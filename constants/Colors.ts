@@ -1,5 +1,9 @@
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
+const successColor = "#00C851";
+const errorColor = "#ff4444";
+const warningColor = "#FF8800";
+const infoColor = "#0099CC";
 
 export default {
   light: {
@@ -8,6 +12,10 @@ export default {
     tint: tintColorLight,
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorLight,
+    success: successColor,
+    error: errorColor,
+    warning: warningColor,
+    info: infoColor,
   },
   dark: {
     text: '#fff',
@@ -15,5 +23,9 @@ export default {
     tint: tintColorDark,
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorDark,
+    success: successColor,
+    error: errorColor,
+    warning: warningColor,
+    info: infoColor,
   },
 };
