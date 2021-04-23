@@ -4,10 +4,11 @@ import { ApolloProvider } from '@apollo/client/react';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from "@apollo/client/link/error";
 import React, { useCallback, useMemo } from 'react';
+import Constants from "expo-constants";
 import { globalActions, snackbarActions, useAppDispatch, useAppSelector } from '../redux';
 
 const httpLink = createHttpLink({
-  uri: 'http://127.0.0.1:3000/graphql',
+  uri: Constants.manifest.extra.url,
 });
 
 
