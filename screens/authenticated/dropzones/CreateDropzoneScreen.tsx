@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { gql, useMutation } from "@apollo/client";
+import { useNavigation } from '@react-navigation/core';
 import { useAppSelector, useAppDispatch, snackbarActions } from '../../../redux';
 
 import { Text, View } from '../../../components/Themed';
@@ -11,7 +11,6 @@ import globalSlice from "../../../redux/global";
 import slice from "../../../components/forms/dropzone/slice";
 import { Mutation } from '../../../graphql/schema';
 import DropzoneForm from '../../../components/forms/dropzone/DropzoneForm';
-import { useNavigation } from '@react-navigation/core';
 import useMutationCreateDropzone from '../../../graphql/hooks/useMutationCreateDropzone';
 
 const { actions } = slice;

@@ -32,7 +32,7 @@ export default function DatePicker(props: IDatepicker) {
       anchor={
         <List.Item
           onPress={() => setOpen(true)}
-          title="Reserve repack due date"
+          title={props.label}
           description={
             props.timestamp ? 
               format(props.timestamp * 1000, "yyyy/MM/dd") :

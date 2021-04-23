@@ -56,6 +56,11 @@ const MUTATION_CREATE_LOAD = gql`
         maxSlots
         isOpen
       }
+      fieldErrors {
+        field,
+        message
+      }
+      errors
     }
   }
 `;
@@ -115,17 +120,43 @@ export default function CreateLoadScreen() {
             maxSlots: maxSlots.value,
             planeId: plane.value?.id ? Number(plane.value?.id) : null,
             pilotId: pilot.value?.id ? Number(plane.value?.id) : null,
-            gcaId: gca.value?.id ? Number(gca.value?.id) : null,
+            gcaId: gca.value?.user?.id ? Number(gca.value?.user?.id) : null,
             isOpen: !!isOpen.value
           }
         });
         
+        result.data?.createLoad?.fieldErrors?.map(({ field, message }) => {
+          switch (field) {
+            case "name":
+              return dispatch(actions.setFieldError(["name", message]));
+            case "maxSlots":
+              return dispatch(actions.setFieldError(["maxSlots", message]));
+            case "plane":
+              return dispatch(actions.setFieldError(["plane", message]));
+            case "gca":
+              return dispatch(actions.setFieldError(["gca", message]));
+            case "is_open":
+              return dispatch(actions.setFieldError(["isOpen", message]));
+            case "pilot":
+              return dispatch(actions.setFieldError(["pilot", message]));
+          }
+        });
+
+        if (result?.data?.createLoad?.errors?.length) {
+          return dispatch(
+            snackbar.showSnackbar({ message: result.data.createLoad.errors[0], variant: "error" })
+          );
+        }
+
         if (result.data?.createLoad?.load) {
           const { load } = result.data.createLoad;
           dispatch(
             snackbar.showSnackbar({ message: `Load ${load.name} created`, variant: "success" })
           );
-          navigation.goBack();
+
+          if (!result.data?.createLoad?.fieldErrors) {
+            navigation.goBack();
+          }
         }
       } catch (error) {
         dispatch(

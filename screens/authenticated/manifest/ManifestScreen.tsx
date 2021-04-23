@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { useNavigation } from '@react-navigation/core';
+import { startOfDay } from 'date-fns';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { Dimensions, StyleSheet } from 'react-native';
@@ -78,17 +79,15 @@ const QUERY_DROPZONE = gql`
 
 export default function ManifestScreen() {
   const state = useAppSelector(state => state.global);
-  const slotState = useAppSelector(state => state.slotForm);
   const [isDialogOpen, setDialogOpen] = React.useState(false);
   const dispatch = useAppDispatch();
   const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONE, {
     variables: {
-      dropzoneId: Number(state.currentDropzone?.id)
+      dropzoneId: Number(state.currentDropzone?.id),
+      earliestTimestamp: startOfDay(new Date()).getTime() / 1000
     },
     fetchPolicy: "no-cache"
   });
-
-  
 
   const navigation = useNavigation();
 
@@ -194,29 +193,6 @@ export default function ManifestScreen() {
           />
         )}
       </View>
-      {/* <BottomSheet
-        ref={bottomSheetRef}
-        snapPoints={[300, 0]}
-        borderRadius={10}
-        renderContent={() =>
-          !slotState?.original ? null : (
-            <View
-              style={{
-                backgroundColor: 'white',
-                padding: 16,
-                height: 300
-              }}
-            >
-              <Button>
-                Edit slot
-              </Button>
-              <Button>
-                Delete slot
-              </Button>
-            </View>
-          )
-        }
-      /> */}
     </>
   );
 }

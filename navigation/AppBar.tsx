@@ -19,6 +19,12 @@ const QUERY_DROPZONES = gql`
   }
 `;
 
+interface IAppBar extends StackHeaderProps {
+  searchEnabled: boolean;
+  searchVisible: boolean;
+  setSearchVisible(visible: boolean): void;
+}
+
 
 function AppBar({ navigation, previous, scene }: StackHeaderProps) {
   const [dropzoneMenuOpen, setDropzoneMenuOpen] = useState(false);

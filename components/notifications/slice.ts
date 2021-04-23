@@ -20,7 +20,7 @@ export default createSlice({
   } as INotificationState,
   reducers: {
     hideSnackbar: (state: INotificationState) => {
-      state.queue.shift();
+      state.queue = state.queue.slice(1);
     },
     showSnackbar: (state: INotificationState, action: PayloadAction<INotification>) => {
       state.queue.push(action.payload);

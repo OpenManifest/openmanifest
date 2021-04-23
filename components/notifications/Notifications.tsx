@@ -30,6 +30,7 @@ const MyComponent = () => {
       onDismiss={() =>
         dispatch(actions.hideSnackbar())
       }
+      duration={3000}
       action={notification?.action}
       style={!!notification?.variant && variantStyle[notification.variant]}
     >
