@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, List } from 'react-native-paper';
 import { xor } from "lodash";
 import { Query } from '../../../graphql/schema';
@@ -9,6 +9,7 @@ import { useAppSelector, useAppDispatch } from '../../../redux';
 
 
 import slice from "./slice";
+import ScrollableScreen from '../../ScrollableScreen';
 
 const { actions } = slice;
 
@@ -43,7 +44,7 @@ export default function ExtraForm() {
   });
 
   return ( 
-    <ScrollView style={styles.fields} contentContainerStyle={{ paddingTop: 200 }}>
+    <>
       <TextInput
         style={styles.field}
         mode="outlined"
@@ -60,7 +61,7 @@ export default function ExtraForm() {
         style={styles.field}
         mode="outlined"
         label="Price"
-        error={!!state.fields.cost.value}
+        error={!!state.fields.cost.error}
         value={state.fields.cost?.value?.toString()}
         onChangeText={(newValue) => dispatch(actions.setField(["cost", Number(newValue)]))}
       />
@@ -68,34 +69,37 @@ export default function ExtraForm() {
         { state.fields.cost.error || "" }
       </HelperText>
 
-      <List.Subheader>
-        Compatible tickets
-      </List.Subheader>
-      {
-        data?.ticketTypes.map((ticket) =>
-          <Checkbox.Item
-            label={ticket.name!}
-            status={state.fields.ticketTypeIds.value.includes(Number(ticket.id))
-              ? "checked"
-              : "unchecked"
-            }
-            onPress={
-              () => dispatch(actions.setField(["ticketTypeIds", xor(state.fields.ticketTypeIds.value, [Number(ticket.id)])]))
-            }
-          />
-        )
-      }
-    </ScrollView>
+      <View style={{ width: "100%"}}>
+        <List.Subheader>
+          Compatible tickets
+        </List.Subheader>
+        {
+          data?.ticketTypes.map((ticket) =>
+            <Checkbox.Item
+              label={ticket.name!}
+              status={state.fields.ticketTypeIds.value.includes(Number(ticket.id))
+                ? "checked"
+                : "unchecked"
+              }
+              onPress={
+                () => dispatch(actions.setField(["ticketTypeIds", xor(state.fields.ticketTypeIds.value, [Number(ticket.id)])]))
+              }
+            />
+          )
+        }
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   fields: {
-    width: "70%",
+    width: "100%",
     flex: 1,
     
   },
   field: {
     marginBottom: 8,
+    width: "100%"
   }
 });

@@ -9,6 +9,7 @@ import JumpTypeSelect from '../../JumpTypeSelect';
 import TicketTypeSelect from '../../TicketTypeSelect';
 import useRestriction from '../../../hooks/useRestriction';
 import RigSelect from '../../RigSelect';
+import ScrollableScreen from '../../ScrollableScreen';
 
 const { actions } = slice;
 export default function SlotForm() {
@@ -47,8 +48,7 @@ export default function SlotForm() {
   console.log("Fields", state.fields);
 
   return ( 
-    <ScrollView style={styles.fields} contentContainerStyle={{ flexGrow: 1}}>
-      
+    <> 
       <JumpTypeSelect
         value={state.fields.jumpType.value}
         required
@@ -90,6 +90,9 @@ export default function SlotForm() {
           </Chip>
         )}
       </ScrollView>
+      <HelperText type={!!state.fields.extras.error ? "error" : "info"}>
+        { state.fields.extras.error || "" }
+      </HelperText>
       <Divider />
       <RigSelect
         value={state.fields.rig.value}
@@ -114,7 +117,7 @@ export default function SlotForm() {
       <HelperText type={!!state.fields.exitWeight.error ? "error" : "info"}>
         { state.fields.exitWeight.error || "" }
       </HelperText>
-    </ScrollView>
+    </>
   );
 }
 

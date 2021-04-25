@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { useNavigation } from '@react-navigation/core';
+import { useIsFocused, useNavigation } from '@react-navigation/core';
 import { startOfDay } from 'date-fns';
 import gql from 'graphql-tag';
 import * as React from 'react';
@@ -90,6 +90,13 @@ export default function ManifestScreen() {
   });
 
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
+
+  React.useEffect(() => {
+    if (isFocused) {
+      refetch();
+    }
+  }, [isFocused]);
 
   const hasPlanes = !!data?.dropzone?.planes?.length;
   const hasTicketTypes = !!data?.dropzone?.ticketTypes?.length;

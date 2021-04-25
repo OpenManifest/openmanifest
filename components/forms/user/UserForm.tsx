@@ -8,6 +8,7 @@ import slice from "./slice";
 import LicenseSelect from '../../LicenseSelect';
 import FederationSelect from '../../FederationSelect';
 import useRestriction from '../../../hooks/useRestriction';
+import ScrollableScreen from '../../ScrollableScreen';
 
 const { actions } = slice;
 export default function SlotForm() {
@@ -37,7 +38,7 @@ export default function SlotForm() {
 
 
   return ( 
-    <ScrollView style={styles.fields} contentContainerStyle={{ flexGrow: 1}}>
+    <>
       <TextInput
         style={styles.field}
         mode="outlined"
@@ -120,18 +121,19 @@ export default function SlotForm() {
           </HelperText>
         </>
       )}
-    </ScrollView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   fields: {
     flex: 1,
-    width: "70%",
+    width: "100%",
     paddingTop: 32,
   },
   field: {
     marginBottom: 8,
+    width: "100%",
   },
   ticketAddons: {
     marginBottom: 8

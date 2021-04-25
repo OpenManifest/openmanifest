@@ -12,6 +12,7 @@ import slice from "../../../components/forms/user/slice";
 import { Mutation, User } from '../../../graphql/schema';
 import UserForm from '../../../components/forms/user/UserForm';
 import { useNavigation, useRoute } from '@react-navigation/core';
+import ScrollableScreen from '../../../components/ScrollableScreen';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;
@@ -183,14 +184,14 @@ export default function UpdateUserScreen() {
   }, [JSON.stringify(state.fields), dispatch, mutationUpdateUser]);
 
   return (
-    <View style={styles.container}>
+    <ScrollableScreen contentContainerStyle={{ paddingHorizontal: 48 }}>
         <UserForm />
         <View style={styles.fields}>
           <Button mode="contained" disabled={data.loading} onPress={onSave} loading={data.loading}>
             Save
           </Button>
       </View>
-    </View>
+    </ScrollableScreen>
   );
 }
 
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   fields: {
-    width: "70%",
+    width: "100%",
     marginBottom: 16
   },
   field: {

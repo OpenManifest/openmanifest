@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { TextInput, HelperText } from 'react-native-paper';
 import { useAppSelector, useAppDispatch } from '../../../redux';
+import ScrollableScreen from '../../ScrollableScreen';
 
 
 import slice from "./slice";
@@ -14,7 +15,7 @@ export default function DropzoneForm() {
   const dispatch = useAppDispatch();
 
   return ( 
-    <ScrollView style={styles.fields} contentContainerStyle={{ paddingTop: 200 }}>
+    <>
       <TextInput
         style={styles.field}
         mode="outlined"
@@ -77,17 +78,17 @@ export default function DropzoneForm() {
       <HelperText type={!!state.fields.maxSlots.error ? "error" : "info"}>
         { state.fields.maxSlots.error || "Maximum amount of jumpers who can be manifested on one load" }
       </HelperText>
-    </ScrollView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   fields: {
-    width: "70%",
+    width: "100%",
     flex: 1,
-    
   },
   field: {
+    width: "100%",
     marginBottom: 8,
   }
 });

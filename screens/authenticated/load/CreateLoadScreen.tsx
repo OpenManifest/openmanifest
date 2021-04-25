@@ -12,6 +12,8 @@ import globalSlice from "../../../redux/global";
 import slice from "../../../components/forms/load/slice";
 import { Mutation } from '../../../graphql/schema';
 import LoadForm from '../../../components/forms/load/LoadForm';
+import ScrollableScreen from '../../../components/ScrollableScreen';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;
@@ -75,13 +77,7 @@ export default function CreateLoadScreen() {
 
   const validate = React.useCallback((): boolean => {
     let hasError = false;
-    if ((state.fields.name?.value?.length || 0) < 3) {
-      hasError = true;
-      dispatch(
-        actions.setFieldError(["name", "Name is too short"])
-      );
-    }
-
+ 
     if (state.fields.maxSlots.value! < 1) {
       hasError = true;
       dispatch(
@@ -168,21 +164,23 @@ export default function CreateLoadScreen() {
   }, [JSON.stringify(state.fields), dispatch, mutationCreateLoad]);
 
   return (
-    <View style={styles.container}>
+    <ScrollableScreen contentContainerStyle={styles.content}>
+        <MaterialCommunityIcons name="airplane-takeoff" size={100} color="#999999" style={{ alignSelf: "center", marginTop: 32 }} />
         <LoadForm />
         <View style={styles.fields}>
-          <Button mode="contained" disabled={data.loading} onPress={onSave} loading={data.loading}>
+          <Button mode="contained" style={styles.button} disabled={data.loading} onPress={onSave} loading={data.loading}>
             Save
           </Button>
-      </View>
-    </View>
+        </View>
+    </ScrollableScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
+  content: {
+    paddingHorizontal: 48,
+  },
+  button: {
   },
   title: {
     fontSize: 20,
@@ -194,8 +192,8 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   fields: {
-    width: "70%",
-    marginBottom: 16
+    marginVertical: 16,
+    width: "100%"
   },
   field: {
     marginBottom: 8,

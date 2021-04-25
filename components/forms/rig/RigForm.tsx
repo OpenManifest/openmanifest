@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
-import { TextInput, HelperText, List } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { TextInput, HelperText } from 'react-native-paper';
 
 import { useAppSelector, useAppDispatch } from '../../../redux';
 
 import slice from "./slice";
 import DatePicker from '../../DatePicker';
+import ScrollableScreen from '../../ScrollableScreen';
 
 const { actions } = slice;
 
@@ -15,7 +16,7 @@ export default function RigForm() {
   const [isDatePickerOpen, setDatePickerOpen] = React.useState(false);
 
   return ( 
-    <ScrollView style={styles.fields}>
+    <>
       <TextInput
         style={styles.field}
         mode="outlined"
@@ -70,7 +71,7 @@ export default function RigForm() {
         onChange={(time) => dispatch(actions.setField(["repackExpiresAt", time]))}
         label="Reserve repack expiry date"
       />
-    </ScrollView>
+    </>
   );
 }
 

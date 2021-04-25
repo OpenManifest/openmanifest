@@ -3,14 +3,14 @@ import * as React from 'react';
 
 import UsersScreen from '../../screens/authenticated/users/UsersScreen';
 import SearchableAppBar from '../../screens/authenticated/users/AppBar';
-import UserProfileScreen from '../../screens/authenticated/profile/UserProfileScreen';
-import UserRigScreen from '../../screens/authenticated/rig/UserRigScreen';
+import RigInspectionScreen from '../../screens/authenticated/rig/RigInspectionScreen';
 import { useAppDispatch, useAppSelector, usersActions } from '../../redux';
 import ProfileScreen from '../../screens/authenticated/profile/ProfileScreen';
+import { Rig } from '../../graphql/schema';
 
 export type ISettingsTabParams = {
   UsersScreen: undefined;
-  UserRigScreen: undefined;
+  RigInspectionScreen: { dropzoneUserId: number, rig: Rig };
   UserProfileScreen: undefined;
 }
 
@@ -39,7 +39,7 @@ export default function SettingsTab() {
     >
       <Settings.Screen name="UsersScreen" component={UsersScreen} options={{ title: "Dropzone users" }} />
       <Settings.Screen name="UserProfileScreen" component={ProfileScreen} options={{ title: "User" }} />
-      <Settings.Screen name="UserRigScreen" component={UserRigScreen} />
+      <Settings.Screen name="RigInspectionScreen" component={RigInspectionScreen} options={{ title: "Inspection" }} />
     </Settings.Navigator>
   );
 }

@@ -5,6 +5,7 @@ import { DatePickerModal } from 'react-native-paper-dates';
 interface IDatepicker {
   label: string;
   timestamp: number;
+  disabled?: boolean;
   onChange(timestamp: number): void;
 }
 export default function DatePicker(props: IDatepicker) {

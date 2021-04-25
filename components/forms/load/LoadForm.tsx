@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, Menu, List, Divider } from 'react-native-paper';
 import { useAppSelector, useAppDispatch } from '../../../redux';
 
@@ -19,92 +19,92 @@ export default function LoadForm() {
 
 
   return ( 
-    <ScrollView style={styles.fields} contentContainerStyle={{ paddingTop: 200 }}>
-      
+    <>
       <TextInput
         style={styles.field}
         mode="outlined"
         label="Name"
         error={!!state.fields.name.error}
+        placeholder="Optional"
         value={state.fields.name.value || ""}
         onChangeText={(newValue) => dispatch(actions.setField(["name", newValue]))}
       />
       <HelperText type={!!state.fields.name.error ? "error" : "info"}>
-        { state.fields.name.error || "" }
-      </HelperText>
-
-      <PlaneSelect
-        value={state.fields.plane.value}
-        onSelect={(value) => {
-          dispatch(actions.setField(["plane", value]));
-          dispatch(actions.setField(["maxSlots", value.maxSlots]));
-        }}
-        dropzoneId={Number(globalState.currentDropzone?.id)}
-      />
-      <HelperText type={!!state.fields.plane.error ? "error" : "info"}>
-        { state.fields.plane.error || "" }
+        { state.fields.name.error || "e.g Starcrest load, Tandem load" }
       </HelperText>
 
       <TextInput
         style={styles.field}
         mode="outlined"
         label="Slots"
-        error={!!state.fields.maxSlots.value}
+        error={!!state.fields.maxSlots.error}
         value={state.fields.maxSlots?.value?.toString()}
         onChangeText={(newValue) => dispatch(actions.setField(["maxSlots", Number(newValue)]))}
       />
       <HelperText type={!!state.fields.maxSlots.error ? "error" : "info"}>
         { state.fields.maxSlots.error || "" }
       </HelperText>
+      <View style={{ width: "100%"}}>
+        <PlaneSelect
+          value={state.fields.plane.value}
+          required
+          onSelect={(value) => {
+            dispatch(actions.setField(["plane", value]));
+            dispatch(actions.setField(["maxSlots", value.maxSlots]));
+          }}
+          dropzoneId={Number(globalState.currentDropzone?.id)}
+        />
+        <HelperText type={!!state.fields.plane.error ? "error" : "info"}>
+          { state.fields.plane.error || "" }
+        </HelperText>
+        
+        <Checkbox.Item
+          label="Allow public manifesting"
+          status={!!state.fields.isOpen.value
+            ? "checked"
+            : "unchecked"
+          }
+          onPress={
+            () => dispatch(actions.setField(["isOpen", !state.fields.isOpen.value]))
+          }
+        />
 
+        <Divider style={{ marginVertical: 8 }} />
       
-      <Checkbox.Item
-        label="Allow public manifesting"
-        status={!!state.fields.isOpen.value
-          ? "checked"
-          : "unchecked"
-        }
-        onPress={
-          () => dispatch(actions.setField(["isOpen", !state.fields.isOpen.value]))
-        }
-      />
-
-      <Divider />
-      <DropzoneUserSelect
-        label="GCA"
-        onSelect={dzUser => dispatch(actions.setField(["gca", dzUser]))}
-        dropzoneId={Number(globalState.currentDropzone?.id)}
-        value={state.fields.gca.value || null}
-        requiredPermissions={["actAsGCA"]}
-        required
-      />
-      <HelperText type={!!state.fields.gca.error ? "error" : "info"}>
-        { state.fields.gca.error || "" }
-      </HelperText>
-      
-      <DropzoneUserSelect
-        label="Pilot"
-        onSelect={dzUser => dispatch(actions.setField(["pilot", dzUser]))}
-        dropzoneId={Number(globalState.currentDropzone?.id)}
-        value={state.fields.pilot.value || null}
-        requiredPermissions={["actAsPilot"]}
-      />
-      <HelperText type={!!state.fields.pilot.error ? "error" : "info"}>
-        { state.fields.pilot.error || "" }
-      </HelperText>
-
-      
-    </ScrollView>
+        <DropzoneUserSelect
+          label="GCA"
+          onSelect={dzUser => dispatch(actions.setField(["gca", dzUser]))}
+          dropzoneId={Number(globalState.currentDropzone?.id)}
+          value={state.fields.gca.value || null}
+          requiredPermissions={["actAsGCA"]}
+          required
+        />
+        <HelperText type={!!state.fields.gca.error ? "error" : "info"}>
+          { state.fields.gca.error || "" }
+        </HelperText>
+        
+        <DropzoneUserSelect
+          label="Pilot"
+          onSelect={dzUser => dispatch(actions.setField(["pilot", dzUser]))}
+          dropzoneId={Number(globalState.currentDropzone?.id)}
+          value={state.fields.pilot.value || null}
+          requiredPermissions={["actAsPilot"]}
+        />
+        <HelperText type={!!state.fields.pilot.error ? "error" : "info"}>
+          { state.fields.pilot.error || "" }
+        </HelperText>
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   fields: {
-    width: "70%",
     flex: 1,
-    
+    width: "100%"
   },
   field: {
     marginBottom: 8,
+    width: "100%"
   }
-});
+})

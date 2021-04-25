@@ -159,6 +159,10 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
             return dispatch(slotForm.setFieldError(["jumpType", message]));
           case "load":
             return dispatch(slotForm.setFieldError(["load", message]));
+          case "credits":
+          case "extras":
+          case "extra_ids":
+            return dispatch(slotForm.setFieldError(["extras", message]));
           case "ticket_type":
             return dispatch(slotForm.setFieldError(["ticketType", message]));
           case "rig":

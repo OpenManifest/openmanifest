@@ -20,6 +20,7 @@ import slotFormSlice from "../components/forms/slot/slice";
 import userFormSlice from "../components/forms/user/slice";
 import dropzoneUserFormSlice from "../components/forms/dropzone_user/slice";
 import rigFormSlice from "../components/forms/rig/slice";
+import rigInspectionFormSlice from "../components/forms/rig_inspection/slice";
 
 // Re-export actions:
 export const { actions: loginActions } = loginSlice;
@@ -36,6 +37,7 @@ export const { actions: slotForm } = slotFormSlice;
 export const { actions: userForm } = userFormSlice;
 export const { actions: dropzoneUserForm } = dropzoneUserFormSlice;
 export const { actions: rigForm } = rigFormSlice;
+export const { actions: rigInspectionForm } = rigInspectionFormSlice;
 
 const persistConfig = {
   key: 'root',
@@ -59,6 +61,7 @@ const reducer = persistCombineReducers(persistConfig, {
     userForm: userFormSlice.reducer,
     dropzoneUserForm: dropzoneUserFormSlice.reducer,
     rigForm: rigFormSlice.reducer,
+    rigInspectionForm: rigInspectionFormSlice.reducer,
     usersScreen: usersSlice.reducer,
   });
 

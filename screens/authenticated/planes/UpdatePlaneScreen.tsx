@@ -12,6 +12,8 @@ import slice from "../../../components/forms/plane/slice";
 import { Mutation, Plane } from '../../../graphql/schema';
 import PlaneForm from '../../../components/forms/plane/PlaneForm';
 import { useNavigation, useRoute } from '@react-navigation/core';
+import ScrollableScreen from '../../../components/ScrollableScreen';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;
@@ -141,21 +143,21 @@ export default function UpdatePlaneScreen() {
   }, [JSON.stringify(state.fields), dispatch, mutationUpdatePlane]);
 
   return (
-    <View style={styles.container}>
+    <ScrollableScreen contentContainerStyle={styles.content}>
+        <MaterialCommunityIcons name="airplane" size={100} color="#999999" style={{ alignSelf: "center" }} />
         <PlaneForm />
-        <View style={styles.fields}>
+        <View style={styles.actions}>
           <Button mode="contained" disabled={data.loading} onPress={onSave} loading={data.loading}>
             Save
           </Button>
       </View>
-    </View>
+    </ScrollableScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
+  content: {
+    paddingHorizontal: 48,
   },
   title: {
     fontSize: 20,
@@ -166,8 +168,8 @@ const styles = StyleSheet.create({
     height: 1,
     width: '80%',
   },
-  fields: {
-    width: "70%",
+  actions: {
+    width: "100%",
     marginBottom: 16
   },
   field: {

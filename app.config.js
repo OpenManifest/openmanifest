@@ -1,5 +1,4 @@
 export default ({config}) => {
-  console.log("EXPO_ENV: ", process.env.EXPO_ENV);
   return {
     ...config,
     name: "Deezed",

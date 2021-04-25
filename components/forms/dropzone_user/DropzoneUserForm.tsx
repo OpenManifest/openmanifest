@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { TextInput, HelperText, List } from 'react-native-paper';
 
 import { useAppSelector, useAppDispatch } from '../../../redux';
@@ -8,17 +8,17 @@ import slice from "./slice";
 import DatePicker from '../../DatePicker';
 import RoleSelect from '../../RoleSelect';
 import useRestriction from '../../../hooks/useRestriction';
+import ScrollableScreen from '../../ScrollableScreen';
 
 const { actions } = slice;
 
 export default function DropzoneUserForm() {
   const { dropzoneUserForm: state, global: globalState} = useAppSelector(state => state);
   const dispatch = useAppDispatch();
-  const canUpdateRole = useRestriction("updatePermissions");
+  const canUpdateRole = useRestriction("updatePermission");
 
   return ( 
-    <ScrollView style={styles.fields}>
-
+    <>
       <RoleSelect
         value={state.fields.role.value}
         onSelect={(newRole) => dispatch(actions.setField(["role", newRole]))}
@@ -54,7 +54,7 @@ export default function DropzoneUserForm() {
       <HelperText type={!!state.fields.credits.error ? "error" : "info"}>
         { state.fields.credits.error || `Current balance: $${state.original?.credits || 0}` }
       </HelperText>
-    </ScrollView>
+    </>
   );
 }
 

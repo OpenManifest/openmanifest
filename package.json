@@ -10,7 +10,7 @@
     "web:production": "EXPO_ENV=production expo start --web",
     "eject": "expo eject",
     "test": "jest --watchAll",
-    "ts:graphql": "curl http://127.0.0.1:3000/graphql -o schema.graphql; yarn graphql-codegen",
+    "ts:graphql": "curl http://127.0.0.1:5000/graphql -o schema.graphql; yarn graphql-codegen",
     "build:web": "EXPO_ENV=production expo build:web",
     "build:ios": "EXPO_ENV=production expo build:ios",
     "build:android": "EXPO_ENV=production expo build:android"
@@ -49,7 +49,7 @@
     "react-native-color-picker": "^0.6.0",
     "react-native-gesture-handler": "~1.8.0",
     "react-native-mmkv-storage": "^0.5.3",
-    "react-native-paper": "^4.7.2",
+    "react-native-paper": "4.8.1",
     "react-native-paper-dates": "web-ridge/react-native-paper-dates",
     "react-native-reanimated": "~1.13.0",
     "react-native-safe-area-context": "3.1.9",

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, ScrollViewProps } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, ScrollViewProps, useWindowDimensions } from "react-native";
+import { useAppSelector } from "../redux";
 
 
 interface IScrollableScreen extends ScrollViewProps {
@@ -7,17 +8,12 @@ interface IScrollableScreen extends ScrollViewProps {
 }
 export default function ScrollableScreen(props: IScrollableScreen) {
 
-  const [height, setHeight] = useState(Dimensions.get('window').height)
+  const { height } = useWindowDimensions();
+  const { theme } = useAppSelector(state => state.global);
 
-  useEffect(() => {
-    Dimensions.addEventListener('change', ({ window }) => setHeight(window.height))
-    return () => {
-      Dimensions.removeEventListener('change', ({ window }) => setHeight(window.height))
-    }
-  }, []);
 
   return (
-    <ScrollView style={[styles.container, { height }, props.style]} contentContainerStyle={[styles.content, props.contentContainerStyle]}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.colors.surface, height: height - (56 * 2) }, props.style]} contentContainerStyle={[styles.content, props.contentContainerStyle]}>
       {props.children}
     </ScrollView>
   )
@@ -27,8 +23,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  content: {
+  content: { 
+    paddingHorizontal: 16, 
+    alignItems: "flex-start", 
     flexGrow: 1,
-    alignItems: "center"
+    paddingBottom: 50
   }
 })

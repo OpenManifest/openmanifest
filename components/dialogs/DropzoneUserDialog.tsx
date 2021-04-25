@@ -126,7 +126,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
       <Dialog visible={!!props.open}>
         <ProgressBar indeterminate visible={createData.loading} color={globalState.theme.colors.accent} />
         <Dialog.Title>
-          {`${state?.original?.id ? "Edit" : "New"} rig`}
+          {`${state?.original?.id ? "Edit" : "New"} dropzone user`}
         </Dialog.Title>
         <Dialog.Content>
           <DropzoneUserForm />

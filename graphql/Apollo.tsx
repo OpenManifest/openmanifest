@@ -20,29 +20,30 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
   // Log any GraphQL errors or network error that occurred
   const errorLink = useMemo(() =>
     onError(({ graphQLErrors, networkError }) => {
-    if (graphQLErrors)
-      graphQLErrors.map(({ message, locations, path }) =>
-        dispatch(
-          snackbarActions.showSnackbar({ message: `[GraphQL error]: ${message}, ${locations}, ${path}`, variant: "error" })
-        )
-      );
-    if (networkError) {
-      dispatch(
-        snackbarActions.showSnackbar({ message: `[Network error]: ${networkError}`, variant: "error" })
-      )
-    }
 
-    if (
-      networkError &&
-      networkError.name ==='ServerError' &&
-      (networkError as ServerError).statusCode === 401
-    ) {
-      dispatch(
-        globalActions.logout()
-      );
-    }
-  }),
-  [dispatch]);
+      if (graphQLErrors?.some((err) => err.extensions?.code === "AUTHENTICATION_ERROR")) {
+        dispatch(
+          snackbarActions.showSnackbar({ message: `Session expires`, variant: "error" })
+        )
+        dispatch(
+          globalActions.logout()
+        );
+        return;
+      }
+        
+      if (graphQLErrors)
+        graphQLErrors.map(({ message, locations, path }) =>
+          dispatch(
+            snackbarActions.showSnackbar({ message: `[GraphQL error]: ${message}, ${locations}, ${path}`, variant: "error" })
+          )
+        );
+      if (networkError) {
+        dispatch(
+          snackbarActions.showSnackbar({ message: `[Network error]: ${networkError}`, variant: "error" })
+        )
+      }
+
+    }), [dispatch]);
 
   const authLink = useMemo(
     () => setContext((_, { headers }) => {

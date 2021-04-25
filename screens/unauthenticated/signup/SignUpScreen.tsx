@@ -9,6 +9,7 @@ import globalSlice from "../../../redux/global";
 
 import slice from "./slice";
 import useMutationSignUp from '../../../graphql/hooks/useMutationSignUp';
+import ScrollableScreen from '../../../components/ScrollableScreen';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;
@@ -38,7 +39,7 @@ export default function SignupScreen() {
   
 
   return (
-    <View style={styles.container}>
+    <ScrollableScreen style={styles.container}>
       <Text style={styles.title}>Sign up</Text>
       <View style={styles.fields}>
         <TextInput
@@ -142,7 +143,7 @@ export default function SignupScreen() {
           Sign up
         </Button>
       </View>
-    </View>
+    </ScrollableScreen>
   );
 }
 

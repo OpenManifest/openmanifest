@@ -10,6 +10,7 @@ import { useQuery } from '@apollo/client';
 import { Query } from '../../../graphql/schema';
 import ScrollableScreen from '../../../components/ScrollableScreen';
 import DropzoneUserDialog from '../../../components/dialogs/DropzoneUserDialog';
+import useRestriction from '../../../hooks/useRestriction';
 
 
 const QUERY_DROPZONE_USER = gql`
@@ -62,6 +63,8 @@ export default function ProfileScreen() {
   const route = useRoute<{ key: string, name: string, params: { userId: string }}>();
   const isSelf = state.currentUser?.id === route.params.userId;
 
+  const canInspectRigs = useRestriction("actAsRigInspector");
+
   const { data, loading } = useQuery<Query>(QUERY_DROPZONE_USER, {
     variables: {
       dropzoneId: Number(state.currentDropzone?.id),
@@ -71,8 +74,15 @@ export default function ProfileScreen() {
 
   const getRigPressAction = React.useCallback((rig) => {
     return () => {
-      dispatch(rigForm.setOriginal(rig));
-      setRigDialogOpen(true);
+      if (!isSelf) {
+        dispatch(rigForm.setOriginal(rig));
+        setRigDialogOpen(true);
+      } else if (canInspectRigs) {
+        navigation.navigate("RigInspectionScreen", {
+          dropzoneUserId: Number(route.params.userId),
+          rig
+        });
+      }
     }
   }, [dispatch, setRigDialogOpen]);
 
@@ -119,7 +129,7 @@ export default function ProfileScreen() {
                 <Button
                   icon="pencil"
                   onPress={() =>
-                    navigation.navigate("UpdateUserScreen", { user: state.currentDropzone?.currentUser })
+                    navigation.navigate("UpdateUserScreen", { user: state.currentDropzone?.currentUser?.user })
                   }
                 >
                   Edit
@@ -177,42 +187,28 @@ export default function ProfileScreen() {
           <Card.Content>
             <DataTable>
               <DataTable.Header>
-                <DataTable.Row>
-                  <DataTable.Title>
-                    Make
-                  </DataTable.Title>
-                  <DataTable.Title>
-                    Model
-                  </DataTable.Title>
-                  <DataTable.Title>
-                    Serial
-                  </DataTable.Title>
-                  <DataTable.Title numeric>
-                    Repack expires
-                  </DataTable.Title>
-                  <DataTable.Title numeric>
-                    Canopy size
-                  </DataTable.Title>
-                </DataTable.Row>
+                <DataTable.Title>
+                  Container
+                </DataTable.Title>
+                <DataTable.Title numeric>
+                  Repack due
+                </DataTable.Title>
+                <DataTable.Title numeric>
+                  Canopy size
+                </DataTable.Title>
               </DataTable.Header>
 
               {
                 data?.dropzone?.dropzoneUser?.user?.rigs?.map((rig) =>
-                  <DataTable.Row onPress={getRigPressAction(rig)}>
-                    <DataTable.Cell onPress={getRigPressAction(rig)}>
-                      {rig?.make}
+                  <DataTable.Row onPress={getRigPressAction(rig)} pointerEvents="none">
+                    <DataTable.Cell>
+                      {[rig?.make, rig?.model, `#${rig?.serial}`].join(" ")}
                     </DataTable.Cell>
-                    <DataTable.Cell onPress={getRigPressAction(rig)}>
-                      {rig?.model}
-                    </DataTable.Cell>
-                    <DataTable.Cell onPress={getRigPressAction(rig)}>
-                      {rig?.serial}
-                    </DataTable.Cell>
-                    <DataTable.Cell onPress={getRigPressAction(rig)}>
+                    <DataTable.Cell numeric>
                       {rig?.repackExpiresAt ? format(rig.repackExpiresAt * 1000, "yyyy/MM/dd") : "-"}
                     </DataTable.Cell>
-                    <DataTable.Cell onPress={getRigPressAction(rig)}>
-                      {`${rig?.canopySize}sqft`}
+                    <DataTable.Cell numeric>
+                      {`${rig?.canopySize}`}
                     </DataTable.Cell>
                   </DataTable.Row>
                 )
@@ -263,8 +259,8 @@ const styles = StyleSheet.create({
     paddingBottom: 56
   },
   card: {
-    marginVertical: 8,
-    width: "80%"
+    margin: 8,
+    width: "100%",
   },
   fields: {
     width: "80%",
