@@ -19,6 +19,7 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.dangertechnologies.deezed",
       "supportsTablet": true,
       "usesIcloudStorage": true
     },
