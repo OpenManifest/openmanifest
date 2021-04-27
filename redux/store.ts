@@ -1,11 +1,14 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux'
-import MMKV from "react-native-mmkv-storage";
+import { Platform } from "react-native";
+import AsyncStorage from '@react-native-community/async-storage';
+
+
+
 import { persistStore, persistCombineReducers } from "redux-persist";
-import storage from 'redux-persist/lib/storage';
+
 
 import globalSlice from "./global";
-import { Platform } from "react-native";
 import notificationSlice from "../components/notifications/slice";
 
 import loginSlice from "../screens/unauthenticated/login/slice";
@@ -21,6 +24,7 @@ import userFormSlice from "../components/forms/user/slice";
 import dropzoneUserFormSlice from "../components/forms/dropzone_user/slice";
 import rigFormSlice from "../components/forms/rig/slice";
 import rigInspectionFormSlice from "../components/forms/rig_inspection/slice";
+import rigInspectionTemplateSlice from "../components/forms/rig_inspection_template/slice";
 
 // Re-export actions:
 export const { actions: loginActions } = loginSlice;
@@ -38,14 +42,14 @@ export const { actions: userForm } = userFormSlice;
 export const { actions: dropzoneUserForm } = dropzoneUserFormSlice;
 export const { actions: rigForm } = rigFormSlice;
 export const { actions: rigInspectionForm } = rigInspectionFormSlice;
+export const { actions: rigInspectionTemplateForm } = rigInspectionTemplateSlice;
 
 const persistConfig = {
   key: 'root',
-  storage: Platform.OS === "web" ? storage : MMKV(),
+  storage: Platform.OS === "web" ? require('redux-persist/lib/storage').default : AsyncStorage,
   whitelist: ["global", "notifications"],
 };
 
-console.log({ localStorage, MMKV });
 
 const reducer = persistCombineReducers(persistConfig, {
     global: globalSlice.reducer,
@@ -62,11 +66,17 @@ const reducer = persistCombineReducers(persistConfig, {
     dropzoneUserForm: dropzoneUserFormSlice.reducer,
     rigForm: rigFormSlice.reducer,
     rigInspectionForm: rigInspectionFormSlice.reducer,
+    rigInspectionTemplate: rigInspectionTemplateSlice.reducer,
     usersScreen: usersSlice.reducer,
   });
 
 export const store = configureStore({
-  reducer
+  reducer,
+  middleware: getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: ["persist/PERSIST"],
+    },
+  })
 });
 export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;

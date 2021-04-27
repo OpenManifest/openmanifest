@@ -58,6 +58,7 @@ export default function PlaneSelect(props: IPlaneSelect) {
       {
         data?.planes?.map((plane) => 
           <List.Item
+            key={`plane-select-${plane.id}`}
             onPress={() => {
               setMenuOpen(false);
               props.onSelect(plane);

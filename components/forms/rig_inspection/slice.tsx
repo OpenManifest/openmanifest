@@ -1,17 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RigInspection, ChecklistValue } from "../../../graphql/schema";
+import { FieldItem } from "../rig_inspection_template/slice";
 
-type FieldItem = Pick<ChecklistValue, "checklistItem" | "value"> & { id?: string | null}
 
 
 interface IRigInspectionEditState {
-  original: RigInspection | null;
   fields: FieldItem[],
+  ok: boolean;
 }
 
 const initialState: IRigInspectionEditState = {
-  original: null,
-  fields: []
+  fields: [],
+  ok: false
 };
 
 
@@ -19,21 +18,28 @@ export default createSlice({
   name: 'rigInspectionForm',
   initialState,
   reducers: {
-    setItem: (state: IRigInspectionEditState, action: PayloadAction<FieldItem>) => {
-      state.fields = [
-        ...state.fields.filter((item) => item.checklistItem.id !== action.payload.checklistItem.id),
-        action.payload
-      ]
+
+    setOk: (state: IRigInspectionEditState, action: PayloadAction<boolean>) => {
+      state.ok = action.payload;
+    },
+    setField: (state: IRigInspectionEditState, action: PayloadAction<[number, FieldItem]>) => {
+      const [index, item] = action.payload;
+
+      console.log({ item, index, fields: state.fields });
+      state.fields = state.fields.map((field, idx) => idx === index ? item : field);
     },
 
-    setOriginal: (state: IRigInspectionEditState, action: PayloadAction<RigInspection>) => {
-      state.original = action.payload;
-      state.fields = action.payload.checklistValues;
+    setFields: (state: IRigInspectionEditState, action: PayloadAction<string>) => {
+      try {
+        state.fields = JSON.parse(action.payload)
+      } catch (error) {
+        console.error("Failed to read rig inspection template", error.message, action.payload);
+      }
     },
     
     reset: (state: IRigInspectionEditState) => {
       state.fields = initialState.fields;
-      state.original = null;
+      state.ok = initialState.ok;
     },
   }
 });

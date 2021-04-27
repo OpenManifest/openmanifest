@@ -35,17 +35,10 @@ export default function SlotForm() {
   }, [state.fields?.user?.value?.id]);
 
   const isEdit = state?.original?.id;
-  const isSelf = state?.fields?.user?.value?.id === globalState.currentUser?.id;
-
-  
-  const allowedToManifestSelf = useRestriction(
-    isEdit ? "updateSlot" : "createSlot"
-  );
 
   const allowedToManifestOthers = useRestriction(
     isEdit ? "updateUserSlot" : "createUserSlot"
   )
-  console.log("Fields", state.fields);
 
   return ( 
     <> 

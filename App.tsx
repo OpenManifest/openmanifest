@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from "react-redux";
 import { PersistGate } from 'redux-persist/integration/react'
-import { Provider as MaterialProvider, ActivityIndicator } from "react-native-paper"
+import { Provider as MaterialProvider, ActivityIndicator, ProgressBar } from "react-native-paper"
 import { Platform, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 
@@ -22,20 +22,28 @@ import RootNavigator from "./navigation/RootNavigator";
 function Content() {
   const state = useAppSelector(state => state.global);
   return (
-    <Apollo>
-      <MaterialProvider theme={state.theme}>
-        <SafeAreaProvider>
-          <NavigationContainer
-            linking={LinkingConfiguration}
-            theme={state.theme}>
-            <RootNavigator />
-          </NavigationContainer>
+    <Suspense
+      fallback={
+        <View style={{ flex: 1, flexGrow: 1 }}>
+          <ProgressBar indeterminate color={state?.theme?.colors?.accent} visible />
+        </View>
+      }
+    >
+      <Apollo>
+        <MaterialProvider theme={state.theme}>
+          <SafeAreaProvider>
+            <NavigationContainer
+              linking={LinkingConfiguration}
+              theme={state.theme}>
+              <RootNavigator />
+            </NavigationContainer>
 
-          <StatusBar />
-          <Notifications />
-        </SafeAreaProvider>
-    </MaterialProvider>
-    </Apollo>
+            <StatusBar />
+            <Notifications />
+          </SafeAreaProvider>
+        </MaterialProvider>
+      </Apollo>
+    </Suspense>
   )
 }
 export default function App() {

@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { useRoute } from '@react-navigation/core';
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import { format } from 'date-fns';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { Button, Card, List } from 'react-native-paper';
+import { Button, Card, Checkbox, Divider, List } from 'react-native-paper';
 import RigInspectionForm from "../../../components/forms/rig_inspection/RigInspectionForm";
 import ScrollableScreen from '../../../components/ScrollableScreen';
 import { DropzoneUser, Mutation, Query, Rig } from '../../../graphql/schema';
@@ -14,10 +14,19 @@ const QUERY_RIG_INSPECTIONS = gql`
   query RigInspections($dropzoneUserId: Int!, $dropzoneId: Int!) {
     dropzone(id: $dropzoneId) {
       id
+
+      rigInspectionTemplate {
+        id
+        name
+        definition
+      }
+
       dropzoneUser(id: $dropzoneUserId) {
         id
         rigInspections {
           id
+          isOk
+          definition
           rig {
             id
           }
@@ -25,16 +34,10 @@ const QUERY_RIG_INSPECTIONS = gql`
             id
             name
           }
-          checklistValues {
+          formTemplate {
             id
-            value
-            checklistItem {
-              id
-              name
-              valueType
-              isRequired
-              description
-            }
+            name
+            definition
           }
         }
       }
@@ -46,15 +49,21 @@ const MUTATION_CREATE_RIG_INSPECTION = gql`
   mutation CreateRigInspection(
     $dropzoneId: Int,
     $rigId: Int,
+    $isOk: Boolean,
+    $definition: String,
   ) {
     createRigInspection(input: {
       attributes: {
         dropzoneId: $dropzoneId,
         rigId: $rigId,
+        isOk: $isOk,
+        definition: $definition,
       }
     }) {
       rigInspection {
         id
+        isOk
+        definition
         inspectedBy {
           id
           name
@@ -62,50 +71,10 @@ const MUTATION_CREATE_RIG_INSPECTION = gql`
         rig {
           id
         }
-        checklistValues {
+        
+        formTemplate {
           id
-          value
-          checklistItem {
-            id
-            name
-            valueType
-            isRequired
-            description
-          }
-        }
-      }
-      fieldErrors {
-        field
-        message
-      }
-      errors
-    }
-  }
-`;
-
-
-
-const MUTATION_SET_VALUE = gql`
-  mutation SetValue(
-    $checklistItemId: Int,
-    $rigInspectionId: Int,
-    $value: String,
-  ) {
-    updateChecklistValue(input: {
-      attributes: {
-        checklistItemId: $checklistItemId,
-        rigInspectionId: $rigInspectionId,
-        value: $value
-      }
-    }) {
-      checklistValue {
-        id,
-        value,
-        checklistItem {
-          id
-          name
-          valueType,
-          description
+          definition
         }
       }
       fieldErrors {
@@ -120,60 +89,77 @@ const MUTATION_SET_VALUE = gql`
 export default function RigInspectionScreen() {
   const { global: globalState, rigInspectionForm: state } = useAppSelector(state => state);
   const dispatch = useAppDispatch();
+  
   const route = useRoute<{ key: string, name: string, params: { rig: Rig, dropzoneUserId: number }}>();
   const { rig, dropzoneUserId } = route.params;
-  const { data, loading } = useQuery<Query>(QUERY_RIG_INSPECTIONS, {
+  const { data, loading, refetch } = useQuery<Query>(QUERY_RIG_INSPECTIONS, {
     variables: {
       dropzoneId: Number(globalState.currentDropzone!.id),
       dropzoneUserId: dropzoneUserId,
     }
   });
 
-  const canInspect = useRestriction("actAsRigInspector");
-  const [mutationCreateRigInspection] = useMutation<Mutation>(MUTATION_CREATE_RIG_INSPECTION);
-  const [mutationSetValue] = useMutation<Mutation>(MUTATION_SET_VALUE);
+  const isFocused = useIsFocused();
 
   React.useEffect(() => {
-    if (data?.dropzone?.dropzoneUser?.rigInspections?.some((inspection) => inspection.rig?.id.toString() === rig.id.toString())) {
+    refetch();
+  }, [isFocused])
+
+  const canInspect = useRestriction("actAsRigInspector");
+  const [mutationCreateRigInspection, mutation] = useMutation<Mutation>(MUTATION_CREATE_RIG_INSPECTION);
+  const navigation = useNavigation();
+  React.useEffect(() => {
+
+    const hasExistingRigInspection = data?.dropzone?.dropzoneUser?.rigInspections?.some((inspection) => inspection.rig?.id.toString() === rig.id.toString() && inspection.definition);
+
+    if (hasExistingRigInspection) {
       const inspection = data?.dropzone?.dropzoneUser?.rigInspections?.find((inspection) => inspection.rig?.id === rig.id);
-      console.log({ inspection });
+      
       dispatch(
-        rigInspectionForm.setOriginal(
-          inspection!
+        rigInspectionForm.setFields(
+          inspection!.definition || ""
+        )
+      );
+
+      dispatch(
+        rigInspectionForm.setOk(
+          inspection!.isOk
+        )
+      );
+    } else {
+      dispatch(
+        rigInspectionForm.setFields(
+          data?.dropzone.rigInspectionTemplate?.definition!,
         )
       )
     }
-  }, [JSON.stringify(data?.dropzone?.dropzoneUser?.rigInspections)]);
+  }, [JSON.stringify(data?.dropzone?.dropzoneUser?.rigInspections), data?.dropzone?.rigInspectionTemplate?.definition]);
 
   const createRigInspection = React.useCallback(async () => {
     try {
-      let rigInspectionId = state.original?.id;
-      if (!rigInspectionId) {
-        const result = await mutationCreateRigInspection({
-          variables: { dropzoneId: Number(globalState.currentDropzone!.id), rigId: Number(rig.id) }
-        });
+      const result = await mutationCreateRigInspection({
+        variables: {
+          dropzoneId: Number(globalState.currentDropzone!.id),
+          rigId: Number(rig.id),
+          definition: JSON.stringify(state.fields),
+          isOk: !!state.ok,
+        }
+      });
 
-        rigInspectionId = result?.data?.createRigInspection?.rigInspection!.id;
-      }
-
-      await Promise.all(
-        state.fields.map((field) =>
-          mutationSetValue({
-            variables: {
-              rigInspectionId: Number(rigInspectionId),
-              checklistItemId: Number(field.checklistItem.id),
-              value: field.value
-          }})
-        )
+      dispatch(
+        snackbarActions.showSnackbar({ message: "Rig inspection saved", variant: "success" })
       );
+      dispatch(rigInspectionForm.reset());
+      navigation.goBack();
+
     } catch(error) {
       dispatch(snackbarActions.showSnackbar({ message: error.message, variant: "error" }));
     }
-  }, [JSON.stringify(state.fields), state?.original?.id, globalState?.currentDropzone?.id]);
+  }, [JSON.stringify(state.fields), state.ok, globalState?.currentDropzone?.id]);
 
   return (
     <ScrollableScreen>
-      <Card style={{ width: "100%"}}>
+      <Card style={{ width: "100%", marginVertical: 16 }}>
         <Card.Title title="Rig" />
         <Card.Content>
           <List.Item
@@ -198,14 +184,28 @@ export default function RigInspectionScreen() {
       </Card>
 
       <Card style={{ width: "100%"}}>
-        <Card.Title title="Inspection" />
+        <Card.Title title={data?.dropzone?.rigInspectionTemplate?.name} />
 
         <Card.Content>
           <RigInspectionForm />
+
+          <Divider />
+          <Checkbox.Item
+            mode="android"
+            label="This rig is OK to jump"
+            onPress={() => dispatch(rigInspectionForm.setOk(!state.ok))}
+            status={state.ok ? "checked" : "unchecked"}
+          />
         </Card.Content>
 
         <Card.Actions>
-          <Button disabled={!canInspect} mode="contained" onPress={() => createRigInspection()} style={{ width: "100%"}}>
+          <Button
+            disabled={!canInspect || JSON.stringify(state.fields) === data?.dropzone?.rigInspectionTemplate?.definition}
+            mode="contained"
+            onPress={() => createRigInspection()}
+            loading={mutation.loading}
+            style={{ width: "100%"}}
+          >
             Mark as inspected
           </Button>
         </Card.Actions>

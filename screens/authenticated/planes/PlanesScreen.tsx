@@ -54,7 +54,7 @@ export default function PlanesScreen() {
         
 
           {
-            !data?.planes?.length && (
+            data?.planes?.length ? null : (
               <NoResults
                 title="No planes?"
                 subtitle="You need to have at least one plane to manifest loads"
@@ -62,7 +62,7 @@ export default function PlanesScreen() {
             )
           }
 
-          { data?.planes?.length && (
+          { !data?.planes?.length ? null : (
             <DataTable>
               <DataTable.Header>
                 <DataTable.Title>Name</DataTable.Title>

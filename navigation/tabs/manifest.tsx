@@ -2,9 +2,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { useAppSelector } from '../../redux';
 
-import ManifestScreen from '../../screens/authenticated/manifest/ManifestScreen';
-import LoadScreen from '../../screens/authenticated/load/LoadScreen';
-import CreateLoadScreen from '../../screens/authenticated/load/CreateLoadScreen';
+const ManifestScreen = React.lazy(() => import('../../screens/authenticated/manifest/ManifestScreen'));
+const LoadScreen = React.lazy(() => import('../../screens/authenticated/load/LoadScreen'));
+const CreateLoadScreen = React.lazy(() => import('../../screens/authenticated/load/CreateLoadScreen'));
 import AppBar from '../AppBar';
 
 

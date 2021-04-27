@@ -1,8 +1,7 @@
-import { BottomNavigation, useTheme } from 'react-native-paper';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { useTheme } from 'react-native-paper';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import ManifestTab from "./tabs/manifest";
 import PackingTab from "./tabs/packing";
@@ -10,7 +9,6 @@ import ProfileTab from "./tabs/profile";
 import SettingsTab from "./tabs/settings";
 import UsersTab from "./tabs/users";
 
-import useColorScheme from '../hooks/useColorScheme';
 import useRestriction from '../hooks/useRestriction';
 
 export type IAuthenticatedTabParams = {
@@ -40,6 +38,9 @@ export default function AuthenticatedTabBar() {
         activeBackgroundColor: theme.colors.primary,
         inactiveTintColor: "#CCCCCC",
         showLabel: false,
+        style: {
+          backgroundColor: theme.colors.primary,
+        }
       }}
     >
       <BottomTab.Screen

@@ -32,6 +32,12 @@ export default function SettingsScreen() {
           left={() => <List.Icon color="#000" icon="parachute" />}
           description="Coming soon"
         />
+        <List.Item
+          title="Rig Inspection"
+          left={() => <List.Icon color="#000" icon="check" />}
+          description="Manage inspection checklist"
+          onPress={() => navigation.navigate("RigInspectionTemplateScreen")}
+        />
       </List.Section>
 
       <List.Section title="Tickets">

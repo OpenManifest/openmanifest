@@ -30,9 +30,10 @@ function AppBar({ navigation, previous, scene, onSearch, searchText, searchVisib
               style={styles.input}
               value={searchText}
               onChangeText={(text) => onSearch(text)}
+              autoFocus
             />
           </View>
-        : <Appbar.Content title={scene.descriptor.options.title} />
+        : <Appbar.Content title={scene.descriptor.options.title} titleStyle={{ fontWeight: "bold" }} />
       }
       <MaterialIcons
         name="search"
@@ -52,8 +53,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: "transparent",
     height: "100%",
-    color: "white",
-    borderColor: "none"
+    color: "#FFFFFF"
   },
   icon: {
     marginHorizontal: 8

@@ -174,6 +174,7 @@ export default function TicketTypeForm() {
       {
         data?.extras.map((extra) =>
           <Checkbox.Item
+            key={`extra-${extra.id}`}
             label={extra.name!}
             status={state.fields.extras.value?.map(({ id }) => id).includes(extra.id)
               ? "checked"

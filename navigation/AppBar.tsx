@@ -1,81 +1,127 @@
 import React, { useState } from "react";
-import { Appbar, Menu, Paragraph, Text, Button } from "react-native-paper";
+import { Appbar, Menu, IconButton, Divider, Chip } from "react-native-paper";
 import { StackHeaderProps } from "@react-navigation/stack";
-import { useQuery, gql } from "@apollo/client";
-import { Dropzone, Query } from "../graphql/schema";
+import { gql, useQuery } from "@apollo/client";
+import { Query } from "../graphql/schema";
 import { globalActions, useAppDispatch, useAppSelector } from "../redux";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import SetupWarning from "./SetupWarning";
 
-const QUERY_DROPZONES = gql`
-  query QueryDropzonesCompact {
-    dropzones {
-      edges {
-        node {
+const QUERY_CURRENT_USER = gql`
+  query QueryDropzone($dropzoneId: Int!) {
+    dropzone(id: $dropzoneId) {
+      id
+      isCreditSystemEnabled
+
+      currentUser {
+        id
+        credits
+        expiresAt
+        
+        rigInspections {
+          id
+          rig {
+            id
+            repackExpiresAt
+          }
+        }
+
+        user {
           id
           name
+          exitWeight
+          email
+          phone
+          rigs {
+            id
+            model
+            make
+            serial
+            canopySize
+            repackExpiresAt
+          }
+          jumpTypes {
+            id
+            name
+          }
+          license {
+            id
+            name
+          }
         }
       }
     }
   }
 `;
 
-interface IAppBar extends StackHeaderProps {
-  searchEnabled: boolean;
-  searchVisible: boolean;
-  setSearchVisible(visible: boolean): void;
-}
 
 
 function AppBar({ navigation, previous, scene }: StackHeaderProps) {
-  const [dropzoneMenuOpen, setDropzoneMenuOpen] = useState(false);
-  const { data } = useQuery<Query>(QUERY_DROPZONES);
-  const { currentDropzone, theme } = useAppSelector(state => state.global);
+  const [contextMenuOpen, setContextMenuOpen] = useState(false);
+  const { currentDropzone } = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
+  const { data, loading } = useQuery<Query>(QUERY_CURRENT_USER, {
+    variables: {
+      dropzoneId: Number(currentDropzone!.id)
+    }
+  });
   
-  const hasRig = !!currentDropzone?.currentUser?.user?.rigs?.length;
-  const hasExitWeight = !!currentDropzone?.currentUser?.user?.exitWeight;
-
-  const showSetupWarning = !hasRig || !hasExitWeight;
+  const showCredits = !!data?.dropzone?.isCreditSystemEnabled;
 
   return (
     <>
     <Appbar.Header>
       {previous ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
-      <Appbar.Content title={scene.descriptor.options.title} />
+      <Appbar.Content title={scene.descriptor.options.title} titleStyle={{ fontWeight: "bold" }} />
+
+      <Chip mode="outlined">
+        {`$${data?.dropzone?.currentUser?.credits || 0}`}
+      </Chip>
       <Menu
-        onDismiss={() => setDropzoneMenuOpen(false)}
-        visible={dropzoneMenuOpen}
+        onDismiss={() => setContextMenuOpen(false)}
+        visible={contextMenuOpen}
         anchor={
-          <Text
-            onPress={() => setDropzoneMenuOpen(true)}
-            style={{ color: "white", marginRight: 8 }}
-          >
-            {currentDropzone?.name}
-          </Text>
+          <IconButton
+            icon="dots-vertical"
+            color="#FFFFFF"
+            onPress={() => setContextMenuOpen(true)}
+          />
       }>
-        {
-          data?.dropzones?.edges?.map((edge) =>
-            <Menu.Item
-              title={edge?.node?.name}
-              onPress={() => {
-                dispatch(globalActions.setDropzone(edge?.node as Dropzone));
-                setDropzoneMenuOpen(false);
-              }}
-            />
-          )
-        }
+        <Menu.Item
+          title="Change dropzone"
+          icon="radar"
+          onPress={() => {
+            dispatch(globalActions.setDropzone(null));
+            setContextMenuOpen(false);
+          }}
+        />
+        <Divider />
+        <Menu.Item
+          title="Log out"
+          icon="logout"
+          onPress={() => {
+            dispatch(globalActions.logout());
+            setContextMenuOpen(false);
+          }}
+        />
       </Menu>
     </Appbar.Header>
-    { showSetupWarning && (
-      <View style={styles.warning}>
-        <Paragraph>
-          You need to complete your profile
-        </Paragraph>
-        <Button color="black" mode="outlined" onPress={() => navigation.navigate("Profile")}>
-          Take me there
-        </Button>
-      </View>
-    )}
+    <SetupWarning
+      credits={data?.dropzone?.currentUser?.credits || 0}
+      loading={loading}
+      isCreditSystemEnabled={!!data?.dropzone?.isCreditSystemEnabled}
+      isExitWeightDefined={!!data?.dropzone?.currentUser?.user?.exitWeight}
+      isMembershipInDate={!!data?.dropzone?.currentUser?.expiresAt && data?.dropzone?.currentUser?.expiresAt > (new Date().getTime() / 1000)}
+      isReserveInDate={
+        !!data?.dropzone?.currentUser?.user?.rigs?.some((rig) => {
+          const isRigInspected = data.dropzone?.currentUser?.rigInspections?.map((inspection) => inspection?.rig?.id === rig.id);
+          const isRepackInDate = (rig.repackExpiresAt || 0) > (new Date().getTime() / 1000);
+          return isRigInspected && isRepackInDate;
+        })
+      }
+      isRigInspectionComplete={!!data?.dropzone?.currentUser?.rigInspections?.length}
+      isRigSetUp={!!data?.dropzone?.currentUser?.user?.rigs?.length}
+    />
     </>
   );
 }

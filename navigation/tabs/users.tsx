@@ -1,11 +1,11 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
-import UsersScreen from '../../screens/authenticated/users/UsersScreen';
-import SearchableAppBar from '../../screens/authenticated/users/AppBar';
-import RigInspectionScreen from '../../screens/authenticated/rig/RigInspectionScreen';
+const UsersScreen = React.lazy(() => import('../../screens/authenticated/users/UsersScreen'));
+const SearchableAppBar = React.lazy(() => import('../../screens/authenticated/users/AppBar'));
+const RigInspectionScreen = React.lazy(() => import('../../screens/authenticated/rig/RigInspectionScreen'));
+const ProfileScreen = React.lazy(() => import('../../screens/authenticated/profile/ProfileScreen'));
 import { useAppDispatch, useAppSelector, usersActions } from '../../redux';
-import ProfileScreen from '../../screens/authenticated/profile/ProfileScreen';
 import { Rig } from '../../graphql/schema';
 
 export type ISettingsTabParams = {

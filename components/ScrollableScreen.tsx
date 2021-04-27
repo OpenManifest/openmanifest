@@ -13,7 +13,9 @@ export default function ScrollableScreen(props: IScrollableScreen) {
 
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.colors.surface, height: height - (56 * 2) }, props.style]} contentContainerStyle={[styles.content, props.contentContainerStyle]}>
+    <ScrollView keyboardDismissMode="on-drag"
+    keyboardShouldPersistTaps="handled"
+    contentInsetAdjustmentBehavior="always" style={[styles.container, { backgroundColor: theme.colors.surface, height: height - (56 * 2) }, props.style]} contentContainerStyle={[styles.content, props.contentContainerStyle]}>
       {props.children}
     </ScrollView>
   )

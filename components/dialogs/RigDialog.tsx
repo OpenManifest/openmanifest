@@ -168,7 +168,7 @@ export default function RigDialog(props: IManifestUserDialog) {
     if (!state.fields.repackExpiresAt.value) {
       hasErrors = true;
       dispatch(
-        rigForm.setFieldError(["repackExpiresAt", "Required"])
+        rigForm.setFieldError(["repackExpiresAt", "You must select a repack date in the future"])
       );
     }
 
@@ -184,7 +184,7 @@ export default function RigDialog(props: IManifestUserDialog) {
       const mutation = state.original?.id ? mutationUpdateRig : mutationCreateRig;
       const response = await mutation({
         variables: {
-          ...state.original?.id ? { id: state.original?.id } : {},
+          ...state.original?.id ? { id: Number(state.original?.id) } : {},
           make: state.fields.make.value,
           model: state.fields.model.value,
           serial: state.fields.serial.value,
@@ -204,7 +204,7 @@ export default function RigDialog(props: IManifestUserDialog) {
             return dispatch(rigForm.setFieldError(["model", message]));
           case "serial":
             return dispatch(rigForm.setFieldError(["serial", message]));
-          case "canopySize":
+          case "canopy_size":
             return dispatch(rigForm.setFieldError(["canopySize", message]));
           case "repack_expires_at":
             return dispatch(rigForm.setFieldError(["repackExpiresAt", message]));
@@ -220,16 +220,16 @@ export default function RigDialog(props: IManifestUserDialog) {
     } catch(error) {
       dispatch(snackbarActions.showSnackbar({ message: error.message, variant: "error" }));
     } 
-  }, [JSON.stringify(state.fields), mutationCreateRig, props.onSuccess])
+  }, [JSON.stringify(state.fields), mutationCreateRig, mutationUpdateRig, props.onSuccess])
   
   return (
     <Portal>
-      <Dialog visible={!!props.open}>
+      <Dialog visible={!!props.open} dismissable={false}>
         <ProgressBar indeterminate visible={createData.loading || updateData.loading} color={globalState.theme.colors.accent} />
         <Dialog.Title>
           {`${state?.original?.id ? "Edit" : "New"} rig`}
         </Dialog.Title>
-        <Dialog.Content>
+        <Dialog.Content pointerEvents="box-none">
           <RigForm />
         </Dialog.Content>
         <Dialog.Actions style={{ justifyContent: "flex-end"}}>
