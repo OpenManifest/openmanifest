@@ -1,12 +1,12 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
-import ProfileScreen from '../../screens/authenticated/profile/ProfileScreen';
-import RigScreen from '../../screens/authenticated/rig/RigScreen';
-import UpdateUserScreen from '../../screens/authenticated/profile/UpdateUserScreen';
 import AppBar from '../AppBar';
 import { useAppSelector } from '../../redux';
 
+const ProfileScreen = React.lazy(() => import('../../screens/authenticated/profile/ProfileScreen'));
+const RigScreen = React.lazy(() => import('../../screens/authenticated/rig/RigScreen'));
+const UpdateUserScreen = React.lazy(() => import('../../screens/authenticated/profile/UpdateUserScreen'));
 
 export type IProfileTabParams = {
   ProfileScreen: {

@@ -7,6 +7,7 @@ import format from "date-fns/format";
 interface IDatepicker {
   label: string;
   timestamp: number;
+  disabled?: boolean;
   onChange(timestamp: number): void;
 }
 export default function DatePicker(props: IDatepicker) {
@@ -32,6 +33,7 @@ export default function DatePicker(props: IDatepicker) {
       anchor={
         <List.Item
           onPress={() => setOpen(true)}
+          disabled={!!props.disabled}
           title={props.label}
           description={
             props.timestamp ? 

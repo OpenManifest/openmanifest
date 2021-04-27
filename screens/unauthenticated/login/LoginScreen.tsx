@@ -5,11 +5,11 @@ import { useNavigation } from "@react-navigation/native";
 import { gql, useMutation } from '@apollo/client';
 
 import { Text, View } from '../../../components/Themed';
-import { actions as snackbar } from '../../../components/notifications';
 import { useAppSelector, useAppDispatch, globalActions, snackbarActions } from '../../../redux';
 
 import slice from "./slice";
 import { Mutation } from '../../../graphql/schema';
+import ScrollableScreen from '../../../components/ScrollableScreen';
 
 const { actions } = slice;
 
@@ -139,8 +139,8 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 20,
@@ -153,6 +153,8 @@ const styles = StyleSheet.create({
   },
   fields: {
     marginBottom: 10,
+    width: "100%",
+    padding: 96,
   },
   button: {
     marginTop: 10,

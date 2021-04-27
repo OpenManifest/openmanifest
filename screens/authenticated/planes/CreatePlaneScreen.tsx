@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { Button } from 'react-native-paper';
 import { gql, useMutation } from "@apollo/client";
 import { useAppSelector, useAppDispatch, dropzoneForm } from '../../../redux';
@@ -11,7 +11,9 @@ import globalSlice from "../../../redux/global";
 import slice from "../../../components/forms/plane/slice";
 import { Mutation } from '../../../graphql/schema';
 import PlaneForm from '../../../components/forms/plane/PlaneForm';
-import { useNavigation } from '@react-navigation/core';
+import { useIsFocused, useNavigation } from '@react-navigation/core';
+import ScrollableScreen from '../../../components/ScrollableScreen';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;
@@ -72,6 +74,12 @@ export default function CreatePlaneScreen() {
   const navigation = useNavigation();
 
   const [mutationCreatePlane, data] = useMutation<Mutation>(MUTATION_CREATE_PLANE);
+  const isFocused = useIsFocused();
+  React.useEffect(() => {
+    if (isFocused) {
+      dispatch(actions.reset());
+    }
+  }, [isFocused]);
 
   const validate = React.useCallback((): boolean => {
     let hasError = false;
@@ -135,21 +143,21 @@ export default function CreatePlaneScreen() {
   }, [JSON.stringify(state.fields), dispatch, mutationCreatePlane]);
 
   return (
-    <View style={styles.container}>
+    <ScrollableScreen contentContainerStyle={styles.content}>
+        <MaterialCommunityIcons name="airplane" size={100} color="#999999" style={{ alignSelf: "center" }} />
         <PlaneForm />
         <View style={styles.fields}>
           <Button mode="contained" disabled={data.loading} onPress={onSave} loading={data.loading}>
             Save
           </Button>
       </View>
-    </View>
+    </ScrollableScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
+  content: {
+    paddingHorizontal: 48,
   },
   title: {
     fontSize: 20,
@@ -161,7 +169,7 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   fields: {
-    width: "70%",
+    width: "100%",
     marginBottom: 16
   },
   field: {

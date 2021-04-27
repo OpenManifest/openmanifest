@@ -3,11 +3,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
 import NotFoundScreen from '../screens/NotFoundScreen';
+import { useAppSelector } from '../redux/store';
+import AppBar from "./AppBar";
+
 import AuthenticatedRoutes from './Authenticated';
 import LimboRoutes from './LimboRoutes';
 import UnauthenticatedRoutes from './Unauthenticated';
-import { useAppSelector } from '../redux/store';
-import AppBar from "./AppBar";
 
 export type TRootNavigatorRouteParams = {
   Authenticated: undefined;

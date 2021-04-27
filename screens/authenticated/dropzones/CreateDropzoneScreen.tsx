@@ -12,6 +12,7 @@ import slice from "../../../components/forms/dropzone/slice";
 import { Mutation } from '../../../graphql/schema';
 import DropzoneForm from '../../../components/forms/dropzone/DropzoneForm';
 import useMutationCreateDropzone from '../../../graphql/hooks/useMutationCreateDropzone';
+import ScrollableScreen from '../../../components/ScrollableScreen';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;
@@ -33,7 +34,7 @@ export default function SignupScreen() {
   })
 
   return (
-    <View style={styles.container}>
+    <ScrollableScreen contentContainerStyle={{ paddingHorizontal: 32 }}>
         <DropzoneForm />
         <View style={styles.fields}>
           <Button
@@ -51,7 +52,7 @@ export default function SignupScreen() {
             Save
           </Button>
       </View>
-    </View>
+    </ScrollableScreen>
   );
 }
 
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   fields: {
-    width: "70%"
+    width: "100%"
   },
   field: {
     marginBottom: 8,

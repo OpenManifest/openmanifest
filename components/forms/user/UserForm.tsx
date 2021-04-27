@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Divider, Chip, List } from 'react-native-paper';
 import { useAppSelector, useAppDispatch } from '../../../redux';
 
@@ -8,6 +8,7 @@ import slice from "./slice";
 import LicenseSelect from '../../LicenseSelect';
 import FederationSelect from '../../FederationSelect';
 import useRestriction from '../../../hooks/useRestriction';
+import ScrollableScreen from '../../ScrollableScreen';
 
 const { actions } = slice;
 export default function SlotForm() {
@@ -37,7 +38,7 @@ export default function SlotForm() {
 
 
   return ( 
-    <ScrollView style={styles.fields} contentContainerStyle={{ flexGrow: 1}}>
+    <>
       <TextInput
         style={styles.field}
         mode="outlined"
@@ -96,7 +97,7 @@ export default function SlotForm() {
 
       <Divider />
 
-      
+      <View style={{ width: "100%"}}>
       <FederationSelect
         value={state?.fields?.license?.value?.federation || state.federation.value}
         onSelect={(value) => dispatch(actions.setFederation(value))}
@@ -120,18 +121,20 @@ export default function SlotForm() {
           </HelperText>
         </>
       )}
-    </ScrollView>
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   fields: {
     flex: 1,
-    width: "70%",
+    width: "100%",
     paddingTop: 32,
   },
   field: {
     marginBottom: 8,
+    width: "100%",
   },
   ticketAddons: {
     marginBottom: 8

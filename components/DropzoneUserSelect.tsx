@@ -41,12 +41,16 @@ export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
             title={
               props.value?.user?.id ? props.value?.user.name : "No user selected"
             }
+            style={{ width: "100%" }}
+            right={() => <List.Icon icon="account" />}
             description={!props.required ? "Optional" : null}
           />
         }>
         {
           data?.edges?.map((edge) => 
             <List.Item
+              key={`user-select-${edge?.node!.id}`}
+              style={{ width: "100%" }}
               onPress={() => {
                 setMenuOpen(false);
                 props.onSelect(edge?.node as DropzoneUser);

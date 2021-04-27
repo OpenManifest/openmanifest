@@ -1,10 +1,11 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/core';
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { ScrollView } from 'react-native';
-import { Button, Card, Chip, DataTable, ProgressBar, TouchableRipple } from 'react-native-paper';
+import { ScrollView, StyleSheet } from 'react-native';
+import { Badge, Button, Card, DataTable, List, Menu, Paragraph, ProgressBar } from 'react-native-paper';
+import addMinutes from "date-fns/addMinutes";
+import differenceInMinutes from "date-fns/differenceInMinutes";
+
 import GCAChip from '../../../components/GcaChip';
 import LoadMasterChip from '../../../components/LoadMasterChip';
 import PilotChip from '../../../components/PilotChip';
@@ -34,6 +35,7 @@ const QUERY_LOAD = gql`
       dispatchAt
       hasLanded
       maxSlots
+      loadNumber
       isFull
       isOpen
       plane {
@@ -100,6 +102,9 @@ const MUTATION_UPDATE_LOAD = gql`
     $gcaId: Int,
     $planeId: Int,
     $isOpen: Boolean,
+    $loadMasterId: Int,
+    $dispatchAt: Int,
+    $hasLanded: Boolean,
   ){
     updateLoad(input: {
       id: $id
@@ -108,12 +113,16 @@ const MUTATION_UPDATE_LOAD = gql`
         gcaId: $gcaId,
         planeId: $planeId,
         isOpen: $isOpen,
+        loadMasterId: $loadMasterId
+        dispatchAt: $dispatchAt
+        hasLanded: $hasLanded
       }
     }) {
       load {
         id
         name
         createdAt
+        loadNumber
         dispatchAt
         hasLanded
         maxSlots
@@ -175,6 +184,7 @@ const MUTATION_UPDATE_LOAD = gql`
 export default function LoadCard(props: ILoadCard) {
   const state = useAppSelector(state => state.global);
   const [isExpanded, setExpanded] = React.useState(false);
+  const [isDispatchOpen, setDispatchOpen] = React.useState(false);
 
   const navigation = useNavigation();
   const { load, loadNumber, onManifest, canManifest } = props;
@@ -218,6 +228,35 @@ export default function LoadCard(props: ILoadCard) {
     }
   }, [mutationUpdateLoad, JSON.stringify(load)]);
 
+  const updateCall = React.useCallback(async (minutes: number | null) => {
+    const dispatchTime = !minutes ? null : addMinutes(new Date(), minutes).getTime() / 1000;
+
+    try {
+      await mutationUpdateLoad({
+        variables: {
+          id: Number(load.id),
+          dispatchAt: dispatchTime ? Math.ceil(dispatchTime) : null
+        }
+      });
+    } catch (e) {
+
+    }
+  }, [mutationUpdateLoad, JSON.stringify(load)]);
+
+  const onLanded = React.useCallback(async () => {
+    try {
+      await mutationUpdateLoad({
+        variables: {
+          id: Number(load.id),
+          hasLanded: true,
+        }
+      });
+    } catch (e) {
+
+    }
+  }, [mutationUpdateLoad, JSON.stringify(load)]);
+
+  const canUpdateLoad = useRestriction("updateLoad");
   const canEditSelf = useRestriction("updateSlot");
   const canEditOthers = useRestriction("updateUserSlot");
 
@@ -246,9 +285,9 @@ export default function LoadCard(props: ILoadCard) {
   
 
   return (
-  <Card style={{ marginVertical: 16 }} elevation={3}>
+  <Card style={{ margin: 16 }} elevation={3}>
     <Card.Title
-      title={`Load ${loadNumber}`}
+      title={`Load ${data?.load?.loadNumber}`}
       subtitle={load.name}
     />
     <ProgressBar
@@ -276,54 +315,126 @@ export default function LoadCard(props: ILoadCard) {
           <LoadMasterChip
             dropzoneId={Number(state.currentDropzone?.id)}
             value={data?.load?.loadMaster?.user}
-            slots={load.slots || []}
+            slots={data?.load.slots || []}
             onSelect={updateLoadMaster}
           />
         </ScrollView>
       </View>
       <DataTable>
         <DataTable.Header style={{ width: "100%"}}>
-          <DataTable.Row style={{ width: "100%"}}>
-            <DataTable.Title>Name</DataTable.Title>
-            <DataTable.Title numeric>Exit weight</DataTable.Title>
-            <DataTable.Title numeric>Jump type</DataTable.Title>
-            <DataTable.Title numeric>Altitude</DataTable.Title>
-          </DataTable.Row>
+          <DataTable.Title>Name</DataTable.Title>
+          <DataTable.Title numeric>Exit weight</DataTable.Title>
+          <DataTable.Title numeric>Jump type</DataTable.Title>
+          <DataTable.Title numeric>Altitude</DataTable.Title>
         </DataTable.Header>
           {
             data?.load?.slots?.map(slot => {
               
               return (
-                <DataTable.Row onPress={getSlotPressAction(slot)}>
-                  <DataTable.Cell onPress={getSlotPressAction(slot)}>{slot?.user?.name}</DataTable.Cell>
-                  <DataTable.Cell numeric onPress={getSlotPressAction(slot)}>{slot?.exitWeight}</DataTable.Cell>
-                  <DataTable.Cell numeric onPress={getSlotPressAction(slot)}>{slot?.jumpType?.name}</DataTable.Cell>
-                  <DataTable.Cell numeric onPress={getSlotPressAction(slot)}>{slot?.ticketType?.altitude}</DataTable.Cell>
+                <DataTable.Row onPress={getSlotPressAction(slot)} pointerEvents="none">
+                  <DataTable.Cell>{slot?.user?.name}</DataTable.Cell>
+                  <DataTable.Cell numeric>{slot?.exitWeight}</DataTable.Cell>
+                  <DataTable.Cell numeric>{slot?.jumpType?.name}</DataTable.Cell>
+                  <DataTable.Cell numeric>{slot?.ticketType?.altitude}</DataTable.Cell>
                 </DataTable.Row>
               )
             })
           }
           {
             Array.from({length: (load?.maxSlots || 0) - (load?.slots?.length || 0)}, (v, i) => i).map(() =>
-            <DataTable.Row>
-              <DataTable.Cell>- Available -</DataTable.Cell>
-              <DataTable.Cell numeric>-</DataTable.Cell>
-              <DataTable.Cell numeric>-</DataTable.Cell>
-              <DataTable.Cell numeric>-</DataTable.Cell>
-            </DataTable.Row>
+              <DataTable.Row>
+                <DataTable.Cell>- Available -</DataTable.Cell>
+                <DataTable.Cell numeric>-</DataTable.Cell>
+                <DataTable.Cell numeric>-</DataTable.Cell>
+                <DataTable.Cell numeric>-</DataTable.Cell>
+              </DataTable.Row>
             )
           }
       </DataTable>
     </Card.Content>
-    <Card.Actions style={{ justifyContent: "flex-end" }}>
-      { data?.load?.maxSlots && data?.load?.maxSlots < 5 ? null :
-        <Button onPress={() => setExpanded(!isExpanded)}>
-          { isExpanded ? "Show less" : "Show more" }
-        </Button>
+    {
+      !!data?.load?.dispatchAt && data?.load?.dispatchAt > (new Date().getTime() / 1000) && (
+        <View style={{ flex: 1, backgroundColor: "#FF8800", padding: 8 }}>
+          <Paragraph>
+            {
+              `Take-off in ${differenceInMinutes(new Date(), (data?.load?.dispatchAt as number) * 1000)} min`
+            }
+          </Paragraph>
+        </View>
+    )}
+    <Card.Actions>
+      {
+        data?.load?.maxSlots && data?.load?.maxSlots < 5 ? null :
+          <Button onPress={() => setExpanded(!isExpanded)}>
+            { isExpanded ? "Show less" : "Show more" }
+          </Button>
       }
-      <Button mode="contained" onPress={() => onManifest()} disabled={!canManifest}>
-        Manifest
-      </Button>
+      <View style={{ flexGrow: 1 }} />
+      {
+       !canUpdateLoad || !!data?.load?.hasLanded ? null : (
+      
+          data?.load?.dispatchAt
+            ? (
+              <Button mode="outlined" onPress={() => updateCall(null)}>
+                Cancel
+              </Button>
+            ) : (
+              <Menu
+                onDismiss={() => setDispatchOpen(false)}
+                visible={isDispatchOpen}
+                anchor={
+                  <Button mode="outlined" onPress={() => setDispatchOpen(true)}>
+                    Dispatch
+                  </Button>
+                }
+              >
+                <List.Item
+                  onPress={() => {
+                    setDispatchOpen(false);
+                    updateCall(20)
+                  }}
+                  title="20 minute call"
+                />
+                <List.Item
+                  onPress={() => {
+                    setDispatchOpen(false);
+                    updateCall(15)
+                  }}
+                  title="15 minute call"
+                />
+                <List.Item
+                  onPress={() => {
+                    setDispatchOpen(false);
+                    updateCall(10)
+                  }}
+                  title="10 minute call"
+                />
+                <List.Item
+                  onPress={() => {
+                    setDispatchOpen(false);
+                    updateCall(5)
+                  }}
+                  title="5 minute call"
+                />
+              </Menu>
+            ))}
+      
+      {
+        data?.load?.hasLanded ? null : (
+          data?.load?.dispatchAt && data?.load.dispatchAt < new Date().getTime() / 1000 && canUpdateLoad
+            ? <Button style={{ marginLeft: 8 }} mode="contained" onPress={() => onLanded()}>
+                Mark as landed
+              </Button>
+            : <Button
+                style={{marginLeft: 8 }}
+                mode="contained"
+                onPress={() => onManifest()}
+                disabled={!canManifest || Boolean(data?.load?.dispatchAt && data.load.dispatchAt < new Date().getTime() / 1000)}
+              >
+                Manifest
+              </Button>
+        )
+      }
     </Card.Actions>
   </Card>
                       

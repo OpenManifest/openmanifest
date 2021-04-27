@@ -1,9 +1,9 @@
-const tintColorLight = '#2f95dc';
-const tintColorDark = '#fff';
-const successColor = "#00C851";
-const errorColor = "#ff4444";
-const warningColor = "#FF8800";
-const infoColor = "#0099CC";
+export const tintColorLight = '#2f95dc';
+export const tintColorDark = '#fff';
+export const successColor = "#00C851";
+export const errorColor = "#ff4444";
+export const warningColor = "#FF8800";
+export const infoColor = "#0099CC";
 
 export default {
   light: {

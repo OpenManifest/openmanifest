@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, Menu, List, Divider } from 'react-native-paper';
 import { xor } from "lodash";
 import { Query } from '../../../graphql/schema';
@@ -43,49 +43,53 @@ export default function TicketTypeForm() {
   });
 
   return ( 
-    <ScrollView style={styles.fields} contentContainerStyle={{ paddingTop: 200 }}>
+    <>
       <TextInput
         style={styles.field}
         mode="outlined"
         label="Name"
         error={!!state.fields.name.error}
-        value={state.fields.name.value}
+        value={state.fields.name.value || ""}
         onChangeText={(newValue) => dispatch(actions.setField(["name", newValue]))}
       />
       <HelperText type={!!state.fields.name.error ? "error" : "info"}>
-        { state.fields.name.error || "" }
+        { state.fields.name.error || "Name of the ticket users will see" }
       </HelperText>
 
       <TextInput
         style={styles.field}
         mode="outlined"
         label="Price"
-        error={!!state.fields.cost.value}
+        error={!!state.fields.cost.error}
         value={state.fields.cost?.value?.toString()}
         onChangeText={(newValue) => dispatch(actions.setField(["cost", Number(newValue)]))}
       />
       <HelperText type={!!state.fields.cost.error ? "error" : "info"}>
-        { state.fields.cost.error || "" }
+        { state.fields.cost.error || "Base cost without extra ticket addons" }
       </HelperText>
+      <View style={{ width: "100%" }}>
 
       <Menu
         onDismiss={() => setAltitudeMenuOpen(false)}
         visible={altitudeMenuOpen}
+
+        style={{position:'absolute',right:'10%',left:'10%', flex: 1 }}
         anchor={
           <List.Item
             onPress={() => {
               setAltitudeMenuOpen(true);
             }}
             title={
-              [4000, 14000].includes(state.fields.altitude.value) ?
+              state.fields.altitude.value && [4000, 14000].includes(state.fields.altitude.value) ?
                 {
                   "14000": "Height",
                   "4000": "Hop n Pop",
                 }[state.fields.altitude.value.toString()] :
                 "Custom"
             }
+            style={{ width: "100%", flex: 1 }}
             right={ () =>
-              <List.Icon icon={[4000, 14000].includes(state.fields.altitude.value) ?
+              <List.Icon icon={state.fields.altitude.value && [4000, 14000].includes(state.fields.altitude.value) ?
                 {
                   "14000": "airplane",
                   "4000": "parachute",
@@ -122,19 +126,36 @@ export default function TicketTypeForm() {
       </Menu>
 
       {
-        ![4000, 14000].includes(state.fields.altitude.value) && (
+        (!state.fields.altitude.value || ![4000, 14000].includes(state.fields.altitude.value)) && (
           <TextInput
             style={styles.field}
             mode="outlined"
             label="Custom altitude"
-            error={!!state.fields.altitude.value}
+            error={!!state.fields.altitude.error}
             value={state.fields.altitude?.value?.toString()}
             onChangeText={(newValue) => dispatch(actions.setField(["altitude", Number(newValue)]))}
           />
         )
       }
+
+      <Checkbox.Item
+        label="Tandem"
+        style={{ width: "100%" }}
+        status={!!state.fields.isTandem.value
+          ? "checked"
+          : "unchecked"
+        }
+        onPress={
+          () => dispatch(actions.setField(["isTandem", !state.fields.isTandem.value]))
+        }
+      />
+      <HelperText type={!!state.fields.isTandem.error ? "error" : "info"}>
+        { state.fields.isTandem.error || "Allow also manifesting a passenger when using this ticket type" }
+      </HelperText>
+
       <Checkbox.Item
         label="Public manifesting"
+        style={{ width: "100%" }}
         status={!!state.fields.allowManifestingSelf.value
           ? "checked"
           : "unchecked"
@@ -143,34 +164,44 @@ export default function TicketTypeForm() {
           () => dispatch(actions.setField(["allowManifestingSelf", !state.fields.allowManifestingSelf.value]))
         }
       />
+      
+      <HelperText type={!!state.fields.allowManifestingSelf.error ? "error" : "info"}>
+        { state.fields.allowManifestingSelf.error || "Allow users to manifest themselves with this ticket" }
+      </HelperText>
 
       <Divider />
       <List.Subheader>Enabled ticket add-ons</List.Subheader>
       {
         data?.extras.map((extra) =>
           <Checkbox.Item
+            key={`extra-${extra.id}`}
             label={extra.name!}
-            status={state.fields.extraIds.value.includes(Number(extra.id))
+            status={state.fields.extras.value?.map(({ id }) => id).includes(extra.id)
               ? "checked"
               : "unchecked"
             }
             onPress={
-              () => dispatch(actions.setField(["extraIds", xor(state.fields.extraIds.value, [Number(extra.id)])]))
+              () => dispatch(
+                actions.setField([
+                  "extras",
+                  state.fields.extras.value?.map(({ id }) => id).includes(extra.id)
+                  ? state.fields.extras.value?.filter(({ id }) => id !== extra.id)
+                  : [...state.fields.extras.value!, extra]
+                ])
+              )
             }
           />
         )
       }
-    </ScrollView>
+
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  fields: {
-    width: "70%",
-    flex: 1,
-    
-  },
   field: {
     marginBottom: 8,
+    width: "100%"
   }
 });

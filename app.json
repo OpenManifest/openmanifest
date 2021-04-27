@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "deezed",
-    "slug": "deezed",
+    "name": "Deezed",
+    "slug": "Deezed",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -19,6 +19,7 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.dangertechnologies.deezed",
       "supportsTablet": true,
       "usesIcloudStorage": true
     },

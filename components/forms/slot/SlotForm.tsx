@@ -9,6 +9,7 @@ import JumpTypeSelect from '../../JumpTypeSelect';
 import TicketTypeSelect from '../../TicketTypeSelect';
 import useRestriction from '../../../hooks/useRestriction';
 import RigSelect from '../../RigSelect';
+import ScrollableScreen from '../../ScrollableScreen';
 
 const { actions } = slice;
 export default function SlotForm() {
@@ -34,21 +35,13 @@ export default function SlotForm() {
   }, [state.fields?.user?.value?.id]);
 
   const isEdit = state?.original?.id;
-  const isSelf = state?.fields?.user?.value?.id === globalState.currentUser?.id;
-
-  
-  const allowedToManifestSelf = useRestriction(
-    isEdit ? "updateSlot" : "createSlot"
-  );
 
   const allowedToManifestOthers = useRestriction(
     isEdit ? "updateUserSlot" : "createUserSlot"
   )
-  console.log("Fields", state.fields);
 
   return ( 
-    <ScrollView style={styles.fields} contentContainerStyle={{ flexGrow: 1}}>
-      
+    <> 
       <JumpTypeSelect
         value={state.fields.jumpType.value}
         required
@@ -90,6 +83,9 @@ export default function SlotForm() {
           </Chip>
         )}
       </ScrollView>
+      <HelperText type={!!state.fields.extras.error ? "error" : "info"}>
+        { state.fields.extras.error || "" }
+      </HelperText>
       <Divider />
       <RigSelect
         value={state.fields.rig.value}
@@ -114,7 +110,7 @@ export default function SlotForm() {
       <HelperText type={!!state.fields.exitWeight.error ? "error" : "info"}>
         { state.fields.exitWeight.error || "" }
       </HelperText>
-    </ScrollView>
+    </>
   );
 }
 

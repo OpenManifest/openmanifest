@@ -1,20 +1,21 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
-import SettingsScreen from '../../screens/authenticated/settings/SettingsScreen';
-import DropzoneSettingsScreen from '../../screens/authenticated/settings/DropzoneSettingsScreen';
-import TicketTypeSettingsScreen from '../../screens/authenticated/ticket_types/TicketTypesScreen';
-import CreatePlaneScreen from '../../screens/authenticated/planes/CreatePlaneScreen';
-import UpdatePlaneScreen from '../../screens/authenticated/planes/UpdatePlaneScreen';
-import UpdateDropzoneScreen from '../../screens/authenticated/dropzones/UpdateDropzoneScreen';
-import PlanesScreen from '../../screens/authenticated/planes/PlanesScreen';
+const SettingsScreen = React.lazy(() => import('../../screens/authenticated/settings/SettingsScreen'));
+const DropzoneSettingsScreen = React.lazy(() => import('../../screens/authenticated/settings/DropzoneSettingsScreen'));
+const TicketTypeSettingsScreen = React.lazy(() => import('../../screens/authenticated/ticket_types/TicketTypesScreen'));
+const CreatePlaneScreen = React.lazy(() => import('../../screens/authenticated/planes/CreatePlaneScreen'));
+const UpdatePlaneScreen = React.lazy(() => import('../../screens/authenticated/planes/UpdatePlaneScreen'));
+const UpdateDropzoneScreen = React.lazy(() => import('../../screens/authenticated/dropzones/UpdateDropzoneScreen'));
+const PlanesScreen = React.lazy(() => import('../../screens/authenticated/planes/PlanesScreen'));
+const RigInspectionTemplateScreen = React.lazy(() => import('../../screens/authenticated/settings/RigInspectionTemplateScreen'));
 
-import CreateTicketTypeScreen from '../../screens/authenticated/ticket_types/CreateTicketTypeScreen';
-import UpdateTicketTypeScreen from '../../screens/authenticated/ticket_types/UpdateTicketTypeScreen';
+const CreateTicketTypeScreen = React.lazy(() => import('../../screens/authenticated/ticket_types/CreateTicketTypeScreen'));
+const UpdateTicketTypeScreen = React.lazy(() => import('../../screens/authenticated/ticket_types/UpdateTicketTypeScreen'));
 
-import CreateExtraScreen from '../../screens/authenticated/extras/CreateExtraScreen';
-import UpdateExtraScreen from '../../screens/authenticated/extras/UpdateExtraScreen';
-import ExtrasScreen from '../../screens/authenticated/extras/ExtrasScreen';
+const CreateExtraScreen = React.lazy(() => import('../../screens/authenticated/extras/CreateExtraScreen'));
+const UpdateExtraScreen = React.lazy(() => import('../../screens/authenticated/extras/UpdateExtraScreen'));
+const ExtrasScreen = React.lazy(() => import('../../screens/authenticated/extras/ExtrasScreen'));
 
 
 import AppBar from '../AppBar';
@@ -36,6 +37,7 @@ export type ISettingsTabParams = {
   UpdateExtraScreen: undefined;
   CreateExtraScreen: undefined;
   ExtrasScreen: undefined;
+  RigInspectionTemplateScreen: undefined;
 }
 
 const Settings = createStackNavigator<ISettingsTabParams>();
@@ -63,6 +65,7 @@ export default function SettingsTab() {
       <Settings.Screen name="CreateExtraScreen" component={CreateExtraScreen} options={{ title: "Create ticket add-on" }}/>
       <Settings.Screen name="UpdateExtraScreen" component={UpdateExtraScreen} options={{ title: "Update ticket add-on" }} />
       <Settings.Screen name="ExtrasScreen" component={ExtrasScreen} options={{ title: "Ticket add-ons" }} />
+      <Settings.Screen name="RigInspectionTemplateScreen" component={RigInspectionTemplateScreen} options={{ title: "Rig Inspection Form" }} />
     </Settings.Navigator>
   );
 }

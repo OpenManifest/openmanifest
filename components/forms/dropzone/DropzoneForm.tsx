@@ -106,7 +106,7 @@ export default function DropzoneForm() {
             </Dialog.Actions>
           </Dialog>
       </Portal>
-      <Card style={{ width: "100%", maxHeight: 300}}>
+      <Card style={{ width: "100%", maxHeight: 300, marginVertical: 16 }}>
         <Card.Cover
           source={{ uri: state.fields.banner.value || 'https://picsum.photos/700' }}
           resizeMode="cover"
@@ -115,7 +115,7 @@ export default function DropzoneForm() {
           <Button onPress={onPickImage}>Upload</Button>
         </Card.Actions>
       </Card>
-      <View style={styles.fields}>
+      <Card style={{ width: "100%", marginVertical: 16, paddingHorizontal: 16 }}>
         <List.Subheader style={styles.subheader}>Dropzone</List.Subheader>
         <TextInput
           style={styles.field}
@@ -154,6 +154,9 @@ export default function DropzoneForm() {
             )
           }
         </Menu>
+        <HelperText type="error">
+          { state.fields.federation.error || "" }
+        </HelperText>
         <List.Subheader style={styles.subheader}>Branding</List.Subheader>
         <List.Item
           title="Primary color"
@@ -179,7 +182,8 @@ export default function DropzoneForm() {
                 backgroundColor: global.theme.colors.accent
               }}
             />
-        }/>
+          }
+        />
 
         <List.Item
           title="Use credit system"
@@ -197,7 +201,8 @@ export default function DropzoneForm() {
                   : "unchecked"
               }
             />
-        }/>
+          }
+        />
 
         <List.Item
           title="Public"
@@ -216,7 +221,7 @@ export default function DropzoneForm() {
               }
             />
         }/>
-      </View>
+      </Card>
     </>
   );
 }
@@ -225,10 +230,11 @@ const styles = StyleSheet.create({
   fields: {
     flexGrow: 1,
     display: "flex",
-    width: "70%",
+    width: "100%",
   },
   field: {
     marginBottom: 8,
+    width: "100%",
   },
   subheader: {
     paddingLeft: 0

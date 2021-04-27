@@ -11,13 +11,15 @@ import globalSlice from "../../../redux/global";
 import slice from "../../../components/forms/extra/slice";
 import { Mutation } from '../../../graphql/schema';
 import ExtraForm from '../../../components/forms/extra/ExtraForm';
-import { useNavigation } from '@react-navigation/core';
+import { useIsFocused, useNavigation } from '@react-navigation/core';
+import ScrollableScreen from '../../../components/ScrollableScreen';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;
 
 
-const MUTATION_CREATE_extra = gql`
+const MUTATION_CREATE_EXTRA = gql`
   mutation CreateExtra(
     $name: String,
     $ticketTypeIds: [Int!]
@@ -53,8 +55,14 @@ export default function CreateExtraScreen() {
   const dispatch = useAppDispatch();
 
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
+  React.useEffect(() => {
+    if (isFocused) {
+      dispatch(actions.reset());
+    }
+  }, [isFocused]);
 
-  const [mutationCreateExtra, data] = useMutation<Mutation>(MUTATION_CREATE_extra);
+  const [mutationCreateExtra, data] = useMutation<Mutation>(MUTATION_CREATE_EXTRA);
 
   const validate = React.useCallback((): boolean => {
     let hasError = false;
@@ -109,14 +117,15 @@ export default function CreateExtraScreen() {
   }, [JSON.stringify(state.fields), dispatch, mutationCreateExtra]);
 
   return (
-    <View style={styles.container}>
+    <ScrollableScreen contentContainerStyle={{ paddingHorizontal: 48 }}>
+        <MaterialCommunityIcons name="ticket-percent" size={100} color="#999999" style={{ alignSelf: "center" }} />
         <ExtraForm />
         <View style={styles.fields}>
           <Button mode="contained" disabled={data.loading} onPress={onSave} loading={data.loading}>
             Save
           </Button>
       </View>
-    </View>
+    </ScrollableScreen>
   );
 }
 
@@ -135,10 +144,11 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   fields: {
-    width: "70%",
+    width: "100%",
     marginBottom: 16
   },
   field: {
+    width: "100%",
     marginBottom: 8,
   }
 });

@@ -1,10 +1,13 @@
+import { format } from 'date-fns';
 import * as React from 'react';
-import { List } from 'react-native-paper';
-import { DatePickerModal } from 'react-native-paper-dates';
+import { View } from "react-native"; 
+import { List, Modal } from 'react-native-paper';
+import { DatePickerModal, DatePickerModalContent } from 'react-native-paper-dates/src';
 
 interface IDatepicker {
   label: string;
   timestamp: number;
+  disabled?: boolean;
   onChange(timestamp: number): void;
 }
 export default function DatePicker(props: IDatepicker) {
@@ -17,6 +20,7 @@ export default function DatePicker(props: IDatepicker) {
   const onConfirmSingle = React.useCallback(
     ({ date }: { date: Date }) => {
       setOpen(false);
+      console.log({ date });
       props.onChange(date.getTime() / 1000);
     },
     [setOpen, props.onChange]
@@ -24,18 +28,28 @@ export default function DatePicker(props: IDatepicker) {
 
   return (
     <>
+      
       <List.Item
         title={props.label}
-        description={props.timestamp ? new Date(props.timestamp * 1000).toISOString() : "-"}
+        disabled={!!props.disabled}
+        description={
+          props.timestamp ? 
+            format(props.timestamp * 1000, "yyyy/MM/dd") :
+            "No date selected"
+        }
+        left={() => <List.Icon icon="calendar" />}
+        onPress={() => setOpen(true)}
       />
+
+      <Modal visible={open}>
       <DatePickerModal
         mode="single"
-        visible={open}
         onDismiss={onDismissSingle}
         date={props.timestamp ? new Date(props.timestamp * 1000) : new Date()}
         onConfirm={onConfirmSingle}
         label={props.label}
       />
+      </Modal>
     </>
   );
 }

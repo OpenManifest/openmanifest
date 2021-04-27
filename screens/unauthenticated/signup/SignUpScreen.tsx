@@ -9,6 +9,7 @@ import globalSlice from "../../../redux/global";
 
 import slice from "./slice";
 import useMutationSignUp from '../../../graphql/hooks/useMutationSignUp';
+import ScrollableScreen from '../../../components/ScrollableScreen';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;
@@ -38,7 +39,7 @@ export default function SignupScreen() {
   
 
   return (
-    <View style={styles.container}>
+    <ScrollableScreen contentContainerStyle={{ padding: 48, alignItems: "center" }}>
       <Text style={styles.title}>Sign up</Text>
       <View style={styles.fields}>
         <TextInput
@@ -61,7 +62,9 @@ export default function SignupScreen() {
           value={state.fields.exitWeight?.value?.toString() || ""}
           keyboardType="numbers-and-punctuation"
           right={() => <TextInput.Affix text="kg" />}
-          onChangeText={(newValue) => dispatch(actions.setField(["exitWeight", parseFloat(newValue)]))}
+          onChangeText={(newValue) =>
+            !newValue || /\d+/.test(newValue) ? dispatch(actions.setField(["exitWeight", parseFloat(newValue || "0")])) : null
+          }
         />
         
         <HelperText type={!!state.fields.exitWeight.error ? "error" : "info"}>
@@ -98,7 +101,7 @@ export default function SignupScreen() {
           mode="outlined"
           label="Password"
           error={Boolean(state.fields.password.error || state.fields.passwordConfirmation.error)}
-          textContentType="newPassword"
+          textContentType="password"
           secureTextEntry
           passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
           value={state.fields.password.value}
@@ -114,7 +117,7 @@ export default function SignupScreen() {
           mode="outlined"
           label="Repeat password"
           error={Boolean(state.fields.password.error || state.fields.passwordConfirmation.error)}
-          textContentType="newPassword"
+          textContentType="password"
           secureTextEntry
           passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
           value={state.fields.passwordConfirmation.value}
@@ -142,15 +145,13 @@ export default function SignupScreen() {
           Sign up
         </Button>
       </View>
-    </View>
+    </ScrollableScreen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   title: {
     fontSize: 20,
@@ -162,7 +163,8 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   fields: {
-    width: "70%"
+    width: "100%",
+    maxWidth: 400,
   },
   field: {
     marginBottom: 8,

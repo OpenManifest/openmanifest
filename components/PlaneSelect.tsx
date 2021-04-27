@@ -52,12 +52,13 @@ export default function PlaneSelect(props: IPlaneSelect) {
             props.value?.name || "No plane selected"
           }
           description={!props.required ? "Optional" : null}
-          left={() => <List.Icon icon="airplane" />}
+          right={() => <List.Icon icon="airplane" />}
         />
       }>
       {
         data?.planes?.map((plane) => 
           <List.Item
+            key={`plane-select-${plane.id}`}
             onPress={() => {
               setMenuOpen(false);
               props.onSelect(plane);

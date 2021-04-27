@@ -1,31 +1,26 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TicketType } from "../../../graphql/schema";
 
+type Fields = Pick<
+  TicketType,
+  | "name"
+  | "cost"
+  | "isTandem"
+  | "allowManifestingSelf"
+  | "altitude"
+  | "extras"
+>;
+
 interface ITicketTypeEditState {
   original: TicketType | null;
   fields: {
-    name: {
-      value: string;
-      error: string | null;
-    },
-    cost: {
-      value: number | null;
-      error: string | null;
-    },
-    altitude: {
-      value: number;
-      error: string | null;
-    },
-    allowManifestingSelf: {
-      value: boolean;
-      error: string | null;
-    },
-    extraIds: {
-      value: number[];
+    [K in keyof Fields] - ?: {
+      value: TicketType[K] | null;
       error: string | null;
     }
   }
 }
+
 
 const initialState: ITicketTypeEditState = {
   original: null,
@@ -46,7 +41,11 @@ const initialState: ITicketTypeEditState = {
       value: false,
       error: null,
     },
-    extraIds: {
+    isTandem: {
+      value: false,
+      error: null,
+    },
+    extras: {
       value: [],
       error: null,
     },

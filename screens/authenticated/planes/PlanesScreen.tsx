@@ -1,14 +1,16 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { StyleSheet, FlatList } from 'react-native';
-import { Card, Title, FAB, Paragraph, List } from 'react-native-paper';
+import { StyleSheet, FlatList, RefreshControl } from 'react-native';
+import { Card, Title, FAB, Paragraph, List, DataTable, ProgressBar } from 'react-native-paper';
 import { View } from '../../../components/Themed';
 import { Query } from "../../../graphql/schema";
 
-import { useNavigation, useRoute } from '@react-navigation/core';
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import { useAppSelector } from '../../../redux';
 import NoResults from '../../../components/NoResults';
+import ScrollableScreen from '../../../components/ScrollableScreen';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 const QUERY_PLANES = gql`
@@ -36,40 +38,53 @@ export default function PlanesScreen() {
     }
   });
   const navigation = useNavigation();
-  const route = useRoute();
 
-  // React.useEffect(() => {
-  //   if (route.name === "PlanesScreen") {
-  //     refetch();
-  //   }
-  // }, [route.name])
+  const isFocused = useIsFocused();
+
+  React.useEffect(() => {
+    if (isFocused) {
+      refetch();
+    }
+  }, [isFocused]);
  
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={data?.planes || []}
-        numColumns={1}
-        refreshing={loading}
-        onRefresh={() => refetch()}
-        style={{ flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListEmptyComponent={() =>
-          <NoResults
-            title="No planes?"
-            subtitle="You need to have at least one plane to manifest loads"
-          />
-        }
-        renderItem={({ item }) =>
-          <List.Item
-            title={item.name}
-            onPress={() => navigation.navigate("UpdatePlaneScreen", { plane: item })}
-            left={() => <List.Icon color="#000" icon="airplane" />}
-            right={() => <List.Icon color="#000" icon="pencil" />}
-          />
-        }
-      />
-      
+    <ScrollableScreen refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}>
+      <ProgressBar visible={loading} color={state.theme.colors.accent} />
+        
+
+          {
+            data?.planes?.length ? null : (
+              <NoResults
+                title="No planes?"
+                subtitle="You need to have at least one plane to manifest loads"
+              />
+            )
+          }
+
+          { !data?.planes?.length ? null : (
+            <DataTable>
+              <DataTable.Header>
+                <DataTable.Title>Name</DataTable.Title>
+                <DataTable.Title numeric>Registration</DataTable.Title>
+                <DataTable.Title numeric>Slots</DataTable.Title>
+              </DataTable.Header>
+              {
+                data?.planes?.map((plane) =>
+                  <DataTable.Row
+                    pointerEvents="none"
+                    onPress={() => navigation.navigate("UpdatePlaneScreen", { plane })}
+                  >
+                    <DataTable.Cell>{plane.name}</DataTable.Cell>
+                    <DataTable.Cell numeric>{plane.registration}</DataTable.Cell>
+                    <DataTable.Cell numeric>
+                      {plane.maxSlots}
+                    </DataTable.Cell>
+                  </DataTable.Row>
+              )}
+            </DataTable>
+          )}
+          
       <FAB
         style={styles.fab}
         small
@@ -77,15 +92,13 @@ export default function PlanesScreen() {
         onPress={() => navigation.navigate("CreatePlaneScreen")}
         label="New plane"
       />
-    </View>
+    </ScrollableScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 8,
-    display: "flex"
+  content: {
+    flexGrow: 1,
   },
   fab: {
     position: 'absolute',

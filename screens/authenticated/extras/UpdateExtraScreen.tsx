@@ -12,6 +12,8 @@ import slice from "../../../components/forms/extra/slice";
 import { Mutation, Extra } from '../../../graphql/schema';
 import ExtraForm from '../../../components/forms/extra/ExtraForm';
 import { useNavigation, useRoute } from '@react-navigation/core';
+import ScrollableScreen from '../../../components/ScrollableScreen';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;
@@ -118,21 +120,21 @@ export default function UpdateExtraScreen() {
   }, [JSON.stringify(state.fields), dispatch, mutationUpdateExtra]);
 
   return (
-    <View style={styles.container}>
+    <ScrollableScreen contentContainerStyle={{ paddingHorizontal: 48 }}>
+        <MaterialCommunityIcons name="ticket-percent" size={100} color="#999999" style={{ alignSelf: "center" }} />
         <ExtraForm />
         <View style={styles.fields}>
           <Button mode="contained" disabled={data.loading} onPress={onSave} loading={data.loading}>
             Save
           </Button>
       </View>
-    </View>
+    </ScrollableScreen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
   },
   title: {
     fontSize: 20,
@@ -144,7 +146,7 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   fields: {
-    width: "70%",
+    width: "100%",
     marginBottom: 16
   },
   field: {

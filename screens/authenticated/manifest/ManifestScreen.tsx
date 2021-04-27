@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { useNavigation } from '@react-navigation/core';
+import { useIsFocused, useNavigation } from '@react-navigation/core';
 import { startOfDay } from 'date-fns';
 import gql from 'graphql-tag';
 import * as React from 'react';
@@ -10,9 +10,9 @@ import ManifestUserDialog from '../../../components/dialogs/ManifestUserDialog';
 
 import NoResults from '../../../components/NoResults';
 import { View } from '../../../components/Themed';
-import { Query } from '../../../graphql/schema';
+import { Load, Query } from '../../../graphql/schema';
 import useRestriction from '../../../hooks/useRestriction';
-import { globalActions, slotForm, useAppDispatch, useAppSelector } from '../../../redux';
+import { globalActions, slotForm, snackbarActions, useAppDispatch, useAppSelector } from '../../../redux';
 import GetStarted from './GetStarted';
 import LoadCard from './LoadCard';
 
@@ -35,12 +35,20 @@ const QUERY_DROPZONE = gql`
 
       currentUser {
         id
+        hasCredits
+        hasExitWeight
+        hasMembership
+        hasReserveInDate
+        hasRigInspection
+        hasLicense
+
         user {
           id
           name
           exitWeight
           email
           phone
+
           rigs {
             id
             model
@@ -90,6 +98,13 @@ export default function ManifestScreen() {
   });
 
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
+
+  React.useEffect(() => {
+    if (isFocused) {
+      refetch();
+    }
+  }, [isFocused]);
 
   const hasPlanes = !!data?.dropzone?.planes?.length;
   const hasTicketTypes = !!data?.dropzone?.ticketTypes?.length;
@@ -124,6 +139,73 @@ export default function ManifestScreen() {
 
   const allowed = useRestriction("createSlot");
   const canCreateLoad = useRestriction("createLoad");
+
+  const onManifest = React.useCallback((load: Load) => {
+    const { currentUser } = data!.dropzone;
+    
+    if (!currentUser.hasLicense) {
+      return dispatch(
+        snackbarActions.showSnackbar({
+          message: "You need to select a license on your user profile",
+          variant: "warning"
+        })
+      );
+    }
+
+    if (!currentUser.hasMembership) {
+      return dispatch(
+        snackbarActions.showSnackbar({
+          message: "Your membership is out of date",
+          variant: "warning"
+        })
+      );
+    }
+
+    if (!currentUser.hasRigInspection) {
+      return dispatch(
+        snackbarActions.showSnackbar({
+          message: "Your rig needs to be inspected before manifesting",
+          variant: "warning"
+        })
+      );
+    }
+
+    if (!currentUser.hasReserveInDate) {
+      return dispatch(
+        snackbarActions.showSnackbar({
+          message: "Your rig needs a reserve repack",
+          variant: "warning"
+        })
+      );
+    }
+
+    if (!currentUser.hasExitWeight) {
+      return dispatch(
+        snackbarActions.showSnackbar({
+          message: "Update your exit weight on your profile before manifesting",
+          variant: "warning"
+        })
+      );
+    }
+
+    if (!currentUser.hasCredits) {
+      return dispatch(
+        snackbarActions.showSnackbar({
+          message: "You have no credits on your account",
+          variant: "warning"
+        })
+      );
+    }
+
+
+    dispatch(
+      slotForm.setField(["user", state.currentUser])
+    );
+    dispatch(
+      slotForm.setField(["load", load])
+    );
+    setDialogOpen(true);
+  }, [JSON.stringify(data?.dropzone?.currentUser)]);
 
   return (
     <>
@@ -167,15 +249,7 @@ export default function ManifestScreen() {
                                 );
                                 setDialogOpen(true);
                               }}
-                              onManifest={() => {
-                                dispatch(
-                                  slotForm.setField(["user", state.currentUser])
-                                );
-                                dispatch(
-                                  slotForm.setField(["load", edge.node!])
-                                );
-                                setDialogOpen(true);
-                              }}
+                              onManifest={() => onManifest(edge.node!)}
                             />
                         )}
                     />

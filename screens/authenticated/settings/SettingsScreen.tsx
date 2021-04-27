@@ -18,7 +18,7 @@ export default function SettingsScreen() {
     <View style={styles.container}>
       <List.Section title="Dropzone">
         <List.Item
-          title="Basic settings"
+          title="Configuration"
           onPress={() => navigation.navigate("UpdateDropzoneScreen", { dropzone: state.currentDropzone })}
           left={() => <List.Icon color="#000" icon="information-outline" />}
         />
@@ -30,10 +30,13 @@ export default function SettingsScreen() {
         <List.Item
           title="Rigs"
           left={() => <List.Icon color="#000" icon="parachute" />}
+          description="Coming soon"
         />
         <List.Item
-          title="Users"
-          left={() => <List.Icon color="#000" icon="account-cog" />}
+          title="Rig Inspection"
+          left={() => <List.Icon color="#000" icon="check" />}
+          description="Manage inspection checklist"
+          onPress={() => navigation.navigate("RigInspectionTemplateScreen")}
         />
       </List.Section>
 

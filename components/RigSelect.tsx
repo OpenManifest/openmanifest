@@ -16,15 +16,23 @@ interface IRigSelect {
 
 const QUERY_RIGS = gql`
   query QueryRigs(
-    $dropzoneId: Int
-    $userId: Int
+    $dropzoneId: Int!
+    $userId: Int!
   ) {
-    rigs(dropzoneId: $dropzoneId, userId: $userId) {
-      id
-      make
-      model
-      canopySize
-      serial
+    dropzone(id: $dropzoneId) {
+      dropzoneUser(userId: $userId) {
+        availableRigs {
+          id
+          make
+          model
+          canopySize
+          serial
+
+          user {
+            id
+          }
+        }
+      }
     }
   }
 `;
@@ -36,6 +44,7 @@ export default function RigSelect(props: IRigSelect) {
   const { data } = useQuery<Query>(QUERY_RIGS, {
     variables: {
       dropzoneId: Number(globalState.currentDropzone?.id),
+      userId: Number(props.userId)
     }
   });
   return (
@@ -57,7 +66,7 @@ export default function RigSelect(props: IRigSelect) {
         />
       }>
       {
-        data?.rigs?.map((rig) => 
+        data?.dropzone?.dropzoneUser?.availableRigs?.map((rig) => 
           <List.Item
             onPress={() => {
               setMenuOpen(false);
@@ -67,7 +76,7 @@ export default function RigSelect(props: IRigSelect) {
               `${props.value?.make} ${props.value?.model}`
             }
             description={
-              `${props.value?.canopySize} sqft`
+              `${props.value?.canopySize} sqft ${!rig.user ? "(DROPZONE RIG)": ""}`
             }
           />
         )

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { gql, useMutation } from "@apollo/client";
-import { useAppSelector, useAppDispatch, dropzoneForm } from '../../../redux';
+import { useAppSelector, useAppDispatch, dropzoneForm, snackbarActions } from '../../../redux';
 
 import { View } from '../../../components/Themed';
 import { actions as snackbar } from "../../../components/notifications";
@@ -12,6 +12,8 @@ import slice from "../../../components/forms/ticket_type/slice";
 import { Mutation, TicketType } from '../../../graphql/schema';
 import TicketTypeForm from '../../../components/forms/ticket_type/TicketTypeForm';
 import { useNavigation, useRoute } from '@react-navigation/core';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import ScrollableScreen from '../../../components/ScrollableScreen';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;
@@ -68,7 +70,7 @@ export default function UpdateTicketTypeScreen() {
 
   const validate = React.useCallback((): boolean => {
     let hasError = false;
-    if (state.fields.name.value.length < 3) {
+    if (!state.fields.name.value || state.fields.name.value.length < 3) {
       hasError = true;
       dispatch(
         actions.setFieldError(["name", "Name is too short"])
@@ -93,7 +95,7 @@ export default function UpdateTicketTypeScreen() {
   }, [JSON.stringify(state.fields), dispatch]);
 
   const onSave = React.useCallback(async () => {
-    const { name, cost, allowManifestingSelf, altitude, extraIds } = state.fields;
+    const { name, cost, allowManifestingSelf, altitude, extras, isTandem } = state.fields;
 
     
 
@@ -106,9 +108,35 @@ export default function UpdateTicketTypeScreen() {
             cost: cost.value,
             altitude: altitude.value,
             allowManifestingSelf: allowManifestingSelf.value,
-            extraIds: extraIds.value,
+            extraIds: extras?.value?.map(({ id }) => id),
+            isTandem: !!isTandem.value
           }
         });
+
+
+        result?.data?.updateTicketType?.fieldErrors?.map(({ field, message }) => {
+          switch (field) {
+            case "name":
+              return dispatch(actions.setFieldError(["name", message]));
+            case "altitude":
+              return dispatch(actions.setFieldError(["altitude", message]));
+            case "cost":
+              return dispatch(actions.setFieldError(["cost", message]));
+            case "allow_manifesting_self":
+              return dispatch(actions.setFieldError(["allowManifestingSelf", message]));
+            case "extras":
+              return dispatch(actions.setFieldError(["extras", message]));
+          }
+        });
+
+        if (result?.data?.updateTicketType?.errors?.length) {
+          return dispatch(
+            snackbarActions.showSnackbar({
+              message: result?.data?.updateTicketType?.errors[0],
+              variant: "error"
+            })
+          );
+        }
         
         if (result.data?.updateTicketType?.ticketType) {
           dispatch(
@@ -126,14 +154,15 @@ export default function UpdateTicketTypeScreen() {
   }, [JSON.stringify(state.fields), dispatch, mutationUpdateTicketType]);
 
   return (
-    <View style={styles.container}>
+    <ScrollableScreen contentContainerStyle={{ paddingHorizontal: 48 }}>
+        <MaterialCommunityIcons name="ticket" size={100} color="#999999" style={{ alignSelf: "center" }} />
         <TicketTypeForm />
         <View style={styles.fields}>
           <Button mode="contained" disabled={data.loading} onPress={onSave} loading={data.loading}>
             Save
           </Button>
       </View>
-    </View>
+    </ScrollableScreen>
   );
 }
 
@@ -152,8 +181,8 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   fields: {
-    width: "70%",
-    marginBottom: 16
+    width: "100%",
+    marginVertical: 16
   },
   field: {
     marginBottom: 8,

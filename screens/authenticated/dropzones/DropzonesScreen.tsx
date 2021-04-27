@@ -8,6 +8,7 @@ import { globalActions, useAppDispatch, useAppSelector } from '../../../redux';
 import { Query } from "../../../graphql/schema";
 
 import { useNavigation } from '@react-navigation/core';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 const QUERY_DROPZONES = gql`
@@ -45,7 +46,7 @@ export default function DropzonesScreen() {
  
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <FlatList
         data={data?.dropzones?.edges || []}
         numColumns={2}
@@ -91,7 +92,7 @@ export default function DropzonesScreen() {
         onPress={() => navigation.navigate("CreateDropzoneScreen")}
         label="Create dropzone"
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -103,8 +104,8 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    margin: 16,
-    right: 0,
+    margin: 32,
+    right: 16,
     bottom: 0,
   },
   empty: {

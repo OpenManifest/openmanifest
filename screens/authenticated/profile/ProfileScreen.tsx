@@ -1,15 +1,20 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/core';
+import { useQuery } from '@apollo/client';
+import { successColor, warningColor } from "../../../constants/Colors";
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { Button, Card, DataTable, FAB, List, ProgressBar } from 'react-native-paper';
+import { StyleSheet, Text, View } from 'react-native';
+import { Button, Card, DataTable, FAB, IconButton, List, ProgressBar } from 'react-native-paper';
 import format from "date-fns/format";
+import gql from 'graphql-tag';
+
+
 import RigDialog from '../../../components/dialogs/RigDialog';
 import { dropzoneUserForm, globalActions, rigForm, useAppDispatch, useAppSelector } from '../../../redux';
-import gql from 'graphql-tag';
-import { useQuery } from '@apollo/client';
 import { Query } from '../../../graphql/schema';
 import ScrollableScreen from '../../../components/ScrollableScreen';
 import DropzoneUserDialog from '../../../components/dialogs/DropzoneUserDialog';
+import useRestriction from '../../../hooks/useRestriction';
 
 
 const QUERY_DROPZONE_USER = gql`
@@ -25,6 +30,13 @@ const QUERY_DROPZONE_USER = gql`
         role {
           id
           name
+        }
+        rigInspections {
+          id
+          isOk
+          rig {
+            id
+          }
         }
         user {
           id
@@ -60,7 +72,7 @@ export default function ProfileScreen() {
   const [rigDialogOpen, setRigDialogOpen] = React.useState(false);
   const [dropzoneUserDialogOpen, setDropzoneUserDialogOpen] = React.useState(false);
   const route = useRoute<{ key: string, name: string, params: { userId: string }}>();
-  const isSelf = state.currentUser?.id === route.params.userId;
+  const isSelf = state.currentDropzone?.currentUser?.id === route.params.userId;
 
   const { data, loading } = useQuery<Query>(QUERY_DROPZONE_USER, {
     variables: {
@@ -68,13 +80,6 @@ export default function ProfileScreen() {
       dropzoneUserId: Number(route.params.userId)
     }
   });
-
-  const getRigPressAction = React.useCallback((rig) => {
-    return () => {
-      dispatch(rigForm.setOriginal(rig));
-      setRigDialogOpen(true);
-    }
-  }, [dispatch, setRigDialogOpen]);
 
   return (
     <>
@@ -119,10 +124,10 @@ export default function ProfileScreen() {
                 <Button
                   icon="pencil"
                   onPress={() =>
-                    navigation.navigate("UpdateUserScreen", { user: state.currentDropzone?.currentUser })
+                    navigation.navigate("UpdateUserScreen", { user: state.currentDropzone?.currentUser?.user })
                   }
                 >
-                  Edit
+                  <Text>Edit</Text>
                 </Button>
               </Card.Actions>
             )}
@@ -144,7 +149,7 @@ export default function ProfileScreen() {
               title="Membership"
               description={
                 !data?.dropzone?.dropzoneUser?.expiresAt ?
-                  <span>Not a member</span>
+                  <Text>Not a member</Text>
                 : format((data?.dropzone?.dropzoneUser?.expiresAt || 0) * 1000, "yyyy/MM/dd")
               }
               left={() =>
@@ -167,7 +172,7 @@ export default function ProfileScreen() {
                 setDropzoneUserDialogOpen(true);
               }}
             >
-              Edit
+              <Text>Edit</Text>
             </Button>
           </Card.Actions>
         </Card>
@@ -177,42 +182,64 @@ export default function ProfileScreen() {
           <Card.Content>
             <DataTable>
               <DataTable.Header>
-                <DataTable.Row>
-                  <DataTable.Title>
-                    Make
-                  </DataTable.Title>
-                  <DataTable.Title>
-                    Model
-                  </DataTable.Title>
-                  <DataTable.Title>
-                    Serial
-                  </DataTable.Title>
-                  <DataTable.Title numeric>
-                    Repack expires
-                  </DataTable.Title>
-                  <DataTable.Title numeric>
-                    Canopy size
-                  </DataTable.Title>
-                </DataTable.Row>
+                <DataTable.Title>
+                  Container
+                </DataTable.Title>
+                <DataTable.Title numeric>
+                  Repack due
+                </DataTable.Title>
+                <DataTable.Title numeric>
+                  Canopy size
+                </DataTable.Title>
+                <DataTable.Title numeric>
+                  Inspected
+                </DataTable.Title>
               </DataTable.Header>
 
               {
                 data?.dropzone?.dropzoneUser?.user?.rigs?.map((rig) =>
-                  <DataTable.Row onPress={getRigPressAction(rig)}>
-                    <DataTable.Cell onPress={getRigPressAction(rig)}>
-                      {rig?.make}
+                  <DataTable.Row
+                    key={`rig-${rig!.id}`}
+                    onPress={() => {
+                      dispatch(rigForm.setOriginal(rig));
+                      setRigDialogOpen(true);
+                    }}
+                    onLongPress={() =>
+                      navigation.navigate("RigInspectionScreen", {
+                        dropzoneUserId: Number(route.params.userId),
+                        rig
+                      })
+                    }
+                    pointerEvents="none"
+                  >
+                    <DataTable.Cell>
+                      {[rig?.make, rig?.model, `#${rig?.serial}`].join(" ")}
                     </DataTable.Cell>
-                    <DataTable.Cell onPress={getRigPressAction(rig)}>
-                      {rig?.model}
-                    </DataTable.Cell>
-                    <DataTable.Cell onPress={getRigPressAction(rig)}>
-                      {rig?.serial}
-                    </DataTable.Cell>
-                    <DataTable.Cell onPress={getRigPressAction(rig)}>
+                    <DataTable.Cell numeric>
                       {rig?.repackExpiresAt ? format(rig.repackExpiresAt * 1000, "yyyy/MM/dd") : "-"}
                     </DataTable.Cell>
-                    <DataTable.Cell onPress={getRigPressAction(rig)}>
-                      {`${rig?.canopySize}sqft`}
+                    <DataTable.Cell numeric>
+                      {`${rig?.canopySize}`}
+                    </DataTable.Cell>
+                    <DataTable.Cell numeric>
+                      <IconButton
+                        icon={
+                          data?.dropzone?.dropzoneUser?.rigInspections?.some((insp) => insp.rig?.id === rig.id && insp.isOk)
+                          ? "eye-check"
+                          : "eye-minus"
+                        }
+                        color={
+                          data?.dropzone?.dropzoneUser?.rigInspections?.some((insp) => insp.rig?.id === rig.id && insp.isOk)
+                          ? successColor
+                          : warningColor
+                        }
+                        onPress={() =>
+                          navigation.navigate("RigInspectionScreen", {
+                            dropzoneUserId: Number(route.params.userId),
+                            rig
+                          })
+                        }
+                      />
                     </DataTable.Cell>
                   </DataTable.Row>
                 )
@@ -222,8 +249,8 @@ export default function ProfileScreen() {
           {
             isSelf && (
             <Card.Actions style={{ justifyContent: "flex-end" }}>
-              <Button onPress={() => setRigDialogOpen(true)}>
-                Add rig
+              <Button onPress={() => setRigDialogOpen(true)} icon="plus">
+                <Text>Add rig</Text>
               </Button>
             </Card.Actions>
           )}
@@ -231,7 +258,7 @@ export default function ProfileScreen() {
 
         { data?.dropzone?.dropzoneUser?.id === state.currentUser?.id && (
           <Button color="#B00020" onPress={() => dispatch(globalActions.logout())}>
-            Log out
+            <Text>Log out</Text>
           </Button>
         )}
       
@@ -263,8 +290,8 @@ const styles = StyleSheet.create({
     paddingBottom: 56
   },
   card: {
-    marginVertical: 8,
-    width: "80%"
+    margin: 8,
+    width: "100%",
   },
   fields: {
     width: "80%",

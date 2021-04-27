@@ -1,14 +1,13 @@
 import { useMutation, useQuery } from '@apollo/client';
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { StyleSheet, FlatList, RefreshControl } from 'react-native';
-import { Card, Title, FAB, Paragraph, List, DataTable, ProgressBar, Switch } from 'react-native-paper';
-import { View } from '../../../components/Themed';
+import { StyleSheet, RefreshControl } from 'react-native';
+import { FAB, DataTable, ProgressBar, Switch } from 'react-native-paper';
 import { Mutation, Query } from "../../../graphql/schema";
 
-import { useNavigation, useRoute } from '@react-navigation/core';
 import { useAppSelector } from '../../../redux';
-import { ScrollView,  } from 'react-native-gesture-handler';
+import ScrollableScreen from '../../../components/ScrollableScreen';
 
 
 const QUERY_TICKET_TYPE = gql`
@@ -67,6 +66,13 @@ export default function TicketTypesScreen() {
   });
   const navigation = useNavigation();
   const route = useRoute();
+  const isFocused = useIsFocused();
+
+  React.useEffect(() => {
+    if (isFocused) {
+      refetch();
+    }
+  }, [isFocused]);
   const [mutationUpdateTicketType, mutation] = useMutation<Mutation>(MUTATION_UPDATE_TICKET_TYPE);
   
   React.useEffect(() => {
@@ -75,7 +81,7 @@ export default function TicketTypesScreen() {
     }
   }, [route.name])
   return (
-      <ScrollView style={styles.container} contentContainerStyle={[styles.content, {  backgroundColor: "white" }]} refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}>
+      <ScrollableScreen style={styles.container} contentContainerStyle={[styles.content, {  backgroundColor: "white" }]} refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}>
       <ProgressBar visible={loading} color={state.theme.colors.accent} />
         <DataTable>
           <DataTable.Header>
@@ -86,7 +92,7 @@ export default function TicketTypesScreen() {
           </DataTable.Header>
 
           { data?.ticketTypes?.map((ticketType) =>
-            <DataTable.Row onPress={() => navigation.navigate("UpdateTicketTypeScreen", { ticketType })}>
+            <DataTable.Row onPress={() => navigation.navigate("UpdateTicketTypeScreen", { ticketType })} pointerEvents="none">
               <DataTable.Cell>{ticketType.name}</DataTable.Cell>
               <DataTable.Cell numeric>${ticketType.cost}</DataTable.Cell>
               <DataTable.Cell numeric>
@@ -116,7 +122,7 @@ export default function TicketTypesScreen() {
           onPress={() => navigation.navigate("CreateTicketTypeScreen")}
           label="New ticket type"
         />
-      </ScrollView>
+      </ScrollableScreen>
   );
 }
 

@@ -63,7 +63,7 @@ export default createSlice({
     setAccentColor: (state: IGlobalState, action: PayloadAction<string>) => {
       state.theme.colors.accent = action.payload;
     },
-    setDropzone: (state: IGlobalState, action: PayloadAction<Dropzone>) => {
+    setDropzone: (state: IGlobalState, action: PayloadAction<Dropzone | null>) => {
       state.currentDropzone = action.payload;
 
       if (state.currentDropzone?.primaryColor) {

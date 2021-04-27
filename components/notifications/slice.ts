@@ -3,7 +3,7 @@ import { Snackbar } from "react-native-paper";
 
 interface INotification {
   message: string;
-  variant?: "error" | "success";
+  variant?: "error" | "success" | "warning";
   action?: {
     label: string;
     onPress: () => void;
