@@ -1,10 +1,12 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
+import { DropzoneUser, Slot } from '../../graphql/schema';
 import { useAppSelector } from '../../redux';
 
 const ManifestScreen = React.lazy(() => import('../../screens/authenticated/manifest/ManifestScreen'));
 const LoadScreen = React.lazy(() => import('../../screens/authenticated/load/LoadScreen'));
 const CreateLoadScreen = React.lazy(() => import('../../screens/authenticated/load/CreateLoadScreen'));
+const ManifestGroupScreen = React.lazy(() => import('../../screens/authenticated/manifest/ManifestGroupScreen'));
 import AppBar from '../AppBar';
 
 
@@ -12,6 +14,11 @@ export type IManifestTabParams = {
   DropzoneScreen: undefined;
   LoadScreen: undefined;
   CreateLoadScreen: undefined;
+  ManifestGroupScreen: {
+    users?: DropzoneUser[];
+    slots?: Slot[]
+    loadId?: number
+  };
 }
 
 const Manifest = createStackNavigator<IManifestTabParams>();
@@ -31,6 +38,7 @@ export default function ManifestTab() {
       <Manifest.Screen name="DropzoneScreen" component={ManifestScreen} options={{ title: "Manifest" }} />
       <Manifest.Screen name="LoadScreen" component={LoadScreen} options={{ title: "Loads" }}/>
       <Manifest.Screen name="CreateLoadScreen" component={CreateLoadScreen} options={{ title: "Create load" }}/>
+      <Manifest.Screen name="ManifestGroupScreen" component={ManifestGroupScreen} options={{ title: "Manifest group" }}/>
     </Manifest.Navigator>
   );
 }

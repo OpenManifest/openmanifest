@@ -24,18 +24,18 @@ const MUTATION_UPDATE_TICKET_TYPE = gql`
     $id: Int!,
     $name: String,
     $cost: Float,
-    $dropzoneId: Int!
     $altitude: Int
     $allowManifestingSelf: Boolean
+    $isTandem: Boolean
   ){
     updateTicketType(input: {
       id: $id
       attributes: {
         name: $name,
         cost: $cost,
-        dropzoneId: $dropzoneId
         altitude: $altitude
         allowManifestingSelf: $allowManifestingSelf
+        isTandem: $isTandem
       }
     }) {
       ticketType {

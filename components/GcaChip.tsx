@@ -75,7 +75,8 @@ export default function GCAChip(props: IGCAChipSelect) {
       }>
       {
         data?.dropzone?.dropzoneUsers?.edges?.map((edge) => 
-          <List.Item
+          <Menu.Item
+            key={`gca-chip-${edge?.node?.id}`}
             onPress={() => {
               setMenuOpen(false);
               props.onSelect(edge?.node?.user as User);

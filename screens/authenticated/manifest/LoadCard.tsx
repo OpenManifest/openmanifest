@@ -2,7 +2,7 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import { useNavigation } from '@react-navigation/core';
 import * as React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { Badge, Button, Card, DataTable, List, Menu, Paragraph, ProgressBar } from 'react-native-paper';
+import { Badge, Button, Card, DataTable, IconButton, List, Menu, Paragraph, ProgressBar } from 'react-native-paper';
 import addMinutes from "date-fns/addMinutes";
 import differenceInMinutes from "date-fns/differenceInMinutes";
 
@@ -14,12 +14,13 @@ import PlaneChip from '../../../components/PlaneChip';
 import { Text, View } from '../../../components/Themed';
 import { Query, Load, Mutation, User, Plane, Slot } from '../../../graphql/schema';
 import useRestriction from '../../../hooks/useRestriction';
-import { useAppSelector } from '../../../redux';
+import { slotsMultipleForm, useAppDispatch, useAppSelector } from '../../../redux';
 
 interface ILoadCard {
   load: Load;
   loadNumber: number;
   canManifest: boolean;
+  onSlotGroupPress(slots: Slot[]): void;
   onSlotPress(slot: Slot): void;
   onSlotLongPress?(slot: Slot): void;
   onManifest(): void;
@@ -67,6 +68,8 @@ const QUERY_LOAD = gql`
         id
         createdAt
         exitWeight
+        passengerName
+        passengerExitWeight
         user {
           id
           name
@@ -75,6 +78,7 @@ const QUERY_LOAD = gql`
           id
           name
           altitude
+          isTandem
 
           extras {
             id
@@ -157,6 +161,10 @@ const MUTATION_UPDATE_LOAD = gql`
           id
           createdAt
           exitWeight
+
+          passengerName
+          passengerExitWeight
+
           user {
             id
             name
@@ -165,6 +173,7 @@ const MUTATION_UPDATE_LOAD = gql`
             id
             name
             altitude
+            isTandem
           }
           jumpType {
             id
@@ -183,8 +192,10 @@ const MUTATION_UPDATE_LOAD = gql`
 
 export default function LoadCard(props: ILoadCard) {
   const state = useAppSelector(state => state.global);
+  const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDispatchOpen, setDispatchOpen] = React.useState(false);
+  const canManifestOthers = useRestriction("createUserSlot");
 
   const navigation = useNavigation();
   const { load, loadNumber, onManifest, canManifest } = props;
@@ -260,21 +271,7 @@ export default function LoadCard(props: ILoadCard) {
   const canEditSelf = useRestriction("updateSlot");
   const canEditOthers = useRestriction("updateUserSlot");
 
-  const getSlotPressAction = React.useCallback((slot: Slot) => {
-
-    if (slot?.user?.id !== state.currentUser?.id && !canEditOthers) {
-      return;
-    }
-    return () => {
-      if (slot.user?.id === state.currentUser?.id) {
-        if (canEditSelf) {
-          props.onSlotPress(slot);
-        }
-      } else if (canEditOthers) {
-        props.onSlotPress(slot);
-      }
-    }
-  }, [JSON.stringify(load), canEditOthers, props.onSlotPress]);
+  
 
   React.useEffect(() => {
     if (data?.load?.maxSlots && data?.load?.maxSlots < 5 && !isExpanded) {
@@ -287,7 +284,23 @@ export default function LoadCard(props: ILoadCard) {
   return (
   <Card style={{ margin: 16 }} elevation={3}>
     <Card.Title
-      title={`Load ${data?.load?.loadNumber}`}
+      style={{ justifyContent: "space-between"}}
+      title={
+        <View style={{ width: "100%", flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+          <Text>{`Load ${data?.load?.loadNumber || 0}`}</Text>
+          <View style={{ flexGrow: 1 }} />
+          { !data?.load?.hasLanded && data?.load?.dispatchAt && data?.load.dispatchAt < new Date().getTime() / 1000 && canManifestOthers && (
+            <IconButton
+              icon="account-group"
+              onPress={() => {
+                dispatch(slotsMultipleForm.reset());
+                dispatch(slotsMultipleForm.setField(["load", load]));
+                navigation.navigate("Users", { screen: "UsersScreen", params: { select: true, loadId: data?.load?.id }});
+              }}
+            />
+          )}
+        </View>
+      }
       subtitle={load.name}
     />
     <ProgressBar
@@ -329,20 +342,41 @@ export default function LoadCard(props: ILoadCard) {
         </DataTable.Header>
           {
             data?.load?.slots?.map(slot => {
-              
+              const slotGroup = data?.load?.slots?.filter(({ groupNumber }) => groupNumber === slot.groupNumber);
+
               return (
-                <DataTable.Row onPress={getSlotPressAction(slot)} pointerEvents="none">
+                <DataTable.Row
+                  key={`slot-${slot.id}`}
+                  onPress={() => {
+                    if (slot.user?.id === state.currentUser?.id) {
+                      if (canEditSelf) {
+                        if (slotGroup?.length) {
+                          props.onSlotGroupPress(slotGroup!)
+                        } else {
+                          props.onSlotPress(slot);
+                        }
+                      }
+                    } else if (canEditOthers) {
+                      if (slotGroup?.length) {
+                        props.onSlotGroupPress(slotGroup!)
+                      } else {
+                        props.onSlotPress(slot);
+                      }
+                    }
+                  }}
+                  pointerEvents="none"
+                >
                   <DataTable.Cell>{slot?.user?.name}</DataTable.Cell>
                   <DataTable.Cell numeric>{slot?.exitWeight}</DataTable.Cell>
                   <DataTable.Cell numeric>{slot?.jumpType?.name}</DataTable.Cell>
-                  <DataTable.Cell numeric>{slot?.ticketType?.altitude}</DataTable.Cell>
+                  <DataTable.Cell numeric>{slot?.ticketType?.name}</DataTable.Cell>
                 </DataTable.Row>
               )
             })
           }
           {
-            Array.from({length: (load?.maxSlots || 0) - (load?.slots?.length || 0)}, (v, i) => i).map(() =>
-              <DataTable.Row>
+            Array.from({length: (load?.maxSlots || 0) - (load?.slots?.length || 0)}, (v, i) => i).map((i) =>
+              <DataTable.Row key={`${load.id}-empty-slot-${i}`}>
                 <DataTable.Cell>- Available -</DataTable.Cell>
                 <DataTable.Cell numeric>-</DataTable.Cell>
                 <DataTable.Cell numeric>-</DataTable.Cell>
@@ -388,28 +422,28 @@ export default function LoadCard(props: ILoadCard) {
                   </Button>
                 }
               >
-                <List.Item
+                <Menu.Item
                   onPress={() => {
                     setDispatchOpen(false);
                     updateCall(20)
                   }}
                   title="20 minute call"
                 />
-                <List.Item
+                <Menu.Item
                   onPress={() => {
                     setDispatchOpen(false);
                     updateCall(15)
                   }}
                   title="15 minute call"
                 />
-                <List.Item
+                <Menu.Item
                   onPress={() => {
                     setDispatchOpen(false);
                     updateCall(10)
                   }}
                   title="10 minute call"
                 />
-                <List.Item
+                <Menu.Item
                   onPress={() => {
                     setDispatchOpen(false);
                     updateCall(5)

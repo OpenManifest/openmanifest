@@ -1,7 +1,7 @@
 import { DocumentNode, useQuery } from "@apollo/client";
 import { Maybe } from "graphql/jsutils/Maybe";
-import { useCallback, useEffect, useMemo } from "react";
-import { FieldError, Query } from "../graphql/schema";
+import { useEffect, useMemo } from "react";
+import { Query } from "../graphql/schema";
 import { snackbarActions, useAppDispatch } from "../redux";
 
 export interface IAppQuery<Payload, InputType> {
@@ -16,7 +16,7 @@ export interface IAppQueryProps<Payload, InputType> {
   variables?: InputType;
 }
 
-export function createQuery<Payload extends {}, InputType extends {}>(
+export function createQuery<Payload extends any, InputType extends {}>(
   query: DocumentNode,
   options: {
     getPayload(query?: Query): Maybe<Payload>;

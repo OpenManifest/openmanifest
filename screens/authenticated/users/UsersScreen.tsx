@@ -1,15 +1,14 @@
 import { useQuery } from '@apollo/client';
-import { useIsFocused, useNavigation, useNavigationState, useRoute } from '@react-navigation/core';
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { List, ProgressBar } from 'react-native-paper';
+import { DeviceEventEmitter, StyleSheet } from 'react-native';
+import { Checkbox, FAB, List, ProgressBar } from 'react-native-paper';
 
-import EditScreenInfo from '../../../components/EditScreenInfo';
 import NoResults from '../../../components/NoResults';
-import { Text, View } from '../../../components/Themed';
-import { Query } from '../../../graphql/schema';
-import { useAppDispatch, useAppSelector, usersActions } from '../../../redux';
+import { View } from '../../../components/Themed';
+import { DropzoneUser, Query } from '../../../graphql/schema';
+import { slotsMultipleForm, useAppDispatch, useAppSelector, usersActions } from '../../../redux';
 
 
 
@@ -40,8 +39,18 @@ const QUERY_DROPZONE_USERS = gql`
     }
   }
 `;
+
+interface IUsersRouteParams{
+  key: string,
+  name: string,
+  params: {
+    select?: boolean;
+    loadId?: number;
+    onSelect?(selectedUsers?: DropzoneUser[]): void;
+  }
+}
 export default function UsersScreen() {
-  const {global, usersScreen } = useAppSelector(state => state);
+  const {global, usersScreen, slotsMultipleForm: multiSlot } = useAppSelector(state => state);
   const dispatch = useAppDispatch();
 
   const { data, loading } = useQuery<Query>(QUERY_DROPZONE_USERS, {
@@ -52,13 +61,24 @@ export default function UsersScreen() {
   });
 
   const navigation = useNavigation();
+  const route = useRoute<IUsersRouteParams>();
 
   const isFocused = useIsFocused();
   React.useEffect(() => {
     if (usersScreen.isSearchVisible) {
       dispatch(usersActions.setSearchVisible(false));
     }
+
+    if (!isFocused && usersScreen.isSelectEnabled) {
+      dispatch(usersActions.setSelectEnabled(false));
+      dispatch(usersActions.setSelected([]));
+    }
   }, [isFocused]);
+
+
+  React.useEffect(() => {
+    dispatch(usersActions.setSelectEnabled(!!route?.params?.select));
+  }, [route?.params?.select])
 
   return (
     <View style={styles.container}>
@@ -73,7 +93,44 @@ export default function UsersScreen() {
           title={edge?.node?.user.name}
           description={edge?.node?.role?.name}
           left={() => <List.Icon icon="account" />}
-          onPress={() => navigation.navigate("UserProfileScreen", { userId: edge?.node?.id })}
+          right={() => !usersScreen.isSelectEnabled ? null :
+            <Checkbox.Android
+              status={
+                usersScreen.selectedUsers?.map(({ id }) => id).includes(`${edge?.node?.user?.id}`)
+                ? "checked"
+                : "unchecked"
+              }
+            />
+          }
+          onPress={
+            !usersScreen.isSelectEnabled  
+              ? () => navigation.navigate("UserProfileScreen", { userId: edge?.node?.id })
+              : () => dispatch(
+                usersActions.setSelected(
+                  usersScreen.selectedUsers?.find(({ id }) => id === `${edge?.node?.id}`)
+                  ? usersScreen.selectedUsers?.filter(({ id }) => id !== `${edge?.node?.id}`)
+                  : [...usersScreen.selectedUsers, edge!.node!],
+                )
+              )
+          }
+        />
+      )}
+
+      { usersScreen.isSelectEnabled && (
+        <FAB
+          style={styles.fab}
+          small
+          icon="check"
+          onPress={() => {
+            dispatch(slotsMultipleForm.setDropzoneUsers(usersScreen.selectedUsers));
+            navigation.navigate("Manifest", {
+              screen: "ManifestGroupScreen",
+              params: {
+                users: usersScreen.selectedUsers
+              }
+            })
+          }}
+          label="Next"
         />
       )}
     </View>
@@ -84,6 +141,12 @@ export default function UsersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
   title: {
     fontSize: 20,

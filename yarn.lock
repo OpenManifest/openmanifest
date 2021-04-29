@@ -11384,9 +11384,19 @@ react-native-mmkv-storage@^0.5.3:
   resolved "https://registry.yarnpkg.com/react-native-mmkv-storage/-/react-native-mmkv-storage-0.5.3.tgz#58f30ca921cfd749bd8ca7b7ffc422787db986c1"
   integrity sha512-6JAD3IYfpdWTiQZWiKSQn4RAjbxVhyziZncvwPY2ToO/o/DiRdW4fce+ZJ755KpfBfG6EcB3is5sX+LXIJqVkA==
 
+react-native-pager-view@^5.1.5:
+  version "5.1.5"
+  resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-5.1.5.tgz#711599b6e74ccf922c7dc6e4a8efb7e8ca90775a"
+  integrity sha512-Z2mW1Rz6Mzh2IDKL7KFi/s1BkZxpuGzRhmvYXWVN/TXDcEC8m3wIdCJOccDawbaQ1NXg2pIdACzmfHpO/tbo+w==
+
 react-native-paper-dates@web-ridge/react-native-paper-dates:
   version "0.4.5"
   resolved "https://codeload.github.com/web-ridge/react-native-paper-dates/tar.gz/99c8e3e6e1abb4c7a090cef27674bc1c828bb0dc"
+
+react-native-paper-tabs@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-paper-tabs/-/react-native-paper-tabs-0.4.2.tgz#366cbe232c70b2bdaa2e09e22c039f78520b9095"
+  integrity sha512-VCpdBuaB/bqI6eVLNxnGLlBiOC4krgwS4O4ZrmXPOpedmuAQwcFJN/Arw62zpTdv3NjbC3U+X6/GMtzYJInm8g==
 
 react-native-paper@4.8.1:
   version "4.8.1"

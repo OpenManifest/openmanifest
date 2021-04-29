@@ -56,7 +56,7 @@ export default function RoleSelect(props: IRoleSelect) {
       }>
       {
         data?.dropzone?.roles?.map((role) =>
-          <List.Item
+          <Menu.Item
             onPress={() => {
               setMenuOpen(false);
               props.onSelect(role);

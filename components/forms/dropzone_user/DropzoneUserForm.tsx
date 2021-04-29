@@ -41,19 +41,6 @@ export default function DropzoneUserForm() {
       <HelperText type={!!state.fields.expiresAt.error ? "error" : "info"}>
         { state.fields.expiresAt.error }
       </HelperText>
-
-      <TextInput
-        style={styles.field}
-        mode="outlined"
-        label="Credits"
-        error={!!state.fields.credits.error}
-        value={state.fields.credits.value?.toString() || ""}
-        keyboardType="number-pad"
-        onChangeText={(newValue) => dispatch(actions.setField(["credits", Number(newValue)]))}
-      />
-      <HelperText type={!!state.fields.credits.error ? "error" : "info"}>
-        { state.fields.credits.error || `Current balance: $${state.original?.credits || 0}` }
-      </HelperText>
     </>
   );
 }

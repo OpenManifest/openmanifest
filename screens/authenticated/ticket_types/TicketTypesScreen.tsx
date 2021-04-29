@@ -47,6 +47,7 @@ const MUTATION_UPDATE_TICKET_TYPE = gql`
         altitude
         cost
         allowManifestingSelf
+        isTandem
         extras {
           id
           name

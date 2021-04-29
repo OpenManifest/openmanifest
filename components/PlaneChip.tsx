@@ -61,7 +61,8 @@ export default function PlaneChip(props: IPlaneChipSelect) {
       }>
       {
         data?.planes?.map((plane) => 
-          <List.Item
+          <Menu.Item
+            key={`lm-plane-chip-${plane.id}`}
             onPress={() => {
               setMenuOpen(false);
               props.onSelect(plane as Plane);

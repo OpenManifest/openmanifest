@@ -1,6 +1,6 @@
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { List, Menu } from "react-native-paper";
 import { Rig, Query } from "../graphql/schema";
 import { useAppSelector } from "../redux";
@@ -10,17 +10,20 @@ interface IRigSelect {
   userId?: number;
   value?: Rig | null;
   required?: boolean;
+  autoSelectFirst?: boolean;
   onSelect(rig: Rig): void;
 }
 
 
 const QUERY_RIGS = gql`
-  query QueryRigs(
+  query QueryAvailableRigs(
     $dropzoneId: Int!
     $userId: Int!
   ) {
     dropzone(id: $dropzoneId) {
+      id
       dropzoneUser(userId: $userId) {
+        id
         availableRigs {
           id
           make
@@ -41,12 +44,25 @@ export default function RigSelect(props: IRigSelect) {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const globalState = useAppSelector(state => state.global);
 
-  const { data } = useQuery<Query>(QUERY_RIGS, {
-    variables: {
-      dropzoneId: Number(globalState.currentDropzone?.id),
-      userId: Number(props.userId)
+  const [fetchRigs, { data, }] = useLazyQuery<Query>(QUERY_RIGS);
+
+  useEffect(() => {
+    if (props.userId && props.dropzoneId) {
+      fetchRigs({
+        variables: {
+          dropzoneId: Number(globalState.currentDropzone?.id),
+          userId: Number(props.userId)
+        }
+      });
     }
-  });
+  }, [props.userId, props.dropzoneId])
+
+  useEffect(() => {
+    if (!props.value && props.autoSelectFirst && data?.dropzone?.dropzoneUser?.availableRigs?.length) {
+      props.onSelect(data.dropzone.dropzoneUser.availableRigs[0]);
+    }
+  }, [props.autoSelectFirst, JSON.stringify(data?.dropzone?.dropzoneUser?.availableRigs)])
+  
   return (
     <Menu
       onDismiss={() => setMenuOpen(false)}
@@ -67,16 +83,14 @@ export default function RigSelect(props: IRigSelect) {
       }>
       {
         data?.dropzone?.dropzoneUser?.availableRigs?.map((rig) => 
-          <List.Item
+          <Menu.Item
+            key={`rig-select-${rig.id}`}
             onPress={() => {
               setMenuOpen(false);
               props.onSelect(rig);
             }}
             title={
-              `${props.value?.make} ${props.value?.model}`
-            }
-            description={
-              `${props.value?.canopySize} sqft ${!rig.user ? "(DROPZONE RIG)": ""}`
+              `${rig?.make} ${rig?.model} (${rig?.canopySize} sqft) ${!rig.user ? "[DROPZONE RIG]": ""}`
             }
           />
         )

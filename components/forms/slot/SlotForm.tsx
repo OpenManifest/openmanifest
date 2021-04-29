@@ -9,7 +9,6 @@ import JumpTypeSelect from '../../JumpTypeSelect';
 import TicketTypeSelect from '../../TicketTypeSelect';
 import useRestriction from '../../../hooks/useRestriction';
 import RigSelect from '../../RigSelect';
-import ScrollableScreen from '../../ScrollableScreen';
 
 const { actions } = slice;
 export default function SlotForm() {
@@ -63,7 +62,7 @@ export default function SlotForm() {
       </HelperText>
 
       {
-        state?.fields?.ticketType?.value?.extras?.length && (
+        !state?.fields?.ticketType?.value?.extras?.length ? null:  (
           <List.Subheader>
             Ticket addons
           </List.Subheader>
@@ -87,12 +86,12 @@ export default function SlotForm() {
         { state.fields.extras.error || "" }
       </HelperText>
       <Divider />
-      <RigSelect
+      { !state.fields.user ? null : <RigSelect
         value={state.fields.rig.value}
         userId={Number(state.fields.user?.value?.id)}
         dropzoneId={Number(globalState.currentDropzone?.id)}
         onSelect={(value) => dispatch(actions.setField(["jumpType", value]))}
-      />
+      />}
       <HelperText type={!!state.fields.rig.error ? "error" : "info"}>
         { state.fields.rig.error || "" }
       </HelperText>
@@ -110,6 +109,31 @@ export default function SlotForm() {
       <HelperText type={!!state.fields.exitWeight.error ? "error" : "info"}>
         { state.fields.exitWeight.error || "" }
       </HelperText>
+
+      {
+        !state.fields.ticketType.value?.isTandem ? null : (
+          <>
+            <List.Subheader>Passenger</List.Subheader>
+            <TextInput
+              style={styles.field}
+              mode="outlined"
+              label="Passenger name"
+              error={!!state.fields.passengerName.error}
+              value={state.fields.passengerName?.value?.toString() || ""}
+              onChangeText={(newValue) => dispatch(actions.setField(["passengerName", newValue]))}
+            />
+            
+            <TextInput
+              style={styles.field}
+              mode="outlined"
+              label="Passenger exit weight"
+              error={!!state.fields.passengerExitWeight.error}
+              value={state.fields.passengerExitWeight.value?.toString() || ""}
+              onChangeText={(newValue) => dispatch(actions.setField(["passengerExitWeight", Number(newValue)]))}
+            />
+          </>
+        )
+      }
     </>
   );
 }

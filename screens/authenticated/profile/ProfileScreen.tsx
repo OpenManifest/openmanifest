@@ -3,17 +3,18 @@ import { useNavigation, useRoute } from '@react-navigation/core';
 import { useQuery } from '@apollo/client';
 import { successColor, warningColor } from "../../../constants/Colors";
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Button, Card, DataTable, FAB, IconButton, List, ProgressBar } from 'react-native-paper';
+import { StyleSheet, Text } from 'react-native';
+import { Button, Card, DataTable, FAB, IconButton, List, ProgressBar, Title } from 'react-native-paper';
 import format from "date-fns/format";
 import gql from 'graphql-tag';
 
 
 import RigDialog from '../../../components/dialogs/RigDialog';
-import { dropzoneUserForm, globalActions, rigForm, useAppDispatch, useAppSelector } from '../../../redux';
+import { creditsForm, dropzoneUserForm, globalActions, rigForm, useAppDispatch, useAppSelector } from '../../../redux';
 import { Query } from '../../../graphql/schema';
 import ScrollableScreen from '../../../components/ScrollableScreen';
 import DropzoneUserDialog from '../../../components/dialogs/DropzoneUserDialog';
+import CreditsDialog from '../../../components/dialogs/CreditsDialog';
 import useRestriction from '../../../hooks/useRestriction';
 
 
@@ -36,6 +37,19 @@ const QUERY_DROPZONE_USER = gql`
           isOk
           rig {
             id
+          }
+        }
+
+
+        transactions {
+          edges {
+            node {
+              id
+              status
+              message
+              amount
+              createdAt
+            }
           }
         }
         user {
@@ -69,6 +83,7 @@ export default function ProfileScreen() {
   const state = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
+  const [creditsDialogOpen, setCreditsDialogOpen] = React.useState(false);
   const [rigDialogOpen, setRigDialogOpen] = React.useState(false);
   const [dropzoneUserDialogOpen, setDropzoneUserDialogOpen] = React.useState(false);
   const route = useRoute<{ key: string, name: string, params: { userId: string }}>();
@@ -131,50 +146,6 @@ export default function ProfileScreen() {
                 </Button>
               </Card.Actions>
             )}
-        </Card>
-        <Card elevation={3} style={styles.card}>
-          <Card.Title title={state.currentDropzone?.name} />
-          <Card.Content>
-            <List.Item
-              title="Role"
-              description={data?.dropzone?.dropzoneUser?.role?.name}
-              left={() => <List.Icon icon="lock" />}
-            />
-            <List.Item
-              title="Credits"
-              description={data?.dropzone?.dropzoneUser?.credits}
-              left={() => <List.Icon icon="cash-multiple" />}
-            />
-            <List.Item
-              title="Membership"
-              description={
-                !data?.dropzone?.dropzoneUser?.expiresAt ?
-                  <Text>Not a member</Text>
-                : format((data?.dropzone?.dropzoneUser?.expiresAt || 0) * 1000, "yyyy/MM/dd")
-              }
-              left={() =>
-                <List.Icon
-                  icon="card-account-details"
-                  color={
-                    data?.dropzone?.dropzoneUser?.expiresAt && (
-                      data?.dropzone?.dropzoneUser?.expiresAt * 1000 > new Date().getTime()
-                    ) ? undefined : "#B00020"}
-                />
-              }
-
-            />
-          </Card.Content>
-          <Card.Actions style={{ justifyContent: "flex-end"}}>
-            <Button
-              icon="pencil"
-              onPress={() => {
-                dispatch(dropzoneUserForm.setOriginal(data?.dropzone?.dropzoneUser!));
-                setDropzoneUserDialogOpen(true);
-              }}
-            >
-              <Text>Edit</Text>
-            </Button>
-          </Card.Actions>
         </Card>
 
         <Card elevation={3} style={styles.card}>
@@ -256,6 +227,94 @@ export default function ProfileScreen() {
           )}
         </Card>
 
+        <Card elevation={3} style={styles.card}>
+          <Card.Title title={state.currentDropzone?.name} />
+          <Card.Content>
+            <List.Item
+              title="Role"
+              description={data?.dropzone?.dropzoneUser?.role?.name}
+              left={() => <List.Icon icon="lock" />}
+            />
+            <List.Item
+              title="Membership"
+              description={
+                !data?.dropzone?.dropzoneUser?.expiresAt ?
+                  <Text>Not a member</Text>
+                : format((data?.dropzone?.dropzoneUser?.expiresAt || 0) * 1000, "yyyy/MM/dd")
+              }
+              left={() =>
+                <List.Icon
+                  icon="card-account-details"
+                  color={
+                    data?.dropzone?.dropzoneUser?.expiresAt && (
+                      data?.dropzone?.dropzoneUser?.expiresAt * 1000 > new Date().getTime()
+                    ) ? undefined : "#B00020"}
+                />
+              }
+
+            />
+          </Card.Content>
+          <Card.Actions style={{ justifyContent: "flex-end"}}>
+            <Button
+              icon="pencil"
+              onPress={() => {
+                dispatch(dropzoneUserForm.setOriginal(data?.dropzone?.dropzoneUser!));
+                setDropzoneUserDialogOpen(true);
+              }}
+            >
+              <Text>Edit</Text>
+            </Button>
+          </Card.Actions>
+        </Card>
+
+        <Card elevation={3} style={styles.card}>
+          <Card.Actions style={{ justifyContent: "space-between"}}>
+            <Title>{`Balance: $${data?.dropzone?.dropzoneUser?.credits}`}</Title>
+            <Button
+              icon="pencil"
+              onPress={() => {
+                if (data?.dropzone?.dropzoneUser) {
+                  dispatch(creditsForm.setOriginal(data!.dropzone!.dropzoneUser!));
+                  setCreditsDialogOpen(true);
+                }
+              }}
+            >
+              <Text>New transaction</Text>
+            </Button>
+          </Card.Actions>
+          <Card.Content>
+            <DataTable>
+              <DataTable.Header>
+                <DataTable.Title>Time</DataTable.Title>
+                <DataTable.Title>Type</DataTable.Title>
+                <DataTable.Title>Message</DataTable.Title>
+                <DataTable.Title numeric>Amount</DataTable.Title>
+              </DataTable.Header>
+              {
+                data?.dropzone?.dropzoneUser?.transactions?.edges?.map((edge) => (
+                  <DataTable.Row key={`transaction-${edge?.node?.id}`}>
+                    <DataTable.Cell>
+                      <Text style={{ fontSize: 12, fontStyle: "italic", color: "#999999" }}>{!edge?.node?.createdAt ? null : format(edge?.node?.createdAt * 1000, "yyyy/MM/dd hh:mm")}</Text>
+                    </DataTable.Cell>
+                    <DataTable.Cell>
+                      <Text style={{ fontSize: 12, fontStyle: "italic", color: "#999999" }}>{edge?.node?.status}</Text>
+                    </DataTable.Cell>
+                    <DataTable.Cell>
+                      {edge?.node?.message}
+                    </DataTable.Cell>
+                    <DataTable.Cell numeric>
+                      {edge?.node?.amount}
+                    </DataTable.Cell>
+                    
+                    
+                  </DataTable.Row>
+                ))
+              }
+            </DataTable>
+            
+          </Card.Content>
+        </Card>
+
         { data?.dropzone?.dropzoneUser?.id === state.currentUser?.id && (
           <Button color="#B00020" onPress={() => dispatch(globalActions.logout())}>
             <Text>Log out</Text>
@@ -275,6 +334,12 @@ export default function ProfileScreen() {
         onClose={() => setDropzoneUserDialogOpen(false)}
         onSuccess={() => setDropzoneUserDialogOpen(false)}
         open={dropzoneUserDialogOpen}
+      />
+
+      <CreditsDialog
+        onClose={() => setCreditsDialogOpen(false)}
+        onSuccess={() => setCreditsDialogOpen(false)}
+        open={creditsDialogOpen}
       />
     </>
   );

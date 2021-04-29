@@ -58,7 +58,8 @@ export default function LicenseSelect(props: ILicenseSelect) {
       }>
       {
         data?.licenses?.map((license) => 
-          <List.Item
+          <Menu.Item
+            key={`license-select-${license.id}`}
             onPress={() => {
               setMenuOpen(false);
               props.onSelect(license);

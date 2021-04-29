@@ -38,7 +38,8 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
       }>
       {
         props.slots?.map((slot) => 
-          <List.Item
+          <Menu.Item
+            key={`lm-chip-${slot.id}`}
             onPress={() => {
               setMenuOpen(false);
               props.onSelect(slot.user as User);

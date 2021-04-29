@@ -18,6 +18,8 @@ const QUERY_TICKET_TYPES = gql`
     ticketTypes(allowManifestingSelf: $allowManifestingSelf, dropzoneId: $dropzoneId) {
       id
       name
+      isTandem
+      cost
 
       extras {
         id
@@ -38,6 +40,8 @@ export default function TicketTypeSelect(props: ITicketTypeSelect) {
       allowManifestingSelf: props.allowManifestingSelf,
     }
   });
+
+  
   return (
     <>
       <List.Subheader>
@@ -59,7 +63,8 @@ export default function TicketTypeSelect(props: ITicketTypeSelect) {
         }>
         {
           data?.ticketTypes?.map((ticketType) => 
-            <List.Item
+            <Menu.Item
+              key={`ticket-type-select-${ticketType.id}`}
               onPress={() => {
                 setMenuOpen(false);
                 props.onSelect(ticketType);
