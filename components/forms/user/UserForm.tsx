@@ -98,29 +98,29 @@ export default function SlotForm() {
       <Divider />
 
       <View style={{ width: "100%"}}>
-      <FederationSelect
-        value={state?.fields?.license?.value?.federation || state.federation.value}
-        onSelect={(value) => dispatch(actions.setFederation(value))}
-        required
-      />
+        <FederationSelect
+          value={state?.fields?.license?.value?.federation || state.federation.value}
+          onSelect={(value) => dispatch(actions.setFederation(value))}
+          required
+        />
 
-      <HelperText type={!!state.federation.error ? "error" : "info"}>
-        { state.federation.error || "" }
-      </HelperText>
+        <HelperText type={!!state.federation.error ? "error" : "info"}>
+          { state.federation.error || "" }
+        </HelperText>
 
-      { (state?.fields?.license?.value?.federation?.id || state?.federation?.value?.id) && (
-        <>
-          <LicenseSelect
-            value={state.fields.license.value}
-            federationId={Number(state?.fields?.license?.value?.federation?.id || state.federation?.value?.id)}
-            onSelect={(value) => dispatch(actions.setField(["license", value]))}
-            required
-          />
-          <HelperText type={!!state.fields.license.error ? "error" : "info"}>
-            { state.fields.license.error || "" }
-          </HelperText>
-        </>
-      )}
+        { (state?.fields?.license?.value?.federation?.id || state?.federation?.value?.id) && (
+          <>
+            <LicenseSelect
+              value={state.fields.license.value}
+              federationId={Number(state?.fields?.license?.value?.federation?.id || state.federation?.value?.id)}
+              onSelect={(value) => dispatch(actions.setField(["license", value]))}
+              required
+            />
+            <HelperText type={!!state.fields.license.error ? "error" : "info"}>
+              { state.fields.license.error || "" }
+            </HelperText>
+          </>
+        )}
       </View>
     </>
   );

@@ -4,7 +4,6 @@ import { DropzoneUser } from "../../../graphql/schema";
 
 type Fields = Pick<
   DropzoneUser,
-  | "credits"
   | "role"
   | "expiresAt"
 >;
@@ -24,10 +23,6 @@ const initialState: IDropzoneUserEditState = {
   fields: {
     role: {
       value: null,
-      error: null,
-    },
-    credits: {
-      value: 0,
       error: null,
     },
     expiresAt: {

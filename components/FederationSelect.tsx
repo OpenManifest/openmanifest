@@ -52,7 +52,7 @@ export default function FederationSelect(props: IFederationSelect) {
       }>
       {
         data?.federations?.map((federation) => 
-          <List.Item
+          <Menu.Item
             onPress={() => {
               setMenuOpen(false);
               props.onSelect(federation);
@@ -60,6 +60,7 @@ export default function FederationSelect(props: IFederationSelect) {
             title={
               federation.name || "-"
             }
+            key={`federation-select-${federation.id}`}
           />
         )
       }

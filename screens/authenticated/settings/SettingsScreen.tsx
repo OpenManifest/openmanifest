@@ -21,21 +21,21 @@ export default function SettingsScreen() {
           title="Configuration"
           onPress={() => navigation.navigate("UpdateDropzoneScreen", { dropzone: state.currentDropzone })}
           left={() => <List.Icon color="#000" icon="information-outline" />}
+          description="Set up name, branding and other settings"
         />
         <List.Item
-          title="Planes"
+          title="Aircrafts"
           onPress={() => navigation.navigate("PlanesScreen")}
           left={() => <List.Icon color="#000" icon="airplane" />}
         />
         <List.Item
           title="Rigs"
           left={() => <List.Icon color="#000" icon="parachute" />}
-          description="Coming soon"
+          description="Dropzone rigs, e.g tandems and student rigs"
         />
         <List.Item
-          title="Rig Inspection"
+          title="Rig Inspection Template"
           left={() => <List.Icon color="#000" icon="check" />}
-          description="Manage inspection checklist"
           onPress={() => navigation.navigate("RigInspectionTemplateScreen")}
         />
       </List.Section>
@@ -45,11 +45,13 @@ export default function SettingsScreen() {
           title="Ticket types"
           onPress={() => navigation.navigate("TicketTypesScreen")}
           left={() => <List.Icon color="#000" icon="ticket" />}
+          description="Manage ticket prices and accessibility"
           />
         <List.Item
           title="Ticket add-ons"
           onPress={() => navigation.navigate("ExtrasScreen")}
           left={() => <List.Icon color="#000" icon="plus" />}
+          description="Supplementary tickets like coach, camera, night jumpi"
         />
       </List.Section>
     </View>

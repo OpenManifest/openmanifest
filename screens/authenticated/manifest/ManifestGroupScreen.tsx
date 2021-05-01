@@ -1,41 +1,34 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { useCallback, useEffect } from "react";
 import { ScrollView } from "react-native";
-import { Button, Dialog, Portal, ProgressBar } from "react-native-paper";
-import { Load, Mutation, User } from "../../graphql/schema";
-import usePalette from "../../hooks/usePalette";
-import { slotForm, snackbarActions, useAppDispatch, useAppSelector } from "../../redux";
-import SlotForm from "../forms/slot/SlotForm";
+import { Button, Card, ProgressBar } from "react-native-paper";
+import ScrollableScreen from "../../../components/ScrollableScreen";
+import { DropzoneUser, Mutation, Slot } from "../../../graphql/schema";
+import { slotForm, slotsMultipleForm, snackbarActions, useAppDispatch, useAppSelector } from "../../../redux";
+import MultipleSlotForm from "../../../components/forms/slots_multiple/MultipleSlotForm";
+import { useNavigation, useRoute } from "@react-navigation/core";
 interface IManifestUserDialog {
   open?: boolean;
   onClose(): void;
   onSuccess(): void;
 }
 
-const MUTATION_CREATE_SLOT = gql`
+const MUTATION_CREATE_SLOTS = gql`
   mutation CreateSlot(
     $jumpTypeId: Int
     $extraIds: [Int!]
     $loadId: Int
-    $rigId: Int
     $ticketTypeId: Int
-    $userId: Int
-    $exitWeight: Float
-    $passengerName: String
-    $passengerExitWeight: Float
+    $userGroup: [SlotUser!]!,
   ) {
-    createSlot(
+    createSlots(
       input: {
         attributes: {
           jumpTypeId: $jumpTypeId
           extraIds: $extraIds
           loadId: $loadId
-          rigId: $rigId
           ticketTypeId: $ticketTypeId
-          userId: $userId
-          exitWeight: $exitWeight
-          passengerExitWeight: $passengerExitWeight
-          passengerName: $passengerName
+          userGroup: $userGroup,
         }
       }
     ) {
@@ -44,8 +37,9 @@ const MUTATION_CREATE_SLOT = gql`
         field
         message
       }
-      slot {
+      slots {
         id
+        groupNumber
         jumpType {
           id
           name
@@ -58,6 +52,7 @@ const MUTATION_CREATE_SLOT = gql`
         load {
           id
           name
+          loadNumber
           createdAt
           dispatchAt
           hasLanded
@@ -119,11 +114,13 @@ const MUTATION_CREATE_SLOT = gql`
   }
 `;
 
-export default function ManifestUserDialog(props: IManifestUserDialog) {
+export default function ManifestGroupScreen(props: IManifestUserDialog) {
   const dispatch = useAppDispatch();
-  const state = useAppSelector(state => state.slotForm);
+  const state = useAppSelector(state => state.slotsMultipleForm);
   const globalState = useAppSelector(state => state.global);
-  const [mutationCreateSlot, mutationData] = useMutation<Mutation>(MUTATION_CREATE_SLOT);
+  const [mutationCreateSlots, mutationData] = useMutation<Mutation>(MUTATION_CREATE_SLOTS);
+  const navigation = useNavigation();
+  
 
   const validate = useCallback(() => {
     let hasErrors = false;
@@ -143,27 +140,19 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
 
     return !hasErrors;
   }, [JSON.stringify(state.fields)]);
+  
   const onManifest = useCallback(async () => {
 
     if (!validate()) {
       return;
     }
     try {
-      const result = await mutationCreateSlot({
+      const result = await mutationCreateSlots({
         variables: {
           jumpTypeId: Number(state.fields.jumpType.value?.id),
           extraIds: state.fields.extras?.value?.map(({ id }) => Number(id)),
           loadId: Number(state.fields.load.value?.id),
-          rigId: !state.fields.rig.value?.id ? null : Number(state.fields.rig.value?.id),
-          ticketTypeId: Number(state.fields.ticketType?.value?.id),
-          userId: Number(state.fields.user?.value?.id),
-          exitWeight: state.fields.exitWeight.value,
-          ...!state.fields.ticketType.value?.isTandem
-            ? {}
-            : {
-                passengerName: state.fields.passengerName?.value,
-                passengerExitWeight: state.fields.passengerExitWeight?.value,
-              }
+          userGroup: state.fields.users.value,
         }
       });
 
@@ -187,44 +176,31 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
             return dispatch(slotForm.setFieldError(["exitWeight", message]));
         }
       });
-      if (result?.data?.createSlot?.errors?.length) {
-        return dispatch(snackbarActions.showSnackbar({ message: result?.data?.createSlot?.errors[0], variant: "error" }));
+      if (result?.data?.createSlots?.errors?.length) {
+        return dispatch(snackbarActions.showSnackbar({ message: result?.data?.createSlots?.errors[0], variant: "error" }));
       }
-      if (!result.data?.createSlot?.fieldErrors?.length) {
-        props.onSuccess();
+      if (!result.data?.createSlots?.fieldErrors?.length) {
+        navigation.navigate("Manifest", { screen: "DropzoneScreen" });
       }
 
     } catch(error) {
       dispatch(snackbarActions.showSnackbar({ message: error.message, variant: "error" }));
     } 
-  }, [JSON.stringify(state.fields), mutationCreateSlot, props.onSuccess])
+  }, [JSON.stringify(state.fields), mutationCreateSlots, props.onSuccess])
   
   return (
-    <Portal>
-      <Dialog visible={!!props.open} style={{ maxHeight: 500 }}>
-        <ProgressBar indeterminate visible={mutationData.loading} color={globalState.theme.colors.accent} />
-        <Dialog.Title>
-          {`Manifest ${state?.fields?.user?.value?.name} on ${state.fields.load?.value?.name}`}
-        </Dialog.Title>
-        <Dialog.ScrollArea>
-          <ScrollView>
-            <SlotForm />
-          </ScrollView>
-        </Dialog.ScrollArea>
-        <Dialog.Actions style={{ justifyContent: "flex-end"}}>
-          <Button
-            onPress={() => {
-              dispatch(slotForm.reset());
-              props.onClose();
-            }}
-          >
-            Cancel
-          </Button>
-          <Button onPress={onManifest}>
-            Manifest
-          </Button>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
+    <ScrollableScreen>
+      <ProgressBar indeterminate visible={mutationData.loading} color={globalState.theme.colors.accent} />
+      <Card.Title title={`Manifest ${state?.fields?.users?.value?.length} jumpers on Load #${state.fields.load?.value?.loadNumber}`} />
+      <MultipleSlotForm />
+      <Button
+        mode="contained"
+        style={{ width: "100%", marginVertical: 16 }}
+        onPress={() => onManifest()}
+        loading={mutationData.loading}
+      >
+        Save
+      </Button>
+  </ScrollableScreen>
   )
 }

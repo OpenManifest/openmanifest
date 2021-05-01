@@ -24,7 +24,6 @@ const QUERY_JUMP_TYPES = gql`
 
 export default function JumpTypeSelect(props: IJumpTypeSelect) {
   const [isMenuOpen, setMenuOpen] = useState(false);
-  const globalState = useAppSelector(state => state.global);
 
   const { data, loading, refetch } = useQuery<Query>(QUERY_JUMP_TYPES, {
     variables: {
@@ -52,7 +51,7 @@ export default function JumpTypeSelect(props: IJumpTypeSelect) {
       }>
       {
         data?.jumpTypes?.map((jumpType) => 
-          <List.Item
+          <Menu.Item
             onPress={() => {
               setMenuOpen(false);
               props.onSelect(jumpType);

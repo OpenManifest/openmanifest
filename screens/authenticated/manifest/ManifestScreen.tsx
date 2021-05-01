@@ -12,7 +12,7 @@ import NoResults from '../../../components/NoResults';
 import { View } from '../../../components/Themed';
 import { Load, Query } from '../../../graphql/schema';
 import useRestriction from '../../../hooks/useRestriction';
-import { globalActions, slotForm, snackbarActions, useAppDispatch, useAppSelector } from '../../../redux';
+import { globalActions, slotForm, slotsMultipleForm, snackbarActions, useAppDispatch, useAppSelector } from '../../../redux';
 import GetStarted from './GetStarted';
 import LoadCard from './LoadCard';
 
@@ -41,6 +41,16 @@ const QUERY_DROPZONE = gql`
         hasReserveInDate
         hasRigInspection
         hasLicense
+
+        transactions {
+          edges {
+            node {
+              id
+              status
+              amount
+            }
+          }
+        }
 
         user {
           id
@@ -73,6 +83,7 @@ const QUERY_DROPZONE = gql`
           node {
             id
             name
+            loadNumber
             isOpen
             maxSlots
             isFull
@@ -209,7 +220,6 @@ export default function ManifestScreen() {
 
   return (
     <>
-    
     <ManifestUserDialog
       open={isDialogOpen}
       onClose={() => setDialogOpen(false)}
@@ -248,6 +258,12 @@ export default function ManifestScreen() {
                                   slotForm.setField(["load", edge.node!])
                                 );
                                 setDialogOpen(true);
+                              }}
+                              onSlotGroupPress={(slots) => {
+                                dispatch(slotsMultipleForm.reset());
+                                dispatch(slotsMultipleForm.setFromSlots(slots));
+                                dispatch(slotsMultipleForm.setField(["load", edge.node!]));
+                                navigation.navigate("ManifestGroupScreen");
                               }}
                               onManifest={() => onManifest(edge.node!)}
                             />

@@ -9,7 +9,11 @@ import { useAppDispatch, useAppSelector, usersActions } from '../../redux';
 import { Rig } from '../../graphql/schema';
 
 export type ISettingsTabParams = {
-  UsersScreen: undefined;
+  UsersScreen: {
+    select?: boolean;
+    loadId: number;
+    onSelect?(): void;
+  };
   RigInspectionScreen: { dropzoneUserId: number, rig: Rig };
   UserProfileScreen: undefined;
 }

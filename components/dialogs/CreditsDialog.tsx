@@ -2,26 +2,28 @@ import { gql, useMutation } from "@apollo/client";
 import React, { useCallback } from "react";
 import { Button, Dialog, Portal, ProgressBar } from "react-native-paper";
 import { Mutation } from "../../graphql/schema";
-import { dropzoneUserForm, snackbarActions, useAppDispatch, useAppSelector } from "../../redux";
-import DropzoneUserForm from "../forms/dropzone_user/DropzoneUserForm";
+import { creditsForm, snackbarActions, useAppDispatch, useAppSelector } from "../../redux";
+import CreditsForm from "../forms/credits/CreditsForm";
 interface IDropzoneUserDialog {
   open?: boolean;
   onClose(): void;
   onSuccess(): void;
 }
 
-const MUTATION_EDIT_DROPZONE_USER = gql`
-  mutation UpdateDropzoneUser(
-    $userRoleId: Int,
-    $expiresAt: Int,
-    $dropzoneUserId: Int
+const MUTATION_CREATE_TRANSACTION = gql`
+  mutation CreatrTransaction(
+    $message: String,
+    $status: String,
+    $amount: Float,
+    $dropzoneUserId: Int,
   ) {
-    updateDropzoneUser(
+    createTransaction(
       input: {
-        id: $dropzoneUserId,
         attributes: {
-          userRoleId: $userRoleId,
-          expiresAt: $expiresAt,
+          amount: $amount,
+          dropzoneUserId: $dropzoneUserId,
+          message: $message,
+          status: $status,
         }
       }
     ) {
@@ -30,18 +32,26 @@ const MUTATION_EDIT_DROPZONE_USER = gql`
         field
         message
       }
-      dropzoneUser {
+      transaction {
         id
-        credits
-        expiresAt
-        role {
-          id
-          name
-        }
+        amount
+        message
 
-        user {
+        dropzoneUser {
           id
-          name
+          credits
+
+          transactions {
+            edges {
+              node {
+                id
+                status
+                amount
+                createdAt
+                message
+              }
+            }
+          }
         }
       }
     }
@@ -50,24 +60,16 @@ const MUTATION_EDIT_DROPZONE_USER = gql`
 
 export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   const dispatch = useAppDispatch();
-  const state = useAppSelector(state => state.dropzoneUserForm);
+  const state = useAppSelector(state => state.creditsForm);
   const globalState = useAppSelector(state => state.global);
-  const [mutationUpdateDropzoneUser, createData] = useMutation<Mutation>(MUTATION_EDIT_DROPZONE_USER);
+  const [mutationCreateTransaction, createData] = useMutation<Mutation>(MUTATION_CREATE_TRANSACTION);
 
   const validate = useCallback(() => {
     let hasErrors = false;
-    
-    if (!state.fields.role.value) {
+    if (!state.fields.amount.value) {
       hasErrors = true;
       dispatch(
-        dropzoneUserForm.setFieldError(["role", "User must have an access level"])
-      );
-    }
-
-    if (!state.fields.expiresAt.value) {
-      hasErrors = true;
-      dispatch(
-        dropzoneUserForm.setFieldError(["expiresAt", "Membership expiry must be set"])
+        creditsForm.setFieldError(["amount", "You must specify an amount"])
       );
     }
 
@@ -80,50 +82,48 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
       return;
     }
     try {
-      const response = await mutationUpdateDropzoneUser({
+      const response = await mutationCreateTransaction({
         variables: {
-          ...state.original?.id ? { id: state.original?.id } : {},
-          userRoleId: Number(state.fields.role.value?.id),
-          expiresAt: state.fields.expiresAt.value,
+          amount: state.fields.amount.value,
+          message: state.fields.message.value,
+          status: state.fields.status.value,
           dropzoneUserId: Number(state.original?.id),
         }
       });
-      const result = response.data?.updateDropzoneUser;
+      const result = state.original?.id ? response.data?.updateRig : response.data?.createRig;
 
       result?.fieldErrors?.map(({ field, message }) => {
         switch (field) {
-          case "user_role":
-            return dispatch(dropzoneUserForm.setFieldError(["role", message]));
-          case "expires_at":
-            return dispatch(dropzoneUserForm.setFieldError(["expiresAt", message]));
+          case "amount":
+            return dispatch(creditsForm.setFieldError(["amount", message]));
+          case "message":
+            return dispatch(creditsForm.setFieldError(["message", message]));
+          case "status":
+            return dispatch(creditsForm.setFieldError(["status", message]));
         }
       });
       if (result?.errors?.length) {
         return dispatch(snackbarActions.showSnackbar({ message: result?.errors[0], variant: "error" }));
       }
       if (!result?.fieldErrors?.length) {
+        dispatch(creditsForm.reset());
         props.onSuccess();
       }
 
     } catch(error) {
       dispatch(snackbarActions.showSnackbar({ message: error.message, variant: "error" }));
     } 
-  }, [JSON.stringify(state.fields), mutationUpdateDropzoneUser, props.onSuccess])
+  }, [JSON.stringify(state.fields), mutationCreateTransaction, props.onSuccess])
   
   return (
     <Portal>
       <Dialog visible={!!props.open}>
         <ProgressBar indeterminate visible={createData.loading} color={globalState.theme.colors.accent} />
-        <Dialog.Title>
-          {`${state?.original?.id ? "Edit" : "New"} dropzone user`}
-        </Dialog.Title>
-        <Dialog.Content>
-          <DropzoneUserForm />
-        </Dialog.Content>
+        <CreditsForm />
         <Dialog.Actions style={{ justifyContent: "flex-end"}}>
           <Button
             onPress={() => {
-              dispatch(dropzoneUserForm.reset());
+              dispatch(creditsForm.reset());
               props.onClose();
             }}
           >

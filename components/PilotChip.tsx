@@ -1,9 +1,8 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import { values } from "lodash";
 import React, { useState } from "react";
 import { Chip, List, Menu } from "react-native-paper";
-import { DropzoneUser, Plane, Query, User } from "../graphql/schema";
+import { Query, User } from "../graphql/schema";
 import useRestriction from "../hooks/useRestriction";
 import { useAppSelector } from "../redux";
 
@@ -75,7 +74,8 @@ export default function PilotChip(props: IPilotChipSelect) {
       }>
       {
         data?.dropzone?.dropzoneUsers?.edges?.map((edge) => 
-          <List.Item
+          <Menu.Item
+            key={`pilot-select-${edge!.node!.id}`}
             onPress={() => {
               setMenuOpen(false);
               props.onSelect(edge?.node?.user as User);

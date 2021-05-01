@@ -26,6 +26,7 @@ const MUTATION_CREATE_TICKET_TYPE = gql`
     $dropzoneId: Int!
     $altitude: Int
     $allowManifestingSelf: Boolean
+    $isTandem: Boolean
   ){
     createTicketType(input: {
       attributes: {
@@ -34,6 +35,7 @@ const MUTATION_CREATE_TICKET_TYPE = gql`
         dropzoneId: $dropzoneId
         altitude: $altitude
         allowManifestingSelf: $allowManifestingSelf
+        isTandem: $isTandem
       }
     }) {
       ticketType {

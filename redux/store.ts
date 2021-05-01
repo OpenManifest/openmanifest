@@ -25,6 +25,8 @@ import dropzoneUserFormSlice from "../components/forms/dropzone_user/slice";
 import rigFormSlice from "../components/forms/rig/slice";
 import rigInspectionFormSlice from "../components/forms/rig_inspection/slice";
 import rigInspectionTemplateSlice from "../components/forms/rig_inspection_template/slice";
+import creditsFormSlice from "../components/forms/credits/slice";
+import slotsMultipleFormSlice from "../components/forms/slots_multiple/slice";
 
 // Re-export actions:
 export const { actions: loginActions } = loginSlice;
@@ -43,6 +45,8 @@ export const { actions: dropzoneUserForm } = dropzoneUserFormSlice;
 export const { actions: rigForm } = rigFormSlice;
 export const { actions: rigInspectionForm } = rigInspectionFormSlice;
 export const { actions: rigInspectionTemplateForm } = rigInspectionTemplateSlice;
+export const { actions: creditsForm } = creditsFormSlice;
+export const { actions: slotsMultipleForm } = slotsMultipleFormSlice;
 
 const persistConfig = {
   key: 'root',
@@ -62,12 +66,14 @@ const reducer = persistCombineReducers(persistConfig, {
     extraForm: extraFormSlice.reducer,
     loadForm: loadFormSlice.reducer,
     slotForm: slotFormSlice.reducer,
+    slotsMultipleForm: slotsMultipleFormSlice.reducer,
     userForm: userFormSlice.reducer,
     dropzoneUserForm: dropzoneUserFormSlice.reducer,
     rigForm: rigFormSlice.reducer,
     rigInspectionForm: rigInspectionFormSlice.reducer,
     rigInspectionTemplate: rigInspectionTemplateSlice.reducer,
     usersScreen: usersSlice.reducer,
+    creditsForm: creditsFormSlice.reducer,
   });
 
 export const store = configureStore({
