@@ -40,6 +40,18 @@ const MUTATION_CREATE_TRANSACTION = gql`
         dropzoneUser {
           id
           credits
+
+          transactions {
+            edges {
+              node {
+                id
+                status
+                amount
+                createdAt
+                message
+              }
+            }
+          }
         }
       }
     }

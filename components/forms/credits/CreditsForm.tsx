@@ -39,8 +39,7 @@ export default function CreditsForm() {
             label="Message"
             error={!!state.fields.message.error}
             value={state.fields.message.value?.toString() || ""}
-            keyboardType="number-pad"
-            onChangeText={(newValue) => dispatch(actions.setField(["message", newValue]))}
+            onChangeText={(newValue: string) => dispatch(actions.setField(["message", newValue]))}
           />
           <HelperText type={!!state.fields.message.error ? "error" : "info"}>
             { state.fields.message.error || "" }
@@ -56,7 +55,7 @@ export default function CreditsForm() {
                     error={!!state.fields.amount.error}
                     value={state.fields.amount.value?.toString() || ""}
                     keyboardType="number-pad"
-                    onChangeText={(newValue) => dispatch(actions.setField(["amount", Number(newValue)]))}
+                    onChangeText={(newValue: string) => dispatch(actions.setField(["amount", Number(newValue)]))}
                   />
                   <HelperText type={!!state.fields.amount.error ? "error" : "info"}>
                     { state.fields.amount.error || "" }
@@ -89,7 +88,7 @@ export default function CreditsForm() {
                     error={!!state.fields.amount.error}
                     value={state.fields.amount.value?.toString() || ""}
                     keyboardType="number-pad"
-                    onChangeText={(newValue) => dispatch(actions.setField(["amount", Number(newValue)]))}
+                    onChangeText={(newValue: string) => dispatch(actions.setField(["amount", Number(newValue)]))}
                   />
                   <HelperText type={!!state.fields.amount.error ? "error" : "info"}>
                     { state.fields.amount.error || "" }
