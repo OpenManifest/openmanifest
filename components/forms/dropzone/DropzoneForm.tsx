@@ -145,6 +145,7 @@ export default function DropzoneForm() {
           {
             data?.federations?.map((federation) =>
               <Menu.Item
+                key={`federation-select-${federation.id}`}
                 title={federation.name}
                 onPress={() => {
                   dispatch(actions.setField(["federation", federation]));

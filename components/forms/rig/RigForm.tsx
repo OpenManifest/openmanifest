@@ -6,12 +6,20 @@ import { useAppSelector, useAppDispatch } from '../../../redux';
 
 import slice from "./slice";
 import DatePicker from '../../DatePicker';
+import ChipSelect from '../../ChipSelect';
+import useRestriction from '../../../hooks/useRestriction';
 
 const { actions } = slice;
 
-export default function RigForm() {
+
+interface IRigForm {
+  showTypeSelect?: boolean;
+}
+export default function RigForm(props: IRigForm) {
   const state = useAppSelector(state => state.rigForm);
   const dispatch = useAppDispatch();
+
+  const canCreateRigs = useRestriction("createRig");
 
   return ( 
     <View>
@@ -50,6 +58,18 @@ export default function RigForm() {
       <HelperText type={!!state.fields.serial.error ? "error" : "info"}>
         { state.fields.serial.error || "" }
       </HelperText>
+
+      { !props.showTypeSelect ? null : (
+        <ChipSelect
+          items={["student", "sport", "tandem"]}
+          renderItemLabel={(item) => item}
+          isDisabled={(item) => !canCreateRigs ? item !== "sport" : false}
+          selected={[state.fields.rigType?.value || "sport"]}
+          onChangeSelected={([rigType]) =>
+            dispatch(actions.setField(["rigType", rigType]))
+          }
+        />
+      )}
 
       <TextInput
         style={styles.field}

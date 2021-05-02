@@ -19,6 +19,7 @@ const MUTATION_CREATE_RIG = gql`
     $make: String,
     $model: String,
     $serial: String,
+    $rigType: String,
     $canopySize: Int,
     $repackExpiresAt: Int
     $userId: Int
@@ -34,6 +35,7 @@ const MUTATION_CREATE_RIG = gql`
           dropzoneId: $dropzoneId
           userId: $userId
           canopySize: $canopySize
+          rigType: $rigType
         }
       }
     ) {
@@ -51,6 +53,7 @@ const MUTATION_CREATE_RIG = gql`
         repackExpiresAt
         packValue
         maintainedAt
+        rigType
 
         user {
           id
@@ -76,6 +79,7 @@ const MUTATION_UPDATE_RIG = gql`
     $make: String,
     $model: String,
     $serial: String,
+    $rigType: String,
     $canopySize: Int,
     $repackExpiresAt: Int
     $userId: Int
@@ -92,6 +96,7 @@ const MUTATION_UPDATE_RIG = gql`
           dropzoneId: $dropzoneId
           userId: $userId
           canopySize: $canopySize
+          rigType: $rigType
         }
       }
     ) {
@@ -109,6 +114,7 @@ const MUTATION_UPDATE_RIG = gql`
         repackExpiresAt
         packValue
         maintainedAt
+        rigType
 
         user {
           id
@@ -189,6 +195,7 @@ export default function RigDialog(props: IManifestUserDialog) {
           model: state.fields.model.value,
           serial: state.fields.serial.value,
           canopySize: state.fields.canopySize.value,
+          rigType: state.fields.rigType.value,
           repackExpiresAt: state.fields.repackExpiresAt.value,
           userId: props.userId ? Number(props.userId) : null,
           dropzoneId: props.dropzoneId ? Number(props.dropzoneId) : null,
@@ -208,6 +215,8 @@ export default function RigDialog(props: IManifestUserDialog) {
             return dispatch(rigForm.setFieldError(["canopySize", message]));
           case "repack_expires_at":
             return dispatch(rigForm.setFieldError(["repackExpiresAt", message]));
+          case "rig_type":
+            return dispatch(rigForm.setFieldError(["rigType", message]));
         }
       });
       if (result?.errors?.length) {
@@ -230,7 +239,7 @@ export default function RigDialog(props: IManifestUserDialog) {
           {`${state?.original?.id ? "Edit" : "New"} rig`}
         </Dialog.Title>
         <Dialog.Content pointerEvents="box-none">
-          <RigForm />
+          <RigForm showTypeSelect={!!props.dropzoneId} />
         </Dialog.Content>
         <Dialog.Actions style={{ justifyContent: "flex-end"}}>
           <Button

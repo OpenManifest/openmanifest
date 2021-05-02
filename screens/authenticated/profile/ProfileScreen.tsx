@@ -17,7 +17,7 @@ import { creditsForm, dropzoneUserForm, rigForm, useAppDispatch, useAppSelector 
 import { Mutation, Query } from '../../../graphql/schema';
 import ScrollableScreen from '../../../components/ScrollableScreen';
 import DropzoneUserDialog from '../../../components/dialogs/DropzoneUserDialog';
-import CreditsDialog from '../../../components/dialogs/CreditsDialog';
+import CreditsSheet from '../../../components/dialogs/CreditsDialog/CreditsSheet';
 
 import TableCard from "./UserInfo/TableCard";
 import Header from "./UserInfo/Header";
@@ -252,7 +252,12 @@ export default function ProfileScreen() {
         <Divider style={styles.divider} />
         <InfoGrid
           items={[
-            { title: "Funds", value: `$${data?.dropzone?.dropzoneUser?.credits || 0}`},
+            {
+              title: "Funds",
+              value: `$${data?.dropzone?.dropzoneUser?.credits || 0}`,
+              onPress: () =>
+                setCreditsDialogOpen(true)
+            },
             { title: "License", value: `${data?.dropzone?.dropzoneUser?.user?.license?.name || "-"}`},
             { title: "Exit weight", value: Math.round(Number(data?.dropzone?.dropzoneUser?.user?.exitWeight)).toString() || "-" }
           ]}
@@ -381,7 +386,7 @@ export default function ProfileScreen() {
       open={dropzoneUserDialogOpen}
     />
 
-    <CreditsDialog
+    <CreditsSheet
       onClose={() => setCreditsDialogOpen(false)}
       onSuccess={() => setCreditsDialogOpen(false)}
       open={creditsDialogOpen}

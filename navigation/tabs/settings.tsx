@@ -9,6 +9,9 @@ const UpdatePlaneScreen = React.lazy(() => import('../../screens/authenticated/p
 const UpdateDropzoneScreen = React.lazy(() => import('../../screens/authenticated/dropzones/UpdateDropzoneScreen'));
 const PlanesScreen = React.lazy(() => import('../../screens/authenticated/planes/PlanesScreen'));
 const RigInspectionTemplateScreen = React.lazy(() => import('../../screens/authenticated/settings/RigInspectionTemplateScreen'));
+const DropzoneRigsScreen = React.lazy(() => import('../../screens/authenticated/settings/DropzoneRigsScreen'));
+const DropzonePermissionScreen = React.lazy(() => import('../../screens/authenticated/settings/DropzonePermissionScreen'));
+const DropzoneMasterLogScreen = React.lazy(() => import('../../screens/authenticated/settings/DropzoneMasterLogScreen'));
 
 const CreateTicketTypeScreen = React.lazy(() => import('../../screens/authenticated/ticket_types/CreateTicketTypeScreen'));
 const UpdateTicketTypeScreen = React.lazy(() => import('../../screens/authenticated/ticket_types/UpdateTicketTypeScreen'));
@@ -20,6 +23,7 @@ const ExtrasScreen = React.lazy(() => import('../../screens/authenticated/extras
 
 import AppBar from '../AppBar';
 import { Dropzone } from '../../graphql/schema';
+import DatePicker from '../../components/DatePicker';
 
 
 export type ISettingsTabParams = {
@@ -38,6 +42,9 @@ export type ISettingsTabParams = {
   CreateExtraScreen: undefined;
   ExtrasScreen: undefined;
   RigInspectionTemplateScreen: undefined;
+  DropzoneRigsScreen: undefined;
+  DropzonePermissionScreen: undefined;
+  DropzoneMasterLogScreen: undefined;
 }
 
 const Settings = createStackNavigator<ISettingsTabParams>();
@@ -66,6 +73,13 @@ export default function SettingsTab() {
       <Settings.Screen name="UpdateExtraScreen" component={UpdateExtraScreen} options={{ title: "Update ticket add-on" }} />
       <Settings.Screen name="ExtrasScreen" component={ExtrasScreen} options={{ title: "Ticket add-ons" }} />
       <Settings.Screen name="RigInspectionTemplateScreen" component={RigInspectionTemplateScreen} options={{ title: "Rig Inspection Form" }} />
+      <Settings.Screen name="DropzoneRigsScreen" component={DropzoneRigsScreen} options={{ title: "Dropzone rigs" }} />
+      <Settings.Screen name="DropzonePermissionScreen" component={DropzonePermissionScreen} options={{ title: "Permissions" }} />
+      <Settings.Screen
+        name="DropzoneMasterLogScreen"
+        component={DropzoneMasterLogScreen}
+        options={{ title: "Master log"}}
+        />
     </Settings.Navigator>
   );
 }

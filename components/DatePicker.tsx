@@ -5,9 +5,10 @@ import { List, Modal } from 'react-native-paper';
 import { DatePickerModal, DatePickerModalContent } from 'react-native-paper-dates/src';
 
 interface IDatepicker {
-  label: string;
+  label?: string;
   timestamp: number;
   disabled?: boolean;
+  color?: string;
   onChange(timestamp: number): void;
 }
 export default function DatePicker(props: IDatepicker) {
@@ -37,7 +38,7 @@ export default function DatePicker(props: IDatepicker) {
             format(props.timestamp * 1000, "yyyy/MM/dd") :
             "No date selected"
         }
-        left={() => <List.Icon icon="calendar" />}
+        left={() => <List.Icon color={props.color} icon="calendar" />}
         onPress={() => setOpen(true)}
       />
 

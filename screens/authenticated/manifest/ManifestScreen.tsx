@@ -3,7 +3,7 @@ import { useIsFocused, useNavigation } from '@react-navigation/core';
 import { startOfDay } from 'date-fns';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { Dimensions, RefreshControl, StyleSheet } from 'react-native';
+import { Dimensions, RefreshControl, StyleSheet, useWindowDimensions } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { FAB, ProgressBar } from 'react-native-paper';
 import ManifestUserDialog from '../../../components/dialogs/ManifestUserDialog';
@@ -218,6 +218,11 @@ export default function ManifestScreen() {
     setDialogOpen(true);
   }, [JSON.stringify(data?.dropzone?.currentUser)]);
 
+
+  const { width } = useWindowDimensions(); 
+
+  const numColumns = Math.ceil(width / 400) || 1;
+
   return (
     <>
     <ManifestUserDialog
@@ -239,9 +244,10 @@ export default function ManifestScreen() {
                         subtitle="How's the weather?"
                       />
                     : <FlatList
+                        key={`loads-columns-${numColumns}`}
                         style={{ flex: 1, height: Dimensions.get("window").height }}
                         contentContainerStyle={{ flexGrow: 1 }}
-                        numColumns={1}
+                        numColumns={numColumns}
                         data={data?.dropzone?.loads?.edges || []}
                         refreshing={loading}
                         onRefresh={refetch}

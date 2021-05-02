@@ -84,9 +84,13 @@ function AppBar({ navigation, previous, scene, hideWarnings }: IAppBarProps) {
       {previous ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
       <Appbar.Content title={scene.descriptor.options.title} titleStyle={{ fontWeight: "bold" }} />
 
-      <Chip mode="outlined">
-        {`$${data?.dropzone?.currentUser?.credits || 0}`}
-      </Chip>
+      { scene.descriptor.options.headerRight
+        ? scene.descriptor.options.headerRight()
+        : (
+          <Chip mode="outlined">
+            {`$${data?.dropzone?.currentUser?.credits || 0}`}
+          </Chip>
+        )}
       <Menu
         onDismiss={() => setContextMenuOpen(false)}
         visible={contextMenuOpen}

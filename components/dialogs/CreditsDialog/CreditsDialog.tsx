@@ -1,9 +1,9 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { useCallback } from "react";
 import { Button, Dialog, Portal, ProgressBar } from "react-native-paper";
-import { Mutation } from "../../graphql/schema";
-import { creditsForm, snackbarActions, useAppDispatch, useAppSelector } from "../../redux";
-import CreditsForm from "../forms/credits/CreditsForm";
+import { Mutation } from "../../../graphql/schema";
+import { creditsForm, snackbarActions, useAppDispatch, useAppSelector } from "../../../redux";
+import CreditsForm from "../../forms/credits/CreditsForm";
 interface IDropzoneUserDialog {
   open?: boolean;
   onClose(): void;

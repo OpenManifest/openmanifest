@@ -24,6 +24,11 @@ export default function SettingsScreen() {
           description="Set up name, branding and other settings"
         />
         <List.Item
+          title="Permissions"
+          left={() => <List.Icon color="#000" icon="lock" />}
+          onPress={() => navigation.navigate("DropzonePermissionScreen")}
+        />
+        <List.Item
           title="Aircrafts"
           onPress={() => navigation.navigate("PlanesScreen")}
           left={() => <List.Icon color="#000" icon="airplane" />}
@@ -32,11 +37,18 @@ export default function SettingsScreen() {
           title="Rigs"
           left={() => <List.Icon color="#000" icon="parachute" />}
           description="Dropzone rigs, e.g tandems and student rigs"
+          onPress={() => navigation.navigate("DropzoneRigsScreen")}
         />
         <List.Item
           title="Rig Inspection Template"
           left={() => <List.Icon color="#000" icon="check" />}
           onPress={() => navigation.navigate("RigInspectionTemplateScreen")}
+        />
+        <List.Item
+          title="Master Log"
+          left={() => <List.Icon color="#000" icon="parachute" />}
+          description="View historic data for daily operations"
+          onPress={() => navigation.navigate("DropzoneMasterLogScreen")}
         />
       </List.Section>
 

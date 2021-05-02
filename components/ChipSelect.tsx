@@ -1,10 +1,10 @@
-import { xorBy } from "lodash";
+import { isEqual, xorBy } from "lodash";
 import React, { useEffect } from "react";
 import { View } from "react-native";
 import { Chip } from "react-native-paper";
 
 
-interface IChipSelect<T extends { id: any }> {
+interface IChipSelect<T extends any> {
   items: T[];
   selected: T[];
   autoSelectFirst?: boolean;
@@ -12,7 +12,7 @@ interface IChipSelect<T extends { id: any }> {
   renderItemLabel(item: T): React.ReactNode;
   onChangeSelected(newItems: T[]): void;
 }
-function ChipSelect<T extends { id: any }>(props: IChipSelect<T>) {
+function ChipSelect<T extends any>(props: IChipSelect<T>) {
   const { items, selected, isDisabled, renderItemLabel, onChangeSelected, autoSelectFirst } = props;
 
   useEffect(() => {
@@ -30,10 +30,10 @@ function ChipSelect<T extends { id: any }>(props: IChipSelect<T>) {
           mode="outlined"
           style={{ margin: 1 }}
           disabled={isDisabled(item)}
-          selected={selected.map(({ id }) => id).includes(item.id)}
+          selected={selected.some((value) => isEqual(item, value))}
           onPress={() =>
             onChangeSelected(
-              selected.length === 1 ? [item] : xorBy(selected, [item], ({ id }) => id)
+              selected.length === 1 ? [item] : xorBy(selected, [item], JSON.stringify),
             )
           }
         >
