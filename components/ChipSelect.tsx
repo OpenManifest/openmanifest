@@ -24,7 +24,7 @@ function ChipSelect<T extends { id: any }>(props: IChipSelect<T>) {
   }, [JSON.stringify(selected), JSON.stringify(items), autoSelectFirst])
 
   return (
-    <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap" }}>
+    <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
       { items.map((item) =>
         <Chip
           mode="outlined"

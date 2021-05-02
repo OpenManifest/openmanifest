@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Appbar, Menu, IconButton, Divider, Chip } from "react-native-paper";
 import { StackHeaderProps } from "@react-navigation/stack";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import { Query } from "../graphql/schema";
 import { globalActions, useAppDispatch, useAppSelector } from "../redux";
 import { StyleSheet } from "react-native";
@@ -55,16 +55,26 @@ const QUERY_CURRENT_USER = gql`
 `;
 
 
+interface IAppBarProps extends StackHeaderProps {
+  hideWarnings?: boolean;
+}
 
-function AppBar({ navigation, previous, scene }: StackHeaderProps) {
+
+function AppBar({ navigation, previous, scene, hideWarnings }: IAppBarProps) {
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const { currentDropzone } = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
-  const { data, loading } = useQuery<Query>(QUERY_CURRENT_USER, {
+  const [loadData, { data, loading }] = useLazyQuery<Query>(QUERY_CURRENT_USER, {
     variables: {
-      dropzoneId: Number(currentDropzone!.id)
+      dropzoneId: Number(currentDropzone?.id)
     }
   });
+
+  useEffect(() => {
+    if (currentDropzone) {
+      loadData();
+    }
+  }, [loadData, currentDropzone])
   
   const showCredits = !!data?.dropzone?.isCreditSystemEnabled;
 
@@ -106,22 +116,24 @@ function AppBar({ navigation, previous, scene }: StackHeaderProps) {
         />
       </Menu>
     </Appbar.Header>
-    <SetupWarning
-      credits={data?.dropzone?.currentUser?.credits || 0}
-      loading={loading}
-      isCreditSystemEnabled={!!data?.dropzone?.isCreditSystemEnabled}
-      isExitWeightDefined={!!data?.dropzone?.currentUser?.user?.exitWeight}
-      isMembershipInDate={!!data?.dropzone?.currentUser?.expiresAt && data?.dropzone?.currentUser?.expiresAt > (new Date().getTime() / 1000)}
-      isReserveInDate={
-        !!data?.dropzone?.currentUser?.user?.rigs?.some((rig) => {
-          const isRigInspected = data.dropzone?.currentUser?.rigInspections?.map((inspection) => inspection?.rig?.id === rig.id);
-          const isRepackInDate = (rig.repackExpiresAt || 0) > (new Date().getTime() / 1000);
-          return isRigInspected && isRepackInDate;
-        })
-      }
-      isRigInspectionComplete={!!data?.dropzone?.currentUser?.rigInspections?.length}
-      isRigSetUp={!!data?.dropzone?.currentUser?.user?.rigs?.length}
-    />
+    { hideWarnings ? null : (
+      <SetupWarning
+        credits={data?.dropzone?.currentUser?.credits || 0}
+        loading={loading}
+        isCreditSystemEnabled={!!data?.dropzone?.isCreditSystemEnabled}
+        isExitWeightDefined={!!data?.dropzone?.currentUser?.user?.exitWeight}
+        isMembershipInDate={!!data?.dropzone?.currentUser?.expiresAt && data?.dropzone?.currentUser?.expiresAt > (new Date().getTime() / 1000)}
+        isReserveInDate={
+          !!data?.dropzone?.currentUser?.user?.rigs?.some((rig) => {
+            const isRigInspected = data.dropzone?.currentUser?.rigInspections?.map((inspection) => inspection?.rig?.id === rig.id);
+            const isRepackInDate = (rig.repackExpiresAt || 0) > (new Date().getTime() / 1000);
+            return isRigInspected && isRepackInDate;
+          })
+        }
+        isRigInspectionComplete={!!data?.dropzone?.currentUser?.rigInspections?.length}
+        isRigSetUp={!!data?.dropzone?.currentUser?.user?.rigs?.length}
+      />
+    )}
     </>
   );
 }

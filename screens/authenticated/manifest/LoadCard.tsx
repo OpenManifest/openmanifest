@@ -2,7 +2,7 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import { useNavigation } from '@react-navigation/core';
 import * as React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { Badge, Button, Card, DataTable, IconButton, List, Menu, Paragraph, ProgressBar } from 'react-native-paper';
+import { Badge, Button, Card, DataTable, IconButton, List, Menu, Paragraph, ProgressBar, Text } from 'react-native-paper';
 import addMinutes from "date-fns/addMinutes";
 import differenceInMinutes from "date-fns/differenceInMinutes";
 
@@ -11,7 +11,7 @@ import LoadMasterChip from '../../../components/LoadMasterChip';
 import PilotChip from '../../../components/PilotChip';
 import PlaneChip from '../../../components/PlaneChip';
 
-import { Text, View } from '../../../components/Themed';
+import { View } from '../../../components/Themed';
 import { Query, Load, Mutation, User, Plane, Slot } from '../../../graphql/schema';
 import useRestriction from '../../../hooks/useRestriction';
 import { slotsMultipleForm, useAppDispatch, useAppSelector } from '../../../redux';
@@ -282,20 +282,20 @@ export default function LoadCard(props: ILoadCard) {
   
 
   return (
-  <Card style={{ margin: 16 }} elevation={3}>
+  <Card style={{ margin: 16, opacity: data?.load?.hasLanded ? 0.5 : 1.0 }} elevation={3}>
     <Card.Title
       style={{ justifyContent: "space-between"}}
       title={
         <View style={{ width: "100%", flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
           <Text>{`Load ${data?.load?.loadNumber || 0}`}</Text>
           <View style={{ flexGrow: 1 }} />
-          { !data?.load?.hasLanded && data?.load?.dispatchAt && data?.load.dispatchAt < new Date().getTime() / 1000 && canManifestOthers && (
+          { !data?.load?.hasLanded && (!data?.load?.dispatchAt || data?.load.dispatchAt > (new Date().getTime() / 1000)) && (
             <IconButton
               icon="account-group"
               onPress={() => {
                 dispatch(slotsMultipleForm.reset());
                 dispatch(slotsMultipleForm.setField(["load", load]));
-                navigation.navigate("Users", { screen: "UsersScreen", params: { select: true, loadId: data?.load?.id }});
+                navigation.navigate("ManifestGroupUserSelectScreen", { loadId: data?.load?.id });
               }}
             />
           )}
@@ -336,17 +336,17 @@ export default function LoadCard(props: ILoadCard) {
       <DataTable>
         <DataTable.Header style={{ width: "100%"}}>
           <DataTable.Title>Name</DataTable.Title>
-          <DataTable.Title numeric>Exit weight</DataTable.Title>
           <DataTable.Title numeric>Jump type</DataTable.Title>
           <DataTable.Title numeric>Altitude</DataTable.Title>
         </DataTable.Header>
           {
             data?.load?.slots?.map(slot => {
-              const slotGroup = data?.load?.slots?.filter(({ groupNumber }) => groupNumber === slot.groupNumber);
+              const slotGroup = data?.load?.slots?.filter(({ groupNumber }) => groupNumber && groupNumber === slot.groupNumber);
 
               return (
                 <DataTable.Row
                   key={`slot-${slot.id}`}
+                  disabled={!!data?.load?.hasLanded}
                   onPress={() => {
                     if (slot.user?.id === state.currentUser?.id) {
                       if (canEditSelf) {
@@ -366,19 +366,29 @@ export default function LoadCard(props: ILoadCard) {
                   }}
                   pointerEvents="none"
                 >
-                  <DataTable.Cell>{slot?.user?.name}</DataTable.Cell>
-                  <DataTable.Cell numeric>{slot?.exitWeight}</DataTable.Cell>
-                  <DataTable.Cell numeric>{slot?.jumpType?.name}</DataTable.Cell>
-                  <DataTable.Cell numeric>{slot?.ticketType?.name}</DataTable.Cell>
+                  <DataTable.Cell>
+                    <Paragraph style={styles.slotText}>
+                      {slot?.user?.name}
+                    </Paragraph>
+                  </DataTable.Cell>
+                  <DataTable.Cell numeric>
+                    <Paragraph style={styles.slotText}>
+                      {slot?.jumpType?.name}
+                    </Paragraph>
+                  </DataTable.Cell>
+                  <DataTable.Cell numeric>
+                    <Paragraph style={styles.slotText}>
+                      {((slot?.ticketType?.altitude || 14000) / 1000)}k
+                    </Paragraph>
+                  </DataTable.Cell>
                 </DataTable.Row>
               )
             })
           }
           {
-            Array.from({length: (load?.maxSlots || 0) - (load?.slots?.length || 0)}, (v, i) => i).map((i) =>
+            Array.from({length: (data?.load?.maxSlots || 0) - (data?.load?.slots?.length || 0)}, (v, i) => i).map((i) =>
               <DataTable.Row key={`${load.id}-empty-slot-${i}`}>
-                <DataTable.Cell>- Available -</DataTable.Cell>
-                <DataTable.Cell numeric>-</DataTable.Cell>
+                <DataTable.Cell><Paragraph style={styles.slotText}>- Available -</Paragraph></DataTable.Cell>
                 <DataTable.Cell numeric>-</DataTable.Cell>
                 <DataTable.Cell numeric>-</DataTable.Cell>
               </DataTable.Row>
@@ -490,6 +500,9 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     height: 1,
     width: '80%',
+  },
+  slotText: {
+    fontSize: 12
   },
   fab: {
     position: 'absolute',

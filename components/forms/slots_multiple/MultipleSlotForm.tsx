@@ -70,7 +70,8 @@ export default function SlotForm() {
     variables: {
       userIds: state.fields.users?.value?.map((slotUser) => slotUser.id) as number[],
       dropzoneId: Number(globalState?.currentDropzone?.id)
-    }
+    },
+    onError: console.error
   });
 
   const allowedToManifestOthers = useRestriction(
@@ -80,7 +81,7 @@ export default function SlotForm() {
   return ( 
     <>
       <List.Subheader>Jump type</List.Subheader>
-      <Card elevation={2} style={{ marginBottom: 16 }}>
+      <Card elevation={2} style={{ marginBottom: 16, flexShrink: 1 }}>
         <Card.Content>
             <ChipSelect
               autoSelectFirst

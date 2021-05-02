@@ -24,7 +24,7 @@ export default function ProfileTab() {
     <Profile.Navigator
       screenOptions={{
         headerShown: true,
-        header: (props) => <AppBar {...props} />,
+        header: (props) => <AppBar {...props} hideWarnings />,
         cardStyle: {
           flex: 1
         }

@@ -27,7 +27,7 @@ query QueryDropzoneUsersManifestDetails(
     id
     name
 
-    dropzoneUser(id: $dropzoneUserId) {
+    dropzoneUser(userId: $dropzoneUserId) {
       id
 
       user {
@@ -52,6 +52,7 @@ query QueryDropzoneUsersManifestDetails(
       user {
         id
         name
+        image
       }
     }
   }
@@ -73,7 +74,8 @@ export default function UserRigCard(props: IUserRigCard) {
     variables: {
       dropzoneUserId,
       dropzoneId
-    }
+    },
+    onError: console.error
   });
 
   const selectedRig = data?.user?.rigs?.find(({ id }) => Number(id) === rigId);
@@ -88,7 +90,11 @@ export default function UserRigCard(props: IUserRigCard) {
       <ProgressBar indeterminate color={globalState.theme.colors.accent} visible={loading} />
       <Card.Title
         title={data?.user.name}
-        left={() => <Avatar.Icon icon="account" size={24} />}
+        left={() =>
+          data?.user?.image
+          ? <Avatar.Image source={{ uri: data.user.image }} size={24} />
+          : <Avatar.Icon icon="account" size={24} />
+        }
       />
       
       <Card.Content>

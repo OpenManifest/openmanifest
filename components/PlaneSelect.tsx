@@ -57,7 +57,7 @@ export default function PlaneSelect(props: IPlaneSelect) {
       }>
       {
         data?.planes?.map((plane) => 
-          <List.Item
+          <Menu.Item
             key={`plane-select-${plane.id}`}
             onPress={() => {
               setMenuOpen(false);
@@ -65,9 +65,6 @@ export default function PlaneSelect(props: IPlaneSelect) {
             }}
             title={
               plane.name || "-"
-            }
-            description={
-              plane.registration
             }
           />
         )

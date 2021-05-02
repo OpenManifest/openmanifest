@@ -3,7 +3,7 @@ import { useIsFocused, useNavigation } from '@react-navigation/core';
 import { startOfDay } from 'date-fns';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, RefreshControl, StyleSheet } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { FAB, ProgressBar } from 'react-native-paper';
 import ManifestUserDialog from '../../../components/dialogs/ManifestUserDialog';
@@ -245,6 +245,9 @@ export default function ManifestScreen() {
                         data={data?.dropzone?.loads?.edges || []}
                         refreshing={loading}
                         onRefresh={refetch}
+                        refreshControl={
+                          <RefreshControl refreshing={loading} onRefresh={() => refetch()} />
+                        }
                         renderItem={({ item: edge, index }) =>
                           !edge?.node ? null : (
                             <LoadCard

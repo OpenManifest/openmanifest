@@ -27,8 +27,7 @@ export default function useRestriction(permission: string): boolean {
   const { data } = useQuery(QUERY_PERMISSIONS, {
     variables: {
       dropzoneId: Number(currentDropzone?.id)
-    },
-    fetchPolicy: "cache-first"
+    }
   });
 
   return data?.dropzone?.currentUser?.permissions?.includes(permission as any) || false;
