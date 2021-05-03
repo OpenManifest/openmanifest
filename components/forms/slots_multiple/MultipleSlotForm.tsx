@@ -8,11 +8,10 @@ import { useAppSelector, useAppDispatch } from '../../../redux';
 
 
 import slice from "./slice";
-import TicketTypeSelect from '../../TicketTypeSelect';
 import useRestriction from '../../../hooks/useRestriction';
 import ChipSelect from '../../ChipSelect';
 import { createQuery } from '../../../graphql/createQuery';
-import { JumpType, Query, SlotUser, TicketType } from '../../../graphql/schema';
+import { JumpType, Query, TicketType } from '../../../graphql/schema';
 
 import UserRigCard from "./UserRigCard";
 

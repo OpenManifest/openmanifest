@@ -12,12 +12,13 @@ import * as ImagePicker from 'expo-image-picker';
 
 
 import { successColor, warningColor } from "../../../constants/Colors";
-import RigDialog from '../../../components/dialogs/RigDialog';
-import { creditsForm, dropzoneUserForm, rigForm, useAppDispatch, useAppSelector } from '../../../redux';
+import RigDialog from '../../../components/dialogs/Rig/RigDialog';
+import { creditsForm, dropzoneUserForm, rigForm, useAppDispatch, useAppSelector, userForm } from '../../../redux';
 import { Mutation, Query } from '../../../graphql/schema';
 import ScrollableScreen from '../../../components/ScrollableScreen';
 import DropzoneUserDialog from '../../../components/dialogs/DropzoneUserDialog';
-import CreditsSheet from '../../../components/dialogs/CreditsDialog/CreditsSheet';
+import CreditsSheet from '../../../components/dialogs/CreditsDialog/Credits';
+import EditUserSheet from '../../../components/dialogs/UpdateUser/UpdateUser';
 
 import TableCard from "./UserInfo/TableCard";
 import Header from "./UserInfo/Header";
@@ -136,6 +137,7 @@ export default function ProfileScreen() {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const [creditsDialogOpen, setCreditsDialogOpen] = React.useState(false);
+  const [editUserDialogOpen, setEditUserDialogOpen] = React.useState(false);
   const [rigDialogOpen, setRigDialogOpen] = React.useState(false);
   const [dropzoneUserDialogOpen, setDropzoneUserDialogOpen] = React.useState(false);
   const route = useRoute<{ key: string, name: string, params: { userId: string }}>();
@@ -203,9 +205,12 @@ export default function ProfileScreen() {
       <Header
         dropzoneUser={data?.dropzone?.dropzoneUser!}
         canEdit={isSelf}
-        onEdit={() =>
-          navigation.navigate("UpdateUserScreen", { user: state.currentDropzone?.currentUser?.user })
-        }
+        onEdit={() => {
+          if (state.currentDropzone?.currentUser?.user) {
+            dispatch(userForm.setOriginal(state.currentDropzone?.currentUser?.user));
+            setEditUserDialogOpen(true);
+          }
+        }}
         onPressAvatar={onPickImage}
       >
 
@@ -369,7 +374,6 @@ export default function ProfileScreen() {
             ))
           }
         </DataTable>
-
       </TableCard>
     </ScrollableScreen>
         
@@ -390,6 +394,12 @@ export default function ProfileScreen() {
       onClose={() => setCreditsDialogOpen(false)}
       onSuccess={() => setCreditsDialogOpen(false)}
       open={creditsDialogOpen}
+    />
+
+    <EditUserSheet
+      onClose={() => setEditUserDialogOpen(false)} 
+      onSuccess={() => setEditUserDialogOpen(false)} 
+      open={editUserDialogOpen}
     />
   </>
   );

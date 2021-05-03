@@ -5,8 +5,8 @@ import { useAppSelector, useAppDispatch } from '../../../redux';
 
 
 import slice from "./slice";
-import JumpTypeSelect from '../../JumpTypeSelect';
-import TicketTypeSelect from '../../TicketTypeSelect';
+import JumpTypeChipSelect from '../../JumpTypeChipSelect';
+import TicketTypeChipSelect from '../../TicketTypeChipSelect';
 import useRestriction from '../../../hooks/useRestriction';
 import RigSelect from '../../RigSelect';
 
@@ -41,7 +41,7 @@ export default function SlotForm() {
 
   return ( 
     <> 
-      <JumpTypeSelect
+      <JumpTypeChipSelect
         value={state.fields.jumpType.value}
         required
         userId={Number(state?.fields?.user?.value?.id) || null}
@@ -51,10 +51,10 @@ export default function SlotForm() {
         { state.fields.jumpType.error || "" }
       </HelperText>
 
-      <TicketTypeSelect
+      <TicketTypeChipSelect
         value={state.fields.ticketType.value}
         required
-        allowManifestingSelf={!allowedToManifestOthers}
+        onlyPublicTickets={!allowedToManifestOthers}
         onSelect={(value) => dispatch(actions.setField(["ticketType", value]))}
       />
       <HelperText type={!!state.fields.ticketType.error ? "error" : "info"}>

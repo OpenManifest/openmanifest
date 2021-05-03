@@ -20,6 +20,7 @@ interface ILoadCard {
   load: Load;
   loadNumber: number;
   canManifest: boolean;
+  onManifestGroup(): void;
   onSlotGroupPress(slots: Slot[]): void;
   onSlotPress(slot: Slot): void;
   onSlotLongPress?(slot: Slot): void;
@@ -198,7 +199,7 @@ export default function LoadCard(props: ILoadCard) {
   const canManifestOthers = useRestriction("createUserSlot");
 
   const navigation = useNavigation();
-  const { load, loadNumber, onManifest, canManifest } = props;
+  const { load, loadNumber, onManifest, canManifest, onManifestGroup } = props;
   const { data, loading } = useQuery<Query>(QUERY_LOAD, {
     variables: {
       id: Number(load.id),
@@ -295,7 +296,9 @@ export default function LoadCard(props: ILoadCard) {
               onPress={() => {
                 dispatch(slotsMultipleForm.reset());
                 dispatch(slotsMultipleForm.setField(["load", load]));
-                navigation.navigate("ManifestGroupUserSelectScreen", { loadId: data?.load?.id });
+                if (onManifestGroup) {
+                  onManifestGroup();
+                }
               }}
             />
           )}

@@ -8,12 +8,14 @@ interface IChipSelect<T extends any> {
   items: T[];
   selected: T[];
   autoSelectFirst?: boolean;
+  icon?: string;
+  isSelected?(item: T): boolean;
   isDisabled(item: T): boolean;
   renderItemLabel(item: T): React.ReactNode;
   onChangeSelected(newItems: T[]): void;
 }
 function ChipSelect<T extends any>(props: IChipSelect<T>) {
-  const { items, selected, isDisabled, renderItemLabel, onChangeSelected, autoSelectFirst } = props;
+  const { items, selected, isSelected, isDisabled, icon, renderItemLabel, onChangeSelected, autoSelectFirst } = props;
 
   useEffect(() => {
     if (!selected || !selected.length && items.length && autoSelectFirst) {
@@ -27,10 +29,16 @@ function ChipSelect<T extends any>(props: IChipSelect<T>) {
     <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
       { items.map((item) =>
         <Chip
+          key={JSON.stringify(item)}
           mode="outlined"
+          icon={!selected.some((value) => isEqual(item, value)) && icon ? icon : undefined}
           style={{ margin: 1 }}
           disabled={isDisabled(item)}
-          selected={selected.some((value) => isEqual(item, value))}
+          selected={
+            isSelected
+              ? isSelected(item)
+              : selected.some((value) => isEqual(item, value))
+          }
           onPress={() =>
             onChangeSelected(
               selected.length === 1 ? [item] : xorBy(selected, [item], JSON.stringify),

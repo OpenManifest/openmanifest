@@ -15,7 +15,6 @@ import { useNavigation, useRoute } from '@react-navigation/core';
 import ScrollableScreen from '../../../components/ScrollableScreen';
 
 const { actions } = slice;
-const { actions: globalActions } = globalSlice;
 
 
 const MUTATION_CREATE_USER = gql`

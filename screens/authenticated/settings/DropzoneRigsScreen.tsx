@@ -9,7 +9,7 @@ import { Query } from "../../../graphql/schema";
 import { useAppSelector, useAppDispatch, rigForm } from '../../../redux';
 import ScrollableScreen from '../../../components/ScrollableScreen';
 import { format } from 'date-fns';
-import RigDialog from '../../../components/dialogs/RigDialog';
+import RigDialog from '../../../components/dialogs/Rig/RigDialog.web';
 
 
 const QUERY_DROPZONE_RIGS = gql`

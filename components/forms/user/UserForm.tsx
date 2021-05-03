@@ -5,10 +5,9 @@ import { useAppSelector, useAppDispatch } from '../../../redux';
 
 
 import slice from "./slice";
-import LicenseSelect from '../../LicenseSelect';
+import LicenseChipSelect from '../../LicenseChipSelect';
 import FederationSelect from '../../FederationSelect';
-import useRestriction from '../../../hooks/useRestriction';
-import ScrollableScreen from '../../ScrollableScreen';
+import { License } from '../../../graphql/schema';
 
 const { actions } = slice;
 export default function SlotForm() {
@@ -110,7 +109,7 @@ export default function SlotForm() {
 
         { (state?.fields?.license?.value?.federation?.id || state?.federation?.value?.id) && (
           <>
-            <LicenseSelect
+            <LicenseChipSelect
               value={state.fields.license.value}
               federationId={Number(state?.fields?.license?.value?.federation?.id || state.federation?.value?.id)}
               onSelect={(value) => dispatch(actions.setField(["license", value]))}
