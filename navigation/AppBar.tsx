@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Appbar, Menu, IconButton, Divider, Chip } from "react-native-paper";
 import { StackHeaderProps } from "@react-navigation/stack";
-import { gql, useLazyQuery, useQuery } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
 import { Query } from "../graphql/schema";
 import { globalActions, useAppDispatch, useAppSelector } from "../redux";
 import { StyleSheet } from "react-native";
@@ -60,7 +60,8 @@ interface IAppBarProps extends StackHeaderProps {
 }
 
 
-function AppBar({ navigation, previous, scene, hideWarnings }: IAppBarProps) {
+function AppBar(props: IAppBarProps) {
+  const { navigation, previous, scene, hideWarnings } = props;
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const { currentDropzone } = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
@@ -85,7 +86,7 @@ function AppBar({ navigation, previous, scene, hideWarnings }: IAppBarProps) {
       <Appbar.Content title={scene.descriptor.options.title} titleStyle={{ fontWeight: "bold" }} />
 
       { scene.descriptor.options.headerRight
-        ? scene.descriptor.options.headerRight()
+        ? scene.descriptor.options.headerRight({ tintColor: "white" })
         : (
           <Chip mode="outlined">
             {`$${data?.dropzone?.currentUser?.credits || 0}`}

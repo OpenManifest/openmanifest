@@ -2,21 +2,19 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { gql, useMutation } from "@apollo/client";
-import { useAppSelector, useAppDispatch, dropzoneForm } from '../../../redux';
+import { useNavigation, useRoute } from '@react-navigation/core';
+import { useAppSelector, useAppDispatch } from '../../../redux';
 
 import { View } from '../../../components/Themed';
 import { actions as snackbar } from "../../../components/notifications";
-import globalSlice from "../../../redux/global";
 
 import slice from "../../../components/forms/plane/slice";
 import { Mutation, Plane } from '../../../graphql/schema';
 import PlaneForm from '../../../components/forms/plane/PlaneForm';
-import { useNavigation, useRoute } from '@react-navigation/core';
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { actions } = slice;
-const { actions: globalActions } = globalSlice;
 
 
 const MUTATION_CREATE_PLANE = gql`

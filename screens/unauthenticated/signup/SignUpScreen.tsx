@@ -9,7 +9,7 @@ import globalSlice from "../../../redux/global";
 
 import slice from "./slice";
 import useMutationSignUp from '../../../graphql/hooks/useMutationSignUp';
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;

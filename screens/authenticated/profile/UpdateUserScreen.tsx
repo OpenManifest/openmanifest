@@ -12,7 +12,7 @@ import slice from "../../../components/forms/user/slice";
 import { Mutation, User } from '../../../graphql/schema';
 import UserForm from '../../../components/forms/user/UserForm';
 import { useNavigation, useRoute } from '@react-navigation/core';
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
 const { actions } = slice;
 

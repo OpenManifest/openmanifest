@@ -16,6 +16,7 @@ import useRestriction from '../../../hooks/useRestriction';
 import { globalActions, slotForm, slotsMultipleForm, snackbarActions, useAppDispatch, useAppSelector } from '../../../redux';
 import GetStarted from './GetStarted';
 import LoadCard from './LoadCard';
+import LoadDialog from '../../../components/dialogs/Load';
 
 const QUERY_DROPZONE = gql`
   query QueryDropzone($dropzoneId: Int!, $earliestTimestamp: Int) {
@@ -100,6 +101,7 @@ const QUERY_DROPZONE = gql`
 export default function ManifestScreen() {
   const state = useAppSelector(state => state.global);
   const [isDialogOpen, setDialogOpen] = React.useState(false);
+  const [isLoadDialogOpen, setLoadDialogOpen] = React.useState(false);
   const [isGroupDialogOpen, setGroupDialogOpen] = React.useState(false);
   const dispatch = useAppDispatch();
   const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONE, {
@@ -275,7 +277,8 @@ export default function ManifestScreen() {
                               onManifest={() => onManifest(edge.node!)}
                               onManifestGroup={() => {
                                 dispatch(slotsMultipleForm.reset());
-                                dispatch(slotsMultipleForm.setField(["load", edge.node!]));
+                                dispatch(slotsMultipleForm.setField(["load", 
+                                edge.node!]));
                                 setGroupDialogOpen(true);
                               }}
                             />
@@ -290,7 +293,7 @@ export default function ManifestScreen() {
             style={styles.fab}
             small
             icon="plus"
-            onPress={() => navigation.navigate("CreateLoadScreen")}
+            onPress={() => setLoadDialogOpen(true)}
             label="New load"
           />
         )}
@@ -304,6 +307,15 @@ export default function ManifestScreen() {
         open={isGroupDialogOpen}
         onClose={() => setGroupDialogOpen(false)}
         onSuccess={() => setGroupDialogOpen(false)}
+      />
+
+      <LoadDialog
+        onSuccess={() => {
+          setLoadDialogOpen(false);
+          refetch();
+        }}
+        open={isLoadDialogOpen}
+        onClose={() => setLoadDialogOpen(false)}
       />
     </>
   );

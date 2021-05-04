@@ -6,10 +6,10 @@ import { Badge, Button, Card, DataTable, IconButton, List, Menu, Paragraph, Prog
 import addMinutes from "date-fns/addMinutes";
 import differenceInMinutes from "date-fns/differenceInMinutes";
 
-import GCAChip from '../../../components/GcaChip';
-import LoadMasterChip from '../../../components/LoadMasterChip';
-import PilotChip from '../../../components/PilotChip';
-import PlaneChip from '../../../components/PlaneChip';
+import GCAChip from '../../../components/chips/GcaChip';
+import LoadMasterChip from '../../../components/chips/LoadMasterChip';
+import PilotChip from '../../../components/chips/PilotChip';
+import PlaneChip from '../../../components/chips/PlaneChip';
 
 import { View } from '../../../components/Themed';
 import { Query, Load, Mutation, User, Plane, Slot } from '../../../graphql/schema';

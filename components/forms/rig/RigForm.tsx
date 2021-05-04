@@ -5,8 +5,8 @@ import { TextInput, HelperText } from 'react-native-paper';
 import { useAppSelector, useAppDispatch } from '../../../redux';
 
 import slice from "./slice";
-import DatePicker from '../../DatePicker';
-import ChipSelect from '../../ChipSelect';
+import DatePicker from '../../input/date_picker/DatePicker';
+import ChipSelect from '../../input/chip_select/ChipSelect';
 import useRestriction from '../../../hooks/useRestriction';
 
 const { actions } = slice;

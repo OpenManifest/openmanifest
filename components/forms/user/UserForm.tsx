@@ -5,9 +5,8 @@ import { useAppSelector, useAppDispatch } from '../../../redux';
 
 
 import slice from "./slice";
-import LicenseChipSelect from '../../LicenseChipSelect';
-import FederationSelect from '../../FederationSelect';
-import { License } from '../../../graphql/schema';
+import LicenseChipSelect from '../../input/chip_select/LicenseChipSelect';
+import FederationSelect from '../../input/dropdown_select/FederationSelect';
 
 const { actions } = slice;
 export default function SlotForm() {

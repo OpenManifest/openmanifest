@@ -275,6 +275,7 @@ export type Dropzone = {
   currentUser: DropzoneUser;
   dropzoneUser?: Maybe<DropzoneUser>;
   dropzoneUsers: DropzoneUserConnection;
+  extras: Array<Extra>;
   federation: Federation;
   id: Scalars['ID'];
   isCreditSystemEnabled: Scalars['Boolean'];
@@ -425,6 +426,7 @@ export type Extra = {
   __typename?: 'Extra';
   cost: Scalars['Int'];
   createdAt: Scalars['Int'];
+  dropzone: Dropzone;
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   ticketTypes: Array<TicketType>;
@@ -1127,6 +1129,7 @@ export type TicketType = {
   cost?: Maybe<Scalars['Float']>;
   createdAt: Scalars['Int'];
   currency?: Maybe<Scalars['String']>;
+  dropzone?: Maybe<Dropzone>;
   extras: Array<Extra>;
   id: Scalars['ID'];
   isTandem?: Maybe<Scalars['Boolean']>;

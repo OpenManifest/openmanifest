@@ -12,13 +12,13 @@ import * as ImagePicker from 'expo-image-picker';
 
 
 import { successColor, warningColor } from "../../../constants/Colors";
-import RigDialog from '../../../components/dialogs/Rig/RigDialog';
 import { creditsForm, dropzoneUserForm, rigForm, useAppDispatch, useAppSelector, userForm } from '../../../redux';
 import { Mutation, Query } from '../../../graphql/schema';
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import DropzoneUserDialog from '../../../components/dialogs/DropzoneUserDialog';
 import CreditsSheet from '../../../components/dialogs/CreditsDialog/Credits';
-import EditUserSheet from '../../../components/dialogs/UpdateUser/UpdateUser';
+import RigDialog from '../../../components/dialogs/Rig';
+import EditUserSheet from '../../../components/dialogs/User';
 
 import TableCard from "./UserInfo/TableCard";
 import Header from "./UserInfo/Header";
@@ -201,7 +201,7 @@ export default function ProfileScreen() {
   return (
     <>
     {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
-    <ScrollableScreen contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}>
+    <ScrollableScreen contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}>
       <Header
         dropzoneUser={data?.dropzone?.dropzoneUser!}
         canEdit={isSelf}
@@ -216,6 +216,7 @@ export default function ProfileScreen() {
 
         <ScrollView horizontal style={{ marginVertical: 8 }}>
           <Chip
+            // @ts-ignore
             icon={({ size }: IconProps) =>
               <MaterialCommunityIcons name="email" size={size} color="#FFFFFF" />
             }
@@ -227,6 +228,7 @@ export default function ProfileScreen() {
           </Chip>
 
           <Chip
+            // @ts-ignore
             icon={({ size }: IconProps) =>
               <MaterialCommunityIcons name="phone" size={size} color="#FFFFFF" />
             }
@@ -238,6 +240,7 @@ export default function ProfileScreen() {
           </Chip>
 
           <Chip
+            // @ts-ignore
             icon={({ size }: IconProps) =>
               <MaterialCommunityIcons name="card-account-details-star-outline" size={size} color="#FFFFFF" />
             }
@@ -394,6 +397,7 @@ export default function ProfileScreen() {
       onClose={() => setCreditsDialogOpen(false)}
       onSuccess={() => setCreditsDialogOpen(false)}
       open={creditsDialogOpen}
+      dropzoneUserId={Number(data?.dropzone?.dropzoneUser?.id)}
     />
 
     <EditUserSheet

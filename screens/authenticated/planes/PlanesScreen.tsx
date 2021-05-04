@@ -1,16 +1,15 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { StyleSheet, FlatList, RefreshControl } from 'react-native';
-import { Card, Title, FAB, Paragraph, List, DataTable, ProgressBar } from 'react-native-paper';
-import { View } from '../../../components/Themed';
+import { StyleSheet, RefreshControl } from 'react-native';
+import { FAB, DataTable, ProgressBar } from 'react-native-paper';
 import { Query } from "../../../graphql/schema";
 
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
-import { useAppSelector } from '../../../redux';
+import { useIsFocused, useNavigation } from '@react-navigation/core';
+import { planeForm, useAppDispatch, useAppSelector } from '../../../redux';
 import NoResults from '../../../components/NoResults';
-import ScrollableScreen from '../../../components/ScrollableScreen';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
+import PlaneDialog from '../../../components/dialogs/Plane';
 
 
 const QUERY_PLANES = gql`
@@ -32,12 +31,13 @@ const QUERY_PLANES = gql`
 
 export default function PlanesScreen() {
   const state = useAppSelector(state => state.global);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
   const { data, loading, refetch } = useQuery<Query>(QUERY_PLANES, {
     variables: {
       dropzoneId: Number(state.currentDropzone?.id)
     }
   });
-  const navigation = useNavigation();
+  const dispatch = useAppDispatch();
 
   const isFocused = useIsFocused();
 
@@ -49,6 +49,7 @@ export default function PlanesScreen() {
  
 
   return (
+    <>
     <ScrollableScreen refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}>
       <ProgressBar visible={loading} color={state.theme.colors.accent} />
         
@@ -73,7 +74,10 @@ export default function PlanesScreen() {
                 data?.planes?.map((plane) =>
                   <DataTable.Row
                     pointerEvents="none"
-                    onPress={() => navigation.navigate("UpdatePlaneScreen", { plane })}
+                    onPress={() => {
+                      dispatch(planeForm.setOriginal(plane));
+                      setDialogOpen(true);
+                    }}
                   >
                     <DataTable.Cell>{plane.name}</DataTable.Cell>
                     <DataTable.Cell numeric>{plane.registration}</DataTable.Cell>
@@ -89,10 +93,15 @@ export default function PlanesScreen() {
         style={styles.fab}
         small
         icon="plus"
-        onPress={() => navigation.navigate("CreatePlaneScreen")}
+        onPress={() => setDialogOpen(true)}
         label="New plane"
       />
     </ScrollableScreen>
+    <PlaneDialog
+      open={dialogOpen}
+      onClose={() => setDialogOpen(false)}
+    />
+    </>
   );
 }
 

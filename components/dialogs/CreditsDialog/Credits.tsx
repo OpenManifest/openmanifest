@@ -10,6 +10,7 @@ import { creditsForm, snackbarActions, useAppDispatch, useAppSelector } from "..
 import CreditsForm from "../../forms/credits/CreditsForm";
 interface ICreditsSheet {
   open?: boolean;
+  dropzoneUserId: number;
   onClose(): void;
   onSuccess(): void;
 }
@@ -63,7 +64,7 @@ const MUTATION_CREATE_TRANSACTION = gql`
 `;
 
 export default function CreditSheet(props: ICreditsSheet) {
-  const { open } = props;
+  const { open, dropzoneUserId } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector(state => state.creditsForm);
   const global = useAppSelector(state => state.global);
@@ -92,7 +93,7 @@ export default function CreditSheet(props: ICreditsSheet) {
           amount: state.fields.amount.value,
           message: state.fields.message.value,
           status: state.fields.status.value,
-          dropzoneUserId: Number(state.original?.id),
+          dropzoneUserId: Number(dropzoneUserId),
         }
       });
       const result = state.original?.id ? response.data?.updateRig : response.data?.createRig;

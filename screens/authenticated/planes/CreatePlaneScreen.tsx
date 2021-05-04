@@ -12,7 +12,7 @@ import slice from "../../../components/forms/plane/slice";
 import { Mutation } from '../../../graphql/schema';
 import PlaneForm from '../../../components/forms/plane/PlaneForm';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { actions } = slice;

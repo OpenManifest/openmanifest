@@ -4,6 +4,7 @@ import { List } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import { View } from '../../../components/Themed';
 import { useAppSelector } from '../../../redux';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
 
 
@@ -15,8 +16,8 @@ export default function SettingsScreen() {
  
 
   return (
-    <View style={styles.container}>
-      <List.Section title="Dropzone">
+    <ScrollableScreen>
+      <List.Section title="Dropzone" style={{ width: "100%" }}>
         <List.Item
           title="Configuration"
           onPress={() => navigation.navigate("UpdateDropzoneScreen", { dropzone: state.currentDropzone })}
@@ -52,7 +53,7 @@ export default function SettingsScreen() {
         />
       </List.Section>
 
-      <List.Section title="Tickets">
+      <List.Section title="Tickets" style={{ width: "100%" }}>
         <List.Item
           title="Ticket types"
           onPress={() => navigation.navigate("TicketTypesScreen")}
@@ -66,7 +67,7 @@ export default function SettingsScreen() {
           description="Supplementary tickets like coach, camera, night jumpi"
         />
       </List.Section>
-    </View>
+    </ScrollableScreen>
   );
 }
 

@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { useIsFocused,  } from '@react-navigation/core';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
@@ -7,9 +7,9 @@ import { FAB, DataTable, ProgressBar } from 'react-native-paper';
 import { Query } from "../../../graphql/schema";
 
 import { useAppSelector, useAppDispatch, rigForm } from '../../../redux';
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { format } from 'date-fns';
-import RigDialog from '../../../components/dialogs/Rig/RigDialog.web';
+import RigDialog from '../../../components/dialogs/Rig';
 
 
 const QUERY_DROPZONE_RIGS = gql`

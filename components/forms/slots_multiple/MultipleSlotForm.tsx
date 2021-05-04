@@ -9,7 +9,7 @@ import { useAppSelector, useAppDispatch } from '../../../redux';
 
 import slice from "./slice";
 import useRestriction from '../../../hooks/useRestriction';
-import ChipSelect from '../../ChipSelect';
+import ChipSelect from '../../input/chip_select/ChipSelect';
 import { createQuery } from '../../../graphql/createQuery';
 import { JumpType, Query, TicketType } from '../../../graphql/schema';
 

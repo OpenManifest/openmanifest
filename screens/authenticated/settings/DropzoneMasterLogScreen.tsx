@@ -6,10 +6,10 @@ import React, { useLayoutEffect, useState } from "react";
 import { Card, DataTable, List, Title } from "react-native-paper";
 import format from "date-fns/format";
 import startOfDay from "date-fns/startOfDay";
-import ScrollableScreen from "../../../components/ScrollableScreen";
+import ScrollableScreen from "../../../components/layout/ScrollableScreen";
 import { Query, Slot } from "../../../graphql/schema";
 import { useAppSelector } from "../../../redux";
-import DatePicker from "../../../components/DatePicker";
+import DatePicker from "../../../components/input/date_picker/DatePicker";
 import { View } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 

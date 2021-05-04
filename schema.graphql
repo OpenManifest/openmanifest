@@ -398,6 +398,7 @@ type Dropzone {
     permissions: [Permission!]
     search: String
   ): DropzoneUserConnection!
+  extras: [Extra!]!
   federation: Federation!
   id: ID!
   isCreditSystemEnabled: Boolean!
@@ -578,6 +579,7 @@ input DropzoneUserInput {
 type Extra {
   cost: Int!
   createdAt: Int!
+  dropzone: Dropzone!
   id: ID!
   name: String
   ticketTypes: [TicketType!]!
@@ -1403,6 +1405,7 @@ type TicketType {
   cost: Float
   createdAt: Int!
   currency: String
+  dropzone: Dropzone
   extras: [Extra!]!
   id: ID!
   isTandem: Boolean

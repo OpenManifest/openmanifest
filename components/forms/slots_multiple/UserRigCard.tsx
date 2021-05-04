@@ -6,7 +6,7 @@ import { createQuery } from "../../../graphql/createQuery";
 import { Query, Rig } from "../../../graphql/schema";
 import { useAppSelector } from "../../../redux";
 import calculateWingLoading from "../../../utils/calculateWingLoading";
-import RigSelect from "../../RigSelect";
+import RigSelect from "../../input/dropdown_select/RigSelect";
 
 
 interface IUserRigCard {

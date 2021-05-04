@@ -5,10 +5,10 @@ import { useAppSelector, useAppDispatch } from '../../../redux';
 
 
 import slice from "./slice";
-import JumpTypeChipSelect from '../../JumpTypeChipSelect';
-import TicketTypeChipSelect from '../../TicketTypeChipSelect';
+import JumpTypeChipSelect from '../../input/chip_select/JumpTypeChipSelect';
+import TicketTypeChipSelect from '../../input/chip_select/TicketTypeChipSelect';
 import useRestriction from '../../../hooks/useRestriction';
-import RigSelect from '../../RigSelect';
+import RigSelect from '../../input/dropdown_select/RigSelect';
 
 const { actions } = slice;
 export default function SlotForm() {

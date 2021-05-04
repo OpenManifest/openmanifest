@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 import * as React from 'react';
 import { Button, Card, Checkbox, Divider, List } from 'react-native-paper';
 import RigInspectionForm from "../../../components/forms/rig_inspection/RigInspectionForm";
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { DropzoneUser, Mutation, Query, Rig } from '../../../graphql/schema';
 import useRestriction from '../../../hooks/useRestriction';
 import { rigInspectionForm, snackbarActions, useAppDispatch, useAppSelector } from '../../../redux';

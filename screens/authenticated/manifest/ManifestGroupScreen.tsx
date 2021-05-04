@@ -3,7 +3,7 @@ import { gql, useMutation } from "@apollo/client";
 import React, { useCallback, useEffect } from "react";
 import { ScrollView } from "react-native";
 import { Button, Card, ProgressBar } from "react-native-paper";
-import ScrollableScreen from "../../../components/ScrollableScreen";
+import ScrollableScreen from "../../../components/layout/ScrollableScreen";
 import { DropzoneUser, Mutation, Slot } from "../../../graphql/schema";
 import { slotForm, slotsMultipleForm, snackbarActions, useAppDispatch, useAppSelector } from "../../../redux";
 import MultipleSlotForm from "../../../components/forms/slots_multiple/MultipleSlotForm";

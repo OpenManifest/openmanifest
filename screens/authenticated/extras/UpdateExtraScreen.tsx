@@ -12,7 +12,7 @@ import slice from "../../../components/forms/extra/slice";
 import { Mutation, Extra } from '../../../graphql/schema';
 import ExtraForm from '../../../components/forms/extra/ExtraForm';
 import { useNavigation, useRoute } from '@react-navigation/core';
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { actions } = slice;
@@ -90,7 +90,6 @@ export default function UpdateExtraScreen() {
   const onSave = React.useCallback(async () => {
     const { name, cost, ticketTypeIds } = state.fields;
 
-    
 
     if (validate()) {
       try {

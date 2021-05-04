@@ -4,7 +4,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 
 import ManifestTab from "./tabs/manifest";
-import PackingTab from "./tabs/packing";
 import ProfileTab from "./tabs/profile";
 import SettingsTab from "./tabs/settings";
 import UsersTab from "./tabs/users";
@@ -59,16 +58,7 @@ export default function AuthenticatedTabBar() {
           unmountOnBlur: true,
         }}
       />
-      { false && canCreatePacks && (
-        <BottomTab.Screen
-          name="Packing"
-          component={PackingTab}
-          options={{
-            tabBarIcon: ({ size, color, focused }) => <MaterialCommunityIcons {...{size, color }} name="parachute" />,
-            unmountOnBlur: true,
-          }}
-        />
-      )}
+     
       { canViewUsers && (
         <BottomTab.Screen
           name="Users"

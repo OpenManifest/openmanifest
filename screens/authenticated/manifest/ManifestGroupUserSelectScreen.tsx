@@ -6,7 +6,7 @@ import { StyleSheet } from 'react-native';
 import { Avatar, Checkbox, Divider, FAB, List, ProgressBar } from 'react-native-paper';
 
 import NoResults from '../../../components/NoResults';
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { View } from '../../../components/Themed';
 import { DropzoneUser, Query } from '../../../graphql/schema';
 import { manifestActions, slotsMultipleForm, useAppDispatch, useAppSelector, usersActions } from '../../../redux';

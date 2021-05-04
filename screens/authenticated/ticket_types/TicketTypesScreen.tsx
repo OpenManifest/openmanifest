@@ -6,9 +6,9 @@ import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar, Switch } from 'react-native-paper';
 import { Mutation, Query } from "../../../graphql/schema";
 
-import { useAppSelector } from '../../../redux';
-import ScrollableScreen from '../../../components/ScrollableScreen';
-
+import { ticketTypeForm, useAppDispatch, useAppSelector } from '../../../redux';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
+import TicketTypesDialog from '../../../components/dialogs/TicketType';
 
 const QUERY_TICKET_TYPE = gql`
   query QueryTicketType(
@@ -60,6 +60,8 @@ const MUTATION_UPDATE_TICKET_TYPE = gql`
 
 export default function TicketTypesScreen() {
   const state = useAppSelector(state => state.global);
+  const dispatch = useAppDispatch();
+  const [dialogOpen, setDialogOpen] = React.useState(false);
   const { data, loading, refetch } = useQuery<Query>(QUERY_TICKET_TYPE, {
     variables: {
       dropzoneId: Number(state.currentDropzone?.id)
@@ -93,7 +95,13 @@ export default function TicketTypesScreen() {
           </DataTable.Header>
 
           { data?.ticketTypes?.map((ticketType) =>
-            <DataTable.Row onPress={() => navigation.navigate("UpdateTicketTypeScreen", { ticketType })} pointerEvents="none">
+            <DataTable.Row
+              onPress={() => {
+                dispatch(ticketTypeForm.setOriginal(ticketType));
+                setDialogOpen(true);
+              }}
+              pointerEvents="none"
+            >
               <DataTable.Cell>{ticketType.name}</DataTable.Cell>
               <DataTable.Cell numeric>${ticketType.cost}</DataTable.Cell>
               <DataTable.Cell numeric>
@@ -120,8 +128,12 @@ export default function TicketTypesScreen() {
           style={styles.fab}
           small
           icon="plus"
-          onPress={() => navigation.navigate("CreateTicketTypeScreen")}
+          onPress={() => setDialogOpen(true)}
           label="New ticket type"
+        />
+        <TicketTypesDialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
         />
       </ScrollableScreen>
   );
