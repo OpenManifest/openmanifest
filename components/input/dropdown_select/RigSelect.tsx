@@ -89,6 +89,7 @@ export default function RigSelect(props: IRigSelect) {
               setMenuOpen(false);
               props.onSelect(rig);
             }}
+            style={{ width: "100%" }}
             title={
               `${rig?.make} ${rig?.model} (${rig?.canopySize} sqft) ${!rig.user ? "[DROPZONE RIG]": ""}`
             }

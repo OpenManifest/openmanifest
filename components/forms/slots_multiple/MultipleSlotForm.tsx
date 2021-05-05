@@ -73,10 +73,6 @@ export default function SlotForm() {
     onError: console.error
   });
 
-  const allowedToManifestOthers = useRestriction(
-    "createUserSlot"
-  );
-
   return ( 
     <>
       <List.Subheader>Jump type</List.Subheader>

@@ -245,6 +245,7 @@ export default function RigDialog(props: IRigDialog) {
     <DialogOrSheet
       title={ state.original?.id ? "Edit rig" : "New rig"}
       open={open}
+      snapPoints={[700, 0]}
       onClose={() => {
         props.onClose();
         dispatch(rigForm.reset());

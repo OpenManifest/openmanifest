@@ -228,6 +228,7 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
     <DialogOrSheet
       title={ state.original?.id ? "Edit aircraft" : "New aircraft"}
       open={open}
+      snapPoints={[680, 0]}
       buttonLabel="Save"
       buttonAction={onSave}
       loading={create.loading || update.loading}

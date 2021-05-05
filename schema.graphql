@@ -321,6 +321,8 @@ type DeletePlanePayload {
   A unique identifier for the client performing the mutation.
   """
   clientMutationId: String
+  errors: [String!]
+  fieldErrors: [FieldError!]
   plane: Plane
 }
 
@@ -343,6 +345,8 @@ type DeleteSlotPayload {
   A unique identifier for the client performing the mutation.
   """
   clientMutationId: String
+  errors: [String!]
+  fieldErrors: [FieldError!]
   slot: Slot
 }
 
@@ -365,6 +369,8 @@ type DeleteTicketPayload {
   A unique identifier for the client performing the mutation.
   """
   clientMutationId: String
+  errors: [String!]
+  fieldErrors: [FieldError!]
   ticketType: TicketType
 }
 
@@ -439,6 +445,11 @@ type Dropzone {
   planes: [Plane!]!
   primaryColor: String
   rigInspectionTemplate: FormTemplate
+
+  """
+  Get rigs for dropzone
+  """
+  rigs: [Rig!]
   roles: [UserRole!]!
   secondaryColor: String
   ticketTypes(isPublic: Boolean): [TicketType!]!
@@ -1003,6 +1014,11 @@ enum Permission {
   createUserSlot
 
   """
+  createUserSlotWithSelf
+  """
+  createUserSlotWithSelf
+
+  """
   createUserTransaction
   """
   createUserTransaction
@@ -1071,6 +1087,11 @@ enum Permission {
   deleteUserSlot
   """
   deleteUserSlot
+
+  """
+  readDropzoneRig
+  """
+  readDropzoneRig
 
   """
   readExtra
@@ -1300,11 +1321,6 @@ type Query {
   planes(dropzoneId: Int!): [Plane!]!
 
   """
-  Get rigs for user or dropzone
-  """
-  rigs(dropzoneId: Int, userId: Int): [Rig!]
-
-  """
   Get ticket types for a dropzone
   """
   ticketTypes(allowManifestingSelf: Boolean, dropzoneId: Int!): [TicketType!]!
@@ -1317,6 +1333,7 @@ type Rig {
   createdAt: Int!
   dropzone: Dropzone
   id: ID!
+  isPublic: Boolean!
   maintainedAt: Int
   make: String
   model: String
@@ -1331,6 +1348,7 @@ type Rig {
 input RigInput {
   canopySize: Int
   dropzoneId: Int
+  isPublic: Boolean
   maintainedAt: Int
   make: String
   model: String

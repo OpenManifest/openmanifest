@@ -72,31 +72,30 @@ export default function UsersScreen() {
   return (
     <>
     <ProgressBar indeterminate color={global.theme.colors.accent} visible={loading} />
-    <ScrollableScreen contentContainerStyle={{ paddingHorizontal: 0 }}>
-      
-      { !data?.dropzone?.dropzoneUsers?.edges?.length && (
-        <NoResults title="No users" subtitle="" />
-      )}
+      <ScrollableScreen contentContainerStyle={{ paddingHorizontal: 0 }}>
+        
+        { !data?.dropzone?.dropzoneUsers?.edges?.length && (
+          <NoResults title="No users" subtitle="" />
+        )}
 
-      { data?.dropzone?.dropzoneUsers?.edges?.map((edge) =>
-      <>
-        <List.Item
-          style={{ width: "100%"}}
-          key={`user-${edge?.node?.id}`}
-          title={edge?.node?.user.name}
-          description={edge?.node?.role?.name}
-          left={() =>
-            !edge?.node?.user?.image
-              ? <List.Icon icon="account" />
-              : <Avatar.Image source={{ uri: edge?.node?.user.image }} style={{ alignSelf: "center", marginHorizontal: 12 }} size={32} />
-          }
-          onPress={() => navigation.navigate("UserProfileScreen", { userId: edge?.node?.id })}
-        />
-        <Divider style={{ width: "100%" }} key={`divider-${edge?.node!.id}`}/>
-        </>
-      )}
+        { data?.dropzone?.dropzoneUsers?.edges?.map((edge) =>
+          <React.Fragment key={`user-${edge?.node?.id}`}>
+            <List.Item
+              style={{ width: "100%"}}
+              title={edge?.node?.user.name}
+              description={edge?.node?.role?.name}
+              left={() =>
+                !edge?.node?.user?.image
+                  ? <List.Icon icon="account" />
+                  : <Avatar.Image source={{ uri: edge?.node?.user.image }} style={{ alignSelf: "center", marginHorizontal: 12 }} size={32} />
+              }
+              onPress={() => navigation.navigate("UserProfileScreen", { userId: edge?.node?.id })}
+            />
+            <Divider style={{ width: "100%" }} key={`divider-${edge?.node!.id}`}/>
+          </React.Fragment>
+        )}
 
-    </ScrollableScreen>
+      </ScrollableScreen>
     </>
   );
 }

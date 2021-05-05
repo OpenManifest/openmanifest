@@ -6,25 +6,29 @@ import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar, Switch } from 'react-native-paper';
 import { Mutation, Query } from "../../../graphql/schema";
 
-import { ticketTypeForm, useAppDispatch, useAppSelector } from '../../../redux';
+import { snackbarActions, ticketTypeForm, useAppDispatch, useAppSelector } from '../../../redux';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import TicketTypesDialog from '../../../components/dialogs/TicketType';
+import SwipeActions from '../../../components/layout/SwipeActions';
 
 const QUERY_TICKET_TYPE = gql`
   query QueryTicketType(
     $dropzoneId: Int!
   ) {
-    ticketTypes(dropzoneId: $dropzoneId) {
+    dropzone(id: $dropzoneId) {
       id
-      cost
-      currency
-      name
-      altitude
-      allowManifestingSelf
-
-      extras {
+      ticketTypes {
         id
+        cost
+        currency
         name
+        altitude
+        allowManifestingSelf
+
+        extras {
+          id
+          name
+        }
       }
     }
   }
@@ -58,6 +62,37 @@ const MUTATION_UPDATE_TICKET_TYPE = gql`
   }
 `;
 
+const MUTATION_DELETE_TICKET_TYPE = gql`
+  mutation DeleteTicketType(
+    $id: Int!,
+  ){
+    deleteTicketType(input: {
+      id: $id
+    }) {
+      ticketType {
+        id
+        dropzone {
+          id
+          ticketTypes {
+            id
+            cost
+            currency
+            name
+            altitude
+            allowManifestingSelf
+
+            extras {
+              id
+              name
+            }
+          }
+        }
+      }
+      errors
+    }
+  }
+`;
+
 export default function TicketTypesScreen() {
   const state = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
@@ -77,6 +112,7 @@ export default function TicketTypesScreen() {
     }
   }, [isFocused]);
   const [mutationUpdateTicketType, mutation] = useMutation<Mutation>(MUTATION_UPDATE_TICKET_TYPE);
+  const [mutationDeleteTicketType, mutationDelete] = useMutation<Mutation>(MUTATION_DELETE_TICKET_TYPE);
   
   React.useEffect(() => {
     if (route.name === "TicketTypesScreen") {
@@ -94,7 +130,25 @@ export default function TicketTypesScreen() {
             <DataTable.Title numeric>Public</DataTable.Title>
           </DataTable.Header>
 
-          { data?.ticketTypes?.map((ticketType) =>
+          { data?.dropzone?.ticketTypes?.map((ticketType) =>
+          <SwipeActions
+            rightAction={{
+              label: "Delete",
+              backgroundColor: "red",
+              onPress: async () => {
+                const { data: result } = await mutationDeleteTicketType({ variables: { id: Number(ticketType.id) }});
+
+                if (result?.deleteTicketType?.errors?.length) {
+                  dispatch(
+                    snackbarActions.showSnackbar({
+                      message: result?.deleteTicketType?.errors[0],
+                      variant: "error"
+                    })
+                  );
+                }
+              }
+            }}
+          >
             <DataTable.Row
               onPress={() => {
                 dispatch(ticketTypeForm.setOriginal(ticketType));
@@ -121,6 +175,7 @@ export default function TicketTypesScreen() {
                 />
               </DataTable.Cell>
             </DataTable.Row>
+            </SwipeActions>
             )}
         </DataTable>
         

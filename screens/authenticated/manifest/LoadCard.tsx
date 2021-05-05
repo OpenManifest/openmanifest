@@ -14,7 +14,8 @@ import PlaneChip from '../../../components/chips/PlaneChip';
 import { View } from '../../../components/Themed';
 import { Query, Load, Mutation, User, Plane, Slot } from '../../../graphql/schema';
 import useRestriction from '../../../hooks/useRestriction';
-import { slotsMultipleForm, useAppDispatch, useAppSelector } from '../../../redux';
+import { manifestActions, slotsMultipleForm, snackbarActions, useAppDispatch, useAppSelector } from '../../../redux';
+import SwipeActions from '../../../components/layout/SwipeActions';
 
 interface ILoadCard {
   load: Load;
@@ -191,16 +192,55 @@ const MUTATION_UPDATE_LOAD = gql`
 `;
 
 
+const MUTATION_DELETE_SLOT = gql`
+mutation DeleteSlot($id: Int!) {
+  deleteSlot(input: { id: $id }) {
+    slot {
+      id
+      load {
+        id
+        slots {
+          id
+          createdAt
+          exitWeight
+
+          passengerName
+          passengerExitWeight
+
+          user {
+            id
+            name
+          }
+          ticketType {
+            id
+            name
+            altitude
+            isTandem
+          }
+          jumpType {
+            id
+            name
+          }
+          extras {
+            id
+            name
+          }
+        }  
+      }
+    }
+  }
+}
+`;
+
+
 export default function LoadCard(props: ILoadCard) {
   const state = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDispatchOpen, setDispatchOpen] = React.useState(false);
-  const canManifestOthers = useRestriction("createUserSlot");
 
-  const navigation = useNavigation();
-  const { load, loadNumber, onManifest, canManifest, onManifestGroup } = props;
-  const { data, loading } = useQuery<Query>(QUERY_LOAD, {
+  const { load, onManifest, canManifest, onManifestGroup } = props;
+  const { data, loading, refetch } = useQuery<Query>(QUERY_LOAD, {
     variables: {
       id: Number(load.id),
     },
@@ -208,6 +248,29 @@ export default function LoadCard(props: ILoadCard) {
   });
 
   const [mutationUpdateLoad, mutation] = useMutation<Mutation>(MUTATION_UPDATE_LOAD);
+  const [mutationDeleteSlot, mutationDelete] = useMutation<Mutation>(MUTATION_DELETE_SLOT);
+
+  const onDeleteSlot = React.useCallback(async (slot: Slot) => {
+    try {
+      const result = await mutationDeleteSlot({
+        variables: {
+          id: Number(slot.id)
+        }
+      });
+
+      if (result?.data?.deleteSlot?.errors) {
+        dispatch(
+          snackbarActions.showSnackbar({
+            message: result.data.deleteSlot.errors[0],
+            variant: "error"
+          })
+        );
+      }
+    } catch (e) {
+
+    }
+  }, [mutationUpdateLoad, JSON.stringify(load)]);
+
   const updatePilot = React.useCallback(async (pilot: User) => {
     try {
       await mutationUpdateLoad({ variables: { id: Number(load.id), pilotId: Number(pilot.id) }});
@@ -272,6 +335,12 @@ export default function LoadCard(props: ILoadCard) {
   const canEditSelf = useRestriction("updateSlot");
   const canEditOthers = useRestriction("updateUserSlot");
 
+  const canRemoveSelf = useRestriction("deleteSlot");
+  const canRemoveOthers = useRestriction("deleteUserSlot");
+
+  const canManifestGroup = useRestriction("createUserSlot");
+  const canManifestGroupWithSelfOnly = useRestriction("createUserSlotWithSelf");
+
   
 
   React.useEffect(() => {
@@ -280,7 +349,7 @@ export default function LoadCard(props: ILoadCard) {
     }
   }, [data?.load?.maxSlots]);
 
-  
+  const showGroupIcon = (canManifestGroupWithSelfOnly || canManifestGroupWithSelfOnly) && !data?.load?.hasLanded && (!data?.load?.dispatchAt || data?.load.dispatchAt > (new Date().getTime() / 1000));
 
   return (
   <Card style={{ margin: 16, opacity: data?.load?.hasLanded ? 0.5 : 1.0 }} elevation={3}>
@@ -290,12 +359,19 @@ export default function LoadCard(props: ILoadCard) {
         <View style={{ width: "100%", flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
           <Text>{`Load ${data?.load?.loadNumber || 0}`}</Text>
           <View style={{ flexGrow: 1 }} />
-          { !data?.load?.hasLanded && (!data?.load?.dispatchAt || data?.load.dispatchAt > (new Date().getTime() / 1000)) && (
+          { showGroupIcon && (
             <IconButton
               icon="account-group"
               onPress={() => {
                 dispatch(slotsMultipleForm.reset());
                 dispatch(slotsMultipleForm.setField(["load", load]));
+
+                if (canManifestGroupWithSelfOnly && !canManifestGroup) {
+                  // Automatically add current user to selection
+                  dispatch(manifestActions.setSelected([state.currentDropzone?.currentUser!]));
+                  dispatch(slotsMultipleForm.setDropzoneUsers([state.currentDropzone?.currentUser!]));
+                }
+
                 if (onManifestGroup) {
                   onManifestGroup();
                 }
@@ -312,11 +388,25 @@ export default function LoadCard(props: ILoadCard) {
     />
     <Card.Content style={{ marginVertical: 8, height: isExpanded ? undefined : 300, overflow: "hidden" }}>
       <View style={{ flexDirection: "row"}}>
-        <ScrollView horizontal>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <PlaneChip
             dropzoneId={Number(state.currentDropzone?.id)}
             value={data?.load?.plane}
-            onSelect={updatePlane}
+            onSelect={async (plane) => {
+              if ((data?.load?.slots?.length || 0) > (plane.maxSlots || 0)) {
+                const diff = (data?.load?.slots?.length || 0) - (plane.maxSlots || 0);
+
+                dispatch(
+                  snackbarActions.showSnackbar({
+                    message: `You need to take ${diff} people off the load to fit on this plane`,
+                    variant: "warning",
+                  })
+                );
+              } else {
+                await updatePlane(plane);
+                refetch();
+              }
+            }}
           />
           <GCAChip
             dropzoneId={Number(state.currentDropzone?.id)}
@@ -345,46 +435,58 @@ export default function LoadCard(props: ILoadCard) {
           {
             data?.load?.slots?.map(slot => {
               const slotGroup = data?.load?.slots?.filter(({ groupNumber }) => groupNumber && groupNumber === slot.groupNumber);
+              const isCurrentUser = slot?.user?.id === state.currentUser?.id;
 
               return (
-                <DataTable.Row
+                <SwipeActions
+                  disabled={
+                    (isCurrentUser && !canRemoveSelf) || (!isCurrentUser && !canRemoveOthers)
+                  }
                   key={`slot-${slot.id}`}
-                  disabled={!!data?.load?.hasLanded}
-                  onPress={() => {
-                    if (slot.user?.id === state.currentUser?.id) {
-                      if (canEditSelf) {
+                  rightAction={{
+                    label: "Delete",
+                    backgroundColor: "red",
+                    onPress: () => onDeleteSlot(slot),
+                  }}
+                >
+                  <DataTable.Row
+                    disabled={!!data?.load?.hasLanded}
+                    onPress={() => {
+                      if (slot.user?.id === state.currentUser?.id) {
+                        if (canEditSelf) {
+                          if (slotGroup?.length) {
+                            props.onSlotGroupPress(slotGroup!)
+                          } else {
+                            props.onSlotPress(slot);
+                          }
+                        }
+                      } else if (canEditOthers) {
                         if (slotGroup?.length) {
                           props.onSlotGroupPress(slotGroup!)
                         } else {
                           props.onSlotPress(slot);
                         }
                       }
-                    } else if (canEditOthers) {
-                      if (slotGroup?.length) {
-                        props.onSlotGroupPress(slotGroup!)
-                      } else {
-                        props.onSlotPress(slot);
-                      }
-                    }
-                  }}
-                  pointerEvents="none"
-                >
-                  <DataTable.Cell>
-                    <Paragraph style={styles.slotText}>
-                      {slot?.user?.name}
-                    </Paragraph>
-                  </DataTable.Cell>
-                  <DataTable.Cell numeric>
-                    <Paragraph style={styles.slotText}>
-                      {slot?.jumpType?.name}
-                    </Paragraph>
-                  </DataTable.Cell>
-                  <DataTable.Cell numeric>
-                    <Paragraph style={styles.slotText}>
-                      {((slot?.ticketType?.altitude || 14000) / 1000)}k
-                    </Paragraph>
-                  </DataTable.Cell>
-                </DataTable.Row>
+                    }}
+                    pointerEvents="none"
+                  >
+                    <DataTable.Cell>
+                      <Paragraph style={styles.slotText}>
+                        {slot?.user?.name}
+                      </Paragraph>
+                    </DataTable.Cell>
+                    <DataTable.Cell numeric>
+                      <Paragraph style={styles.slotText}>
+                        {slot?.jumpType?.name}
+                      </Paragraph>
+                    </DataTable.Cell>
+                    <DataTable.Cell numeric>
+                      <Paragraph style={styles.slotText}>
+                        {((slot?.ticketType?.altitude || 14000) / 1000)}k
+                      </Paragraph>
+                    </DataTable.Cell>
+                  </DataTable.Row>
+                </SwipeActions>
               )
             })
           }
@@ -430,7 +532,10 @@ export default function LoadCard(props: ILoadCard) {
                 onDismiss={() => setDispatchOpen(false)}
                 visible={isDispatchOpen}
                 anchor={
-                  <Button mode="outlined" onPress={() => setDispatchOpen(true)}>
+                  <Button
+                    mode="outlined"
+                    onPress={() => setDispatchOpen(true)}
+                  >
                     Dispatch
                   </Button>
                 }
@@ -469,7 +574,29 @@ export default function LoadCard(props: ILoadCard) {
       {
         data?.load?.hasLanded ? null : (
           data?.load?.dispatchAt && data?.load.dispatchAt < new Date().getTime() / 1000 && canUpdateLoad
-            ? <Button style={{ marginLeft: 8 }} mode="contained" onPress={() => onLanded()}>
+            ? <Button
+                style={{ marginLeft: 8 }}
+                mode="contained"
+                onPress={() => {
+                  if (!data?.load?.loadMaster?.id) {
+                    return dispatch(
+                      snackbarActions.showSnackbar({
+                        message: "You must select a load master before this load can be finalized",
+                        variant: "warning"
+                      })
+                    );
+                  }
+
+                  if (!data?.load?.pilot?.id) {
+                    return dispatch(
+                      snackbarActions.showSnackbar({
+                        message: "You must select a pilot before this load can be finalized",
+                        variant: "warning"
+                      })
+                    );
+                  }
+                  onLanded();
+                }}>
                 Mark as landed
               </Button>
             : <Button

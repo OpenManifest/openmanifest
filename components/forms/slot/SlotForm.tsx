@@ -90,7 +90,7 @@ export default function SlotForm() {
         value={state.fields.rig.value}
         userId={Number(state.fields.user?.value?.id)}
         dropzoneId={Number(globalState.currentDropzone?.id)}
-        onSelect={(value) => dispatch(actions.setField(["jumpType", value]))}
+        onSelect={(value) => dispatch(actions.setField(["rig", value]))}
       />}
       <HelperText type={!!state.fields.rig.error ? "error" : "info"}>
         { state.fields.rig.error || "" }

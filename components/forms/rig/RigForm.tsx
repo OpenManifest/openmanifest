@@ -59,17 +59,7 @@ export default function RigForm(props: IRigForm) {
         { state.fields.serial.error || "" }
       </HelperText>
 
-      { !props.showTypeSelect ? null : (
-        <ChipSelect
-          items={["student", "sport", "tandem"]}
-          renderItemLabel={(item) => item}
-          isDisabled={(item) => !canCreateRigs ? item !== "sport" : false}
-          selected={[state.fields.rigType?.value || "sport"]}
-          onChangeSelected={([rigType]) =>
-            dispatch(actions.setField(["rigType", rigType]))
-          }
-        />
-      )}
+      
 
       <TextInput
         style={styles.field}
@@ -84,6 +74,17 @@ export default function RigForm(props: IRigForm) {
         { state.fields.canopySize.error || "Size of canopy in container" }
       </HelperText>
 
+      { !props.showTypeSelect ? null : (
+        <ChipSelect
+          items={["student", "sport", "tandem"]}
+          renderItemLabel={(item) => item}
+          isDisabled={(item) => !canCreateRigs ? item !== "sport" : false}
+          selected={[state.fields.rigType?.value || "sport"]}
+          onChangeSelected={([rigType]) =>
+            dispatch(actions.setField(["rigType", rigType]))
+          }
+        />
+      )}
       <DatePicker
         timestamp={state.fields.repackExpiresAt.value || new Date().getTime() / 1000}
         onChange={(time) => dispatch(actions.setField(["repackExpiresAt", time]))}
@@ -92,6 +93,8 @@ export default function RigForm(props: IRigForm) {
       <HelperText type={!!state.fields.repackExpiresAt.error ? "error" : "info"}>
         { state.fields.repackExpiresAt.error || "" }
       </HelperText>
+
+      
     </View>
   );
 }

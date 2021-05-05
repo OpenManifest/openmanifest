@@ -8,6 +8,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import NoResults from '../../../components/NoResults';
 import { DropzoneUser, Query } from '../../../graphql/schema';
 import { manifestActions, slotsMultipleForm, useAppDispatch, useAppSelector } from '../../../redux';
+import useRestriction from '../../../hooks/useRestriction';
 
 
 
@@ -57,6 +58,9 @@ export default function UsersScreen(props: IUserListSelect) {
   });
 
 
+  const canManifestGroup = useRestriction("createUserSlot");
+  const canManifestGroupWithSelfOnly = useRestriction("createUserSlotWithSelf");
+
   return (
     <>
     <Searchbar
@@ -90,6 +94,13 @@ export default function UsersScreen(props: IUserListSelect) {
                 : "unchecked"
               }
             />
+          }
+          disabled={
+          // Dont allow removing current user if the user
+            // can only manifest a group with themselves in it
+            edge?.node?.user.id === global.currentUser?.id && (
+              canManifestGroupWithSelfOnly && !canManifestGroup
+            )  
           }
           onPress={
             () => dispatch(

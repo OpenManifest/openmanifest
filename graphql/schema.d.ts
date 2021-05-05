@@ -234,6 +234,8 @@ export type DeletePlanePayload = {
   __typename?: 'DeletePlanePayload';
   /** A unique identifier for the client performing the mutation. */
   clientMutationId?: Maybe<Scalars['String']>;
+  errors?: Maybe<Array<Scalars['String']>>;
+  fieldErrors?: Maybe<Array<FieldError>>;
   plane?: Maybe<Plane>;
 };
 
@@ -249,6 +251,8 @@ export type DeleteSlotPayload = {
   __typename?: 'DeleteSlotPayload';
   /** A unique identifier for the client performing the mutation. */
   clientMutationId?: Maybe<Scalars['String']>;
+  errors?: Maybe<Array<Scalars['String']>>;
+  fieldErrors?: Maybe<Array<FieldError>>;
   slot?: Maybe<Slot>;
 };
 
@@ -264,6 +268,8 @@ export type DeleteTicketPayload = {
   __typename?: 'DeleteTicketPayload';
   /** A unique identifier for the client performing the mutation. */
   clientMutationId?: Maybe<Scalars['String']>;
+  errors?: Maybe<Array<Scalars['String']>>;
+  fieldErrors?: Maybe<Array<FieldError>>;
   ticketType?: Maybe<TicketType>;
 };
 
@@ -287,6 +293,8 @@ export type Dropzone = {
   planes: Array<Plane>;
   primaryColor?: Maybe<Scalars['String']>;
   rigInspectionTemplate?: Maybe<FormTemplate>;
+  /** Get rigs for dropzone */
+  rigs?: Maybe<Array<Rig>>;
   roles: Array<UserRole>;
   secondaryColor?: Maybe<Scalars['String']>;
   ticketTypes: Array<TicketType>;
@@ -816,6 +824,8 @@ export enum Permission {
   DeleteSlot = 'deleteSlot',
   /** createUserSlot */
   CreateUserSlot = 'createUserSlot',
+  /** createUserSlotWithSelf */
+  CreateUserSlotWithSelf = 'createUserSlotWithSelf',
   /** updateUserSlot */
   UpdateUserSlot = 'updateUserSlot',
   /** deleteUserSlot */
@@ -860,6 +870,8 @@ export enum Permission {
   UpdateDropzoneRig = 'updateDropzoneRig',
   /** deleteDropzoneRig */
   DeleteDropzoneRig = 'deleteDropzoneRig',
+  /** readDropzoneRig */
+  ReadDropzoneRig = 'readDropzoneRig',
   /** readPermissions */
   ReadPermissions = 'readPermissions',
   /** updatePermissions */
@@ -950,8 +962,6 @@ export type Query = {
   loads: LoadConnection;
   /** Get planes from a dropzone */
   planes: Array<Plane>;
-  /** Get rigs for user or dropzone */
-  rigs?: Maybe<Array<Rig>>;
   /** Get ticket types for a dropzone */
   ticketTypes: Array<TicketType>;
   userCheckPasswordToken: User;
@@ -1012,12 +1022,6 @@ export type QueryPlanesArgs = {
 };
 
 
-export type QueryRigsArgs = {
-  userId?: Maybe<Scalars['Int']>;
-  dropzoneId?: Maybe<Scalars['Int']>;
-};
-
-
 export type QueryTicketTypesArgs = {
   dropzoneId: Scalars['Int'];
   allowManifestingSelf?: Maybe<Scalars['Boolean']>;
@@ -1041,6 +1045,7 @@ export type Rig = {
   createdAt: Scalars['Int'];
   dropzone?: Maybe<Dropzone>;
   id: Scalars['ID'];
+  isPublic: Scalars['Boolean'];
   maintainedAt?: Maybe<Scalars['Int']>;
   make?: Maybe<Scalars['String']>;
   model?: Maybe<Scalars['String']>;
@@ -1063,6 +1068,7 @@ export type RigInput = {
   userId?: Maybe<Scalars['Int']>;
   /** student / sport / tandem */
   rigType?: Maybe<Scalars['String']>;
+  isPublic?: Maybe<Scalars['Boolean']>;
   canopySize?: Maybe<Scalars['Int']>;
 };
 

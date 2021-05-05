@@ -1,30 +1,84 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { useIsFocused,  } from '@react-navigation/core';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar } from 'react-native-paper';
-import { Query } from "../../../graphql/schema";
+import { Mutation, Query } from "../../../graphql/schema";
 
-import { useAppSelector, useAppDispatch, rigForm } from '../../../redux';
+import { useAppSelector, useAppDispatch, rigForm, snackbarActions } from '../../../redux';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { format } from 'date-fns';
 import RigDialog from '../../../components/dialogs/Rig';
+import { Switch } from 'react-native-gesture-handler';
 
 
 const QUERY_DROPZONE_RIGS = gql`
   query QueryDropzoneRigs(
     $dropzoneId: Int!
   ) {
-    rigs(dropzoneId: $dropzoneId) {
+    dropzone(id: $dropzoneId) {
       id
-      make
-      model
-      serial
-      rigType
-      repackExpiresAt
-      canopySize
-      packValue
+      rigs {
+        id
+        make
+        isPublic
+        model
+        serial
+        rigType
+        repackExpiresAt
+        canopySize
+        packValue
+      }
+    }
+  }
+`;
+
+const MUTATION_UPDATE_RIG = gql`
+  mutation UpdateDropzoneRig(
+    $id: Int!
+    $isPublic: Boolean,
+  ) {
+    updateRig(
+      input: {
+        id: $id,
+        attributes: {
+          isPublic: $isPublic
+        }
+      }
+    ) {
+      errors
+      fieldErrors {
+        field
+        message
+      }
+      rig {
+        id
+        make
+        model
+        serial
+        isPublic
+        canopySize
+        repackExpiresAt
+        packValue
+        maintainedAt
+        rigType
+
+        dropzone {
+          id
+          rigs {
+            id
+            make
+            model
+            isPublic
+            serial
+            canopySize
+            repackExpiresAt
+            packValue
+            maintainedAt
+          }
+        }
+      }
     }
   }
 `;
@@ -39,6 +93,7 @@ export default function DropzoneRigsScreen() {
   });
   const dispatch = useAppDispatch();
   const isFocused = useIsFocused();
+  const [mutationUpdateRig, updateData] = useMutation<Mutation>(MUTATION_UPDATE_RIG);
 
   React.useEffect(() => {
     if (isFocused) {
@@ -47,8 +102,8 @@ export default function DropzoneRigsScreen() {
   }, [isFocused]);
 
   return (
-      <ScrollableScreen style={styles.container} contentContainerStyle={[styles.content, {  backgroundColor: "white" }]} refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}>
-      <ProgressBar visible={loading} color={state.theme.colors.accent} />
+      <ScrollableScreen style={styles.container} contentContainerStyle={[styles.content, {  backgroundColor: "white" }]} refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}>
+      <ProgressBar visible={loading || updateData.loading} color={state.theme.colors.accent} />
         <DataTable>
           <DataTable.Header>
             <DataTable.Title>
@@ -63,19 +118,20 @@ export default function DropzoneRigsScreen() {
             <DataTable.Title numeric>
               Type
             </DataTable.Title>
+            <DataTable.Title numeric>
+              Public
+            </DataTable.Title>
           </DataTable.Header>
 
           {
-            data?.rigs?.map((rig) =>
-              <DataTable.Row
-                key={`rig-${rig!.id}`}
-                onPress={() => {
-                  dispatch(rigForm.setOriginal(rig));
-                  setRigDialogOpen(true);
-                }}
-                pointerEvents="none"
-              >
-                <DataTable.Cell>
+            data?.dropzone?.rigs?.map((rig) =>
+              <DataTable.Row key={`rig-${rig!.id}`}>
+                <DataTable.Cell
+                  onPress={() => {
+                    dispatch(rigForm.setOriginal(rig));
+                    setRigDialogOpen(true);
+                  }}
+                >
                   {[rig?.make, rig?.model, `#${rig?.serial}`].join(" ")}
                 </DataTable.Cell>
                 <DataTable.Cell numeric>
@@ -86,6 +142,28 @@ export default function DropzoneRigsScreen() {
                 </DataTable.Cell>
                 <DataTable.Cell numeric>
                   {rig.rigType}
+                </DataTable.Cell>
+                  <DataTable.Cell numeric>
+                    <Switch
+                      onValueChange={async () => {
+                        const { data: result } = await mutationUpdateRig({
+                          variables: {
+                            id: Number(rig.id),
+                            isPublic: !rig.isPublic
+                          }
+                        });
+
+                        if (result?.updateRig?.errors?.length) {
+                          dispatch(
+                            snackbarActions.showSnackbar({
+                              message: result?.updateRig.errors[0],
+                              variant: "error"
+                            })
+                          )
+                        }
+                      }}
+                      value={!!rig.isPublic}
+                    />
                 </DataTable.Cell>
               </DataTable.Row>
             )

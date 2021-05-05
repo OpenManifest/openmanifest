@@ -201,6 +201,13 @@ export default function DropzonePermissionScreen() {
 
                           <PermissionListItem
                             role={role}
+                            permissionName="createUserSlotWithSelf"
+                            description="Allow manifesting others only if the user is part of the group"
+                            title="Manifest own groups"
+                          />
+
+                          <PermissionListItem
+                            role={role}
                             permissionName="updateUserSlot"
                             description="Update other people's slots on a load"
                             title="Update other users slot"

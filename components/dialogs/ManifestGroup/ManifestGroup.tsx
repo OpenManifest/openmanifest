@@ -7,7 +7,7 @@ import { Tabs, TabScreen, useTabNavigation } from 'react-native-paper-tabs';
 import BottomSheetBehavior from "reanimated-bottom-sheet";
 import BottomSheet from "reanimated-bottom-sheet";
 import { Mutation } from "../../../graphql/schema";
-import { slotForm, snackbarActions, useAppDispatch, useAppSelector } from "../../../redux";
+import { slotForm, slotsMultipleForm, snackbarActions, useAppDispatch, useAppSelector } from "../../../redux";
 import MultipleSlotForm from "../../forms/slots_multiple/MultipleSlotForm";
 import UserListSelect from "./UserListSelect";
 interface IManifestUserDialog {
@@ -215,18 +215,21 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         snapPoints={[600, 0]}
         initialSnap={1}
         onCloseEnd={() => {
-          dispatch(slotForm.reset());
           props.onClose();
+          dispatch(slotsMultipleForm.reset());
+          setTabIndex(0);
         }}
         renderHeader={() =>
           <View style={[styles.sheetHeader, { backgroundColor: globalState.theme.colors.primary }]} />
         }
         renderContent={() => 
           <View style={{ backgroundColor: "white"}}>
-            <Tabs defaultIndex={0} mode="fixed" onChangeIndex={setTabIndex}>
-              <TabScreen label="Create group" ><View /></TabScreen>
-              <TabScreen label="Configure jump"><View /></TabScreen>
-            </Tabs>
+            <View pointerEvents={(state.fields.users?.value?.length || 0) > 0 ? undefined : "none"}>
+              <Tabs defaultIndex={tabIndex} mode="fixed" onChangeIndex={setTabIndex}>
+                <TabScreen label="Create group" ><View /></TabScreen>
+                <TabScreen label="Configure jump"><View /></TabScreen>
+              </Tabs>
+            </View>
             
             {
               tabIndex === 0
