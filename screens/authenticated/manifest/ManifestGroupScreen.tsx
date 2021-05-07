@@ -1,8 +1,9 @@
+
 import { gql, useMutation } from "@apollo/client";
 import React, { useCallback, useEffect } from "react";
 import { ScrollView } from "react-native";
 import { Button, Card, ProgressBar } from "react-native-paper";
-import ScrollableScreen from "../../../components/ScrollableScreen";
+import ScrollableScreen from "../../../components/layout/ScrollableScreen";
 import { DropzoneUser, Mutation, Slot } from "../../../graphql/schema";
 import { slotForm, slotsMultipleForm, snackbarActions, useAppDispatch, useAppSelector } from "../../../redux";
 import MultipleSlotForm from "../../../components/forms/slots_multiple/MultipleSlotForm";
@@ -37,76 +38,64 @@ const MUTATION_CREATE_SLOTS = gql`
         field
         message
       }
-      slots {
+      
+      load {
         id
-        groupNumber
-        jumpType {
+        name
+        loadNumber
+        createdAt
+        dispatchAt
+        hasLanded
+        maxSlots
+        isFull
+        isOpen
+        plane {
           id
           name
         }
-        extras {
+        gca {
           id
-          name
-        }
-        exitWeight
-        load {
-          id
-          name
-          loadNumber
-          createdAt
-          dispatchAt
-          hasLanded
-          maxSlots
-          isFull
-          isOpen
-          plane {
+          user {
             id
             name
           }
-          gca {
+        }
+        pilot {
+          id
+          user {
             id
-            user {
-              id
-              name
-            }
+            name
           }
-          pilot {
+        }
+        loadMaster {
+          id
+          user {
             id
-            user {
-              id
-              name
-            }
+            name
           }
-          loadMaster {
+        }
+        slots {
+          id
+          createdAt
+          user {
             id
-            user {
-              id
-              name
-            }
+            name
           }
-          slots {
+          passengerName
+          passengerExitWeight
+          ticketType {
             id
-            createdAt
-            user {
-              id
-              name
-            }
-            passengerName
-            passengerExitWeight
-            ticketType {
-              id
-              name
-              isTandem
-              altitude
-            }
-            jumpType {
-              id
-              name
-            }
-            extras {
-              id
-              name
-            }
+            name
+            isTandem
+            altitude
+          }
+          jumpType {
+            id
+            name
+          }
+          extras {
+            id
+            name
           }
         }
       }
@@ -150,6 +139,7 @@ export default function ManifestGroupScreen(props: IManifestUserDialog) {
       const result = await mutationCreateSlots({
         variables: {
           jumpTypeId: Number(state.fields.jumpType.value?.id),
+          ticketTypeId: Number(state.fields.ticketType.value?.id),
           extraIds: state.fields.extras?.value?.map(({ id }) => Number(id)),
           loadId: Number(state.fields.load.value?.id),
           userGroup: state.fields.users.value,

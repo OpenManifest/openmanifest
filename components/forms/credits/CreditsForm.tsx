@@ -99,7 +99,7 @@ export default function CreditsForm() {
                   <DataTable>
                     <DataTable.Row>
                       <DataTable.Title>Current balance</DataTable.Title>
-                      <DataTable.Cell numeric>{`$${state.original!.credits || 0}`}</DataTable.Cell>
+                      <DataTable.Cell numeric>{`$${state.original?.credits || 0}`}</DataTable.Cell>
                     </DataTable.Row>
                     <DataTable.Row>
                       <DataTable.Title>Withdraw</DataTable.Title>

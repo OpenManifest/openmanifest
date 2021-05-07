@@ -5,10 +5,10 @@ import { useAppSelector, useAppDispatch } from '../../../redux';
 
 
 import slice from "./slice";
-import JumpTypeSelect from '../../JumpTypeSelect';
-import TicketTypeSelect from '../../TicketTypeSelect';
+import JumpTypeChipSelect from '../../input/chip_select/JumpTypeChipSelect';
+import TicketTypeChipSelect from '../../input/chip_select/TicketTypeChipSelect';
 import useRestriction from '../../../hooks/useRestriction';
-import RigSelect from '../../RigSelect';
+import RigSelect from '../../input/dropdown_select/RigSelect';
 
 const { actions } = slice;
 export default function SlotForm() {
@@ -41,7 +41,7 @@ export default function SlotForm() {
 
   return ( 
     <> 
-      <JumpTypeSelect
+      <JumpTypeChipSelect
         value={state.fields.jumpType.value}
         required
         userId={Number(state?.fields?.user?.value?.id) || null}
@@ -51,10 +51,10 @@ export default function SlotForm() {
         { state.fields.jumpType.error || "" }
       </HelperText>
 
-      <TicketTypeSelect
+      <TicketTypeChipSelect
         value={state.fields.ticketType.value}
         required
-        allowManifestingSelf={!allowedToManifestOthers}
+        onlyPublicTickets={!allowedToManifestOthers}
         onSelect={(value) => dispatch(actions.setField(["ticketType", value]))}
       />
       <HelperText type={!!state.fields.ticketType.error ? "error" : "info"}>
@@ -90,7 +90,7 @@ export default function SlotForm() {
         value={state.fields.rig.value}
         userId={Number(state.fields.user?.value?.id)}
         dropzoneId={Number(globalState.currentDropzone?.id)}
-        onSelect={(value) => dispatch(actions.setField(["jumpType", value]))}
+        onSelect={(value) => dispatch(actions.setField(["rig", value]))}
       />}
       <HelperText type={!!state.fields.rig.error ? "error" : "info"}>
         { state.fields.rig.error || "" }

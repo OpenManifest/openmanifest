@@ -9,6 +9,7 @@ type Fields = Pick<
   | "serial"
   | "canopySize"
   | "repackExpiresAt"
+  | "rigType"
 >;
 
 interface IRigEditState {
@@ -42,6 +43,10 @@ const initialState: IRigEditState = {
     },
     canopySize: {
       value: null,
+      error: null,
+    },
+    rigType: {
+      value: "sport",
       error: null,
     },
   }

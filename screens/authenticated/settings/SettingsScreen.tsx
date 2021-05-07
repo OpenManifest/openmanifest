@@ -4,6 +4,7 @@ import { List } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import { View } from '../../../components/Themed';
 import { useAppSelector } from '../../../redux';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
 
 
@@ -15,13 +16,18 @@ export default function SettingsScreen() {
  
 
   return (
-    <View style={styles.container}>
-      <List.Section title="Dropzone">
+    <ScrollableScreen>
+      <List.Section title="Dropzone" style={{ width: "100%" }}>
         <List.Item
           title="Configuration"
           onPress={() => navigation.navigate("UpdateDropzoneScreen", { dropzone: state.currentDropzone })}
           left={() => <List.Icon color="#000" icon="information-outline" />}
           description="Set up name, branding and other settings"
+        />
+        <List.Item
+          title="Permissions"
+          left={() => <List.Icon color="#000" icon="lock" />}
+          onPress={() => navigation.navigate("DropzonePermissionScreen")}
         />
         <List.Item
           title="Aircrafts"
@@ -32,15 +38,22 @@ export default function SettingsScreen() {
           title="Rigs"
           left={() => <List.Icon color="#000" icon="parachute" />}
           description="Dropzone rigs, e.g tandems and student rigs"
+          onPress={() => navigation.navigate("DropzoneRigsScreen")}
         />
         <List.Item
           title="Rig Inspection Template"
           left={() => <List.Icon color="#000" icon="check" />}
           onPress={() => navigation.navigate("RigInspectionTemplateScreen")}
         />
+        <List.Item
+          title="Master Log"
+          left={() => <List.Icon color="#000" icon="parachute" />}
+          description="View historic data for daily operations"
+          onPress={() => navigation.navigate("DropzoneMasterLogScreen")}
+        />
       </List.Section>
 
-      <List.Section title="Tickets">
+      <List.Section title="Tickets" style={{ width: "100%" }}>
         <List.Item
           title="Ticket types"
           onPress={() => navigation.navigate("TicketTypesScreen")}
@@ -54,7 +67,7 @@ export default function SettingsScreen() {
           description="Supplementary tickets like coach, camera, night jumpi"
         />
       </List.Section>
-    </View>
+    </ScrollableScreen>
   );
 }
 

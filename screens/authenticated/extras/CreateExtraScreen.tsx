@@ -12,7 +12,7 @@ import slice from "../../../components/forms/extra/slice";
 import { Mutation } from '../../../graphql/schema';
 import ExtraForm from '../../../components/forms/extra/ExtraForm';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { actions } = slice;

@@ -1,21 +1,29 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/core';
-import { useQuery } from '@apollo/client';
-import { successColor, warningColor } from "../../../constants/Colors";
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { useMutation, useQuery } from '@apollo/client';
 import * as React from 'react';
-import { StyleSheet, Text } from 'react-native';
-import { Button, Card, DataTable, FAB, IconButton, List, ProgressBar, Title } from 'react-native-paper';
+import { Platform, RefreshControl, StyleSheet, Text } from 'react-native';
+import { Chip, DataTable, Divider, IconButton, ProgressBar } from 'react-native-paper';
 import format from "date-fns/format";
 import gql from 'graphql-tag';
+import { ScrollView } from 'react-native-gesture-handler';
+import { IconProps } from 'react-native-paper/lib/typescript/components/MaterialCommunityIcon';
+import * as ImagePicker from 'expo-image-picker';
 
 
-import RigDialog from '../../../components/dialogs/RigDialog';
-import { creditsForm, dropzoneUserForm, globalActions, rigForm, useAppDispatch, useAppSelector } from '../../../redux';
-import { Query } from '../../../graphql/schema';
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import { successColor, warningColor } from "../../../constants/Colors";
+import { creditsForm, dropzoneUserForm, rigForm, useAppDispatch, useAppSelector, userForm } from '../../../redux';
+import { Mutation, Query } from '../../../graphql/schema';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import DropzoneUserDialog from '../../../components/dialogs/DropzoneUserDialog';
-import CreditsDialog from '../../../components/dialogs/CreditsDialog';
-import useRestriction from '../../../hooks/useRestriction';
+import CreditsSheet from '../../../components/dialogs/CreditsDialog/Credits';
+import RigDialog from '../../../components/dialogs/Rig';
+import EditUserSheet from '../../../components/dialogs/User';
+
+import TableCard from "./UserInfo/TableCard";
+import Header from "./UserInfo/Header";
+import InfoGrid from './UserInfo/InfoGrid';
+
 
 
 const QUERY_DROPZONE_USER = gql`
@@ -58,6 +66,7 @@ const QUERY_DROPZONE_USER = gql`
           exitWeight
           email
           phone
+          image
           rigs {
             id
             model
@@ -79,269 +88,324 @@ const QUERY_DROPZONE_USER = gql`
     }
   }
 `;
+
+const MUTATION_UPDATE_IMAGE = gql`
+  mutation UpdateUserImage(
+    $id: Int,
+    $image: String
+  ){
+    updateUser(input: {
+      id: $id
+      attributes: {
+        image: $image,
+      }
+    }) {
+      user {
+        id
+        name
+        exitWeight
+        email
+        image
+        phone
+        rigs {
+          id
+          model
+          make
+          serial
+          canopySize
+        }
+        jumpTypes {
+          id
+          name
+        }
+        license {
+          id
+          name
+
+          federation {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+`;
+
 export default function ProfileScreen() {
   const state = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const [creditsDialogOpen, setCreditsDialogOpen] = React.useState(false);
+  const [editUserDialogOpen, setEditUserDialogOpen] = React.useState(false);
   const [rigDialogOpen, setRigDialogOpen] = React.useState(false);
   const [dropzoneUserDialogOpen, setDropzoneUserDialogOpen] = React.useState(false);
   const route = useRoute<{ key: string, name: string, params: { userId: string }}>();
   const isSelf = state.currentDropzone?.currentUser?.id === route.params.userId;
 
-  const { data, loading } = useQuery<Query>(QUERY_DROPZONE_USER, {
+  const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONE_USER, {
     variables: {
       dropzoneId: Number(state.currentDropzone?.id),
       dropzoneUserId: Number(route.params.userId)
     }
   });
 
+  const isFocused = useIsFocused();
+
+  React.useEffect(() => {
+    if (isFocused) {
+      refetch();
+    }
+  }, [isFocused])
+
+  const [mutationUpdateUser, mutation] = useMutation<Mutation>(MUTATION_UPDATE_IMAGE);
+
+  React.useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
+  }, []);
+
+  
+  const onPickImage = React.useCallback(
+    async () => {
+      try {
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 0.1,
+          base64: true,
+        }) as { base64: string };
+    
+
+        // Upload image
+        await mutationUpdateUser({
+          variables: {
+            id: Number(data?.dropzone?.dropzoneUser?.user?.id),
+            image: `data:image/jpeg;base64,${result.base64}`,
+          }
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [dispatch],
+  )
+
   return (
     <>
-    <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />
-    <ScrollableScreen contentContainerStyle={styles.content}>
+    {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
+    <ScrollableScreen contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}>
+      <Header
+        dropzoneUser={data?.dropzone?.dropzoneUser!}
+        canEdit={isSelf}
+        onEdit={() => {
+          if (state.currentDropzone?.currentUser?.user) {
+            dispatch(userForm.setOriginal(state.currentDropzone?.currentUser?.user));
+            setEditUserDialogOpen(true);
+          }
+        }}
+        onPressAvatar={onPickImage}
+      >
+
+        <ScrollView horizontal style={{ marginVertical: 8 }}>
+          <Chip
+            // @ts-ignore
+            icon={({ size }: IconProps) =>
+              <MaterialCommunityIcons name="email" size={size} color="#FFFFFF" />
+            }
+            mode="outlined"
+            style={styles.chip}
+            textStyle={styles.chipTitle}
+          >
+            {data?.dropzone?.dropzoneUser?.user?.email  || "-"}
+          </Chip>
+
+          <Chip
+            // @ts-ignore
+            icon={({ size }: IconProps) =>
+              <MaterialCommunityIcons name="phone" size={size} color="#FFFFFF" />
+            }
+            mode="outlined"
+            style={styles.chip}
+            textStyle={styles.chipTitle}
+          >
+            {data?.dropzone?.dropzoneUser?.user?.phone  || "-"}
+          </Chip>
+
+          <Chip
+            // @ts-ignore
+            icon={({ size }: IconProps) =>
+              <MaterialCommunityIcons name="card-account-details-star-outline" size={size} color="#FFFFFF" />
+            }
+            mode="outlined"
+            style={styles.chip}
+            textStyle={styles.chipTitle}
+            onPress={() => {
+              dispatch(dropzoneUserForm.setOriginal(data?.dropzone?.dropzoneUser!));
+              setDropzoneUserDialogOpen(true);
+            }}
+          >
+            {!data?.dropzone?.dropzoneUser?.expiresAt
+                  ? "Not a member"
+                  : format((data?.dropzone?.dropzoneUser?.expiresAt || 0) * 1000, "yyyy/MM/dd")}
+          </Chip>
+        </ScrollView>
+        <Divider style={styles.divider} />
+        <InfoGrid
+          items={[
+            {
+              title: "Funds",
+              value: `$${data?.dropzone?.dropzoneUser?.credits || 0}`,
+              onPress: () =>
+                setCreditsDialogOpen(true)
+            },
+            { title: "License", value: `${data?.dropzone?.dropzoneUser?.user?.license?.name || "-"}`},
+            { title: "Exit weight", value: Math.round(Number(data?.dropzone?.dropzoneUser?.user?.exitWeight)).toString() || "-" }
+          ]}
+        />
+        <Divider style={[styles.divider, { backgroundColor: "white" }]} />
+      </Header>
       
-        <Card elevation={3} style={styles.card}>
-          <Card.Title title="Basic information" />
-          <Card.Content>
-            <List.Item
-              title="Name"
-              left={() => <List.Icon icon="account-outline" />}
-              description={data?.dropzone?.dropzoneUser?.user?.name  || "-"}
-            />
-            <List.Item
-              title="Email"
-              left={() => <List.Icon icon="at" />}
-              description={data?.dropzone?.dropzoneUser?.user?.email  || "-"}
-            />
+      <TableCard title="Rigs" buttonIcon="plus" onPressButton={() => setRigDialogOpen(true)}>
+        <DataTable>
+          <DataTable.Header>
+            <DataTable.Title>
+              Container
+            </DataTable.Title>
+            <DataTable.Title numeric>
+              Repack due
+            </DataTable.Title>
+            <DataTable.Title numeric>
+              Canopy size
+            </DataTable.Title>
+            <DataTable.Title numeric>
+              Inspected
+            </DataTable.Title>
+          </DataTable.Header>
 
-            <List.Item
-              title="Phone"
-              left={() => <List.Icon icon="phone" />}
-              description={data?.dropzone?.dropzoneUser?.user?.phone  || "-"}
-            />
-
-            <List.Item
-              title="License"
-              left={() => <List.Icon icon="ticket-account" />}
-              description={data?.dropzone?.dropzoneUser?.user?.license?.name || "-"}
-            />
-
-            <List.Item
-              title="Exit weight"
-              left={() => <List.Icon icon="scale" />}
-              description={data?.dropzone?.dropzoneUser?.user?.exitWeight  || "-"}
-            />
-          </Card.Content>
           {
-            isSelf && (
-              <Card.Actions style={{ justifyContent: "flex-end"}}>
-                <Button
-                  icon="pencil"
-                  onPress={() =>
-                    navigation.navigate("UpdateUserScreen", { user: state.currentDropzone?.currentUser?.user })
-                  }
-                >
-                  <Text>Edit</Text>
-                </Button>
-              </Card.Actions>
-            )}
-        </Card>
-
-        <Card elevation={3} style={styles.card}>
-          <Card.Title title="Rigs" />
-          <Card.Content>
-            <DataTable>
-              <DataTable.Header>
-                <DataTable.Title>
-                  Container
-                </DataTable.Title>
-                <DataTable.Title numeric>
-                  Repack due
-                </DataTable.Title>
-                <DataTable.Title numeric>
-                  Canopy size
-                </DataTable.Title>
-                <DataTable.Title numeric>
-                  Inspected
-                </DataTable.Title>
-              </DataTable.Header>
-
-              {
-                data?.dropzone?.dropzoneUser?.user?.rigs?.map((rig) =>
-                  <DataTable.Row
-                    key={`rig-${rig!.id}`}
-                    onPress={() => {
-                      dispatch(rigForm.setOriginal(rig));
-                      setRigDialogOpen(true);
-                    }}
-                    onLongPress={() =>
+            data?.dropzone?.dropzoneUser?.user?.rigs?.map((rig) =>
+              <DataTable.Row
+                key={`rig-${rig!.id}`}
+                onPress={() => {
+                  dispatch(rigForm.setOriginal(rig));
+                  setRigDialogOpen(true);
+                }}
+                onLongPress={() =>
+                  navigation.navigate("RigInspectionScreen", {
+                    dropzoneUserId: Number(route.params.userId),
+                    rig
+                  })
+                }
+                pointerEvents="none"
+              >
+                <DataTable.Cell>
+                  {[rig?.make, rig?.model, `#${rig?.serial}`].join(" ")}
+                </DataTable.Cell>
+                <DataTable.Cell numeric>
+                  {rig?.repackExpiresAt ? format(rig.repackExpiresAt * 1000, "yyyy/MM/dd") : "-"}
+                </DataTable.Cell>
+                <DataTable.Cell numeric>
+                  {`${rig?.canopySize}`}
+                </DataTable.Cell>
+                <DataTable.Cell numeric>
+                  <IconButton
+                    icon={
+                      data?.dropzone?.dropzoneUser?.rigInspections?.some((insp) => insp.rig?.id === rig.id && insp.isOk)
+                      ? "eye-check"
+                      : "eye-minus"
+                    }
+                    color={
+                      data?.dropzone?.dropzoneUser?.rigInspections?.some((insp) => insp.rig?.id === rig.id && insp.isOk)
+                      ? successColor
+                      : warningColor
+                    }
+                    onPress={() =>
                       navigation.navigate("RigInspectionScreen", {
                         dropzoneUserId: Number(route.params.userId),
                         rig
                       })
                     }
-                    pointerEvents="none"
-                  >
-                    <DataTable.Cell>
-                      {[rig?.make, rig?.model, `#${rig?.serial}`].join(" ")}
-                    </DataTable.Cell>
-                    <DataTable.Cell numeric>
-                      {rig?.repackExpiresAt ? format(rig.repackExpiresAt * 1000, "yyyy/MM/dd") : "-"}
-                    </DataTable.Cell>
-                    <DataTable.Cell numeric>
-                      {`${rig?.canopySize}`}
-                    </DataTable.Cell>
-                    <DataTable.Cell numeric>
-                      <IconButton
-                        icon={
-                          data?.dropzone?.dropzoneUser?.rigInspections?.some((insp) => insp.rig?.id === rig.id && insp.isOk)
-                          ? "eye-check"
-                          : "eye-minus"
-                        }
-                        color={
-                          data?.dropzone?.dropzoneUser?.rigInspections?.some((insp) => insp.rig?.id === rig.id && insp.isOk)
-                          ? successColor
-                          : warningColor
-                        }
-                        onPress={() =>
-                          navigation.navigate("RigInspectionScreen", {
-                            dropzoneUserId: Number(route.params.userId),
-                            rig
-                          })
-                        }
-                      />
-                    </DataTable.Cell>
-                  </DataTable.Row>
-                )
-              }
-            </DataTable>
-          </Card.Content>
+                  />
+                </DataTable.Cell>
+              </DataTable.Row>
+            )
+          }
+        </DataTable>
+      </TableCard>
+        
+      <TableCard
+        title="Transactions"
+        buttonIcon="plus"
+        onPressButton={() => {
+          if (data?.dropzone?.dropzoneUser) {
+            dispatch(creditsForm.setOriginal(data!.dropzone!.dropzoneUser!));
+            setCreditsDialogOpen(true);
+          }
+        }}
+      >
+        <DataTable>
+          <DataTable.Header>
+            <DataTable.Title>Time</DataTable.Title>
+            <DataTable.Title>Type</DataTable.Title>
+            <DataTable.Title>Message</DataTable.Title>
+            <DataTable.Title numeric>Amount</DataTable.Title>
+          </DataTable.Header>
           {
-            isSelf && (
-            <Card.Actions style={{ justifyContent: "flex-end" }}>
-              <Button onPress={() => setRigDialogOpen(true)} icon="plus">
-                <Text>Add rig</Text>
-              </Button>
-            </Card.Actions>
-          )}
-        </Card>
+            data?.dropzone?.dropzoneUser?.transactions?.edges?.map((edge) => (
+              <DataTable.Row key={`transaction-${edge?.node?.id}`}>
+                <DataTable.Cell>
+                  <Text style={{ fontSize: 12, fontStyle: "italic", color: "#999999" }}>{!edge?.node?.createdAt ? null : format(edge?.node?.createdAt * 1000, "yyyy/MM/dd hh:mm")}</Text>
+                </DataTable.Cell>
+                <DataTable.Cell>
+                  <Text style={{ fontSize: 12, fontStyle: "italic", color: "#999999" }}>{edge?.node?.status}</Text>
+                </DataTable.Cell>
+                <DataTable.Cell>
+                  {edge?.node?.message}
+                </DataTable.Cell>
+                <DataTable.Cell numeric>
+                  {edge?.node?.amount}
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))
+          }
+        </DataTable>
+      </TableCard>
+    </ScrollableScreen>
+        
+    <RigDialog
+      onClose={() => setRigDialogOpen(false)}
+      onSuccess={() => setRigDialogOpen(false)}
+      userId={Number(data?.dropzone?.dropzoneUser?.user?.id)}
+      open={rigDialogOpen}
+    />
+    
+    <DropzoneUserDialog
+      onClose={() => setDropzoneUserDialogOpen(false)}
+      onSuccess={() => setDropzoneUserDialogOpen(false)}
+      open={dropzoneUserDialogOpen}
+    />
 
-        <Card elevation={3} style={styles.card}>
-          <Card.Title title={state.currentDropzone?.name} />
-          <Card.Content>
-            <List.Item
-              title="Role"
-              description={data?.dropzone?.dropzoneUser?.role?.name}
-              left={() => <List.Icon icon="lock" />}
-            />
-            <List.Item
-              title="Membership"
-              description={
-                !data?.dropzone?.dropzoneUser?.expiresAt ?
-                  <Text>Not a member</Text>
-                : format((data?.dropzone?.dropzoneUser?.expiresAt || 0) * 1000, "yyyy/MM/dd")
-              }
-              left={() =>
-                <List.Icon
-                  icon="card-account-details"
-                  color={
-                    data?.dropzone?.dropzoneUser?.expiresAt && (
-                      data?.dropzone?.dropzoneUser?.expiresAt * 1000 > new Date().getTime()
-                    ) ? undefined : "#B00020"}
-                />
-              }
+    <CreditsSheet
+      onClose={() => setCreditsDialogOpen(false)}
+      onSuccess={() => setCreditsDialogOpen(false)}
+      open={creditsDialogOpen}
+      dropzoneUserId={Number(data?.dropzone?.dropzoneUser?.id)}
+    />
 
-            />
-          </Card.Content>
-          <Card.Actions style={{ justifyContent: "flex-end"}}>
-            <Button
-              icon="pencil"
-              onPress={() => {
-                dispatch(dropzoneUserForm.setOriginal(data?.dropzone?.dropzoneUser!));
-                setDropzoneUserDialogOpen(true);
-              }}
-            >
-              <Text>Edit</Text>
-            </Button>
-          </Card.Actions>
-        </Card>
-
-        <Card elevation={3} style={styles.card}>
-          <Card.Actions style={{ justifyContent: "space-between"}}>
-            <Title>{`Balance: $${data?.dropzone?.dropzoneUser?.credits}`}</Title>
-            <Button
-              icon="pencil"
-              onPress={() => {
-                if (data?.dropzone?.dropzoneUser) {
-                  dispatch(creditsForm.setOriginal(data!.dropzone!.dropzoneUser!));
-                  setCreditsDialogOpen(true);
-                }
-              }}
-            >
-              <Text>New transaction</Text>
-            </Button>
-          </Card.Actions>
-          <Card.Content>
-            <DataTable>
-              <DataTable.Header>
-                <DataTable.Title>Time</DataTable.Title>
-                <DataTable.Title>Type</DataTable.Title>
-                <DataTable.Title>Message</DataTable.Title>
-                <DataTable.Title numeric>Amount</DataTable.Title>
-              </DataTable.Header>
-              {
-                data?.dropzone?.dropzoneUser?.transactions?.edges?.map((edge) => (
-                  <DataTable.Row key={`transaction-${edge?.node?.id}`}>
-                    <DataTable.Cell>
-                      <Text style={{ fontSize: 12, fontStyle: "italic", color: "#999999" }}>{!edge?.node?.createdAt ? null : format(edge?.node?.createdAt * 1000, "yyyy/MM/dd hh:mm")}</Text>
-                    </DataTable.Cell>
-                    <DataTable.Cell>
-                      <Text style={{ fontSize: 12, fontStyle: "italic", color: "#999999" }}>{edge?.node?.status}</Text>
-                    </DataTable.Cell>
-                    <DataTable.Cell>
-                      {edge?.node?.message}
-                    </DataTable.Cell>
-                    <DataTable.Cell numeric>
-                      {edge?.node?.amount}
-                    </DataTable.Cell>
-                    
-                    
-                  </DataTable.Row>
-                ))
-              }
-            </DataTable>
-            
-          </Card.Content>
-        </Card>
-
-        { data?.dropzone?.dropzoneUser?.id === state.currentUser?.id && (
-          <Button color="#B00020" onPress={() => dispatch(globalActions.logout())}>
-            <Text>Log out</Text>
-          </Button>
-        )}
-      
-      </ScrollableScreen>
-      
-      <RigDialog
-        onClose={() => setRigDialogOpen(false)}
-        onSuccess={() => setRigDialogOpen(false)}
-        userId={Number(data?.dropzone?.dropzoneUser?.user?.id)}
-        open={rigDialogOpen}
-      />
-      
-      <DropzoneUserDialog
-        onClose={() => setDropzoneUserDialogOpen(false)}
-        onSuccess={() => setDropzoneUserDialogOpen(false)}
-        open={dropzoneUserDialogOpen}
-      />
-
-      <CreditsDialog
-        onClose={() => setCreditsDialogOpen(false)}
-        onSuccess={() => setCreditsDialogOpen(false)}
-        open={creditsDialogOpen}
-      />
-    </>
+    <EditUserSheet
+      onClose={() => setEditUserDialogOpen(false)} 
+      onSuccess={() => setEditUserDialogOpen(false)} 
+      open={editUserDialogOpen}
+    />
+  </>
   );
 }
 
@@ -350,35 +414,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    alignItems: 'center',
     flexGrow: 1,
-    paddingBottom: 56
+    paddingBottom: 56,
+    paddingHorizontal: 0,
   },
-  card: {
-    margin: 8,
-    width: "100%",
+  divider: {
+    height: 1,
+    width: '100%',
   },
-  fields: {
-    width: "80%",
+  chip: {
+    margin: 1,
+    backgroundColor: "transparent",
+    minHeight: 23,
+    borderWidth: 0,
+    justifyContent: "center",
+    alignItems: "center",
     display: "flex",
   },
-  spacer: {
-    width: "100%",
-    height: 32,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
+  chipTitle: {
+    color: "white",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: 12,
+    lineHeight: 24,
+    textAlignVertical: "center"
+  }
 });

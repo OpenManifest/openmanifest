@@ -12,6 +12,7 @@ import globalSlice from "./global";
 import notificationSlice from "../components/notifications/slice";
 
 import loginSlice from "../screens/unauthenticated/login/slice";
+import manifestSlice from "../screens/authenticated/manifest/slice";
 import signUpSlice from "../screens/unauthenticated/signup/slice";
 import usersSlice from "../screens/authenticated/users/slice";
 import dropzoneFormSlice from "../components/forms/dropzone/slice";
@@ -30,6 +31,7 @@ import slotsMultipleFormSlice from "../components/forms/slots_multiple/slice";
 
 // Re-export actions:
 export const { actions: loginActions } = loginSlice;
+export const { actions: manifestActions } = manifestSlice;
 export const { actions: signUpActions } = signUpSlice;
 export const { actions: globalActions } = globalSlice;
 export const { actions: usersActions } = usersSlice;
@@ -67,6 +69,7 @@ const reducer = persistCombineReducers(persistConfig, {
     loadForm: loadFormSlice.reducer,
     slotForm: slotFormSlice.reducer,
     slotsMultipleForm: slotsMultipleFormSlice.reducer,
+    manifest: manifestSlice.reducer,
     userForm: userFormSlice.reducer,
     dropzoneUserForm: dropzoneUserFormSlice.reducer,
     rigForm: rigFormSlice.reducer,

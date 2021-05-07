@@ -9,7 +9,7 @@ import { useAppSelector, useAppDispatch, globalActions, snackbarActions } from '
 
 import slice from "./slice";
 import { Mutation } from '../../../graphql/schema';
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
 const { actions } = slice;
 

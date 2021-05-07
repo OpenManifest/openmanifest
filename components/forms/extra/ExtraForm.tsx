@@ -9,7 +9,7 @@ import { useAppSelector, useAppDispatch } from '../../../redux';
 
 
 import slice from "./slice";
-import ScrollableScreen from '../../ScrollableScreen';
+import ScrollableScreen from '../../layout/ScrollableScreen';
 
 const { actions } = slice;
 

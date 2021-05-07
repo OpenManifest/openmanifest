@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { Checkbox, HelperText, List, TextInput } from "react-native-paper";
 import useRestriction from "../../../hooks/useRestriction";
-import DatePicker from '../../DatePicker';
+import DatePicker from '../../input/date_picker/DatePicker';
 import { FieldItem } from "./slice";
 
 interface IFormItemItem {

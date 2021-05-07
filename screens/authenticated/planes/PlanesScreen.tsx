@@ -1,43 +1,73 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { StyleSheet, FlatList, RefreshControl } from 'react-native';
-import { Card, Title, FAB, Paragraph, List, DataTable, ProgressBar } from 'react-native-paper';
-import { View } from '../../../components/Themed';
-import { Query } from "../../../graphql/schema";
+import { StyleSheet, RefreshControl } from 'react-native';
+import { FAB, DataTable, ProgressBar } from 'react-native-paper';
+import { Mutation, Query } from "../../../graphql/schema";
 
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
-import { useAppSelector } from '../../../redux';
+import { useIsFocused, useNavigation } from '@react-navigation/core';
+import { planeForm, snackbarActions, useAppDispatch, useAppSelector } from '../../../redux';
 import NoResults from '../../../components/NoResults';
-import ScrollableScreen from '../../../components/ScrollableScreen';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
+import PlaneDialog from '../../../components/dialogs/Plane';
+import useRestriction from '../../../hooks/useRestriction';
+import SwipeActions from '../../../components/layout/SwipeActions';
 
 
 const QUERY_PLANES = gql`
   query QueryPlanes(
     $dropzoneId: Int!
   ) {
-    planes(dropzoneId: $dropzoneId) {
+    dropzone(id: $dropzoneId) {
       id
-      name
-      registration
-      hours
-      minSlots
-      maxSlots
-      nextMaintenanceHours
-      createdAt
+      planes {
+        id
+        name
+        registration
+        hours
+        minSlots
+        maxSlots
+        nextMaintenanceHours
+        createdAt
+      }
     }
   }
 `;
 
+
+const MUTATION_DELETE_PLANE = gql`
+mutation DeletePlane($id: Int!) {
+  deletePlane(input: { id: $id }) {
+    errors
+    plane {
+      id
+      dropzone {
+        id
+        planes {
+          name
+          registration
+          hours
+          minSlots
+          maxSlots
+          nextMaintenanceHours
+          createdAt
+        }
+      }
+    }
+  }
+}
+`;
 export default function PlanesScreen() {
   const state = useAppSelector(state => state.global);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
   const { data, loading, refetch } = useQuery<Query>(QUERY_PLANES, {
     variables: {
       dropzoneId: Number(state.currentDropzone?.id)
     }
   });
-  const navigation = useNavigation();
+
+  const [deletePlane, mutation] = useMutation<Mutation>(MUTATION_DELETE_PLANE);
+  const dispatch = useAppDispatch();
 
   const isFocused = useIsFocused();
 
@@ -48,13 +78,16 @@ export default function PlanesScreen() {
   }, [isFocused]);
  
 
+  const canDeletePlane = useRestriction("deletePlane");
+
   return (
+    <>
     <ScrollableScreen refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}>
       <ProgressBar visible={loading} color={state.theme.colors.accent} />
         
 
           {
-            data?.planes?.length ? null : (
+            data?.dropzone?.planes?.length ? null : (
               <NoResults
                 title="No planes?"
                 subtitle="You need to have at least one plane to manifest loads"
@@ -62,7 +95,7 @@ export default function PlanesScreen() {
             )
           }
 
-          { !data?.planes?.length ? null : (
+          { !data?.dropzone?.planes?.length ? null : (
             <DataTable>
               <DataTable.Header>
                 <DataTable.Title>Name</DataTable.Title>
@@ -70,17 +103,39 @@ export default function PlanesScreen() {
                 <DataTable.Title numeric>Slots</DataTable.Title>
               </DataTable.Header>
               {
-                data?.planes?.map((plane) =>
-                  <DataTable.Row
-                    pointerEvents="none"
-                    onPress={() => navigation.navigate("UpdatePlaneScreen", { plane })}
-                  >
-                    <DataTable.Cell>{plane.name}</DataTable.Cell>
-                    <DataTable.Cell numeric>{plane.registration}</DataTable.Cell>
-                    <DataTable.Cell numeric>
-                      {plane.maxSlots}
-                    </DataTable.Cell>
-                  </DataTable.Row>
+                data?.dropzone?.planes?.map((plane) =>
+                <SwipeActions
+                  disabled={!canDeletePlane}
+                  rightAction={{
+                    label: "Delete",
+                    backgroundColor: "red",
+                    onPress: async () => {
+                      const { data: result } = await deletePlane({ variables: { id: Number(plane.id )}});
+                      
+                      if (result?.deletePlane?.errors?.length) {
+                        dispatch(
+                          snackbarActions.showSnackbar({
+                            message: result.deletePlane.errors[0],
+                            variant: "error"
+                          })
+                        );
+                      }
+                    }
+                  }}>
+                    <DataTable.Row
+                      pointerEvents="none"
+                      onPress={() => {
+                        dispatch(planeForm.setOriginal(plane));
+                        setDialogOpen(true);
+                      }}
+                    >
+                      <DataTable.Cell>{plane.name}</DataTable.Cell>
+                      <DataTable.Cell numeric>{plane.registration}</DataTable.Cell>
+                      <DataTable.Cell numeric>
+                        {plane.maxSlots}
+                      </DataTable.Cell>
+                    </DataTable.Row>
+                  </SwipeActions>
               )}
             </DataTable>
           )}
@@ -89,10 +144,15 @@ export default function PlanesScreen() {
         style={styles.fab}
         small
         icon="plus"
-        onPress={() => navigation.navigate("CreatePlaneScreen")}
+        onPress={() => setDialogOpen(true)}
         label="New plane"
       />
     </ScrollableScreen>
+    <PlaneDialog
+      open={dialogOpen}
+      onClose={() => setDialogOpen(false)}
+    />
+    </>
   );
 }
 

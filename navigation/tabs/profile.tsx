@@ -5,14 +5,12 @@ import AppBar from '../AppBar';
 import { useAppSelector } from '../../redux';
 
 const ProfileScreen = React.lazy(() => import('../../screens/authenticated/profile/ProfileScreen'));
-const RigScreen = React.lazy(() => import('../../screens/authenticated/rig/RigScreen'));
 const UpdateUserScreen = React.lazy(() => import('../../screens/authenticated/profile/UpdateUserScreen'));
 
 export type IProfileTabParams = {
   ProfileScreen: {
     userId: string,
   };
-  RigScreen: undefined;
   UpdateUserScreen: undefined;
 }
 
@@ -24,7 +22,7 @@ export default function ProfileTab() {
     <Profile.Navigator
       screenOptions={{
         headerShown: true,
-        header: (props) => <AppBar {...props} />,
+        header: (props) => <AppBar {...props} hideWarnings />,
         cardStyle: {
           flex: 1
         }
@@ -39,7 +37,6 @@ export default function ProfileTab() {
         }}
       />
       <Profile.Screen name="UpdateUserScreen" component={UpdateUserScreen} options={{ title: "Edit profile" }} />
-      <Profile.Screen name="RigScreen" component={RigScreen} options={{ title: "Rig" }} />
     </Profile.Navigator>
   );
 }

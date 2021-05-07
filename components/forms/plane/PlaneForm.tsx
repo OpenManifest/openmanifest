@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { TextInput, HelperText } from 'react-native-paper';
 import { useAppSelector, useAppDispatch } from '../../../redux';
-import ScrollableScreen from '../../ScrollableScreen';
+import ScrollableScreen from '../../layout/ScrollableScreen';
 
 
 import slice from "./slice";

@@ -12,12 +12,10 @@ import globalSlice from "../../../redux/global";
 import slice from "../../../components/forms/load/slice";
 import { Mutation } from '../../../graphql/schema';
 import LoadForm from '../../../components/forms/load/LoadForm';
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { actions } = slice;
-const { actions: globalActions } = globalSlice;
-
 
 const MUTATION_CREATE_LOAD = gql`
   mutation CreateLoad(

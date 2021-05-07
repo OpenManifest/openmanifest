@@ -12,7 +12,7 @@ import slice from "../../../components/forms/dropzone/slice";
 import { Dropzone, Mutation, Query } from '../../../graphql/schema';
 import DropzoneForm from '../../../components/forms/dropzone/DropzoneForm';
 import { useNavigation, useRoute } from '@react-navigation/core';
-import ScrollableScreen from '../../../components/ScrollableScreen';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;

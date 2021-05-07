@@ -5,10 +5,10 @@ import { TextInput, HelperText, List } from 'react-native-paper';
 import { useAppSelector, useAppDispatch } from '../../../redux';
 
 import slice from "./slice";
-import DatePicker from '../../DatePicker';
-import RoleSelect from '../../RoleSelect';
+import DatePicker from '../../input/date_picker/DatePicker';
+import RoleSelect from '../../input/dropdown_select/RoleSelect';
 import useRestriction from '../../../hooks/useRestriction';
-import ScrollableScreen from '../../ScrollableScreen';
+import ScrollableScreen from '../../layout/ScrollableScreen';
 
 const { actions } = slice;
 

@@ -2,13 +2,13 @@ import { useQuery } from '@apollo/client';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { DeviceEventEmitter, StyleSheet } from 'react-native';
-import { Checkbox, FAB, List, ProgressBar } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { Avatar, Divider, List, ProgressBar } from 'react-native-paper';
 
 import NoResults from '../../../components/NoResults';
-import { View } from '../../../components/Themed';
-import { DropzoneUser, Query } from '../../../graphql/schema';
-import { slotsMultipleForm, useAppDispatch, useAppSelector, usersActions } from '../../../redux';
+import ScrollableScreen from '../../../components/layout/ScrollableScreen';
+import { Query } from '../../../graphql/schema';
+import { useAppDispatch, useAppSelector, usersActions } from '../../../redux';
 
 
 
@@ -31,6 +31,7 @@ const QUERY_DROPZONE_USERS = gql`
             }
             user {
               id
+              image
               name
             }
           }
@@ -43,11 +44,6 @@ const QUERY_DROPZONE_USERS = gql`
 interface IUsersRouteParams{
   key: string,
   name: string,
-  params: {
-    select?: boolean;
-    loadId?: number;
-    onSelect?(selectedUsers?: DropzoneUser[]): void;
-  }
 }
 export default function UsersScreen() {
   const {global, usersScreen, slotsMultipleForm: multiSlot } = useAppSelector(state => state);
@@ -69,72 +65,38 @@ export default function UsersScreen() {
       dispatch(usersActions.setSearchVisible(false));
     }
 
-    if (!isFocused && usersScreen.isSelectEnabled) {
-      dispatch(usersActions.setSelectEnabled(false));
-      dispatch(usersActions.setSelected([]));
-    }
   }, [isFocused]);
 
 
-  React.useEffect(() => {
-    dispatch(usersActions.setSelectEnabled(!!route?.params?.select));
-  }, [route?.params?.select])
 
   return (
-    <View style={styles.container}>
-      <ProgressBar indeterminate color={global.theme.colors.accent} visible={loading} />
-      
-      { !data?.dropzone?.dropzoneUsers?.edges?.length && (
-        <NoResults title="No users" subtitle="" />
-      )}
+    <>
+    <ProgressBar indeterminate color={global.theme.colors.accent} visible={loading} />
+      <ScrollableScreen contentContainerStyle={{ paddingHorizontal: 0 }}>
+        
+        { !data?.dropzone?.dropzoneUsers?.edges?.length && (
+          <NoResults title="No users" subtitle="" />
+        )}
 
-      { data?.dropzone?.dropzoneUsers?.edges?.map((edge) =>
-        <List.Item
-          title={edge?.node?.user.name}
-          description={edge?.node?.role?.name}
-          left={() => <List.Icon icon="account" />}
-          right={() => !usersScreen.isSelectEnabled ? null :
-            <Checkbox.Android
-              status={
-                usersScreen.selectedUsers?.map(({ id }) => id).includes(`${edge?.node?.user?.id}`)
-                ? "checked"
-                : "unchecked"
+        { data?.dropzone?.dropzoneUsers?.edges?.map((edge) =>
+          <React.Fragment key={`user-${edge?.node?.id}`}>
+            <List.Item
+              style={{ width: "100%"}}
+              title={edge?.node?.user.name}
+              description={edge?.node?.role?.name}
+              left={() =>
+                !edge?.node?.user?.image
+                  ? <List.Icon icon="account" />
+                  : <Avatar.Image source={{ uri: edge?.node?.user.image }} style={{ alignSelf: "center", marginHorizontal: 12 }} size={32} />
               }
+              onPress={() => navigation.navigate("UserProfileScreen", { userId: edge?.node?.id })}
             />
-          }
-          onPress={
-            !usersScreen.isSelectEnabled  
-              ? () => navigation.navigate("UserProfileScreen", { userId: edge?.node?.id })
-              : () => dispatch(
-                usersActions.setSelected(
-                  usersScreen.selectedUsers?.find(({ id }) => id === `${edge?.node?.id}`)
-                  ? usersScreen.selectedUsers?.filter(({ id }) => id !== `${edge?.node?.id}`)
-                  : [...usersScreen.selectedUsers, edge!.node!],
-                )
-              )
-          }
-        />
-      )}
+            <Divider style={{ width: "100%" }} key={`divider-${edge?.node!.id}`}/>
+          </React.Fragment>
+        )}
 
-      { usersScreen.isSelectEnabled && (
-        <FAB
-          style={styles.fab}
-          small
-          icon="check"
-          onPress={() => {
-            dispatch(slotsMultipleForm.setDropzoneUsers(usersScreen.selectedUsers));
-            navigation.navigate("Manifest", {
-              screen: "ManifestGroupScreen",
-              params: {
-                users: usersScreen.selectedUsers
-              }
-            })
-          }}
-          label="Next"
-        />
-      )}
-    </View>
-    
+      </ScrollableScreen>
+    </>
   );
 }
 

@@ -8,11 +8,10 @@ import { useAppSelector, useAppDispatch } from '../../../redux';
 
 
 import slice from "./slice";
-import TicketTypeSelect from '../../TicketTypeSelect';
 import useRestriction from '../../../hooks/useRestriction';
-import ChipSelect from '../../ChipSelect';
+import ChipSelect from '../../input/chip_select/ChipSelect';
 import { createQuery } from '../../../graphql/createQuery';
-import { JumpType, Query, SlotUser, TicketType } from '../../../graphql/schema';
+import { JumpType, Query, TicketType } from '../../../graphql/schema';
 
 import UserRigCard from "./UserRigCard";
 
@@ -70,17 +69,14 @@ export default function SlotForm() {
     variables: {
       userIds: state.fields.users?.value?.map((slotUser) => slotUser.id) as number[],
       dropzoneId: Number(globalState?.currentDropzone?.id)
-    }
+    },
+    onError: console.error
   });
-
-  const allowedToManifestOthers = useRestriction(
-    "createUserSlot"
-  );
 
   return ( 
     <>
       <List.Subheader>Jump type</List.Subheader>
-      <Card elevation={2} style={{ marginBottom: 16 }}>
+      <Card elevation={2} style={{ marginBottom: 16, flexShrink: 1 }}>
         <Card.Content>
             <ChipSelect
               autoSelectFirst

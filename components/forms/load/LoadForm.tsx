@@ -5,8 +5,8 @@ import { useAppSelector, useAppDispatch } from '../../../redux';
 
 
 import slice from "./slice";
-import PlaneSelect from '../../PlaneSelect';
-import DropzoneUserSelect from '../../DropzoneUserSelect';
+import PlaneSelect from '../../input/dropdown_select/PlaneSelect';
+import DropzoneUserSelect from '../../input/dropdown_select/DropzoneUserSelect';
 
 const { actions } = slice;
 

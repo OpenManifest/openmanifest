@@ -7,8 +7,9 @@ import { View } from '../../../components/Themed';
 import { Query } from "../../../graphql/schema";
 
 import { useNavigation, useRoute } from '@react-navigation/core';
-import { useAppSelector } from '../../../redux';
+import { extraForm, useAppDispatch, useAppSelector } from '../../../redux';
 import NoResults from '../../../components/NoResults';
+import TicketTypeExtraDialog from '../../../components/dialogs/TicketTypeExtra';
 import usePalette from '../../../hooks/usePalette';
 import global from '../../../redux/global';
 
@@ -17,15 +18,17 @@ const QUERY_TICKET_TYPE = gql`
   query QueryExtra(
     $dropzoneId: Int!
   ) {
-    extras(dropzoneId: $dropzoneId) {
+    dropzone(id: $dropzoneId) {
       id
-      cost
-      name
-
-      ticketTypes {
+      extras {
         id
-        altitude
+        cost
         name
+        ticketTypes {
+          id
+          altitude
+          name
+        }
       }
     }
   }
@@ -38,15 +41,8 @@ export default function ExtrasScreen() {
       dropzoneId: Number(state.currentDropzone?.id)
     }
   });
-  const navigation = useNavigation();
-  const route = useRoute();
-
-  // React.useEffect(() => {
-  //   if (route.name === "PlanesScreen") {
-  //     refetch();
-  //   }
-  // }, [route.name])
- 
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const dispatch = useAppDispatch();
 
   return (
     <>
@@ -58,14 +54,20 @@ export default function ExtrasScreen() {
           <DataTable.Title numeric>Cost</DataTable.Title>
         </DataTable.Header>
 
-        { data?.extras?.map((extra) =>
-          <DataTable.Row>
-            <DataTable.Cell onPress={() => navigation.navigate("UpdateExtraScreen", { extra })}>{extra.name}</DataTable.Cell>
+        { data?.dropzone?.extras?.map((extra) =>
+          <DataTable.Row
+            onPress={() => {
+              dispatch(extraForm.setOriginal(extra));
+              setDialogOpen(true);
+            }}
+            pointerEvents="none"
+          >
+            <DataTable.Cell>{extra.name}</DataTable.Cell>
             <DataTable.Cell numeric>{extra.cost}</DataTable.Cell>
           </DataTable.Row>
         )}
       </DataTable>
-      { !loading && !data?.extras?.length && (
+      { !loading && !data?.dropzone?.extras?.length && (
           <NoResults
             title="No ticket addons"
             subtitle="You can add multiple addons to assign to tickets, e.g outside camera, or coach"
@@ -76,10 +78,14 @@ export default function ExtrasScreen() {
         style={styles.fab}
         small
         icon="plus"
-        onPress={() => navigation.navigate("CreateExtraScreen")}
+        onPress={() => setDialogOpen(true)}
         label="New ticket addon"
       />
     </View>
+    <TicketTypeExtraDialog
+      open={dialogOpen}
+      onClose={() => setDialogOpen(false)}
+    />
     </>
   );
 }

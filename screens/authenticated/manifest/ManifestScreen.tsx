@@ -3,10 +3,11 @@ import { useIsFocused, useNavigation } from '@react-navigation/core';
 import { startOfDay } from 'date-fns';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, RefreshControl, StyleSheet, useWindowDimensions } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { FAB, ProgressBar } from 'react-native-paper';
-import ManifestUserDialog from '../../../components/dialogs/ManifestUserDialog';
+import ManifestUserSheet from '../../../components/dialogs/ManifestUser/ManifestUser';
+import ManifestGroupSheet from '../../../components/dialogs/ManifestGroup/ManifestGroup';
 
 import NoResults from '../../../components/NoResults';
 import { View } from '../../../components/Themed';
@@ -15,6 +16,7 @@ import useRestriction from '../../../hooks/useRestriction';
 import { globalActions, slotForm, slotsMultipleForm, snackbarActions, useAppDispatch, useAppSelector } from '../../../redux';
 import GetStarted from './GetStarted';
 import LoadCard from './LoadCard';
+import LoadDialog from '../../../components/dialogs/Load';
 
 const QUERY_DROPZONE = gql`
   query QueryDropzone($dropzoneId: Int!, $earliestTimestamp: Int) {
@@ -99,6 +101,8 @@ const QUERY_DROPZONE = gql`
 export default function ManifestScreen() {
   const state = useAppSelector(state => state.global);
   const [isDialogOpen, setDialogOpen] = React.useState(false);
+  const [isLoadDialogOpen, setLoadDialogOpen] = React.useState(false);
+  const [isGroupDialogOpen, setGroupDialogOpen] = React.useState(false);
   const dispatch = useAppDispatch();
   const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONE, {
     variables: {
@@ -218,13 +222,14 @@ export default function ManifestScreen() {
     setDialogOpen(true);
   }, [JSON.stringify(data?.dropzone?.currentUser)]);
 
+
+  const { width } = useWindowDimensions(); 
+
+  const numColumns = Math.ceil(width / 400) || 1;
+
   return (
     <>
-    <ManifestUserDialog
-      open={isDialogOpen}
-      onClose={() => setDialogOpen(false)}
-      onSuccess={() => setDialogOpen(false)}
-    />
+    
     <ProgressBar visible={loading} indeterminate color={state.theme.colors.accent} />
       <View style={styles.container}>
         
@@ -239,12 +244,16 @@ export default function ManifestScreen() {
                         subtitle="How's the weather?"
                       />
                     : <FlatList
+                        key={`loads-columns-${numColumns}`}
                         style={{ flex: 1, height: Dimensions.get("window").height }}
                         contentContainerStyle={{ flexGrow: 1 }}
-                        numColumns={1}
+                        numColumns={numColumns}
                         data={data?.dropzone?.loads?.edges || []}
                         refreshing={loading}
                         onRefresh={refetch}
+                        refreshControl={
+                          <RefreshControl refreshing={loading} onRefresh={() => refetch()} />
+                        }
                         renderItem={({ item: edge, index }) =>
                           !edge?.node ? null : (
                             <LoadCard
@@ -266,6 +275,12 @@ export default function ManifestScreen() {
                                 navigation.navigate("ManifestGroupScreen");
                               }}
                               onManifest={() => onManifest(edge.node!)}
+                              onManifestGroup={() => {
+                                dispatch(slotsMultipleForm.reset());
+                                dispatch(slotsMultipleForm.setField(["load", 
+                                edge.node!]));
+                                setGroupDialogOpen(true);
+                              }}
                             />
                         )}
                     />
@@ -278,11 +293,30 @@ export default function ManifestScreen() {
             style={styles.fab}
             small
             icon="plus"
-            onPress={() => navigation.navigate("CreateLoadScreen")}
+            onPress={() => setLoadDialogOpen(true)}
             label="New load"
           />
         )}
       </View>
+      <ManifestUserSheet
+        open={isDialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onSuccess={() => setDialogOpen(false)}
+      />
+      <ManifestGroupSheet
+        open={isGroupDialogOpen}
+        onClose={() => setGroupDialogOpen(false)}
+        onSuccess={() => setGroupDialogOpen(false)}
+      />
+
+      <LoadDialog
+        onSuccess={() => {
+          setLoadDialogOpen(false);
+          refetch();
+        }}
+        open={isLoadDialogOpen}
+        onClose={() => setLoadDialogOpen(false)}
+      />
     </>
   );
 }

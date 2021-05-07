@@ -4,16 +4,16 @@ import { DropzoneUser, Slot } from '../../graphql/schema';
 import { useAppSelector } from '../../redux';
 
 const ManifestScreen = React.lazy(() => import('../../screens/authenticated/manifest/ManifestScreen'));
-const LoadScreen = React.lazy(() => import('../../screens/authenticated/load/LoadScreen'));
 const CreateLoadScreen = React.lazy(() => import('../../screens/authenticated/load/CreateLoadScreen'));
 const ManifestGroupScreen = React.lazy(() => import('../../screens/authenticated/manifest/ManifestGroupScreen'));
+const ManifestGroupUserSelectScreen = React.lazy(() => import('../../screens/authenticated/manifest/ManifestGroupUserSelectScreen'));
 import AppBar from '../AppBar';
 
 
 export type IManifestTabParams = {
   DropzoneScreen: undefined;
-  LoadScreen: undefined;
   CreateLoadScreen: undefined;
+  ManifestGroupUserSelectScreen: undefined;
   ManifestGroupScreen: {
     users?: DropzoneUser[];
     slots?: Slot[]
@@ -36,9 +36,9 @@ export default function ManifestTab() {
       }}
     >
       <Manifest.Screen name="DropzoneScreen" component={ManifestScreen} options={{ title: "Manifest" }} />
-      <Manifest.Screen name="LoadScreen" component={LoadScreen} options={{ title: "Loads" }}/>
       <Manifest.Screen name="CreateLoadScreen" component={CreateLoadScreen} options={{ title: "Create load" }}/>
       <Manifest.Screen name="ManifestGroupScreen" component={ManifestGroupScreen} options={{ title: "Manifest group" }}/>
+      <Manifest.Screen name="ManifestGroupUserSelectScreen" component={ManifestGroupUserSelectScreen} options={{ title: "Select users" }}/>
     </Manifest.Navigator>
   );
 }

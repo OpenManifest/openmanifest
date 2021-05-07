@@ -5,13 +5,21 @@ import { TextInput, HelperText } from 'react-native-paper';
 import { useAppSelector, useAppDispatch } from '../../../redux';
 
 import slice from "./slice";
-import DatePicker from '../../DatePicker';
+import DatePicker from '../../input/date_picker/DatePicker';
+import ChipSelect from '../../input/chip_select/ChipSelect';
+import useRestriction from '../../../hooks/useRestriction';
 
 const { actions } = slice;
 
-export default function RigForm() {
+
+interface IRigForm {
+  showTypeSelect?: boolean;
+}
+export default function RigForm(props: IRigForm) {
   const state = useAppSelector(state => state.rigForm);
   const dispatch = useAppDispatch();
+
+  const canCreateRigs = useRestriction("createRig");
 
   return ( 
     <View>
@@ -51,6 +59,8 @@ export default function RigForm() {
         { state.fields.serial.error || "" }
       </HelperText>
 
+      
+
       <TextInput
         style={styles.field}
         mode="outlined"
@@ -64,6 +74,17 @@ export default function RigForm() {
         { state.fields.canopySize.error || "Size of canopy in container" }
       </HelperText>
 
+      { !props.showTypeSelect ? null : (
+        <ChipSelect
+          items={["student", "sport", "tandem"]}
+          renderItemLabel={(item) => item}
+          isDisabled={(item) => !canCreateRigs ? item !== "sport" : false}
+          selected={[state.fields.rigType?.value || "sport"]}
+          onChangeSelected={([rigType]) =>
+            dispatch(actions.setField(["rigType", rigType]))
+          }
+        />
+      )}
       <DatePicker
         timestamp={state.fields.repackExpiresAt.value || new Date().getTime() / 1000}
         onChange={(time) => dispatch(actions.setField(["repackExpiresAt", time]))}
@@ -72,6 +93,8 @@ export default function RigForm() {
       <HelperText type={!!state.fields.repackExpiresAt.error ? "error" : "info"}>
         { state.fields.repackExpiresAt.error || "" }
       </HelperText>
+
+      
     </View>
   );
 }
