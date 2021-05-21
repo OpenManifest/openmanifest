@@ -18,7 +18,7 @@ import GetStarted from './GetStarted';
 import LoadCard from './LoadCard';
 import LoadDialog from '../../../components/dialogs/Load';
 
-const QUERY_DROPZONE = gql`
+export const QUERY_DROPZONE = gql`
   query QueryDropzone($dropzoneId: Int!, $earliestTimestamp: Int) {
     dropzone(id: $dropzoneId) {
       id
@@ -37,6 +37,7 @@ const QUERY_DROPZONE = gql`
 
       currentUser {
         id
+        credits
         hasCredits
         hasExitWeight
         hasMembership
@@ -117,6 +118,7 @@ export default function ManifestScreen() {
 
   React.useEffect(() => {
     if (isFocused) {
+      console.log("IS FOCUSED!");
       refetch();
     }
   }, [isFocused]);
@@ -152,7 +154,6 @@ export default function ManifestScreen() {
     data?.dropzone?.secondaryColor
   ])
 
-  const allowed = useRestriction("createSlot");
   const canCreateLoad = useRestriction("createLoad");
 
   const onManifest = React.useCallback((load: Load) => {
@@ -226,10 +227,12 @@ export default function ManifestScreen() {
   const { width } = useWindowDimensions(); 
 
   const numColumns = Math.ceil(width / 400) || 1;
+  
 
+  console.log("SHOWING LOADS: ", data?.dropzone?.loads?.edges?.length);
+  console.log("SHOWING LOADS: ", loading, Number(state.currentDropzone?.id));
   return (
     <>
-    
     <ProgressBar visible={loading} indeterminate color={state.theme.colors.accent} />
       <View style={styles.container}>
         
@@ -244,6 +247,8 @@ export default function ManifestScreen() {
                         subtitle="How's the weather?"
                       />
                     : <FlatList
+                        testID="loads"
+                        keyExtractor={(item) => `load-${item?.node?.id}`}
                         key={`loads-columns-${numColumns}`}
                         style={{ flex: 1, height: Dimensions.get("window").height }}
                         contentContainerStyle={{ flexGrow: 1 }}
@@ -259,7 +264,6 @@ export default function ManifestScreen() {
                             <LoadCard
                               key={`load-${edge.node.id}`}
                               load={edge.node}
-                              canManifest={allowed && edge?.node?.isOpen && !edge?.node?.isFull}
                               loadNumber={(data?.dropzone?.loads?.edges?.length || 0) - index}
                               onSlotPress={(slot) => {
                                 dispatch(slotForm.setOriginal(slot));

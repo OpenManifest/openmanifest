@@ -15,7 +15,7 @@ interface IJumpTypeSelect {
   onSelect(jt: JumpType): void;
 }
 
-const QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES = gql`
+export const QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES = gql`
 query DropzoneUsersAllowedJumpTypes(
   $dropzoneId: Int!,
   $userIds: [Int!]!

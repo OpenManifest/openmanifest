@@ -36,7 +36,7 @@ interface IGlobalState {
   isDarkMode: boolean;
 }
 
-const initialState: IGlobalState = {
+export const initialState: IGlobalState = {
   currentUser: null,
   currentDropzone: null,
   permissions: [],

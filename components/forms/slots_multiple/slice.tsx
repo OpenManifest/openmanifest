@@ -23,7 +23,7 @@ interface ISlotEditState {
   },
 }
 
-const initialState: ISlotEditState = {
+export const initialState: ISlotEditState = {
   original: null,
   fields: {
     jumpType: {

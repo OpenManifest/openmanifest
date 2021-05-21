@@ -5,12 +5,12 @@ import { Button, Portal } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomSheetBehavior from "reanimated-bottom-sheet";
 import BottomSheet from "reanimated-bottom-sheet";
-import { Mutation } from "../../../graphql/schema";
+import { DropzoneUser, Mutation } from "../../../graphql/schema";
 import { creditsForm, snackbarActions, useAppDispatch, useAppSelector } from "../../../redux";
 import CreditsForm from "../../forms/credits/CreditsForm";
 interface ICreditsSheet {
   open?: boolean;
-  dropzoneUserId: number;
+  dropzoneUser?: DropzoneUser;
   onClose(): void;
   onSuccess(): void;
 }
@@ -64,7 +64,7 @@ const MUTATION_CREATE_TRANSACTION = gql`
 `;
 
 export default function CreditSheet(props: ICreditsSheet) {
-  const { open, dropzoneUserId } = props;
+  const { open, dropzoneUser } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector(state => state.creditsForm);
   const global = useAppSelector(state => state.global);
@@ -93,7 +93,7 @@ export default function CreditSheet(props: ICreditsSheet) {
           amount: state.fields.amount.value,
           message: state.fields.message.value,
           status: state.fields.status.value,
-          dropzoneUserId: Number(dropzoneUserId),
+          dropzoneUserId: Number(dropzoneUser?.id),
         }
       });
       const result = state.original?.id ? response.data?.updateRig : response.data?.createRig;

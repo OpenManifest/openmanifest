@@ -26,6 +26,7 @@ const MyComponent = () => {
 
   return (
     <Snackbar
+      testID="snackbar-message"
       visible={!!notification}
       onDismiss={() =>
         dispatch(actions.hideSnackbar())

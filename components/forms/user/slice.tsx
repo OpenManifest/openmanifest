@@ -26,7 +26,7 @@ interface IUserEditState {
   }
 }
 
-const initialState: IUserEditState = {
+export const initialState: IUserEditState = {
   original: null,
   federation: {
     value: null,

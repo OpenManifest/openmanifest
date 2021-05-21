@@ -19,7 +19,7 @@ interface IExtraEditState {
   }
 }
 
-const initialState: IExtraEditState = {
+export const initialState: IExtraEditState = {
   original: null,
   fields: {
     name: {

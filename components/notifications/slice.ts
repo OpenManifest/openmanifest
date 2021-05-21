@@ -13,11 +13,10 @@ interface INotificationState {
   queue: INotification[];
 }
 
+export const initialState = { queue: [] } as INotificationState;
 export default createSlice({
   name: 'notifications',
-  initialState: {
-    queue: []
-  } as INotificationState,
+  initialState,
   reducers: {
     hideSnackbar: (state: INotificationState) => {
       state.queue = state.queue.slice(1);

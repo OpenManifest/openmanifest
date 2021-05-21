@@ -232,7 +232,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
           <View style={styles.sheetHeader} />
         }
         renderContent={() => 
-          <View style={styles.sheet}>
+          <View style={styles.sheet} testID="manifest-form">
             <SafeAreaView style={styles.contentContainer}>
               <SlotForm />
               <Button

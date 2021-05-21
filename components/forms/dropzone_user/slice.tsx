@@ -18,7 +18,7 @@ interface IDropzoneUserEditState {
   }
 }
 
-const initialState: IDropzoneUserEditState = {
+export const initialState: IDropzoneUserEditState = {
   original: null,
   fields: {
     role: {

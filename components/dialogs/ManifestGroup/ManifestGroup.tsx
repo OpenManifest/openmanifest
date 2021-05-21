@@ -223,7 +223,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
           <View style={[styles.sheetHeader, { backgroundColor: globalState.theme.colors.primary }]} />
         }
         renderContent={() => 
-          <View style={{ backgroundColor: "white"}}>
+          <View style={{ backgroundColor: "white"}} testID="manifest-group-sheet">
             <View pointerEvents={(state.fields.users?.value?.length || 0) > 0 ? undefined : "none"}>
               <Tabs defaultIndex={tabIndex} mode="fixed" onChangeIndex={setTabIndex}>
                 <TabScreen label="Create group" ><View /></TabScreen>

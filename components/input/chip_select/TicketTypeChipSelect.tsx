@@ -14,7 +14,7 @@ interface ITicketTypeSelect {
   onSelect(jt: TicketType): void;
 }
 
-const QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES = gql`
+export const QUERY_DROPZONE_USERS_ALLOWED_TICKET_TYPES = gql`
 query DropzoneUsersAllowedTicketTypes(
   $dropzoneId: Int!,
   $onlyPublicTickets: Boolean
@@ -42,7 +42,7 @@ query DropzoneUsersAllowedTicketTypes(
 const useTicketTypes = createQuery<{ ticketTypes: TicketType[] }, {
   dropzoneId: number,
   onlyPublicTickets?: boolean | null
- }>(QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES, {
+ }>(QUERY_DROPZONE_USERS_ALLOWED_TICKET_TYPES, {
    getPayload: (query) => ({
      ticketTypes: query?.dropzone?.ticketTypes || [],
    })

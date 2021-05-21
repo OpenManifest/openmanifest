@@ -12,10 +12,10 @@ import RigSelect from '../../input/dropdown_select/RigSelect';
 
 const { actions } = slice;
 export default function SlotForm() {
-  const state = useAppSelector(state => state.slotForm);
+  
   const dispatch = useAppDispatch();
   const globalState = useAppSelector(state => state.global);
-
+  const state = useAppSelector(state => state.slotForm);
   React.useEffect(() => {
     if (state.fields.user?.value) {
       if (!state.fields.exitWeight.value) {

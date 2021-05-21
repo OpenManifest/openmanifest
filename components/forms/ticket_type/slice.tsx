@@ -22,7 +22,7 @@ interface ITicketTypeEditState {
 }
 
 
-const initialState: ITicketTypeEditState = {
+export const initialState: ITicketTypeEditState = {
   original: null,
   fields: {
     name: {

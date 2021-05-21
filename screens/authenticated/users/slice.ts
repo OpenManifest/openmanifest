@@ -6,7 +6,7 @@ interface IUserScreenState {
   searchText: string;
 }
 
-const initialState: IUserScreenState = {
+export const initialState: IUserScreenState = {
   isSearchVisible: false,
   searchText: "",
 };

@@ -19,8 +19,6 @@ import SwipeActions from '../../../components/layout/SwipeActions';
 
 interface ILoadCard {
   load: Load;
-  loadNumber: number;
-  canManifest: boolean;
   onManifestGroup(): void;
   onSlotGroupPress(slots: Slot[]): void;
   onSlotPress(slot: Slot): void;
@@ -29,7 +27,7 @@ interface ILoadCard {
 }
 
 
-const QUERY_LOAD = gql`
+export const QUERY_LOAD = gql`
   query QueryLoad($id: Int!) {
     load(id: $id) {
       id
@@ -239,7 +237,7 @@ export default function LoadCard(props: ILoadCard) {
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDispatchOpen, setDispatchOpen] = React.useState(false);
 
-  const { load, onManifest, canManifest, onManifestGroup } = props;
+  const { load, onManifest, onManifestGroup } = props;
   const { data, loading, refetch } = useQuery<Query>(QUERY_LOAD, {
     variables: {
       id: Number(load.id),
@@ -331,17 +329,20 @@ export default function LoadCard(props: ILoadCard) {
     }
   }, [mutationUpdateLoad, JSON.stringify(load)]);
 
+  
   const canUpdateLoad = useRestriction("updateLoad");
+  
   const canEditSelf = useRestriction("updateSlot");
   const canEditOthers = useRestriction("updateUserSlot");
-
+  
   const canRemoveSelf = useRestriction("deleteSlot");
   const canRemoveOthers = useRestriction("deleteUserSlot");
-
+  
+  const canManifestSelf = useRestriction("createSlot");
   const canManifestGroup = useRestriction("createUserSlot");
   const canManifestGroupWithSelfOnly = useRestriction("createUserSlotWithSelf");
 
-  
+  const showManifestButton = canManifestSelf && data?.load?.isOpen && !data?.load?.isFull;
 
   React.useEffect(() => {
     if (data?.load?.maxSlots && data?.load?.maxSlots < 5 && !isExpanded) {
@@ -349,10 +350,10 @@ export default function LoadCard(props: ILoadCard) {
     }
   }, [data?.load?.maxSlots]);
 
-  const showGroupIcon = (canManifestGroupWithSelfOnly || canManifestGroupWithSelfOnly) && !data?.load?.hasLanded && (!data?.load?.dispatchAt || data?.load.dispatchAt > (new Date().getTime() / 1000));
+  const showGroupIcon = (canManifestGroup || canManifestGroupWithSelfOnly) && !data?.load?.hasLanded && (!data?.load?.dispatchAt || data?.load.dispatchAt > (new Date().getTime() / 1000));
 
   return (
-  <Card style={{ margin: 16, opacity: data?.load?.hasLanded ? 0.5 : 1.0 }} elevation={3}>
+  <Card testID="load-card" style={{ margin: 16, opacity: data?.load?.hasLanded ? 0.5 : 1.0 }} elevation={3}>
     <Card.Title
       style={{ justifyContent: "space-between"}}
       title={
@@ -362,6 +363,7 @@ export default function LoadCard(props: ILoadCard) {
           { showGroupIcon && (
             <IconButton
               icon="account-group"
+              testID="manifest-group-button"
               onPress={() => {
                 dispatch(slotsMultipleForm.reset());
                 dispatch(slotsMultipleForm.setField(["load", load]));
@@ -450,6 +452,7 @@ export default function LoadCard(props: ILoadCard) {
                   }}
                 >
                   <DataTable.Row
+                    testID="slot-row"
                     disabled={!!data?.load?.hasLanded}
                     onPress={() => {
                       if (slot.user?.id === state.currentUser?.id) {
@@ -492,7 +495,7 @@ export default function LoadCard(props: ILoadCard) {
           }
           {
             Array.from({length: (data?.load?.maxSlots || 0) - (data?.load?.slots?.length || 0)}, (v, i) => i).map((i) =>
-              <DataTable.Row key={`${load.id}-empty-slot-${i}`}>
+              <DataTable.Row key={`${load.id}-empty-slot-${i}`} testID="slot-row">
                 <DataTable.Cell><Paragraph style={styles.slotText}>- Available -</Paragraph></DataTable.Cell>
                 <DataTable.Cell numeric>-</DataTable.Cell>
                 <DataTable.Cell numeric>-</DataTable.Cell>
@@ -514,7 +517,7 @@ export default function LoadCard(props: ILoadCard) {
     <Card.Actions>
       {
         data?.load?.maxSlots && data?.load?.maxSlots < 5 ? null :
-          <Button onPress={() => setExpanded(!isExpanded)}>
+          <Button onPress={() => setExpanded(!isExpanded)} testID={ isExpanded ? "show-less" : "show-more" }>
             { isExpanded ? "Show less" : "Show more" }
           </Button>
       }
@@ -524,7 +527,7 @@ export default function LoadCard(props: ILoadCard) {
       
           data?.load?.dispatchAt
             ? (
-              <Button mode="outlined" onPress={() => updateCall(null)}>
+              <Button mode="outlined" onPress={() => updateCall(null)} testID="dispatch-cancel">
                 Cancel
               </Button>
             ) : (
@@ -535,12 +538,14 @@ export default function LoadCard(props: ILoadCard) {
                   <Button
                     mode="outlined"
                     onPress={() => setDispatchOpen(true)}
+                    testID="dispatch-button"
                   >
                     Dispatch
                   </Button>
                 }
               >
                 <Menu.Item
+                  testID="dispatch-call"
                   onPress={() => {
                     setDispatchOpen(false);
                     updateCall(20)
@@ -548,6 +553,7 @@ export default function LoadCard(props: ILoadCard) {
                   title="20 minute call"
                 />
                 <Menu.Item
+                  testID="dispatch-call"
                   onPress={() => {
                     setDispatchOpen(false);
                     updateCall(15)
@@ -555,6 +561,7 @@ export default function LoadCard(props: ILoadCard) {
                   title="15 minute call"
                 />
                 <Menu.Item
+                  testID="dispatch-call"
                   onPress={() => {
                     setDispatchOpen(false);
                     updateCall(10)
@@ -602,8 +609,9 @@ export default function LoadCard(props: ILoadCard) {
             : <Button
                 style={{marginLeft: 8 }}
                 mode="contained"
+                testID="manifest-button"
                 onPress={() => onManifest()}
-                disabled={!canManifest || Boolean(data?.load?.dispatchAt && data.load.dispatchAt < new Date().getTime() / 1000)}
+                disabled={!showManifestButton || Boolean(data?.load?.dispatchAt && data.load.dispatchAt < new Date().getTime() / 1000)}
               >
                 Manifest
               </Button>

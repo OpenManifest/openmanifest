@@ -263,8 +263,12 @@ export default function ProfileScreen() {
             {
               title: "Funds",
               value: `$${data?.dropzone?.dropzoneUser?.credits || 0}`,
-              onPress: () =>
-                setCreditsDialogOpen(true)
+              onPress: () => {
+                if (data?.dropzone?.dropzoneUser) {
+                  dispatch(creditsForm.setOriginal(data?.dropzone?.dropzoneUser));
+                  setCreditsDialogOpen(true)
+                }
+              }
             },
             { title: "License", value: `${data?.dropzone?.dropzoneUser?.user?.license?.name || "-"}`},
             { title: "Exit weight", value: Math.round(Number(data?.dropzone?.dropzoneUser?.user?.exitWeight)).toString() || "-" }
@@ -397,7 +401,7 @@ export default function ProfileScreen() {
       onClose={() => setCreditsDialogOpen(false)}
       onSuccess={() => setCreditsDialogOpen(false)}
       open={creditsDialogOpen}
-      dropzoneUserId={Number(data?.dropzone?.dropzoneUser?.id)}
+      dropzoneUser={data?.dropzone?.dropzoneUser || undefined}
     />
 
     <EditUserSheet

@@ -18,7 +18,7 @@ interface IDropzoneEditState {
   }
 }
 
-const initialState: IDropzoneEditState = {
+export const initialState: IDropzoneEditState = {
   original: null,
   fields: {
     amount: {

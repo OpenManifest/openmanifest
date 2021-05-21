@@ -15,7 +15,7 @@ interface IRigInspectionEditState {
   fields: FieldItem[],
 }
 
-const initialState: IRigInspectionEditState = {
+export const initialState: IRigInspectionEditState = {
   original: null,
   fields: []
 };

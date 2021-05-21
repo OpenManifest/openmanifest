@@ -8,7 +8,7 @@ interface IRigInspectionEditState {
   ok: boolean;
 }
 
-const initialState: IRigInspectionEditState = {
+export const initialState: IRigInspectionEditState = {
   fields: [],
   ok: false
 };

@@ -1,33 +1,55 @@
-import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+import { combineReducers, configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux'
 import { Platform } from "react-native";
 import AsyncStorage from '@react-native-community/async-storage';
 
 
 
-import { persistStore, persistCombineReducers } from "redux-persist";
+import { persistStore, persistReducer } from "redux-persist";
 
 
-import globalSlice from "./global";
-import notificationSlice from "../components/notifications/slice";
+import globalSlice, { initialState as initialStateGlobal } from "./global";
+import notificationSlice, { initialState as initialStateNotification } from "../components/notifications/slice";
 
-import loginSlice from "../screens/unauthenticated/login/slice";
-import manifestSlice from "../screens/authenticated/manifest/slice";
-import signUpSlice from "../screens/unauthenticated/signup/slice";
-import usersSlice from "../screens/authenticated/users/slice";
-import dropzoneFormSlice from "../components/forms/dropzone/slice";
-import planeFormSlice from "../components/forms/plane/slice";
-import ticketTypeFormSlice from "../components/forms/ticket_type/slice";
-import extraFormSlice from "../components/forms/extra/slice";
-import loadFormSlice from "../components/forms/load/slice";
-import slotFormSlice from "../components/forms/slot/slice";
-import userFormSlice from "../components/forms/user/slice";
-import dropzoneUserFormSlice from "../components/forms/dropzone_user/slice";
-import rigFormSlice from "../components/forms/rig/slice";
-import rigInspectionFormSlice from "../components/forms/rig_inspection/slice";
-import rigInspectionTemplateSlice from "../components/forms/rig_inspection_template/slice";
-import creditsFormSlice from "../components/forms/credits/slice";
-import slotsMultipleFormSlice from "../components/forms/slots_multiple/slice";
+import loginSlice, { initialState as initialStateLogin } from "../screens/unauthenticated/login/slice";
+import manifestSlice, { initialState as initialStateManifest } from "../screens/authenticated/manifest/slice";
+import signUpSlice, { initialState as initialStateSignup } from "../screens/unauthenticated/signup/slice";
+import usersSlice, { initialState as initialStateUsers } from "../screens/authenticated/users/slice";
+import dropzoneFormSlice, { initialState as initialStateDropzoneForm } from "../components/forms/dropzone/slice";
+import planeFormSlice, { initialState as initialStatePlaneForm } from "../components/forms/plane/slice";
+import ticketTypeFormSlice, { initialState as initialStateTicketTypeForm } from "../components/forms/ticket_type/slice";
+import extraFormSlice, { initialState as initialStateExtraForm } from "../components/forms/extra/slice";
+import loadFormSlice, { initialState as initialStateLoadForm } from "../components/forms/load/slice";
+import slotFormSlice, { initialState as initialStateSlotForm } from "../components/forms/slot/slice";
+import userFormSlice, { initialState as initialStateUserForm } from "../components/forms/user/slice";
+import dropzoneUserFormSlice, { initialState as initialStateDropzoneUserForm } from "../components/forms/dropzone_user/slice";
+import rigFormSlice, { initialState as initialStateRigForm } from "../components/forms/rig/slice";
+import rigInspectionFormSlice, { initialState as initialStateRigInspectionForm } from "../components/forms/rig_inspection/slice";
+import rigInspectionTemplateSlice, { initialState as initialStateRigInspectionTemplateForm } from "../components/forms/rig_inspection_template/slice";
+import creditsFormSlice, { initialState as initialStateCreditsForm } from "../components/forms/credits/slice";
+import slotsMultipleFormSlice, { initialState as initialStateSlotsMultipleForm } from "../components/forms/slots_multiple/slice";
+
+export const initialState = {
+  creditsForm: initialStateCreditsForm,
+  dropzoneForm: initialStateDropzoneForm,
+  dropzoneUserForm: initialStateDropzoneUserForm,
+  extraForm: initialStateExtraForm,
+  global: initialStateGlobal,
+  loadForm: initialStateLoadForm,
+  login: initialStateLogin,
+  manifest: initialStateManifest,
+  notifications: initialStateNotification,
+  planeForm: initialStatePlaneForm,
+  rigForm: initialStateRigForm,
+  rigInspectionForm: initialStateRigInspectionForm,
+  rigInspectionTemplate: initialStateRigInspectionTemplateForm,
+  signup: initialStateSignup,
+  slotForm: initialStateSlotForm,
+  slotsMultipleForm: initialStateSlotsMultipleForm,
+  ticketTypeForm: initialStateTicketTypeForm,
+  userForm: initialStateUserForm,
+  usersScreen: initialStateUsers,
+} as RootState;
 
 // Re-export actions:
 export const { actions: loginActions } = loginSlice;
@@ -52,12 +74,12 @@ export const { actions: slotsMultipleForm } = slotsMultipleFormSlice;
 
 const persistConfig = {
   key: 'root',
-  storage: Platform.OS === "web" ? require('redux-persist/lib/storage').default : AsyncStorage,
+  storage: Platform.OS === "web" || false ? require('redux-persist/lib/storage').default : AsyncStorage,
   whitelist: ["global", "notifications"],
 };
 
 
-const reducer = persistCombineReducers(persistConfig, {
+export const rootReducer = combineReducers({
     global: globalSlice.reducer,
     notifications: notificationSlice.reducer,
     login: loginSlice.reducer,
@@ -79,14 +101,16 @@ const reducer = persistCombineReducers(persistConfig, {
     creditsForm: creditsFormSlice.reducer,
   });
 
+export const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
-  reducer,
+  reducer: persistedReducer,
   middleware: getDefaultMiddleware({
     serializableCheck: {
       ignoredActions: ["persist/PERSIST"],
     },
   })
 });
+
 export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

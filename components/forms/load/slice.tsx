@@ -24,7 +24,7 @@ interface ILoadEditState {
   }
 }
 
-const initialState: ILoadEditState = {
+export const initialState: ILoadEditState = {
   original: null,
   fields: {
     name: {

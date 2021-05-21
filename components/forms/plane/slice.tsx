@@ -31,7 +31,7 @@ interface IPlaneEditState {
   }
 }
 
-const initialState: IPlaneEditState = {
+export const initialState: IPlaneEditState = {
   original: null,
   fields: {
     name: {

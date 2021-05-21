@@ -22,7 +22,7 @@ interface IRigEditState {
   }
 }
 
-const initialState: IRigEditState = {
+export const initialState: IRigEditState = {
   original: null,
   fields: {
     make: {

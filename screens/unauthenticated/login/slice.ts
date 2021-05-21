@@ -13,7 +13,7 @@ interface ILoginScreenState {
   }
 }
 
-const initialState = {
+export const initialState = {
   fields: {
     email: {
       value: "",

@@ -35,7 +35,7 @@ interface ISignUpScreenState {
   }
 }
 
-const initialState = {
+export const initialState = {
   federation: null,
   fields: {
     email: {
