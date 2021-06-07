@@ -1,7 +1,4 @@
-import { useQuery } from '@apollo/client';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
-import { startOfDay } from 'date-fns';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { Dimensions, RefreshControl, StyleSheet, useWindowDimensions } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -11,92 +8,13 @@ import ManifestGroupSheet from '../../../components/dialogs/ManifestGroup/Manife
 
 import NoResults from '../../../components/NoResults';
 import { View } from '../../../components/Themed';
-import { Load, Query } from '../../../graphql/schema';
+import { Load } from '../../../graphql/schema';
 import useRestriction from '../../../hooks/useRestriction';
-import { globalActions, slotForm, slotsMultipleForm, snackbarActions, useAppDispatch, useAppSelector } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import GetStarted from './GetStarted';
 import LoadCard from './LoadCard';
 import LoadDialog from '../../../components/dialogs/Load';
-
-export const QUERY_DROPZONE = gql`
-  query QueryDropzone($dropzoneId: Int!, $earliestTimestamp: Int) {
-    dropzone(id: $dropzoneId) {
-      id
-      name
-      primaryColor,
-      secondaryColor,
-      planes {
-        id
-        name
-        registration
-      }
-      ticketTypes {
-        id
-        name
-      }
-
-      currentUser {
-        id
-        credits
-        hasCredits
-        hasExitWeight
-        hasMembership
-        hasReserveInDate
-        hasRigInspection
-        hasLicense
-
-        transactions {
-          edges {
-            node {
-              id
-              status
-              amount
-            }
-          }
-        }
-
-        user {
-          id
-          name
-          exitWeight
-          email
-          phone
-
-          rigs {
-            id
-            model
-            make
-            serial
-            canopySize
-            repackExpiresAt
-          }
-          jumpTypes {
-            id
-            name
-          }
-          license {
-            id
-            name
-          }
-        }
-      }
-
-      loads(earliestTimestamp: $earliestTimestamp) {
-        edges {
-          node {
-            id
-            name
-            loadNumber
-            isOpen
-            maxSlots
-            isFull
-          }
-        }
-      }
-    }
-  }
-`;
-
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 
 
 export default function ManifestScreen() {
@@ -105,13 +23,7 @@ export default function ManifestScreen() {
   const [isLoadDialogOpen, setLoadDialogOpen] = React.useState(false);
   const [isGroupDialogOpen, setGroupDialogOpen] = React.useState(false);
   const dispatch = useAppDispatch();
-  const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONE, {
-    variables: {
-      dropzoneId: Number(state.currentDropzone?.id),
-      earliestTimestamp: startOfDay(new Date()).getTime() / 1000
-    },
-    fetchPolicy: "no-cache"
-  });
+  const { dropzone, currentUser, loading, refetch } = useCurrentDropzone();
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -123,45 +35,31 @@ export default function ManifestScreen() {
     }
   }, [isFocused]);
 
-  const hasPlanes = !!data?.dropzone?.planes?.length;
-  const hasTicketTypes = !!data?.dropzone?.ticketTypes?.length;
-  const isPublic = !!data?.dropzone?.isPublic;
+  const hasPlanes = !!dropzone?.planes?.length;
+  const hasTicketTypes = !!dropzone?.ticketTypes?.length;
+  const isPublic = !!dropzone?.isPublic;
   const isSetupComplete = hasPlanes && hasTicketTypes;
 
   React.useEffect(() => {
-    if (data?.dropzone?.id) {
-      dispatch(globalActions.setDropzone(data.dropzone));
-    
-      dispatch(
-        globalActions.setUser({
-          ...state?.currentUser,
-          ...(data?.dropzone?.currentUser.user || {})
-        })
-      );
-    }
-  }, [JSON.stringify(data?.dropzone)]);
-
-  React.useEffect(() => {
-    if (data?.dropzone?.primaryColor && data?.dropzone?.primaryColor !== state.theme?.colors?.primary) {
-      dispatch(globalActions.setPrimaryColor(data.dropzone.primaryColor));
+    if (dropzone?.primaryColor && dropzone?.primaryColor !== state.theme?.colors?.primary) {
+      dispatch(actions.global.setPrimaryColor(dropzone.primaryColor));
     }
 
-    if (data?.dropzone?.secondaryColor && data?.dropzone?.secondaryColor !== state.theme?.colors?.accent) {
-      dispatch(globalActions.setPrimaryColor(data.dropzone.secondaryColor));
+    if (dropzone?.secondaryColor && dropzone?.secondaryColor !== state.theme?.colors?.accent) {
+      dispatch(actions.global.setPrimaryColor(dropzone.secondaryColor));
     }
   }, [
-    data?.dropzone?.primaryColor,
-    data?.dropzone?.secondaryColor
+    dropzone?.primaryColor,
+    dropzone?.secondaryColor
   ])
 
   const canCreateLoad = useRestriction("createLoad");
 
   const onManifest = React.useCallback((load: Load) => {
-    const { currentUser } = data!.dropzone;
     
     if (!currentUser.hasLicense) {
       return dispatch(
-        snackbarActions.showSnackbar({
+        actions.notifications.showSnackbar({
           message: "You need to select a license on your user profile",
           variant: "warning"
         })
@@ -170,7 +68,7 @@ export default function ManifestScreen() {
 
     if (!currentUser.hasMembership) {
       return dispatch(
-        snackbarActions.showSnackbar({
+        actions.notifications.showSnackbar({
           message: "Your membership is out of date",
           variant: "warning"
         })
@@ -179,7 +77,7 @@ export default function ManifestScreen() {
 
     if (!currentUser.hasRigInspection) {
       return dispatch(
-        snackbarActions.showSnackbar({
+        actions.notifications.showSnackbar({
           message: "Your rig needs to be inspected before manifesting",
           variant: "warning"
         })
@@ -188,7 +86,7 @@ export default function ManifestScreen() {
 
     if (!currentUser.hasReserveInDate) {
       return dispatch(
-        snackbarActions.showSnackbar({
+        actions.notifications.showSnackbar({
           message: "Your rig needs a reserve repack",
           variant: "warning"
         })
@@ -197,7 +95,7 @@ export default function ManifestScreen() {
 
     if (!currentUser.hasExitWeight) {
       return dispatch(
-        snackbarActions.showSnackbar({
+        actions.notifications.showSnackbar({
           message: "Update your exit weight on your profile before manifesting",
           variant: "warning"
         })
@@ -206,7 +104,7 @@ export default function ManifestScreen() {
 
     if (!currentUser.hasCredits) {
       return dispatch(
-        snackbarActions.showSnackbar({
+        actions.notifications.showSnackbar({
           message: "You have no credits on your account",
           variant: "warning"
         })
@@ -215,13 +113,13 @@ export default function ManifestScreen() {
 
 
     dispatch(
-      slotForm.setField(["user", state.currentUser])
+      actions.forms.manifest.setField(["user", currentUser.user])
     );
     dispatch(
-      slotForm.setField(["load", load])
+      actions.forms.manifest.setField(["load", load])
     );
     setDialogOpen(true);
-  }, [JSON.stringify(data?.dropzone?.currentUser)]);
+  }, [JSON.stringify(dropzone?.currentUser)]);
 
 
   const { width } = useWindowDimensions(); 
@@ -229,7 +127,7 @@ export default function ManifestScreen() {
   const numColumns = Math.ceil(width / 400) || 1;
   
 
-  console.log("SHOWING LOADS: ", data?.dropzone?.loads?.edges?.length);
+  console.log("SHOWING LOADS: ", dropzone?.loads?.edges?.length);
   console.log("SHOWING LOADS: ", loading, Number(state.currentDropzone?.id));
   return (
     <>
@@ -241,7 +139,7 @@ export default function ManifestScreen() {
             !isSetupComplete
               ? <GetStarted {...{ hasPlanes, hasTicketTypes, isPublic }}/>
                 : <View style={{ width: "100%", flex: 1,  height: Dimensions.get("window").height }}>
-                  { (data?.dropzone?.loads?.edges?.length || 0) < 1
+                  { (dropzone?.loads?.edges?.length || 0) < 1
                     ? <NoResults
                         title="No loads so far today"
                         subtitle="How's the weather?"
@@ -253,7 +151,7 @@ export default function ManifestScreen() {
                         style={{ flex: 1, height: Dimensions.get("window").height }}
                         contentContainerStyle={{ flexGrow: 1 }}
                         numColumns={numColumns}
-                        data={data?.dropzone?.loads?.edges || []}
+                        data={dropzone?.loads?.edges || []}
                         refreshing={loading}
                         onRefresh={refetch}
                         refreshControl={
@@ -264,24 +162,23 @@ export default function ManifestScreen() {
                             <LoadCard
                               key={`load-${edge.node.id}`}
                               load={edge.node}
-                              loadNumber={(data?.dropzone?.loads?.edges?.length || 0) - index}
                               onSlotPress={(slot) => {
-                                dispatch(slotForm.setOriginal(slot));
+                                dispatch(actions.forms.manifest.setOriginal(slot));
                                 dispatch(
-                                  slotForm.setField(["load", edge.node!])
+                                  actions.forms.manifest.setField(["load", edge.node!])
                                 );
                                 setDialogOpen(true);
                               }}
                               onSlotGroupPress={(slots) => {
-                                dispatch(slotsMultipleForm.reset());
-                                dispatch(slotsMultipleForm.setFromSlots(slots));
-                                dispatch(slotsMultipleForm.setField(["load", edge.node!]));
+                                dispatch(actions.forms.manifestGroup.reset());
+                                dispatch(actions.forms.manifestGroup.setFromSlots(slots));
+                                dispatch(actions.forms.manifestGroup.setField(["load", edge.node!]));
                                 navigation.navigate("ManifestGroupScreen");
                               }}
                               onManifest={() => onManifest(edge.node!)}
                               onManifestGroup={() => {
-                                dispatch(slotsMultipleForm.reset());
-                                dispatch(slotsMultipleForm.setField(["load", 
+                                dispatch(actions.forms.manifestGroup.reset());
+                                dispatch(actions.forms.manifestGroup.setField(["load", 
                                 edge.node!]));
                                 setGroupDialogOpen(true);
                               }}

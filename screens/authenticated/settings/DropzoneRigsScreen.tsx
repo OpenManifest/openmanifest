@@ -6,7 +6,7 @@ import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar } from 'react-native-paper';
 import { Mutation, Query } from "../../../graphql/schema";
 
-import { useAppSelector, useAppDispatch, rigForm, snackbarActions } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { format } from 'date-fns';
 import RigDialog from '../../../components/dialogs/Rig';
@@ -128,7 +128,7 @@ export default function DropzoneRigsScreen() {
               <DataTable.Row key={`rig-${rig!.id}`}>
                 <DataTable.Cell
                   onPress={() => {
-                    dispatch(rigForm.setOriginal(rig));
+                    dispatch(actions.forms.rig.setOriginal(rig));
                     setRigDialogOpen(true);
                   }}
                 >
@@ -155,7 +155,7 @@ export default function DropzoneRigsScreen() {
 
                         if (result?.updateRig?.errors?.length) {
                           dispatch(
-                            snackbarActions.showSnackbar({
+                            actions.notifications.showSnackbar({
                               message: result?.updateRig.errors[0],
                               variant: "error"
                             })

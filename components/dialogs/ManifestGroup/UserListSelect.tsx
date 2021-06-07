@@ -6,9 +6,10 @@ import { Avatar, Button, Checkbox, Divider, List, Searchbar } from 'react-native
 import { ScrollView } from "react-native-gesture-handler";
 
 import NoResults from '../../../components/NoResults';
-import { DropzoneUser, Query } from '../../../graphql/schema';
-import { manifestActions, slotsMultipleForm, useAppDispatch, useAppSelector } from '../../../redux';
+import { Query } from '../../../graphql/schema';
+import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import useRestriction from '../../../hooks/useRestriction';
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 
 
 
@@ -46,7 +47,7 @@ interface IUserListSelect {
 }
 
 export default function UsersScreen(props: IUserListSelect) {
-  const {global, manifest } = useAppSelector(state => state);
+  const {global, screens, forms } = useAppSelector(state => state);
   const dispatch = useAppDispatch();
   const [searchText, setSearchText] = React.useState("");
 
@@ -57,7 +58,7 @@ export default function UsersScreen(props: IUserListSelect) {
     }
   });
 
-
+  const { currentUser } = useCurrentDropzone();
   const canManifestGroup = useRestriction("createUserSlot");
   const canManifestGroupWithSelfOnly = useRestriction("createUserSlotWithSelf");
 
@@ -89,7 +90,7 @@ export default function UsersScreen(props: IUserListSelect) {
           right={() => 
             <Checkbox
               status={
-                manifest.selectedUsers?.map(({ id }) => id).includes(edge!.node!.id)
+                screens.manifest.selectedUsers?.map(({ id }) => id).includes(edge!.node!.id)
                 ? "checked"
                 : "unchecked"
               }
@@ -98,16 +99,16 @@ export default function UsersScreen(props: IUserListSelect) {
           disabled={
           // Dont allow removing current user if the user
             // can only manifest a group with themselves in it
-            edge?.node?.user.id === global.currentUser?.id && (
+            edge?.node?.user.id === currentUser?.id && (
               canManifestGroupWithSelfOnly && !canManifestGroup
             )  
           }
           onPress={
             () => dispatch(
-              manifestActions.setSelected(
-                manifest.selectedUsers?.find(({ id }) => id === `${edge?.node?.id}`)
-                ? manifest.selectedUsers?.filter(({ id }) => id !== `${edge?.node?.id}`)
-                : [...manifest.selectedUsers, edge!.node!],
+              actions.screens.manifest.setSelected(
+                screens.manifest.selectedUsers?.find(({ id }) => id === `${edge?.node?.id}`)
+                ? screens.manifest.selectedUsers?.filter(({ id }) => id !== `${edge?.node?.id}`)
+                : [...screens.manifest.selectedUsers, edge!.node!],
               )
             )
           }
@@ -119,7 +120,7 @@ export default function UsersScreen(props: IUserListSelect) {
     </View>
     <Button
       onPress={() => {
-        dispatch(slotsMultipleForm.setDropzoneUsers(manifest.selectedUsers));
+        dispatch(actions.forms.manifestGroup.setDropzoneUsers(screens.manifest.selectedUsers));
         props.onNext();
       }}
       style={styles.button}

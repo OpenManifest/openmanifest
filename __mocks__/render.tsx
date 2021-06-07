@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Provider as Material } from "react-native-paper";
 import { render as rtlRender, RenderOptions } from '@testing-library/react-native';
 import { createStore } from 'redux';

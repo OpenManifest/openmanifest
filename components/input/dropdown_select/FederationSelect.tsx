@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React, { useEffect, useState } from "react";
+import * as React from "react";
 import { List, Menu } from "react-native-paper";
 import { Federation, Query } from "../../../graphql/schema";
 
@@ -21,11 +21,11 @@ const QUERY_FEDERATIONS = gql`
 `;
 
 export default function FederationSelect(props: IFederationSelect) {
-  const [isMenuOpen, setMenuOpen] = useState(false);
+  const [isMenuOpen, setMenuOpen] = React.useState(false);
 
   const { data } = useQuery<Query>(QUERY_FEDERATIONS);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (data?.federations?.length === 1 && !props.value) {
       props.onSelect(data.federations![0]);
     }

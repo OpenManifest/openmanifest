@@ -1,17 +1,16 @@
-import React, { useCallback } from 'react';
-import { StyleSheet } from 'react-native';
+import * as React from 'react';
+import { Image, StyleSheet } from 'react-native';
 import { Button, HelperText, TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { gql, useMutation } from '@apollo/client';
 
-import { Text, View } from '../../../components/Themed';
-import { useAppSelector, useAppDispatch, globalActions, snackbarActions } from '../../../redux';
+import { View } from '../../../components/Themed';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
-import slice from "./slice";
 import { Mutation } from '../../../graphql/schema';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
+import { primaryColor } from '../../../constants/Colors';
+import logo from "../../../assets/images/logo.png";
 
-const { actions } = slice;
 
 const MUTATION_LOG_IN = gql`
   mutation UserLogin($email: String!, $password: String!) {
@@ -36,12 +35,12 @@ const MUTATION_LOG_IN = gql`
 `;
 
 export default function LoginScreen() {
-  const state = useAppSelector(state => state.login);
+  const state = useAppSelector(state => state.screens.login);
   const dispatch = useAppDispatch();  
   const navigation = useNavigation();
   const [mutationLogin, data] = useMutation<Mutation>(MUTATION_LOG_IN);
 
-  const onLogin = useCallback(
+  const onLogin = React.useCallback(
     async () => {
       const emailRegex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
       let hasError = false;
@@ -49,21 +48,21 @@ export default function LoginScreen() {
       if (!state.fields.email.value) {
         hasError = true;
         dispatch(
-          actions.setEmailError("Email is required")
+          actions.screens.login.setEmailError("Email is required")
         );
       }
 
       if (!state.fields.password.value) {
         hasError = true;
         dispatch(
-          actions.setPasswordError("Password is required")
+          actions.screens.login.setPasswordError("Password is required")
         );
       }
 
       if (!emailRegex.test(state.fields.email.value)) {
         hasError = true;
         dispatch(
-          actions.setEmailError("Please enter a valid email")
+          actions.screens.login.setEmailError("Please enter a valid email")
         );
       }
 
@@ -80,14 +79,14 @@ export default function LoginScreen() {
 
           if (result?.data?.userLogin?.authenticatable && result?.data?.userLogin?.credentials) {
             dispatch(
-              globalActions.setCredentials(result.data.userLogin.credentials)
+              actions.global.setCredentials(result.data.userLogin.credentials)
             );
             dispatch(
-              globalActions.setUser(result.data.userLogin.authenticatable)
+              actions.global.setUser(result.data.userLogin.authenticatable)
             );
           }
         } catch (e) {
-          dispatch(snackbarActions.showSnackbar({ message: e.message, variant: "error" }));
+          dispatch(actions.notifications.showSnackbar({ message: e.message, variant: "error" }));
         }
       }
     },
@@ -96,15 +95,14 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sign in</Text>
-
+      <Image source={logo} style={{ height: 300 }} resizeMode="contain" />
       <View style={styles.fields}>
         <TextInput
           label="Email"
           mode="outlined"
           value={state.fields.email.value}
           onChangeText={(newValue) => {
-            dispatch(actions.setEmail(newValue));
+            dispatch(actions.screens.login.setEmail(newValue));
           }}
         />
         <HelperText type="error">
@@ -117,18 +115,18 @@ export default function LoginScreen() {
           value={state.fields.password.value}
           secureTextEntry
           onChangeText={(newValue) => {
-            dispatch(actions.setPassword(newValue));
+            dispatch(actions.screens.login.setPassword(newValue));
           }}
           error={!!state.fields.password.error}
         />
         <HelperText type="error">
           {state.fields.password.error || " "}
         </HelperText>
-        <Button mode="contained" style={styles.button} onPress={onLogin} loading={data.loading}>
+        <Button mode="contained" labelStyle={styles.buttonLabel} style={styles.button} onPress={onLogin} loading={data.loading}>
           Log in
         </Button>
 
-        <Button style={styles.button} onPress={() => navigation.navigate("SignUpScreen")}>
+        <Button labelStyle={styles.textButtonLabel} style={styles.textButton} onPress={() => navigation.navigate("SignUpScreen")}>
           Sign up
         </Button>
       </View>
@@ -141,23 +139,36 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: primaryColor,
+    paddingTop: 10,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
+  
   fields: {
     marginBottom: 10,
+    marginTop: -50,
     width: "100%",
-    padding: 96,
+    paddingHorizontal: 56,
+    backgroundColor: "transparent"
   },
   button: {
     marginTop: 10,
+    backgroundColor: "white",
     width: "100%"
+  },
+  buttonLabel: {
+    color: "#FF1414",
+  },
+  textButton: {
+    marginTop: 10,
+    backgroundColor: "transparent",
+    color: "white",
+    width: "100%"
+  },
+  textButtonLabel: {
+    color: "#FFFFFF",
   }
 });

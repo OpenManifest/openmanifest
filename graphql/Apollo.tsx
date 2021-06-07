@@ -3,9 +3,9 @@ import { ApolloProvider } from '@apollo/client/react';
 
 import { setContext } from '@apollo/client/link/context';
 import { onError } from "@apollo/client/link/error";
-import React, { useCallback, useMemo } from 'react';
+import * as React from 'react';
 import Constants from "expo-constants";
-import { globalActions, snackbarActions, useAppDispatch, useAppSelector } from '../redux';
+import { actions, useAppDispatch, useAppSelector } from '../redux';
 
 const httpLink = createHttpLink({
   uri: Constants.manifest.extra.url,
@@ -18,15 +18,15 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
   const credentials = useAppSelector(state => state.global.credentials);
   const dispatch = useAppDispatch();
   // Log any GraphQL errors or network error that occurred
-  const errorLink = useMemo(() =>
+  const errorLink = React.useMemo(() =>
     onError(({ graphQLErrors, networkError }) => {
 
       if (graphQLErrors?.some((err) => err.extensions?.code === "AUTHENTICATION_ERROR")) {
         dispatch(
-          snackbarActions.showSnackbar({ message: `Session expires`, variant: "error" })
+          actions.notifications.showSnackbar({ message: `Session expires`, variant: "error" })
         )
         dispatch(
-          globalActions.logout()
+          actions.global.logout()
         );
         return;
       }
@@ -34,18 +34,18 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
       if (graphQLErrors)
         graphQLErrors.map(({ message, locations, path }) =>
           dispatch(
-            snackbarActions.showSnackbar({ message: `[GraphQL error]: ${message}, ${locations}, ${path}`, variant: "error" })
+            actions.notifications.showSnackbar({ message: `[GraphQL error]: ${message}, ${locations}, ${path}`, variant: "error" })
           )
         );
       if (networkError) {
         dispatch(
-          snackbarActions.showSnackbar({ message: `[Network error]: ${networkError}`, variant: "error" })
+          actions.notifications.showSnackbar({ message: `[Network error]: ${networkError}`, variant: "error" })
         )
       }
 
     }), [dispatch]);
 
-  const authLink = useMemo(
+  const authLink = React.useMemo(
     () => setContext((_, { headers }) => {
       return {
         
@@ -63,7 +63,7 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
     [JSON.stringify(credentials)],
   );
   
-  const client = useMemo(() =>
+  const client = React.useMemo(() =>
     new ApolloClient({
       link: errorLink.concat(authLink).concat(httpLink),
       cache: new InMemoryCache(),

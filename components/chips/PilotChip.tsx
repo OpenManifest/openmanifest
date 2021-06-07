@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React, { useState } from "react";
+import * as React from "react";
 import { Chip, Menu } from "react-native-paper";
 import { Query, User } from "../../graphql/schema";
 import useRestriction from "../../hooks/useRestriction";
@@ -43,7 +43,7 @@ const QUERY_DROPZONE_USERS = gql`
 `;
 
 export default function PilotChip(props: IPilotChipSelect) {
-  const [isMenuOpen, setMenuOpen] = useState(false);
+  const [isMenuOpen, setMenuOpen] = React.useState(false);
   const globalState = useAppSelector(state => state.global);
 
   const { data } = useQuery<Query>(QUERY_DROPZONE_USERS, {

@@ -1,19 +1,13 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { TextInput, HelperText, Checkbox, Menu, List, Divider } from 'react-native-paper';
-import { useAppSelector, useAppDispatch } from '../../../redux';
+import { StyleSheet, View } from 'react-native';
+import { TextInput, HelperText, Checkbox, Divider } from 'react-native-paper';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
-
-import slice from "./slice";
 import PlaneSelect from '../../input/dropdown_select/PlaneSelect';
 import DropzoneUserSelect from '../../input/dropdown_select/DropzoneUserSelect';
 
-const { actions } = slice;
-
-
-
 export default function LoadForm() {
-  const state = useAppSelector(state => state.loadForm);
+  const state = useAppSelector(state => state.forms.load);
   const dispatch = useAppDispatch();
   const globalState = useAppSelector(state => state.global);
 
@@ -28,7 +22,7 @@ export default function LoadForm() {
         placeholder="Optional"
         value={state.fields.name.value || ""}
         autoFocus
-        onChangeText={(newValue) => dispatch(actions.setField(["name", newValue]))}
+        onChangeText={(newValue) => dispatch(actions.forms.load.setField(["name", newValue]))}
       />
       <HelperText type={!!state.fields.name.error ? "error" : "info"}>
         { state.fields.name.error || "e.g Starcrest load, Tandem load" }
@@ -40,7 +34,7 @@ export default function LoadForm() {
         label="Slots"
         error={!!state.fields.maxSlots.error}
         value={state.fields.maxSlots?.value?.toString()}
-        onChangeText={(newValue) => dispatch(actions.setField(["maxSlots", Number(newValue)]))}
+        onChangeText={(newValue) => dispatch(actions.forms.load.setField(["maxSlots", Number(newValue)]))}
       />
       <HelperText type={!!state.fields.maxSlots.error ? "error" : "info"}>
         { state.fields.maxSlots.error || "" }
@@ -50,8 +44,8 @@ export default function LoadForm() {
           value={state.fields.plane.value}
           required
           onSelect={(value) => {
-            dispatch(actions.setField(["plane", value]));
-            dispatch(actions.setField(["maxSlots", value.maxSlots]));
+            dispatch(actions.forms.load.setField(["plane", value]));
+            dispatch(actions.forms.load.setField(["maxSlots", value.maxSlots]));
           }}
           dropzoneId={Number(globalState.currentDropzone?.id)}
         />
@@ -66,7 +60,7 @@ export default function LoadForm() {
             : "unchecked"
           }
           onPress={
-            () => dispatch(actions.setField(["isOpen", !state.fields.isOpen.value]))
+            () => dispatch(actions.forms.load.setField(["isOpen", !state.fields.isOpen.value]))
           }
         />
 
@@ -74,7 +68,7 @@ export default function LoadForm() {
       
         <DropzoneUserSelect
           label="GCA"
-          onSelect={dzUser => dispatch(actions.setField(["gca", dzUser]))}
+          onSelect={dzUser => dispatch(actions.forms.load.setField(["gca", dzUser]))}
           dropzoneId={Number(globalState.currentDropzone?.id)}
           value={state.fields.gca.value || null}
           requiredPermissions={["actAsGCA"]}
@@ -86,7 +80,7 @@ export default function LoadForm() {
         
         <DropzoneUserSelect
           label="Pilot"
-          onSelect={dzUser => dispatch(actions.setField(["pilot", dzUser]))}
+          onSelect={dzUser => dispatch(actions.forms.load.setField(["pilot", dzUser]))}
           dropzoneId={Number(globalState.currentDropzone?.id)}
           value={state.fields.pilot.value || null}
           requiredPermissions={["actAsPilot"]}

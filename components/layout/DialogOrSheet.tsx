@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, Portal, Title } from "react-native-paper";
@@ -19,11 +19,11 @@ interface IBottomSheetProps {
 export default function DialogOrSheet(props: IBottomSheetProps) {
   const { open, snapPoints, onClose, title, buttonLabel, buttonAction, loading, children } = props;
 
-  const sheetRef = useRef<BottomSheetBehavior>(null);
+  const sheetRef = React.useRef<BottomSheetBehavior>(null);
 
   const snappingPoints = snapPoints || [600, 0];
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (open) {
       sheetRef?.current?.snapTo(snappingPoints?.length - 2);
     } else {

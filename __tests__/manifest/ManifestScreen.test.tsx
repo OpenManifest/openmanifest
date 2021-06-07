@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import '@testing-library/jest-native';
 import set from "lodash/set";
 import { fireEvent, render, waitFor } from '../../__mocks__/render';

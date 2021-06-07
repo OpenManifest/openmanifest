@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React, { useState } from "react";
+import * as React from "react";
 import { List, Menu } from "react-native-paper";
 import { JumpType, Query } from "../../../graphql/schema";
 import { useAppSelector } from "../../../redux";
@@ -23,7 +23,7 @@ const QUERY_JUMP_TYPES = gql`
 `;
 
 export default function JumpTypeSelect(props: IJumpTypeSelect) {
-  const [isMenuOpen, setMenuOpen] = useState(false);
+  const [isMenuOpen, setMenuOpen] = React.useState(false);
 
   const { data, loading, refetch } = useQuery<Query>(QUERY_JUMP_TYPES, {
     variables: {

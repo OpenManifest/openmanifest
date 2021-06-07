@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { Paragraph, Button} from "react-native-paper";
 import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/core";

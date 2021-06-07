@@ -2,21 +2,16 @@ import * as React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { Button } from 'react-native-paper';
 import { gql, useMutation } from "@apollo/client";
-import { useAppSelector, useAppDispatch, dropzoneForm } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
 import { View } from '../../../components/Themed';
 import { actions as snackbar } from "../../../components/notifications";
-import globalSlice from "../../../redux/global";
 
-import slice from "../../../components/forms/plane/slice";
 import { Mutation } from '../../../graphql/schema';
 import PlaneForm from '../../../components/forms/plane/PlaneForm';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
-const { actions } = slice;
-const { actions: globalActions } = globalSlice;
 
 
 const MUTATION_CREATE_PLANE = gql`
@@ -68,7 +63,8 @@ const MUTATION_CREATE_PLANE = gql`
 `;
 
 export default function CreatePlaneScreen() {
-  const { planeForm: state, global: globalState } = useAppSelector(state => state);
+  const state  = useAppSelector(state => state.forms.plane);
+  const globalState = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
 
   const navigation = useNavigation();
@@ -77,7 +73,7 @@ export default function CreatePlaneScreen() {
   const isFocused = useIsFocused();
   React.useEffect(() => {
     if (isFocused) {
-      dispatch(actions.reset());
+      dispatch(actions.forms.plane.reset());
     }
   }, [isFocused]);
 
@@ -86,21 +82,21 @@ export default function CreatePlaneScreen() {
     if (state.fields.name.value.length < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["name", "Name is too short"])
+        actions.forms.plane.setFieldError(["name", "Name is too short"])
       );
     }
 
     if (state.fields.registration.value.length < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["registration", "Registration is too short"])
+        actions.forms.plane.setFieldError(["registration", "Registration is too short"])
       );
     }
 
     if (!state.fields.maxSlots.value) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["maxSlots", "Max slots must be specified"])
+        actions.forms.plane.setFieldError(["maxSlots", "Max slots must be specified"])
       );
     }
 

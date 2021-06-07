@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React, { useState } from "react";
+import * as React from "react";
 import { Chip, Menu } from "react-native-paper";
 import { Plane, Query } from "../../graphql/schema";
 import useRestriction from "../../hooks/useRestriction";
@@ -31,7 +31,7 @@ const QUERY_PLANES = gql`
 `;
 
 export default function PlaneChip(props: IPlaneChipSelect) {
-  const [isMenuOpen, setMenuOpen] = useState(false);
+  const [isMenuOpen, setMenuOpen] = React.useState(false);
   const globalState = useAppSelector(state => state.global);
 
   const { data } = useQuery<Query>(QUERY_PLANES, {

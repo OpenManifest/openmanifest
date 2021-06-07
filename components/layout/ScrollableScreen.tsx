@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import * as React from "react";
 import { Dimensions, ScrollView, StyleSheet, ScrollViewProps, useWindowDimensions } from "react-native";
 import { useAppSelector } from "../../redux";
 

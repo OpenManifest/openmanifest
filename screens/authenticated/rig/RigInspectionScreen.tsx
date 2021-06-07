@@ -6,9 +6,9 @@ import * as React from 'react';
 import { Button, Card, Checkbox, Divider, List } from 'react-native-paper';
 import RigInspectionForm from "../../../components/forms/rig_inspection/RigInspectionForm";
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import { DropzoneUser, Mutation, Query, Rig } from '../../../graphql/schema';
+import { Mutation, Query, Rig } from '../../../graphql/schema';
 import useRestriction from '../../../hooks/useRestriction';
-import { rigInspectionForm, snackbarActions, useAppDispatch, useAppSelector } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 
 const QUERY_RIG_INSPECTIONS = gql`
   query RigInspections($dropzoneUserId: Int!, $dropzoneId: Int!) {
@@ -87,7 +87,8 @@ const MUTATION_CREATE_RIG_INSPECTION = gql`
 `;
 
 export default function RigInspectionScreen() {
-  const { global: globalState, rigInspectionForm: state } = useAppSelector(state => state);
+  const state = useAppSelector(state => state.forms.rigInspection);
+  const globalState = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
   
   const route = useRoute<{ key: string, name: string, params: { rig: Rig, dropzoneUserId: number }}>();
@@ -116,19 +117,19 @@ export default function RigInspectionScreen() {
       const inspection = data?.dropzone?.dropzoneUser?.rigInspections?.find((inspection) => inspection.rig?.id === rig.id);
       
       dispatch(
-        rigInspectionForm.setFields(
+        actions.forms.rigInspection.setFields(
           inspection!.definition || ""
         )
       );
 
       dispatch(
-        rigInspectionForm.setOk(
+        actions.forms.rigInspection.setOk(
           inspection!.isOk
         )
       );
     } else {
       dispatch(
-        rigInspectionForm.setFields(
+        actions.forms.rigInspection.setFields(
           data?.dropzone.rigInspectionTemplate?.definition!,
         )
       )
@@ -147,13 +148,13 @@ export default function RigInspectionScreen() {
       });
 
       dispatch(
-        snackbarActions.showSnackbar({ message: "Rig inspection saved", variant: "success" })
+        actions.notifications.showSnackbar({ message: "Rig inspection saved", variant: "success" })
       );
-      dispatch(rigInspectionForm.reset());
+      dispatch(actions.forms.rigInspection.reset());
       navigation.goBack();
 
     } catch(error) {
-      dispatch(snackbarActions.showSnackbar({ message: error.message, variant: "error" }));
+      dispatch(actions.notifications.showSnackbar({ message: error.message, variant: "error" }));
     }
   }, [JSON.stringify(state.fields), state.ok, globalState?.currentDropzone?.id]);
 
@@ -193,7 +194,7 @@ export default function RigInspectionScreen() {
           <Checkbox.Item
             mode="android"
             label="This rig is OK to jump"
-            onPress={() => dispatch(rigInspectionForm.setOk(!state.ok))}
+            onPress={() => dispatch(actions.forms.rigInspection.setOk(!state.ok))}
             status={state.ok ? "checked" : "unchecked"}
           />
         </Card.Content>

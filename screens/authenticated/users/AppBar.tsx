@@ -1,7 +1,6 @@
-import React from "react";
-import { Appbar, List, TextInput } from "react-native-paper";
+import * as React from "react";
+import { Appbar, TextInput } from "react-native-paper";
 import { StackHeaderProps } from "@react-navigation/stack";
-import { gql } from "@apollo/client";
 import { useAppDispatch, useAppSelector } from "../../../redux";
 import { StyleSheet, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";

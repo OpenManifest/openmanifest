@@ -4,7 +4,7 @@ import * as React from 'react';
 import { StyleSheet, FlatList, Dimensions } from 'react-native';
 import { Card, Title, FAB, Paragraph } from 'react-native-paper';
 import { View } from '../../../components/Themed';
-import { globalActions, useAppDispatch, useAppSelector } from '../../../redux';
+import { actions, useAppDispatch } from '../../../redux';
 import { Query } from "../../../graphql/schema";
 
 import { useNavigation } from '@react-navigation/core';
@@ -72,7 +72,7 @@ export default function DropzonesScreen() {
             onPress={async ()=> {
               if (item?.node) {
                 dispatch(
-                  globalActions.setDropzone(item.node)
+                  actions.global.setDropzone(item.node)
                 );
               }
             }}

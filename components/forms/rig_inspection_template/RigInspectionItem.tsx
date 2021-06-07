@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { View } from "react-native";
 import { Checkbox, HelperText, List, TextInput } from "react-native-paper";
 import useRestriction from "../../../hooks/useRestriction";

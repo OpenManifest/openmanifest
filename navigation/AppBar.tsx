@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import * as React from "react";
 import { Appbar, Menu, IconButton, Divider, Chip } from "react-native-paper";
 import { StackHeaderProps } from "@react-navigation/stack";
 import { gql, useLazyQuery } from "@apollo/client";
 import { Query } from "../graphql/schema";
-import { globalActions, useAppDispatch, useAppSelector } from "../redux";
+import { actions, useAppDispatch, useAppSelector } from "../redux";
 import { StyleSheet } from "react-native";
 import SetupWarning from "./SetupWarning";
 
@@ -62,7 +62,7 @@ interface IAppBarProps extends StackHeaderProps {
 
 function AppBar(props: IAppBarProps) {
   const { navigation, previous, scene, hideWarnings } = props;
-  const [contextMenuOpen, setContextMenuOpen] = useState(false);
+  const [contextMenuOpen, setContextMenuOpen] = React.useState(false);
   const { currentDropzone } = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
   const [loadData, { data, loading }] = useLazyQuery<Query>(QUERY_CURRENT_USER, {
@@ -71,7 +71,7 @@ function AppBar(props: IAppBarProps) {
     }
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (currentDropzone) {
       loadData();
     }
@@ -106,7 +106,7 @@ function AppBar(props: IAppBarProps) {
           title="Change dropzone"
           icon="radar"
           onPress={() => {
-            dispatch(globalActions.setDropzone(null));
+            dispatch(actions.global.setDropzone(null));
             setContextMenuOpen(false);
           }}
         />
@@ -115,7 +115,7 @@ function AppBar(props: IAppBarProps) {
           title="Log out"
           icon="logout"
           onPress={() => {
-            dispatch(globalActions.logout());
+            dispatch(actions.global.logout());
             setContextMenuOpen(false);
           }}
         />

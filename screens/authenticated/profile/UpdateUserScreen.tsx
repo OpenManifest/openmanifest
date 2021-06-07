@@ -2,19 +2,14 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { gql, useMutation } from "@apollo/client";
-import { useAppSelector, useAppDispatch, dropzoneForm, userForm } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
 import { View } from '../../../components/Themed';
-import { actions as snackbar } from "../../../components/notifications";
-import globalSlice from "../../../redux/global";
 
-import slice from "../../../components/forms/user/slice";
 import { Mutation, User } from '../../../graphql/schema';
 import UserForm from '../../../components/forms/user/UserForm';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-
-const { actions } = slice;
 
 
 const MUTATION_CREATE_USER = gql`
@@ -68,7 +63,8 @@ const MUTATION_CREATE_USER = gql`
 `;
 
 export default function UpdateUserScreen() {
-  const { userForm: state, global: globalState } = useAppSelector(state => state);
+  const state = useAppSelector(state => state.forms.user);
+  const globalState = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
 
   const navigation = useNavigation();
@@ -76,7 +72,7 @@ export default function UpdateUserScreen() {
   const user = route.params!.user;
 
   React.useEffect(() => {
-    dispatch(actions.setOriginal(user));
+    dispatch(actions.forms.user.setOriginal(user));
   }, [user?.id]);
 
   const [mutationUpdateUser, data] = useMutation<Mutation>(MUTATION_CREATE_USER);
@@ -87,35 +83,35 @@ export default function UpdateUserScreen() {
     if ((state.fields.name?.value?.length || 0) < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["name", "Name is too short"])
+        actions.forms.user.setFieldError(["name", "Name is too short"])
       );
     }
 
     if ((state.fields.email?.value?.length || 0) < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["email", "Email is too short"])
+        actions.forms.user.setFieldError(["email", "Email is too short"])
       );
     }
 
     if ((state.fields.phone?.value?.length || 0) < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["phone", "Phone number is too short"])
+        actions.forms.user.setFieldError(["phone", "Phone number is too short"])
       );
     }
 
     if (!emailRegex.test(state.fields?.email?.value || "")) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["email", "Please enter a valid email"])
+        actions.forms.user.setFieldError(["email", "Please enter a valid email"])
       );
     }
 
     if ((state.fields.exitWeight?.value || 0) < 30) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["exitWeight", "Exit weight seems too low?"])
+        actions.forms.user.setFieldError(["exitWeight", "Exit weight seems too low?"])
       );
     }
 
@@ -147,35 +143,35 @@ export default function UpdateUserScreen() {
             fieldErrors?.map(({ field, message }) => {
               switch (field) {
                 case "name":
-                  return dispatch(userForm.setFieldError(["name", message]));
+                  return dispatch(actions.forms.user.setFieldError(["name", message]));
                 case "exit_weight":
-                  return dispatch(userForm.setFieldError(["exitWeight", message]));
+                  return dispatch(actions.forms.user.setFieldError(["exitWeight", message]));
                 case "license_id":
-                  return dispatch(userForm.setFieldError(["license", message]));
+                  return dispatch(actions.forms.user.setFieldError(["license", message]));
                 case "phone":
-                  return dispatch(userForm.setFieldError(["phone", message]));
+                  return dispatch(actions.forms.user.setFieldError(["phone", message]));
                 case "email":
-                  return dispatch(userForm.setFieldError(["email", message]));
+                  return dispatch(actions.forms.user.setFieldError(["email", message]));
               }
             });
           } else if (errors?.length) {
             errors.map((message) =>
               dispatch(
-                snackbar.showSnackbar({ message: message, variant: "error" })
+                actions.notifications.showSnackbar({ message: message, variant: "error" })
               )
             );
           } else {
             dispatch(
-              snackbar.showSnackbar({ message: `Profile has been updated`, variant: "success" })
+              actions.notifications.showSnackbar({ message: `Profile has been updated`, variant: "success" })
             );
             navigation.goBack();
-            dispatch(userForm.reset());
+            dispatch(actions.forms.user.reset());
           }
 
         }
       } catch (error) {
         dispatch(
-          snackbar.showSnackbar({ message: error.message, variant: "error" })
+          actions.notifications.showSnackbar({ message: error.message, variant: "error" })
         );
       }
     }

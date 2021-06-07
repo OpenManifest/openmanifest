@@ -1,19 +1,15 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { TextInput, HelperText, List } from 'react-native-paper';
+import { HelperText, List } from 'react-native-paper';
 
-import { useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
-import slice from "./slice";
 import DatePicker from '../../input/date_picker/DatePicker';
 import RoleSelect from '../../input/dropdown_select/RoleSelect';
 import useRestriction from '../../../hooks/useRestriction';
-import ScrollableScreen from '../../layout/ScrollableScreen';
-
-const { actions } = slice;
 
 export default function DropzoneUserForm() {
-  const { dropzoneUserForm: state, global: globalState} = useAppSelector(state => state);
+  const state = useAppSelector(state => state.forms.dropzoneUser);
   const dispatch = useAppDispatch();
   const canUpdateRole = useRestriction("updatePermission");
 
@@ -21,7 +17,7 @@ export default function DropzoneUserForm() {
     <>
       <RoleSelect
         value={state.fields.role.value}
-        onSelect={(newRole) => dispatch(actions.setField(["role", newRole]))}
+        onSelect={(newRole) => dispatch(actions.forms.dropzoneUser.setField(["role", newRole]))}
         disabled={!canUpdateRole}
         required
       />
@@ -35,7 +31,7 @@ export default function DropzoneUserForm() {
       </List.Subheader>
       <DatePicker
         timestamp={state.fields.expiresAt.value || new Date().getTime() / 1000}
-        onChange={(time) => dispatch(actions.setField(["expiresAt", time]))}
+        onChange={(time) => dispatch(actions.forms.dropzoneUser.setField(["expiresAt", time]))}
         label="Membership expires"
       />
       <HelperText type={!!state.fields.expiresAt.error ? "error" : "info"}>

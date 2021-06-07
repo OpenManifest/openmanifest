@@ -1,19 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button, TextInput, HelperText, Card, Menu, List, Portal, Modal, Dialog, Checkbox } from 'react-native-paper';
 import { getDocumentAsync } from "expo-document-picker";
 import { useQuery, gql } from '@apollo/client';
 import { ColorPicker } from "react-native-color-picker";
-import { useAppSelector, useAppDispatch, globalActions } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 import SliderComponent from "@react-native-community/slider";
 
 import { View } from '../../Themed';
 
 import slice from "./slice";
 import { Query } from '../../../graphql/schema';
-import { ScrollView } from 'react-native';
 
-const { actions } = slice;
 
 const QUERY_FEDERATIONS = gql`
   query QueryFederations {
@@ -24,21 +22,22 @@ const QUERY_FEDERATIONS = gql`
   }
 `;
 export default function DropzoneForm() {
-  const { dropzoneForm: state, global } = useAppSelector(state => state);
+  const global = useAppSelector(state => state.global);
+  const state = useAppSelector(state => state.forms.dropzone);
   const dispatch = useAppDispatch();
   const { data, loading } = useQuery<Query>(QUERY_FEDERATIONS);
-  const [federationMenuOpen, setFederationMenuOpen] = useState(false);
-  const [colorPicker, setColorPicker] = useState<"primary" | "secondary" | null>(null);
+  const [federationMenuOpen, setFederationMenuOpen] = React.useState(false);
+  const [colorPicker, setColorPicker] = React.useState<"primary" | "secondary" | null>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (data?.federations?.length && !state.fields.federation?.value) {
       dispatch(
-        actions.setField(["federation", data.federations[0]])
+        actions.forms.dropzone.setField(["federation", data.federations[0]])
       );
     }
   }, [JSON.stringify(data?.federations)]);
 
-  const onPickImage = useCallback(
+  const onPickImage = React.useCallback(
     async () => {
       try {
         const result = await getDocumentAsync({
@@ -46,7 +45,7 @@ export default function DropzoneForm() {
           type: "image",
         }) as { uri: string };
 
-        dispatch(actions.setField(["banner", result.uri as string]));
+        dispatch(actions.forms.dropzone.setField(["banner", result.uri as string]));
       } catch (e) {
         console.log(e);
       }
@@ -67,8 +66,8 @@ export default function DropzoneForm() {
                 onColorSelected={color => {
                 dispatch(
                   colorPicker === "primary"
-                    ? actions.setField(["primaryColor", color])
-                    : actions.setField(["secondaryColor", color])
+                    ? actions.forms.dropzone.setField(["primaryColor", color])
+                    : actions.forms.dropzone.setField(["secondaryColor", color])
                 )
                 }}
                 style={{ flex: 1 }}
@@ -91,11 +90,11 @@ export default function DropzoneForm() {
                   })
                   if (colorPicker === "primary") {
                     dispatch(
-                      globalActions.setPrimaryColor(state.fields.primaryColor.value!),
+                      actions.global.setPrimaryColor(state.fields.primaryColor.value!),
                     );
                   } else {
                     dispatch(
-                      globalActions.setAccentColor(state.fields.secondaryColor.value!),
+                      actions.global.setAccentColor(state.fields.secondaryColor.value!),
                     );
                   }
                   setColorPicker(null);
@@ -123,7 +122,7 @@ export default function DropzoneForm() {
           label="Name"
           error={!!state.fields.name.error}
           value={state.fields.name.value || ""}
-          onChangeText={(newValue) => dispatch(actions.setField(["name", newValue]))}
+          onChangeText={(newValue) => dispatch(actions.forms.dropzone.setField(["name", newValue]))}
         />
         <HelperText type="error">
           { state.fields.name.error || "" }
@@ -148,7 +147,7 @@ export default function DropzoneForm() {
                 key={`federation-select-${federation.id}`}
                 title={federation.name}
                 onPress={() => {
-                  dispatch(actions.setField(["federation", federation]));
+                  dispatch(actions.forms.dropzone.setField(["federation", federation]));
                   setFederationMenuOpen(false);
                 }}
               />
@@ -190,12 +189,12 @@ export default function DropzoneForm() {
           title="Use credit system"
           description="Users will be charged credits when a load is marked as landed and can't manifest with insufficient funds."
           onPress={() =>
-            dispatch(actions.setField(["isCreditSystemEnabled", !state.fields.isCreditSystemEnabled.value]))
+            dispatch(actions.forms.dropzone.setField(["isCreditSystemEnabled", !state.fields.isCreditSystemEnabled.value]))
           }
           left={() =>
             <Checkbox
               onPress={() =>
-                dispatch(actions.setField(["isCreditSystemEnabled", !state.fields.isCreditSystemEnabled.value]))
+                dispatch(actions.forms.dropzone.setField(["isCreditSystemEnabled", !state.fields.isCreditSystemEnabled.value]))
               }
               status={state.fields.isCreditSystemEnabled.value
                   ? "checked"
@@ -209,12 +208,12 @@ export default function DropzoneForm() {
           title="Public"
           description="Your dropzone will not be available in the app if this is disabled"
           onPress={() =>
-            dispatch(actions.setField(["isPublic", !state.fields.isPublic.value]))
+            dispatch(actions.forms.dropzone.setField(["isPublic", !state.fields.isPublic.value]))
           }
           left={() =>
             <Checkbox
               onPress={() =>
-                dispatch(actions.setField(["isPublic", !state.fields.isPublic.value]))
+                dispatch(actions.forms.dropzone.setField(["isPublic", !state.fields.isPublic.value]))
               }
               status={state.fields.isPublic.value
                   ? "checked"

@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React, { useState } from "react";
+import * as React from "react";
 import { List, Menu } from "react-native-paper";
 import { Query, UserRole } from "../../../graphql/schema";
 import { useAppSelector } from "../../../redux";
@@ -26,7 +26,7 @@ const QUERY_ROLES = gql`
 `;
 
 export default function RoleSelect(props: IRoleSelect) {
-  const [isMenuOpen, setMenuOpen] = useState(false);
+  const [isMenuOpen, setMenuOpen] = React.useState(false);
   const globalState = useAppSelector(state => state.global);
 
   const { data, loading, refetch } = useQuery<Query>(QUERY_ROLES, {

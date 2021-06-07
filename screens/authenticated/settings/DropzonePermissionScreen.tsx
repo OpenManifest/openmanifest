@@ -3,13 +3,12 @@ import { useIsFocused } from '@react-navigation/core';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { List, ProgressBar, Title } from 'react-native-paper';
+import { List, ProgressBar } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 
 import { Query } from "../../../graphql/schema";
-import { useAppSelector, useAppDispatch } from '../../../redux';
+import { useAppSelector } from '../../../redux';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import useRestriction from '../../../hooks/useRestriction';
 import PermissionListItem from '../../../components/permissions/PermissionListItem';
 
 
@@ -109,9 +108,7 @@ export default function DropzonePermissionScreen() {
       dropzoneId: Number(state.currentDropzone?.id),
     }
   });
-  const dispatch = useAppDispatch();
   const isFocused = useIsFocused();
-  const canUpdateRole = useRestriction("updatePermission");
 
   React.useEffect(() => {
     if (isFocused) {

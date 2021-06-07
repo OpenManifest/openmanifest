@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import React from "react";
+import * as React from "react";
 import { List } from "react-native-paper";
 import { createQuery } from "../../../graphql/createQuery";
 import { TicketType } from "../../../graphql/schema";

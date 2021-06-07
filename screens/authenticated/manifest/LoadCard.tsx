@@ -1,11 +1,11 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { useNavigation } from '@react-navigation/core';
 import * as React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { Badge, Button, Card, DataTable, IconButton, List, Menu, Paragraph, ProgressBar, Text } from 'react-native-paper';
+import { Button, Card, DataTable, IconButton, Menu, Paragraph, ProgressBar, Text } from 'react-native-paper';
 import addMinutes from "date-fns/addMinutes";
 import differenceInMinutes from "date-fns/differenceInMinutes";
 
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 import GCAChip from '../../../components/chips/GcaChip';
 import LoadMasterChip from '../../../components/chips/LoadMasterChip';
 import PilotChip from '../../../components/chips/PilotChip';
@@ -14,7 +14,7 @@ import PlaneChip from '../../../components/chips/PlaneChip';
 import { View } from '../../../components/Themed';
 import { Query, Load, Mutation, User, Plane, Slot } from '../../../graphql/schema';
 import useRestriction from '../../../hooks/useRestriction';
-import { manifestActions, slotsMultipleForm, snackbarActions, useAppDispatch, useAppSelector } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import SwipeActions from '../../../components/layout/SwipeActions';
 
 interface ILoadCard {
@@ -244,6 +244,7 @@ export default function LoadCard(props: ILoadCard) {
     },
     // pollInterval: 30000,
   });
+  const { currentUser } = useCurrentDropzone();
 
   const [mutationUpdateLoad, mutation] = useMutation<Mutation>(MUTATION_UPDATE_LOAD);
   const [mutationDeleteSlot, mutationDelete] = useMutation<Mutation>(MUTATION_DELETE_SLOT);
@@ -258,7 +259,7 @@ export default function LoadCard(props: ILoadCard) {
 
       if (result?.data?.deleteSlot?.errors) {
         dispatch(
-          snackbarActions.showSnackbar({
+          actions.notifications.showSnackbar({
             message: result.data.deleteSlot.errors[0],
             variant: "error"
           })
@@ -365,13 +366,13 @@ export default function LoadCard(props: ILoadCard) {
               icon="account-group"
               testID="manifest-group-button"
               onPress={() => {
-                dispatch(slotsMultipleForm.reset());
-                dispatch(slotsMultipleForm.setField(["load", load]));
+                dispatch(actions.forms.manifestGroup.reset());
+                dispatch(actions.forms.manifestGroup.setField(["load", load]));
 
                 if (canManifestGroupWithSelfOnly && !canManifestGroup) {
                   // Automatically add current user to selection
-                  dispatch(manifestActions.setSelected([state.currentDropzone?.currentUser!]));
-                  dispatch(slotsMultipleForm.setDropzoneUsers([state.currentDropzone?.currentUser!]));
+                  dispatch(actions.screens.manifest.setSelected([currentUser]));
+                  dispatch(actions.forms.manifestGroup.setDropzoneUsers([currentUser]));
                 }
 
                 if (onManifestGroup) {
@@ -399,7 +400,7 @@ export default function LoadCard(props: ILoadCard) {
                 const diff = (data?.load?.slots?.length || 0) - (plane.maxSlots || 0);
 
                 dispatch(
-                  snackbarActions.showSnackbar({
+                  actions.notifications.showSnackbar({
                     message: `You need to take ${diff} people off the load to fit on this plane`,
                     variant: "warning",
                   })
@@ -437,7 +438,7 @@ export default function LoadCard(props: ILoadCard) {
           {
             data?.load?.slots?.map(slot => {
               const slotGroup = data?.load?.slots?.filter(({ groupNumber }) => groupNumber && groupNumber === slot.groupNumber);
-              const isCurrentUser = slot?.user?.id === state.currentUser?.id;
+              const isCurrentUser = slot?.user?.id === currentUser?.id;
 
               return (
                 <SwipeActions
@@ -455,7 +456,7 @@ export default function LoadCard(props: ILoadCard) {
                     testID="slot-row"
                     disabled={!!data?.load?.hasLanded}
                     onPress={() => {
-                      if (slot.user?.id === state.currentUser?.id) {
+                      if (slot.user?.id === currentUser?.id) {
                         if (canEditSelf) {
                           if (slotGroup?.length) {
                             props.onSlotGroupPress(slotGroup!)
@@ -587,7 +588,7 @@ export default function LoadCard(props: ILoadCard) {
                 onPress={() => {
                   if (!data?.load?.loadMaster?.id) {
                     return dispatch(
-                      snackbarActions.showSnackbar({
+                      actions.notifications.showSnackbar({
                         message: "You must select a load master before this load can be finalized",
                         variant: "warning"
                       })
@@ -596,7 +597,7 @@ export default function LoadCard(props: ILoadCard) {
 
                   if (!data?.load?.pilot?.id) {
                     return dispatch(
-                      snackbarActions.showSnackbar({
+                      actions.notifications.showSnackbar({
                         message: "You must select a pilot before this load can be finalized",
                         variant: "warning"
                       })

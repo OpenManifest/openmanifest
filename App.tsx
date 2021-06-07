@@ -1,17 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { Suspense } from 'react';
+import * as React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from "react-redux";
 import { PersistGate } from 'redux-persist/integration/react'
 import { Provider as MaterialProvider, ActivityIndicator, ProgressBar } from "react-native-paper"
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 
 import Apollo from "./graphql/Apollo";
 import { store, persistor, useAppSelector } from "./redux/store";
 
 import useCachedResources from './hooks/useCachedResources';
-import useColorScheme from './hooks/useColorScheme';
 import Notifications from './components/notifications/Notifications';
 import LinkingConfiguration from './navigation/Routes';
 import RootNavigator from "./navigation/RootNavigator";
@@ -22,7 +21,7 @@ import RootNavigator from "./navigation/RootNavigator";
 function Content() {
   const state = useAppSelector(state => state.global);
   return (
-    <Suspense
+    <React.Suspense
       fallback={
         <View style={{ flex: 1, flexGrow: 1 }}>
           <ProgressBar indeterminate color={state?.theme?.colors?.accent} visible />
@@ -43,7 +42,7 @@ function Content() {
           </SafeAreaProvider>
         </MaterialProvider>
       </Apollo>
-    </Suspense>
+    </React.Suspense>
   )
 }
 export default function App() {

@@ -1,14 +1,12 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { useRoute } from '@react-navigation/core';
-import { format } from 'date-fns';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { Button, Card, List } from 'react-native-paper';
+import { Button, Card } from 'react-native-paper';
 import RigInspectionTemplateForm from "../../../components/forms/rig_inspection_template/RigInspectionTemplateForm";
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import { DropzoneUser, Mutation, Query, Rig } from '../../../graphql/schema';
+import { Mutation, Query } from '../../../graphql/schema';
 import useRestriction from '../../../hooks/useRestriction';
-import { rigInspectionForm, rigInspectionTemplateForm, snackbarActions, useAppDispatch, useAppSelector } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 
 const QUERY_RIG_INSPECTION = gql`
   query RigInspection($dropzoneId: Int!) {
@@ -53,7 +51,8 @@ const MUTATION_UPDATE_FORM = gql`
 
 
 export default function RigInspectionTemplateScreen() {
-  const { global: globalState, rigInspectionTemplate } = useAppSelector(state => state);
+  const globalState = useAppSelector(state => state.global);
+  const state = useAppSelector(state => state.forms.rigInspectionTemplate);
   const dispatch = useAppDispatch();
   const { data, loading } = useQuery<Query>(QUERY_RIG_INSPECTION, {
     variables: {
@@ -68,7 +67,7 @@ export default function RigInspectionTemplateScreen() {
     if (data?.dropzone?.rigInspectionTemplate) {
       
       dispatch(
-        rigInspectionTemplateForm.setOriginal(
+        actions.forms.rigInspectionTemplate.setOriginal(
           data.dropzone.rigInspectionTemplate
         )
       )
@@ -81,14 +80,14 @@ export default function RigInspectionTemplateScreen() {
           variables: {
             formId: Number(data?.dropzone.rigInspectionTemplate!.id),
             dropzoneId: Number(data?.dropzone?.id),
-            definition: JSON.stringify(rigInspectionTemplate.fields),
+            definition: JSON.stringify(state.fields),
         }
       });
-      dispatch(snackbarActions.showSnackbar({ message: "Template saved", variant: "success" }));
+      dispatch(actions.notifications.showSnackbar({ message: "Template saved", variant: "success" }));
     } catch(error) {
-      dispatch(snackbarActions.showSnackbar({ message: error.message, variant: "error" }));
+      dispatch(actions.notifications.showSnackbar({ message: error.message, variant: "error" }));
     }
-  }, [JSON.stringify(rigInspectionTemplate.fields), rigInspectionTemplate?.original?.id, globalState?.currentDropzone?.id]);
+  }, [JSON.stringify(state.fields), state?.original?.id, globalState?.currentDropzone?.id]);
 
   return (
     <ScrollableScreen>

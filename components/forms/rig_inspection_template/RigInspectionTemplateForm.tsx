@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { useAppSelector, useAppDispatch, rigInspectionTemplateForm } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
 import { FieldItem } from "./slice";
 import RigInspectionItem from './RigInspectionItem';
@@ -10,8 +10,8 @@ import { Button, Checkbox, Dialog, Divider, FAB, IconButton, Portal, TextInput }
 
 
 
-export default function RigForm() {
-  const { rigInspectionTemplate: state } = useAppSelector(state => state);
+export default function RigInspectionTemplateForm() {
+  const state = useAppSelector(state => state.forms.rigInspectionTemplate);
   const [newItem, setNewItem] = React.useState<Partial<FieldItem> & { index?: number } | null>(null);
   const [fabOpen, setFabOpen] = React.useState(false);
 
@@ -34,7 +34,7 @@ export default function RigForm() {
                     }
                   />
                 </View>
-                <IconButton icon="delete" onPress={() => dispatch(rigInspectionTemplateForm.setFields(state.fields.filter((_, i) => i !== index)))} />
+                <IconButton icon="delete" onPress={() => dispatch(actions.forms.rigInspectionTemplate.setFields(state.fields.filter((_, i) => i !== index)))} />
               </View>
               <Divider />
             </>
@@ -75,9 +75,9 @@ export default function RigForm() {
               onPress={() => {
                 if (newItem?.index !== undefined) {
                   // If index was provided, replace existing field at that index
-                  dispatch(rigInspectionTemplateForm.setFields(state.fields.map((field, idx) => idx === newItem.index ? newItem : field) as FieldItem[]));
+                  dispatch(actions.forms.rigInspectionTemplate.setFields(state.fields.map((field, idx) => idx === newItem.index ? newItem : field) as FieldItem[]));
                 } else {
-                  dispatch(rigInspectionTemplateForm.setFields([...state.fields, newItem as FieldItem]));
+                  dispatch(actions.forms.rigInspectionTemplate.setFields([...state.fields, newItem as FieldItem]));
                 }
                 setNewItem(null);
               }}

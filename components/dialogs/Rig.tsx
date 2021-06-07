@@ -1,8 +1,8 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { useCallback, useRef } from "react";
+import * as React from "react";
 import BottomSheetBehavior from "reanimated-bottom-sheet";
 import { Mutation } from "../../graphql/schema";
-import { rigForm, snackbarActions, useAppDispatch, useAppSelector } from "../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../redux";
 import RigForm from "../forms/rig/RigForm";
 import DialogOrSheet from "../layout/DialogOrSheet";
 interface IRigDialog {
@@ -136,53 +136,52 @@ const MUTATION_UPDATE_RIG = gql`
 export default function RigDialog(props: IRigDialog) {
   const { open, onClose, userId, dropzoneId } = props;
   const dispatch = useAppDispatch();
-  const state = useAppSelector(state => state.rigForm);
-  const globalState = useAppSelector(state => state.global);
+  const state = useAppSelector(state => state.forms.rig);
   const [mutationCreateRig, createData] = useMutation<Mutation>(MUTATION_CREATE_RIG);
   const [mutationUpdateRig, updateData] = useMutation<Mutation>(MUTATION_UPDATE_RIG);
 
   const isLoading = createData.loading || updateData.loading;
-  const validate = useCallback(() => {
+  const validate = React.useCallback(() => {
     let hasErrors = false;
     if (!state.fields.make.value) {
       hasErrors = true;
       dispatch(
-        rigForm.setFieldError(["make", "Required"])
+        actions.forms.rig.setFieldError(["make", "Required"])
       );
     }
 
     if (!state.fields.model.value) {
       hasErrors = true;
       dispatch(
-        rigForm.setFieldError(["model", "Required"])
+        actions.forms.rig.setFieldError(["model", "Required"])
       );
     }
 
     if (!state.fields.serial.value) {
       hasErrors = true;
       dispatch(
-        rigForm.setFieldError(["serial", "Required"])
+        actions.forms.rig.setFieldError(["serial", "Required"])
       );
     }
 
     if (!state.fields.canopySize.value) {
       hasErrors = true;
       dispatch(
-        rigForm.setFieldError(["canopySize", "Required"])
+        actions.forms.rig.setFieldError(["canopySize", "Required"])
       );
     }
 
     if (!state.fields.repackExpiresAt.value) {
       hasErrors = true;
       dispatch(
-        rigForm.setFieldError(["repackExpiresAt", "You must select a repack date in the future"])
+        actions.forms.rig.setFieldError(["repackExpiresAt", "You must select a repack date in the future"])
       );
     }
 
     return !hasErrors;
   }, [JSON.stringify(state.fields)]);
   
-  const onSave = useCallback(async () => {
+  const onSave = React.useCallback(async () => {
 
     if (!validate()) {
       return;
@@ -207,32 +206,32 @@ export default function RigDialog(props: IRigDialog) {
       result?.fieldErrors?.map(({ field, message }) => {
         switch (field) {
           case "make":
-            return dispatch(rigForm.setFieldError(["make", message]));
+            return dispatch(actions.forms.rig.setFieldError(["make", message]));
           case "model":
-            return dispatch(rigForm.setFieldError(["model", message]));
+            return dispatch(actions.forms.rig.setFieldError(["model", message]));
           case "serial":
-            return dispatch(rigForm.setFieldError(["serial", message]));
+            return dispatch(actions.forms.rig.setFieldError(["serial", message]));
           case "canopy_size":
-            return dispatch(rigForm.setFieldError(["canopySize", message]));
+            return dispatch(actions.forms.rig.setFieldError(["canopySize", message]));
           case "repack_expires_at":
-            return dispatch(rigForm.setFieldError(["repackExpiresAt", message]));
+            return dispatch(actions.forms.rig.setFieldError(["repackExpiresAt", message]));
           case "rig_type":
-            return dispatch(rigForm.setFieldError(["rigType", message]));
+            return dispatch(actions.forms.rig.setFieldError(["rigType", message]));
         }
       });
       if (result?.errors?.length) {
-        return dispatch(snackbarActions.showSnackbar({ message: result?.errors[0], variant: "error" }));
+        return dispatch(actions.notifications.showSnackbar({ message: result?.errors[0], variant: "error" }));
       }
       if (!result?.fieldErrors?.length) {
         props.onSuccess();
       }
 
     } catch(error) {
-      dispatch(snackbarActions.showSnackbar({ message: error.message, variant: "error" }));
+      dispatch(actions.notifications.showSnackbar({ message: error.message, variant: "error" }));
     } 
   }, [JSON.stringify(state.fields), mutationCreateRig, mutationUpdateRig, props.onSuccess])
   
-  const sheetRef = useRef<BottomSheetBehavior>(null);
+  const sheetRef = React.useRef<BottomSheetBehavior>(null);
   React.useEffect(() => {
     if (props.open) {
       sheetRef?.current?.snapTo(0);
@@ -248,7 +247,7 @@ export default function RigDialog(props: IRigDialog) {
       snapPoints={[700, 0]}
       onClose={() => {
         props.onClose();
-        dispatch(rigForm.reset());
+        dispatch(actions.forms.rig.reset());
       }}
       buttonAction={onSave}
       buttonLabel="Save"

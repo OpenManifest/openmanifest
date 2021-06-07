@@ -2,18 +2,15 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
-import { View } from '../../../components/Themed';
 import { useAppSelector } from '../../../redux';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
 
 
 
-export default function SettingsScreen() {
-  
+export default function SettingsScreen() {  
   const navigation = useNavigation();
   const state = useAppSelector(state => state.global);
- 
 
   return (
     <ScrollableScreen>

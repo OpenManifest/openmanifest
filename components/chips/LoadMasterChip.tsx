@@ -1,5 +1,5 @@
 import { values } from "lodash";
-import React, { useState } from "react";
+import * as React from "react";
 import { Chip, List, Menu } from "react-native-paper";
 import { Slot, User } from "../../graphql/schema";
 import useRestriction from "../../hooks/useRestriction";
@@ -15,7 +15,7 @@ interface ILoadMasterChipSelect {
 
 
 export default function LoadMasterChip(props: ILoadMasterChipSelect) {
-  const [isMenuOpen, setMenuOpen] = useState(false);
+  const [isMenuOpen, setMenuOpen] = React.useState(false);
   const allowed = useRestriction("updateLoad");
 
   return (

@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DropzoneUser } from "../../../graphql/schema";
 
-interface IUserScreenState {
+interface IManifestScreenState {
   isSearchVisible: boolean;
   selectedUsers: DropzoneUser[]
   searchText: string;
 }
 
-export const initialState: IUserScreenState = {
+export const initialState: IManifestScreenState = {
   isSearchVisible: false,
   selectedUsers: [],
   searchText: "",
@@ -18,18 +18,18 @@ export default createSlice({
   name: 'manifestScreen',
   initialState,
   reducers: {
-    setSelected: (state: IUserScreenState, action: PayloadAction<DropzoneUser[]>) => {
+    setSelected: (state: IManifestScreenState, action: PayloadAction<DropzoneUser[]>) => {
       state.selectedUsers = action.payload;
     },
-    setSearchText: (state: IUserScreenState, action: PayloadAction<string>) => {
+    setSearchText: (state: IManifestScreenState, action: PayloadAction<string>) => {
       state.searchText = action.payload;
     },
 
-    setSearchVisible: (state: IUserScreenState, action: PayloadAction<boolean>) => {
+    setSearchVisible: (state: IManifestScreenState, action: PayloadAction<boolean>) => {
       state.isSearchVisible = action.payload;
     },
     
-    reset: (state: IUserScreenState) => {
+    reset: (state: IManifestScreenState) => {
       state.isSearchVisible = initialState.isSearchVisible;
       state.searchText = initialState.searchText;
     },

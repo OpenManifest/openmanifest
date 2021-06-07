@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import groupBy from "lodash/groupBy";
 import flatten from "lodash/flatten";
 import gql from "graphql-tag";
-import React, { useLayoutEffect, useState } from "react";
+import * as React from "react";
 import { Card, DataTable, List, Title } from "react-native-paper";
 import format from "date-fns/format";
 import startOfDay from "date-fns/startOfDay";
@@ -73,11 +73,11 @@ query MasterLog($dropzoneId: Int!, $timestamp: Int!) {
 `;
 export default function DropzoneMasterLogScreen() {
   const globalState = useAppSelector(state => state.global);
-  const [timestamp, setTimestamp] = useState(startOfDay(new Date()).getTime());
+  const [timestamp, setTimestamp] = React.useState(startOfDay(new Date()).getTime());
   const navigation = useNavigation();
 
 
-  useLayoutEffect(() => {
+  React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () =>
         <DatePicker

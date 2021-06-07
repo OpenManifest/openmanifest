@@ -7,13 +7,9 @@ import { Avatar, Checkbox, Divider, FAB, List, ProgressBar } from 'react-native-
 
 import NoResults from '../../../components/NoResults';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import { View } from '../../../components/Themed';
 import { DropzoneUser, Query } from '../../../graphql/schema';
-import { manifestActions, slotsMultipleForm, useAppDispatch, useAppSelector, usersActions } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 
-import slice from "./slice";
-
-const { actions } = slice;
 
 const QUERY_DROPZONE_USERS = gql`
   query QueryDropzoneUsersSearch(
@@ -54,7 +50,8 @@ interface IUsersRouteParams{
   }
 }
 export default function UsersScreen() {
-  const {global, manifest } = useAppSelector(state => state);
+  const global = useAppSelector(state => state.global);
+  const manifest = useAppSelector(state => state.screens.manifest);
   const dispatch = useAppDispatch();
 
   const { data, loading } = useQuery<Query>(QUERY_DROPZONE_USERS, {
@@ -70,7 +67,7 @@ export default function UsersScreen() {
   const isFocused = useIsFocused();
   React.useEffect(() => {
     if (manifest.isSearchVisible) {
-      dispatch(manifestActions.setSearchVisible(false));
+      dispatch(actions.screens.manifest.setSearchVisible(false));
     }
   }, [isFocused]);
 
@@ -107,7 +104,7 @@ export default function UsersScreen() {
           }
           onPress={
               () => dispatch(
-                manifestActions.setSelected(
+                actions.screens.manifest.setSelected(
                   manifest.selectedUsers?.find(({ id }) => id === `${edge?.node?.id}`)
                   ? manifest.selectedUsers?.filter(({ id }) => id !== `${edge?.node?.id}`)
                   : [...manifest.selectedUsers, edge!.node!],
@@ -126,10 +123,10 @@ export default function UsersScreen() {
       visible={manifest.selectedUsers.length > 0}
       icon="check"
       onPress={() => {
-        dispatch(slotsMultipleForm.setDropzoneUsers(manifest.selectedUsers));
+        dispatch(actions.forms.manifestGroup.setDropzoneUsers(manifest.selectedUsers));
         navigation.setParams({ select: false });
-        dispatch(manifestActions.setSearchVisible(false));
-        dispatch(manifestActions.setSelected([]));
+        dispatch(actions.screens.manifest.setSearchVisible(false));
+        dispatch(actions.screens.manifest.setSelected([]));
         navigation.navigate("ManifestGroupScreen");
       }}
       label="Next"

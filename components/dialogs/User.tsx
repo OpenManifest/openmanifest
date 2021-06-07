@@ -1,9 +1,8 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { useEffect, useRef } from "react";
-import BottomSheetBehavior from "reanimated-bottom-sheet";
+import * as React from "react";
 import { Mutation } from "../../graphql/schema";
 import UserForm from '../forms/user/UserForm';
-import { userForm, snackbarActions as snackbar, userForm as actions, useAppDispatch, useAppSelector } from "../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../redux";
 import DialogOrSheet from "../layout/DialogOrSheet";
 
 interface IUpdateUserDialog {
@@ -62,10 +61,9 @@ const MUTATION_CREATE_USER = gql`
 `;
 
 export default function UpdateUserDialog(props: IUpdateUserDialog) {
-  const { open } = props;
-  const { userForm: state } = useAppSelector(state => state);
+  const { open, onSuccess } = props;
+  const state = useAppSelector(state => state.forms.user);
   const dispatch = useAppDispatch();
-
 
 
   const [mutationUpdateUser, mutation] = useMutation<Mutation>(MUTATION_CREATE_USER);
@@ -76,35 +74,35 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
     if ((state.fields.name?.value?.length || 0) < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["name", "Name is too short"])
+        actions.forms.user.setFieldError(["name", "Name is too short"])
       );
     }
 
     if ((state.fields.email?.value?.length || 0) < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["email", "Email is too short"])
+        actions.forms.user.setFieldError(["email", "Email is too short"])
       );
     }
 
     if ((state.fields.phone?.value?.length || 0) < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["phone", "Phone number is too short"])
+        actions.forms.user.setFieldError(["phone", "Phone number is too short"])
       );
     }
 
     if (!emailRegex.test(state.fields?.email?.value || "")) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["email", "Please enter a valid email"])
+        actions.forms.user.setFieldError(["email", "Please enter a valid email"])
       );
     }
 
     if ((state.fields.exitWeight?.value || 0) < 30) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["exitWeight", "Exit weight seems too low?"])
+        actions.forms.user.setFieldError(["exitWeight", "Exit weight seems too low?"])
       );
     }
 
@@ -136,50 +134,41 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
             fieldErrors?.map(({ field, message }) => {
               switch (field) {
                 case "name":
-                  return dispatch(userForm.setFieldError(["name", message]));
+                  return dispatch(actions.forms.user.setFieldError(["name", message]));
                 case "exit_weight":
-                  return dispatch(userForm.setFieldError(["exitWeight", message]));
+                  return dispatch(actions.forms.user.setFieldError(["exitWeight", message]));
                 case "license_id":
-                  return dispatch(userForm.setFieldError(["license", message]));
+                  return dispatch(actions.forms.user.setFieldError(["license", message]));
                 case "phone":
-                  return dispatch(userForm.setFieldError(["phone", message]));
+                  return dispatch(actions.forms.user.setFieldError(["phone", message]));
                 case "email":
-                  return dispatch(userForm.setFieldError(["email", message]));
+                  return dispatch(actions.forms.user.setFieldError(["email", message]));
               }
             });
           } else if (errors?.length) {
             errors.map((message) =>
               dispatch(
-                snackbar.showSnackbar({ message: message, variant: "error" })
+                actions.notifications.showSnackbar({ message: message, variant: "error" })
               )
             );
           } else {
             dispatch(
-              snackbar.showSnackbar({ message: `Profile has been updated`, variant: "success" })
+              actions.notifications.showSnackbar({ message: `Profile has been updated`, variant: "success" })
             );
-            sheetRef?.current?.snapTo(1);
-            dispatch(userForm.reset());
+            dispatch(actions.forms.user.reset());
+            onSuccess();
           }
 
         }
       } catch (error) {
         dispatch(
-          snackbar.showSnackbar({ message: error.message, variant: "error" })
+          actions.notifications.showSnackbar({ message: error.message, variant: "error" })
         );
       }
     }
     
   }, [JSON.stringify(state.fields), dispatch, mutationUpdateUser]);
 
-  const sheetRef = useRef<BottomSheetBehavior>(null);
-
-  useEffect(() => {
-    if (open) {
-      sheetRef?.current?.snapTo(0);
-    } else if (!open) {
-      sheetRef?.current?.snapTo(1);
-    }
-  }, [open]);
 
   return (
     <DialogOrSheet
@@ -189,7 +178,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
       loading={mutation.loading}
       onClose={() => {
         props.onClose();
-        dispatch(userForm.reset());
+        dispatch(actions.forms.user.reset());
       }}
       buttonAction={onSave}
       buttonLabel="Save"

@@ -1,17 +1,11 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, List } from 'react-native-paper';
 import { xor } from "lodash";
 import { Query } from '../../../graphql/schema';
-import { useAppSelector, useAppDispatch } from '../../../redux';
-
-
-import slice from "./slice";
-import ScrollableScreen from '../../layout/ScrollableScreen';
-
-const { actions } = slice;
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
 
 const QUERY_TICKET_TYPES = gql`
@@ -34,10 +28,10 @@ const QUERY_TICKET_TYPES = gql`
 `;
 
 export default function ExtraForm() {
-  const state = useAppSelector(state => state.extraForm);
+  const state = useAppSelector(state => state.forms.extra);
   const dispatch = useAppDispatch();
   const globalState = useAppSelector(state => state.global);
-  const { data, loading, refetch } = useQuery<Query>(QUERY_TICKET_TYPES, {
+  const { data } = useQuery<Query>(QUERY_TICKET_TYPES, {
     variables: {
       dropzoneId: Number(globalState.currentDropzone?.id)
     }
@@ -51,7 +45,7 @@ export default function ExtraForm() {
         label="Name"
         error={!!state.fields.name.error}
         value={state.fields.name.value}
-        onChangeText={(newValue) => dispatch(actions.setField(["name", newValue]))}
+        onChangeText={(newValue) => dispatch(actions.forms.extra.setField(["name", newValue]))}
       />
       <HelperText type={!!state.fields.name.error ? "error" : "info"}>
         { state.fields.name.error || "" }
@@ -63,7 +57,7 @@ export default function ExtraForm() {
         label="Price"
         error={!!state.fields.cost.error}
         value={state.fields.cost?.value?.toString()}
-        onChangeText={(newValue) => dispatch(actions.setField(["cost", Number(newValue)]))}
+        onChangeText={(newValue) => dispatch(actions.forms.extra.setField(["cost", Number(newValue)]))}
       />
       <HelperText type={!!state.fields.cost.error ? "error" : "info"}>
         { state.fields.cost.error || "" }
@@ -82,7 +76,7 @@ export default function ExtraForm() {
                 : "unchecked"
               }
               onPress={
-                () => dispatch(actions.setField(["ticketTypeIds", xor(state.fields.ticketTypeIds.value, [Number(ticket.id)])]))
+                () => dispatch(actions.forms.extra.setField(["ticketTypeIds", xor(state.fields.ticketTypeIds.value, [Number(ticket.id)])]))
               }
             />
           )

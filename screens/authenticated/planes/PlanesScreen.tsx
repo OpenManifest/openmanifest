@@ -5,8 +5,8 @@ import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar } from 'react-native-paper';
 import { Mutation, Query } from "../../../graphql/schema";
 
-import { useIsFocused, useNavigation } from '@react-navigation/core';
-import { planeForm, snackbarActions, useAppDispatch, useAppSelector } from '../../../redux';
+import { useIsFocused } from '@react-navigation/core';
+import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import NoResults from '../../../components/NoResults';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import PlaneDialog from '../../../components/dialogs/Plane';
@@ -114,7 +114,7 @@ export default function PlanesScreen() {
                       
                       if (result?.deletePlane?.errors?.length) {
                         dispatch(
-                          snackbarActions.showSnackbar({
+                          actions.notifications.showSnackbar({
                             message: result.deletePlane.errors[0],
                             variant: "error"
                           })
@@ -125,7 +125,7 @@ export default function PlanesScreen() {
                     <DataTable.Row
                       pointerEvents="none"
                       onPress={() => {
-                        dispatch(planeForm.setOriginal(plane));
+                        dispatch(actions.forms.plane.setOriginal(plane));
                         setDialogOpen(true);
                       }}
                     >

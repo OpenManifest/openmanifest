@@ -1,9 +1,8 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import { values } from "lodash";
-import React, { useState } from "react";
-import { Chip, List, Menu } from "react-native-paper";
-import { DropzoneUser, Plane, Query, User } from "../../graphql/schema";
+import * as React from "react";
+import { Chip, Menu } from "react-native-paper";
+import { Query, User } from "../../graphql/schema";
 import useRestriction from "../../hooks/useRestriction";
 import { useAppSelector } from "../../redux";
 
@@ -44,7 +43,7 @@ const QUERY_DROPZONE_USERS = gql`
 `;
 
 export default function GCAChip(props: IGCAChipSelect) {
-  const [isMenuOpen, setMenuOpen] = useState(false);
+  const [isMenuOpen, setMenuOpen] = React.useState(false);
   const globalState = useAppSelector(state => state.global);
 
   const { data } = useQuery<Query>(QUERY_DROPZONE_USERS, {

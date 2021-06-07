@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 import { uniqBy } from "lodash";
-import React from "react";
+import * as React from "react";
 import { List } from "react-native-paper";
 import { createQuery } from "../../../graphql/createQuery";
 import { JumpType } from "../../../graphql/schema";

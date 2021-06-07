@@ -15,6 +15,7 @@ const CombinedDefaultTheme = {
   colors: {
     ...PaperDefaultTheme.colors,
     ...NavigationDefaultTheme.colors,
+    primary: "#333333",
   },
 };
 const CombinedDarkTheme = {
@@ -23,12 +24,17 @@ const CombinedDarkTheme = {
   colors: {
     ...PaperDarkTheme.colors,
     ...NavigationDarkTheme.colors,
+    primary: "#333333",
   },
 };
 
 interface IGlobalState {
+
+  currentDropzoneId: number;
+  // @deprecated
   currentUser: User | null;
   credentials: Credential | null;
+  // @deprecated
   currentDropzone: Dropzone | null;
   permissions: string[];
 
@@ -39,6 +45,7 @@ interface IGlobalState {
 export const initialState: IGlobalState = {
   currentUser: null,
   currentDropzone: null,
+  currentDropzoneId: null,
   permissions: [],
   credentials: null,
   theme: CombinedDefaultTheme,
@@ -65,6 +72,7 @@ export default createSlice({
     },
     setDropzone: (state: IGlobalState, action: PayloadAction<Dropzone | null>) => {
       state.currentDropzone = action.payload;
+      state.currentDropzoneId = Number(action.payload.id);
 
       if (state.currentDropzone?.primaryColor) {
         state.theme.colors.primary = state.currentDropzone?.primaryColor;

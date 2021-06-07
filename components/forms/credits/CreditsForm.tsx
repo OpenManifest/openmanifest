@@ -1,16 +1,12 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { TextInput, HelperText, List, Divider, Dialog, DataTable } from 'react-native-paper';
+import { TextInput, HelperText, Divider, Dialog, DataTable } from 'react-native-paper';
 import { Tabs, TabScreen } from "react-native-paper-tabs";
-import { useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 import useRestriction from '../../../hooks/useRestriction';
 
-import slice from "./slice";
-
-const { actions } = slice;
-
 export default function CreditsForm() {
-  const { creditsForm: state, global: globalState} = useAppSelector(state => state);
+  const state = useAppSelector(state => state.forms.credits);
   const dispatch = useAppDispatch();
   const canUpdateRole = useRestriction("updatePermission");
 
@@ -25,7 +21,7 @@ export default function CreditsForm() {
       <Tabs
         defaultIndex={0} // default = 0
         onChangeIndex={(newIndex) => {
-          dispatch(actions.setField(["status", newIndex === 1 ? "withdrawal" : "deposit"]));
+          dispatch(actions.forms.credits.setField(["status", newIndex === 1 ? "withdrawal" : "deposit"]));
         }}
         mode="fixed"
       >
@@ -39,7 +35,7 @@ export default function CreditsForm() {
             label="Message"
             error={!!state.fields.message.error}
             value={state.fields.message.value?.toString() || ""}
-            onChangeText={(newValue: string) => dispatch(actions.setField(["message", newValue]))}
+            onChangeText={(newValue: string) => dispatch(actions.forms.credits.setField(["message", newValue]))}
           />
           <HelperText type={!!state.fields.message.error ? "error" : "info"}>
             { state.fields.message.error || "" }
@@ -55,7 +51,7 @@ export default function CreditsForm() {
                     error={!!state.fields.amount.error}
                     value={state.fields.amount.value?.toString() || ""}
                     keyboardType="number-pad"
-                    onChangeText={(newValue: string) => dispatch(actions.setField(["amount", Number(newValue)]))}
+                    onChangeText={(newValue: string) => dispatch(actions.forms.credits.setField(["amount", Number(newValue)]))}
                   />
                   <HelperText type={!!state.fields.amount.error ? "error" : "info"}>
                     { state.fields.amount.error || "" }
@@ -88,7 +84,7 @@ export default function CreditsForm() {
                     error={!!state.fields.amount.error}
                     value={state.fields.amount.value?.toString() || ""}
                     keyboardType="number-pad"
-                    onChangeText={(newValue: string) => dispatch(actions.setField(["amount", Number(newValue)]))}
+                    onChangeText={(newValue: string) => dispatch(actions.forms.credits.setField(["amount", Number(newValue)]))}
                   />
                   <HelperText type={!!state.fields.amount.error ? "error" : "info"}>
                     { state.fields.amount.error || "" }

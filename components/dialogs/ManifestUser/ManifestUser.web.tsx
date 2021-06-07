@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { useCallback, useEffect } from "react";
+import * as React from "react";
 import { ScrollView } from "react-native";
 import { Button, Dialog, Portal, ProgressBar } from "react-native-paper";
 import { Load, Mutation, User } from "../../../graphql/schema";
@@ -125,7 +125,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
   const globalState = useAppSelector(state => state.global);
   const [mutationCreateSlot, mutationData] = useMutation<Mutation>(MUTATION_CREATE_SLOT);
 
-  const validate = useCallback(() => {
+  const validate = React.useCallback(() => {
     let hasErrors = false;
     if (!state.fields.jumpType.value?.id) {
       hasErrors = true;
@@ -143,7 +143,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
 
     return !hasErrors;
   }, [JSON.stringify(state.fields)]);
-  const onManifest = useCallback(async () => {
+  const onManifest = React.useCallback(async () => {
 
     if (!validate()) {
       return;

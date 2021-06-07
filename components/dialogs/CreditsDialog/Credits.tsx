@@ -1,12 +1,11 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { useCallback, useEffect, useRef } from "react";
+import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, Portal } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 import BottomSheetBehavior from "reanimated-bottom-sheet";
 import BottomSheet from "reanimated-bottom-sheet";
 import { DropzoneUser, Mutation } from "../../../graphql/schema";
-import { creditsForm, snackbarActions, useAppDispatch, useAppSelector } from "../../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../../redux";
 import CreditsForm from "../../forms/credits/CreditsForm";
 interface ICreditsSheet {
   open?: boolean;
@@ -66,23 +65,23 @@ const MUTATION_CREATE_TRANSACTION = gql`
 export default function CreditSheet(props: ICreditsSheet) {
   const { open, dropzoneUser } = props;
   const dispatch = useAppDispatch();
-  const state = useAppSelector(state => state.creditsForm);
+  const state = useAppSelector(state => state.forms.credits);
   const global = useAppSelector(state => state.global);
   const [mutationCreateTransaction, createData] = useMutation<Mutation>(MUTATION_CREATE_TRANSACTION);
 
-  const validate = useCallback(() => {
+  const validate = React.useCallback(() => {
     let hasErrors = false;
     if (!state.fields.amount.value) {
       hasErrors = true;
       dispatch(
-        creditsForm.setFieldError(["amount", "You must specify an amount"])
+        actions.forms.credits.setFieldError(["amount", "You must specify an amount"])
       );
     }
 
     return !hasErrors;
   }, [JSON.stringify(state.fields)]);
   
-  const onSave = useCallback(async () => {
+  const onSave = React.useCallback(async () => {
 
     if (!validate()) {
       return;
@@ -101,29 +100,29 @@ export default function CreditSheet(props: ICreditsSheet) {
       result?.fieldErrors?.map(({ field, message }) => {
         switch (field) {
           case "amount":
-            return dispatch(creditsForm.setFieldError(["amount", message]));
+            return dispatch(actions.forms.credits.setFieldError(["amount", message]));
           case "message":
-            return dispatch(creditsForm.setFieldError(["message", message]));
+            return dispatch(actions.forms.credits.setFieldError(["message", message]));
           case "status":
-            return dispatch(creditsForm.setFieldError(["status", message]));
+            return dispatch(actions.forms.credits.setFieldError(["status", message]));
         }
       });
       if (result?.errors?.length) {
-        return dispatch(snackbarActions.showSnackbar({ message: result?.errors[0], variant: "error" }));
+        return dispatch(actions.notifications.showSnackbar({ message: result?.errors[0], variant: "error" }));
       }
       if (!result?.fieldErrors?.length) {
-        dispatch(creditsForm.reset());
+        dispatch(actions.forms.credits.reset());
         props.onSuccess();
       }
 
     } catch(error) {
-      dispatch(snackbarActions.showSnackbar({ message: error.message, variant: "error" }));
+      dispatch(actions.notifications.showSnackbar({ message: error.message, variant: "error" }));
     } 
   }, [JSON.stringify(state.fields), mutationCreateTransaction, props.onSuccess])
   
-  const sheetRef = useRef<BottomSheetBehavior>(null);
+  const sheetRef = React.useRef<BottomSheetBehavior>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (open) {
       sheetRef?.current?.snapTo(0);
     } else if (!open) {

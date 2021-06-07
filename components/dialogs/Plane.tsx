@@ -1,16 +1,11 @@
 import * as React from 'react';
 import { gql, useMutation } from "@apollo/client";
-import { useAppSelector, useAppDispatch,  } from '../../redux';
+import { actions, useAppSelector, useAppDispatch,  } from '../../redux';
 
-import { actions as snackbar } from "../notifications";
-
-import slice from "../forms/plane/slice";
 import { Mutation } from '../../graphql/schema';
 import PlaneForm from '../forms/plane/PlaneForm';
-import { useIsFocused, useNavigation } from '@react-navigation/core';
 import DialogOrSheet from "../layout/DialogOrSheet";
 
-const { actions } = slice;
 
 const MUTATION_UPDATE_PLANE = gql`
   mutation UpdatePlane(
@@ -126,7 +121,8 @@ interface IPlaneDialogProps {
 
 export default function CreatePlaneScreen(props: IPlaneDialogProps) {
   const { open, onClose } = props;
-  const { planeForm: state, global: globalState } = useAppSelector(state => state);
+  const globalState = useAppSelector(state => state.global);
+  const state = useAppSelector(state => state.forms.plane);
   const dispatch = useAppDispatch();
 
 
@@ -139,21 +135,21 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
     if (state.fields.name.value.length < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["name", "Name is too short"])
+        actions.forms.plane.setFieldError(["name", "Name is too short"])
       );
     }
 
     if (state.fields.registration.value.length < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["registration", "Registration is too short"])
+        actions.forms.plane.setFieldError(["registration", "Registration is too short"])
       );
     }
 
     if (!state.fields.maxSlots.value) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["maxSlots", "Max slots must be specified"])
+        actions.forms.plane.setFieldError(["maxSlots", "Max slots must be specified"])
       );
     }
 
@@ -189,17 +185,17 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
           payload.fieldErrors.forEach(({ field, message }) => {
             switch (field) {
               case "max_slots":
-                return dispatch(actions.setFieldError(["maxSlots", message]));
+                return dispatch(actions.forms.plane.setFieldError(["maxSlots", message]));
               case "name":
-                return dispatch(actions.setFieldError(["name", message]));
+                return dispatch(actions.forms.plane.setFieldError(["name", message]));
               case "minSlots":
-                return dispatch(actions.setFieldError(["minSlots", message]));
+                return dispatch(actions.forms.plane.setFieldError(["minSlots", message]));
               case "hours":
-                return dispatch(actions.setFieldError(["hours", message]));
+                return dispatch(actions.forms.plane.setFieldError(["hours", message]));
               case "next_maintenance_hours":
-                return dispatch(actions.setFieldError(["nextMaintenanceHours", message]));
+                return dispatch(actions.forms.plane.setFieldError(["nextMaintenanceHours", message]));
               case "registration":
-                return dispatch(actions.setFieldError(["registration", message]));
+                return dispatch(actions.forms.plane.setFieldError(["registration", message]));
             }
           })
           return;
@@ -208,16 +204,16 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
         if (payload?.plane) {
           const plane = payload?.plane;
           dispatch(
-            snackbar.showSnackbar({ message: `Added plane ${plane.name}`, variant: "success" })
+            actions.notifications.showSnackbar({ message: `Added plane ${plane.name}`, variant: "success" })
           );
           onClose();
           dispatch(
-            actions.reset()
+            actions.forms.plane.reset()
           );
         }
       } catch (error) {
         dispatch(
-          snackbar.showSnackbar({ message: error.message, variant: "error" })
+          actions.notifications.showSnackbar({ message: error.message, variant: "error" })
         );
       }
     }
@@ -234,7 +230,7 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
       loading={create.loading || update.loading}
       onClose={() => {
         onClose();
-        dispatch(actions.reset());
+        dispatch(actions.forms.plane.reset());
       }}
     >
         <PlaneForm />

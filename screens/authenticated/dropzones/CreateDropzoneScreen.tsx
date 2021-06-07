@@ -1,36 +1,24 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/core';
-import { useAppSelector, useAppDispatch, snackbarActions } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
-import { Text, View } from '../../../components/Themed';
-import { actions as snackbar } from "../../../components/notifications";
-import globalSlice from "../../../redux/global";
+import { View } from '../../../components/Themed';
 
-import slice from "../../../components/forms/dropzone/slice";
-import { Mutation } from '../../../graphql/schema';
 import DropzoneForm from '../../../components/forms/dropzone/DropzoneForm';
 import useMutationCreateDropzone from '../../../graphql/hooks/useMutationCreateDropzone';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
-const { actions } = slice;
-const { actions: globalActions } = globalSlice;
 
-
-
-
-export default function SignupScreen() {
-  const state = useAppSelector(state => state.dropzoneForm);
+export default function CreateDropzoneScreen() {
+  const state = useAppSelector(state => state.forms.dropzone);
   const dispatch = useAppDispatch();
 
-  const navigation = useNavigation();
-
   const createDropzone = useMutationCreateDropzone({
-    onError: (e: string) => dispatch(snackbarActions.showSnackbar({ message: e, variant: "error"})),
+    onError: (e: string) => dispatch(actions.notifications.showSnackbar({ message: e, variant: "error"})),
     onFieldError: (field, error) =>
-      dispatch(actions.setFieldError([field as string, error])),
-    onSuccess: (payload) => dispatch(globalActions.setDropzone(payload.dropzone!)),
+      dispatch(actions.forms.dropzone.setFieldError([field as string, error])),
+    onSuccess: (payload) => dispatch(actions.global.setDropzone(payload.dropzone!)),
   })
 
   return (

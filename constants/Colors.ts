@@ -5,6 +5,8 @@ export const errorColor = "#ff4444";
 export const warningColor = "#FF8800";
 export const infoColor = "#0099CC";
 
+export const primaryColor = "#FF1414";
+
 export default {
   light: {
     text: '#000',

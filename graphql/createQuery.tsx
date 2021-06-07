@@ -1,8 +1,8 @@
 import { DocumentNode, useQuery } from "@apollo/client";
 import { Maybe } from "graphql/jsutils/Maybe";
-import { useEffect, useMemo } from "react";
+import * as React from "react";
 import { Query } from "../graphql/schema";
-import { snackbarActions, useAppDispatch } from "../redux";
+import { actions, useAppDispatch } from "../redux";
 
 export interface IAppQuery<Payload, InputType> {
   data: Maybe<Payload>,
@@ -32,18 +32,20 @@ export function createQuery<Payload extends any, InputType extends {}>(
       variables,
     });
 
-    const transformedData = useMemo(() => getPayload(data), [JSON.stringify(data)]);
+    const transformedData = React.useMemo(() => getPayload(data), [JSON.stringify(data)]);
 
-    useEffect(() => {
+    React.useEffect(() => {
       const hasChanged = JSON.stringify(previousData) !== JSON.stringify(data);
       if (error?.message) {
         if (opts.showSnackbarErrors !== false) {
           dispatch(
-            snackbarActions.showSnackbar({ message: error.message, variant: "error" })
+            actions.notifications.showSnackbar({ message: error.message, variant: "error" })
           );
         }
 
-        onError!(error.message);
+        if (onError) {
+          (error.message);
+        }
       }
       
     }, [opts.onError, error?.message])

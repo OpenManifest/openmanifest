@@ -1,16 +1,10 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, Menu, List, Divider } from 'react-native-paper';
-import { xor } from "lodash";
 import { Query } from '../../../graphql/schema';
-import { useAppSelector, useAppDispatch } from '../../../redux';
-
-
-import slice from "./slice";
-
-const { actions } = slice;
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
 
 const QUERY_EXTRAS = gql`
@@ -31,7 +25,7 @@ const QUERY_EXTRAS = gql`
 `;
 
 export default function TicketTypeForm() {
-  const state = useAppSelector(state => state.ticketTypeForm);
+  const state = useAppSelector(state => state.forms.ticketType);
   const dispatch = useAppDispatch();
   const globalState = useAppSelector(state => state.global);
 
@@ -50,7 +44,7 @@ export default function TicketTypeForm() {
         label="Name"
         error={!!state.fields.name.error}
         value={state.fields.name.value || ""}
-        onChangeText={(newValue) => dispatch(actions.setField(["name", newValue]))}
+        onChangeText={(newValue) => dispatch(actions.forms.ticketType.setField(["name", newValue]))}
       />
       <HelperText type={!!state.fields.name.error ? "error" : "info"}>
         { state.fields.name.error || "Name of the ticket users will see" }
@@ -62,7 +56,7 @@ export default function TicketTypeForm() {
         label="Price"
         error={!!state.fields.cost.error}
         value={state.fields.cost?.value?.toString()}
-        onChangeText={(newValue) => dispatch(actions.setField(["cost", Number(newValue)]))}
+        onChangeText={(newValue) => dispatch(actions.forms.ticketType.setField(["cost", Number(newValue)]))}
       />
       <HelperText type={!!state.fields.cost.error ? "error" : "info"}>
         { state.fields.cost.error || "Base cost without extra ticket addons" }
@@ -101,7 +95,7 @@ export default function TicketTypeForm() {
         }>
           <List.Item
             onPress={() => {
-              dispatch(actions.setField(["altitude", 4000]));
+              dispatch(actions.forms.ticketType.setField(["altitude", 4000]));
               setAltitudeMenuOpen(false);
             }}
             title="Hop n Pop"
@@ -109,7 +103,7 @@ export default function TicketTypeForm() {
           />
           <List.Item
             onPress={() => {
-              dispatch(actions.setField(["altitude", 14000]));
+              dispatch(actions.forms.ticketType.setField(["altitude", 14000]));
               setAltitudeMenuOpen(false);
             }}
             title="Height"
@@ -117,7 +111,7 @@ export default function TicketTypeForm() {
           />
           <List.Item
             onPress={() => {
-              dispatch(actions.setField(["altitude", 7000]));
+              dispatch(actions.forms.ticketType.setField(["altitude", 7000]));
               setAltitudeMenuOpen(false);
             }}
             title="Other"
@@ -133,7 +127,7 @@ export default function TicketTypeForm() {
             label="Custom altitude"
             error={!!state.fields.altitude.error}
             value={state.fields.altitude?.value?.toString()}
-            onChangeText={(newValue) => dispatch(actions.setField(["altitude", Number(newValue)]))}
+            onChangeText={(newValue) => dispatch(actions.forms.ticketType.setField(["altitude", Number(newValue)]))}
           />
         )
       }
@@ -146,7 +140,7 @@ export default function TicketTypeForm() {
           : "unchecked"
         }
         onPress={
-          () => dispatch(actions.setField(["isTandem", !state.fields.isTandem.value]))
+          () => dispatch(actions.forms.ticketType.setField(["isTandem", !state.fields.isTandem.value]))
         }
       />
       <HelperText type={!!state.fields.isTandem.error ? "error" : "info"}>
@@ -161,7 +155,7 @@ export default function TicketTypeForm() {
           : "unchecked"
         }
         onPress={
-          () => dispatch(actions.setField(["allowManifestingSelf", !state.fields.allowManifestingSelf.value]))
+          () => dispatch(actions.forms.ticketType.setField(["allowManifestingSelf", !state.fields.allowManifestingSelf.value]))
         }
       />
       
@@ -182,7 +176,7 @@ export default function TicketTypeForm() {
             }
             onPress={
               () => dispatch(
-                actions.setField([
+                actions.forms.ticketType.setField([
                   "extras",
                   state.fields.extras.value?.map(({ id }) => id).includes(extra.id)
                   ? state.fields.extras.value?.filter(({ id }) => id !== extra.id)

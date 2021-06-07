@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { gql, useMutation } from "@apollo/client";
 
-import { useAppSelector, useAppDispatch, snackbarActions } from '../../redux';
-import { actions as snackbar } from "../../components/notifications";
-import slice from "../../components/forms/ticket_type/slice";
+import { actions, useAppSelector, useAppDispatch } from '../../redux';
 import { Mutation } from '../../graphql/schema';
 import TicketTypeForm from '../../components/forms/ticket_type/TicketTypeForm';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
 import DialogOrSheet from '../layout/DialogOrSheet';
 
-const { actions } = slice;
 
 
 const MUTATION_CREATE_TICKET_TYPE = gql`
@@ -125,7 +122,8 @@ interface ITicketTypeDialog {
 
 export default function TicketTypeDialog(props: ITicketTypeDialog) {
   const { open, onClose } = props;
-  const { ticketTypeForm: state, global: globalState } = useAppSelector(state => state);
+  const globalState = useAppSelector(state => state.global);
+  const state = useAppSelector(state => state.forms.ticketType);
   const dispatch = useAppDispatch();
 
   const navigation = useNavigation();
@@ -136,7 +134,7 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
   const isFocused = useIsFocused();
   React.useEffect(() => {
     if (isFocused) {
-      dispatch(actions.reset());
+      dispatch(actions.forms.ticketType.reset());
     }
   }, [isFocused]);
 
@@ -145,21 +143,21 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
     if (!state.fields.name.value || state.fields.name.value.length < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["name", "Name is too short"])
+        actions.forms.ticketType.setFieldError(["name", "Name is too short"])
       );
     }
 
     if (state.fields.cost.value! < 1) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["cost", "Cost must be at least $1"])
+        actions.forms.ticketType.setFieldError(["cost", "Cost must be at least $1"])
       );
     }
 
     if (!state.fields.altitude.value) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["altitude", "Altitude must be specified"])
+        actions.forms.ticketType.setFieldError(["altitude", "Altitude must be specified"])
       );
     }
 
@@ -198,15 +196,15 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
           return payload?.fieldErrors?.map(({ field, message }) => {
             switch (field) {
               case "name":
-                return dispatch(actions.setFieldError(["name", message]));
+                return dispatch(actions.forms.ticketType.setFieldError(["name", message]));
               case "altitude":
-                return dispatch(actions.setFieldError(["altitude", message]));
+                return dispatch(actions.forms.ticketType.setFieldError(["altitude", message]));
               case "cost":
-                return dispatch(actions.setFieldError(["cost", message]));
+                return dispatch(actions.forms.ticketType.setFieldError(["cost", message]));
               case "allow_manifesting_self":
-                return dispatch(actions.setFieldError(["allowManifestingSelf", message]));
+                return dispatch(actions.forms.ticketType.setFieldError(["allowManifestingSelf", message]));
               case "extras":
-                return dispatch(actions.setFieldError(["extras", message]));
+                return dispatch(actions.forms.ticketType.setFieldError(["extras", message]));
             }
           });
         }
@@ -214,7 +212,7 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
         if (payload?.errors?.length) {
           onClose();
           return dispatch(
-            snackbarActions.showSnackbar({
+            actions.notifications.showSnackbar({
               message: payload?.errors[0],
               variant: "error"
             })
@@ -223,14 +221,14 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
         
         if (payload?.ticketType) {
           dispatch(
-            snackbar.showSnackbar({ message: `Saved`, variant: "success" })
+            actions.notifications.showSnackbar({ message: `Saved`, variant: "success" })
           );
-          dispatch(actions.reset());
+          dispatch(actions.forms.ticketType.reset());
           onClose();
         }
       } catch (error) {
         dispatch(
-          snackbar.showSnackbar({ message: error.message, variant: "error" })
+          actions.notifications.showSnackbar({ message: error.message, variant: "error" })
         );
       }
     }

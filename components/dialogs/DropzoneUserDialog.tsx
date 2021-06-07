@@ -1,13 +1,13 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { useCallback } from "react";
+import * as React from "react";
 import { Button, Dialog, Portal, ProgressBar } from "react-native-paper";
-import { Mutation } from "../../graphql/schema";
-import { dropzoneUserForm, snackbarActions, useAppDispatch, useAppSelector } from "../../redux";
+import { DropzoneUser, Mutation } from "../../graphql/schema";
+import { actions, useAppDispatch, useAppSelector } from "../../redux";
 import DropzoneUserForm from "../forms/dropzone_user/DropzoneUserForm";
 interface IDropzoneUserDialog {
   open?: boolean;
   onClose(): void;
-  onSuccess(): void;
+  onSuccess(user: DropzoneUser): void;
 }
 
 const MUTATION_EDIT_DROPZONE_USER = gql`
@@ -50,31 +50,31 @@ const MUTATION_EDIT_DROPZONE_USER = gql`
 
 export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   const dispatch = useAppDispatch();
-  const state = useAppSelector(state => state.dropzoneUserForm);
+  const state = useAppSelector(state => state.forms.dropzoneUser);
   const globalState = useAppSelector(state => state.global);
   const [mutationUpdateDropzoneUser, createData] = useMutation<Mutation>(MUTATION_EDIT_DROPZONE_USER);
 
-  const validate = useCallback(() => {
+  const validate = React.useCallback(() => {
     let hasErrors = false;
     
     if (!state.fields.role.value) {
       hasErrors = true;
       dispatch(
-        dropzoneUserForm.setFieldError(["role", "User must have an access level"])
+        actions.forms.dropzoneUser.setFieldError(["role", "User must have an access level"])
       );
     }
 
     if (!state.fields.expiresAt.value) {
       hasErrors = true;
       dispatch(
-        dropzoneUserForm.setFieldError(["expiresAt", "Membership expiry must be set"])
+        actions.forms.dropzoneUser.setFieldError(["expiresAt", "Membership expiry must be set"])
       );
     }
 
     return !hasErrors;
   }, [JSON.stringify(state.fields)]);
   
-  const onSave = useCallback(async () => {
+  const onSave = React.useCallback(async () => {
 
     if (!validate()) {
       return;
@@ -93,20 +93,22 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
       result?.fieldErrors?.map(({ field, message }) => {
         switch (field) {
           case "user_role":
-            return dispatch(dropzoneUserForm.setFieldError(["role", message]));
+            return dispatch(actions.forms.dropzoneUser.setFieldError(["role", message]));
           case "expires_at":
-            return dispatch(dropzoneUserForm.setFieldError(["expiresAt", message]));
+            return dispatch(actions.forms.dropzoneUser.setFieldError(["expiresAt", message]));
         }
       });
       if (result?.errors?.length) {
-        return dispatch(snackbarActions.showSnackbar({ message: result?.errors[0], variant: "error" }));
+        return dispatch(actions.notifications.showSnackbar({ message: result?.errors[0], variant: "error" }));
       }
       if (!result?.fieldErrors?.length) {
-        props.onSuccess();
+        props.onSuccess(result.dropzoneUser);
+      } else {
+        console.error(result.fieldErrors);
       }
 
     } catch(error) {
-      dispatch(snackbarActions.showSnackbar({ message: error.message, variant: "error" }));
+      dispatch(actions.notifications.showSnackbar({ message: error.message, variant: "error" }));
     } 
   }, [JSON.stringify(state.fields), mutationUpdateDropzoneUser, props.onSuccess])
   
@@ -123,7 +125,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         <Dialog.Actions style={{ justifyContent: "flex-end"}}>
           <Button
             onPress={() => {
-              dispatch(dropzoneUserForm.reset());
+              dispatch(actions.forms.dropzoneUser.reset());
               props.onClose();
             }}
           >

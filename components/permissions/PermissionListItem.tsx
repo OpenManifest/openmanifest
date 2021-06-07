@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
-import React from "react";
+import * as React from "react";
 import { List, Switch } from "react-native-paper";
 import { Mutation, UserRole } from "../../graphql/schema";
 import useRestriction from "../../hooks/useRestriction";

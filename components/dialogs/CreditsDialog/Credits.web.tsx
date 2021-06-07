@@ -1,8 +1,8 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { useCallback } from "react";
+import * as React from "react";
 import { Button, Dialog, Portal, ProgressBar } from "react-native-paper";
 import { Mutation } from "../../../graphql/schema";
-import { creditsForm, snackbarActions, useAppDispatch, useAppSelector } from "../../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../../redux";
 import CreditsForm from "../../forms/credits/CreditsForm";
 interface IDropzoneUserDialog {
   open?: boolean;
@@ -60,23 +60,23 @@ const MUTATION_CREATE_TRANSACTION = gql`
 
 export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   const dispatch = useAppDispatch();
-  const state = useAppSelector(state => state.creditsForm);
+  const state = useAppSelector(state => state.forms.credits);
   const globalState = useAppSelector(state => state.global);
   const [mutationCreateTransaction, createData] = useMutation<Mutation>(MUTATION_CREATE_TRANSACTION);
 
-  const validate = useCallback(() => {
+  const validate = React.useCallback(() => {
     let hasErrors = false;
     if (!state.fields.amount.value) {
       hasErrors = true;
       dispatch(
-        creditsForm.setFieldError(["amount", "You must specify an amount"])
+        actions.forms.credits.setFieldError(["amount", "You must specify an amount"])
       );
     }
 
     return !hasErrors;
   }, [JSON.stringify(state.fields)]);
   
-  const onSave = useCallback(async () => {
+  const onSave = React.useCallback(async () => {
 
     if (!validate()) {
       return;
@@ -95,23 +95,23 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
       result?.fieldErrors?.map(({ field, message }) => {
         switch (field) {
           case "amount":
-            return dispatch(creditsForm.setFieldError(["amount", message]));
+            return dispatch(actions.forms.credits.setFieldError(["amount", message]));
           case "message":
-            return dispatch(creditsForm.setFieldError(["message", message]));
+            return dispatch(actions.forms.credits.setFieldError(["message", message]));
           case "status":
-            return dispatch(creditsForm.setFieldError(["status", message]));
+            return dispatch(actions.forms.credits.setFieldError(["status", message]));
         }
       });
       if (result?.errors?.length) {
-        return dispatch(snackbarActions.showSnackbar({ message: result?.errors[0], variant: "error" }));
+        return dispatch(actions.notifications.showSnackbar({ message: result?.errors[0], variant: "error" }));
       }
       if (!result?.fieldErrors?.length) {
-        dispatch(creditsForm.reset());
+        dispatch(actions.forms.credits.reset());
         props.onSuccess();
       }
 
     } catch(error) {
-      dispatch(snackbarActions.showSnackbar({ message: error.message, variant: "error" }));
+      dispatch(actions.notifications.showSnackbar({ message: error.message, variant: "error" }));
     } 
   }, [JSON.stringify(state.fields), mutationCreateTransaction, props.onSuccess])
   
@@ -123,7 +123,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         <Dialog.Actions style={{ justifyContent: "flex-end"}}>
           <Button
             onPress={() => {
-              dispatch(creditsForm.reset());
+              dispatch(actions.forms.credits.reset());
               props.onClose();
             }}
           >

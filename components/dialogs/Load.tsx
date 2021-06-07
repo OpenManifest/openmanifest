@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { gql, useMutation } from "@apollo/client";
 
-import { useAppSelector, useAppDispatch } from '../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../redux';
 import { actions as snackbar } from "../../components/notifications";
 
-import slice from "../forms/load/slice";
 import { Load, Mutation } from '../../graphql/schema';
 import LoadForm from '../forms/load/LoadForm';
 import DialogOrSheet from '../layout/DialogOrSheet';
-
-const { actions } = slice;
 
 
 const MUTATION_CREATE_LOAD = gql`
@@ -67,7 +64,9 @@ interface ILoadDialog {
 }
 export default function LoadDialog(props: ILoadDialog) {
   const { open, onClose, onSuccess } = props;
-  const { loadForm: state, global: globalState } = useAppSelector(state => state);
+  const state = useAppSelector(state => state.forms.load);
+  const globalState = useAppSelector(state => state.global);
+  
   const dispatch = useAppDispatch();
   const [mutationCreateLoad, mutation] = useMutation<Mutation>(MUTATION_CREATE_LOAD);
 
@@ -77,21 +76,21 @@ export default function LoadDialog(props: ILoadDialog) {
     if (state.fields.maxSlots.value! < 1) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["maxSlots", "Please specify amount of allowed jumpers"])
+        actions.forms.load.setFieldError(["maxSlots", "Please specify amount of allowed jumpers"])
       );
     }
 
     if (!state.fields.plane.value) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["plane", "What plane is flying this load?"])
+        actions.forms.load.setFieldError(["plane", "What plane is flying this load?"])
       );
     }
 
     if (!state.fields.gca.value) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["gca", "You must have a GCA for this load"])
+        actions.forms.load.setFieldError(["gca", "You must have a GCA for this load"])
       );
     }
 
@@ -120,17 +119,17 @@ export default function LoadDialog(props: ILoadDialog) {
         result.data?.createLoad?.fieldErrors?.map(({ field, message }) => {
           switch (field) {
             case "name":
-              return dispatch(actions.setFieldError(["name", message]));
+              return dispatch(actions.forms.load.setFieldError(["name", message]));
             case "maxSlots":
-              return dispatch(actions.setFieldError(["maxSlots", message]));
+              return dispatch(actions.forms.load.setFieldError(["maxSlots", message]));
             case "plane":
-              return dispatch(actions.setFieldError(["plane", message]));
+              return dispatch(actions.forms.load.setFieldError(["plane", message]));
             case "gca":
-              return dispatch(actions.setFieldError(["gca", message]));
+              return dispatch(actions.forms.load.setFieldError(["gca", message]));
             case "is_open":
-              return dispatch(actions.setFieldError(["isOpen", message]));
+              return dispatch(actions.forms.load.setFieldError(["isOpen", message]));
             case "pilot":
-              return dispatch(actions.setFieldError(["pilot", message]));
+              return dispatch(actions.forms.load.setFieldError(["pilot", message]));
           }
         });
 
@@ -148,7 +147,7 @@ export default function LoadDialog(props: ILoadDialog) {
 
           if (!result.data?.createLoad?.fieldErrors) {
             onSuccess(result.data.createLoad.load);
-            dispatch(actions.reset());
+            dispatch(actions.forms.load.reset());
           }
         }
       } catch (error) {

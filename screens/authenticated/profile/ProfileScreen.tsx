@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import * as React from 'react';
 import { Platform, RefreshControl, StyleSheet, Text } from 'react-native';
 import { Chip, DataTable, Divider, IconButton, ProgressBar } from 'react-native-paper';
@@ -12,7 +12,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 
 import { successColor, warningColor } from "../../../constants/Colors";
-import { creditsForm, dropzoneUserForm, rigForm, useAppDispatch, useAppSelector, userForm } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import { Mutation, Query } from '../../../graphql/schema';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import DropzoneUserDialog from '../../../components/dialogs/DropzoneUserDialog';
@@ -23,71 +23,9 @@ import EditUserSheet from '../../../components/dialogs/User';
 import TableCard from "./UserInfo/TableCard";
 import Header from "./UserInfo/Header";
 import InfoGrid from './UserInfo/InfoGrid';
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
+import useDropzoneUser from '../../../graphql/hooks/useDropzoneUser';
 
-
-
-const QUERY_DROPZONE_USER = gql`
-  query QueryDropzoneUser($dropzoneId: Int!, $dropzoneUserId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      name
-
-      dropzoneUser(id: $dropzoneUserId) {
-        id
-        credits
-        expiresAt
-        role {
-          id
-          name
-        }
-        rigInspections {
-          id
-          isOk
-          rig {
-            id
-          }
-        }
-
-
-        transactions {
-          edges {
-            node {
-              id
-              status
-              message
-              amount
-              createdAt
-            }
-          }
-        }
-        user {
-          id
-          name
-          exitWeight
-          email
-          phone
-          image
-          rigs {
-            id
-            model
-            make
-            serial
-            canopySize
-            repackExpiresAt
-          }
-          jumpTypes {
-            id
-            name
-          }
-          license {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
-`;
 
 const MUTATION_UPDATE_IMAGE = gql`
   mutation UpdateUserImage(
@@ -136,19 +74,15 @@ export default function ProfileScreen() {
   const state = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
+  const { currentUser } = useCurrentDropzone();
   const [creditsDialogOpen, setCreditsDialogOpen] = React.useState(false);
   const [editUserDialogOpen, setEditUserDialogOpen] = React.useState(false);
   const [rigDialogOpen, setRigDialogOpen] = React.useState(false);
   const [dropzoneUserDialogOpen, setDropzoneUserDialogOpen] = React.useState(false);
   const route = useRoute<{ key: string, name: string, params: { userId: string }}>();
-  const isSelf = state.currentDropzone?.currentUser?.id === route.params.userId;
+  const isSelf = currentUser?.id === route.params.userId;
 
-  const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONE_USER, {
-    variables: {
-      dropzoneId: Number(state.currentDropzone?.id),
-      dropzoneUserId: Number(route.params.userId)
-    }
-  });
+  const { dropzoneUser, loading, refetch } = useDropzoneUser(Number(route.params.userId));
 
   const isFocused = useIsFocused();
 
@@ -187,7 +121,7 @@ export default function ProfileScreen() {
         // Upload image
         await mutationUpdateUser({
           variables: {
-            id: Number(data?.dropzone?.dropzoneUser?.user?.id),
+            id: Number(dropzoneUser?.user?.id),
             image: `data:image/jpeg;base64,${result.base64}`,
           }
         });
@@ -203,11 +137,11 @@ export default function ProfileScreen() {
     {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
     <ScrollableScreen contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}>
       <Header
-        dropzoneUser={data?.dropzone?.dropzoneUser!}
+        dropzoneUser={dropzoneUser!}
         canEdit={isSelf}
         onEdit={() => {
-          if (state.currentDropzone?.currentUser?.user) {
-            dispatch(userForm.setOriginal(state.currentDropzone?.currentUser?.user));
+          if (dropzoneUser?.user) {
+            dispatch(actions.forms.user.setOriginal(dropzoneUser?.user));
             setEditUserDialogOpen(true);
           }
         }}
@@ -224,7 +158,7 @@ export default function ProfileScreen() {
             style={styles.chip}
             textStyle={styles.chipTitle}
           >
-            {data?.dropzone?.dropzoneUser?.user?.email  || "-"}
+            {dropzoneUser?.user?.email  || "-"}
           </Chip>
 
           <Chip
@@ -236,7 +170,7 @@ export default function ProfileScreen() {
             style={styles.chip}
             textStyle={styles.chipTitle}
           >
-            {data?.dropzone?.dropzoneUser?.user?.phone  || "-"}
+            {dropzoneUser?.user?.phone  || "-"}
           </Chip>
 
           <Chip
@@ -248,13 +182,13 @@ export default function ProfileScreen() {
             style={styles.chip}
             textStyle={styles.chipTitle}
             onPress={() => {
-              dispatch(dropzoneUserForm.setOriginal(data?.dropzone?.dropzoneUser!));
+              dispatch(actions.forms.dropzoneUser.setOriginal(dropzoneUser!));
               setDropzoneUserDialogOpen(true);
             }}
           >
-            {!data?.dropzone?.dropzoneUser?.expiresAt
+            {!dropzoneUser?.expiresAt
                   ? "Not a member"
-                  : format((data?.dropzone?.dropzoneUser?.expiresAt || 0) * 1000, "yyyy/MM/dd")}
+                  : format((dropzoneUser?.expiresAt || 0) * 1000, "yyyy/MM/dd")}
           </Chip>
         </ScrollView>
         <Divider style={styles.divider} />
@@ -262,16 +196,16 @@ export default function ProfileScreen() {
           items={[
             {
               title: "Funds",
-              value: `$${data?.dropzone?.dropzoneUser?.credits || 0}`,
+              value: `$${dropzoneUser?.credits || 0}`,
               onPress: () => {
-                if (data?.dropzone?.dropzoneUser) {
-                  dispatch(creditsForm.setOriginal(data?.dropzone?.dropzoneUser));
+                if (dropzoneUser) {
+                  dispatch(actions.forms.credits.setOriginal(dropzoneUser));
                   setCreditsDialogOpen(true)
                 }
               }
             },
-            { title: "License", value: `${data?.dropzone?.dropzoneUser?.user?.license?.name || "-"}`},
-            { title: "Exit weight", value: Math.round(Number(data?.dropzone?.dropzoneUser?.user?.exitWeight)).toString() || "-" }
+            { title: "License", value: `${dropzoneUser?.user?.license?.name || "-"}`},
+            { title: "Exit weight", value: Math.round(Number(dropzoneUser?.user?.exitWeight)).toString() || "-" }
           ]}
         />
         <Divider style={[styles.divider, { backgroundColor: "white" }]} />
@@ -295,11 +229,11 @@ export default function ProfileScreen() {
           </DataTable.Header>
 
           {
-            data?.dropzone?.dropzoneUser?.user?.rigs?.map((rig) =>
+            dropzoneUser?.user?.rigs?.map((rig) =>
               <DataTable.Row
                 key={`rig-${rig!.id}`}
                 onPress={() => {
-                  dispatch(rigForm.setOriginal(rig));
+                  dispatch(actions.forms.rig.setOriginal(rig));
                   setRigDialogOpen(true);
                 }}
                 onLongPress={() =>
@@ -322,12 +256,12 @@ export default function ProfileScreen() {
                 <DataTable.Cell numeric>
                   <IconButton
                     icon={
-                      data?.dropzone?.dropzoneUser?.rigInspections?.some((insp) => insp.rig?.id === rig.id && insp.isOk)
+                      dropzoneUser?.rigInspections?.some((insp) => insp.rig?.id === rig.id && insp.isOk)
                       ? "eye-check"
                       : "eye-minus"
                     }
                     color={
-                      data?.dropzone?.dropzoneUser?.rigInspections?.some((insp) => insp.rig?.id === rig.id && insp.isOk)
+                      dropzoneUser?.rigInspections?.some((insp) => insp.rig?.id === rig.id && insp.isOk)
                       ? successColor
                       : warningColor
                     }
@@ -349,8 +283,8 @@ export default function ProfileScreen() {
         title="Transactions"
         buttonIcon="plus"
         onPressButton={() => {
-          if (data?.dropzone?.dropzoneUser) {
-            dispatch(creditsForm.setOriginal(data!.dropzone!.dropzoneUser!));
+          if (dropzoneUser) {
+            dispatch(actions.forms.credits.setOriginal(dropzoneUser!));
             setCreditsDialogOpen(true);
           }
         }}
@@ -363,7 +297,7 @@ export default function ProfileScreen() {
             <DataTable.Title numeric>Amount</DataTable.Title>
           </DataTable.Header>
           {
-            data?.dropzone?.dropzoneUser?.transactions?.edges?.map((edge) => (
+            dropzoneUser?.transactions?.edges?.map((edge) => (
               <DataTable.Row key={`transaction-${edge?.node?.id}`}>
                 <DataTable.Cell>
                   <Text style={{ fontSize: 12, fontStyle: "italic", color: "#999999" }}>{!edge?.node?.createdAt ? null : format(edge?.node?.createdAt * 1000, "yyyy/MM/dd hh:mm")}</Text>
@@ -387,13 +321,18 @@ export default function ProfileScreen() {
     <RigDialog
       onClose={() => setRigDialogOpen(false)}
       onSuccess={() => setRigDialogOpen(false)}
-      userId={Number(data?.dropzone?.dropzoneUser?.user?.id)}
+      userId={Number(dropzoneUser?.user?.id)}
       open={rigDialogOpen}
     />
     
     <DropzoneUserDialog
       onClose={() => setDropzoneUserDialogOpen(false)}
-      onSuccess={() => setDropzoneUserDialogOpen(false)}
+      onSuccess={(user) => {
+        setDropzoneUserDialogOpen(false);
+        if (currentUser?.id === dropzoneUser?.id) {
+          dispatch(actions.global.setUser(user.user));
+        }
+      }}
       open={dropzoneUserDialogOpen}
     />
 
@@ -401,7 +340,7 @@ export default function ProfileScreen() {
       onClose={() => setCreditsDialogOpen(false)}
       onSuccess={() => setCreditsDialogOpen(false)}
       open={creditsDialogOpen}
-      dropzoneUser={data?.dropzone?.dropzoneUser || undefined}
+      dropzoneUser={dropzoneUser || undefined}
     />
 
     <EditUserSheet

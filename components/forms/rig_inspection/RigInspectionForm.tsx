@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useAppSelector, useAppDispatch, rigInspectionForm } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 import RigInspectionItem from '../rig_inspection_template/RigInspectionItem';
 
 
 
 export default function RigInspectionForm() {
-  const { rigInspectionForm: state } = useAppSelector(state => state);
+  const state = useAppSelector(state => state.forms.rigInspection);
   const dispatch = useAppDispatch();
   
   return ( 
@@ -18,7 +18,7 @@ export default function RigInspectionForm() {
               value={item?.value || ""}
               onChange={(value) =>
                 dispatch(
-                  rigInspectionForm.setField([index, value])
+                  actions.forms.rigInspection.setField([index, value])
                 )
               }
             />

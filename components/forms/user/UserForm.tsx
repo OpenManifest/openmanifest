@@ -1,39 +1,31 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { TextInput, HelperText, Divider, Chip, List } from 'react-native-paper';
-import { useAppSelector, useAppDispatch } from '../../../redux';
+import { StyleSheet, View } from 'react-native';
+import { TextInput, HelperText, Divider } from 'react-native-paper';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
 
-import slice from "./slice";
 import LicenseChipSelect from '../../input/chip_select/LicenseChipSelect';
 import FederationSelect from '../../input/dropdown_select/FederationSelect';
-
-const { actions } = slice;
 export default function SlotForm() {
-  const state = useAppSelector(state => state.userForm);
+  const state = useAppSelector(state => state.forms.user);
   const dispatch = useAppDispatch();
-  const globalState = useAppSelector(state => state.global);
 
   React.useEffect(() => {
     if (state.original) {
       if (!state.fields.exitWeight.value) {
         dispatch(
-          actions.setField(["exitWeight", state.original.exitWeight || "60"])
+          actions.forms.user.setField(["exitWeight", state.original.exitWeight || "60"])
         );
       }
 
       if (!state.fields.rigs.value && state.original?.id) {
         dispatch(
-          actions.setField(["rigs", state.original.rigs])
+          actions.forms.user.setField(["rigs", state.original.rigs])
         );
       }
 
     }
   }, [state.original?.id]);
-
-  const isEdit = state?.original?.id;
-  const isSelf = state?.original?.id === globalState.currentUser?.id;  
-
 
   return ( 
     <>
@@ -43,7 +35,7 @@ export default function SlotForm() {
         label="Name"
         error={!!state.fields.name.error}
         value={state.fields.name?.value?.toString() || ""}
-        onChangeText={(newValue) => dispatch(actions.setField(["name", newValue]))}
+        onChangeText={(newValue) => dispatch(actions.forms.user.setField(["name", newValue]))}
       />
       
       <HelperText type={!!state.fields.name.error ? "error" : "info"}>
@@ -56,7 +48,7 @@ export default function SlotForm() {
         label="Email"
         error={!!state.fields.email.error}
         value={state.fields.email?.value?.toString() || ""}
-        onChangeText={(newValue) => dispatch(actions.setField(["email", newValue]))}
+        onChangeText={(newValue) => dispatch(actions.forms.user.setField(["email", newValue]))}
       />
       
       <HelperText type={!!state.fields.email.error ? "error" : "info"}>
@@ -69,7 +61,7 @@ export default function SlotForm() {
         label="Phone"
         error={!!state.fields.phone.error}
         value={state.fields.phone?.value?.toString() || ""}
-        onChangeText={(newValue) => dispatch(actions.setField(["phone", newValue]))}
+        onChangeText={(newValue) => dispatch(actions.forms.user.setField(["phone", newValue]))}
       />
       
       <HelperText type={!!state.fields.phone.error ? "error" : "info"}>
@@ -86,7 +78,7 @@ export default function SlotForm() {
         value={state.fields.exitWeight?.value?.toString() || ""}
         keyboardType="numbers-and-punctuation"
         right={() => <TextInput.Affix text="kg" />}
-        onChangeText={(newValue) => dispatch(actions.setField(["exitWeight", newValue]))}
+        onChangeText={(newValue) => dispatch(actions.forms.user.setField(["exitWeight", newValue]))}
       />
       
       <HelperText type={!!state.fields.exitWeight.error ? "error" : "info"}>
@@ -98,7 +90,7 @@ export default function SlotForm() {
       <View style={{ width: "100%"}}>
         <FederationSelect
           value={state?.fields?.license?.value?.federation || state.federation.value}
-          onSelect={(value) => dispatch(actions.setFederation(value))}
+          onSelect={(value) => dispatch(actions.forms.user.setFederation(value))}
           required
         />
 
@@ -111,7 +103,7 @@ export default function SlotForm() {
             <LicenseChipSelect
               value={state.fields.license.value}
               federationId={Number(state?.fields?.license?.value?.federation?.id || state.federation?.value?.id)}
-              onSelect={(value) => dispatch(actions.setField(["license", value]))}
+              onSelect={(value) => dispatch(actions.forms.user.setField(["license", value]))}
               required
             />
             <HelperText type={!!state.fields.license.error ? "error" : "info"}>

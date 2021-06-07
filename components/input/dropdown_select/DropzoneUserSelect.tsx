@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import * as React from "react";
 import { List, Menu, Title } from "react-native-paper";
 import useQueryDropzoneUsers from "../../../graphql/hooks/useQueryDropzoneUsers";
 import { DropzoneUser } from "../../../graphql/schema";
@@ -17,14 +17,14 @@ interface IDropzoneUserSelect {
 
 
 export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
-  const [isMenuOpen, setMenuOpen] = useState(false);
+  const [isMenuOpen, setMenuOpen] = React.useState(false);
   const globalState = useAppSelector(state => state.global);
 
   const { data, loading, refetch } = useQueryDropzoneUsers({
     variables: {
       dropzoneId: Number(globalState.currentDropzone?.id),
       permissions: props.requiredPermissions
-    }
+    },
   });
 
   return (

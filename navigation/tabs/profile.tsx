@@ -2,7 +2,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
 import AppBar from '../AppBar';
-import { useAppSelector } from '../../redux';
+import useCurrentDropzone from '../../graphql/hooks/useCurrentDropzone';
 
 const ProfileScreen = React.lazy(() => import('../../screens/authenticated/profile/ProfileScreen'));
 const UpdateUserScreen = React.lazy(() => import('../../screens/authenticated/profile/UpdateUserScreen'));
@@ -17,7 +17,8 @@ export type IProfileTabParams = {
 const Profile = createStackNavigator<IProfileTabParams>();
 
 export default function ProfileTab() {
-  const { currentDropzone } = useAppSelector(state => state.global);
+  const { currentUser } = useCurrentDropzone();
+  
   return (
     <Profile.Navigator
       screenOptions={{
@@ -33,7 +34,7 @@ export default function ProfileTab() {
         component={ProfileScreen}
         options={{ title: "Profile" }}
         initialParams={{
-          userId: currentDropzone?.currentUser?.id,
+          userId: currentUser?.id,
         }}
       />
       <Profile.Screen name="UpdateUserScreen" component={UpdateUserScreen} options={{ title: "Edit profile" }} />

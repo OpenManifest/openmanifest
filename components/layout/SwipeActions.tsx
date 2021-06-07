@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import * as React from "react";
 import { Animated } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -19,7 +19,7 @@ export interface ISwipeActions {
 export default function SwipeActions(props: ISwipeActions) {
   const { children, rightAction, disabled } = props;
 
-  const ref = useRef<any>();
+  const ref = React.useRef<any>();
   const rightActions = (progress: Animated.AnimatedInterpolation, dragX: Animated.AnimatedInterpolation) => {
     const scale = dragX.interpolate({
       inputRange: [-100, 0],

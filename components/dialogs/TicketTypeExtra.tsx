@@ -1,15 +1,10 @@
 import * as React from 'react';
 import { gql, useMutation } from "@apollo/client";
-import { useAppSelector, useAppDispatch } from '../../redux';
-
-import { actions as snackbar } from "../../components/notifications";
-
-import slice from "../../components/forms/extra/slice";
+import { actions, useAppSelector, useAppDispatch } from '../../redux';
 import { Mutation } from '../../graphql/schema';
 import ExtraForm from '../../components/forms/extra/ExtraForm';
 import DialogOrSheet from '../layout/DialogOrSheet';
 
-const { actions } = slice;
 
 const MUTATION_UPDATE_EXTRA = gql`
   mutation UpdateExtra(
@@ -106,7 +101,8 @@ interface ITicketTypeExtraDialog {
 }
 export default function TicketTypeExtraDialog(props: ITicketTypeExtraDialog) {
   const { open, onClose } = props;
-  const { extraForm: state, global: globalState } = useAppSelector(state => state);
+  const globalState = useAppSelector(state => state.global);
+  const state = useAppSelector(state => state.forms.extra);
   const dispatch = useAppDispatch();
 
 
@@ -118,14 +114,14 @@ export default function TicketTypeExtraDialog(props: ITicketTypeExtraDialog) {
     if (state.fields.name.value.length < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["name", "Name is too short"])
+        actions.forms.extra.setFieldError(["name", "Name is too short"])
       );
     }
 
     if (Number(state.fields.cost.value) < 0) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["cost", "Price must be a number"])
+        actions.forms.extra.setFieldError(["cost", "Price must be a number"])
       );
     }
 
@@ -159,29 +155,29 @@ export default function TicketTypeExtraDialog(props: ITicketTypeExtraDialog) {
 
         if (payload?.errors?.length) {
           return dispatch(
-            snackbar.showSnackbar({ message: payload.errors[0], variant: "error" })
+            actions.notifications.showSnackbar({ message: payload.errors[0], variant: "error" })
           )
         } else if (payload?.fieldErrors?.length) {
           payload.fieldErrors?.forEach(({ field, message }) => {
             switch(field) {
               case "name":
-                return dispatch(actions.setFieldError(["name", message]));
+                return dispatch(actions.forms.extra.setFieldError(["name", message]));
               case "cost":
-                return dispatch(actions.setFieldError(["cost", message]));
+                return dispatch(actions.forms.extra.setFieldError(["cost", message]));
               case "ticket_type_ids":
-                return dispatch(actions.setFieldError(["ticketTypeIds", message]));
+                return dispatch(actions.forms.extra.setFieldError(["ticketTypeIds", message]));
             }
           });
         } else if (payload?.extra) {
           dispatch(
-            snackbar.showSnackbar({ message: `Saved ${payload.extra.name}`, variant: "success" })
+            actions.notifications.showSnackbar({ message: `Saved ${payload.extra.name}`, variant: "success" })
           );
           onClose();
-          dispatch(actions.reset());
+          dispatch(actions.forms.extra.reset());
         }
       } catch (error) {
         dispatch(
-          snackbar.showSnackbar({ message: error.message, variant: "error" })
+          actions.notifications.showSnackbar({ message: error.message, variant: "error" })
         );
       }
     }

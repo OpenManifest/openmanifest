@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import * as appRedux from "../../redux";
 import LoadCard from '../../screens/authenticated/manifest/LoadCard';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';

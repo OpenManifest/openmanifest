@@ -1,21 +1,15 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Button, ProgressBar } from 'react-native-paper';
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { useAppSelector, useAppDispatch, snackbarActions } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
 import { View } from '../../../components/Themed';
-import { actions as snackbar } from "../../../components/notifications";
-import globalSlice from "../../../redux/global";
-
-import slice from "../../../components/forms/dropzone/slice";
 import { Dropzone, Mutation, Query } from '../../../graphql/schema';
 import DropzoneForm from '../../../components/forms/dropzone/DropzoneForm';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
-const { actions } = slice;
-const { actions: globalActions } = globalSlice;
 
 const QUERY_DROPZONE_DETAILS = gql`
   query QueryDropzoneDetails($dropzoneId: Int!) {
@@ -84,7 +78,7 @@ const MUTATION_UPDATE_DROPZONE = gql`
 `;
 
 export default function UpdateDropzoneScreen() {
-  const state = useAppSelector(state => state.dropzoneForm);
+  const state = useAppSelector(state => state.forms.dropzone);
   const globalState = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
 
@@ -98,7 +92,7 @@ export default function UpdateDropzoneScreen() {
 
   React.useEffect(() => {
     if (data?.dropzone?.id) {
-      dispatch(actions.setOriginal(data.dropzone));
+      dispatch(actions.forms.dropzone.setOriginal(data.dropzone));
     }
   }, [data?.dropzone?.id]);
 
@@ -111,7 +105,7 @@ export default function UpdateDropzoneScreen() {
     if (!name.value?.length || name.value?.length < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["name", "Name is too short"])
+        actions.forms.dropzone.setFieldError(["name", "Name is too short"])
       );
     }
 
@@ -134,23 +128,23 @@ export default function UpdateDropzoneScreen() {
           switch (field) {
             case "federation":
             case "federation_id":
-              return dispatch(actions.setFieldError(["federation", message]));
+              return dispatch(actions.forms.dropzone.setFieldError(["federation", message]));
             case "banner":
-              return dispatch(actions.setFieldError(["banner", message]));
+              return dispatch(actions.forms.dropzone.setFieldError(["banner", message]));
             case "primary_color":
-              return dispatch(actions.setFieldError(["primaryColor", message]));
+              return dispatch(actions.forms.dropzone.setFieldError(["primaryColor", message]));
             case "secondary_color":
-              return dispatch(actions.setFieldError(["secondaryColor", message]));
+              return dispatch(actions.forms.dropzone.setFieldError(["secondaryColor", message]));
             case "is_credit_system_enabled":
-              return dispatch(actions.setFieldError(["isCreditSystemEnabled", message]));
+              return dispatch(actions.forms.dropzone.setFieldError(["isCreditSystemEnabled", message]));
             case "name":
-              return dispatch(actions.setFieldError(["name", message]));
+              return dispatch(actions.forms.dropzone.setFieldError(["name", message]));
             case "is_public":
-              return dispatch(actions.setFieldError(["isPublic", message]));
+              return dispatch(actions.forms.dropzone.setFieldError(["isPublic", message]));
           }
         });
         if (result?.data?.updateDropzone?.errors?.length) {
-          return dispatch(snackbarActions.showSnackbar({
+          return dispatch(actions.notifications.showSnackbar({
             message: result?.data?.updateDropzone?.errors[0],
             variant: "error"
           }));
@@ -158,20 +152,20 @@ export default function UpdateDropzoneScreen() {
           // No errors:
           if (result.data?.updateDropzone?.dropzone) {
             dispatch(
-              globalActions.setDropzone({
+              actions.global.setDropzone({
                 ...(globalState.currentDropzone || {}),
                 ...result?.data?.updateDropzone?.dropzone,
               })
             );
             dispatch(
-              snackbar.showSnackbar({ message: `Saved`, variant: "success" })
+              actions.notifications.showSnackbar({ message: `Saved`, variant: "success" })
             );
             navigation.goBack();
           }
         }
       } catch (error) {
         dispatch(
-          snackbar.showSnackbar({ message: error.message, variant: "error" })
+          actions.notifications.showSnackbar({ message: error.message, variant: "error" })
         );
       }
     }

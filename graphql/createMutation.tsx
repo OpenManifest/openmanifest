@@ -1,6 +1,6 @@
 import { DocumentNode, useMutation } from "@apollo/client";
 import { Maybe } from "graphql/jsutils/Maybe";
-import { useCallback } from "react";
+import * as React from "react";
 import { FieldError, Mutation } from "./schema";
 
 export interface IAppMutation<Payload, InputType> {
@@ -74,7 +74,7 @@ export function createMutation<InputType extends {}, Payload extends { fieldErro
     const [mutate, { data, loading, error}] = useMutation(mutation);
 
 
-    const onMutate = useCallback(async (variables: InputType): Promise<Maybe<Payload>> => {
+    const onMutate = React.useCallback(async (variables: InputType): Promise<Maybe<Payload>> => {
       
 
       function validate() {

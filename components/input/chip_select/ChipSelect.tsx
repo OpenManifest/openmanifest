@@ -1,5 +1,5 @@
 import { isEqual, xorBy } from "lodash";
-import React, { useEffect } from "react";
+import * as React from "react";
 import { View } from "react-native";
 import { Chip } from "react-native-paper";
 
@@ -17,7 +17,7 @@ interface IChipSelect<T extends any> {
 function ChipSelect<T extends any>(props: IChipSelect<T>) {
   const { items, selected, isSelected, isDisabled, icon, renderItemLabel, onChangeSelected, autoSelectFirst } = props;
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!selected || !selected.length && items.length && autoSelectFirst) {
       onChangeSelected(
         [items[0]]

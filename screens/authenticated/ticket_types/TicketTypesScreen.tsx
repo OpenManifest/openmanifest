@@ -1,12 +1,12 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { useIsFocused, useRoute } from '@react-navigation/core';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar, Switch } from 'react-native-paper';
 import { Mutation, Query } from "../../../graphql/schema";
 
-import { snackbarActions, ticketTypeForm, useAppDispatch, useAppSelector } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import TicketTypesDialog from '../../../components/dialogs/TicketType';
 import SwipeActions from '../../../components/layout/SwipeActions';
@@ -102,7 +102,6 @@ export default function TicketTypesScreen() {
       dropzoneId: Number(state.currentDropzone?.id)
     }
   });
-  const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
 
@@ -140,7 +139,7 @@ export default function TicketTypesScreen() {
 
                 if (result?.deleteTicketType?.errors?.length) {
                   dispatch(
-                    snackbarActions.showSnackbar({
+                    actions.notifications.showSnackbar({
                       message: result?.deleteTicketType?.errors[0],
                       variant: "error"
                     })
@@ -151,7 +150,7 @@ export default function TicketTypesScreen() {
           >
             <DataTable.Row
               onPress={() => {
-                dispatch(ticketTypeForm.setOriginal(ticketType));
+                dispatch(actions.forms.ticketType.setOriginal(ticketType));
                 setDialogOpen(true);
               }}
               pointerEvents="none"

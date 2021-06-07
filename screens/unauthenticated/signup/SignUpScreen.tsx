@@ -1,38 +1,32 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
-import { useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
 import { Text, View } from '../../../components/Themed';
-import { actions as snackbar } from "../../../components/notifications";
-import globalSlice from "../../../redux/global";
-
-import slice from "./slice";
 import useMutationSignUp from '../../../graphql/hooks/useMutationSignUp';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
-const { actions } = slice;
-const { actions: globalActions } = globalSlice;
 
 
 export default function SignupScreen() {
-  const state = useAppSelector(state => state.signup);
+  const state = useAppSelector(state => state.screens.signup);
   const dispatch = useAppDispatch();
 
   const { loading, mutate: onSignUp } = useMutationSignUp({
     onSuccess: (payload) => {
       if (payload.credentials) {
         dispatch(
-          globalActions.setCredentials(payload.credentials)
+          actions.global.setCredentials(payload.credentials)
         );
         dispatch(
-          globalActions.setUser(payload.authenticatable!)
+          actions.global.setUser(payload.authenticatable!)
         );
       }
     },
     onFieldError: (field, value) =>
       dispatch(
-        actions.setFieldError([field as any, value])
+        actions.screens.signup.setFieldError([field as any, value])
       )
   });
 
@@ -48,7 +42,7 @@ export default function SignupScreen() {
           label="Name"
           error={!!state.fields.name.error}
           value={state.fields.name.value}
-          onChangeText={(newValue) => dispatch(actions.setField(["name", newValue]))}
+          onChangeText={(newValue) => dispatch(actions.screens.signup.setField(["name", newValue]))}
         />
         <HelperText type="error">
           { state.fields.name.error || "" }
@@ -63,7 +57,7 @@ export default function SignupScreen() {
           keyboardType="numbers-and-punctuation"
           right={() => <TextInput.Affix text="kg" />}
           onChangeText={(newValue) =>
-            !newValue || /\d+/.test(newValue) ? dispatch(actions.setField(["exitWeight", parseFloat(newValue || "0")])) : null
+            !newValue || /\d+/.test(newValue) ? dispatch(actions.screens.signup.setField(["exitWeight", parseFloat(newValue || "0")])) : null
           }
         />
         
@@ -77,7 +71,7 @@ export default function SignupScreen() {
           label="Email"
           error={!!state.fields.email.error}
           value={state.fields.email.value}
-          onChangeText={(newValue) => dispatch(actions.setField(["email", newValue]))}
+          onChangeText={(newValue) => dispatch(actions.screens.signup.setField(["email", newValue]))}
         />
 
         <HelperText type="error">
@@ -90,7 +84,7 @@ export default function SignupScreen() {
           label="Phone"
           error={!!state.fields.phone.error}
           value={state.fields.phone.value}
-          onChangeText={(newValue) => dispatch(actions.setField(["phone", newValue]))}
+          onChangeText={(newValue) => dispatch(actions.screens.signup.setField(["phone", newValue]))}
         />
         <HelperText type="error">
           { state.fields.phone.error || "" }
@@ -105,7 +99,7 @@ export default function SignupScreen() {
           secureTextEntry
           passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
           value={state.fields.password.value}
-          onChangeText={(newValue) => dispatch(actions.setField(["password", newValue]))}
+          onChangeText={(newValue) => dispatch(actions.screens.signup.setField(["password", newValue]))}
         />
 
         <HelperText type="error">
@@ -121,7 +115,7 @@ export default function SignupScreen() {
           secureTextEntry
           passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
           value={state.fields.passwordConfirmation.value}
-          onChangeText={(newValue) => dispatch(actions.setField(["passwordConfirmation", newValue]))}
+          onChangeText={(newValue) => dispatch(actions.screens.signup.setField(["passwordConfirmation", newValue]))}
         />
         <HelperText type="error">
           { state.fields.passwordConfirmation.error || "" }
