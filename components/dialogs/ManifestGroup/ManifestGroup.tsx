@@ -4,8 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, Portal } from "react-native-paper";
 import { Tabs, TabScreen, useTabNavigation } from 'react-native-paper-tabs';
-import BottomSheetBehavior from "reanimated-bottom-sheet";
-import BottomSheet from "reanimated-bottom-sheet";
+import BottomSheet from "@gorhom/bottom-sheet";
 import { Mutation } from "../../../graphql/schema";
 import { actions, useAppDispatch, useAppSelector } from "../../../redux";
 import ManifestGroupForm from "../../forms/manifest_group/ManifestGroupForm";
@@ -186,7 +185,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
   }, [JSON.stringify(state.fields), mutationCreateSlots, props.onSuccess])
   
   
-  const sheetRef = React.useRef<BottomSheetBehavior>(null);
+  const sheetRef = React.useRef<BottomSheet>(null);
 
   React.useEffect(() => {
     if (state.fields.ticketType?.value?.isTandem) {
@@ -207,7 +206,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       <BottomSheet
         ref={sheetRef}
         snapPoints={[600, 0]}
-        initialSnap={1}
+        index={-1}
         onCloseEnd={() => {
           props.onClose();
           dispatch(actions.forms.manifestGroup.reset());
@@ -216,8 +215,8 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         renderHeader={() =>
           <View style={[styles.sheetHeader, { backgroundColor: globalState.theme.colors.primary }]} />
         }
-        renderContent={() => 
-          <View style={{ backgroundColor: "white"}} testID="manifest-group-sheet">
+       >
+         <View style={{ backgroundColor: "white"}} testID="manifest-group-sheet">
             <View pointerEvents={(state.fields.users?.value?.length || 0) > 0 ? undefined : "none"}>
               <Tabs defaultIndex={tabIndex} mode="fixed" onChangeIndex={setTabIndex}>
                 <TabScreen label="Create group" ><View /></TabScreen>
@@ -243,8 +242,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
                 )
             }
           </View>
-        }
-       />
+        </BottomSheet>
     </Portal>
   )
 }

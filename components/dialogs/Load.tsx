@@ -165,7 +165,7 @@ export default function LoadDialog(props: ILoadDialog) {
       onClose={onClose}
       buttonAction={onSave}
       buttonLabel="Create"
-      snapPoints={[750, 0]}
+      snapPoints={[750, "30%", 0]}
       loading={mutation.loading}
       title="New Load"
     >

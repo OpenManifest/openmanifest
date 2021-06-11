@@ -1,9 +1,8 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { Button, Portal, Title } from "react-native-paper";
-import BottomSheetBehavior from "reanimated-bottom-sheet";
-import ReanimatedBottomSheet from "reanimated-bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+
 interface IBottomSheetProps {
   open?: boolean;
   buttonLabel?: string;
@@ -19,36 +18,41 @@ interface IBottomSheetProps {
 export default function DialogOrSheet(props: IBottomSheetProps) {
   const { open, snapPoints, onClose, title, buttonLabel, buttonAction, loading, children } = props;
 
-  const sheetRef = React.useRef<BottomSheetBehavior>(null);
+  const sheetRef = React.useRef<BottomSheet>(null);
 
   const snappingPoints = snapPoints || [600, 0];
 
   React.useEffect(() => {
     if (open) {
       sheetRef?.current?.snapTo(snappingPoints?.length - 2);
+      console.log("Oh snap!");
     } else {
       sheetRef?.current?.snapTo(snappingPoints?.length - 1);
+      console.log("Oh snap1!");
     }
   }, [open]);
 
   return (
     <Portal>
-      <ReanimatedBottomSheet
+      <BottomSheet
         ref={sheetRef}
         snapPoints={snappingPoints}
-        initialSnap={snappingPoints.length - 1}
-        onCloseEnd={() => {
-          onClose();
+        index={-1}
+        onChange={(e) => {
+          if (e < 1) {
+            onClose();
+          }
         }}
-        renderHeader={() =>
+        handleComponent={() =>
           !title
             ? <View style={styles.sheetHeader} />
             : <View style={styles.sheetHeaderWithTitle}>
                 <Title>{title}</Title>
               </View>
         }
-        renderContent={() => 
-          <ScrollView style={{ backgroundColor: "#FFFFFF" }} contentContainerStyle={styles.sheet}>
+        
+       >
+         <BottomSheetScrollView style={{ backgroundColor: "#FFFFFF" }} contentContainerStyle={styles.sheet}>
             { children }
             <Button
               onPress={buttonAction}
@@ -58,9 +62,8 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
             >
               { buttonLabel }
             </Button>
-          </ScrollView>
-        }
-       />
+          </BottomSheetScrollView>
+        </BottomSheet>
     </Portal>
   )
 }
@@ -87,6 +90,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   sheetHeader: {
+    zIndex: 10000,
     elevation: 2,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -101,6 +105,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2.22,
   },
   sheetHeaderWithTitle: {
+    zIndex: 10000,
     elevation: 2,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,

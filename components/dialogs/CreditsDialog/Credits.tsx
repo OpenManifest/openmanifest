@@ -2,8 +2,8 @@ import { gql, useMutation } from "@apollo/client";
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, Portal } from "react-native-paper";
-import BottomSheetBehavior from "reanimated-bottom-sheet";
-import BottomSheet from "reanimated-bottom-sheet";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+
 import { DropzoneUser, Mutation } from "../../../graphql/schema";
 import { actions, useAppDispatch, useAppSelector } from "../../../redux";
 import CreditsForm from "../../forms/credits/CreditsForm";
@@ -120,7 +120,7 @@ export default function CreditSheet(props: ICreditsSheet) {
     } 
   }, [JSON.stringify(state.fields), mutationCreateTransaction, props.onSuccess])
   
-  const sheetRef = React.useRef<BottomSheetBehavior>(null);
+  const sheetRef = React.useRef<BottomSheet>(null);
 
   React.useEffect(() => {
     if (open) {
@@ -135,7 +135,7 @@ export default function CreditSheet(props: ICreditsSheet) {
       <BottomSheet
         ref={sheetRef}
         snapPoints={[550, 0]}
-        initialSnap={1}
+        index={-1}
         onCloseEnd={() => props.onClose()}
         renderHeader={() =>
           <View style={[styles.sheetHeader, { backgroundColor: global.theme.colors.primary }]} />

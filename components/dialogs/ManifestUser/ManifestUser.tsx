@@ -3,8 +3,7 @@ import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, Portal } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import BottomSheetBehavior from "reanimated-bottom-sheet";
-import BottomSheet from "reanimated-bottom-sheet";
+import BottomSheet from "@gorhom/bottom-sheet";
 import { Mutation } from "../../../graphql/schema";
 import { actions, useAppDispatch, useAppSelector } from "../../../redux";
 import ManifestForm from "../../forms/manifest/ManifestForm";
@@ -202,7 +201,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     } 
   }, [JSON.stringify(state.fields), mutationCreateSlot, props.onSuccess])
   
-  const sheetRef = React.useRef<BottomSheetBehavior>(null);
+  const sheetRef = React.useRef<BottomSheet>(null);
 
   React.useEffect(() => {
     if (state.fields.ticketType?.value?.isTandem) {
@@ -223,7 +222,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       <BottomSheet
         ref={sheetRef}
         snapPoints={[600, 0]}
-        initialSnap={1}
+        index={-1}
         onCloseEnd={() => {
           dispatch(actions.forms.manifest.reset());
           props.onClose();
@@ -231,8 +230,8 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         renderHeader={() =>
           <View style={styles.sheetHeader} />
         }
-        renderContent={() => 
-          <View style={styles.sheet} testID="manifest-form">
+       >
+         <View style={styles.sheet} testID="manifest-form">
             <SafeAreaView style={styles.contentContainer}>
               <ManifestForm />
               <Button
@@ -245,8 +244,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
               </Button>
             </SafeAreaView>
           </View>
-       }
-       />
+        </BottomSheet>
     </Portal>
   )
 }

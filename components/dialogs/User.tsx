@@ -162,7 +162,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
         }
       } catch (error) {
         dispatch(
-          actions.notifications.showSnackbar({ message: error.message, variant: "error" })
+          actions.notifications.showSnackbarr({ message: error.message, variant: "error" })
         );
       }
     }
