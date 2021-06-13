@@ -72,7 +72,7 @@ export default function UpdatePlaneScreen() {
   const plane = route.params!.plane;
 
   React.useEffect(() => {
-    dispatch(actions.forms.plane.setOriginal(plane));
+    dispatch(actions.forms.plane.setOpen(plane));
   }, [plane?.id]);
 
   const [mutationUpdatePlane, data] = useMutation<Mutation>(MUTATION_CREATE_PLANE);

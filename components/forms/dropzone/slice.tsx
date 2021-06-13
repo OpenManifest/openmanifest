@@ -14,6 +14,7 @@ type Fields = Pick<
 
 interface IDropzoneEditState {
   original: Dropzone | null;
+  open: boolean;
   fields: {
     [K in keyof Fields] - ?: {
       value: Dropzone[K] | null;
@@ -24,6 +25,7 @@ interface IDropzoneEditState {
 
 export const initialState: IDropzoneEditState = {
   original: null,
+  open: false,
   fields: {
     federation: {
       value: null,
@@ -57,7 +59,7 @@ export const initialState: IDropzoneEditState = {
 };
 
 export default createSlice({
-  name: 'dropzone',
+  name: 'forms/dropzone',
   initialState,
   reducers: {
     setField: <T extends keyof IDropzoneEditState["fields"]>(state: IDropzoneEditState, action: PayloadAction<[T, IDropzoneEditState["fields"][T]["value"]]>) => {
@@ -74,12 +76,19 @@ export default createSlice({
       }
     },
 
-    setOriginal: (state: IDropzoneEditState, action: PayloadAction<Dropzone>) => {
-      state.original = action.payload;
-      for (const key in action.payload) {
-        if (key in state.fields) {
-          const typedKey = key as keyof typeof initialState["fields"];
-          state.fields[typedKey].value = action.payload[typedKey];
+    setOpen: (state: IDropzoneEditState, action: PayloadAction<boolean | Dropzone>) => {
+      if (typeof action.payload === "boolean") {
+        state.open = action.payload;
+        state.original = null;
+        state.fields = initialState.fields;
+      } else {
+        state.original = action.payload;
+        state.open = true;
+        for (const key in action.payload) {
+          if (key in state.fields) {
+            const typedKey = key as keyof typeof initialState["fields"];
+            state.fields[typedKey].value = action.payload[typedKey];
+          }
         }
       }
     },

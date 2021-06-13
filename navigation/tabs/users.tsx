@@ -5,7 +5,7 @@ const UsersScreen = React.lazy(() => import('../../screens/authenticated/users/U
 const SearchableAppBar = React.lazy(() => import('../../screens/authenticated/users/AppBar'));
 const RigInspectionScreen = React.lazy(() => import('../../screens/authenticated/rig/RigInspectionScreen'));
 const ProfileScreen = React.lazy(() => import('../../screens/authenticated/profile/ProfileScreen'));
-import { useAppDispatch, useAppSelector, usersActions } from '../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../redux';
 import { Rig } from '../../graphql/schema';
 
 export type ISettingsTabParams = {
@@ -21,7 +21,7 @@ export type ISettingsTabParams = {
 const Settings = createStackNavigator<ISettingsTabParams>();
 
 export default function SettingsTab() {
-  const { isSearchVisible, searchText } = useAppSelector(state => state.usersScreen);
+  const { isSearchVisible, searchText } = useAppSelector(state => state.screens.users);
   const dispatch = useAppDispatch();
 
   return (
@@ -33,8 +33,8 @@ export default function SettingsTab() {
             {...props}
             searchText={searchText}
             searchVisible={isSearchVisible}
-            setSearchVisible={(visible) => dispatch(usersActions.setSearchVisible(visible))}
-            onSearch={(text) => dispatch(usersActions.setSearchText(text))}
+            setSearchVisible={(visible) => dispatch(actions.screens.users.setSearchVisible(visible))}
+            onSearch={(text) => dispatch(actions.screens.users.setSearchText(text))}
           />,
         cardStyle: {
           flex: 1

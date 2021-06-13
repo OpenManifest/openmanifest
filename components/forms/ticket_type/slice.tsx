@@ -13,6 +13,7 @@ type Fields = Pick<
 
 interface ITicketTypeEditState {
   original: TicketType | null;
+  open: boolean;
   fields: {
     [K in keyof Fields] - ?: {
       value: TicketType[K] | null;
@@ -24,6 +25,7 @@ interface ITicketTypeEditState {
 
 export const initialState: ITicketTypeEditState = {
   original: null,
+  open: false,
   fields: {
     name: {
       value: "",
@@ -53,7 +55,7 @@ export const initialState: ITicketTypeEditState = {
 };
 
 export default createSlice({
-  name: 'ticketTypeForm',
+  name: 'forms/ticketType',
   initialState,
   reducers: {
     setField: <T extends  keyof ITicketTypeEditState["fields"]>(state: ITicketTypeEditState, action: PayloadAction<[T, ITicketTypeEditState["fields"][T]["value"]]>) => {
@@ -68,12 +70,19 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOriginal: (state: ITicketTypeEditState, action: PayloadAction<TicketType>) => {
-      state.original = action.payload;
-      state.fields.altitude.value = action.payload.altitude!;
-      state.fields.cost.value = action.payload.cost!;
-      state.fields.allowManifestingSelf.value = action.payload.allowManifestingSelf!;
-      state.fields.name.value = action.payload.name!;
+    setOpen: (state: ITicketTypeEditState, action: PayloadAction<boolean | TicketType>) => {
+      if (typeof action.payload === "boolean") {
+        state.open = action.payload;
+        state.original = null;
+        state.fields = initialState.fields;
+      } else {
+        state.original = action.payload;
+        state.open = true;
+        state.fields.altitude.value = action.payload.altitude!;
+        state.fields.cost.value = action.payload.cost!;
+        state.fields.allowManifestingSelf.value = action.payload.allowManifestingSelf!;
+        state.fields.name.value = action.payload.name!;
+      }
     },
     
     reset: (state: ITicketTypeEditState) => {

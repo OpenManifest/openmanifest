@@ -8,7 +8,7 @@ import { Avatar, Divider, List, ProgressBar } from 'react-native-paper';
 import NoResults from '../../../components/NoResults';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { Query } from '../../../graphql/schema';
-import { useAppDispatch, useAppSelector, usersActions } from '../../../redux';
+import { actions,  useAppDispatch, useAppSelector } from '../../../redux';
 
 
 
@@ -46,13 +46,14 @@ interface IUsersRouteParams{
   name: string,
 }
 export default function UsersScreen() {
-  const {global, usersScreen, slotsMultipleForm: multiSlot } = useAppSelector(state => state);
+  const global = useAppSelector(state => state.global);
+  const state = useAppSelector(state => state.screens.users);
   const dispatch = useAppDispatch();
 
   const { data, loading } = useQuery<Query>(QUERY_DROPZONE_USERS, {
     variables: {
       dropzoneId: Number(global.currentDropzone?.id),
-      search: usersScreen.searchText,
+      search: state.searchText,
     }
   });
 
@@ -61,8 +62,8 @@ export default function UsersScreen() {
 
   const isFocused = useIsFocused();
   React.useEffect(() => {
-    if (usersScreen.isSearchVisible) {
-      dispatch(usersActions.setSearchVisible(false));
+    if (state.isSearchVisible) {
+      dispatch(actions.screens.users.setSearchVisible(false));
     }
 
   }, [isFocused]);

@@ -5,17 +5,19 @@ import { FieldItem } from "../rig_inspection_template/slice";
 
 interface IRigInspectionEditState {
   fields: FieldItem[],
+  open: boolean;
   ok: boolean;
 }
 
 export const initialState: IRigInspectionEditState = {
   fields: [],
+  open: false,
   ok: false
 };
 
 
 export default createSlice({
-  name: 'rigInspectionForm',
+  name: 'forms/rig',
   initialState,
   reducers: {
 

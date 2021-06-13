@@ -67,7 +67,7 @@ export default function RigInspectionTemplateScreen() {
     if (data?.dropzone?.rigInspectionTemplate) {
       
       dispatch(
-        actions.forms.rigInspectionTemplate.setOriginal(
+        actions.forms.rigInspectionTemplate.setOpen(
           data.dropzone.rigInspectionTemplate
         )
       )

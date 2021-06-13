@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Federation, User } from "../../../graphql/schema";
 
-
 type Fields = Pick<
   User,
   | "exitWeight"
@@ -14,6 +13,7 @@ type Fields = Pick<
 
 interface IUserEditState {
   original: User | null;
+  open: boolean;
   federation: {
     value: Federation | null,
     error: null,
@@ -28,6 +28,7 @@ interface IUserEditState {
 
 export const initialState: IUserEditState = {
   original: null,
+  open: false,
   federation: {
     value: null,
     error: null,
@@ -62,7 +63,7 @@ export const initialState: IUserEditState = {
 
 
 export default createSlice({
-  name: 'userForm',
+  name: 'forms/user',
   initialState,
   reducers: {
     setFederation: (state: IUserEditState, action: PayloadAction<Federation>) => {
@@ -80,13 +81,20 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOriginal: (state: IUserEditState, action: PayloadAction<User>) => {
-      state.original = action.payload;
-      state.federation.value = action.payload.license?.federation!;
-      for (const key in action.payload) {
-        if (key in state.fields) {
-          const typedKey = key as keyof typeof initialState["fields"];
-          state.fields[typedKey].value = action.payload[typedKey];
+    setOpen: (state: IUserEditState, action: PayloadAction<boolean | User>) => {
+      if (typeof action.payload === "boolean") {
+        state.open = action.payload;
+        state.original = null;
+        state.fields = initialState.fields;
+      } else {
+        state.original = action.payload;
+        state.open = true;
+        state.federation.value = action.payload.license?.federation!;
+        for (const key in action.payload) {
+          if (key in state.fields) {
+            const typedKey = key as keyof typeof initialState["fields"];
+            state.fields[typedKey].value = action.payload[typedKey];
+          }
         }
       }
     },

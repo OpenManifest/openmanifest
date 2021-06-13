@@ -95,8 +95,8 @@ const MUTATION_DELETE_TICKET_TYPE = gql`
 
 export default function TicketTypesScreen() {
   const state = useAppSelector(state => state.global);
+  const form = useAppSelector(state => state.forms.ticketType);
   const dispatch = useAppDispatch();
-  const [dialogOpen, setDialogOpen] = React.useState(false);
   const { data, loading, refetch } = useQuery<Query>(QUERY_TICKET_TYPE, {
     variables: {
       dropzoneId: Number(state.currentDropzone?.id)
@@ -150,8 +150,7 @@ export default function TicketTypesScreen() {
           >
             <DataTable.Row
               onPress={() => {
-                dispatch(actions.forms.ticketType.setOriginal(ticketType));
-                setDialogOpen(true);
+                dispatch(actions.forms.ticketType.setOpen(ticketType));
               }}
               pointerEvents="none"
             >
@@ -182,12 +181,12 @@ export default function TicketTypesScreen() {
           style={styles.fab}
           small
           icon="plus"
-          onPress={() => setDialogOpen(true)}
+          onPress={() => dispatch(actions.forms.ticketType.setOpen(true))}
           label="New ticket type"
         />
         <TicketTypesDialog
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
+          open={form.open}
+          onClose={() => dispatch(actions.forms.ticketType.setOpen(false))}
         />
       </ScrollableScreen>
   );

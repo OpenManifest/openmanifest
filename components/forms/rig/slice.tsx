@@ -14,6 +14,7 @@ type Fields = Pick<
 
 interface IRigEditState {
   original: Rig | null;
+  open: boolean;
   fields: {
     [K in keyof Fields] - ?: {
       value: Rig[K] | null;
@@ -24,6 +25,7 @@ interface IRigEditState {
 
 export const initialState: IRigEditState = {
   original: null,
+  open: false,
   fields: {
     make: {
       value: "",
@@ -54,7 +56,7 @@ export const initialState: IRigEditState = {
 
 
 export default createSlice({
-  name: 'rigForm',
+  name: 'forms/rig',
   initialState,
   reducers: {
     setField: <T extends keyof IRigEditState["fields"]>(state: IRigEditState, action: PayloadAction<[T, IRigEditState["fields"][T]["value"]]>) => {
@@ -69,12 +71,19 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOriginal: (state: IRigEditState, action: PayloadAction<Rig>) => {
-      state.original = action.payload;
-      for (const key in action.payload) {
-        if (key in state.fields) {
-          const typedKey = key as keyof typeof initialState["fields"];
-          state.fields[typedKey].value = action.payload[typedKey];
+    setOpen: (state: IRigEditState, action: PayloadAction<boolean | Rig>) => {
+      if (typeof action.payload === "boolean") {
+        state.open = action.payload;
+        state.original = null;
+        state.fields = initialState.fields;
+      } else {
+        state.original = action.payload;
+        state.open = true;
+        for (const key in action.payload) {
+          if (key in state.fields) {
+            const typedKey = key as keyof typeof initialState["fields"];
+            state.fields[typedKey].value = action.payload[typedKey];
+          }
         }
       }
     },

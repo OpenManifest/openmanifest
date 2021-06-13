@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { gql, useMutation } from "@apollo/client";
-import { useAppSelector, useAppDispatch, dropzoneForm } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
 import { View } from '../../../components/Themed';
 import { actions as snackbar } from "../../../components/notifications";
@@ -14,9 +14,6 @@ import ExtraForm from '../../../components/forms/extra/ExtraForm';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
-const { actions } = slice;
-const { actions: globalActions } = globalSlice;
 
 
 const MUTATION_UPDATE_EXTRA = gql`
@@ -53,7 +50,8 @@ const MUTATION_UPDATE_EXTRA = gql`
 `;
 
 export default function UpdateExtraScreen() {
-  const { extraForm: state, global: globalState } = useAppSelector(state => state);
+  const globalState = useAppSelector(state => state.global);
+  const state = useAppSelector(state => state.forms.extra);
   const dispatch = useAppDispatch();
 
   const navigation = useNavigation();
@@ -61,7 +59,7 @@ export default function UpdateExtraScreen() {
   const extra = route.params!.extra;
 
   React.useEffect(() => {
-    dispatch(actions.setOriginal(extra));
+    dispatch(actions.forms.extra.setOpen(extra));
   }, [extra?.id]);
 
   const [mutationUpdateExtra, data] = useMutation<Mutation>(MUTATION_UPDATE_EXTRA);
@@ -71,14 +69,14 @@ export default function UpdateExtraScreen() {
     if (state.fields.name.value.length < 3) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["name", "Name is too short"])
+        actions.forms.extra.setFieldError(["name", "Name is too short"])
       );
     }
 
     if (Number(state.fields.cost.value) < 0) {
       hasError = true;
       dispatch(
-        actions.setFieldError(["cost", "Price must be a number"])
+        actions.forms.extra.setFieldError(["cost", "Price must be a number"])
       );
     }
 

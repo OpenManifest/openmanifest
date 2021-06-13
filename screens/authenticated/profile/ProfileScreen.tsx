@@ -72,13 +72,10 @@ const MUTATION_UPDATE_IMAGE = gql`
 
 export default function ProfileScreen() {
   const state = useAppSelector(state => state.global);
+  const forms = useAppSelector(state => state.forms);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const { currentUser } = useCurrentDropzone();
-  const [creditsDialogOpen, setCreditsDialogOpen] = React.useState(false);
-  const [editUserDialogOpen, setEditUserDialogOpen] = React.useState(false);
-  const [rigDialogOpen, setRigDialogOpen] = React.useState(false);
-  const [dropzoneUserDialogOpen, setDropzoneUserDialogOpen] = React.useState(false);
   const route = useRoute<{ key: string, name: string, params: { userId: string }}>();
   const isSelf = currentUser?.id === route.params.userId;
 
@@ -141,8 +138,7 @@ export default function ProfileScreen() {
         canEdit={isSelf}
         onEdit={() => {
           if (dropzoneUser?.user) {
-            dispatch(actions.forms.user.setOriginal(dropzoneUser?.user));
-            setEditUserDialogOpen(true);
+            dispatch(actions.forms.user.setOpen(dropzoneUser?.user));
           }
         }}
         onPressAvatar={onPickImage}
@@ -182,8 +178,7 @@ export default function ProfileScreen() {
             style={styles.chip}
             textStyle={styles.chipTitle}
             onPress={() => {
-              dispatch(actions.forms.dropzoneUser.setOriginal(dropzoneUser!));
-              setDropzoneUserDialogOpen(true);
+              dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser!));
             }}
           >
             {!dropzoneUser?.expiresAt
@@ -199,8 +194,7 @@ export default function ProfileScreen() {
               value: `$${dropzoneUser?.credits || 0}`,
               onPress: () => {
                 if (dropzoneUser) {
-                  dispatch(actions.forms.credits.setOriginal(dropzoneUser));
-                  setCreditsDialogOpen(true)
+                  dispatch(actions.forms.credits.setOpen(dropzoneUser));
                 }
               }
             },
@@ -211,7 +205,7 @@ export default function ProfileScreen() {
         <Divider style={[styles.divider, { backgroundColor: "white" }]} />
       </Header>
       
-      <TableCard title="Rigs" buttonIcon="plus" onPressButton={() => setRigDialogOpen(true)}>
+      <TableCard title="Rigs" buttonIcon="plus" onPressButton={() => dispatch(actions.forms.rig.setOpen(true))}>
         <DataTable>
           <DataTable.Header>
             <DataTable.Title>
@@ -233,8 +227,7 @@ export default function ProfileScreen() {
               <DataTable.Row
                 key={`rig-${rig!.id}`}
                 onPress={() => {
-                  dispatch(actions.forms.rig.setOriginal(rig));
-                  setRigDialogOpen(true);
+                  dispatch(actions.forms.rig.setOpen(rig));
                 }}
                 onLongPress={() =>
                   navigation.navigate("RigInspectionScreen", {
@@ -284,8 +277,7 @@ export default function ProfileScreen() {
         buttonIcon="plus"
         onPressButton={() => {
           if (dropzoneUser) {
-            dispatch(actions.forms.credits.setOriginal(dropzoneUser!));
-            setCreditsDialogOpen(true);
+            dispatch(actions.forms.credits.setOpen(dropzoneUser!));
           }
         }}
       >
@@ -319,34 +311,34 @@ export default function ProfileScreen() {
     </ScrollableScreen>
         
     <RigDialog
-      onClose={() => setRigDialogOpen(false)}
-      onSuccess={() => setRigDialogOpen(false)}
+      onClose={() => dispatch(actions.forms.rig.setOpen(false))}
+      onSuccess={() => dispatch(actions.forms.rig.setOpen(false))}
+      open={forms.rig.open}
       userId={Number(dropzoneUser?.user?.id)}
-      open={rigDialogOpen}
     />
     
     <DropzoneUserDialog
-      onClose={() => setDropzoneUserDialogOpen(false)}
+      onClose={() => dispatch(actions.forms.dropzoneUser.setOpen(false))}
       onSuccess={(user) => {
-        setDropzoneUserDialogOpen(false);
+        dispatch(actions.forms.dropzoneUser.setOpen(false));
         if (currentUser?.id === dropzoneUser?.id) {
           dispatch(actions.global.setUser(user.user));
         }
       }}
-      open={dropzoneUserDialogOpen}
+      open={forms.dropzoneUser.open}
     />
 
     <CreditsSheet
-      onClose={() => setCreditsDialogOpen(false)}
-      onSuccess={() => setCreditsDialogOpen(false)}
-      open={creditsDialogOpen}
+      onClose={() => dispatch(actions.forms.credits.setOpen(false))}
+      onSuccess={() => dispatch(actions.forms.credits.setOpen(false))}
+      open={forms.credits.open}
       dropzoneUser={dropzoneUser || undefined}
     />
 
     <EditUserSheet
-      onClose={() => setEditUserDialogOpen(false)} 
-      onSuccess={() => setEditUserDialogOpen(false)} 
-      open={editUserDialogOpen}
+      onClose={() => dispatch(actions.forms.user.setOpen(false))} 
+      onSuccess={() => dispatch(actions.forms.user.setOpen(false))}
+      open={forms.user.open}
     />
   </>
   );

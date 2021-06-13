@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
@@ -7,7 +7,8 @@ import { Text, View } from '../../../components/Themed';
 import useMutationSignUp from '../../../graphql/hooks/useMutationSignUp';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
-
+import { primaryColor } from '../../../constants/Colors';
+import logo from "../../../assets/images/logo.png";
 
 export default function SignupScreen() {
   const state = useAppSelector(state => state.screens.signup);
@@ -33,8 +34,8 @@ export default function SignupScreen() {
   
 
   return (
-    <ScrollableScreen contentContainerStyle={{ padding: 48, alignItems: "center" }}>
-      <Text style={styles.title}>Sign up</Text>
+    <ScrollableScreen style={styles.container} contentContainerStyle={styles.content}>
+      <Image source={logo} style={{ width: "100%", height: 200 }} resizeMode="contain" />
       <View style={styles.fields}>
         <TextInput
           style={styles.field}
@@ -123,6 +124,8 @@ export default function SignupScreen() {
 
         <Button
           mode="contained"
+          labelStyle={styles.buttonLabel} 
+          style={styles.button}
           onPress={() =>
             onSignUp({
               email: state.fields.email.value,
@@ -146,6 +149,18 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: primaryColor,
+  },
+  content: {
+    paddingHorizontal: 60,
+  },
+  button: {
+    marginTop: 10,
+    backgroundColor: "white",
+    width: "100%"
+  },
+  buttonLabel: {
+    color: "#FF1414",
   },
   title: {
     fontSize: 20,
@@ -159,8 +174,12 @@ const styles = StyleSheet.create({
   fields: {
     width: "100%",
     maxWidth: 400,
+    backgroundColor: "transparent"
   },
   field: {
     marginBottom: 8,
+    backgroundColor: "pink",
+    borderColor: "white",
+    color: "white"
   }
 });

@@ -85,7 +85,7 @@ const MUTATION_UPDATE_RIG = gql`
 
 export default function DropzoneRigsScreen() {
   const state = useAppSelector(state => state.global);
-  const [rigDialogOpen, setRigDialogOpen] = React.useState(false);
+  const rigForm = useAppSelector(state => state.forms.rig);
   const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONE_RIGS, {
     variables: {
       dropzoneId: Number(state.currentDropzone?.id)
@@ -128,8 +128,7 @@ export default function DropzoneRigsScreen() {
               <DataTable.Row key={`rig-${rig!.id}`}>
                 <DataTable.Cell
                   onPress={() => {
-                    dispatch(actions.forms.rig.setOriginal(rig));
-                    setRigDialogOpen(true);
+                    dispatch(actions.forms.rig.setOpen(rig));
                   }}
                 >
                   {[rig?.make, rig?.model, `#${rig?.serial}`].join(" ")}
@@ -171,13 +170,13 @@ export default function DropzoneRigsScreen() {
         </DataTable>
 
         <RigDialog
-          onClose={() => setRigDialogOpen(false)}
+          onClose={() => dispatch(actions.forms.rig.setOpen(false))}
           onSuccess={() => {
-            setRigDialogOpen(false);
+            dispatch(actions.forms.rig.setOpen(false))
             refetch();
           }}
           dropzoneId={Number(state.currentDropzone?.id)}
-          open={rigDialogOpen}
+          open={rigForm.open}
         />
         
         <FAB
@@ -185,7 +184,7 @@ export default function DropzoneRigsScreen() {
           small
           icon="plus"
           onPress={() =>
-            setRigDialogOpen(true)
+            dispatch(actions.forms.rig.setOpen(true))
           }
           label="New rig"
         />

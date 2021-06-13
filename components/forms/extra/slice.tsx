@@ -3,6 +3,7 @@ import { Extra } from "../../../graphql/schema";
 
 interface IExtraEditState {
   original: Extra | null;
+  open: boolean;
   fields: {
     name: {
       value: string;
@@ -21,6 +22,7 @@ interface IExtraEditState {
 
 export const initialState: IExtraEditState = {
   original: null,
+  open: false,
   fields: {
     name: {
       value: "",
@@ -38,7 +40,7 @@ export const initialState: IExtraEditState = {
 };
 
 export default createSlice({
-  name: 'ExtraForm',
+  name: 'forms/extra',
   initialState,
   reducers: {
     setField: <T extends  keyof IExtraEditState["fields"]>(state: IExtraEditState, action: PayloadAction<[T, IExtraEditState["fields"][T]["value"]]>) => {
@@ -53,11 +55,18 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOriginal: (state: IExtraEditState, action: PayloadAction<Extra>) => {
-      state.original = action.payload;
-      state.fields.ticketTypeIds.value = action.payload.ticketTypes.map(({ id }) => Number(id));
-      state.fields.cost.value = action.payload.cost;
-      state.fields.name.value = action.payload.name!;
+    setOpen: (state: IExtraEditState, action: PayloadAction<boolean | Extra>) => {
+      if (typeof action.payload === "boolean") {
+        state.open = action.payload;
+        state.original = null;
+        state.fields = initialState.fields;
+      } else {
+        state.original = action.payload;
+        state.open = true;
+        state.fields.ticketTypeIds.value = action.payload.ticketTypes.map(({ id }) => Number(id));
+        state.fields.cost.value = action.payload.cost;
+        state.fields.name.value = action.payload.name!;
+      }
     },
     
     reset: (state: IExtraEditState) => {

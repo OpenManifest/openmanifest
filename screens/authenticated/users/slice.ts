@@ -13,7 +13,7 @@ export const initialState: IUserScreenState = {
 
 
 export default createSlice({
-  name: 'usersScreen',
+  name: 'screens/user',
   initialState,
   reducers: {
     setSearchText: (state: IUserScreenState, action: PayloadAction<string>) => {

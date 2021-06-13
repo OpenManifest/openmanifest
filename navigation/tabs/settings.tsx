@@ -55,7 +55,7 @@ export default function SettingsTab() {
       }}
     >
       <Settings.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: "Settings" }} />
-      <Settings.Screen name="UpdateDropzoneScreen" component={UpdateDropzoneScreen} />
+      <Settings.Screen name="UpdateDropzoneScreen" component={UpdateDropzoneScreen} options={{ title: "Basic settings" }} />
       <Settings.Screen name="PlanesScreen" component={PlanesScreen} options={{ title: "Planes"}} />
       <Settings.Screen name="CreatePlaneScreen" component={CreatePlaneScreen} options={{ title: "New plane"}} />
       <Settings.Screen name="UpdatePlaneScreen" component={UpdatePlaneScreen} options={{ title: "Edit plane"}} />

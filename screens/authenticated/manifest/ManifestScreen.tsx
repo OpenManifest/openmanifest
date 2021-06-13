@@ -19,9 +19,7 @@ import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 
 export default function ManifestScreen() {
   const state = useAppSelector(state => state.global);
-  const [isDialogOpen, setDialogOpen] = React.useState(false);
-  const [isLoadDialogOpen, setLoadDialogOpen] = React.useState(false);
-  const [isGroupDialogOpen, setGroupDialogOpen] = React.useState(false);
+  const forms = useAppSelector(state => state.forms);
   const dispatch = useAppDispatch();
   const { dropzone, currentUser, loading, refetch } = useCurrentDropzone();
 
@@ -30,7 +28,6 @@ export default function ManifestScreen() {
 
   React.useEffect(() => {
     if (isFocused) {
-      console.log("IS FOCUSED!");
       refetch();
     }
   }, [isFocused]);
@@ -111,24 +108,20 @@ export default function ManifestScreen() {
       );
     }
 
-
+    dispatch(actions.forms.manifest.setOpen(true));
     dispatch(
       actions.forms.manifest.setField(["user", currentUser.user])
     );
     dispatch(
       actions.forms.manifest.setField(["load", load])
     );
-    setDialogOpen(true);
   }, [JSON.stringify(dropzone?.currentUser)]);
 
 
   const { width } = useWindowDimensions(); 
 
   const numColumns = Math.ceil(width / 400) || 1;
-  
 
-  console.log("SHOWING LOADS: ", dropzone?.loads?.edges?.length);
-  console.log("SHOWING LOADS: ", loading, Number(state.currentDropzone?.id));
   return (
     <>
     <ProgressBar visible={loading} indeterminate color={state.theme.colors.accent} />
@@ -163,11 +156,10 @@ export default function ManifestScreen() {
                               key={`load-${edge.node.id}`}
                               load={edge.node}
                               onSlotPress={(slot) => {
-                                dispatch(actions.forms.manifest.setOriginal(slot));
+                                dispatch(actions.forms.manifest.setOpen(slot));
                                 dispatch(
                                   actions.forms.manifest.setField(["load", edge.node!])
                                 );
-                                setDialogOpen(true);
                               }}
                               onSlotGroupPress={(slots) => {
                                 dispatch(actions.forms.manifestGroup.reset());
@@ -175,12 +167,15 @@ export default function ManifestScreen() {
                                 dispatch(actions.forms.manifestGroup.setField(["load", edge.node!]));
                                 navigation.navigate("ManifestGroupScreen");
                               }}
-                              onManifest={() => onManifest(edge.node!)}
+                              onManifest={() => {
+                                
+                                onManifest(edge.node!)
+                              }}
                               onManifestGroup={() => {
                                 dispatch(actions.forms.manifestGroup.reset());
                                 dispatch(actions.forms.manifestGroup.setField(["load", 
                                 edge.node!]));
-                                setGroupDialogOpen(true);
+                                dispatch(actions.forms.manifestGroup.setOpen(true));
                               }}
                             />
                         )}
@@ -194,29 +189,29 @@ export default function ManifestScreen() {
             style={styles.fab}
             small
             icon="plus"
-            onPress={() => setLoadDialogOpen(true)}
+            onPress={() => dispatch(actions.forms.load.setOpen(true))}
             label="New load"
           />
         )}
       </View>
       <ManifestUserSheet
-        open={isDialogOpen}
-        onClose={() => setDialogOpen(false)}
-        onSuccess={() => setDialogOpen(false)}
+        open={forms.manifest.open}
+        onClose={() => dispatch(actions.forms.manifest.setOpen(false))}
+        onSuccess={() => dispatch(actions.forms.manifest.setOpen(false))}
       />
       <ManifestGroupSheet
-        open={isGroupDialogOpen}
-        onClose={() => setGroupDialogOpen(false)}
-        onSuccess={() => setGroupDialogOpen(false)}
+        open={forms.manifestGroup.open}
+        onClose={() => dispatch(actions.forms.manifestGroup.setOpen(false))}
+        onSuccess={() => dispatch(actions.forms.manifestGroup.setOpen(false))}
       />
 
       <LoadDialog
         onSuccess={() => {
-          setLoadDialogOpen(false);
+          dispatch(actions.forms.load.setOpen(false));
           refetch();
         }}
-        open={isLoadDialogOpen}
-        onClose={() => setLoadDialogOpen(false)}
+        open={forms.load.open}
+        onClose={() => dispatch(actions.forms.load.setOpen(false))}
       />
     </>
   );

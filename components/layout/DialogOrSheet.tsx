@@ -1,7 +1,8 @@
+import { last,sortBy, uniq } from "lodash";
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, Portal, Title } from "react-native-paper";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
 interface IBottomSheetProps {
   open?: boolean;
@@ -20,15 +21,13 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
 
   const sheetRef = React.useRef<BottomSheet>(null);
 
-  const snappingPoints = snapPoints || [600, 0];
+  const snappingPoints = React.useMemo(() => sortBy(uniq([0, ...(snapPoints || [600])])), [JSON.stringify(snapPoints)]);
 
   React.useEffect(() => {
     if (open) {
-      sheetRef?.current?.snapTo(snappingPoints?.length - 2);
-      console.log("Oh snap!");
-    } else {
       sheetRef?.current?.snapTo(snappingPoints?.length - 1);
-      console.log("Oh snap1!");
+    } else {
+      sheetRef?.current?.close();
     }
   }, [open]);
 
@@ -36,11 +35,13 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     <Portal>
       <BottomSheet
         ref={sheetRef}
+        backdropComponent={BottomSheetBackdrop}
         snapPoints={snappingPoints}
         index={-1}
-        onChange={(e) => {
-          if (e < 1) {
+        onChange={(toIndex) => {
+          if (toIndex <= 0) {
             onClose();
+            sheetRef?.current?.close();
           }
         }}
         handleComponent={() =>
@@ -50,7 +51,6 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
                 <Title>{title}</Title>
               </View>
         }
-        
        >
          <BottomSheetScrollView style={{ backgroundColor: "#FFFFFF" }} contentContainerStyle={styles.sheet}>
             { children }
@@ -83,8 +83,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     elevation: 3,
     backgroundColor: "white",
-    flexGrow: 1,
-    height: "100%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",

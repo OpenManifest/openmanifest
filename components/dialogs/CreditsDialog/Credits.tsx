@@ -2,7 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, Portal } from "react-native-paper";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
 import { DropzoneUser, Mutation } from "../../../graphql/schema";
 import { actions, useAppDispatch, useAppSelector } from "../../../redux";
@@ -123,34 +123,43 @@ export default function CreditSheet(props: ICreditsSheet) {
   const sheetRef = React.useRef<BottomSheet>(null);
 
   React.useEffect(() => {
+    console.log(`Open: ${open}`);
     if (open) {
-      sheetRef?.current?.snapTo(0);
-    } else if (!open) {
       sheetRef?.current?.snapTo(1);
+    } else {
+      sheetRef?.current?.close();
+      props.onClose();
     }
   }, [open]);
+
+  const snapPoints = React.useMemo(() => [0, 550], []);
 
   return (
     <Portal>
       <BottomSheet
         ref={sheetRef}
-        snapPoints={[550, 0]}
+        snapPoints={snapPoints}
         index={-1}
-        onCloseEnd={() => props.onClose()}
-        renderHeader={() =>
+        onChange={(idx) => {
+          if (idx <= 0) {
+            props.onClose();
+            sheetRef.current?.close();
+          }
+        }}
+        backdropComponent={BottomSheetBackdrop}
+        handleComponent={() =>
           <View style={[styles.sheetHeader, { backgroundColor: global.theme.colors.primary }]} />
         }
-        renderContent={() => 
-          <View style={styles.sheet}>
+      >
+          <BottomSheetView style={styles.sheet}>
             <CreditsForm />
             <View style={styles.buttonContainer}>
               <Button onPress={onSave} loading={createData.loading} mode="contained" style={styles.button}>
                 Save
               </Button>
             </View>
-          </View>
-      }
-    />
+          </BottomSheetView>
+      </BottomSheet>
     </Portal>
   );
 }

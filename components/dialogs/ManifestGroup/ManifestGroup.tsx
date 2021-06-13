@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, Portal } from "react-native-paper";
 import { Tabs, TabScreen, useTabNavigation } from 'react-native-paper-tabs';
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { Mutation } from "../../../graphql/schema";
 import { actions, useAppDispatch, useAppSelector } from "../../../redux";
 import ManifestGroupForm from "../../forms/manifest_group/ManifestGroupForm";
@@ -195,24 +195,30 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
 
   React.useEffect(() => {
     if (open) {
-      sheetRef?.current?.snapTo(0);
-    } else if (!open) {
       sheetRef?.current?.snapTo(1);
+    } else {
+      sheetRef?.current?.close();
+      props.onClose();
     }
   }, [open]);
+
+  const snapPoints = React.useMemo(() => [0, 550], []);
 
   return (
     <Portal>
       <BottomSheet
         ref={sheetRef}
-        snapPoints={[600, 0]}
+        snapPoints={snapPoints}
         index={-1}
-        onCloseEnd={() => {
-          props.onClose();
-          dispatch(actions.forms.manifestGroup.reset());
-          setTabIndex(0);
+        onChange={(idx) => {
+          if (idx <= 0) {
+            props.onClose();
+            dispatch(actions.forms.manifestGroup.reset());
+            setTabIndex(0);
+          }
         }}
-        renderHeader={() =>
+        backdropComponent={BottomSheetBackdrop}
+        handleComponent={() =>
           <View style={[styles.sheetHeader, { backgroundColor: globalState.theme.colors.primary }]} />
         }
        >
@@ -279,8 +285,8 @@ const styles = StyleSheet.create({
   },
   sheetHeader: {
     elevation: 2,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
     height: 30,
     shadowColor: "#000",
     shadowOffset: {

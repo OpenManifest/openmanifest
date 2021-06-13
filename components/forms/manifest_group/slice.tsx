@@ -15,6 +15,7 @@ interface IFields extends Pick<
 
 interface ISlotEditState {
   original: IFields | null;
+  open: boolean;
   fields: {
     [K in keyof IFields] - ?: {
       value: IFields[K] | null;
@@ -25,6 +26,7 @@ interface ISlotEditState {
 
 export const initialState: ISlotEditState = {
   original: null,
+  open: false,
   fields: {
     jumpType: {
       value: null,
@@ -51,7 +53,7 @@ export const initialState: ISlotEditState = {
 
 
 export default createSlice({
-  name: 'slotMultipleForm',
+  name: 'forms/manifestGroup',
   initialState,
   reducers: {
     setField: <T extends keyof ISlotEditState["fields"]>(state: ISlotEditState, action: PayloadAction<[T, ISlotEditState["fields"][T]["value"]]>) => {
@@ -89,12 +91,19 @@ export default createSlice({
       ) as SlotUser[];
     },
 
-    setOriginal: (state: ISlotEditState, action: PayloadAction<IFields>) => {
-      state.original = action.payload;
-      for (const key in action.payload) {
-        if (key in state.fields) {
-          const typedKey = key as keyof typeof initialState["fields"];
-          state.fields[typedKey].value = action.payload[typedKey];
+    setOpen: (state: ISlotEditState, action: PayloadAction<boolean | IFields>) => {
+      if (typeof action.payload === "boolean") {
+        state.open = action.payload;
+        state.original = null;
+        state.fields = initialState.fields;
+      } else {
+        state.original = action.payload;
+        state.open = true;
+        for (const key in action.payload) {
+          if (key in state.fields) {
+            const typedKey = key as keyof typeof initialState["fields"];
+            state.fields[typedKey].value = action.payload[typedKey];
+          }
         }
       }
     },

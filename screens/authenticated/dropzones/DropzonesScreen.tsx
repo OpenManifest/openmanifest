@@ -63,26 +63,29 @@ export default function DropzonesScreen() {
             </Paragraph>
           </View>
         }
-        renderItem={({ item }) =>
-          <Card
-            style={{
-              width: (Dimensions.get("window").width / 2) - 32,
-              margin: 8
-            }}
-            onPress={async ()=> {
-              if (item?.node) {
-                dispatch(
-                  actions.global.setDropzone(item.node)
-                );
-              }
-            }}
-          >
-            <Card.Cover source={{ uri: item?.node?.banner as string }} />
-            <Card.Content>
-              <Title>{item?.node?.name}</Title>
-            </Card.Content>
-          </Card>
-        }
+        renderItem={({ item }) => {
+          console.log("Banner: ", item.node.banner);
+          return (
+            <Card
+              style={{
+                width: (Dimensions.get("window").width / 2) - 32,
+                margin: 8
+              }}
+              onPress={async ()=> {
+                if (item?.node) {
+                  dispatch(
+                    actions.global.setDropzone(item.node)
+                  );
+                }
+              }}
+            >
+              <Card.Cover source={{ uri: item?.node?.banner as string }} />
+              <Card.Content>
+                <Title>{item?.node?.name}</Title>
+              </Card.Content>
+            </Card>
+          )
+        }}
       />
       
       <FAB

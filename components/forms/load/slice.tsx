@@ -16,6 +16,7 @@ type Fields = Pick<
 
 interface ILoadEditState {
   original: Load | null;
+  open: boolean;
   fields: {
     [K in keyof Fields] - ?: {
       value: Load[K] | null;
@@ -26,6 +27,7 @@ interface ILoadEditState {
 
 export const initialState: ILoadEditState = {
   original: null,
+  open: false,
   fields: {
     name: {
       value: "",
@@ -64,7 +66,7 @@ export const initialState: ILoadEditState = {
 
 
 export default createSlice({
-  name: 'loadForm',
+  name: 'forms/load',
   initialState,
   reducers: {
     setField: <T extends keyof ILoadEditState["fields"]>(state: ILoadEditState, action: PayloadAction<[T, ILoadEditState["fields"][T]["value"]]>) => {
@@ -79,12 +81,19 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOriginal: (state: ILoadEditState, action: PayloadAction<Load>) => {
-      state.original = action.payload;
-      for (const key in action.payload) {
-        if (key in state.fields) {
-          const typedKey = key as keyof typeof initialState["fields"];
-          state.fields[typedKey].value = action.payload[typedKey];
+    setOpen: (state: ILoadEditState, action: PayloadAction<boolean | Load>) => {
+      if (typeof action.payload === "boolean") {
+        state.open = action.payload;
+        state.original = null;
+        state.fields = initialState.fields;
+      } else {
+        state.original = action.payload;
+        state.open = true;
+        for (const key in action.payload) {
+          if (key in state.fields) {
+            const typedKey = key as keyof typeof initialState["fields"];
+            state.fields[typedKey].value = action.payload[typedKey];
+          }
         }
       }
     },

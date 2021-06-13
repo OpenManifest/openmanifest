@@ -106,6 +106,7 @@ export default function DropzoneForm() {
           </Dialog>
       </Portal>
       <Card style={{ width: "100%", maxHeight: 300, marginVertical: 16 }}>
+        <Card.Title title="Banner" />
         <Card.Cover
           source={{ uri: state.fields.banner.value || 'https://picsum.photos/700' }}
           resizeMode="cover"

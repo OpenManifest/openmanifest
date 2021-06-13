@@ -1,17 +1,14 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { StyleSheet, FlatList } from 'react-native';
-import { Card, Title, FAB, Paragraph, List, DataTable, ProgressBar } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { FAB, DataTable, ProgressBar } from 'react-native-paper';
 import { View } from '../../../components/Themed';
 import { Query } from "../../../graphql/schema";
 
-import { useNavigation, useRoute } from '@react-navigation/core';
-import { extraForm, useAppDispatch, useAppSelector } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import NoResults from '../../../components/NoResults';
 import TicketTypeExtraDialog from '../../../components/dialogs/TicketTypeExtra';
-import usePalette from '../../../hooks/usePalette';
-import global from '../../../redux/global';
 
 
 const QUERY_TICKET_TYPE = gql`
@@ -36,12 +33,12 @@ const QUERY_TICKET_TYPE = gql`
 
 export default function ExtrasScreen() {
   const state = useAppSelector(state => state.global);
+  const formState = useAppSelector(state => state.forms.extra);
   const { data, loading, refetch } = useQuery<Query>(QUERY_TICKET_TYPE, {
     variables: {
       dropzoneId: Number(state.currentDropzone?.id)
     }
   });
-  const [dialogOpen, setDialogOpen] = React.useState(false);
   const dispatch = useAppDispatch();
 
   return (
@@ -57,8 +54,7 @@ export default function ExtrasScreen() {
         { data?.dropzone?.extras?.map((extra) =>
           <DataTable.Row
             onPress={() => {
-              dispatch(extraForm.setOriginal(extra));
-              setDialogOpen(true);
+              dispatch(actions.forms.extra.setOpen(extra));
             }}
             pointerEvents="none"
           >
@@ -78,13 +74,13 @@ export default function ExtrasScreen() {
         style={styles.fab}
         small
         icon="plus"
-        onPress={() => setDialogOpen(true)}
+        onPress={() => dispatch(actions.forms.extra.setOpen(true))}
         label="New ticket addon"
       />
     </View>
     <TicketTypeExtraDialog
-      open={dialogOpen}
-      onClose={() => setDialogOpen(false)}
+      open={formState.open}
+      onClose={() => dispatch(actions.forms.extra.setOpen(false))}
     />
     </>
   );

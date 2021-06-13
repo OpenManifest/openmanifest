@@ -92,7 +92,7 @@ export default function UpdateDropzoneScreen() {
 
   React.useEffect(() => {
     if (data?.dropzone?.id) {
-      dispatch(actions.forms.dropzone.setOriginal(data.dropzone));
+      dispatch(actions.forms.dropzone.setOpen(data.dropzone));
     }
   }, [data?.dropzone?.id]);
 

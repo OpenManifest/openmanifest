@@ -7,6 +7,7 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import { Mutation } from "../../../graphql/schema";
 import { actions, useAppDispatch, useAppSelector } from "../../../redux";
 import ManifestForm from "../../forms/manifest/ManifestForm";
+import DialogOrSheet from "../../layout/DialogOrSheet";
 interface IManifestUserDialog {
   open?: boolean;
   onClose(): void;
@@ -218,34 +219,19 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
   }, [open]);
 
   return (
-    <Portal>
-      <BottomSheet
-        ref={sheetRef}
-        snapPoints={[600, 0]}
-        index={-1}
-        onCloseEnd={() => {
-          dispatch(actions.forms.manifest.reset());
-          props.onClose();
-        }}
-        renderHeader={() =>
-          <View style={styles.sheetHeader} />
-        }
-       >
-         <View style={styles.sheet} testID="manifest-form">
-            <SafeAreaView style={styles.contentContainer}>
-              <ManifestForm />
-              <Button
-                onPress={onManifest}
-                mode="contained"
-                style={styles.button}
-                loading={mutationData.loading}
-              >
-                Manifest
-              </Button>
-            </SafeAreaView>
-          </View>
-        </BottomSheet>
-    </Portal>
+    <DialogOrSheet
+      snapPoints={[0, 600]}
+      onClose={() => {
+        dispatch(actions.forms.manifest.reset());
+        props.onClose();
+      }}
+      buttonAction={onManifest}
+      buttonLabel="Manifest"
+      loading={mutationData.loading}
+      open={open}
+      >
+      <ManifestForm />
+    </DialogOrSheet>
   )
 }
 

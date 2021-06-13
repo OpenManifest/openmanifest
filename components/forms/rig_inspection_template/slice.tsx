@@ -22,14 +22,14 @@ export const initialState: IRigInspectionEditState = {
 
 
 export default createSlice({
-  name: 'rigInspectionTemplateForm',
+  name: 'forms/rigInspection',
   initialState,
   reducers: {
     setFields: (state: IRigInspectionEditState, action: PayloadAction<FieldItem[]>) => {
       state.fields = action.payload;
     },
 
-    setOriginal: (state: IRigInspectionEditState, action: PayloadAction<FormTemplate>) => {
+    setOpen: (state: IRigInspectionEditState, action: PayloadAction<FormTemplate>) => {
       state.original = action.payload;
 
       try {

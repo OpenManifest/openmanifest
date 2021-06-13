@@ -3,6 +3,7 @@ import { Plane } from "../../../graphql/schema";
 
 interface IPlaneEditState {
   original: Plane | null;
+  open: boolean;
   fields: {
     name: {
       value: string;
@@ -33,6 +34,7 @@ interface IPlaneEditState {
 
 export const initialState: IPlaneEditState = {
   original: null,
+  open: false,
   fields: {
     name: {
       value: "",
@@ -77,14 +79,21 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOriginal: (state: IPlaneEditState, action: PayloadAction<Plane>) => {
-      state.original = action.payload;
-      state.fields.hours.value = action.payload.hours!;
-      state.fields.minSlots.value = action.payload.minSlots!;
-      state.fields.maxSlots.value = action.payload.maxSlots!;
-      state.fields.name.value = action.payload.name!;
-      state.fields.registration.value = action.payload.registration!;
-      state.fields.nextMaintenanceHours.value = action.payload.nextMaintenanceHours!;
+    setOpen: (state: IPlaneEditState, action: PayloadAction<boolean | Plane>) => {
+      if (typeof action.payload === "boolean") {
+        state.open = action.payload;
+        state.original = null;
+        state.fields = initialState.fields;
+      } else {
+        state.original = action.payload;
+        state.open = true;
+        state.fields.hours.value = action.payload.hours!;
+        state.fields.minSlots.value = action.payload.minSlots!;
+        state.fields.maxSlots.value = action.payload.maxSlots!;
+        state.fields.name.value = action.payload.name!;
+        state.fields.registration.value = action.payload.registration!;
+        state.fields.nextMaintenanceHours.value = action.payload.nextMaintenanceHours!;
+      }
     },
     
     reset: (state: IPlaneEditState) => {

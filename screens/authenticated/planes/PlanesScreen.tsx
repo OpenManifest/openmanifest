@@ -58,11 +58,11 @@ mutation DeletePlane($id: Int!) {
 }
 `;
 export default function PlanesScreen() {
-  const state = useAppSelector(state => state.global);
-  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const global = useAppSelector(state => state.global);
+  const state = useAppSelector(state => state.forms.plane);
   const { data, loading, refetch } = useQuery<Query>(QUERY_PLANES, {
     variables: {
-      dropzoneId: Number(state.currentDropzone?.id)
+      dropzoneId: Number(global.currentDropzone?.id)
     }
   });
 
@@ -83,7 +83,7 @@ export default function PlanesScreen() {
   return (
     <>
     <ScrollableScreen refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}>
-      <ProgressBar visible={loading} color={state.theme.colors.accent} />
+      <ProgressBar visible={loading} color={global.theme.colors.accent} />
         
 
           {
@@ -125,8 +125,7 @@ export default function PlanesScreen() {
                     <DataTable.Row
                       pointerEvents="none"
                       onPress={() => {
-                        dispatch(actions.forms.plane.setOriginal(plane));
-                        setDialogOpen(true);
+                        dispatch(actions.forms.plane.setOpen(plane));
                       }}
                     >
                       <DataTable.Cell>{plane.name}</DataTable.Cell>
@@ -144,13 +143,13 @@ export default function PlanesScreen() {
         style={styles.fab}
         small
         icon="plus"
-        onPress={() => setDialogOpen(true)}
+        onPress={() => dispatch(actions.forms.plane.setOpen(true))}
         label="New plane"
       />
     </ScrollableScreen>
     <PlaneDialog
-      open={dialogOpen}
-      onClose={() => setDialogOpen(false)}
+      open={state.open}
+      onClose={() => dispatch(actions.forms.plane.setOpen(false))}
     />
     </>
   );

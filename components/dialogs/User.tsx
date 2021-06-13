@@ -162,7 +162,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
         }
       } catch (error) {
         dispatch(
-          actions.notifications.showSnackbarr({ message: error.message, variant: "error" })
+          actions.notifications.showSnackbar({ message: error.message, variant: "error" })
         );
       }
     }
@@ -174,7 +174,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
     <DialogOrSheet
       title="Update information"
       open={open}
-      snapPoints={[740, 0]}
+      snapPoints={[0, 740]}
       loading={mutation.loading}
       onClose={() => {
         props.onClose();

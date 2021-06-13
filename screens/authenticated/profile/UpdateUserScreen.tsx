@@ -72,7 +72,7 @@ export default function UpdateUserScreen() {
   const user = route.params!.user;
 
   React.useEffect(() => {
-    dispatch(actions.forms.user.setOriginal(user));
+    dispatch(actions.forms.user.setOpen(user));
   }, [user?.id]);
 
   const [mutationUpdateUser, data] = useMutation<Mutation>(MUTATION_CREATE_USER);

@@ -192,7 +192,7 @@ export default function TicketTypeExtraDialog(props: ITicketTypeExtraDialog) {
       loading={create.loading || update.loading}
       buttonAction={onSave}
       buttonLabel="Save"
-      snapPoints={["80%", "50%", 0]}
+      snapPoints={[0, "50%", "80%"]}
     >
       <ExtraForm />
     </DialogOrSheet>
