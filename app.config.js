@@ -1,13 +1,13 @@
 export default ({config}) => {
   return {
     ...config,
-    name: "Deezed",
+    name: "OpenManifest",
     version: '1.0.0',
-    slug: "Deezed",
+    slug: "openmanifest",
     // All values in extra will be passed to your app.
     extra: {
       url: process.env.EXPO_ENV === 'production'
-        ? "https://deezed.herokuapp.com/graphql"
+        ? "https://openmanifest.org/graphql"
         : "http://localhost:5000/graphql"
     },
   }

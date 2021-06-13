@@ -9,11 +9,13 @@ import AppBar from "./AppBar";
 import AuthenticatedRoutes from './Authenticated';
 import LimboRoutes from './LimboRoutes';
 import UnauthenticatedRoutes from './Unauthenticated';
+import DropzonesScreen from '../screens/authenticated/dropzones/DropzonesScreen';
 
 export type TRootNavigatorRouteParams = {
   Authenticated: undefined;
   Unauthenticated: undefined;
   Dropzones: undefined;
+  DropzonesScreen: undefined;
   NotFound: undefined;
 }
 // A root stack navigator is often used for displaying modals on top of all other content
@@ -43,6 +45,7 @@ export default function RootNavigator() {
             <Stack.Screen name="Unauthenticated" component={UnauthenticatedRoutes} />
         )
       }
+      <Stack.Screen name="DropzonesScreen" component={DropzonesScreen} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
   );

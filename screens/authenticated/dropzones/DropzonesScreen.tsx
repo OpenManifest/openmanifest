@@ -4,7 +4,7 @@ import * as React from 'react';
 import { StyleSheet, FlatList, Dimensions } from 'react-native';
 import { Card, Title, FAB, Paragraph } from 'react-native-paper';
 import { View } from '../../../components/Themed';
-import { actions, useAppDispatch } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import { Query } from "../../../graphql/schema";
 
 import { useNavigation } from '@react-navigation/core';
@@ -41,6 +41,7 @@ const QUERY_DROPZONES = gql`
 
 export default function DropzonesScreen() {
   const dispatch = useAppDispatch();
+  const globalState = useAppSelector(state => state.global);
   const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONES);
   const navigation = useNavigation();
  
@@ -64,7 +65,6 @@ export default function DropzonesScreen() {
           </View>
         }
         renderItem={({ item }) => {
-          console.log("Banner: ", item.node.banner);
           return (
             <Card
               style={{
@@ -73,9 +73,14 @@ export default function DropzonesScreen() {
               }}
               onPress={async ()=> {
                 if (item?.node) {
+                  const shouldPushRoute = !!globalState.currentDropzoneId; 
                   dispatch(
                     actions.global.setDropzone(item.node)
                   );
+
+                  if (shouldPushRoute) {
+                    navigation.replace("Authenticated", { screen: "HomeScreen"});
+                  }
                 }
               }}
             >

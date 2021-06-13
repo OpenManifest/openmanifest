@@ -1,7 +1,7 @@
 import * as Linking from 'expo-linking';
 
 export default {
-  prefixes: [Linking.makeUrl('/'), "dz://"],
+  prefixes: [Linking.makeUrl('/'), "dz://", "openmanifest://"],
   config: {
     screens: {
       Authenticated: {

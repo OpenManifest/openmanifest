@@ -21,6 +21,7 @@
     "ios": {
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
+      "icon": "./assets/images/ios-icon.png",
       "usesIcloudStorage": true
     },
     "android": {

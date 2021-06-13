@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 
 import ManifestTab from "./tabs/manifest";
+import NotificationTab from "./tabs/notifications";
 import ProfileTab from "./tabs/profile";
 import SettingsTab from "./tabs/settings";
 import UsersTab from "./tabs/users";
@@ -15,6 +16,7 @@ export type IAuthenticatedTabParams = {
   Profile: undefined;
   Packing: undefined;
   Users: undefined;
+  Notifications: undefined;
   Settings: undefined;
 }
 
@@ -51,6 +53,14 @@ export default function AuthenticatedTabBar() {
         }}
       />
       <BottomTab.Screen
+        name="Notifications"
+        component={NotificationTab}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => <MaterialCommunityIcons name="bell" color={color} size={size} />,
+          unmountOnBlur: true,
+        }}
+      />
+      <BottomTab.Screen
         name="Profile"
         component={ProfileTab}
         options={{
@@ -58,6 +68,7 @@ export default function AuthenticatedTabBar() {
           unmountOnBlur: true,
         }}
       />
+
      
       { canViewUsers && (
         <BottomTab.Screen

@@ -28,6 +28,17 @@ const QUERY_DROPZONE_USER = gql`
           }
         }
 
+        notifications {
+          edges {
+            node {
+              id
+              message
+              notificationType
+              createdAt
+            }
+          }
+        }
+
 
         transactions {
           edges {

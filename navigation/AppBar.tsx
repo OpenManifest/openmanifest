@@ -106,7 +106,7 @@ function AppBar(props: IAppBarProps) {
           title="Change dropzone"
           icon="radar"
           onPress={() => {
-            dispatch(actions.global.setDropzone(null));
+            navigation.replace("DropzonesScreen");
             setContextMenuOpen(false);
           }}
         />

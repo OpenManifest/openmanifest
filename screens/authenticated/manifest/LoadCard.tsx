@@ -507,8 +507,8 @@ export default function LoadCard(props: ILoadCard) {
     </Card.Content>
     {
       !!data?.load?.dispatchAt && data?.load?.dispatchAt > (new Date().getTime() / 1000) && (
-        <View style={{ flex: 1, backgroundColor: "#FF8800", padding: 8 }}>
-          <Paragraph>
+        <View style={{ flex: 1, backgroundColor: "black", padding: 8 }}>
+          <Paragraph style={{ color: "#FFFFFF" }}>
             {
               `Take-off in ${differenceInMinutes(new Date(), (data?.load?.dispatchAt as number) * 1000)} min`
             }
