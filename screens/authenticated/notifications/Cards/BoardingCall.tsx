@@ -50,9 +50,9 @@ export default function BoardingCallNotification(props: INotification) {
   return (
     <>
     <List.Item
-      title={`Load #${(notification.resource as Load).loadNumber} dispatch time changed`}
+      title={`Load #${(notification.resource as Load).loadNumber} boarding call`}
       description={
-        `Take-off in ${differenceInMinutes(new Date(), ((notification.resource as Load)?.dispatchAt as number) * 1000)} min`
+        notification.message
       }
       style={{ width: "100%"}}
       left={

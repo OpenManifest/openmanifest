@@ -4,13 +4,14 @@ import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar } from 'react-native-paper';
-import { Mutation, Query } from "../../../graphql/schema";
+import { Mutation, Permission, Query } from "../../../graphql/schema.d";
 
 import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { format } from 'date-fns';
 import RigDialog from '../../../components/dialogs/Rig';
 import { Switch } from 'react-native-gesture-handler';
+import useRestriction from '../../../hooks/useRestriction';
 
 
 const QUERY_DROPZONE_RIGS = gql`
@@ -94,6 +95,8 @@ export default function DropzoneRigsScreen() {
   const dispatch = useAppDispatch();
   const isFocused = useIsFocused();
   const [mutationUpdateRig, updateData] = useMutation<Mutation>(MUTATION_UPDATE_RIG);
+
+  const canCreateRig = useRestriction(Permission.CreateDropzoneRig);
 
   React.useEffect(() => {
     if (isFocused) {
@@ -180,6 +183,7 @@ export default function DropzoneRigsScreen() {
         />
         
         <FAB
+          visible={canCreateRig}
           style={styles.fab}
           small
           icon="plus"

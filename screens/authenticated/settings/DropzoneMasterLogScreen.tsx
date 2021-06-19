@@ -7,11 +7,12 @@ import { Card, DataTable, List, Title } from "react-native-paper";
 import format from "date-fns/format";
 import startOfDay from "date-fns/startOfDay";
 import ScrollableScreen from "../../../components/layout/ScrollableScreen";
-import { Query, Slot } from "../../../graphql/schema";
+import { Query, Slot } from "../../../graphql/schema.d";
 import { useAppSelector } from "../../../redux";
 import DatePicker from "../../../components/input/date_picker/DatePicker";
 import { View } from "react-native";
 import { useNavigation } from "@react-navigation/core";
+import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
 
 const QUERY_MASTER_LOG = gql`
 query MasterLog($dropzoneId: Int!, $timestamp: Int!) {
@@ -72,7 +73,7 @@ query MasterLog($dropzoneId: Int!, $timestamp: Int!) {
 }
 `;
 export default function DropzoneMasterLogScreen() {
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
   const [timestamp, setTimestamp] = React.useState(startOfDay(new Date()).getTime());
   const navigation = useNavigation();
 
@@ -90,7 +91,7 @@ export default function DropzoneMasterLogScreen() {
 
   const { data } = useQuery<Query>(QUERY_MASTER_LOG, {
     variables: {
-      dropzoneId: Number(globalState.currentDropzone?.id),
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
       timestamp: Math.floor(timestamp / 1000),
     },
   });

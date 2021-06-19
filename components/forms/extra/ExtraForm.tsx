@@ -6,6 +6,7 @@ import { TextInput, HelperText, Checkbox, List } from 'react-native-paper';
 import { xor } from "lodash";
 import { Query } from '../../../graphql/schema';
 import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 
 
 const QUERY_TICKET_TYPES = gql`
@@ -30,10 +31,10 @@ const QUERY_TICKET_TYPES = gql`
 export default function ExtraForm() {
   const state = useAppSelector(state => state.forms.extra);
   const dispatch = useAppDispatch();
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
   const { data } = useQuery<Query>(QUERY_TICKET_TYPES, {
     variables: {
-      dropzoneId: Number(globalState.currentDropzone?.id)
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
     }
   });
 

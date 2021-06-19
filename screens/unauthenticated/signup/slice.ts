@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { Federation, License } from "../../../graphql/schema";
+import { Federation, License } from "../../../graphql/schema.d";
 
 interface ISignUpScreenState {
   federation?: Federation | null,

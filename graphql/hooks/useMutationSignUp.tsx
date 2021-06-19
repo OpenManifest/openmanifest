@@ -10,6 +10,7 @@ export const MUTATION_USER_SIGNUP = gql`
     $passwordConfirmation: String!
     $name: String!
     $phone: String!
+    $pushToken: String
     $exitWeight: Float!
     $licenseId: Int
   ){
@@ -20,6 +21,7 @@ export const MUTATION_USER_SIGNUP = gql`
       exitWeight: $exitWeight,
       name: $name,
       phone: $phone,
+      pushToken: $pushToken,
       licenseId: $licenseId
     ) {
       authenticatable {

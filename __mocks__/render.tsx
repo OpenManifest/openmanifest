@@ -4,7 +4,6 @@ import { render as rtlRender, RenderOptions } from '@testing-library/react-nativ
 import { createStore } from 'redux';
 import { Provider as Redux } from 'react-redux';
 import { MockedProvider as Apollo, MockedResponse } from "@apollo/client/testing";
-import merge from "lodash/merge";
 
 // Import your own reducer
 import { rootReducer, RootState, initialState as initialDefaultState } from '../redux/store';

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { View } from "react-native";
 import { Checkbox, HelperText, List, TextInput } from "react-native-paper";
+import { Permission } from "../../../graphql/schema.d";
 import useRestriction from "../../../hooks/useRestriction";
 import DatePicker from '../../input/date_picker/DatePicker';
 import { FieldItem } from "./slice";
@@ -12,7 +13,7 @@ interface IFormItemItem {
 }
 
 export default function RigInspectionItem(props: IFormItemItem) {
-  const canInspect = useRestriction("actAsRigInspector");
+  const canInspect = useRestriction(Permission.ActAsRigInspector);
 
   if (props.config?.valueType && props.config?.valueType === "string") {
     return (

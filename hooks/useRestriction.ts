@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
+import { Permission } from "../graphql/schema";
 import { useAppSelector } from "../redux";
 
 export const QUERY_PERMISSIONS = gql`
@@ -22,7 +23,7 @@ query QueryPermissions($dropzoneId: Int!) {
     }
   }`;
 
-export default function useRestriction(permission: string): boolean {
+export default function useRestriction(permission: Permission): boolean {
   const { currentDropzone } = useAppSelector(state => state.global);
   const { data } = useQuery(QUERY_PERMISSIONS, {
     variables: {

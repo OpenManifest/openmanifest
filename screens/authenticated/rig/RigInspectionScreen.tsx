@@ -6,7 +6,8 @@ import * as React from 'react';
 import { Button, Card, Checkbox, Divider, List } from 'react-native-paper';
 import RigInspectionForm from "../../../components/forms/rig_inspection/RigInspectionForm";
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import { Mutation, Query, Rig } from '../../../graphql/schema';
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
+import { Mutation, Query, Rig, Permission } from '../../../graphql/schema.d';
 import useRestriction from '../../../hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 
@@ -88,14 +89,14 @@ const MUTATION_CREATE_RIG_INSPECTION = gql`
 
 export default function RigInspectionScreen() {
   const state = useAppSelector(state => state.forms.rigInspection);
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
   const dispatch = useAppDispatch();
   
   const route = useRoute<{ key: string, name: string, params: { rig: Rig, dropzoneUserId: number }}>();
   const { rig, dropzoneUserId } = route.params;
   const { data, loading, refetch } = useQuery<Query>(QUERY_RIG_INSPECTIONS, {
     variables: {
-      dropzoneId: Number(globalState.currentDropzone!.id),
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
       dropzoneUserId: dropzoneUserId,
     }
   });
@@ -106,7 +107,7 @@ export default function RigInspectionScreen() {
     refetch();
   }, [isFocused])
 
-  const canInspect = useRestriction("actAsRigInspector");
+  const canInspect = useRestriction(Permission.ActAsRigInspector);
   const [mutationCreateRigInspection, mutation] = useMutation<Mutation>(MUTATION_CREATE_RIG_INSPECTION);
   const navigation = useNavigation();
   React.useEffect(() => {
@@ -140,7 +141,7 @@ export default function RigInspectionScreen() {
     try {
       const result = await mutationCreateRigInspection({
         variables: {
-          dropzoneId: Number(globalState.currentDropzone!.id),
+          dropzoneId: Number(currentDropzone?.dropzone?.id),
           rigId: Number(rig.id),
           definition: JSON.stringify(state.fields),
           isOk: !!state.ok,
@@ -156,7 +157,7 @@ export default function RigInspectionScreen() {
     } catch(error) {
       dispatch(actions.notifications.showSnackbar({ message: error.message, variant: "error" }));
     }
-  }, [JSON.stringify(state.fields), state.ok, globalState?.currentDropzone?.id]);
+  }, [JSON.stringify(state.fields), state.ok, currentDropzone?.dropzone?.id]);
 
   return (
     <ScrollableScreen>

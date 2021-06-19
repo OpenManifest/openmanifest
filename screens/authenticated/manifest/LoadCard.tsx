@@ -12,7 +12,7 @@ import PilotChip from '../../../components/chips/PilotChip';
 import PlaneChip from '../../../components/chips/PlaneChip';
 
 import { View } from '../../../components/Themed';
-import { Query, Load, Mutation, User, Plane, Slot } from '../../../graphql/schema';
+import { Query, Load, Mutation, User, Permission, Plane, Slot, DropzoneUser } from '../../../graphql/schema.d';
 import useRestriction from '../../../hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import SwipeActions from '../../../components/layout/SwipeActions';
@@ -70,9 +70,13 @@ export const QUERY_LOAD = gql`
         exitWeight
         passengerName
         passengerExitWeight
-        user {
+        
+        dropzoneUser {
           id
-          name
+          user {
+            id
+            name
+          }
         }
         ticketType {
           id
@@ -244,7 +248,8 @@ export default function LoadCard(props: ILoadCard) {
     },
     // pollInterval: 30000,
   });
-  const { currentUser } = useCurrentDropzone();
+  const currentDropzone = useCurrentDropzone();
+  const { currentUser } = currentDropzone;
 
   const [mutationUpdateLoad, mutation] = useMutation<Mutation>(MUTATION_UPDATE_LOAD);
   const [mutationDeleteSlot, mutationDelete] = useMutation<Mutation>(MUTATION_DELETE_SLOT);
@@ -270,7 +275,7 @@ export default function LoadCard(props: ILoadCard) {
     }
   }, [mutationUpdateLoad, JSON.stringify(load)]);
 
-  const updatePilot = React.useCallback(async (pilot: User) => {
+  const updatePilot = React.useCallback(async (pilot: DropzoneUser) => {
     try {
       await mutationUpdateLoad({ variables: { id: Number(load.id), pilotId: Number(pilot.id) }});
     } catch (e) {
@@ -278,7 +283,7 @@ export default function LoadCard(props: ILoadCard) {
     }
   }, [mutationUpdateLoad, JSON.stringify(load)]);
 
-  const updateGCA = React.useCallback(async (gca: User) => {
+  const updateGCA = React.useCallback(async (gca: DropzoneUser) => {
     try {
       await mutationUpdateLoad({ variables: { id: Number(load.id), gcaId: Number(gca.id) }});
     } catch (e) {
@@ -294,7 +299,7 @@ export default function LoadCard(props: ILoadCard) {
     }
   }, [mutationUpdateLoad, JSON.stringify(load)]);
 
-  const updateLoadMaster = React.useCallback(async (lm: User) => {
+  const updateLoadMaster = React.useCallback(async (lm: DropzoneUser) => {
     try {
       await mutationUpdateLoad({ variables: { id: Number(load.id), loadMasterId: Number(lm.id) }});
     } catch (e) {
@@ -331,17 +336,17 @@ export default function LoadCard(props: ILoadCard) {
   }, [mutationUpdateLoad, JSON.stringify(load)]);
 
   
-  const canUpdateLoad = useRestriction("updateLoad");
+  const canUpdateLoad = useRestriction(Permission.UpdateLoad);
   
-  const canEditSelf = useRestriction("updateSlot");
-  const canEditOthers = useRestriction("updateUserSlot");
+  const canEditSelf = useRestriction(Permission.UpdateSlot);
+  const canEditOthers = useRestriction(Permission.UpdateUserSlot);
   
-  const canRemoveSelf = useRestriction("deleteSlot");
-  const canRemoveOthers = useRestriction("deleteUserSlot");
+  const canRemoveSelf = useRestriction(Permission.DeleteSlot);
+  const canRemoveOthers = useRestriction(Permission.DeleteUserSlot);
   
-  const canManifestSelf = useRestriction("createSlot");
-  const canManifestGroup = useRestriction("createUserSlot");
-  const canManifestGroupWithSelfOnly = useRestriction("createUserSlotWithSelf");
+  const canManifestSelf = useRestriction(Permission.CreateSlot);
+  const canManifestGroup = useRestriction(Permission.CreateUserSlot);
+  const canManifestGroupWithSelfOnly = useRestriction(Permission.CreateUserSlotWithSelf);
 
   const showManifestButton = canManifestSelf && data?.load?.isOpen && !data?.load?.isFull;
 
@@ -412,18 +417,18 @@ export default function LoadCard(props: ILoadCard) {
             }}
           />
           <GCAChip
-            dropzoneId={Number(state.currentDropzone?.id)}
-            value={data?.load?.gca?.user}
+            dropzoneId={Number(currentDropzone?.dropzone?.id)}
+            value={data?.load?.gca}
             onSelect={updateGCA}
           />
           <PilotChip
-            dropzoneId={Number(state.currentDropzone?.id)}
-            value={data?.load?.pilot?.user}
+            dropzoneId={Number(currentDropzone?.dropzone?.id)}
+            value={data?.load?.pilot}
             onSelect={updatePilot}
           />
           <LoadMasterChip
-            dropzoneId={Number(state.currentDropzone?.id)}
-            value={data?.load?.loadMaster?.user}
+            dropzoneId={Number(currentDropzone?.dropzone?.id)}
+            value={data?.load?.loadMaster}
             slots={data?.load.slots || []}
             onSelect={updateLoadMaster}
           />
@@ -476,7 +481,7 @@ export default function LoadCard(props: ILoadCard) {
                   >
                     <DataTable.Cell>
                       <Paragraph style={styles.slotText}>
-                        {slot?.user?.name}
+                        {slot?.dropzoneUser?.user?.name}
                       </Paragraph>
                     </DataTable.Cell>
                     <DataTable.Cell numeric>

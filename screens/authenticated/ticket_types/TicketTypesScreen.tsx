@@ -4,12 +4,13 @@ import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar, Switch } from 'react-native-paper';
-import { Mutation, Query } from "../../../graphql/schema";
+import { Mutation, Permission, Query } from "../../../graphql/schema.d";
 
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import TicketTypesDialog from '../../../components/dialogs/TicketType';
 import SwipeActions from '../../../components/layout/SwipeActions';
+import useRestriction from '../../../hooks/useRestriction';
 
 const QUERY_TICKET_TYPE = gql`
   query QueryTicketType(
@@ -58,6 +59,11 @@ const MUTATION_UPDATE_TICKET_TYPE = gql`
           cost
         }
       }
+      fieldErrors {
+        field
+        message
+      }
+      errors
     }
   }
 `;
@@ -118,6 +124,8 @@ export default function TicketTypesScreen() {
       refetch();
     }
   }, [route.name])
+
+  const canCreateTicketTypes = useRestriction(Permission.CreateTicketType);
   return (
       <ScrollableScreen style={styles.container} contentContainerStyle={[styles.content, {  backgroundColor: "white" }]} refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}>
       <ProgressBar visible={loading} color={state.theme.colors.accent} />
@@ -180,6 +188,7 @@ export default function TicketTypesScreen() {
         <FAB
           style={styles.fab}
           small
+          visible={canCreateTicketTypes}
           icon="plus"
           onPress={() => dispatch(actions.forms.ticketType.setOpen(true))}
           label="New ticket type"

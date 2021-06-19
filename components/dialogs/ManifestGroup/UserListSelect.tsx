@@ -6,7 +6,7 @@ import { Avatar, Button, Checkbox, Divider, List, Searchbar } from 'react-native
 import { ScrollView } from "react-native-gesture-handler";
 
 import NoResults from '../../../components/NoResults';
-import { Query } from '../../../graphql/schema';
+import { Permission, Query } from '../../../graphql/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import useRestriction from '../../../hooks/useRestriction';
 import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
@@ -50,17 +50,18 @@ export default function UsersScreen(props: IUserListSelect) {
   const {global, screens, forms } = useAppSelector(state => state);
   const dispatch = useAppDispatch();
   const [searchText, setSearchText] = React.useState("");
+  const currentDropzone = useCurrentDropzone();
 
   const { data, loading } = useQuery<Query>(QUERY_DROPZONE_USERS, {
     variables: {
-      dropzoneId: Number(global.currentDropzone?.id),
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
       search: searchText,
     }
   });
 
   const { currentUser } = useCurrentDropzone();
-  const canManifestGroup = useRestriction("createUserSlot");
-  const canManifestGroupWithSelfOnly = useRestriction("createUserSlotWithSelf");
+  const canManifestGroup = useRestriction(Permission.CreateUserSlot);
+  const canManifestGroupWithSelfOnly = useRestriction(Permission.CreateUserSlotWithSelf);
 
   return (
     <>

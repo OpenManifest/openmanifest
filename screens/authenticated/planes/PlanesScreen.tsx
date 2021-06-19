@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar } from 'react-native-paper';
-import { Mutation, Query } from "../../../graphql/schema";
+import { Mutation, Permission, Query } from "../../../graphql/schema.d";
 
 import { useIsFocused } from '@react-navigation/core';
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
@@ -78,7 +78,8 @@ export default function PlanesScreen() {
   }, [isFocused]);
  
 
-  const canDeletePlane = useRestriction("deletePlane");
+  const canDeletePlane = useRestriction(Permission.DeletePlane);
+  const canCreatePlane = useRestriction(Permission.CreatePlane);
 
   return (
     <>
@@ -141,6 +142,7 @@ export default function PlanesScreen() {
           
       <FAB
         style={styles.fab}
+        visible={canCreatePlane}
         small
         icon="plus"
         onPress={() => dispatch(actions.forms.plane.setOpen(true))}

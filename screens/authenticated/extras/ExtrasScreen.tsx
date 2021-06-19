@@ -4,11 +4,13 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB, DataTable, ProgressBar } from 'react-native-paper';
 import { View } from '../../../components/Themed';
-import { Query } from "../../../graphql/schema";
+import { Permission, Query } from "../../../graphql/schema.d";
 
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import NoResults from '../../../components/NoResults';
 import TicketTypeExtraDialog from '../../../components/dialogs/TicketTypeExtra';
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
+import useRestriction from '../../../hooks/useRestriction';
 
 
 const QUERY_TICKET_TYPE = gql`
@@ -32,18 +34,20 @@ const QUERY_TICKET_TYPE = gql`
 `;
 
 export default function ExtrasScreen() {
-  const state = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
+  const globalState = useAppSelector(state => state.global);
   const formState = useAppSelector(state => state.forms.extra);
   const { data, loading, refetch } = useQuery<Query>(QUERY_TICKET_TYPE, {
     variables: {
-      dropzoneId: Number(state.currentDropzone?.id)
+      dropzoneId: Number(currentDropzone?.dropzone?.id)
     }
   });
   const dispatch = useAppDispatch();
+  const canCreateExtras = useRestriction(Permission.CreateExtra);
 
   return (
     <>
-    <ProgressBar visible={loading} indeterminate color={state.theme.colors.accent} />
+    <ProgressBar visible={loading} indeterminate color={globalState.theme.colors.accent} />
     <View style={styles.container}>
       <DataTable>
         <DataTable.Header>
@@ -59,7 +63,7 @@ export default function ExtrasScreen() {
             pointerEvents="none"
           >
             <DataTable.Cell>{extra.name}</DataTable.Cell>
-            <DataTable.Cell numeric>{extra.cost}</DataTable.Cell>
+            <DataTable.Cell numeric>${extra.cost}</DataTable.Cell>
           </DataTable.Row>
         )}
       </DataTable>
@@ -72,6 +76,7 @@ export default function ExtrasScreen() {
       
       <FAB
         style={styles.fab}
+        visible={canCreateExtras}
         small
         icon="plus"
         onPress={() => dispatch(actions.forms.extra.setOpen(true))}

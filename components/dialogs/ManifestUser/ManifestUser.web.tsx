@@ -2,7 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import * as React from "react";
 import { ScrollView } from "react-native";
 import { Button, Dialog, Portal, ProgressBar } from "react-native-paper";
-import { Load, Mutation, User } from "../../../graphql/schema";
+import { Load, Mutation, User } from "../../../graphql/schema.d";
 import usePalette from "../../../hooks/usePalette";
 import { slotForm, snackbarActions, useAppDispatch, useAppSelector } from "../../../redux";
 import SlotForm from "../../forms/slot/SlotForm";

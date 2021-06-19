@@ -2,7 +2,8 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { List, Menu } from "react-native-paper";
-import { Query, UserRole } from "../../../graphql/schema";
+import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
+import { Query, UserRole } from "../../../graphql/schema.d";
 import { useAppSelector } from "../../../redux";
 
 
@@ -27,11 +28,11 @@ const QUERY_ROLES = gql`
 
 export default function RoleSelect(props: IRoleSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
 
   const { data, loading, refetch } = useQuery<Query>(QUERY_ROLES, {
     variables: {
-      dropzoneId: Number(globalState.currentDropzone?.id),
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
     }
   });
   return (

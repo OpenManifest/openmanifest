@@ -6,7 +6,7 @@ import { StyleSheet } from 'react-native';
 import { List, ProgressBar } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 
-import { Query } from "../../../graphql/schema";
+import { Query } from "../../../graphql/schema.d";
 import { useAppSelector } from '../../../redux';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import PermissionListItem from '../../../components/permissions/PermissionListItem';

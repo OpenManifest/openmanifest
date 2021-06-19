@@ -16,6 +16,8 @@ const QUERY_DROPZONE_USER = gql`
         id
         credits
         expiresAt
+        permissions
+
         role {
           id
           name
@@ -98,6 +100,8 @@ export default function useDropzoneUser(id?: number) {
 
   return {
     ...dropzoneUser,
-    dropzoneUser: dropzoneUser?.data?.dropzone?.dropzoneUser,
+    dropzoneUser: !id || id === Number(currentDropzone?.data?.dropzone?.currentUser?.id)
+      ? currentDropzone?.data?.dropzone?.currentUser
+      : dropzoneUser?.data?.dropzone?.dropzoneUser,
   };
 }

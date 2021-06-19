@@ -4,6 +4,7 @@ import { actions, useAppSelector, useAppDispatch } from '../../redux';
 import { Mutation } from '../../graphql/schema';
 import ExtraForm from '../../components/forms/extra/ExtraForm';
 import DialogOrSheet from '../layout/DialogOrSheet';
+import useCurrentDropzone from '../../graphql/hooks/useCurrentDropzone';
 
 
 const MUTATION_UPDATE_EXTRA = gql`
@@ -101,7 +102,7 @@ interface ITicketTypeExtraDialog {
 }
 export default function TicketTypeExtraDialog(props: ITicketTypeExtraDialog) {
   const { open, onClose } = props;
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
   const state = useAppSelector(state => state.forms.extra);
   const dispatch = useAppDispatch();
 
@@ -142,7 +143,7 @@ export default function TicketTypeExtraDialog(props: ITicketTypeExtraDialog) {
         const result = await mutation({
           variables: {
             ...state.original?.id ? { id: Number(state.original.id) } : {},
-            dropzoneId: Number(globalState.currentDropzone?.id),
+            dropzoneId: Number(currentDropzone?.dropzone?.id),
             name: name.value,
             cost: cost.value,
             ticketTypeIds: ticketTypeIds.value,

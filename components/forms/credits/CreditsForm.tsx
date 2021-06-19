@@ -3,12 +3,10 @@ import { StyleSheet, Text, View } from 'react-native';
 import { TextInput, HelperText, Divider, Dialog, DataTable } from 'react-native-paper';
 import { Tabs, TabScreen } from "react-native-paper-tabs";
 import { actions, useAppSelector, useAppDispatch } from '../../../redux';
-import useRestriction from '../../../hooks/useRestriction';
 
 export default function CreditsForm() {
   const state = useAppSelector(state => state.forms.credits);
   const dispatch = useAppDispatch();
-  const canUpdateRole = useRestriction("updatePermission");
 
   const currentCredits = (state.original?.credits || 0)
   const amount = (state.fields.amount.value || 0);

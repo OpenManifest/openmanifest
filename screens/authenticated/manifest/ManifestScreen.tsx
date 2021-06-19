@@ -8,7 +8,7 @@ import ManifestGroupSheet from '../../../components/dialogs/ManifestGroup/Manife
 
 import NoResults from '../../../components/NoResults';
 import { View } from '../../../components/Themed';
-import { Load } from '../../../graphql/schema';
+import { Load, Permission } from '../../../graphql/schema.d';
 import useRestriction from '../../../hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import GetStarted from './GetStarted';
@@ -50,7 +50,7 @@ export default function ManifestScreen() {
     dropzone?.secondaryColor
   ])
 
-  const canCreateLoad = useRestriction("createLoad");
+  const canCreateLoad = useRestriction(Permission.CreateLoad);
 
   const onManifest = React.useCallback((load: Load) => {
     
@@ -110,7 +110,7 @@ export default function ManifestScreen() {
 
     dispatch(actions.forms.manifest.setOpen(true));
     dispatch(
-      actions.forms.manifest.setField(["user", currentUser.user])
+      actions.forms.manifest.setField(["dropzoneUser", currentUser])
     );
     dispatch(
       actions.forms.manifest.setField(["load", load])
@@ -173,9 +173,8 @@ export default function ManifestScreen() {
                               }}
                               onManifestGroup={() => {
                                 dispatch(actions.forms.manifestGroup.reset());
-                                dispatch(actions.forms.manifestGroup.setField(["load", 
-                                edge.node!]));
                                 dispatch(actions.forms.manifestGroup.setOpen(true));
+                                dispatch(actions.forms.manifestGroup.setField(["load", edge.node!]));
                               }}
                             />
                         )}

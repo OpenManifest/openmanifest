@@ -14,6 +14,7 @@ import ExtraForm from '../../../components/forms/extra/ExtraForm';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 
 
 const MUTATION_UPDATE_EXTRA = gql`
@@ -50,7 +51,7 @@ const MUTATION_UPDATE_EXTRA = gql`
 `;
 
 export default function UpdateExtraScreen() {
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
   const state = useAppSelector(state => state.forms.extra);
   const dispatch = useAppDispatch();
 
@@ -94,7 +95,7 @@ export default function UpdateExtraScreen() {
         const result = await mutationUpdateExtra({
           variables: {
             id: Number(state.original!.id!),
-            dropzoneId: Number(globalState.currentDropzone?.id),
+            dropzoneId: Number(currentDropzone?.dropzone?.id),
             name: name.value,
             cost: cost.value,
             ticketTypeIds: ticketTypeIds.value,

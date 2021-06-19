@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Slot } from "../../../graphql/schema";
+import { Slot } from "../../../graphql/schema.d";
 
 
 type Fields = Pick<
@@ -8,7 +8,7 @@ type Fields = Pick<
   | "load"
   | "ticketType"
   | "rig"
-  | "user"
+  | "dropzoneUser"
   | "exitWeight"
   | "extras"
   | "passengerExitWeight"
@@ -50,7 +50,7 @@ export const initialState: ISlotEditState = {
       value: null,
       error: null,
     },
-    user: {
+    dropzoneUser: {
       value: null,
       error: null,
     },

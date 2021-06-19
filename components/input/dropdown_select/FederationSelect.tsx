@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { List, Menu } from "react-native-paper";
-import { Federation, Query } from "../../../graphql/schema";
+import { Federation, Query } from "../../../graphql/schema.d";
 
 
 interface IFederationSelect {

@@ -2,7 +2,8 @@ import { useLazyQuery, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { List, Menu } from "react-native-paper";
-import { Rig, Query } from "../../../graphql/schema";
+import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
+import { Rig, Query } from "../../../graphql/schema.d";
 import { useAppSelector } from "../../../redux";
 
 interface IRigSelect {
@@ -42,7 +43,7 @@ const QUERY_RIGS = gql`
 
 export default function RigSelect(props: IRigSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
 
   const [fetchRigs, { data, }] = useLazyQuery<Query>(QUERY_RIGS);
 
@@ -50,7 +51,7 @@ export default function RigSelect(props: IRigSelect) {
     if (props.userId && props.dropzoneId) {
       fetchRigs({
         variables: {
-          dropzoneId: Number(globalState.currentDropzone?.id),
+          dropzoneId: Number(currentDropzone?.dropzone?.id),
           userId: Number(props.userId)
         }
       });

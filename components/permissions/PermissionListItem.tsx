@@ -2,9 +2,9 @@ import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { List, Switch } from "react-native-paper";
-import { Mutation, UserRole } from "../../graphql/schema";
+import { Mutation, Permission, UserRole } from "../../graphql/schema.d";
 import useRestriction from "../../hooks/useRestriction";
-import { snackbarActions, useAppDispatch } from "../../redux";
+import { actions, useAppDispatch } from "../../redux";
 
 interface IPermissionListItem {
   title: string;
@@ -36,7 +36,7 @@ const MUTATION_UPDATE_ROLE = gql`
 
 export default function PermissionListItem(props: IPermissionListItem) {
   const { title, description, role, permissionName } = props;
-  const canChangePermissions = useRestriction("updatePermission");
+  const canChangePermissions = useRestriction(Permission.GrantPermission);
   const [mutationUpdatePermission, mutation] = useMutation<Mutation>(MUTATION_UPDATE_ROLE);
   const dispatch = useAppDispatch();
 
@@ -68,7 +68,7 @@ export default function PermissionListItem(props: IPermissionListItem) {
 
             if (result?.data?.updateRole?.errors?.length) {
               result?.data?.updateRole?.errors?.map((message) =>
-                dispatch(snackbarActions.showSnackbar({ message, variant: "error" }))
+                dispatch(actions.notifications.showSnackbar({ message, variant: "error" }))
               );
               return;
             }

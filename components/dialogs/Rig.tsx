@@ -1,7 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import * as React from "react";
 import BottomSheetBehavior from "@gorhom/bottom-sheet";
-import { Mutation } from "../../graphql/schema";
+import { Mutation } from "../../graphql/schema.d";
 import { actions, useAppDispatch, useAppSelector } from "../../redux";
 import RigForm from "../forms/rig/RigForm";
 import DialogOrSheet from "../layout/DialogOrSheet";

@@ -12,6 +12,7 @@ import PlaneForm from '../../../components/forms/plane/PlaneForm';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 
 
 const MUTATION_CREATE_PLANE = gql`
@@ -64,7 +65,7 @@ const MUTATION_CREATE_PLANE = gql`
 
 export default function CreatePlaneScreen() {
   const state  = useAppSelector(state => state.forms.plane);
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
   const dispatch = useAppDispatch();
 
   const navigation = useNavigation();
@@ -112,7 +113,7 @@ export default function CreatePlaneScreen() {
       try {
         const result = await mutationCreatePlane({
           variables: {
-            dropzoneId: Number(globalState.currentDropzone?.id),
+            dropzoneId: Number(currentDropzone?.dropzone?.id),
             name: name.value,
             registration: registration.value,
             minSlots: minSlots.value,

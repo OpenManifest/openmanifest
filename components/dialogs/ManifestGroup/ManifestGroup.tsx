@@ -5,7 +5,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { Button, Portal } from "react-native-paper";
 import { Tabs, TabScreen, useTabNavigation } from 'react-native-paper-tabs';
 import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
-import { Mutation } from "../../../graphql/schema";
+import { Mutation } from "../../../graphql/schema.d";
 import { actions, useAppDispatch, useAppSelector } from "../../../redux";
 import ManifestGroupForm from "../../forms/manifest_group/ManifestGroupForm";
 import UserListSelect from "./UserListSelect";

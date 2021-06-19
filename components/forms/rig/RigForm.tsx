@@ -7,6 +7,7 @@ import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 import DatePicker from '../../input/date_picker/DatePicker';
 import ChipSelect from '../../input/chip_select/ChipSelect';
 import useRestriction from '../../../hooks/useRestriction';
+import { Permission } from '../../../graphql/schema.d';
 
 
 interface IRigForm {
@@ -16,7 +17,7 @@ export default function RigForm(props: IRigForm) {
   const state = useAppSelector(state => state.forms.rig);
   const dispatch = useAppDispatch();
 
-  const canCreateRigs = useRestriction("createRig");
+  const canCreateRigs = useRestriction(Permission.CreateRig);
 
   return ( 
     <View>

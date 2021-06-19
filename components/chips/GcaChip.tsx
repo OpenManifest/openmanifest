@@ -2,14 +2,14 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { Chip, Menu } from "react-native-paper";
-import { Query, User } from "../../graphql/schema";
+import useCurrentDropzone from "../../graphql/hooks/useCurrentDropzone";
+import { Query, DropzoneUser, Permission } from "../../graphql/schema.d";
 import useRestriction from "../../hooks/useRestriction";
-import { useAppSelector } from "../../redux";
 
 interface IGCAChipSelect {
   dropzoneId: number;
-  value?: User | null;
-  onSelect(user: User): void;
+  value?: DropzoneUser | null;
+  onSelect(user: DropzoneUser): void;
 }
 
 
@@ -44,20 +44,20 @@ const QUERY_DROPZONE_USERS = gql`
 
 export default function GCAChip(props: IGCAChipSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
 
   const { data } = useQuery<Query>(QUERY_DROPZONE_USERS, {
     variables: {
-      dropzoneId: Number(globalState.currentDropzone?.id),
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
       permissions: ["actAsGCA"]
     }
   });
-  const allowed = useRestriction("updateLoad");
+  const allowed = useRestriction(Permission.UpdateLoad);
 
   return (
     !allowed ?
     <Chip mode="outlined" icon="radio-handheld">
-      {props.value?.name || "No gca"}
+      {props.value?.user?.name || "No gca"}
     </Chip> : (
     <Menu
       onDismiss={() => setMenuOpen(false)}
@@ -69,7 +69,7 @@ export default function GCAChip(props: IGCAChipSelect) {
           style={{ marginHorizontal: 4 }}
           onPress={() => setMenuOpen(true)}
         >
-          {props.value?.id ? props.value?.name : "No gca"}
+          {props.value?.id ? props.value?.user?.name : "No gca"}
         </Chip>
       }>
       {
@@ -78,7 +78,7 @@ export default function GCAChip(props: IGCAChipSelect) {
             key={`gca-chip-${edge?.node?.id}`}
             onPress={() => {
               setMenuOpen(false);
-              props.onSelect(edge?.node?.user as User);
+              props.onSelect(edge?.node);
             }}
             title={
               edge?.node?.user?.name

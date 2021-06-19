@@ -7,11 +7,12 @@ import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 import DatePicker from '../../input/date_picker/DatePicker';
 import RoleSelect from '../../input/dropdown_select/RoleSelect';
 import useRestriction from '../../../hooks/useRestriction';
+import { Permission } from '../../../graphql/schema.d';
 
 export default function DropzoneUserForm() {
   const state = useAppSelector(state => state.forms.dropzoneUser);
   const dispatch = useAppDispatch();
-  const canUpdateRole = useRestriction("updatePermission");
+  const canUpdateRole = useRestriction(Permission.GrantPermission);
 
   return ( 
     <>

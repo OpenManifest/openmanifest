@@ -4,6 +4,8 @@ import { List } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import { useAppSelector } from '../../../redux';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
+import useRestriction from '../../../hooks/useRestriction';
+import { Permission } from '../../../graphql/schema.d';
 
 
 
@@ -12,15 +14,20 @@ export default function SettingsScreen() {
   const navigation = useNavigation();
   const state = useAppSelector(state => state.global);
 
+  const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
+  const canUpdateRigInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
+
   return (
     <ScrollableScreen>
       <List.Section title="Dropzone" style={{ width: "100%" }}>
-        <List.Item
-          title="Configuration"
-          onPress={() => navigation.navigate("UpdateDropzoneScreen", { dropzone: state.currentDropzone })}
-          left={() => <List.Icon color="#000" icon="information-outline" />}
-          description="Set up name, branding and other settings"
-        />
+        {!canUpdateDropzone ? null : (
+          <List.Item
+            title="Configuration"
+            onPress={() => navigation.navigate("UpdateDropzoneScreen", { dropzone: state.currentDropzone })}
+            left={() => <List.Icon color="#000" icon="information-outline" />}
+            description="Set up name, branding and other settings"
+          />
+        )}
         <List.Item
           title="Permissions"
           left={() => <List.Icon color="#000" icon="lock" />}
@@ -38,6 +45,7 @@ export default function SettingsScreen() {
           onPress={() => navigation.navigate("DropzoneRigsScreen")}
         />
         <List.Item
+          disabled={!canUpdateRigInspectionTemplate}
           title="Rig Inspection Template"
           left={() => <List.Icon color="#000" icon="check" />}
           onPress={() => navigation.navigate("RigInspectionTemplateScreen")}

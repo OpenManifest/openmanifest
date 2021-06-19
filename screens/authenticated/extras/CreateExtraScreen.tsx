@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { gql, useMutation } from "@apollo/client";
-import { useAppSelector, useAppDispatch, dropzoneForm } from '../../../redux';
+import { useAppSelector, useAppDispatch } from '../../../redux';
 
 import { View } from '../../../components/Themed';
 import { actions as snackbar } from "../../../components/notifications";
@@ -14,6 +14,7 @@ import ExtraForm from '../../../components/forms/extra/ExtraForm';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;
@@ -51,8 +52,9 @@ const MUTATION_CREATE_EXTRA = gql`
 `;
 
 export default function CreateExtraScreen() {
-  const { extraForm: state, global: globalState } = useAppSelector(state => state);
+  const state = useAppSelector(state => state.forms.extra);
   const dispatch = useAppDispatch();
+  const currentDropzone = useCurrentDropzone();
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -93,7 +95,7 @@ export default function CreateExtraScreen() {
       try {
         const result = await mutationCreateExtra({
           variables: {
-            dropzoneId: Number(globalState.currentDropzone?.id),
+            dropzoneId: Number(currentDropzone?.dropzone?.id),
             name: name.value,
             cost: cost.value,
             ticketTypeIds: ticketTypeIds.value,

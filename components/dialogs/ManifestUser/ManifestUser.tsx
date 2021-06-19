@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { Button, Portal } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { Mutation } from "../../../graphql/schema";
+import { Mutation } from "../../../graphql/schema.d";
 import { actions, useAppDispatch, useAppSelector } from "../../../redux";
 import ManifestForm from "../../forms/manifest/ManifestForm";
 import DialogOrSheet from "../../layout/DialogOrSheet";
@@ -21,7 +21,7 @@ const MUTATION_CREATE_SLOT = gql`
     $loadId: Int
     $rigId: Int
     $ticketTypeId: Int
-    $userId: Int
+    $dropzoneUserId: Int
     $exitWeight: Float
     $passengerName: String
     $passengerExitWeight: Float
@@ -34,7 +34,7 @@ const MUTATION_CREATE_SLOT = gql`
           loadId: $loadId
           rigId: $rigId
           ticketTypeId: $ticketTypeId
-          userId: $userId
+          dropzoneUserId: $dropzoneUserId
           exitWeight: $exitWeight
           passengerExitWeight: $passengerExitWeight
           passengerName: $passengerName
@@ -159,7 +159,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
           loadId: Number(state.fields.load.value?.id),
           rigId: !state.fields.rig.value?.id ? null : Number(state.fields.rig.value?.id),
           ticketTypeId: Number(state.fields.ticketType?.value?.id),
-          userId: Number(state.fields.user?.value?.id),
+          dropzoneUserId: Number(state.fields.dropzoneUser?.value?.id),
           exitWeight: state.fields.exitWeight.value,
           ...!state.fields.ticketType.value?.isTandem
             ? {}
@@ -170,6 +170,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         }
       });
 
+      console.log(result?.data?.createSlot); 
       result.data?.createSlot?.fieldErrors?.map(({ field, message }) => {
         switch (field) {
           case "jump_type":
@@ -184,8 +185,8 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
             return dispatch(actions.forms.manifest.setFieldError(["ticketType", message]));
           case "rig":
             return dispatch(actions.forms.manifest.setFieldError(["rig", message]));
-          case "user":
-            return dispatch(actions.forms.manifest.setFieldError(["user", message]));
+          case "dropzone_user":
+            return dispatch(actions.forms.manifest.setFieldError(["dropzoneUser", message]));
           case "exit_weight":
             return dispatch(actions.forms.manifest.setFieldError(["exitWeight", message]));
         }

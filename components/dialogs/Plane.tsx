@@ -5,6 +5,7 @@ import { actions, useAppSelector, useAppDispatch,  } from '../../redux';
 import { Mutation } from '../../graphql/schema';
 import PlaneForm from '../forms/plane/PlaneForm';
 import DialogOrSheet from "../layout/DialogOrSheet";
+import useCurrentDropzone from '../../graphql/hooks/useCurrentDropzone';
 
 
 const MUTATION_UPDATE_PLANE = gql`
@@ -51,6 +52,11 @@ const MUTATION_UPDATE_PLANE = gql`
           }
         }
       }
+      fieldErrors {
+        field
+        message
+      }
+      errors
     }
   }
 `;
@@ -87,6 +93,11 @@ const MUTATION_CREATE_PLANE = gql`
           }
         }
       }
+      fieldErrors {
+        field
+        message
+      }
+      errors
     }
   }
   fragment plane on Plane {
@@ -121,7 +132,7 @@ interface IPlaneDialogProps {
 
 export default function CreatePlaneScreen(props: IPlaneDialogProps) {
   const { open, onClose } = props;
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
   const state = useAppSelector(state => state.forms.plane);
   const dispatch = useAppDispatch();
 
@@ -167,7 +178,7 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
       try {
         const result = await mutation({
           variables: {
-            ...state.original?.id ? { id: Number(state.original.id) } : { dropzoneId: Number(globalState.currentDropzone?.id), },
+            ...state.original?.id ? { id: Number(state.original.id) } : { dropzoneId: Number(currentDropzone?.dropzone?.id), },
             name: name.value,
             registration: registration.value,
             minSlots: minSlots.value,
@@ -188,7 +199,7 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
                 return dispatch(actions.forms.plane.setFieldError(["maxSlots", message]));
               case "name":
                 return dispatch(actions.forms.plane.setFieldError(["name", message]));
-              case "minSlots":
+              case "min_slots":
                 return dispatch(actions.forms.plane.setFieldError(["minSlots", message]));
               case "hours":
                 return dispatch(actions.forms.plane.setFieldError(["hours", message]));
@@ -199,6 +210,13 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
             }
           })
           return;
+        }
+
+        if (payload.errors?.length) {
+          payload.errors.forEach((message) =>
+          dispatch(
+            actions.notifications.showSnackbar({ message, variant: "error" })
+          ));
         }
         
         if (payload?.plane) {

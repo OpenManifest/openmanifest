@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TextInput, HelperText, Checkbox, Divider } from 'react-native-paper';
+import { TextInput, HelperText, Checkbox, Divider, List } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
 import PlaneSelect from '../../input/dropdown_select/PlaneSelect';
 import DropzoneUserSelect from '../../input/dropdown_select/DropzoneUserSelect';
+import DropzoneUserChipSelect from '../../input/chip_select/DropzoneUserChipSelect';
+import PlaneChipSelect from '../../input/chip_select/PlaneChipSelect';
 
 export default function LoadForm() {
   const state = useAppSelector(state => state.forms.load);
@@ -40,19 +42,43 @@ export default function LoadForm() {
         { state.fields.maxSlots.error || "" }
       </HelperText>
       <View style={{ width: "100%"}}>
-        <PlaneSelect
+        <PlaneChipSelect
           value={state.fields.plane.value}
           required
           onSelect={(value) => {
             dispatch(actions.forms.load.setField(["plane", value]));
             dispatch(actions.forms.load.setField(["maxSlots", value.maxSlots]));
           }}
-          dropzoneId={Number(globalState.currentDropzone?.id)}
         />
         <HelperText type={!!state.fields.plane.error ? "error" : "info"}>
           { state.fields.plane.error || "" }
         </HelperText>
         
+
+        
+        <DropzoneUserChipSelect
+          label="GCA"
+          onSelect={dzUser => dispatch(actions.forms.load.setField(["gca", dzUser]))}
+          value={state.fields.gca.value || null}
+          requiredPermissions={["actAsGCA"]}
+          required
+        />
+        <HelperText type={!!state.fields.gca.error ? "error" : "info"}>
+          { state.fields.gca.error || "" }
+        </HelperText>
+        
+        <DropzoneUserChipSelect
+          label="Pilot"
+          onSelect={dzUser => dispatch(actions.forms.load.setField(["pilot", dzUser]))}
+          value={state.fields.pilot.value || null}
+          requiredPermissions={["actAsPilot"]}
+        />
+        <HelperText type={!!state.fields.pilot.error ? "error" : "info"}>
+          { state.fields.pilot.error || "" }
+        </HelperText>
+
+        <Divider style={{ marginVertical: 8 }} />
+      
         <Checkbox.Item
           label="Allow public manifesting"
           status={!!state.fields.isOpen.value
@@ -63,31 +89,6 @@ export default function LoadForm() {
             () => dispatch(actions.forms.load.setField(["isOpen", !state.fields.isOpen.value]))
           }
         />
-
-        <Divider style={{ marginVertical: 8 }} />
-      
-        <DropzoneUserSelect
-          label="GCA"
-          onSelect={dzUser => dispatch(actions.forms.load.setField(["gca", dzUser]))}
-          dropzoneId={Number(globalState.currentDropzone?.id)}
-          value={state.fields.gca.value || null}
-          requiredPermissions={["actAsGCA"]}
-          required
-        />
-        <HelperText type={!!state.fields.gca.error ? "error" : "info"}>
-          { state.fields.gca.error || "" }
-        </HelperText>
-        
-        <DropzoneUserSelect
-          label="Pilot"
-          onSelect={dzUser => dispatch(actions.forms.load.setField(["pilot", dzUser]))}
-          dropzoneId={Number(globalState.currentDropzone?.id)}
-          value={state.fields.pilot.value || null}
-          requiredPermissions={["actAsPilot"]}
-        />
-        <HelperText type={!!state.fields.pilot.error ? "error" : "info"}>
-          { state.fields.pilot.error || "" }
-        </HelperText>
       </View>
     </>
   );

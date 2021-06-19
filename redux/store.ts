@@ -22,7 +22,7 @@ export const initialState = {
 } as RootState;
 
 const persistConfig = {
-  key: 'open-manifest.0.9.0',
+  key: 'open-manifest.0.9.1',
   storage: Platform.OS === "web" || false ? require('redux-persist/lib/storage').default : AsyncStorage,
   whitelist: ["global", "notifications"],
 };

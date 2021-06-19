@@ -2,7 +2,8 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { List, Menu } from "react-native-paper";
-import { Plane, Query } from "../../../graphql/schema";
+import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
+import { Plane, Query } from "../../../graphql/schema.d";
 import { useAppSelector } from "../../../redux";
 
 interface IPlaneSelect {
@@ -32,11 +33,11 @@ const QUERY_PLANES = gql`
 
 export default function PlaneSelect(props: IPlaneSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
 
   const { data, loading, refetch } = useQuery<Query>(QUERY_PLANES, {
     variables: {
-      dropzoneId: Number(globalState.currentDropzone?.id),
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
     }
   });
   return (

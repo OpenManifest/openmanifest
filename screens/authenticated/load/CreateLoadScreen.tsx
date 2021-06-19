@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { gql, useMutation } from "@apollo/client";
-import { useAppSelector, useAppDispatch, dropzoneForm } from '../../../redux';
+import { useAppSelector, useAppDispatch } from '../../../redux';
 import { useNavigation } from '@react-navigation/core';
 
 import { View } from '../../../components/Themed';
@@ -14,6 +14,7 @@ import { Mutation } from '../../../graphql/schema';
 import LoadForm from '../../../components/forms/load/LoadForm';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 
 const { actions } = slice;
 
@@ -66,7 +67,8 @@ const MUTATION_CREATE_LOAD = gql`
 `;
 
 export default function CreateLoadScreen() {
-  const { loadForm: state, global: globalState } = useAppSelector(state => state);
+  const currentDropzone = useCurrentDropzone();
+  const state = useAppSelector(state => state.forms.load);
   const dispatch = useAppDispatch();
 
   const navigation = useNavigation();
@@ -109,7 +111,7 @@ export default function CreateLoadScreen() {
       try {
         const result = await mutationCreateLoad({
           variables: {
-            dropzoneId: Number(globalState.currentDropzone?.id),
+            dropzoneId: Number(currentDropzone?.dropzone?.id),
             name: name.value,
             maxSlots: maxSlots.value,
             planeId: plane.value?.id ? Number(plane.value?.id) : null,

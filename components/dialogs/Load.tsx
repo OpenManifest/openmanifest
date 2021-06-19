@@ -7,6 +7,7 @@ import { actions as snackbar } from "../../components/notifications";
 import { Load, Mutation } from '../../graphql/schema';
 import LoadForm from '../forms/load/LoadForm';
 import DialogOrSheet from '../layout/DialogOrSheet';
+import useCurrentDropzone from '../../graphql/hooks/useCurrentDropzone';
 
 
 const MUTATION_CREATE_LOAD = gql`
@@ -65,7 +66,7 @@ interface ILoadDialog {
 export default function LoadDialog(props: ILoadDialog) {
   const { open, onClose, onSuccess } = props;
   const state = useAppSelector(state => state.forms.load);
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
   
   const dispatch = useAppDispatch();
   const [mutationCreateLoad, mutation] = useMutation<Mutation>(MUTATION_CREATE_LOAD);
@@ -106,7 +107,7 @@ export default function LoadDialog(props: ILoadDialog) {
       try {
         const result = await mutationCreateLoad({
           variables: {
-            dropzoneId: Number(globalState.currentDropzone?.id),
+            dropzoneId: Number(currentDropzone?.dropzone?.id),
             name: name.value,
             maxSlots: maxSlots.value,
             planeId: plane.value?.id ? Number(plane.value?.id) : null,

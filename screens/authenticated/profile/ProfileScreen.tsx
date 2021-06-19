@@ -13,7 +13,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { successColor, warningColor } from "../../../constants/Colors";
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
-import { Mutation, Query } from '../../../graphql/schema';
+import { Mutation, Permission, Query } from '../../../graphql/schema.d';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import DropzoneUserDialog from '../../../components/dialogs/DropzoneUserDialog';
 import CreditsSheet from '../../../components/dialogs/CreditsDialog/Credits';
@@ -25,6 +25,10 @@ import Header from "./UserInfo/Header";
 import InfoGrid from './UserInfo/InfoGrid';
 import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 import useDropzoneUser from '../../../graphql/hooks/useDropzoneUser';
+import Badge from '../../../components/Badge';
+import useRestriction from '../../../hooks/useRestriction';
+import useMutationRevokePermission from '../../../graphql/hooks/useMutationRevokePermission';
+import useMutationGrantPermission from '../../../graphql/hooks/useMutationGrantPermission';
 
 
 const MUTATION_UPDATE_IMAGE = gql`
@@ -70,6 +74,8 @@ const MUTATION_UPDATE_IMAGE = gql`
   }
 `;
 
+
+
 export default function ProfileScreen() {
   const state = useAppSelector(state => state.global);
   const forms = useAppSelector(state => state.forms);
@@ -80,6 +86,7 @@ export default function ProfileScreen() {
   const isSelf = currentUser?.id === route.params.userId;
 
   const { dropzoneUser, loading, refetch } = useDropzoneUser(Number(route.params.userId));
+  const canGrantPermission = useRestriction(Permission.GrantPermission);
 
   const isFocused = useIsFocused();
 
@@ -90,6 +97,24 @@ export default function ProfileScreen() {
   }, [isFocused])
 
   const [mutationUpdateUser, mutation] = useMutation<Mutation>(MUTATION_UPDATE_IMAGE);
+  const revokePermission = useMutationRevokePermission({
+    onSuccess: (payload) => {
+      refetch();
+      dispatch(actions.notifications.showSnackbar({ message: "Permission revoked" }))
+    },
+    onError: (error) => {
+      dispatch(actions.notifications.showSnackbar({ message: error, variant: "error" }))
+    },
+  });
+  const grantPermission = useMutationGrantPermission({
+    onSuccess: (payload) => {
+      refetch();
+      dispatch(actions.notifications.showSnackbar({ message: "Permission granted" }));
+    },
+    onError: (error) => {
+      dispatch(actions.notifications.showSnackbar({ message: error, variant: "error" }))
+    },
+  });
 
   React.useEffect(() => {
     (async () => {
@@ -129,10 +154,37 @@ export default function ProfileScreen() {
     [dispatch],
   )
 
+  const badges = dropzoneUser?.permissions?.filter((name) => /^actAs/.test(name)) || [];
+
+  const shouldShowBadge = (permission: Permission) => canGrantPermission || badges.includes(permission);
+
   return (
     <>
     {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
     <ScrollableScreen contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}>
+      <ScrollView horizontal contentContainerStyle={{ padding: 8, justifyContent: "space-evenly", backgroundColor: state.theme.colors.primary }}>
+        {
+          [
+            Permission.ActAsPilot,
+            Permission.ActAsDzso,
+            Permission.ActAsGca,
+            Permission.ActAsRigInspector,
+            Permission.ActAsLoadMaster,
+          ].map((permission) =>
+            !shouldShowBadge(permission)
+              ? null
+              : <Badge
+                  type={permission as any}
+                  selected={badges.includes(permission)}
+                  onPress={() => !canGrantPermission ? null :
+                    badges.includes(permission) 
+                      ? revokePermission.mutate({ permissionName: permission, dropzoneUserId: Number(dropzoneUser.id) })
+                      : grantPermission.mutate({ permissionName: permission, dropzoneUserId: Number(dropzoneUser.id) })
+                  }
+                />
+          )
+        }
+      </ScrollView>
       <Header
         dropzoneUser={dropzoneUser!}
         canEdit={isSelf}
@@ -143,6 +195,7 @@ export default function ProfileScreen() {
         }}
         onPressAvatar={onPickImage}
       >
+       
 
         <ScrollView horizontal style={{ marginVertical: 8 }}>
           <Chip

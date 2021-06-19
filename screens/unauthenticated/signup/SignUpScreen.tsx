@@ -12,6 +12,7 @@ import logo from "../../../assets/images/logo.png";
 
 export default function SignupScreen() {
   const state = useAppSelector(state => state.screens.signup);
+  const globalState = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
 
   const { loading, mutate: onSignUp } = useMutationSignUp({
@@ -128,6 +129,7 @@ export default function SignupScreen() {
           style={styles.button}
           onPress={() =>
             onSignUp({
+              pushToken: globalState.expoPushToken,
               email: state.fields.email.value,
               name: state.fields.name.value,
               exitWeight: state.fields.exitWeight.value,

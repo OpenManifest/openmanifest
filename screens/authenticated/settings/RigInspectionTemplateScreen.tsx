@@ -4,7 +4,8 @@ import * as React from 'react';
 import { Button, Card } from 'react-native-paper';
 import RigInspectionTemplateForm from "../../../components/forms/rig_inspection_template/RigInspectionTemplateForm";
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import { Mutation, Query } from '../../../graphql/schema';
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
+import { Mutation, Permission, Query } from '../../../graphql/schema.d';
 import useRestriction from '../../../hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 
@@ -51,16 +52,16 @@ const MUTATION_UPDATE_FORM = gql`
 
 
 export default function RigInspectionTemplateScreen() {
-  const globalState = useAppSelector(state => state.global);
   const state = useAppSelector(state => state.forms.rigInspectionTemplate);
+  const currentDropzone = useCurrentDropzone();
   const dispatch = useAppDispatch();
   const { data, loading } = useQuery<Query>(QUERY_RIG_INSPECTION, {
     variables: {
-      dropzoneId: Number(globalState?.currentDropzone?.id)
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
     }
   });
 
-  const canEdit = useRestriction("updateFormTemplate");
+  const canEdit = useRestriction(Permission.UpdateFormTemplate);
   const [mutationUpdateForm, mutation] = useMutation<Mutation>(MUTATION_UPDATE_FORM);
 
   React.useEffect(() => {
@@ -87,7 +88,7 @@ export default function RigInspectionTemplateScreen() {
     } catch(error) {
       dispatch(actions.notifications.showSnackbar({ message: error.message, variant: "error" }));
     }
-  }, [JSON.stringify(state.fields), state?.original?.id, globalState?.currentDropzone?.id]);
+  }, [JSON.stringify(state.fields), state?.original?.id, currentDropzone?.dropzone?.id]);
 
   return (
     <ScrollableScreen>

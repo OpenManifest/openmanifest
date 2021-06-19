@@ -49,9 +49,9 @@ export default function ManifestedNotification(props: INotification) {
   return (
     <>
     <List.Item
-      title={`You have been manifested on Load #${(notification.resource as Load).loadNumber}`}
+      title={`Manifest`}
       description={
-        "Keep an eye on your notifications"
+        notification.message
       }
       style={{ width: "100%"}}
       left={

@@ -12,6 +12,7 @@ import { createQuery } from '../../../graphql/createQuery';
 import { JumpType, TicketType } from '../../../graphql/schema';
 
 import UserRigCard from "./UserRigCard";
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 
 
 const QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES = gql`
@@ -61,11 +62,12 @@ const useAllowedJumpTypes = createQuery<{ jumpTypes: JumpType[], allowedJumpType
 export default function SlotForm() {
   const state = useAppSelector(state => state.forms.manifestGroup);
   const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
   const dispatch = useAppDispatch();
   const { data, loading } = useAllowedJumpTypes({
     variables: {
       userIds: state.fields.users?.value?.map((slotUser) => slotUser.id) as number[],
-      dropzoneId: Number(globalState?.currentDropzone?.id)
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
     },
     onError: console.error
   });
@@ -146,7 +148,7 @@ export default function SlotForm() {
       {
         state.fields?.users?.value?.map((slotUser) =>
           <UserRigCard
-            dropzoneId={Number(globalState.currentDropzone!.id)}
+            dropzoneId={Number(currentDropzone?.dropzone?.id)}
             dropzoneUserId={Number(slotUser.id)}
             rigId={Number(slotUser.rigId) || undefined}
             exitWeight={slotUser.exitWeight}

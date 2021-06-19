@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import * as React from "react";
 import { useAppSelector } from "../../redux";
 import { Query } from "../schema";
+import useMutationUpdateUser from "./useMutationUpdateUser";
 
 export const QUERY_DROPZONE = gql`
   query QueryDropzone($dropzoneId: Int!, $earliestTimestamp: Int) {
@@ -31,6 +32,13 @@ export const QUERY_DROPZONE = gql`
         hasReserveInDate
         hasRigInspection
         hasLicense
+        permissions
+        expiresAt
+
+        role {
+          id
+          name
+        }
 
         transactions {
           edges {
@@ -48,6 +56,7 @@ export const QUERY_DROPZONE = gql`
           exitWeight
           email
           phone
+          pushToken
 
           rigs {
             id
@@ -85,6 +94,8 @@ export const QUERY_DROPZONE = gql`
 `;
 export default function useCurrentDropzone() {
   const dropzoneId = useAppSelector(state => state.global.currentDropzoneId);
+  const pushToken = useAppSelector(state => state.global.expoPushToken);
+
 
   const currentDropzone = useQuery<Query>(QUERY_DROPZONE, {
     variables: {
@@ -94,6 +105,29 @@ export default function useCurrentDropzone() {
     fetchPolicy: "cache-first"
   });
 
+  const mutationUpdateUser = useMutationUpdateUser({
+    onSuccess: () => null,
+    onError: () => null,
+  });
+
+  // Update remote push token if we have a local token, but no
+  // token saved on the server. This is done so that the server
+  // is able to send us push notifications
+  React.useEffect(() => {
+    const userId = currentDropzone?.data?.dropzone?.currentUser?.user?.id;
+    const remoteToken = currentDropzone?.data?.dropzone?.currentUser?.user?.pushToken;
+    const localToken = pushToken;
+
+    if (!currentDropzone.loading && currentDropzone.called) {
+      if (localToken && localToken !== remoteToken) {
+        mutationUpdateUser.mutate({
+          id: Number(userId),
+          pushToken: localToken,
+        })
+      }
+    }
+
+  }, [pushToken, currentDropzone?.data?.dropzone?.currentUser?.user?.pushToken])
   return {
     ...currentDropzone,
     dropzone: currentDropzone?.data?.dropzone,

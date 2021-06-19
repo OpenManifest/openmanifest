@@ -2,7 +2,8 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { Chip, Menu } from "react-native-paper";
-import { Plane, Query } from "../../graphql/schema";
+import useCurrentDropzone from "../../graphql/hooks/useCurrentDropzone";
+import { Plane, Permission, Query } from "../../graphql/schema.d";
 import useRestriction from "../../hooks/useRestriction";
 import { useAppSelector } from "../../redux";
 
@@ -32,14 +33,14 @@ const QUERY_PLANES = gql`
 
 export default function PlaneChip(props: IPlaneChipSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
 
   const { data } = useQuery<Query>(QUERY_PLANES, {
     variables: {
-      dropzoneId: Number(globalState.currentDropzone?.id),
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
     }
   });
-  const allowed = useRestriction("updateLoad");
+  const allowed = useRestriction(Permission.UpdateLoad);
 
   return (
     !allowed ?

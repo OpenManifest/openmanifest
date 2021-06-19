@@ -38,6 +38,8 @@ interface IGlobalState {
   currentDropzone: Dropzone | null;
   permissions: string[];
 
+  expoPushToken: string;
+
   theme: typeof CombinedDarkTheme | typeof CombinedDefaultTheme,
   isDarkMode: boolean;
 }
@@ -48,6 +50,7 @@ export const initialState: IGlobalState = {
   currentDropzoneId: null,
   permissions: [],
   credentials: null,
+  expoPushToken: null,
   theme: CombinedDefaultTheme,
   isDarkMode: false,
 };
@@ -60,6 +63,9 @@ export default createSlice({
     },
     setUser: (state: IGlobalState, action: PayloadAction<User>) => {
       state.currentUser = action.payload;
+    },
+    setExpoPushToken: (state: IGlobalState, action: PayloadAction<string>) => {
+      state.expoPushToken = action.payload;
     },
     setPermissions: (state: IGlobalState, action: PayloadAction<string[]>) => {
       state.permissions = action.payload;

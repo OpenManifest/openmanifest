@@ -10,6 +10,7 @@ import SettingsTab from "./tabs/settings";
 import UsersTab from "./tabs/users";
 
 import useRestriction from '../hooks/useRestriction';
+import { Permission } from '../graphql/schema.d';
 
 export type IAuthenticatedTabParams = {
   Manifest: undefined;
@@ -26,9 +27,23 @@ const BottomTab = createBottomTabNavigator<IAuthenticatedTabParams>();
 export default function AuthenticatedTabBar() {
   const theme = useTheme();
 
-  const canViewUsers = useRestriction("readUser");
-  const canCreatePacks = useRestriction("createPackjob");
-  const canManageDropzone = useRestriction("updateDropzone");
+  const canViewUsers = useRestriction(Permission.ReadUser);
+
+  const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
+  const canUpdatePlane = useRestriction(Permission.UpdatePlane);
+  const canUpdateTicketTypes = useRestriction(Permission.UpdateTicketType);
+  const canUpdateExtras = useRestriction(Permission.UpdateExtra);
+  const canUpdatePermissions = useRestriction(Permission.GrantPermission);
+  const canUpdateDzRigs = useRestriction(Permission.UpdateDropzoneRig);
+  const canUpdateRigInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
+
+  const shouldShowSettings = canUpdateDropzone
+  || canUpdatePlane
+  || canUpdateTicketTypes
+  || canUpdateExtras
+  || canUpdatePermissions
+  || canUpdateDzRigs
+  || canUpdateRigInspectionTemplate;
   
   return (
     <BottomTab.Navigator
@@ -81,7 +96,7 @@ export default function AuthenticatedTabBar() {
         />
       )}
       
-      { canManageDropzone && (
+      { shouldShowSettings && (
         <BottomTab.Screen
           name="Settings"
           component={SettingsTab}

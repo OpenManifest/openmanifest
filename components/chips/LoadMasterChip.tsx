@@ -1,14 +1,13 @@
-import { values } from "lodash";
 import * as React from "react";
-import { Chip, List, Menu } from "react-native-paper";
-import { Slot, User } from "../../graphql/schema";
+import { Chip, Menu } from "react-native-paper";
+import { Slot, DropzoneUser, Permission } from "../../graphql/schema.d";
 import useRestriction from "../../hooks/useRestriction";
 
 interface ILoadMasterChipSelect {
   dropzoneId: number;
-  value?: User | null;
+  value?: DropzoneUser | null;
   slots: Slot[];
-  onSelect(user: User): void;
+  onSelect(user: DropzoneUser): void;
 }
 
 
@@ -16,12 +15,12 @@ interface ILoadMasterChipSelect {
 
 export default function LoadMasterChip(props: ILoadMasterChipSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const allowed = useRestriction("updateLoad");
+  const allowed = useRestriction(Permission.UpdateLoad);
 
   return (
     !allowed ?
     <Chip mode="outlined" icon="radio-handheld">
-      {props.value?.name || "No loadmaster"}
+      {props.value?.user?.name || "No loadmaster"}
     </Chip> : (
     <Menu
       onDismiss={() => setMenuOpen(false)}
@@ -33,7 +32,7 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
           style={{ marginHorizontal: 4 }}
           onPress={() => allowed && setMenuOpen(true)}
         >
-          {props.value?.id ? props.value?.name : "No loadmaster"}
+          {props.value?.id ? props.value?.user?.name : "No loadmaster"}
         </Chip>
       }>
       {
@@ -42,10 +41,10 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
             key={`lm-chip-${slot.id}`}
             onPress={() => {
               setMenuOpen(false);
-              props.onSelect(slot.user as User);
+              props.onSelect(slot.dropzoneUser);
             }}
             title={
-              slot?.user?.name
+              slot?.dropzoneUser?.user?.name
             }
           />
         )

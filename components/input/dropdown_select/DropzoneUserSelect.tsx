@@ -1,7 +1,8 @@
 import * as React from "react";
 import { List, Menu, Title } from "react-native-paper";
+import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
 import useQueryDropzoneUsers from "../../../graphql/hooks/useQueryDropzoneUsers";
-import { DropzoneUser } from "../../../graphql/schema";
+import { DropzoneUser } from "../../../graphql/schema.d";
 import { useAppSelector } from "../../../redux";
 
 interface IDropzoneUserSelect {
@@ -19,10 +20,11 @@ interface IDropzoneUserSelect {
 export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
 
   const { data, loading, refetch } = useQueryDropzoneUsers({
     variables: {
-      dropzoneId: Number(globalState.currentDropzone?.id),
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
       permissions: props.requiredPermissions
     },
   });
@@ -36,6 +38,9 @@ export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
         anchor={
           <List.Item
             onPress={() => {
+              if (!data?.edges?.length) {
+                refetch();
+              }
               setMenuOpen(true);
             }}
             title={

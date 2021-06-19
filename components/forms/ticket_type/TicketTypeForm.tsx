@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, Menu, List, Divider } from 'react-native-paper';
+import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 import { Query } from '../../../graphql/schema';
 import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
@@ -27,12 +28,12 @@ const QUERY_EXTRAS = gql`
 export default function TicketTypeForm() {
   const state = useAppSelector(state => state.forms.ticketType);
   const dispatch = useAppDispatch();
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
 
   const [altitudeMenuOpen, setAltitudeMenuOpen] = React.useState(false);
   const { data, loading, refetch } = useQuery<Query>(QUERY_EXTRAS, {
     variables: {
-      dropzoneId: Number(globalState.currentDropzone?.id)
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
     }
   });
 

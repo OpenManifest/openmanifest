@@ -6,6 +6,7 @@ import { Mutation } from '../../graphql/schema';
 import TicketTypeForm from '../../components/forms/ticket_type/TicketTypeForm';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
 import DialogOrSheet from '../layout/DialogOrSheet';
+import useCurrentDropzone from '../../graphql/hooks/useCurrentDropzone';
 
 
 
@@ -122,11 +123,9 @@ interface ITicketTypeDialog {
 
 export default function TicketTypeDialog(props: ITicketTypeDialog) {
   const { open, onClose } = props;
-  const globalState = useAppSelector(state => state.global);
   const state = useAppSelector(state => state.forms.ticketType);
   const dispatch = useAppDispatch();
-
-  const navigation = useNavigation();
+  const currentDropzone = useCurrentDropzone();
 
   const [mutationCreateTicketType, create] = useMutation<Mutation>(MUTATION_CREATE_TICKET_TYPE);
   const [mutationUpdateTicketType, update] = useMutation<Mutation>(MUTATION_UPDATE_TICKET_TYPE);
@@ -178,7 +177,7 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
         
         const result = await mutation({
           variables: {
-            ...state.original?.id ? { id: Number(state.original?.id)} : { dropzoneId: Number(globalState.currentDropzone?.id) },
+            ...state.original?.id ? { id: Number(state.original?.id)} : { dropzoneId: Number(currentDropzone?.dropzone?.id) },
             name: name.value,
             cost: cost.value,
             altitude: altitude.value,

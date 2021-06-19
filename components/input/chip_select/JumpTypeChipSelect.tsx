@@ -3,7 +3,8 @@ import { uniqBy } from "lodash";
 import * as React from "react";
 import { List } from "react-native-paper";
 import { createQuery } from "../../../graphql/createQuery";
-import { JumpType } from "../../../graphql/schema";
+import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
+import { JumpType } from "../../../graphql/schema.d";
 import { useAppSelector } from "../../../redux";
 import ChipSelect from "./ChipSelect";
 
@@ -48,12 +49,12 @@ const useAllowedJumpTypes = createQuery<{ jumpTypes: JumpType[], allowedJumpType
  });
 
 export default function JumpTypeChipSelect(props: IJumpTypeSelect) {
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
   
   const { data, loading } = useAllowedJumpTypes({
     variables: {
       userIds: [Number(props.userId) || null].filter(Boolean) as number[],
-      dropzoneId: Number(globalState?.currentDropzone?.id)
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
     },
     onError: console.error
   });

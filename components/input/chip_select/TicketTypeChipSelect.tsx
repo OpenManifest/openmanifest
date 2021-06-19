@@ -2,7 +2,8 @@ import gql from "graphql-tag";
 import * as React from "react";
 import { List } from "react-native-paper";
 import { createQuery } from "../../../graphql/createQuery";
-import { TicketType } from "../../../graphql/schema";
+import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
+import { TicketType } from "../../../graphql/schema.d";
 import { useAppSelector } from "../../../redux";
 import ChipSelect from "./ChipSelect";
 
@@ -49,11 +50,11 @@ const useTicketTypes = createQuery<{ ticketTypes: TicketType[] }, {
  });
 
 export default function TicketTypeChipSelect(props: ITicketTypeSelect) {
-  const globalState = useAppSelector(state => state.global);
+  const currentDropzone = useCurrentDropzone();
   
   const { data, loading } = useTicketTypes({
     variables: {
-      dropzoneId: Number(globalState?.currentDropzone?.id),
+      dropzoneId: Number(currentDropzone?.dropzone?.id),
       onlyPublicTickets: props.onlyPublicTickets || null,
     },
     onError: console.error

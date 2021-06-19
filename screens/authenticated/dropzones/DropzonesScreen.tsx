@@ -5,7 +5,7 @@ import { StyleSheet, FlatList, Dimensions } from 'react-native';
 import { Card, Title, FAB, Paragraph } from 'react-native-paper';
 import { View } from '../../../components/Themed';
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
-import { Query } from "../../../graphql/schema";
+import { Query } from "../../../graphql/schema.d";
 
 import { useNavigation } from '@react-navigation/core';
 import { SafeAreaView } from 'react-native-safe-area-context';

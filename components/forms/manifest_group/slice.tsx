@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { pick, pickBy } from "lodash";
-import { SlotUser, Slot, DropzoneUser } from "../../../graphql/schema";
+import { SlotUser, Slot, DropzoneUser } from "../../../graphql/schema.d";
 
 
 interface IFields extends Pick<

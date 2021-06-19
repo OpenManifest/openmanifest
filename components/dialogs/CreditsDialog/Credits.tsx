@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { Button, Portal } from "react-native-paper";
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
-import { DropzoneUser, Mutation } from "../../../graphql/schema";
+import { DropzoneUser, Mutation } from "../../../graphql/schema.d";
 import { actions, useAppDispatch, useAppSelector } from "../../../redux";
 import CreditsForm from "../../forms/credits/CreditsForm";
 interface ICreditsSheet {
