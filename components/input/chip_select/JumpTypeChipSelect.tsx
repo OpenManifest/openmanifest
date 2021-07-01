@@ -49,12 +49,11 @@ const useAllowedJumpTypes = createQuery<{ jumpTypes: JumpType[], allowedJumpType
  });
 
 export default function JumpTypeChipSelect(props: IJumpTypeSelect) {
-  const currentDropzone = useCurrentDropzone();
-  
+  const { currentDropzoneId } = useAppSelector(state => state.global);
   const { data, loading } = useAllowedJumpTypes({
     variables: {
       userIds: [Number(props.userId) || null].filter(Boolean) as number[],
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: Number(currentDropzoneId),
     },
     onError: console.error
   });

@@ -5,7 +5,7 @@ import { List } from "react-native-paper";
 import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
 import useQueryDropzoneUsers from "../../../graphql/hooks/useQueryDropzoneUsers";
 import { DropzoneUser } from "../../../graphql/schema.d";
-import { actions, useAppDispatch } from "../../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../../redux";
 import ChipSelect from "./ChipSelect";
 
 
@@ -20,12 +20,12 @@ interface IDropzoneUserChipSelect {
 
 export default function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
   const { label, requiredPermissions, icon, required, value } = props;
-  const currentDropzone = useCurrentDropzone();
+  const { currentDropzoneId } = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
 
   const { data, loading, refetch } = useQueryDropzoneUsers({
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: Number(currentDropzoneId),
       permissions: requiredPermissions
     },
     onError: (message) =>

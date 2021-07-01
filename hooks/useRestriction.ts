@@ -24,10 +24,11 @@ query QueryPermissions($dropzoneId: Int!) {
   }`;
 
 export default function useRestriction(permission: Permission): boolean {
-  const { currentDropzone } = useAppSelector(state => state.global);
+  const { currentDropzoneId } = useAppSelector(state => state.global);
+  
   const { data } = useQuery(QUERY_PERMISSIONS, {
     variables: {
-      dropzoneId: Number(currentDropzone?.id)
+      dropzoneId: Number(currentDropzoneId)
     }
   });
 

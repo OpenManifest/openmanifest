@@ -5,6 +5,7 @@ import { Chip, Menu } from "react-native-paper";
 import useCurrentDropzone from "../../graphql/hooks/useCurrentDropzone";
 import { Query, DropzoneUser, Permission } from "../../graphql/schema.d";
 import useRestriction from "../../hooks/useRestriction";
+import { useAppSelector } from "../../redux";
 
 interface IGCAChipSelect {
   dropzoneId: number;
@@ -15,7 +16,7 @@ interface IGCAChipSelect {
 
 
 const QUERY_DROPZONE_USERS = gql`
-  query QueryDropzoneUsers(
+  query QueryGCAUsers(
     $dropzoneId: Int!
     $permissions: [Permission!]
   ) {
@@ -44,11 +45,11 @@ const QUERY_DROPZONE_USERS = gql`
 
 export default function GCAChip(props: IGCAChipSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const currentDropzone = useCurrentDropzone();
+  const { currentDropzoneId } = useAppSelector(state => state.global);
 
   const { data } = useQuery<Query>(QUERY_DROPZONE_USERS, {
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: Number(currentDropzoneId),
       permissions: ["actAsGCA"]
     }
   });

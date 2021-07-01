@@ -89,7 +89,7 @@ export default function DropzoneRigsScreen() {
   const rigForm = useAppSelector(state => state.forms.rig);
   const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONE_RIGS, {
     variables: {
-      dropzoneId: Number(state.currentDropzone?.id)
+      dropzoneId: Number(state.currentDropzoneId)
     }
   });
   const dispatch = useAppDispatch();
@@ -178,7 +178,7 @@ export default function DropzoneRigsScreen() {
             dispatch(actions.forms.rig.setOpen(false))
             refetch();
           }}
-          dropzoneId={Number(state.currentDropzone?.id)}
+          dropzoneId={Number(state.currentDropzoneId)}
           open={rigForm.open}
         />
         

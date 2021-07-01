@@ -26,6 +26,11 @@ const MUTATION_UPDATE_USER = gql`
         exitWeight: $exitWeight,
       }
     }) {
+      errors
+      fieldErrors {
+        field
+        message
+      }
       user {
         id
         name

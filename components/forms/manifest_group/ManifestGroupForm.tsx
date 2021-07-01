@@ -62,12 +62,11 @@ const useAllowedJumpTypes = createQuery<{ jumpTypes: JumpType[], allowedJumpType
 export default function SlotForm() {
   const state = useAppSelector(state => state.forms.manifestGroup);
   const globalState = useAppSelector(state => state.global);
-  const currentDropzone = useCurrentDropzone();
   const dispatch = useAppDispatch();
   const { data, loading } = useAllowedJumpTypes({
     variables: {
       userIds: state.fields.users?.value?.map((slotUser) => slotUser.id) as number[],
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: globalState.currentDropzoneId,
     },
     onError: console.error
   });
@@ -148,7 +147,7 @@ export default function SlotForm() {
       {
         state.fields?.users?.value?.map((slotUser) =>
           <UserRigCard
-            dropzoneId={Number(currentDropzone?.dropzone?.id)}
+            dropzoneId={globalState.currentDropzoneId}
             dropzoneUserId={Number(slotUser.id)}
             rigId={Number(slotUser.rigId) || undefined}
             exitWeight={slotUser.exitWeight}

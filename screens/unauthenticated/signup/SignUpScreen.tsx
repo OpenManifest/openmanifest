@@ -1,22 +1,31 @@
 import * as React from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image, KeyboardAvoidingView, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
-import { Text, View } from '../../../components/Themed';
 import useMutationSignUp from '../../../graphql/hooks/useMutationSignUp';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
 import { primaryColor } from '../../../constants/Colors';
 import logo from "../../../assets/images/logo.png";
+import { useNavigation } from '@react-navigation/core';
 
 export default function SignupScreen() {
   const state = useAppSelector(state => state.screens.signup);
   const globalState = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
+  const navigation = useNavigation();
 
   const { loading, mutate: onSignUp } = useMutationSignUp({
     onSuccess: (payload) => {
+      // Reset the form and redirect to login screen with a snackbar
+      dispatch(
+        actions.notifications.showSnackbar({ message: "A confirmation link has been sent to your email", variant: "success" })
+      );
+
+      navigation.navigate("LoginScreen");
+      // Credentials are received on login only now. Return
+      return;
       if (payload.credentials) {
         dispatch(
           actions.global.setCredentials(payload.credentials)
@@ -36,8 +45,8 @@ export default function SignupScreen() {
 
   return (
     <ScrollableScreen style={styles.container} contentContainerStyle={styles.content}>
-      <Image source={logo} style={{ width: "100%", height: 200 }} resizeMode="contain" />
-      <View style={styles.fields}>
+      <KeyboardAvoidingView style={styles.fields} behavior="position">
+        <Image source={logo} style={{ width: "100%", height: 200 }} resizeMode="contain" />
         <TextInput
           style={styles.field}
           mode="outlined"
@@ -49,19 +58,6 @@ export default function SignupScreen() {
         <HelperText type="error">
           { state.fields.name.error || "" }
         </HelperText>
-
-        <TextInput
-          style={styles.field}
-          mode="outlined"
-          label="Exit weight"
-          error={!!state.fields.exitWeight.error}
-          value={state.fields.exitWeight?.value?.toString() || ""}
-          keyboardType="numbers-and-punctuation"
-          right={() => <TextInput.Affix text="kg" />}
-          onChangeText={(newValue) =>
-            !newValue || /\d+/.test(newValue) ? dispatch(actions.screens.signup.setField(["exitWeight", parseFloat(newValue || "0")])) : null
-          }
-        />
         
         <HelperText type={!!state.fields.exitWeight.error ? "error" : "info"}>
           { state.fields.exitWeight.error || "" }
@@ -143,7 +139,7 @@ export default function SignupScreen() {
         >
           Sign up
         </Button>
-      </View>
+      </KeyboardAvoidingView>
     </ScrollableScreen>
   );
 }
@@ -155,6 +151,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 60,
+    alignItems: "center",
   },
   button: {
     marginTop: 10,
@@ -175,12 +172,13 @@ const styles = StyleSheet.create({
   },
   fields: {
     width: "100%",
+    flexGrow: 1,
     maxWidth: 400,
     backgroundColor: "transparent"
   },
   field: {
     marginBottom: 8,
-    backgroundColor: "pink",
+    backgroundColor: "white",
     borderColor: "white",
     color: "white"
   }

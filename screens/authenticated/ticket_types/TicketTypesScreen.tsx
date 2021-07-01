@@ -105,7 +105,7 @@ export default function TicketTypesScreen() {
   const dispatch = useAppDispatch();
   const { data, loading, refetch } = useQuery<Query>(QUERY_TICKET_TYPE, {
     variables: {
-      dropzoneId: Number(state.currentDropzone?.id)
+      dropzoneId: Number(state.currentDropzoneId)
     }
   });
   const route = useRoute();

@@ -2,10 +2,9 @@ import { gql, useMutation } from "@apollo/client";
 import * as React from "react";
 import { ScrollView } from "react-native";
 import { Button, Dialog, Portal, ProgressBar } from "react-native-paper";
-import { Load, Mutation, User } from "../../../graphql/schema.d";
-import usePalette from "../../../hooks/usePalette";
-import { slotForm, snackbarActions, useAppDispatch, useAppSelector } from "../../../redux";
-import SlotForm from "../../forms/slot/SlotForm";
+import { Mutation } from "../../../graphql/schema.d";
+import { actions, useAppDispatch, useAppSelector } from "../../../redux";
+import SlotForm from "../../forms/manifest/ManifestForm";
 interface IManifestUserDialog {
   open?: boolean;
   onClose(): void;
@@ -19,7 +18,7 @@ const MUTATION_CREATE_SLOT = gql`
     $loadId: Int
     $rigId: Int
     $ticketTypeId: Int
-    $userId: Int
+    $dropzoneUserId: Int
     $exitWeight: Float
     $passengerName: String
     $passengerExitWeight: Float
@@ -32,7 +31,7 @@ const MUTATION_CREATE_SLOT = gql`
           loadId: $loadId
           rigId: $rigId
           ticketTypeId: $ticketTypeId
-          userId: $userId
+          dropzoneUserId: $dropzoneUserId
           exitWeight: $exitWeight
           passengerExitWeight: $passengerExitWeight
           passengerName: $passengerName
@@ -121,7 +120,7 @@ const MUTATION_CREATE_SLOT = gql`
 
 export default function ManifestUserDialog(props: IManifestUserDialog) {
   const dispatch = useAppDispatch();
-  const state = useAppSelector(state => state.slotForm);
+  const state = useAppSelector(state => state.forms.manifest);
   const globalState = useAppSelector(state => state.global);
   const [mutationCreateSlot, mutationData] = useMutation<Mutation>(MUTATION_CREATE_SLOT);
 
@@ -130,14 +129,14 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     if (!state.fields.jumpType.value?.id) {
       hasErrors = true;
       dispatch(
-        slotForm.setFieldError(["jumpType", "You must specify the type of jump"])
+        actions.forms.manifest.setFieldError(["jumpType", "You must specify the type of jump"])
       );
     }
 
     if (!state.fields.ticketType.value?.id) {
       hasErrors = true;
       dispatch(
-        slotForm.setFieldError(["ticketType", "You must select a ticket type to manifest"])
+        actions.forms.manifest.setFieldError(["ticketType", "You must select a ticket type to manifest"])
       );
     }
 
@@ -156,7 +155,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
           loadId: Number(state.fields.load.value?.id),
           rigId: !state.fields.rig.value?.id ? null : Number(state.fields.rig.value?.id),
           ticketTypeId: Number(state.fields.ticketType?.value?.id),
-          userId: Number(state.fields.user?.value?.id),
+          dropzoneUserId: Number(state.fields.dropzoneUser?.value?.id),
           exitWeight: state.fields.exitWeight.value,
           ...!state.fields.ticketType.value?.isTandem
             ? {}
@@ -170,32 +169,32 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       result.data?.createSlot?.fieldErrors?.map(({ field, message }) => {
         switch (field) {
           case "jump_type":
-            return dispatch(slotForm.setFieldError(["jumpType", message]));
+            return dispatch(actions.forms.manifest.setFieldError(["jumpType", message]));
           case "load":
-            return dispatch(slotForm.setFieldError(["load", message]));
+            return dispatch(actions.forms.manifest.setFieldError(["load", message]));
           case "credits":
           case "extras":
           case "extra_ids":
-            return dispatch(slotForm.setFieldError(["extras", message]));
+            return dispatch(actions.forms.manifest.setFieldError(["extras", message]));
           case "ticket_type":
-            return dispatch(slotForm.setFieldError(["ticketType", message]));
+            return dispatch(actions.forms.manifest.setFieldError(["ticketType", message]));
           case "rig":
-            return dispatch(slotForm.setFieldError(["rig", message]));
-          case "user":
-            return dispatch(slotForm.setFieldError(["user", message]));
+            return dispatch(actions.forms.manifest.setFieldError(["rig", message]));
+          case "dropzone_user":
+            return dispatch(actions.forms.manifest.setFieldError(["dropzoneUser", message]));
           case "exit_weight":
-            return dispatch(slotForm.setFieldError(["exitWeight", message]));
+            return dispatch(actions.forms.manifest.setFieldError(["exitWeight", message]));
         }
       });
       if (result?.data?.createSlot?.errors?.length) {
-        return dispatch(snackbarActions.showSnackbar({ message: result?.data?.createSlot?.errors[0], variant: "error" }));
+        return dispatch(actions.notifications.showSnackbar({ message: result?.data?.createSlot?.errors[0], variant: "error" }));
       }
       if (!result.data?.createSlot?.fieldErrors?.length) {
         props.onSuccess();
       }
 
     } catch(error) {
-      dispatch(snackbarActions.showSnackbar({ message: error.message, variant: "error" }));
+      dispatch(actions.notifications.showSnackbar({ message: error.message, variant: "error" }));
     } 
   }, [JSON.stringify(state.fields), mutationCreateSlot, props.onSuccess])
   
@@ -204,7 +203,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       <Dialog visible={!!props.open} style={{ maxHeight: 500 }}>
         <ProgressBar indeterminate visible={mutationData.loading} color={globalState.theme.colors.accent} />
         <Dialog.Title>
-          {`Manifest ${state?.fields?.user?.value?.name} on ${state.fields.load?.value?.name}`}
+          {`Manifest ${state?.fields?.dropzoneUser?.value?.user?.name} on ${state.fields.load?.value?.name}`}
         </Dialog.Title>
         <Dialog.ScrollArea>
           <ScrollView>
@@ -214,7 +213,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         <Dialog.Actions style={{ justifyContent: "flex-end"}}>
           <Button
             onPress={() => {
-              dispatch(slotForm.reset());
+              dispatch(actions.forms.manifest.reset());
               props.onClose();
             }}
           >

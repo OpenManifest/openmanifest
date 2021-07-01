@@ -6,9 +6,10 @@ import * as React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from "react-redux";
 import { PersistGate } from 'redux-persist/integration/react'
-import { Provider as MaterialProvider, ActivityIndicator, ProgressBar } from "react-native-paper"
-import { Platform, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { Provider as MaterialProvider, ActivityIndicator, ProgressBar, Portal } from "react-native-paper"
+import { Linking, Platform, View } from 'react-native';
+import { NavigationContainer, useLinking } from '@react-navigation/native';
+import URI from "urijs";
 
 import Apollo from "./graphql/Apollo";
 import { store, persistor, useAppSelector, useAppDispatch } from "./redux/store";
@@ -18,6 +19,7 @@ import NotificationArea from './components/notifications/Notifications';
 import LinkingConfiguration from './navigation/Routes';
 import RootNavigator from "./navigation/RootNavigator";
 import { actions } from './redux';
+import UserWizardScreen from './components/dialogs/UserWizard/UserWizardScreen';
 
 
 Notifications.setNotificationHandler({
@@ -27,27 +29,6 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
-
-// Can use this function below, OR use Expo's Push Notification Tool-> https://expo.io/notifications
-async function sendPushNotification(expoPushToken) {
-  const message = {
-    to: expoPushToken,
-    sound: 'default',
-    title: 'Original Title',
-    body: 'And here is the body!',
-    data: { someData: 'goes here' },
-  };
-
-  await fetch('https://exp.host/--/api/v2/push/send', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Accept-encoding': 'gzip, deflate',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(message),
-  });
-}
 
 async function registerForPushNotificationsAsync() {
   let token;
@@ -87,6 +68,13 @@ function Content() {
   const notificationListener = React.useRef<ReturnType<typeof Notifications.addNotificationReceivedListener>>();
   const responseListener = React.useRef<ReturnType<typeof Notifications.addNotificationResponseReceivedListener>>();
 
+  const onOutsideLink = (link) => {
+    console.log(link);
+    const uri = URI(link.url);
+    const intendedRoute = uri.path();
+    console.log(intendedRoute);
+  };
+
   React.useEffect(() => {
     registerForPushNotificationsAsync().then(token => dispatch(actions.global.setExpoPushToken(token)));
 
@@ -100,9 +88,12 @@ function Content() {
       console.log(response);
     });
 
+    Linking.addEventListener("url", onOutsideLink);
+
     return () => {
       Notifications.removeNotificationSubscription(notificationListener.current);
       Notifications.removeNotificationSubscription(responseListener.current);
+      Linking.removeEventListener("url", onOutsideLink);
     };
   }, []);
 
@@ -121,9 +112,11 @@ function Content() {
               linking={LinkingConfiguration}
               theme={state.theme}>
               <RootNavigator />
+
             </NavigationContainer>
 
             <StatusBar />
+            <UserWizardScreen />
             <NotificationArea />
           </SafeAreaProvider>
         </MaterialProvider>
@@ -135,21 +128,22 @@ export default function App() {
   const isLoadingComplete = useCachedResources();
 
 
+
   if (!isLoadingComplete) {
     return null;
   } else {
     return (
       <Provider store={store}>
-          <PersistGate
-            persistor={persistor}
-            loading={
-              <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                <ActivityIndicator size="large" />
-              </View>
-          }>
-            <Content />
-          </PersistGate>
-        </Provider>
+        <PersistGate
+          persistor={persistor}
+          loading={
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+              <ActivityIndicator size="large" />
+            </View>
+        }>
+          <Content />
+        </PersistGate>
+      </Provider>
     );
   }
 }

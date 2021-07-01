@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image, KeyboardAvoidingView, StyleSheet } from 'react-native';
 import { Button, HelperText, TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { gql, useMutation } from '@apollo/client';
@@ -95,8 +95,8 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Image source={logo} style={{ height: 300 }} resizeMode="contain" />
-      <View style={styles.fields}>
+      <Image source={logo} style={{ height: 300, width: "100%" }} resizeMode="contain" />
+      <KeyboardAvoidingView style={styles.fields} behavior="padding">
         <TextInput
           label="Email"
           mode="outlined"
@@ -129,7 +129,7 @@ export default function LoginScreen() {
         <Button labelStyle={styles.textButtonLabel} style={styles.textButton} onPress={() => navigation.navigate("SignUpScreen")}>
           Sign up
         </Button>
-      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
   fields: {
     marginBottom: 10,
     marginTop: -50,
+    maxWidth: 400,
     width: "100%",
     paddingHorizontal: 56,
     backgroundColor: "transparent"

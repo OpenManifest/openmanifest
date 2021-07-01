@@ -18,14 +18,9 @@ interface ISetupWarning {
 function Warning(props: { title: string, action?: () => void }) {
   return (
     <View style={styles.warning}>
-        <Paragraph>
+        <Paragraph style={{ color: "white",  }}>
           {props.title}
         </Paragraph>
-        {!props.action ? null : (
-          <Button color="black" mode="outlined" onPress={() => props.action!()}>
-            Take me there
-          </Button>
-        )}
       </View>
   );
 }
@@ -87,7 +82,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 56,
     width: "100%",
-    backgroundColor: "#ffbb33",
+    backgroundColor: "black",
     justifyContent: "space-between",
     paddingHorizontal: 32
   },

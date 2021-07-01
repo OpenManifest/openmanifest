@@ -26,16 +26,19 @@ export default function DatePicker(props: IDatepicker) {
     [setOpen, props.onChange]
   );
 
+  const timestampLabel = props.timestamp ? 
+    format(props.timestamp * 1000, "yyyy/MM/dd") :
+    "No date selected";
+    
   return (
     <>
-      
       <List.Item
-        title={props.label}
+        title={props.label || timestampLabel}
         disabled={!!props.disabled}
         description={
-          props.timestamp ? 
-            format(props.timestamp * 1000, "yyyy/MM/dd") :
-            "No date selected"
+          !props.label
+            ? null
+            : timestampLabel
         }
         left={() => <List.Icon color={props.color} icon="calendar" />}
         onPress={() => setOpen(true)}

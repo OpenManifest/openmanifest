@@ -4,7 +4,6 @@ import { Slot, DropzoneUser, Permission } from "../../graphql/schema.d";
 import useRestriction from "../../hooks/useRestriction";
 
 interface ILoadMasterChipSelect {
-  dropzoneId: number;
   value?: DropzoneUser | null;
   slots: Slot[];
   onSelect(user: DropzoneUser): void;
@@ -19,7 +18,7 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
 
   return (
     !allowed ?
-    <Chip mode="outlined" icon="radio-handheld">
+    <Chip mode="outlined" icon="shield-account">
       {props.value?.user?.name || "No loadmaster"}
     </Chip> : (
     <Menu
@@ -28,7 +27,7 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
       anchor={
         <Chip
           mode="outlined"
-          icon="parachute"
+          icon="shield-account"
           style={{ marginHorizontal: 4 }}
           onPress={() => allowed && setMenuOpen(true)}
         >

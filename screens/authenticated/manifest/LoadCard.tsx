@@ -398,7 +398,6 @@ export default function LoadCard(props: ILoadCard) {
       <View style={{ flexDirection: "row"}}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <PlaneChip
-            dropzoneId={Number(state.currentDropzone?.id)}
             value={data?.load?.plane}
             onSelect={async (plane) => {
               if ((data?.load?.slots?.length || 0) > (plane.maxSlots || 0)) {
@@ -427,7 +426,6 @@ export default function LoadCard(props: ILoadCard) {
             onSelect={updatePilot}
           />
           <LoadMasterChip
-            dropzoneId={Number(currentDropzone?.dropzone?.id)}
             value={data?.load?.loadMaster}
             slots={data?.load.slots || []}
             onSelect={updateLoadMaster}

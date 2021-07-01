@@ -1,9 +1,20 @@
 import * as Linking from 'expo-linking';
 
 export default {
-  prefixes: [Linking.makeUrl('/'), "dz://", "openmanifest://"],
+  prefixes: [
+    Linking.makeUrl('/'),
+    "https://openmanifest.org",
+    "openmanifest://",
+    "http://localhost:19006"
+  ],
   config: {
     screens: {
+      confirm: {
+        path: "/confirm",
+        params: {
+          account_confirmation_success: undefined,
+        }
+      },
       Authenticated: {
         screens: {
           HomeScreen: "/home",
@@ -21,6 +32,7 @@ export default {
       },
       Unauthenticated: {
         screens: {
+          
           LoginScreen: "/login",
           SignUpScreen: "/signup",
         }

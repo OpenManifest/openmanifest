@@ -43,7 +43,6 @@ export default function UserHeader(props: IUserHeader) {
                 : <Avatar.Image
                     size={80}
                     source={{ uri: dropzoneUser?.user.image }}
-                    color={theme.colors.primary}
                     style={{ backgroundColor: theme.colors.surface }}
                   />
               }

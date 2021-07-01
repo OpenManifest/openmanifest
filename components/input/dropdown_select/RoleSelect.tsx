@@ -28,11 +28,11 @@ const QUERY_ROLES = gql`
 
 export default function RoleSelect(props: IRoleSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const currentDropzone = useCurrentDropzone();
+  const { currentDropzoneId } = useAppSelector(state => state.global);
 
   const { data, loading, refetch } = useQuery<Query>(QUERY_ROLES, {
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: Number(currentDropzoneId),
     }
   });
   return (

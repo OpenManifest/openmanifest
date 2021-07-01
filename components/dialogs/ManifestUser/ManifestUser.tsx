@@ -1,9 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import * as React from "react";
-import { View, StyleSheet } from "react-native";
-import { Button, Portal } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { StyleSheet } from "react-native";
 import { Mutation } from "../../../graphql/schema.d";
 import { actions, useAppDispatch, useAppSelector } from "../../../redux";
 import ManifestForm from "../../forms/manifest/ManifestForm";
@@ -203,21 +200,6 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     } 
   }, [JSON.stringify(state.fields), mutationCreateSlot, props.onSuccess])
   
-  const sheetRef = React.useRef<BottomSheet>(null);
-
-  React.useEffect(() => {
-    if (state.fields.ticketType?.value?.isTandem) {
-      sheetRef?.current?.snapTo(0);
-    }
-  }, [state.fields.ticketType?.value?.isTandem])
-
-  React.useEffect(() => {
-    if (open) {
-      sheetRef?.current?.snapTo(0);
-    } else if (!open) {
-      sheetRef?.current?.snapTo(1);
-    }
-  }, [open]);
 
   return (
     <DialogOrSheet
@@ -235,39 +217,3 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     </DialogOrSheet>
   )
 }
-
-const styles = StyleSheet.create({
-  button: {
-    width: "100%",
-    borderRadius: 16,
-    padding: 5,
-  },
-  contentContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 32,
-  },
-  sheet: {
-    elevation: 3,
-    backgroundColor: "white",
-    flexGrow: 1,
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-  },
-  sheetHeader: {
-    elevation: 2,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    height: 40,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: -4,
-    },
-    backgroundColor: "white",
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-  }
-
-})

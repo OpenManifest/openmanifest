@@ -33,11 +33,11 @@ const QUERY_TICKET_TYPES = gql`
 
 export default function TicketTypeSelect(props: ITicketTypeSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const currentDropzone = useCurrentDropzone();
+  const { currentDropzoneId } = useAppSelector(state => state.global);
 ;
   const { data, loading, refetch } = useQuery<Query>(QUERY_TICKET_TYPES, {
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: Number(currentDropzoneId),
       allowManifestingSelf: props.allowManifestingSelf,
     }
   });

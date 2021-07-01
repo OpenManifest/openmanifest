@@ -23,7 +23,7 @@ export default function LoadForm() {
         error={!!state.fields.name.error}
         placeholder="Optional"
         value={state.fields.name.value || ""}
-        autoFocus
+        
         onChangeText={(newValue) => dispatch(actions.forms.load.setField(["name", newValue]))}
       />
       <HelperText type={!!state.fields.name.error ? "error" : "info"}>

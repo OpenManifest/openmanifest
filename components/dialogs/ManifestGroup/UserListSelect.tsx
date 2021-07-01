@@ -47,14 +47,14 @@ interface IUserListSelect {
 }
 
 export default function UsersScreen(props: IUserListSelect) {
-  const {global, screens, forms } = useAppSelector(state => state);
+  const { screens } = useAppSelector(state => state);
   const dispatch = useAppDispatch();
   const [searchText, setSearchText] = React.useState("");
-  const currentDropzone = useCurrentDropzone();
+  const { currentDropzoneId } = useAppSelector(state => state.global);
 
   const { data, loading } = useQuery<Query>(QUERY_DROPZONE_USERS, {
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: Number(currentDropzoneId),
       search: searchText,
     }
   });

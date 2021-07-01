@@ -43,7 +43,7 @@ const QUERY_RIGS = gql`
 
 export default function RigSelect(props: IRigSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const currentDropzone = useCurrentDropzone();
+  const { currentDropzoneId } = useAppSelector(state => state.global);
 
   const [fetchRigs, { data, }] = useLazyQuery<Query>(QUERY_RIGS);
 
@@ -51,7 +51,7 @@ export default function RigSelect(props: IRigSelect) {
     if (props.userId && props.dropzoneId) {
       fetchRigs({
         variables: {
-          dropzoneId: Number(currentDropzone?.dropzone?.id),
+          dropzoneId: currentDropzoneId,
           userId: Number(props.userId)
         }
       });

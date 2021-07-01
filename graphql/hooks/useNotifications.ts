@@ -39,11 +39,10 @@ const QUERY_DROPZONE_USER_NOTIFICATIONS = gql`
 // Returns current user if no ID is provided
 export default function useNotifications() {
   const dropzoneId = useAppSelector(state => state.global.currentDropzoneId);
-  const currentDropzone = useCurrentDropzone();
 
   const query = useQuery<Pick<Query, "dropzone">>(QUERY_DROPZONE_USER_NOTIFICATIONS, {
     variables: {
-      dropzoneId: dropzoneId,
+      dropzoneId,
     },
     pollInterval: 30000,
   });

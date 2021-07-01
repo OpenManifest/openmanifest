@@ -1,10 +1,7 @@
 import { combineReducers, configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+import AsyncStorage from '@react-native-community/async-storage';
 import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux'
 import { Platform } from "react-native";
-import AsyncStorage from '@react-native-community/async-storage';
-
-
-
 import { persistStore, persistReducer } from "redux-persist";
 import { reducers as forms, initialState as initialStateForms } from "../components/forms/slice";
 import { reducers as screens, initialState as initialStateScreens } from "../screens/slice";
@@ -12,7 +9,6 @@ import { reducers as screens, initialState as initialStateScreens } from "../scr
 
 import globalSlice, { initialState as initialStateGlobal } from "./global";
 import notificationSlice, { initialState as initialStateNotification } from "../components/notifications/slice";
-
 
 export const initialState = {
   forms: initialStateForms,
@@ -46,15 +42,14 @@ export const actions = {
   screens: screenActions,
   global: globalSlice.actions,
   notifications: notificationSlice.actions,
-}
+};
 
 export const rootReducer = combineReducers({
-    global: globalSlice.reducer,
-    notifications: notificationSlice.reducer,
-    screens: combineReducers(screenReducers),
-    forms: combineReducers(formReducers),
-  });
-
+  global: globalSlice.reducer,
+  notifications: notificationSlice.reducer,
+  screens: combineReducers(screenReducers),
+  forms: combineReducers(formReducers),
+});
 export const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
   reducer: persistedReducer,

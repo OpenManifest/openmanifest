@@ -1,7 +1,8 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
-import { List, Menu } from "react-native-paper";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { List, Menu, TextInput } from "react-native-paper";
 import { Federation, Query } from "../../../graphql/schema.d";
 
 
@@ -39,16 +40,18 @@ export default function FederationSelect(props: IFederationSelect) {
     <Menu
       onDismiss={() => setMenuOpen(false)}
       visible={isMenuOpen}
+      
       anchor={
-        <List.Item
-          onPress={() => {
-            setMenuOpen(true);
-          }}
-          title={
-            props.value?.name || "Please select federation"
-          }
-          description={!props.required ? "Optional" : null}
-        />
+        <TouchableOpacity onPress={() => { setMenuOpen(true); }}>
+          <TextInput
+            mode="outlined"
+            disabled
+            style={{ minWidth: 200 }}
+            value={
+              props.value?.name || "Please select federation"
+            }
+          />
+        </TouchableOpacity>
       }>
       {
         data?.federations?.map((federation) => 

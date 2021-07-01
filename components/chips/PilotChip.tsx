@@ -16,7 +16,7 @@ interface IPilotChipSelect {
 
 
 const QUERY_DROPZONE_USERS = gql`
-  query QueryDropzoneUsers(
+  query QueryPilotUsers(
     $dropzoneId: Int!
     $permissions: [Permission!]
   ) {
@@ -45,11 +45,11 @@ const QUERY_DROPZONE_USERS = gql`
 
 export default function PilotChip(props: IPilotChipSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const currentDropzone = useCurrentDropzone();
+  const { currentDropzoneId } = useAppSelector(state => state.global);
 
   const { data } = useQuery<Query>(QUERY_DROPZONE_USERS, {
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: currentDropzoneId,
       permissions: ["actAsPilot"]
     }
   });
@@ -66,7 +66,7 @@ export default function PilotChip(props: IPilotChipSelect) {
       anchor={
         <Chip
           mode="outlined"
-          icon="airplane-takeoff"
+          icon="shield-airplane"
           style={{ marginHorizontal: 4 }}
           onPress={() => setMenuOpen(true)}
         >

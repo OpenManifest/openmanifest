@@ -5,6 +5,7 @@ import * as React from "react";
 import { List } from "react-native-paper";
 import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
 import { Plane, Query } from "../../../graphql/schema.d";
+import { useAppSelector } from "../../../redux";
 import ChipSelect from "./ChipSelect";
 
 
@@ -16,7 +17,7 @@ interface IPlaneSelect {
 }
 
 const QUERY_PLANES = gql`
-  query QueryPlanes(
+  query QuerySelectPlanes(
     $dropzoneId: Int!
   ) {
     planes(dropzoneId: $dropzoneId) {
@@ -33,11 +34,11 @@ const QUERY_PLANES = gql`
 `;
 
 export default function PlaneChipSelect(props: IPlaneSelect) {
-  const currentDropzone = useCurrentDropzone();
+  const { currentDropzoneId } = useAppSelector(state => state.global);
   
   const { data, loading, refetch } = useQuery<Query>(QUERY_PLANES, {
     variables: {
-      dropzoneId: Number(currentDropzone.dropzone?.id),
+      dropzoneId: currentDropzoneId,
     }
   });
 

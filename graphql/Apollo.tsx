@@ -19,11 +19,11 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
   // Log any GraphQL errors or network error that occurred
   const errorLink = React.useMemo(() =>
-    onError(({ graphQLErrors, networkError }) => {
+    onError(({ graphQLErrors, networkError, operation, response }) => {
 
       if (graphQLErrors?.some((err) => err.extensions?.code === "AUTHENTICATION_ERROR")) {
         dispatch(
-          actions.notifications.showSnackbar({ message: `Session expires`, variant: "error" })
+          actions.notifications.showSnackbar({ message: `Session expired`, variant: "error" })
         )
         dispatch(
           actions.global.logout()
@@ -31,12 +31,19 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
         return;
       }
         
-      if (graphQLErrors)
-        graphQLErrors.map(({ message, locations, path }) =>
+      if (graphQLErrors && process.env.EXPO_ENV !== 'production') {
+        graphQLErrors.map((err) => {
+          const { message, locations, path, stack, source, name, nodes } = err;
           dispatch(
-            actions.notifications.showSnackbar({ message: `[GraphQL error]: ${message}, ${locations}, ${path}`, variant: "error" })
+            actions.notifications.showSnackbar({ message: `[GraphQL error]: ${message}, ${locations[0]}, ${path}`, variant: "error" })
           )
-        );
+          console.error(
+            `[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}, ${name}, ${nodes}`
+          );
+          console.error(JSON.stringify(err));
+          console.error(operation);
+        });
+      }
       if (networkError) {
         dispatch(
           actions.notifications.showSnackbar({ message: `[Network error]: ${networkError}`, variant: "error" })

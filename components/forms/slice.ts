@@ -11,6 +11,7 @@ import * as manifest from "./manifest/slice";
 import * as manifestGroup from "./manifest_group/slice";
 import * as ticketType from "./ticket_type/slice";
 import * as user from "./user/slice";
+import * as userWizard from "../dialogs/UserWizard/slice";
 
 export const initialState = {
   credits: credits.initialState,
@@ -26,6 +27,7 @@ export const initialState = {
   manifestGroup: manifestGroup.initialState,
   ticketType: ticketType.initialState,
   user: user.initialState,
+  userWizard: userWizard.initialState,
 }
 export const reducers = {
   credits: credits.default,
@@ -41,4 +43,5 @@ export const reducers = {
   manifestGroup: manifestGroup.default,
   ticketType: ticketType.default,
   user: user.default,
+  userWizard: userWizard.default,
 }

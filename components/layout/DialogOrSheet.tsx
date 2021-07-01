@@ -1,6 +1,6 @@
 import { last,sortBy, uniq } from "lodash";
 import * as React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Keyboard, KeyboardAvoidingView } from "react-native";
 import { Button, Portal, Title } from "react-native-paper";
 import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
@@ -18,10 +18,24 @@ interface IBottomSheetProps {
 
 export default function DialogOrSheet(props: IBottomSheetProps) {
   const { open, snapPoints, onClose, title, buttonLabel, buttonAction, loading, children } = props;
-
   const sheetRef = React.useRef<BottomSheet>(null);
-
   const snappingPoints = React.useMemo(() => sortBy(uniq([0, ...(snapPoints || [600])])), [JSON.stringify(snapPoints)]);
+
+  const [keyboardVisible, setKeyboardVisible] = React.useState(false);
+
+  const onKeyboardVisible = () => setKeyboardVisible(true);
+  const onKeyboardHidden = () => setKeyboardVisible(false);
+
+  React.useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', onKeyboardVisible);
+    Keyboard.addListener('keyboardDidHide', onKeyboardHidden);
+
+    return () => {
+      Keyboard.removeListener('keyboardDidShow', onKeyboardVisible);
+      Keyboard.removeListener('keyboardDidHide', onKeyboardHidden);
+    };
+  }, []);
+  
 
   React.useEffect(() => {
     if (open) {
@@ -34,6 +48,8 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
   return (
     <Portal>
       <BottomSheet
+        keyboardBehavior="interactive"
+        keyboardBlurBehavior="restore"
         ref={sheetRef}
         backdropComponent={BottomSheetBackdrop}
         snapPoints={snappingPoints}
@@ -41,6 +57,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
         onChange={(toIndex) => {
           if (toIndex <= 0) {
             onClose();
+            Keyboard.dismiss();
             sheetRef?.current?.close();
           }
         }}
@@ -52,17 +69,23 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
               </View>
         }
        >
-         <BottomSheetScrollView style={{ backgroundColor: "#FFFFFF" }} contentContainerStyle={styles.sheet}>
-            { children }
-            <Button
-              onPress={buttonAction}
-              mode="contained"
-              style={styles.button}
-              loading={loading}
+          <BottomSheetScrollView
+              style={{ backgroundColor: "#FFFFFF" }}
+              contentContainerStyle={[
+                styles.sheet,
+                { paddingBottom: keyboardVisible ? 400 : 0 }
+              ]}
             >
-              { buttonLabel }
-            </Button>
-          </BottomSheetScrollView>
+              { children }
+              <Button
+                onPress={buttonAction}
+                mode="contained"
+                style={styles.button}
+                loading={loading}
+              >
+                { buttonLabel }
+              </Button>
+            </BottomSheetScrollView>
         </BottomSheet>
     </Portal>
   )

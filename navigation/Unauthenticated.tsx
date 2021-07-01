@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import LoginScreen from '../screens/unauthenticated/login/LoginScreen';
 import SignUpScreen from '../screens/unauthenticated/signup/SignUpScreen';
+import UserWizardScreen from '../screens/user_wizard/UserWizardScreen';
 
 
 // A root stack navigator is often used for displaying modals on top of all other content
@@ -18,7 +19,6 @@ export default function Unauthenticated() {
           flex: 1
         }
       }}
-      initialRouteName="LoginScreen"
     >
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="SignUpScreen" component={SignUpScreen} />

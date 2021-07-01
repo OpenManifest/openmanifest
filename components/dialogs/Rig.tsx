@@ -1,6 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
 import * as React from "react";
-import BottomSheetBehavior from "@gorhom/bottom-sheet";
 import { Mutation } from "../../graphql/schema.d";
 import { actions, useAppDispatch, useAppSelector } from "../../redux";
 import RigForm from "../forms/rig/RigForm";
@@ -230,15 +229,6 @@ export default function RigDialog(props: IRigDialog) {
       dispatch(actions.notifications.showSnackbar({ message: error.message, variant: "error" }));
     } 
   }, [JSON.stringify(state.fields), mutationCreateRig, mutationUpdateRig, props.onSuccess])
-  
-  const sheetRef = React.useRef<BottomSheetBehavior>(null);
-  React.useEffect(() => {
-    if (props.open) {
-      sheetRef?.current?.snapTo(0);
-    } else if (!props.open) {
-      sheetRef?.current?.snapTo(1);
-    }
-  }, [props.open]);
 
   return (
     <DialogOrSheet

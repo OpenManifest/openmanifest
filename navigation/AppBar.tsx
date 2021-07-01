@@ -63,19 +63,19 @@ interface IAppBarProps extends StackHeaderProps {
 function AppBar(props: IAppBarProps) {
   const { navigation, previous, scene, hideWarnings } = props;
   const [contextMenuOpen, setContextMenuOpen] = React.useState(false);
-  const { currentDropzone } = useAppSelector(state => state.global);
+  const { currentDropzoneId } = useAppSelector(state => state.global);
   const dispatch = useAppDispatch();
   const [loadData, { data, loading }] = useLazyQuery<Query>(QUERY_CURRENT_USER, {
     variables: {
-      dropzoneId: Number(currentDropzone?.id)
+      dropzoneId: Number(currentDropzoneId)
     }
   });
 
   React.useEffect(() => {
-    if (currentDropzone) {
+    if (currentDropzoneId) {
       loadData();
     }
-  }, [loadData, currentDropzone])
+  }, [loadData, currentDropzoneId])
   
   const showCredits = !!data?.dropzone?.isCreditSystemEnabled;
 

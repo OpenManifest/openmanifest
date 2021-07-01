@@ -8,14 +8,13 @@ import useRestriction from "../../hooks/useRestriction";
 import { useAppSelector } from "../../redux";
 
 interface IPlaneChipSelect {
-  dropzoneId: number;
   value?: Plane | null;
   onSelect(dzUser: Plane): void;
 }
 
 
 const QUERY_PLANES = gql`
-  query QueryPlanes(
+  query QueryChipPlanes(
     $dropzoneId: Int!
   ) {
     planes(dropzoneId: $dropzoneId) {
@@ -33,11 +32,11 @@ const QUERY_PLANES = gql`
 
 export default function PlaneChip(props: IPlaneChipSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const currentDropzone = useCurrentDropzone();
+  const { currentDropzoneId } = useAppSelector(state => state.global);
 
   const { data } = useQuery<Query>(QUERY_PLANES, {
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: Number(currentDropzoneId),
     }
   });
   const allowed = useRestriction(Permission.UpdateLoad);

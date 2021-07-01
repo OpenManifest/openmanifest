@@ -66,7 +66,7 @@ interface ILoadDialog {
 export default function LoadDialog(props: ILoadDialog) {
   const { open, onClose, onSuccess } = props;
   const state = useAppSelector(state => state.forms.load);
-  const currentDropzone = useCurrentDropzone();
+  const { currentDropzoneId } = useAppSelector(state => state.global);
   
   const dispatch = useAppDispatch();
   const [mutationCreateLoad, mutation] = useMutation<Mutation>(MUTATION_CREATE_LOAD);
@@ -107,11 +107,11 @@ export default function LoadDialog(props: ILoadDialog) {
       try {
         const result = await mutationCreateLoad({
           variables: {
-            dropzoneId: Number(currentDropzone?.dropzone?.id),
+            dropzoneId: currentDropzoneId,
             name: name.value,
             maxSlots: maxSlots.value,
             planeId: plane.value?.id ? Number(plane.value?.id) : null,
-            pilotId: pilot.value?.id ? Number(plane.value?.id) : null,
+            pilotId: pilot.value?.id ? Number(pilot.value?.id) : null,
             gcaId: gca.value?.user?.id ? Number(gca.value?.user?.id) : null,
             isOpen: !!isOpen.value
           }
@@ -166,7 +166,7 @@ export default function LoadDialog(props: ILoadDialog) {
       onClose={onClose}
       buttonAction={onSave}
       buttonLabel="Create"
-      snapPoints={["30%", 750]}
+      snapPoints={["30%", 650]}
       loading={mutation.loading}
       title="New Load"
     >

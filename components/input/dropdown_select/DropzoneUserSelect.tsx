@@ -20,11 +20,10 @@ interface IDropzoneUserSelect {
 export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const globalState = useAppSelector(state => state.global);
-  const currentDropzone = useCurrentDropzone();
 
   const { data, loading, refetch } = useQueryDropzoneUsers({
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: globalState.currentDropzoneId,
       permissions: props.requiredPermissions
     },
   });

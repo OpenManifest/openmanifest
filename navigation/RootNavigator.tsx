@@ -1,19 +1,18 @@
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
 import NotFoundScreen from '../screens/NotFoundScreen';
 import { useAppSelector } from '../redux/store';
-import AppBar from "./AppBar";
 
 import AuthenticatedRoutes from './Authenticated';
 import LimboRoutes from './LimboRoutes';
 import UnauthenticatedRoutes from './Unauthenticated';
 import DropzonesScreen from '../screens/authenticated/dropzones/DropzonesScreen';
-
+import ConfirmUserScreen from "../screens/unauthenticated/signup/ConfirmUserScreen";
 export type TRootNavigatorRouteParams = {
   Authenticated: undefined;
   Unauthenticated: undefined;
+  confirm: { account_confirmation_success?: boolean };
   Dropzones: undefined;
   DropzonesScreen: undefined;
   NotFound: undefined;
@@ -24,12 +23,12 @@ const Stack = createStackNavigator<TRootNavigatorRouteParams>();
 
 export default function RootNavigator() {
   const globalState = useAppSelector(state => state.global);
-
   
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
+
         cardStyle: {
           flex: 1
         }
@@ -43,9 +42,11 @@ export default function RootNavigator() {
                 <Stack.Screen name="Dropzones" component={LimboRoutes} />
           ) : (
             <Stack.Screen name="Unauthenticated" component={UnauthenticatedRoutes} />
-        )
+          )
       }
+      <Stack.Screen name="confirm" component={ConfirmUserScreen} />
       <Stack.Screen name="DropzonesScreen" component={DropzonesScreen} />
+      
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
   );

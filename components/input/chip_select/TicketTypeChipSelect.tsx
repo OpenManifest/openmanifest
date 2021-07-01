@@ -50,11 +50,11 @@ const useTicketTypes = createQuery<{ ticketTypes: TicketType[] }, {
  });
 
 export default function TicketTypeChipSelect(props: ITicketTypeSelect) {
-  const currentDropzone = useCurrentDropzone();
+  const { currentDropzoneId } = useAppSelector(state => state.global);
   
   const { data, loading } = useTicketTypes({
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: Number(currentDropzoneId),
       onlyPublicTickets: props.onlyPublicTickets || null,
     },
     onError: console.error

@@ -22,7 +22,8 @@ export const MUTATION_USER_SIGNUP = gql`
       name: $name,
       phone: $phone,
       pushToken: $pushToken,
-      licenseId: $licenseId
+      licenseId: $licenseId,
+      confirmSuccessUrl: "https://openmanifest.org/confirm/"
     ) {
       authenticatable {
         createdAt,

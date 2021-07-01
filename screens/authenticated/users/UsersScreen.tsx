@@ -52,7 +52,7 @@ export default function UsersScreen() {
 
   const { data, loading } = useQuery<Query>(QUERY_DROPZONE_USERS, {
     variables: {
-      dropzoneId: Number(global.currentDropzone?.id),
+      dropzoneId: Number(global.currentDropzoneId),
       search: state.searchText,
     }
   });

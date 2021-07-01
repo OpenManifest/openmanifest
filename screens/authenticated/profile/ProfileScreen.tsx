@@ -156,13 +156,15 @@ export default function ProfileScreen() {
 
   const badges = dropzoneUser?.permissions?.filter((name) => /^actAs/.test(name)) || [];
 
+  const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
+  const canUpdateUser = useRestriction(Permission.UpdateUser);
   const shouldShowBadge = (permission: Permission) => canGrantPermission || badges.includes(permission);
 
   return (
     <>
     {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
     <ScrollableScreen contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}>
-      <ScrollView horizontal contentContainerStyle={{ padding: 8, justifyContent: "space-evenly", backgroundColor: state.theme.colors.primary }}>
+      <ScrollView horizontal style={{ width: "100%" }} contentContainerStyle={{ flexGrow: 1, padding: 8, justifyContent: "space-evenly", backgroundColor: state.theme.colors.primary }}>
         {
           [
             Permission.ActAsPilot,
@@ -231,7 +233,9 @@ export default function ProfileScreen() {
             style={styles.chip}
             textStyle={styles.chipTitle}
             onPress={() => {
-              dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser!));
+              if (canUpdateUser) {
+                dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser!));
+              }
             }}
           >
             {!dropzoneUser?.expiresAt
@@ -327,12 +331,16 @@ export default function ProfileScreen() {
         
       <TableCard
         title="Transactions"
-        buttonIcon="plus"
-        onPressButton={() => {
-          if (dropzoneUser) {
-            dispatch(actions.forms.credits.setOpen(dropzoneUser!));
-          }
-        }}
+        {
+          ...canAddTransaction ? {
+            buttonIcon: "plus",
+            onPressButton: () => {
+              if (dropzoneUser) {
+                dispatch(actions.forms.credits.setOpen(dropzoneUser!));
+              }
+            }
+          } : {}
+        }
       >
         <DataTable>
           <DataTable.Header>
