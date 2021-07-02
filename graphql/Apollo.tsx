@@ -35,7 +35,7 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
         graphQLErrors.map((err) => {
           const { message, locations, path, stack, source, name, nodes } = err;
           dispatch(
-            actions.notifications.showSnackbar({ message: `[GraphQL error]: ${message}, ${locations[0]}, ${path}`, variant: "error" })
+            actions.notifications.showSnackbar({ message: `[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}`, variant: "error" })
           )
           console.error(
             `[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}, ${name}, ${nodes}`

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { Button, ProgressBar } from 'react-native-paper';
+import { Button, IconButton, ProgressBar } from 'react-native-paper';
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { actions, useAppSelector, useAppDispatch } from '../../../redux';
 
@@ -174,15 +174,18 @@ export default function UpdateDropzoneScreen() {
 
   return (
     <>
-    <ProgressBar indeterminate color={globalState.theme.colors.accent} visible={loading} />
-    <ScrollableScreen contentContainerStyle={styles.content}>
-      <DropzoneForm />
-      <View style={styles.fields}>
-        <Button mode="contained" disabled={mutation.loading} onPress={onSave} loading={mutation.loading}>
-          Save
-        </Button>
-      </View>
-    </ScrollableScreen>
+      <ProgressBar indeterminate color={globalState.theme.colors.accent} visible={loading} />
+      <ScrollableScreen style={{ backgroundColor: globalState.theme.colors.accent }} contentContainerStyle={styles.content}>
+        <IconButton
+          icon="wizard"
+        />
+        <DropzoneForm />
+        <View style={styles.fields}>
+          <Button mode="contained" disabled={mutation.loading} onPress={onSave} loading={mutation.loading}>
+            Save
+          </Button>
+        </View>
+      </ScrollableScreen>
     </>
   );
 }
@@ -209,7 +212,7 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   fields: {
-    width: "70%",
+    width: "100%",
     marginBottom: 16,
   },
   field: {

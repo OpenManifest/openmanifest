@@ -99,6 +99,7 @@ function UserWizardScreen() {
         id: Number(rigForm.original?.id),
         repackExpiresAt: rigForm.fields.repackExpiresAt.value,
       });
+      dispatch(actions.forms.rig.setOpen(rig.rig));
       return true;
     } catch (_) {
       return false;

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import { Avatar } from "react-native-paper";
 import { PaginationProps } from "react-native-swiper-flatlist";
 import { successColor } from "../../constants/Colors";
@@ -9,6 +9,10 @@ interface IWizardPagination extends PaginationProps {
 }
 export default function WizardPagination(props: IWizardPagination) {
   const { size, paginationIndex, icons } = props;
+
+  const { width } = Dimensions.get('window');
+  
+  const bridgeLength = (width - (48 * 2) - (size * 30)) / size;
 
   return (
     <View style={styles.pagination}>
@@ -37,7 +41,7 @@ export default function WizardPagination(props: IWizardPagination) {
               />
               {
                 size - 1 > index
-                  ? <View style={[styles.bridge, paginationIndex > index ? styles.bridgeDone : undefined]} />
+                  ? <View style={[styles.bridge, { width: bridgeLength }, paginationIndex > index ? styles.bridgeDone : undefined]} />
                   : null
               }
             </React.Fragment>

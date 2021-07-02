@@ -97,7 +97,12 @@ export default function DropzonesScreen() {
         style={styles.fab}
         small
         icon="plus"
-        onPress={() => navigation.navigate("CreateDropzoneScreen")}
+        onPress={() => {
+          dispatch(actions.forms.plane.reset());
+          dispatch(actions.forms.ticketType.reset());
+          dispatch(actions.forms.dropzone.reset());
+          dispatch(actions.forms.dropzoneWizard.setOpen(true));
+        }}
         label="Create dropzone"
       />
     </SafeAreaView>
@@ -108,13 +113,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 8,
-    display: "flex"
+    display: "flex",
+    backgroundColor: "#FF1414",
   },
   fab: {
     position: 'absolute',
     margin: 32,
     right: 16,
     bottom: 0,
+    backgroundColor: "#FFFFFF"
   },
   empty: {
     flex: 1,

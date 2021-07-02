@@ -12,6 +12,7 @@ import * as manifestGroup from "./manifest_group/slice";
 import * as ticketType from "./ticket_type/slice";
 import * as user from "./user/slice";
 import * as userWizard from "../dialogs/UserWizard/slice";
+import * as dropzoneWizard from "../dialogs/DropzoneWizard/slice";
 
 export const initialState = {
   credits: credits.initialState,
@@ -28,6 +29,7 @@ export const initialState = {
   ticketType: ticketType.initialState,
   user: user.initialState,
   userWizard: userWizard.initialState,
+  dropzoneWizard: dropzoneWizard.initialState,
 }
 export const reducers = {
   credits: credits.default,
@@ -44,4 +46,5 @@ export const reducers = {
   ticketType: ticketType.default,
   user: user.default,
   userWizard: userWizard.default,
+  dropzoneWizard: dropzoneWizard.default,
 }

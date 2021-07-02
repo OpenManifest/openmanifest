@@ -44,6 +44,7 @@ function Wizard(props: IWizardProps) {
         loading={loading}
         mode="contained"
         color="#FFFFFF"
+        disabled={loading}
         style={styles.button}
         onPress={async () => {
           // @ts-ignore
@@ -67,6 +68,7 @@ function Wizard(props: IWizardProps) {
             <Button
               key={`button-${index}`}
               mode="text"
+              disabled={loading}
               color="#FFFFFF"
               style={styles.buttonBack}
               onPress={async () => {

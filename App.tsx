@@ -20,6 +20,7 @@ import LinkingConfiguration from './navigation/Routes';
 import RootNavigator from "./navigation/RootNavigator";
 import { actions } from './redux';
 import UserWizardScreen from './components/dialogs/UserWizard/UserWizardScreen';
+import DropzoneWizardScreen from './components/dialogs/DropzoneWizard/DropzoneWizard';
 
 
 Notifications.setNotificationHandler({
@@ -117,6 +118,7 @@ function Content() {
 
             <StatusBar />
             <UserWizardScreen />
+            <DropzoneWizardScreen />
             <NotificationArea />
           </SafeAreaProvider>
         </MaterialProvider>
