@@ -59,7 +59,7 @@ function ColorPicker(props: IColorPicker) {
         }
         <TouchableRipple onPress={() => setDialogOpen(true)}>
           <Surface style={[styles.colorBox, { backgroundColor: isCustomColor ? value : "#FFFFFF" }, isCustomColor ? { borderWidth: 2, borderColor: "black" } : {}]}>
-            <MaterialIcons name="add" size={15} />
+            <MaterialIcons name="add" size={1} />
           </Surface>
         </TouchableRipple>
       </Card.Content>
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     flexDirection: "column",
   },
-  card: { padding: 8, marginVertical: 8, maxHeight: 180 },
+  card: { padding: 8, marginVertical: 16 },
   title: { color: "white", fontSize: 24, fontWeight: "bold", marginBottom: 10, textAlign: "center" },
 
   colorBox: {

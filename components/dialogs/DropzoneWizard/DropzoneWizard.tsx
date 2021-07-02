@@ -225,6 +225,7 @@ function DropzoneWizardScreen() {
         visible={state.open}
         dismissable={false}
         style={styles.modal}
+        contentContainerStyle={{ height: "100%" }}
       >
           <Wizard
             onNext={onNextStep}
@@ -239,7 +240,6 @@ function DropzoneWizardScreen() {
           >
             <NameAndFederationStep />
             <ThemingStep />
-            { /* Dropzone should be created here */ }
             <AircraftStep />
             <TicketTypeStep />
             <PermissionStep title="Who can manifest?" permission={Permission.CreateSlot} />
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     flex: 1,
-    alignItems: "center"
+    alignItems: "center",
   }
 })
 

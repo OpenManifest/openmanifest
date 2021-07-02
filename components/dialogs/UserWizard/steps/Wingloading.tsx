@@ -10,6 +10,13 @@ function WingloadingWizardScreen() {
   const rigForm = useAppSelector(state => state.forms.rig);
   const userForm = useAppSelector(state => state.forms.user);
   const dispatch = useAppDispatch();
+  const [canopySize, setCanopySize] = React.useState(rigForm.fields.canopySize.value || 120);
+
+
+  React.useEffect(() => {
+    setCanopySize(rigForm.fields.canopySize.value);
+  }, [rigForm.fields.canopySize.value]);
+
 
   return (
     <WizardScreen style={styles.container}>
@@ -63,7 +70,7 @@ function WingloadingWizardScreen() {
         <Card style={styles.card} elevation={3}>
           <View style={styles.cardTitle}>
             <List.Subheader>Canopy size</List.Subheader>
-            <Text style={styles.cardValue}>{(rigForm.fields.canopySize.value || 120)}ft</Text>
+            <Text style={styles.cardValue}>{(canopySize || 120)}ft</Text>
           </View>
             
           <View style={styles.slider}>
@@ -72,13 +79,11 @@ function WingloadingWizardScreen() {
               minimumValue={34}
               maximumValue={350}
               step={1}
-              value={rigForm.fields.canopySize.value || 120}
+              value={canopySize || 120}
               minimumTrackTintColor="#FF1414"
               maximumTrackTintColor="#000000"
-              onValueChange={debounce((value) =>
-                dispatch(actions.forms.rig.setField(["canopySize", value])),
-                20
-              )}
+              onValueChange={(size) => setCanopySize(size)}
+              onSlidingComplete={() => dispatch(actions.forms.rig.setField(["canopySize", canopySize]))}
             />
           </View>
             

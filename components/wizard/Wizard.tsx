@@ -15,13 +15,12 @@ interface IWizardProps {
 function Wizard(props: IWizardProps) {
   const { children, icons, onNext, loading } = props;
   const [index, setIndex] = React.useState(0);
-  const globalState = useAppSelector(state => state.global);
   const ref = React.useRef<SwiperFlatList>(null);
 
   const isLastItem = index === React.Children.count(children) - 1;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       <SwiperFlatList
         showPagination
         index={index}
@@ -39,6 +38,8 @@ function Wizard(props: IWizardProps) {
       >
         {children}
       </SwiperFlatList>
+
+      <View style={styles.buttons}>
       <Button
         key={`button-next-${index}`}
         loading={loading}
@@ -82,6 +83,7 @@ function Wizard(props: IWizardProps) {
             </Button>     
           )
       }
+      </View>
     </View>
   );
 }
@@ -90,23 +92,27 @@ const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   button: {
+    alignSelf: "center",
+    width: "100%",
+  },
+  buttonBack: {
+    alignSelf: "center",
+    width: "100%",
+    marginHorizontal: 48
+  },
+  container: {
+    width,
+    flex: 1,
+    paddingBottom: 100
+  },
+  buttons: {
     position: "absolute",
     bottom: 100,
     alignSelf: "center",
-    width: 300
-  },
-  buttonBack: {
-    position: "absolute",
-    bottom: 40,
-    alignSelf: "center",
-    width: 300
-  },
-  container: {
-    borderColor: "black",
-    borderWidth: 2,
-    width,
-    flex: 1,
-  },
+    width: "100%",
+    paddingHorizontal: 48,
+    maxWidth: 404,
+  }
 });
 
 export default Wizard;

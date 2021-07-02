@@ -11,8 +11,9 @@ export default function WizardPagination(props: IWizardPagination) {
   const { size, paginationIndex, icons } = props;
 
   const { width } = Dimensions.get('window');
+  const screenWidth = width > 500 ? 500 : width;
   
-  const bridgeLength = (width - (48 * 2) - (size * 30)) / size;
+  const bridgeLength = (screenWidth - (48 * 2) - (size * 30)) / size;
 
   return (
     <View style={styles.pagination}>

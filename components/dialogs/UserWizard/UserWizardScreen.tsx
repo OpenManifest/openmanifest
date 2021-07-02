@@ -160,6 +160,7 @@ function UserWizardScreen() {
         visible={state.open}
         dismissable={false}
         style={styles.modal}
+        contentContainerStyle={{ height: "100%" }}
       >
 
           <Wizard
