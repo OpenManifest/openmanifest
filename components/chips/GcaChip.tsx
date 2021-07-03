@@ -15,7 +15,7 @@ interface IGCAChipSelect {
 
 
 
-const QUERY_DROPZONE_USERS = gql`
+export const QUERY_PERMISSION_USER = gql`
   query QueryGCAUsers(
     $dropzoneId: Int!
     $permissions: [Permission!]
@@ -47,7 +47,7 @@ export default function GCAChip(props: IGCAChipSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector(state => state.global);
 
-  const { data } = useQuery<Query>(QUERY_DROPZONE_USERS, {
+  const { data } = useQuery<Query>(QUERY_PERMISSION_USER, {
     variables: {
       dropzoneId: Number(currentDropzoneId),
       permissions: ["actAsGCA"]

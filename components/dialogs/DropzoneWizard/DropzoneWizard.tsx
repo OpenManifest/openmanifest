@@ -2,6 +2,7 @@ import * as React from "react";
 import { StyleSheet } from "react-native";
 import { Portal, Modal } from "react-native-paper";
 import Wizard from "../../wizard/Wizard";
+import WizardCompleteStep from "../../wizard/WizardCompleteStep";
 import NameAndFederationStep from "./steps/Name";
 import AircraftStep from "./steps/Aircraft";
 import ThemingStep from "./steps/Theming";
@@ -62,28 +63,29 @@ function DropzoneWizardScreen() {
   });
 
 
-  const onBasicInfoNext = React.useCallback(async (): Promise<boolean> => {
+  const onBasicInfoNext = React.useCallback(async (index: number, setIndex: (idx: number) => void): Promise<void> => {
     if (!dropzone.fields.name.value) {
+      console.log("Set name error");
       dispatch(actions.forms.dropzone.setFieldError(["name", "Your dropzone must have a name"]));
-      return false;
-    }
-
+      console.log(dropzone.fields.name);
+      return;
+    } 
     if (!dropzone.fields.federation.value) {
       dispatch(actions.forms.dropzone.setFieldError(["federation", "Your dropzone must have an associated organization"]));
-      return false;
+      return;
     }
 
-    return true;
+    setIndex(index + 1);
   }, [JSON.stringify(dropzone.fields), dropzone.original]);
 
-  const onThemingNext = React.useCallback(async (): Promise<boolean> => {
+  const onThemingNext = React.useCallback(async (index: number, setIndex: (idx: number) => void) => {
     if (!dropzone.fields.primaryColor.value) {
       dispatch(actions.forms.dropzone.setFieldError(["primaryColor", "Please pick a primary color"]));
-      return false;
+      return;
     }
     if (!dropzone.fields.secondaryColor.value) {
       dispatch(actions.forms.dropzone.setFieldError(["secondaryColor", "Please pick an accent color"]));
-      return false;
+      return;
     }
 
     // Create or update dropzone
@@ -110,20 +112,20 @@ function DropzoneWizardScreen() {
         dispatch(actions.global.setDropzone(result.dropzone));
         dispatch(actions.global.setPrimaryColor(result.dropzone.primaryColor));
         dispatch(actions.global.setAccentColor(result.dropzone.secondaryColor));
-        return true;
+        return setIndex(index + 1);
       }
       return false;
 
   }, [JSON.stringify(dropzone.fields), dropzone.original]);
 
-  const onAircraftNext = React.useCallback(async (): Promise<boolean> => {
+  const onAircraftNext = React.useCallback(async (index: number, setIndex: (idx: number) => void) => {
     if (!aircraft.fields.name.value) {
       dispatch(actions.forms.plane.setFieldError(["name", "You must name your aircraft"]));
-      return false;
+      return;
     }
     if (!aircraft.fields.registration.value) {
       dispatch(actions.forms.plane.setFieldError(["registration", "Please provide aircraft registration"]));
-      return false;
+      return;
     }
 
     // Create or update dropzone
@@ -146,22 +148,22 @@ function DropzoneWizardScreen() {
 
       if (!result.errors?.length && result.plane?.id) {
         dispatch(actions.forms.plane.setOpen(result.plane));
-        return true;
+        setIndex(index + 1);
       }
       return false;
 
   }, [JSON.stringify(aircraft.fields), dropzone.original, JSON.stringify(aircraft.original)]);
 
 
-  const onTicketTypeNext = React.useCallback(async (): Promise<boolean> => {
+  const onTicketTypeNext = React.useCallback(async (index: number, setIndex: (idx: number) => void) => {
     if (!ticket.fields.name.value) {
       dispatch(actions.forms.ticketType.setFieldError(["name", "You must name your ticket"]));
-      return false;
+      return;
     }
 
     if (!ticket.fields.cost.value) {
       dispatch(actions.forms.ticketType.setFieldError(["cost", "Tickets must have a price"]));
-      return false;
+      return;
     }
 
     // Create or update dropzone
@@ -186,38 +188,13 @@ function DropzoneWizardScreen() {
 
       if (!result.errors?.length && result.ticketType?.id) {
         dispatch(actions.forms.ticketType.setOpen(result.ticketType));
-        return true;
+        setIndex(index + 1)
+        return;
       }
       return false;
 
   }, [JSON.stringify(ticket.fields), dropzone.original, JSON.stringify(ticket.original)]);
   
-  const onNextStep = React.useCallback(async (index): Promise<boolean> => {
-    switch (index) {
-      case 0:
-        return onBasicInfoNext();
-      case 1:
-        return onThemingNext();
-      case 2:
-        return onAircraftNext();
-      case 3:
-        return onTicketTypeNext();
-      case 4:
-        return true;
-      case 5:
-        dispatch(
-          actions.global.setDropzone(dropzone.original)
-        );
-        dispatch(actions.forms.dropzoneWizard.setOpen(false));
-        dispatch(actions.forms.dropzoneWizard.reset());
-        dispatch(actions.forms.ticketType.reset());
-        dispatch(actions.forms.plane.reset());
-        dispatch(actions.forms.dropzone.reset());
-      default:
-        return false;
-    }
-  }, [onBasicInfoNext, onThemingNext, onAircraftNext, onTicketTypeNext]);
-
 
   return (
     <Portal>
@@ -227,23 +204,108 @@ function DropzoneWizardScreen() {
         style={styles.modal}
         contentContainerStyle={{ height: "100%" }}
       >
-          <Wizard
-            onNext={onNextStep}
-            loading={
-              mutationCreateDropzone.loading ||
-              mutationUpdateDropzone.loading ||
-              mutationCreatePlane.loading ||
-              mutationUpdatePlane.loading ||
-              mutationCreateTicketType.loading ||
-              mutationUpdateTicketType.loading
-            }
-          >
-            <NameAndFederationStep />
-            <ThemingStep />
-            <AircraftStep />
-            <TicketTypeStep />
-            <PermissionStep title="Who can manifest?" permission={Permission.CreateSlot} />
-            <PermissionStep title="Manifest other people?" permission={Permission.CreateUserSlot} />
+          <Wizard>
+            
+            <NameAndFederationStep
+              onBack={() => {
+                dispatch(actions.forms.dropzoneWizard.setOpen(false));
+                dispatch(actions.forms.dropzoneWizard.reset());
+                dispatch(actions.forms.ticketType.setOpen(false));
+                dispatch(actions.forms.plane.setOpen(false));
+                dispatch(actions.forms.dropzone.setOpen(false));
+                dispatch(actions.forms.ticketType.reset());
+                dispatch(actions.forms.plane.reset());
+                dispatch(actions.forms.dropzone.reset());
+              }}
+              backButtonLabel="Cancel"
+              nextButtonLabel="Next"
+              onNext={onBasicInfoNext}
+            />
+            <ThemingStep
+              onBack={(idx, setIndex) => setIndex(idx - 1)}
+              onNext={onThemingNext}
+              loading={
+                mutationCreateDropzone.loading ||
+                mutationUpdateDropzone.loading
+              }
+              nextButtonLabel="Next"
+              backButtonLabel="Back"
+            />
+            <AircraftStep
+              onBack={(idx, setIndex) => setIndex(idx - 1)}
+              onNext={onAircraftNext}
+              loading={
+                mutationCreatePlane.loading ||
+                mutationUpdatePlane.loading
+              }
+              nextButtonLabel="Next"
+              backButtonLabel="Back"
+            />
+            <TicketTypeStep
+              onBack={(idx, setIndex) => setIndex(idx - 1)}
+              onNext={onTicketTypeNext}
+              loading={
+                mutationCreateTicketType.loading ||
+                mutationUpdateTicketType.loading
+              }
+              nextButtonLabel="Next"
+              backButtonLabel="Back"
+            />
+            <PermissionStep
+              title="Who can manifest?"
+              permission={Permission.CreateSlot}
+              onBack={(idx, setIndex) => setIndex(idx - 1)}
+              onNext={(idx, setIndex) => setIndex(idx + 1)}
+              nextButtonLabel="Next"
+              backButtonLabel="Back"  
+            />
+            <PermissionStep
+              title="Manifest other people?"
+              permission={Permission.CreateUserSlot}
+              onBack={(idx, setIndex) => setIndex(idx - 1)}
+              onNext={(idx, setIndex) => {
+                setIndex(idx + 1);
+              }}
+              nextButtonLabel="Next"
+              backButtonLabel="Back"
+            />
+            <WizardCompleteStep
+              title="Setup complete"
+              subtitle="You can configure settings under the Settings screen"
+              backButtonLabel="Back"
+              nextButtonLabel="Done"
+              onBack={(idx, setIndex) => setIndex(idx - 1)}
+              onNext={() => {
+                dispatch(
+                  actions.global.setDropzone(dropzone.original)
+                );
+                if (dropzone.fields.primaryColor.value) {
+                  dispatch(
+                    actions.global.setPrimaryColor(dropzone.fields.primaryColor.value)
+                  );
+                }
+                if (dropzone.fields.secondaryColor.value) {
+                  dispatch(
+                    actions.global.setAccentColor(dropzone.fields.secondaryColor.value)
+                  );
+                }
+                dispatch(
+                  actions.global.setDropzone(dropzone.original)
+                );
+                
+                dispatch(actions.forms.dropzoneWizard.setOpen(false));
+                dispatch(actions.forms.dropzoneWizard.reset());
+                dispatch(actions.forms.ticketType.setOpen(false));
+                dispatch(actions.forms.plane.setOpen(false));
+                dispatch(actions.forms.dropzone.setOpen(false));
+                dispatch(actions.forms.ticketType.reset());
+                dispatch(actions.forms.plane.reset());
+                dispatch(actions.forms.dropzone.reset());
+
+                // Set complete-flag to force navigation from dropzone screen
+                dispatch(actions.forms.dropzoneWizard.complete());
+              }}
+            />
           </Wizard>
       </Modal>
     </Portal>

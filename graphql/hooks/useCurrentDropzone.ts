@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import { startOfDay } from "date-fns";
 import gql from 'graphql-tag';
 import * as React from "react";
-import { actions, useAppDispatch, useAppSelector } from "../../redux";
+import { useAppDispatch, useAppSelector } from "../../redux";
 import { Query } from "../schema";
 import useMutationUpdateUser from "./useMutationUpdateUser";
 
@@ -128,25 +128,6 @@ export default function useCurrentDropzone() {
     }
 
   }, [pushToken, currentDropzone?.data?.dropzone?.currentUser?.user?.pushToken]);
-
-  // Trigger the user setup wizard if the user doesn't have isSetupComplete: true
-  React.useEffect(() => {
-
-    if (currentDropzone?.data?.dropzone?.currentUser?.id) {
-      const { currentUser } = currentDropzone?.data?.dropzone;
-
-      const isSetupComplete = currentUser.hasLicense && currentUser.user?.rigs?.length && currentUser?.user?.exitWeight && currentUser?.user?.rigs?.some((rig)=>  rig.canopySize);
-
-      if (!isSetupComplete) {
-        dispatch(actions.forms.user.setOpen(currentUser.user));
-        if (currentUser?.user?.rigs?.length) {
-          dispatch(actions.forms.rig.setOpen(currentUser.user.rigs[0]));
-        }
-
-        dispatch(actions.forms.userWizard.setOpen(currentUser.user));
-      }
-    }
-  }, [JSON.stringify(currentDropzone?.data?.dropzone?.currentUser)]);
 
   return {
     ...currentDropzone,

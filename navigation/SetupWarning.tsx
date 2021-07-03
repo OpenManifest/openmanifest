@@ -13,44 +13,51 @@ interface ISetupWarning {
   isExitWeightDefined: boolean;
   isReserveInDate: boolean;
   isMembershipInDate: boolean;
+  onSetupWizard?(): void;
 }
 
 function Warning(props: { title: string, action?: () => void }) {
+  const { action, title } = props;
   return (
     <View style={styles.warning}>
-        <Paragraph style={{ color: "white",  }}>
-          {props.title}
-        </Paragraph>
-      </View>
+      <Paragraph style={{ color: "white",  }}>
+        {title}
+      </Paragraph>
+      {!action ? null : (
+        <Button onPress={action}>
+          Fix
+        </Button>
+      )}
+    </View>
   );
 }
 
 export default function SetupWarning(props: ISetupWarning) {
-  const { credits, loading, isCreditSystemEnabled, isRigSetUp, isExitWeightDefined, isMembershipInDate, isReserveInDate, isRigInspectionComplete } = props;
+  const { credits, loading, isCreditSystemEnabled, isRigSetUp, isExitWeightDefined, isMembershipInDate, isReserveInDate, isRigInspectionComplete, onSetupWizard } = props;
 
   if (props.loading) {
     return null;
   }
   
   const navigation = useNavigation();
+  
 
   if (!isExitWeightDefined || !isRigSetUp) {
     const missing = [
       !isExitWeightDefined ? "exit weight" : null,
-      !isRigSetUp ? "at least one rig" : null,
+      !isRigSetUp ? "equipment" : null,
     ].filter(Boolean);
 
     return (
       <Warning
         title={`You need to define ${missing.join("and")} in your profile`}
-        action={() => navigation.navigate("Profile")}
+        action={() => onSetupWizard()}
       />
     );
   } else if (!isMembershipInDate) {
     return (
       <Warning
         title="Your membership seems to be out of date"
-        action={() => navigation.navigate("Profile")}
       />
     )
   } else if (!isRigInspectionComplete) {

@@ -2,20 +2,18 @@ import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Card, HelperText, List, Menu, TextInput, Title } from "react-native-paper";
-import WizardScreen from "../../../wizard/WizardScreen";
+import WizardScreen, { IWizardScreenProps } from "../../../wizard/WizardScreen";
 import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
 
 
-function RigWizardScreen() {
+function RigWizardScreen(props: IWizardScreenProps) {
   const state = useAppSelector(state => state.forms.rig);
   const dispatch = useAppDispatch();
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const [isOtherMake, setIsOtherMake] = React.useState(false);
 
   return (
-    <WizardScreen style={styles.container}>
-      <Title style={styles.title}>What're you jumping?</Title>
-
+    <WizardScreen style={styles.container} {...props} title="What're you jumping?">
       <View style={styles.content}>
         <Card style={styles.card}>
           <List.Subheader>Manufacturer</List.Subheader>

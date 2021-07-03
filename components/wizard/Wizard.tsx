@@ -7,112 +7,70 @@ import WizardPagination from "./Pagination";
 
 interface IWizardProps {
   children: React.ReactNode;
-  loading?: boolean;
+  
   icons?: string[];
-  onNext(currentIndex: number): Promise<boolean>;
 }
 
+interface IWizardContext {
+  count: number,
+  index: number,
+  setIndex(idx: number): void;
+}
+
+export const WizardContext = React.createContext<IWizardContext>({
+  index: 0,
+  count: 0,
+  setIndex: () => null
+} as IWizardContext)
+
 function Wizard(props: IWizardProps) {
-  const { children, icons, onNext, loading } = props;
+  const { children, icons } = props;
   const [index, setIndex] = React.useState(0);
   const ref = React.useRef<SwiperFlatList>(null);
-
-  const isLastItem = index === React.Children.count(children) - 1;
+  const count = React.Children.count(children);
 
   return (
-    <View style={[styles.container]}>
-      <SwiperFlatList
-        showPagination
-        index={index}
-        PaginationComponent={(props) => 
-          <WizardPagination {...props} icons={icons} />
-        }
-        numColumns={1}
-        scrollEnabled={false}
-        autoplay={false}
-        ref={ref}
-        onChangeIndex={({ index, prevIndex }) => {
-          console.log({ index, prevIndex });
-          setIndex(index || 0);
-        }}
-      >
-        {children}
-      </SwiperFlatList>
-
-      <View style={styles.buttons}>
-      <Button
-        key={`button-next-${index}`}
-        loading={loading}
-        mode="contained"
-        color="#FFFFFF"
-        disabled={loading}
-        style={styles.button}
-        onPress={async () => {
+    <WizardContext.Provider
+      value={{
+        index,
+        count,
+        setIndex: (idx) => {
           // @ts-ignore
-          const shouldNavigate = await onNext(ref.current.getCurrentIndex());
-
-          if (shouldNavigate) {
-            // @ts-ignore
-            ref.current.scrollToIndex({ index: ref.current.getCurrentIndex() + 1 });
-          }
-        }}
-      >
-        {
-          isLastItem ? "Done" : "Next"
+          ref.current?.scrollToIndex({ index: idx, animated: true });
         }
-      </Button>
-
-      {
-        index === 0
-          ? null
-          : (
-            <Button
-              key={`button-${index}`}
-              mode="text"
-              disabled={loading}
-              color="#FFFFFF"
-              style={styles.buttonBack}
-              onPress={async () => {
-                // @ts-ignore
-                ref.current.scrollToIndex({ index: ref.current.getCurrentIndex() - 1 });
-              }}
-            >
-              {
-                "Back"
-              }
-            </Button>     
-          )
-      }
+      }}
+    >
+      <View style={[styles.container]}>
+        <SwiperFlatList
+          showPagination
+          index={index}
+          PaginationComponent={(props) => 
+            <WizardPagination {...props} icons={icons} />
+          }
+          numColumns={1}
+          scrollEnabled={false}
+          autoplay={false}
+          ref={ref}
+          onChangeIndex={({ index, prevIndex }) => {
+            setIndex(index || 0);
+          }}
+        >
+          {children}
+        </SwiperFlatList>
       </View>
-    </View>
+    </WizardContext.Provider>
   );
 }
 
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-  button: {
-    alignSelf: "center",
-    width: "100%",
-  },
-  buttonBack: {
-    alignSelf: "center",
-    width: "100%",
-    marginHorizontal: 48
-  },
+  
   container: {
     width,
     flex: 1,
-    paddingBottom: 100
+    paddingBottom: 0
   },
-  buttons: {
-    position: "absolute",
-    bottom: 100,
-    alignSelf: "center",
-    width: "100%",
-    paddingHorizontal: 48,
-    maxWidth: 404,
-  }
 });
 
 export default Wizard;

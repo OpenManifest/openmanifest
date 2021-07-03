@@ -3,11 +3,16 @@ import { StyleSheet } from "react-native";
 import { Paragraph, Title } from "react-native-paper";
 import { View } from "./Themed";
 
-export default function NoResults({ title, subtitle }: { title: string, subtitle: string}) {
+interface INoResults {
+  title: string;
+  subtitle: string;
+  color?: string;
+}
+export default function NoResults({ title, color, subtitle }: INoResults) {
   return (
     <View style={styles.empty}>
-      <Title>{title}</Title>
-      <Paragraph style={{ textAlign: "center" }}>
+      <Title style={{ color }}>{title}</Title>
+      <Paragraph style={{ color, textAlign: "center" }}>
         {subtitle}
       </Paragraph>
     </View>
@@ -19,7 +24,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 8,
-    display: "flex"
+    display: "flex",
+    backgroundColor: "transparent",
   },
   fab: {
     position: 'absolute',
@@ -32,6 +38,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+    backgroundColor: "transparent",
     height: "100%"
   }
 });

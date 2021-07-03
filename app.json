@@ -19,7 +19,7 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": "2",
+      "buildNumber": "8",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
       "icon": "./assets/images/ios-icon.png",

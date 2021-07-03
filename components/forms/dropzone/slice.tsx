@@ -71,7 +71,7 @@ export default createSlice({
     setFieldError: <T extends  keyof IDropzoneEditState["fields"]>(state: IDropzoneEditState, action: PayloadAction<[string, string]>) => {
       const [field, error] = action.payload;
 
-      if (field in state.fields && (state.fields[field as T]).error) {
+      if (field in state.fields && "error" in (state.fields[field as T])) {
         state.fields[field as T].error = error;
       }
     },

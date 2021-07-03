@@ -1,20 +1,20 @@
 import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Card, HelperText, List, Menu, Paragraph, TextInput } from "react-native-paper";
-import WizardScreen from "../../../wizard/WizardScreen";
+import WizardScreen, { IWizardScreenProps } from "../../../wizard/WizardScreen";
 import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
 import Slider from '@react-native-community/slider';
 import { debounce } from "lodash";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-function TicketTypeWizardScreen() {
+function TicketTypeWizardScreen(props: IWizardScreenProps) {
   const state = useAppSelector(state => state.forms.ticketType);
   const dispatch = useAppDispatch();
   const [altitudeMenuOpen, setAltitudeMenuOpen] = React.useState(false);
+  const [price, setPrice] = React.useState(0);
 
   return (
-    <WizardScreen style={styles.container}>
-      <Text style={styles.title}>Tickets</Text>
+    <WizardScreen style={styles.container} {...props} title="Tickets">
       <Paragraph style={styles.paragraph}>You can add more tickets later under Settings</Paragraph>
 
       <View style={styles.content}>
@@ -35,7 +35,7 @@ function TicketTypeWizardScreen() {
       <Card style={styles.card} elevation={3}>
           <View style={styles.cardTitle}>
             <List.Subheader>Price</List.Subheader>
-            <Text style={styles.cardValue}>${(state.fields.cost.value || 0)}</Text>
+            <Text style={styles.cardValue}>${(price || 0)}</Text>
           </View>
             
           <View style={styles.slider}>
@@ -44,13 +44,11 @@ function TicketTypeWizardScreen() {
               minimumValue={0}
               maximumValue={500}
               step={1}
-              value={state.fields.cost.value || 0}
+              value={price}
               minimumTrackTintColor="#FF1414"
               maximumTrackTintColor="#000000"
-              onValueChange={debounce((value) =>
-                dispatch(actions.forms.ticketType.setField(["cost", value])),
-                20
-              )}
+              onSlidingComplete={() => dispatch(actions.forms.ticketType.setField(["cost", price]))}
+              onValueChange={setPrice}
             />
           </View>
             

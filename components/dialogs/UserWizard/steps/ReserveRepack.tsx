@@ -2,18 +2,16 @@ import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { Card, HelperText, List, Title } from "react-native-paper";
 import DatePicker from "../../../input/date_picker/DatePicker";
-import WizardScreen from "../../../wizard/WizardScreen";
+import WizardScreen, { IWizardScreenProps } from "../../../wizard/WizardScreen";
 import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
 
 
-function ReserveRepackWizardScreen() {
+function ReserveRepackWizardScreen(props: IWizardScreenProps) {
   const state = useAppSelector(state => state.forms.rig);
   const dispatch = useAppDispatch();
 
   return (
-    <WizardScreen style={styles.container}>
-      <Title style={styles.title}>Next reserve repack?</Title>
-
+    <WizardScreen style={styles.container} {...props} title="Next reserve repack?">
       <View style={styles.content}>
         <Card style={styles.card}>
           <List.Subheader>Due date</List.Subheader>

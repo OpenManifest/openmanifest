@@ -3,13 +3,14 @@ import { useIsFocused } from '@react-navigation/core';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { List, ProgressBar } from 'react-native-paper';
+import { Card, List, ProgressBar } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 
 import { Query } from "../../../graphql/schema.d";
 import { useAppSelector } from '../../../redux';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import PermissionListItem from '../../../components/permissions/PermissionListItem';
+import { capitalize } from 'lodash';
 
 
 const QUERY_DROPZONE_PERMISSIONS = gql`
@@ -122,23 +123,26 @@ export default function DropzonePermissionScreen() {
         : <Tabs defaultIndex={0} mode="scrollable">
               {
                 data?.dropzone?.roles?.map((role) =>
-                  <TabScreen label={role.name!} key={`permission-tab-role-${role.id}`}>
-                    <ScrollableScreen>
-                      
-                      <List.Subheader>User Management</List.Subheader>
-                      <PermissionListItem
-                        role={role}
-                        permissionName="readUser"
-                        description="View other users' profiles"
-                        title="View Users"
-                      />
+                  <TabScreen label={capitalize(role.name?.replace("_", " "))} key={`permission-tab-role-${role.id}`}>
+                    <ScrollableScreen contentContainerStyle={{ maxWidth: 500, width: "100%", alignSelf: "center" }}>
+                      <Card style={styles.card}>
+                        <List.Subheader>User Management</List.Subheader>
+                        <PermissionListItem
+                          role={role}
+                          permissionName="readUser"
+                          description="View other users' profiles"
+                          title="View Users"
+                        />
 
-                      <PermissionListItem
-                        role={role}
-                        permissionName="updateUser"
-                        description="Update other users"
-                        title="Update Users"
-                      />
+                        <PermissionListItem
+                          role={role}
+                          permissionName="updateUser"
+                          description="Update other users"
+                          title="Update Users"
+                        />
+                        </Card>
+
+                      <Card style={styles.card}>
 
                       <List.Section title="Manifest" style={{ width: "100%"}}>
                         <List.Accordion title="Loads">
@@ -238,117 +242,119 @@ export default function DropzonePermissionScreen() {
                           />
                         </List.Accordion>
                       </List.Section>
-                      
-                      <List.Section title="Administration" style={{ width: "100%"}}>
-                        <List.Accordion title="Dropzone">
-                          <PermissionListItem
-                            role={role}
-                            permissionName="updateDropzone"
-                            description="Change dropzone name, visibility, and branding"
-                            title="Update Dropzone"
-                          />
-                          <PermissionListItem
-                            role={role}
-                            permissionName="deleteDropzone"
-                            description="Permanently delete dropzone"
-                            title="Delete Dropzone"
-                          />
-                        </List.Accordion>
+                      </Card>
+                      <Card style={styles.card}>
+                        <List.Section title="Administration" style={{ width: "100%"}}>
+                          <List.Accordion title="Dropzone">
+                            <PermissionListItem
+                              role={role}
+                              permissionName="updateDropzone"
+                              description="Change dropzone name, visibility, and branding"
+                              title="Update Dropzone"
+                            />
+                            <PermissionListItem
+                              role={role}
+                              permissionName="deleteDropzone"
+                              description="Permanently delete dropzone"
+                              title="Delete Dropzone"
+                            />
+                          </List.Accordion>
 
-                        <List.Accordion title="Ticket types">
-                          <PermissionListItem
-                            role={role}
-                            permissionName="createTicketType"
-                            description="Create new jump tickets"
-                            title="Create Ticket"
-                          />
+                          <List.Accordion title="Ticket types">
+                            <PermissionListItem
+                              role={role}
+                              permissionName="createTicketType"
+                              description="Create new jump tickets"
+                              title="Create Ticket"
+                            />
 
-                          <PermissionListItem
-                            role={role}
-                            permissionName="updateTicketType"
-                            description="Make changes to existing ticket types, including prices"
-                            title="Update Tickets"
-                          />
-                          <PermissionListItem
-                            role={role}
-                            permissionName="deleteTicketType"
-                            description="Delete existing ticket types"
-                            title="Remove Tickets"
-                          />
-                        </List.Accordion>
+                            <PermissionListItem
+                              role={role}
+                              permissionName="updateTicketType"
+                              description="Make changes to existing ticket types, including prices"
+                              title="Update Tickets"
+                            />
+                            <PermissionListItem
+                              role={role}
+                              permissionName="deleteTicketType"
+                              description="Delete existing ticket types"
+                              title="Remove Tickets"
+                            />
+                          </List.Accordion>
 
-                        <List.Accordion title="Ticket addons">
-                          <PermissionListItem
-                            role={role}
-                            permissionName="createExtra"
-                            description="Set up new ticket addons"
-                            title="Create Ticket addon"
-                          />
-                          <PermissionListItem
-                            role={role}
-                            permissionName="updateExtra"
-                            description="Make changes to existing ticket addons, including prices"
-                            title="Update Ticket addons"
-                          />
+                          <List.Accordion title="Ticket addons">
+                            <PermissionListItem
+                              role={role}
+                              permissionName="createExtra"
+                              description="Set up new ticket addons"
+                              title="Create Ticket addon"
+                            />
+                            <PermissionListItem
+                              role={role}
+                              permissionName="updateExtra"
+                              description="Make changes to existing ticket addons, including prices"
+                              title="Update Ticket addons"
+                            />
 
-                          <PermissionListItem
-                            role={role}
-                            permissionName="deleteExtra"
-                            description="Delete existing ticket addons"
-                            title="Remove Ticket addons"
-                          />
-                        </List.Accordion>
+                            <PermissionListItem
+                              role={role}
+                              permissionName="deleteExtra"
+                              description="Delete existing ticket addons"
+                              title="Remove Ticket addons"
+                            />
+                          </List.Accordion>
 
-                        <List.Accordion title="Planes">
-                          <PermissionListItem
-                            role={role}
-                            permissionName="createPlane"
-                            description="Add new aircrafts"
-                            title="Create Aircraft"
-                          />
+                          <List.Accordion title="Planes">
+                            <PermissionListItem
+                              role={role}
+                              permissionName="createPlane"
+                              description="Add new aircrafts"
+                              title="Create Aircraft"
+                            />
 
-                          <PermissionListItem
-                            role={role}
-                            permissionName="updatePlane"
-                            description="Make changes to existing aircrafts"
-                            title="Update Aircraft"
-                          />
+                            <PermissionListItem
+                              role={role}
+                              permissionName="updatePlane"
+                              description="Make changes to existing aircrafts"
+                              title="Update Aircraft"
+                            />
 
-                          <PermissionListItem
-                            role={role}
-                            permissionName="deletePlane"
-                            description="Remove existing aircrafts"
-                            title="Remove Aircraft"
-                          />
-                        </List.Accordion>
-                        
-                        <List.Accordion title="Rigs">
-                          <PermissionListItem
-                            role={role}
-                            permissionName="createDropzoneRig"
-                            description="Create dropzone managed rigs, e.g tandem and student rigs"
-                            title="Create Rig"
-                          />
-                          <PermissionListItem
-                            role={role}
-                            permissionName="updateDropzoneRig"
-                            description="Make changes to existing student and tandem rigs"
-                            title="Update Rigs"
-                          />
-                          <PermissionListItem
-                            role={role}
-                            permissionName="deleteDropzoneRig"
-                            description="Delete existing student and tandem rigs"
-                            title="Remove Rigs"
-                          />
-                          <PermissionListItem
-                            role={role}
-                            permissionName="updateFormTemplate"
-                            description="Make changes to the rig inspection template"
-                            title="Modify Rig Inspection Form"
-                          />
-                        </List.Accordion>
-                      </List.Section>
+                            <PermissionListItem
+                              role={role}
+                              permissionName="deletePlane"
+                              description="Remove existing aircrafts"
+                              title="Remove Aircraft"
+                            />
+                          </List.Accordion>
+                          
+                          <List.Accordion title="Rigs">
+                            <PermissionListItem
+                              role={role}
+                              permissionName="createDropzoneRig"
+                              description="Create dropzone managed rigs, e.g tandem and student rigs"
+                              title="Create Rig"
+                            />
+                            <PermissionListItem
+                              role={role}
+                              permissionName="updateDropzoneRig"
+                              description="Make changes to existing student and tandem rigs"
+                              title="Update Rigs"
+                            />
+                            <PermissionListItem
+                              role={role}
+                              permissionName="deleteDropzoneRig"
+                              description="Delete existing student and tandem rigs"
+                              title="Remove Rigs"
+                            />
+                            <PermissionListItem
+                              role={role}
+                              permissionName="updateFormTemplate"
+                              description="Make changes to the rig inspection template"
+                              title="Modify Rig Inspection Form"
+                            />
+                          </List.Accordion>
+                        </List.Section>
+                      </Card>
                     </ScrollableScreen>
                   </TabScreen>
                 )
@@ -361,6 +367,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     display: "flex"
+  },
+  card: {
+    width: "100%",
+    marginVertical: 16,
   },
   content: {
     flexGrow: 1,

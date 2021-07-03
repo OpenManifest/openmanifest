@@ -2,7 +2,7 @@ import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Card } from "react-native-paper";
 import { capitalize } from "lodash";
-import WizardScreen from "../../../wizard/WizardScreen";
+import WizardScreen, { IWizardScreenProps } from "../../../wizard/WizardScreen";
 import { useAppDispatch, useAppSelector } from "../../../../redux";
 import { Permission, Query } from "../../../../graphql/schema.d";
 import PermissionListItem from "../../../permissions/PermissionListItem";
@@ -24,16 +24,15 @@ const QUERY_DROPZONE_PERMISSIONS = gql`
   }
 `;
 
-interface IPermissionWizardScreen {
+interface IPermissionWizardScreen extends IWizardScreenProps {
   permission: Permission,
   title: string;
 }
 
 
-function WingloadingWizardScreen(props: IPermissionWizardScreen) {
-  const { title, permission } = props;
+function PermissionWizardScreen(props: IPermissionWizardScreen) {
+  const { permission, ...rest } = props;
   const dropzoneForm = useAppSelector(state => state.forms.dropzone);
-  const dispatch = useAppDispatch();
   const [queryRoles, { data, loading, called }] = useLazyQuery<Query>(QUERY_DROPZONE_PERMISSIONS);
 
   React.useEffect(() => {
@@ -47,8 +46,7 @@ function WingloadingWizardScreen(props: IPermissionWizardScreen) {
   }, [dropzoneForm.original]);
 
   return (
-    <WizardScreen style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+    <WizardScreen style={styles.container} {...rest}>
 
       <View style={styles.content}>
         {
@@ -82,6 +80,7 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "space-around",
     flexDirection: "column",
+    marginBottom: 16,
   },
   card: { padding: 8, marginVertical: 16 },
   cardTitle: {
@@ -121,4 +120,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WingloadingWizardScreen;
+export default PermissionWizardScreen;

@@ -6,7 +6,7 @@ import { useAppSelector } from "../../redux";
 interface IScrollableScreen extends ScrollViewProps {
   children: React.ReactNode;
 }
-export default function ScrollableScreen(props: IScrollableScreen) {
+export default React.forwardRef<ScrollView, IScrollableScreen>((props, ref) => {
 
   const { height } = useWindowDimensions();
   const { theme } = useAppSelector(state => state.global);
@@ -16,6 +16,7 @@ export default function ScrollableScreen(props: IScrollableScreen) {
   return (
     <ScrollView
       {...rest}
+      ref={ref}
       keyboardDismissMode="on-drag"
       keyboardShouldPersistTaps="handled"
       contentInsetAdjustmentBehavior="always"
@@ -25,7 +26,7 @@ export default function ScrollableScreen(props: IScrollableScreen) {
       {children}
     </ScrollView>
   )
-}
+});
 
 const styles = StyleSheet.create({
   container: {

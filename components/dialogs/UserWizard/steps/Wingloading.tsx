@@ -1,12 +1,12 @@
 import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Avatar, Card, HelperText, List, Paragraph } from "react-native-paper";
-import WizardScreen from "../../../wizard/WizardScreen";
+import WizardScreen, { IWizardScreenProps } from "../../../wizard/WizardScreen";
 import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
 import Slider from '@react-native-community/slider';
 import { ceil, debounce } from "lodash";
 
-function WingloadingWizardScreen() {
+function WingloadingWizardScreen(props: IWizardScreenProps) {
   const rigForm = useAppSelector(state => state.forms.rig);
   const userForm = useAppSelector(state => state.forms.user);
   const dispatch = useAppDispatch();
@@ -19,8 +19,7 @@ function WingloadingWizardScreen() {
 
 
   return (
-    <WizardScreen style={styles.container}>
-      <Text style={styles.title}>Your wingloading</Text>
+    <WizardScreen style={styles.container} {...props} title="Your wingloading">
 
       <View style={styles.content}>
         <Card>

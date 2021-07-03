@@ -57,7 +57,7 @@ export default function DropzoneForm() {
 
   return (
     <>
-      <Card style={{ width: "100%", maxHeight: 300, marginVertical: 16 }}>
+      <Card style={styles.card}>
         <Card.Title title="Banner" />
         <Card.Cover
           source={{ uri: state.fields.banner.value || 'https://picsum.photos/700' }}
@@ -121,42 +121,45 @@ export default function DropzoneForm() {
         value={state.fields.secondaryColor.value}
       />
 
-      <List.Item
-        title="Use credit system"
-        description="Users will be charged credits when a load is marked as landed and can't manifest with insufficient funds."
-        onPress={() =>
-          dispatch(actions.forms.dropzone.setField(["isCreditSystemEnabled", !state.fields.isCreditSystemEnabled.value]))
-        }
-        left={() =>
-          <Checkbox
-            onPress={() =>
-              dispatch(actions.forms.dropzone.setField(["isCreditSystemEnabled", !state.fields.isCreditSystemEnabled.value]))
-            }
-            status={state.fields.isCreditSystemEnabled.value
-                ? "checked"
-                : "unchecked"
-            }
-          />
-        }
-      />
-
-      <List.Item
-        title="Public"
-        description="Your dropzone will not be available in the app if this is disabled"
-        onPress={() =>
-          dispatch(actions.forms.dropzone.setField(["isPublic", !state.fields.isPublic.value]))
-        }
-        left={() =>
-          <Checkbox
-            onPress={() =>
-              dispatch(actions.forms.dropzone.setField(["isPublic", !state.fields.isPublic.value]))
-            }
-            status={state.fields.isPublic.value
-                ? "checked"
-                : "unchecked"
-            }
-          />
-      }/>
+      <Card style={styles.card}>
+        <List.Item
+          title="Use credit system"
+          description="Users will be charged credits when a load is marked as landed and can't manifest with insufficient funds."
+          onPress={() =>
+            dispatch(actions.forms.dropzone.setField(["isCreditSystemEnabled", !state.fields.isCreditSystemEnabled.value]))
+          }
+          left={() =>
+            <Checkbox
+              onPress={() =>
+                dispatch(actions.forms.dropzone.setField(["isCreditSystemEnabled", !state.fields.isCreditSystemEnabled.value]))
+              }
+              status={state.fields.isCreditSystemEnabled.value
+                  ? "checked"
+                  : "unchecked"
+              }
+            />
+          }
+        />
+      </Card>
+      <Card style={styles.card}>
+        <List.Item
+          title="Public"
+          description="Your dropzone will not be available in the app if this is disabled"
+          onPress={() =>
+            dispatch(actions.forms.dropzone.setField(["isPublic", !state.fields.isPublic.value]))
+          }
+          left={() =>
+            <Checkbox
+              onPress={() =>
+                dispatch(actions.forms.dropzone.setField(["isPublic", !state.fields.isPublic.value]))
+              }
+              status={state.fields.isPublic.value
+                  ? "checked"
+                  : "unchecked"
+              }
+            />
+        }/>
+      </Card>
     </>
   );
 }

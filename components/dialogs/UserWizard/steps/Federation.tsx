@@ -3,19 +3,16 @@ import { StyleSheet, View } from "react-native";
 import { Card, HelperText, Title } from "react-native-paper";
 import LicenseChipSelect from "../../../input/chip_select/LicenseChipSelect";
 import FederationSelect from "../../../input/dropdown_select/FederationSelect";
-import WizardScreen from "../../../wizard/WizardScreen";
+import WizardScreen, { IWizardScreenProps } from "../../../wizard/WizardScreen";
 import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
 
 
-function FederationWizardSceen() {
+function FederationWizardSceen(props: IWizardScreenProps) {
   const state = useAppSelector(state => state.forms.user);
   const dispatch = useAppDispatch();
 
   return (
-    <WizardScreen style={styles.container}>
-      <Title style={styles.title}>What license do you have?</Title>
-
-
+    <WizardScreen style={styles.container} {...props} title="What license do you have?">
       <View style={styles.content}>
         <Card style={styles.card}>
           <FederationSelect

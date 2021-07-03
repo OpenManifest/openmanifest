@@ -176,9 +176,6 @@ export default function UpdateDropzoneScreen() {
     <>
       <ProgressBar indeterminate color={globalState.theme.colors.accent} visible={loading} />
       <ScrollableScreen style={{ backgroundColor: globalState.theme.colors.accent }} contentContainerStyle={styles.content}>
-        <IconButton
-          icon="wizard"
-        />
         <DropzoneForm />
         <View style={styles.fields}>
           <Button mode="contained" disabled={mutation.loading} onPress={onSave} loading={mutation.loading}>
@@ -199,7 +196,9 @@ const styles = StyleSheet.create({
   content: {
     display: "flex",
     flexGrow: 1,
+    alignSelf: "center",
     alignItems: 'center',
+    maxWidth: 500,
     padding: 48,
   },
   title: {

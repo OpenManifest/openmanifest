@@ -2,19 +2,16 @@ import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { Card, HelperText, List, TextInput, Title } from "react-native-paper";
 import FederationSelect from "../../../input/dropdown_select/FederationSelect";
-import WizardScreen from "../../../wizard/WizardScreen";
+import WizardScreen, { IWizardScreenProps } from "../../../wizard/WizardScreen";
 import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
 
 
-function NameAndFederationWizardSceen() {
+function NameAndFederationWizardSceen(props: IWizardScreenProps) {
   const state = useAppSelector(state => state.forms.dropzone);
   const dispatch = useAppDispatch();
 
   return (
-    <WizardScreen style={styles.container}>
-      <Title style={styles.title}>Give your dropzone a name</Title>
-
-
+    <WizardScreen style={styles.container} {...props} title="Basic information">
       <View style={styles.content}>
         <Card style={styles.card}>
           <List.Subheader>Name</List.Subheader>
@@ -49,6 +46,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 48,
     alignItems: "center",
+    backgroundColor: "transparent"
   },
   content: {
     width: "100%",

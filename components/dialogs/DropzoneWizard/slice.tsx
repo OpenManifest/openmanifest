@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Dropzone } from "../../../graphql/schema.d";
 interface IDropzoneWizardState {
   open: boolean;
+  complete: boolean;
   fields: {
     dropzone: {
       value: Dropzone;
@@ -12,6 +13,7 @@ interface IDropzoneWizardState {
 
 export const initialState: IDropzoneWizardState = {
   open: false,
+  complete: false,
   fields: {
     dropzone: {
       value: null,
@@ -43,6 +45,10 @@ export default createSlice({
         state.fields.dropzone.value = action.payload;
         state.open = true;
       }
+    },
+
+    complete: (state: IDropzoneWizardState, action: PayloadAction<boolean | undefined>) => {
+      state.complete = action.payload !== undefined ? action.payload : true;
     },
     
     reset: (state: IDropzoneWizardState) => {

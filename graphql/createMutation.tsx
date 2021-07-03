@@ -1,11 +1,11 @@
-import { DocumentNode, useMutation } from "@apollo/client";
+import { DocumentNode, useMutation, MutationOptions } from "@apollo/client";
 import { Maybe } from "graphql/jsutils/Maybe";
 import * as React from "react";
 import { FieldError, Mutation } from "./schema";
 
 export interface IAppMutation<Payload, InputType> {
   loading: boolean;
-  mutate(variables: InputType): Promise<Maybe<Payload>>;
+  mutate(variables: InputType, opts?: Omit<Partial<MutationOptions>, "variables"> | undefined): Promise<Maybe<Payload>>;
 }
 
 export interface IAppMutationProps<Payload, InputType> {
@@ -74,7 +74,7 @@ export function createMutation<InputType extends {}, Payload extends { fieldErro
     const [mutate, { data, loading, error}] = useMutation(mutation);
 
 
-    const onMutate = React.useCallback(async (variables: InputType): Promise<Maybe<Payload>> => {
+    const onMutate = React.useCallback(async (variables: InputType, mopts?: Omit<MutationOptions, "variables">  | undefined): Promise<Maybe<Payload>> => {
       
 
       function validate() {
@@ -114,7 +114,8 @@ export function createMutation<InputType extends {}, Payload extends { fieldErro
       }
       try {
         const result = await mutate({
-          variables
+          variables,
+          ...mopts
         });
 
         const payload = getPayload(result.data);

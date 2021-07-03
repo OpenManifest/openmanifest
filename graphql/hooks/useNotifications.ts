@@ -27,6 +27,12 @@ const QUERY_DROPZONE_USER_NOTIFICATIONS = gql`
                   loadNumber
                   dispatchAt
                 }
+                ...on Transaction {
+                  id
+                  amount
+                  message
+                  status
+                }
               }
             }
           }

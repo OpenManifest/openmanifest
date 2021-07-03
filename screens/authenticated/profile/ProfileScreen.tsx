@@ -9,7 +9,7 @@ import gql from 'graphql-tag';
 import { ScrollView } from 'react-native-gesture-handler';
 import { IconProps } from 'react-native-paper/lib/typescript/components/MaterialCommunityIcon';
 import * as ImagePicker from 'expo-image-picker';
-
+import { QUERY_PERMISSION_USER } from "../../../components/chips/GcaChip";
 
 import { successColor, warningColor } from "../../../constants/Colors";
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
@@ -180,8 +180,103 @@ export default function ProfileScreen() {
                   selected={badges.includes(permission)}
                   onPress={() => !canGrantPermission ? null :
                     badges.includes(permission) 
-                      ? revokePermission.mutate({ permissionName: permission, dropzoneUserId: Number(dropzoneUser.id) })
-                      : grantPermission.mutate({ permissionName: permission, dropzoneUserId: Number(dropzoneUser.id) })
+                      ? revokePermission.mutate({
+                          permissionName: permission,
+                          dropzoneUserId: Number(dropzoneUser.id)
+                        }, {
+                        update: async (client, { data }) => {
+                          const c = client.readQuery<Query>({
+                            query: QUERY_PERMISSION_USER,
+                            variables: {
+                              permissions: [permission],
+                              dropzoneId: Number(state.currentDropzoneId),
+                            }
+                          });
+
+                          const updatedList = (c?.dropzone?.dropzoneUsers?.edges || []).filter((edge) => edge.node.id !== dropzoneUser.id);
+                          
+                          client.writeQuery({
+                            query: QUERY_PERMISSION_USER,
+                            variables: {
+                              permissions: [permission],
+                              dropzoneId: Number(state.currentDropzoneId),
+                            },
+                            data: {
+                              ...c,
+                              dropzone: {
+                                ...c?.dropzone,
+                                dropzoneUsers: updatedList
+                              }
+                            }
+                          });
+
+                          return {
+                            data: {
+                              ...c,
+                              dropzone: {
+                                ...c?.dropzone,
+                                dropzoneUsers: updatedList
+                              }
+                            }
+                          };
+                        }
+                      })
+                      : grantPermission.mutate({
+                          permissionName: permission,
+                          dropzoneUserId: Number(dropzoneUser.id),
+                        }, {
+                          update: async (client, { data }) => {
+                            const c = client.readQuery<Query>({
+                              query: QUERY_PERMISSION_USER,
+                              variables: {
+                                permissions: [permission],
+                                dropzoneId: Number(state.currentDropzoneId),
+                              },
+                            });
+  
+                            const current = (c?.dropzone?.dropzoneUsers?.edges || []);
+                            const shouldUpdate = !!current.find((edge) => edge.node.id === dropzoneUser.id);
+                            console.log(current);
+                            console.log("c:");
+                            console.log(c);
+                            
+                            const updatedGcaList = shouldUpdate? [
+                              ...(c?.dropzone?.dropzoneUsers?.edges || []).map(
+                                (edge) => edge.node.id !== dropzoneUser.id
+                                ? edge
+                                : {
+                                    ...edge,
+                                    node: {
+                                      ...edge.node,
+                                      ...data.grantPermission?.dropzoneUser,
+                                    }
+                                  }
+                              ),
+                            ] : [
+                              ...(c?.dropzone?.dropzoneUsers?.edges || []),
+                              { edge: { node: data.grantPermission?.dropzoneUser}}
+                            ]
+                            const newData = {
+                              ...c,
+                              dropzone: {
+                                ...c?.dropzone,
+                                dropzoneUsers: updatedGcaList
+                              }
+                            };
+                            client.writeQuery({
+                              query: QUERY_PERMISSION_USER,
+                              variables: {
+                                dropzoneId: Number(state.currentDropzoneId),
+                                permissions: [permission]
+                              },
+                              data: newData
+                            });
+
+                            return {
+                              data: newData
+                            };
+                          }
+                        })
                   }
                 />
           )
@@ -250,7 +345,7 @@ export default function ProfileScreen() {
               title: "Funds",
               value: `$${dropzoneUser?.credits || 0}`,
               onPress: () => {
-                if (dropzoneUser) {
+                if (dropzoneUser && canAddTransaction) {
                   dispatch(actions.forms.credits.setOpen(dropzoneUser));
                 }
               }

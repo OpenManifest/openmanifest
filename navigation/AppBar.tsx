@@ -137,6 +137,18 @@ function AppBar(props: IAppBarProps) {
         }
         isRigInspectionComplete={!!data?.dropzone?.currentUser?.rigInspections?.length}
         isRigSetUp={!!data?.dropzone?.currentUser?.user?.rigs?.length}
+        onSetupWizard={() => {
+          const currentUser = data?.dropzone?.currentUser;
+
+          if (currentUser) {
+            dispatch(actions.forms.user.setOpen(currentUser.user));
+            if (currentUser?.user?.rigs?.length) {
+              dispatch(actions.forms.rig.setOpen(currentUser.user.rigs[0]));
+            }
+  
+            dispatch(actions.forms.userWizard.setOpen(currentUser.user));
+          }
+        }}
       />
     )}
     </>

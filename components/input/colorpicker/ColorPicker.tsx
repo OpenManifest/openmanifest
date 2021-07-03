@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     flexDirection: "column",
   },
-  card: { padding: 8, marginVertical: 16 },
+  card: { padding: 8, marginVertical: 16, height: 200 },
   title: { color: "white", fontSize: 24, fontWeight: "bold", marginBottom: 10, textAlign: "center" },
 
   colorBox: {

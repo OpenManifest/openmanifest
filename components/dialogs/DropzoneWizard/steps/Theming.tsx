@@ -1,19 +1,17 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { Card, HelperText, List, Surface, Title, TouchableRipple } from "react-native-paper";
-import WizardScreen from "../../../wizard/WizardScreen";
+import WizardScreen, { IWizardScreenProps } from "../../../wizard/WizardScreen";
 import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
 import { PhonePreview, WebPreview } from "../../../theme_preview";
 import ColorPicker from "../../../input/colorpicker";
 
-function ReserveRepackWizardScreen() {
+function ReserveRepackWizardScreen(props: IWizardScreenProps) {
   const state = useAppSelector(state => state.forms.dropzone);
   const dispatch = useAppDispatch();
 
   return (
-    <WizardScreen style={styles.container}>
-      <Title style={styles.title}>Branding</Title>
-
+    <WizardScreen style={styles.container} {...props} title="Branding">
       <View style={styles.content}>
 
         <View style={{ flexDirection: "row", alignItems: "flex-end", justifyContent: "space-evenly" }}>
@@ -62,7 +60,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   card: { padding: 8, marginVertical: 16 },
-  title: { color: "white", fontSize: 24, fontWeight: "bold", marginBottom: 10, textAlign: "center" },
+  
 
   colorBox: {
     height: 25,
