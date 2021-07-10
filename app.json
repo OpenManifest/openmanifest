@@ -19,7 +19,10 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": "8",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "buildNumber": "12",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
       "icon": "./assets/images/ios-icon.png",

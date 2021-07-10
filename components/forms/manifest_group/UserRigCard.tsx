@@ -27,7 +27,7 @@ query QueryDropzoneUsersManifestDetails(
     id
     name
 
-    dropzoneUser(userId: $dropzoneUserId) {
+    dropzoneUser(id: $dropzoneUserId) {
       id
 
       user {

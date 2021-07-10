@@ -6,7 +6,7 @@ import { useAppSelector } from "../../redux";
 import { Query } from "../schema";
 import useCurrentDropzone from "./useCurrentDropzone";
 
-const QUERY_DROPZONE_USER = gql`
+export const QUERY_DROPZONE_USER = gql`
   query QueryDropzoneUser($dropzoneId: Int!, $dropzoneUserId: Int!) {
     dropzone(id: $dropzoneId) {
       id
@@ -94,7 +94,7 @@ export default function useDropzoneUser(id?: number) {
   const dropzoneUser = useQuery<Pick<Query, "dropzone">>(QUERY_DROPZONE_USER, {
     variables: {
       dropzoneId: dropzoneId,
-      dropzoneUserId: id || currentDropzone?.data?.dropzone?.currentUser?.id,
+      dropzoneUserId: id || Number(currentDropzone?.data?.dropzone?.currentUser?.id),
     }
   });
 

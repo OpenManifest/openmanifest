@@ -17,7 +17,7 @@ export const initialState: IRigInspectionEditState = {
 
 
 export default createSlice({
-  name: 'forms/rig',
+  name: 'forms/rigInspection',
   initialState,
   reducers: {
 
@@ -26,8 +26,6 @@ export default createSlice({
     },
     setField: (state: IRigInspectionEditState, action: PayloadAction<[number, FieldItem]>) => {
       const [index, item] = action.payload;
-
-      console.log({ item, index, fields: state.fields });
       state.fields = state.fields.map((field, idx) => idx === index ? item : field);
     },
 
@@ -35,6 +33,7 @@ export default createSlice({
       try {
         state.fields = JSON.parse(action.payload)
       } catch (error) {
+        console.log(action.payload);
         console.error("Failed to read rig inspection template", error.message, action.payload);
       }
     },

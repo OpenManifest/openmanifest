@@ -65,9 +65,7 @@ function DropzoneWizardScreen() {
 
   const onBasicInfoNext = React.useCallback(async (index: number, setIndex: (idx: number) => void): Promise<void> => {
     if (!dropzone.fields.name.value) {
-      console.log("Set name error");
       dispatch(actions.forms.dropzone.setFieldError(["name", "Your dropzone must have a name"]));
-      console.log(dropzone.fields.name);
       return;
     } 
     if (!dropzone.fields.federation.value) {

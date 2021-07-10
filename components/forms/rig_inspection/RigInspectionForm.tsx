@@ -14,6 +14,7 @@ export default function RigInspectionForm() {
         state.fields.map((item, index) => {
           return (
             <RigInspectionItem
+              key={index}
               config={item}
               value={item?.value || ""}
               onChange={(value) =>

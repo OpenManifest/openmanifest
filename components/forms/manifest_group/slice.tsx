@@ -71,7 +71,7 @@ export default createSlice({
 
     setFromSlots: (state: ISlotEditState, action: PayloadAction<Slot[]>) => {
       state.fields.users.value = action.payload.map((slot) => ({
-          id: Number(slot.user?.id),
+          id: Number(slot.dropzoneUser?.id),
           rigId: Number(slot.rig?.id),
           exitWeight: Number(slot.exitWeight),
         })
@@ -84,9 +84,9 @@ export default createSlice({
 
     setDropzoneUsers: (state: ISlotEditState, action: PayloadAction<DropzoneUser[]>) => {
       state.fields.users.value = action.payload.map<SlotUser>((dzUser) => ({
-          id: Number(dzUser.user.id),
+          id: Number(dzUser.id),
           rigId: Number(dzUser?.availableRigs?.find(({ id }) => id)?.id),
-          exitWeight: Number(dzUser?.user.exitWeight),
+          exitWeight: Number(dzUser?.user?.exitWeight),
         })
       ) as SlotUser[];
     },

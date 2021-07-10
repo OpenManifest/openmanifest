@@ -12,13 +12,12 @@ import { Load, Permission } from '../../../graphql/schema.d';
 import useRestriction from '../../../hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import GetStarted from './GetStarted';
-import LoadCard from './SmallLoadCard';
-import DetailedLoadCard from './LoadCard';
+import LoadCard from './LoadCard';
 import LoadDialog from '../../../components/dialogs/Load';
 import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 
 
-export default function ManifestScreen() {
+export default function ManifestOverviewScreen() {
   const state = useAppSelector(state => state.global);
   const forms = useAppSelector(state => state.forms);
   const dispatch = useAppDispatch();
@@ -152,8 +151,8 @@ export default function ManifestScreen() {
                           <RefreshControl refreshing={loading} onRefresh={() => refetch()} />
                         }
                         renderItem={({ item: edge, index }) =>
-                          false ? (
-                            <DetailedLoadCard
+                          !edge?.node ? null : (
+                            <LoadCard
                               key={`load-${edge.node.id}`}
                               load={edge.node}
                               onSlotPress={(slot) => {
@@ -165,7 +164,7 @@ export default function ManifestScreen() {
                               onSlotGroupPress={(slots) => {
                                 dispatch(actions.forms.manifestGroup.reset());
                                 dispatch(actions.forms.manifestGroup.setFromSlots(slots));
-                                dispatch(actions.forms.manifestGroup.setField(["load", edge.node!]));
+                                dispatch(actions.forms.manifestGroup.setFaield(["load", edge.node!]));
                                 navigation.navigate("ManifestGroupScreen");
                               }}
                               onManifest={() => {
@@ -177,14 +176,8 @@ export default function ManifestScreen() {
                                 dispatch(actions.forms.manifestGroup.setOpen(true));
                                 dispatch(actions.forms.manifestGroup.setField(["load", edge.node!]));
                               }}
-                            />) : (
-                              <LoadCard
-                                key={`load-${edge.node.id}`}
-                                load={edge.node}
-                                onPress={() => navigation.navigate("LoadScreen", { load: edge.node })}
-                              />
-                            )
-                        }
+                            />
+                        )}
                     />
                   }
 

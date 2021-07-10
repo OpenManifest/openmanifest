@@ -76,6 +76,7 @@ export const QUERY_LOAD = gql`
           user {
             id
             name
+            exitWeight
           }
         }
         ticketType {

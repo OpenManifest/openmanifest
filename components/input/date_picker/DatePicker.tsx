@@ -20,7 +20,6 @@ export default function DatePicker(props: IDatepicker) {
   const onConfirmSingle = React.useCallback(
     ({ date }: { date: Date }) => {
       setOpen(false);
-      console.log({ date });
       props.onChange(date.getTime() / 1000);
     },
     [setOpen, props.onChange]

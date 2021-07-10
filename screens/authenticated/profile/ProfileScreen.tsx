@@ -236,9 +236,7 @@ export default function ProfileScreen() {
   
                             const current = (c?.dropzone?.dropzoneUsers?.edges || []);
                             const shouldUpdate = !!current.find((edge) => edge.node.id === dropzoneUser.id);
-                            console.log(current);
-                            console.log("c:");
-                            console.log(c);
+
                             
                             const updatedGcaList = shouldUpdate? [
                               ...(c?.dropzone?.dropzoneUsers?.edges || []).map(

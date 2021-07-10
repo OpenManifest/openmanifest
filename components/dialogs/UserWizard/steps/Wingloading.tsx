@@ -11,6 +11,7 @@ function WingloadingWizardScreen(props: IWizardScreenProps) {
   const userForm = useAppSelector(state => state.forms.user);
   const dispatch = useAppDispatch();
   const [canopySize, setCanopySize] = React.useState(rigForm.fields.canopySize.value || 120);
+  const [weight, setWeight] = React.useState(Number(userForm.fields.exitWeight.value) || 120);
 
 
   React.useEffect(() => {
@@ -47,7 +48,7 @@ function WingloadingWizardScreen(props: IWizardScreenProps) {
         <Card style={styles.card} elevation={3}>
           <View style={styles.cardTitle}>
             <List.Subheader>Your exit weight</List.Subheader>
-            <Text style={styles.cardValue}>{(userForm.fields.exitWeight.value || 50)}kg</Text>
+            <Text style={styles.cardValue}>{(weight || 50)}kg</Text>
           </View>
           <Slider
             style={styles.sliderControl}
@@ -56,10 +57,11 @@ function WingloadingWizardScreen(props: IWizardScreenProps) {
             step={0.5}
             minimumTrackTintColor="#FF1414"
             maximumTrackTintColor="#000000"
-            onValueChange={debounce((value) =>
-              dispatch(actions.forms.user.setField(["exitWeight", value.toString()])),
-              20
-            )}
+            onSlidingComplete={() =>
+              dispatch(actions.forms.user.setField(["exitWeight", weight.toString()]))
+            }
+            value={weight}
+            onValueChange={(w) => setWeight(w)}
           />
           <HelperText type={userForm.fields.exitWeight?.error ? "error" : "info" }>
             { userForm.fields.exitWeight?.error || "Your weight in kg's with all equipment on"}

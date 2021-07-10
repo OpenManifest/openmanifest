@@ -381,6 +381,7 @@ export type DropzoneUser = AnyResource & {
   availableRigs?: Maybe<Array<Rig>>;
   createdAt: Scalars['Int'];
   credits?: Maybe<Scalars['Int']>;
+  dropzone: Dropzone;
   expiresAt?: Maybe<Scalars['Int']>;
   hasCredits: Scalars['Boolean'];
   hasExitWeight: Scalars['Boolean'];
@@ -540,6 +541,7 @@ export type Load = AnyResource & {
   pilot?: Maybe<DropzoneUser>;
   plane: Plane;
   slots?: Maybe<Array<Slot>>;
+  state: LoadState;
   updatedAt: Scalars['Int'];
 };
 
@@ -573,7 +575,21 @@ export type LoadInput = {
   planeId?: Maybe<Scalars['Int']>;
   gcaId?: Maybe<Scalars['Int']>;
   loadMasterId?: Maybe<Scalars['Int']>;
+  state?: Maybe<LoadState>;
 };
+
+export enum LoadState {
+  /** open */
+  Open = 'open',
+  /** boarding_call */
+  BoardingCall = 'boarding_call',
+  /** in_flight */
+  InFlight = 'in_flight',
+  /** landed */
+  Landed = 'landed',
+  /** cancelled */
+  Cancelled = 'cancelled'
+}
 
 export type MasterLog = {
   __typename?: 'MasterLog';
@@ -1209,7 +1225,7 @@ export type Slot = AnyResource & {
 };
 
 export type SlotInput = {
-  userId?: Maybe<Scalars['Int']>;
+  dropzoneUserId?: Maybe<Scalars['Int']>;
   ticketTypeId?: Maybe<Scalars['Int']>;
   jumpTypeId?: Maybe<Scalars['Int']>;
   loadId?: Maybe<Scalars['Int']>;
@@ -1253,7 +1269,7 @@ export type TicketTypeInput = {
   extraIds?: Maybe<Array<Scalars['Int']>>;
 };
 
-export type Transaction = {
+export type Transaction = AnyResource & {
   __typename?: 'Transaction';
   amount: Scalars['Float'];
   createdAt: Scalars['Int'];

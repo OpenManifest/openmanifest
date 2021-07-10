@@ -40,6 +40,14 @@ export const QUERY_DROPZONE = gql`
           name
         }
 
+        rigInspections {
+          id
+          isOk
+          rig {
+            id
+          }
+        }
+
         transactions {
           edges {
             node {
@@ -47,6 +55,17 @@ export const QUERY_DROPZONE = gql`
               status
               amount
             }
+          }
+        }
+        availableRigs {
+          id
+          make
+          model
+          canopySize
+          serial
+
+          user {
+            id
           }
         }
 
@@ -85,7 +104,7 @@ export const QUERY_DROPZONE = gql`
             loadNumber
             isOpen
             maxSlots
-            isFull
+            state
           }
         }
       }

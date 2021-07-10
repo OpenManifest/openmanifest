@@ -34,6 +34,19 @@ const QUERY_DROPZONE_USERS = gql`
               id
               image
               name
+              exitWeight
+            }
+
+            availableRigs {
+              id
+              make
+              model
+              canopySize
+              serial
+
+              user {
+                id
+              }
             }
           }
         }
@@ -105,14 +118,15 @@ export default function UsersScreen(props: IUserListSelect) {
             )  
           }
           onPress={
-            () => dispatch(
-              actions.screens.manifest.setSelected(
-                screens.manifest.selectedUsers?.find(({ id }) => id === `${edge?.node?.id}`)
-                ? screens.manifest.selectedUsers?.filter(({ id }) => id !== `${edge?.node?.id}`)
-                : [...screens.manifest.selectedUsers, edge!.node!],
-              )
-            )
-          }
+            () => {
+              dispatch(
+                actions.screens.manifest.setSelected(
+                  screens.manifest.selectedUsers?.find(({ id }) => id === `${edge?.node?.id}`)
+                  ? screens.manifest.selectedUsers?.filter(({ id }) => id !== `${edge?.node?.id}`)
+                  : [...screens.manifest.selectedUsers, edge!.node!],
+                )
+              );
+          }}
         />
         <Divider style={{ width: "100%" }} key={`divider-${edge?.node!.id}`}/>
         </>

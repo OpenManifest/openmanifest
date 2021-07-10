@@ -9,6 +9,9 @@ import { useAppSelector } from "../../redux";
 
 interface IPilotChipSelect {
   dropzoneId: number;
+  small?: boolean;
+  backgroundColor?: string;
+  color?: string;
   value?: DropzoneUser | null;
   onSelect(user: DropzoneUser): void;
 }
@@ -44,6 +47,7 @@ const QUERY_DROPZONE_USERS = gql`
 `;
 
 export default function PilotChip(props: IPilotChipSelect) {
+  const { small, color, backgroundColor } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector(state => state.global);
 
@@ -57,7 +61,18 @@ export default function PilotChip(props: IPilotChipSelect) {
 
   return (
     !allowed ?
-    <Chip mode="outlined" icon="radio-handheld">
+    <Chip
+      mode="outlined"
+      icon="radio-handheld"
+      style={{ 
+        marginHorizontal: 4,
+        backgroundColor,
+        height: small ? 25 : undefined,
+        alignItems: "center",
+        borderColor: color ? color : undefined,
+      }}
+      textStyle={{ color, fontSize: small ? 12 : undefined }}
+    >
       {props.value?.user?.name || "No pilot"}
     </Chip> : (
     <Menu
@@ -67,7 +82,14 @@ export default function PilotChip(props: IPilotChipSelect) {
         <Chip
           mode="outlined"
           icon="shield-airplane"
-          style={{ marginHorizontal: 4 }}
+          style={{ 
+            marginHorizontal: 4,
+            backgroundColor,
+            height: small ? 25 : undefined,
+            alignItems: "center",
+            borderColor: color ? color : undefined,
+          }}
+          textStyle={{ color, fontSize: small ? 12 : undefined }}
           onPress={() => setMenuOpen(true)}
         >
         {props.value?.id ? props.value?.user?.name : "No pilot"}

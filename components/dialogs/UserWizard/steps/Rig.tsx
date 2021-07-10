@@ -16,7 +16,7 @@ function RigWizardScreen(props: IWizardScreenProps) {
     <WizardScreen style={styles.container} {...props} title="What're you jumping?">
       <View style={styles.content}>
         <Card style={styles.card}>
-          <List.Subheader>Manufacturer</List.Subheader>
+          <List.Subheader>Container manufacturer</List.Subheader>
           <Menu
             onDismiss={() => setMenuOpen(false)}
             visible={isMenuOpen}
@@ -37,7 +37,7 @@ function RigWizardScreen(props: IWizardScreenProps) {
               </TouchableOpacity>
             }>
             {
-              ["Icon", "Javelin", "Mirage", "Vector", "PA (Talon)", "Infinity", "Parachutes de France", "Racer"].map((make) => 
+              ["Icon", "Javelin", "Mirage", "Vector", "PA (Talon)", "Infinity", "Parachutes de France", "Parachute Systems", "Racer"].map((make) => 
                 <Menu.Item
                   onPress={() => {
                     setMenuOpen(false);
@@ -87,7 +87,7 @@ function RigWizardScreen(props: IWizardScreenProps) {
         </Card>
 
         <Card style={styles.card}>
-          <List.Subheader>Serial numebr</List.Subheader>
+          <List.Subheader>Serial number</List.Subheader>
           <TextInput
             style={styles.field}
             mode="outlined"

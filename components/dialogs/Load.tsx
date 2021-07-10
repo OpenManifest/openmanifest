@@ -112,7 +112,7 @@ export default function LoadDialog(props: ILoadDialog) {
             maxSlots: maxSlots.value,
             planeId: plane.value?.id ? Number(plane.value?.id) : null,
             pilotId: pilot.value?.id ? Number(pilot.value?.id) : null,
-            gcaId: gca.value?.user?.id ? Number(gca.value?.user?.id) : null,
+            gcaId: gca.value?.id ? Number(gca.value?.id) : null,
             isOpen: !!isOpen.value
           }
         });
@@ -142,6 +142,7 @@ export default function LoadDialog(props: ILoadDialog) {
 
         if (result.data?.createLoad?.load) {
           const { load } = result.data.createLoad;
+          console.log(load);
           dispatch(
             snackbar.showSnackbar({ message: `Load ${load.name} created`, variant: "success" })
           );

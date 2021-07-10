@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
-import { format } from 'date-fns';
+import { format, startOfDay } from 'date-fns';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { Button, Card, Checkbox, Divider, List } from 'react-native-paper';
@@ -10,6 +10,9 @@ import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 import { Mutation, Query, Rig, Permission } from '../../../graphql/schema.d';
 import useRestriction from '../../../hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
+import { QUERY_DROPZONE_USER } from '../../../graphql/hooks/useDropzoneUser';
+import { QUERY_DROPZONE } from '../../../graphql/hooks/useCurrentDropzone';
+import { KeyboardAvoidingView } from 'react-native';
 
 const QUERY_RIG_INSPECTIONS = gql`
   query RigInspections($dropzoneUserId: Int!, $dropzoneId: Int!) {
@@ -33,7 +36,10 @@ const QUERY_RIG_INSPECTIONS = gql`
           }
           inspectedBy {
             id
-            name
+            user {
+              id
+              name
+            }
           }
           formTemplate {
             id
@@ -65,12 +71,34 @@ const MUTATION_CREATE_RIG_INSPECTION = gql`
         id
         isOk
         definition
+        dropzoneUser {
+          id
+          rigInspections {
+            id
+            isOk
+            rig {
+              id
+            }
+            inspectedBy {
+              id
+              user {
+                id
+                name
+              }
+            }
+          }
+        }
         inspectedBy {
           id
-          name
+          user {
+            id
+            name
+          }
         }
         rig {
           id
+          make
+          model
         }
         
         formTemplate {
@@ -119,7 +147,7 @@ export default function RigInspectionScreen() {
       
       dispatch(
         actions.forms.rigInspection.setFields(
-          inspection!.definition || ""
+          inspection!.definition || "{}"
         )
       );
 
@@ -131,7 +159,7 @@ export default function RigInspectionScreen() {
     } else {
       dispatch(
         actions.forms.rigInspection.setFields(
-          data?.dropzone.rigInspectionTemplate?.definition!,
+          data?.dropzone.rigInspectionTemplate?.definition || '[]',
         )
       )
     }
@@ -145,8 +173,76 @@ export default function RigInspectionScreen() {
           rigId: Number(rig.id),
           definition: JSON.stringify(state.fields),
           isOk: !!state.ok,
+        },
+        update: async (client, { data }) => {
+
+          const { rigInspection } = data?.createRigInspection;
+          const result = client.readQuery<Query>({
+            query: QUERY_DROPZONE_USER,
+            variables: {
+              dropzoneId: Number(currentDropzone?.dropzone?.id),
+              dropzoneUserId: Number(rigInspection?.dropzoneUser?.id),
+            }
+          });
+
+          const currentDz = client.readQuery<Query>({
+            query: QUERY_DROPZONE,
+            variables: {
+              dropzoneId: Number(currentDropzone?.dropzone?.id),
+              earliestTimestamp: startOfDay(new Date()).getTime() / 1000
+            }
+          });
+
+          if (currentDz?.dropzone?.currentUser?.id === rigInspection?.dropzoneUser?.id) {
+            client.writeQuery({
+              query: QUERY_DROPZONE,
+              variables: {
+                dropzoneId: Number(currentDropzone?.dropzone?.id),
+                earliestTimestamp: startOfDay(new Date()).getTime() / 1000
+              },
+              data: {
+                ...currentDz,
+                dropzone: {
+                  ...currentDz?.dropzone,
+                  currentUser: {
+                    ...currentDz?.dropzone?.currentUser,
+                    rigInspections: [
+                      ...(currentDz.dropzone?.currentUser?.rigInspections || []).filter((ins) => ins.id !== data?.createRigInspection?.rigInspection?.id),
+                      rigInspection,
+                    ]
+                  }
+                }
+              }
+            })
+          } 
+
+          const newData = {
+            ...result.dropzone,
+            dropzoneUser: {
+              ...result.dropzone?.dropzoneUser,
+              rigInspections: [
+                ...(result.dropzone?.dropzoneUser?.rigInspections || []).filter((ins) => ins.id !== data?.createRigInspection?.rigInspection?.id),
+                rigInspection,
+              ]
+            }
+          };
+
+
+          client.writeQuery({
+            query: QUERY_DROPZONE_USER,
+            variables: {
+              dropzoneId: Number(currentDropzone?.dropzone?.id),
+              dropzoneUserId: Number(data?.createRigInspection?.rigInspection?.dropzoneUser?.id),
+            },
+            data: newData
+          });
+          return {
+            data: newData,
+          };
         }
       });
+
+      console.log(result?.data?.createRigInspection);
 
       dispatch(
         actions.notifications.showSnackbar({ message: "Rig inspection saved", variant: "success" })
@@ -161,6 +257,15 @@ export default function RigInspectionScreen() {
 
   return (
     <ScrollableScreen>
+      <KeyboardAvoidingView
+        behavior="position"
+        style={{
+          width: "100%",
+          flexGrow: 1,
+          maxWidth: 400,
+          backgroundColor: "transparent"
+      }}
+      >
       <Card style={{ width: "100%", marginVertical: 16 }}>
         <Card.Title title="Rig" />
         <Card.Content>
@@ -185,6 +290,7 @@ export default function RigInspectionScreen() {
         </Card.Content>
       </Card>
 
+      
       <Card style={{ width: "100%"}}>
         <Card.Title title={data?.dropzone?.rigInspectionTemplate?.name} />
 
@@ -212,6 +318,7 @@ export default function RigInspectionScreen() {
           </Button>
         </Card.Actions>
       </Card>
+      </KeyboardAvoidingView>
     </ScrollableScreen>
   );
 }
