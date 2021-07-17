@@ -10,6 +10,8 @@ export const QUERY_DROPZONE = gql`
   query QueryDropzone($dropzoneId: Int!, $earliestTimestamp: Int) {
     dropzone(id: $dropzoneId) {
       id
+      lat
+      lng
       name
       primaryColor,
       secondaryColor,
@@ -21,6 +23,19 @@ export const QUERY_DROPZONE = gql`
       ticketTypes {
         id
         name
+      }
+
+      currentConditions {
+        id
+        jumpRun
+        temperature
+        offsetDirection
+        offsetMiles
+        winds {
+          altitude
+          speed
+          direction
+        }
       }
 
       currentUser {

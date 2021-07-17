@@ -8,10 +8,12 @@ mutation CreateDropzone(
   $name: String!,
   $banner: String,
   $federationId: Int!
+  $lat: Float
+  $lng: Float
   $primaryColor: String
   $secondaryColor: String
 ){
-  createDropzone(input: { attributes: { name: $name, banner: $banner, federationId: $federationId, primaryColor: $primaryColor, secondaryColor: $secondaryColor }}) {
+  createDropzone(input: { attributes: { name: $name, banner: $banner, federationId: $federationId, primaryColor: $primaryColor, secondaryColor: $secondaryColor, lat: $lat, lng: $lng }}) {
     dropzone {
       id
       name
@@ -33,6 +35,8 @@ export default createMutation<{
   federationId: number,
   primaryColor: string,
   secondaryColor: string,
+  lat: number,
+  lng: number,
 }, CreateDropzonePayload>(
   MUTATION_CREATE_DROPZONE, {
     getPayload: (result) => result.createDropzone,

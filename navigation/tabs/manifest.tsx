@@ -8,6 +8,7 @@ const CreateLoadScreen = React.lazy(() => import('../../screens/authenticated/lo
 const ManifestGroupScreen = React.lazy(() => import('../../screens/authenticated/manifest/ManifestGroupScreen'));
 const ManifestGroupUserSelectScreen = React.lazy(() => import('../../screens/authenticated/manifest/ManifestGroupUserSelectScreen'));
 import AppBar from '../AppBar';
+import JumpRun from '../../components/dialogs/WeatherConditionsWizard/steps/JumpRun2'
 
 
 export type IManifestTabParams = {

@@ -65,6 +65,7 @@ export default function GCAChip(props: IGCAChipSelect) {
     <Chip
       mode="outlined"
       icon="radio-handheld"
+      selectedColor={color}
       style={{ 
         marginHorizontal: 4,
         backgroundColor,
@@ -83,6 +84,7 @@ export default function GCAChip(props: IGCAChipSelect) {
         <Chip
           mode="outlined"
           icon="radio-handheld"
+          selectedColor={color}
           onPress={() => setMenuOpen(true)}
           style={{ 
             marginHorizontal: 4,

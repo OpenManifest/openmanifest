@@ -142,7 +142,6 @@ export default function LoadDialog(props: ILoadDialog) {
 
         if (result.data?.createLoad?.load) {
           const { load } = result.data.createLoad;
-          console.log(load);
           dispatch(
             snackbar.showSnackbar({ message: `Load ${load.name} created`, variant: "success" })
           );

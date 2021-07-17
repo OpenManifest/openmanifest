@@ -4,6 +4,7 @@ import { Portal, Modal } from "react-native-paper";
 import Wizard from "../../wizard/Wizard";
 import WizardCompleteStep from "../../wizard/WizardCompleteStep";
 import NameAndFederationStep from "./steps/Name";
+import LocationStep from "./steps/Location";
 import AircraftStep from "./steps/Aircraft";
 import ThemingStep from "./steps/Theming";
 import PermissionStep from "./steps/Permissions";
@@ -94,6 +95,8 @@ function DropzoneWizardScreen() {
           banner: "",
           primaryColor: dropzone.fields.primaryColor.value,
           secondaryColor: dropzone.fields.secondaryColor.value,
+          lat: dropzone.fields.lat.value,
+          lng: dropzone.fields.lng.value,
         })
       : await mutationUpdateDropzone.mutate({
           id: Number(dropzone.original.id),
@@ -101,6 +104,8 @@ function DropzoneWizardScreen() {
           name: dropzone.fields.name.value,
           primaryColor: dropzone.fields.primaryColor.value,
           secondaryColor: dropzone.fields.secondaryColor.value,
+          lat: dropzone.fields.lat.value,
+          lng: dropzone.fields.lng.value,
           banner: "",
         });
 
@@ -203,7 +208,6 @@ function DropzoneWizardScreen() {
         contentContainerStyle={{ height: "100%" }}
       >
           <Wizard>
-            
             <NameAndFederationStep
               onBack={() => {
                 dispatch(actions.forms.dropzoneWizard.setOpen(false));
@@ -218,6 +222,12 @@ function DropzoneWizardScreen() {
               backButtonLabel="Cancel"
               nextButtonLabel="Next"
               onNext={onBasicInfoNext}
+            />
+            <LocationStep
+              onBack={(idx, setIndex) => setIndex(idx - 1)}
+              onNext={(idx, setIndex) => setIndex(idx + 1)}
+              backButtonLabel="Back"
+              nextButtonLabel="Next"
             />
             <ThemingStep
               onBack={(idx, setIndex) => setIndex(idx - 1)}

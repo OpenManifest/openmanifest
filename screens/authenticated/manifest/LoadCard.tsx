@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { Button, Card, DataTable, IconButton, Menu, Paragraph, ProgressBar, Text } from 'react-native-paper';
 import addMinutes from "date-fns/addMinutes";
 import differenceInMinutes from "date-fns/differenceInMinutes";
+import Skeleton from 'react-native-skeleton-content';
 
 import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
 import GCAChip from '../../../components/chips/GcaChip';
@@ -16,6 +17,7 @@ import { Query, Load, Mutation, User, Permission, Plane, Slot, DropzoneUser } fr
 import useRestriction from '../../../hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from '../../../redux';
 import SwipeActions from '../../../components/layout/SwipeActions';
+import LoadingCard from './LoadingCard';
 
 interface ILoadCard {
   load: Load;
@@ -337,6 +339,8 @@ export default function LoadCard(props: ILoadCard) {
   }, [mutationUpdateLoad, JSON.stringify(load)]);
 
   
+
+  
   const canUpdateLoad = useRestriction(Permission.UpdateLoad);
   
   const canEditSelf = useRestriction(Permission.UpdateSlot);
@@ -358,7 +362,11 @@ export default function LoadCard(props: ILoadCard) {
   }, [data?.load?.maxSlots]);
 
   const showGroupIcon = (canManifestGroup || canManifestGroupWithSelfOnly) && !data?.load?.hasLanded && (!data?.load?.dispatchAt || data?.load.dispatchAt > (new Date().getTime() / 1000));
-
+  if (loading) {
+    return (
+      <LoadingCard />
+    )
+  }
   return (
   <Card testID="load-card" style={{ margin: 16, opacity: data?.load?.hasLanded ? 0.5 : 1.0 }} elevation={3}>
     <Card.Title
@@ -624,7 +632,6 @@ export default function LoadCard(props: ILoadCard) {
       }
     </Card.Actions>
   </Card>
-                      
   );
 }
 

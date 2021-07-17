@@ -5,14 +5,10 @@ import { getDocumentAsync } from "expo-document-picker";
 import { useQuery, gql } from '@apollo/client';
 import ColorPicker from "../../input/colorpicker";
 import { actions, useAppSelector, useAppDispatch } from '../../../redux';
-import SliderComponent from "@react-native-community/slider";
-
-import { View } from '../../Themed';
-
-import slice from "./slice";
 import { Query } from '../../../graphql/schema';
 import { PhonePreview, WebPreview } from '../../theme_preview';
 import FederationSelect from '../../input/dropdown_select/FederationSelect';
+import LocationPicker from '../../input/LocationPicker';
 
 
 const QUERY_FEDERATIONS = gql`
@@ -62,6 +58,7 @@ export default function DropzoneForm() {
         <Card.Cover
           source={{ uri: state.fields.banner.value || 'https://picsum.photos/700' }}
           resizeMode="cover"
+          style={{ width: '100%'}}
         />
         <Card.Actions style={{ justifyContent: "flex-end" }}>
           <Button onPress={onPickImage}>Upload</Button>
@@ -86,6 +83,22 @@ export default function DropzoneForm() {
         <HelperText type={!!state.fields.federation.error ? "error" : "info"}>
           { state.fields.federation.error || "" }
         </HelperText>
+      </Card>
+
+      <Card style={[styles.card, { height: 500, paddingHorizontal: 0 }]}>
+        <List.Subheader>Location</List.Subheader>
+        <Card.Content style={{ marginTop: 50, paddingBottom: 50, paddingLeft: 0, paddingRight: 0, flexGrow: 1 }}>
+          <LocationPicker
+            value={{
+              lat: state.fields.lat.value,
+              lng: state.fields.lng.value
+            }}
+            onChange={(region) => {
+              dispatch(actions.forms.dropzone.setField(["lat", region.latitude]));
+              dispatch(actions.forms.dropzone.setField(["lng", region.longitude]));
+            }}
+          />
+        </Card.Content>
       </Card>
         
 

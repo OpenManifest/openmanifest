@@ -242,7 +242,6 @@ export default function RigInspectionScreen() {
         }
       });
 
-      console.log(result?.data?.createRigInspection);
 
       dispatch(
         actions.notifications.showSnackbar({ message: "Rig inspection saved", variant: "success" })

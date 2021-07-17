@@ -175,7 +175,7 @@ export default function UpdateDropzoneScreen() {
   return (
     <>
       <ProgressBar indeterminate color={globalState.theme.colors.accent} visible={loading} />
-      <ScrollableScreen style={{ backgroundColor: globalState.theme.colors.accent }} contentContainerStyle={styles.content}>
+      <ScrollableScreen style={{ backgroundColor: '#f4f5f5' }} contentContainerStyle={styles.content}>
         <DropzoneForm />
         <View style={styles.fields}>
           <Button mode="contained" disabled={mutation.loading} onPress={onSave} loading={mutation.loading}>
@@ -198,6 +198,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignSelf: "center",
     alignItems: 'center',
+    width: '100%',
     maxWidth: 500,
     padding: 48,
   },

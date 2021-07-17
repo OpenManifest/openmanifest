@@ -1,22 +1,15 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
 import * as React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
-import { Badge, Button, Card, Chip, DataTable, IconButton, Menu, Paragraph, ProgressBar, Text } from 'react-native-paper';
-import addMinutes from "date-fns/addMinutes";
-import endOfDay from "date-fns/endOfDay";
-import differenceInMinutes from "date-fns/differenceInMinutes";
+import { StyleSheet } from 'react-native';
+import { Badge, Card, Chip } from 'react-native-paper';
 
 import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
-import GCAChip from '../../../components/chips/GcaChip';
-import LoadMasterChip from '../../../components/chips/LoadMasterChip';
 import PilotChip from '../../../components/chips/PilotChip';
 import PlaneChip from '../../../components/chips/PlaneChip';
 
 import { View } from '../../../components/Themed';
-import { Query, Load, Mutation, User, Permission, Plane, Slot, DropzoneUser } from '../../../graphql/schema.d';
-import useRestriction from '../../../hooks/useRestriction';
-import { actions, useAppDispatch, useAppSelector } from '../../../redux';
-import SwipeActions from '../../../components/layout/SwipeActions';
+import { Query, Load, Mutation, Plane, DropzoneUser, LoadState } from '../../../graphql/schema.d';
+import { actions, useAppDispatch } from '../../../redux';
 import { errorColor, successColor, warningColor } from '../../../constants/Colors';
 import Countdown from './Countdown';
 import { isBefore } from 'date-fns';
@@ -231,6 +224,13 @@ export default function LoadCard(props: ILoadCard) {
     }
   }, [mutationUpdateLoad, JSON.stringify(load)]);
   
+  const loadStates = {
+    [LoadState.Open]: "Open",
+    [LoadState.BoardingCall]: "On call",
+    [LoadState.Cancelled]: "Cancelled",
+    [LoadState.InFlight]: "In air",
+    [LoadState.Landed]: "Landed"
+  };
   return (
     <Card
       testID="load-card"
@@ -249,13 +249,13 @@ export default function LoadCard(props: ILoadCard) {
           marginRight: -5,
         }}
       >
-        {data?.load?.state || ''}
+        {loadStates[data?.load?.state] || ''}
       </Badge>
       <Card.Title
         style={{ justifyContent: "space-between" }}
         title={`Load #${load.loadNumber}`}
         subtitle={load.name}
-        right={() => !data?.load?.dispatchAt || !isBefore(new Date(), data?.load?.dispatchAt) ? null : (
+        right={() => !data?.load?.dispatchAt || isBefore(new Date(), data?.load?.dispatchAt) ? null : (
           <View style={{ marginRight: 16 }}>
             <Countdown end={new Date(data.load.dispatchAt * 1000)} />
           </View>
@@ -266,6 +266,7 @@ export default function LoadCard(props: ILoadCard) {
         <View style={{ flexDirection: "row", flexWrap: 'wrap' }}>
             <PlaneChip
               value={data?.load?.plane}
+              small
               onSelect={async (plane) => {
                 if ((data?.load?.slots?.length || 0) > (plane.maxSlots || 0)) {
                   const diff = (data?.load?.slots?.length || 0) - (plane.maxSlots || 0);
@@ -286,8 +287,14 @@ export default function LoadCard(props: ILoadCard) {
               dropzoneId={Number(currentDropzone?.dropzone?.id)}
               value={data?.load?.pilot}
               onSelect={updatePilot}
+              small
             />
-            <Chip icon="parachute">
+            <Chip
+              mode="outlined"
+              icon="parachute"
+              style={styles.smallChip}
+              textStyle={styles.smallChipText}
+            >
               {data?.load?.slots?.length} / {data?.load?.plane?.maxSlots}
             </Chip>
         </View>
@@ -302,4 +309,10 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     flexDirection: "row"
   },
+  smallChip: {
+    height: 25,
+    margin: 4,
+    alignItems: "center"
+  },
+  smallChipText: { fontSize: 12 },
 });

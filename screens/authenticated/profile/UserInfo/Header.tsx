@@ -50,7 +50,7 @@ export default function UserHeader(props: IUserHeader) {
           </View>
           <View style={styles.titleContainer}>
             <Title style={styles.title}>{dropzoneUser?.user?.name}</Title>
-            <Paragraph style={styles.paragraph}>{dropzoneUser?.role?.name}</Paragraph>
+            <Paragraph style={styles.paragraph}>{dropzoneUser?.role?.name?.replace('_', ' ').toUpperCase()}</Paragraph>
           </View>
         </View>
 

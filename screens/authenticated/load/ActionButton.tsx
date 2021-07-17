@@ -254,12 +254,12 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     }
   }, [mutationUpdateLoad, JSON.stringify(load)]);
 
-  const cancelLoad = React.useCallback(async () => {
+  const updateLoadState = React.useCallback(async (state: LoadState) => {
 
     try {
       await mutationUpdateLoad({
         variables: {
-          state: "canceled",
+          state,
           dispatchAt: null
         }
       });
@@ -405,28 +405,35 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     ].includes(load.state) ? null :{ label: "Cancel boarding call", icon: "airplane-off", onPress: createCallAction(null) },
     ![
       LoadState.Open
-    ].includes(load.state) ? null :{ label: "Cancel load", icon: "delete-sweep", onPress: () => cancelLoad() },
+    ].includes(load.state) ? null :{ label: "Cancel load", icon: "delete-sweep", onPress: () => updateLoadState(LoadState.Cancelled) },
+    ![
+      LoadState.Cancelled
+    ].includes(load.state) ? null :{ label: "Re-open load", icon: "undo", onPress: () => updateLoadState(LoadState.Open) },
     ![
       LoadState.BoardingCall,
       LoadState.InFlight,
     ].includes(load.state) ? null : { label: "Mark as Landed", icon: "airplane-landing", onPress: () => onLanded() },
   ].filter(Boolean);
 
-  console.log(load);
+  const actions = [
+    ...isOpen ? manifestActions : [],
+    ...[
+      LoadState.Open,
+    ].includes(load?.state) ? callActions : [],
+    ...workflowActions,
+  ];
 
   return (
     <Portal>
       <FAB.Group
-        visible
+        visible={!!actions.length}
         open={isExpanded}
         icon={isExpanded ? 'close' : 'plus'}
-        actions={[
-          ...isOpen ? manifestActions : [],
-          ...[
-            LoadState.Open,
-          ].includes(load?.state) ? callActions : [],
-          ...workflowActions,
-        ]}
+        fabStyle={{
+          marginLeft: 16,
+          marginBottom: 32,
+        }}
+        actions={actions}
         onStateChange={({ open }) => setExpanded(open)}
       />
     </Portal>

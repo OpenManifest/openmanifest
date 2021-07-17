@@ -21,6 +21,7 @@ import RootNavigator from "./navigation/RootNavigator";
 import { actions } from './redux';
 import UserWizardScreen from './components/dialogs/UserWizard/UserWizardScreen';
 import DropzoneWizardScreen from './components/dialogs/DropzoneWizard/DropzoneWizard';
+import { WeatherConditionsWizard } from './components/dialogs/WeatherConditionsWizard/WeatherConditionsWizard';
 
 
 Notifications.setNotificationHandler({
@@ -119,6 +120,7 @@ function Content() {
             <StatusBar />
             <UserWizardScreen />
             <DropzoneWizardScreen />
+            <WeatherConditionsWizard />
             <NotificationArea />
           </SafeAreaProvider>
         </MaterialProvider>

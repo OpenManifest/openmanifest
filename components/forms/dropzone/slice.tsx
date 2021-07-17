@@ -9,6 +9,8 @@ type Fields = Pick<
   | "primaryColor"
   | "banner"
   | "isPublic"
+  | "lng"
+  | "lat"
   | "isCreditSystemEnabled"
 >;
 
@@ -28,6 +30,14 @@ export const initialState: IDropzoneEditState = {
   open: false,
   fields: {
     federation: {
+      value: null,
+      error: null,
+    },
+    lat: {
+      value: null,
+      error: null,
+    },
+    lng: {
       value: null,
       error: null,
     },

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Dimensions, View, StyleSheet } from "react-native";
+import { Dimensions, View, StyleSheet, StyleProp } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, Title } from "react-native-paper";
 import { SafeAreaViewProps } from "react-native-safe-area-context";;
@@ -11,6 +11,8 @@ export interface IWizardScreenProps extends SafeAreaViewProps {
   loading?: boolean;
   backButtonLabel?: string;
   nextButtonLabel?: string;
+  containerStyle?: StyleProp;
+  disableScroll?: boolean;
   
   onBack(currentIndex: number, setIndex: (idx: number) => void): void;
   onNext(currentIndex: number, setIndex: (idx: number) => void): void;
@@ -18,7 +20,7 @@ export interface IWizardScreenProps extends SafeAreaViewProps {
 export function WizardScreen(props: IWizardScreenProps) {
   const { title, loading, onBack, backButtonLabel, nextButtonLabel, onNext } = props;
   const { width, height } = Dimensions.get('window');
-  const screenWidth = width > 500 ? 500 : width;
+  const screenWidth = width > 600 ? 500 : width;
 
   const { index, setIndex } = React.useContext(WizardContext);
 
@@ -36,15 +38,18 @@ export function WizardScreen(props: IWizardScreenProps) {
   return (
     <View style={StyleSheet.flatten([styles.wizardScreen, { width }, props.style])}>
       <ScrollableScreen
-        style={[styles.container, { width: screenWidth }]}
+        style={[styles.container, props.containerStyle || {}, { width }]}
         contentContainerStyle={[styles.content, { minHeight: height }]}
+        scrollEnabled={!props.disableScroll}
+        pointerEvents="box-none"
         // @ts-ignore
         ref={scrollRef}
+
       >
         <Title style={styles.title}>{title}</Title>
         { props.children }
 
-        <View style={styles.buttons}>
+        <View style={styles.buttons} pointerEvents="box-none">
         <Button
           key={`button-next-${index}`}
           loading={loading}
@@ -120,7 +125,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 48
   },
   buttons: {
-    alignSelf: "flex-end",
+    alignSelf: "center",
     alignItems: "flex-end",
     flexGrow: 1,
     justifyContent: "flex-end",

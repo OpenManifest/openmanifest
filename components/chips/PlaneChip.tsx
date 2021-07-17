@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
-import { Chip, Menu } from "react-native-paper";
+import { Avatar, Chip, Menu } from "react-native-paper";
 import useCurrentDropzone from "../../graphql/hooks/useCurrentDropzone";
 import { Plane, Permission, Query } from "../../graphql/schema.d";
 import useRestriction from "../../hooks/useRestriction";
@@ -51,8 +51,17 @@ export default function PlaneChip(props: IPlaneChipSelect) {
     <Chip
       mode="outlined"
       icon="airplane-takeoff"
-      style={{ marginHorizontal: 4, backgroundColor, height: small ? 25 : undefined, alignItems: "center" }}
-      textStyle={{ color, fontSize: small ? 12 : undefined }}
+      selectedColor={color}
+      style={{
+        marginHorizontal: 4,
+        backgroundColor,
+        height: small ? 25 : undefined,
+        alignItems: "center"
+      }}
+      textStyle={{
+        color,
+        fontSize: small ? 12 : undefined
+      }}
     >
       {props.value?.name || "No plane"}
     </Chip> : (
@@ -63,13 +72,16 @@ export default function PlaneChip(props: IPlaneChipSelect) {
         <Chip
           mode="outlined"
           icon="airplane"
+          selectedColor={color}
           style={{ 
             marginHorizontal: 4,
             backgroundColor,
             height: small ? 25 : undefined,
             alignItems: "center",
             borderColor: color ? color : undefined,
+            
           }}
+
           textStyle={{ color, fontSize: small ? 12 : undefined }}
           onPress={() => allowed && setMenuOpen(true)}
         >

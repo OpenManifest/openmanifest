@@ -24,6 +24,7 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
     <Chip
       mode="outlined"
       icon="shield-account"
+      selectedColor={color}
       style={{ 
         marginHorizontal: 4,
         backgroundColor,
@@ -42,6 +43,7 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
         <Chip
           mode="outlined"
           icon="shield-account"
+          selectedColor={color}
           style={{ 
             marginHorizontal: 4,
             backgroundColor,

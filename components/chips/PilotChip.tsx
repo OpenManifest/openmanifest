@@ -64,6 +64,7 @@ export default function PilotChip(props: IPilotChipSelect) {
     <Chip
       mode="outlined"
       icon="radio-handheld"
+      selectedColor={color}
       style={{ 
         marginHorizontal: 4,
         backgroundColor,
@@ -82,6 +83,7 @@ export default function PilotChip(props: IPilotChipSelect) {
         <Chip
           mode="outlined"
           icon="shield-airplane"
+          selectedColor={color}
           style={{ 
             marginHorizontal: 4,
             backgroundColor,

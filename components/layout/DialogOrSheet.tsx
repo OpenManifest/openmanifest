@@ -20,6 +20,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
   const { open, snapPoints, onClose, title, buttonLabel, buttonAction, loading, children } = props;
   const sheetRef = React.useRef<BottomSheet>(null);
   const snappingPoints = React.useMemo(() => sortBy(uniq([0, ...(snapPoints || [600])])), [JSON.stringify(snapPoints)]);
+  const [currentIndex, setIndex] = React.useState(-1);
 
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
 
@@ -41,9 +42,28 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     if (open) {
       sheetRef?.current?.snapTo(snappingPoints?.length - 1);
     } else {
+      setIndex(-1);
+      sheetRef?.current?.close();
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (open) {
+      sheetRef?.current?.snapTo(snappingPoints?.length - 1);
+    } else {
+      setIndex(-1);
       sheetRef?.current?.close();
     }
   }, [open]);
+
+  React.useEffect(() => {
+    if (open && currentIndex < 0) {
+      sheetRef?.current?.snapTo(snappingPoints?.length - 1);
+    } else if (!open && currentIndex > -1) {
+      setIndex(-1);
+      sheetRef?.current?.close();
+    }
+  }, [currentIndex]);
 
   return (
     <Portal>
@@ -55,6 +75,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
         snapPoints={snappingPoints}
         index={-1}
         onChange={(toIndex) => {
+          setIndex(toIndex);
           if (toIndex <= 0) {
             onClose();
             Keyboard.dismiss();

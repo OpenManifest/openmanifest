@@ -9,6 +9,8 @@ const MUTATION_UPDATE_DROPZONE = gql`
     $name: String!,
     $banner: String,
     $federationId: Int!
+    $lat: Float
+    $lng: Float
     $primaryColor: String
     $secondaryColor: String
     $isCreditSystemEnabled: Boolean,
@@ -19,6 +21,8 @@ const MUTATION_UPDATE_DROPZONE = gql`
       attributes: {
         name: $name,
         banner: $banner,
+        lat: $lat,
+        lng: $lng,
         federationId: $federationId
         primaryColor: $primaryColor
         secondaryColor: $secondaryColor

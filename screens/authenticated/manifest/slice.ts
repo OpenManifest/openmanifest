@@ -3,14 +3,16 @@ import { DropzoneUser } from "../../../graphql/schema.d";
 
 interface IManifestScreenState {
   isSearchVisible: boolean;
-  selectedUsers: DropzoneUser[]
+  selectedUsers: DropzoneUser[];
   searchText: string;
+  display: "list" | "cards";
 }
 
 export const initialState: IManifestScreenState = {
   isSearchVisible: false,
   selectedUsers: [],
   searchText: "",
+  display: "list",
 };
 
 
@@ -27,6 +29,10 @@ export default createSlice({
 
     setSearchVisible: (state: IManifestScreenState, action: PayloadAction<boolean>) => {
       state.isSearchVisible = action.payload;
+    },
+
+    setDisplayStyle: (state: IManifestScreenState, action: PayloadAction<"cards" | "list">) => {
+      state.display = action.payload;
     },
     
     reset: (state: IManifestScreenState) => {

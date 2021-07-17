@@ -35,7 +35,9 @@ export default function Countdown(props: ICountdownProps) {
       size={size || 50}
       strokeWidth={2}
     >
-      {({ remainingTime, animatedColor }) => {
+      {
+      // @ts-ignore
+      ({ remainingTime, animatedColor }) => {
         const seconds = Math.round(remainingTime % 60);
         const minutes = secondsToMinutes(remainingTime);
         const formattedSeconds = seconds < 10

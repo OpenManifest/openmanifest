@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 import * as React from "react";
 import { List, Menu } from "react-native-paper";
 import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
+import useDropzoneUser from "../../../graphql/hooks/useDropzoneUser";
 import { Query, UserRole } from "../../../graphql/schema.d";
 import { useAppSelector } from "../../../redux";
 
@@ -18,7 +19,7 @@ const QUERY_ROLES = gql`
   query RolesQuery($dropzoneId: Int!) {
     dropzone(id: $dropzoneId) {
       id
-      roles {
+      roles(selectable: true) {
         id
         name
       }
@@ -29,7 +30,7 @@ const QUERY_ROLES = gql`
 export default function RoleSelect(props: IRoleSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector(state => state.global);
-
+  const { dropzoneUser } = useDropzoneUser();
   const { data, loading, refetch } = useQuery<Query>(QUERY_ROLES, {
     variables: {
       dropzoneId: Number(currentDropzoneId),
@@ -50,7 +51,7 @@ export default function RoleSelect(props: IRoleSelect) {
             setMenuOpen(true);
           }}
           title={
-            props.value?.name || "Access level"
+            props.value?.name?.replace('_', ' ')?.toUpperCase() || "Access level"
           }
           description={!props.required ? "Optional" : null}
         />
@@ -63,7 +64,7 @@ export default function RoleSelect(props: IRoleSelect) {
               props.onSelect(role);
             }}
             title={
-              role.name || "-"
+              role.name?.replace('_', ' ').toUpperCase() || "-"
             }
           />
         )
