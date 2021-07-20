@@ -11,5 +11,12 @@ export default ({config}) => {
         ? "https://openmanifest.org/graphql"
         : "http://127.0.0.1:5000/graphql"
     },
+    ios: {
+      ...config.ios,
+      config: {
+        ...config.ios.config,
+        googleMapsApiKey: process.env.GOOGLE_MAPS_IOS
+      },
+    },
   }
 }

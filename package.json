@@ -1,5 +1,5 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "app/Entrypoint.tsx",
   "scripts": {
     "start": "expo start",
     "start:production": "EXPO_ENV=production expo start",
@@ -37,6 +37,7 @@
     "@expo/vector-icons": "^12.0.0",
     "@fseehawer/react-circular-slider": "^2.3.5",
     "@gorhom/bottom-sheet": "3.6.5",
+    "@react-google-maps/api": "^2.2.0",
     "@react-native-async-storage/async-storage": "^1.15.4",
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/datetimepicker": "3.0.4",
@@ -70,6 +71,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
     "react-native-color-picker": "^0.6.0",
     "react-native-countdown-circle-timer": "^2.5.3",
+    "react-native-dotenv": "^3.1.1",
     "react-native-gesture-handler": "1.10.3",
     "react-native-knob": "^2.3.2",
     "react-native-maps": "0.27.1",
