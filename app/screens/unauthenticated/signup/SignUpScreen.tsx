@@ -8,6 +8,8 @@ import useMutationSignUp from '../../../api/hooks/useMutationSignUp';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
 import { primaryColor } from '../../../constants/Colors';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore PNG allowed
 import logo from '../../../../assets/images/logo.png';
 
 export default function SignupScreen() {
@@ -28,14 +30,10 @@ export default function SignupScreen() {
 
       navigation.navigate('LoginScreen');
       // Credentials are received on login only now. Return
-      return;
-      if (payload.credentials) {
-        dispatch(actions.global.setCredentials(payload.credentials));
-        dispatch(actions.global.setUser(payload.authenticatable!));
-      }
+      return null;
     },
     onFieldError: (field, value) =>
-      dispatch(actions.screens.signup.setFieldError([field as any, value])),
+      dispatch(actions.screens.signup.setFieldError([field as keyof typeof state.fields, value])),
   });
 
   return (

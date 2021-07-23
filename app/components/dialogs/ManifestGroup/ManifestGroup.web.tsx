@@ -4,7 +4,6 @@ import { View, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Dialog, Portal } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
-import BottomSheet from '@gorhom/bottom-sheet';
 import { Mutation } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import ManifestGroupForm from '../../forms/manifest_group/ManifestGroupForm';
@@ -194,23 +193,6 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     state.fields.users.value,
     validate,
   ]);
-
-  const sheetRef = React.useRef<BottomSheet>(null);
-
-  React.useEffect(() => {
-    if (state.fields.ticketType?.value?.isTandem) {
-      sheetRef?.current?.snapTo(0);
-    }
-  }, [state.fields.ticketType?.value?.isTandem]);
-
-  React.useEffect(() => {
-    if (open) {
-      sheetRef?.current?.snapTo(1);
-    } else {
-      sheetRef?.current?.close();
-      onClose();
-    }
-  }, [onClose, open]);
 
   return (
     <Portal>

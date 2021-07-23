@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Dropzone } from '../../../api/schema.d';
 
-type Fields = Pick<
+export type DropzoneFields = Pick<
   Dropzone,
   | 'federation'
   | 'name'
@@ -18,7 +18,7 @@ interface IDropzoneEditState {
   original: Dropzone | null;
   open: boolean;
   fields: {
-    [K in keyof Fields]-?: {
+    [K in keyof DropzoneFields]-?: {
       value: Dropzone[K] | null;
       error: string | null;
     };

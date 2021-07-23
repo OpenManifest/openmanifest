@@ -3,10 +3,11 @@ import { useIsFocused } from '@react-navigation/core';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { Card, List, ProgressBar } from 'react-native-paper';
+import { Card, List } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 
 import { capitalize } from 'lodash';
+import SkeletonContent from 'react-native-skeleton-content';
 import { Query } from '../../../api/schema.d';
 import { useAppSelector } from '../../../state';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
@@ -112,10 +113,29 @@ export default function DropzonePermissionScreen() {
     if (isFocused) {
       refetch();
     }
-  }, [isFocused]);
+  }, [isFocused, refetch]);
 
-  return loading ? (
-    <ProgressBar indeterminate color={state.theme.colors.accent} />
+  return loading || !data?.dropzone?.roles?.length ? (
+    <SkeletonContent
+      isLoading
+      containerStyle={{
+        flexGrow: 1,
+        paddingHorizontal: 16,
+      }}
+      layout={[
+        {
+          key: 'first',
+          height: 175,
+          marginTop: 70,
+          marginBottom: 35,
+          width: '100%',
+        },
+        { key: 'second', height: 175, marginBottom: 35, width: '100%' },
+        { key: 'third', height: 175, marginBottom: 35, width: '100%' },
+        { key: 'fourth', height: 175, marginBottom: 35, width: '100%' },
+        { key: 'fifth', height: 175, marginBottom: 35, width: '100%' },
+      ]}
+    />
   ) : (
     <Tabs defaultIndex={0} mode="scrollable">
       {data?.dropzone?.roles?.map((role) => (

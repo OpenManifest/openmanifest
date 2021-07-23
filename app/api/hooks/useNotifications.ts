@@ -1,9 +1,7 @@
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import * as React from 'react';
 import { useAppSelector } from '../../state';
 import { Query } from '../schema';
-import useCurrentDropzone from './useCurrentDropzone';
 
 const QUERY_DROPZONE_USER_NOTIFICATIONS = gql`
   query QueryNotifications($dropzoneId: Int!) {

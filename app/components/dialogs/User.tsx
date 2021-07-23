@@ -3,6 +3,7 @@ import UserForm from '../forms/user/UserForm';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import DialogOrSheet from '../layout/DialogOrSheet';
 import useMutationUpdateUser from '../../api/hooks/useMutationUpdateUser';
+import { UserFields } from '../forms/user/slice';
 
 interface IUpdateUserDialog {
   open?: boolean;
@@ -26,7 +27,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
       onSuccess();
     },
     onFieldError: (field, value) =>
-      dispatch(actions.forms.user.setFieldError([field as any, value])),
+      dispatch(actions.forms.user.setFieldError([field as keyof UserFields, value])),
     onError: (error) =>
       dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' })),
   });

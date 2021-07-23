@@ -28,7 +28,6 @@ function NameAndFederationWizardSceen(props: IWizardScreenProps) {
           <FederationSelect
             value={state.fields.federation.value}
             onSelect={(value) => dispatch(actions.forms.dropzone.setField(['federation', value]))}
-            required
           />
           <HelperText type={state.fields.federation.error ? 'error' : 'info'}>
             {state.fields.federation.error || ''}

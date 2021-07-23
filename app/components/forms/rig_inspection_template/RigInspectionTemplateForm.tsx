@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import {
   Button,
@@ -29,7 +29,8 @@ export default function RigInspectionTemplateForm() {
     <>
       {state.fields?.map((item, index) => {
         return (
-          <>
+          // eslint-disable-next-line react/no-array-index-key
+          <React.Fragment key={`${item.valueType}${index}`}>
             <View
               style={{
                 display: 'flex',
@@ -52,7 +53,7 @@ export default function RigInspectionTemplateForm() {
               />
             </View>
             <Divider />
-          </>
+          </React.Fragment>
         );
       })}
       <Portal>
@@ -113,6 +114,10 @@ export default function RigInspectionTemplateForm() {
           open={fabOpen}
           visible
           icon={fabOpen ? 'close' : 'plus'}
+          fabStyle={{
+            marginLeft: 16,
+            marginBottom: 48,
+          }}
           actions={[
             {
               icon: 'pencil',
@@ -141,12 +146,3 @@ export default function RigInspectionTemplateForm() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  fields: {
-    flex: 1,
-  },
-  field: {
-    marginBottom: 8,
-  },
-});

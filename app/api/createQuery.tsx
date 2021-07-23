@@ -10,14 +10,17 @@ export interface IAppQuery<Payload, InputType> {
   refetch(variables?: InputType): void;
 }
 
-export interface IAppQueryProps<Payload, InputType> {
+export interface IAppQueryProps<InputType> {
   onError?(message: string): void;
   pollInterval?: number;
   showSnackbarErrors?: boolean;
   variables?: InputType;
 }
 
-export function createQuery<Payload extends Record<string, unknown>, InputType extends object>(
+export function createQuery<
+  Payload extends Maybe<Record<string, unknown>>,
+  InputType extends object
+>(
   query: DocumentNode,
   options: {
     getPayload(query?: Query): Maybe<Payload>;
@@ -25,9 +28,7 @@ export function createQuery<Payload extends Record<string, unknown>, InputType e
 ) {
   const { getPayload } = options;
 
-  return function useAppQuery(
-    opts: IAppQueryProps<Payload, InputType>
-  ): IAppQuery<Payload, InputType> {
+  return function useAppQuery(opts: IAppQueryProps<InputType>): IAppQuery<Payload, InputType> {
     const { variables, pollInterval, onError } = opts;
     const dispatch = useAppDispatch();
 

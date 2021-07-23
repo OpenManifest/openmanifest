@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import WizardScreen, { IWizardScreenProps } from '../../../../components/wizard/WizardScreen';
-import { useAppSelector } from '../../../../state';
+// eslint-disable-next-line max-len
 import WeatherConditionForm from '../../../../components/forms/weather_conditions/WeatherConditionForm';
 
 function WindsWizardScreen(props: IWizardScreenProps) {
-  const state = useAppSelector((root) => root.forms.weather);
   return (
     <WizardScreen style={styles.container} {...props} title="Winds Aloft">
       <WeatherConditionForm />

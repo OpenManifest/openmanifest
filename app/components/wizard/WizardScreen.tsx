@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dimensions, View, StyleSheet, StyleProp, ScrollViewProps } from 'react-native';
+import { Dimensions, View, StyleSheet, ScrollViewProps } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Title } from 'react-native-paper';
 import { SafeAreaViewProps } from 'react-native-safe-area-context';

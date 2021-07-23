@@ -3,7 +3,7 @@ import * as React from 'react';
 import { ScrollView } from 'react-native';
 import { Avatar, Card, TextInput, ProgressBar, Chip, Divider } from 'react-native-paper';
 import { createQuery } from '../../../api/createQuery';
-import { Query, Rig } from '../../../api/schema.d';
+import { DropzoneUser, Query, Rig } from '../../../api/schema.d';
 import { useAppSelector } from '../../../state';
 import calculateWingLoading from '../../../utils/calculateWingLoading';
 import RigSelect from '../../input/dropdown_select/RigSelect';
@@ -61,7 +61,7 @@ const useQueryDropzoneUsersDetails = createQuery<
     dropzoneUserId: number;
   }
 >(QUERY_DROPZONE_USERS_MANIFEST_DETAILS, {
-  getPayload: (query) => query?.dropzone?.dropzoneUser,
+  getPayload: (query) => query?.dropzone?.dropzoneUser as DropzoneUser | null,
 });
 
 export default function UserRigCard(props: IUserRigCard) {
@@ -82,7 +82,7 @@ export default function UserRigCard(props: IUserRigCard) {
     if (!exitWeight && data?.user?.exitWeight) {
       onChangeExitWeight(Number(data.user.exitWeight));
     }
-  }, [data.user.exitWeight, exitWeight, onChangeExitWeight]);
+  }, [data?.user.exitWeight, exitWeight, onChangeExitWeight]);
   return (
     <Card style={{ width: '100%' }} elevation={3}>
       <ProgressBar indeterminate color={globalState.theme.colors.accent} visible={loading} />
@@ -108,7 +108,7 @@ export default function UserRigCard(props: IUserRigCard) {
           </Chip>
           {!selectedRig || !exitWeight || !selectedRig.canopySize ? null : (
             <Chip style={{ marginHorizontal: 1 }} icon="escalator-down" mode="outlined" disabled>
-              {calculateWingLoading(exitWeight, selectedRig.canopySize!)}
+              {calculateWingLoading(exitWeight, selectedRig.canopySize)}
             </Chip>
           )}
         </ScrollView>

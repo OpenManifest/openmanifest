@@ -40,6 +40,7 @@ const MUTATION_EDIT_DROPZONE_USER = gql`
 `;
 
 export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
+  const { open } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.dropzoneUser);
   const globalState = useAppSelector((root) => root.global);
@@ -88,20 +89,23 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
             return dispatch(actions.forms.dropzoneUser.setFieldError(['role', message]));
           case 'expires_at':
             return dispatch(actions.forms.dropzoneUser.setFieldError(['expiresAt', message]));
+          default:
+            return null;
         }
       });
       if (result?.errors?.length) {
-        return dispatch(
+        dispatch(
           actions.notifications.showSnackbar({
             message: result?.errors[0],
             variant: 'error',
           })
         );
+        return;
       }
-      if (!result?.fieldErrors?.length) {
+      if (!result?.fieldErrors?.length && result?.dropzoneUser) {
         props.onSuccess(result.dropzoneUser);
       } else {
-        console.error(result.fieldErrors);
+        console.error(result?.fieldErrors);
       }
     } catch (error) {
       dispatch(
@@ -123,7 +127,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
 
   return (
     <Portal>
-      <Dialog visible={!!props.open}>
+      <Dialog visible={!!open}>
         <ProgressBar
           indeterminate
           visible={createData.loading}

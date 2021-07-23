@@ -2,9 +2,9 @@ import { gql, useMutation } from '@apollo/client';
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Button, Portal } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
-import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Mutation } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import ManifestGroupForm from '../../forms/manifest_group/ManifestGroupForm';
@@ -13,6 +13,7 @@ import UserListSelect from './UserListSelect';
 interface IManifestUserDialog {
   open?: boolean;
   onClose(): void;
+  onSuccess?(): void;
 }
 
 const MUTATION_CREATE_SLOTS = gql`
@@ -104,8 +105,8 @@ const MUTATION_CREATE_SLOTS = gql`
   }
 `;
 
-export default function ManifestUserDialog(props: IManifestUserDialog) {
-  const { open, onClose } = props;
+export default function ManifestGroupDialog(props: IManifestUserDialog) {
+  const { open, onClose, onSuccess } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.manifestGroup);
   const globalState = useAppSelector((root) => root.global);
@@ -174,7 +175,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         return;
       }
       if (!result.data?.createSlots?.fieldErrors?.length) {
-        onClose();
+        onSuccess?.();
       }
     } catch (error) {
       dispatch(
@@ -187,7 +188,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
   }, [
     dispatch,
     mutationCreateSlots,
-    onClose,
+    onSuccess,
     state.fields.extras?.value,
     state.fields.jumpType.value?.id,
     state.fields.load.value?.id,
@@ -196,7 +197,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     validate,
   ]);
 
-  const sheetRef = React.useRef<BottomSheet>(null);
+  const sheetRef = React.useRef<BottomSheetModal>(null);
 
   React.useEffect(() => {
     if (state.fields.ticketType?.value?.isTandem) {
@@ -216,59 +217,49 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
   const snapPoints = React.useMemo(() => [0, 550], []);
 
   return (
-    <Portal>
-      <BottomSheet
-        ref={sheetRef}
-        snapPoints={snapPoints}
-        index={-1}
-        onChange={(idx) => {
-          if (idx <= 0) {
-            props.onClose();
-            dispatch(actions.forms.manifestGroup.reset());
-            setTabIndex(0);
-          }
-        }}
-        backdropComponent={BottomSheetBackdrop}
-        handleComponent={() => (
-          <View
-            style={[styles.sheetHeader, { backgroundColor: globalState.theme.colors.primary }]}
-          />
-        )}
-      >
-        <View style={{ backgroundColor: 'white' }} testID="manifest-group-sheet">
-          <View pointerEvents={(state.fields.users?.value?.length || 0) > 0 ? undefined : 'none'}>
-            <Tabs defaultIndex={tabIndex} mode="fixed" onChangeIndex={setTabIndex}>
-              <TabScreen label="Create group">
-                <View />
-              </TabScreen>
-              <TabScreen label="Configure jump">
-                <View />
-              </TabScreen>
-            </Tabs>
-          </View>
-
-          {tabIndex === 0 ? (
-            <View style={styles.userListContainer}>
-              <UserListSelect onNext={() => setTabIndex(1)} />
-            </View>
-          ) : (
-            <ScrollView contentContainerStyle={{ paddingBottom: 200, flexGrow: 1 }}>
-              <ManifestGroupForm />
-              <View style={styles.buttonContainer}>
-                <Button
-                  onPress={onManifest}
-                  loading={mutationData.loading}
-                  mode="contained"
-                  style={styles.button}
-                >
-                  Save
-                </Button>
-              </View>
-            </ScrollView>
-          )}
+    <BottomSheetModal
+      ref={sheetRef}
+      snapPoints={snapPoints}
+      index={-1}
+      onDismiss={onClose}
+      backdropComponent={BottomSheetBackdrop}
+      handleComponent={() => (
+        <View style={[styles.sheetHeader, { backgroundColor: globalState.theme.colors.primary }]} />
+      )}
+    >
+      <View style={{ backgroundColor: 'white' }} testID="manifest-group-sheet">
+        <View pointerEvents={(state.fields.users?.value?.length || 0) > 0 ? undefined : 'none'}>
+          <Tabs defaultIndex={tabIndex} mode="fixed" onChangeIndex={setTabIndex}>
+            <TabScreen label="Create group">
+              <View />
+            </TabScreen>
+            <TabScreen label="Configure jump">
+              <View />
+            </TabScreen>
+          </Tabs>
         </View>
-      </BottomSheet>
-    </Portal>
+
+        {tabIndex === 0 ? (
+          <View style={styles.userListContainer}>
+            <UserListSelect onNext={() => setTabIndex(1)} />
+          </View>
+        ) : (
+          <ScrollView contentContainerStyle={{ paddingBottom: 200, flexGrow: 1 }}>
+            <ManifestGroupForm />
+            <View style={styles.buttonContainer}>
+              <Button
+                onPress={onManifest}
+                loading={mutationData.loading}
+                mode="contained"
+                style={styles.button}
+              >
+                Save
+              </Button>
+            </View>
+          </ScrollView>
+        )}
+      </View>
+    </BottomSheetModal>
   );
 }
 

@@ -45,7 +45,6 @@ export default function ChipSelectSkeleton(props: IChipSelectSkeletonLoadingProp
             { key: 'chip3', width: 96, height: 32, borderRadius: 16 },
           ],
         },
-        // ...Array.from({ length: rows || 1 }).map(() => ({ key: 'header', width: '100%', height: 60, borderRadius: 8, marginBottom: 37 })),
       ]}
     />
   );

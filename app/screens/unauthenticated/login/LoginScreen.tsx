@@ -9,6 +9,9 @@ import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import { Mutation } from '../../../api/schema';
 import { primaryColor } from '../../../constants/Colors';
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore PNGs are allowed
 import logo from '../../../../assets/images/logo.png';
 
 const MUTATION_LOG_IN = gql`
@@ -40,9 +43,9 @@ export default function LoginScreen() {
   const [mutationLogin, data] = useMutation<Mutation>(MUTATION_LOG_IN);
 
   const onLogin = React.useCallback(async () => {
-    const emailRegex = new RegExp(
-      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
+    // eslint-disable-next-line
+    const pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const emailRegex = new RegExp(pattern);
     let hasError = false;
 
     if (!state.fields.email.value) {
@@ -84,7 +87,7 @@ export default function LoginScreen() {
         );
       }
     }
-  }, [mutationLogin, JSON.stringify(state.fields)]);
+  }, [dispatch, mutationLogin, state.fields.email.value, state.fields.password.value]);
 
   return (
     <View style={styles.container}>

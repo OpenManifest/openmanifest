@@ -2,7 +2,6 @@ import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Card, HelperText, List, Menu, Paragraph, TextInput } from 'react-native-paper';
 import Slider from '@react-native-community/slider';
-import { debounce } from 'lodash';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { actions, useAppDispatch, useAppSelector } from '../../../../state';
 import WizardScreen, { IWizardScreenProps } from '../../../../components/wizard/WizardScreen';

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Federation, User } from '../../../api/schema.d';
 
-type Fields = Pick<User, 'exitWeight' | 'rigs' | 'name' | 'phone' | 'email' | 'license'>;
+export type UserFields = Pick<User, 'exitWeight' | 'rigs' | 'name' | 'phone' | 'email' | 'license'>;
 
 interface IUserEditState {
   original: User | null;
@@ -11,7 +11,7 @@ interface IUserEditState {
     error: null;
   };
   fields: {
-    [K in keyof Fields]-?: {
+    [K in keyof UserFields]-?: {
       value: User[K] | null;
       error: string | null;
     };

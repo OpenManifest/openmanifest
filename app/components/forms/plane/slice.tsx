@@ -1,32 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Plane } from '../../../api/schema.d';
 
+export type PlaneFields = Pick<
+  Plane,
+  'name' | 'registration' | 'minSlots' | 'maxSlots' | 'hours' | 'nextMaintenanceHours'
+>;
+
 interface IPlaneEditState {
   original: Plane | null;
   open: boolean;
   fields: {
-    name: {
-      value: string;
-      error: string | null;
-    };
-    registration: {
-      value: string;
-      error: string | null;
-    };
-    minSlots: {
-      value: number;
-      error: string | null;
-    };
-    maxSlots: {
-      value: number;
-      error: string | null;
-    };
-    hours: {
-      value: number | null;
-      error: string | null;
-    };
-    nextMaintenanceHours: {
-      value: number | null;
+    [K in keyof PlaneFields]-?: {
+      value: Plane[K] | null;
       error: string | null;
     };
   };

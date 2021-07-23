@@ -60,6 +60,7 @@ const MUTATION_CREATE_TRANSACTION = gql`
 `;
 
 export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
+  const { open, onClose } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.credits);
   const globalState = useAppSelector((root) => root.global);
@@ -75,7 +76,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
     }
 
     return !hasErrors;
-  }, [JSON.stringify(state.fields)]);
+  }, [dispatch, state.fields.amount.value]);
 
   const onSave = React.useCallback(async () => {
     if (!validate()) {
@@ -100,15 +101,18 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
             return dispatch(actions.forms.credits.setFieldError(['message', message]));
           case 'status':
             return dispatch(actions.forms.credits.setFieldError(['status', message]));
+          default:
+            return null;
         }
       });
       if (result?.errors?.length) {
-        return dispatch(
+        dispatch(
           actions.notifications.showSnackbar({
             message: result?.errors[0],
             variant: 'error',
           })
         );
+        return;
       }
       if (!result?.fieldErrors?.length) {
         dispatch(actions.forms.credits.reset());
@@ -122,11 +126,20 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         })
       );
     }
-  }, [JSON.stringify(state.fields), mutationCreateTransaction, props.onSuccess]);
+  }, [
+    dispatch,
+    mutationCreateTransaction,
+    props,
+    state.fields.amount.value,
+    state.fields.message.value,
+    state.fields.status.value,
+    state.original?.id,
+    validate,
+  ]);
 
   return (
     <Portal>
-      <Dialog visible={!!props.open}>
+      <Dialog visible={!!open}>
         <ProgressBar
           indeterminate
           visible={createData.loading}
@@ -137,7 +150,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
           <Button
             onPress={() => {
               dispatch(actions.forms.credits.reset());
-              props.onClose();
+              onClose();
             }}
           >
             Cancel

@@ -11,6 +11,7 @@ export default function RigInspectionForm() {
       {state.fields.map((item, index) => {
         return (
           <RigInspectionItem
+            // eslint-disable-next-line react/no-array-index-key
             key={index}
             config={item}
             value={item?.value || ''}

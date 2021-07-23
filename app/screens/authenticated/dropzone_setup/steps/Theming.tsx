@@ -20,13 +20,13 @@ function ReserveRepackWizardScreen(props: IWizardScreenProps) {
           }}
         >
           <PhonePreview
-            primaryColor={state.fields.primaryColor.value}
-            secondaryColor={state.fields.secondaryColor.value}
+            primaryColor={state.fields.primaryColor.value || '#000000'}
+            secondaryColor={state.fields.secondaryColor.value || '#ffffff'}
           />
 
           <WebPreview
-            primaryColor={state.fields.primaryColor.value}
-            secondaryColor={state.fields.secondaryColor.value}
+            primaryColor={state.fields.primaryColor.value || '#000000'}
+            secondaryColor={state.fields.secondaryColor.value || '#ffffff'}
           />
         </View>
 
@@ -35,7 +35,7 @@ function ReserveRepackWizardScreen(props: IWizardScreenProps) {
           helperText="Primary color is used for elements like the title bar and the tab bar"
           error={state.fields.primaryColor.error}
           onChange={(color) => dispatch(actions.forms.dropzone.setField(['primaryColor', color]))}
-          value={state.fields.primaryColor.value}
+          value={state.fields.primaryColor.value || '#000000'}
         />
 
         <ColorPicker
@@ -43,7 +43,7 @@ function ReserveRepackWizardScreen(props: IWizardScreenProps) {
           helperText="Accent color is used for highlights, like buttons and loading bars"
           error={state.fields.secondaryColor.error}
           onChange={(color) => dispatch(actions.forms.dropzone.setField(['secondaryColor', color]))}
-          value={state.fields.secondaryColor.value}
+          value={state.fields.secondaryColor.value || '#FFFFFF'}
         />
       </View>
     </WizardScreen>

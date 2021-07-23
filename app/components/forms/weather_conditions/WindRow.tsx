@@ -39,6 +39,7 @@ export default function WindRow(props: IWindRowProps) {
           >
             {[14000, 12000, 10000, 7000, 5000, 2000, 1000].map((alt) => (
               <List.Item
+                key={alt}
                 onPress={() => {
                   if (alt) {
                     onChange('altitude', alt);

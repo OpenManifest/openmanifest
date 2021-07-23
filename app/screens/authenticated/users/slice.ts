@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DropzoneUser } from '../../../api/schema.d';
 
 interface IUserScreenState {
   isSearchVisible: boolean;

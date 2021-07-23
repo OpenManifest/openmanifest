@@ -65,7 +65,14 @@ export default function SwipeActions(props: ISwipeActions) {
     );
   };
   return (
-    <Swipeable ref={ref} enabled={!disabled} renderRightActions={rightActions} useNativeAnimations>
+    <Swipeable
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      ref={ref}
+      enabled={!disabled}
+      renderRightActions={rightActions}
+      useNativeAnimations
+    >
       {children}
     </Swipeable>
   );

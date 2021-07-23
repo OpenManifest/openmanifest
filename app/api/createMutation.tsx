@@ -12,7 +12,7 @@ export interface IAppMutation<Payload, InputType> {
   ): Promise<Maybe<Payload>>;
 }
 
-export interface IAppMutationProps<Payload, InputType> {
+export interface IAppMutationProps<Payload> {
   onSuccess(payload: Payload): void;
   onError?(message: string): void;
   onFieldError?(field: string, value: string): void;
@@ -84,7 +84,7 @@ export function createMutation<
   const { getPayload, fieldErrorMap, validates: validators } = options;
 
   return function useAppMutation(
-    opts: IAppMutationProps<Payload, InputType>
+    opts: IAppMutationProps<Payload>
   ): IAppMutation<Payload, InputType> {
     const { onFieldError, onSuccess, onError } = opts;
 
@@ -140,7 +140,9 @@ export function createMutation<
           payload?.fieldErrors?.forEach(({ field, message }) => {
             const camelizedField = camelCase(field);
             const fieldName =
-              camelizedField in (fieldErrorMap || {}) ? fieldErrorMap[field] : field;
+              fieldErrorMap && camelizedField in (fieldErrorMap || {})
+                ? fieldErrorMap[field]
+                : field;
 
             if (opts.onFieldError) {
               opts.onFieldError(`${fieldName}`, message);

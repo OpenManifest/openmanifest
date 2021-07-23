@@ -67,7 +67,7 @@ export default function ExtraForm() {
         <List.Subheader>Compatible tickets</List.Subheader>
         {data?.ticketTypes.map((ticket) => (
           <Checkbox.Item
-            label={ticket.name!}
+            label={ticket.name || ''}
             status={
               state.fields.ticketTypeIds.value.includes(Number(ticket.id)) ? 'checked' : 'unchecked'
             }

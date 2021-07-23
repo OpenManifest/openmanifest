@@ -11,6 +11,7 @@ import AppBar from '../AppBar';
 
 import ManifestScreen from '../../screens/authenticated/manifest/ManifestScreen';
 import ManifestGroupScreen from '../../screens/authenticated/manifest/ManifestGroupScreen';
+// eslint-disable-next-line max-len
 import ManifestGroupUserSelectScreen from '../../screens/authenticated/manifest/ManifestGroupUserSelectScreen';
 
 export type IManifestTabParams = {

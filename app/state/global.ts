@@ -4,11 +4,13 @@ import {
   DefaultTheme as NavigationDefaultTheme,
 } from '@react-navigation/native';
 import { DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme } from 'react-native-paper';
+import { Theme } from 'react-native-paper/lib/typescript/types';
 import { Credential, User, Dropzone } from '../api/schema';
 
-const CombinedDefaultTheme = {
+const CombinedDefaultTheme: Theme = {
   ...PaperDefaultTheme,
   ...NavigationDefaultTheme,
+  roundness: 16,
   colors: {
     ...PaperDefaultTheme.colors,
     ...NavigationDefaultTheme.colors,
@@ -18,6 +20,7 @@ const CombinedDefaultTheme = {
 const CombinedDarkTheme = {
   ...PaperDarkTheme,
   ...NavigationDarkTheme,
+  roundness: 16,
   colors: {
     ...PaperDarkTheme.colors,
     ...NavigationDarkTheme.colors,
@@ -98,9 +101,11 @@ export default createSlice({
     },
     logout: (state: IGlobalState) => {
       Object.keys(initialState).forEach((key) => {
-        const payloadKey = key as keyof typeof initialState;
+        const payloadKey = key as keyof Required<IGlobalState>;
         if (payloadKey in state) {
           const typedKey = payloadKey as keyof typeof initialState;
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore We know this is right
           state[payloadKey] = initialState[typedKey];
         }
       });

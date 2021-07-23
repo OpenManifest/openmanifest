@@ -1,6 +1,4 @@
 import { useQuery } from '@apollo/client';
-import groupBy from 'lodash/groupBy';
-import flatten from 'lodash/flatten';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { Card, DataTable, List } from 'react-native-paper';
@@ -8,7 +6,7 @@ import startOfDay from 'date-fns/startOfDay';
 import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import { Query, Slot } from '../../../api/schema.d';
+import { Query } from '../../../api/schema.d';
 import DatePicker from '../../../components/input/date_picker/DatePicker';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
@@ -93,10 +91,6 @@ export default function DropzoneMasterLogScreen() {
       timestamp: Math.floor(timestamp / 1000),
     },
   });
-
-  const allSlots = flatten(data?.dropzone?.masterLog?.loads?.map(({ slots }) => slots)) as Slot[];
-
-  const slotsByJumpType = groupBy(allSlots, ({ jumpType }) => jumpType?.name);
 
   return (
     <ScrollableScreen>

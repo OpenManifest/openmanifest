@@ -143,12 +143,12 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
 
   const validate = React.useCallback((): boolean => {
     let hasError = false;
-    if (state.fields.name.value.length < 3) {
+    if ((state.fields.name.value || '').length < 3) {
       hasError = true;
       dispatch(actions.forms.plane.setFieldError(['name', 'Name is too short']));
     }
 
-    if (state.fields.registration.value.length < 3) {
+    if ((state.fields.registration.value || '').length < 3) {
       hasError = true;
       dispatch(actions.forms.plane.setFieldError(['registration', 'Registration is too short']));
     }
@@ -162,8 +162,8 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
   }, [
     dispatch,
     state.fields.maxSlots.value,
-    state.fields.name.value.length,
-    state.fields.registration.value.length,
+    state.fields.name.value,
+    state.fields.registration.value,
   ]);
 
   const onSave = React.useCallback(async () => {
@@ -246,7 +246,7 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
     mutationUpdatePlane,
     onClose,
     state.fields,
-    state.original.id,
+    state.original?.id,
     validate,
   ]);
 

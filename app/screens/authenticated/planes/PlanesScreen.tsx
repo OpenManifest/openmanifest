@@ -99,6 +99,7 @@ export default function PlanesScreen() {
             </DataTable.Header>
             {data?.dropzone?.planes?.map((plane) => (
               <SwipeActions
+                key={`plane-${plane.id}`}
                 disabled={!canDeletePlane}
                 rightAction={{
                   label: 'Delete',

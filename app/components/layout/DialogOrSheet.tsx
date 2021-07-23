@@ -1,8 +1,8 @@
 import { sortBy, uniq } from 'lodash';
 import * as React from 'react';
-import { View, StyleSheet, Keyboard } from 'react-native';
-import { Button, Portal, Title } from 'react-native-paper';
-import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import { View, StyleSheet, Keyboard, Easing } from 'react-native';
+import { Button, Title } from 'react-native-paper';
+import { BottomSheetModal, BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 
 interface IBottomSheetProps {
   open?: boolean;
@@ -18,12 +18,11 @@ interface IBottomSheetProps {
 
 export default function DialogOrSheet(props: IBottomSheetProps) {
   const { open, snapPoints, onClose, title, buttonLabel, buttonAction, loading, children } = props;
-  const sheetRef = React.useRef<BottomSheet>(null);
+  const sheetRef = React.useRef<BottomSheetModal>(null);
   const snappingPoints = React.useMemo(
-    () => sortBy(uniq([0, ...(snapPoints || [600])])),
+    () => sortBy(uniq([0, ...(snapPoints || [600])])).filter((s) => s !== 0),
     [snapPoints]
   );
-  const [currentIndex, setIndex] = React.useState(-1);
 
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
 
@@ -42,69 +41,47 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
 
   React.useEffect(() => {
     if (open) {
-      sheetRef?.current?.snapTo(snappingPoints?.length - 1);
+      sheetRef.current?.present();
+      sheetRef.current?.snapTo(snappingPoints?.length - 1, 300, Easing.exp);
     } else {
-      setIndex(-1);
-      sheetRef?.current?.close();
+      sheetRef.current?.dismiss();
+      sheetRef.current?.close();
     }
   }, [open, snappingPoints?.length]);
-
-  React.useEffect(() => {
-    if (open) {
-      sheetRef?.current?.snapTo(snappingPoints?.length - 1);
-    } else {
-      setIndex(-1);
-      sheetRef?.current?.close();
-    }
-  }, [open, snappingPoints?.length]);
-
-  React.useEffect(() => {
-    if (open && currentIndex < 0) {
-      sheetRef?.current?.snapTo(snappingPoints?.length - 1);
-    } else if (!open && currentIndex > -1) {
-      setIndex(-1);
-      sheetRef?.current?.close();
-    }
-  }, [currentIndex, open, snappingPoints?.length]);
 
   return (
-    <Portal>
-      <BottomSheet
-        keyboardBehavior="interactive"
-        keyboardBlurBehavior="restore"
-        ref={sheetRef}
-        backdropComponent={BottomSheetBackdrop}
-        snapPoints={snappingPoints}
-        index={-1}
-        onChange={(toIndex) => {
-          setIndex(toIndex);
-          if (toIndex <= 0) {
-            onClose();
-            Keyboard.dismiss();
-            sheetRef?.current?.close();
-          }
-        }}
-        handleComponent={() =>
-          !title ? (
-            <View style={styles.sheetHeader} />
-          ) : (
-            <View style={styles.sheetHeaderWithTitle}>
-              <Title>{title}</Title>
-            </View>
-          )
-        }
+    <BottomSheetModal
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
+      dismissOnPanDown
+      onDismiss={() => {
+        console.log('Dismissing');
+        onClose();
+      }}
+      ref={sheetRef}
+      snapPoints={snappingPoints}
+      backdropComponent={BottomSheetBackdrop}
+      index={(snappingPoints?.length || 1) - 1}
+      handleComponent={() =>
+        !title ? (
+          <View style={styles.sheetHeader} />
+        ) : (
+          <View style={styles.sheetHeaderWithTitle}>
+            <Title>{title}</Title>
+          </View>
+        )
+      }
+    >
+      <BottomSheetScrollView
+        style={{ backgroundColor: '#FFFFFF' }}
+        contentContainerStyle={[styles.sheet, { paddingBottom: keyboardVisible ? 400 : 80 }]}
       >
-        <BottomSheetScrollView
-          style={{ backgroundColor: '#FFFFFF' }}
-          contentContainerStyle={[styles.sheet, { paddingBottom: keyboardVisible ? 400 : 0 }]}
-        >
-          {children}
-          <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>
-            {buttonLabel}
-          </Button>
-        </BottomSheetScrollView>
-      </BottomSheet>
-    </Portal>
+        {children}
+        <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>
+          {buttonLabel}
+        </Button>
+      </BottomSheetScrollView>
+    </BottomSheetModal>
   );
 }
 
@@ -113,6 +90,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 16,
     padding: 5,
+    alignSelf: 'flex-end',
   },
   contentContainer: {
     paddingHorizontal: 16,

@@ -1,13 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Rig } from '../../../api/schema.d';
 
-type Fields = Pick<Rig, 'make' | 'model' | 'serial' | 'canopySize' | 'repackExpiresAt' | 'rigType'>;
+export type RigFields = Pick<
+  Rig,
+  'make' | 'model' | 'serial' | 'canopySize' | 'repackExpiresAt' | 'rigType'
+>;
 
 interface IRigEditState {
   original: Rig | null;
   open: boolean;
   fields: {
-    [K in keyof Fields]-?: {
+    [K in keyof RigFields]-?: {
       value: Rig[K] | null;
       error: string | null;
     };

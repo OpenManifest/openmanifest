@@ -103,17 +103,15 @@ export default function TicketTypesScreen() {
     if (isFocused) {
       refetch();
     }
-  }, [isFocused]);
-  const [mutationUpdateTicketType, mutation] = useMutation<Mutation>(MUTATION_UPDATE_TICKET_TYPE);
-  const [mutationDeleteTicketType, mutationDelete] = useMutation<Mutation>(
-    MUTATION_DELETE_TICKET_TYPE
-  );
+  }, [isFocused, refetch]);
+  const [mutationUpdateTicketType] = useMutation<Mutation>(MUTATION_UPDATE_TICKET_TYPE);
+  const [mutationDeleteTicketType] = useMutation<Mutation>(MUTATION_DELETE_TICKET_TYPE);
 
   React.useEffect(() => {
     if (route.name === 'TicketTypesScreen') {
       refetch();
     }
-  }, [route.name]);
+  }, [refetch, route.name]);
 
   const canCreateTicketTypes = useRestriction(Permission.CreateTicketType);
   return (

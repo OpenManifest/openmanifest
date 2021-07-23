@@ -18,7 +18,7 @@ import { mapDegreesToDirections } from '../../../utils/mapDegreesToDirection';
 import { getPointOnCircle } from '../../../utils/calculateCoordinatesByAngle';
 import Map from '../../map/Map';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 interface IJumpRunSelectorProps {
   value: number;

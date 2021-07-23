@@ -15,6 +15,7 @@ import ConfirmUserScreen from '../screens/unauthenticated/signup/ConfirmUserScre
 export type TRootNavigatorRouteParams = {
   Authenticated: undefined;
   Unauthenticated: undefined;
+  // eslint-disable-next-line camelcase
   confirm: { account_confirmation_success?: boolean };
   Dropzones: undefined;
   DropzonesScreen: undefined;

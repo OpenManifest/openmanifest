@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { Button, Card } from 'react-native-paper';
+// eslint-disable-next-line max-len
 import RigInspectionTemplateForm from '../../../components/forms/rig_inspection_template/RigInspectionTemplateForm';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
@@ -45,7 +46,7 @@ export default function RigInspectionTemplateScreen() {
   const state = useAppSelector((root) => root.forms.rigInspectionTemplate);
   const currentDropzone = useCurrentDropzone();
   const dispatch = useAppDispatch();
-  const { data, loading } = useQuery<Query>(QUERY_RIG_INSPECTION, {
+  const { data } = useQuery<Query>(QUERY_RIG_INSPECTION, {
     variables: {
       dropzoneId: Number(currentDropzone?.dropzone?.id),
     },
@@ -58,13 +59,13 @@ export default function RigInspectionTemplateScreen() {
     if (data?.dropzone?.rigInspectionTemplate) {
       dispatch(actions.forms.rigInspectionTemplate.setOpen(data.dropzone.rigInspectionTemplate));
     }
-  }, [JSON.stringify(data?.dropzone?.rigInspectionTemplate)]);
+  }, [data?.dropzone.rigInspectionTemplate, dispatch]);
 
   const updateForm = React.useCallback(async () => {
     try {
       await mutationUpdateForm({
         variables: {
-          formId: Number(data?.dropzone.rigInspectionTemplate!.id),
+          formId: Number(data?.dropzone.rigInspectionTemplate?.id),
           dropzoneId: Number(data?.dropzone?.id),
           definition: JSON.stringify(state.fields),
         },
@@ -83,7 +84,13 @@ export default function RigInspectionTemplateScreen() {
         })
       );
     }
-  }, [JSON.stringify(state.fields), state?.original?.id, currentDropzone?.dropzone?.id]);
+  }, [
+    mutationUpdateForm,
+    data?.dropzone.rigInspectionTemplate?.id,
+    data?.dropzone?.id,
+    state.fields,
+    dispatch,
+  ]);
 
   return (
     <ScrollableScreen>

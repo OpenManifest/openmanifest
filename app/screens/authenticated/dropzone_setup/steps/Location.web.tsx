@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as Location from 'expo-location';
 import WizardScreen, { IWizardScreenProps } from '../../../../components/wizard/WizardScreen';
 import { actions, useAppDispatch, useAppSelector } from '../../../../state';
@@ -38,14 +39,14 @@ function LocationWizardStep(props: IWizardScreenProps) {
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [dispatch]);
 
   // Start at user location
   React.useEffect(() => {
     if (state.fields.lat.value === null || state.fields.lng.value == null) {
       setUsersLocation();
     }
-  }, []);
+  }, [setUsersLocation, state.fields.lat.value, state.fields.lng.value]);
 
   const opacity = React.useRef(new Animated.Value(0));
 
@@ -74,14 +75,11 @@ function LocationWizardStep(props: IWizardScreenProps) {
       useNativeDriver: true,
     })
   );
-  const setCoordinateFade = React.useCallback(
-    (visible: boolean) => {
-      setAnimating(true);
-      console.log({ visible });
-      (visible ? fadeIn : fadeOut).current.start(() => setAnimating(false));
-    },
-    [isAnimating]
-  );
+  const setCoordinateFade = React.useCallback((visible: boolean) => {
+    setAnimating(true);
+    console.log({ visible });
+    (visible ? fadeIn : fadeOut).current.start(() => setAnimating(false));
+  }, []);
 
   const { height, width } = useWindowDimensions();
   const [isDragging, setDragging] = React.useState(false);
@@ -102,10 +100,11 @@ function LocationWizardStep(props: IWizardScreenProps) {
           y: 0,
         }}
         {...{ height, width }}
-        coords={{
-          lat: region?.latitude,
-          lng: region?.longitude,
-        }}
+        coords={
+          region?.latitude && region?.longitude
+            ? { lat: region?.latitude, lng: region?.longitude }
+            : undefined
+        }
         onDragStart={() => {
           setDragging(true);
           setCoordinateFade(false);

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { gql, useMutation } from '@apollo/client';
 
-import { useIsFocused, useNavigation } from '@react-navigation/core';
+import { useIsFocused } from '@react-navigation/core';
 import { actions, useAppSelector, useAppDispatch } from '../../state';
 import { Mutation } from '../../api/schema';
 import TicketTypeForm from '../forms/ticket_type/TicketTypeForm';
@@ -135,7 +135,7 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
     if (isFocused) {
       dispatch(actions.forms.ticketType.reset());
     }
-  }, [isFocused]);
+  }, [dispatch, isFocused]);
 
   const validate = React.useCallback((): boolean => {
     let hasError = false;
@@ -144,7 +144,7 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
       dispatch(actions.forms.ticketType.setFieldError(['name', 'Name is too short']));
     }
 
-    if (state.fields.cost.value! < 1) {
+    if ((state.fields.cost.value || 0) < 1) {
       hasError = true;
       dispatch(actions.forms.ticketType.setFieldError(['cost', 'Cost must be at least $1']));
     }
@@ -155,7 +155,7 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
     }
 
     return !hasError;
-  }, [JSON.stringify(state.fields), dispatch]);
+  }, [state.fields, dispatch]);
 
   const onSave = React.useCallback(async () => {
     const { name, cost, allowManifestingSelf, altitude, extras, isTandem } = state.fields;
@@ -197,6 +197,8 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
                 );
               case 'extras':
                 return dispatch(actions.forms.ticketType.setFieldError(['extras', message]));
+              default:
+                return null;
             }
           });
         }
@@ -230,12 +232,23 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
         );
       }
     }
-  }, [JSON.stringify(state.fields), dispatch, mutationCreateTicketType]);
+    return null;
+  }, [
+    state.fields,
+    state.original?.id,
+    validate,
+    mutationUpdateTicketType,
+    mutationCreateTicketType,
+    currentDropzone?.dropzone?.id,
+    dispatch,
+    onClose,
+  ]);
 
   return (
     <DialogOrSheet
       title={state.original?.id ? 'Edit ticket' : 'New ticket'}
       open={open}
+      snapPoints={[550, 650]}
       onClose={() => {
         onClose();
       }}

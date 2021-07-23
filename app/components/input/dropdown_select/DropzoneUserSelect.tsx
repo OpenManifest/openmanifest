@@ -47,7 +47,7 @@ export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
       >
         {data?.edges?.map((edge) => (
           <Menu.Item
-            key={`user-select-${edge?.node!.id}`}
+            key={`user-select-${edge?.node?.id}`}
             style={{ width: '100%' }}
             onPress={() => {
               setMenuOpen(false);

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
 import { HelperText, List } from 'react-native-paper';
 
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
@@ -38,12 +37,3 @@ export default function DropzoneUserForm() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  fields: {
-    flex: 1,
-  },
-  field: {
-    marginBottom: 8,
-  },
-});

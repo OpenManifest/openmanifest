@@ -11,6 +11,8 @@ import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import useMutationUpdateUser from '../../../api/hooks/useMutationUpdateUser';
 import useMutationUpdateRig from '../../../api/hooks/useMutationUpdateRig';
 import useMutationCreateRig from '../../../api/hooks/useMutationCreateRig';
+import { UserFields } from '../../forms/user/slice';
+import { RigFields } from '../../forms/rig/slice';
 
 function UserWizardScreen() {
   const userForm = useAppSelector((root) => root.forms.user);
@@ -22,21 +24,21 @@ function UserWizardScreen() {
     onError: (message) =>
       dispatch(actions.notifications.showSnackbar({ message, variant: 'error' })),
     onFieldError: (field, value) =>
-      dispatch(actions.forms.user.setFieldError([field as any, value])),
+      dispatch(actions.forms.user.setFieldError([field as keyof UserFields, value])),
   });
   const mutationUpdateRig = useMutationUpdateRig({
     onSuccess: () => true,
     onError: (message) =>
       dispatch(actions.notifications.showSnackbar({ message, variant: 'error' })),
     onFieldError: (field, value) =>
-      dispatch(actions.forms.rig.setFieldError([field as any, value])),
+      dispatch(actions.forms.rig.setFieldError([field as keyof RigFields, value])),
   });
   const mutationCreateRig = useMutationCreateRig({
     onSuccess: (e) => true,
     onError: (message) =>
       dispatch(actions.notifications.showSnackbar({ message, variant: 'error' })),
     onFieldError: (field, value) =>
-      dispatch(actions.forms.rig.setFieldError([field as any, value])),
+      dispatch(actions.forms.rig.setFieldError([field as keyof RigFields, value])),
   });
 
   const onFederationNext = React.useCallback(

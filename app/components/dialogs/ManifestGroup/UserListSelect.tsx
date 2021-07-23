@@ -6,7 +6,7 @@ import { Avatar, Button, Checkbox, Divider, List, Searchbar } from 'react-native
 import { ScrollView } from 'react-native-gesture-handler';
 
 import NoResults from '../../NoResults';
-import { Permission, Query } from '../../../api/schema.d';
+import { DropzoneUser, Permission, Query } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import useRestriction from '../../../hooks/useRestriction';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
@@ -60,7 +60,7 @@ export default function UsersScreen(props: IUserListSelect) {
   const [searchText, setSearchText] = React.useState('');
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 
-  const { data, loading } = useQuery<Query>(QUERY_DROPZONE_USERS, {
+  const { data } = useQuery<Query>(QUERY_DROPZONE_USERS, {
     variables: {
       dropzoneId: Number(currentDropzoneId),
       search: searchText,
@@ -101,7 +101,9 @@ export default function UsersScreen(props: IUserListSelect) {
                 right={() => (
                   <Checkbox
                     status={
-                      screens.manifest.selectedUsers?.map(({ id }) => id).includes(edge!.node!.id)
+                      screens.manifest.selectedUsers
+                        ?.map<string>(({ id }) => id)
+                        .includes(edge?.node?.id as string)
                         ? 'checked'
                         : 'unchecked'
                     }
@@ -121,12 +123,12 @@ export default function UsersScreen(props: IUserListSelect) {
                         ? screens.manifest.selectedUsers?.filter(
                             ({ id }) => id !== `${edge?.node?.id}`
                           )
-                        : [...screens.manifest.selectedUsers, edge!.node!]
+                        : ([...screens.manifest.selectedUsers, edge?.node] as DropzoneUser[])
                     )
                   );
                 }}
               />
-              <Divider style={{ width: '100%' }} key={`divider-${edge?.node!.id}`} />
+              <Divider style={{ width: '100%' }} key={`divider-${edge?.node?.id}`} />
             </>
           ))}
         </ScrollView>

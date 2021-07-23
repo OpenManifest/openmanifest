@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { LayoutRectangle, View, ViewStyle } from 'react-native';
-import { Region } from 'react-native-maps';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+// eslint-disable-next-line import/no-unresolved
 import { GOOGLE_MAPS_WEB } from '@env';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Location from 'expo-location';
@@ -25,7 +25,7 @@ interface IMapProps {
   center?: { lat: number; lng: number };
   mapStyle?: ViewStyle;
   containerStyle?: ViewStyle;
-  onDragStart?(): void;
+  // onDragStart?(): void;
   onDragEnd?(coords: { lat: number; lng: number }): void;
 }
 export default function Map(props: IMapProps) {
@@ -39,65 +39,71 @@ export default function Map(props: IMapProps) {
   const { containerStyle, mapStyle } = props;
   const map = React.useRef<GoogleMap>(null);
 
-  const onLoad = React.useCallback(async (component: GoogleMap) => {
-    map.current = component;
-    try {
-      const { status } = await Location.requestPermissionsAsync();
-      if (status !== 'granted') {
-        return;
+  const onLoad = React.useCallback(
+    async (component: GoogleMap) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      map.current = component;
+      try {
+        const { status } = await Location.requestPermissionsAsync();
+        if (status !== 'granted') {
+          return;
+        }
+        const location = await Location.getCurrentPositionAsync({});
+        const lat = coords?.lat || location.coords.latitude;
+        const lng = coords?.lng || location.coords.longitude;
+      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const bounds = new window.google.maps.LatLngBounds();
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        map.current?.fitBounds(bounds);
       }
-      const location = await Location.getCurrentPositionAsync({});
-      const lat = coords?.lat || location.coords.latitude;
-      const lng = coords?.lng || location.coords.longitude;
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const bounds = new window.google.maps.LatLngBounds();
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      map.current?.fitBounds(bounds);
-    }
-  }, []);
+    },
+    [coords?.lat, coords?.lng]
+  );
 
   const onUnmount = React.useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     map.current = null;
   }, []);
 
   const delayedPanningTimer = React.useRef<ReturnType<typeof setTimeout>>();
 
-  const panDelayed = React.useCallback(
-    (lat: number, lng: number) => {
-      if (delayedPanningTimer) {
-        clearTimeout(delayedPanningTimer.current);
-        delayedPanningTimer.current = null;
-      }
-      return;
-      if (map.current?.panTo) {
-        console.log('PANNING', lat, lng);
-        map.current?.panTo?.({ lat, lng });
+  const panDelayed = React.useCallback((lat: number, lng: number) => {
+    if (delayedPanningTimer) {
+      clearTimeout(delayedPanningTimer.current);
+      delayedPanningTimer.current = null;
+    }
+    return;
+    if (map.current?.panTo) {
+      console.log('PANNING', lat, lng);
+      map.current?.panTo?.({ lat, lng });
 
-        const latDelta = calculateLatLngDelta(lat, 0.5);
-        // @ts-ignore
-        const bounds = new window.google.maps.LatLngBounds(
-          { lat: lat - latDelta, lng: lng - latDelta },
-          { lat: lat + latDelta, lng: lng + latDelta }
-        );
-        // @ts-ignore
-        map.current?.fitBounds(bounds);
-      } else {
-        console.log('DELAYING PANNING TO ', lat, lng, map.current);
-        delayedPanningTimer.current = setTimeout(() => panDelayed(lat, lng), 500);
-      }
-    },
-    [isLoaded, map.current]
-  );
+      const latDelta = calculateLatLngDelta(lat, 0.5);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const bounds = new window.google.maps.LatLngBounds(
+        { lat: lat - latDelta, lng: lng - latDelta },
+        { lat: lat + latDelta, lng: lng + latDelta }
+      );
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      map.current?.fitBounds(bounds);
+    } else {
+      console.log('DELAYING PANNING TO ', lat, lng, map.current);
+      delayedPanningTimer.current = setTimeout(() => panDelayed(lat, lng), 500);
+    }
+  }, []);
 
   React.useEffect(() => {
     if (center) {
       console.log({ center, coords });
       panDelayed(center.lat, center.lng);
     }
-  }, [center]);
+  }, [center, coords, panDelayed]);
 
   const [rootLayout, setRootLayout] = React.useState<LayoutRectangle>();
   return !isLoaded ? null : (
@@ -117,14 +123,18 @@ export default function Map(props: IMapProps) {
     >
       <GoogleMap
         onLoad={(component: GoogleMap) => {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           map.current = component;
           onLoad(component);
         }}
         center={coords}
         onDragEnd={() => {
           onDragEnd?.({
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             lat: map.current.center.lat(),
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             lng: map.current.center.lng(),
           });

@@ -151,6 +151,7 @@ export default function LoadDialog(props: ILoadDialog) {
           if (!result.data?.createLoad?.fieldErrors) {
             onSuccess(result.data.createLoad.load);
             dispatch(actions.forms.load.reset());
+            requestAnimationFrame(() => dispatch(actions.forms.load.setOpen(false)));
           }
         }
       } catch (error) {

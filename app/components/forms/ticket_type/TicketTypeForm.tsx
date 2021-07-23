@@ -4,7 +4,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, Menu, List, Divider } from 'react-native-paper';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
-import { Query } from '../../../api/schema';
+import { Extra, Query } from '../../../api/schema';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 const QUERY_EXTRAS = gql`
@@ -22,13 +22,18 @@ const QUERY_EXTRAS = gql`
   }
 `;
 
+const ALTITUDE_LABEL_MAP: { [key: string]: string } = {
+  '14000': 'Height',
+  '4000': 'Hop n Pop',
+};
+
 export default function TicketTypeForm() {
   const state = useAppSelector((root) => root.forms.ticketType);
   const dispatch = useAppDispatch();
   const currentDropzone = useCurrentDropzone();
 
   const [altitudeMenuOpen, setAltitudeMenuOpen] = React.useState(false);
-  const { data, loading, refetch } = useQuery<Query>(QUERY_EXTRAS, {
+  const { data } = useQuery<Query>(QUERY_EXTRAS, {
     variables: {
       dropzoneId: Number(currentDropzone?.dropzone?.id),
     },
@@ -72,11 +77,9 @@ export default function TicketTypeForm() {
                 setAltitudeMenuOpen(true);
               }}
               title={
-                state.fields.altitude.value && [4000, 14000].includes(state.fields.altitude.value)
-                  ? {
-                      '14000': 'Height',
-                      '4000': 'Hop n Pop',
-                    }[state.fields.altitude.value.toString()]
+                state.fields.altitude.value &&
+                state.fields.altitude.value.toString() in ALTITUDE_LABEL_MAP
+                  ? ALTITUDE_LABEL_MAP[state.fields.altitude.value.toString()]
                   : 'Custom'
               }
               style={{ width: '100%', flex: 1 }}
@@ -84,11 +87,8 @@ export default function TicketTypeForm() {
                 <List.Icon
                   icon={
                     state.fields.altitude.value &&
-                    [4000, 14000].includes(state.fields.altitude.value)
-                      ? ({
-                          '14000': 'airplane',
-                          '4000': 'parachute',
-                        }[state.fields.altitude.value.toString()] as string)
+                    state.fields.altitude.value.toString() in ALTITUDE_LABEL_MAP
+                      ? ALTITUDE_LABEL_MAP[state.fields.altitude.value.toString()]
                       : 'pencil-plus'
                   }
                 />
@@ -172,7 +172,7 @@ export default function TicketTypeForm() {
         {data?.extras.map((extra) => (
           <Checkbox.Item
             key={`extra-${extra.id}`}
-            label={extra.name!}
+            label={extra.name || ''}
             status={
               state.fields.extras.value?.map(({ id }) => id).includes(extra.id)
                 ? 'checked'
@@ -184,7 +184,7 @@ export default function TicketTypeForm() {
                   'extras',
                   state.fields.extras.value?.map(({ id }) => id).includes(extra.id)
                     ? state.fields.extras.value?.filter(({ id }) => id !== extra.id)
-                    : [...state.fields.extras.value, extra],
+                    : [...(state.fields.extras?.value as Required<Extra[]>), extra],
                 ])
               )
             }

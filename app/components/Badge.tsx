@@ -22,7 +22,7 @@ function Badge(props: IBadgeProps) {
     actAsLoadMaster: 'shield-account',
     actAsPilot: 'shield-airplane',
     actAsRigInspector: 'shield-search',
-  }[props.type];
+  }[type];
 
   const label = {
     actAsDZSO: 'DZSO',
@@ -30,7 +30,7 @@ function Badge(props: IBadgeProps) {
     actAsLoadMaster: 'Load Master',
     actAsPilot: 'Pilot',
     actAsRigInspector: 'Rig Inspector',
-  }[props.type];
+  }[type];
 
   return (
     <Chip
@@ -42,7 +42,7 @@ function Badge(props: IBadgeProps) {
         selected ? undefined : { backgroundColor: 'transparent', borderColor: 'white' },
       ].filter(Boolean)}
       disabled={disabled}
-      onPress={() => onPress()}
+      onPress={() => onPress?.()}
     >
       {label}
     </Chip>

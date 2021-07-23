@@ -14,7 +14,7 @@ import useRestriction from '../../../../hooks/useRestriction';
 import { Permission } from '../../../../api/schema.d';
 import JumpRunMap from './JumpRun';
 
-export default function WeatherConditions() {
+export default function WeatherBoard() {
   const { dropzone, loading, called } = useCurrentDropzone();
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
@@ -108,7 +108,7 @@ export default function WeatherConditions() {
                     (item) => Number(item.altitude),
                     'desc'
                   ).map(({ speed: wind, direction, altitude }) => (
-                    <>
+                    <React.Fragment key={`wind-at-${altitude}`}>
                       <Divider style={{ width: '100%', backgroundColor: 'white' }} />
                       <View style={styles.row}>
                         <View style={styles.cell}>
@@ -137,7 +137,7 @@ export default function WeatherConditions() {
                           />
                         </View>
                       </View>
-                    </>
+                    </React.Fragment>
                   ))}
                 </View>
                 <View style={styles.jumpRun} pointerEvents="box-none">

@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { createMutation, isRequired } from '../createMutation';
-import { CreateDropzonePayload, Mutation } from '../schema';
+import { CreateDropzonePayload } from '../schema';
 
 export const MUTATION_CREATE_DROPZONE = gql`
   mutation CreateDropzone(

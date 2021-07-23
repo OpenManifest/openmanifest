@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { DropzoneFields } from '../../../components/forms/dropzone/slice';
+import { PlaneFields } from '../../../components/forms/plane/slice';
+import { TicketTypeFields } from '../../../components/forms/ticket_type/slice';
 import Wizard from '../../../components/wizard/Wizard';
 import WizardCompleteStep from '../../../components/wizard/WizardCompleteStep';
 import NameAndFederationStep from './steps/Name';
@@ -29,42 +32,42 @@ function DropzoneSetupScreen() {
       dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' })),
     onSuccess: (payload) => console.log(payload),
     onFieldError: (field, value) =>
-      dispatch(actions.forms.dropzone.setFieldError([field as any, value])),
+      dispatch(actions.forms.dropzone.setFieldError([field as keyof DropzoneFields, value])),
   });
   const mutationUpdateDropzone = useMutationUpdateDropzone({
     onError: (error) =>
       dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' })),
     onSuccess: (payload) => console.log(payload),
     onFieldError: (field, value) =>
-      dispatch(actions.forms.dropzone.setFieldError([field as any, value])),
+      dispatch(actions.forms.dropzone.setFieldError([field as keyof DropzoneFields, value])),
   });
   const mutationCreatePlane = useMutationCreatePlane({
     onError: (error) =>
       dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' })),
     onSuccess: (payload) => console.log(payload),
     onFieldError: (field, value) =>
-      dispatch(actions.forms.plane.setFieldError([field as any, value])),
+      dispatch(actions.forms.plane.setFieldError([field as keyof PlaneFields, value])),
   });
   const mutationUpdatePlane = useMutationUpdatePlane({
     onError: (error) =>
       dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' })),
     onSuccess: (payload) => console.log(payload),
     onFieldError: (field, value) =>
-      dispatch(actions.forms.plane.setFieldError([field as any, value])),
+      dispatch(actions.forms.plane.setFieldError([field as keyof PlaneFields, value])),
   });
   const mutationCreateTicketType = useMutationCreateTicketType({
     onError: (error) =>
       dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' })),
     onSuccess: (payload) => console.log(payload),
     onFieldError: (field, value) =>
-      dispatch(actions.forms.ticketType.setFieldError([field as any, value])),
+      dispatch(actions.forms.ticketType.setFieldError([field as keyof TicketTypeFields, value])),
   });
   const mutationUpdateTicketType = useMutationUpdateTicketType({
     onError: (error) =>
       dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' })),
     onSuccess: (payload) => console.log(payload),
     onFieldError: (field, value) =>
-      dispatch(actions.forms.ticketType.setFieldError([field as any, value])),
+      dispatch(actions.forms.ticketType.setFieldError([field as keyof TicketTypeFields, value])),
   });
 
   const onBasicInfoNext = React.useCallback(
@@ -173,8 +176,8 @@ function DropzoneSetupScreen() {
             dropzoneId: Number(dropzone?.original?.id),
             name: aircraft.fields.name.value,
             registration: aircraft.fields.registration.value,
-            minSlots: aircraft.fields.minSlots.value,
-            maxSlots: aircraft.fields.maxSlots.value,
+            minSlots: Number(aircraft.fields.minSlots.value),
+            maxSlots: Number(aircraft.fields.maxSlots.value),
           })
         : await mutationUpdatePlane.mutate({
             id: Number(aircraft.original.id),

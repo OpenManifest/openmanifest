@@ -19,6 +19,8 @@ const CountdownCircleTimer = Platform.select({
       })
     )
   ),
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   web: React.lazy(() =>
     import('react-countdown-circle-timer').then(({ CountdownCircleTimer: defaultExport }) => ({
       default: defaultExport,

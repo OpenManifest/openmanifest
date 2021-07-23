@@ -1,34 +1,7 @@
-import { useMutation } from '@apollo/client';
 import * as React from 'react';
 import { Caption, Card, List } from 'react-native-paper';
-import gql from 'graphql-tag';
 import { formatDistanceToNow } from 'date-fns';
-import { Mutation, Notification } from '../../../../api/schema';
-
-const MUTATION_MARK_AS_SEEN = gql`
-  mutation MarkAsSeen($id: Int) {
-    updateNotification(input: { id: $id, attributes: { isSeen: true } }) {
-      notification {
-        id
-        isSeen
-        message
-        notificationType
-        receivedBy {
-          notifications {
-            edges {
-              node {
-                id
-                message
-                isSeen
-                notificationType
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+import { Notification } from '../../../../api/schema';
 
 interface INotification {
   notification: Notification;

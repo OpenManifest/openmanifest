@@ -7,14 +7,12 @@ import { Mutation } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import ManifestGroupForm from '../../../components/forms/manifest_group/ManifestGroupForm';
 
-interface IManifestUserDialog {
-  open?: boolean;
-  onClose(): void;
+interface IManifestGroupScreen {
   onSuccess(): void;
 }
 
 const MUTATION_CREATE_SLOTS = gql`
-  mutation CreateSlot(
+  mutation CreateMultipleSlot(
     $jumpTypeId: Int
     $extraIds: [Int!]
     $loadId: Int
@@ -102,7 +100,8 @@ const MUTATION_CREATE_SLOTS = gql`
   }
 `;
 
-export default function ManifestGroupScreen(props: IManifestUserDialog) {
+export default function ManifestGroupScreen(props: IManifestGroupScreen) {
+  const { onSuccess } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.manifestGroup);
   const globalState = useAppSelector((root) => root.global);
@@ -129,7 +128,7 @@ export default function ManifestGroupScreen(props: IManifestUserDialog) {
     }
 
     return !hasErrors;
-  }, [JSON.stringify(state.fields)]);
+  }, [dispatch, state.fields.jumpType.value?.id, state.fields.ticketType.value?.id]);
 
   const onManifest = React.useCallback(async () => {
     if (!validate()) {
@@ -158,17 +157,21 @@ export default function ManifestGroupScreen(props: IManifestUserDialog) {
             return dispatch(actions.forms.manifestGroup.setFieldError(['extras', message]));
           case 'ticket_type':
             return dispatch(actions.forms.manifestGroup.setFieldError(['ticketType', message]));
+          default:
+            return null;
         }
       });
       if (result?.data?.createSlots?.errors?.length) {
-        return dispatch(
+        dispatch(
           actions.notifications.showSnackbar({
             message: result?.data?.createSlots?.errors[0],
             variant: 'error',
           })
         );
+        return;
       }
       if (!result.data?.createSlots?.fieldErrors?.length) {
+        onSuccess?.();
         navigation.navigate('Manifest', { screen: 'DropzoneScreen' });
       }
     } catch (error) {
@@ -179,7 +182,18 @@ export default function ManifestGroupScreen(props: IManifestUserDialog) {
         })
       );
     }
-  }, [JSON.stringify(state.fields), mutationCreateSlots, props.onSuccess]);
+  }, [
+    dispatch,
+    mutationCreateSlots,
+    navigation,
+    onSuccess,
+    state.fields.extras?.value,
+    state.fields.jumpType.value?.id,
+    state.fields.load.value?.id,
+    state.fields.ticketType.value?.id,
+    state.fields.users.value,
+    validate,
+  ]);
 
   return (
     <ScrollableScreen>
@@ -189,6 +203,7 @@ export default function ManifestGroupScreen(props: IManifestUserDialog) {
         color={globalState.theme.colors.accent}
       />
       <Card.Title
+        // eslint-disable-next-line max-len
         title={`Manifest ${state?.fields?.users?.value?.length} jumpers on Load #${state.fields.load?.value?.loadNumber}`}
       />
       <ManifestGroupForm />

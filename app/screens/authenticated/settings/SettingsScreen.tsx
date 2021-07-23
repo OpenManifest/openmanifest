@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import { useAppSelector } from '../../../state';
@@ -76,24 +75,3 @@ export default function SettingsScreen() {
     </ScrollableScreen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 8,
-    display: 'flex',
-  },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-  },
-  empty: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%',
-  },
-});

@@ -3,7 +3,6 @@ import * as React from 'react';
 
 import LoginScreen from '../screens/unauthenticated/login/LoginScreen';
 import SignUpScreen from '../screens/unauthenticated/signup/SignUpScreen';
-import UserWizardScreen from '../screens/user_wizard/UserWizardScreen';
 
 // A root stack navigator is often used for displaying modals on top of all other content
 // Read more here: https://reactnavigation.org/docs/modal

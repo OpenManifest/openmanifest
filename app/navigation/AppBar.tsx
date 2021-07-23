@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Appbar, Menu, IconButton, Divider, Chip } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { gql, useLazyQuery } from '@apollo/client';
-import { StyleSheet } from 'react-native';
 import { Query } from '../api/schema';
 import { actions, useAppDispatch, useAppSelector } from '../state';
 import SetupWarning from './SetupWarning';
@@ -74,8 +73,6 @@ function AppBar(props: IAppBarProps) {
       loadData();
     }
   }, [loadData, currentDropzoneId]);
-
-  const showCredits = !!data?.dropzone?.isCreditSystemEnabled;
 
   return (
     <>
@@ -159,17 +156,5 @@ function AppBar(props: IAppBarProps) {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  warning: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 56,
-    width: '100%',
-    backgroundColor: '#ffbb33',
-    justifyContent: 'space-between',
-    paddingHorizontal: 32,
-  },
-});
 
 export default AppBar;

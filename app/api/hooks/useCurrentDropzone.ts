@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import { startOfDay } from 'date-fns';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { useAppDispatch, useAppSelector } from '../../state';
+import { useAppSelector } from '../../state';
 import { Query } from '../schema';
 import useMutationUpdateUser from './useMutationUpdateUser';
 

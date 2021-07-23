@@ -8,6 +8,7 @@ function ConfirmUserScreen() {
   const route = useRoute<{
     key: string;
     name: string;
+    // eslint-disable-next-line camelcase
     params?: { account_confirmation_success?: string };
   }>();
 

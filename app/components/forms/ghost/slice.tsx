@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Federation, User, DropzoneUser } from '../../../api/schema.d';
 
-type Fields = Pick<User, 'exitWeight' | 'name' | 'phone' | 'email' | 'license'> &
+export type GhostFields = Pick<User, 'exitWeight' | 'name' | 'phone' | 'email' | 'license'> &
   Pick<DropzoneUser, 'role'>;
 
 interface IGhostEditState {
@@ -12,8 +12,8 @@ interface IGhostEditState {
     error: null;
   };
   fields: {
-    [K in keyof Fields]-?: {
-      value: Fields[K] | null;
+    [K in keyof GhostFields]-?: {
+      value: GhostFields[K] | null;
       error: string | null;
     };
   };

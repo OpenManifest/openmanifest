@@ -242,6 +242,8 @@ export default function ActionButton(props: ILoadActionButtonProps) {
           marginLeft: 16,
           marginBottom: 32,
         }}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         actions={buttonActions}
         onStateChange={({ open }) => setExpanded(open)}
       />

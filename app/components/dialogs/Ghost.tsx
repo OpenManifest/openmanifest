@@ -3,6 +3,7 @@ import GhostForm from '../forms/ghost/GhostForm';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import DialogOrSheet from '../layout/DialogOrSheet';
 import useMutationCreateGhost from '../../api/hooks/useMutationCreateGhost';
+import { GhostFields } from '../forms/ghost/slice';
 
 interface ICreateGhostDialog {
   open?: boolean;
@@ -16,9 +17,9 @@ export default function CreateGhostDialog(props: ICreateGhostDialog) {
   const dispatch = useAppDispatch();
 
   const mutationCreateGhost = useMutationCreateGhost({
-    onSuccess: (payload) => {},
+    onSuccess: (payload) => null,
     onFieldError: (field, value) => {
-      dispatch(actions.forms.ghost.setFieldError([field as any, value]));
+      dispatch(actions.forms.ghost.setFieldError([field as keyof GhostFields, value]));
       console.log(field, value);
     },
 
@@ -29,14 +30,14 @@ export default function CreateGhostDialog(props: ICreateGhostDialog) {
   const onSave = React.useCallback(async () => {
     const { name, license, phone, email, exitWeight, role } = state.fields;
     try {
-      const result = await mutationCreateGhost.mutate({
-        dropzoneId: globalState.currentDropzoneId,
-        name: name.value,
-        licenseId: !license.value?.id ? null : Number(license.value!.id),
+      await mutationCreateGhost.mutate({
+        dropzoneId: globalState.currentDropzoneId as number,
+        name: name.value || '',
+        licenseId: !license.value?.id ? null : Number(license.value?.id),
         phone: phone.value,
         exitWeight: Number(exitWeight.value),
-        email: email.value,
-        roleId: Number(role.value.id),
+        email: email.value || '',
+        roleId: Number(role?.value?.id),
       });
 
       onSuccess();

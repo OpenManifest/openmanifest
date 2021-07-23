@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  ScrollViewProps,
-  useWindowDimensions,
-} from 'react-native';
+import { ScrollView, StyleSheet, ScrollViewProps, useWindowDimensions } from 'react-native';
 import { useAppSelector } from '../../state';
 
 interface IScrollableScreen extends ScrollViewProps {

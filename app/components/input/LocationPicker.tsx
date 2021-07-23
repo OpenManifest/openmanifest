@@ -85,6 +85,8 @@ export function LocationWizardStep(props: ILocationPickerProps) {
 
   return (
     <MapView
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       ref={map}
       style={{
         ...StyleSheet.absoluteFillObject,

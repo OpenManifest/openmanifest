@@ -25,7 +25,7 @@ export default function CreateDropzoneScreen() {
 
   return (
     <ScrollableScreen contentContainerStyle={{ paddingHorizontal: 32 }}>
-      <DropzoneForm />
+      <DropzoneForm loading={createDropzone.loading} />
       <View style={styles.fields}>
         <Button
           mode="contained"

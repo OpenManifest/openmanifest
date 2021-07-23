@@ -89,7 +89,7 @@ export default function DropzoneRigsScreen() {
     if (isFocused) {
       refetch();
     }
-  }, [isFocused]);
+  }, [isFocused, refetch]);
 
   return (
     <ScrollableScreen
@@ -108,7 +108,7 @@ export default function DropzoneRigsScreen() {
         </DataTable.Header>
 
         {data?.dropzone?.rigs?.map((rig) => (
-          <DataTable.Row key={`rig-${rig!.id}`}>
+          <DataTable.Row key={`rig-${rig.id}`}>
             <DataTable.Cell
               onPress={() => {
                 dispatch(actions.forms.rig.setOpen(rig));

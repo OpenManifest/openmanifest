@@ -17,7 +17,6 @@ function FederationWizardSceen(props: IWizardScreenProps) {
           <FederationSelect
             value={state?.fields?.license?.value?.federation || state.federation.value}
             onSelect={(value) => dispatch(actions.forms.user.setFederation(value))}
-            required
           />
           <HelperText type={state.federation.error ? 'error' : 'info'}>
             {state.federation.error || ''}
@@ -33,7 +32,6 @@ function FederationWizardSceen(props: IWizardScreenProps) {
                   state?.fields?.license?.value?.federation?.id || state.federation?.value?.id
                 )}
                 onSelect={(value) => dispatch(actions.forms.user.setField(['license', value]))}
-                required
               />
               <HelperText type={state.fields.license.error ? 'error' : 'info'}>
                 {state.fields.license.error || ''}

@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, Snackbar } from 'react-native-paper';
+import { Snackbar } from 'react-native-paper';
 import { useAppSelector, useAppDispatch } from '../../state';
 
 import slice from './slice';

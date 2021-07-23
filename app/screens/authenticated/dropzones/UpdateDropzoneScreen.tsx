@@ -219,7 +219,7 @@ export default function UpdateDropzoneScreen() {
         style={{ backgroundColor: '#f4f5f5' }}
         contentContainerStyle={styles.content}
       >
-        <DropzoneForm />
+        <DropzoneForm loading={loading} />
         <View style={styles.fields}>
           <Button
             mode="contained"

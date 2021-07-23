@@ -6,15 +6,11 @@ import * as React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import {
-  Provider as MaterialProvider,
-  ActivityIndicator,
-  ProgressBar,
-  Portal,
-} from 'react-native-paper';
+import { Provider as MaterialProvider, ActivityIndicator, ProgressBar } from 'react-native-paper';
 import { Linking, Platform, View } from 'react-native';
-import { NavigationContainer, useLinking } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 import URI from 'urijs';
 import Apollo from './api/Apollo';
@@ -35,8 +31,8 @@ Notifications.setNotificationHandler({
   }),
 });
 
-async function registerForPushNotificationsAsync() {
-  let token;
+async function registerForPushNotificationsAsync(): Promise<string | null> {
+  let token: string | null = null;
   if (Constants.isDevice) {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
@@ -46,7 +42,7 @@ async function registerForPushNotificationsAsync() {
     }
     if (finalStatus !== 'granted') {
       console.warn('Failed to get push token for push notification!');
-      return;
+      return null;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
     console.log(token);
@@ -63,7 +59,7 @@ async function registerForPushNotificationsAsync() {
     });
   }
 
-  return token;
+  return token || null;
 }
 
 function Content() {
@@ -75,8 +71,7 @@ function Content() {
   const responseListener =
     React.useRef<ReturnType<typeof Notifications.addNotificationResponseReceivedListener>>();
 
-  const onOutsideLink = (link) => {
-    console.log(link);
+  const onOutsideLink = (link: { url: string }) => {
     const uri = URI(link.url);
     const intendedRoute = uri.path();
     console.log(intendedRoute);
@@ -84,23 +79,29 @@ function Content() {
 
   React.useEffect(() => {
     if (Platform.OS === 'web') {
-      return;
+      return undefined;
     }
-    registerForPushNotificationsAsync().then((token) =>
-      dispatch(actions.global.setExpoPushToken(token))
-    );
+    registerForPushNotificationsAsync().then((token: string | null) => {
+      if (token) {
+        dispatch(actions.global.setExpoPushToken(token));
+      }
+    });
 
     // This listener is fired whenever a notification is received while the app is foregrounded
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: notification.request.content.body,
-          variant: 'warning',
-        })
-      );
+      if (notification.request.content.body) {
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: notification.request.content.body,
+            variant: 'warning',
+          })
+        );
+      }
     });
 
-    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+    // This listener is fired whenever a user taps on or
+    // interacts with a notification (works when app is foregrounded,
+    // backgrounded, or killed)
     responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
       console.log(response);
     });
@@ -108,11 +109,15 @@ function Content() {
     Linking.addEventListener('url', onOutsideLink);
 
     return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      Notifications.removeNotificationSubscription(responseListener.current);
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(notificationListener.current);
+      }
+      if (responseListener.current) {
+        Notifications.removeNotificationSubscription(responseListener.current);
+      }
       Linking.removeEventListener('url', onOutsideLink);
     };
-  }, []);
+  }, [dispatch]);
 
   return (
     <React.Suspense
@@ -126,7 +131,9 @@ function Content() {
         <MaterialProvider theme={state.theme}>
           <SafeAreaProvider>
             <NavigationContainer linking={LinkingConfiguration} theme={state.theme}>
-              <RootNavigator />
+              <BottomSheetModalProvider>
+                <RootNavigator />
+              </BottomSheetModalProvider>
             </NavigationContainer>
 
             <StatusBar />

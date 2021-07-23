@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { createMutation } from '../createMutation';
-import { LoadInput, UpdateLoadPayload, UpdateTicketPayload } from '../schema';
+import { LoadInput, UpdateLoadPayload } from '../schema';
 
 const MUTATION_UPDATE_LOAD = gql`
   mutation UpdateLoad(

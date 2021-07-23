@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Snackbar } from 'react-native-paper';
 
 interface INotification {
   message: string;

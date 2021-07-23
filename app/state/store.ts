@@ -21,36 +21,46 @@ export const initialState = {
 const persistConfig = {
   key: 'open-manifest.0.9.1',
   storage:
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
     Platform.OS === 'web' || false ? require('redux-persist/lib/storage').default : AsyncStorage,
   whitelist: ['global', 'notifications'],
 };
 
-const screenReducers = Object.keys(screens).reduce((obj, key: keyof typeof screens) => {
-  return !screens[key] ? obj : { ...obj, [key]: screens[key].reducer };
-}, {}) as unknown as {
+// eslint-disable
+const screenReducers = Object.keys(screens).reduce(
+  // eslint-disable-next-line max-len
+  (obj, key) =>
+    !screens || !(key in screens)
+      ? obj
+      : { ...obj, [key]: screens[key as keyof typeof screens].reducer },
+  {}
+) as {
   [K in keyof typeof screens]: typeof screens[K]['reducer'];
 };
+
 const formReducers = Object.keys(forms).reduce(
-  (obj, key: keyof typeof forms) => (!forms[key] ? obj : { ...obj, [key]: forms[key].reducer }),
+  (obj, key) =>
+    !forms || !(key in forms) ? obj : { ...obj, [key]: forms[key as keyof typeof forms].reducer },
   {}
 ) as {
   [K in keyof typeof forms]: typeof forms[K]['reducer'];
 };
 
 export const screenActions = Object.keys(screens).reduce(
-  (obj, key: keyof typeof screens) =>
-    !screens[key] ? obj : { ...obj, [key]: screens[key].actions },
+  (obj, key) =>
+    !(key in screens) ? obj : { ...obj, [key]: screens[key as keyof typeof screens].actions },
   {}
 ) as {
   [K in keyof typeof screens]: typeof screens[K]['actions'];
 };
 export const formActions = Object.keys(forms).reduce(
-  (obj, key: keyof typeof forms) => (!forms[key] ? obj : { ...obj, [key]: forms[key].actions }),
+  (obj, key) =>
+    !(key in forms) ? obj : { ...obj, [key]: forms[key as keyof typeof forms].actions },
   {}
 ) as {
   [K in keyof typeof forms]: typeof forms[K]['actions'];
 };
+// eslint-enable
 
 export const actions = {
   forms: formActions,

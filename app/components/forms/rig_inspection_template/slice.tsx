@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RigInspection, FormTemplate } from '../../../api/schema.d';
+import { FormTemplate } from '../../../api/schema.d';
 
 export interface FieldItem {
   label: string;
@@ -20,7 +20,7 @@ export const initialState: IRigInspectionEditState = {
 };
 
 export default createSlice({
-  name: 'forms/rigInspection',
+  name: 'forms/rigInspectionTemplate',
   initialState,
   reducers: {
     setFields: (state: IRigInspectionEditState, action: PayloadAction<FieldItem[]>) => {
@@ -31,7 +31,7 @@ export default createSlice({
       state.original = action.payload;
 
       try {
-        state.fields = JSON.parse(action.payload.definition!);
+        state.fields = JSON.parse(action.payload.definition || '[]');
       } catch (err) {
         console.log('Invalid json: ', action.payload.definition);
       }

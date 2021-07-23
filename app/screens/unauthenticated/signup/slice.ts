@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { Federation, License } from '../../../api/schema.d';
 
-interface ISignUpScreenState {
+export interface ISignUpScreenState {
   federation?: Federation | null;
   fields: {
     name: {

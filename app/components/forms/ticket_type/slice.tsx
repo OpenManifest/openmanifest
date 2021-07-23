@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TicketType } from '../../../api/schema.d';
 
-type Fields = Pick<
+export type TicketTypeFields = Pick<
   TicketType,
   'name' | 'cost' | 'isTandem' | 'allowManifestingSelf' | 'altitude' | 'extras'
 >;
@@ -10,7 +10,7 @@ interface ITicketTypeEditState {
   original: TicketType | null;
   open: boolean;
   fields: {
-    [K in keyof Fields]-?: {
+    [K in keyof TicketTypeFields]-?: {
       value: TicketType[K] | null;
       error: string | null;
     };

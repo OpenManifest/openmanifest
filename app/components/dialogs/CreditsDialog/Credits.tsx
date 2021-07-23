@@ -1,8 +1,8 @@
 import { gql, useMutation } from '@apollo/client';
 import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, Portal } from 'react-native-paper';
-import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import { View, StyleSheet, Easing } from 'react-native';
+import { Button } from 'react-native-paper';
+import { BottomSheetView, BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet';
 
 import { DropzoneUser, Mutation } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
@@ -16,7 +16,7 @@ interface ICreditsSheet {
 }
 
 const MUTATION_CREATE_TRANSACTION = gql`
-  mutation CreatrTransaction(
+  mutation CreateTransaction(
     $message: String
     $status: String
     $amount: Float
@@ -64,7 +64,7 @@ const MUTATION_CREATE_TRANSACTION = gql`
 `;
 
 export default function CreditSheet(props: ICreditsSheet) {
-  const { open, dropzoneUser } = props;
+  const { open, dropzoneUser, onClose } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.credits);
   const global = useAppSelector((root) => root.global);
@@ -105,15 +105,18 @@ export default function CreditSheet(props: ICreditsSheet) {
             return dispatch(actions.forms.credits.setFieldError(['message', message]));
           case 'status':
             return dispatch(actions.forms.credits.setFieldError(['status', message]));
+          default:
+            return null;
         }
       });
       if (result?.errors?.length) {
-        return dispatch(
+        dispatch(
           actions.notifications.showSnackbar({
             message: result?.errors[0],
             variant: 'error',
           })
         );
+        return;
       }
       if (!result?.fieldErrors?.length) {
         dispatch(actions.forms.credits.reset());
@@ -127,54 +130,57 @@ export default function CreditSheet(props: ICreditsSheet) {
         })
       );
     }
-  }, [JSON.stringify(state.fields), mutationCreateTransaction, props.onSuccess]);
+  }, [
+    validate,
+    mutationCreateTransaction,
+    state.fields.amount.value,
+    state.fields.message.value,
+    state.fields.status.value,
+    state.original?.id,
+    dropzoneUser?.id,
+    dispatch,
+    props,
+  ]);
 
-  const sheetRef = React.useRef<BottomSheet>(null);
+  const sheetRef = React.useRef<BottomSheetModal>(null);
 
   React.useEffect(() => {
-    console.log(`Open: ${open}`);
     if (open) {
-      sheetRef?.current?.snapTo(1);
+      sheetRef.current?.present();
+      sheetRef.current?.snapTo(0, 300, Easing.exp);
     } else {
-      sheetRef?.current?.close();
-      props.onClose();
+      sheetRef.current?.dismiss();
+      sheetRef.current?.close();
     }
   }, [open]);
 
-  const snapPoints = React.useMemo(() => [0, 550], []);
+  const snapPoints = React.useMemo(() => [550], []);
 
   return (
-    <Portal>
-      <BottomSheet
-        ref={sheetRef}
-        snapPoints={snapPoints}
-        index={-1}
-        onChange={(idx) => {
-          if (idx <= 0) {
-            props.onClose();
-            sheetRef.current?.close();
-          }
-        }}
-        backdropComponent={BottomSheetBackdrop}
-        handleComponent={() => (
-          <View style={[styles.sheetHeader, { backgroundColor: global.theme.colors.primary }]} />
-        )}
-      >
-        <BottomSheetView style={styles.sheet}>
-          <CreditsForm />
-          <View style={styles.buttonContainer}>
-            <Button
-              onPress={onSave}
-              loading={createData.loading}
-              mode="contained"
-              style={styles.button}
-            >
-              Save
-            </Button>
-          </View>
-        </BottomSheetView>
-      </BottomSheet>
-    </Portal>
+    <BottomSheetModal
+      ref={sheetRef}
+      snapPoints={snapPoints}
+      index={-1}
+      onDismiss={onClose}
+      backdropComponent={BottomSheetBackdrop}
+      handleComponent={() => (
+        <View style={[styles.sheetHeader, { backgroundColor: global.theme.colors.primary }]} />
+      )}
+    >
+      <BottomSheetView style={styles.sheet}>
+        <CreditsForm />
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={onSave}
+            loading={createData.loading}
+            mode="contained"
+            style={styles.button}
+          >
+            Save
+          </Button>
+        </View>
+      </BottomSheetView>
+    </BottomSheetModal>
   );
 }
 
