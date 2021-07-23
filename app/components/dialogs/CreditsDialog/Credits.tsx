@@ -144,28 +144,39 @@ export default function CreditSheet(props: ICreditsSheet) {
 
   const sheetRef = React.useRef<BottomSheetModal>(null);
 
+  const snapPoints = React.useMemo(() => [550], []);
+
+  const memoizedClose = React.useMemo(() => onClose, [onClose]);
   React.useEffect(() => {
     if (open) {
       sheetRef.current?.present();
-      sheetRef.current?.snapTo(0, 300, Easing.exp);
+      sheetRef.current?.snapTo(snapPoints?.length - 1, 300);
     } else {
-      sheetRef.current?.dismiss();
-      sheetRef.current?.close();
+      sheetRef.current?.dismiss(300);
+      setTimeout(memoizedClose, 350);
     }
-  }, [open]);
+  }, [memoizedClose, open, snapPoints?.length]);
 
-  const snapPoints = React.useMemo(() => [550], []);
+  const onDismiss = React.useCallback(() => {
+    setTimeout(() => {
+      memoizedClose();
+    });
+  }, [memoizedClose]);
+
+  const HandleComponent = React.useMemo(
+    () => () =>
+      <View style={[styles.sheetHeader, { backgroundColor: global.theme.colors.primary }]} />,
+    [global.theme.colors.primary]
+  );
 
   return (
     <BottomSheetModal
       ref={sheetRef}
       snapPoints={snapPoints}
-      index={-1}
-      onDismiss={onClose}
+      onDismiss={onDismiss}
+      index={0}
       backdropComponent={BottomSheetBackdrop}
-      handleComponent={() => (
-        <View style={[styles.sheetHeader, { backgroundColor: global.theme.colors.primary }]} />
-      )}
+      handleComponent={HandleComponent}
     >
       <BottomSheetView style={styles.sheet}>
         <CreditsForm />

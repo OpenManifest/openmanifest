@@ -39,38 +39,45 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     };
   }, []);
 
+  const memoizedClose = React.useMemo(() => onClose, [onClose]);
+
   React.useEffect(() => {
     if (open) {
       sheetRef.current?.present();
-      sheetRef.current?.snapTo(snappingPoints?.length - 1, 300, Easing.exp);
+      sheetRef.current?.snapTo(snappingPoints?.length - 1, 300);
     } else {
-      sheetRef.current?.dismiss();
-      sheetRef.current?.close();
+      sheetRef.current?.dismiss(300);
+      setTimeout(memoizedClose, 350);
     }
-  }, [open, snappingPoints?.length]);
+  }, [memoizedClose, open, snappingPoints?.length]);
+
+  const onDismiss = React.useCallback(() => {
+    setTimeout(() => {
+      memoizedClose();
+    });
+  }, [memoizedClose]);
+
+  const HandleComponent = React.useMemo(
+    () => () =>
+      !title ? (
+        <View style={styles.sheetHeader} />
+      ) : (
+        <View style={styles.sheetHeaderWithTitle}>
+          <Title>{title}</Title>
+        </View>
+      ),
+    [title]
+  );
 
   return (
     <BottomSheetModal
-      keyboardBehavior="interactive"
-      keyboardBlurBehavior="restore"
       dismissOnPanDown
-      onDismiss={() => {
-        console.log('Dismissing');
-        onClose();
-      }}
+      onDismiss={onDismiss}
       ref={sheetRef}
       snapPoints={snappingPoints}
       backdropComponent={BottomSheetBackdrop}
       index={(snappingPoints?.length || 1) - 1}
-      handleComponent={() =>
-        !title ? (
-          <View style={styles.sheetHeader} />
-        ) : (
-          <View style={styles.sheetHeaderWithTitle}>
-            <Title>{title}</Title>
-          </View>
-        )
-      }
+      handleComponent={HandleComponent}
     >
       <BottomSheetScrollView
         style={{ backgroundColor: '#FFFFFF' }}

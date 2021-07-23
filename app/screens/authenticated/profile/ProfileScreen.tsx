@@ -145,6 +145,7 @@ export default function ProfileScreen() {
   const shouldShowBadge = (permission: Permission) =>
     canGrantPermission || badges.includes(permission);
 
+  console.log(forms.dropzoneUser.open);
   return (
     <>
       {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}

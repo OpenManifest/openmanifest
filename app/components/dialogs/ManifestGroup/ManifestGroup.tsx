@@ -205,27 +205,38 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
     }
   }, [state.fields.ticketType?.value?.isTandem]);
 
+  const snapPoints = React.useMemo(() => [550], []);
+  const memoizedClose = React.useMemo(() => onClose, [onClose]);
   React.useEffect(() => {
     if (open) {
-      sheetRef?.current?.snapTo(1);
+      sheetRef.current?.present();
+      sheetRef.current?.snapTo(snapPoints?.length - 1, 300);
     } else {
-      sheetRef?.current?.close();
-      onClose();
+      sheetRef.current?.dismiss(300);
+      setTimeout(memoizedClose, 350);
     }
-  }, [open, onClose]);
+  }, [memoizedClose, open, snapPoints?.length]);
 
-  const snapPoints = React.useMemo(() => [0, 550], []);
+  const onDismiss = React.useCallback(() => {
+    setTimeout(() => {
+      memoizedClose();
+    });
+  }, [memoizedClose]);
+
+  const HandleComponent = React.useMemo(
+    () => () =>
+      <View style={[styles.sheetHeader, { backgroundColor: globalState.theme.colors.primary }]} />,
+    [globalState.theme.colors.primary]
+  );
 
   return (
     <BottomSheetModal
       ref={sheetRef}
       snapPoints={snapPoints}
-      index={-1}
-      onDismiss={onClose}
+      index={0}
+      onDismiss={onDismiss}
       backdropComponent={BottomSheetBackdrop}
-      handleComponent={() => (
-        <View style={[styles.sheetHeader, { backgroundColor: globalState.theme.colors.primary }]} />
-      )}
+      handleComponent={HandleComponent}
     >
       <View style={{ backgroundColor: 'white' }} testID="manifest-group-sheet">
         <View pointerEvents={(state.fields.users?.value?.length || 0) > 0 ? undefined : 'none'}>

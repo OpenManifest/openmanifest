@@ -11,7 +11,7 @@ interface ICreateGhostDialog {
   onSuccess(): void;
 }
 export default function CreateGhostDialog(props: ICreateGhostDialog) {
-  const { open, onSuccess } = props;
+  const { open, onSuccess, onClose } = props;
   const state = useAppSelector((root) => root.forms.ghost);
   const globalState = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
@@ -64,9 +64,7 @@ export default function CreateGhostDialog(props: ICreateGhostDialog) {
       open={open}
       snapPoints={[0, 400, 740]}
       loading={mutationCreateGhost.loading}
-      onClose={() => {
-        props.onClose();
-      }}
+      onClose={onClose}
       buttonAction={onSave}
       buttonLabel="Save"
     >
