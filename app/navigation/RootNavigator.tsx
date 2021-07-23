@@ -10,8 +10,7 @@ import LimboRoutes from './LimboRoutes';
 import UnauthenticatedRoutes from './Unauthenticated';
 import DropzonesScreen from '../screens/authenticated/dropzones/DropzonesScreen';
 import DropzoneSetupScreen from '../screens/authenticated/dropzone_setup/DropzoneSetupScreen';
-import ConfirmUserScreen from "../screens/unauthenticated/signup/ConfirmUserScreen";
-
+import ConfirmUserScreen from '../screens/unauthenticated/signup/ConfirmUserScreen';
 
 export type TRootNavigatorRouteParams = {
   Authenticated: undefined;
@@ -21,38 +20,37 @@ export type TRootNavigatorRouteParams = {
   DropzonesScreen: undefined;
   DropzoneSetupScreen: undefined;
   NotFound: undefined;
-}
+};
 // A root stack navigator is often used for displaying modals on top of all other content
 // Read more here: https://reactnavigation.org/docs/modal
 const Stack = createStackNavigator<TRootNavigatorRouteParams>();
 const Drawer = createDrawerNavigator<TRootNavigatorRouteParams>();
 
 export default function RootNavigator() {
-  const globalState = useAppSelector(state => state.global);
-  
+  const globalState = useAppSelector((root) => root.global);
+
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
         cardStyle: {
-          flex: 1
-        }
+          flex: 1,
+        },
       }}
     >
-      {
-        globalState.credentials
-          ? (
-                globalState.currentDropzone
-                  ? <Stack.Screen name="Authenticated" component={AuthenticatedRoutes} /> :
-                    <Stack.Screen name="Dropzones" component={LimboRoutes} />
-          ) : (
-            <Stack.Screen name="Unauthenticated" component={UnauthenticatedRoutes} />
-          )
-        }
+      {globalState.credentials ? (
+        globalState.currentDropzone ? (
+          <Stack.Screen name="Authenticated" component={AuthenticatedRoutes} />
+        ) : (
+          <Stack.Screen name="Dropzones" component={LimboRoutes} />
+        )
+      ) : (
+        <Stack.Screen name="Unauthenticated" component={UnauthenticatedRoutes} />
+      )}
       <Stack.Screen name="DropzoneSetupScreen" component={DropzoneSetupScreen} />
       <Stack.Screen name="confirm" component={ConfirmUserScreen} />
       <Stack.Screen name="DropzonesScreen" component={DropzonesScreen} />
-      
+
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
   );

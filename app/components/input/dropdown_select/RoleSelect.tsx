@@ -1,12 +1,9 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import * as React from "react";
-import { List, Menu } from "react-native-paper";
-import useCurrentDropzone from "../../../api/hooks/useCurrentDropzone";
-import useDropzoneUser from "../../../api/hooks/useDropzoneUser";
-import { Query, UserRole } from "../../../api/schema.d";
-import { useAppSelector } from "../../../state";
-
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import * as React from 'react';
+import { List, Menu } from 'react-native-paper';
+import { Query, UserRole } from '../../../api/schema.d';
+import { useAppSelector } from '../../../state';
 
 interface IRoleSelect {
   value?: UserRole | null;
@@ -28,48 +25,45 @@ const QUERY_ROLES = gql`
 `;
 
 export default function RoleSelect(props: IRoleSelect) {
+  const { onSelect, disabled, required, value } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const { currentDropzoneId } = useAppSelector(state => state.global);
-  const { dropzoneUser } = useDropzoneUser();
-  const { data, loading, refetch } = useQuery<Query>(QUERY_ROLES, {
+  const { currentDropzoneId } = useAppSelector((root) => root.global);
+  const { data } = useQuery<Query>(QUERY_ROLES, {
     variables: {
       dropzoneId: Number(currentDropzoneId),
-    }
+    },
   });
   return (
     <>
-    <List.Subheader style={{ paddingLeft: 0 }}>
-      Access level
-    </List.Subheader>
-    <Menu
-      onDismiss={() => setMenuOpen(false)}
-      visible={!props.disabled && isMenuOpen}
-      anchor={
-        <List.Item
-          left={() => <List.Icon icon="lock" />}
-          onPress={props.disabled ? undefined : () => {
-            setMenuOpen(true);
-          }}
-          title={
-            props.value?.name?.replace('_', ' ')?.toUpperCase() || "Access level"
-          }
-          description={!props.required ? "Optional" : null}
-        />
-      }>
-      {
-        data?.dropzone?.roles?.map((role) =>
+      <List.Subheader style={{ paddingLeft: 0 }}>Access level</List.Subheader>
+      <Menu
+        onDismiss={() => setMenuOpen(false)}
+        visible={!disabled && isMenuOpen}
+        anchor={
+          <List.Item
+            left={() => <List.Icon icon="lock" />}
+            onPress={
+              disabled
+                ? undefined
+                : () => {
+                    setMenuOpen(true);
+                  }
+            }
+            title={value?.name?.replace('_', ' ')?.toUpperCase() || 'Access level'}
+            description={!required ? 'Optional' : null}
+          />
+        }
+      >
+        {data?.dropzone?.roles?.map((role) => (
           <Menu.Item
             onPress={() => {
               setMenuOpen(false);
-              props.onSelect(role);
+              onSelect(role);
             }}
-            title={
-              role.name?.replace('_', ' ').toUpperCase() || "-"
-            }
+            title={role.name?.replace('_', ' ').toUpperCase() || '-'}
           />
-        )
-      }
-    </Menu>
+        ))}
+      </Menu>
     </>
-  )
+  );
 }

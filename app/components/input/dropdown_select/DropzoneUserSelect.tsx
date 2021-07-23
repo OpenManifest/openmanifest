@@ -1,12 +1,10 @@
-import * as React from "react";
-import { List, Menu, Title } from "react-native-paper";
-import useCurrentDropzone from "../../../api/hooks/useCurrentDropzone";
-import useQueryDropzoneUsers from "../../../api/hooks/useQueryDropzoneUsers";
-import { DropzoneUser } from "../../../api/schema.d";
-import { useAppSelector } from "../../../state";
+import * as React from 'react';
+import { List, Menu, Title } from 'react-native-paper';
+import useQueryDropzoneUsers from '../../../api/hooks/useQueryDropzoneUsers';
+import { DropzoneUser } from '../../../api/schema.d';
+import { useAppSelector } from '../../../state';
 
 interface IDropzoneUserSelect {
-  dropzoneId: number;
   requiredPermissions: string[];
   value: DropzoneUser | null;
   required?: boolean;
@@ -14,23 +12,21 @@ interface IDropzoneUserSelect {
   onSelect(dzUser: DropzoneUser): void;
 }
 
-
-
-
 export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
+  const { requiredPermissions, value, onSelect, label, required } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const globalState = useAppSelector(state => state.global);
+  const globalState = useAppSelector((root) => root.global);
 
-  const { data, loading, refetch } = useQueryDropzoneUsers({
+  const { data, refetch } = useQueryDropzoneUsers({
     variables: {
-      dropzoneId: globalState.currentDropzoneId,
-      permissions: props.requiredPermissions
+      dropzoneId: globalState.currentDropzoneId as number,
+      permissions: requiredPermissions,
     },
   });
 
   return (
     <>
-      <Title>{props.label}</Title>
+      <Title>{label}</Title>
       <Menu
         onDismiss={() => setMenuOpen(false)}
         visible={isMenuOpen}
@@ -42,30 +38,25 @@ export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
               }
               setMenuOpen(true);
             }}
-            title={
-              props.value?.user?.id ? props.value?.user.name : "No user selected"
-            }
-            style={{ width: "100%" }}
+            title={value?.user?.id ? value?.user.name : 'No user selected'}
+            style={{ width: '100%' }}
             right={() => <List.Icon icon="account" />}
-            description={!props.required ? "Optional" : null}
+            description={!required ? 'Optional' : null}
           />
-        }>
-        {
-          data?.edges?.map((edge) => 
-            <Menu.Item
-              key={`user-select-${edge?.node!.id}`}
-              style={{ width: "100%" }}
-              onPress={() => {
-                setMenuOpen(false);
-                props.onSelect(edge?.node as DropzoneUser);
-              }}
-              title={
-                edge?.node?.user?.name || "-"
-              }
-            />
-          )
         }
+      >
+        {data?.edges?.map((edge) => (
+          <Menu.Item
+            key={`user-select-${edge?.node!.id}`}
+            style={{ width: '100%' }}
+            onPress={() => {
+              setMenuOpen(false);
+              onSelect(edge?.node as DropzoneUser);
+            }}
+            title={edge?.node?.user?.name || '-'}
+          />
+        ))}
       </Menu>
     </>
-  )
+  );
 }

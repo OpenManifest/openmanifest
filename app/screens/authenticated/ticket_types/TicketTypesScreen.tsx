@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar, Switch } from 'react-native-paper';
-import { Mutation, Permission, Query } from "../../../api/schema.d";
+import { Mutation, Permission, Query } from '../../../api/schema.d';
 
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
@@ -13,9 +13,7 @@ import SwipeActions from '../../../components/layout/SwipeActions';
 import useRestriction from '../../../hooks/useRestriction';
 
 const QUERY_TICKET_TYPE = gql`
-  query QueryTicketType(
-    $dropzoneId: Int!
-  ) {
+  query QueryTicketType($dropzoneId: Int!) {
     dropzone(id: $dropzoneId) {
       id
       ticketTypes {
@@ -36,16 +34,10 @@ const QUERY_TICKET_TYPE = gql`
 `;
 
 const MUTATION_UPDATE_TICKET_TYPE = gql`
-  mutation UpdateTicketTypePublic(
-    $id: Int!,
-    $allowManifestingSelf: Boolean
-  ){
-    updateTicketType(input: {
-      id: $id
-      attributes: {
-        allowManifestingSelf: $allowManifestingSelf
-      }
-    }) {
+  mutation UpdateTicketTypePublic($id: Int!, $allowManifestingSelf: Boolean) {
+    updateTicketType(
+      input: { id: $id, attributes: { allowManifestingSelf: $allowManifestingSelf } }
+    ) {
       ticketType {
         id
         name
@@ -69,12 +61,8 @@ const MUTATION_UPDATE_TICKET_TYPE = gql`
 `;
 
 const MUTATION_DELETE_TICKET_TYPE = gql`
-  mutation DeleteTicketType(
-    $id: Int!,
-  ){
-    deleteTicketType(input: {
-      id: $id
-    }) {
+  mutation DeleteTicketType($id: Int!) {
+    deleteTicketType(input: { id: $id }) {
       ticketType {
         id
         dropzone {
@@ -100,13 +88,13 @@ const MUTATION_DELETE_TICKET_TYPE = gql`
 `;
 
 export default function TicketTypesScreen() {
-  const state = useAppSelector(state => state.global);
-  const form = useAppSelector(state => state.forms.ticketType);
+  const state = useAppSelector((root) => root.global);
+  const form = useAppSelector((root) => root.forms.ticketType);
   const dispatch = useAppDispatch();
   const { data, loading, refetch } = useQuery<Query>(QUERY_TICKET_TYPE, {
     variables: {
-      dropzoneId: Number(state.currentDropzoneId)
-    }
+      dropzoneId: Number(state.currentDropzoneId),
+    },
   });
   const route = useRoute();
   const isFocused = useIsFocused();
@@ -117,43 +105,51 @@ export default function TicketTypesScreen() {
     }
   }, [isFocused]);
   const [mutationUpdateTicketType, mutation] = useMutation<Mutation>(MUTATION_UPDATE_TICKET_TYPE);
-  const [mutationDeleteTicketType, mutationDelete] = useMutation<Mutation>(MUTATION_DELETE_TICKET_TYPE);
-  
+  const [mutationDeleteTicketType, mutationDelete] = useMutation<Mutation>(
+    MUTATION_DELETE_TICKET_TYPE
+  );
+
   React.useEffect(() => {
-    if (route.name === "TicketTypesScreen") {
+    if (route.name === 'TicketTypesScreen') {
       refetch();
     }
-  }, [route.name])
+  }, [route.name]);
 
   const canCreateTicketTypes = useRestriction(Permission.CreateTicketType);
   return (
-      <ScrollableScreen style={styles.container} contentContainerStyle={[styles.content, {  backgroundColor: "white" }]} refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}>
+    <ScrollableScreen
+      style={styles.container}
+      contentContainerStyle={[styles.content, { backgroundColor: 'white' }]}
+      refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
+    >
       <ProgressBar visible={loading} color={state.theme.colors.accent} />
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title>Name</DataTable.Title>
-            <DataTable.Title numeric>Cost</DataTable.Title>
-            <DataTable.Title numeric>Altitude</DataTable.Title>
-            <DataTable.Title numeric>Public</DataTable.Title>
-          </DataTable.Header>
+      <DataTable>
+        <DataTable.Header>
+          <DataTable.Title>Name</DataTable.Title>
+          <DataTable.Title numeric>Cost</DataTable.Title>
+          <DataTable.Title numeric>Altitude</DataTable.Title>
+          <DataTable.Title numeric>Public</DataTable.Title>
+        </DataTable.Header>
 
-          { data?.dropzone?.ticketTypes?.map((ticketType) =>
+        {data?.dropzone?.ticketTypes?.map((ticketType) => (
           <SwipeActions
             rightAction={{
-              label: "Delete",
-              backgroundColor: "red",
+              label: 'Delete',
+              backgroundColor: 'red',
               onPress: async () => {
-                const { data: result } = await mutationDeleteTicketType({ variables: { id: Number(ticketType.id) }});
+                const { data: result } = await mutationDeleteTicketType({
+                  variables: { id: Number(ticketType.id) },
+                });
 
                 if (result?.deleteTicketType?.errors?.length) {
                   dispatch(
                     actions.notifications.showSnackbar({
                       message: result?.deleteTicketType?.errors[0],
-                      variant: "error"
+                      variant: 'error',
                     })
                   );
                 }
-              }
+              },
             }}
           >
             <DataTable.Row
@@ -164,47 +160,45 @@ export default function TicketTypesScreen() {
             >
               <DataTable.Cell>{ticketType.name}</DataTable.Cell>
               <DataTable.Cell numeric>${ticketType.cost}</DataTable.Cell>
-              <DataTable.Cell numeric>
-                {ticketType.altitude}
-              </DataTable.Cell>
+              <DataTable.Cell numeric>{ticketType.altitude}</DataTable.Cell>
               <DataTable.Cell numeric>
                 <Switch
                   onValueChange={() => {
                     mutationUpdateTicketType({
                       variables: {
                         id: Number(ticketType.id),
-                        allowManifestingSelf: !ticketType.allowManifestingSelf
-                      }
-                    })
+                        allowManifestingSelf: !ticketType.allowManifestingSelf,
+                      },
+                    });
                   }}
                   value={!!ticketType.allowManifestingSelf}
                 />
               </DataTable.Cell>
             </DataTable.Row>
-            </SwipeActions>
-            )}
-        </DataTable>
-        
-        <FAB
-          style={styles.fab}
-          small
-          visible={canCreateTicketTypes}
-          icon="plus"
-          onPress={() => dispatch(actions.forms.ticketType.setOpen(true))}
-          label="New ticket type"
-        />
-        <TicketTypesDialog
-          open={form.open}
-          onClose={() => dispatch(actions.forms.ticketType.setOpen(false))}
-        />
-      </ScrollableScreen>
+          </SwipeActions>
+        ))}
+      </DataTable>
+
+      <FAB
+        style={styles.fab}
+        small
+        visible={canCreateTicketTypes}
+        icon="plus"
+        onPress={() => dispatch(actions.forms.ticketType.setOpen(true))}
+        label="New ticket type"
+      />
+      <TicketTypesDialog
+        open={form.open}
+        onClose={() => dispatch(actions.forms.ticketType.setOpen(false))}
+      />
+    </ScrollableScreen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    display: "flex"
+    display: 'flex',
   },
   content: {
     flexGrow: 1,
@@ -217,9 +211,9 @@ const styles = StyleSheet.create({
   },
   empty: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    height: "100%"
-  }
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+  },
 });

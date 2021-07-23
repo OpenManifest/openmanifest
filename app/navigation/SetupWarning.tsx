@@ -1,8 +1,6 @@
-import * as React from "react";
-import { Paragraph, Button} from "react-native-paper";
-import { View, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/core";
-
+import * as React from 'react';
+import { Paragraph, Button } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
 
 interface ISetupWarning {
   credits: number;
@@ -16,15 +14,13 @@ interface ISetupWarning {
   onSetupWizard?(): void;
 }
 
-function Warning(props: { title: string, action?: () => void }) {
+function Warning(props: { title: string; action?: () => void }) {
   const { action, title } = props;
   return (
     <View style={styles.warning}>
-      <Paragraph style={{ color: "white", flex: 7/10, flexGrow: 2 }}>
-        {title}
-      </Paragraph>
+      <Paragraph style={{ color: 'white', flex: 7 / 10, flexGrow: 2 }}>{title}</Paragraph>
       {!action ? null : (
-        <Button onPress={action} style={{ flex: 1/10, flexShrink: 1 }}>
+        <Button onPress={action} style={{ flex: 1 / 10, flexShrink: 1 }}>
           Fix
         </Button>
       )}
@@ -33,51 +29,49 @@ function Warning(props: { title: string, action?: () => void }) {
 }
 
 export default function SetupWarning(props: ISetupWarning) {
-  const { credits, loading, isCreditSystemEnabled, isRigSetUp, isExitWeightDefined, isMembershipInDate, isReserveInDate, isRigInspectionComplete, onSetupWizard } = props;
+  const {
+    credits,
+    loading,
+    isCreditSystemEnabled,
+    isRigSetUp,
+    isExitWeightDefined,
+    isMembershipInDate,
+    isReserveInDate,
+    isRigInspectionComplete,
+    onSetupWizard,
+  } = props;
 
-  if (props.loading) {
+  if (loading) {
     return null;
   }
-  
-  const navigation = useNavigation();
-  
 
   if (!isExitWeightDefined || !isRigSetUp) {
     const missing = [
-      !isExitWeightDefined ? "exit weight" : null,
-      !isRigSetUp ? "equipment" : null,
+      !isExitWeightDefined ? 'exit weight' : null,
+      !isRigSetUp ? 'equipment' : null,
     ].filter(Boolean);
 
     return (
       <Warning
-        title={`You need to define ${missing.join(" and ")} in your profile`}
-        action={() => onSetupWizard()}
+        title={`You need to define ${missing.join(' and ')} in your profile`}
+        action={() => onSetupWizard?.()}
       />
     );
-  } else if (!isMembershipInDate) {
+  }
+  if (!isMembershipInDate) {
+    return <Warning title="Your membership seems to be out of date" />;
+  }
+  if (!isRigInspectionComplete) {
+    return <Warning title="Your rig must be inspected before you can manifest at this dropzone" />;
+  }
+  if (!isReserveInDate) {
     return (
-      <Warning
-        title="Your membership seems to be out of date"
-      />
-    )
-  } else if (!isRigInspectionComplete) {
-    return (
-      <Warning
-        title={`Your rig must be inspected before you can manifest at this dropzone`}
-      />
+      // eslint-disable-next-line max-len
+      <Warning title="Your reserve repack is due. You cannot manifest if your repack is out of date." />
     );
-  } else if (!isReserveInDate) {
-    return (
-      <Warning
-        title={`Your reserve repack is due. You cannot manifest if your repack is out of date.`}
-      />
-    );
-  } else if (isCreditSystemEnabled && !credits && !loading) {
-    return (
-      <Warning
-        title="You'll need to top up on credits before you can manifest"
-      />
-    );
+  }
+  if (isCreditSystemEnabled && !credits && !loading) {
+    return <Warning title="You'll need to top up on credits before you can manifest" />;
   }
 
   return null;
@@ -85,12 +79,12 @@ export default function SetupWarning(props: ISetupWarning) {
 
 const styles = StyleSheet.create({
   warning: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     height: 56,
-    width: "100%",
-    backgroundColor: "black",
-    justifyContent: "space-between",
-    paddingHorizontal: 32
+    width: '100%',
+    backgroundColor: 'black',
+    justifyContent: 'space-between',
+    paddingHorizontal: 32,
   },
-})
+});

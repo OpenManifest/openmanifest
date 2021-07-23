@@ -1,13 +1,13 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Snackbar } from "react-native-paper";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Snackbar } from 'react-native-paper';
 
 interface INotification {
   message: string;
-  variant?: "error" | "success" | "warning";
+  variant?: 'error' | 'success' | 'warning';
   action?: {
     label: string;
     onPress: () => void;
-  }
+  };
 }
 interface INotificationState {
   queue: INotification[];
@@ -23,8 +23,6 @@ export default createSlice({
     },
     showSnackbar: (state: INotificationState, action: PayloadAction<INotification>) => {
       state.queue.push(action.payload);
-    }
-  }
+    },
+  },
 });
-
-

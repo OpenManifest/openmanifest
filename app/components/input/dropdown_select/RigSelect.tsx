@@ -1,10 +1,9 @@
-import { useLazyQuery, useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import * as React from "react";
-import { List, Menu } from "react-native-paper";
-import useCurrentDropzone from "../../../api/hooks/useCurrentDropzone";
-import { Rig, Query } from "../../../api/schema.d";
-import { useAppSelector } from "../../../state";
+import { useLazyQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import * as React from 'react';
+import { List, Menu } from 'react-native-paper';
+import { Rig, Query } from '../../../api/schema.d';
+import { useAppSelector } from '../../../state';
 
 interface IRigSelect {
   dropzoneId?: number;
@@ -15,12 +14,8 @@ interface IRigSelect {
   onSelect(rig: Rig): void;
 }
 
-
 const QUERY_RIGS = gql`
-  query QueryAvailableRigs(
-    $dropzoneId: Int!
-    $userId: Int!
-  ) {
+  query QueryAvailableRigs($dropzoneId: Int!, $userId: Int!) {
     dropzone(id: $dropzoneId) {
       id
       dropzoneUser(userId: $userId) {
@@ -42,28 +37,29 @@ const QUERY_RIGS = gql`
 `;
 
 export default function RigSelect(props: IRigSelect) {
+  const { userId, value, required, autoSelectFirst, onSelect, dropzoneId } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const { currentDropzoneId } = useAppSelector(state => state.global);
+  const { currentDropzoneId } = useAppSelector((root) => root.global);
 
-  const [fetchRigs, { data, }] = useLazyQuery<Query>(QUERY_RIGS);
+  const [fetchRigs, { data }] = useLazyQuery<Query>(QUERY_RIGS);
 
   React.useEffect(() => {
-    if (props.userId && props.dropzoneId) {
+    if (userId && dropzoneId) {
       fetchRigs({
         variables: {
           dropzoneId: currentDropzoneId,
-          userId: Number(props.userId)
-        }
+          userId: Number(userId),
+        },
       });
     }
-  }, [props.userId, props.dropzoneId])
+  }, [userId, dropzoneId, fetchRigs, currentDropzoneId]);
 
   React.useEffect(() => {
-    if (!props.value && props.autoSelectFirst && data?.dropzone?.dropzoneUser?.availableRigs?.length) {
-      props.onSelect(data.dropzone.dropzoneUser.availableRigs[0]);
+    if (!value && autoSelectFirst && data?.dropzone?.dropzoneUser?.availableRigs?.length) {
+      onSelect(data.dropzone.dropzoneUser.availableRigs[0]);
     }
-  }, [props.autoSelectFirst, JSON.stringify(data?.dropzone?.dropzoneUser?.availableRigs)])
-  
+  }, [autoSelectFirst, data?.dropzone.dropzoneUser?.availableRigs, onSelect, value]);
+
   return (
     <Menu
       onDismiss={() => setMenuOpen(false)}
@@ -74,29 +70,28 @@ export default function RigSelect(props: IRigSelect) {
             setMenuOpen(true);
           }}
           title={
-            props.value
-            ? `${props.value?.make} ${props.value?.model} (${props.value?.canopySize || "?"}sqft)`
-            : 'Select rig'
+            value
+              ? `${value?.make} ${value?.model} (${value?.canopySize || '?'}sqft)`
+              : 'Select rig'
           }
-          description={!props.required ? "Optional" : null}
+          description={!required ? 'Optional' : null}
           left={() => <List.Icon icon="parachute" />}
         />
-      }>
-      {
-        data?.dropzone?.dropzoneUser?.availableRigs?.map((rig) => 
-          <Menu.Item
-            key={`rig-select-${rig.id}`}
-            onPress={() => {
-              setMenuOpen(false);
-              props.onSelect(rig);
-            }}
-            style={{ width: "100%" }}
-            title={
-              `${rig?.make} ${rig?.model} (${rig?.canopySize} sqft) ${!rig.user ? "[DROPZONE RIG]": ""}`
-            }
-          />
-        )
       }
+    >
+      {data?.dropzone?.dropzoneUser?.availableRigs?.map((rig) => (
+        <Menu.Item
+          key={`rig-select-${rig.id}`}
+          onPress={() => {
+            setMenuOpen(false);
+            onSelect(rig);
+          }}
+          style={{ width: '100%' }}
+          title={`${rig?.make} ${rig?.model} (${rig?.canopySize} sqft) ${
+            !rig.user ? '[DROPZONE RIG]' : ''
+          }`}
+        />
+      ))}
     </Menu>
-  )
+  );
 }

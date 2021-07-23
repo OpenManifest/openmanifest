@@ -1,10 +1,8 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import * as React from "react";
-import { List, Menu } from "react-native-paper";
-import { JumpType, Query } from "../../../api/schema.d";
-import { useAppSelector } from "../../../state";
-
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import * as React from 'react';
+import { List, Menu } from 'react-native-paper';
+import { JumpType, Query } from '../../../api/schema.d';
 
 interface IJumpTypeSelect {
   value?: JumpType | null;
@@ -23,46 +21,40 @@ const QUERY_JUMP_TYPES = gql`
 `;
 
 export default function JumpTypeSelect(props: IJumpTypeSelect) {
+  const { userId, onSelect, value, required } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
 
-  const { data, loading, refetch } = useQuery<Query>(QUERY_JUMP_TYPES, {
+  const { data } = useQuery<Query>(QUERY_JUMP_TYPES, {
     variables: {
-      allowedForUserId: props.userId,
-    }
+      allowedForUserId: userId,
+    },
   });
   return (
     <>
-    <List.Subheader>
-      Jump type
-    </List.Subheader>
-    <Menu
-      onDismiss={() => setMenuOpen(false)}
-      visible={isMenuOpen}
-      anchor={
-        <List.Item
-          onPress={() => {
-            setMenuOpen(true);
-          }}
-          title={
-            props.value?.name || "Please select jump type"
-          }
-          description={!props.required ? "Optional" : null}
-        />
-      }>
-      {
-        data?.jumpTypes?.map((jumpType) => 
+      <List.Subheader>Jump type</List.Subheader>
+      <Menu
+        onDismiss={() => setMenuOpen(false)}
+        visible={isMenuOpen}
+        anchor={
+          <List.Item
+            onPress={() => {
+              setMenuOpen(true);
+            }}
+            title={value?.name || 'Please select jump type'}
+            description={!required ? 'Optional' : null}
+          />
+        }
+      >
+        {data?.jumpTypes?.map((jumpType) => (
           <Menu.Item
             onPress={() => {
               setMenuOpen(false);
-              props.onSelect(jumpType);
+              onSelect(jumpType);
             }}
-            title={
-              jumpType.name || "-"
-            }
+            title={jumpType.name || '-'}
           />
-        )
-      }
-    </Menu>
+        ))}
+      </Menu>
     </>
-  )
+  );
 }

@@ -1,14 +1,12 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import * as React from "react";
-import { List } from "react-native-paper";
-import { License, Query } from "../../../api/schema.d";
-import ChipSelect from "./ChipSelect";
-
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import * as React from 'react';
+import { List } from 'react-native-paper';
+import { License, Query } from '../../../api/schema.d';
+import ChipSelect from './ChipSelect';
 
 interface ILicenseSelect {
   value?: License | null;
-  required?: boolean;
   federationId?: number | null;
   onSelect(jt: License): void;
 }
@@ -23,35 +21,30 @@ const QUERY_LICENSES = gql`
         id
         name
       }
-
     }
   }
 `;
 
 export default function LicenseChipSelect(props: ILicenseSelect) {
-
+  const { federationId, onSelect, value } = props;
   const { data } = useQuery<Query>(QUERY_LICENSES, {
     variables: {
-      federationId: props.federationId,
-    }
+      federationId,
+    },
   });
   return (
     <>
-      <List.Subheader>
-        License
-      </List.Subheader>
+      <List.Subheader>License</List.Subheader>
       <ChipSelect<License>
         autoSelectFirst
         icon="ticket-account"
         items={data?.licenses || []}
-        selected={[props.value].filter(Boolean) as License[]}
-        isSelected={(item) => item.id === props.value?.id}
+        selected={[value].filter(Boolean) as License[]}
+        isSelected={(item) => item.id === value?.id}
         renderItemLabel={(license) => license?.name}
         isDisabled={() => false}
-        onChangeSelected={([first]) =>
-          first ? props.onSelect(first) : null
-        }
+        onChangeSelected={([first]) => (first ? onSelect(first) : null)}
       />
     </>
-  )
+  );
 }

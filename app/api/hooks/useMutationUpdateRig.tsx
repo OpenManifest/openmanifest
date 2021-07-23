@@ -1,23 +1,22 @@
-import gql from "graphql-tag";
-import { createMutation } from "../createMutation";
-import { MutationUpdateRigArgs, UpdateRigPayload } from "../schema";
-
+import gql from 'graphql-tag';
+import { createMutation } from '../createMutation';
+import { MutationUpdateRigArgs, UpdateRigPayload } from '../schema';
 
 const MUTATION_UPDATE_RIG = gql`
   mutation UpdateRig(
     $id: Int!
-    $make: String,
-    $model: String,
-    $serial: String,
-    $rigType: String,
-    $canopySize: Int,
+    $make: String
+    $model: String
+    $serial: String
+    $rigType: String
+    $canopySize: Int
     $repackExpiresAt: Int
     $userId: Int
     $dropzoneId: Int
   ) {
     updateRig(
       input: {
-        id: $id,
+        id: $id
         attributes: {
           make: $make
           model: $model
@@ -64,11 +63,10 @@ const MUTATION_UPDATE_RIG = gql`
   }
 `;
 
-
-export default createMutation<{ id: number } & MutationUpdateRigArgs["input"]["attributes"], UpdateRigPayload>(
-  MUTATION_UPDATE_RIG, {
-    getPayload: (result) => result.updateRig,
-    fieldErrorMap: {
-    },
-  }
-);
+export default createMutation<
+  { id: number } & MutationUpdateRigArgs['input']['attributes'],
+  UpdateRigPayload
+>(MUTATION_UPDATE_RIG, {
+  getPayload: (result) => result.updateRig,
+  fieldErrorMap: {},
+});

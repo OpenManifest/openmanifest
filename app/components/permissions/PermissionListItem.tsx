@@ -1,10 +1,10 @@
-import { useMutation } from "@apollo/client";
-import gql from "graphql-tag";
-import * as React from "react";
-import { List, Switch } from "react-native-paper";
-import { Mutation, Permission, UserRole } from "../../api/schema.d";
-import useRestriction from "../../hooks/useRestriction";
-import { actions, useAppDispatch } from "../../state";
+import { useMutation } from '@apollo/client';
+import gql from 'graphql-tag';
+import * as React from 'react';
+import { List, Switch } from 'react-native-paper';
+import { Mutation, Permission, UserRole } from '../../api/schema.d';
+import useRestriction from '../../hooks/useRestriction';
+import { actions, useAppDispatch } from '../../state';
 
 interface IPermissionListItem {
   title: string;
@@ -15,11 +15,7 @@ interface IPermissionListItem {
 
 const MUTATION_UPDATE_ROLE = gql`
   mutation UpdateRole($roleId: Int!, $permissionName: String!, $enabled: Boolean!) {
-    updateRole(input: {
-      id: $roleId,
-      permission: $permissionName,
-      enabled: $enabled
-    }) {
+    updateRole(input: { id: $roleId, permission: $permissionName, enabled: $enabled }) {
       role {
         id
         name
@@ -43,8 +39,8 @@ export default function PermissionListItem(props: IPermissionListItem) {
   return (
     <List.Item
       disabled={!canChangePermissions}
-      style={{ width: "100%" }}
-      right={() =>
+      style={{ width: '100%' }}
+      right={() => (
         <Switch
           value={role.permissions.includes(permissionName)}
           onValueChange={async () => {
@@ -52,7 +48,7 @@ export default function PermissionListItem(props: IPermissionListItem) {
               variables: {
                 roleId: Number(role.id),
                 permissionName,
-                enabled: !role.permissions.includes(permissionName)
+                enabled: !role.permissions.includes(permissionName),
               },
               optimisticResponse: {
                 updateRole: {
@@ -60,21 +56,25 @@ export default function PermissionListItem(props: IPermissionListItem) {
                     ...role,
                     permissions: !role.permissions.includes(permissionName)
                       ? role.permissions.filter((name) => name !== permissionName)
-                      : [...role.permissions, permissionName]
-                  }
-                }
-              }
+                      : [...role.permissions, permissionName],
+                  },
+                },
+              },
             });
 
             if (result?.data?.updateRole?.errors?.length) {
               result?.data?.updateRole?.errors?.map((message) =>
-                dispatch(actions.notifications.showSnackbar({ message, variant: "error" }))
+                dispatch(
+                  actions.notifications.showSnackbar({
+                    message,
+                    variant: 'error',
+                  })
+                )
               );
-              return;
             }
           }}
         />
-      }
+      )}
       {...{ title, description }}
     />
   );

@@ -1,5 +1,5 @@
-import slice from "./slice";
-import Notifications from "./Notifications";
+import slice from './slice';
+import Notifications from './Notifications';
 
 const { actions } = slice;
 

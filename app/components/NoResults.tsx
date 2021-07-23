@@ -1,7 +1,7 @@
-import * as React from "react";
-import { StyleSheet } from "react-native";
-import { Paragraph, Title } from "react-native-paper";
-import { View } from "./Themed";
+import * as React from 'react';
+import { StyleSheet } from 'react-native';
+import { Paragraph, Title } from 'react-native-paper';
+import { View } from './Themed';
 
 interface INoResults {
   title: string;
@@ -12,20 +12,17 @@ export default function NoResults({ title, color, subtitle }: INoResults) {
   return (
     <View style={styles.empty}>
       <Title style={{ color }}>{title}</Title>
-      <Paragraph style={{ color, textAlign: "center" }}>
-        {subtitle}
-      </Paragraph>
+      <Paragraph style={{ color, textAlign: 'center' }}>{subtitle}</Paragraph>
     </View>
-  )
+  );
 }
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 8,
-    display: "flex",
-    backgroundColor: "transparent",
+    display: 'flex',
+    backgroundColor: 'transparent',
   },
   fab: {
     position: 'absolute',
@@ -35,10 +32,10 @@ const styles = StyleSheet.create({
   },
   empty: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    backgroundColor: "transparent",
-    height: "100%"
-  }
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    backgroundColor: 'transparent',
+    height: '100%',
+  },
 });

@@ -10,33 +10,30 @@ import useRestriction from '../../../hooks/useRestriction';
 import { Permission } from '../../../api/schema.d';
 
 export default function DropzoneUserForm() {
-  const state = useAppSelector(state => state.forms.dropzoneUser);
+  const state = useAppSelector((root) => root.forms.dropzoneUser);
   const dispatch = useAppDispatch();
   const canUpdateRole = useRestriction(Permission.GrantPermission);
 
-  return ( 
+  return (
     <>
       <RoleSelect
         value={state.fields.role.value}
-        onSelect={(newRole) => dispatch(actions.forms.dropzoneUser.setField(["role", newRole]))}
+        onSelect={(newRole) => dispatch(actions.forms.dropzoneUser.setField(['role', newRole]))}
         disabled={!canUpdateRole}
         required
       />
-      <HelperText type={!!state.fields.role.error ? "error" : "info"}>
-        { state.fields.role.error }
+      <HelperText type={state.fields.role.error ? 'error' : 'info'}>
+        {state.fields.role.error}
       </HelperText>
 
-
-      <List.Subheader style={{ paddingLeft: 0 }}>
-        Financial
-      </List.Subheader>
+      <List.Subheader style={{ paddingLeft: 0 }}>Financial</List.Subheader>
       <DatePicker
         timestamp={state.fields.expiresAt.value || new Date().getTime() / 1000}
-        onChange={(time) => dispatch(actions.forms.dropzoneUser.setField(["expiresAt", time]))}
+        onChange={(time) => dispatch(actions.forms.dropzoneUser.setField(['expiresAt', time]))}
         label="Membership expires"
       />
-      <HelperText type={!!state.fields.expiresAt.error ? "error" : "info"}>
-        { state.fields.expiresAt.error }
+      <HelperText type={state.fields.expiresAt.error ? 'error' : 'info'}>
+        {state.fields.expiresAt.error}
       </HelperText>
     </>
   );
@@ -48,5 +45,5 @@ const styles = StyleSheet.create({
   },
   field: {
     marginBottom: 8,
-  }
+  },
 });

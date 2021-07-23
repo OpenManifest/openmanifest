@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DropzoneUser } from "../../../api/schema.d";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { DropzoneUser } from '../../../api/schema.d';
 
 interface IUserScreenState {
   isSearchVisible: boolean;
@@ -8,9 +8,8 @@ interface IUserScreenState {
 
 export const initialState: IUserScreenState = {
   isSearchVisible: false,
-  searchText: "",
+  searchText: '',
 };
-
 
 export default createSlice({
   name: 'screens/user',
@@ -23,12 +22,10 @@ export default createSlice({
     setSearchVisible: (state: IUserScreenState, action: PayloadAction<boolean>) => {
       state.isSearchVisible = action.payload;
     },
-    
+
     reset: (state: IUserScreenState) => {
       state.isSearchVisible = initialState.isSearchVisible;
       state.searchText = initialState.searchText;
     },
-  }
+  },
 });
-
-

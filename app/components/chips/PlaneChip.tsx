@@ -1,11 +1,10 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import * as React from "react";
-import { Avatar, Chip, Menu } from "react-native-paper";
-import useCurrentDropzone from "../../api/hooks/useCurrentDropzone";
-import { Plane, Permission, Query } from "../../api/schema.d";
-import useRestriction from "../../hooks/useRestriction";
-import { useAppSelector } from "../../state";
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import * as React from 'react';
+import { Chip, Menu } from 'react-native-paper';
+import { Plane, Permission, Query } from '../../api/schema.d';
+import useRestriction from '../../hooks/useRestriction';
+import { useAppSelector } from '../../state';
 
 interface IPlaneChipSelect {
   value?: Plane | null;
@@ -16,11 +15,8 @@ interface IPlaneChipSelect {
   onSelect(dzUser: Plane): void;
 }
 
-
 const QUERY_PLANES = gql`
-  query QueryChipPlanes(
-    $dropzoneId: Int!
-  ) {
+  query QueryChipPlanes($dropzoneId: Int!) {
     planes(dropzoneId: $dropzoneId) {
       id
       name
@@ -35,19 +31,18 @@ const QUERY_PLANES = gql`
 `;
 
 export default function PlaneChip(props: IPlaneChipSelect) {
-  const { small, color, backgroundColor } = props;
+  const { small, color, backgroundColor, value, onSelect } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const { currentDropzoneId } = useAppSelector(state => state.global);
+  const { currentDropzoneId } = useAppSelector((root) => root.global);
 
   const { data } = useQuery<Query>(QUERY_PLANES, {
     variables: {
       dropzoneId: Number(currentDropzoneId),
-    }
+    },
   });
   const allowed = useRestriction(Permission.UpdateLoad);
 
-  return (
-    !allowed ?
+  return !allowed ? (
     <Chip
       mode="outlined"
       icon="airplane-takeoff"
@@ -56,15 +51,16 @@ export default function PlaneChip(props: IPlaneChipSelect) {
         marginHorizontal: 4,
         backgroundColor,
         height: small ? 25 : undefined,
-        alignItems: "center"
+        alignItems: 'center',
       }}
       textStyle={{
         color,
-        fontSize: small ? 12 : undefined
+        fontSize: small ? 12 : undefined,
       }}
     >
-      {props.value?.name || "No plane"}
-    </Chip> : (
+      {value?.name || 'No plane'}
+    </Chip>
+  ) : (
     <Menu
       onDismiss={() => setMenuOpen(false)}
       visible={isMenuOpen}
@@ -73,35 +69,30 @@ export default function PlaneChip(props: IPlaneChipSelect) {
           mode="outlined"
           icon="airplane"
           selectedColor={color}
-          style={{ 
+          style={{
             marginHorizontal: 4,
             backgroundColor,
             height: small ? 25 : undefined,
-            alignItems: "center",
-            borderColor: color ? color : undefined,
-            
+            alignItems: 'center',
+            borderColor: color || undefined,
           }}
-
           textStyle={{ color, fontSize: small ? 12 : undefined }}
           onPress={() => allowed && setMenuOpen(true)}
         >
-          {props.value?.name || "No plane"}
+          {value?.name || 'No plane'}
         </Chip>
-      }>
-      {
-        data?.planes?.map((plane) => 
-          <Menu.Item
-            key={`lm-plane-chip-${plane.id}`}
-            onPress={() => {
-              setMenuOpen(false);
-              props.onSelect(plane as Plane);
-            }}
-            title={
-              plane.name
-            }
-          />
-        )
       }
+    >
+      {data?.planes?.map((plane) => (
+        <Menu.Item
+          key={`lm-plane-chip-${plane.id}`}
+          onPress={() => {
+            setMenuOpen(false);
+            onSelect(plane as Plane);
+          }}
+          title={plane.name}
+        />
+      ))}
     </Menu>
-  ))
+  );
 }

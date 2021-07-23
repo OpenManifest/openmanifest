@@ -1,10 +1,10 @@
-import { useQuery } from "@apollo/client";
-import { startOfDay } from "date-fns";
+import { useQuery } from '@apollo/client';
+import { startOfDay } from 'date-fns';
 import gql from 'graphql-tag';
-import * as React from "react";
-import { useAppDispatch, useAppSelector } from "../../state";
-import { Query } from "../schema";
-import useMutationUpdateUser from "./useMutationUpdateUser";
+import * as React from 'react';
+import { useAppDispatch, useAppSelector } from '../../state';
+import { Query } from '../schema';
+import useMutationUpdateUser from './useMutationUpdateUser';
 
 export const QUERY_DROPZONE = gql`
   query QueryDropzone($dropzoneId: Int!, $earliestTimestamp: Int) {
@@ -13,8 +13,8 @@ export const QUERY_DROPZONE = gql`
       lat
       lng
       name
-      primaryColor,
-      secondaryColor,
+      primaryColor
+      secondaryColor
       planes {
         id
         name
@@ -127,16 +127,15 @@ export const QUERY_DROPZONE = gql`
   }
 `;
 export default function useCurrentDropzone() {
-  const dropzoneId = useAppSelector(state => state.global.currentDropzoneId);
-  const pushToken = useAppSelector(state => state.global.expoPushToken);
-  const dispatch = useAppDispatch();
+  const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
+  const pushToken = useAppSelector((root) => root.global.expoPushToken);
 
   const currentDropzone = useQuery<Query>(QUERY_DROPZONE, {
     variables: {
-      dropzoneId: dropzoneId,
-      earliestTimestamp: startOfDay(new Date()).getTime() / 1000
+      dropzoneId,
+      earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
     },
-    fetchPolicy: "cache-first"
+    fetchPolicy: 'cache-first',
   });
 
   const mutationUpdateUser = useMutationUpdateUser({
@@ -157,15 +156,21 @@ export default function useCurrentDropzone() {
         mutationUpdateUser.mutate({
           id: Number(userId),
           pushToken: localToken,
-        })
+        });
       }
     }
-
-  }, [pushToken, currentDropzone?.data?.dropzone?.currentUser?.user?.pushToken]);
+  }, [
+    pushToken,
+    currentDropzone?.data?.dropzone?.currentUser?.user?.pushToken,
+    currentDropzone?.data?.dropzone?.currentUser?.user?.id,
+    currentDropzone.loading,
+    currentDropzone.called,
+    mutationUpdateUser,
+  ]);
 
   return {
     ...currentDropzone,
     dropzone: currentDropzone?.data?.dropzone,
     currentUser: currentDropzone?.data?.dropzone?.currentUser,
-  }
+  };
 }

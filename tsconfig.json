@@ -16,5 +16,6 @@
   },
   "include": [
     "jest.setup.ts",
+    "app/**/*",
   ]
 }

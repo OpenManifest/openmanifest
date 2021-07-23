@@ -11,6 +11,7 @@ interface IDatepicker {
   onChange(timestamp: number): void;
 }
 export default function DatePicker(props: IDatepicker) {
+  const { disabled, label, timestamp, onChange, color } = props;
   const [open, setOpen] = React.useState(false);
 
   const onDismissSingle = React.useCallback(() => {
@@ -20,26 +21,20 @@ export default function DatePicker(props: IDatepicker) {
   const onConfirmSingle = React.useCallback(
     ({ date }: { date: Date }) => {
       setOpen(false);
-      props.onChange(date.getTime() / 1000);
+      onChange(date.getTime() / 1000);
     },
-    [setOpen, props.onChange]
+    [setOpen, onChange]
   );
 
-  const timestampLabel = props.timestamp ? 
-    format(props.timestamp * 1000, "yyyy/MM/dd") :
-    "No date selected";
-    
+  const timestampLabel = timestamp ? format(timestamp * 1000, 'yyyy/MM/dd') : 'No date selected';
+
   return (
     <>
       <List.Item
-        title={props.label || timestampLabel}
-        disabled={!!props.disabled}
-        description={
-          !props.label
-            ? null
-            : timestampLabel
-        }
-        left={() => <List.Icon color={props.color} icon="calendar" />}
+        title={label || timestampLabel}
+        disabled={!!disabled}
+        description={!label ? null : timestampLabel}
+        left={() => <List.Icon color={color} icon="calendar" />}
         onPress={() => setOpen(true)}
       />
 
@@ -48,9 +43,9 @@ export default function DatePicker(props: IDatepicker) {
           visible={open}
           mode="single"
           onDismiss={onDismissSingle}
-          date={props.timestamp ? new Date(props.timestamp * 1000) : new Date()}
-          onConfirm={(date: any) => onConfirmSingle(date)}
-          label={props.label}
+          date={timestamp ? new Date(timestamp * 1000) : new Date()}
+          onConfirm={(date) => onConfirmSingle(date as { date: Date })}
+          label={label}
         />
       </Modal>
     </>

@@ -1,91 +1,84 @@
-import gql from "graphql-tag";
-import { uniqBy } from "lodash";
-import * as React from "react";
-import { List } from "react-native-paper";
-import { createQuery } from "../../../api/createQuery";
-import useCurrentDropzone from "../../../api/hooks/useCurrentDropzone";
-import { JumpType } from "../../../api/schema.d";
-import { useAppSelector } from "../../../state";
-import ChipSelect from "./ChipSelect";
-import ChipSelectSkeleton from "./ChipSelectSkeleton";
-
+import gql from 'graphql-tag';
+import { uniqBy } from 'lodash';
+import * as React from 'react';
+import { List } from 'react-native-paper';
+import { createQuery } from '../../../api/createQuery';
+import { JumpType } from '../../../api/schema.d';
+import { useAppSelector } from '../../../state';
+import ChipSelect from './ChipSelect';
+import ChipSelectSkeleton from './ChipSelectSkeleton';
 
 interface IJumpTypeSelect {
   value?: JumpType | null;
-  required?: boolean;
   userId?: number | null;
   onLoadingStateChanged?(loading: boolean): void;
   onSelect(jt: JumpType): void;
 }
 
 export const QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES = gql`
-query DropzoneUsersAllowedJumpTypes(
-  $dropzoneId: Int!,
-  $userIds: [Int!]!
-) {
-  dropzone(id: $dropzoneId) {
-    id
+  query DropzoneUsersAllowedJumpTypes($dropzoneId: Int!, $userIds: [Int!]!) {
+    dropzone(id: $dropzoneId) {
+      id
 
-    allowedJumpTypes(userId: $userIds) {
+      allowedJumpTypes(userId: $userIds) {
+        id
+        name
+      }
+    }
+    jumpTypes {
       id
       name
     }
   }
-  jumpTypes {
-    id
-    name
-  }
-}
-
 `;
 
-const useAllowedJumpTypes = createQuery<{ jumpTypes: JumpType[], allowedJumpTypes: JumpType[] }, {
-  dropzoneId: number,
-  userIds: number[],
- }>(QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES, {
-   getPayload: (query) => ({
-     allowedJumpTypes: query?.dropzone?.allowedJumpTypes || [],
-     ticketTypes: query?.dropzone?.ticketTypes || [],
-     jumpTypes: query?.jumpTypes || [],
-   })
- });
+const useAllowedJumpTypes = createQuery<
+  { jumpTypes: JumpType[]; allowedJumpTypes: JumpType[] },
+  {
+    dropzoneId: number;
+    userIds: number[];
+  }
+>(QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES, {
+  getPayload: (query) => ({
+    allowedJumpTypes: query?.dropzone?.allowedJumpTypes || [],
+    ticketTypes: query?.dropzone?.ticketTypes || [],
+    jumpTypes: query?.jumpTypes || [],
+  }),
+});
 
 export default function JumpTypeChipSelect(props: IJumpTypeSelect) {
-  const { onLoadingStateChanged, userId } = props;
-  const { currentDropzoneId } = useAppSelector(state => state.global);
+  const { onLoadingStateChanged, userId, value, onSelect } = props;
+  const { currentDropzoneId } = useAppSelector((root) => root.global);
   const { data, loading } = useAllowedJumpTypes({
     variables: {
-      userIds: [Number(props.userId) || null].filter(Boolean) as number[],
+      userIds: [Number(userId) || null].filter(Boolean) as number[],
       dropzoneId: Number(currentDropzoneId),
     },
-    onError: console.error
+    onError: console.error,
   });
 
   React.useEffect(() => {
     onLoadingStateChanged?.(loading);
-  }, [loading]);
+  }, [loading, onLoadingStateChanged]);
 
-  return (
-    loading
-    ? <ChipSelectSkeleton /> 
-    : <>
-      <List.Subheader>
-        Jump type
-      </List.Subheader>
+  return loading ? (
+    <ChipSelectSkeleton />
+  ) : (
+    <>
+      <List.Subheader>Jump type</List.Subheader>
       <ChipSelect
         autoSelectFirst
-        items={uniqBy([
-            ...(data?.allowedJumpTypes || []),
-            ...(data?.jumpTypes || [])
-          ], ({ id }) => id) || []
+        items={
+          uniqBy([...(data?.allowedJumpTypes || []), ...(data?.jumpTypes || [])], ({ id }) => id) ||
+          []
         }
-        selected={[props.value].filter(Boolean)}
-        renderItemLabel={(jumpType) => jumpType?.name}
-        isDisabled={(jumpType) => !data?.allowedJumpTypes?.map(({ id }) => id).includes(jumpType!.id)}
-        onChangeSelected={([first]) =>
-          first ? props.onSelect(first) : null
+        selected={[value].filter(Boolean) as JumpType[]}
+        renderItemLabel={(jumpType) => jumpType?.name || 'Unknown'}
+        isDisabled={(jumpType) =>
+          !data?.allowedJumpTypes?.map(({ id }) => id).includes(jumpType?.id)
         }
+        onChangeSelected={([first]) => (first ? onSelect(first) : null)}
       />
     </>
-  )
+  );
 }

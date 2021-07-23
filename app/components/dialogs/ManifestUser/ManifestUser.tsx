@@ -1,10 +1,10 @@
-import { gql, useMutation } from "@apollo/client";
-import * as React from "react";
-import { StyleSheet } from "react-native";
-import { Mutation } from "../../../api/schema.d";
-import { actions, useAppDispatch, useAppSelector } from "../../../state";
-import ManifestForm from "../../forms/manifest/ManifestForm";
-import DialogOrSheet from "../../layout/DialogOrSheet";
+import { gql, useMutation } from '@apollo/client';
+import * as React from 'react';
+import { Mutation } from '../../../api/schema.d';
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
+import ManifestForm from '../../forms/manifest/ManifestForm';
+import DialogOrSheet from '../../layout/DialogOrSheet';
+
 interface IManifestUserDialog {
   open?: boolean;
   onClose(): void;
@@ -119,10 +119,9 @@ const MUTATION_CREATE_SLOT = gql`
 `;
 
 export default function ManifestUserDialog(props: IManifestUserDialog) {
-  const { open } = props;
+  const { open, onSuccess } = props;
   const dispatch = useAppDispatch();
-  const state = useAppSelector(state => state.forms.manifest);
-  const globalState = useAppSelector(state => state.global);
+  const state = useAppSelector((root) => root.forms.manifest);
   const [mutationCreateSlot, mutationData] = useMutation<Mutation>(MUTATION_CREATE_SLOT);
 
   const validate = React.useCallback(() => {
@@ -130,25 +129,28 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     if (!state.fields.jumpType.value?.id) {
       hasErrors = true;
       dispatch(
-        actions.forms.manifest.setFieldError(["jumpType", "You must specify the type of jump"])
+        actions.forms.manifest.setFieldError(['jumpType', 'You must specify the type of jump'])
       );
     }
 
     if (!state.fields.ticketType.value?.id) {
       hasErrors = true;
       dispatch(
-        actions.forms.manifest.setFieldError(["ticketType", "You must select a ticket type to manifest"])
+        actions.forms.manifest.setFieldError([
+          'ticketType',
+          'You must select a ticket type to manifest',
+        ])
       );
     }
 
     return !hasErrors;
-  }, [JSON.stringify(state.fields)]);
-  const onManifest = React.useCallback(async () => {
+  }, [dispatch, state.fields.jumpType.value?.id, state.fields.ticketType.value?.id]);
 
-    if (!validate()) {
-      return;
-    }
+  const onManifest = React.useCallback(async () => {
     try {
+      if (!validate()) {
+        return;
+      }
       const result = await mutationCreateSlot({
         variables: {
           jumpTypeId: Number(state.fields.jumpType.value?.id),
@@ -158,48 +160,75 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
           ticketTypeId: Number(state.fields.ticketType?.value?.id),
           dropzoneUserId: Number(state.fields.dropzoneUser?.value?.id),
           exitWeight: state.fields.exitWeight.value,
-          ...!state.fields.ticketType.value?.isTandem
+          ...(!state.fields.ticketType.value?.isTandem
             ? {}
             : {
                 passengerName: state.fields.passengerName?.value,
                 passengerExitWeight: state.fields.passengerExitWeight?.value,
-              }
-        }
+              }),
+        },
       });
 
-      console.log(result?.data?.createSlot); 
       result.data?.createSlot?.fieldErrors?.map(({ field, message }) => {
         switch (field) {
-          case "jump_type":
-            return dispatch(actions.forms.manifest.setFieldError(["jumpType", message]));
-          case "load":
-            return dispatch(actions.forms.manifest.setFieldError(["load", message]));
-          case "credits":
-          case "extras":
-          case "extra_ids":
-            return dispatch(actions.forms.manifest.setFieldError(["extras", message]));
-          case "ticket_type":
-            return dispatch(actions.forms.manifest.setFieldError(["ticketType", message]));
-          case "rig":
-            return dispatch(actions.forms.manifest.setFieldError(["rig", message]));
-          case "dropzone_user":
-            return dispatch(actions.forms.manifest.setFieldError(["dropzoneUser", message]));
-          case "exit_weight":
-            return dispatch(actions.forms.manifest.setFieldError(["exitWeight", message]));
+          case 'jump_type':
+            return dispatch(actions.forms.manifest.setFieldError(['jumpType', message]));
+          case 'load':
+            return dispatch(actions.forms.manifest.setFieldError(['load', message]));
+          case 'credits':
+          case 'extras':
+          case 'extra_ids':
+            return dispatch(actions.forms.manifest.setFieldError(['extras', message]));
+          case 'ticket_type':
+            return dispatch(actions.forms.manifest.setFieldError(['ticketType', message]));
+          case 'rig':
+            return dispatch(actions.forms.manifest.setFieldError(['rig', message]));
+          case 'dropzone_user':
+            return dispatch(actions.forms.manifest.setFieldError(['dropzoneUser', message]));
+          case 'exit_weight':
+            return dispatch(actions.forms.manifest.setFieldError(['exitWeight', message]));
+          default:
+            return null;
         }
       });
+
       if (result?.data?.createSlot?.errors?.length) {
-        return dispatch(actions.notifications.showSnackbar({ message: result?.data?.createSlot?.errors[0], variant: "error" }));
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: result?.data?.createSlot?.errors[0],
+            variant: 'error',
+          })
+        );
+        return;
       }
       if (!result.data?.createSlot?.fieldErrors?.length) {
-        props.onSuccess();
+        onSuccess();
       }
-
-    } catch(error) {
-      dispatch(actions.notifications.showSnackbar({ message: error.message, variant: "error" }));
-    } 
-  }, [JSON.stringify(state.fields), mutationCreateSlot, props.onSuccess])
-  
+      return;
+    } catch (error) {
+      dispatch(
+        actions.notifications.showSnackbar({
+          message: error.message,
+          variant: 'error',
+        })
+      );
+    }
+  }, [
+    validate,
+    mutationCreateSlot,
+    state.fields.jumpType.value?.id,
+    state.fields.extras?.value,
+    state.fields.load.value?.id,
+    state.fields.rig.value?.id,
+    state.fields.ticketType.value?.id,
+    state.fields.ticketType.value?.isTandem,
+    state.fields.dropzoneUser?.value?.id,
+    state.fields.exitWeight.value,
+    state.fields.passengerName?.value,
+    state.fields.passengerExitWeight?.value,
+    dispatch,
+    onSuccess,
+  ]);
 
   return (
     <DialogOrSheet
@@ -212,8 +241,8 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       buttonLabel="Manifest"
       loading={mutationData.loading}
       open={open}
-      >
+    >
       <ManifestForm />
     </DialogOrSheet>
-  )
+  );
 }

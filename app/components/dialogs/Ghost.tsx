@@ -1,8 +1,8 @@
-import * as React from "react";
+import * as React from 'react';
 import GhostForm from '../forms/ghost/GhostForm';
-import { actions, useAppDispatch, useAppSelector } from "../../state";
-import DialogOrSheet from "../layout/DialogOrSheet";
-import useMutationCreateGhost from "../../api/hooks/useMutationCreateGhost";
+import { actions, useAppDispatch, useAppSelector } from '../../state';
+import DialogOrSheet from '../layout/DialogOrSheet';
+import useMutationCreateGhost from '../../api/hooks/useMutationCreateGhost';
 
 interface ICreateGhostDialog {
   open?: boolean;
@@ -11,22 +11,19 @@ interface ICreateGhostDialog {
 }
 export default function CreateGhostDialog(props: ICreateGhostDialog) {
   const { open, onSuccess } = props;
-  const state = useAppSelector(state => state.forms.ghost);
-  const globalState = useAppSelector(state => state.global);
+  const state = useAppSelector((root) => root.forms.ghost);
+  const globalState = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
 
-
   const mutationCreateGhost = useMutationCreateGhost({
-    onSuccess: (payload) => {
-      
-    },
+    onSuccess: (payload) => {},
     onFieldError: (field, value) => {
       dispatch(actions.forms.ghost.setFieldError([field as any, value]));
       console.log(field, value);
     },
-      
+
     onError: (error) =>
-      dispatch(actions.notifications.showSnackbar({ message: error, variant: "error" })),
+      dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' })),
   });
 
   const onSave = React.useCallback(async () => {
@@ -44,17 +41,21 @@ export default function CreateGhostDialog(props: ICreateGhostDialog) {
 
       onSuccess();
       dispatch(
-        actions.notifications.showSnackbar({ message: `Profile has been updated`, variant: "success" })
+        actions.notifications.showSnackbar({
+          message: `Profile has been updated`,
+          variant: 'success',
+        })
       );
       dispatch(actions.forms.ghost.reset());
     } catch (error) {
       dispatch(
-        actions.notifications.showSnackbar({ message: error.message, variant: "error" })
+        actions.notifications.showSnackbar({
+          message: error.message,
+          variant: 'error',
+        })
       );
     }
-    
-  }, [JSON.stringify(state.fields), dispatch, mutationCreateGhost, open, onSuccess]);
-
+  }, [state.fields, mutationCreateGhost, globalState.currentDropzoneId, onSuccess, dispatch]);
 
   return (
     <DialogOrSheet
@@ -70,5 +71,5 @@ export default function CreateGhostDialog(props: ICreateGhostDialog) {
     >
       <GhostForm />
     </DialogOrSheet>
-  )
+  );
 }

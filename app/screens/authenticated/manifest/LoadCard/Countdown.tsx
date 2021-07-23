@@ -1,13 +1,29 @@
-import * as React from "react";
-import { Animated, Platform } from "react-native";
-import diff from "date-fns/differenceInSeconds";
-import secondsToMinutes from "date-fns/secondsToMinutes";
-import isAfter from "date-fns/isAfter";
+import * as React from 'react';
+import { Animated, Platform } from 'react-native';
+import diff from 'date-fns/differenceInSeconds';
+import secondsToMinutes from 'date-fns/secondsToMinutes';
+import isAfter from 'date-fns/isAfter';
 
 const CountdownCircleTimer = Platform.select({
-  ios: React.lazy(() => import('react-native-countdown-circle-timer').then(({ CountdownCircleTimer }) => ({ default: CountdownCircleTimer }))),
-  android: React.lazy(() => import('react-native-countdown-circle-timer').then(({ CountdownCircleTimer }) => ({ default: CountdownCircleTimer }))),
-  web: React.lazy(() => import('react-countdown-circle-timer').then(({ CountdownCircleTimer }) => ({ default: CountdownCircleTimer }))),
+  ios: React.lazy(() =>
+    import('react-native-countdown-circle-timer').then(
+      ({ CountdownCircleTimer: defaultExport }) => ({
+        default: defaultExport,
+      })
+    )
+  ),
+  android: React.lazy(() =>
+    import('react-native-countdown-circle-timer').then(
+      ({ CountdownCircleTimer: defaultExport }) => ({
+        default: defaultExport,
+      })
+    )
+  ),
+  web: React.lazy(() =>
+    import('react-countdown-circle-timer').then(({ CountdownCircleTimer: defaultExport }) => ({
+      default: defaultExport,
+    }))
+  ),
 });
 
 interface ICountdownProps {
@@ -15,7 +31,6 @@ interface ICountdownProps {
   size?: number;
 }
 export default function Countdown(props: ICountdownProps) {
-
   const { end, size } = props;
   const difference = diff(end, new Date());
   const fractionFiveMinutes = 5 / difference;
@@ -24,9 +39,7 @@ export default function Countdown(props: ICountdownProps) {
   return (
     <CountdownCircleTimer
       isPlaying={isAfter(end, new Date())}
-      duration={
-        difference || 1
-      }
+      duration={difference || 1}
       colors={[
         ['#004777', fractionTwentyMinutes],
         ['#F7B801', fractionTenMinutes],
@@ -36,22 +49,20 @@ export default function Countdown(props: ICountdownProps) {
       strokeWidth={2}
     >
       {
-      // @ts-ignore
-      ({ remainingTime, animatedColor }) => {
-        const seconds = Math.round(remainingTime % 60);
-        const minutes = secondsToMinutes(remainingTime);
-        const formattedSeconds = seconds < 10
-          ? `0${seconds}`
-          : seconds;
-        const formattedMinutes = minutes < 10
-          ? `0${minutes}`
-          : minutes;
-        return (
-          <Animated.Text style={{ color: animatedColor, fontSize: 16 }}>
-            {formattedMinutes}:{formattedSeconds}
-          </Animated.Text>
-        );
-      }}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        ({ remainingTime, animatedColor }) => {
+          const seconds = Math.round(remainingTime % 60);
+          const minutes = secondsToMinutes(remainingTime);
+          const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+          const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+          return (
+            <Animated.Text style={{ color: animatedColor, fontSize: 16 }}>
+              {formattedMinutes}:{formattedSeconds}
+            </Animated.Text>
+          );
+        }
+      }
     </CountdownCircleTimer>
   );
 }

@@ -1,33 +1,44 @@
-import * as React from "react";
-import { View, ViewProps, ViewStyle } from "react-native";
-import MapView, { MapViewProps, PROVIDER_GOOGLE, Region } from 'react-native-maps';
-import { calculateLatLngDelta } from "../../utils/calculateLatLngDelta";
-
+import * as React from 'react';
+import { View, ViewStyle } from 'react-native';
+import MapView, { Region } from 'react-native-maps';
+import { calculateLatLngDelta } from '../../utils/calculateLatLngDelta';
 
 interface IMapProps {
   width: number;
-  height: number,
+  height: number;
   position?: {
-    x: number,
-    y: number,
-  }
-  coords: {
-    lat: number,
-    lng: number
-  },
-  shape?: "round" | "square";
-  
+    x: number;
+    y: number;
+  };
+  coords?: {
+    lat: number;
+    lng: number;
+  };
+  shape?: 'round' | 'square';
+
   children?: React.ReactNode;
   interactive?: boolean;
-  center?: { lat: number, lng: number };
+  center?: { lat: number; lng: number };
   mapStyle?: ViewStyle;
   containerStyle?: ViewStyle;
   onChange?(region: Region): void;
   onDragStart?(): void;
-  onDragEnd?(coords: { lat: number, lng: number }): void;
+  onDragEnd?(coords: { lat: number; lng: number }): void;
 }
 export default function Map(props: IMapProps) {
-  const { width, height, position, coords, center, shape, interactive, onChange, onDragStart, onDragEnd, children } = props;
+  const {
+    width,
+    height,
+    position,
+    coords,
+    center,
+    shape,
+    interactive,
+    onChange,
+    onDragStart,
+    onDragEnd,
+    children,
+  } = props;
   const { containerStyle, mapStyle } = props;
   const map = React.useRef<MapView>();
   const region = coords
@@ -42,34 +53,38 @@ export default function Map(props: IMapProps) {
   const [isDragging, setDragging] = React.useState(false);
 
   React.useEffect(() => {
-    if (center?.lat && center?.lng) {
-      map.current.animateCamera({ center: { latitude: center.lat, longitude: center.lng }});
+    if (center?.lat && center?.lng && map.current) {
+      map.current?.animateCamera({
+        center: { latitude: center.lat, longitude: center.lng },
+      });
     }
-  }, [JSON.stringify(center)])
+  }, [center?.lat, center?.lng]);
   return (
     <View
       style={{
         width,
         height,
-        borderRadius: shape === "round"
-          ?  width / 2
-          : undefined,
+        borderRadius: shape === 'round' ? width / 2 : undefined,
         overflow: 'hidden',
-        ...position?.y && position?.x ? {
-          position: 'absolute',
-          top: position.y,
-          left: position.x,
-        } : {},
+        ...(position?.y && position?.x
+          ? {
+              position: 'absolute',
+              top: position.y,
+              left: position.x,
+            }
+          : {}),
         ...(containerStyle || {}),
       }}
     >
       <MapView
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         ref={map}
-        //provider={PROVIDER_GOOGLE}
+        // provider={PROVIDER_GOOGLE}
         style={{
           width: '100%',
           height: '100%',
-          ...(mapStyle || {})
+          ...(mapStyle || {}),
         }}
         initialRegion={region}
         region={region}
@@ -84,12 +99,12 @@ export default function Map(props: IMapProps) {
           onChange?.(newRegion);
           onDragEnd?.({ lat: newRegion.latitude, lng: newRegion.longitude });
         }}
-        focusable={interactive ? true : false}
-        pointerEvents={interactive ? undefined : "none"}
+        focusable={!!interactive}
+        pointerEvents={interactive ? undefined : 'none'}
         mapType="satellite"
       >
         {children}
       </MapView>
     </View>
-  )
+  );
 }

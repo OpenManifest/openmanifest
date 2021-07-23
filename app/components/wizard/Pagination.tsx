@@ -1,8 +1,8 @@
-import * as React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
-import { Avatar } from "react-native-paper";
-import { PaginationProps } from "react-native-swiper-flatlist";
-import { successColor } from "../../constants/Colors";
+import * as React from 'react';
+import { View, StyleSheet, Dimensions } from 'react-native';
+import { Avatar } from 'react-native-paper';
+import { PaginationProps } from 'react-native-swiper-flatlist';
+import { successColor } from '../../constants/Colors';
 
 interface IWizardPagination extends PaginationProps {
   icons?: string[];
@@ -12,67 +12,62 @@ export default function WizardPagination(props: IWizardPagination) {
 
   const { width } = Dimensions.get('window');
   const screenWidth = width > 500 ? 500 : width;
-  
-  const bridgeLength = (screenWidth - (48 * 2) - (size * 30)) / size;
+
+  const bridgeLength = (screenWidth - 48 * 2 - size * 30) / size;
 
   return (
     <View style={styles.pagination}>
-      {
-        Array.from({ length: size }).map((_, index) => {
-          const hasCustomIcon = icons && icons.length > index;
-          const isPast = index < paginationIndex;
-          const isCurrent = index == paginationIndex;
-          let defaultIcon = isPast
-            ? "check" : "";
-          defaultIcon = isCurrent ? "pencil" : defaultIcon;
+      {Array.from({ length: size }).map((_, index) => {
+        const hasCustomIcon = icons && icons.length > index;
+        const isPast = index < (paginationIndex || 0);
+        const isCurrent = index === paginationIndex;
+        let defaultIcon = isPast ? 'check' : '';
+        defaultIcon = isCurrent ? 'pencil' : defaultIcon;
 
-          return (
-            <React.Fragment key={index}>
-              <Avatar.Icon
-                icon={
-                  hasCustomIcon
-                    ? icons[index]
-                    : defaultIcon
-                }
-                size={30}
+        return (
+          // eslint-disable-next-line react/no-array-index-key
+          <React.Fragment key={index}>
+            <Avatar.Icon
+              icon={hasCustomIcon && icons ? icons[index] : defaultIcon}
+              size={30}
+              style={[styles.icon, (paginationIndex || 0) > index ? styles.iconDone : undefined]}
+            />
+            {size - 1 > index ? (
+              <View
                 style={[
-                  styles.icon,
-                  paginationIndex > index ? styles.iconDone : undefined
+                  styles.bridge,
+                  { width: bridgeLength },
+                  (paginationIndex || 0) > index ? styles.bridgeDone : undefined,
                 ]}
               />
-              {
-                size - 1 > index
-                  ? <View style={[styles.bridge, { width: bridgeLength }, paginationIndex > index ? styles.bridgeDone : undefined]} />
-                  : null
-              }
-            </React.Fragment>
-          );
-        })
-      }
+            ) : null}
+          </React.Fragment>
+        );
+      })}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   pagination: {
-    flexDirection: "row",
-    position: "absolute",
+    flexDirection: 'row',
+    position: 'absolute',
     top: 100,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   bridge: {
     height: 10,
     marginTop: 10,
     marginLeft: -2,
     width: 50,
-    backgroundColor: "white",
+    backgroundColor: 'white',
   },
   bridgeDone: {
     backgroundColor: successColor,
   },
   icon: {
-    backgroundColor: "white",
-    marginLeft: -1
+    backgroundColor: 'white',
+    marginLeft: -1,
   },
   iconDone: {
     backgroundColor: successColor,

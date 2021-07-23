@@ -1,10 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { FieldItem } from "../rig_inspection_template/slice";
-
-
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { FieldItem } from '../rig_inspection_template/slice';
 
 interface IRigInspectionEditState {
-  fields: FieldItem[],
+  fields: FieldItem[];
   open: boolean;
   ok: boolean;
 }
@@ -12,37 +10,33 @@ interface IRigInspectionEditState {
 export const initialState: IRigInspectionEditState = {
   fields: [],
   open: false,
-  ok: false
+  ok: false,
 };
-
 
 export default createSlice({
   name: 'forms/rigInspection',
   initialState,
   reducers: {
-
     setOk: (state: IRigInspectionEditState, action: PayloadAction<boolean>) => {
       state.ok = action.payload;
     },
     setField: (state: IRigInspectionEditState, action: PayloadAction<[number, FieldItem]>) => {
       const [index, item] = action.payload;
-      state.fields = state.fields.map((field, idx) => idx === index ? item : field);
+      state.fields = state.fields.map((field, idx) => (idx === index ? item : field));
     },
 
     setFields: (state: IRigInspectionEditState, action: PayloadAction<string>) => {
       try {
-        state.fields = JSON.parse(action.payload)
+        state.fields = JSON.parse(action.payload);
       } catch (error) {
         console.log(action.payload);
-        console.error("Failed to read rig inspection template", error.message, action.payload);
+        console.error('Failed to read rig inspection template', error.message, action.payload);
       }
     },
-    
+
     reset: (state: IRigInspectionEditState) => {
       state.fields = initialState.fields;
       state.ok = initialState.ok;
     },
-  }
+  },
 });
-
-

@@ -1,16 +1,15 @@
-
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Snackbar } from 'react-native-paper';
 import { useAppSelector, useAppDispatch } from '../../state';
 
-import slice from "./slice";
+import slice from './slice';
 import usePalette from '../../hooks/usePalette';
+
 const { actions } = slice;
 
 const MyComponent = () => {
-
-  const state = useAppSelector(state => state.notifications);
+  const state = useAppSelector((root) => root.notifications);
   const dispatch = useAppDispatch();
   const palette = usePalette();
 
@@ -23,22 +22,18 @@ const MyComponent = () => {
     warning: { backgroundColor: palette.warning },
   };
 
-
   return (
     <Snackbar
       testID="snackbar-message"
       visible={!!notification}
-      onDismiss={() =>
-        dispatch(actions.hideSnackbar())
-      }
+      onDismiss={() => dispatch(actions.hideSnackbar())}
       duration={3000}
       action={notification?.action}
       style={!!notification?.variant && variantStyle[notification.variant]}
     >
-      { notification?.message }
+      {notification?.message}
     </Snackbar>
   );
 };
-
 
 export default MyComponent;

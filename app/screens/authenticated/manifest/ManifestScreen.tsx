@@ -2,7 +2,7 @@ import { useIsFocused, useNavigation } from '@react-navigation/core';
 import * as React from 'react';
 import { Dimensions, RefreshControl, StyleSheet, useWindowDimensions } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { FAB, IconButton, Menu, ProgressBar, ToggleButton } from 'react-native-paper';
+import { FAB, IconButton, Menu, ProgressBar } from 'react-native-paper';
 import ManifestUserSheet from '../../../components/dialogs/ManifestUser/ManifestUser';
 import ManifestGroupSheet from '../../../components/dialogs/ManifestGroup/ManifestGroup';
 
@@ -19,13 +19,14 @@ import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import WeatherConditions from './Weather/WeatherBoard';
 import LoadingCardLarge from './LoadCard/Large/Loading';
 import LoadingCardSmall from './LoadCard/Small/Loading';
+
 export default function ManifestScreen() {
-  const state = useAppSelector(state => state.global);
-  const forms = useAppSelector(state => state.forms);
-  const manifestScreen = useAppSelector(state => state.screens.manifest);
+  const state = useAppSelector((root) => root.global);
+  const forms = useAppSelector((root) => root.forms);
+  const manifestScreen = useAppSelector((root) => root.screens.manifest);
   const dispatch = useAppDispatch();
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
-  const { dropzone, data, currentUser, loading, refetch, fetchMore, error } = useCurrentDropzone();
+  const { dropzone, currentUser, loading, refetch, fetchMore } = useCurrentDropzone();
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -34,7 +35,7 @@ export default function ManifestScreen() {
     if (isFocused) {
       refetch();
     }
-  }, [isFocused]);
+  }, [isFocused, refetch]);
 
   const hasPlanes = !!dropzone?.planes?.length;
   const hasTicketTypes = !!dropzone?.ticketTypes?.length;
@@ -50,83 +51,84 @@ export default function ManifestScreen() {
       dispatch(actions.global.setPrimaryColor(dropzone.secondaryColor));
     }
   }, [
+    dispatch,
     dropzone?.primaryColor,
-    dropzone?.secondaryColor
-  ])
+    dropzone?.secondaryColor,
+    state.theme?.colors?.accent,
+    state.theme?.colors?.primary,
+  ]);
 
   const canCreateLoad = useRestriction(Permission.CreateLoad);
 
-  const onManifest = React.useCallback((load: Load) => {
-    
-    if (!currentUser?.hasLicense) {
-      return dispatch(
-        actions.notifications.showSnackbar({
-          message: "You need to select a license on your user profile",
-          variant: "warning"
-        })
-      );
-    }
+  const onManifest = React.useCallback(
+    (load: Load) => {
+      if (!currentUser?.hasLicense) {
+        return dispatch(
+          actions.notifications.showSnackbar({
+            message: 'You need to select a license on your user profile',
+            variant: 'warning',
+          })
+        );
+      }
 
-    if (!currentUser?.hasMembership) {
-      return dispatch(
-        actions.notifications.showSnackbar({
-          message: "Your membership is out of date",
-          variant: "warning"
-        })
-      );
-    }
+      if (!currentUser?.hasMembership) {
+        return dispatch(
+          actions.notifications.showSnackbar({
+            message: 'Your membership is out of date',
+            variant: 'warning',
+          })
+        );
+      }
 
-    if (!currentUser?.hasRigInspection) {
-      return dispatch(
-        actions.notifications.showSnackbar({
-          message: "Your rig needs to be inspected before manifesting",
-          variant: "warning"
-        })
-      );
-    }
+      if (!currentUser?.hasRigInspection) {
+        return dispatch(
+          actions.notifications.showSnackbar({
+            message: 'Your rig needs to be inspected before manifesting',
+            variant: 'warning',
+          })
+        );
+      }
 
-    if (!currentUser?.hasReserveInDate) {
-      return dispatch(
-        actions.notifications.showSnackbar({
-          message: "Your rig needs a reserve repack",
-          variant: "warning"
-        })
-      );
-    }
+      if (!currentUser?.hasReserveInDate) {
+        return dispatch(
+          actions.notifications.showSnackbar({
+            message: 'Your rig needs a reserve repack',
+            variant: 'warning',
+          })
+        );
+      }
 
-    if (!currentUser?.hasExitWeight) {
-      return dispatch(
-        actions.notifications.showSnackbar({
-          message: "Update your exit weight on your profile before manifesting",
-          variant: "warning"
-        })
-      );
-    }
+      if (!currentUser?.hasExitWeight) {
+        return dispatch(
+          actions.notifications.showSnackbar({
+            message: 'Update your exit weight on your profile before manifesting',
+            variant: 'warning',
+          })
+        );
+      }
 
-    if (!currentUser?.hasCredits) {
-      return dispatch(
-        actions.notifications.showSnackbar({
-          message: "You have no credits on your account",
-          variant: "warning"
-        })
-      );
-    }
+      if (!currentUser?.hasCredits) {
+        return dispatch(
+          actions.notifications.showSnackbar({
+            message: 'You have no credits on your account',
+            variant: 'warning',
+          })
+        );
+      }
 
-    dispatch(actions.forms.manifest.setOpen(true));
-    dispatch(
-      actions.forms.manifest.setField(["dropzoneUser", currentUser])
-    );
-    dispatch(
-      actions.forms.manifest.setField(["load", load])
-    );
-  }, [JSON.stringify(dropzone?.currentUser)]);
+      dispatch(actions.forms.manifest.setOpen(true));
+      dispatch(actions.forms.manifest.setField(['dropzoneUser', currentUser]));
+      dispatch(actions.forms.manifest.setField(['load', load]));
+      return null;
+    },
+    [currentUser, dispatch]
+  );
 
-
-  const { width } = useWindowDimensions(); 
+  const { width } = useWindowDimensions();
 
   const cardWidth = (manifestScreen.display === 'cards' ? 335 : 550) + 32;
   const numColumns = Math.floor(width / cardWidth) || 1;
-  const contentWidth = (cardWidth * numColumns);
+  const contentWidth = cardWidth * numColumns;
 
   const loads = dropzone?.loads?.edges || [];
   const initialLoading = !loads?.length && loading;
@@ -134,86 +136,90 @@ export default function ManifestScreen() {
   return (
     <>
       <ProgressBar visible={loading} indeterminate color={state.theme.colors.accent} />
-      
+
       <View style={styles.container}>
-        {
-          !initialLoading && !isSetupComplete
-              ? <GetStarted {...{ hasPlanes, hasTicketTypes, isPublic }}/>
-              : <View style={{ width: "100%", flex: 1,  height: Dimensions.get("window").height }}>
-                  <FlatList
-                    ListHeaderComponent={() => <WeatherConditions />}
-                    ListEmptyComponent={() =>
-                      <NoResults
-                        title="No loads so far today"
-                        subtitle="How's the weather?"
-                      />
-                    }
-                    style={{
-                      flex: 1,
-                      paddingTop: 35,
-                      height: Dimensions.get("window").height,
-                    }}
-                    testID="loads"
-                    keyExtractor={({ item }, idx) => `load-small-${item?.node?.id || idx}`}
-                    key={`loads-columns-${numColumns}`}
-                    contentContainerStyle={{
-                      width: contentWidth,
-                      alignSelf: 'center',
-                      paddingBottom: 100
-                    }}
-                    numColumns={numColumns}
-                    data={initialLoading ? [1, 1, 1, 1, 1] : loads}
-                    refreshControl={
-                      <RefreshControl refreshing={loading} onRefresh={() => fetchMore({ })} />
-                    }
-                    renderItem={({ item: edge, index }) => {
-                      // 1 means loading, because null and undefined
-                      // get filtered out
-                      if (edge === 1) {
-                        return manifestScreen.display === "list"
-                          ? <LoadingCardLarge key={`loading-card-${index}`} />
-                          : <LoadingCardSmall key={`loading-card-${index}`} />
+        {!initialLoading && !isSetupComplete ? (
+          <GetStarted {...{ hasPlanes, hasTicketTypes, isPublic }} />
+        ) : (
+          <View
+            style={{
+              width: '100%',
+              flex: 1,
+              height: Dimensions.get('window').height,
+            }}
+          >
+            <FlatList
+              ListHeaderComponent={() => <WeatherConditions />}
+              ListEmptyComponent={() => (
+                <NoResults title="No loads so far today" subtitle="How's the weather?" />
+              )}
+              style={{
+                flex: 1,
+                paddingTop: 35,
+                height: Dimensions.get('window').height,
+              }}
+              testID="loads"
+              keyExtractor={({ item }, idx) => `load-small-${item?.node?.id || idx}`}
+              key={`loads-columns-${numColumns}`}
+              contentContainerStyle={{
+                width: contentWidth,
+                alignSelf: 'center',
+                paddingBottom: 100,
+              }}
+              numColumns={numColumns}
+              data={initialLoading ? [1, 1, 1, 1, 1] : loads}
+              refreshControl={
+                <RefreshControl refreshing={loading} onRefresh={() => fetchMore({})} />
+              }
+              renderItem={({ item: edge, index }) => {
+                // 1 means loading, because null and undefined
+                // get filtered out
+                if (edge === 1) {
+                  return manifestScreen.display === 'list' ? (
+                    <LoadingCardLarge key={`loading-card-${index}`} />
+                  ) : (
+                    <LoadingCardSmall key={`loading-card-${index}`} />
+                  );
+                }
+
+                return manifestScreen.display === 'list' ? (
+                  <LoadCardLarge
+                    controlsVisible={false}
+                    key={`load-${edge.node.id}`}
+                    load={edge.node}
+                    onSlotPress={(slot) => {
+                      if (edge?.node) {
+                        dispatch(actions.forms.manifest.setOpen(slot));
+                        dispatch(actions.forms.manifest.setField(['load', edge.node]));
                       }
-                      
-                      
-                      return manifestScreen.display === "list" ? (
-                        <LoadCardLarge
-                          controlsVisible={false}
-                          key={`load-${edge.node.id}`}
-                          load={edge.node}
-                          onSlotPress={(slot) => {
-                            dispatch(actions.forms.manifest.setOpen(slot));
-                            dispatch(
-                              actions.forms.manifest.setField(["load", edge.node!])
-                            );
-                          }}
-                          onSlotGroupPress={(slots) => {
-                            dispatch(actions.forms.manifestGroup.reset());
-                            dispatch(actions.forms.manifestGroup.setFromSlots(slots));
-                            dispatch(actions.forms.manifestGroup.setField(["load", edge.node!]));
-                            navigation.navigate("ManifestGroupScreen");
-                          }}
-                          onManifest={() => {
-                            
-                            onManifest(edge.node!)
-                          }}
-                          onManifestGroup={() => {
-                            dispatch(actions.forms.manifestGroup.reset());
-                            dispatch(actions.forms.manifestGroup.setOpen(true));
-                            dispatch(actions.forms.manifestGroup.setField(["load", edge.node!]));
-                          }}
-                        />) : (
-                          <LoadCardSmall
-                            key={`load-${edge.node.id}`}
-                            load={edge.node}
-                            onPress={() => navigation.navigate("LoadScreen", { load: edge.node })}
-                          />
-                        );
+                    }}
+                    onSlotGroupPress={(slots) => {
+                      dispatch(actions.forms.manifestGroup.reset());
+                      dispatch(actions.forms.manifestGroup.setFromSlots(slots));
+                      dispatch(actions.forms.manifestGroup.setField(['load', edge.node]));
+                      navigation.navigate('ManifestGroupScreen');
+                    }}
+                    onManifest={() => {
+                      onManifest(edge.node);
+                    }}
+                    onManifestGroup={() => {
+                      dispatch(actions.forms.manifestGroup.reset());
+                      dispatch(actions.forms.manifestGroup.setOpen(true));
+                      dispatch(actions.forms.manifestGroup.setField(['load', edge.node]));
                     }}
                   />
-              </View>
-        }
-        { canCreateLoad && isSetupComplete && (
+                ) : (
+                  <LoadCardSmall
+                    key={`load-${edge.node.id}`}
+                    load={edge.node}
+                    onPress={() => navigation.navigate('LoadScreen', { load: edge.node })}
+                  />
+                );
+              }}
+            />
+          </View>
+        )}
+        {canCreateLoad && isSetupComplete && (
           <FAB
             style={styles.fab}
             small
@@ -225,15 +231,15 @@ export default function ManifestScreen() {
       </View>
       <View style={styles.header}>
         <Menu
-          anchor={
-            <IconButton icon="cog-outline" onPress={() => setDisplayOptionsOpen(true)} />
-          }
+          anchor={<IconButton icon="cog-outline" onPress={() => setDisplayOptionsOpen(true)} />}
           visible={isDisplayOptionsOpen}
           onDismiss={() => setDisplayOptionsOpen(false)}
         >
           <Menu.Item
             title="Show expanded cards"
-            titleStyle={{ fontWeight: manifestScreen.display === 'cards' ? 'normal' : 'bold'}}
+            titleStyle={{
+              fontWeight: manifestScreen.display === 'cards' ? 'normal' : 'bold',
+            }}
             onPress={() => {
               dispatch(actions.screens.manifest.setDisplayStyle('list'));
               setDisplayOptionsOpen(false);
@@ -241,7 +247,9 @@ export default function ManifestScreen() {
           />
           <Menu.Item
             title="Show compact cards"
-            titleStyle={{ fontWeight: manifestScreen.display === 'list' ? 'normal' : 'bold'}}
+            titleStyle={{
+              fontWeight: manifestScreen.display === 'list' ? 'normal' : 'bold',
+            }}
             onPress={() => {
               dispatch(actions.screens.manifest.setDisplayStyle('cards'));
               setDisplayOptionsOpen(false);
@@ -268,7 +276,6 @@ export default function ManifestScreen() {
         open={forms.load.open}
         onClose={() => dispatch(actions.forms.load.setOpen(false))}
       />
-
     </>
   );
 }
@@ -295,13 +302,13 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   header: {
-    alignItems: "flex-start",
-    justifyContent: "flex-end",
+    alignItems: 'flex-start',
+    justifyContent: 'flex-end',
     flexDirection: 'row',
     padding: 0,
-    width: "100%",
-    position: "absolute",
+    width: '100%',
+    position: 'absolute',
     top: 0,
-    backgroundColor: "transparent"
-  }
+    backgroundColor: 'transparent',
+  },
 });

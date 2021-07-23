@@ -1,29 +1,28 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Slot } from "../../../api/schema.d";
-
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Slot } from '../../../api/schema.d';
 
 type Fields = Pick<
   Slot,
-  | "jumpType"
-  | "load"
-  | "ticketType"
-  | "rig"
-  | "dropzoneUser"
-  | "exitWeight"
-  | "extras"
-  | "passengerExitWeight"
-  | "passengerName"
->
+  | 'jumpType'
+  | 'load'
+  | 'ticketType'
+  | 'rig'
+  | 'dropzoneUser'
+  | 'exitWeight'
+  | 'extras'
+  | 'passengerExitWeight'
+  | 'passengerName'
+>;
 
 interface ISlotEditState {
   original: Slot | null;
   open: boolean;
   fields: {
-    [K in keyof Fields] - ?: {
+    [K in keyof Fields]-?: {
       value: Fields[K] | null;
       error: string | null;
-    }
-  }
+    };
+  };
 }
 
 export const initialState: ISlotEditState = {
@@ -66,48 +65,52 @@ export const initialState: ISlotEditState = {
       value: null,
       error: null,
     },
-  }
+  },
 };
-
 
 export default createSlice({
   name: 'forms/manifest',
   initialState,
   reducers: {
-    setField: <T extends keyof ISlotEditState["fields"]>(state: ISlotEditState, action: PayloadAction<[T, ISlotEditState["fields"][T]["value"]]>) => {
+    setField: <T extends keyof ISlotEditState['fields']>(
+      state: ISlotEditState,
+      action: PayloadAction<[T, ISlotEditState['fields'][T]['value']]>
+    ) => {
       const [field, value] = action.payload;
 
       state.fields[field].value = value;
       state.fields[field].error = null;
     },
-    setFieldError: <T extends  keyof ISlotEditState["fields"]>(state: ISlotEditState, action: PayloadAction<[T, ISlotEditState["fields"][T]["error"]]>) => {
+    setFieldError: <T extends keyof ISlotEditState['fields']>(
+      state: ISlotEditState,
+      action: PayloadAction<[T, ISlotEditState['fields'][T]['error']]>
+    ) => {
       const [field, error] = action.payload;
 
       state.fields[field].error = error;
     },
 
     setOpen: (state: ISlotEditState, action: PayloadAction<boolean | Slot>) => {
-      if (typeof action.payload === "boolean") {
+      if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;
         state.fields = initialState.fields;
       } else {
         state.original = action.payload;
         state.open = true;
-        for (const key in action.payload) {
-          if (key in state.fields) {
-            const typedKey = key as keyof typeof initialState["fields"];
-            state.fields[typedKey].value = action.payload[typedKey];
+        Object.keys(action.payload).forEach((key) => {
+          const payloadKey = key as keyof typeof action.payload;
+          if (payloadKey in state.fields) {
+            const typedKey = payloadKey as keyof typeof initialState['fields'];
+            state.fields[typedKey].value = action.payload[typedKey as typeof payloadKey];
           }
-        }
+        });
       }
     },
-    
+
     reset: (state: ISlotEditState) => {
       state.fields = initialState.fields;
       state.original = null;
     },
-  }
+  },
 });
-
-

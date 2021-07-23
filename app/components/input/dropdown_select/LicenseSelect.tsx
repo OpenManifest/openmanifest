@@ -1,10 +1,8 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import * as React from "react";
-import { List, Menu } from "react-native-paper";
-import { License, Query } from "../../../api/schema.d";
-import { useAppSelector } from "../../../state";
-
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import * as React from 'react';
+import { List, Menu } from 'react-native-paper';
+import { License, Query } from '../../../api/schema.d';
 
 interface ILicenseSelect {
   value?: License | null;
@@ -23,54 +21,46 @@ const QUERY_LICENSES = gql`
         id
         name
       }
-
     }
   }
 `;
 
 export default function LicenseSelect(props: ILicenseSelect) {
+  const { onSelect, value, required, federationId } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const globalState = useAppSelector(state => state.global);
 
-  const { data, loading, refetch } = useQuery<Query>(QUERY_LICENSES, {
+  const { data } = useQuery<Query>(QUERY_LICENSES, {
     variables: {
-      federationId: props.federationId,
-    }
+      federationId,
+    },
   });
   return (
     <>
-    <List.Subheader>
-      License
-    </List.Subheader>
-    <Menu
-      onDismiss={() => setMenuOpen(false)}
-      visible={isMenuOpen}
-      anchor={
-        <List.Item
-          onPress={() => {
-            setMenuOpen(true);
-          }}
-          title={
-            props.value?.name || "Please select a license"
-          }
-          description={!props.required ? "Optional" : null}
-        />
-      }>
-      {
-        data?.licenses?.map((license) => 
+      <List.Subheader>License</List.Subheader>
+      <Menu
+        onDismiss={() => setMenuOpen(false)}
+        visible={isMenuOpen}
+        anchor={
+          <List.Item
+            onPress={() => {
+              setMenuOpen(true);
+            }}
+            title={value?.name || 'Please select a license'}
+            description={!required ? 'Optional' : null}
+          />
+        }
+      >
+        {data?.licenses?.map((license) => (
           <Menu.Item
             key={`license-select-${license.id}`}
             onPress={() => {
               setMenuOpen(false);
-              props.onSelect(license);
+              onSelect(license);
             }}
-            title={
-              license.name || "-"
-            }
+            title={license.name || '-'}
           />
-        )
-      }
-    </Menu>
+        ))}
+      </Menu>
     </>
-  )
+  );
 }

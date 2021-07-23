@@ -1,9 +1,9 @@
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import * as React from "react";
-import { useAppSelector } from "../../state";
-import { Query } from "../schema";
-import useCurrentDropzone from "./useCurrentDropzone";
+import * as React from 'react';
+import { useAppSelector } from '../../state';
+import { Query } from '../schema';
+import useCurrentDropzone from './useCurrentDropzone';
 
 const QUERY_DROPZONE_USER_NOTIFICATIONS = gql`
   query QueryNotifications($dropzoneId: Int!) {
@@ -12,7 +12,7 @@ const QUERY_DROPZONE_USER_NOTIFICATIONS = gql`
 
       currentUser {
         id
-        
+
         notifications {
           edges {
             node {
@@ -22,12 +22,12 @@ const QUERY_DROPZONE_USER_NOTIFICATIONS = gql`
               createdAt
 
               resource {
-                ...on Load {
+                ... on Load {
                   id
                   loadNumber
                   dispatchAt
                 }
-                ...on Transaction {
+                ... on Transaction {
                   id
                   amount
                   message
@@ -44,9 +44,9 @@ const QUERY_DROPZONE_USER_NOTIFICATIONS = gql`
 
 // Returns current user if no ID is provided
 export default function useNotifications() {
-  const dropzoneId = useAppSelector(state => state.global.currentDropzoneId);
+  const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
 
-  const query = useQuery<Pick<Query, "dropzone">>(QUERY_DROPZONE_USER_NOTIFICATIONS, {
+  const query = useQuery<Pick<Query, 'dropzone'>>(QUERY_DROPZONE_USER_NOTIFICATIONS, {
     variables: {
       dropzoneId,
     },

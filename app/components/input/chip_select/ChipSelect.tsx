@@ -1,10 +1,9 @@
-import { isEqual, xorBy } from "lodash";
-import * as React from "react";
-import { View } from "react-native";
-import { Chip } from "react-native-paper";
+import { isEqual, xorBy } from 'lodash';
+import * as React from 'react';
+import { View } from 'react-native';
+import { Chip } from 'react-native-paper';
 
-
-interface IChipSelect<T extends any> {
+interface IChipSelect<T extends Record<string, unknown> | string> {
   items: T[];
   selected: T[];
   autoSelectFirst?: boolean;
@@ -14,42 +13,45 @@ interface IChipSelect<T extends any> {
   renderItemLabel(item: T): React.ReactNode;
   onChangeSelected(newItems: T[]): void;
 }
-function ChipSelect<T extends any>(props: IChipSelect<T>) {
-  const { items, selected, isSelected, isDisabled, icon, renderItemLabel, onChangeSelected, autoSelectFirst } = props;
+function ChipSelect<T extends Record<string, unknown> | string>(props: IChipSelect<T>) {
+  const {
+    items,
+    selected,
+    isSelected,
+    isDisabled,
+    icon,
+    renderItemLabel,
+    onChangeSelected,
+    autoSelectFirst,
+  } = props;
 
   React.useEffect(() => {
-    if (!selected || !selected.length && items.length && autoSelectFirst) {
-      onChangeSelected(
-        [items[0]]
-      );
+    if (!selected || (!selected.length && items.length && autoSelectFirst)) {
+      onChangeSelected([items[0]]);
     }
-  }, [JSON.stringify(selected), JSON.stringify(items), autoSelectFirst])
+  }, [selected, items, autoSelectFirst, onChangeSelected]);
 
   return (
-    <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-      { items.map((item) =>
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+      {items.map((item) => (
         <Chip
           key={JSON.stringify(item)}
           mode="outlined"
           icon={!selected.some((value) => isEqual(item, value)) && icon ? icon : undefined}
           style={{ margin: 1 }}
           disabled={isDisabled(item)}
-          selected={
-            isSelected
-              ? isSelected(item)
-              : selected.some((value) => isEqual(item, value))
-          }
+          selected={isSelected ? isSelected(item) : selected.some((value) => isEqual(item, value))}
           onPress={() =>
             onChangeSelected(
-              selected.length === 1 ? [item] : xorBy(selected, [item], JSON.stringify),
+              selected.length === 1 ? [item] : xorBy(selected, [item], JSON.stringify)
             )
           }
         >
-          { renderItemLabel(item) }
+          {renderItemLabel(item)}
         </Chip>
-      )}
+      ))}
     </View>
-  )
+  );
 }
 
 export default ChipSelect;

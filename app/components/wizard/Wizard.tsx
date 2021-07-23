@@ -1,27 +1,25 @@
-import * as React from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
-import { Button } from "react-native-paper";
+import * as React from 'react';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
-import { useAppSelector } from "../../state";
-import WizardPagination from "./Pagination";
+import WizardPagination from './Pagination';
 
 interface IWizardProps {
   children: React.ReactNode;
-  
+
   icons?: string[];
 }
 
 interface IWizardContext {
-  count: number,
-  index: number,
+  count: number;
+  index: number;
   setIndex(idx: number): void;
 }
 
 export const WizardContext = React.createContext<IWizardContext>({
   index: 0,
   count: 0,
-  setIndex: () => null
-} as IWizardContext)
+  setIndex: () => null,
+} as IWizardContext);
 
 function Wizard(props: IWizardProps) {
   const { children, icons } = props;
@@ -35,24 +33,23 @@ function Wizard(props: IWizardProps) {
         index,
         count,
         setIndex: (idx) => {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           ref.current?.scrollToIndex({ index: idx, animated: true });
-        }
+        },
       }}
     >
       <View style={[styles.container]}>
         <SwiperFlatList
           showPagination
           index={index}
-          PaginationComponent={(props) => 
-            <WizardPagination {...props} icons={icons} />
-          }
+          PaginationComponent={(wizardProps) => <WizardPagination {...wizardProps} icons={icons} />}
           numColumns={1}
           scrollEnabled={false}
           autoplay={false}
           ref={ref}
-          onChangeIndex={({ index, prevIndex }) => {
-            setIndex(index || 0);
+          onChangeIndex={({ index: idx, prevIndex }) => {
+            setIndex(idx || 0);
           }}
         >
           {children}
@@ -65,11 +62,10 @@ function Wizard(props: IWizardProps) {
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-  
   container: {
     width,
     flex: 1,
-    paddingBottom: 0
+    paddingBottom: 0,
   },
 });
 

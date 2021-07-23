@@ -1,25 +1,23 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RigInspection, FormTemplate } from "../../../api/schema.d";
-
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RigInspection, FormTemplate } from '../../../api/schema.d';
 
 export interface FieldItem {
   label: string;
   description?: string;
   isRequired?: boolean;
-  valueType: "integer" | "boolean" | "date" | "string";
+  valueType: 'integer' | 'boolean' | 'date' | 'string';
   value?: number | boolean | string;
 }
 
 interface IRigInspectionEditState {
   original: FormTemplate | null;
-  fields: FieldItem[],
+  fields: FieldItem[];
 }
 
 export const initialState: IRigInspectionEditState = {
   original: null,
-  fields: []
+  fields: [],
 };
-
 
 export default createSlice({
   name: 'forms/rigInspection',
@@ -34,16 +32,14 @@ export default createSlice({
 
       try {
         state.fields = JSON.parse(action.payload.definition!);
-      } catch(err) {
-        console.log("Invalid json: ", action.payload.definition);
+      } catch (err) {
+        console.log('Invalid json: ', action.payload.definition);
       }
     },
-    
+
     reset: (state: IRigInspectionEditState) => {
       state.fields = initialState.fields;
       state.original = null;
     },
-  }
+  },
 });
-
-

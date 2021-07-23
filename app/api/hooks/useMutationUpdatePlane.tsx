@@ -1,29 +1,30 @@
-import gql from "graphql-tag";
-import { createMutation } from "../createMutation";
-import { MutationUpdatePlaneArgs, UpdatePlanePayload } from "../schema";
-
+import gql from 'graphql-tag';
+import { createMutation } from '../createMutation';
+import { MutationUpdatePlaneArgs, UpdatePlanePayload } from '../schema';
 
 const MUTATION_UPDATE_PLANE = gql`
   mutation UpdatePlane(
-    $id: Int!,
-    $name: String!,
-    $registration: String!,
+    $id: Int!
+    $name: String!
+    $registration: String!
     $minSlots: Int!
     $maxSlots: Int!
     $hours: Int
     $nextMaintenanceHours: Int
-  ){
-    updatePlane(input: {
-      id: $id
-      attributes: {
-        name: $name,
-        registration: $registration,
-        minSlots: $minSlots
-        maxSlots: $maxSlots
-        hours: $hours
-        nextMaintenanceHours: $nextMaintenanceHours
+  ) {
+    updatePlane(
+      input: {
+        id: $id
+        attributes: {
+          name: $name
+          registration: $registration
+          minSlots: $minSlots
+          maxSlots: $maxSlots
+          hours: $hours
+          nextMaintenanceHours: $nextMaintenanceHours
+        }
       }
-    }) {
+    ) {
       errors
       fieldErrors {
         field
@@ -56,11 +57,10 @@ const MUTATION_UPDATE_PLANE = gql`
   }
 `;
 
-
-export default createMutation<{ id: number } & MutationUpdatePlaneArgs["input"]["attributes"], UpdatePlanePayload>(
-  MUTATION_UPDATE_PLANE, {
-    getPayload: (result) => result.updatePlane,
-    fieldErrorMap: {
-    },
-  }
-);
+export default createMutation<
+  { id: number } & MutationUpdatePlaneArgs['input']['attributes'],
+  UpdatePlanePayload
+>(MUTATION_UPDATE_PLANE, {
+  getPayload: (result) => result.updatePlane,
+  fieldErrorMap: {},
+});

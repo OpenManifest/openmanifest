@@ -1,23 +1,20 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { useIsFocused,  } from '@react-navigation/core';
+import { useIsFocused } from '@react-navigation/core';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar } from 'react-native-paper';
-import { Mutation, Permission, Query } from "../../../api/schema.d";
+import { format } from 'date-fns';
+import { Switch } from 'react-native-gesture-handler';
+import { Mutation, Permission, Query } from '../../../api/schema.d';
 
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import { format } from 'date-fns';
 import RigDialog from '../../../components/dialogs/Rig';
-import { Switch } from 'react-native-gesture-handler';
 import useRestriction from '../../../hooks/useRestriction';
 
-
 const QUERY_DROPZONE_RIGS = gql`
-  query QueryDropzoneRigs(
-    $dropzoneId: Int!
-  ) {
+  query QueryDropzoneRigs($dropzoneId: Int!) {
     dropzone(id: $dropzoneId) {
       id
       rigs {
@@ -36,18 +33,8 @@ const QUERY_DROPZONE_RIGS = gql`
 `;
 
 const MUTATION_UPDATE_RIG = gql`
-  mutation UpdateDropzoneRig(
-    $id: Int!
-    $isPublic: Boolean,
-  ) {
-    updateRig(
-      input: {
-        id: $id,
-        attributes: {
-          isPublic: $isPublic
-        }
-      }
-    ) {
+  mutation UpdateDropzoneRig($id: Int!, $isPublic: Boolean) {
+    updateRig(input: { id: $id, attributes: { isPublic: $isPublic } }) {
       errors
       fieldErrors {
         field
@@ -85,12 +72,12 @@ const MUTATION_UPDATE_RIG = gql`
 `;
 
 export default function DropzoneRigsScreen() {
-  const state = useAppSelector(state => state.global);
-  const rigForm = useAppSelector(state => state.forms.rig);
+  const state = useAppSelector((root) => root.global);
+  const rigForm = useAppSelector((root) => root.forms.rig);
   const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONE_RIGS, {
     variables: {
-      dropzoneId: Number(state.currentDropzoneId)
-    }
+      dropzoneId: Number(state.currentDropzoneId),
+    },
   });
   const dispatch = useAppDispatch();
   const isFocused = useIsFocused();
@@ -105,101 +92,87 @@ export default function DropzoneRigsScreen() {
   }, [isFocused]);
 
   return (
-      <ScrollableScreen style={styles.container} contentContainerStyle={[styles.content, {  backgroundColor: "white" }]} refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}>
+    <ScrollableScreen
+      style={styles.container}
+      contentContainerStyle={[styles.content, { backgroundColor: 'white' }]}
+      refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}
+    >
       <ProgressBar visible={loading || updateData.loading} color={state.theme.colors.accent} />
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title>
-              Container
-            </DataTable.Title>
-            <DataTable.Title numeric>
-              Repack due
-            </DataTable.Title>
-            <DataTable.Title numeric>
-              Canopy size
-            </DataTable.Title>
-            <DataTable.Title numeric>
-              Type
-            </DataTable.Title>
-            <DataTable.Title numeric>
-              Public
-            </DataTable.Title>
-          </DataTable.Header>
+      <DataTable>
+        <DataTable.Header>
+          <DataTable.Title>Container</DataTable.Title>
+          <DataTable.Title numeric>Repack due</DataTable.Title>
+          <DataTable.Title numeric>Canopy size</DataTable.Title>
+          <DataTable.Title numeric>Type</DataTable.Title>
+          <DataTable.Title numeric>Public</DataTable.Title>
+        </DataTable.Header>
 
-          {
-            data?.dropzone?.rigs?.map((rig) =>
-              <DataTable.Row key={`rig-${rig!.id}`}>
-                <DataTable.Cell
-                  onPress={() => {
-                    dispatch(actions.forms.rig.setOpen(rig));
-                  }}
-                >
-                  {[rig?.make, rig?.model, `#${rig?.serial}`].join(" ")}
-                </DataTable.Cell>
-                <DataTable.Cell numeric>
-                  {rig?.repackExpiresAt ? format(rig.repackExpiresAt * 1000, "yyyy/MM/dd") : "-"}
-                </DataTable.Cell>
-                <DataTable.Cell numeric>
-                  {`${rig?.canopySize}`}
-                </DataTable.Cell>
-                <DataTable.Cell numeric>
-                  {rig.rigType}
-                </DataTable.Cell>
-                  <DataTable.Cell numeric>
-                    <Switch
-                      onValueChange={async () => {
-                        const { data: result } = await mutationUpdateRig({
-                          variables: {
-                            id: Number(rig.id),
-                            isPublic: !rig.isPublic
-                          }
-                        });
+        {data?.dropzone?.rigs?.map((rig) => (
+          <DataTable.Row key={`rig-${rig!.id}`}>
+            <DataTable.Cell
+              onPress={() => {
+                dispatch(actions.forms.rig.setOpen(rig));
+              }}
+            >
+              {[rig?.make, rig?.model, `#${rig?.serial}`].join(' ')}
+            </DataTable.Cell>
+            <DataTable.Cell numeric>
+              {rig?.repackExpiresAt ? format(rig.repackExpiresAt * 1000, 'yyyy/MM/dd') : '-'}
+            </DataTable.Cell>
+            <DataTable.Cell numeric>{`${rig?.canopySize}`}</DataTable.Cell>
+            <DataTable.Cell numeric>{rig.rigType}</DataTable.Cell>
+            <DataTable.Cell numeric>
+              <Switch
+                onValueChange={async () => {
+                  const { data: result } = await mutationUpdateRig({
+                    variables: {
+                      id: Number(rig.id),
+                      isPublic: !rig.isPublic,
+                    },
+                  });
 
-                        if (result?.updateRig?.errors?.length) {
-                          dispatch(
-                            actions.notifications.showSnackbar({
-                              message: result?.updateRig.errors[0],
-                              variant: "error"
-                            })
-                          )
-                        }
-                      }}
-                      value={!!rig.isPublic}
-                    />
-                </DataTable.Cell>
-              </DataTable.Row>
-            )
-          }
-        </DataTable>
+                  if (result?.updateRig?.errors?.length) {
+                    dispatch(
+                      actions.notifications.showSnackbar({
+                        message: result?.updateRig.errors[0],
+                        variant: 'error',
+                      })
+                    );
+                  }
+                }}
+                value={!!rig.isPublic}
+              />
+            </DataTable.Cell>
+          </DataTable.Row>
+        ))}
+      </DataTable>
 
-        <RigDialog
-          onClose={() => dispatch(actions.forms.rig.setOpen(false))}
-          onSuccess={() => {
-            dispatch(actions.forms.rig.setOpen(false))
-            refetch();
-          }}
-          dropzoneId={Number(state.currentDropzoneId)}
-          open={rigForm.open}
-        />
-        
-        <FAB
-          visible={canCreateRig}
-          style={styles.fab}
-          small
-          icon="plus"
-          onPress={() =>
-            dispatch(actions.forms.rig.setOpen(true))
-          }
-          label="New rig"
-        />
-      </ScrollableScreen>
+      <RigDialog
+        onClose={() => dispatch(actions.forms.rig.setOpen(false))}
+        onSuccess={() => {
+          dispatch(actions.forms.rig.setOpen(false));
+          refetch();
+        }}
+        dropzoneId={Number(state.currentDropzoneId)}
+        open={rigForm.open}
+      />
+
+      <FAB
+        visible={canCreateRig}
+        style={styles.fab}
+        small
+        icon="plus"
+        onPress={() => dispatch(actions.forms.rig.setOpen(true))}
+        label="New rig"
+      />
+    </ScrollableScreen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    display: "flex"
+    display: 'flex',
   },
   content: {
     flexGrow: 1,
@@ -212,9 +185,9 @@ const styles = StyleSheet.create({
   },
   empty: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    height: "100%"
-  }
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+  },
 });

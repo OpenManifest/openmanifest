@@ -1,11 +1,9 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import * as React from "react";
-import { List, Menu } from "react-native-paper";
-import useCurrentDropzone from "../../../api/hooks/useCurrentDropzone";
-import { TicketType, Query } from "../../../api/schema.d";
-import { useAppSelector } from "../../../state";
-
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import * as React from 'react';
+import { List, Menu } from 'react-native-paper';
+import { TicketType, Query } from '../../../api/schema.d';
+import { useAppSelector } from '../../../state';
 
 interface ITicketTypeSelect {
   value?: TicketType | null;
@@ -32,22 +30,19 @@ const QUERY_TICKET_TYPES = gql`
 `;
 
 export default function TicketTypeSelect(props: ITicketTypeSelect) {
+  const { allowManifestingSelf, value, required } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const { currentDropzoneId } = useAppSelector(state => state.global);
-;
-  const { data, loading, refetch } = useQuery<Query>(QUERY_TICKET_TYPES, {
+  const { currentDropzoneId } = useAppSelector((root) => root.global);
+  const { data } = useQuery<Query>(QUERY_TICKET_TYPES, {
     variables: {
       dropzoneId: Number(currentDropzoneId),
-      allowManifestingSelf: props.allowManifestingSelf,
-    }
+      allowManifestingSelf,
+    },
   });
 
-  
   return (
     <>
-      <List.Subheader>
-        Ticket
-      </List.Subheader>
+      <List.Subheader>Ticket</List.Subheader>
       <Menu
         onDismiss={() => setMenuOpen(false)}
         visible={isMenuOpen}
@@ -56,27 +51,22 @@ export default function TicketTypeSelect(props: ITicketTypeSelect) {
             onPress={() => {
               setMenuOpen(true);
             }}
-            title={
-              props.value?.name || "Please select ticket type"
-            }
-            description={!props.required ? "Optional" : null}
+            title={value?.name || 'Please select ticket type'}
+            description={!required ? 'Optional' : null}
           />
-        }>
-        {
-          data?.ticketTypes?.map((ticketType) => 
-            <Menu.Item
-              key={`ticket-type-select-${ticketType.id}`}
-              onPress={() => {
-                setMenuOpen(false);
-                props.onSelect(ticketType);
-              }}
-              title={
-                ticketType.name || "-"
-              }
-            />
-          )
         }
+      >
+        {data?.ticketTypes?.map((ticketType) => (
+          <Menu.Item
+            key={`ticket-type-select-${ticketType.id}`}
+            onPress={() => {
+              setMenuOpen(false);
+              props.onSelect(ticketType);
+            }}
+            title={ticketType.name || '-'}
+          />
+        ))}
       </Menu>
     </>
-  )
+  );
 }

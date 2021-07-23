@@ -1,16 +1,16 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import { Permission } from "../api/schema";
-import { useAppSelector } from "../state";
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import { Permission } from '../api/schema';
+import { useAppSelector } from '../state';
 
 export const QUERY_PERMISSIONS = gql`
-query QueryPermissions($dropzoneId: Int!) {
+  query QueryPermissions($dropzoneId: Int!) {
     dropzone(id: $dropzoneId) {
       id
       name
       primaryColor
       secondaryColor
-      
+
       currentUser {
         id
         role {
@@ -19,17 +19,17 @@ query QueryPermissions($dropzoneId: Int!) {
         }
         permissions
       }
-
     }
-  }`;
+  }
+`;
 
 export default function useRestriction(permission: Permission): boolean {
-  const { currentDropzoneId } = useAppSelector(state => state.global);
-  
+  const { currentDropzoneId } = useAppSelector((root) => root.global);
+
   const { data } = useQuery(QUERY_PERMISSIONS, {
     variables: {
-      dropzoneId: Number(currentDropzoneId)
-    }
+      dropzoneId: Number(currentDropzoneId),
+    },
   });
 
   const permissions = data?.dropzone?.currentUser?.permissions || [];

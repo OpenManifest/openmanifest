@@ -1,36 +1,35 @@
-import gql from "graphql-tag";
-import { createMutation, isEmail, isRequired, validates } from "../createMutation";
-import { MutationUserSignUpArgs, UserSignUpPayload } from "../schema";
-
+import gql from 'graphql-tag';
+import { createMutation, isEmail, isRequired, validates } from '../createMutation';
+import { MutationUserSignUpArgs, UserSignUpPayload } from '../schema';
 
 export const MUTATION_USER_SIGNUP = gql`
   mutation UserSignUp(
-    $email: String!,
-    $password: String!,
+    $email: String!
+    $password: String!
     $passwordConfirmation: String!
     $name: String!
     $phone: String!
     $pushToken: String
     $exitWeight: Float!
     $licenseId: Int
-  ){
+  ) {
     userSignUp(
-      email: $email,
-      password: $password,
-      passwordConfirmation: $passwordConfirmation,
-      exitWeight: $exitWeight,
-      name: $name,
-      phone: $phone,
-      pushToken: $pushToken,
-      licenseId: $licenseId,
+      email: $email
+      password: $password
+      passwordConfirmation: $passwordConfirmation
+      exitWeight: $exitWeight
+      name: $name
+      phone: $phone
+      pushToken: $pushToken
+      licenseId: $licenseId
       confirmSuccessUrl: "https://openmanifest.org/confirm/"
     ) {
       authenticatable {
-        createdAt,
-        email,
-        id,
-        name,
-        phone,
+        createdAt
+        email
+        id
+        name
+        phone
       }
       credentials {
         accessToken
@@ -43,30 +42,24 @@ export const MUTATION_USER_SIGNUP = gql`
   }
 `;
 
-
-export default createMutation<MutationUserSignUpArgs, UserSignUpPayload>(
-  MUTATION_USER_SIGNUP, {
-    getPayload: (result) => result.userSignUp,
-    fieldErrorMap: {
-      license: "licenseId",
-    },
-    validates: {
-      name: [
-        isRequired("Name is required")
-      ],
-      email: [
-        isEmail("Please enter a valid email"),
-      ],
-      passwordConfirmation: [
-        validates(
-          "Password must have 1 uppercase, 1 lowercase, 1 digit and be at least 8 characters",
-          (fields) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}.*$/.test(fields.passwordConfirmation)
-        ),
-        validates(
-          "Passwords don't match",
-          (fields) => fields.password === fields.passwordConfirmation
-        )
-      ]
-    }
-  }
-);
+export default createMutation<MutationUserSignUpArgs, UserSignUpPayload>(MUTATION_USER_SIGNUP, {
+  getPayload: (result) => result.userSignUp,
+  fieldErrorMap: {
+    license: 'licenseId',
+  },
+  validates: {
+    name: [isRequired('Name is required')],
+    email: [isEmail('Please enter a valid email')],
+    passwordConfirmation: [
+      validates(
+        'Password must have 1 uppercase, 1 lowercase, 1 digit and be at least 8 characters',
+        (fields) =>
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}.*$/.test(fields.passwordConfirmation)
+      ),
+      validates(
+        "Passwords don't match",
+        (fields) => fields.password === fields.passwordConfirmation
+      ),
+    ],
+  },
+});

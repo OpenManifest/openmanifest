@@ -1,10 +1,7 @@
-import { useRoute } from '@react-navigation/core';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { List, Paragraph, TouchableRipple } from 'react-native-paper';
 
-
-import { useAppDispatch, useAppSelector } from '../../../../state';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 
 interface IIconInfoRow {
@@ -26,15 +23,8 @@ export default function IconInfoRow(props: IIconInfoRow) {
       disabled={!onPress}
     >
       <View style={styles.container}>
-        <List.Icon
-          icon={icon}
-          size={16}
-          style={styles.icon}
-          color={iconColor}
-        />
-        <Paragraph style={styles.label}>
-          {label}
-        </Paragraph>
+        <List.Icon icon={icon} style={styles.icon} color={iconColor} />
+        <Paragraph style={styles.label}>{label}</Paragraph>
       </View>
     </TouchableRipple>
   );
@@ -42,16 +32,16 @@ export default function IconInfoRow(props: IIconInfoRow) {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "center"
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   label: {
-    color: "#999999"
+    color: '#999999',
   },
   icon: {
     height: 16,
     width: 16,
     marginHorizontal: 12,
-    marginVertical: 16
-  }
+    marginVertical: 16,
+  },
 });

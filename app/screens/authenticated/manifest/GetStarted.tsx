@@ -1,74 +1,47 @@
-import { useQuery } from '@apollo/client';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { List, Menu } from 'react-native-paper';
+import { List } from 'react-native-paper';
 
 import { Text, View } from '../../../components/Themed';
-import { Query } from '../../../api/schema';
 import usePalette from '../../../hooks/usePalette';
-import { useAppSelector } from '../../../state';
-
 
 interface IGetStartedProps {
   hasPlanes: boolean;
   hasTicketTypes: boolean;
   isPublic: boolean;
 }
-export default function GetStarted({
-  hasPlanes,
-  hasTicketTypes,
-  isPublic,
-}: IGetStartedProps) {
+export default function GetStarted({ hasPlanes, hasTicketTypes, isPublic }: IGetStartedProps) {
   const palette = usePalette();
 
   return (
-      <View style={{ width: "70%"}}>
+    <View style={{ width: '70%' }}>
       <Text style={styles.title}>Set up dropzone</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-        <List.Item
-          title="Create dropzone"
-          left={
-            () =>
-              <List.Icon
-                color={palette.success}
-                icon="check"
-              />
-          }
-        >
-        </List.Item>
-        <List.Item
-          title="Add a plane"
-          left={
-            () =>
-              !hasPlanes ?
-                <List.Icon
-                  color={palette.error}
-                  icon="close"
-                /> :
-                <List.Icon
-                  color={palette.success}
-                  icon="check"
-                />
-          }
-        />
-        <List.Item
-          title="Configure jump tickets"
-          left={
-            () =>
-            !hasTicketTypes ?
-              <List.Icon
-                color={palette.error}
-                icon="close"
-              /> :
-              <List.Icon
-                color={palette.success}
-                icon="check"
-              />
-          }
-        />
-      </View>
+      <List.Item
+        title="Create dropzone"
+        left={() => <List.Icon color={palette.success} icon="check" />}
+      />
+      <List.Item
+        title="Add a plane"
+        left={() =>
+          !hasPlanes ? (
+            <List.Icon color={palette.error} icon="close" />
+          ) : (
+            <List.Icon color={palette.success} icon="check" />
+          )
+        }
+      />
+      <List.Item
+        title="Configure jump tickets"
+        left={() =>
+          !hasTicketTypes ? (
+            <List.Icon color={palette.error} icon="close" />
+          ) : (
+            <List.Icon color={palette.success} icon="check" />
+          )
+        }
+      />
+    </View>
   );
 }
 

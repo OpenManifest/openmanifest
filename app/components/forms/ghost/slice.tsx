@@ -1,28 +1,22 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Federation, User, DropzoneUser } from "../../../api/schema.d";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Federation, User, DropzoneUser } from '../../../api/schema.d';
 
-type Fields = Pick<
-  User,
-  | "exitWeight"
-  | "name"
-  | "phone"
-  | "email"
-  | "license"
-> & Pick<DropzoneUser, "role">;
+type Fields = Pick<User, 'exitWeight' | 'name' | 'phone' | 'email' | 'license'> &
+  Pick<DropzoneUser, 'role'>;
 
 interface IGhostEditState {
   original: User | null;
   open: boolean;
   federation: {
-    value: Federation | null,
-    error: null,
-  },
+    value: Federation | null;
+    error: null;
+  };
   fields: {
-    [K in keyof Fields] - ?: {
+    [K in keyof Fields]-?: {
       value: Fields[K] | null;
       error: string | null;
-    }
-  }
+    };
+  };
 }
 
 export const initialState: IGhostEditState = {
@@ -38,11 +32,11 @@ export const initialState: IGhostEditState = {
       error: null,
     },
     email: {
-      value: "",
+      value: '',
       error: null,
     },
     phone: {
-      value: "",
+      value: '',
       error: null,
     },
     name: {
@@ -56,10 +50,9 @@ export const initialState: IGhostEditState = {
     license: {
       value: null,
       error: null,
-    }
-  }
+    },
+  },
 };
-
 
 export default createSlice({
   name: 'forms/ghost',
@@ -68,14 +61,20 @@ export default createSlice({
     setFederation: (state: IGhostEditState, action: PayloadAction<Federation>) => {
       state.federation.value = action.payload;
     },
-    setField: <T extends keyof IGhostEditState["fields"]>(state: IGhostEditState, action: PayloadAction<[T, IGhostEditState["fields"][T]["value"]]>) => {
+    setField: <T extends keyof IGhostEditState['fields']>(
+      state: IGhostEditState,
+      action: PayloadAction<[T, IGhostEditState['fields'][T]['value']]>
+    ) => {
       const [field, value] = action.payload;
       if (field in state.fields) {
         state.fields[field].value = value;
         state.fields[field].error = null;
       }
     },
-    setFieldError: <T extends  keyof IGhostEditState["fields"]>(state: IGhostEditState, action: PayloadAction<[T, IGhostEditState["fields"][T]["error"]]>) => {
+    setFieldError: <T extends keyof IGhostEditState['fields']>(
+      state: IGhostEditState,
+      action: PayloadAction<[T, IGhostEditState['fields'][T]['error']]>
+    ) => {
       const [field, error] = action.payload;
 
       if (field in state) {
@@ -83,34 +82,32 @@ export default createSlice({
       } else {
         console.error('Cannot set error on ', field);
       }
-      
     },
 
     setOpen: (state: IGhostEditState, action: PayloadAction<boolean | User>) => {
       console.log('Setting open');
       console.log(action.payload);
-      if (typeof action.payload === "boolean") {
+      if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;
         state.fields = initialState.fields;
       } else {
         state.original = action.payload;
         state.open = true;
-        state.federation.value = action.payload.license?.federation!;
-        for (const key in action.payload) {
-          if (key in state.fields) {
-            const typedKey = key as keyof typeof initialState["fields"];
-            state.fields[typedKey].value = action.payload[typedKey];
+        state.federation.value = action.payload.license?.federation || null;
+        Object.keys(action.payload).forEach((key) => {
+          const payloadKey = key as keyof typeof action.payload;
+          if (payloadKey in state.fields) {
+            const typedKey = payloadKey as keyof typeof initialState['fields'];
+            state.fields[typedKey].value = action.payload[typedKey as typeof payloadKey];
           }
-        }
+        });
       }
     },
-    
+
     reset: (state: IGhostEditState) => {
       state.fields = initialState.fields;
       state.original = null;
     },
-  }
+  },
 });
-
-

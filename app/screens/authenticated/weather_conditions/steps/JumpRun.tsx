@@ -1,27 +1,26 @@
-import * as React from "react";
-import { StyleSheet, View } from "react-native";
-import WizardScreen, { IWizardScreenProps } from "../../../../components/wizard/WizardScreen";
-import { actions, useAppDispatch, useAppSelector } from "../../../../state";
+import * as React from 'react';
+import { StyleSheet, View } from 'react-native';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as Location from 'expo-location';
+import WizardScreen, { IWizardScreenProps } from '../../../../components/wizard/WizardScreen';
+import { actions, useAppDispatch, useAppSelector } from '../../../../state';
 import JumpRunSelector from '../../../../components/input/jump_run_select/JumpRunSelect';
-import useCurrentDropzone from "../../../../api/hooks/useCurrentDropzone";
-import * as Location from "expo-location";
+import useCurrentDropzone from '../../../../api/hooks/useCurrentDropzone';
 
 function WindsWizardScreen(props: IWizardScreenProps) {
-  const state = useAppSelector(state => state.forms.weather);
+  const state = useAppSelector((root) => root.forms.weather);
   const dispatch = useAppDispatch();
   const { dropzone } = useCurrentDropzone();
-  const [jumpRun, setJumpRun] = React.useState(state.fields.jumpRun.value || 0);
   const [location, setLocation] = React.useState<Location.LocationObject['coords']>();
   const setUsersLocation = React.useCallback(async () => {
     try {
-      let { status } = await Location.requestPermissionsAsync();
+      const { status } = await Location.requestPermissionsAsync();
       if (status !== 'granted') {
         return;
       }
-      let location = await Location.getCurrentPositionAsync({});
-      
-      
-      setLocation(location.coords);
+      const position = await Location.getCurrentPositionAsync({});
+
+      setLocation(position.coords);
     } catch (error) {
       console.log(error);
     }
@@ -31,38 +30,40 @@ function WindsWizardScreen(props: IWizardScreenProps) {
     if (!dropzone?.lat || !dropzone?.lng) {
       setUsersLocation();
     }
-  }, []);
+  }, [dropzone?.lat, dropzone?.lng, setUsersLocation]);
 
   return (
     <WizardScreen style={styles.container} {...props} contentStyle={{ paddingTop: 130 }}>
-      <View style={{ width: "100%", height: "80%" }}>
-      <JumpRunSelector
-        value={jumpRun}
-        latitude={dropzone?.lat || location?.latitude || 0}
-        longitude={dropzone?.lng || location?.longitude || 0}
-        onChange={(value) => dispatch(actions.forms.weather.setField(['jumpRun', Math.round(value)]))}
-      />
+      <View style={{ width: '100%', height: '80%' }}>
+        <JumpRunSelector
+          value={state.fields.jumpRun.value || 0}
+          latitude={dropzone?.lat || location?.latitude || 0}
+          longitude={dropzone?.lng || location?.longitude || 0}
+          onChange={(value) =>
+            dispatch(actions.forms.weather.setField(['jumpRun', Math.round(value)]))
+          }
+        />
       </View>
     </WizardScreen>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 0,
-    alignItems: "center",
+    alignItems: 'center',
     paddingLeft: 0,
     backgroundColor: 'blue',
     paddingRight: 0,
   },
   slider: {
     width: '100%',
-    marginTop: 32
+    marginTop: 32,
   },
   textInput: {
     height: 80,
     width: 200,
-    alignSelf: "center",
+    alignSelf: 'center',
     backgroundColor: 'transparent',
     color: 'white',
     fontSize: 60,
@@ -70,18 +71,18 @@ const styles = StyleSheet.create({
     marginBottom: 60,
   },
   content: {
-    width: "100%",
-    flexDirection: "column",
+    width: '100%',
+    flexDirection: 'column',
   },
   iconContainer: {
     width: 250,
     height: 250,
-    borderRadius: 250/2,
+    borderRadius: 250 / 2,
     borderWidth: 15,
     borderColor: 'white',
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   icon: { position: 'absolute', top: -75 },
 
@@ -94,58 +95,57 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   headerAltitude: {
-    flex: 3.5/10,
-    
+    flex: 3.5 / 10,
+
     color: 'white',
-    textAlign: "center",
-    fontWeight: "bold"
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   headerSpeed: {
-    flex: 3/10,
-    
+    flex: 3 / 10,
+
     color: 'white',
-    textAlign: "center",
-    fontWeight: "bold"
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   headerDirection: {
-    flex: 3/10,
-    
+    flex: 3 / 10,
+
     color: 'white',
-    textAlign: "center",
-    fontWeight: "bold"
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   card: { padding: 8, marginVertical: 16 },
   cardTitle: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   cardValue: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginRight: 8,
     fontSize: 16,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   title: {
-    color: "white",
+    color: 'white',
     marginBottom: 50,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     fontSize: 25,
-    textAlign: "center",
-    
+    textAlign: 'center',
   },
   field: {
     marginBottom: 8,
   },
-  sliderControl: { width: "100%", height: 40 },
+  sliderControl: { width: '100%', height: 40 },
   wingLoading: {
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   wingLoadingCardLeft: {
-    width: "30%",
+    width: '30%',
   },
   wingLoadingCardRight: {
     paddingLeft: 16,
-    width: "70%",
+    width: '70%',
   },
 });
 

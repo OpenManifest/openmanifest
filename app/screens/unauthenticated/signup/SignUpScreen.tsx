@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { Image, KeyboardAvoidingView, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/core';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import useMutationSignUp from '../../../api/hooks/useMutationSignUp';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
 import { primaryColor } from '../../../constants/Colors';
-import logo from "../../../../assets/images/logo.png";
-import { useNavigation } from '@react-navigation/core';
+import logo from '../../../../assets/images/logo.png';
 
 export default function SignupScreen() {
-  const state = useAppSelector(state => state.screens.signup);
-  const globalState = useAppSelector(state => state.global);
+  const state = useAppSelector((root) => root.screens.signup);
+  const globalState = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
 
@@ -20,47 +20,40 @@ export default function SignupScreen() {
     onSuccess: (payload) => {
       // Reset the form and redirect to login screen with a snackbar
       dispatch(
-        actions.notifications.showSnackbar({ message: "A confirmation link has been sent to your email", variant: "success" })
+        actions.notifications.showSnackbar({
+          message: 'A confirmation link has been sent to your email',
+          variant: 'success',
+        })
       );
 
-      navigation.navigate("LoginScreen");
+      navigation.navigate('LoginScreen');
       // Credentials are received on login only now. Return
       return;
       if (payload.credentials) {
-        dispatch(
-          actions.global.setCredentials(payload.credentials)
-        );
-        dispatch(
-          actions.global.setUser(payload.authenticatable!)
-        );
+        dispatch(actions.global.setCredentials(payload.credentials));
+        dispatch(actions.global.setUser(payload.authenticatable!));
       }
     },
     onFieldError: (field, value) =>
-      dispatch(
-        actions.screens.signup.setFieldError([field as any, value])
-      )
+      dispatch(actions.screens.signup.setFieldError([field as any, value])),
   });
-
-  
 
   return (
     <ScrollableScreen style={styles.container} contentContainerStyle={styles.content}>
       <KeyboardAvoidingView style={styles.fields} behavior="position">
-        <Image source={logo} style={{ width: "100%", height: 200 }} resizeMode="contain" />
+        <Image source={logo} style={{ width: '100%', height: 200 }} resizeMode="contain" />
         <TextInput
           style={styles.field}
           mode="outlined"
           label="Name"
           error={!!state.fields.name.error}
           value={state.fields.name.value}
-          onChangeText={(newValue) => dispatch(actions.screens.signup.setField(["name", newValue]))}
+          onChangeText={(newValue) => dispatch(actions.screens.signup.setField(['name', newValue]))}
         />
-        <HelperText type="error">
-          { state.fields.name.error || "" }
-        </HelperText>
-        
-        <HelperText type={!!state.fields.exitWeight.error ? "error" : "info"}>
-          { state.fields.exitWeight.error || "" }
+        <HelperText type="error">{state.fields.name.error || ''}</HelperText>
+
+        <HelperText type={state.fields.exitWeight.error ? 'error' : 'info'}>
+          {state.fields.exitWeight.error || ''}
         </HelperText>
 
         <TextInput
@@ -69,12 +62,12 @@ export default function SignupScreen() {
           label="Email"
           error={!!state.fields.email.error}
           value={state.fields.email.value}
-          onChangeText={(newValue) => dispatch(actions.screens.signup.setField(["email", newValue]))}
+          onChangeText={(newValue) =>
+            dispatch(actions.screens.signup.setField(['email', newValue]))
+          }
         />
 
-        <HelperText type="error">
-          { state.fields.email.error || "" }
-        </HelperText>
+        <HelperText type="error">{state.fields.email.error || ''}</HelperText>
 
         <TextInput
           style={styles.field}
@@ -82,11 +75,11 @@ export default function SignupScreen() {
           label="Phone"
           error={!!state.fields.phone.error}
           value={state.fields.phone.value}
-          onChangeText={(newValue) => dispatch(actions.screens.signup.setField(["phone", newValue]))}
+          onChangeText={(newValue) =>
+            dispatch(actions.screens.signup.setField(['phone', newValue]))
+          }
         />
-        <HelperText type="error">
-          { state.fields.phone.error || "" }
-        </HelperText>
+        <HelperText type="error">{state.fields.phone.error || ''}</HelperText>
 
         <TextInput
           style={styles.field}
@@ -97,12 +90,12 @@ export default function SignupScreen() {
           secureTextEntry
           passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
           value={state.fields.password.value}
-          onChangeText={(newValue) => dispatch(actions.screens.signup.setField(["password", newValue]))}
+          onChangeText={(newValue) =>
+            dispatch(actions.screens.signup.setField(['password', newValue]))
+          }
         />
 
-        <HelperText type="error">
-          { state.fields.password.error || "" }
-        </HelperText>
+        <HelperText type="error">{state.fields.password.error || ''}</HelperText>
 
         <TextInput
           style={styles.field}
@@ -113,15 +106,15 @@ export default function SignupScreen() {
           secureTextEntry
           passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
           value={state.fields.passwordConfirmation.value}
-          onChangeText={(newValue) => dispatch(actions.screens.signup.setField(["passwordConfirmation", newValue]))}
+          onChangeText={(newValue) =>
+            dispatch(actions.screens.signup.setField(['passwordConfirmation', newValue]))
+          }
         />
-        <HelperText type="error">
-          { state.fields.passwordConfirmation.error || "" }
-        </HelperText>
+        <HelperText type="error">{state.fields.passwordConfirmation.error || ''}</HelperText>
 
         <Button
           mode="contained"
-          labelStyle={styles.buttonLabel} 
+          labelStyle={styles.buttonLabel}
           style={styles.button}
           onPress={() =>
             onSignUp({
@@ -151,15 +144,15 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 60,
-    alignItems: "center",
+    alignItems: 'center',
   },
   button: {
     marginTop: 10,
-    backgroundColor: "white",
-    width: "100%"
+    backgroundColor: 'white',
+    width: '100%',
   },
   buttonLabel: {
-    color: "#FF1414",
+    color: '#FF1414',
   },
   title: {
     fontSize: 20,
@@ -171,15 +164,15 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   fields: {
-    width: "100%",
+    width: '100%',
     flexGrow: 1,
     maxWidth: 400,
-    backgroundColor: "transparent"
+    backgroundColor: 'transparent',
   },
   field: {
     marginBottom: 8,
-    backgroundColor: "white",
-    borderColor: "white",
-    color: "white"
-  }
+    backgroundColor: 'white',
+    borderColor: 'white',
+    color: 'white',
+  },
 });

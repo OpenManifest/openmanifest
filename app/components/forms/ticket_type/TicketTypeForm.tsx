@@ -7,11 +7,8 @@ import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import { Query } from '../../../api/schema';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
-
 const QUERY_EXTRAS = gql`
-  query QueryExtras(
-    $dropzoneId: Int!
-  ) {
+  query QueryExtras($dropzoneId: Int!) {
     extras(dropzoneId: $dropzoneId) {
       id
       cost
@@ -26,7 +23,7 @@ const QUERY_EXTRAS = gql`
 `;
 
 export default function TicketTypeForm() {
-  const state = useAppSelector(state => state.forms.ticketType);
+  const state = useAppSelector((root) => root.forms.ticketType);
   const dispatch = useAppDispatch();
   const currentDropzone = useCurrentDropzone();
 
@@ -34,21 +31,21 @@ export default function TicketTypeForm() {
   const { data, loading, refetch } = useQuery<Query>(QUERY_EXTRAS, {
     variables: {
       dropzoneId: Number(currentDropzone?.dropzone?.id),
-    }
+    },
   });
 
-  return ( 
+  return (
     <>
       <TextInput
         style={styles.field}
         mode="outlined"
         label="Name"
         error={!!state.fields.name.error}
-        value={state.fields.name.value || ""}
-        onChangeText={(newValue) => dispatch(actions.forms.ticketType.setField(["name", newValue]))}
+        value={state.fields.name.value || ''}
+        onChangeText={(newValue) => dispatch(actions.forms.ticketType.setField(['name', newValue]))}
       />
-      <HelperText type={!!state.fields.name.error ? "error" : "info"}>
-        { state.fields.name.error || "Name of the ticket users will see" }
+      <HelperText type={state.fields.name.error ? 'error' : 'info'}>
+        {state.fields.name.error || 'Name of the ticket users will see'}
       </HelperText>
 
       <TextInput
@@ -57,46 +54,51 @@ export default function TicketTypeForm() {
         label="Price"
         error={!!state.fields.cost.error}
         value={state.fields.cost?.value?.toString()}
-        onChangeText={(newValue) => dispatch(actions.forms.ticketType.setField(["cost", Number(newValue)]))}
+        onChangeText={(newValue) =>
+          dispatch(actions.forms.ticketType.setField(['cost', Number(newValue)]))
+        }
       />
-      <HelperText type={!!state.fields.cost.error ? "error" : "info"}>
-        { state.fields.cost.error || "Base cost without extra ticket addons" }
+      <HelperText type={state.fields.cost.error ? 'error' : 'info'}>
+        {state.fields.cost.error || 'Base cost without extra ticket addons'}
       </HelperText>
-      <View style={{ width: "100%" }}>
-
-      <Menu
-        onDismiss={() => setAltitudeMenuOpen(false)}
-        visible={altitudeMenuOpen}
-
-        style={{position:'absolute',right:'10%',left:'10%', flex: 1 }}
-        anchor={
+      <View style={{ width: '100%' }}>
+        <Menu
+          onDismiss={() => setAltitudeMenuOpen(false)}
+          visible={altitudeMenuOpen}
+          style={{ position: 'absolute', right: '10%', left: '10%', flex: 1 }}
+          anchor={
+            <List.Item
+              onPress={() => {
+                setAltitudeMenuOpen(true);
+              }}
+              title={
+                state.fields.altitude.value && [4000, 14000].includes(state.fields.altitude.value)
+                  ? {
+                      '14000': 'Height',
+                      '4000': 'Hop n Pop',
+                    }[state.fields.altitude.value.toString()]
+                  : 'Custom'
+              }
+              style={{ width: '100%', flex: 1 }}
+              right={() => (
+                <List.Icon
+                  icon={
+                    state.fields.altitude.value &&
+                    [4000, 14000].includes(state.fields.altitude.value)
+                      ? ({
+                          '14000': 'airplane',
+                          '4000': 'parachute',
+                        }[state.fields.altitude.value.toString()] as string)
+                      : 'pencil-plus'
+                  }
+                />
+              )}
+            />
+          }
+        >
           <List.Item
             onPress={() => {
-              setAltitudeMenuOpen(true);
-            }}
-            title={
-              state.fields.altitude.value && [4000, 14000].includes(state.fields.altitude.value) ?
-                {
-                  "14000": "Height",
-                  "4000": "Hop n Pop",
-                }[state.fields.altitude.value.toString()] :
-                "Custom"
-            }
-            style={{ width: "100%", flex: 1 }}
-            right={ () =>
-              <List.Icon icon={state.fields.altitude.value && [4000, 14000].includes(state.fields.altitude.value) ?
-                {
-                  "14000": "airplane",
-                  "4000": "parachute",
-                }[state.fields.altitude.value.toString()] as string :
-                "pencil-plus" 
-              } />
-            }
-          />
-        }>
-          <List.Item
-            onPress={() => {
-              dispatch(actions.forms.ticketType.setField(["altitude", 4000]));
+              dispatch(actions.forms.ticketType.setField(['altitude', 4000]));
               setAltitudeMenuOpen(false);
             }}
             title="Hop n Pop"
@@ -104,7 +106,7 @@ export default function TicketTypeForm() {
           />
           <List.Item
             onPress={() => {
-              dispatch(actions.forms.ticketType.setField(["altitude", 14000]));
+              dispatch(actions.forms.ticketType.setField(['altitude', 14000]));
               setAltitudeMenuOpen(false);
             }}
             title="Height"
@@ -112,83 +114,82 @@ export default function TicketTypeForm() {
           />
           <List.Item
             onPress={() => {
-              dispatch(actions.forms.ticketType.setField(["altitude", 7000]));
+              dispatch(actions.forms.ticketType.setField(['altitude', 7000]));
               setAltitudeMenuOpen(false);
             }}
             title="Other"
             right={() => <List.Icon icon="parachute" />}
           />
-      </Menu>
+        </Menu>
 
-      {
-        (!state.fields.altitude.value || ![4000, 14000].includes(state.fields.altitude.value)) && (
+        {(!state.fields.altitude.value || ![4000, 14000].includes(state.fields.altitude.value)) && (
           <TextInput
             style={styles.field}
             mode="outlined"
             label="Custom altitude"
             error={!!state.fields.altitude.error}
             value={state.fields.altitude?.value?.toString()}
-            onChangeText={(newValue) => dispatch(actions.forms.ticketType.setField(["altitude", Number(newValue)]))}
+            onChangeText={(newValue) =>
+              dispatch(actions.forms.ticketType.setField(['altitude', Number(newValue)]))
+            }
           />
-        )
-      }
+        )}
 
-      <Checkbox.Item
-        label="Tandem"
-        style={{ width: "100%" }}
-        status={!!state.fields.isTandem.value
-          ? "checked"
-          : "unchecked"
-        }
-        onPress={
-          () => dispatch(actions.forms.ticketType.setField(["isTandem", !state.fields.isTandem.value]))
-        }
-      />
-      <HelperText type={!!state.fields.isTandem.error ? "error" : "info"}>
-        { state.fields.isTandem.error || "Allow also manifesting a passenger when using this ticket type" }
-      </HelperText>
+        <Checkbox.Item
+          label="Tandem"
+          style={{ width: '100%' }}
+          status={state.fields.isTandem.value ? 'checked' : 'unchecked'}
+          onPress={() =>
+            dispatch(actions.forms.ticketType.setField(['isTandem', !state.fields.isTandem.value]))
+          }
+        />
+        <HelperText type={state.fields.isTandem.error ? 'error' : 'info'}>
+          {state.fields.isTandem.error ||
+            'Allow also manifesting a passenger when using this ticket type'}
+        </HelperText>
 
-      <Checkbox.Item
-        label="Public manifesting"
-        style={{ width: "100%" }}
-        status={!!state.fields.allowManifestingSelf.value
-          ? "checked"
-          : "unchecked"
-        }
-        onPress={
-          () => dispatch(actions.forms.ticketType.setField(["allowManifestingSelf", !state.fields.allowManifestingSelf.value]))
-        }
-      />
-      
-      <HelperText type={!!state.fields.allowManifestingSelf.error ? "error" : "info"}>
-        { state.fields.allowManifestingSelf.error || "Allow users to manifest themselves with this ticket" }
-      </HelperText>
+        <Checkbox.Item
+          label="Public manifesting"
+          style={{ width: '100%' }}
+          status={state.fields.allowManifestingSelf.value ? 'checked' : 'unchecked'}
+          onPress={() =>
+            dispatch(
+              actions.forms.ticketType.setField([
+                'allowManifestingSelf',
+                !state.fields.allowManifestingSelf.value,
+              ])
+            )
+          }
+        />
 
-      <Divider />
-      <List.Subheader>Enabled ticket add-ons</List.Subheader>
-      {
-        data?.extras.map((extra) =>
+        <HelperText type={state.fields.allowManifestingSelf.error ? 'error' : 'info'}>
+          {state.fields.allowManifestingSelf.error ||
+            'Allow users to manifest themselves with this ticket'}
+        </HelperText>
+
+        <Divider />
+        <List.Subheader>Enabled ticket add-ons</List.Subheader>
+        {data?.extras.map((extra) => (
           <Checkbox.Item
             key={`extra-${extra.id}`}
             label={extra.name!}
-            status={state.fields.extras.value?.map(({ id }) => id).includes(extra.id)
-              ? "checked"
-              : "unchecked"
+            status={
+              state.fields.extras.value?.map(({ id }) => id).includes(extra.id)
+                ? 'checked'
+                : 'unchecked'
             }
-            onPress={
-              () => dispatch(
+            onPress={() =>
+              dispatch(
                 actions.forms.ticketType.setField([
-                  "extras",
+                  'extras',
                   state.fields.extras.value?.map(({ id }) => id).includes(extra.id)
-                  ? state.fields.extras.value?.filter(({ id }) => id !== extra.id)
-                  : [...state.fields.extras.value!, extra]
+                    ? state.fields.extras.value?.filter(({ id }) => id !== extra.id)
+                    : [...state.fields.extras.value, extra],
                 ])
               )
             }
           />
-        )
-      }
-
+        ))}
       </View>
     </>
   );
@@ -197,6 +198,6 @@ export default function TicketTypeForm() {
 const styles = StyleSheet.create({
   field: {
     marginBottom: 8,
-    width: "100%"
-  }
+    width: '100%',
+  },
 });

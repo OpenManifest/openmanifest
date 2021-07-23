@@ -1,8 +1,8 @@
-import { sortBy, uniq } from "lodash";
-import * as React from "react";
-import { View, StyleSheet, Keyboard } from "react-native";
-import { Button, Portal, Title } from "react-native-paper";
-import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { sortBy, uniq } from 'lodash';
+import * as React from 'react';
+import { View, StyleSheet, Keyboard } from 'react-native';
+import { Button, Portal, Title } from 'react-native-paper';
+import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 
 interface IBottomSheetProps {
   open?: boolean;
@@ -11,7 +11,7 @@ interface IBottomSheetProps {
   loading?: boolean;
   title?: string;
 
-  snapPoints?: Array<string | number>;
+  snapPoints?: (string | number)[];
   buttonAction?(): void;
   onClose(): void;
 }
@@ -19,7 +19,10 @@ interface IBottomSheetProps {
 export default function DialogOrSheet(props: IBottomSheetProps) {
   const { open, snapPoints, onClose, title, buttonLabel, buttonAction, loading, children } = props;
   const sheetRef = React.useRef<BottomSheet>(null);
-  const snappingPoints = React.useMemo(() => sortBy(uniq([0, ...(snapPoints || [600])])), [JSON.stringify(snapPoints)]);
+  const snappingPoints = React.useMemo(
+    () => sortBy(uniq([0, ...(snapPoints || [600])])),
+    [snapPoints]
+  );
   const [currentIndex, setIndex] = React.useState(-1);
 
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
@@ -36,7 +39,6 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
       Keyboard.removeListener('keyboardDidHide', onKeyboardHidden);
     };
   }, []);
-  
 
   React.useEffect(() => {
     if (open) {
@@ -45,7 +47,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
       setIndex(-1);
       sheetRef?.current?.close();
     }
-  }, []);
+  }, [open, snappingPoints?.length]);
 
   React.useEffect(() => {
     if (open) {
@@ -54,7 +56,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
       setIndex(-1);
       sheetRef?.current?.close();
     }
-  }, [open]);
+  }, [open, snappingPoints?.length]);
 
   React.useEffect(() => {
     if (open && currentIndex < 0) {
@@ -63,7 +65,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
       setIndex(-1);
       sheetRef?.current?.close();
     }
-  }, [currentIndex]);
+  }, [currentIndex, open, snappingPoints?.length]);
 
   return (
     <Portal>
@@ -83,38 +85,32 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
           }
         }}
         handleComponent={() =>
-          !title
-            ? <View style={styles.sheetHeader} />
-            : <View style={styles.sheetHeaderWithTitle}>
-                <Title>{title}</Title>
-              </View>
+          !title ? (
+            <View style={styles.sheetHeader} />
+          ) : (
+            <View style={styles.sheetHeaderWithTitle}>
+              <Title>{title}</Title>
+            </View>
+          )
         }
-       >
-          <BottomSheetScrollView
-              style={{ backgroundColor: "#FFFFFF" }}
-              contentContainerStyle={[
-                styles.sheet,
-                { paddingBottom: keyboardVisible ? 400 : 0 }
-              ]}
-            >
-              { children }
-              <Button
-                onPress={buttonAction}
-                mode="contained"
-                style={styles.button}
-                loading={loading}
-              >
-                { buttonLabel }
-              </Button>
-            </BottomSheetScrollView>
-        </BottomSheet>
+      >
+        <BottomSheetScrollView
+          style={{ backgroundColor: '#FFFFFF' }}
+          contentContainerStyle={[styles.sheet, { paddingBottom: keyboardVisible ? 400 : 0 }]}
+        >
+          {children}
+          <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>
+            {buttonLabel}
+          </Button>
+        </BottomSheetScrollView>
+      </BottomSheet>
     </Portal>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   button: {
-    width: "100%",
+    width: '100%',
     borderRadius: 16,
     padding: 5,
   },
@@ -126,10 +122,10 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     paddingHorizontal: 16,
     elevation: 3,
-    backgroundColor: "white",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
+    backgroundColor: 'white',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
   sheetHeader: {
     zIndex: 10000,
@@ -137,12 +133,12 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     height: 40,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: -4,
     },
-    backgroundColor: "white",
+    backgroundColor: 'white',
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
   },
@@ -152,16 +148,15 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     height: 56,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: -4,
     },
-    backgroundColor: "white",
+    backgroundColor: 'white',
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
     paddingLeft: 16,
     paddingTop: 16,
-  }
-
-})
+  },
+});

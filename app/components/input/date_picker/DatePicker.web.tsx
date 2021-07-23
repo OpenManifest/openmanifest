@@ -2,7 +2,7 @@ import * as React from 'react';
 import { List, Menu } from 'react-native-paper';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
-import format from "date-fns/format";
+import format from 'date-fns/format';
 
 interface IDatepicker {
   label: string;
@@ -11,48 +11,32 @@ interface IDatepicker {
   onChange(timestamp: number): void;
 }
 export default function DatePicker(props: IDatepicker) {
+  const { disabled, label, timestamp, onChange } = props;
   const [open, setOpen] = React.useState(false);
-
-  const onDismissSingle = React.useCallback(() => {
-    setOpen(false);
-  }, [setOpen]);
-
-  const onConfirmSingle = React.useCallback(
-    ({ date }: { date: Date }) => {
-      setOpen(false);
-      props.onChange(date.getTime() / 1000);
-    },
-    [setOpen, props.onChange]
-  );
 
   return (
     <>
-    <Menu
-      onDismiss={() => setOpen(false)}
-      visible={open}
-      anchor={
-        <List.Item
-          onPress={() => setOpen(true)}
-          disabled={!!props.disabled}
-          title={props.label}
-          description={
-            props.timestamp ? 
-              format(props.timestamp * 1000, "yyyy/MM/dd") :
-              "No date selected"
-          }
-          left={() => <List.Icon icon="calendar" />}
+      <Menu
+        onDismiss={() => setOpen(false)}
+        visible={open}
+        anchor={
+          <List.Item
+            onPress={() => setOpen(true)}
+            disabled={!!disabled}
+            title={label}
+            description={timestamp ? format(timestamp * 1000, 'yyyy/MM/dd') : 'No date selected'}
+            left={() => <List.Icon icon="calendar" />}
+          />
+        }
+      >
+        <DayPicker
+          selectedDays={timestamp ? [new Date(timestamp * 1000)] : []}
+          onDayClick={(date) => {
+            onChange(date.getTime() / 1000);
+            setOpen(false);
+          }}
         />
-      }>
-      <DayPicker
-        selectedDays={props.timestamp ? [new Date(props.timestamp * 1000)] : []}
-        
-        onDayClick={(date) => {
-          props.onChange(date.getTime() / 1000);
-          setOpen(false);
-        }}
-
-      />
-    </Menu>
+      </Menu>
     </>
   );
 }

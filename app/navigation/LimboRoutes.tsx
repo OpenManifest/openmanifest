@@ -1,9 +1,8 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
-import DropzonesScreen from "../screens/authenticated/dropzones/DropzonesScreen";
-import CreateDropzoneScreen from "../screens/authenticated/dropzones/CreateDropzoneScreen";
-
+import DropzonesScreen from '../screens/authenticated/dropzones/DropzonesScreen';
+import CreateDropzoneScreen from '../screens/authenticated/dropzones/CreateDropzoneScreen';
 
 const Stack = createStackNavigator();
 
@@ -13,8 +12,8 @@ export default function Limbo() {
       screenOptions={{
         headerShown: false,
         cardStyle: {
-          flex: 1
-        }
+          flex: 1,
+        },
       }}
       initialRouteName="Dropzones"
     >

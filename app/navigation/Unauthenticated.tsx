@@ -5,7 +5,6 @@ import LoginScreen from '../screens/unauthenticated/login/LoginScreen';
 import SignUpScreen from '../screens/unauthenticated/signup/SignUpScreen';
 import UserWizardScreen from '../screens/user_wizard/UserWizardScreen';
 
-
 // A root stack navigator is often used for displaying modals on top of all other content
 // Read more here: https://reactnavigation.org/docs/modal
 const Stack = createStackNavigator();
@@ -16,8 +15,8 @@ export default function Unauthenticated() {
       screenOptions={{
         headerShown: false,
         cardStyle: {
-          flex: 1
-        }
+          flex: 1,
+        },
       }}
     >
       <Stack.Screen name="LoginScreen" component={LoginScreen} />

@@ -1,29 +1,29 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface ILoginScreenState {
   fields: {
     email: {
-      value: string,
-      error: string | null,
-    },
+      value: string;
+      error: string | null;
+    };
     password: {
-      value: string,
-      error: string | null,
-    },
-  }
+      value: string;
+      error: string | null;
+    };
+  };
 }
 
 export const initialState = {
   fields: {
     email: {
-      value: "",
+      value: '',
       error: null,
     },
     password: {
-      value: "",
+      value: '',
       error: null,
-    }
-  }
+    },
+  },
 } as ILoginScreenState;
 
 export default createSlice({
@@ -44,7 +44,6 @@ export default createSlice({
     },
     reset: (state: ILoginScreenState) => {
       state.fields = initialState.fields;
-    }
-  }
+    },
+  },
 });
-

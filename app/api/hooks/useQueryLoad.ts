@@ -1,6 +1,6 @@
-import gql from "graphql-tag";
-import { createQuery } from "../createQuery";
-import { Query } from "../schema";
+import gql from 'graphql-tag';
+import { createQuery } from '../createQuery';
+import { Query } from '../schema';
 
 export const QUERY_LOAD = gql`
   query QueryLoad($id: Int!) {
@@ -51,9 +51,9 @@ export const QUERY_LOAD = gql`
         dropzoneUser {
           id
           role {
-              id
-              name
-            }
+            id
+            name
+          }
           user {
             id
             name
@@ -89,8 +89,11 @@ export const QUERY_LOAD = gql`
   }
 `;
 
-export default createQuery<Query["load"], {
-  id: number
- }>(QUERY_LOAD, {
-   getPayload: (query) => query?.load,
- });
+export default createQuery<
+  Query['load'],
+  {
+    id: number;
+  }
+>(QUERY_LOAD, {
+  getPayload: (query) => query?.load,
+});

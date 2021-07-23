@@ -1,20 +1,19 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DropzoneUser } from "../../../api/schema.d";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { DropzoneUser } from '../../../api/schema.d';
 
 interface IManifestScreenState {
   isSearchVisible: boolean;
   selectedUsers: DropzoneUser[];
   searchText: string;
-  display: "list" | "cards";
+  display: 'list' | 'cards';
 }
 
 export const initialState: IManifestScreenState = {
   isSearchVisible: false,
   selectedUsers: [],
-  searchText: "",
-  display: "cards",
+  searchText: '',
+  display: 'cards',
 };
-
 
 export default createSlice({
   name: 'manifestScreen',
@@ -31,15 +30,13 @@ export default createSlice({
       state.isSearchVisible = action.payload;
     },
 
-    setDisplayStyle: (state: IManifestScreenState, action: PayloadAction<"cards" | "list">) => {
+    setDisplayStyle: (state: IManifestScreenState, action: PayloadAction<'cards' | 'list'>) => {
       state.display = action.payload;
     },
-    
+
     reset: (state: IManifestScreenState) => {
       state.isSearchVisible = initialState.isSearchVisible;
       state.searchText = initialState.searchText;
     },
-  }
+  },
 });
-
-

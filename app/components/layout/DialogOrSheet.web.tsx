@@ -1,8 +1,9 @@
-import * as React from "react";
-import { StyleSheet } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import { Button, Dialog, Portal, ProgressBar } from "react-native-paper";
-import { useAppSelector } from "../../state";
+import * as React from 'react';
+import { StyleSheet } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Button, Dialog, Portal, ProgressBar } from 'react-native-paper';
+import { useAppSelector } from '../../state';
+
 interface IBottomSheetProps {
   open?: boolean;
   title?: string;
@@ -10,30 +11,30 @@ interface IBottomSheetProps {
   children: React.ReactNode;
   loading?: boolean;
 
-  snapPoints?: Array<string | number>;
+  snapPoints?: (string | number)[];
   buttonAction?(): void;
   onClose(): void;
 }
 
 export default function DialogOrSheet(props: IBottomSheetProps) {
   const { buttonLabel, buttonAction, title, loading, children } = props;
-  const globalState = useAppSelector(state => state.global);
+  const globalState = useAppSelector((root) => root.global);
 
   return (
     <Portal>
-      <Dialog visible={!!props.open} dismissable={false} style={{ maxWidth: 500, alignSelf: "center" }}>
+      <Dialog
+        visible={!!props.open}
+        dismissable={false}
+        style={{ maxWidth: 500, alignSelf: 'center' }}
+      >
         <ProgressBar indeterminate visible={loading} color={globalState.theme.colors.accent} />
-        <Dialog.Title>
-          { title }
-        </Dialog.Title>
+        <Dialog.Title>{title}</Dialog.Title>
         <Dialog.Content pointerEvents="box-none">
           <Dialog.ScrollArea>
-            <ScrollView>
-              { children }
-            </ScrollView>
+            <ScrollView>{children}</ScrollView>
           </Dialog.ScrollArea>
         </Dialog.Content>
-        <Dialog.Actions style={{ justifyContent: "flex-end"}}>
+        <Dialog.Actions style={{ justifyContent: 'flex-end' }}>
           <Button
             onPress={() => {
               props.onClose();
@@ -41,19 +42,17 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
           >
             Cancel
           </Button>
-          
-          <Button onPress={buttonAction}>
-            { buttonLabel }
-          </Button>
+
+          <Button onPress={buttonAction}>{buttonLabel}</Button>
         </Dialog.Actions>
       </Dialog>
     </Portal>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   button: {
-    width: "100%",
+    width: '100%',
     borderRadius: 16,
     padding: 5,
   },
@@ -63,26 +62,25 @@ const styles = StyleSheet.create({
   },
   sheet: {
     elevation: 3,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     flexGrow: 1,
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
   sheetHeader: {
     elevation: 2,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     height: 40,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: -4,
     },
-    backgroundColor: "white",
+    backgroundColor: 'white',
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
-  }
-
-})
+  },
+});

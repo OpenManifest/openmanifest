@@ -1,31 +1,32 @@
-import gql from "graphql-tag";
-import { createMutation } from "../createMutation";
-import { MutationUpdateUserArgs, UpdateUserPayload, UserSignUpPayload } from "../schema";
-
+import gql from 'graphql-tag';
+import { createMutation } from '../createMutation';
+import { MutationUpdateUserArgs, UpdateUserPayload, UserSignUpPayload } from '../schema';
 
 const MUTATION_UPDATE_USER = gql`
   mutation UpdateUser(
-    $id: Int,
-    $name: String,
-    $phone: String,
-    $email: String,
-    $pushToken: String,
-    $nickname: String,
-    $licenseId: Int,
-    $exitWeight: Float,
-  ){
-    updateUser(input: {
-      id: $id
-      attributes: {
-        pushToken: $pushToken
-        name: $name,
-        phone: $phone,
-        email: $email,
-        nickname: $nickname,
-        licenseId: $licenseId,
-        exitWeight: $exitWeight,
+    $id: Int
+    $name: String
+    $phone: String
+    $email: String
+    $pushToken: String
+    $nickname: String
+    $licenseId: Int
+    $exitWeight: Float
+  ) {
+    updateUser(
+      input: {
+        id: $id
+        attributes: {
+          pushToken: $pushToken
+          name: $name
+          phone: $phone
+          email: $email
+          nickname: $nickname
+          licenseId: $licenseId
+          exitWeight: $exitWeight
+        }
       }
-    }) {
+    ) {
       errors
       fieldErrors {
         field
@@ -63,13 +64,13 @@ const MUTATION_UPDATE_USER = gql`
   }
 `;
 
-
-export default createMutation<{ id: number } & MutationUpdateUserArgs["input"]["attributes"], UpdateUserPayload>(
-  MUTATION_UPDATE_USER, {
-    getPayload: (result) => result.updateUser,
-    fieldErrorMap: {
-      license: "licenseId",
-      exit_weight: "exitWeight",
-    },
-  }
-);
+export default createMutation<
+  { id: number } & MutationUpdateUserArgs['input']['attributes'],
+  UpdateUserPayload
+>(MUTATION_UPDATE_USER, {
+  getPayload: (result) => result.updateUser,
+  fieldErrorMap: {
+    license: 'licenseId',
+    exit_weight: 'exitWeight',
+  },
+});

@@ -1,53 +1,53 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { Federation, License } from "../../../api/schema.d";
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { Federation, License } from '../../../api/schema.d';
 
 interface ISignUpScreenState {
-  federation?: Federation | null,
+  federation?: Federation | null;
   fields: {
     name: {
-      value: string,
-      error: string | null,
-    },
+      value: string;
+      error: string | null;
+    };
     phone: {
-      value: string,
-      error: string | null,
-    },
+      value: string;
+      error: string | null;
+    };
     email: {
-      value: string,
-      error: string | null,
-    },
+      value: string;
+      error: string | null;
+    };
     exitWeight: {
-      value: number,
-      error: string | null,
-    },
+      value: number;
+      error: string | null;
+    };
     password: {
-      value: string,
-      error: string | null,
-    },
+      value: string;
+      error: string | null;
+    };
     passwordConfirmation: {
-      value: string,
-      error: string | null,
-    },
+      value: string;
+      error: string | null;
+    };
     license: {
-      value: License | null,
-      error: string | null,
-    },
-  }
+      value: License | null;
+      error: string | null;
+    };
+  };
 }
 
 export const initialState = {
   federation: null,
   fields: {
     email: {
-      value: "",
+      value: '',
       error: null,
     },
     password: {
-      value: "",
+      value: '',
       error: null,
     },
     passwordConfirmation: {
-      value: "",
+      value: '',
       error: null,
     },
     exitWeight: {
@@ -55,18 +55,18 @@ export const initialState = {
       error: null,
     },
     name: {
-      value: "",
+      value: '',
       error: null,
     },
     phone: {
-      value: "",
+      value: '',
       error: null,
     },
     license: {
       value: null,
       error: null,
-    }
-  }
+    },
+  },
 } as ISignUpScreenState;
 
 export default createSlice({
@@ -76,21 +76,26 @@ export default createSlice({
     setFederation: (state: ISignUpScreenState, action: PayloadAction<Federation>) => {
       state.federation = action.payload;
     },
-    setField: <T extends keyof ISignUpScreenState["fields"]>(state: ISignUpScreenState, action: PayloadAction<[T, ISignUpScreenState["fields"][T]["value"]]>) => {
+    setField: <T extends keyof ISignUpScreenState['fields']>(
+      state: ISignUpScreenState,
+      action: PayloadAction<[T, ISignUpScreenState['fields'][T]['value']]>
+    ) => {
       const [field, value] = action.payload;
 
       state.fields[field].value = value;
       state.fields[field].error = null;
     },
-    setFieldError: <T extends  keyof ISignUpScreenState["fields"]>(state: ISignUpScreenState, action: PayloadAction<[T, ISignUpScreenState["fields"][T]["error"]]>) => {
+    setFieldError: <T extends keyof ISignUpScreenState['fields']>(
+      state: ISignUpScreenState,
+      action: PayloadAction<[T, ISignUpScreenState['fields'][T]['error']]>
+    ) => {
       const [field, error] = action.payload;
 
       state.fields[field].error = error;
     },
-    
+
     reset: (state: ISignUpScreenState) => {
       state.fields = initialState.fields;
     },
-  }
+  },
 });
-

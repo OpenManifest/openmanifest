@@ -1,31 +1,32 @@
-import gql from "graphql-tag";
-import { createMutation } from "../createMutation";
-import { LoadInput, UpdateLoadPayload, UpdateTicketPayload } from "../schema";
-
+import gql from 'graphql-tag';
+import { createMutation } from '../createMutation';
+import { LoadInput, UpdateLoadPayload, UpdateTicketPayload } from '../schema';
 
 const MUTATION_UPDATE_LOAD = gql`
   mutation UpdateLoad(
-    $id: Int!,
-    $pilotId: Int,
-    $gcaId: Int,
-    $planeId: Int,
-    $isOpen: Boolean,
-    $loadMasterId: Int,
-    $dispatchAt: Int,
-    $hasLanded: Boolean,
-  ){
-    updateLoad(input: {
-      id: $id
-      attributes: {
-        pilotId: $pilotId,
-        gcaId: $gcaId,
-        planeId: $planeId,
-        isOpen: $isOpen,
-        loadMasterId: $loadMasterId
-        dispatchAt: $dispatchAt
-        hasLanded: $hasLanded
+    $id: Int!
+    $pilotId: Int
+    $gcaId: Int
+    $planeId: Int
+    $isOpen: Boolean
+    $loadMasterId: Int
+    $dispatchAt: Int
+    $hasLanded: Boolean
+  ) {
+    updateLoad(
+      input: {
+        id: $id
+        attributes: {
+          pilotId: $pilotId
+          gcaId: $gcaId
+          planeId: $planeId
+          isOpen: $isOpen
+          loadMasterId: $loadMasterId
+          dispatchAt: $dispatchAt
+          hasLanded: $hasLanded
+        }
       }
-    }) {
+    ) {
       load {
         id
         name
@@ -93,15 +94,12 @@ const MUTATION_UPDATE_LOAD = gql`
   }
 `;
 
-
-export default createMutation<{ id: number } & LoadInput, UpdateLoadPayload>(
-  MUTATION_UPDATE_LOAD, {
-    getPayload: (result) => result.updateLoad,
-    fieldErrorMap: {
-      pilotId: "pilot",
-      gcaId: "gca",
-      planeId: "plane",
-      loadMasterId: "loadMaster",
-    },
-  }
-);
+export default createMutation<{ id: number } & LoadInput, UpdateLoadPayload>(MUTATION_UPDATE_LOAD, {
+  getPayload: (result) => result.updateLoad,
+  fieldErrorMap: {
+    pilotId: 'pilot',
+    gcaId: 'gca',
+    planeId: 'plane',
+    loadMasterId: 'loadMaster',
+  },
+});

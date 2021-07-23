@@ -1,8 +1,8 @@
-import * as React from "react";
-import { View, StyleSheet, Text } from "react-native";
-import { Avatar, HelperText, Paragraph } from "react-native-paper";
-import { successColor } from "../../constants/Colors";
-import WizardScreen, { IWizardScreenProps } from "./WizardScreen";
+import * as React from 'react';
+import { View, StyleSheet, Text } from 'react-native';
+import { Avatar, Paragraph } from 'react-native-paper';
+import { successColor } from '../../constants/Colors';
+import WizardScreen, { IWizardScreenProps } from './WizardScreen';
 
 interface IWizardCompleteStep extends IWizardScreenProps {
   subtitle?: string;
@@ -13,35 +13,30 @@ function WizardCompleteStep(props: IWizardCompleteStep) {
   return (
     <WizardScreen style={styles.container} {...rest}>
       <View style={styles.content}>
-        
-        <Avatar.Icon
-          icon="check"
-          size={150}
-          style={styles.icon}
-        />
+        <Avatar.Icon icon="check" size={150} style={styles.icon} />
         <Text style={styles.title}>{title}</Text>
         <Paragraph style={styles.subtitle}>{subtitle}</Paragraph>
       </View>
     </WizardScreen>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   subtitle: {
-    color: "white",
-    textAlign: "center",
+    color: 'white',
+    textAlign: 'center',
   },
   title: {
     fontSize: 26,
-    color: "white",
-    textAlign: "center",
-    fontWeight: "bold",
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   content: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     flexGrow: 1,
-    alignSelf: "center"
+    alignSelf: 'center',
   },
   icon: {
     marginVertical: 32,
@@ -49,8 +44,8 @@ const styles = StyleSheet.create({
   },
   container: {
     paddingHorizontal: 48,
-    alignItems: "center",
-    backgroundColor: "transparent"
+    alignItems: 'center',
+    backgroundColor: 'transparent',
   },
 });
 

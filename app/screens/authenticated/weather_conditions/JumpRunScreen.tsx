@@ -1,59 +1,67 @@
-import * as React from "react";
-import { useNavigation } from "@react-navigation/native";
-import { Button, FAB } from "react-native-paper";
-import { actions, useAppDispatch, useAppSelector } from "../../../state";
-import useMutationCreateWeatherConditions from "../../../api/hooks/useMutationCreateWeatherConditions";
-import { StyleSheet, View } from "react-native";
-import JumpRunSelector from "../../../components/input/jump_run_select/JumpRunSelectFullScreen";
-import useCurrentDropzone from "../../../api/hooks/useCurrentDropzone";
-import * as Location from "expo-location";
+import * as React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { FAB } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as Location from 'expo-location';
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
+import JumpRunSelector from '../../../components/input/jump_run_select/JumpRunSelectFullScreen';
+// eslint-disable-next-line max-len
+import useMutationCreateWeatherConditions from '../../../api/hooks/useMutationCreateWeatherConditions';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
 export default function JumpRunScreen() {
-  const state = useAppSelector(state => state.forms.weather);
-  const dropzoneId = useAppSelector(state => state.global.currentDropzoneId);
+  const state = useAppSelector((root) => root.forms.weather);
+  const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
-  
+
   const mutationCreateWeatherConditions = useMutationCreateWeatherConditions({
-    onSuccess: () => {
-      
-    },
+    onSuccess: () => null,
     onFieldError: (field: keyof typeof state.fields, message: string) =>
       dispatch(actions.forms.weather.setFieldError([field, message])),
     onError: (message) => {
-      dispatch(actions.notifications.showSnackbar({ message, variant: "error" }));
-    }
+      dispatch(actions.notifications.showSnackbar({ message, variant: 'error' }));
+    },
   });
 
   const onSaveConditions = React.useCallback(async () => {
-    try {
-      await mutationCreateWeatherConditions.mutate({
-        id: Number(state!.original!.id),
-        dropzoneId: dropzoneId!,
-        winds: JSON.stringify(state.fields.winds.value),
-        jumpRun: state.fields.jumpRun.value,
-        temperature: state.fields.temperature.value,
-      });
-      navigation.goBack();
-      dispatch(actions.notifications.showSnackbar({ message: "Weather board updated", variant: "success" }));
-    } catch (e) {
-
-    }
-  }, [JSON.stringify(state.fields), mutationCreateWeatherConditions])
+    await mutationCreateWeatherConditions.mutate({
+      id: Number(state.original?.id),
+      dropzoneId: dropzoneId as number,
+      winds: JSON.stringify(state.fields.winds.value),
+      jumpRun: state.fields.jumpRun.value,
+      temperature: state.fields.temperature.value,
+    });
+    navigation.goBack();
+    dispatch(
+      actions.notifications.showSnackbar({
+        message: 'Weather board updated',
+        variant: 'success',
+      })
+    );
+  }, [
+    mutationCreateWeatherConditions,
+    state.original?.id,
+    state.fields.winds.value,
+    state.fields.jumpRun.value,
+    state.fields.temperature.value,
+    dropzoneId,
+    navigation,
+    dispatch,
+  ]);
 
   const { dropzone } = useCurrentDropzone();
-  const [jumpRun, setJumpRun] = React.useState(state.fields.jumpRun.value || 0);
   const [location, setLocation] = React.useState<Location.LocationObject['coords']>();
   const setUsersLocation = React.useCallback(async () => {
     try {
-      let { status } = await Location.requestPermissionsAsync();
+      const { status } = await Location.requestPermissionsAsync();
       if (status !== 'granted') {
         return;
       }
-      let location = await Location.getCurrentPositionAsync({});
-      
-      
-      setLocation(location.coords);
+      const position = await Location.getCurrentPositionAsync({});
+
+      setLocation(position.coords);
     } catch (error) {
       console.log(error);
     }
@@ -63,24 +71,20 @@ export default function JumpRunScreen() {
     if (!dropzone?.lat || !dropzone?.lng) {
       setUsersLocation();
     }
-  }, []);
-  
+  }, [dropzone?.lat, dropzone?.lng, setUsersLocation]);
+
   return (
-      <View style={StyleSheet.absoluteFill}>
-        <JumpRunSelector
-          value={jumpRun}
-          latitude={dropzone?.lat || location?.latitude || 0}
-          longitude={dropzone?.lng || location?.longitude || 0}
-          onChange={(value) => dispatch(actions.forms.weather.setField(['jumpRun', Math.round(value)]))}
-        />
-        <FAB
-          style={styles.fab}
-          small
-          icon="check"
-          onPress={() => onSaveConditions()}
-          label="Save"
-        />
-      </View>
+    <View style={StyleSheet.absoluteFill}>
+      <JumpRunSelector
+        value={state.fields.jumpRun.value || 0}
+        latitude={dropzone?.lat || location?.latitude || 0}
+        longitude={dropzone?.lng || location?.longitude || 0}
+        onChange={(value) =>
+          dispatch(actions.forms.weather.setField(['jumpRun', Math.round(value)]))
+        }
+      />
+      <FAB style={styles.fab} small icon="check" onPress={() => onSaveConditions()} label="Save" />
+    </View>
   );
 }
 

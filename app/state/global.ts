@@ -1,13 +1,10 @@
-import { Credential, User, Dropzone } from "../api/schema";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
 } from '@react-navigation/native';
-import {
-  DarkTheme as PaperDarkTheme,
-  DefaultTheme as PaperDefaultTheme,
-} from 'react-native-paper';
+import { DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme } from 'react-native-paper';
+import { Credential, User, Dropzone } from '../api/schema';
 
 const CombinedDefaultTheme = {
   ...PaperDefaultTheme,
@@ -15,7 +12,7 @@ const CombinedDefaultTheme = {
   colors: {
     ...PaperDefaultTheme.colors,
     ...NavigationDefaultTheme.colors,
-    primary: "#333333",
+    primary: '#333333',
   },
 };
 const CombinedDarkTheme = {
@@ -24,12 +21,11 @@ const CombinedDarkTheme = {
   colors: {
     ...PaperDarkTheme.colors,
     ...NavigationDarkTheme.colors,
-    primary: "#333333",
+    primary: '#333333',
   },
 };
 
 interface IGlobalState {
-
   currentDropzoneId: number | null;
   // @deprecated
   currentUser: User | null;
@@ -40,7 +36,7 @@ interface IGlobalState {
 
   expoPushToken: string | null;
 
-  theme: typeof CombinedDarkTheme | typeof CombinedDefaultTheme,
+  theme: typeof CombinedDarkTheme | typeof CombinedDefaultTheme;
   isDarkMode: boolean;
 }
 
@@ -91,7 +87,7 @@ export default createSlice({
     toggleDarkMode: (state: IGlobalState) => {
       state.isDarkMode = !state.isDarkMode;
       state.theme = state.isDarkMode ? CombinedDarkTheme : CombinedDefaultTheme;
-      
+
       if (state.currentDropzone?.primaryColor) {
         state.theme.colors.primary = state.currentDropzone?.primaryColor;
       }
@@ -101,15 +97,13 @@ export default createSlice({
       }
     },
     logout: (state: IGlobalState) => {
-      for(const key in initialState) {
-        const typedKey = key as keyof IGlobalState;
-        if (key in state) {
-          (state[typedKey] as any) = initialState[typedKey];
+      Object.keys(initialState).forEach((key) => {
+        const payloadKey = key as keyof typeof initialState;
+        if (payloadKey in state) {
+          const typedKey = payloadKey as keyof typeof initialState;
+          state[payloadKey] = initialState[typedKey];
         }
-      }
-    }
-  }
+      });
+    },
+  },
 });
-
-
-

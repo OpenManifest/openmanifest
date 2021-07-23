@@ -9,36 +9,38 @@ import DropzoneForm from '../../../components/forms/dropzone/DropzoneForm';
 import useMutationCreateDropzone from '../../../api/hooks/useMutationCreateDropzone';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
-
 export default function CreateDropzoneScreen() {
-  const state = useAppSelector(state => state.forms.dropzone);
+  const state = useAppSelector((root) => root.forms.dropzone);
   const dispatch = useAppDispatch();
 
   const createDropzone = useMutationCreateDropzone({
-    onError: (e: string) => dispatch(actions.notifications.showSnackbar({ message: e, variant: "error"})),
+    onError: (e: string) =>
+      dispatch(actions.notifications.showSnackbar({ message: e, variant: 'error' })),
     onFieldError: (field, error) =>
       dispatch(actions.forms.dropzone.setFieldError([field as string, error])),
-    onSuccess: (payload) => dispatch(actions.global.setDropzone(payload.dropzone!)),
-  })
+    // eslint-disable-next-line max-len
+    onSuccess: (payload) =>
+      payload?.dropzone && dispatch(actions.global.setDropzone(payload.dropzone)),
+  });
 
   return (
     <ScrollableScreen contentContainerStyle={{ paddingHorizontal: 32 }}>
-        <DropzoneForm />
-        <View style={styles.fields}>
-          <Button
-            mode="contained"
-            disabled={createDropzone.loading}
-            loading={createDropzone.loading}
-            onPress={() => 
-              createDropzone.mutate({
-                name: state.fields.name.value!,
-                banner: state.fields.banner.value!,
-                federationId: Number(state.fields.federation.value!.id),
-              })
-            }
-          >
-            Save
-          </Button>
+      <DropzoneForm />
+      <View style={styles.fields}>
+        <Button
+          mode="contained"
+          disabled={createDropzone.loading}
+          loading={createDropzone.loading}
+          onPress={() =>
+            createDropzone.mutate({
+              name: state.fields.name.value || '',
+              banner: state.fields.banner.value || null,
+              federationId: Number(state.fields.federation.value?.id),
+            })
+          }
+        >
+          Save
+        </Button>
       </View>
     </ScrollableScreen>
   );
@@ -59,9 +61,9 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   fields: {
-    width: "100%"
+    width: '100%',
   },
   field: {
     marginBottom: 8,
-  }
+  },
 });

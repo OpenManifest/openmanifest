@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Extra } from "../../../api/schema.d";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Extra } from '../../../api/schema.d';
 
 interface IExtraEditState {
   original: Extra | null;
@@ -8,16 +8,16 @@ interface IExtraEditState {
     name: {
       value: string;
       error: string | null;
-    },
+    };
     cost: {
       value: number | null;
       error: string | null;
-    },
+    };
     ticketTypeIds: {
-      value: number[],
-      error: null,
-    }
-  }
+      value: number[];
+      error: null;
+    };
+  };
 }
 
 export const initialState: IExtraEditState = {
@@ -25,7 +25,7 @@ export const initialState: IExtraEditState = {
   open: false,
   fields: {
     name: {
-      value: "",
+      value: '',
       error: null,
     },
     cost: {
@@ -35,28 +35,34 @@ export const initialState: IExtraEditState = {
     ticketTypeIds: {
       value: [],
       error: null,
-    }
-  }
+    },
+  },
 };
 
 export default createSlice({
   name: 'forms/extra',
   initialState,
   reducers: {
-    setField: <T extends  keyof IExtraEditState["fields"]>(state: IExtraEditState, action: PayloadAction<[T, IExtraEditState["fields"][T]["value"]]>) => {
+    setField: <T extends keyof IExtraEditState['fields']>(
+      state: IExtraEditState,
+      action: PayloadAction<[T, IExtraEditState['fields'][T]['value']]>
+    ) => {
       const [field, value] = action.payload;
 
       state.fields[field].value = value;
       state.fields.name.error = null;
     },
-    setFieldError: <T extends  keyof IExtraEditState["fields"]>(state: IExtraEditState, action: PayloadAction<[T, IExtraEditState["fields"][T]["error"]]>) => {
+    setFieldError: <T extends keyof IExtraEditState['fields']>(
+      state: IExtraEditState,
+      action: PayloadAction<[T, IExtraEditState['fields'][T]['error']]>
+    ) => {
       const [field, error] = action.payload;
 
       state.fields[field].error = error;
     },
 
     setOpen: (state: IExtraEditState, action: PayloadAction<boolean | Extra>) => {
-      if (typeof action.payload === "boolean") {
+      if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;
         state.fields = initialState.fields;
@@ -65,15 +71,13 @@ export default createSlice({
         state.open = true;
         state.fields.ticketTypeIds.value = action.payload.ticketTypes.map(({ id }) => Number(id));
         state.fields.cost.value = action.payload.cost;
-        state.fields.name.value = action.payload.name!;
+        state.fields.name.value = action.payload.name || '';
       }
     },
-    
+
     reset: (state: IExtraEditState) => {
       state.fields = initialState.fields;
       state.original = null;
     },
-  }
+  },
 });
-
-
