@@ -7,8 +7,8 @@ import { Avatar, Checkbox, Divider, FAB, List, ProgressBar } from 'react-native-
 
 import NoResults from '../../../components/NoResults';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import { DropzoneUser, Query } from '../../../graphql/schema';
-import { actions, useAppDispatch, useAppSelector } from '../../../redux';
+import { DropzoneUser, Query } from '../../../api/schema';
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
 
 
 const QUERY_DROPZONE_USERS = gql`

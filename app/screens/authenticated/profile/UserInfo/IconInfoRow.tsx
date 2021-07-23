@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { List, Paragraph, TouchableRipple } from 'react-native-paper';
 
 
-import { useAppDispatch, useAppSelector } from '../../../../redux';
+import { useAppDispatch, useAppSelector } from '../../../../state';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 
 interface IIconInfoRow {

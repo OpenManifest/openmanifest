@@ -3,10 +3,10 @@ import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar } from 'react-native-paper';
-import { Mutation, Permission, Query } from "../../../graphql/schema.d";
+import { Mutation, Permission, Query } from "../../../api/schema.d";
 
 import { useIsFocused } from '@react-navigation/core';
-import { actions, useAppDispatch, useAppSelector } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import NoResults from '../../../components/NoResults';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import PlaneDialog from '../../../components/dialogs/Plane';

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Dimensions, ScrollView, StyleSheet, ScrollViewProps, useWindowDimensions } from "react-native";
-import { useAppSelector } from "../../redux";
+import { useAppSelector } from "../../state";
 
 
 interface IScrollableScreen extends ScrollViewProps {

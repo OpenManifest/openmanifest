@@ -2,19 +2,19 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { gql, useMutation } from "@apollo/client";
-import { useAppSelector, useAppDispatch } from '../../../redux';
+import { useAppSelector, useAppDispatch } from '../../../state';
 
 import { View } from '../../../components/Themed';
 import { actions as snackbar } from "../../../components/notifications";
-import globalSlice from "../../../redux/global";
+import globalSlice from "../../../state/global";
 
 import slice from "../../../components/forms/extra/slice";
-import { Mutation } from '../../../graphql/schema';
+import { Mutation } from '../../../api/schema';
 import ExtraForm from '../../../components/forms/extra/ExtraForm';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
 const { actions } = slice;
 const { actions: globalActions } = globalSlice;

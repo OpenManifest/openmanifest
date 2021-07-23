@@ -12,8 +12,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { QUERY_PERMISSION_USER } from "../../../components/chips/GcaChip";
 
 import { successColor, warningColor } from "../../../constants/Colors";
-import { actions, useAppDispatch, useAppSelector } from '../../../redux';
-import { Mutation, Permission, Query } from '../../../graphql/schema.d';
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
+import { Mutation, Permission, Query } from '../../../api/schema.d';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import DropzoneUserDialog from '../../../components/dialogs/DropzoneUserDialog';
 import CreditsSheet from '../../../components/dialogs/CreditsDialog/Credits';
@@ -23,12 +23,12 @@ import EditUserSheet from '../../../components/dialogs/User';
 import TableCard from "./UserInfo/TableCard";
 import Header from "./UserInfo/Header";
 import InfoGrid from './UserInfo/InfoGrid';
-import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
-import useDropzoneUser from '../../../graphql/hooks/useDropzoneUser';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
+import useDropzoneUser from '../../../api/hooks/useDropzoneUser';
 import Badge from '../../../components/Badge';
 import useRestriction from '../../../hooks/useRestriction';
-import useMutationRevokePermission from '../../../graphql/hooks/useMutationRevokePermission';
-import useMutationGrantPermission from '../../../graphql/hooks/useMutationGrantPermission';
+import useMutationRevokePermission from '../../../api/hooks/useMutationRevokePermission';
+import useMutationGrantPermission from '../../../api/hooks/useMutationGrantPermission';
 
 
 const MUTATION_UPDATE_IMAGE = gql`

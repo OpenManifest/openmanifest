@@ -2,12 +2,12 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText } from 'react-native-paper';
 
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import DatePicker from '../../input/date_picker/DatePicker';
 import ChipSelect from '../../input/chip_select/ChipSelect';
 import useRestriction from '../../../hooks/useRestriction';
-import { Permission } from '../../../graphql/schema.d';
+import { Permission } from '../../../api/schema.d';
 
 
 interface IRigForm {

@@ -2,9 +2,9 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { List, Menu } from "react-native-paper";
-import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
-import { Plane, Query } from "../../../graphql/schema.d";
-import { useAppSelector } from "../../../redux";
+import useCurrentDropzone from "../../../api/hooks/useCurrentDropzone";
+import { Plane, Query } from "../../../api/schema.d";
+import { useAppSelector } from "../../../state";
 
 interface IPlaneSelect {
   dropzoneId: number;

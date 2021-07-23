@@ -4,12 +4,12 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB, DataTable, ProgressBar } from 'react-native-paper';
 import { View } from '../../../components/Themed';
-import { Permission, Query } from "../../../graphql/schema.d";
+import { Permission, Query } from "../../../api/schema.d";
 
-import { actions, useAppDispatch, useAppSelector } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import NoResults from '../../../components/NoResults';
 import TicketTypeExtraDialog from '../../../components/dialogs/TicketTypeExtra';
-import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import useRestriction from '../../../hooks/useRestriction';
 
 

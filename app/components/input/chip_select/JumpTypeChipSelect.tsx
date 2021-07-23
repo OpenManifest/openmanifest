@@ -2,17 +2,19 @@ import gql from "graphql-tag";
 import { uniqBy } from "lodash";
 import * as React from "react";
 import { List } from "react-native-paper";
-import { createQuery } from "../../../graphql/createQuery";
-import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
-import { JumpType } from "../../../graphql/schema.d";
-import { useAppSelector } from "../../../redux";
+import { createQuery } from "../../../api/createQuery";
+import useCurrentDropzone from "../../../api/hooks/useCurrentDropzone";
+import { JumpType } from "../../../api/schema.d";
+import { useAppSelector } from "../../../state";
 import ChipSelect from "./ChipSelect";
+import ChipSelectSkeleton from "./ChipSelectSkeleton";
 
 
 interface IJumpTypeSelect {
   value?: JumpType | null;
   required?: boolean;
   userId?: number | null;
+  onLoadingStateChanged?(loading: boolean): void;
   onSelect(jt: JumpType): void;
 }
 
@@ -49,6 +51,7 @@ const useAllowedJumpTypes = createQuery<{ jumpTypes: JumpType[], allowedJumpType
  });
 
 export default function JumpTypeChipSelect(props: IJumpTypeSelect) {
+  const { onLoadingStateChanged, userId } = props;
   const { currentDropzoneId } = useAppSelector(state => state.global);
   const { data, loading } = useAllowedJumpTypes({
     variables: {
@@ -58,8 +61,14 @@ export default function JumpTypeChipSelect(props: IJumpTypeSelect) {
     onError: console.error
   });
 
+  React.useEffect(() => {
+    onLoadingStateChanged?.(loading);
+  }, [loading]);
+
   return (
-    <>
+    loading
+    ? <ChipSelectSkeleton /> 
+    : <>
       <List.Subheader>
         Jump type
       </List.Subheader>

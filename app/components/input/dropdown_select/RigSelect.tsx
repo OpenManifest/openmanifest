@@ -2,9 +2,9 @@ import { useLazyQuery, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { List, Menu } from "react-native-paper";
-import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
-import { Rig, Query } from "../../../graphql/schema.d";
-import { useAppSelector } from "../../../redux";
+import useCurrentDropzone from "../../../api/hooks/useCurrentDropzone";
+import { Rig, Query } from "../../../api/schema.d";
+import { useAppSelector } from "../../../state";
 
 interface IRigSelect {
   dropzoneId?: number;

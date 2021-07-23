@@ -1,4 +1,4 @@
-import { Credential, User, Dropzone } from "../graphql/schema";
+import { Credential, User, Dropzone } from "../api/schema";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   DarkTheme as NavigationDarkTheme,

@@ -10,7 +10,7 @@ import SettingsTab from "./tabs/settings";
 import UsersTab from "./tabs/users";
 
 import useRestriction from '../hooks/useRestriction';
-import { Permission } from '../graphql/schema.d';
+import { Permission } from '../api/schema.d';
 
 export type IAuthenticatedTabParams = {
   Manifest: undefined;

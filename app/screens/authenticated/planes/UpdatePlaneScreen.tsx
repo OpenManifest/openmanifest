@@ -3,12 +3,12 @@ import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { gql, useMutation } from "@apollo/client";
 import { useNavigation, useRoute } from '@react-navigation/core';
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import { View } from '../../../components/Themed';
 import { actions as snackbar } from "../../../components/notifications";
 
-import { Mutation, Plane } from '../../../graphql/schema';
+import { Mutation, Plane } from '../../../api/schema';
 import PlaneForm from '../../../components/forms/plane/PlaneForm';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';

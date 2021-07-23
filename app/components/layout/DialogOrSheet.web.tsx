@@ -2,7 +2,7 @@ import * as React from "react";
 import { StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, Dialog, Portal, ProgressBar } from "react-native-paper";
-import { useAppSelector } from "../../redux";
+import { useAppSelector } from "../../state";
 interface IBottomSheetProps {
   open?: boolean;
   title?: string;

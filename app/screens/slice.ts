@@ -1,4 +1,3 @@
-import { combineReducers } from "@reduxjs/toolkit";
 import * as users from "./authenticated/users/slice";
 import * as login from "./unauthenticated/login/slice";
 import * as manifest from "./authenticated/manifest/slice";

@@ -12,15 +12,15 @@ import { NavigationContainer, useLinking } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
 
 import URI from 'urijs';
-import Apollo from "./graphql/Apollo";
-import { store, persistor, useAppSelector, useAppDispatch } from "./redux/store";
+import Apollo from "./api/Apollo";
+import { store, persistor, useAppSelector, useAppDispatch } from "./state/store";
 
 
 import useCachedResources from './hooks/useCachedResources';
 import NotificationArea from './components/notifications/Notifications';
 import LinkingConfiguration from './navigation/Routes';
 import RootNavigator from "./navigation/RootNavigator";
-import { actions } from './redux';
+import { actions } from './state';
 import UserWizardScreen from './components/dialogs/UserWizard/UserWizardScreen';
 
 

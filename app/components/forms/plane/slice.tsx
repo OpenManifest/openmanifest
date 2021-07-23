@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Plane } from "../../../graphql/schema.d";
+import { Plane } from "../../../api/schema.d";
 
 interface IPlaneEditState {
   original: Plane | null;

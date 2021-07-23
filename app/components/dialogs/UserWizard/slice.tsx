@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Rig, User } from "../../../graphql/schema.d";
+import { Rig, User } from "../../../api/schema.d";
 
 interface IUserWizardState {
   open: boolean;

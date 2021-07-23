@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Card, HelperText, List, TextInput, Title } from "react-native-paper";
 import FederationSelect from "../../../../components/input/dropdown_select/FederationSelect";
 import WizardScreen, { IWizardScreenProps } from "../../../../components/wizard/WizardScreen";
-import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../../../state";
 
 
 function NameAndFederationWizardSceen(props: IWizardScreenProps) {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import { FieldItem } from "./slice";
 import RigInspectionItem from './RigInspectionItem';

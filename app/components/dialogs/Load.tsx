@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { gql, useMutation } from "@apollo/client";
 
-import { actions, useAppSelector, useAppDispatch } from '../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../state';
 import { actions as snackbar } from "../../components/notifications";
 
-import { Load, Mutation } from '../../graphql/schema';
+import { Load, Mutation } from '../../api/schema';
 import LoadForm from '../forms/load/LoadForm';
 import DialogOrSheet from '../layout/DialogOrSheet';
-import useCurrentDropzone from '../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
 
 
 const MUTATION_CREATE_LOAD = gql`

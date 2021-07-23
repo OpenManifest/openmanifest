@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as appRedux from "../../redux";
+import * as appRedux from "../../state";
 import LoadCard from '../../screens/authenticated/manifest/LoadCard';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import { MOCK_QUERY_LOAD } from './__mocks__/QueryLoad.mock';

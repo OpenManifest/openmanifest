@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, Divider, List } from 'react-native-paper';
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
-import PlaneSelect from '../../input/dropdown_select/PlaneSelect';
-import DropzoneUserSelect from '../../input/dropdown_select/DropzoneUserSelect';
 import DropzoneUserChipSelect from '../../input/chip_select/DropzoneUserChipSelect';
 import PlaneChipSelect from '../../input/chip_select/PlaneChipSelect';
 
 export default function LoadForm() {
   const state = useAppSelector(state => state.forms.load);
   const dispatch = useAppDispatch();
-  const globalState = useAppSelector(state => state.global);
+  
+  const [loading, setLoading] = React.useState(true);
 
 
   return ( 

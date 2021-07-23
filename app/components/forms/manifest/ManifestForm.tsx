@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { TextInput, HelperText, Divider, Chip, List } from 'react-native-paper';
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
-import { Permission } from '../../../graphql/schema.d';
+import { Permission } from '../../../api/schema.d';
 import JumpTypeChipSelect from '../../input/chip_select/JumpTypeChipSelect';
 import TicketTypeChipSelect from '../../input/chip_select/TicketTypeChipSelect';
 import useRestriction from '../../../hooks/useRestriction';
 import RigSelect from '../../input/dropdown_select/RigSelect';
-import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
 export default function ManifestForm() {
   

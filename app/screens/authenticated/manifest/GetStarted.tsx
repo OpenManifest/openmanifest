@@ -6,9 +6,9 @@ import { StyleSheet } from 'react-native';
 import { List, Menu } from 'react-native-paper';
 
 import { Text, View } from '../../../components/Themed';
-import { Query } from '../../../graphql/schema';
+import { Query } from '../../../api/schema';
 import usePalette from '../../../hooks/usePalette';
-import { useAppSelector } from '../../../redux';
+import { useAppSelector } from '../../../state';
 
 
 interface IGetStartedProps {

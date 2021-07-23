@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Divider } from 'react-native-paper';
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 
 import LicenseChipSelect from '../../input/chip_select/LicenseChipSelect';

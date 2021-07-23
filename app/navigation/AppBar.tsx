@@ -2,8 +2,8 @@ import * as React from "react";
 import { Appbar, Menu, IconButton, Divider, Chip } from "react-native-paper";
 import { StackHeaderProps } from "@react-navigation/stack";
 import { gql, useLazyQuery } from "@apollo/client";
-import { Query } from "../graphql/schema";
-import { actions, useAppDispatch, useAppSelector } from "../redux";
+import { Query } from "../api/schema";
+import { actions, useAppDispatch, useAppSelector } from "../state";
 import { StyleSheet } from "react-native";
 import SetupWarning from "./SetupWarning";
 

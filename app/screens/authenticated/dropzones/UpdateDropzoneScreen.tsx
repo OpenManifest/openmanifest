@@ -2,10 +2,10 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button, IconButton, ProgressBar } from 'react-native-paper';
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import { View } from '../../../components/Themed';
-import { Dropzone, Mutation, Query } from '../../../graphql/schema';
+import { Dropzone, Mutation, Query } from '../../../api/schema';
 import DropzoneForm from '../../../components/forms/dropzone/DropzoneForm';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';

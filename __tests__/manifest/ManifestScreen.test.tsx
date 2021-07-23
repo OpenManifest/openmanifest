@@ -5,11 +5,11 @@ import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import { MOCK_QUERY_DROPZONE } from "./__mocks__/QueryDropzone.mock";
 import { MOCK_QUERY_ALLOWED_TICKET_TYPES } from "./__mocks__/QueryAllowedTicketTypes.mock";
 import { MOCK_QUERY_ALLOWED_JUMP_TYPES } from "./__mocks__/QueryAllowedJumpTypes.mock";
-import * as appRedux from "../../redux";
+import * as appRedux from "../../state";
 
 
 import ManifestScreen from "../../screens/authenticated/manifest/ManifestScreen";
-import * as global from '../../redux/global';
+import * as global from '../../state/global';
 import { MOCK_QUERY_LOAD } from './__mocks__/QueryLoad.mock';
 
 const initialState = {

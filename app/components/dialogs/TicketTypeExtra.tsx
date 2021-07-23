@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { gql, useMutation } from "@apollo/client";
-import { actions, useAppSelector, useAppDispatch } from '../../redux';
-import { Mutation } from '../../graphql/schema';
+import { actions, useAppSelector, useAppDispatch } from '../../state';
+import { Mutation } from '../../api/schema';
 import ExtraForm from '../../components/forms/extra/ExtraForm';
 import DialogOrSheet from '../layout/DialogOrSheet';
-import useCurrentDropzone from '../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
 
 
 const MUTATION_UPDATE_EXTRA = gql`

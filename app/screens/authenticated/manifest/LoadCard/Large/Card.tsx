@@ -4,21 +4,21 @@ import { Button, Card, DataTable, IconButton, Menu, Paragraph, ProgressBar, Text
 import addMinutes from "date-fns/addMinutes";
 import differenceInMinutes from "date-fns/differenceInMinutes";
 
-import useCurrentDropzone from '../../../../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../../../../api/hooks/useCurrentDropzone';
 import GCAChip from '../../../../../components/chips/GcaChip';
 import LoadMasterChip from '../../../../../components/chips/LoadMasterChip';
 import PilotChip from '../../../../../components/chips/PilotChip';
 import PlaneChip from '../../../../../components/chips/PlaneChip';
 
 import { View } from '../../../../../components/Themed';
-import { Load, Permission, Plane, Slot, DropzoneUser } from '../../../../../graphql/schema.d';
+import { Load, Permission, Plane, Slot, DropzoneUser } from '../../../../../api/schema.d';
 import useRestriction from '../../../../../hooks/useRestriction';
-import { actions, useAppDispatch, useAppSelector } from '../../../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../../../state';
 import SwipeActions from '../../../../../components/layout/SwipeActions';
 import LoadingCard from '../Small/Loading';
-import useQueryLoad from '../../../../../graphql/hooks/useQueryLoad';
-import useMutationUpdateLoad from '../../../../../graphql/hooks/useMutationUpdateLoad';
-import useMutationDeleteSlot from '../../../../../graphql/hooks/useMutationDeleteSlot';
+import useQueryLoad from '../../../../../api/hooks/useQueryLoad';
+import useMutationUpdateLoad from '../../../../../api/hooks/useMutationUpdateLoad';
+import useMutationDeleteSlot from '../../../../../api/hooks/useMutationDeleteSlot';
 
 interface ILoadCardLarge {
   load: Load;

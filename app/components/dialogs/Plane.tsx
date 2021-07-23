@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { gql, useMutation } from "@apollo/client";
-import { actions, useAppSelector, useAppDispatch,  } from '../../redux';
+import { actions, useAppSelector, useAppDispatch,  } from '../../state';
 
-import { Mutation } from '../../graphql/schema';
+import { Mutation } from '../../api/schema';
 import PlaneForm from '../forms/plane/PlaneForm';
 import DialogOrSheet from "../layout/DialogOrSheet";
-import useCurrentDropzone from '../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
 
 
 const MUTATION_UPDATE_PLANE = gql`

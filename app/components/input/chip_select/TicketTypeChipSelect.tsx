@@ -1,17 +1,19 @@
 import gql from "graphql-tag";
 import * as React from "react";
 import { List } from "react-native-paper";
-import { createQuery } from "../../../graphql/createQuery";
-import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
-import { TicketType } from "../../../graphql/schema.d";
-import { useAppSelector } from "../../../redux";
+import { createQuery } from "../../../api/createQuery";
+import useCurrentDropzone from "../../../api/hooks/useCurrentDropzone";
+import { TicketType } from "../../../api/schema.d";
+import { useAppSelector } from "../../../state";
 import ChipSelect from "./ChipSelect";
+import ChipSelectSkeleton from "./ChipSelectSkeleton";
 
 
 interface ITicketTypeSelect {
   value?: TicketType | null;
   required?: boolean;
   onlyPublicTickets?: boolean;
+  onLoadingStateChanged?(loading: boolean): void;
   onSelect(jt: TicketType): void;
 }
 
@@ -50,6 +52,7 @@ const useTicketTypes = createQuery<{ ticketTypes: TicketType[] }, {
  });
 
 export default function TicketTypeChipSelect(props: ITicketTypeSelect) {
+  const { value, onLoadingStateChanged, onSelect } = props;
   const { currentDropzoneId } = useAppSelector(state => state.global);
   
   const { data, loading } = useTicketTypes({
@@ -60,19 +63,25 @@ export default function TicketTypeChipSelect(props: ITicketTypeSelect) {
     onError: console.error
   });
 
+  React.useEffect(() => {
+    onLoadingStateChanged?.(loading);
+  }, [loading]);
+
   return (
-    <>
+    loading
+    ? <ChipSelectSkeleton /> 
+    : <>
       <List.Subheader>
         Ticket
       </List.Subheader>
       <ChipSelect
         autoSelectFirst
         items={data?.ticketTypes || []}
-        selected={[props.value].filter(Boolean)}
+        selected={[value].filter(Boolean)}
         renderItemLabel={(ticketType) => ticketType?.name}
         isDisabled={() => false}
         onChangeSelected={([first]) =>
-          first ? props.onSelect(first) : null
+          first ? onSelect(first) : null
         }
       />
     </>

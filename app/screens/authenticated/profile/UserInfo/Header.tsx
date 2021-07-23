@@ -2,8 +2,8 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Avatar, IconButton, Paragraph, Title, TouchableRipple } from 'react-native-paper';
 
-import { useAppSelector } from '../../../../redux';
-import { DropzoneUser } from '../../../../graphql/schema';
+import { useAppSelector } from '../../../../state';
+import { DropzoneUser } from '../../../../api/schema';
 
 
 interface IUserHeader {

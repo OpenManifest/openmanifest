@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View } from "react-native";
 import { Checkbox, HelperText, List, TextInput } from "react-native-paper";
-import { Permission } from "../../../graphql/schema.d";
+import { Permission } from "../../../api/schema.d";
 import useRestriction from "../../../hooks/useRestriction";
 import DatePicker from '../../input/date_picker/DatePicker';
 import { FieldItem } from "./slice";

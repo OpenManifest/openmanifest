@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Dropzone } from "../../../graphql/schema.d";
+import { Dropzone } from "../../../api/schema.d";
 interface IDropzoneWizardState {
   open: boolean;
   complete: boolean;

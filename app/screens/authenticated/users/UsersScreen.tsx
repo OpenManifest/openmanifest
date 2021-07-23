@@ -2,16 +2,17 @@ import { useQuery } from '@apollo/client';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { RefreshControl, StyleSheet, View } from 'react-native';
-import { Avatar, Divider, FAB, List, ProgressBar } from 'react-native-paper';
+import { RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Avatar, Card, Divider, FAB, List, ProgressBar } from 'react-native-paper';
 
 import NoResults from '../../../components/NoResults';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import { Permission, Query } from '../../../graphql/schema.d';
-import { actions,  useAppDispatch, useAppSelector } from '../../../redux';
+import { Permission, Query } from '../../../api/schema.d';
+import { actions,  useAppDispatch, useAppSelector } from '../../../state';
 import useRestriction from '../../../hooks/useRestriction';
 import CreateGhostDialog from '../../../components/dialogs/Ghost';
 import { FlatList } from 'react-native-gesture-handler';
+import SkeletonContent from 'react-native-skeleton-content';
 
 const QUERY_DROPZONE_USERS = gql`
   query QueryDropzoneUsersSearch(
@@ -42,9 +43,21 @@ const QUERY_DROPZONE_USERS = gql`
   }
 `;
 
-interface IUsersRouteParams{
-  key: string,
-  name: string,
+
+function UserCardSkeleton({ width }: { width: number }) {
+  return (
+    <SkeletonContent
+      isLoading
+      containerStyle={{
+        height: 110,
+        width,
+        margin: 4,
+      }}
+      layout={[
+        { key: "user-card-container", height: 110, width }
+      ]}
+    />
+  );
 }
 export default function UsersScreen() {
   const global = useAppSelector(state => state.global);
@@ -72,56 +85,73 @@ export default function UsersScreen() {
 
 
   const canCreateUser = useRestriction(Permission.CreateUser);
+  const { width, height } = useWindowDimensions();
 
+  const cardWidth = 550 + 32;
+  const numColumns = Math.floor(width / cardWidth) || 1;
+  const contentWidth = (cardWidth * numColumns) - 16;
+  
+  const users = data?.dropzone?.dropzoneUsers?.edges || [];
+  const initialLoading = !users?.length && loading;
 
   return (
     <>
       <ProgressBar indeterminate color={global.theme.colors.accent} visible={loading} />
       <FlatList
-        data={data?.dropzone?.dropzoneUsers?.edges || []}
+        data={initialLoading ? [1, 1, 1, 1, 1] : users}
         onRefresh={() => refetch({
           dropzoneId: Number(global.currentDropzoneId),
           search: state.searchText,
         })}
+        keyExtractor={({ item }, idx) => `user-${item?.node?.id || idx}`}
+        style={{
+          flex: 1,
+          paddingTop: 35,
+        }}
         refreshing={loading}
-
         refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch}/>}
-        style={{ flexGrow: 1 }}
         ListEmptyComponent={() => (
           <View style={{ alignSelf: "center", alignItems: "center", justifyContent: "center" }}>
             <NoResults title="No users" subtitle="" />
           </View>
         )}
-        numColumns={1}
+        numColumns={numColumns}
+        contentContainerStyle={{ width: contentWidth, alignSelf: "center" }}
         renderItem={({ item: edge }) => (
-        <React.Fragment key={`user-${edge?.node?.id}`}>
-          <List.Item
-              style={{ width: "100%"}}
-              title={edge?.node?.user.name}
-              description={
-                edge?.node?.role?.name?.replace('_', ' ').toUpperCase()
-              }
-              left={() =>
-                !edge?.node?.user?.image
-                  ? <List.Icon icon="account" />
-                  : <Avatar.Image source={{ uri: edge?.node?.user.image }} style={{ alignSelf: "center", marginHorizontal: 12 }} size={32} />
-              }
-              onPress={() => navigation.navigate("UserProfileScreen", { userId: edge?.node?.id })}
-            />
-            <Divider style={{ width: "100%" }} key={`divider-${edge?.node!.id}`}/>
-          </React.Fragment>
+          edge === 1
+          ? <UserCardSkeleton width={cardWidth} />
+          : <Card key={`user-${edge?.node?.id}`} elevation={3} style={{ width: cardWidth, margin: 4 }}>
+              <Card.Content>
+                <List.Item
+                  style={{ width: "100%"}}
+                  title={edge?.node?.user.name}
+                  description={
+                    edge?.node?.role?.name?.replace('_', ' ').toUpperCase()
+                  }
+                  left={() =>
+                    !edge?.node?.user?.image
+                      ? <Avatar.Icon icon="account" style={{ alignSelf: "center", marginHorizontal: 12 }} size={32} />
+                      : <Avatar.Image source={{ uri: edge?.node?.user.image }} style={{ alignSelf: "center", marginHorizontal: 12 }} size={32} />
+                  }
+                  right={() =>
+                    <List.Icon icon="chevron-right" />
+                  }
+                  onPress={() => navigation.navigate("UserProfileScreen", { userId: edge?.node?.id })}
+                />
+              </Card.Content>
+            </Card>
         )}
       />
         
        
       { canCreateUser && (
-        <FAB
-        style={styles.fab}
-        small
-        icon="plus"
-        onPress={() => dispatch(actions.forms.ghost.setOpen(true))}
-        label="Add user"
-        />
+          <FAB
+            style={styles.fab}
+            small
+            icon="plus"
+            onPress={() => dispatch(actions.forms.ghost.setOpen(true))}
+            label="Add user"
+          />
         )}
       <CreateGhostDialog
         open={ghostForm.open}

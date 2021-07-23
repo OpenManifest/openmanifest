@@ -1,8 +1,8 @@
 import * as React from "react";
 import UserForm from '../forms/user/UserForm';
-import { actions, useAppDispatch, useAppSelector } from "../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../state";
 import DialogOrSheet from "../layout/DialogOrSheet";
-import useMutationUpdateUser from "../../graphql/hooks/useMutationUpdateUser";
+import useMutationUpdateUser from "../../api/hooks/useMutationUpdateUser";
 
 interface IUpdateUserDialog {
   open?: boolean;

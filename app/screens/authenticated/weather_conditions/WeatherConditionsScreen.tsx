@@ -2,8 +2,8 @@ import * as React from "react";
 import { useNavigation } from "@react-navigation/native";
 import Wizard from "../../../components/wizard/Wizard";
 import WizardCompleteStep from "../../../components/wizard/WizardCompleteStep";
-import { actions, useAppDispatch, useAppSelector } from "../../../redux";
-import useMutationCreateWeatherConditions from "../../../graphql/hooks/useMutationCreateWeatherConditions";
+import { actions, useAppDispatch, useAppSelector } from "../../../state";
+import useMutationCreateWeatherConditions from "../../../api/hooks/useMutationCreateWeatherConditions";
 import WindsStep from "./steps/Winds";
 import JumpRunStep from "./steps/JumpRun";
 

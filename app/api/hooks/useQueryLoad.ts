@@ -47,13 +47,21 @@ export const QUERY_LOAD = gql`
         exitWeight
         passengerName
         passengerExitWeight
-        
+        wingLoading
         dropzoneUser {
           id
+          role {
+              id
+              name
+            }
           user {
             id
             name
             exitWeight
+            license {
+              id
+              name
+            }
           }
         }
         ticketType {

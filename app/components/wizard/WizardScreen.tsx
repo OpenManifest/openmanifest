@@ -51,43 +51,43 @@ export function WizardScreen(props: IWizardScreenProps) {
         { props.children }
 
         <View style={styles.buttons} pointerEvents="box-none">
-        <Button
-          key={`button-next-${index}`}
-          loading={loading}
-          mode="contained"
-          color="#FFFFFF"
-          disabled={loading}
-          style={styles.button}
-          onPress={async () => {
-            console.log("onNext with index", index);
-            onNext(index, setIndex);
-          }}
-        >
-          {
-            nextButtonLabel
-          }
-        </Button>
+          <Button
+            key={`button-next-${index}`}
+            loading={loading}
+            mode="contained"
+            color="#FFFFFF"
+            disabled={loading}
+            style={styles.button}
+            onPress={async () => {
+              console.log("onNext with index", index);
+              onNext(index, setIndex);
+            }}
+          >
+            {
+              nextButtonLabel
+            }
+          </Button>
 
-        {
-          !onBack
-            ? null
-            : (
-              <Button
-                key={`button-${index}`}
-                mode="text"
-                disabled={loading}
-                color="#FFFFFF"
-                style={styles.buttonBack}
-                onPress={async () => {
-                  onBack(index, setIndex);
-                }}
-              >
-                {
-                  backButtonLabel
-                }
-              </Button>     
-            )
-        }
+          {
+            !onBack
+              ? null
+              : (
+                <Button
+                  key={`button-${index}`}
+                  mode="text"
+                  disabled={loading}
+                  color="#FFFFFF"
+                  style={styles.buttonBack}
+                  onPress={async () => {
+                    onBack(index, setIndex);
+                  }}
+                >
+                  {
+                    backButtonLabel
+                  }
+                </Button>     
+              )
+          }
         </View>
       </ScrollableScreen>
     </View>

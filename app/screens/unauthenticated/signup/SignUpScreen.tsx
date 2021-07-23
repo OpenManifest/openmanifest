@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Image, KeyboardAvoidingView, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
-import useMutationSignUp from '../../../graphql/hooks/useMutationSignUp';
+import useMutationSignUp from '../../../api/hooks/useMutationSignUp';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
 import { primaryColor } from '../../../constants/Colors';

@@ -2,12 +2,12 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { HelperText, List } from 'react-native-paper';
 
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import DatePicker from '../../input/date_picker/DatePicker';
 import RoleSelect from '../../input/dropdown_select/RoleSelect';
 import useRestriction from '../../../hooks/useRestriction';
-import { Permission } from '../../../graphql/schema.d';
+import { Permission } from '../../../api/schema.d';
 
 export default function DropzoneUserForm() {
   const state = useAppSelector(state => state.forms.dropzoneUser);

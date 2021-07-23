@@ -2,10 +2,10 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { List } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
-import { useAppSelector } from '../../../redux';
+import { useAppSelector } from '../../../state';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import useRestriction from '../../../hooks/useRestriction';
-import { Permission } from '../../../graphql/schema.d';
+import { Permission } from '../../../api/schema.d';
 
 
 

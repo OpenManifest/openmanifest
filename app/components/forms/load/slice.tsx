@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Load } from "../../../graphql/schema.d";
+import { Load } from "../../../api/schema.d";
 
 
 type Fields = Pick<

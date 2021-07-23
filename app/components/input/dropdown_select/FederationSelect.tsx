@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 import * as React from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { List, Menu, TextInput } from "react-native-paper";
-import { Federation, Query } from "../../../graphql/schema.d";
+import { Federation, Query } from "../../../api/schema.d";
 
 
 interface IFederationSelect {

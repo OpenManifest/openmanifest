@@ -1,8 +1,8 @@
 import { gql, useMutation } from "@apollo/client";
 import * as React from "react";
 import { Button, Dialog, Portal, ProgressBar } from "react-native-paper";
-import { DropzoneUser, Mutation } from "../../graphql/schema.d";
-import { actions, useAppDispatch, useAppSelector } from "../../redux";
+import { DropzoneUser, Mutation } from "../../api/schema.d";
+import { actions, useAppDispatch, useAppSelector } from "../../state";
 import DropzoneUserForm from "../forms/dropzone_user/DropzoneUserForm";
 interface IDropzoneUserDialog {
   open?: boolean;

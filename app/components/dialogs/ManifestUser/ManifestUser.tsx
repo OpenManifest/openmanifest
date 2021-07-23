@@ -1,8 +1,8 @@
 import { gql, useMutation } from "@apollo/client";
 import * as React from "react";
 import { StyleSheet } from "react-native";
-import { Mutation } from "../../../graphql/schema.d";
-import { actions, useAppDispatch, useAppSelector } from "../../../redux";
+import { Mutation } from "../../../api/schema.d";
+import { actions, useAppDispatch, useAppSelector } from "../../../state";
 import ManifestForm from "../../forms/manifest/ManifestForm";
 import DialogOrSheet from "../../layout/DialogOrSheet";
 interface IManifestUserDialog {

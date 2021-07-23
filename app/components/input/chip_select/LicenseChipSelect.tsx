@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { List } from "react-native-paper";
-import { License, Query } from "../../../graphql/schema.d";
+import { License, Query } from "../../../api/schema.d";
 import ChipSelect from "./ChipSelect";
 
 

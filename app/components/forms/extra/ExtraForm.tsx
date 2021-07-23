@@ -4,9 +4,9 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, List } from 'react-native-paper';
 import { xor } from "lodash";
-import { Query } from '../../../graphql/schema';
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
-import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
+import { Query } from '../../../api/schema';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
 
 const QUERY_TICKET_TYPES = gql`

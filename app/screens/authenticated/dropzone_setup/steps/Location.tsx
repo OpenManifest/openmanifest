@@ -3,7 +3,7 @@ import { Animated, Easing, StyleSheet, Text, TouchableOpacity, View } from "reac
 import { Card, HelperText, List, TextInput } from "react-native-paper";
 import FederationSelect from "../../../input/dropdown_select/FederationSelect";
 import WizardScreen, { IWizardScreenProps } from "../../../../components/wizard/WizardScreen";
-import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../../../state";
 import MapView, { Region } from "react-native-maps";
 import { calculateLatLngDelta } from "../../../../utils/calculateLatLngDelta";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
@@ -27,24 +27,17 @@ function LocationWizardStep(props: IWizardScreenProps) {
       dispatch(actions.forms.dropzone.setField(["lat", location.coords.latitude]));
       dispatch(actions.forms.dropzone.setField(["lng", location.coords.longitude]));
 
+      setInternalRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: calculateLatLngDelta(location.coords.latitude),
+        longitudeDelta: calculateLatLngDelta(location.coords.latitude),
+      });
       map.current?.animateCamera({ center: location.coords });
     } catch (error) {
       console.log(error);
     }
   }, []);
-
-  // Start at user location
-  React.useEffect(() => {
-    if (state.fields.lat.value === null || state.fields.lng.value == null) {
-      setUsersLocation();
-    }
-  }, []);
-
-  const opacity = React.useRef(
-    new Animated.Value(0)
-  );
-
-  const map = React.useRef<MapView>();
 
   const region = state.fields.lat.value && state.fields.lng.value
   ? {
@@ -54,6 +47,21 @@ function LocationWizardStep(props: IWizardScreenProps) {
     longitudeDelta: calculateLatLngDelta(state.fields.lat.value),
   }
   : undefined;
+
+  // Start at user location
+  React.useEffect(() => {
+    if (!region?.latitude || !region?.longitude) {
+      setUsersLocation();
+    }
+  }, [region]);
+
+  const opacity = React.useRef(
+    new Animated.Value(0)
+  );
+
+  const map = React.useRef<MapView>();
+
+  
 
   const [isAnimating, setAnimating] = React.useState<boolean>(false);
   const fadeOut = React.useRef(
@@ -109,7 +117,7 @@ function LocationWizardStep(props: IWizardScreenProps) {
           dispatch(actions.forms.dropzone.setField(["lat", r.latitude]));
           dispatch(actions.forms.dropzone.setField(["lng", r.longitude]));
         }}
-        mapType="satellite"
+        mapType="hybrid"
         zoomEnabled
         scrollEnabled
         focusable
@@ -169,7 +177,7 @@ function LocationWizardStep(props: IWizardScreenProps) {
             textShadowRadius: 10,
           }}
         >
-          { !region.latitude || !region.longitude ? null :
+          { !region?.latitude || !region?.longitude ? null :
             <>{region?.latitude?.toFixed(5)},{region?.longitude?.toFixed(5)}</>
           }
         </Animated.Text>

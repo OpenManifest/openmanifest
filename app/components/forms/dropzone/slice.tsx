@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Dropzone, Federation } from "../../../graphql/schema.d";
+import { Dropzone, Federation } from "../../../api/schema.d";
 
 type Fields = Pick<
   Dropzone,

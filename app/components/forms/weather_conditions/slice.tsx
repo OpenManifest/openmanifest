@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { WeatherCondition } from "../../../graphql/schema.d";
+import { WeatherCondition } from "../../../api/schema.d";
 
 type Fields = Pick<
   WeatherCondition,

@@ -6,10 +6,10 @@ import { ProgressBar } from 'react-native-paper';
 import gql from 'graphql-tag';
 
 
-import { useAppSelector } from '../../../redux';
-import { Load, Mutation } from '../../../graphql/schema';
+import { useAppSelector } from '../../../state';
+import { Load, Mutation } from '../../../api/schema';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import useNotifications from '../../../graphql/hooks/useNotifications';
+import useNotifications from '../../../api/hooks/useNotifications';
 import NoResults from '../../../components/NoResults';
 
 import ManifestedCard from "./Cards/Manifested";
@@ -64,7 +64,7 @@ export default function ProfileScreen() {
   return (
     <>
     {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
-    <ScrollableScreen contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}>
+    <ScrollableScreen style={{ backgroundColor: "#F4F5F5" }} contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}>
       {
         !notifications?.edges?.length ?
         <NoResults title="No notifications" subtitle="Notifications will show up here" /> :
@@ -86,13 +86,12 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   content: {
     flexGrow: 1,
     paddingBottom: 56,
-    paddingHorizontal: 0,
+    alignItems: "center",
+    paddingHorizontal: 16,
+    marginHorizontal: 16,
   },
   divider: {
     height: 1,

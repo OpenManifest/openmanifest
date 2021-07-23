@@ -6,7 +6,7 @@ export default function LoadingCard() {
   return (
     <Skeleton
       containerStyle={{
-        height: 120,
+        height: 160,
         width: 335,
         margin: 16,
         paddingHorizontal: 16

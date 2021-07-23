@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RigInspection, FormTemplate } from "../../../graphql/schema.d";
+import { RigInspection, FormTemplate } from "../../../api/schema.d";
 
 
 export interface FieldItem {

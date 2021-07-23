@@ -6,7 +6,7 @@ import { Provider as Redux } from 'react-redux';
 import { MockedProvider as Apollo, MockedResponse } from "@apollo/client/testing";
 
 // Import your own reducer
-import { rootReducer, RootState, initialState as initialDefaultState } from '../redux/store';
+import { rootReducer, RootState, initialState as initialDefaultState } from '../state/store';
 import { QUERY_PERMISSIONS } from '../hooks/useRestriction';
 
 interface IRenderer extends RenderOptions {
@@ -65,7 +65,7 @@ function render(
             {children}
         </Material>
         </Apollo>
-      </Redux>
+      </state>
     );
   }
   return rtlRender(ui, { wrapper: Wrapper, ...renderOptions })

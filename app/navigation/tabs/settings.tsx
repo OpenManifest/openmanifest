@@ -19,7 +19,7 @@ const ExtrasScreen = React.lazy(() => import('../../screens/authenticated/extras
 
 
 import AppBar from '../AppBar';
-import { Dropzone } from '../../graphql/schema';
+import { Dropzone } from '../../api/schema';
 
 export type ISettingsTabParams = {
   SettingsScreen: undefined;

@@ -3,8 +3,8 @@ import { gql, useMutation } from "@apollo/client";
 import * as React from "react";
 import { Button, Card, ProgressBar } from "react-native-paper";
 import ScrollableScreen from "../../../components/layout/ScrollableScreen";
-import { Mutation } from "../../../graphql/schema.d";
-import { actions, useAppDispatch, useAppSelector } from "../../../redux";
+import { Mutation } from "../../../api/schema.d";
+import { actions, useAppDispatch, useAppSelector } from "../../../state";
 import ManifestGroupForm from "../../../components/forms/manifest_group/ManifestGroupForm";
 import { useNavigation } from "@react-navigation/core";
 interface IManifestUserDialog {

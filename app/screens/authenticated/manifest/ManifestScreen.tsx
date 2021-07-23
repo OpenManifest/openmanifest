@@ -8,23 +8,24 @@ import ManifestGroupSheet from '../../../components/dialogs/ManifestGroup/Manife
 
 import NoResults from '../../../components/NoResults';
 import { View } from '../../../components/Themed';
-import { Load, Permission } from '../../../graphql/schema.d';
+import { Load, Permission } from '../../../api/schema.d';
 import useRestriction from '../../../hooks/useRestriction';
-import { actions, useAppDispatch, useAppSelector } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import GetStarted from './GetStarted';
 import LoadCardSmall from './LoadCard/Small/Card';
 import LoadCardLarge from './LoadCard/Large/Card';
 import LoadDialog from '../../../components/dialogs/Load';
-import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import WeatherConditions from './Weather/WeatherBoard';
-import LoadingCard from './LoadCard/Small/Loading';
+import LoadingCardLarge from './LoadCard/Large/Loading';
+import LoadingCardSmall from './LoadCard/Small/Loading';
 export default function ManifestScreen() {
   const state = useAppSelector(state => state.global);
   const forms = useAppSelector(state => state.forms);
   const manifestScreen = useAppSelector(state => state.screens.manifest);
   const dispatch = useAppDispatch();
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
-  const { dropzone, currentUser, loading, refetch, fetchMore } = useCurrentDropzone();
+  const { dropzone, data, currentUser, loading, refetch, fetchMore, error } = useCurrentDropzone();
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -125,7 +126,10 @@ export default function ManifestScreen() {
 
   const cardWidth = (manifestScreen.display === 'cards' ? 335 : 550) + 32;
   const numColumns = Math.floor(width / cardWidth) || 1;
-  const contentWidth = (cardWidth * numColumns) - 16;
+  const contentWidth = (cardWidth * numColumns);
+
+  const loads = dropzone?.loads?.edges || [];
+  const initialLoading = !loads?.length && loading;
 
   return (
     <>
@@ -133,73 +137,82 @@ export default function ManifestScreen() {
       
       <View style={styles.container}>
         {
-          loading
-          ? <LoadingCard />
-          : (!isSetupComplete
+          !initialLoading && !isSetupComplete
               ? <GetStarted {...{ hasPlanes, hasTicketTypes, isPublic }}/>
-                : <View style={{ width: "100%", flex: 1,  height: Dimensions.get("window").height }}>
-                    
-                    <FlatList
-                      ListHeaderComponent={() => <WeatherConditions />}
-                      ListEmptyComponent={() =>
-                        <NoResults
-                          title="No loads so far today"
-                          subtitle="How's the weather?"
-                        />
+              : <View style={{ width: "100%", flex: 1,  height: Dimensions.get("window").height }}>
+                  <FlatList
+                    ListHeaderComponent={() => <WeatherConditions />}
+                    ListEmptyComponent={() =>
+                      <NoResults
+                        title="No loads so far today"
+                        subtitle="How's the weather?"
+                      />
+                    }
+                    style={{
+                      flex: 1,
+                      paddingTop: 35,
+                      height: Dimensions.get("window").height,
+                    }}
+                    testID="loads"
+                    keyExtractor={({ item }, idx) => `load-small-${item?.node?.id || idx}`}
+                    key={`loads-columns-${numColumns}`}
+                    contentContainerStyle={{
+                      width: contentWidth,
+                      alignSelf: 'center',
+                      paddingBottom: 100
+                    }}
+                    numColumns={numColumns}
+                    data={initialLoading ? [1, 1, 1, 1, 1] : loads}
+                    refreshControl={
+                      <RefreshControl refreshing={loading} onRefresh={() => fetchMore({ })} />
+                    }
+                    renderItem={({ item: edge, index }) => {
+                      // 1 means loading, because null and undefined
+                      // get filtered out
+                      if (edge === 1) {
+                        return manifestScreen.display === "list"
+                          ? <LoadingCardLarge key={`loading-card-${index}`} />
+                          : <LoadingCardSmall key={`loading-card-${index}`} />
                       }
-                      style={{
-                        flex: 1,
-                        paddingTop: 35,
-                        height: Dimensions.get("window").height,
-                        width: contentWidth,
-                        alignSelf: 'center'
-                      }}
-                      testID="loads"
-                      keyExtractor={(item) => `load-${item?.node?.id}`}
-                      key={`loads-columns-${numColumns}`}
-                      contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
-                      numColumns={numColumns}
-                      data={(dropzone?.loads?.edges || [])}
-                      refreshControl={
-                        <RefreshControl refreshing={loading} onRefresh={() => fetchMore({ })} />
-                      }
-                      renderItem={({ item: edge, index }) =>
-                        manifestScreen.display === "list" ? (
-                          <LoadCardLarge
+                      
+                      
+                      return manifestScreen.display === "list" ? (
+                        <LoadCardLarge
+                          controlsVisible={false}
+                          key={`load-${edge.node.id}`}
+                          load={edge.node}
+                          onSlotPress={(slot) => {
+                            dispatch(actions.forms.manifest.setOpen(slot));
+                            dispatch(
+                              actions.forms.manifest.setField(["load", edge.node!])
+                            );
+                          }}
+                          onSlotGroupPress={(slots) => {
+                            dispatch(actions.forms.manifestGroup.reset());
+                            dispatch(actions.forms.manifestGroup.setFromSlots(slots));
+                            dispatch(actions.forms.manifestGroup.setField(["load", edge.node!]));
+                            navigation.navigate("ManifestGroupScreen");
+                          }}
+                          onManifest={() => {
+                            
+                            onManifest(edge.node!)
+                          }}
+                          onManifestGroup={() => {
+                            dispatch(actions.forms.manifestGroup.reset());
+                            dispatch(actions.forms.manifestGroup.setOpen(true));
+                            dispatch(actions.forms.manifestGroup.setField(["load", edge.node!]));
+                          }}
+                        />) : (
+                          <LoadCardSmall
                             key={`load-${edge.node.id}`}
                             load={edge.node}
-                            onSlotPress={(slot) => {
-                              dispatch(actions.forms.manifest.setOpen(slot));
-                              dispatch(
-                                actions.forms.manifest.setField(["load", edge.node!])
-                              );
-                            }}
-                            onSlotGroupPress={(slots) => {
-                              dispatch(actions.forms.manifestGroup.reset());
-                              dispatch(actions.forms.manifestGroup.setFromSlots(slots));
-                              dispatch(actions.forms.manifestGroup.setField(["load", edge.node!]));
-                              navigation.navigate("ManifestGroupScreen");
-                            }}
-                            onManifest={() => {
-                              
-                              onManifest(edge.node!)
-                            }}
-                            onManifestGroup={() => {
-                              dispatch(actions.forms.manifestGroup.reset());
-                              dispatch(actions.forms.manifestGroup.setOpen(true));
-                              dispatch(actions.forms.manifestGroup.setField(["load", edge.node!]));
-                            }}
-                          />) : (
-                            <LoadCardSmall
-                              key={`load-${edge.node.id}`}
-                              load={edge.node}
-                              onPress={() => navigation.navigate("LoadScreen", { load: edge.node })}
-                            />
-                          )
-                      }
-                    />
-                </View>
-        )}
+                            onPress={() => navigation.navigate("LoadScreen", { load: edge.node })}
+                          />
+                        );
+                    }}
+                  />
+              </View>
+        }
         { canCreateLoad && isSetupComplete && (
           <FAB
             style={styles.fab}

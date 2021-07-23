@@ -4,10 +4,10 @@ import * as React from 'react';
 import { Button, Card } from 'react-native-paper';
 import RigInspectionTemplateForm from "../../../components/forms/rig_inspection_template/RigInspectionTemplateForm";
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
-import { Mutation, Permission, Query } from '../../../graphql/schema.d';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
+import { Mutation, Permission, Query } from '../../../api/schema.d';
 import useRestriction from '../../../hooks/useRestriction';
-import { actions, useAppDispatch, useAppSelector } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
 
 const QUERY_RIG_INSPECTION = gql`
   query RigInspection($dropzoneId: Int!) {

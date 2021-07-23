@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Chip, Menu } from "react-native-paper";
-import { Slot, DropzoneUser, Permission } from "../../graphql/schema.d";
+import { Slot, DropzoneUser, Permission } from "../../api/schema.d";
 import useRestriction from "../../hooks/useRestriction";
 
 interface ILoadMasterChipSelect {

@@ -1,4 +1,4 @@
-import { TicketType, Dropzone } from "../../../graphql/schema";
+import { TicketType, Dropzone } from "../../../api/schema";
 import { QUERY_DROPZONE_USERS_ALLOWED_TICKET_TYPES } from "../../../components/input/chip_select/TicketTypeChipSelect";
 export const MOCK_QUERY_ALLOWED_TICKET_TYPES =
   {

@@ -3,11 +3,11 @@ import * as React from 'react';
 import { FAB, Portal } from 'react-native-paper';
 import addMinutes from "date-fns/addMinutes";
 
-import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
-import { Load, Mutation, Permission, LoadState } from '../../../graphql/schema.d';
+import { Load, Mutation, Permission, LoadState } from '../../../api/schema.d';
 import useRestriction from '../../../hooks/useRestriction';
-import { actions, useAppDispatch, useAppSelector } from '../../../redux';
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
 
 interface ILoadActionButtonProps {
   load: Load;

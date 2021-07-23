@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Animated, StyleSheet,TouchableOpacity, View } from "react-native";
-import { actions, useAppDispatch, useAppSelector } from "../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../state";
 import MapView, { Region } from "react-native-maps";
 import { calculateLatLngDelta } from "../../utils/calculateLatLngDelta";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";

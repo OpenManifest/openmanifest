@@ -3,9 +3,9 @@ import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, Menu, List, Divider } from 'react-native-paper';
-import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
-import { Query } from '../../../graphql/schema';
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
+import { Query } from '../../../api/schema';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 
 const QUERY_EXTRAS = gql`

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Appbar, TextInput } from "react-native-paper";
 import { StackHeaderProps } from "@react-navigation/stack";
-import { useAppDispatch, useAppSelector } from "../../../redux";
+import { useAppDispatch, useAppSelector } from "../../../state";
 import { StyleSheet, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
@@ -52,7 +52,8 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: "transparent",
     height: "100%",
-    color: "#FFFFFF"
+    color: "#FFFFFF",
+    fontSize: 20,
   },
   icon: {
     marginHorizontal: 8

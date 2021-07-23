@@ -7,10 +7,10 @@ import FederationStep from "./steps/Federation";
 import RigStep from "./steps/Rig";
 import ReserveRepackStep from "./steps/ReserveRepack";
 import WingloadingStep from "./steps/Wingloading";
-import { actions, useAppDispatch, useAppSelector } from "../../../redux";
-import useMutationUpdateUser from "../../../graphql/hooks/useMutationUpdateUser";
-import useMutationUpdateRig from "../../../graphql/hooks/useMutationUpdateRig";
-import useMutationCreateRig from "../../../graphql/hooks/useMutationCreateRig";
+import { actions, useAppDispatch, useAppSelector } from "../../../state";
+import useMutationUpdateUser from "../../../api/hooks/useMutationUpdateUser";
+import useMutationUpdateRig from "../../../api/hooks/useMutationUpdateRig";
+import useMutationCreateRig from "../../../api/hooks/useMutationCreateRig";
 
 function UserWizardScreen() {
   const userForm = useAppSelector(state => state.forms.user);

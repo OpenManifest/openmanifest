@@ -6,8 +6,8 @@ import { StyleSheet } from 'react-native';
 import { Card, List, ProgressBar } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 
-import { Query } from "../../../graphql/schema.d";
-import { useAppSelector } from '../../../redux';
+import { Query } from "../../../api/schema.d";
+import { useAppSelector } from '../../../state';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import PermissionListItem from '../../../components/permissions/PermissionListItem';
 import { capitalize } from 'lodash';

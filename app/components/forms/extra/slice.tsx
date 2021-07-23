@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Extra } from "../../../graphql/schema.d";
+import { Extra } from "../../../api/schema.d";
 
 interface IExtraEditState {
   original: Extra | null;

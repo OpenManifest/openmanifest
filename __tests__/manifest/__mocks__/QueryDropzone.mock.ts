@@ -1,6 +1,6 @@
 import startOfDay from "date-fns/startOfDay";
 import addDays from "date-fns/addDays";
-import { TicketType, Plane, Dropzone, DropzoneUser } from "../../../graphql/schema";
+import { TicketType, Plane, Dropzone, DropzoneUser } from "../../../api/schema";
 import { QUERY_DROPZONE } from "../../../screens/authenticated/manifest/ManifestScreen";
 
 

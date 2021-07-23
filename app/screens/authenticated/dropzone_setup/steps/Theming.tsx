@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import WizardScreen, { IWizardScreenProps } from "../../../../components/wizard/WizardScreen";
-import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../../../state";
 import { PhonePreview, WebPreview } from "../../../../components/theme_preview";
 import ColorPicker from "../../../../components/input/colorpicker";
 

@@ -4,8 +4,8 @@ import { View, StyleSheet } from "react-native";
 import { Button, Portal } from "react-native-paper";
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
-import { DropzoneUser, Mutation } from "../../../graphql/schema.d";
-import { actions, useAppDispatch, useAppSelector } from "../../../redux";
+import { DropzoneUser, Mutation } from "../../../api/schema.d";
+import { actions, useAppDispatch, useAppSelector } from "../../../state";
 import CreditsForm from "../../forms/credits/CreditsForm";
 interface ICreditsSheet {
   open?: boolean;

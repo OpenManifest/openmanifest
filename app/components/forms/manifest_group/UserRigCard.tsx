@@ -2,9 +2,9 @@ import gql from "graphql-tag";
 import * as React from "react";
 import { ScrollView } from "react-native";
 import { Avatar, Card, TextInput, ProgressBar, Chip, Divider } from "react-native-paper";
-import { createQuery } from "../../../graphql/createQuery";
-import { Query, Rig } from "../../../graphql/schema.d";
-import { useAppSelector } from "../../../redux";
+import { createQuery } from "../../../api/createQuery";
+import { Query, Rig } from "../../../api/schema.d";
+import { useAppSelector } from "../../../state";
 import calculateWingLoading from "../../../utils/calculateWingLoading";
 import RigSelect from "../../input/dropdown_select/RigSelect";
 

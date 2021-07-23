@@ -80,8 +80,8 @@ export default function JumpRunMap(props: IJumpRunMapProps) {
     x: origin.originX,
     y: origin.originY,
     degrees: jumpRun,
-    offsetX: 0,
-    offsetY: 0,
+    offsetX: -10,
+    offsetY: -10,
     radius: MAP_SIZE / 2
   });
   return (

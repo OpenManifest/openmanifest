@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import { View } from '../../../components/Themed';
 
 import DropzoneForm from '../../../components/forms/dropzone/DropzoneForm';
-import useMutationCreateDropzone from '../../../graphql/hooks/useMutationCreateDropzone';
+import useMutationCreateDropzone from '../../../api/hooks/useMutationCreateDropzone';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 
 

@@ -1,7 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import * as React from "react";
-import { Mutation } from "../../graphql/schema.d";
-import { actions, useAppDispatch, useAppSelector } from "../../redux";
+import { Mutation } from "../../api/schema.d";
+import { actions, useAppDispatch, useAppSelector } from "../../state";
 import RigForm from "../forms/rig/RigForm";
 import DialogOrSheet from "../layout/DialogOrSheet";
 interface IRigDialog {

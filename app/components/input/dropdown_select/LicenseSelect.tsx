@@ -2,8 +2,8 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { List, Menu } from "react-native-paper";
-import { License, Query } from "../../../graphql/schema.d";
-import { useAppSelector } from "../../../redux";
+import { License, Query } from "../../../api/schema.d";
+import { useAppSelector } from "../../../state";
 
 
 interface ILicenseSelect {

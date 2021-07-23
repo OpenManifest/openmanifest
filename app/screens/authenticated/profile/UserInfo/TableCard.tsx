@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { IconButton, List} from 'react-native-paper';
 
 
-import { useAppSelector } from '../../../../redux';
+import { useAppSelector } from '../../../../state';
 
 interface ITableCard {
   children: React.ReactNode;

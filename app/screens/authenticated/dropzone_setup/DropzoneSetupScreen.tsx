@@ -8,14 +8,14 @@ import AircraftStep from "./steps/Aircraft";
 import ThemingStep from "./steps/Theming";
 import PermissionStep from "./steps/Permissions";
 import TicketTypeStep from "./steps/TicketType";
-import { actions, useAppDispatch, useAppSelector } from "../../../redux";
-import useMutationCreateDropzone from "../../../graphql/hooks/useMutationCreateDropzone";
-import useMutationUpdateDropzone from "../../../graphql/hooks/useMutationUpdateDropzone";
-import useMutationCreatePlane from "../../../graphql/hooks/useMutationCreatePlane";
-import useMutationUpdatePlane from "../../../graphql/hooks/useMutationUpdatePlane";
-import useMutationCreateTicketType from "../../../graphql/hooks/useMutationCreateTicketType";
-import useMutationUpdateTicketType from "../../../graphql/hooks/useMutationUpdateTicketType";
-import { Permission } from "../../../graphql/schema.d";
+import { actions, useAppDispatch, useAppSelector } from "../../../state";
+import useMutationCreateDropzone from "../../../api/hooks/useMutationCreateDropzone";
+import useMutationUpdateDropzone from "../../../api/hooks/useMutationUpdateDropzone";
+import useMutationCreatePlane from "../../../api/hooks/useMutationCreatePlane";
+import useMutationUpdatePlane from "../../../api/hooks/useMutationUpdatePlane";
+import useMutationCreateTicketType from "../../../api/hooks/useMutationCreateTicketType";
+import useMutationUpdateTicketType from "../../../api/hooks/useMutationUpdateTicketType";
+import { Permission } from "../../../api/schema.d";
 import { useNavigation } from "@react-navigation/native";
 
 

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { gql, useMutation } from "@apollo/client";
 
-import { actions, useAppSelector, useAppDispatch } from '../../redux';
-import { Mutation } from '../../graphql/schema';
+import { actions, useAppSelector, useAppDispatch } from '../../state';
+import { Mutation } from '../../api/schema';
 import TicketTypeForm from '../../components/forms/ticket_type/TicketTypeForm';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
 import DialogOrSheet from '../layout/DialogOrSheet';
-import useCurrentDropzone from '../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
 
 
 

@@ -2,16 +2,16 @@ import * as React from "react";
 import { Animated, Dimensions, LayoutChangeEvent, LayoutRectangle, StyleSheet, useWindowDimensions, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { GestureEvent, PanGestureHandler, PanGestureHandlerEventPayload } from "react-native-gesture-handler";
-import { calculateAngle } from "../../utils/calculateAngle";
-import { mapDegreesToDirections } from "../../utils/mapDegreesToDirection";
-import MapView from 'react-native-maps';
-import { calculateLatLngDelta } from "../../utils/calculateLatLngDelta";
-import { getPointOnCircle } from "../../utils/calculateCoordinatesByAngle";
+import { calculateAngle } from "../../../utils/calculateAngle";
+import { mapDegreesToDirections } from "../../../utils/mapDegreesToDirection";
+import { getPointOnCircle } from "../../../utils/calculateCoordinatesByAngle";
+import Map from "../../map/Map";
 
 const { width, height } = Dimensions.get('window');
 
 interface IJumpRunSelectorProps {
   value: number;
+  title?: string;
   latitude: number;
   longitude: number;
   onChange?(val: number): void
@@ -25,11 +25,12 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
     height: 0,
     width: 0,
   });
-  const MAP_SIZE = rootLayout.width * MAP_SIZE_PERCENTAGE;
-  const CENTER_Y = (rootLayout.height / 2) - 75;
-  const CENTER_X = (rootLayout.width / 2) - 100;
+  let MAP_SIZE = rootLayout.width * MAP_SIZE_PERCENTAGE;
+  MAP_SIZE = MAP_SIZE > 475 ? 475 : MAP_SIZE;
+  const CENTER_Y = (rootLayout.height / 2);
+  const CENTER_X = (rootLayout.width / 2);
 
-  const { latitude, longitude, value, onChange } = props;
+  const { latitude, longitude, value, title, onChange } = props;
   const [isDragging, setDragging] = React.useState(false);
   const [jumpRun, setJumpRun] = React.useState(value || 0);
   const [origin, setOrigin] = React.useState<LayoutRectangle & { originX: number, originY: number }>({
@@ -83,10 +84,10 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
     };
 
     const angle = calculateAngle({ x: origin.originX, y: origin.originY }, currentCoordinates)
+    requestAnimationFrame(() => setJumpRun(angle));
     // Find the angle between these coordinates:
     rotation.current.setValue(angle);
     
-    setJumpRun(angle);
   }, [setJumpRun, origin]);
 
   const onMountRotatableView = React.useCallback((event: LayoutChangeEvent) => {
@@ -127,77 +128,69 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
           useNativeDriver: true
         }).start();
         planeAnimation.current.start();
-        onChange(jumpRun);
+        requestAnimationFrame(() => onChange?.(jumpRun));
       }}
       {...{ onGestureEvent } }
     >
-      <View style={{ width: '100%', height: '100%', backgroundColor: 'red', alignItems: "center" }} onLayout={(layout) => setRootLayout(layout.nativeEvent.layout)}>
-        <Animated.Text
-          style={[styles.title, {    
-            marginBottom: 4,        
-            opacity: opacity.current.interpolate({
-              inputRange: [0, 1],
-              outputRange: [1, 0],
-            })
-          }]}
-        >
-          JUMP RUN
-        </Animated.Text>
+      <View style={{ width: '100%', height: '100%', alignItems: "center", marginTop: 50 }} onLayout={(layout) => setRootLayout(layout.nativeEvent.layout)}>
+        {title && (
+          <Animated.Text
+            style={[styles.title, {    
+              marginBottom: 4,        
+              opacity: opacity.current.interpolate({
+                inputRange: [0, 1],
+                outputRange: [1, 0],
+              })
+            }]}
+          >
+            {title}
+          </Animated.Text>
+        )}
 
-        <View
-          style={{
-            width: MAP_SIZE,
-            height: MAP_SIZE,
-            borderRadius: MAP_SIZE,
-            overflow: 'hidden',
-            position: 'absolute',
-            top: origin.y,
-            left: origin.x,
+       
+        <Map
+          position={{ y: 0, x: 0 }}
+          coords={{
+            lat: latitude,
+            lng: longitude,
           }}
+          containerStyle={{
+            position: "relative",
+            top: undefined,
+            left: undefined,
+            maxWidth: 500,
+            maxHeight: 500
+          }}
+          interactive={false}
+          height={MAP_SIZE}
+          width={MAP_SIZE}
+          onChange={() => null}
+          shape="round"
         >
-        <MapView
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
-          region={{
-            latitude,
-            longitude,
-            latitudeDelta: calculateLatLngDelta(latitude),
-            longitudeDelta: calculateLatLngDelta(latitude),
-          }}
-          focusable={false}
-          pointerEvents="none"
-          mapType="satellite"
-        />
-        </View>
 
         <Animated.View
           onLayout={onMountRotatableView}
           style={[styles.iconContainer, {
-            width: rootLayout.width * MAP_SIZE_PERCENTAGE,
-            height: rootLayout.width * MAP_SIZE_PERCENTAGE,
-            transform: [{
-              rotate: rotation.current.interpolate({
-                inputRange: [0, 360],
-                outputRange: ['0deg', '360deg']
-              })
-            }]
+            width: MAP_SIZE,
+            height: MAP_SIZE,
           }]}
         >
           <Animated.View
             style={{
               height: MAP_SIZE,
-              width: 2,
+              width: opacity.current.interpolate({
+                inputRange: [0, 1],
+                outputRange: [10, 2]
+              }),
               backgroundColor: '#FF1414',
               opacity: opacity.current.interpolate({
                 inputRange: [0, 1],
                 outputRange: [0.6, 1]
               }),
               transform: [{
-                scaleX: opacity.current.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [10, 1]
+                rotate: rotation.current.interpolate({
+                  inputRange: [0, 360],
+                  outputRange: ['0deg', '360deg']
                 }),
               }]
             }}
@@ -210,6 +203,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
             height: 40,
             top: planeStartPosition.y,
             left: planeStartPosition.x,
+            zIndex: 100,
             opacity: planePosition.current.interpolate({
               inputRange: [-400, -200, 400],
               outputRange: [0.0, 1.0, 0.0],
@@ -233,12 +227,13 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
         <Animated.Text
           style={[styles.degreeLabel, {
             opacity: opacity.current,
-            top: CENTER_Y,
-            left: CENTER_X,
+            top: MAP_SIZE/2 - 60,
+            left: MAP_SIZE/2 - 100,
           }]}
         >
           {Math.round(jumpRun)}
         </Animated.Text>
+        </Map>
 
         <Animated.Text
           style={[styles.bottomDegreeLabel, {
@@ -293,11 +288,13 @@ const styles = StyleSheet.create({
   },
   bottomDegreeLabel: {
     fontSize: 50,
+    paddingBottom: 16,
     fontWeight: 'bold',
     color: 'white',
     position: 'absolute',
     bottom: 50,
     left: 0,
+    top: 48,
     width: "100%",
     textAlign: 'center',
     textShadowColor: 'rgba(15, 15, 15, 0.5)',
@@ -316,7 +313,7 @@ const styles = StyleSheet.create({
     borderWidth: 10,
     borderRadius: width / 2,
     borderStyle: 'solid',
-    borderColor: 'pink',
+    borderColor: '#222222',
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",

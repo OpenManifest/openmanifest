@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TextInput, HelperText, Divider, Dialog, DataTable } from 'react-native-paper';
 import { Tabs, TabScreen } from "react-native-paper-tabs";
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 export default function CreditsForm() {
   const state = useAppSelector(state => state.forms.credits);

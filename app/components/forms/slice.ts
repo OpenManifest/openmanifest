@@ -14,7 +14,8 @@ import * as ticketType from "./ticket_type/slice";
 import * as user from "./user/slice";
 import * as weather from "./weather_conditions/slice";
 import * as userWizard from "../dialogs/UserWizard/slice";
-import * as dropzoneWizard from "../dialogs/DropzoneWizard/slice";
+import * as dropzoneWizard from "../../screens/authenticated/dropzone_setup/slice";
+
 
 export const initialState = {
   credits: credits.initialState,

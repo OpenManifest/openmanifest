@@ -2,7 +2,7 @@ import * as React from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { Button } from "react-native-paper";
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
-import { useAppSelector } from "../../redux";
+import { useAppSelector } from "../../state";
 import WizardPagination from "./Pagination";
 
 interface IWizardProps {

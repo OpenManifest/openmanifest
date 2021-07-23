@@ -6,11 +6,11 @@ import * as React from "react";
 import { Card, DataTable, List } from "react-native-paper";
 import startOfDay from "date-fns/startOfDay";
 import ScrollableScreen from "../../../components/layout/ScrollableScreen";
-import { Query, Slot } from "../../../graphql/schema.d";
+import { Query, Slot } from "../../../api/schema.d";
 import DatePicker from "../../../components/input/date_picker/DatePicker";
 import { View } from "react-native";
 import { useNavigation } from "@react-navigation/core";
-import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
+import useCurrentDropzone from "../../../api/hooks/useCurrentDropzone";
 
 const QUERY_MASTER_LOG = gql`
 query MasterLog($dropzoneId: Int!, $timestamp: Int!) {

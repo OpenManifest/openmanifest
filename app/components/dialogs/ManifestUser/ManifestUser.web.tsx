@@ -2,8 +2,8 @@ import { gql, useMutation } from "@apollo/client";
 import * as React from "react";
 import { ScrollView } from "react-native";
 import { Button, Dialog, Portal, ProgressBar } from "react-native-paper";
-import { Mutation } from "../../../graphql/schema.d";
-import { actions, useAppDispatch, useAppSelector } from "../../../redux";
+import { Mutation } from "../../../api/schema.d";
+import { actions, useAppDispatch, useAppSelector } from "../../../state";
 import SlotForm from "../../forms/manifest/ManifestForm";
 interface IManifestUserDialog {
   open?: boolean;

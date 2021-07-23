@@ -1,8 +1,8 @@
 import * as React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ViewStyle, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Card, List, Menu, TextInput } from "react-native-paper";
-import { Wind } from "../../../graphql/schema";
+import { Wind } from "../../../api/schema";
 
 export interface IWindRowProps extends Wind {
   onChange(field: keyof Wind, value: number): void;
@@ -13,27 +13,19 @@ export default function WindRow(props: IWindRowProps) {
   const [_speed, _setSpeed] = React.useState(speed);
   const [_direction, _setDirection] = React.useState(direction);
 
-  const directionRef = React.useRef();
   return (
-    <Card style={styles.card}>
+    <Card style={styles.card} elevation={3}>
       <Card.Content style={styles.row}>
       <View style={styles.altitudeCard}>
         <Menu
           onDismiss={() => setAltitudeMenuOpen(false)}
           visible={altitudeMenuOpen}
-          style={{ width: 150 }}
-          contentStyle={{ width: 150 }}
+          style={{ minWidth: 130 }}
           anchor={
-            <View style={{ flexGrow: 1 }} pointerEvents="box-none">
-              <TouchableOpacity onPress={() => setAltitudeMenuOpen(true)} style={{ flexDirection: "row", width: "100%", flexGrow: 1 }}>
-                <List.Icon icon="arrow-up" style={{ width: 20 }} />
-                <TextInput
-                  disabled
-                  style={{ flexGrow: 1, width: "100%" }}
-                  value={altitude?.toString()}
-                />
+              <TouchableOpacity style={{ flexGrow: 1, height: 60, flexDirection: "row", alignItems: "center", justifyContent: "center" }} onPress={() => setAltitudeMenuOpen(true)} >
+                <List.Icon icon="arrow-up" style={styles.icon} />
+                <Text style={styles.altitudeOption}>{altitude?.toString()}</Text>
               </TouchableOpacity>
-            </View>
           }>
             {[
               14000,
@@ -52,44 +44,45 @@ export default function WindRow(props: IWindRowProps) {
                   setAltitudeMenuOpen(false);
                 }}
                 title={alt.toString()}
-                left={() => <List.Icon icon="arrow-up" />}
+                left={() => <List.Icon style={styles.icon} icon="arrow-up" />}
               />
           )}
         </Menu>
       </View>
 
       <View style={styles.strengthCard}>
-          <List.Icon icon="weather-windy" style={{ width: 20 }} />
+          <List.Icon icon="weather-windy" style={styles.icon} />
           <TextInput
             value={_speed?.toString()}
             onBlur={() => onChange('speed', Number(_speed))}
             onChangeText={(newSpeed) => {
               if (/\d/.test(newSpeed)) {
-                const [numbers] = newSpeed.match(/\d+/);
+                const [numbers] = newSpeed.match(/\d+/) || [_speed];
                 _setSpeed(numbers);
               } else if (!newSpeed) {
                 _setSpeed('')
               }
             }}
-            style={{ flexGrow: 1, width: "100%" }}
+            style={styles.textField}
             keyboardType="numeric"
           />
       </View>
 
       <View style={styles.directionCard}>
-          <List.Icon icon="compass" style={{ width: 20 }} />
+          <List.Icon icon="compass" style={styles.icon} />
           <TextInput
             value={_direction?.toString()}
             onBlur={() => onChange('direction', Number(_direction))}
             onChangeText={(newDir) => {
               if (/\d/.test(newDir)) {
-                const [numbers] = newDir.match(/\d+/);
+                const [numbers] = newDir.match(/\d+/) || [_direction];
                 _setDirection(numbers);
               } else if (!newDir) {
                 _setDirection('')
               }
             }}
-            style={{ flexGrow: 1, width: "100%" }}
+            style={styles.textField}
+            keyboardType="numeric"
           />
       </View>
       </Card.Content>
@@ -97,29 +90,56 @@ export default function WindRow(props: IWindRowProps) {
   );
 }
 
+const CARD_STYLE: ViewStyle = {
+  height: 60,
+  flexDirection: "row",
+  width: 350 / 3,
+};
+
 const styles = StyleSheet.create({
-  card: {
-    marginVertical: 8,
-    width: 360,
+  altitudeOption: {
+    minWidth: 50,
+    flexGrow: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    textAlignVertical: "center",
+    lineHeight: 20,
+    fontSize: 20,
     alignSelf: "center"
   },
+  card: {
+    marginVertical: 8,
+    marginHorizontal: 18,
+    width: 350,
+    alignSelf: "center",
+    
+    borderRadius: 10,
+  },
+  icon: {
+    width: 20,
+  },
   altitudeCard: {
+    ...CARD_STYLE,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
     overflow: "hidden",
-    height: 60,
-    width: 120,
-    flexDirection: "row",
   },
   strengthCard: {
-    width: 120,
-    overflow: "hidden",
-    height: 60,
-    flexDirection: "row",
+    ...CARD_STYLE,
   },
   directionCard: {
+    ...CARD_STYLE,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
     overflow: "hidden",
-    height: 60,
-    width: 120,
-    flexDirection: "row",
+  },
+  textField: {
+    flex: 1,
+    flexGrow: 1,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    width: "100%",
+    minWidth: 80
   },
   row: {
     flexGrow: 1,

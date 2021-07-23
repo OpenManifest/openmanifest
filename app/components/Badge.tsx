@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Chip } from "react-native-paper";
-import { Permission } from "app/graphql/schema.d";
+import { Permission } from "app/api/schema.d";
 
 
 export interface IBadgeProps {

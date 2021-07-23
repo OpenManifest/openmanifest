@@ -5,8 +5,8 @@ const UsersScreen = React.lazy(() => import('../../screens/authenticated/users/U
 const SearchableAppBar = React.lazy(() => import('../../screens/authenticated/users/AppBar'));
 const RigInspectionScreen = React.lazy(() => import('../../screens/authenticated/rig/RigInspectionScreen'));
 const ProfileScreen = React.lazy(() => import('../../screens/authenticated/profile/ProfileScreen'));
-import { actions, useAppDispatch, useAppSelector } from '../../redux';
-import { Rig } from '../../graphql/schema';
+import { actions, useAppDispatch, useAppSelector } from '../../state';
+import { Rig } from '../../api/schema';
 
 export type ISettingsTabParams = {
   UsersScreen: {

@@ -20,11 +20,11 @@ function Warning(props: { title: string, action?: () => void }) {
   const { action, title } = props;
   return (
     <View style={styles.warning}>
-      <Paragraph style={{ color: "white",  }}>
+      <Paragraph style={{ color: "white", flex: 7/10, flexGrow: 2 }}>
         {title}
       </Paragraph>
       {!action ? null : (
-        <Button onPress={action}>
+        <Button onPress={action} style={{ flex: 1/10, flexShrink: 1 }}>
           Fix
         </Button>
       )}
@@ -50,7 +50,7 @@ export default function SetupWarning(props: ISetupWarning) {
 
     return (
       <Warning
-        title={`You need to define ${missing.join("and")} in your profile`}
+        title={`You need to define ${missing.join(" and ")} in your profile`}
         action={() => onSetupWizard()}
       />
     );

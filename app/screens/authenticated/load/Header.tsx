@@ -2,8 +2,8 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Avatar, IconButton, Paragraph, Title } from 'react-native-paper';
 
-import { useAppSelector } from '../../../redux';
-import { Load } from '../../../graphql/schema';
+import { useAppSelector } from '../../../state';
+import { Load } from '../../../api/schema';
 import { isAfter } from 'date-fns/esm';
 import Countdown from '../manifest/LoadCard/Countdown';
 

@@ -3,8 +3,8 @@ import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, FlatList, Dimensions, View } from 'react-native';
 import { Card, Title, FAB, Avatar } from 'react-native-paper';
-import { actions, useAppDispatch, useAppSelector } from '../../../redux';
-import { Query } from "../../../graphql/schema.d";
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
+import { Query } from "../../../api/schema.d";
 
 import { useNavigation } from '@react-navigation/core';
 import { SafeAreaView } from 'react-native-safe-area-context';

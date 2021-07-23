@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Card, HelperText, List, Title } from "react-native-paper";
 import DatePicker from "../../../input/date_picker/DatePicker";
 import WizardScreen, { IWizardScreenProps } from "../../../wizard/WizardScreen";
-import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../../../state";
 
 
 function ReserveRepackWizardScreen(props: IWizardScreenProps) {

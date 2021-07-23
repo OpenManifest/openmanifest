@@ -6,12 +6,12 @@ import * as React from 'react';
 import { Button, Card, Checkbox, Divider, List } from 'react-native-paper';
 import RigInspectionForm from "../../../components/forms/rig_inspection/RigInspectionForm";
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
-import { Mutation, Query, Rig, Permission } from '../../../graphql/schema.d';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
+import { Mutation, Query, Rig, Permission } from '../../../api/schema.d';
 import useRestriction from '../../../hooks/useRestriction';
-import { actions, useAppDispatch, useAppSelector } from '../../../redux';
-import { QUERY_DROPZONE_USER } from '../../../graphql/hooks/useDropzoneUser';
-import { QUERY_DROPZONE } from '../../../graphql/hooks/useCurrentDropzone';
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
+import { QUERY_DROPZONE_USER } from '../../../api/hooks/useDropzoneUser';
+import { QUERY_DROPZONE } from '../../../api/hooks/useCurrentDropzone';
 import { KeyboardAvoidingView } from 'react-native';
 
 const QUERY_RIG_INSPECTIONS = gql`

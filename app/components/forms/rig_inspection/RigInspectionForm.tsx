@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 import RigInspectionItem from '../rig_inspection_template/RigInspectionItem';
 
 

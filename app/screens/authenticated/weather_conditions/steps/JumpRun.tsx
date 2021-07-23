@@ -1,9 +1,9 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import WizardScreen, { IWizardScreenProps } from "../../../../components/wizard/WizardScreen";
-import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
-import JumpRunSelector from '../../../../components/input/JumpRunSelect';
-import useCurrentDropzone from "../../../../graphql/hooks/useCurrentDropzone";
+import { actions, useAppDispatch, useAppSelector } from "../../../../state";
+import JumpRunSelector from '../../../../components/input/jump_run_select/JumpRunSelect';
+import useCurrentDropzone from "../../../../api/hooks/useCurrentDropzone";
 import * as Location from "expo-location";
 
 function WindsWizardScreen(props: IWizardScreenProps) {

@@ -1,19 +1,21 @@
 import * as React from "react";
-import { Text } from "react-native";
+import { StyleSheet } from "react-native";
 import { Avatar, Badge, Card, Chip } from "react-native-paper";
-import { Slot } from "../../../graphql/schema";
+import { ViewProps } from "../../../components/Themed";
+import { Slot } from "../../../api/schema";
 
 interface ISlotCardProps {
   slot: Slot;
+  style?: ViewProps['style'];
   onPress?(slot: Slot): void;
   onDelete?(slot: Slot): void;
 }
 
 export default function SlotCard(props: ISlotCardProps) {
-  const { slot, onPress, onDelete } = props;
+  const { slot, onPress, onDelete, style } = props;
 
   return (
-    <Card onPress={() => onPress(slot)} elevation={3} style={{ marginVertical: 4 }}>
+    <Card onPress={() => onPress?.(slot)} elevation={3} style={StyleSheet.flatten([{ margin: 12, height: 150, width: "100%" }, style])}>
       <Card.Title
         title={slot?.dropzoneUser?.user.name}
         left={() =>
@@ -23,7 +25,7 @@ export default function SlotCard(props: ISlotCardProps) {
         }
         right={() =>
           !onDelete ? null :
-          <Badge style={{ position: "absolute", marginTop: -45, marginRight: -45 }} onPress={(e) => { e.preventDefault(); onDelete?.(slot); }}>
+          <Badge style={{ marginTop: -45, marginRight: -5 }} onPress={(e) => { e.preventDefault(); onDelete?.(slot); }}>
             -
           </Badge>
         }

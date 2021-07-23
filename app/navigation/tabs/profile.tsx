@@ -2,7 +2,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
 import AppBar from '../AppBar';
-import useCurrentDropzone from '../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
 
 const ProfileScreen = React.lazy(() => import('../../screens/authenticated/profile/ProfileScreen'));
 const UpdateUserScreen = React.lazy(() => import('../../screens/authenticated/profile/UpdateUserScreen'));

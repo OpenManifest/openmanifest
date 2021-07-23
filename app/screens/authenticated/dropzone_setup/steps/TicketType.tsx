@@ -2,7 +2,7 @@ import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Card, HelperText, List, Menu, Paragraph, TextInput } from "react-native-paper";
 import WizardScreen, { IWizardScreenProps } from "../../../../components/wizard/WizardScreen";
-import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../../../state";
 import Slider from '@react-native-community/slider';
 import { debounce } from "lodash";
 import { TouchableOpacity } from "react-native-gesture-handler";

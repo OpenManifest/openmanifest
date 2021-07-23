@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Card, HelperText, List, Menu, TextInput, Title } from "react-native-paper";
 import WizardScreen, { IWizardScreenProps } from "../../../wizard/WizardScreen";
-import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../../../state";
 
 
 function RigWizardScreen(props: IWizardScreenProps) {

@@ -6,10 +6,10 @@ import { Card, Divider, } from "react-native-paper";
 import format from 'date-fns/format';
 import weatherBackground from '../../../../../assets/images/weather.png';
 import { isNumber, orderBy } from "lodash";
-import useCurrentDropzone from "../../../../graphql/hooks/useCurrentDropzone";
-import { actions, useAppDispatch } from "../../../../redux";
+import useCurrentDropzone from "../../../../api/hooks/useCurrentDropzone";
+import { actions, useAppDispatch } from "../../../../state";
 import useRestriction from "../../../../hooks/useRestriction";
-import { Permission } from "../../../../graphql/schema.d";
+import { Permission } from "../../../../api/schema.d";
 import JumpRunMap from './JumpRun';
 import { useNavigation } from "@react-navigation/native";
 export default function WeatherConditions() {
@@ -36,7 +36,7 @@ export default function WeatherConditions() {
       onPress={() => {
         if (canUpdate) {
           dispatch(actions.forms.weather.setOpen(dropzone!.currentConditions));
-          navigation.navigate("WeatherConditionsScreen");
+          navigation.navigate("WindScreen");
         }
       }}
     >
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-evenly",
     height: 20,
-    
+    width: "100%",
     flexDirection: "row",
   },
   cell: {
@@ -239,14 +239,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: "center",
     flexDirection: "row",
+    width: "100%",
   },
   bottom: {
     flexDirection: "row",
+    width: "100%",
     justifyContent: 'space-between',
     alignItems: "flex-end",
     flexGrow: 1,
     height: 105,
     marginTop: 32,
+    paddingBottom: 20,
   },
   windboard: {
     width: 200,

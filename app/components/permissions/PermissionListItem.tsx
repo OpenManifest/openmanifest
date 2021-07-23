@@ -2,9 +2,9 @@ import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { List, Switch } from "react-native-paper";
-import { Mutation, Permission, UserRole } from "../../graphql/schema.d";
+import { Mutation, Permission, UserRole } from "../../api/schema.d";
 import useRestriction from "../../hooks/useRestriction";
-import { actions, useAppDispatch } from "../../redux";
+import { actions, useAppDispatch } from "../../state";
 
 interface IPermissionListItem {
   title: string;

@@ -1,8 +1,8 @@
 import * as React from "react";
 import GhostForm from '../forms/ghost/GhostForm';
-import { actions, useAppDispatch, useAppSelector } from "../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../state";
 import DialogOrSheet from "../layout/DialogOrSheet";
-import useMutationCreateGhost from "../../graphql/hooks/useMutationCreateGhost";
+import useMutationCreateGhost from "../../api/hooks/useMutationCreateGhost";
 
 interface ICreateGhostDialog {
   open?: boolean;

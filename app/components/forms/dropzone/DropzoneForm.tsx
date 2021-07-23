@@ -4,8 +4,8 @@ import { Button, TextInput, HelperText, Card, Menu, List, Portal, Modal, Dialog,
 import { getDocumentAsync } from "expo-document-picker";
 import { useQuery, gql } from '@apollo/client';
 import ColorPicker from "../../input/colorpicker";
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
-import { Query } from '../../../graphql/schema';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
+import { Query } from '../../../api/schema';
 import { PhonePreview, WebPreview } from '../../theme_preview';
 import FederationSelect from '../../input/dropdown_select/FederationSelect';
 import LocationPicker from '../../input/LocationPicker';

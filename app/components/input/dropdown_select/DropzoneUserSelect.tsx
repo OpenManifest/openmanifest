@@ -1,9 +1,9 @@
 import * as React from "react";
 import { List, Menu, Title } from "react-native-paper";
-import useCurrentDropzone from "../../../graphql/hooks/useCurrentDropzone";
-import useQueryDropzoneUsers from "../../../graphql/hooks/useQueryDropzoneUsers";
-import { DropzoneUser } from "../../../graphql/schema.d";
-import { useAppSelector } from "../../../redux";
+import useCurrentDropzone from "../../../api/hooks/useCurrentDropzone";
+import useQueryDropzoneUsers from "../../../api/hooks/useQueryDropzoneUsers";
+import { DropzoneUser } from "../../../api/schema.d";
+import { useAppSelector } from "../../../state";
 
 interface IDropzoneUserSelect {
   dropzoneId: number;

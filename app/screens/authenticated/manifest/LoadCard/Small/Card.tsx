@@ -4,18 +4,18 @@ import { StyleSheet } from 'react-native';
 import { Badge, Card, Chip } from 'react-native-paper';
 import { isBefore } from 'date-fns';
 
-import useCurrentDropzone from '../../../../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../../../../api/hooks/useCurrentDropzone';
 import PilotChip from '../../../../../components/chips/PilotChip';
 import PlaneChip from '../../../../../components/chips/PlaneChip';
 
 import { View } from '../../../../../components/Themed';
-import { Load, Plane, DropzoneUser, LoadState, Slot } from '../../../../../graphql/schema.d';
-import { actions, useAppDispatch } from '../../../../../redux';
+import { Load, Plane, DropzoneUser, LoadState, Slot } from '../../../../../api/schema.d';
+import { actions, useAppDispatch } from '../../../../../state';
 import { errorColor, successColor, warningColor } from '../../../../../constants/Colors';
 import Countdown from '../Countdown';
-import useQueryLoad from '../../../../../graphql/hooks/useQueryLoad';
-import useMutationUpdateLoad from '../../../../../graphql/hooks/useMutationUpdateLoad';
-import useMutationDeleteSlot from '../../../../../graphql/hooks/useMutationDeleteSlot';
+import useQueryLoad from '../../../../../api/hooks/useQueryLoad';
+import useMutationUpdateLoad from '../../../../../api/hooks/useMutationUpdateLoad';
+import useMutationDeleteSlot from '../../../../../api/hooks/useMutationDeleteSlot';
 import Loading from './Loading';
 
 interface ILoadCardSmall {

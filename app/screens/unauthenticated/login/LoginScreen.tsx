@@ -5,9 +5,9 @@ import { useNavigation } from "@react-navigation/native";
 import { gql, useMutation } from '@apollo/client';
 
 import { View } from '../../../components/Themed';
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
-import { Mutation } from '../../../graphql/schema';
+import { Mutation } from '../../../api/schema';
 import { primaryColor } from '../../../constants/Colors';
 import logo from "../../../../assets/images/logo.png";
 

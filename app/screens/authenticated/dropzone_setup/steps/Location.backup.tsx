@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Animated, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import WizardScreen, { IWizardScreenProps } from "../../../../components/wizard/WizardScreen";
-import { actions, useAppDispatch, useAppSelector } from "../../../../redux";
+import { actions, useAppDispatch, useAppSelector } from "../../../../state";
 import { Region } from "react-native-maps";
 import { calculateLatLngDelta } from "../../../../utils/calculateLatLngDelta";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";

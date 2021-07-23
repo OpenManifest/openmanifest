@@ -1,4 +1,4 @@
-import { Load } from "../../../graphql/schema";
+import { Load } from "../../../api/schema";
 import { QUERY_LOAD } from "../../../screens/authenticated/manifest/LoadCard";
 
 export const MOCK_QUERY_LOAD = (override: Partial<Load>) => ({

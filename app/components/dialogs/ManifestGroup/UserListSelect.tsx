@@ -6,10 +6,10 @@ import { Avatar, Button, Checkbox, Divider, List, Searchbar } from 'react-native
 import { ScrollView } from "react-native-gesture-handler";
 
 import NoResults from '../../../components/NoResults';
-import { Permission, Query } from '../../../graphql/schema.d';
-import { actions, useAppDispatch, useAppSelector } from '../../../redux';
+import { Permission, Query } from '../../../api/schema.d';
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import useRestriction from '../../../hooks/useRestriction';
-import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
 
 

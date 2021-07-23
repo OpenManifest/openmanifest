@@ -1,7 +1,7 @@
 import { useLazyQuery, useQuery } from "@apollo/client";
 import gql from 'graphql-tag';
 import * as React from "react";
-import { useAppSelector } from "../../redux";
+import { useAppSelector } from "../../state";
 import { Query } from "../schema";
 import useCurrentDropzone from "./useCurrentDropzone";
 

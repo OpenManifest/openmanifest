@@ -4,15 +4,15 @@ import { HelperText, Divider, Chip, List, Card } from 'react-native-paper';
 import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
 
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 
 import ChipSelect from '../../input/chip_select/ChipSelect';
-import { createQuery } from '../../../graphql/createQuery';
-import { JumpType, TicketType } from '../../../graphql/schema';
+import { createQuery } from '../../../api/createQuery';
+import { JumpType, TicketType } from '../../../api/schema';
 
 import UserRigCard from "./UserRigCard";
-import useCurrentDropzone from '../../../graphql/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
 
 const QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES = gql`

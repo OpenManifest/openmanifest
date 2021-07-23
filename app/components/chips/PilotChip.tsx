@@ -2,10 +2,10 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import * as React from "react";
 import { Chip, Menu } from "react-native-paper";
-import useCurrentDropzone from "../../graphql/hooks/useCurrentDropzone";
-import { Query, DropzoneUser, Permission } from "../../graphql/schema.d";
+import useCurrentDropzone from "../../api/hooks/useCurrentDropzone";
+import { Query, DropzoneUser, Permission } from "../../api/schema.d";
 import useRestriction from "../../hooks/useRestriction";
-import { useAppSelector } from "../../redux";
+import { useAppSelector } from "../../state";
 
 interface IPilotChipSelect {
   dropzoneId: number;

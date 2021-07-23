@@ -3,7 +3,7 @@ import * as React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import NotFoundScreen from '../screens/NotFoundScreen';
-import { useAppSelector } from '../redux/store';
+import { useAppSelector } from '../state/store';
 
 import AuthenticatedRoutes from './Authenticated';
 import LimboRoutes from './LimboRoutes';

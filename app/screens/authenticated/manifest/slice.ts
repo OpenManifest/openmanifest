@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DropzoneUser } from "../../../graphql/schema.d";
+import { DropzoneUser } from "../../../api/schema.d";
 
 interface IManifestScreenState {
   isSearchVisible: boolean;

@@ -2,11 +2,11 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { gql, useMutation } from "@apollo/client";
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import { View } from '../../../components/Themed';
 
-import { Mutation, User } from '../../../graphql/schema';
+import { Mutation, User } from '../../../api/schema';
 import UserForm from '../../../components/forms/user/UserForm';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';

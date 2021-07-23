@@ -5,7 +5,7 @@ import { setContext } from '@apollo/client/link/context';
 import { onError } from "@apollo/client/link/error";
 import * as React from 'react';
 import Constants from "expo-constants";
-import { actions, useAppDispatch, useAppSelector } from '../redux';
+import { actions, useAppDispatch, useAppSelector } from '../state';
 
 const httpLink = createHttpLink({
   uri: Constants.manifest.extra.url,

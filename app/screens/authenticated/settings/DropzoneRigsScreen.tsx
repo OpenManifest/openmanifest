@@ -4,9 +4,9 @@ import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar } from 'react-native-paper';
-import { Mutation, Permission, Query } from "../../../graphql/schema.d";
+import { Mutation, Permission, Query } from "../../../api/schema.d";
 
-import { actions, useAppSelector, useAppDispatch } from '../../../redux';
+import { actions, useAppSelector, useAppDispatch } from '../../../state';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import { format } from 'date-fns';
 import RigDialog from '../../../components/dialogs/Rig';
