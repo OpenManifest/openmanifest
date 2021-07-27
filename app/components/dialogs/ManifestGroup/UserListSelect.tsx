@@ -34,6 +34,7 @@ const QUERY_DROPZONE_USERS = gql`
 
             availableRigs {
               id
+              name
               make
               model
               canopySize
@@ -54,7 +55,7 @@ interface IUserListSelect {
   onNext(): void;
 }
 
-export default function UsersScreen(props: IUserListSelect) {
+export default function UserListSelect(props: IUserListSelect) {
   const { screens } = useAppSelector((root) => root);
   const dispatch = useAppDispatch();
   const [searchText, setSearchText] = React.useState('');
@@ -81,7 +82,7 @@ export default function UsersScreen(props: IUserListSelect) {
           )}
 
           {data?.dropzone?.dropzoneUsers?.edges?.map((edge) => (
-            <>
+            <React.Fragment key={`user-${edge?.node?.id || 0}`}>
               <List.Item
                 style={{ width: '100%' }}
                 key={`user-${edge?.node?.id}`}
@@ -129,7 +130,7 @@ export default function UsersScreen(props: IUserListSelect) {
                 }}
               />
               <Divider style={{ width: '100%' }} key={`divider-${edge?.node?.id}`} />
-            </>
+            </React.Fragment>
           ))}
         </ScrollView>
       </View>

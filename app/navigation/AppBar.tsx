@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Appbar, Menu, IconButton, Divider, Chip } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { gql, useLazyQuery } from '@apollo/client';
+import { DrawerActions } from '@react-navigation/native';
 import { Query } from '../api/schema';
 import { actions, useAppDispatch, useAppSelector } from '../state';
 import SetupWarning from './SetupWarning';
@@ -33,6 +34,7 @@ const QUERY_CURRENT_USER = gql`
           phone
           rigs {
             id
+            name
             model
             make
             serial
@@ -77,7 +79,16 @@ function AppBar(props: IAppBarProps) {
   return (
     <>
       <Appbar.Header>
-        {previous ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
+        {previous ? (
+          <Appbar.BackAction onPress={navigation.goBack} />
+        ) : (
+          <IconButton
+            icon="account-circle"
+            color="#FFFFFF"
+            size={32}
+            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+          />
+        )}
         <Appbar.Content
           title={scene.descriptor.options.title}
           titleStyle={{ fontWeight: 'bold' }}
@@ -88,35 +99,6 @@ function AppBar(props: IAppBarProps) {
         ) : (
           <Chip mode="outlined">{`$${data?.dropzone?.currentUser?.credits || 0}`}</Chip>
         )}
-        <Menu
-          onDismiss={() => setContextMenuOpen(false)}
-          visible={contextMenuOpen}
-          anchor={
-            <IconButton
-              icon="dots-vertical"
-              color="#FFFFFF"
-              onPress={() => setContextMenuOpen(true)}
-            />
-          }
-        >
-          <Menu.Item
-            title="Change dropzone"
-            icon="radar"
-            onPress={() => {
-              navigation.replace('DropzonesScreen');
-              setContextMenuOpen(false);
-            }}
-          />
-          <Divider />
-          <Menu.Item
-            title="Log out"
-            icon="logout"
-            onPress={() => {
-              dispatch(actions.global.logout());
-              setContextMenuOpen(false);
-            }}
-          />
-        </Menu>
       </Appbar.Header>
       {hideWarnings ? null : (
         <SetupWarning

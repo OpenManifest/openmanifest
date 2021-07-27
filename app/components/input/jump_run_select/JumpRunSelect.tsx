@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  Animated,
-  Dimensions,
-  LayoutChangeEvent,
-  LayoutRectangle,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Animated, LayoutRectangle, StyleSheet, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   GestureEvent,
@@ -17,9 +10,6 @@ import MapView from 'react-native-maps';
 import { calculateAngle } from '../../../utils/calculateAngle';
 import { mapDegreesToDirections } from '../../../utils/mapDegreesToDirection';
 import { calculateLatLngDelta } from '../../../utils/calculateLatLngDelta';
-import { getPointOnCircle } from '../../../utils/calculateCoordinatesByAngle';
-
-const { width } = Dimensions.get('window');
 
 interface IJumpRunSelectorProps {
   title?: string;
@@ -29,7 +19,6 @@ interface IJumpRunSelectorProps {
   onChange?(val: number): void;
 }
 
-const MAP_SIZE_PERCENTAGE = 1.0;
 export default function JumpRunSelector(props: IJumpRunSelectorProps) {
   const [rootLayout, setRootLayout] = React.useState<LayoutRectangle>({
     x: 0,
@@ -37,23 +26,15 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
     height: 0,
     width: 0,
   });
-  const MAP_SIZE = rootLayout.width * MAP_SIZE_PERCENTAGE;
-  const CENTER_Y = rootLayout.height / 2 - 75;
-  const CENTER_X = rootLayout.width / 2 - 100;
+  const { height: MAP_HEIGHT, width: MAP_WIDTH } = rootLayout;
+  const CENTER_Y = rootLayout.height / 2;
+  const CENTER_X = rootLayout.width / 2;
+
+  const hypothenuse = Math.hypot(MAP_WIDTH, MAP_HEIGHT);
 
   const { latitude, longitude, value, onChange, title } = props;
   const [isDragging, setDragging] = React.useState(false);
   const [jumpRun, setJumpRun] = React.useState(value || 0);
-  const [origin, setOrigin] = React.useState<
-    LayoutRectangle & { originX: number; originY: number }
-  >({
-    x: 0,
-    y: 0,
-    height: 0,
-    width: 0,
-    originX: 0,
-    originY: 0,
-  });
 
   const rotation = React.useRef(new Animated.Value(jumpRun));
   const opacity = React.useRef(new Animated.Value(0));
@@ -65,28 +46,28 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
   }, [isDragging, value]);
 
   /** ANIMATIONS * */
-  const planePosition = React.useRef(new Animated.Value(0));
-  const planeAnimation = React.useRef(
-    Animated.loop(
+  const planePosition = React.useRef(new Animated.Value(hypothenuse));
+  const planeAnimation = React.useRef<Animated.CompositeAnimation>();
+
+  React.useEffect(() => {
+    planeAnimation.current = Animated.loop(
       Animated.timing(planePosition.current, {
-        duration: 3000,
-        toValue: -400,
+        duration: 6000,
+        toValue: -hypothenuse / 2,
         useNativeDriver: true,
       }),
       {
         resetBeforeIteration: true,
       }
-    )
-  );
+    );
+  }, [hypothenuse]);
 
   const onGestureEvent = React.useCallback(
     (e: GestureEvent<PanGestureHandlerEventPayload>) => {
       // Stop plane animation
-      planePosition.current.setValue(0);
-      planeAnimation.current.stop();
-
+      planeAnimation.current?.stop();
       // Reset coordinates
-      planeAnimation.current.reset();
+      planeAnimation.current?.reset();
       const { nativeEvent } = e;
       const { x, y } = nativeEvent;
 
@@ -96,41 +77,23 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
         y,
       };
 
-      const angle = calculateAngle({ x: origin.originX, y: origin.originY }, currentCoordinates);
+      const angle = calculateAngle(
+        { x: rootLayout.x / 2, y: rootLayout.y / 2 },
+        currentCoordinates
+      );
       // Find the angle between these coordinates:
       rotation.current.setValue(angle);
 
-      setJumpRun(angle);
+      requestAnimationFrame(() => setJumpRun(angle));
     },
-    [setJumpRun, origin]
+    [setJumpRun, rootLayout]
   );
-
-  const onMountRotatableView = React.useCallback(
-    (event: LayoutChangeEvent) => {
-      const { layout } = event.nativeEvent;
-      setOrigin({
-        ...layout,
-        // Center of spinny thing
-        originX: layout.x + rootLayout.width / 2,
-        originY: layout.y + rootLayout.height / 2,
-      });
-    },
-    [rootLayout.height, rootLayout.width]
-  );
-
-  const planeStartPosition = getPointOnCircle({
-    x: origin.originX,
-    y: origin.originY,
-    degrees: jumpRun,
-    offsetX: -20,
-    offsetY: -20,
-    radius: MAP_SIZE / 2,
-  });
 
   return (
     <PanGestureHandler
       onBegan={() => {
         setDragging(true);
+        planePosition.current.setValue(hypothenuse / 2);
         Animated.timing(opacity.current, {
           duration: 350,
           toValue: 1,
@@ -144,13 +107,14 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
           toValue: 0,
           useNativeDriver: true,
         }).start();
-        planeAnimation.current.start();
+        planePosition.current.setValue(hypothenuse / 2);
+        planeAnimation.current?.start();
         onChange?.(jumpRun);
       }}
       {...{ onGestureEvent }}
     >
       <View
-        style={{ width: '100%', height: '100%', alignItems: 'center' }}
+        style={StyleSheet.absoluteFill}
         onLayout={(layout) => setRootLayout(layout.nativeEvent.layout)}
       >
         {title && (
@@ -169,85 +133,33 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
             {title}
           </Animated.Text>
         )}
-
-        <View
-          style={{
-            width: MAP_SIZE,
-            height: MAP_SIZE,
-            borderRadius: MAP_SIZE,
-            overflow: 'hidden',
-            position: 'absolute',
-            top: origin.y,
-            left: origin.x,
+        <MapView
+          style={StyleSheet.absoluteFill}
+          region={{
+            latitude,
+            longitude,
+            latitudeDelta: calculateLatLngDelta(latitude),
+            longitudeDelta: calculateLatLngDelta(latitude),
           }}
+          focusable={false}
+          pointerEvents="none"
+          mapType="satellite"
         >
-          <MapView
+          <View
             style={{
-              width: '100%',
-              height: '100%',
+              ...StyleSheet.absoluteFillObject,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
-            region={{
-              latitude,
-              longitude,
-              latitudeDelta: calculateLatLngDelta(latitude),
-              longitudeDelta: calculateLatLngDelta(latitude),
-            }}
-            focusable={false}
-            pointerEvents="none"
-            mapType="satellite"
-          />
-        </View>
-
-        <Animated.View
-          onLayout={onMountRotatableView}
-          style={[
-            styles.iconContainer,
-            {
-              width: rootLayout.width * MAP_SIZE_PERCENTAGE,
-              height: rootLayout.width * MAP_SIZE_PERCENTAGE,
-              transform: [
-                {
-                  rotate: rotation.current.interpolate({
-                    inputRange: [0, 360],
-                    outputRange: ['0deg', '360deg'],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
-          <Animated.View
-            style={{
-              height: MAP_SIZE,
-              width: 2,
-              backgroundColor: '#FF1414',
-              opacity: opacity.current.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.6, 1],
-              }),
-              transform: [
-                {
-                  scaleX: opacity.current.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [10, 1],
-                  }),
-                },
-              ],
-            }}
-          />
-        </Animated.View>
-        {!rootLayout?.width ? null : (
-          <Animated.View
-            style={[
-              {
-                position: 'absolute',
-                width: 40,
-                height: 40,
-                top: planeStartPosition.y,
-                left: planeStartPosition.x,
-                opacity: planePosition.current.interpolate({
-                  inputRange: [-400, -200, 400],
-                  outputRange: [0.0, 1.0, 0.0],
+          >
+            <Animated.View
+              style={{
+                height: hypothenuse,
+                width: isDragging ? 2 : 10,
+                backgroundColor: '#FF1414',
+                opacity: opacity.current.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.6, 1],
                 }),
                 transform: [
                   {
@@ -256,42 +168,68 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
                       outputRange: ['0deg', '360deg'],
                     }),
                   },
-                  {
-                    translateY: planePosition.current,
-                  },
                 ],
+              }}
+            />
+            {!rootLayout?.width ? null : (
+              <Animated.View
+                style={[
+                  {
+                    position: 'absolute',
+                    width: 40,
+                    height: 40,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: planePosition.current.interpolate({
+                      inputRange: [-hypothenuse / 2, 0, hypothenuse / 2],
+                      outputRange: [0.0, 1.0, 0.0],
+                    }),
+                    transform: [
+                      {
+                        rotate: rotation.current.interpolate({
+                          inputRange: [0, 360],
+                          outputRange: ['0deg', '360deg'],
+                        }),
+                      },
+                      {
+                        translateY: planePosition.current,
+                      },
+                    ],
+                  },
+                ]}
+              >
+                <MaterialCommunityIcons name="airplane" size={40} color="#ffffff" />
+              </Animated.View>
+            )}
+            <Animated.Text
+              style={[
+                styles.degreeLabel,
+                {
+                  opacity: opacity.current,
+                  top: CENTER_Y - 75,
+                  left: CENTER_X - 100,
+                },
+              ]}
+            >
+              {Math.round(jumpRun)}
+            </Animated.Text>
+          </View>
+
+          <Animated.Text
+            style={[
+              styles.bottomDegreeLabel,
+              {
+                opacity: opacity.current.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [1, 0],
+                }),
               },
             ]}
           >
-            <MaterialCommunityIcons name="airplane" size={40} color="#ffffff" />
-          </Animated.View>
-        )}
-        <Animated.Text
-          style={[
-            styles.degreeLabel,
-            {
-              opacity: opacity.current,
-              top: CENTER_Y,
-              left: CENTER_X,
-            },
-          ]}
-        >
-          {Math.round(jumpRun)}
-        </Animated.Text>
-
-        <Animated.Text
-          style={[
-            styles.bottomDegreeLabel,
-            {
-              opacity: opacity.current.interpolate({
-                inputRange: [0, 1],
-                outputRange: [1, 0],
-              }),
-            },
-          ]}
-        >
-          {Math.round(jumpRun)}&deg; ({mapDegreesToDirections(jumpRun)})
-        </Animated.Text>
+            {Math.round(jumpRun)}&deg; ({mapDegreesToDirections(jumpRun)})
+          </Animated.Text>
+        </MapView>
       </View>
     </PanGestureHandler>
   );
@@ -322,6 +260,8 @@ const styles = StyleSheet.create({
   degreeLabel: {
     width: 200,
     height: 120,
+    left: 0,
+    top: '50%',
     textAlign: 'center',
     textShadowColor: 'rgba(15, 15, 15, 0.5)',
     textShadowRadius: 10,
@@ -338,7 +278,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     position: 'absolute',
-    bottom: 50,
+    top: 100,
     left: 0,
     width: '100%',
     textAlign: 'center',
@@ -353,14 +293,5 @@ const styles = StyleSheet.create({
   content: {
     width: '100%',
     flexDirection: 'column',
-  },
-  iconContainer: {
-    borderWidth: 10,
-    borderRadius: width / 2,
-    borderStyle: 'solid',
-    borderColor: 'pink',
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

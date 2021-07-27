@@ -1,4 +1,4 @@
-import { DocumentNode, useMutation, MutationOptions } from '@apollo/client';
+import { DocumentNode, useMutation, MutationOptions, MutationHookOptions } from '@apollo/client';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import * as React from 'react';
 import camelCase from 'lodash/camelCase';
@@ -16,6 +16,7 @@ export interface IAppMutationProps<Payload> {
   onSuccess(payload: Payload): void;
   onError?(message: string): void;
   onFieldError?(field: string, value: string): void;
+  mutation?: MutationHookOptions;
 }
 
 export interface IFieldValidator<InputType> {
@@ -71,7 +72,7 @@ export function createMutation<
     getPayload: (rootField: Mutation) => Maybe<Payload>;
     fieldErrorMap?: {
       // Map serverFieldName: tsFieldName
-      [k: string]: keyof InputType;
+      [K in keyof InputType]?: string;
     };
 
     // All validators patterns must be truthy before
@@ -88,7 +89,20 @@ export function createMutation<
   ): IAppMutation<Payload, InputType> {
     const { onFieldError, onSuccess, onError } = opts;
 
-    const [mutate, { loading }] = useMutation(mutation);
+    const [mutate, { loading }] = useMutation(mutation, opts.mutation);
+
+    const raiseFieldError = React.useCallback(
+      (field: string, message: string) => {
+        const camelizedField = camelCase(field);
+        const fieldName =
+          fieldErrorMap && camelizedField in fieldErrorMap
+            ? fieldErrorMap[field as keyof InputType]
+            : field;
+
+        onFieldError?.(`${fieldName}`, message);
+      },
+      [onFieldError]
+    );
 
     const onMutate = React.useCallback(
       async (
@@ -105,18 +119,16 @@ export function createMutation<
               if (variable in (options.validates || {})) {
                 validators[variable]?.forEach((validator) => {
                   if (validator.pattern) {
-                    if (!validator.pattern.test(`${variables[variable]}`)) {
+                    if (!validator.pattern.test(`${variables[variable] || ''}`)) {
                       hasErrors = true;
 
-                      if (onFieldError) {
-                        onFieldError(variable as string, validator.message);
-                      }
+                      raiseFieldError(variable as string, validator.message);
                     }
                   } else if (validator.callback && !validator.callback(variables)) {
                     hasErrors = true;
-                    if (onFieldError) {
-                      onFieldError(variable as string, validator.message);
-                    }
+                    raiseFieldError(variable as string, validator.message);
+                  } else {
+                    console.log(`Validator had no callback or pattern for ${variable}`);
                   }
                 });
               }
@@ -127,7 +139,7 @@ export function createMutation<
         }
 
         if (!validate()) {
-          return;
+          return undefined;
         }
         try {
           const result = await mutate({
@@ -138,31 +150,23 @@ export function createMutation<
           const payload = getPayload(result.data);
 
           payload?.fieldErrors?.forEach(({ field, message }) => {
-            const camelizedField = camelCase(field);
-            const fieldName =
-              fieldErrorMap && camelizedField in (fieldErrorMap || {})
-                ? fieldErrorMap[field]
-                : field;
-
-            if (opts.onFieldError) {
-              opts.onFieldError(`${fieldName}`, message);
-            }
+            raiseFieldError(field, message);
           });
 
           if (payload?.errors?.length && onError) {
             payload.errors?.map((message) => onError(message));
-            return;
+            return undefined;
           }
           if (!payload?.fieldErrors?.length && payload) {
-            onSuccess(payload);
+            requestAnimationFrame(() => onSuccess(payload));
           }
+          return payload;
         } catch (err) {
-          if (onError) {
-            onError(err.message);
-          }
+          onError?.(err.message);
         }
+        return undefined;
       },
-      [onFieldError, onError, onSuccess, mutate, opts]
+      [raiseFieldError, mutate, onError, onSuccess]
     );
 
     return {

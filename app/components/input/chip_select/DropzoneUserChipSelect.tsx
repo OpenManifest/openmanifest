@@ -1,3 +1,4 @@
+import { uniqBy } from 'lodash';
 import * as React from 'react';
 import { List } from 'react-native-paper';
 import useQueryDropzoneUsers from '../../../api/hooks/useQueryDropzoneUsers';
@@ -33,6 +34,14 @@ export default function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
     onLoadingStateChanged?.(loading);
   }, [loading, onLoadingStateChanged]);
 
+  const onChangeSelected = React.useCallback(
+    ([first]) => (first ? onSelect(first) : null),
+    [onSelect]
+  );
+  const getItemLabel = React.useCallback((dzUser) => dzUser?.user.name, []);
+  const isSelected = React.useCallback((item) => item.id === value?.id, [value?.id]);
+  const selected = React.useMemo(() => [value].filter(Boolean) as DropzoneUser[], [value]);
+
   return loading ? (
     <ChipSelectSkeleton />
   ) : (
@@ -41,12 +50,11 @@ export default function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
       <ChipSelect<DropzoneUser>
         autoSelectFirst
         icon={icon || 'account'}
-        items={(data?.edges?.map((edge) => edge?.node) || []) as DropzoneUser[]}
-        selected={[value].filter(Boolean) as DropzoneUser[]}
-        isSelected={(item) => item.id === value?.id}
-        renderItemLabel={(dzUser) => dzUser?.user.name}
-        isDisabled={() => false}
-        onChangeSelected={([first]) => (first ? onSelect(first) : null)}
+        items={uniqBy(data?.edges?.map((edge) => edge?.node) || [], 'id') as DropzoneUser[]}
+        selected={selected}
+        isSelected={isSelected}
+        renderItemLabel={getItemLabel}
+        onChangeSelected={onChangeSelected}
       />
     </>
   );

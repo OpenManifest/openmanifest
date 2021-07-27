@@ -1,4 +1,4 @@
-import { sortBy, uniq } from 'lodash';
+import { pick, sortBy, isEqual, uniq } from 'lodash';
 import * as React from 'react';
 import { View, StyleSheet, Keyboard, Easing } from 'react-native';
 import { Button, Title } from 'react-native-paper';
@@ -41,28 +41,43 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
 
   const memoizedClose = React.useMemo(() => onClose, [onClose]);
 
-  React.useEffect(() => {
-    if (open) {
-      sheetRef.current?.present();
-      sheetRef.current?.snapTo(snappingPoints?.length - 1, 300);
-    } else {
-      sheetRef.current?.dismiss(300);
-      setTimeout(memoizedClose, 350);
-    }
-  }, [memoizedClose, open, snappingPoints?.length]);
-
   const onDismiss = React.useCallback(() => {
     setTimeout(() => {
-      memoizedClose();
+      requestAnimationFrame(() => memoizedClose());
     });
   }, [memoizedClose]);
+
+  const show = () => {
+    'worklet';
+
+    sheetRef.current?.present();
+  };
+
+  const hide = () => {
+    'worklet';
+
+    sheetRef.current?.dismiss(300);
+    setTimeout(onDismiss, 350);
+  };
+
+  React.useEffect(() => {
+    if (open) {
+      show();
+      // sheetRef.current?.snapTo(snappingPoints?.length - 1, 300);
+    } else {
+      hide();
+    }
+  }, [onDismiss, open]);
 
   const HandleComponent = React.useMemo(
     () => () =>
       !title ? (
-        <View style={styles.sheetHeader} />
+        <View style={styles.sheetHeader}>
+          <View style={styles.handle} />
+        </View>
       ) : (
         <View style={styles.sheetHeaderWithTitle}>
+          <View style={styles.handle} />
           <Title>{title}</Title>
         </View>
       ),
@@ -103,6 +118,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 32,
   },
+  handle: {
+    width: 32,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#AAAAAA',
+    alignSelf: 'center',
+  },
   sheet: {
     paddingBottom: 30,
     paddingHorizontal: 16,
@@ -118,6 +140,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     height: 40,
+    paddingTop: 4,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -144,4 +167,11 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingTop: 16,
   },
+});
+
+const x = React.memo(DialogOrSheet, (a, b) => {
+  return isEqual(
+    pick(a, ['loading', 'open', 'buttonAction']),
+    pick(b, ['loading', 'open', 'buttonAction'])
+  );
 });

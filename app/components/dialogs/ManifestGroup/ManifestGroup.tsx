@@ -1,10 +1,10 @@
 import { gql, useMutation } from '@apollo/client';
 import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, StyleSheet, Keyboard } from 'react-native';
+import { omit } from 'lodash';
 import { Button } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
-import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Mutation } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import ManifestGroupForm from '../../forms/manifest_group/ManifestGroupForm';
@@ -112,6 +112,20 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
   const globalState = useAppSelector((root) => root.global);
   const [mutationCreateSlots, mutationData] = useMutation<Mutation>(MUTATION_CREATE_SLOTS);
   const [tabIndex, setTabIndex] = React.useState(0);
+  const [keyboardVisible, setKeyboardVisible] = React.useState(false);
+
+  const onKeyboardVisible = () => setKeyboardVisible(true);
+  const onKeyboardHidden = () => setKeyboardVisible(false);
+
+  React.useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', onKeyboardVisible);
+    Keyboard.addListener('keyboardDidHide', onKeyboardHidden);
+
+    return () => {
+      Keyboard.removeListener('keyboardDidShow', onKeyboardVisible);
+      Keyboard.removeListener('keyboardDidHide', onKeyboardHidden);
+    };
+  }, []);
 
   const validate = React.useCallback(() => {
     let hasErrors = false;
@@ -132,8 +146,30 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
       );
     }
 
+    if (state.fields.ticketType.value?.isTandem) {
+      const hasPassengers = state.fields.users?.value?.every(
+        (slotUser) => !!slotUser.passengerName
+      );
+
+      if (!hasPassengers) {
+        hasErrors = true;
+        dispatch(
+          actions.forms.manifestGroup.setFieldError([
+            'users',
+            'You cant manifest tandems without passengers',
+          ])
+        );
+      }
+    }
+
     return !hasErrors;
-  }, [dispatch, state.fields.jumpType.value?.id, state.fields.ticketType.value?.id]);
+  }, [
+    dispatch,
+    state.fields.jumpType.value?.id,
+    state.fields.ticketType.value?.id,
+    state.fields.ticketType.value?.isTandem,
+    state.fields.users,
+  ]);
   const onManifest = React.useCallback(async () => {
     if (!validate()) {
       return;
@@ -145,7 +181,9 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
           ticketTypeId: Number(state.fields.ticketType.value?.id),
           extraIds: state.fields.extras?.value?.map(({ id }) => Number(id)),
           loadId: Number(state.fields.load.value?.id),
-          userGroup: state.fields.users.value,
+          userGroup: state.fields.users.value?.map((slotUserWithRig) =>
+            omit(slotUserWithRig, ['rig'])
+          ),
         },
       });
 
@@ -175,7 +213,7 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
         return;
       }
       if (!result.data?.createSlots?.fieldErrors?.length) {
-        onSuccess?.();
+        requestAnimationFrame(() => onSuccess?.());
       }
     } catch (error) {
       dispatch(
@@ -206,22 +244,26 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
   }, [state.fields.ticketType?.value?.isTandem]);
 
   const snapPoints = React.useMemo(() => [550], []);
-  const memoizedClose = React.useMemo(() => onClose, [onClose]);
+  const memoizedClose = React.useCallback(() => {
+    onClose();
+    setTabIndex(0);
+  }, [onClose]);
+
+  const onDismiss = React.useCallback(() => {
+    setTimeout(() => {
+      requestAnimationFrame(() => memoizedClose());
+    });
+  }, [memoizedClose]);
+
   React.useEffect(() => {
     if (open) {
       sheetRef.current?.present();
       sheetRef.current?.snapTo(snapPoints?.length - 1, 300);
     } else {
       sheetRef.current?.dismiss(300);
-      setTimeout(memoizedClose, 350);
+      setTimeout(onDismiss, 350);
     }
-  }, [memoizedClose, open, snapPoints?.length]);
-
-  const onDismiss = React.useCallback(() => {
-    setTimeout(() => {
-      memoizedClose();
-    });
-  }, [memoizedClose]);
+  }, [memoizedClose, onDismiss, open, snapPoints?.length]);
 
   const HandleComponent = React.useMemo(
     () => () =>
@@ -238,7 +280,7 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
       backdropComponent={BottomSheetBackdrop}
       handleComponent={HandleComponent}
     >
-      <View style={{ backgroundColor: 'white' }} testID="manifest-group-sheet">
+      <View style={{ backgroundColor: 'white', flexGrow: 1 }} testID="manifest-group-sheet">
         <View pointerEvents={(state.fields.users?.value?.length || 0) > 0 ? undefined : 'none'}>
           <Tabs defaultIndex={tabIndex} mode="fixed" onChangeIndex={setTabIndex}>
             <TabScreen label="Create group">
@@ -255,7 +297,10 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
             <UserListSelect onNext={() => setTabIndex(1)} />
           </View>
         ) : (
-          <ScrollView contentContainerStyle={{ paddingBottom: 200, flexGrow: 1 }}>
+          <BottomSheetScrollView
+            style={{ flex: 1, flexGrow: 1, width: '100%', height: '100%' }}
+            contentContainerStyle={[styles.sheet, { paddingBottom: keyboardVisible ? 400 : 80 }]}
+          >
             <ManifestGroupForm />
             <View style={styles.buttonContainer}>
               <Button
@@ -267,7 +312,7 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
                 Save
               </Button>
             </View>
-          </ScrollView>
+          </BottomSheetScrollView>
         )}
       </View>
     </BottomSheetModal>
@@ -295,14 +340,12 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   sheet: {
-    elevation: 3,
-    backgroundColor: 'white',
-    flexGrow: 1,
-    height: '100%',
+    paddingBottom: 30,
+    paddingHorizontal: 16,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    paddingBottom: 32,
+    flexGrow: 1,
   },
   sheetHeader: {
     elevation: 2,

@@ -28,11 +28,14 @@ function DropzoneSetupScreen() {
   const navigation = useNavigation();
 
   const mutationCreateDropzone = useMutationCreateDropzone({
-    onError: (error) =>
-      dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' })),
+    onError: (error) => {
+      dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' }));
+    },
     onSuccess: (payload) => console.log(payload),
-    onFieldError: (field, value) =>
-      dispatch(actions.forms.dropzone.setFieldError([field as keyof DropzoneFields, value])),
+    onFieldError: (field, value) => {
+      dispatch(actions.forms.dropzone.setFieldError([field as keyof DropzoneFields, value]));
+      console.log(field, value);
+    },
   });
   const mutationUpdateDropzone = useMutationUpdateDropzone({
     onError: (error) =>
@@ -105,6 +108,7 @@ function DropzoneSetupScreen() {
         );
         return;
       }
+      console.log(dropzone.fields);
 
       // Create or update dropzone
       const result = !dropzone.original?.id
@@ -142,12 +146,7 @@ function DropzoneSetupScreen() {
     },
     [
       dispatch,
-      dropzone.fields.federation.value?.id,
-      dropzone.fields.lat.value,
-      dropzone.fields.lng.value,
-      dropzone.fields.name.value,
-      dropzone.fields.primaryColor.value,
-      dropzone.fields.secondaryColor.value,
+      dropzone.fields,
       dropzone.original?.id,
       mutationCreateDropzone,
       mutationUpdateDropzone,

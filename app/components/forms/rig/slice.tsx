@@ -3,7 +3,7 @@ import { Rig } from '../../../api/schema.d';
 
 export type RigFields = Pick<
   Rig,
-  'make' | 'model' | 'serial' | 'canopySize' | 'repackExpiresAt' | 'rigType'
+  'make' | 'model' | 'serial' | 'canopySize' | 'repackExpiresAt' | 'rigType' | 'name'
 >;
 
 interface IRigEditState {
@@ -22,6 +22,10 @@ export const initialState: IRigEditState = {
   open: false,
   fields: {
     make: {
+      value: '',
+      error: null,
+    },
+    name: {
       value: '',
       error: null,
     },

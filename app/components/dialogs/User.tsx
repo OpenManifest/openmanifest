@@ -1,17 +1,22 @@
 import * as React from 'react';
+import { startOfDay } from 'date-fns';
 import UserForm from '../forms/user/UserForm';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import DialogOrSheet from '../layout/DialogOrSheet';
 import useMutationUpdateUser from '../../api/hooks/useMutationUpdateUser';
+import { QUERY_DROPZONE } from '../../api/hooks/useCurrentDropzone';
+import { QUERY_DROPZONE_USER } from '../../api/hooks/useDropzoneUser';
 import { UserFields } from '../forms/user/slice';
 
 interface IUpdateUserDialog {
   open?: boolean;
+  dropzoneUserId: number;
   onClose(): void;
   onSuccess(): void;
 }
 export default function UpdateUserDialog(props: IUpdateUserDialog) {
-  const { open, onSuccess } = props;
+  const { open, onSuccess, onClose, dropzoneUserId } = props;
+  const currentDropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
   const state = useAppSelector((root) => root.forms.user);
   const dispatch = useAppDispatch();
 
@@ -23,83 +28,61 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
           variant: 'success',
         })
       );
-      dispatch(actions.forms.user.reset());
+      dispatch(actions.forms.user.setOpen(false));
       onSuccess();
     },
     onFieldError: (field, value) =>
       dispatch(actions.forms.user.setFieldError([field as keyof UserFields, value])),
     onError: (error) =>
       dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' })),
+    mutation: {
+      refetchQueries: [
+        {
+          query: QUERY_DROPZONE,
+          variables: {
+            dropzoneId: currentDropzoneId,
+            earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
+          },
+        },
+        {
+          query: QUERY_DROPZONE_USER,
+          variables: {
+            dropzoneId: currentDropzoneId,
+            dropzoneUserId,
+          },
+        },
+      ],
+    },
   });
 
-  const validate = React.useCallback((): boolean => {
-    let hasError = false;
-    const emailRegex = new RegExp(
-      // eslint-disable-next-line max-len
-      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
-    if ((state.fields.name?.value?.length || 0) < 3) {
-      hasError = true;
-      dispatch(actions.forms.user.setFieldError(['name', 'Name is too short']));
-    }
-
-    if ((state.fields.email?.value?.length || 0) < 3) {
-      hasError = true;
-      dispatch(actions.forms.user.setFieldError(['email', 'Email is too short']));
-    }
-
-    if ((state.fields.phone?.value?.length || 0) < 3) {
-      hasError = true;
-      dispatch(actions.forms.user.setFieldError(['phone', 'Phone number is too short']));
-    }
-
-    if (!emailRegex.test(state.fields?.email?.value || '')) {
-      hasError = true;
-      dispatch(actions.forms.user.setFieldError(['email', 'Please enter a valid email']));
-    }
-
-    if ((state.fields.exitWeight?.value || 0) < 30) {
-      hasError = true;
-      dispatch(actions.forms.user.setFieldError(['exitWeight', 'Exit weight seems too low?']));
-    }
-
-    return !hasError;
-  }, [state.fields, dispatch]);
-
   const onSave = React.useCallback(async () => {
-    const { name, license, phone, email, exitWeight } = state.fields;
+    await mutationUpdateUser.mutate({
+      id: Number(state.original?.id),
+      name: state.fields.name.value,
+      licenseId: !state.fields.license.value?.id ? null : Number(state.fields.license.value?.id),
+      phone: state.fields.phone.value,
+      exitWeight: parseFloat(state.fields.exitWeight?.value || '50'),
+      email: state.fields.email.value,
+    });
+  }, [
+    mutationUpdateUser,
+    state.fields.email.value,
+    state.fields.exitWeight?.value,
+    state.fields.license.value?.id,
+    state.fields.name.value,
+    state.fields.phone.value,
+    state.original?.id,
+  ]);
 
-    if (validate()) {
-      try {
-        await mutationUpdateUser.mutate({
-          id: Number(state.original?.id),
-          name: name.value,
-          licenseId: !license.value?.id ? null : Number(license.value?.id),
-          phone: phone.value,
-          exitWeight: parseFloat(exitWeight?.value || '50'),
-          email: email.value,
-        });
-      } catch (error) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: error.message,
-            variant: 'error',
-          })
-        );
-      }
-    }
-  }, [dispatch, mutationUpdateUser, state.fields, state.original?.id, validate]);
+  const snapPoints = React.useMemo(() => [740], []);
 
   return (
     <DialogOrSheet
       title="Update information"
       open={open}
-      snapPoints={[0, 740]}
+      snapPoints={snapPoints}
       loading={mutationUpdateUser.loading}
-      onClose={() => {
-        props.onClose();
-        dispatch(actions.forms.user.reset());
-      }}
+      onClose={onClose}
       buttonAction={onSave}
       buttonLabel="Save"
     >

@@ -73,6 +73,7 @@ export const QUERY_DROPZONE = gql`
           }
         }
         availableRigs {
+          name
           id
           make
           model
@@ -91,14 +92,20 @@ export const QUERY_DROPZONE = gql`
           email
           phone
           pushToken
+          image
 
           rigs {
             id
+            name
             model
             make
             serial
             canopySize
             repackExpiresAt
+
+            user {
+              id
+            }
           }
           jumpTypes {
             id

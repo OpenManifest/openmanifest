@@ -30,23 +30,28 @@ const CountdownCircleTimer = Platform.select({
 
 interface ICountdownProps {
   end: Date;
+  variant?: 'dark' | 'light';
   size?: number;
 }
 export default function Countdown(props: ICountdownProps) {
-  const { end, size } = props;
+  const { end, size, variant } = props;
   const difference = diff(end, new Date());
   const fractionFiveMinutes = 5 / difference;
   const fractionTenMinutes = 10 / difference;
   const fractionTwentyMinutes = 10 / difference;
   return (
     <CountdownCircleTimer
-      isPlaying={isAfter(end, new Date())}
-      duration={difference || 1}
-      colors={[
-        ['#004777', fractionTwentyMinutes],
-        ['#F7B801', fractionTenMinutes],
-        ['#A30000', fractionFiveMinutes],
-      ]}
+      isPlaying={difference > 1}
+      duration={difference > 1 ? difference : 0}
+      colors={
+        difference > 0
+          ? [
+              [variant === 'light' ? '#FFFFFF' : '#004777', fractionTwentyMinutes],
+              [variant === 'light' ? '#FFFFFF' : '#F7B801', fractionTenMinutes],
+              [variant === 'light' ? '#FFFFFF' : '#A30000', fractionFiveMinutes],
+            ]
+          : [[variant === 'light' ? '#FFFFFF' : '#A30000', 1]]
+      }
       size={size || 50}
       strokeWidth={2}
     >

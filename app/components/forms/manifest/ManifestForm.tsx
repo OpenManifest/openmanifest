@@ -100,6 +100,7 @@ export default function ManifestForm() {
       <Divider />
       {!state.fields.dropzoneUser ? null : (
         <RigSelect
+          required
           value={state.fields.rig.value}
           userId={Number(state.fields.dropzoneUser?.value?.user?.id)}
           dropzoneId={Number(currentDropzone?.dropzone?.id)}
@@ -115,7 +116,7 @@ export default function ManifestForm() {
         label="Exit weight"
         error={!!state.fields.exitWeight.error}
         value={state.fields.exitWeight?.value?.toString() || ''}
-        keyboardType="numbers-and-punctuation"
+        keyboardType="number-pad"
         right={() => <TextInput.Affix text="kg" />}
         onChangeText={(newValue) =>
           dispatch(actions.forms.manifest.setField(['exitWeight', Number(newValue)]))

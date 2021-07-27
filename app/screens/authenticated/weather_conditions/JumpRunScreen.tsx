@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Location from 'expo-location';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import JumpRunSelector from '../../../components/input/jump_run_select/JumpRunSelectFullScreen';
+import JumpRunSelector from '../../../components/input/jump_run_select/JumpRunSelect';
 // eslint-disable-next-line max-len
 import useMutationCreateWeatherConditions from '../../../api/hooks/useMutationCreateWeatherConditions';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
@@ -83,7 +83,15 @@ export default function JumpRunScreen() {
           dispatch(actions.forms.weather.setField(['jumpRun', Math.round(value)]))
         }
       />
-      <FAB style={styles.fab} small icon="check" onPress={() => onSaveConditions()} label="Save" />
+      <FAB
+        style={styles.fab}
+        small
+        icon="check"
+        loading={mutationCreateWeatherConditions.loading}
+        disabled={mutationCreateWeatherConditions.loading}
+        onPress={() => onSaveConditions()}
+        label="Save"
+      />
     </View>
   );
 }

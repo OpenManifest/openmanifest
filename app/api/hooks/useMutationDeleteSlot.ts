@@ -17,6 +17,9 @@ const MUTATION_DELETE_SLOT = gql`
         }
         load {
           id
+          availableSlots
+          isOpen
+          weight
           slots {
             id
             createdAt

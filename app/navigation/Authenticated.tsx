@@ -3,11 +3,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 
+import { StyleSheet } from 'react-native';
 import ManifestTab from './tabs/manifest';
-import NotificationTab from './tabs/notifications';
-import ProfileTab from './tabs/profile';
-import SettingsTab from './tabs/settings';
+import SettingsTab from './drawer/settings';
 import UsersTab from './tabs/users';
+import NotificationsTab from './tabs/notifications';
 
 import useRestriction from '../hooks/useRestriction';
 import { Permission } from '../api/schema.d';
@@ -64,56 +64,48 @@ export default function AuthenticatedTabBar() {
         component={ManifestTab}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <MaterialCommunityIcons name="airplane" color={color} size={size} />
+            <MaterialCommunityIcons name="airplane" {...{ color, size }} style={styles.icon} />
           ),
           unmountOnBlur: true,
         }}
       />
       <BottomTab.Screen
         name="Notifications"
-        component={NotificationTab}
+        component={NotificationsTab}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <MaterialCommunityIcons name="bell" color={color} size={size} />
+            <MaterialCommunityIcons name="bell" {...{ color, size }} style={styles.icon} />
           ),
           unmountOnBlur: true,
         }}
       />
-      <BottomTab.Screen
-        name="Profile"
-        component={ProfileTab}
-        options={{
-          tabBarIcon: ({ size, color, focused }) => (
-            <MaterialCommunityIcons {...{ size, color }} name="account-circle" />
-          ),
-          unmountOnBlur: true,
-        }}
-      />
-
       {canViewUsers && (
         <BottomTab.Screen
           name="Users"
           component={UsersTab}
           options={{
             tabBarIcon: ({ size, color, focused }) => (
-              <MaterialCommunityIcons {...{ size, color }} name="account-group" />
+              <MaterialCommunityIcons
+                {...{ size, color }}
+                name="account-group"
+                style={styles.icon}
+              />
             ),
             unmountOnBlur: true,
-          }}
-        />
-      )}
-
-      {shouldShowSettings && (
-        <BottomTab.Screen
-          name="Settings"
-          component={SettingsTab}
-          options={{
-            tabBarIcon: ({ size, color, focused }) => (
-              <MaterialCommunityIcons {...{ size, color }} name="account-cog" />
-            ),
           }}
         />
       )}
     </BottomTab.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  icon: {
+    textShadowColor: '#000000',
+    textShadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    textShadowRadius: 1,
+  },
+});

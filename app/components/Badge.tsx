@@ -36,9 +36,12 @@ function Badge(props: IBadgeProps) {
     <Chip
       mode={selected ? 'outlined' : 'flat'}
       icon={iconName}
-      textStyle={selected ? {} : { color: 'white' }}
+      textStyle={{
+        ...(selected ? {} : { color: 'white' }),
+        fontSize: 12,
+      }}
       style={[
-        { marginHorizontal: 2, maxHeight: 35 },
+        { marginHorizontal: 2, height: 25, alignItems: 'center' },
         selected ? undefined : { backgroundColor: 'transparent', borderColor: 'white' },
       ].filter(Boolean)}
       disabled={disabled}

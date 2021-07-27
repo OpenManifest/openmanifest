@@ -10,11 +10,14 @@ export const QUERY_LOAD = gql`
       createdAt
       dispatchAt
       hasLanded
-      maxSlots
       loadNumber
       isFull
       state
       isOpen
+      weight
+      maxSlots
+      availableSlots
+      occupiedSlots
       plane {
         id
         maxSlots

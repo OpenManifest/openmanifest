@@ -13,6 +13,7 @@ import {
 import addMinutes from 'date-fns/addMinutes';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 
+import { useNavigation } from '@react-navigation/native';
 import useCurrentDropzone from '../../../../../api/hooks/useCurrentDropzone';
 import GCAChip from '../../../../../components/chips/GcaChip';
 import LoadMasterChip from '../../../../../components/chips/LoadMasterChip';
@@ -187,6 +188,7 @@ export default function LoadCard(props: ILoadCardLarge) {
     });
   }, [load?.id, mutationUpdateLoad]);
 
+  const navigation = useNavigation();
   const canUpdateLoad = useRestriction(Permission.UpdateLoad);
 
   const canEditSelf = useRestriction(Permission.UpdateSlot);
@@ -356,14 +358,38 @@ export default function LoadCard(props: ILoadCardLarge) {
                     </Paragraph>
                   </DataTable.Cell>
                 </DataTable.Row>
+
+                {slot?.ticketType?.isTandem && (
+                  <DataTable.Row
+                    testID="slot-row"
+                    disabled={!!load?.hasLanded}
+                    pointerEvents="none"
+                  >
+                    <DataTable.Cell>
+                      <Paragraph style={styles.slotText}>{slot?.passengerName}</Paragraph>
+                    </DataTable.Cell>
+                    <DataTable.Cell numeric>
+                      <Paragraph style={styles.slotText}>Passenger</Paragraph>
+                    </DataTable.Cell>
+                    <DataTable.Cell numeric>
+                      <Paragraph style={styles.slotText}>
+                        {(slot?.ticketType?.altitude || 14000) / 1000}k
+                      </Paragraph>
+                    </DataTable.Cell>
+                  </DataTable.Row>
+                )}
               </SwipeActions>
             );
           })}
           {Array.from(
-            { length: (load?.maxSlots || 0) - (load?.slots?.length || 0) },
+            { length: load?.availableSlots || ((load?.maxSlots || 0) - (load?.slots?.length || 0)) },
             (v, i) => i
           ).map((i) => (
-            <DataTable.Row key={`${load?.id}-empty-slot-${i}`} testID="slot-row">
+            <DataTable.Row
+              key={`${load?.id}-empty-slot-${i}`}
+              testID="slot-row"
+              onPress={() => navigation.navigate('LoadScreen', { load })}
+            >
               <DataTable.Cell>
                 <Paragraph style={styles.slotText}>- Available -</Paragraph>
               </DataTable.Cell>

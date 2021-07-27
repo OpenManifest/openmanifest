@@ -10,9 +10,9 @@ import { Provider as MaterialProvider, ActivityIndicator, ProgressBar } from 're
 import { Linking, Platform, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-
 import URI from 'urijs';
+import Wrapper from './EntrypointWrapper';
+
 import Apollo from './api/Apollo';
 import { store, persistor, useAppSelector, useAppDispatch } from './state/store';
 
@@ -131,9 +131,9 @@ function Content() {
         <MaterialProvider theme={state.theme}>
           <SafeAreaProvider>
             <NavigationContainer linking={LinkingConfiguration} theme={state.theme}>
-              <BottomSheetModalProvider>
+              <Wrapper>
                 <RootNavigator />
-              </BottomSheetModalProvider>
+              </Wrapper>
             </NavigationContainer>
 
             <StatusBar />

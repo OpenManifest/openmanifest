@@ -1,18 +1,19 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ViewProps } from 'react-native';
 import { Divider, List } from 'react-native-paper';
 
 interface IInfoGrid {
   items: { title: string; value: string; onPress?(): void; bold?: boolean }[];
+  style?: ViewProps['style'];
 }
 export default function InfoGrid(props: IInfoGrid) {
-  const { items } = props;
+  const { items, style } = props;
   const flex = 1 / items.length;
 
   return (
     <>
       <Divider style={styles.divider} />
-      <View style={styles.container}>
+      <View style={StyleSheet.flatten([styles.container, style])}>
         {items.map((item, i) => (
           <>
             {/* eslint-disable-next-line react/no-array-index-key */}

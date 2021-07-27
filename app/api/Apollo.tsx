@@ -43,11 +43,11 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
                 locations
               )}, ${path}, ${name}, ${nodes}`
             );
-            console.error(JSON.stringify(err));
-            console.error(operation);
+            console.log(JSON.stringify(err));
+            console.log(operation);
           });
         }
-        if (networkError) {
+        if (networkError && process.env.EXPO_ENV !== 'production') {
           dispatch(
             actions.notifications.showSnackbar({
               message: `[Network error]: ${networkError}`,

@@ -1,8 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SlotUser, Slot, DropzoneUser } from '../../../api/schema.d';
+import { SlotUser, Slot, DropzoneUser, Rig } from '../../../api/schema.d';
+
+export type SlotUserWithRig = SlotUser & { rig?: Rig };
 
 interface IFields extends Pick<Slot, 'jumpType' | 'load' | 'ticketType' | 'extras'> {
-  users: SlotUser[];
+  users: SlotUserWithRig[];
 }
 
 interface ISlotEditState {

@@ -32,6 +32,7 @@ const QUERY_RIG_INSPECTIONS = gql`
           definition
           rig {
             id
+            name
           }
           inspectedBy {
             id
@@ -88,6 +89,7 @@ const MUTATION_CREATE_RIG_INSPECTION = gql`
         }
         rig {
           id
+          name
           make
           model
         }

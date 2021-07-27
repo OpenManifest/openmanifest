@@ -52,9 +52,9 @@ export default function PlaneChipSelect(props: IPlaneSelect) {
         autoSelectFirst
         items={uniqBy([...(data?.planes || [])], ({ id }) => id) || []}
         selected={[value].filter(Boolean) as Plane[]}
-        renderItemLabel={(plane) => plane?.name || ''}
+        renderItemLabel={(plane: Plane) => plane?.name || ''}
         isDisabled={(plane) => false}
-        onChangeSelected={([first]) => (first ? onSelect(first) : null)}
+        onChangeSelected={([first]) => (first ? onSelect(first as Plane) : null)}
       />
     </>
   );

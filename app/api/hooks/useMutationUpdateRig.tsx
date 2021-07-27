@@ -5,6 +5,7 @@ import { MutationUpdateRigArgs, UpdateRigPayload } from '../schema';
 const MUTATION_UPDATE_RIG = gql`
   mutation UpdateRig(
     $id: Int!
+    $name: String
     $make: String
     $model: String
     $serial: String
@@ -18,6 +19,7 @@ const MUTATION_UPDATE_RIG = gql`
       input: {
         id: $id
         attributes: {
+          name: $name
           make: $make
           model: $model
           serial: $serial
@@ -36,6 +38,7 @@ const MUTATION_UPDATE_RIG = gql`
       }
       rig {
         id
+        name
         make
         model
         serial
@@ -49,6 +52,7 @@ const MUTATION_UPDATE_RIG = gql`
           id
           rigs {
             id
+            name
             make
             model
             serial

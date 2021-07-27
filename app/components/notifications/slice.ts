@@ -18,7 +18,8 @@ export default createSlice({
   initialState,
   reducers: {
     hideSnackbar: (state: INotificationState) => {
-      state.queue = state.queue.slice(1);
+      const [, ...newQueue] = state.queue;
+      state.queue = newQueue;
     },
     showSnackbar: (state: INotificationState, action: PayloadAction<INotification>) => {
       state.queue.push(action.payload);

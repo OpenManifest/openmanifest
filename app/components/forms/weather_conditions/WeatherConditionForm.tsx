@@ -28,13 +28,16 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
     if (state.fields.jumpRun.value !== jumpRun) {
       setJumpRun(state.fields.jumpRun.value);
     }
-  }, [jumpRun, state.fields.jumpRun.value]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setJumpRun, state.fields.jumpRun.value]);
 
   React.useEffect(() => {
     if (state.fields.temperature.value !== temperature) {
-      setJumpRun(state.fields.temperature.value);
+      setTemperature(state.fields.temperature.value);
     }
-  }, [state.fields.jumpRun.value, state.fields.temperature.value, temperature]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.fields.jumpRun.value, state.fields.temperature.value, setTemperature]);
   return (
     <KeyboardAvoidingView behavior="position" style={styles.content}>
       <View style={styles.row}>
@@ -58,8 +61,10 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
                 dispatch(actions.forms.weather.setField(['temperature', Number(temperature)]))
               }
               onChangeText={(newTemp) => {
+                console.log({ newTemp });
                 if (/\d/.test(newTemp)) {
-                  const [numbers] = newTemp.match(/^\-\d+/) || [temperature];
+                  const [numbers] = newTemp.match(/^\-?\d+/) || [temperature];
+                  console.log({ numbers: Number(numbers) });
                   setTemperature(Number(numbers));
                 }
               }}

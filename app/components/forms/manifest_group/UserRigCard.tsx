@@ -1,7 +1,16 @@
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { ScrollView } from 'react-native';
-import { Avatar, Card, TextInput, ProgressBar, Chip, Divider } from 'react-native-paper';
+import { ScrollView, View, StyleSheet } from 'react-native';
+import {
+  Avatar,
+  Card,
+  TextInput,
+  ProgressBar,
+  Chip,
+  Divider,
+  List,
+  Button,
+} from 'react-native-paper';
 import { createQuery } from '../../../api/createQuery';
 import { DropzoneUser, Query, Rig } from '../../../api/schema.d';
 import { useAppSelector } from '../../../state';
@@ -12,9 +21,16 @@ interface IUserRigCard {
   dropzoneUserId: number;
   dropzoneId: number;
   exitWeight?: number;
+  isTandem?: boolean;
+  selectedRig?: Rig;
+
+  passengerName?: string;
+  passengerWeight?: number;
+  onRemove?(): void;
   onChangeExitWeight(weight: number): void;
-  rigId?: number;
   onChangeRig(rig: Rig): void;
+  onChangePassengerName?(name: string): void;
+  onChangePassengerWeight?(weight: number): void;
 }
 
 const QUERY_DROPZONE_USERS_MANIFEST_DETAILS = gql`
@@ -36,6 +52,7 @@ const QUERY_DROPZONE_USERS_MANIFEST_DETAILS = gql`
           }
           rigs {
             id
+            name
             make
             model
             canopySize
@@ -65,7 +82,20 @@ const useQueryDropzoneUsersDetails = createQuery<
 });
 
 export default function UserRigCard(props: IUserRigCard) {
-  const { dropzoneId, dropzoneUserId, onChangeRig, exitWeight, rigId, onChangeExitWeight } = props;
+  const {
+    dropzoneId,
+    dropzoneUserId,
+    onChangeRig,
+    exitWeight,
+    selectedRig,
+    isTandem,
+    passengerName,
+    passengerWeight,
+    onRemove,
+    onChangeExitWeight,
+    onChangePassengerName,
+    onChangePassengerWeight,
+  } = props;
   const { global: globalState } = useAppSelector((root) => root);
 
   const { data, loading } = useQueryDropzoneUsersDetails({
@@ -76,15 +106,13 @@ export default function UserRigCard(props: IUserRigCard) {
     onError: console.error,
   });
 
-  const selectedRig = data?.user?.rigs?.find(({ id }) => Number(id) === rigId);
-
   React.useEffect(() => {
     if (!exitWeight && data?.user?.exitWeight) {
       onChangeExitWeight(Number(data.user.exitWeight));
     }
   }, [data?.user.exitWeight, exitWeight, onChangeExitWeight]);
   return (
-    <Card style={{ width: '100%' }} elevation={3}>
+    <Card style={{ marginHorizontal: 16, marginBottom: 16 }} elevation={3}>
       <ProgressBar indeterminate color={globalState.theme.colors.accent} visible={loading} />
       <Card.Title
         title={data?.user.name}
@@ -112,22 +140,75 @@ export default function UserRigCard(props: IUserRigCard) {
             </Chip>
           )}
         </ScrollView>
-        <RigSelect
-          userId={dropzoneUserId}
-          dropzoneId={dropzoneId}
-          onSelect={onChangeRig}
-          value={selectedRig}
-          autoSelectFirst
-        />
-
-        <TextInput
-          value={!exitWeight ? '' : `${exitWeight}`}
-          onChangeText={(text: string) => onChangeExitWeight(Number(text))}
-          keyboardType="number-pad"
-          label="Exit weight"
-          mode="outlined"
-        />
+        <View style={styles.row}>
+          <View style={styles.rowFirst}>
+            <RigSelect
+              userId={dropzoneUserId}
+              dropzoneId={dropzoneId}
+              onSelect={onChangeRig}
+              value={selectedRig}
+              tandem={isTandem}
+              autoSelectFirst
+              required
+            />
+          </View>
+          <View style={styles.rowLast}>
+            <TextInput
+              value={!exitWeight ? '' : `${exitWeight}`}
+              onChangeText={(text: string) => onChangeExitWeight(Number(text))}
+              keyboardType="number-pad"
+              label="Exit weight"
+              mode="outlined"
+            />
+          </View>
+        </View>
+        {!isTandem ? null : (
+          <>
+            <Divider />
+            <List.Subheader>Passenger</List.Subheader>
+            <View style={styles.row}>
+              <View style={styles.rowFirst}>
+                <TextInput
+                  value={passengerName || ''}
+                  onChangeText={(text: string) => onChangePassengerName?.(text)}
+                  label="Passenger name"
+                  mode="outlined"
+                />
+              </View>
+              <View style={styles.rowLast}>
+                <TextInput
+                  value={!passengerWeight ? '' : `${passengerWeight}`}
+                  onChangeText={(text: string) => onChangePassengerWeight?.(Number(text))}
+                  keyboardType="number-pad"
+                  label="Exit weight"
+                  mode="outlined"
+                />
+              </View>
+            </View>
+          </>
+        )}
       </Card.Content>
+      <Card.Actions style={styles.actions}>
+        <Button mode="text" onPress={() => onRemove?.()}>
+          Remove
+        </Button>
+      </Card.Actions>
     </Card>
   );
 }
+
+const styles = StyleSheet.create({
+  row: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rowFirst: {
+    flex: 2 / 3,
+    marginRight: 4,
+  },
+  rowLast: {
+    flex: 1 / 3,
+  },
+  actions: { justifyContent: 'flex-end' },
+});

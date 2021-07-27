@@ -10,6 +10,7 @@ const MUTATION_UPDATE_TICKET_TYPE = gql`
     $altitude: Int
     $allowManifestingSelf: Boolean
     $isTandem: Boolean
+    $extraIds: [Int!]
   ) {
     updateTicketType(
       input: {
@@ -20,6 +21,7 @@ const MUTATION_UPDATE_TICKET_TYPE = gql`
           altitude: $altitude
           allowManifestingSelf: $allowManifestingSelf
           isTandem: $isTandem
+          extrasIds: $extraIds
         }
       }
     ) {
@@ -66,5 +68,8 @@ export default createMutation<
   UpdateTicketPayload
 >(MUTATION_UPDATE_TICKET_TYPE, {
   getPayload: (result) => result.updateTicketType,
-  fieldErrorMap: {},
+  fieldErrorMap: {
+    id: 'original',
+    extraIds: 'extras',
+  },
 });

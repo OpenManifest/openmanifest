@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 import { createQuery } from '../createQuery';
 import { Query } from '../schema';
 
-const QUERY_DROPZONE_USERS = gql`
+export const QUERY_DROPZONE_USERS = gql`
   query QueryDropzoneUsers($dropzoneId: Int!, $permissions: [Permission!]) {
     dropzone(id: $dropzoneId) {
       id

@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { createMutation } from '../createMutation';
+import { createMutation, isNumeric, isRequired } from '../createMutation';
 import { MutationCreateTicketTypeArgs, CreateTicketPayload } from '../schema';
 
 const MUTATION_CREATE_TICKET_TYPE = gql`
@@ -10,6 +10,7 @@ const MUTATION_CREATE_TICKET_TYPE = gql`
     $altitude: Int
     $allowManifestingSelf: Boolean
     $isTandem: Boolean
+    $extraIds: [Int!]
   ) {
     createTicketType(
       input: {
@@ -20,6 +21,7 @@ const MUTATION_CREATE_TICKET_TYPE = gql`
           altitude: $altitude
           allowManifestingSelf: $allowManifestingSelf
           isTandem: $isTandem
+          extraIds: $extraIds
         }
       }
     ) {
@@ -66,5 +68,12 @@ export default createMutation<
   CreateTicketPayload
 >(MUTATION_CREATE_TICKET_TYPE, {
   getPayload: (result) => result.createTicketType,
-  fieldErrorMap: {},
+  fieldErrorMap: {
+    extraIds: 'extras',
+  },
+  validates: {
+    name: [isRequired('Tickets must have names')],
+    cost: [isRequired('Tickets must have a price')],
+    altitude: [isRequired('Altitude must be specified'), isNumeric('Altitude must be a number')],
+  },
 });

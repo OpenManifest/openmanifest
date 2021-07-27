@@ -19,6 +19,7 @@ const QUERY_DROPZONE_RIGS = gql`
       id
       rigs {
         id
+        name
         make
         isPublic
         model
@@ -42,6 +43,7 @@ const MUTATION_UPDATE_RIG = gql`
       }
       rig {
         id
+        name
         make
         model
         serial
@@ -56,6 +58,7 @@ const MUTATION_UPDATE_RIG = gql`
           id
           rigs {
             id
+            name
             make
             model
             isPublic

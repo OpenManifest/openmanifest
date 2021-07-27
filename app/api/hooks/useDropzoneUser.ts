@@ -59,6 +59,7 @@ export const QUERY_DROPZONE_USER = gql`
           image
           rigs {
             id
+            name
             model
             make
             serial
@@ -93,6 +94,7 @@ export default function useDropzoneUser(id?: number) {
       dropzoneId,
       dropzoneUserId: id || Number(currentDropzone?.data?.dropzone?.currentUser?.id),
     },
+    fetchPolicy: 'cache-and-network',
   });
 
   return {

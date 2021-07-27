@@ -250,18 +250,21 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
     validate,
   ]);
 
+  const snapPoints = React.useMemo(() => [580, '80%'], []);
+  const onDialogClose = React.useCallback(() => {
+    onClose();
+    dispatch(actions.forms.plane.reset());
+  }, [dispatch, onClose]);
+
   return (
     <DialogOrSheet
       title={state.original?.id ? 'Edit aircraft' : 'New aircraft'}
       open={open}
-      snapPoints={[0, 580]}
+      snapPoints={snapPoints}
       buttonLabel="Save"
       buttonAction={onSave}
       loading={create.loading || update.loading}
-      onClose={() => {
-        onClose();
-        dispatch(actions.forms.plane.reset());
-      }}
+      onClose={onDialogClose}
     >
       <PlaneForm />
     </DialogOrSheet>

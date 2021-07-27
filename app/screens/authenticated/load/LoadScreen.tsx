@@ -10,11 +10,13 @@ import GCAChip from '../../../components/chips/GcaChip';
 import LoadMasterChip from '../../../components/chips/LoadMasterChip';
 import PilotChip from '../../../components/chips/PilotChip';
 import PlaneChip from '../../../components/chips/PlaneChip';
+import ManifestUserSheet from '../../../components/dialogs/ManifestUser/ManifestUser';
+import ManifestGroupSheet from '../../../components/dialogs/ManifestGroup/ManifestGroup';
 
 import { View } from '../../../components/Themed';
 import { Load, Permission, Plane, Slot, DropzoneUser, LoadState } from '../../../api/schema.d';
 import useRestriction from '../../../hooks/useRestriction';
-import { actions, useAppDispatch } from '../../../state';
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import SlotCard from './SlotCard';
 import ActionButton from './ActionButton';
 import Header from './Header';
@@ -38,7 +40,7 @@ function AvailableSlotCard({ width }: { width: number }) {
     >
       <Card.Title
         title="Available"
-        style={{ alignSelf: 'center', justifyContent: 'center' }}
+        style={{ alignSelf: 'center', justifyContent: 'center', flex: 1 }}
         titleStyle={{ textAlign: 'center' }}
       />
     </Card>
@@ -62,6 +64,7 @@ function SlotSkeleton({ width }: { width: number }) {
 export default function LoadScreen() {
   const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
+  const forms = useAppSelector((root) => root.forms);
   const route = useRoute<{ key: string; name: string; params: { load: Load } }>();
 
   const {
@@ -178,18 +181,19 @@ export default function LoadScreen() {
   const navigation = useNavigation();
 
   const slots: (Slot | 2)[] = Array.from({
-    length: load?.maxSlots || 0,
+    length: (load?.slots?.length || 0) + (load?.availableSlots || 0),
   }).map((_, index) => ((load?.slots?.length || 0) > index ? (load.slots as Slot[])[index] : 2));
 
   const maxSlots = load?.maxSlots || load?.plane?.maxSlots || 0;
-  const occupiedSlots = load?.slots?.length || 0;
+  const occupiedSlots = maxSlots - (load?.availableSlots || 0);
 
   const { width } = useWindowDimensions();
 
-  const cardWidth = 380;
+  const cardWidth = 364;
   const padding = 24;
   const numColumns = Math.floor(width / (cardWidth + padding)) || 1;
-  const contentWidth = (cardWidth + padding) * numColumns + padding;
+  let contentWidth = (cardWidth + padding) * numColumns + padding;
+  contentWidth = width < contentWidth ? width : contentWidth;
 
   const initialLoading = !detailedLoad?.slots?.length && loading;
 
@@ -290,7 +294,7 @@ export default function LoadScreen() {
               key={`slot-${node.id}`}
               slot={node}
               onDelete={
-                (currentUser?.id === node.dropzoneUser.id && canRemoveSelf) || canRemoveOthers
+                (currentUser?.id === node?.dropzoneUser?.id && canRemoveSelf) || canRemoveOthers
                   ? onDeleteSlot
                   : undefined
               }
@@ -332,6 +336,19 @@ export default function LoadScreen() {
         }}
       />
       <ActionButton load={load} />
+      <ManifestUserSheet
+        open={forms.manifest.open}
+        onClose={() => dispatch(actions.forms.manifest.setOpen(false))}
+        onSuccess={() => dispatch(actions.forms.manifest.setOpen(false))}
+      />
+      <ManifestGroupSheet
+        open={forms.manifestGroup.open}
+        onClose={() => {
+          dispatch(actions.forms.manifestGroup.setOpen(false));
+          dispatch(actions.forms.manifestGroup.reset());
+        }}
+        onSuccess={() => dispatch(actions.forms.manifestGroup.setOpen(false))}
+      />
     </View>
   );
 }

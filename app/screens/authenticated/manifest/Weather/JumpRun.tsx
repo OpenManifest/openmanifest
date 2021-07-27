@@ -7,6 +7,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import isEqual from 'lodash/isEqual';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getPointOnCircle } from '../../../../utils/calculateCoordinatesByAngle';
 import Map from '../../../../components/map/Map';
@@ -20,7 +21,7 @@ interface IJumpRunMapProps {
 }
 
 const MAP_SIZE_PERCENTAGE = 1.0;
-export default function JumpRunMap(props: IJumpRunMapProps) {
+function JumpRunMap(props: IJumpRunMapProps) {
   const { lat, lng } = props;
   const [rootLayout, setRootLayout] = React.useState<LayoutRectangle>({
     x: 0,
@@ -75,13 +76,21 @@ export default function JumpRunMap(props: IJumpRunMapProps) {
   );
 
   React.useEffect(() => {
+    'worklet';
+
     planeAnimation.current.start();
   }, []);
 
-  React.useEffect(() => {
+  const animate = () => {
+    'worklet';
+
     planeAnimation.current.stop();
     planeAnimation.current.reset();
     planeAnimation.current.start();
+  };
+
+  React.useEffect(() => {
+    animate();
   }, [jumpRun]);
 
   const planeStartPosition = getPointOnCircle({
@@ -92,6 +101,10 @@ export default function JumpRunMap(props: IJumpRunMapProps) {
     offsetY: 0,
     radius: MAP_SIZE / 2,
   });
+
+  const position = React.useMemo(() => ({ x: 0, y: 0 }), []);
+  const coords = React.useMemo(() => (lat && lng ? { lat, lng } : undefined), [lat, lng]);
+
   return (
     <View
       onLayout={({ nativeEvent }) => setRootLayout(nativeEvent.layout)}
@@ -109,14 +122,11 @@ export default function JumpRunMap(props: IJumpRunMapProps) {
         }}
       >
         <Map
-          coords={lat && lng ? { lat, lng } : undefined}
-          center={lat && lng ? { lat, lng } : undefined}
+          coords={coords}
+          center={coords}
           height={MAP_SIZE}
           width={MAP_SIZE}
-          position={{
-            x: 0,
-            y: 0,
-          }}
+          position={position}
           interactive={false}
         />
       </View>
@@ -239,3 +249,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default React.memo(JumpRunMap, (a, b) => isEqual(a, b));

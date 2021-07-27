@@ -3,8 +3,6 @@ import * as React from 'react';
 import { Dimensions, RefreshControl, StyleSheet, useWindowDimensions } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { FAB, IconButton, Menu, ProgressBar } from 'react-native-paper';
-import ManifestUserSheet from '../../../components/dialogs/ManifestUser/ManifestUser';
-import ManifestGroupSheet from '../../../components/dialogs/ManifestGroup/ManifestGroup';
 
 import NoResults from '../../../components/NoResults';
 import { View } from '../../../components/Themed';
@@ -126,7 +124,8 @@ export default function ManifestScreen() {
 
   const { width } = useWindowDimensions();
 
-  const cardWidth = (manifestScreen.display === 'cards' ? 335 : 550) + 32;
+  let cardWidth = (manifestScreen.display === 'cards' ? 335 : 550) + 32;
+  cardWidth = cardWidth > width ? width - 32 : cardWidth;
   const numColumns = Math.floor(width / cardWidth) || 1;
   const contentWidth = cardWidth * numColumns;
 
@@ -257,16 +256,6 @@ export default function ManifestScreen() {
           />
         </Menu>
       </View>
-      <ManifestUserSheet
-        open={forms.manifest.open}
-        onClose={() => dispatch(actions.forms.manifest.setOpen(false))}
-        onSuccess={() => dispatch(actions.forms.manifest.setOpen(false))}
-      />
-      <ManifestGroupSheet
-        open={forms.manifestGroup.open}
-        onClose={() => dispatch(actions.forms.manifestGroup.setOpen(false))}
-        onSuccess={() => dispatch(actions.forms.manifestGroup.setOpen(false))}
-      />
 
       <LoadDialog
         onSuccess={() => {

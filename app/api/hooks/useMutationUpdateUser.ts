@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { createMutation } from '../createMutation';
+import { createMutation, isEmail, isRequired, isNumeric, validates } from '../createMutation';
 import { MutationUpdateUserArgs, UpdateUserPayload } from '../schema';
 
 const MUTATION_UPDATE_USER = gql`
@@ -41,6 +41,7 @@ const MUTATION_UPDATE_USER = gql`
         phone
         rigs {
           id
+          name
           model
           make
           serial
@@ -69,8 +70,19 @@ export default createMutation<
   UpdateUserPayload
 >(MUTATION_UPDATE_USER, {
   getPayload: (result) => result.updateUser,
+  validates: {
+    email: [isRequired('Email is required'), isEmail('Not a valid email')],
+    name: [isRequired('Name is required')],
+    phone: [isRequired('Phone number is required')],
+    exitWeight: [
+      isRequired('Exit weight is required'),
+      isNumeric('Exit weight must be a valid number'),
+      validates('Exit weight seems too low?', ({ exitWeight }) => {
+        return Number(exitWeight) > 30;
+      }),
+    ],
+  },
   fieldErrorMap: {
-    license: 'licenseId',
-    exit_weight: 'exitWeight',
+    licenseId: 'license',
   },
 });

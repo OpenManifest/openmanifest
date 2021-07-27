@@ -1,5 +1,6 @@
 import { gql, useMutation } from '@apollo/client';
 import * as React from 'react';
+import { omit } from 'lodash';
 import { Button, Card, ProgressBar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
@@ -141,7 +142,9 @@ export default function ManifestGroupScreen(props: IManifestGroupScreen) {
           ticketTypeId: Number(state.fields.ticketType.value?.id),
           extraIds: state.fields.extras?.value?.map(({ id }) => Number(id)),
           loadId: Number(state.fields.load.value?.id),
-          userGroup: state.fields.users.value,
+          userGroup: state.fields.users.value?.map((slotUserWithRig) =>
+            omit(slotUserWithRig, ['rig'])
+          ),
         },
       });
 

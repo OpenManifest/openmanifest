@@ -10,17 +10,24 @@ interface IRigSelect {
   userId?: number;
   value?: Rig | null;
   required?: boolean;
+  tandem?: boolean;
   autoSelectFirst?: boolean;
   onSelect(rig: Rig): void;
 }
 
+function getTitleForRig(rig: Rig) {
+  const name = rig?.name || `${rig?.make} ${rig?.model}`;
+
+  return `${name} (${rig?.canopySize} sqft) ${!rig.user ? '[DROPZONE RIG]' : ''}`;
+}
+
 const QUERY_RIGS = gql`
-  query QueryAvailableRigs($dropzoneId: Int!, $userId: Int!) {
+  query QueryAvailableRigs($dropzoneId: Int!, $userId: Int!, $isTandem: Boolean) {
     dropzone(id: $dropzoneId) {
       id
       dropzoneUser(userId: $userId) {
         id
-        availableRigs {
+        availableRigs(isTandem: $isTandem) {
           id
           make
           model
@@ -37,7 +44,7 @@ const QUERY_RIGS = gql`
 `;
 
 export default function RigSelect(props: IRigSelect) {
-  const { userId, value, required, autoSelectFirst, onSelect, dropzoneId } = props;
+  const { userId, value, required, autoSelectFirst, onSelect, dropzoneId, tandem } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 
@@ -49,10 +56,11 @@ export default function RigSelect(props: IRigSelect) {
         variables: {
           dropzoneId: currentDropzoneId,
           userId: Number(userId),
+          isTandem: tandem || undefined,
         },
       });
     }
-  }, [userId, dropzoneId, fetchRigs, currentDropzoneId]);
+  }, [userId, dropzoneId, fetchRigs, currentDropzoneId, tandem]);
 
   React.useEffect(() => {
     if (!value && autoSelectFirst && data?.dropzone?.dropzoneUser?.availableRigs?.length) {
@@ -69,11 +77,7 @@ export default function RigSelect(props: IRigSelect) {
           onPress={() => {
             setMenuOpen(true);
           }}
-          title={
-            value
-              ? `${value?.make} ${value?.model} (${value?.canopySize || '?'}sqft)`
-              : 'Select rig'
-          }
+          title={value ? getTitleForRig(value) : 'Select rig'}
           description={!required ? 'Optional' : null}
           left={() => <List.Icon icon="parachute" />}
         />
@@ -87,9 +91,7 @@ export default function RigSelect(props: IRigSelect) {
             onSelect(rig);
           }}
           style={{ width: '100%' }}
-          title={`${rig?.make} ${rig?.model} (${rig?.canopySize} sqft) ${
-            !rig.user ? '[DROPZONE RIG]' : ''
-          }`}
+          title={getTitleForRig(rig)}
         />
       ))}
     </Menu>

@@ -1,21 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Extra } from '../../../api/schema.d';
 
+export type ExtraFields = Pick<Extra, 'name' | 'cost' | 'ticketTypes'>;
 interface IExtraEditState {
   original: Extra | null;
   open: boolean;
   fields: {
-    name: {
-      value: string;
+    [K in keyof ExtraFields]-?: {
+      value: Extra[K] | null;
       error: string | null;
-    };
-    cost: {
-      value: number | null;
-      error: string | null;
-    };
-    ticketTypeIds: {
-      value: number[];
-      error: null;
     };
   };
 }
@@ -32,7 +25,7 @@ export const initialState: IExtraEditState = {
       value: null,
       error: null,
     },
-    ticketTypeIds: {
+    ticketTypes: {
       value: [],
       error: null,
     },
@@ -69,7 +62,7 @@ export default createSlice({
       } else {
         state.original = action.payload;
         state.open = true;
-        state.fields.ticketTypeIds.value = action.payload.ticketTypes.map(({ id }) => Number(id));
+        state.fields.ticketTypes.value = action.payload.ticketTypes;
         state.fields.cost.value = action.payload.cost;
         state.fields.name.value = action.payload.name || '';
       }

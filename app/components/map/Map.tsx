@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { View, ViewStyle } from 'react-native';
 import MapView, { Region } from 'react-native-maps';
+import isEqual from 'lodash/isEqual';
+import { pick } from 'lodash';
 import { calculateLatLngDelta } from '../../utils/calculateLatLngDelta';
 
 interface IMapProps {
@@ -25,7 +27,7 @@ interface IMapProps {
   onDragStart?(): void;
   onDragEnd?(coords: { lat: number; lng: number }): void;
 }
-export default function Map(props: IMapProps) {
+function Map(props: IMapProps) {
   const {
     width,
     height,
@@ -108,3 +110,5 @@ export default function Map(props: IMapProps) {
     </View>
   );
 }
+
+export default Map;

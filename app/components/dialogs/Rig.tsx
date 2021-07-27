@@ -1,8 +1,9 @@
-import { gql, useMutation } from '@apollo/client';
 import * as React from 'react';
-import { Mutation } from '../../api/schema.d';
+import useMutationCreateRig from '../../api/hooks/useMutationCreateRig';
+import useMutationUpdateRig from '../../api/hooks/useMutationUpdateRig';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import RigForm from '../forms/rig/RigForm';
+import { RigFields } from '../forms/rig/slice';
 import DialogOrSheet from '../layout/DialogOrSheet';
 
 interface IRigDialog {
@@ -13,259 +14,85 @@ interface IRigDialog {
   onSuccess(): void;
 }
 
-const MUTATION_CREATE_RIG = gql`
-  mutation CreateRig(
-    $make: String
-    $model: String
-    $serial: String
-    $rigType: String
-    $canopySize: Int
-    $repackExpiresAt: Int
-    $userId: Int
-    $dropzoneId: Int
-  ) {
-    createRig(
-      input: {
-        attributes: {
-          make: $make
-          model: $model
-          serial: $serial
-          repackExpiresAt: $repackExpiresAt
-          dropzoneId: $dropzoneId
-          userId: $userId
-          canopySize: $canopySize
-          rigType: $rigType
-        }
-      }
-    ) {
-      errors
-      fieldErrors {
-        field
-        message
-      }
-      rig {
-        id
-        make
-        model
-        serial
-        canopySize
-        repackExpiresAt
-        packValue
-        maintainedAt
-        rigType
-
-        user {
-          id
-          rigs {
-            id
-            make
-            model
-            serial
-            canopySize
-            repackExpiresAt
-            packValue
-            maintainedAt
-          }
-        }
-      }
-    }
-  }
-`;
-
-const MUTATION_UPDATE_RIG = gql`
-  mutation UpdateRig(
-    $id: Int!
-    $make: String
-    $model: String
-    $serial: String
-    $rigType: String
-    $canopySize: Int
-    $repackExpiresAt: Int
-    $userId: Int
-    $dropzoneId: Int
-  ) {
-    updateRig(
-      input: {
-        id: $id
-        attributes: {
-          make: $make
-          model: $model
-          serial: $serial
-          repackExpiresAt: $repackExpiresAt
-          dropzoneId: $dropzoneId
-          userId: $userId
-          canopySize: $canopySize
-          rigType: $rigType
-        }
-      }
-    ) {
-      errors
-      fieldErrors {
-        field
-        message
-      }
-      rig {
-        id
-        make
-        model
-        serial
-        canopySize
-        repackExpiresAt
-        packValue
-        maintainedAt
-        rigType
-
-        user {
-          id
-          rigs {
-            id
-            make
-            model
-            serial
-            canopySize
-            repackExpiresAt
-            packValue
-            maintainedAt
-          }
-        }
-      }
-    }
-  }
-`;
-
 export default function RigDialog(props: IRigDialog) {
-  const { open, dropzoneId } = props;
+  const { open, dropzoneId, onClose, onSuccess, userId } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.rig);
-  const [mutationCreateRig, createData] = useMutation<Mutation>(MUTATION_CREATE_RIG);
-  const [mutationUpdateRig, updateData] = useMutation<Mutation>(MUTATION_UPDATE_RIG);
 
-  const isLoading = createData.loading || updateData.loading;
-  const validate = React.useCallback(() => {
-    let hasErrors = false;
-    if (!state.fields.make.value) {
-      hasErrors = true;
-      dispatch(actions.forms.rig.setFieldError(['make', 'Required']));
-    }
+  const updateRig = useMutationUpdateRig({
+    onSuccess: (payload) => requestAnimationFrame(() => onSuccess()),
 
-    if (!state.fields.model.value) {
-      hasErrors = true;
-      dispatch(actions.forms.rig.setFieldError(['model', 'Required']));
-    }
+    onFieldError: (field, message) =>
+      dispatch(actions.forms.rig.setFieldError([field as keyof RigFields, message])),
+    onError: (message) =>
+      dispatch(actions.notifications.showSnackbar({ message, variant: 'error' })),
+  });
+  const createRig = useMutationCreateRig({
+    onSuccess: (payload) => requestAnimationFrame(() => onSuccess()),
+    onFieldError: (field, message) =>
+      dispatch(actions.forms.rig.setFieldError([field as keyof RigFields, message])),
+    onError: (message) =>
+      dispatch(actions.notifications.showSnackbar({ message, variant: 'error' })),
+  });
 
-    if (!state.fields.serial.value) {
-      hasErrors = true;
-      dispatch(actions.forms.rig.setFieldError(['serial', 'Required']));
-    }
-
-    if (!state.fields.canopySize.value) {
-      hasErrors = true;
-      dispatch(actions.forms.rig.setFieldError(['canopySize', 'Required']));
-    }
-
-    if (!state.fields.repackExpiresAt.value) {
-      hasErrors = true;
-      dispatch(
-        actions.forms.rig.setFieldError([
-          'repackExpiresAt',
-          'You must select a repack date in the future',
-        ])
-      );
-    }
-
-    return !hasErrors;
-  }, [
-    dispatch,
-    state.fields.canopySize.value,
-    state.fields.make.value,
-    state.fields.model.value,
-    state.fields.repackExpiresAt.value,
-    state.fields.serial.value,
-  ]);
+  const isLoading = updateRig.loading || createRig.loading;
 
   const onSave = React.useCallback(async () => {
-    if (!validate()) {
-      return;
-    }
-    try {
-      const mutation = state.original?.id ? mutationUpdateRig : mutationCreateRig;
-      const response = await mutation({
-        variables: {
-          ...(state.original?.id ? { id: Number(state.original?.id) } : {}),
-          make: state.fields.make.value,
-          model: state.fields.model.value,
-          serial: state.fields.serial.value,
-          canopySize: state.fields.canopySize.value,
-          rigType: state.fields.rigType.value,
-          repackExpiresAt: state.fields.repackExpiresAt.value,
-          userId: props.userId ? Number(props.userId) : null,
-          dropzoneId: props.dropzoneId ? Number(props.dropzoneId) : null,
-        },
+    if (state.original?.id) {
+      await updateRig.mutate({
+        id: Number(state.original?.id),
+        name: state.fields.name.value,
+        make: state.fields.make.value,
+        model: state.fields.model.value,
+        serial: state.fields.serial.value,
+        canopySize: state.fields.canopySize.value,
+        rigType: state.fields.rigType.value,
+        repackExpiresAt: state.fields.repackExpiresAt.value,
+        userId: userId ? Number(userId) : null,
+        dropzoneId: dropzoneId ? Number(dropzoneId) : null,
       });
-      const result = state.original?.id ? response.data?.updateRig : response.data?.createRig;
-
-      result?.fieldErrors?.map(({ field, message }) => {
-        switch (field) {
-          case 'make':
-            return dispatch(actions.forms.rig.setFieldError(['make', message]));
-          case 'model':
-            return dispatch(actions.forms.rig.setFieldError(['model', message]));
-          case 'serial':
-            return dispatch(actions.forms.rig.setFieldError(['serial', message]));
-          case 'canopy_size':
-            return dispatch(actions.forms.rig.setFieldError(['canopySize', message]));
-          case 'repack_expires_at':
-            return dispatch(actions.forms.rig.setFieldError(['repackExpiresAt', message]));
-          case 'rig_type':
-            return dispatch(actions.forms.rig.setFieldError(['rigType', message]));
-          default:
-            return null;
-        }
+    } else {
+      await createRig.mutate({
+        name: state.fields.name.value,
+        make: state.fields.make.value,
+        model: state.fields.model.value,
+        serial: state.fields.serial.value,
+        canopySize: state.fields.canopySize.value,
+        rigType: state.fields.rigType.value,
+        repackExpiresAt: state.fields.repackExpiresAt.value,
+        userId: userId ? Number(userId) : null,
+        dropzoneId: dropzoneId ? Number(dropzoneId) : null,
       });
-      if (result?.errors?.length) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: result?.errors[0],
-            variant: 'error',
-          })
-        );
-        return;
-      }
-      if (!result?.fieldErrors?.length) {
-        props.onSuccess();
-      }
-    } catch (error) {
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: error.message,
-          variant: 'error',
-        })
-      );
     }
   }, [
-    dispatch,
-    mutationCreateRig,
-    mutationUpdateRig,
-    props,
+    createRig,
+    dropzoneId,
     state.fields.canopySize.value,
     state.fields.make.value,
     state.fields.model.value,
     state.fields.repackExpiresAt.value,
     state.fields.rigType.value,
+    state.fields.name.value,
     state.fields.serial.value,
     state.original?.id,
-    validate,
+    updateRig,
+    userId,
   ]);
+
+  const snapPoints = React.useMemo(() => [580], []);
+  const onDialogClose = React.useCallback(() => {
+    requestAnimationFrame(() => {
+      onClose();
+      dispatch(actions.forms.rig.reset());
+    });
+  }, [dispatch, onClose]);
 
   return (
     <DialogOrSheet
       title={state.original?.id ? 'Edit rig' : 'New rig'}
       open={open}
-      snapPoints={[0, 580]}
-      onClose={() => {
-        props.onClose();
-        dispatch(actions.forms.rig.reset());
-      }}
+      snapPoints={snapPoints}
+      onClose={onDialogClose}
       buttonAction={onSave}
       buttonLabel="Save"
       loading={isLoading}

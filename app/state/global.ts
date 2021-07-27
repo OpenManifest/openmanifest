@@ -10,7 +10,6 @@ import { Credential, User, Dropzone } from '../api/schema';
 const CombinedDefaultTheme: Theme = {
   ...PaperDefaultTheme,
   ...NavigationDefaultTheme,
-  roundness: 16,
   colors: {
     ...PaperDefaultTheme.colors,
     ...NavigationDefaultTheme.colors,
@@ -20,7 +19,6 @@ const CombinedDefaultTheme: Theme = {
 const CombinedDarkTheme = {
   ...PaperDarkTheme,
   ...NavigationDarkTheme,
-  roundness: 16,
   colors: {
     ...PaperDarkTheme.colors,
     ...NavigationDarkTheme.colors,

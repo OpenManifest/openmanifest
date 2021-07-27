@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Avatar, IconButton, Paragraph, Title, TouchableRipple } from 'react-native-paper';
-
+import { LinearGradient } from 'expo-linear-gradient';
 import { useAppSelector } from '../../../../state';
 import { DropzoneUser } from '../../../../api/schema';
 
@@ -15,8 +15,14 @@ interface IUserHeader {
 export default function UserHeader(props: IUserHeader) {
   const { dropzoneUser, onEdit, canEdit, children, onPressAvatar } = props;
   const { theme } = useAppSelector((root) => root.global);
+
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.primary }]}>
+    <LinearGradient
+      start={{ x: 0.0, y: 0.25 }}
+      end={{ x: 0.5, y: 1.0 }}
+      style={styles.container}
+      colors={[theme.colors.accent, theme.colors.primary]}
+    >
       <View style={styles.actions}>
         {!canEdit ? null : (
           <IconButton
@@ -55,7 +61,7 @@ export default function UserHeader(props: IUserHeader) {
       </View>
 
       {children}
-    </View>
+    </LinearGradient>
   );
 }
 

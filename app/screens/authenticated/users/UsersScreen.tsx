@@ -125,7 +125,9 @@ export default function UsersScreen() {
               elevation={3}
               style={{ width: cardWidth, margin: 4 }}
             >
-              <Card.Content>
+              <Card.Content
+                style={{ paddingLeft: 0, paddingTop: 0, paddingRight: 0, paddingBottom: 0 }}
+              >
                 <List.Item
                   style={{ width: '100%' }}
                   title={edge?.node?.user.name}
@@ -135,13 +137,13 @@ export default function UsersScreen() {
                       <Avatar.Icon
                         icon="account"
                         style={{ alignSelf: 'center', marginHorizontal: 12 }}
-                        size={32}
+                        size={48}
                       />
                     ) : (
                       <Avatar.Image
                         source={{ uri: edge?.node?.user.image }}
                         style={{ alignSelf: 'center', marginHorizontal: 12 }}
-                        size={32}
+                        size={48}
                       />
                     )
                   }
@@ -169,10 +171,12 @@ export default function UsersScreen() {
       )}
       <CreateGhostDialog
         open={ghostForm.open}
-        onClose={() => dispatch(actions.forms.ghost.setOpen(false))}
+        onClose={() => requestAnimationFrame(() => dispatch(actions.forms.ghost.setOpen(false)))}
         onSuccess={() => {
-          dispatch(actions.forms.ghost.setOpen(false));
-          refetch();
+          requestAnimationFrame(() => {
+            dispatch(actions.forms.ghost.setOpen(false));
+            refetch();
+          });
         }}
       />
     </>

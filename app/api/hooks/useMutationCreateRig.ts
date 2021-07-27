@@ -1,10 +1,11 @@
 import gql from 'graphql-tag';
-import { createMutation } from '../createMutation';
-import { MutationCreateRigArgs, CreateRigPayload } from '../schema';
+import { createMutation, isNumeric, isRequired } from '../createMutation';
+import { CreateRigPayload, RigInput } from '../schema';
 
 const MUTATION_CREATE_RIG = gql`
   mutation CreateRig(
     $make: String
+    $name: String
     $model: String
     $serial: String
     $rigType: String
@@ -16,6 +17,7 @@ const MUTATION_CREATE_RIG = gql`
     createRig(
       input: {
         attributes: {
+          name: $name
           make: $make
           model: $model
           serial: $serial
@@ -34,6 +36,7 @@ const MUTATION_CREATE_RIG = gql`
       }
       rig {
         id
+        name
         make
         model
         serial
@@ -47,6 +50,7 @@ const MUTATION_CREATE_RIG = gql`
           id
           rigs {
             id
+            name
             make
             model
             serial
@@ -61,10 +65,17 @@ const MUTATION_CREATE_RIG = gql`
   }
 `;
 
-export default createMutation<MutationCreateRigArgs['input']['attributes'], CreateRigPayload>(
-  MUTATION_CREATE_RIG,
-  {
-    getPayload: (result) => result.createRig,
-    fieldErrorMap: {},
-  }
-);
+export default createMutation<RigInput, CreateRigPayload>(MUTATION_CREATE_RIG, {
+  getPayload: (result) => result.createRig,
+  fieldErrorMap: {},
+  validates: {
+    make: [isRequired('Manufacturer is required')],
+    model: [isRequired('Model is required')],
+    serial: [isRequired('Serial number is required')],
+    canopySize: [
+      isRequired('Canopy size is required'),
+      isNumeric('Canopy size must be a valid number'),
+    ],
+    repackExpiresAt: [isRequired('You must set a reserve repack expiry date')],
+  },
+});

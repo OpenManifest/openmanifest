@@ -79,6 +79,8 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       );
     }
 
+    /*
+    // Allow user to manifest with dropzone rigs
     if (!currentUser?.hasRigInspection) {
       return dispatch(
         actions.notifications.showSnackbar({
@@ -88,6 +90,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       );
     }
 
+    
     if (!currentUser?.hasReserveInDate) {
       return dispatch(
         actions.notifications.showSnackbar({
@@ -96,6 +99,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
         })
       );
     }
+    */
 
     if (!currentUser?.hasExitWeight) {
       return dispatch(

@@ -24,12 +24,23 @@ const QUERY_DROPZONE_USER_NOTIFICATIONS = gql`
                   id
                   loadNumber
                   dispatchAt
+                  state
                 }
                 ... on Transaction {
                   id
                   amount
                   message
                   status
+                }
+
+                ... on Slot {
+                  id
+                  load {
+                    id
+                    loadNumber
+                    dispatchAt
+                    state
+                  }
                 }
               }
             }

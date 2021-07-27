@@ -17,10 +17,19 @@ export default function CreateGhostDialog(props: ICreateGhostDialog) {
   const dispatch = useAppDispatch();
 
   const mutationCreateGhost = useMutationCreateGhost({
-    onSuccess: (payload) => null,
+    onSuccess: (payload) => {
+      requestAnimationFrame(() => {
+        onSuccess();
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: `${payload?.user?.name} has been added to your dropzone`,
+            variant: 'success',
+          })
+        );
+      });
+    },
     onFieldError: (field, value) => {
       dispatch(actions.forms.ghost.setFieldError([field as keyof GhostFields, value]));
-      console.log(field, value);
     },
 
     onError: (error) =>
@@ -28,41 +37,32 @@ export default function CreateGhostDialog(props: ICreateGhostDialog) {
   });
 
   const onSave = React.useCallback(async () => {
-    const { name, license, phone, email, exitWeight, role } = state.fields;
-    try {
-      await mutationCreateGhost.mutate({
-        dropzoneId: globalState.currentDropzoneId as number,
-        name: name.value || '',
-        licenseId: !license.value?.id ? null : Number(license.value?.id),
-        phone: phone.value,
-        exitWeight: Number(exitWeight.value),
-        email: email.value || '',
-        roleId: Number(role?.value?.id),
-      });
+    mutationCreateGhost.mutate({
+      dropzoneId: globalState.currentDropzoneId as number,
+      name: state.fields.name.value || '',
+      licenseId: !state.fields.license.value?.id ? null : Number(state.fields.license.value?.id),
+      phone: state.fields.phone.value,
+      exitWeight: Number(state.fields.exitWeight.value),
+      email: state.fields.email.value || '',
+      roleId: Number(state.fields.role.value?.id),
+    });
+  }, [
+    mutationCreateGhost,
+    globalState.currentDropzoneId,
+    state.fields.name.value,
+    state.fields.license.value?.id,
+    state.fields.phone.value,
+    state.fields.exitWeight.value,
+    state.fields.email.value,
+    state.fields.role.value?.id,
+  ]);
 
-      onSuccess();
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: `Profile has been updated`,
-          variant: 'success',
-        })
-      );
-      dispatch(actions.forms.ghost.reset());
-    } catch (error) {
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: error.message,
-          variant: 'error',
-        })
-      );
-    }
-  }, [state.fields, mutationCreateGhost, globalState.currentDropzoneId, onSuccess, dispatch]);
-
+  const snapPoints = React.useMemo(() => [400, 740], []);
   return (
     <DialogOrSheet
       title="Pre-register user"
       open={open}
-      snapPoints={[0, 400, 740]}
+      snapPoints={snapPoints}
       loading={mutationCreateGhost.loading}
       onClose={onClose}
       buttonAction={onSave}

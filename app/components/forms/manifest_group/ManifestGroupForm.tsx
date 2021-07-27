@@ -6,14 +6,15 @@ import { uniqBy } from 'lodash';
 
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
+import useRestriction from '../../../hooks/useRestriction';
 import ChipSelect from '../../input/chip_select/ChipSelect';
 import { createQuery } from '../../../api/createQuery';
-import { JumpType, TicketType } from '../../../api/schema';
+import { JumpType, Permission, TicketType } from '../../../api/schema.d';
 
 import UserRigCard from './UserRigCard';
 
 const QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES = gql`
-  query DropzoneUsersAllowedJumpTypes($dropzoneId: Int!, $userIds: [Int!]!) {
+  query DropzoneUsersAllowedJumpTypes($dropzoneId: Int!, $userIds: [Int!]!, $isPublic: Boolean) {
     dropzone(id: $dropzoneId) {
       id
 
@@ -22,10 +23,11 @@ const QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES = gql`
         name
       }
 
-      ticketTypes(isPublic: true) {
+      ticketTypes(isPublic: $isPublic) {
         id
         name
         cost
+        isTandem
 
         extras {
           id
@@ -50,6 +52,7 @@ const useAllowedJumpTypes = createQuery<
   {
     dropzoneId: number;
     userIds: number[];
+    isPublic: boolean;
   }
 >(QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES, {
   getPayload: (query) => ({
@@ -63,18 +66,22 @@ export default function SlotForm() {
   const state = useAppSelector((root) => root.forms.manifestGroup);
   const globalState = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
+  const canManifestOthers = useRestriction(Permission.CreateUserSlot);
   const { data } = useAllowedJumpTypes({
     variables: {
       userIds: state.fields.users?.value?.map((slotUser) => slotUser.id) as number[],
       dropzoneId: globalState.currentDropzoneId as number,
+      isPublic: canManifestOthers ? null : true,
     },
     onError: console.error,
   });
 
+  const isTandem = !!state.fields.ticketType.value?.isTandem;
+
   return (
     <>
       <List.Subheader>Jump type</List.Subheader>
-      <Card elevation={2} style={{ marginBottom: 16, flexShrink: 1 }}>
+      <Card elevation={2} style={{ marginBottom: 16, flexShrink: 1, marginHorizontal: 16 }}>
         <Card.Content>
           <ChipSelect
             autoSelectFirst
@@ -85,12 +92,12 @@ export default function SlotForm() {
               ) || []
             }
             selected={state.fields.jumpType.value ? [state.fields.jumpType.value] : []}
-            renderItemLabel={(jumpType) => jumpType.name}
-            isDisabled={(jumpType) =>
+            renderItemLabel={(jumpType: JumpType) => jumpType.name}
+            isDisabled={(jumpType: JumpType) =>
               !data?.allowedJumpTypes?.map(({ id }) => id).includes(jumpType.id)
             }
             onChangeSelected={([first]) =>
-              dispatch(actions.forms.manifestGroup.setField(['jumpType', first]))
+              dispatch(actions.forms.manifestGroup.setField(['jumpType', first as JumpType]))
             }
           />
 
@@ -101,16 +108,15 @@ export default function SlotForm() {
       </Card>
 
       <List.Subheader>Ticket</List.Subheader>
-      <Card elevation={2} style={{ width: '100%' }}>
+      <Card elevation={2} style={{ marginHorizontal: 16 }}>
         <Card.Content>
           <ChipSelect
             autoSelectFirst
             items={data?.ticketTypes || []}
             selected={state.fields.ticketType.value ? [state.fields.ticketType.value] : []}
-            renderItemLabel={(ticketType) => ticketType.name}
-            isDisabled={() => false}
+            renderItemLabel={(ticketType: TicketType) => ticketType.name}
             onChangeSelected={([first]) =>
-              dispatch(actions.forms.manifestGroup.setField(['ticketType', first]))
+              dispatch(actions.forms.manifestGroup.setField(['ticketType', first as TicketType]))
             }
           />
           <HelperText type={state.fields.ticketType.error ? 'error' : 'info'}>
@@ -158,7 +164,7 @@ export default function SlotForm() {
         <UserRigCard
           dropzoneId={globalState.currentDropzoneId as number}
           dropzoneUserId={Number(slotUser.id)}
-          rigId={Number(slotUser.rigId) || undefined}
+          selectedRig={slotUser.rig || undefined}
           exitWeight={slotUser.exitWeight}
           onChangeExitWeight={(exitWeight) =>
             dispatch(
@@ -170,12 +176,45 @@ export default function SlotForm() {
               ])
             )
           }
+          onRemove={() =>
+            dispatch(
+              actions.forms.manifestGroup.setField([
+                'users',
+                state.fields.users.value?.filter((user) => user.id !== slotUser.id),
+              ])
+            )
+          }
           onChangeRig={(newRig) =>
             dispatch(
               actions.forms.manifestGroup.setField([
                 'users',
                 state.fields.users.value?.map((user) =>
-                  user.id === slotUser.id ? { ...slotUser, rigId: Number(newRig.id) } : user
+                  user.id === slotUser.id
+                    ? { ...slotUser, rigId: Number(newRig.id), rig: newRig }
+                    : user
+                ),
+              ])
+            )
+          }
+          {...{ isTandem }}
+          passengerName={slotUser.passengerName}
+          passengerWeight={slotUser.passengerExitWeight}
+          onChangePassengerName={(passengerName) =>
+            dispatch(
+              actions.forms.manifestGroup.setField([
+                'users',
+                state.fields.users.value?.map((user) =>
+                  user.id === slotUser.id ? { ...slotUser, passengerName } : user
+                ),
+              ])
+            )
+          }
+          onChangePassengerWeight={(passengerExitWeight) =>
+            dispatch(
+              actions.forms.manifestGroup.setField([
+                'users',
+                state.fields.users.value?.map((user) =>
+                  user.id === slotUser.id ? { ...slotUser, passengerExitWeight } : user
                 ),
               ])
             )

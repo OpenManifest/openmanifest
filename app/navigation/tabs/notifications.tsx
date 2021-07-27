@@ -21,6 +21,7 @@ export default function Notifications() {
           flex: 1,
         },
       }}
+      initialRouteName="NotificationsScreen"
     >
       <Profile.Screen
         name="NotificationsScreen"

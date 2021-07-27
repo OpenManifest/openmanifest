@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Load } from '../../../api/schema.d';
 
-type Fields = Pick<
+export type LoadFields = Pick<
   Load,
   'name' | 'gca' | 'dispatchAt' | 'isOpen' | 'loadMaster' | 'pilot' | 'maxSlots' | 'plane'
 >;
@@ -10,7 +10,7 @@ interface ILoadEditState {
   original: Load | null;
   open: boolean;
   fields: {
-    [K in keyof Fields]-?: {
+    [K in keyof LoadFields]-?: {
       value: Load[K] | null;
       error: string | null;
     };

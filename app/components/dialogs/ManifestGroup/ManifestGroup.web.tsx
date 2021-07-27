@@ -1,4 +1,5 @@
 import { gql, useMutation } from '@apollo/client';
+import { omit } from 'lodash';
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -142,7 +143,9 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
           ticketTypeId: Number(state.fields.ticketType.value?.id),
           extraIds: state.fields.extras?.value?.map(({ id }) => Number(id)),
           loadId: Number(state.fields.load.value?.id),
-          userGroup: state.fields.users.value,
+          userGroup: state.fields.users.value?.map((slotUserWithRig) =>
+            omit(slotUserWithRig, ['rig'])
+          ),
         },
       });
 

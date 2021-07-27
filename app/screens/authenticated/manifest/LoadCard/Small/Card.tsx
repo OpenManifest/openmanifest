@@ -135,8 +135,8 @@ export default function LoadCard(props: ILoadCardSmall) {
             value={load?.plane}
             small
             onSelect={async (plane) => {
-              if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
-                const diff = (load?.slots?.length || 0) - (plane.maxSlots || 0);
+              if ((load?.occupiedSlots || 0) > (plane.maxSlots || 0)) {
+                const diff = (load?.occupiedSlots || 0) - (plane.maxSlots || 0);
 
                 dispatch(
                   actions.notifications.showSnackbar({
@@ -157,7 +157,7 @@ export default function LoadCard(props: ILoadCardSmall) {
             style={styles.smallChip}
             textStyle={styles.smallChipText}
           >
-            {load?.slots?.length} / {load?.plane?.maxSlots}
+            {load?.occupiedSlots || 0} / {load?.plane?.maxSlots}
           </Chip>
         </View>
       </Card.Content>

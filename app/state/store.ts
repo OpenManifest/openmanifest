@@ -23,7 +23,7 @@ const persistConfig = {
   storage:
     // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
     Platform.OS === 'web' || false ? require('redux-persist/lib/storage').default : AsyncStorage,
-  whitelist: ['global', 'notifications'],
+  whitelist: ['global'],
 };
 
 // eslint-disable

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Slot } from '../../../api/schema.d';
 
-type Fields = Pick<
+export type ManifestUserFields = Pick<
   Slot,
   | 'jumpType'
   | 'load'
@@ -18,8 +18,8 @@ interface ISlotEditState {
   original: Slot | null;
   open: boolean;
   fields: {
-    [K in keyof Fields]-?: {
-      value: Fields[K] | null;
+    [K in keyof ManifestUserFields]-?: {
+      value: ManifestUserFields[K] | null;
       error: string | null;
     };
   };

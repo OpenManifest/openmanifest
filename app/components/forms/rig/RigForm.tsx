@@ -24,6 +24,18 @@ export default function RigForm(props: IRigForm) {
       <TextInput
         style={styles.field}
         mode="outlined"
+        label="Name"
+        error={!!state.fields.name.error}
+        value={state.fields.name.value || ''}
+        onChangeText={(newValue) => dispatch(actions.forms.rig.setField(['name', newValue]))}
+      />
+      <HelperText type={state.fields.name.error ? 'error' : 'info'}>
+        {state.fields.name.error || 'You can give your equipment a nickname'}
+      </HelperText>
+
+      <TextInput
+        style={styles.field}
+        mode="outlined"
         label="Make"
         error={!!state.fields.make.error}
         value={state.fields.make.value || ''}
