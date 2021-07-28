@@ -60,7 +60,6 @@ function LocationWizardStep(props: IWizardScreenProps) {
         }
       : undefined;
 
-  const [isAnimating, setAnimating] = React.useState<boolean>(false);
   const fadeOut = React.useRef(
     Animated.timing(opacity.current, {
       duration: 100,
@@ -76,9 +75,8 @@ function LocationWizardStep(props: IWizardScreenProps) {
     })
   );
   const setCoordinateFade = React.useCallback((visible: boolean) => {
-    setAnimating(true);
     console.log({ visible });
-    (visible ? fadeIn : fadeOut).current.start(() => setAnimating(false));
+    (visible ? fadeIn : fadeOut).current.start();
   }, []);
 
   const { height, width } = useWindowDimensions();
@@ -113,7 +111,6 @@ function LocationWizardStep(props: IWizardScreenProps) {
         onDragEnd={(r) => {
           fadeOut.current?.stop();
           fadeIn.current?.stop();
-          setAnimating(false);
           setCoordinateFade(true);
           setDragging(false);
           dispatch(actions.forms.dropzone.setField(['lat', r.lat]));

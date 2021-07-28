@@ -382,7 +382,7 @@ export default function LoadCard(props: ILoadCardLarge) {
             );
           })}
           {Array.from(
-            { length: load?.availableSlots || ((load?.maxSlots || 0) - (load?.slots?.length || 0)) },
+            { length: load?.availableSlots || (load?.maxSlots || 0) - (load?.slots?.length || 0) },
             (v, i) => i
           ).map((i) => (
             <DataTable.Row

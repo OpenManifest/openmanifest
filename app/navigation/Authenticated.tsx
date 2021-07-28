@@ -5,7 +5,6 @@ import * as React from 'react';
 
 import { StyleSheet } from 'react-native';
 import ManifestTab from './tabs/manifest';
-import SettingsTab from './drawer/settings';
 import UsersTab from './tabs/users';
 import NotificationsTab from './tabs/notifications';
 
@@ -27,23 +26,6 @@ export default function AuthenticatedTabBar() {
   const theme = useTheme();
 
   const canViewUsers = useRestriction(Permission.ReadUser);
-
-  const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
-  const canUpdatePlane = useRestriction(Permission.UpdatePlane);
-  const canUpdateTicketTypes = useRestriction(Permission.UpdateTicketType);
-  const canUpdateExtras = useRestriction(Permission.UpdateExtra);
-  const canUpdatePermissions = useRestriction(Permission.GrantPermission);
-  const canUpdateDzRigs = useRestriction(Permission.UpdateDropzoneRig);
-  const canUpdateRigInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
-
-  const shouldShowSettings =
-    canUpdateDropzone ||
-    canUpdatePlane ||
-    canUpdateTicketTypes ||
-    canUpdateExtras ||
-    canUpdatePermissions ||
-    canUpdateDzRigs ||
-    canUpdateRigInspectionTemplate;
 
   return (
     <BottomTab.Navigator

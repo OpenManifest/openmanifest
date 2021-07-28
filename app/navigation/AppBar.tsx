@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Appbar, Menu, IconButton, Divider, Chip } from 'react-native-paper';
+import { Appbar, IconButton, Chip } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { gql, useLazyQuery } from '@apollo/client';
 import { DrawerActions } from '@react-navigation/native';
@@ -61,7 +61,6 @@ interface IAppBarProps extends StackHeaderProps {
 
 function AppBar(props: IAppBarProps) {
   const { navigation, previous, scene, hideWarnings } = props;
-  const [contextMenuOpen, setContextMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
   const [loadData, { data, loading }] = useLazyQuery<Query>(QUERY_CURRENT_USER, {

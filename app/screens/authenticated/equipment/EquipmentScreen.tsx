@@ -1,4 +1,4 @@
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { useIsFocused } from '@react-navigation/core';
 import * as React from 'react';
 import { RefreshControl, StyleSheet } from 'react-native';
 import { DataTable, FAB, IconButton, ProgressBar } from 'react-native-paper';
@@ -18,7 +18,6 @@ export default function ProfileScreen() {
   const state = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
-  const navigation = useNavigation();
   const { currentUser } = useCurrentDropzone();
 
   const { dropzoneUser, loading, refetch } = useDropzoneUser(Number(currentUser?.id));
@@ -77,12 +76,6 @@ export default function ProfileScreen() {
                     )
                       ? successColor
                       : warningColor
-                  }
-                  onPress={() =>
-                    navigation.navigate('RigInspectionScreen', {
-                      dropzoneUserId: Number(route.params.userId),
-                      rig,
-                    })
                   }
                 />
               </DataTable.Cell>

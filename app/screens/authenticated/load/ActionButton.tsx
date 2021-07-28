@@ -232,7 +232,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
 
   const buttonActions = [
     ...(isOpen ? manifestActions : []),
-    ...([LoadState.Open].includes(load?.state) ? callActions : []),
+    ...(canUpdateLoad && [LoadState.Open].includes(load?.state) ? callActions : []),
     ...(canUpdateLoad ? workflowActions : []),
   ];
 

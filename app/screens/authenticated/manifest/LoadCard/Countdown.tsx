@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Animated, Platform } from 'react-native';
 import diff from 'date-fns/differenceInSeconds';
 import secondsToMinutes from 'date-fns/secondsToMinutes';
-import isAfter from 'date-fns/isAfter';
 
 const CountdownCircleTimer = Platform.select({
   ios: React.lazy(() =>

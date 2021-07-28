@@ -5,13 +5,11 @@ import { DataTable, ProgressBar } from 'react-native-paper';
 import format from 'date-fns/format';
 
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import { Permission } from '../../../api/schema.d';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import CreditsSheet from '../../../components/dialogs/CreditsDialog/Credits';
 
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import useDropzoneUser from '../../../api/hooks/useDropzoneUser';
-import useRestriction from '../../../hooks/useRestriction';
 
 export default function ProfileScreen() {
   const state = useAppSelector((root) => root.global);
@@ -30,7 +28,6 @@ export default function ProfileScreen() {
     }
   }, [isFocused, refetch]);
 
-  const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
   return (
     <>
       {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}

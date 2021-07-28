@@ -1,13 +1,8 @@
 import { gql, useMutation } from '@apollo/client';
 import * as React from 'react';
-import { View, StyleSheet, Easing, Keyboard } from 'react-native';
+import { View, StyleSheet, Keyboard } from 'react-native';
 import { Button } from 'react-native-paper';
-import {
-  BottomSheetView,
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetScrollView,
-} from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 import { DropzoneUser, Mutation } from '../../../api/schema.d';
@@ -188,6 +183,8 @@ export default function CreditSheet(props: ICreditsSheet) {
     } else {
       hide();
     }
+    // Intentional to not open/close the sheet every time these change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDismiss, open]);
 
   const HandleComponent = React.useMemo(

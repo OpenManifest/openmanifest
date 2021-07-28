@@ -1,6 +1,6 @@
-import { pick, sortBy, isEqual, uniq } from 'lodash';
+import { sortBy, uniq } from 'lodash';
 import * as React from 'react';
-import { View, StyleSheet, Keyboard, Easing } from 'react-native';
+import { View, StyleSheet, Keyboard } from 'react-native';
 import { Button, Title } from 'react-native-paper';
 import { BottomSheetModal, BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 
@@ -67,6 +67,9 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     } else {
       hide();
     }
+    // We dont want to refresh everytime anything else changes,
+    // this is intentional
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDismiss, open]);
 
   const HandleComponent = React.useMemo(
@@ -167,11 +170,4 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingTop: 16,
   },
-});
-
-const x = React.memo(DialogOrSheet, (a, b) => {
-  return isEqual(
-    pick(a, ['loading', 'open', 'buttonAction']),
-    pick(b, ['loading', 'open', 'buttonAction'])
-  );
 });

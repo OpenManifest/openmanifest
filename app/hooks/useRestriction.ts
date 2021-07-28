@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
-import { Permission } from '../api/schema';
+import { Permission } from '../api/schema.d';
 import { useAppSelector } from '../state';
 
 export const QUERY_PERMISSIONS = gql`
@@ -33,5 +33,5 @@ export default function useRestriction(permission: Permission): boolean {
   });
 
   const permissions = data?.dropzone?.currentUser?.permissions || [];
-  return permissions?.includes(permission as any) || false;
+  return permissions?.includes(permission as Permission) || false;
 }

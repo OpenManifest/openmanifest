@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { View, ViewStyle } from 'react-native';
 import MapView, { Region } from 'react-native-maps';
-import isEqual from 'lodash/isEqual';
-import { pick } from 'lodash';
 import { calculateLatLngDelta } from '../../utils/calculateLatLngDelta';
 
 interface IMapProps {

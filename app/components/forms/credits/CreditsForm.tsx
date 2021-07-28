@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { TextInput, HelperText, Divider, Dialog, DataTable } from 'react-native-paper';
-import { Tabs, TabScreen } from 'react-native-paper-tabs';
+import { TextInput, HelperText, Divider, DataTable } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 export default function CreditsForm() {
