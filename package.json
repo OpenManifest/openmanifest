@@ -10,7 +10,9 @@
     "web": "EXPO_ENV=development expo start --web",
     "web:production": "EXPO_ENV=production expo start --web",
     "eject": "expo eject",
-    "test": "jest --watchAll",
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:ci": "jest --ci --collectCoverage=true --passWithNoTests",
     "typecheck": "tsc --noEmit",
     "lint": "eslint app/",
     "lint:fix": "eslint app/ --fix",
@@ -23,14 +25,29 @@
   "jest": {
     "preset": "jest-expo",
     "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry/.*)"
+      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry|react-native-iphone-x-helper/.*)"
+    ],
+    "testPathIgnorePatterns": [
+      "/__mocks__/.*.mock.ts"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx"
     ],
     "setupFiles": [
-      "./node_modules/react-native-gesture-handler/jestSetup.js"
+      "./node_modules/react-native-gesture-handler/jestSetup.js",
+      "./node_modules/react-native/jest/setup.js"
     ],
     "setupFilesAfterEnv": [
       "@testing-library/jest-native/extend-expect",
       "<rootDir>/jest.setup.ts"
+    ],
+    "collectCoverageFrom": [
+      "**/*.{ts,tsx}",
+      "!**/node_modules/**",
+      "!**/__mocks__/**"
     ]
   },
   "dependencies": {

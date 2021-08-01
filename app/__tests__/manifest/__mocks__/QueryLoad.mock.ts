@@ -1,20 +1,19 @@
-import { Load } from "../../../api/schema";
-import { QUERY_LOAD } from "../../../screens/authenticated/manifest/LoadCard";
+import { Load } from '../../../api/schema.d';
+import { QUERY_LOAD } from '../../../api/hooks/useQueryLoad';
 
 export const MOCK_QUERY_LOAD = (override: Partial<Load>) => ({
   request: {
     query: QUERY_LOAD,
     variables: {
-      id: 1
-    }
+      id: 1,
+    },
   },
   result: {
     data: {
       load: {
-        
-        id: "1",
-        name: "Test Load",
-        createdAt: (new Date().getTime() / 1000) - (30 * 60 * 60),
+        id: '1',
+        name: 'Test Load',
+        createdAt: new Date().getTime() / 1000 - 30 * 60 * 60,
         dispatchAt: null,
         hasLanded: false,
         maxSlots: 10,
@@ -23,22 +22,22 @@ export const MOCK_QUERY_LOAD = (override: Partial<Load>) => ({
         isOpen: true,
         plane: {
           id: 1,
-          name: "Beaver"
+          name: 'Beaver',
         },
         gca: {
           id: 1,
           user: {
             id: 1,
-            name: "jest"
-          }
+            name: 'jest',
+          },
         },
         pilot: {
           id: 2,
-          
+
           user: {
             id: 2,
-            name: "Jess I. Canflie",
-          }
+            name: 'Jess I. Canflie',
+          },
         },
 
         loadMaster: null,
@@ -51,11 +50,11 @@ export const MOCK_QUERY_LOAD = (override: Partial<Load>) => ({
             exitWeight: 100,
             user: {
               id: 2,
-              name: "Amy Hops",
+              name: 'Amy Hops',
             },
             ticketType: {
               id: 1,
-              name: "Height",
+              name: 'Height',
               altitude: 14000,
               isTandem: false,
 
@@ -64,7 +63,7 @@ export const MOCK_QUERY_LOAD = (override: Partial<Load>) => ({
 
             jumpType: {
               id: 1,
-              name: "Freefly"
+              name: 'Freefly',
             },
             extras: null,
           },
@@ -76,11 +75,11 @@ export const MOCK_QUERY_LOAD = (override: Partial<Load>) => ({
             exitWeight: 70,
             user: {
               id: 3,
-              name: "Ali Falls",
+              name: 'Ali Falls',
             },
             ticketType: {
               id: 2,
-              name: "Hop n Pop",
+              name: 'Hop n Pop',
               altitude: 4000,
               isTandem: false,
 
@@ -89,7 +88,7 @@ export const MOCK_QUERY_LOAD = (override: Partial<Load>) => ({
 
             jumpType: {
               id: 2,
-              name: "Hop n Pop"
+              name: 'Hop n Pop',
             },
             extras: null,
           },
@@ -101,28 +100,26 @@ export const MOCK_QUERY_LOAD = (override: Partial<Load>) => ({
             exitWeight: 100,
             user: {
               id: 2,
-              name: "John Stumble",
+              name: 'John Stumble',
             },
             ticketType: {
               id: 3,
-              name: "Tandem",
+              name: 'Tandem',
               altitude: 14000,
               isTandem: true,
 
-              extras: [
-                { id: 1, name: "Outside camera", cost: 120 },
-              ],
+              extras: [{ id: 1, name: 'Outside camera', cost: 120 }],
             },
 
             jumpType: {
               id: 3,
-              name: "Tandem"
+              name: 'Tandem',
             },
-            extras: [{ id: 1, name: "Outside camera", cost: 120 },],
-          }
+            extras: [{ id: 1, name: 'Outside camera', cost: 120 }],
+          },
         ],
         ...override,
-      } as Load
+      } as Load,
     },
   },
 });

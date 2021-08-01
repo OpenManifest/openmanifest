@@ -9,7 +9,7 @@ module.exports = function(api) {
         "extensions": ['.js', '.jsx', '.es', '.es6', '.mjs', '.ts', '.tsx'],
         }
       ],
-      'react-native-reanimated/plugin',
+      
       ["module:react-native-dotenv", {
         "moduleName": "@env",
         "path": ".env",
@@ -18,6 +18,7 @@ module.exports = function(api) {
         "safe": false,
         "allowUndefined": true
       }],
+      'react-native-reanimated/plugin',
     ],
   };
 };

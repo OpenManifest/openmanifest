@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/Cellar/node/15.11.0/bin/node /usr/local/Cellar/yarn/1.22.4/libexec/bin/yarn.js add -D airbnb-typescript-prettier
+  /usr/local/Cellar/node/15.11.0/bin/node /usr/local/Cellar/yarn/1.22.4/libexec/bin/yarn.js test:ci
 
 PATH: 
   /Users/amnesthesia/.rvm/gems/ruby-2.2.1/bin:/Users/amnesthesia/.rvm/gems/ruby-2.2.1@global/bin:/Users/amnesthesia/.rvm/rubies/ruby-2.2.1/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/amnesthesia/.rvm/bin:/Users/amnesthesia/Scripts:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/amnesthesia/.rvm/bin
@@ -14,17 +14,12 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/airbnb-typescript-prettier: Not found
-      at Request.params.callback [as _callback] (/usr/local/Cellar/yarn/1.22.4/libexec/lib/cli.js:66987:18)
-      at Request.self.callback (/usr/local/Cellar/yarn/1.22.4/libexec/lib/cli.js:140748:22)
-      at Request.emit (node:events:378:20)
-      at Request.<anonymous> (/usr/local/Cellar/yarn/1.22.4/libexec/lib/cli.js:141720:10)
-      at Request.emit (node:events:378:20)
-      at IncomingMessage.<anonymous> (/usr/local/Cellar/yarn/1.22.4/libexec/lib/cli.js:141642:12)
-      at Object.onceWrapper (node:events:484:28)
-      at IncomingMessage.emit (node:events:390:22)
-      at endReadableNT (node:internal/streams/readable:1307:12)
-      at processTicksAndRejections (node:internal/process/task_queues:81:21)
+  SyntaxError: /Users/amnesthesia/Documents/Development/openmanifest-app/package.json: Unexpected token ] in JSON at position 1350
+      at JSON.parse (<anonymous>)
+      at /usr/local/Cellar/yarn/1.22.4/libexec/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.22.4/libexec/lib/cli.js:310:30)
+      at /usr/local/Cellar/yarn/1.22.4/libexec/lib/cli.js:321:13
 
 npm manifest: 
   {
@@ -40,7 +35,10 @@ npm manifest:
       "web:production": "EXPO_ENV=production expo start --web",
       "eject": "expo eject",
       "test": "jest --watchAll",
+      "test:ci": "jest --ci --collectCoverage=true --passWithNoTests",
       "typecheck": "tsc --noEmit",
+      "lint": "eslint app/",
+      "lint:fix": "eslint app/ --fix",
       "ts:graphql": "curl http://127.0.0.1:5000/graphql -o schema.graphql; yarn graphql-codegen",
       "build:web": "EXPO_ENV=production expo build:web",
       "build:ios": "EXPO_ENV=production expo build:ios",
@@ -50,7 +48,10 @@ npm manifest:
     "jest": {
       "preset": "jest-expo",
       "transformIgnorePatterns": [
-        "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry/.*)"
+        "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry/.*)",
+      ],
+      "testPathIgnorePatterns": [
+        "<rootDir>/**/__mocks__/*.mock.*"
       ],
       "setupFiles": [
         "./node_modules/react-native-gesture-handler/jestSetup.js"
@@ -73,6 +74,7 @@ npm manifest:
       "@react-native-community/masked-view": "0.1.10",
       "@react-native-community/slider": "^3.0.3",
       "@react-navigation/bottom-tabs": "5.11.2",
+      "@react-navigation/core": "^5.14.4",
       "@react-navigation/drawer": "^5.12.5",
       "@react-navigation/material-bottom-tabs": "^5.3.15",
       "@react-navigation/native": "~5.8.10",
@@ -86,12 +88,14 @@ npm manifest:
       "expo-document-picker": "~8.4.1",
       "expo-font": "~8.4.0",
       "expo-image-picker": "~9.2.0",
+      "expo-linear-gradient": "9.1.0",
       "expo-linking": "~2.0.0",
       "expo-notifications": "~0.8.2",
       "expo-splash-screen": "~0.8.0",
       "expo-status-bar": "~1.0.3",
       "expo-web-browser": "~8.6.0",
       "graphql": "^15.5.0",
+      "graphql-tag": "^2.12.5",
       "lodash": "^4.17.21",
       "react": "16.13.1",
       "react-countdown-circle-timer": "^2.5.3",
@@ -135,11 +139,13 @@ npm manifest:
       "@types/react": "~16.9.35",
       "@types/react-native": "~0.63.2",
       "@types/react-test-renderer": "16.9.5",
+      "@types/urijs": "^1.19.16",
       "@typescript-eslint/eslint-plugin": "^4.4.1",
       "@typescript-eslint/parser": "^4.28.4",
       "enzyme": "^3.11.0",
       "eslint": "^7.31.0",
       "eslint-config-airbnb-typescript": "^12.3.1",
+      "eslint-config-airbnb-typescript-prettier": "^4.2.0",
       "eslint-config-universe": "^7.0.1",
       "eslint-plugin-import": "^2.22.0",
       "eslint-plugin-jsx-a11y": "^6.3.1",
@@ -3689,6 +3695,11 @@ Lockfile:
     dependencies:
       source-map "^0.6.1"
   
+  "@types/urijs@^1.19.16":
+    version "1.19.16"
+    resolved "https://registry.yarnpkg.com/@types/urijs/-/urijs-1.19.16.tgz#156658c47438fa867db5dce4d2949fe1ca0878e2"
+    integrity sha512-WgxqcUSEYijGnNWHSln/uqay+AywS3mEhLC+d2PwLsru2fLeMblvxP67Y/SCfB2Pxe+dX/zbIoNNzXY+VKOtNA==
+  
   "@types/webpack-sources@*":
     version "2.1.1"
     resolved "https://registry.yarnpkg.com/@types/webpack-sources/-/webpack-sources-2.1.1.tgz#6af17e3a3ded71eec2b98008d7c12f498a0a4506"
@@ -3741,7 +3752,7 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/@types/zen-observable/-/zen-observable-0.8.3.tgz#781d360c282436494b32fe7d9f7f8e64b3118aa3"
     integrity sha512-fbF6oTd4sGGy0xjHPKAt+eS2CrxJ3+6gQ3FGcBoIJR2TLAyCkCyI8JqZNy+FeON0AhVgNJoUumVoZQjBFUqHkw==
   
-  "@typescript-eslint/eslint-plugin@^4.12.0", "@typescript-eslint/eslint-plugin@^4.4.1":
+  "@typescript-eslint/eslint-plugin@^4.12.0", "@typescript-eslint/eslint-plugin@^4.4.1", "@typescript-eslint/eslint-plugin@^4.7.0":
     version "4.28.4"
     resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-4.28.4.tgz#e73c8cabbf3f08dee0e1bda65ed4e622ae8f8921"
     integrity sha512-s1oY4RmYDlWMlcV0kKPBaADn46JirZzvvH7c2CtAqxCY96S538JRBAzt83RrfkDheV/+G/vWNK0zek+8TB3Gmw==
@@ -3766,7 +3777,7 @@ Lockfile:
       eslint-scope "^5.1.1"
       eslint-utils "^3.0.0"
   
-  "@typescript-eslint/parser@^4.12.0", "@typescript-eslint/parser@^4.28.4", "@typescript-eslint/parser@^4.4.1":
+  "@typescript-eslint/parser@^4.12.0", "@typescript-eslint/parser@^4.28.4", "@typescript-eslint/parser@^4.4.1", "@typescript-eslint/parser@^4.7.0":
     version "4.28.4"
     resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-4.28.4.tgz#bc462dc2779afeefdcf49082516afdc3e7b96fab"
     integrity sha512-4i0jq3C6n+og7/uCHiE6q5ssw87zVdpUj1k6VlVYMonE3ILdFApEzTWgppSRG4kVNB/5jxnH+gTeKLMNfUelQA==
@@ -6921,6 +6932,21 @@ Lockfile:
       object.assign "^4.1.2"
       object.entries "^1.1.2"
   
+  eslint-config-airbnb-typescript-prettier@^4.2.0:
+    version "4.2.0"
+    resolved "https://registry.yarnpkg.com/eslint-config-airbnb-typescript-prettier/-/eslint-config-airbnb-typescript-prettier-4.2.0.tgz#54101963a3ec868c04d2f685f9ffcf04052d5cea"
+    integrity sha512-t2glck+2p/oAx0ibhZhWSU4xrJZtef6zrLH/tLNzS/JmfwYoGHWRQBT53p4lrLqk57DhE+GG9qh+6WN6IkiYvA==
+    dependencies:
+      "@typescript-eslint/eslint-plugin" "^4.7.0"
+      "@typescript-eslint/parser" "^4.7.0"
+      eslint-config-airbnb "^18.2.1"
+      eslint-config-prettier "^6.15.0"
+      eslint-plugin-import "^2.22.1"
+      eslint-plugin-jsx-a11y "^6.4.1"
+      eslint-plugin-prettier "^3.1.4"
+      eslint-plugin-react "^7.21.5"
+      eslint-plugin-react-hooks "^4.2.0"
+  
   eslint-config-airbnb-typescript@^12.3.1:
     version "12.3.1"
     resolved "https://registry.yarnpkg.com/eslint-config-airbnb-typescript/-/eslint-config-airbnb-typescript-12.3.1.tgz#83ab40d76402c208eb08516260d1d6fac8f8acbc"
@@ -6930,7 +6956,7 @@ Lockfile:
       eslint-config-airbnb "^18.2.0"
       eslint-config-airbnb-base "^14.2.0"
   
-  eslint-config-airbnb@^18.2.0:
+  eslint-config-airbnb@^18.2.0, eslint-config-airbnb@^18.2.1:
     version "18.2.1"
     resolved "https://registry.yarnpkg.com/eslint-config-airbnb/-/eslint-config-airbnb-18.2.1.tgz#b7fe2b42f9f8173e825b73c8014b592e449c98d9"
     integrity sha512-glZNDEZ36VdlZWoxn/bUR1r/sdFKPd1mHPbqUtkctgNG4yT2DLLtJ3D+yCV+jzZCc2V1nBVkmdknOJBZ5Hc0fg==
@@ -6939,7 +6965,7 @@ Lockfile:
       object.assign "^4.1.2"
       object.entries "^1.1.2"
   
-  eslint-config-prettier@^6.11.0:
+  eslint-config-prettier@^6.11.0, eslint-config-prettier@^6.15.0:
     version "6.15.0"
     resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-6.15.0.tgz#7f93f6cb7d45a92f1537a70ecc06366e1ac6fed9"
     integrity sha512-a1+kOYLR8wMGustcgAjdydMsQ2A/2ipRPwRKUmfYaSxc9ZPcrku080Ctl6zrZzZNs/U82MjSv+qKREkoq3bJaw==
@@ -6977,7 +7003,7 @@ Lockfile:
       debug "^3.2.7"
       pkg-dir "^2.0.0"
   
-  eslint-plugin-import@^2.22.0:
+  eslint-plugin-import@^2.22.0, eslint-plugin-import@^2.22.1:
     version "2.23.4"
     resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.23.4.tgz#8dceb1ed6b73e46e50ec9a5bb2411b645e7d3d97"
     integrity sha512-6/wP8zZRsnQFiR3iaPFgh5ImVRM1WN5NUWfTIRqwOdeiGJlBcSk82o1FEVq8yXmy4lkIzTo7YhHCIxlU/2HyEQ==
@@ -6998,7 +7024,7 @@ Lockfile:
       resolve "^1.20.0"
       tsconfig-paths "^3.9.0"
   
-  eslint-plugin-jsx-a11y@^6.3.1:
+  eslint-plugin-jsx-a11y@^6.3.1, eslint-plugin-jsx-a11y@^6.4.1:
     version "6.4.1"
     resolved "https://registry.yarnpkg.com/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.4.1.tgz#a2d84caa49756942f42f1ffab9002436391718fd"
     integrity sha512-0rGPJBbwHoGNPU73/QCLP/vveMlM1b1Z9PponxO87jfr6tuH5ligXbDT6nHSSzBC8ovX2Z+BQu7Bk5D/Xgq9zg==
@@ -7022,12 +7048,12 @@ Lockfile:
     dependencies:
       prettier-linter-helpers "^1.0.0"
   
-  eslint-plugin-react-hooks@^4.0.8, eslint-plugin-react-hooks@^4.1.0:
+  eslint-plugin-react-hooks@^4.0.8, eslint-plugin-react-hooks@^4.1.0, eslint-plugin-react-hooks@^4.2.0:
     version "4.2.0"
     resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.2.0.tgz#8c229c268d468956334c943bb45fc860280f5556"
     integrity sha512-623WEiZJqxR7VdxFCKLI6d6LLpwJkGPYKODnkH3D7WpOG5KM8yWueBd8TLsNAetEJNF5iJmolaAKO3F8yzyVBQ==
   
-  eslint-plugin-react@^7.20.3, eslint-plugin-react@^7.20.6:
+  eslint-plugin-react@^7.20.3, eslint-plugin-react@^7.20.6, eslint-plugin-react@^7.21.5:
     version "7.24.0"
     resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.24.0.tgz#eadedfa351a6f36b490aa17f4fa9b14e842b9eb4"
     integrity sha512-KJJIx2SYx7PBx3ONe/mEeMz4YE0Lcr7feJTCMyyKb/341NcjuAgim3Acgan89GfPv7nxXK2+0slu0CWXYM4x+Q==
@@ -7351,15 +7377,15 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/expo-keep-awake/-/expo-keep-awake-8.4.0.tgz#346d0988e6364c46050fef4b7829f302ef3e603d"
     integrity sha512-gozpL5Azfaht/YIMFOHRHjHuJ9KT6hJH4y71Al+/YfQSwHS5sqhoKGPgSxaktqbxRrWVUH9q7wSl3EXRK9bYjA==
   
+  expo-linear-gradient@9.1.0, expo-linear-gradient@~9.1.0:
+    version "9.1.0"
+    resolved "https://registry.yarnpkg.com/expo-linear-gradient/-/expo-linear-gradient-9.1.0.tgz#7adfe8284268874134954b8249207938c455a5b3"
+    integrity sha512-9W4TxaDrZUzmLzd18+Eo2Ef7ONnuLrHKX0PRyHEGY2/rJCtGiPJtJuR6AS5dkX7WB/Pxlx0zK/p/qDHHw09Uxg==
+  
   expo-linear-gradient@~8.4.0:
     version "8.4.0"
     resolved "https://registry.yarnpkg.com/expo-linear-gradient/-/expo-linear-gradient-8.4.0.tgz#34e6f960b1971c57dacf7211c747ba490a76bf63"
     integrity sha512-f9JOXaIl0MR8RBYRIud5UAsEi52oz81XhQs73VUpujemHjOyHmrZa6dqwf399YOwI/WBwbpcINcUIw/mCYE1mA==
-  
-  expo-linear-gradient@~9.1.0:
-    version "9.1.0"
-    resolved "https://registry.yarnpkg.com/expo-linear-gradient/-/expo-linear-gradient-9.1.0.tgz#7adfe8284268874134954b8249207938c455a5b3"
-    integrity sha512-9W4TxaDrZUzmLzd18+Eo2Ef7ONnuLrHKX0PRyHEGY2/rJCtGiPJtJuR6AS5dkX7WB/Pxlx0zK/p/qDHHw09Uxg==
   
   expo-linking@~2.0.0, expo-linking@~2.0.1:
     version "2.0.1"
@@ -8308,7 +8334,7 @@ Lockfile:
     dependencies:
       es6-promise "^3.2.1"
   
-  graphql-tag@^2.11.0, graphql-tag@^2.12.0:
+  graphql-tag@^2.11.0, graphql-tag@^2.12.0, graphql-tag@^2.12.5:
     version "2.12.5"
     resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.12.5.tgz#5cff974a67b417747d05c8d9f5f3cb4495d0db8f"
     integrity sha512-5xNhP4063d16Pz3HBtKprutsPrmHZi5IdUGOWRxA2B6VF7BIRGOHZ5WQvDmJXZuPcBg7rYwaFxvQYjqkSdR3TQ==
