@@ -19,16 +19,40 @@
       "**/*"
     ],
     "ios": {
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "buildNumber": "23",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
       "icon": "./assets/images/ios-icon.png",
-      "usesIcloudStorage": true
+      "usesIcloudStorage": true,
+      "associatedDomains": [
+        "applinks:openmanifest.org",
+        "applinks:openmanifest.org?mode=developer"
+      ]
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ff1414"
-      }
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "openmanifest.org",
+              "pathPrefix": "/confirm"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

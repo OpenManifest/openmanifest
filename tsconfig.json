@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "./",
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
     "lib": [
@@ -14,6 +15,7 @@
     "strict": true
   },
   "include": [
-    "jest.setup.ts"
+    "jest.setup.ts",
+    "app/**/*",
   ]
 }

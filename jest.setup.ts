@@ -1,23 +1,39 @@
-import 'react-native-gesture-handler/jestSetup';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import '@testing-library/jest-dom';
+import 'react-native-gesture-handler/jestSetup';
 
+global.__reanimatedWorkletInit = jest.fn();
 
 jest.mock('react-native-reanimated', () => {
-  const Reanimated = require('react-native-reanimated/mock');
-
-  // The mock for `call` immediately calls the callback which is incorrect
-  // So we override it with a no-op
-  Reanimated.default.call = () => {};
-
-  return Reanimated;
+  return {
+    // @ts-ignore
+    ...jest.requireActual('react-native-reanimated/mock'),
+    useSharedValue: jest.fn,
+    useAnimatedStyle: jest.fn,
+    withTiming: jest.fn,
+    withSpring: jest.fn,
+    withRepeat: jest.fn,
+    withSequence: jest.fn,
+    addWhiteListedNativeProps: jest.fn,
+    useAnimatedProps: jest.fn,
+    Easing: {
+      linear: jest.fn,
+      elastic: jest.fn,
+    },
+  };
 });
 
-// Silence the warning: Animated: `useNativeDriver` is not supported because the native animated module is missing
-jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
-
-jest.mock("@react-navigation/core", () => ({
+jest.mock('@react-navigation/core', () => ({
   ...jest.requireActual('@react-navigation/core'),
- useNavigation: () => jest.fn(),
- useIsFocused: jest.fn().mockReturnValue(false),
+  useNavigation: () => jest.fn(),
+  useIsFocused: jest.fn().mockReturnValue(false),
 }));
 
+// Mock redux-persist
+jest.mock('redux-persist', () => {
+  const real = jest.requireActual('redux-persist');
+  return {
+    ...real,
+    persistReducer: jest.fn().mockImplementation((config, reducers) => reducers),
+  };
+});

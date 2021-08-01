@@ -1,5 +1,5 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "app/Entrypoint.tsx",
   "scripts": {
     "start": "expo start",
     "start:production": "EXPO_ENV=production expo start",
@@ -10,7 +10,12 @@
     "web": "EXPO_ENV=development expo start --web",
     "web:production": "EXPO_ENV=production expo start --web",
     "eject": "expo eject",
-    "test": "jest --watchAll",
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:ci": "jest --ci --collectCoverage=true --passWithNoTests",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint app/",
+    "lint:fix": "eslint app/ --fix",
     "ts:graphql": "curl http://127.0.0.1:5000/graphql -o schema.graphql; yarn graphql-codegen",
     "build:web": "EXPO_ENV=production expo build:web",
     "build:ios": "EXPO_ENV=production expo build:ios",
@@ -20,26 +25,46 @@
   "jest": {
     "preset": "jest-expo",
     "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry/.*)"
+      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry|react-native-iphone-x-helper/.*)"
+    ],
+    "testPathIgnorePatterns": [
+      "/__mocks__/.*.mock.ts"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx"
     ],
     "setupFiles": [
-      "./node_modules/react-native-gesture-handler/jestSetup.js"
+      "./node_modules/react-native-gesture-handler/jestSetup.js",
+      "./node_modules/react-native/jest/setup.js"
     ],
     "setupFilesAfterEnv": [
       "@testing-library/jest-native/extend-expect",
       "<rootDir>/jest.setup.ts"
+    ],
+    "collectCoverageFrom": [
+      "**/*.{ts,tsx}",
+      "!**/node_modules/**",
+      "!**/__mocks__/**"
     ]
   },
   "dependencies": {
     "@apollo/client": "^3.3.14",
+    "@expo-google-fonts/inter": "^0.2.0",
     "@expo/vector-icons": "^12.0.0",
+    "@fseehawer/react-circular-slider": "^2.3.5",
     "@gorhom/bottom-sheet": "3.6.5",
+    "@react-google-maps/api": "^2.2.0",
     "@react-native-async-storage/async-storage": "^1.15.4",
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/datetimepicker": "3.0.4",
     "@react-native-community/masked-view": "0.1.10",
-    "@react-native-community/slider": "3.0.3",
+    "@react-native-community/slider": "^3.0.3",
     "@react-navigation/bottom-tabs": "5.11.2",
+    "@react-navigation/core": "^5.14.4",
+    "@react-navigation/drawer": "^5.12.5",
     "@react-navigation/material-bottom-tabs": "^5.3.15",
     "@react-navigation/native": "~5.8.10",
     "@react-navigation/stack": "~5.12.8",
@@ -52,30 +77,43 @@
     "expo-document-picker": "~8.4.1",
     "expo-font": "~8.4.0",
     "expo-image-picker": "~9.2.0",
+    "expo-linear-gradient": "9.1.0",
     "expo-linking": "~2.0.0",
+    "expo-notifications": "~0.8.2",
     "expo-splash-screen": "~0.8.0",
     "expo-status-bar": "~1.0.3",
     "expo-web-browser": "~8.6.0",
     "graphql": "^15.5.0",
+    "graphql-tag": "^2.12.5",
     "lodash": "^4.17.21",
     "react": "16.13.1",
+    "react-countdown-circle-timer": "^2.5.3",
     "react-day-picker": "^7.4.10",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
     "react-native-color-picker": "^0.6.0",
+    "react-native-countdown-circle-timer": "^2.5.3",
+    "react-native-dotenv": "^3.1.1",
     "react-native-gesture-handler": "1.10.3",
+    "react-native-knob": "^2.3.2",
+    "react-native-maps": "0.27.1",
     "react-native-mmkv-storage": "^0.5.3",
     "react-native-pager-view": "^5.1.5",
     "react-native-paper": "4.8.1",
     "react-native-paper-dates": "web-ridge/react-native-paper-dates",
     "react-native-paper-tabs": "^0.4.2",
+    "react-native-range-slider-expo": "^1.4.0",
     "react-native-reanimated": "2.0.0-rc.0",
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "~2.15.0",
+    "react-native-skeleton-content": "^1.0.22",
+    "react-native-svg": "12.1.0",
+    "react-native-swiper-flatlist": "^3.0.14",
     "react-native-web": "~0.13.12",
     "react-redux": "^7.2.3",
     "redux": "^4.0.5",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "urijs": "^1.19.6"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
@@ -90,9 +128,21 @@
     "@types/react": "~16.9.35",
     "@types/react-native": "~0.63.2",
     "@types/react-test-renderer": "16.9.5",
+    "@types/urijs": "^1.19.16",
+    "@typescript-eslint/eslint-plugin": "^4.4.1",
+    "@typescript-eslint/parser": "^4.28.4",
     "enzyme": "^3.11.0",
+    "eslint": "^7.31.0",
+    "eslint-config-airbnb-typescript": "^12.3.1",
+    "eslint-config-airbnb-typescript-prettier": "^4.2.0",
+    "eslint-config-universe": "^7.0.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.20.3",
+    "eslint-plugin-react-hooks": "^4.0.8",
     "graphql-to-typescript": "^0.1.2",
     "jest-expo": "~40.0.0",
+    "prettier": "^2.3.2",
     "react-test-renderer": "16.11.0",
     "redux-mock-store": "^1.5.4",
     "typescript": "~4.0.0"
