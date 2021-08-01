@@ -22,7 +22,7 @@
       "config": {
         "usesNonExemptEncryption": false
       },
-      "buildNumber": "23",
+      "buildNumber": "24",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
       "icon": "./assets/images/ios-icon.png",

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Region } from 'react-native-maps';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-// eslint-disable-next-line import/no-extraneous-dependencies
+// eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
 import * as Location from 'expo-location';
 import WizardScreen, { IWizardScreenProps } from '../../../../components/wizard/WizardScreen';
 import { actions, useAppDispatch, useAppSelector } from '../../../../state';

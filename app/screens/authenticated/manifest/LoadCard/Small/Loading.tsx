@@ -4,6 +4,7 @@ import Skeleton from 'react-native-skeleton-content';
 export default function LoadingCard() {
   return (
     <Skeleton
+      key="loading-card"
       containerStyle={{
         height: 160,
         width: 335,

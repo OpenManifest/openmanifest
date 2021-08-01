@@ -31,10 +31,12 @@ describe('<LoadCard />', () => {
       }
     );
 
+    await new Promise((resolve) => setTimeout(resolve, 0));
     await waitFor(async () => {
       expect(screen.queryAllByTestId('slot-row').length).toBe(10);
     });
   });
+
   it('should show a "Show more" button if more than 5 slots on load', async () => {
     let screen = render(
       <LoadCard
@@ -76,6 +78,7 @@ describe('<LoadCard />', () => {
       expect(screen.queryAllByTestId('show-more').length).toBe(0);
     });
   });
+
   it('should show a "Dispath" button if "updateLoad" permission granted', async () => {
     let screen = render(
       <LoadCard

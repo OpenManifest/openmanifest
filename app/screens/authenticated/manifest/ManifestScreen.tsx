@@ -180,7 +180,6 @@ export default function ManifestScreen() {
                     <LoadingCardSmall key={`loading-card-${index}`} />
                   );
                 }
-
                 return manifestScreen.display === 'list' ? (
                   <LoadCardLarge
                     controlsVisible={false}

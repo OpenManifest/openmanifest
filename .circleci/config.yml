@@ -1,0 +1,123 @@
+---
+version: 2.1
+
+jobs:
+  lint_and_test:
+    docker:
+      - image: circleci/node:15
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+      - run: yarn install --frozen-lockfile
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+      - run:
+          name: Create reports directory
+          command: mkdir -p ~/reports
+      - run:
+          name: Lint typescript
+          command: yarn lint:ci --output-file ~/reports/eslint.xml
+      - store_test_results:
+          path: ~/reports
+      - store_artifacts:
+          path: ~/reports
+      - run:
+          name: Run jest tests
+          command: yarn test:ci
+  bump_version:
+    docker:
+      - image: circleci/node:15
+    working_directory: ~/repo
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "17:42:42:d3:0c:02:1e:4b:0f:c8:0d:1f:30:be:ee:6c"
+      - checkout
+      - run:
+          name: Increment iOS build number
+          working_directory: ~/repo
+          command: |
+            CURRENT=$(npx --silent json -f app.json \"expo.ios.buildNumber\")
+            NEXT_VERSION=$(node -e "console.log($CURRENT + 1)")
+            echo "export NEW_VERSION=$NEXT_VERSION" >> $BASH_ENV
+      - deploy:
+          name: Push new build number
+          working_directory: ~/repo
+          command: |
+            npx --silent json -I -f app.json -e "this.expo.ios.buildNumber=\"$NEW_VERSION\""
+            npx --silent json -I -f app.json -e "this.expo.version=\"1.0.$NEW_VERSION\""
+            git config credential.helper 'cache --timeout=120'
+            git config user.email "deploy@openmanifest.org"
+            git config user.name "CircleCI Version Bump"
+            git commit --allow-empty -m "[skip ci] Publish $NEW_VERSION"
+            # Push quietly to prevent showing the token in log
+            git push -q origin main
+
+  publish_to_expo:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:15
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+      - run: yarn install --frozen-lockfile
+      - run: yarn global add expo-cli
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+      - run:
+          name: Login into Expo
+          command: yarn expo login --non-interactive -u $EXPO_USERNAME -p $EXPO_PASSWORD
+      - run:
+          name: Save current branch name to an env variable
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "main" ]; then
+              echo 'export EXPO_RELEASE_CHANNEL="default"' >> $BASH_ENV
+            else
+              echo 'export EXPO_RELEASE_CHANNEL=$CIRCLE_BRANCH' >> $BASH_ENV
+            fi
+      - run:
+          name: Publish to Expo
+          command: yarn expo publish --non-interactive --max-workers 1 --release-channel $EXPO_RELEASE_CHANNEL
+      - run:
+          name: Building iOS w/ Expo
+          command: yarn expo build:ios --release-channel default
+      - run:
+          name: Downloading .ipa from expo
+          command: curl -o /tmp/outputs/app.ipa "$(npx expo url:ipa --non-interactive)"
+      - persist_to_workspace:
+          root: /tmp/outputs
+          paths:
+            - app.ipa
+  push_to_testflight:
+    macos:
+      xcode: "10.2.1"
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/outputs
+      - run:
+          name: Installing fastlane dependencies
+          command: |
+            brew cask install fastlane
+      - run:
+          name: Uploading to apple app store with fastlane
+          command: fastlane deliver --verbose --ipa /tmp/outputs/app.ipa --skip_metadata --skip_screenshots
+workflows:
+  app:
+    jobs:
+      - lint_and_test
+      - bump_version:
+          requires:
+            - lint_and_test
+      - publish_to_expo:
+          requires:
+            - bump_version

@@ -4,6 +4,7 @@ import { render as rtlRender, RenderOptions } from '@testing-library/react-nativ
 import { createStore } from 'redux';
 import { Provider as Redux } from 'react-redux';
 import { MockedProvider as Apollo, MockedResponse } from '@apollo/client/testing';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 // Import your own reducer
 import { rootReducer, RootState } from '../state/store';
@@ -24,6 +25,7 @@ function render(
     return (
       <Redux store={store}>
         <Apollo
+          addTypename={false}
           mocks={[
             ...(graphql || []),
             {
@@ -42,9 +44,9 @@ function render(
                     secondaryColor: '#FFFFFF',
 
                     currentUser: {
-                      id: 10,
+                      id: '10',
                       role: {
-                        id: 1,
+                        id: '1',
                         name: 'jest',
                       },
                       permissions: permissions || [],
@@ -55,7 +57,9 @@ function render(
             },
           ]}
         >
-          <Material>{children}</Material>
+          <Material>
+            <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+          </Material>
         </Apollo>
       </Redux>
     );

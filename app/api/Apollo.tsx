@@ -8,7 +8,7 @@ import Constants from 'expo-constants';
 import { actions, useAppDispatch, useAppSelector } from '../state';
 
 const httpLink = createHttpLink({
-  uri: Constants.manifest.extra.url,
+  uri: Constants.manifest?.extra?.url,
 });
 
 export default function Apollo({ children }: { children: React.ReactNode }) {

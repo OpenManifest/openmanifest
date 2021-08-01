@@ -16,6 +16,7 @@
   },
   "include": [
     "jest.setup.ts",
-    "app/**/*",
-  ]
+    "app/**/*"
+  ],
+  "extends": "expo/tsconfig.base"
 }

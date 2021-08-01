@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { FAB } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
-// eslint-disable-next-line import/no-extraneous-dependencies
+// eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
 import * as Location from 'expo-location';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import JumpRunSelector from '../../../components/input/jump_run_select/JumpRunSelect';

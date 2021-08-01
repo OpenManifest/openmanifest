@@ -62,7 +62,7 @@ export default function LoadCard(props: ILoadCardLarge) {
       id: Number(initialRecord.id),
     },
     showSnackbarErrors: true,
-    pollInterval: 30000,
+    // pollInterval: 30000,
   });
   const currentDropzone = useCurrentDropzone();
   const { currentUser } = currentDropzone;
@@ -381,10 +381,7 @@ export default function LoadCard(props: ILoadCardLarge) {
               </SwipeActions>
             );
           })}
-          {Array.from(
-            { length: load?.availableSlots || (load?.maxSlots || 0) - (load?.slots?.length || 0) },
-            (v, i) => i
-          ).map((i) => (
+          {Array.from({ length: load?.availableSlots || 0 }, (v, i) => i).map((i) => (
             <DataTable.Row
               key={`${load?.id}-empty-slot-${i}`}
               testID="slot-row"
