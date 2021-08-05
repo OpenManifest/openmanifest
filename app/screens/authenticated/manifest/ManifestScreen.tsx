@@ -33,7 +33,7 @@ export default function ManifestScreen() {
     if (isFocused && dropzone?.name) {
       navigation.setOptions({ title: dropzone.name });
     }
-  }, [isFocused, dropzone?.name]);
+  }, [isFocused, dropzone.name, navigation]);
 
   React.useEffect(() => {
     if (isFocused) {
