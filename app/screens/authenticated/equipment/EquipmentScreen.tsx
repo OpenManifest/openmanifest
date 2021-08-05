@@ -1,21 +1,19 @@
 import { useIsFocused, useNavigation } from '@react-navigation/core';
 import * as React from 'react';
-import { RefreshControl, StyleSheet } from 'react-native';
-import { DataTable, FAB, IconButton, ProgressBar } from 'react-native-paper';
-import format from 'date-fns/format';
+import { StyleSheet } from 'react-native';
+import { FAB } from 'react-native-paper';
 
-import { successColor, warningColor } from '../../../constants/Colors';
+import { FlatList } from 'react-native-gesture-handler';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import { Permission } from '../../../api/schema.d';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import RigDialog from '../../../components/dialogs/Rig';
 
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import useDropzoneUser from '../../../api/hooks/useDropzoneUser';
 import useRestriction from '../../../hooks/useRestriction';
+import RigCard from './RigCard';
 
 export default function ProfileScreen() {
-  const state = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
   const { currentUser } = useCurrentDropzone();
@@ -35,64 +33,34 @@ export default function ProfileScreen() {
   const canUpdateUser = useRestriction(Permission.UpdateUser);
   return (
     <>
-      {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
-      <ScrollableScreen
-        contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}
-      >
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title>Container</DataTable.Title>
-            <DataTable.Title numeric>Repack due</DataTable.Title>
-            <DataTable.Title numeric>Canopy size</DataTable.Title>
-            <DataTable.Title numeric>Inspected</DataTable.Title>
-          </DataTable.Header>
+      <FlatList
+        data={dropzoneUser?.user?.rigs || []}
+        numColumns={1}
+        style={{ flex: 1 }}
+        refreshing={loading}
+        contentContainerStyle={{ padding: 16 }}
+        renderItem={({ item }) => (
+          <RigCard
+            onSuccessfulImageUpload={refetch}
+            rig={item}
+            rigInspection={dropzoneUser?.rigInspections?.find(
+              (insp) => insp.rig?.id === item.id && insp.isOk
+            )}
+            onPress={() => {
+              dispatch(actions.forms.rig.setOpen(item));
+            }}
+          />
+        )}
+      />
 
-          {dropzoneUser?.user?.rigs?.map((rig) => (
-            <DataTable.Row
-              key={`rig-${rig?.id}`}
-              onPress={() => {
-                dispatch(actions.forms.rig.setOpen(rig));
-              }}
-              pointerEvents="none"
-            >
-              <DataTable.Cell>
-                {[rig?.make, rig?.model, `#${rig?.serial}`].join(' ')}
-              </DataTable.Cell>
-              <DataTable.Cell numeric>
-                {rig?.repackExpiresAt ? format(rig.repackExpiresAt * 1000, 'yyyy/MM/dd') : '-'}
-              </DataTable.Cell>
-              <DataTable.Cell numeric>{`${rig?.canopySize}`}</DataTable.Cell>
-              <DataTable.Cell numeric>
-                <IconButton
-                  icon={
-                    dropzoneUser?.rigInspections?.some(
-                      (insp) => insp.rig?.id === rig.id && insp.isOk
-                    )
-                      ? 'eye-check'
-                      : 'eye-minus'
-                  }
-                  color={
-                    dropzoneUser?.rigInspections?.some(
-                      (insp) => insp.rig?.id === rig.id && insp.isOk
-                    )
-                      ? successColor
-                      : warningColor
-                  }
-                />
-              </DataTable.Cell>
-            </DataTable.Row>
-          ))}
-        </DataTable>
-        <FAB
-          style={styles.fab}
-          visible={canUpdateUser}
-          small
-          icon="plus"
-          onPress={() => dispatch(actions.forms.rig.setOpen(true))}
-          label="Add rig"
-        />
-      </ScrollableScreen>
+      <FAB
+        style={styles.fab}
+        visible={canUpdateUser}
+        small
+        icon="plus"
+        onPress={() => dispatch(actions.forms.rig.setOpen(true))}
+        label="Add rig"
+      />
 
       <RigDialog
         onClose={() => dispatch(actions.forms.rig.setOpen(false))}

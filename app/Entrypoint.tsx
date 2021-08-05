@@ -15,6 +15,7 @@ import Wrapper from './EntrypointWrapper';
 
 import Apollo from './api/Apollo';
 import { store, persistor, useAppSelector, useAppDispatch } from './state/store';
+import ImageViewer from './components/dialogs/ImageViewer/ImageViewer';
 
 import useCachedResources from './hooks/useCachedResources';
 import NotificationArea from './components/notifications/Notifications';
@@ -130,6 +131,7 @@ function Content() {
       <Apollo>
         <MaterialProvider theme={state.theme}>
           <SafeAreaProvider>
+            <ImageViewer />
             <NavigationContainer linking={LinkingConfiguration} theme={state.theme}>
               <Wrapper>
                 <RootNavigator />

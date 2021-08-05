@@ -58,6 +58,13 @@ export const QUERY_DROPZONE = gql`
         rigInspections {
           id
           isOk
+          inspectedBy {
+            id
+            user {
+              id
+              name
+            }
+          }
           rig {
             id
           }
@@ -104,6 +111,7 @@ export const QUERY_DROPZONE = gql`
             serial
             canopySize
             repackExpiresAt
+            packingCard
 
             user {
               id
@@ -144,7 +152,7 @@ export default function useCurrentDropzone() {
       dropzoneId,
       earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
     },
-    fetchPolicy: 'cache-first',
+    fetchPolicy: 'cache-and-network',
   });
 
   const mutationUpdateUser = useMutationUpdateUser({

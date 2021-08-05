@@ -100,6 +100,7 @@
     "react-native-countdown-circle-timer": "^2.5.3",
     "react-native-dotenv": "^3.1.1",
     "react-native-gesture-handler": "~1.10.2",
+    "react-native-image-viewing": "^0.2.0",
     "react-native-maps": "0.28.0",
     "react-native-mmkv-storage": "^0.5.3",
     "react-native-pager-view": "5.0.12",

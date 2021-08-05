@@ -5,9 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import {
   DrawerActions,
   getFocusedRouteNameFromRoute,
-  NavigationState,
   useNavigation,
-  useNavigationState,
   useRoute,
 } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -109,10 +107,7 @@ export default function DrawerMenu() {
                 params: {
                   screen: 'Manifest',
                   params: {
-                    screen: 'Profile',
-                    params: {
-                      screen: 'ProfileScreen',
-                    },
+                    screen: 'ProfileScreen',
                   },
                 },
               });

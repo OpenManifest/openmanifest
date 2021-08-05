@@ -116,8 +116,14 @@ workflows:
     jobs:
       - lint_and_test
       - bump_version:
+          filters:
+            branches:
+              only: main
           requires:
             - lint_and_test
       - publish_to_expo:
+          filters:
+            branches:
+              only: main
           requires:
             - bump_version

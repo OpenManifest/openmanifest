@@ -5,6 +5,9 @@ import { Platform } from 'react-native';
 import { persistStore, persistReducer } from 'redux-persist';
 import { reducers as forms, initialState as initialStateForms } from '../components/forms/slice';
 import { reducers as screens, initialState as initialStateScreens } from '../screens/slice';
+import imageViewerSlice, {
+  initialState as imageViewerState,
+} from '../components/dialogs/ImageViewer/slice';
 
 import globalSlice, { initialState as initialStateGlobal } from './global';
 import notificationSlice, {
@@ -16,6 +19,7 @@ export const initialState = {
   screens: initialStateScreens,
   global: initialStateGlobal,
   notifications: initialStateNotification,
+  imageViewer: imageViewerState,
 } as RootState;
 
 const persistConfig = {
@@ -67,11 +71,13 @@ export const actions = {
   screens: screenActions,
   global: globalSlice.actions,
   notifications: notificationSlice.actions,
+  imageViewer: imageViewerSlice.actions,
 };
 
 export const rootReducer = combineReducers({
   global: globalSlice.reducer,
   notifications: notificationSlice.reducer,
+  imageViewer: imageViewerSlice.reducer,
   screens: combineReducers(screenReducers),
   forms: combineReducers(formReducers),
 });

@@ -24,8 +24,10 @@ import SettingsScreen from '../../screens/authenticated/settings/SettingsScreen'
 import TicketTypeSettingsScreen from '../../screens/authenticated/ticket_types/TicketTypesScreen';
 import UpdateDropzoneScreen from '../../screens/authenticated/dropzones/UpdateDropzoneScreen';
 import PlanesScreen from '../../screens/authenticated/planes/PlanesScreen';
+// eslint-disable-next-line max-len
 import RigInspectionTemplateScreen from '../../screens/authenticated/settings/RigInspectionTemplateScreen';
 import DropzoneRigsScreen from '../../screens/authenticated/settings/DropzoneRigsScreen';
+// eslint-disable-next-line max-len
 import DropzonePermissionScreen from '../../screens/authenticated/settings/DropzonePermissionScreen';
 import DropzoneMasterLogScreen from '../../screens/authenticated/settings/DropzoneMasterLogScreen';
 import UpdateExtraScreen from '../../screens/authenticated/extras/UpdateExtraScreen';
