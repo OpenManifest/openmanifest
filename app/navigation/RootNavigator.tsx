@@ -13,8 +13,6 @@ import DropzonesScreen from '../screens/authenticated/dropzones/DropzonesScreen'
 import DropzoneSetupScreen from '../screens/authenticated/dropzone_setup/DropzoneSetupScreen';
 import ConfirmUserScreen from '../screens/unauthenticated/signup/ConfirmUserScreen';
 import DrawerMenu from './drawer/Drawer';
-import ProfileRoutes from './drawer/profile';
-import SettingsRoutes from './drawer/settings';
 
 export type TRootNavigatorRouteParams = {
   Authenticated: undefined;
@@ -55,8 +53,6 @@ export default function RootNavigator() {
             {() => (
               <Drawer.Navigator drawerContent={() => <DrawerMenu />}>
                 <Drawer.Screen name="Authenticated" component={AuthenticatedRoutes} />
-                <Drawer.Screen name="Profile" component={ProfileRoutes} />
-                <Drawer.Screen name="Settings" component={SettingsRoutes} />
               </Drawer.Navigator>
             )}
           </Stack.Screen>

@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
-import { DropzoneUser, Slot } from '../../api/schema';
+import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
+import { Dropzone, DropzoneUser, Slot } from '../../api/schema.d';
 import { useAppSelector } from '../../state';
 import LoadScreen from '../../screens/authenticated/load/LoadScreen';
 // eslint-disable-next-line max-len
@@ -13,6 +14,22 @@ import ManifestScreen from '../../screens/authenticated/manifest/ManifestScreen'
 import ManifestGroupScreen from '../../screens/authenticated/manifest/ManifestGroupScreen';
 // eslint-disable-next-line max-len
 import ManifestGroupUserSelectScreen from '../../screens/authenticated/manifest/ManifestGroupUserSelectScreen';
+import ProfileScreen from '../../screens/authenticated/profile/ProfileScreen';
+import NotificationsScreen from '../../screens/authenticated/notifications/NotificationsScreen';
+import TransactionsScreen from '../../screens/authenticated/transactions/TransactionsScreen';
+import EquipmentScreen from '../../screens/authenticated/equipment/EquipmentScreen';
+
+// Settings
+import SettingsScreen from '../../screens/authenticated/settings/SettingsScreen';
+import TicketTypeSettingsScreen from '../../screens/authenticated/ticket_types/TicketTypesScreen';
+import UpdateDropzoneScreen from '../../screens/authenticated/dropzones/UpdateDropzoneScreen';
+import PlanesScreen from '../../screens/authenticated/planes/PlanesScreen';
+import RigInspectionTemplateScreen from '../../screens/authenticated/settings/RigInspectionTemplateScreen';
+import DropzoneRigsScreen from '../../screens/authenticated/settings/DropzoneRigsScreen';
+import DropzonePermissionScreen from '../../screens/authenticated/settings/DropzonePermissionScreen';
+import DropzoneMasterLogScreen from '../../screens/authenticated/settings/DropzoneMasterLogScreen';
+import UpdateExtraScreen from '../../screens/authenticated/extras/UpdateExtraScreen';
+import ExtrasScreen from '../../screens/authenticated/extras/ExtrasScreen';
 
 export type IManifestTabParams = {
   DropzoneScreen: undefined;
@@ -21,17 +38,41 @@ export type IManifestTabParams = {
   WeatherConditionsScreen: undefined;
   WindScreen: undefined;
   JumpRunScreen: undefined;
+  Settings: undefined;
+  Profile: undefined;
   ManifestGroupScreen: {
     users?: DropzoneUser[];
     slots?: Slot[];
     loadId?: number;
   };
+
+  ProfileScreen: {
+    userId: string;
+  };
+  NotificationsScreen: undefined;
+  EquipmentScreen: undefined;
+  TransactionsScreen: undefined;
+
+  SettingsScreen: undefined;
+  UpdateDropzoneScreen: { dropzone: Dropzone };
+  TicketTypeSettingsScreen: undefined;
+  PlanesScreen: undefined;
+  PlaneScreen: undefined;
+  TicketTypesScreen: undefined;
+  UpdateExtraScreen: undefined;
+  ExtrasScreen: undefined;
+  RigInspectionTemplateScreen: undefined;
+  DropzoneRigsScreen: undefined;
+  DropzonePermissionScreen: undefined;
+  DropzoneMasterLogScreen: undefined;
 };
 
 const Manifest = createStackNavigator<IManifestTabParams>();
 
 export default function ManifestTab() {
   const globalState = useAppSelector((root) => root.global);
+  const { currentUser } = useCurrentDropzone();
+
   return (
     <Manifest.Navigator
       screenOptions={{
@@ -72,6 +113,78 @@ export default function ManifestTab() {
         name="ManifestGroupUserSelectScreen"
         component={ManifestGroupUserSelectScreen}
         options={{ title: 'Select users' }}
+      />
+
+      {/* PROFILE */}
+      <Manifest.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{ title: 'Profile' }}
+        initialParams={{
+          userId: currentUser?.id,
+        }}
+      />
+      <Manifest.Screen
+        name="NotificationsScreen"
+        component={NotificationsScreen}
+        options={{ title: 'Notifications' }}
+      />
+      <Manifest.Screen
+        name="EquipmentScreen"
+        component={EquipmentScreen}
+        options={{ title: 'Equipment' }}
+      />
+      <Manifest.Screen
+        name="TransactionsScreen"
+        component={TransactionsScreen}
+        options={{ title: 'Transactions' }}
+      />
+
+      <Manifest.Screen
+        name="SettingsScreen"
+        component={SettingsScreen}
+        options={{ title: 'Settings' }}
+      />
+      <Manifest.Screen
+        name="UpdateDropzoneScreen"
+        component={UpdateDropzoneScreen}
+        options={{ title: 'Basic settings' }}
+      />
+      <Manifest.Screen name="PlanesScreen" component={PlanesScreen} options={{ title: 'Planes' }} />
+      <Manifest.Screen
+        name="TicketTypesScreen"
+        component={TicketTypeSettingsScreen}
+        options={{ title: 'Ticket types' }}
+      />
+      <Manifest.Screen
+        name="UpdateExtraScreen"
+        component={UpdateExtraScreen}
+        options={{ title: 'Update ticket add-on' }}
+      />
+      <Manifest.Screen
+        name="ExtrasScreen"
+        component={ExtrasScreen}
+        options={{ title: 'Ticket add-ons' }}
+      />
+      <Manifest.Screen
+        name="RigInspectionTemplateScreen"
+        component={RigInspectionTemplateScreen}
+        options={{ title: 'Rig Inspection Form' }}
+      />
+      <Manifest.Screen
+        name="DropzoneRigsScreen"
+        component={DropzoneRigsScreen}
+        options={{ title: 'Dropzone rigs' }}
+      />
+      <Manifest.Screen
+        name="DropzonePermissionScreen"
+        component={DropzonePermissionScreen}
+        options={{ title: 'Permissions' }}
+      />
+      <Manifest.Screen
+        name="DropzoneMasterLogScreen"
+        component={DropzoneMasterLogScreen}
+        options={{ title: 'Master log' }}
       />
     </Manifest.Navigator>
   );

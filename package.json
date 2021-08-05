@@ -52,7 +52,8 @@
     ]
   },
   "resolutions": {
-    "react-native-reanimated": "~2.2.0"
+    "react-native-reanimated": "~2.2.0",
+    "expo-linear-gradient": "~9.2.0"
   },
   "dependencies": {
     "@apollo/client": "^3.3.14",

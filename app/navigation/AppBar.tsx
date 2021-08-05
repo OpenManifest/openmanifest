@@ -75,6 +75,7 @@ function AppBar(props: IAppBarProps) {
     }
   }, [loadData, currentDropzoneId]);
 
+  console.log(scene.descriptor);
   return (
     <>
       <Appbar.Header>

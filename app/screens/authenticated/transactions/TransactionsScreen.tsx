@@ -1,4 +1,4 @@
-import { useIsFocused } from '@react-navigation/core';
+import { useIsFocused, useNavigation } from '@react-navigation/core';
 import * as React from 'react';
 import { RefreshControl, StyleSheet, Text } from 'react-native';
 import { DataTable, ProgressBar } from 'react-native-paper';
@@ -21,6 +21,8 @@ export default function ProfileScreen() {
   );
 
   const isFocused = useIsFocused();
+  const navigation = useNavigation();
+  React.useEffect(() => navigation.setOptions({ title: 'Transactions' }), [navigation]);
 
   React.useEffect(() => {
     if (isFocused) {
