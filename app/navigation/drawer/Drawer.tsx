@@ -109,10 +109,7 @@ export default function DrawerMenu() {
                 params: {
                   screen: 'Manifest',
                   params: {
-                    screen: 'Profile',
-                    params: {
-                      screen: 'ProfileScreen',
-                    },
+                    screen: 'ProfileScreen',
                   },
                 },
               });
