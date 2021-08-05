@@ -30,6 +30,12 @@ export default function ManifestScreen() {
   const isFocused = useIsFocused();
 
   React.useEffect(() => {
+    if (isFocused && dropzone?.name) {
+      navigation.setOptions({ title: dropzone.name });
+    }
+  }, [isFocused, dropzone?.name]);
+
+  React.useEffect(() => {
     if (isFocused) {
       refetch();
     }

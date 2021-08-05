@@ -2,26 +2,17 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
-import AppBar from '../AppBar';
 import { Dropzone } from '../../api/schema';
 
 import SettingsScreen from '../../screens/authenticated/settings/SettingsScreen';
-
 import TicketTypeSettingsScreen from '../../screens/authenticated/ticket_types/TicketTypesScreen';
-
 import UpdateDropzoneScreen from '../../screens/authenticated/dropzones/UpdateDropzoneScreen';
-
 import PlanesScreen from '../../screens/authenticated/planes/PlanesScreen';
 import RigInspectionTemplateScreen from '../../screens/authenticated/settings/RigInspectionTemplateScreen';
-
 import DropzoneRigsScreen from '../../screens/authenticated/settings/DropzoneRigsScreen';
-
 import DropzonePermissionScreen from '../../screens/authenticated/settings/DropzonePermissionScreen';
-
 import DropzoneMasterLogScreen from '../../screens/authenticated/settings/DropzoneMasterLogScreen';
-
 import UpdateExtraScreen from '../../screens/authenticated/extras/UpdateExtraScreen';
-
 import ExtrasScreen from '../../screens/authenticated/extras/ExtrasScreen';
 
 export type ISettingsTabParams = {
@@ -45,8 +36,7 @@ export default function SettingsTab() {
   return (
     <Settings.Navigator
       screenOptions={{
-        headerShown: true,
-        header: (props) => <AppBar {...props} />,
+        headerShown: false,
         cardStyle: {
           flex: 1,
         },

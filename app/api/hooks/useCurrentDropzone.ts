@@ -68,6 +68,8 @@ export const QUERY_DROPZONE = gql`
             node {
               id
               status
+              createdAt
+              message
               amount
             }
           }

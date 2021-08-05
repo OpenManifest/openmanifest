@@ -3,10 +3,11 @@ import { View, StyleSheet } from 'react-native';
 import { Avatar, Drawer, List, useTheme } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
-  CommonActions,
   DrawerActions,
   getFocusedRouteNameFromRoute,
+  NavigationState,
   useNavigation,
+  useNavigationState,
   useRoute,
 } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -103,19 +104,18 @@ export default function DrawerMenu() {
             descriptionStyle={styles.profileAvatarSubtitle}
             style={styles.profileAvatar}
             onPress={() => {
-              navigation.dispatch(
-                CommonActions.reset({
-                  index: 0,
-                  routes: [
-                    {
-                      name: 'Profile',
-                      state: {
-                        routes: [{ name: 'ProfileScreen' }],
-                      },
+              navigation.navigate('Authenticated', {
+                screen: 'Authenticated',
+                params: {
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'Profile',
+                    params: {
+                      screen: 'ProfileScreen',
                     },
-                  ],
-                })
-              );
+                  },
+                },
+              });
             }}
           />
         )}
@@ -154,24 +154,14 @@ export default function DrawerMenu() {
             icon="account"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Profile',
+                screen: 'Authenticated',
                 params: {
-                  screen: 'ProfileScreen',
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'ProfileScreen',
+                  },
                 },
               });
-              navigation.dispatch(
-                CommonActions.reset({
-                  index: 0,
-                  routes: [
-                    {
-                      name: 'Profile',
-                      state: {
-                        routes: [{ name: 'ProfileScreen' }],
-                      },
-                    },
-                  ],
-                })
-              );
             }}
           />
           <Drawer.Item
@@ -180,24 +170,14 @@ export default function DrawerMenu() {
             icon="parachute"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Profile',
+                screen: 'Authenticated',
                 params: {
-                  screen: 'EquipmentScreen',
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'EquipmentScreen',
+                  },
                 },
               });
-              navigation.dispatch(
-                CommonActions.reset({
-                  index: 0,
-                  routes: [
-                    {
-                      name: 'Profile',
-                      state: {
-                        routes: [{ name: 'EquipmentScreen' }],
-                      },
-                    },
-                  ],
-                })
-              );
             }}
           />
           <Drawer.Item
@@ -219,24 +199,14 @@ export default function DrawerMenu() {
             icon="cash"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Profile',
+                screen: 'Authenticated',
                 params: {
-                  screen: 'TransactionsScreen',
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'TransactionsScreen',
+                  },
                 },
               });
-              navigation.dispatch(
-                CommonActions.reset({
-                  index: 0,
-                  routes: [
-                    {
-                      name: 'Profile',
-                      state: {
-                        routes: [{ name: 'TransactionsScreen' }],
-                      },
-                    },
-                  ],
-                })
-              );
             }}
           />
           {shouldShowSettings ? (
@@ -244,7 +214,17 @@ export default function DrawerMenu() {
               active={routeName === 'Settings'}
               label="Settings"
               icon="cog"
-              onPress={() => navigation.navigate('Settings')}
+              onPress={() =>
+                navigation.navigate('Authenticated', {
+                  screen: 'Authenticated',
+                  params: {
+                    screen: 'Manifest',
+                    params: {
+                      screen: 'SettingsScreen',
+                    },
+                  },
+                })
+              }
             />
           ) : null}
           <Drawer.Item

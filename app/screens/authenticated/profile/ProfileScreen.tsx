@@ -82,6 +82,7 @@ export default function ProfileScreen() {
 
   const isFocused = useIsFocused();
 
+  React.useEffect(() => navigation.setOptions({ title: 'Profile' }), [navigation]);
   React.useEffect(() => {
     if (isFocused) {
       refetch();

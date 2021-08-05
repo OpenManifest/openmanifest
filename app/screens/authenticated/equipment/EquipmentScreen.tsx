@@ -1,4 +1,4 @@
-import { useIsFocused } from '@react-navigation/core';
+import { useIsFocused, useNavigation } from '@react-navigation/core';
 import * as React from 'react';
 import { RefreshControl, StyleSheet } from 'react-native';
 import { DataTable, FAB, IconButton, ProgressBar } from 'react-native-paper';
@@ -19,6 +19,8 @@ export default function ProfileScreen() {
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
   const { currentUser } = useCurrentDropzone();
+  const navigation = useNavigation();
+  React.useEffect(() => navigation.setOptions({ title: 'Equipment' }), [navigation]);
 
   const { dropzoneUser, loading, refetch } = useDropzoneUser(Number(currentUser?.id));
 
