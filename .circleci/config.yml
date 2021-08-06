@@ -1,6 +1,132 @@
 ---
 version: 2.1
 
+executors:
+  js:
+    docker:
+      - image: circleci/node:12.13.1
+    working_directory: ~/expo-project
+    environment:
+      YARN_CACHE_FOLDER: ~/yarn_cache
+
+  android:
+    # WARNING: medium (default) seems not to be enough for Turtle
+    # To use larger resource classes you need to open a ticket and request it from CircleCI
+    # More Information Here - https://circleci.com/docs/2.0/configuration-reference/#resource_class
+    resource_class: xlarge
+    docker:
+      # https://github.com/expo/expo-turtle-android
+      - image: dsokal/expo-turtle-android
+    # NOTE: If you have macos machines you can use them instead.
+    # Comment out 'resource_class', 'docker' and 'image' and replace
+    # with the comments below.
+    #  macos:
+    #    xcode: 10.1.0
+    working_directory: ~/expo-project
+    environment:
+      EXPO_SDK_VERSION: 39.0.0
+      TURTLE_VERSION: 0.21.9
+      PLATFORM: android
+      YARN_CACHE_FOLDER: ~/yarn_cache
+
+  ios:
+    macos:
+      xcode: 11.1.0
+    working_directory: ~/expo-project
+    environment:
+      EXPO_SDK_VERSION: 39.0.0
+      TURTLE_VERSION: 0.21.9
+      PLATFORM: ios
+      YARN_CACHE_FOLDER: /Users/distiller/yarn_cache
+      HOMEBREW_NO_AUTO_UPDATE: 1
+
+commands:
+  install_macos_deps:
+    steps:
+      - run:
+          name: Installing jq & node@12
+          command: |
+            brew install jq node@12
+            brew link --overwrite --force node@12
+  add_yarn_binaries_to_path:
+    steps:
+      - run:
+          name: Add yarn binaries path to $PATH
+          command: echo 'export PATH=~/.yarn/bin:$PATH' >> $BASH_ENV
+
+  determine_turtle_cache_key_component:
+    steps:
+      - run:
+          name: Determine Turtle cache key component
+          command: echo $TURTLE_VERSION $PLATFORM > /tmp/turtle-version-platform
+
+  restore_turtle_cache:
+    steps:
+      - restore_cache:
+          keys:
+            - cache-turtle-cli-{{ checksum "/tmp/turtle-version-platform" }}
+
+  save_turtle_cache:
+    steps:
+      - save_cache:
+          paths:
+            - ~/.turtle
+            - ~/yarn_cache
+          key: cache-turtle-cli-{{ checksum "/tmp/turtle-version-platform" }}
+
+  install_turtle_ios:
+    steps:
+      - run:
+          name: Installing turtle-cli
+          command: |
+            yarn config set prefix ~/.yarn
+            yarn global add turtle-cli@$TURTLE_VERSION
+  setup_turtle:
+    steps:
+      - run:
+          name: Setting up environment for Turtle
+          command: turtle setup:$PLATFORM --sdk-version $EXPO_SDK_VERSION
+
+  restore_yarn_cache:
+    parameters:
+      platform:
+        type: string
+    steps:
+      - restore_cache:
+          keys:
+            - cache-yarn-<< parameters.platform >>-{{ checksum "package.json" }}
+
+  save_yarn_cache:
+    parameters:
+      platform:
+        type: string
+    steps:
+      - save_cache:
+          paths:
+            - ~/yarn_cache
+          key: cache-yarn-<< parameters.platform >>-{{ checksum "package.json" }}
+
+workflows:
+  version: 2
+  builds:
+    jobs:
+      - lint_and_test
+      - bump_version:
+          filters:
+            branches:
+              only: main
+          requires:
+            - lint_and_test
+      - publish_app:
+          filters:
+            branches:
+              only: master
+          requires:
+            - bump_version
+      - build_ios_archive:
+          requires:
+            - publish_app
+
 jobs:
   lint_and_test:
     docker:
@@ -58,52 +184,53 @@ jobs:
             # Push quietly to prevent showing the token in log
             git push -q origin main
 
-  publish_to_expo:
-    working_directory: ~/repo
-    docker:
-      - image: circleci/node:15
+  publish_app:
+    executor: js
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "yarn.lock" }}
-      - run: yarn install --frozen-lockfile
-      - run: yarn global add expo-cli
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "yarn.lock" }}
+      - add_yarn_binaries_to_path
+      - restore_yarn_cache:
+          platform: linux
       - run:
-          name: Login into Expo
-          command: yarn expo login --non-interactive -u $EXPO_USERNAME -p $EXPO_PASSWORD
+          name: Installing expo-cli
+          command: yarn global add expo-cli
       - run:
-          name: Save current branch name to an env variable
+          name: Publishing Expo app
           command: |
-            if [ "${CIRCLE_BRANCH}" == "main" ]; then
-              echo 'export EXPO_RELEASE_CHANNEL="default"' >> $BASH_ENV
-            else
-              echo 'export EXPO_RELEASE_CHANNEL=$CIRCLE_BRANCH' >> $BASH_ENV
-            fi
-      - run:
-          name: Publish to Expo
-          command: yarn expo publish --non-interactive --max-workers 1 --release-channel $EXPO_RELEASE_CHANNEL
-      - run:
-          name: Building iOS w/ Expo
-          command: yarn expo build:ios --release-channel default
-      - run:
-          name: Downloading .ipa from expo
-          command: curl -o /tmp/outputs/app.ipa "$(npx expo url:ipa --non-interactive)"
-      - persist_to_workspace:
-          root: /tmp/outputs
-          paths:
-            - app.ipa
-  push_to_testflight:
-    macos:
-      xcode: "10.2.1"
+            expo login -u $EXPO_USERNAME -p $EXPO_PASSWORD --non-interactive
+            yarn
+            expo publish
+      - save_yarn_cache:
+          platform: linux
+
+  build_ios_archive:
+    executor: ios
     steps:
       - checkout
-      - attach_workspace:
-          at: /tmp/outputs
+      - restore_yarn_cache:
+          platform: darwin
+      - run: yarn
+      - save_yarn_cache:
+          platform: darwin
+      - install_macos_deps
+      - add_yarn_binaries_to_path
+      - determine_turtle_cache_key_component
+      - restore_turtle_cache
+      - install_turtle_ios
+      - setup_turtle
+      - save_turtle_cache
+      - run:
+          name: Building Expo standalone app
+          command: |
+            echo $EXPO_IOS_DIST_P12_BASE64 > expo-project_dist.p12.base64
+            base64 --decode expo-project_dist.p12.base64 > expo-project_dist.p12
+            echo $EXPO_IOS_PROVISIONING_PROFILE_BASE64 > expo-project.mobileprovision.base64
+            base64 --decode expo-project.mobileprovision.base64 > expo-project.mobileprovision
+            turtle build:ios \
+              --team-id $EXPO_APPLE_TEAM_ID \
+              --dist-p12-path ./expo-project_dist.p12 \
+              --provisioning-profile-path ./expo-project.mobileprovision \
+              -o ~/expo-project.ipa
       - run:
           name: Installing fastlane dependencies
           command: |
@@ -111,13 +238,3 @@ jobs:
       - run:
           name: Uploading to apple app store with fastlane
           command: fastlane deliver --verbose --ipa /tmp/outputs/app.ipa --skip_metadata --skip_screenshots
-workflows:
-  app:
-    jobs:
-      - lint_and_test
-      - bump_version:
-          requires:
-            - lint_and_test
-      - publish_to_expo:
-          requires:
-            - bump_version
