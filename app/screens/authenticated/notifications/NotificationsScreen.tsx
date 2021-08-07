@@ -1,13 +1,11 @@
 import { useIsFocused } from '@react-navigation/core';
 import * as React from 'react';
-import { RefreshControl, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 // import gql from 'graphql-tag';
 
 import { FlatList } from 'react-native-gesture-handler';
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import { useAppSelector } from '../../../state';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import useNotifications from '../../../api/hooks/useNotifications';
 import NoResults from '../../../components/NoResults';
 
@@ -61,12 +59,17 @@ export default function ProfileScreen() {
   return (
     <>
       {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
+      {notifications?.edges?.length ? null : (
+        <View style={styles.empty}>
+          <NoResults title="No notifications" subtitle="Notifications will show up here" />
+        </View>
+      )}
       <FlatList
         data={notifications?.edges}
         numColumns={1}
-        ListEmptyComponent={
-          <NoResults title="No notifications" subtitle="Notifications will show up here" />
-        }
+        style={{
+          flex: 1,
+        }}
         renderItem={({ item: edge }) => {
           switch (edge?.node?.notificationType) {
             case 'boarding_call':
@@ -100,5 +103,13 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     width: '100%',
+  },
+  empty: {
+    ...StyleSheet.absoluteFillObject,
+    flexGrow: 1,
+    flex: 1,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

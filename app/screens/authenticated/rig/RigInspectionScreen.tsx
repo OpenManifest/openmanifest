@@ -1,9 +1,9 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
-import { format, startOfDay } from 'date-fns';
+import { startOfDay } from 'date-fns';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { Button, Card, Checkbox, Divider, List } from 'react-native-paper';
+import { Button, Card, Checkbox, Divider } from 'react-native-paper';
 import { KeyboardAvoidingView } from 'react-native';
 import RigInspectionForm from '../../../components/forms/rig_inspection/RigInspectionForm';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';

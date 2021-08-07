@@ -1,7 +1,7 @@
 import { sortBy, uniq } from 'lodash';
 import * as React from 'react';
 import { View, StyleSheet, Keyboard } from 'react-native';
-import { Button, Title } from 'react-native-paper';
+import { Button, Title, useTheme } from 'react-native-paper';
 import { BottomSheetModal, BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 
 interface IBottomSheetProps {
@@ -71,20 +71,30 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     // this is intentional
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDismiss, open]);
-
+  const theme = useTheme();
   const HandleComponent = React.useMemo(
     () => () =>
       !title ? (
-        <View style={styles.sheetHeader}>
+        <View
+          style={[
+            styles.sheetHeader,
+            { shadowColor: theme.colors.onSurface, backgroundColor: theme.colors.surface },
+          ]}
+        >
           <View style={styles.handle} />
         </View>
       ) : (
-        <View style={styles.sheetHeaderWithTitle}>
+        <View
+          style={[
+            styles.sheetHeaderWithTitle,
+            { shadowColor: theme.colors.onSurface, backgroundColor: theme.colors.surface },
+          ]}
+        >
           <View style={styles.handle} />
           <Title>{title}</Title>
         </View>
       ),
-    [title]
+    [theme.colors.onSurface, theme.colors.surface, title]
   );
 
   return (
@@ -98,8 +108,10 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
       handleComponent={HandleComponent}
     >
       <BottomSheetScrollView
-        style={{ backgroundColor: '#FFFFFF' }}
-        contentContainerStyle={[styles.sheet, { paddingBottom: keyboardVisible ? 400 : 80 }]}
+        contentContainerStyle={[
+          styles.sheet,
+          { paddingBottom: keyboardVisible ? 400 : 80, backgroundColor: theme.colors.surface },
+        ]}
       >
         {children}
         <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>
@@ -132,7 +144,6 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     paddingHorizontal: 16,
     elevation: 3,
-    backgroundColor: 'white',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -140,8 +151,8 @@ const styles = StyleSheet.create({
   sheetHeader: {
     zIndex: 10000,
     elevation: 2,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     height: 40,
     paddingTop: 4,
     shadowColor: '#000',
@@ -149,22 +160,20 @@ const styles = StyleSheet.create({
       width: 0,
       height: -4,
     },
-    backgroundColor: 'white',
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
   },
   sheetHeaderWithTitle: {
     zIndex: 10000,
     elevation: 2,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 14,
+    borderTopRightRadius: 14,
     height: 56,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: -4,
     },
-    backgroundColor: 'white',
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
     paddingLeft: 16,

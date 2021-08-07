@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { Platform, RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Avatar, Card, FAB, List, ProgressBar } from 'react-native-paper';
 
 import { FlatList } from 'react-native-gesture-handler';

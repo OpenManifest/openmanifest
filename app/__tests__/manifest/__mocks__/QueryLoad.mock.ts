@@ -9,7 +9,6 @@ export const MOCK_QUERY_LOAD = (override: Partial<Load>) => ({
     },
   },
   result: () => {
-    console.log('Returning mock response now');
     return {
       data: {
         load: {

@@ -23,6 +23,13 @@ export const QUERY_DROPZONE_USER = gql`
         rigInspections {
           id
           isOk
+          inspectedBy {
+            id
+            user {
+              id
+              name
+            }
+          }
           rig {
             id
           }
@@ -59,6 +66,7 @@ export const QUERY_DROPZONE_USER = gql`
           image
           rigs {
             id
+            packingCard
             name
             model
             make

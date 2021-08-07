@@ -76,6 +76,7 @@ export const MOCK_QUERY_DROPZONE = (overrides?: IOverride) => ({
               {
                 id: '1',
                 name: 'Primary',
+                packingCard: null,
                 make: 'Vector',
                 model: 'V310',
                 serial: '12345',
@@ -89,6 +90,7 @@ export const MOCK_QUERY_DROPZONE = (overrides?: IOverride) => ({
                 id: '2',
                 name: 'Pond',
                 make: 'Mirage',
+                packingCard: null,
                 model: 'G4.1',
                 serial: '34567',
                 canopySize: 170,

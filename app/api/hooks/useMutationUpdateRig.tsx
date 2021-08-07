@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { createMutation } from '../createMutation';
-import { MutationUpdateRigArgs, UpdateRigPayload } from '../schema';
+import { RigInput, UpdateRigPayload } from '../schema';
 
 const MUTATION_UPDATE_RIG = gql`
   mutation UpdateRig(
@@ -11,6 +11,7 @@ const MUTATION_UPDATE_RIG = gql`
     $serial: String
     $rigType: String
     $canopySize: Int
+    $packingCard: String
     $repackExpiresAt: Int
     $userId: Int
     $dropzoneId: Int
@@ -21,6 +22,7 @@ const MUTATION_UPDATE_RIG = gql`
         attributes: {
           name: $name
           make: $make
+          packingCard: $packingCard
           model: $model
           serial: $serial
           repackExpiresAt: $repackExpiresAt
@@ -47,6 +49,7 @@ const MUTATION_UPDATE_RIG = gql`
         packValue
         maintainedAt
         rigType
+        packingCard
 
         user {
           id
@@ -67,10 +70,7 @@ const MUTATION_UPDATE_RIG = gql`
   }
 `;
 
-export default createMutation<
-  { id: number } & MutationUpdateRigArgs['input']['attributes'],
-  UpdateRigPayload
->(MUTATION_UPDATE_RIG, {
+export default createMutation<{ id: number } & RigInput, UpdateRigPayload>(MUTATION_UPDATE_RIG, {
   getPayload: (result) => result.updateRig,
   fieldErrorMap: {},
 });

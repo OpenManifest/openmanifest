@@ -1,10 +1,7 @@
 import * as React from 'react';
-import { Caption, Card, List } from 'react-native-paper';
 
-import { formatDistanceToNow } from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
-import { TouchableOpacity } from 'react-native';
-import { Load, Notification } from '../../../../api/schema';
+import { Load, Notification } from '../../../../api/schema.d';
 import NotificationCard from './NotificationCard';
 
 interface INotification {

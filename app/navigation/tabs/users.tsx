@@ -7,6 +7,8 @@ import UsersScreen from '../../screens/authenticated/users/UsersScreen';
 import SearchableAppBar from '../../screens/authenticated/users/AppBar';
 import RigInspectionScreen from '../../screens/authenticated/rig/RigInspectionScreen';
 import ProfileScreen from '../../screens/authenticated/profile/ProfileScreen';
+import TransactionsScreen from '../../screens/authenticated/transactions/TransactionsScreen';
+import EquipmentScreen from '../../screens/authenticated/equipment/EquipmentScreen';
 
 export type ISettingsTabParams = {
   UsersScreen: {
@@ -16,6 +18,8 @@ export type ISettingsTabParams = {
   };
   RigInspectionScreen: { dropzoneUserId: number; rig: Rig };
   UserProfileScreen: undefined;
+  TransactionsScreen: undefined;
+  EquipmentScreen: undefined;
 };
 
 const Settings = createStackNavigator<ISettingsTabParams>();
@@ -58,6 +62,16 @@ export default function SettingsTab() {
         name="RigInspectionScreen"
         component={RigInspectionScreen}
         options={{ title: 'Inspection' }}
+      />
+      <Settings.Screen
+        name="TransactionsScreen"
+        component={TransactionsScreen}
+        options={{ title: 'Transactions' }}
+      />
+      <Settings.Screen
+        name="EquipmentScreen"
+        component={EquipmentScreen}
+        options={{ title: 'Equipment' }}
       />
     </Settings.Navigator>
   );
