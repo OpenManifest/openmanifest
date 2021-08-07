@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { Badge, Card, Chip, useTheme } from 'react-native-paper';
+import { Badge, Card, Chip } from 'react-native-paper';
 import { isBefore } from 'date-fns';
 
 import PilotChip from '../../../../../components/chips/PilotChip';
@@ -8,8 +8,8 @@ import PlaneChip from '../../../../../components/chips/PlaneChip';
 
 import { View } from '../../../../../components/Themed';
 import { Load, Plane, DropzoneUser, LoadState } from '../../../../../api/schema.d';
-import { actions, useAppDispatch } from '../../../../../state';
-import { errorColor, successColor, warningColor } from '../../../../../constants/Colors';
+import { actions, useAppDispatch, useAppSelector } from '../../../../../state';
+import { errorColor, warningColor } from '../../../../../constants/Colors';
 import Countdown from '../Countdown';
 import useQueryLoad from '../../../../../api/hooks/useQueryLoad';
 import useMutationUpdateLoad from '../../../../../api/hooks/useMutationUpdateLoad';
@@ -20,17 +20,18 @@ interface ILoadCardSmall {
   onPress(): void;
 }
 
-const LOAD_BADGE_COLOR: { [K in LoadState]?: string } = {
-  open: successColor,
-  cancelled: errorColor,
-  boarding_call: warningColor,
-};
-
 export default function LoadCard(props: ILoadCardSmall) {
   const { load: initialRecord, onPress } = props;
   const dispatch = useAppDispatch();
-  const theme = useTheme();
-
+  const { theme, palette } = useAppSelector((root) => root.global);
+  const LOAD_BADGE_COLOR: { [K in LoadState]?: string } = React.useMemo(
+    () => ({
+      open: palette.accent.light,
+      cancelled: errorColor,
+      boarding_call: warningColor,
+    }),
+    [palette.accent.light]
+  );
   const {
     data: load,
     loading,
@@ -113,6 +114,8 @@ export default function LoadCard(props: ILoadCardSmall) {
           backgroundColor: load?.state ? LOAD_BADGE_COLOR[load.state] : undefined,
           marginTop: -5,
           marginRight: -5,
+          color: 'white',
+          fontSize: 12,
         }}
       >
         {load?.state ? loadStates[load?.state] : ''}

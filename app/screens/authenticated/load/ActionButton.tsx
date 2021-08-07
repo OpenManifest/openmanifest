@@ -244,7 +244,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
         icon={isExpanded ? 'close' : 'plus'}
         fabStyle={{
           marginLeft: 16,
-          marginBottom: 32,
+          marginBottom: 100,
         }}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore

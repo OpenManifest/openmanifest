@@ -137,7 +137,17 @@ export default function DropzonePermissionScreen() {
       ]}
     />
   ) : (
-    <Tabs defaultIndex={0} mode="scrollable">
+    <Tabs
+      defaultIndex={0}
+      mode="scrollable"
+      theme={{
+        ...state.theme,
+        colors: {
+          ...state.theme.colors,
+          primary: state.palette.primary.light,
+        },
+      }}
+    >
       {data?.dropzone?.roles?.map((role) => (
         <TabScreen
           label={capitalize(role.name?.replace('_', ' '))}

@@ -71,17 +71,17 @@ export default function ProfileScreen() {
         renderItem={({ item: edge }) => {
           switch (edge?.node?.notificationType) {
             case 'boarding_call':
-              return <BoardingCallNotification notification={edge.node} />;
+              return <BoardingCallNotification key={edge.node.id} notification={edge.node} />;
             case 'user_manifested':
-              return <ManifestedCard notification={edge.node} />;
+              return <ManifestedCard key={edge.node.id} notification={edge.node} />;
             case 'credits_updated':
-              return <FundsNotification notification={edge.node} />;
+              return <FundsNotification key={edge.node.id} notification={edge.node} />;
             case 'rig_inspection_requested':
             case 'rig_inspection_completed':
-              return <RigInspectionNotification notification={edge.node} />;
+              return <RigInspectionNotification key={edge.node.id} notification={edge.node} />;
             case 'permission_granted':
             case 'permission_revoked':
-              return <PermissionNotification notification={edge.node} />;
+              return <PermissionNotification key={edge.node.id} notification={edge.node} />;
             default:
               return null;
           }

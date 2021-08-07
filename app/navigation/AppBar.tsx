@@ -61,7 +61,7 @@ interface IAppBarProps extends StackHeaderProps {
 
 function AppBar(props: IAppBarProps) {
   const { navigation, previous, scene, hideWarnings } = props;
-  const { currentDropzoneId } = useAppSelector((root) => root.global);
+  const { currentDropzoneId, palette, theme } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
   const [loadData, { data, loading }] = useLazyQuery<Query>(QUERY_CURRENT_USER, {
     variables: {
@@ -77,13 +77,15 @@ function AppBar(props: IAppBarProps) {
 
   return (
     <>
-      <Appbar.Header>
+      <Appbar.Header
+        style={{ backgroundColor: theme.dark ? theme.colors.background : theme.colors.surface }}
+      >
         {previous ? (
           <Appbar.BackAction onPress={navigation.goBack} />
         ) : (
           <IconButton
+            color={theme.dark ? palette.primary.dark : palette.primary.light}
             icon="account-circle"
-            color="#FFFFFF"
             size={32}
             onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
           />
@@ -96,7 +98,11 @@ function AppBar(props: IAppBarProps) {
         {scene.descriptor.options.headerRight ? (
           scene.descriptor.options.headerRight({ tintColor: 'white' })
         ) : (
-          <Chip mode="outlined">{`$${data?.dropzone?.currentUser?.credits || 0}`}</Chip>
+          <Chip
+            style={{ borderColor: palette.primary.dark }}
+            mode="outlined"
+            textStyle={{ color: palette.primary.dark }}
+          >{`$${data?.dropzone?.currentUser?.credits || 0}`}</Chip>
         )}
       </Appbar.Header>
       {hideWarnings ? null : (

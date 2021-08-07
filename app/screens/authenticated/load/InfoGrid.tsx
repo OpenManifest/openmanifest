@@ -27,6 +27,9 @@ export default function InfoGrid(props: IInfoGrid) {
                     fontWeight: item.bold !== false ? 'bold' : undefined,
                   },
                 ]}
+                style={{
+                  paddingVertical: 20,
+                }}
                 title={item.value}
                 descriptionStyle={styles.description}
                 description={item.title}
@@ -49,19 +52,15 @@ const styles = StyleSheet.create({
   divider: {
     height: StyleSheet.hairlineWidth,
     width: '100%',
-    backgroundColor: 'white',
   },
   verticalDivider: {
     width: StyleSheet.hairlineWidth,
     height: '100%',
-    backgroundColor: 'white',
   },
   title: {
     textAlign: 'center',
-    color: 'white',
   },
   description: {
     textAlign: 'center',
-    color: 'white',
   },
 });

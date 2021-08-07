@@ -1,31 +1,41 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Avatar, IconButton, Paragraph, Title, TouchableRipple } from 'react-native-paper';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useAppSelector } from '../../../../state';
-import { DropzoneUser } from '../../../../api/schema';
+import {
+  Avatar,
+  Divider,
+  IconButton,
+  Menu,
+  Paragraph,
+  Title,
+  TouchableRipple,
+} from 'react-native-paper';
+import format from 'date-fns/format';
+import color from 'color';
+import { openURL } from 'expo-linking';
+import useRestriction from '../../../../hooks/useRestriction';
+import { actions, useAppDispatch, useAppSelector } from '../../../../state';
+import { DropzoneUser, Permission } from '../../../../api/schema.d';
 
 interface IUserHeader {
   dropzoneUser?: DropzoneUser;
   canEdit?: boolean;
   children?: React.ReactNode;
+  variant?: 'dark' | 'light';
   onPressAvatar?(): void;
   onEdit?(): void;
 }
 export default function UserHeader(props: IUserHeader) {
-  const { dropzoneUser, onEdit, canEdit, children, onPressAvatar } = props;
-  const { theme } = useAppSelector((root) => root.global);
+  const { dropzoneUser, variant, onEdit, canEdit, children, onPressAvatar } = props;
+  const { theme, palette } = useAppSelector((root) => root.global);
+  const [isContactOpen, setContactOpen] = React.useState<boolean>(false);
+  const canUpdateUser = useRestriction(Permission.UpdateUser);
+  const dispatch = useAppDispatch();
+
+  const textColor = variant === 'light' ? theme.colors.surface : theme.colors.onSurface;
+  const primaryDark = color(theme.colors.primary).darken(0.3).hex();
 
   return (
-    <LinearGradient
-      start={{ x: 0.0, y: 0.25 }}
-      end={{ x: 0.5, y: 0.75 }}
-      style={styles.container}
-      colors={[
-        theme.dark ? theme.colors.surface : theme.colors.accent,
-        theme.dark ? theme.colors.surface : theme.colors.primary,
-      ]}
-    >
+    <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <View style={styles.actions}>
         {!canEdit ? null : (
           <IconButton
@@ -43,28 +53,80 @@ export default function UserHeader(props: IUserHeader) {
               <Avatar.Icon
                 size={80}
                 icon="account"
-                color={theme.dark ? theme.colors.text : theme.colors.primary}
-                style={{ backgroundColor: theme.colors.surface }}
+                color={theme.dark ? theme.colors.text : palette.primary.dark}
+                style={{ backgroundColor: palette.primary.light }}
               />
             ) : (
               <Avatar.Image
                 size={80}
                 source={{ uri: dropzoneUser?.user.image }}
-                style={{ backgroundColor: theme.colors.surface }}
+                style={{ backgroundColor: palette.primary.light }}
               />
             )}
           </TouchableRipple>
         </View>
         <View style={styles.titleContainer}>
-          <Title style={styles.title}>{dropzoneUser?.user?.name}</Title>
-          <Paragraph style={styles.paragraph}>
+          <Menu
+            onDismiss={() => setContactOpen(false)}
+            visible={isContactOpen}
+            anchor={
+              <TouchableRipple onPress={() => setContactOpen(true)}>
+                <Title style={[styles.title, { color: primaryDark, fontSize: 26 }]}>
+                  {dropzoneUser?.user?.name}
+                </Title>
+              </TouchableRipple>
+            }
+          >
+            <Menu.Item
+              onPress={() => {
+                setContactOpen(false);
+                // TODO: Send email
+                if (dropzoneUser?.user.email) {
+                  openURL(`mail:${dropzoneUser?.user.email}`);
+                }
+              }}
+              icon="email"
+              title={dropzoneUser?.user?.email}
+            />
+            <Menu.Item
+              onPress={() => {
+                setContactOpen(false);
+                if (dropzoneUser?.user.email) {
+                  openURL(`tel:${dropzoneUser?.user.phone}`);
+                }
+              }}
+              icon="phone"
+              title={dropzoneUser?.user?.phone}
+            />
+            <Menu.Item
+              onPress={() => {
+                setContactOpen(false);
+                if (canUpdateUser && dropzoneUser) {
+                  dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser));
+                }
+              }}
+              icon="card-account-details-star-outline"
+              title={
+                !dropzoneUser?.expiresAt
+                  ? 'Not a member'
+                  : format((dropzoneUser?.expiresAt || 0) * 1000, 'yyyy/MM/dd')
+              }
+            />
+          </Menu>
+          <Divider style={{ width: '100%' }} />
+          <Paragraph
+            style={[
+              styles.paragraph,
+              { fontWeight: 'bold', fontSize: 14, paddingLeft: 4, color: textColor },
+            ]}
+          >
             {dropzoneUser?.role?.name?.replace('_', ' ').toUpperCase()}
           </Paragraph>
         </View>
       </View>
 
       {children}
-    </LinearGradient>
+    </View>
   );
 }
 

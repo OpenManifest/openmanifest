@@ -152,23 +152,29 @@ export default function UsersScreen() {
                 <List.Item
                   style={{ width: '100%' }}
                   title={edge?.node?.user.name}
+                  titleStyle={{ fontWeight: 'bold' }}
+                  descriptionStyle={{ fontSize: 12 }}
                   description={edge?.node?.role?.name?.replace('_', ' ').toUpperCase()}
                   left={() =>
                     !edge?.node?.user?.image ? (
                       <Avatar.Icon
                         icon="account"
                         style={{
-                          backgroundColor: 'transparent',
+                          backgroundColor: global.palette.primary.light,
                           alignSelf: 'center',
-                          marginHorizontal: 12,
+                          marginHorizontal: 22,
                         }}
-                        color={global.theme.colors.primary}
-                        size={55}
+                        color={global.palette.primary.dark}
+                        size={36}
                       />
                     ) : (
                       <Avatar.Image
                         source={{ uri: edge?.node?.user.image }}
-                        style={{ alignSelf: 'center', marginHorizontal: 22 }}
+                        style={{
+                          alignSelf: 'center',
+                          marginHorizontal: 22,
+                          backgroundColor: global.palette.primary.light,
+                        }}
                         size={36}
                       />
                     )

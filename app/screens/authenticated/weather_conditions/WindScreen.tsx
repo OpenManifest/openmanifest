@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Button, useTheme } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 // eslint-disable-next-line max-len
@@ -11,6 +11,7 @@ import WeatherConditionForm from '../../../components/forms/weather_conditions/W
 
 export default function WindScreen() {
   const state = useAppSelector((root) => root.forms.weather);
+  const { theme, palette } = useAppSelector((root) => root.global);
   const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
@@ -42,10 +43,9 @@ export default function WindScreen() {
     dispatch(actions.forms.weather.reset());
     dispatch(actions.forms.weather.setOpen(false));
   }, [mutationCreateWeatherConditions, state, dropzoneId, navigation, dispatch]);
-  const theme = useTheme();
 
   return (
-    <ScrollableScreen contentContainerStyle={{ backgroundColor: theme.colors.backdrop }}>
+    <ScrollableScreen contentContainerStyle={{ backgroundColor: theme.colors.background }}>
       <WeatherConditionForm
         onPressJumpRun={() => navigation.navigate('JumpRunScreen')}
         variant={theme.dark ? 'light' : undefined}
@@ -54,8 +54,21 @@ export default function WindScreen() {
         <Button
           loading={mutationCreateWeatherConditions.loading}
           mode="contained"
+          color={palette.primary.main}
           disabled={mutationCreateWeatherConditions.loading}
-          style={styles.button}
+          style={[
+            styles.button,
+            {
+              borderRadius: 20,
+              height: 42,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 20,
+            },
+          ]}
+          labelStyle={{
+            color: 'white',
+          }}
           onPress={async () => {
             onSaveConditions();
           }}

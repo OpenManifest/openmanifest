@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Card, HelperText, List, Surface, TouchableRipple } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
+import manipulate from 'color';
 import ColorPickerDialog from './ColorPickerDialog';
 
 const COLOR_PRESETS = [
   '#000000',
-  '#AAAAAA',
-  '#DDDDDD',
   '#FF1414',
   '#D6116B',
   '#B70E97',
@@ -54,11 +53,31 @@ function ColorPicker(props: IColorPicker) {
               <Surface
                 style={[
                   styles.colorBox,
-                  { backgroundColor: color },
+                  { flexDirection: 'row' },
                   color === value ? { borderWidth: 2, borderColor: 'black' } : {},
                 ]}
               >
-                {null}
+                <View
+                  style={{
+                    height: '100%',
+                    width: '33%',
+                    backgroundColor: manipulate(color).lighten(0.6).hex(),
+                  }}
+                />
+                <View
+                  style={{
+                    height: '100%',
+                    width: '33%',
+                    backgroundColor: color,
+                  }}
+                />
+                <View
+                  style={{
+                    height: '100%',
+                    width: '33%',
+                    backgroundColor: manipulate(color).darken(0.3).hex(),
+                  }}
+                />
               </Surface>
             </TouchableRipple>
           ))}

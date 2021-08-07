@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Chip } from 'react-native-paper';
+import { useAppSelector } from '../state';
 import { Permission } from '../api/schema.d';
 
 export interface IBadgeProps {
@@ -18,6 +19,7 @@ export interface IBadgeProps {
 
 function Badge(props: IBadgeProps) {
   const { type, selected, disabled, onPress } = props;
+  const { palette } = useAppSelector((root) => root.global);
   const iconName = {
     actAsDZSO: 'shield-cross',
     actAsGCA: 'radio-handheld',
@@ -37,15 +39,23 @@ function Badge(props: IBadgeProps) {
   return (
     <Chip
       mode={selected ? 'outlined' : 'flat'}
-      style={[styles.chip, selected ? undefined : { opacity: 0.5 }].filter(Boolean)}
+      style={[
+        styles.chip,
+        { borderColor: palette.primary.dark },
+        selected ? undefined : { opacity: 0.5 },
+      ].filter(Boolean)}
       disabled={disabled}
       onPress={() => onPress?.()}
     >
       <View style={styles.innerChip}>
         <View style={{ marginRight: 8 }}>
-          <MaterialCommunityIcons name={selected ? 'check' : iconName} color="#FFFFFF" size={18} />
+          <MaterialCommunityIcons
+            name={selected ? 'check' : iconName}
+            color={palette.primary.dark}
+            size={18}
+          />
         </View>
-        <Text style={{ color: 'white' }}>{label}</Text>
+        <Text style={{ color: palette.primary.dark }}>{label}</Text>
       </View>
     </Chip>
   );

@@ -2,12 +2,13 @@ import * as React from 'react';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { StyleSheet, ImageBackground, Text, View, TouchableOpacity } from 'react-native';
-import { Card, Divider } from 'react-native-paper';
+import { Card, Divider, useTheme } from 'react-native-paper';
 import format from 'date-fns/format';
 import { orderBy } from 'lodash';
 import { useNavigation } from '@react-navigation/native';
 import SkeletonContent from 'react-native-skeleton-content';
 import weatherBackground from '../../../../../assets/images/weather.png';
+import nightBackground from '../../../../../assets/images/night.png';
 import useCurrentDropzone from '../../../../api/hooks/useCurrentDropzone';
 import { actions, useAppDispatch } from '../../../../state';
 import useRestriction from '../../../../hooks/useRestriction';
@@ -18,6 +19,7 @@ export default function WeatherBoard() {
   const { dropzone, loading, called } = useCurrentDropzone();
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
+  const theme = useTheme();
 
   const conditions = dropzone?.currentConditions;
 
@@ -47,7 +49,7 @@ export default function WeatherBoard() {
       }}
     >
       <ImageBackground
-        source={weatherBackground}
+        source={theme.dark ? nightBackground : weatherBackground}
         style={{ ...StyleSheet.absoluteFillObject }}
         resizeMode="cover"
       >
