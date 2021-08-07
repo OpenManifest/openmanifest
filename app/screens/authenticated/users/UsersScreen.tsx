@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Platform, RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Avatar, Card, FAB, List, ProgressBar } from 'react-native-paper';
 
 import { FlatList } from 'react-native-gesture-handler';
@@ -78,9 +78,8 @@ export default function UsersScreen() {
   const canCreateUser = useRestriction(Permission.CreateUser);
   const { width } = useWindowDimensions();
 
-  const cardWidth = 360;
+  const cardWidth = 370;
   const numColumns = Math.floor(width / cardWidth) || 1;
-  const contentWidth = cardWidth * numColumns + 8;
 
   const users = data?.dropzone?.dropzoneUsers?.edges || [];
   const initialLoading = !users?.length && loading;
@@ -99,7 +98,7 @@ export default function UsersScreen() {
         keyExtractor={({ item }, idx) => `user-${item?.node?.id || idx}`}
         style={{
           flex: 1,
-          paddingTop: 35,
+          paddingTop: 0,
         }}
         refreshing={loading}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
@@ -115,7 +114,7 @@ export default function UsersScreen() {
           </View>
         )}
         numColumns={numColumns}
-        contentContainerStyle={{ width: contentWidth, alignSelf: 'center' }}
+        contentContainerStyle={{ width: '100%', alignSelf: 'center' }}
         renderItem={({ item: edge }) =>
           edge === 1 ? (
             <UserCardSkeleton width={cardWidth} />
@@ -123,7 +122,7 @@ export default function UsersScreen() {
             <Card
               key={`user-${edge?.node?.id}`}
               elevation={3}
-              style={{ width: cardWidth, margin: 4 }}
+              style={{ margin: 0, marginVertical: 0, borderRadius: 2, width: '100%' }}
             >
               <Card.Content
                 style={{ paddingLeft: 0, paddingTop: 0, paddingRight: 0, paddingBottom: 0 }}
@@ -136,14 +135,19 @@ export default function UsersScreen() {
                     !edge?.node?.user?.image ? (
                       <Avatar.Icon
                         icon="account"
-                        style={{ alignSelf: 'center', marginHorizontal: 12 }}
-                        size={48}
+                        style={{
+                          backgroundColor: 'transparent',
+                          alignSelf: 'center',
+                          marginHorizontal: 12,
+                        }}
+                        color={global.theme.colors.primary}
+                        size={55}
                       />
                     ) : (
                       <Avatar.Image
                         source={{ uri: edge?.node?.user.image }}
-                        style={{ alignSelf: 'center', marginHorizontal: 12 }}
-                        size={48}
+                        style={{ alignSelf: 'center', marginHorizontal: 22 }}
+                        size={36}
                       />
                     )
                   }

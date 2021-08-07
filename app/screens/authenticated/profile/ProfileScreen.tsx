@@ -2,8 +2,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import { useMutation } from '@apollo/client';
 import * as React from 'react';
-import { Platform, RefreshControl, StyleSheet, Text } from 'react-native';
-import { Chip, DataTable, Divider, IconButton, ProgressBar } from 'react-native-paper';
+import { Platform, RefreshControl, StyleSheet, View } from 'react-native';
+import { Chip, Divider, ProgressBar } from 'react-native-paper';
 import format from 'date-fns/format';
 import gql from 'graphql-tag';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -13,7 +13,6 @@ import startOfDay from 'date-fns/startOfDay';
 import { QUERY_DROPZONE_USERS } from '../../../api/hooks/useQueryDropzoneUsers';
 import { QUERY_PERMISSION_USER } from '../../../components/chips/GcaChip';
 
-import { successColor, warningColor } from '../../../constants/Colors';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import { Mutation, Permission, Query } from '../../../api/schema.d';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
@@ -22,15 +21,19 @@ import CreditsSheet from '../../../components/dialogs/CreditsDialog/Credits';
 import RigDialog from '../../../components/dialogs/Rig';
 import EditUserSheet from '../../../components/dialogs/User';
 
-import TableCard from './UserInfo/TableCard';
 import Header from './UserInfo/Header';
 import InfoGrid from './UserInfo/InfoGrid';
 import useCurrentDropzone, { QUERY_DROPZONE } from '../../../api/hooks/useCurrentDropzone';
-import useDropzoneUser, { QUERY_DROPZONE_USER } from '../../../api/hooks/useDropzoneUser';
+// eslint-disable-next-line max-len
+import useDropzoneUserProfile, {
+  QUERY_DROPZONE_USER_PROFILE,
+} from '../../../api/hooks/useDropzoneUserProfile';
 import Badge, { IBadgeProps } from '../../../components/Badge';
 import useRestriction from '../../../hooks/useRestriction';
 import useMutationRevokePermission from '../../../api/hooks/useMutationRevokePermission';
 import useMutationGrantPermission from '../../../api/hooks/useMutationGrantPermission';
+
+import SlotCard from './SlotCard';
 
 const MUTATION_UPDATE_IMAGE = gql`
   mutation UpdateUserImage($id: Int, $image: String) {
@@ -77,7 +80,9 @@ export default function ProfileScreen() {
   const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
   const isSelf = currentUser?.id === route.params.userId;
 
-  const { dropzoneUser, loading, refetch } = useDropzoneUser(Number(route.params.userId));
+  const { dropzoneUser, loading, refetch } = useDropzoneUserProfile(
+    Number(route.params.userId) || currentUser.id
+  );
   const canGrantPermission = useRestriction(Permission.GrantPermission);
 
   const isFocused = useIsFocused();
@@ -108,7 +113,7 @@ export default function ProfileScreen() {
           },
         },
         {
-          query: QUERY_DROPZONE_USER,
+          query: QUERY_DROPZONE_USER_PROFILE,
           variables: {
             dropzoneId: state.currentDropzoneId,
             dropzoneUserId: Number(route.params.userId),
@@ -135,7 +140,7 @@ export default function ProfileScreen() {
           },
         },
         {
-          query: QUERY_DROPZONE_USER,
+          query: QUERY_DROPZONE_USER_PROFILE,
           variables: {
             dropzoneId: state.currentDropzoneId,
             dropzoneUserId: Number(route.params.userId),
@@ -185,7 +190,6 @@ export default function ProfileScreen() {
   const shouldShowBadge = (permission: Permission) =>
     canGrantPermission || badges.includes(permission);
 
-  console.log(forms.dropzoneUser.open);
   return (
     <>
       {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
@@ -438,122 +442,17 @@ export default function ProfileScreen() {
             <Divider style={[styles.divider, { backgroundColor: 'white' }]} />
           </Header>
         )}
-
-        <TableCard
-          title="Rigs"
-          buttonIcon="plus"
-          onPressButton={() => dispatch(actions.forms.rig.setOpen(true))}
-        >
-          <DataTable>
-            <DataTable.Header>
-              <DataTable.Title>Container</DataTable.Title>
-              <DataTable.Title numeric>Repack due</DataTable.Title>
-              <DataTable.Title numeric>Canopy size</DataTable.Title>
-              <DataTable.Title numeric>Inspected</DataTable.Title>
-            </DataTable.Header>
-
-            {dropzoneUser?.user?.rigs?.map((rig) => (
-              <DataTable.Row
-                key={`rig-${rig?.id}`}
-                onPress={() => {
-                  dispatch(actions.forms.rig.setOpen(rig));
-                }}
-                onLongPress={() =>
-                  navigation.navigate('RigInspectionScreen', {
-                    dropzoneUserId: Number(route.params.userId),
-                    rig,
-                  })
-                }
-                pointerEvents="none"
-              >
-                <DataTable.Cell>
-                  {[rig?.make, rig?.model, `#${rig?.serial}`].join(' ')}
-                </DataTable.Cell>
-                <DataTable.Cell numeric>
-                  {rig?.repackExpiresAt ? format(rig.repackExpiresAt * 1000, 'yyyy/MM/dd') : '-'}
-                </DataTable.Cell>
-                <DataTable.Cell numeric>{`${rig?.canopySize}`}</DataTable.Cell>
-                <DataTable.Cell numeric>
-                  <IconButton
-                    icon={
-                      dropzoneUser?.rigInspections?.some(
-                        (insp) => insp.rig?.id === rig.id && insp.isOk
-                      )
-                        ? 'eye-check'
-                        : 'eye-minus'
-                    }
-                    color={
-                      dropzoneUser?.rigInspections?.some(
-                        (insp) => insp.rig?.id === rig.id && insp.isOk
-                      )
-                        ? successColor
-                        : warningColor
-                    }
-                    onPress={() =>
-                      navigation.navigate('RigInspectionScreen', {
-                        dropzoneUserId: Number(route.params.userId),
-                        rig,
-                      })
-                    }
-                  />
-                </DataTable.Cell>
-              </DataTable.Row>
-            ))}
-          </DataTable>
-        </TableCard>
-
-        <TableCard
-          title="Transactions"
-          {...(canAddTransaction
-            ? {
-                buttonIcon: 'plus',
-                onPressButton: () => {
-                  if (dropzoneUser) {
-                    dispatch(actions.forms.credits.setOpen(dropzoneUser));
-                  }
-                },
-              }
-            : {})}
-        >
-          <DataTable>
-            <DataTable.Header>
-              <DataTable.Title>Time</DataTable.Title>
-              <DataTable.Title>Type</DataTable.Title>
-              <DataTable.Title>Message</DataTable.Title>
-              <DataTable.Title numeric>Amount</DataTable.Title>
-            </DataTable.Header>
-            {dropzoneUser?.transactions?.edges?.map((edge) => (
-              <DataTable.Row key={`transaction-${edge?.node?.id}`}>
-                <DataTable.Cell>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontStyle: 'italic',
-                      color: '#999999',
-                    }}
-                  >
-                    {!edge?.node?.createdAt
-                      ? null
-                      : format(edge?.node?.createdAt * 1000, 'yyyy/MM/dd hh:mm')}
-                  </Text>
-                </DataTable.Cell>
-                <DataTable.Cell>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontStyle: 'italic',
-                      color: '#999999',
-                    }}
-                  >
-                    {edge?.node?.status}
-                  </Text>
-                </DataTable.Cell>
-                <DataTable.Cell>{edge?.node?.message}</DataTable.Cell>
-                <DataTable.Cell numeric>{edge?.node?.amount}</DataTable.Cell>
-              </DataTable.Row>
-            ))}
-          </DataTable>
-        </TableCard>
+        <View style={{ height: 12 }} />
+        {dropzoneUser?.slots?.edges?.map((edge) =>
+          edge?.node ? (
+            <SlotCard
+              slot={edge.node}
+              onPress={() => {
+                navigation.navigate('LoadScreen', { load: edge.node });
+              }}
+            />
+          ) : null
+        )}
       </ScrollableScreen>
 
       <RigDialog

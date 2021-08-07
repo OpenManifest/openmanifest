@@ -16,10 +16,14 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.manifest);
   const createSlot = useMutationCreateSlot({
-    onSuccess: (payload) => {
-      dispatch(actions.forms.manifest.reset());
-      onSuccess();
-    },
+    onSuccess: (payload) =>
+      setTimeout(() => {
+        dispatch(actions.forms.manifest.reset());
+        dispatch(
+          actions.notifications.showSnackbar({ message: 'Board updated', variant: 'success' })
+        );
+        onSuccess();
+      }),
 
     onFieldError: (field, message) =>
       dispatch(actions.forms.manifest.setFieldError([field as keyof ManifestUserFields, message])),

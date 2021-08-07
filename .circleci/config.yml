@@ -123,9 +123,6 @@ workflows:
               only: master
           requires:
             - bump_version
-      - build_ios_archive:
-          requires:
-            - publish_app
 
 jobs:
   lint_and_test:

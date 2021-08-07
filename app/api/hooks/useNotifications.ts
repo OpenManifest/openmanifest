@@ -18,6 +18,13 @@ const QUERY_DROPZONE_USER_NOTIFICATIONS = gql`
               message
               notificationType
               createdAt
+              sentBy {
+                id
+                user {
+                  id
+                  name
+                }
+              }
 
               resource {
                 ... on Load {
@@ -40,6 +47,37 @@ const QUERY_DROPZONE_USER_NOTIFICATIONS = gql`
                     loadNumber
                     dispatchAt
                     state
+                  }
+                }
+
+                ... on Rig {
+                  id
+                  user {
+                    id
+                    name
+                  }
+                  rigInspections(dropzoneId: $dropzoneId) {
+                    id
+                    createdAt
+                    inspectedBy {
+                      id
+                      user {
+                        id
+                        name
+                      }
+                    }
+                  }
+                }
+
+                ... on RigInspection {
+                  id
+                  createdAt
+                  inspectedBy {
+                    id
+                    user {
+                      id
+                      name
+                    }
                   }
                 }
               }

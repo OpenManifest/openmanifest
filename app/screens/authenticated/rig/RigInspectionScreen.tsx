@@ -12,9 +12,10 @@ import { Mutation, Query, Rig, Permission } from '../../../api/schema.d';
 import useRestriction from '../../../hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import { QUERY_DROPZONE_USER } from '../../../api/hooks/useDropzoneUser';
+import RigCard from '../equipment/RigCard';
 
 const QUERY_RIG_INSPECTIONS = gql`
-  query RigInspections($dropzoneUserId: Int!, $dropzoneId: Int!) {
+  query RigInspections($dropzoneUserId: Int, $dropzoneId: Int!, $userId: Int) {
     dropzone(id: $dropzoneId) {
       id
 
@@ -24,7 +25,7 @@ const QUERY_RIG_INSPECTIONS = gql`
         definition
       }
 
-      dropzoneUser(id: $dropzoneUserId) {
+      dropzoneUser(id: $dropzoneUserId, userId: $userId) {
         id
         rigInspections {
           id
@@ -116,13 +117,14 @@ export default function RigInspectionScreen() {
   const route = useRoute<{
     key: string;
     name: string;
-    params: { rig: Rig; dropzoneUserId: number };
+    params: { rig: Rig; dropzoneUserId: number; userId: number };
   }>();
-  const { rig, dropzoneUserId } = route.params;
+  const { rig, dropzoneUserId, userId } = route.params;
   const { data, refetch } = useQuery<Query>(QUERY_RIG_INSPECTIONS, {
     variables: {
       dropzoneId: Number(currentDropzone?.dropzone?.id),
       dropzoneUserId,
+      userId,
     },
   });
 
@@ -139,7 +141,7 @@ export default function RigInspectionScreen() {
   const navigation = useNavigation();
   React.useEffect(() => {
     const hasExistingRigInspection = data?.dropzone?.dropzoneUser?.rigInspections?.some(
-      (inspection) => inspection.rig?.id.toString() === rig.id.toString() && inspection.definition
+      (inspection) => inspection.rig?.id?.toString() === rig.id?.toString() && inspection.definition
     );
 
     if (hasExistingRigInspection) {
@@ -281,20 +283,7 @@ export default function RigInspectionScreen() {
           backgroundColor: 'transparent',
         }}
       >
-        <Card style={{ width: '100%', marginVertical: 16 }}>
-          <Card.Title title="Rig" />
-          <Card.Content>
-            <List.Item title="Make" description={rig.make} />
-            <List.Item title="Model" description={rig.model} />
-            <List.Item title="Serial" description={rig.serial} />
-            <List.Item
-              title="Repack due"
-              description={
-                rig?.repackExpiresAt ? format(rig.repackExpiresAt * 1000, 'yyyy/MM/dd') : '-'
-              }
-            />
-          </Card.Content>
-        </Card>
+        <RigCard rig={rig} />
 
         <Card style={{ width: '100%' }}>
           <Card.Title title={data?.dropzone?.rigInspectionTemplate?.name} />

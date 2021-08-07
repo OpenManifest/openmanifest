@@ -13,6 +13,8 @@ import { registerRootComponent } from 'expo';
 import URI from 'urijs';
 import Wrapper from './EntrypointWrapper';
 
+import AppUpdate from './components/app_update/AppUpdate';
+
 import Apollo from './api/Apollo';
 import { store, persistor, useAppSelector, useAppDispatch } from './state/store';
 
@@ -120,29 +122,31 @@ function Content() {
   }, [dispatch]);
 
   return (
-    <React.Suspense
-      fallback={
-        <View style={{ flex: 1, flexGrow: 1 }}>
-          <ProgressBar indeterminate color={state?.theme?.colors?.accent} visible />
-        </View>
-      }
-    >
-      <Apollo>
-        <MaterialProvider theme={state.theme}>
-          <SafeAreaProvider>
-            <NavigationContainer linking={LinkingConfiguration} theme={state.theme}>
-              <Wrapper>
-                <RootNavigator />
-              </Wrapper>
-            </NavigationContainer>
+    <AppUpdate>
+      <React.Suspense
+        fallback={
+          <View style={{ flex: 1, flexGrow: 1 }}>
+            <ProgressBar indeterminate color={state?.theme?.colors?.accent} visible />
+          </View>
+        }
+      >
+        <Apollo>
+          <MaterialProvider theme={state.theme}>
+            <SafeAreaProvider>
+              <NavigationContainer linking={LinkingConfiguration} theme={state.theme}>
+                <Wrapper>
+                  <RootNavigator />
+                </Wrapper>
+              </NavigationContainer>
 
-            <StatusBar />
-            <UserWizardScreen />
-            <NotificationArea />
-          </SafeAreaProvider>
-        </MaterialProvider>
-      </Apollo>
-    </React.Suspense>
+              <StatusBar />
+              <UserWizardScreen />
+              <NotificationArea />
+            </SafeAreaProvider>
+          </MaterialProvider>
+        </Apollo>
+      </React.Suspense>
+    </AppUpdate>
   );
 }
 function App() {
