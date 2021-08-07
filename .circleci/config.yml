@@ -4,7 +4,7 @@ version: 2.1
 executors:
   js:
     docker:
-      - image: circleci/node:12.13.1
+      - image: circleci/node:14
     working_directory: ~/expo-project
     environment:
       YARN_CACHE_FOLDER: ~/yarn_cache
@@ -44,10 +44,10 @@ commands:
   install_macos_deps:
     steps:
       - run:
-          name: Installing jq & node@12
+          name: Installing jq & node@14
           command: |
-            brew install jq node@12
-            brew link --overwrite --force node@12
+            brew install jq node@14
+            brew link --overwrite --force node@14
   add_yarn_binaries_to_path:
     steps:
       - run:
