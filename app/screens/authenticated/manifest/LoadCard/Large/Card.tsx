@@ -234,6 +234,7 @@ export default function LoadCard(props: ILoadCardLarge) {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
+              backgroundColor: 'transparent',
             }}
           >
             <Text>{`Load ${load?.loadNumber || 0}`}</Text>
@@ -273,8 +274,12 @@ export default function LoadCard(props: ILoadCardLarge) {
           overflow: 'hidden',
         }}
       >
-        <View style={{ flexDirection: 'row' }}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={{ flexDirection: 'row', backgroundColor: 'transparent' }}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ backgroundColor: 'transparent' }}
+          >
             <PlaneChip
               value={load?.plane}
               onSelect={async (plane) => {

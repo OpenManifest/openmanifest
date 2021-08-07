@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Chip, Menu } from 'react-native-paper';
+import { Chip, Menu, useTheme } from 'react-native-paper';
 import { Slot, DropzoneUser, Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
 
@@ -14,7 +14,9 @@ interface ILoadMasterChipSelect {
 }
 
 export default function LoadMasterChip(props: ILoadMasterChipSelect) {
-  const { small, color, backgroundColor, value, onSelect, slots } = props;
+  const { small, color: assignedColor, backgroundColor, value, onSelect, slots } = props;
+  const theme = useTheme();
+  const color = assignedColor || theme.colors.onSurface;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const allowed = useRestriction(Permission.UpdateLoad);
 

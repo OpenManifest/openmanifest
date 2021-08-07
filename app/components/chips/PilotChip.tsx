@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { Chip, Menu } from 'react-native-paper';
+import { Chip, Menu, useTheme } from 'react-native-paper';
 import { Query, DropzoneUser, Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
 import { useAppSelector } from '../../state';
@@ -40,7 +40,9 @@ const QUERY_DROPZONE_USERS = gql`
 `;
 
 export default function PilotChip(props: IPilotChipSelect) {
-  const { small, color, backgroundColor, onSelect, value } = props;
+  const { small, color: assignedColor, backgroundColor, onSelect, value } = props;
+  const theme = useTheme();
+  const color = assignedColor || theme.colors.onSurface;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 

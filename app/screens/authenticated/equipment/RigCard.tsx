@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import * as React from 'react';
 import { Text, View, StyleSheet, Platform } from 'react-native';
-import { Avatar, Card, Chip, Divider, Menu, ProgressBar } from 'react-native-paper';
+import { Avatar, Card, Chip, Divider, Menu, ProgressBar, useTheme } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
@@ -77,6 +77,7 @@ export default function RigCard(props: IRigCardProps) {
   const canUpdateRig =
     currentUser?.user?.id === rig.user?.id || (rig?.dropzone?.id && canManageDropzoneRigs);
 
+  const theme = useTheme();
   return (
     <Card onPress={onPress} style={{ marginVertical: 16 }}>
       <ProgressBar visible={isUploading} indeterminate color={accent} />
@@ -84,22 +85,32 @@ export default function RigCard(props: IRigCardProps) {
       <Card.Content>
         <View style={styles.content}>
           <View style={styles.left}>
-            <Avatar.Icon icon="parachute" size={70} />
+            <Avatar.Icon
+              icon="parachute"
+              size={70}
+              style={{ backgroundColor: theme.dark ? theme.colors.surface : theme.colors.primary }}
+            />
           </View>
           <View style={styles.right}>
             <View style={styles.textRow}>
-              <Text style={styles.label}>Container</Text>
-              <Text style={styles.description}>
+              <Text style={[styles.label, { color: theme.colors.onSurface }]}>Container</Text>
+              <Text style={[styles.description, { color: theme.colors.onSurface }]}>
                 {rig.make} {rig.model}
               </Text>
             </View>
             <View style={styles.textRow}>
-              <Text style={styles.label}>Main canopy size</Text>
-              <Text style={styles.description}>{rig.canopySize}</Text>
+              <Text style={[styles.label, { color: theme.colors.onSurface }]}>
+                Main canopy size
+              </Text>
+              <Text style={[styles.description, { color: theme.colors.onSurface }]}>
+                {rig.canopySize}
+              </Text>
             </View>
             <View style={styles.textRow}>
-              <Text style={styles.label}>Repack expiry date</Text>
-              <Text style={styles.description}>
+              <Text style={[styles.label, { color: theme.colors.onSurface }]}>
+                Repack expiry date
+              </Text>
+              <Text style={[styles.description, { color: theme.colors.onSurface }]}>
                 {rig.repackExpiresAt ? format(rig.repackExpiresAt * 1000, 'yyyy/MM/dd') : 'N/A'}
               </Text>
             </View>
