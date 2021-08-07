@@ -6,6 +6,7 @@ import WizardCompleteStep from '../../wizard/WizardCompleteStep';
 import FederationStep from './steps/Federation';
 import RigStep from './steps/Rig';
 import ReserveRepackStep from './steps/ReserveRepack';
+import AskForRigStep from './steps/AskForRig';
 import WingloadingStep from './steps/Wingloading';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import useMutationUpdateUser from '../../../api/hooks/useMutationUpdateUser';
@@ -209,6 +210,20 @@ function UserWizardScreen() {
             loading={mutationUpdateUser.loading}
             onNext={onFederationNext}
           />
+          <AskForRigStep
+            backButtonLabel="Cancel"
+            nextButtonLabel={state.fields.skipRigSetup.value ? 'Done' : 'Next'}
+            onBack={(index, setIndex) => {
+              setIndex(index - 1);
+            }}
+            onNext={(index, setIndex) => {
+              if (state.fields.skipRigSetup.value === true) {
+                setIndex(index + 4);
+              } else {
+                setIndex(index + 1);
+              }
+            }}
+          />
           <RigStep
             backButtonLabel="Back"
             nextButtonLabel="Next"
@@ -249,7 +264,11 @@ function UserWizardScreen() {
             backButtonLabel="Back"
             nextButtonLabel="Done"
             onBack={(index, setIndex) => {
-              setIndex(index - 1);
+              if (state.fields.skipRigSetup.value === true) {
+                setIndex(index - 4);
+              } else {
+                setIndex(index - 1);
+              }
             }}
             onNext={() => {
               dispatch(actions.forms.userWizard.setOpen(false));

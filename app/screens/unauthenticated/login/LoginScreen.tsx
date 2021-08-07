@@ -72,8 +72,6 @@ export default function LoginScreen() {
           },
         });
 
-        console.log({ result });
-
         if (result?.data?.userLogin?.authenticatable && result?.data?.userLogin?.credentials) {
           dispatch(actions.global.setCredentials(result.data.userLogin.credentials));
           dispatch(actions.global.setUser(result.data.userLogin.authenticatable));

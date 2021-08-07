@@ -22,7 +22,11 @@ export default React.forwardRef<ScrollView, IScrollableScreen>((props, ref) => {
         { backgroundColor: theme.colors.surface, height: height - 56 * 2 },
         style,
       ]}
-      contentContainerStyle={[styles.content, contentContainerStyle]}
+      contentContainerStyle={[
+        styles.content,
+        { backgroundColor: theme.colors.surface },
+        contentContainerStyle,
+      ]}
     >
       {children}
     </ScrollView>

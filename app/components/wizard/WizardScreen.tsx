@@ -53,7 +53,7 @@ function WizardScreen(props: IWizardScreenProps) {
         style={[styles.container, containerStyle || {}, { width }]}
         contentContainerStyle={StyleSheet.flatten([
           styles.content,
-          { minHeight: height },
+          { minHeight: height, backgroundColor: 'transparent' },
           contentStyle,
         ])}
         scrollEnabled={!disableScroll}

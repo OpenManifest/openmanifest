@@ -2,35 +2,31 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import { useMutation } from '@apollo/client';
 import * as React from 'react';
-import { Platform, RefreshControl, StyleSheet, Text } from 'react-native';
-import { Chip, DataTable, Divider, IconButton, ProgressBar } from 'react-native-paper';
+import { Platform, RefreshControl, StyleSheet, View } from 'react-native';
+import { Card, Chip, Divider, List, ProgressBar } from 'react-native-paper';
 import format from 'date-fns/format';
 import gql from 'graphql-tag';
 import { ScrollView } from 'react-native-gesture-handler';
 import { IconProps } from 'react-native-paper/lib/typescript/components/MaterialCommunityIcon';
 import * as ImagePicker from 'expo-image-picker';
-import startOfDay from 'date-fns/startOfDay';
-import { QUERY_DROPZONE_USERS } from '../../../api/hooks/useQueryDropzoneUsers';
-import { QUERY_PERMISSION_USER } from '../../../components/chips/GcaChip';
 
-import { successColor, warningColor } from '../../../constants/Colors';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import { Mutation, Permission, Query } from '../../../api/schema.d';
+import { Mutation, Permission } from '../../../api/schema.d';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import DropzoneUserDialog from '../../../components/dialogs/DropzoneUserDialog';
 import CreditsSheet from '../../../components/dialogs/CreditsDialog/Credits';
 import RigDialog from '../../../components/dialogs/Rig';
 import EditUserSheet from '../../../components/dialogs/User';
 
-import TableCard from './UserInfo/TableCard';
 import Header from './UserInfo/Header';
 import InfoGrid from './UserInfo/InfoGrid';
-import useCurrentDropzone, { QUERY_DROPZONE } from '../../../api/hooks/useCurrentDropzone';
-import useDropzoneUser, { QUERY_DROPZONE_USER } from '../../../api/hooks/useDropzoneUser';
-import Badge, { IBadgeProps } from '../../../components/Badge';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
+// eslint-disable-next-line max-len
+import useDropzoneUserProfile from '../../../api/hooks/useDropzoneUserProfile';
 import useRestriction from '../../../hooks/useRestriction';
-import useMutationRevokePermission from '../../../api/hooks/useMutationRevokePermission';
-import useMutationGrantPermission from '../../../api/hooks/useMutationGrantPermission';
+
+import SlotCard from './SlotCard';
+import PermissionBadges from './UserInfo/PermissionBadges';
 
 const MUTATION_UPDATE_IMAGE = gql`
   mutation UpdateUserImage($id: Int, $image: String) {
@@ -77,8 +73,9 @@ export default function ProfileScreen() {
   const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
   const isSelf = currentUser?.id === route.params.userId;
 
-  const { dropzoneUser, loading, refetch } = useDropzoneUser(Number(route.params.userId));
-  const canGrantPermission = useRestriction(Permission.GrantPermission);
+  const { dropzoneUser, loading, refetch } = useDropzoneUserProfile(
+    Number(route.params.userId) || Number(currentUser?.id)
+  );
 
   const isFocused = useIsFocused();
 
@@ -90,60 +87,6 @@ export default function ProfileScreen() {
   }, [isFocused, refetch]);
 
   const [mutationUpdateUser] = useMutation<Mutation>(MUTATION_UPDATE_IMAGE);
-  const revokePermission = useMutationRevokePermission({
-    onSuccess: (payload) => {
-      refetch();
-      dispatch(actions.notifications.showSnackbar({ message: 'Permission revoked' }));
-    },
-    onError: (error) => {
-      dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' }));
-    },
-    mutation: {
-      refetchQueries: [
-        {
-          query: QUERY_DROPZONE,
-          variables: {
-            dropzoneId: state.currentDropzoneId,
-            earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
-          },
-        },
-        {
-          query: QUERY_DROPZONE_USER,
-          variables: {
-            dropzoneId: state.currentDropzoneId,
-            dropzoneUserId: Number(route.params.userId),
-          },
-        },
-      ],
-    },
-  });
-  const grantPermission = useMutationGrantPermission({
-    onSuccess: (payload) => {
-      refetch();
-      dispatch(actions.notifications.showSnackbar({ message: 'Permission granted' }));
-    },
-    onError: (error) => {
-      dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' }));
-    },
-    mutation: {
-      refetchQueries: [
-        {
-          query: QUERY_DROPZONE,
-          variables: {
-            dropzoneId: state.currentDropzoneId,
-            earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
-          },
-        },
-        {
-          query: QUERY_DROPZONE_USER,
-          variables: {
-            dropzoneId: state.currentDropzoneId,
-            dropzoneUserId: Number(route.params.userId),
-          },
-        },
-      ],
-    },
-  });
 
   React.useEffect(() => {
     (async () => {
@@ -182,10 +125,8 @@ export default function ProfileScreen() {
 
   const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
   const canUpdateUser = useRestriction(Permission.UpdateUser);
-  const shouldShowBadge = (permission: Permission) =>
-    canGrantPermission || badges.includes(permission);
+  const canViewOthersTransactions = useRestriction(Permission.ReadUserTransactions);
 
-  console.log(forms.dropzoneUser.open);
   return (
     <>
       {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
@@ -204,7 +145,11 @@ export default function ProfileScreen() {
             }}
             onPressAvatar={onPickImage}
           >
-            <ScrollView horizontal style={{ marginVertical: 8 }}>
+            <ScrollView
+              horizontal
+              style={{ marginVertical: 8 }}
+              showsHorizontalScrollIndicator={false}
+            >
               <Chip
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore This is a valid prop
@@ -255,164 +200,7 @@ export default function ProfileScreen() {
                   : format((dropzoneUser?.expiresAt || 0) * 1000, 'yyyy/MM/dd')}
               </Chip>
             </ScrollView>
-            <ScrollView
-              horizontal
-              style={{ width: '100%' }}
-              contentContainerStyle={{
-                flexGrow: 1,
-                padding: 8,
-                justifyContent: 'space-evenly',
-              }}
-            >
-              {[
-                Permission.ActAsPilot,
-                Permission.ActAsDzso,
-                Permission.ActAsGca,
-                Permission.ActAsRigInspector,
-                Permission.ActAsLoadMaster,
-              ].map((permission) =>
-                !shouldShowBadge(permission) ? null : (
-                  <Badge
-                    type={permission as IBadgeProps['type']}
-                    selected={badges.includes(permission)}
-                    onPress={() =>
-                      // eslint-disable-next-line no-nested-ternary
-                      !canGrantPermission
-                        ? null
-                        : badges.includes(permission)
-                        ? revokePermission.mutate(
-                            {
-                              permissionName: permission,
-                              dropzoneUserId: Number(dropzoneUser?.id),
-                            },
-                            {
-                              refetchQueries: [
-                                {
-                                  query: QUERY_DROPZONE_USERS,
-                                  variables: {
-                                    dropzoneId: state.currentDropzoneId,
-                                    permissions: [permission],
-                                  },
-                                },
-                              ],
-                              update: async (client, { data }) => {
-                                const c = client.readQuery<Query>({
-                                  query: QUERY_PERMISSION_USER,
-                                  variables: {
-                                    permissions: [permission],
-                                    dropzoneId: Number(state.currentDropzoneId),
-                                  },
-                                });
 
-                                const updatedList = (
-                                  c?.dropzone?.dropzoneUsers?.edges || []
-                                ).filter((edge) => edge?.node?.id !== dropzoneUser?.id);
-
-                                client.writeQuery({
-                                  query: QUERY_PERMISSION_USER,
-                                  variables: {
-                                    permissions: [permission],
-                                    dropzoneId: Number(state.currentDropzoneId),
-                                  },
-                                  data: {
-                                    ...c,
-                                    dropzone: {
-                                      ...c?.dropzone,
-                                      dropzoneUsers: updatedList,
-                                    },
-                                  },
-                                });
-
-                                return {
-                                  data: {
-                                    ...c,
-                                    dropzone: {
-                                      ...c?.dropzone,
-                                      dropzoneUsers: updatedList,
-                                    },
-                                  },
-                                };
-                              },
-                            }
-                          )
-                        : grantPermission.mutate(
-                            {
-                              permissionName: permission,
-                              dropzoneUserId: Number(dropzoneUser?.id),
-                            },
-                            {
-                              refetchQueries: [
-                                {
-                                  query: QUERY_DROPZONE_USERS,
-                                  variables: {
-                                    dropzoneId: state.currentDropzoneId,
-                                    permissions: [permission],
-                                  },
-                                },
-                              ],
-                              update: async (client, { data }) => {
-                                const c = client.readQuery<Query>({
-                                  query: QUERY_PERMISSION_USER,
-                                  variables: {
-                                    permissions: [permission],
-                                    dropzoneId: Number(state.currentDropzoneId),
-                                  },
-                                });
-
-                                const current = c?.dropzone?.dropzoneUsers?.edges || [];
-                                const shouldUpdate = !!current.find(
-                                  (edge) => edge?.node?.id === dropzoneUser?.id
-                                );
-
-                                const updatedGcaList = shouldUpdate
-                                  ? [
-                                      ...(c?.dropzone?.dropzoneUsers?.edges || []).map((edge) =>
-                                        edge?.node?.id !== dropzoneUser?.id
-                                          ? edge
-                                          : {
-                                              ...edge,
-                                              node: {
-                                                ...edge?.node,
-                                                ...data?.grantPermission?.dropzoneUser,
-                                              },
-                                            }
-                                      ),
-                                    ]
-                                  : [
-                                      ...(c?.dropzone?.dropzoneUsers?.edges || []),
-                                      {
-                                        edge: {
-                                          node: data?.grantPermission?.dropzoneUser,
-                                        },
-                                      },
-                                    ];
-                                const newData = {
-                                  ...c,
-                                  dropzone: {
-                                    ...c?.dropzone,
-                                    dropzoneUsers: updatedGcaList,
-                                  },
-                                };
-                                client.writeQuery({
-                                  query: QUERY_PERMISSION_USER,
-                                  variables: {
-                                    dropzoneId: Number(state.currentDropzoneId),
-                                    permissions: [permission],
-                                  },
-                                  data: newData,
-                                });
-
-                                return {
-                                  data: newData,
-                                };
-                              },
-                            }
-                          )
-                    }
-                  />
-                )
-              )}
-            </ScrollView>
             <Divider style={styles.divider} />
             <InfoGrid
               items={[
@@ -435,125 +223,57 @@ export default function ProfileScreen() {
                 },
               ]}
             />
-            <Divider style={[styles.divider, { backgroundColor: 'white' }]} />
+            <Divider
+              style={[
+                styles.divider,
+                { height: StyleSheet.hairlineWidth, backgroundColor: 'white' },
+              ]}
+            />
+            <PermissionBadges {...{ dropzoneUser, permissions: badges }} />
           </Header>
         )}
-
-        <TableCard
-          title="Rigs"
-          buttonIcon="plus"
-          onPressButton={() => dispatch(actions.forms.rig.setOpen(true))}
-        >
-          <DataTable>
-            <DataTable.Header>
-              <DataTable.Title>Container</DataTable.Title>
-              <DataTable.Title numeric>Repack due</DataTable.Title>
-              <DataTable.Title numeric>Canopy size</DataTable.Title>
-              <DataTable.Title numeric>Inspected</DataTable.Title>
-            </DataTable.Header>
-
-            {dropzoneUser?.user?.rigs?.map((rig) => (
-              <DataTable.Row
-                key={`rig-${rig?.id}`}
-                onPress={() => {
-                  dispatch(actions.forms.rig.setOpen(rig));
-                }}
-                onLongPress={() =>
-                  navigation.navigate('RigInspectionScreen', {
-                    dropzoneUserId: Number(route.params.userId),
-                    rig,
-                  })
-                }
-                pointerEvents="none"
-              >
-                <DataTable.Cell>
-                  {[rig?.make, rig?.model, `#${rig?.serial}`].join(' ')}
-                </DataTable.Cell>
-                <DataTable.Cell numeric>
-                  {rig?.repackExpiresAt ? format(rig.repackExpiresAt * 1000, 'yyyy/MM/dd') : '-'}
-                </DataTable.Cell>
-                <DataTable.Cell numeric>{`${rig?.canopySize}`}</DataTable.Cell>
-                <DataTable.Cell numeric>
-                  <IconButton
-                    icon={
-                      dropzoneUser?.rigInspections?.some(
-                        (insp) => insp.rig?.id === rig.id && insp.isOk
-                      )
-                        ? 'eye-check'
-                        : 'eye-minus'
-                    }
-                    color={
-                      dropzoneUser?.rigInspections?.some(
-                        (insp) => insp.rig?.id === rig.id && insp.isOk
-                      )
-                        ? successColor
-                        : warningColor
-                    }
-                    onPress={() =>
-                      navigation.navigate('RigInspectionScreen', {
-                        dropzoneUserId: Number(route.params.userId),
-                        rig,
-                      })
-                    }
-                  />
-                </DataTable.Cell>
-              </DataTable.Row>
-            ))}
-          </DataTable>
-        </TableCard>
-
-        <TableCard
-          title="Transactions"
-          {...(canAddTransaction
-            ? {
-                buttonIcon: 'plus',
-                onPressButton: () => {
-                  if (dropzoneUser) {
-                    dispatch(actions.forms.credits.setOpen(dropzoneUser));
+        <View style={{ width: '100%' }}>
+          <List.Subheader>Manage</List.Subheader>
+          <Card style={{ margin: 8, marginRight: 8 }} elevation={1}>
+            {isSelf || canViewOthersTransactions ? (
+              <>
+                <List.Item
+                  style={{ width: '100%', padding: 0 }}
+                  title="Transactions"
+                  left={() => <List.Icon icon="cash" />}
+                  right={() => <List.Icon icon="chevron-right" />}
+                  onPress={() =>
+                    navigation.navigate('TransactionsScreen', { userId: dropzoneUser?.id })
                   }
-                },
-              }
-            : {})}
-        >
-          <DataTable>
-            <DataTable.Header>
-              <DataTable.Title>Time</DataTable.Title>
-              <DataTable.Title>Type</DataTable.Title>
-              <DataTable.Title>Message</DataTable.Title>
-              <DataTable.Title numeric>Amount</DataTable.Title>
-            </DataTable.Header>
-            {dropzoneUser?.transactions?.edges?.map((edge) => (
-              <DataTable.Row key={`transaction-${edge?.node?.id}`}>
-                <DataTable.Cell>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontStyle: 'italic',
-                      color: '#999999',
-                    }}
-                  >
-                    {!edge?.node?.createdAt
-                      ? null
-                      : format(edge?.node?.createdAt * 1000, 'yyyy/MM/dd hh:mm')}
-                  </Text>
-                </DataTable.Cell>
-                <DataTable.Cell>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontStyle: 'italic',
-                      color: '#999999',
-                    }}
-                  >
-                    {edge?.node?.status}
-                  </Text>
-                </DataTable.Cell>
-                <DataTable.Cell>{edge?.node?.message}</DataTable.Cell>
-                <DataTable.Cell numeric>{edge?.node?.amount}</DataTable.Cell>
-              </DataTable.Row>
-            ))}
-          </DataTable>
-        </TableCard>
+                />
+                <Divider style={{ width: '100%' }} />
+              </>
+            ) : null}
+            <List.Item
+              style={{ width: '100%', padding: 0 }}
+              title="Equipment"
+              left={() => <List.Icon icon="parachute" />}
+              right={() => <List.Icon icon="chevron-right" />}
+              onPress={() => navigation.navigate('EquipmentScreen', { userId: dropzoneUser?.id })}
+            />
+          </Card>
+        </View>
+
+        <View style={{ width: '100%' }}>
+          <List.Subheader>History</List.Subheader>
+          <Card style={{ margin: 8, marginHorizontal: 0 }} elevation={1}>
+            {dropzoneUser?.slots?.edges?.map((edge) =>
+              edge?.node ? (
+                <SlotCard
+                  slot={edge.node}
+                  onPress={() => {
+                    navigation.navigate('LoadScreen', { load: edge.node });
+                  }}
+                />
+              ) : null
+            )}
+          </Card>
+        </View>
       </ScrollableScreen>
 
       <RigDialog

@@ -15,6 +15,7 @@ export type IProfileTabParams = {
   };
   NotificationsScreen: undefined;
   EquipmentScreen: undefined;
+  LoadScreen: undefined;
   TransactionsScreen: undefined;
 };
 

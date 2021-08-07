@@ -61,10 +61,8 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
                 dispatch(actions.forms.weather.setField(['temperature', Number(temperature)]))
               }
               onChangeText={(newTemp) => {
-                console.log({ newTemp });
                 if (/\d/.test(newTemp)) {
                   const [numbers] = newTemp.match(/^\-?\d+/) || [temperature];
-                  console.log({ numbers: Number(numbers) });
                   setTemperature(Number(numbers));
                 }
               }}

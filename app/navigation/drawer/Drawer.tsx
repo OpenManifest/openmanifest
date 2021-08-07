@@ -175,6 +175,7 @@ export default function DrawerMenu() {
               });
             }}
           />
+
           <Drawer.Item
             label="Notifications"
             active={subRouteName === 'Notifications'}

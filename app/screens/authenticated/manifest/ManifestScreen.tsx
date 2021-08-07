@@ -159,8 +159,8 @@ export default function ManifestScreen() {
                 <NoResults title="No loads so far today" subtitle="How's the weather?" />
               )}
               style={{
-                flex: 1,
                 paddingTop: 35,
+                flex: 1,
                 height: Dimensions.get('window').height,
               }}
               testID="loads"

@@ -339,7 +339,9 @@ export default function LoadScreen() {
       <ManifestUserSheet
         open={forms.manifest.open}
         onClose={() => dispatch(actions.forms.manifest.setOpen(false))}
-        onSuccess={() => dispatch(actions.forms.manifest.setOpen(false))}
+        onSuccess={() => {
+          dispatch(actions.forms.manifest.setOpen(false));
+        }}
       />
       <ManifestGroupSheet
         open={forms.manifestGroup.open}

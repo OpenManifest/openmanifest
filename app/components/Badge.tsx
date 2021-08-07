@@ -1,4 +1,6 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { Chip } from 'react-native-paper';
 import { Permission } from '../api/schema.d';
 
@@ -35,21 +37,34 @@ function Badge(props: IBadgeProps) {
   return (
     <Chip
       mode={selected ? 'outlined' : 'flat'}
-      icon={iconName}
-      textStyle={{
-        ...(selected ? {} : { color: 'white' }),
-        fontSize: 12,
-      }}
-      style={[
-        { marginHorizontal: 2, height: 25, alignItems: 'center' },
-        selected ? undefined : { backgroundColor: 'transparent', borderColor: 'white' },
-      ].filter(Boolean)}
+      style={[styles.chip, selected ? undefined : { opacity: 0.5 }].filter(Boolean)}
       disabled={disabled}
       onPress={() => onPress?.()}
     >
-      {label}
+      <View style={styles.innerChip}>
+        <View style={{ marginRight: 8 }}>
+          <MaterialCommunityIcons name={selected ? 'check' : iconName} color="#FFFFFF" size={18} />
+        </View>
+        <Text style={{ color: 'white' }}>{label}</Text>
+      </View>
     </Chip>
   );
 }
 
+const styles = StyleSheet.create({
+  chip: {
+    height: 24,
+    marginLeft: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    borderColor: 'white',
+    width: 'auto',
+  },
+  innerChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 30,
+  },
+});
 export default Badge;

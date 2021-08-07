@@ -8,6 +8,14 @@ export const MUTATION_GRANT_PERMISSION = gql`
       dropzoneUser {
         id
         permissions
+        user {
+          id
+          name
+        }
+        role {
+          id
+          name
+        }
       }
       fieldErrors {
         field

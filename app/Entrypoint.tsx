@@ -7,11 +7,13 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider as MaterialProvider, ActivityIndicator, ProgressBar } from 'react-native-paper';
-import { Linking, Platform, View } from 'react-native';
+import { Appearance, Linking, Platform, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
 import URI from 'urijs';
 import Wrapper from './EntrypointWrapper';
+
+import AppUpdate from './components/app_update/AppUpdate';
 
 import Apollo from './api/Apollo';
 import { store, persistor, useAppSelector, useAppDispatch } from './state/store';
@@ -78,10 +80,21 @@ function Content() {
     console.log(intendedRoute);
   };
 
+  const isDarkMode = Appearance.getColorScheme() === 'dark';
+
+  React.useEffect(() => {
+    if (isDarkMode && !state.isDarkMode) {
+      dispatch(actions.global.toggleDarkMode());
+    } else if (!isDarkMode && state.isDarkMode) {
+      dispatch(actions.global.toggleDarkMode());
+    }
+  }, [dispatch, isDarkMode, state.isDarkMode]);
+
   React.useEffect(() => {
     if (Platform.OS === 'web') {
       return undefined;
     }
+
     registerForPushNotificationsAsync().then((token: string | null) => {
       if (token) {
         dispatch(actions.global.setExpoPushToken(token));
@@ -121,30 +134,32 @@ function Content() {
   }, [dispatch]);
 
   return (
-    <React.Suspense
-      fallback={
-        <View style={{ flex: 1, flexGrow: 1 }}>
-          <ProgressBar indeterminate color={state?.theme?.colors?.accent} visible />
-        </View>
-      }
-    >
-      <Apollo>
-        <MaterialProvider theme={state.theme}>
-          <SafeAreaProvider>
-            <ImageViewer />
-            <NavigationContainer linking={LinkingConfiguration} theme={state.theme}>
-              <Wrapper>
-                <RootNavigator />
-              </Wrapper>
-            </NavigationContainer>
+    <AppUpdate>
+      <React.Suspense
+        fallback={
+          <View style={{ flex: 1, flexGrow: 1 }}>
+            <ProgressBar indeterminate color={state?.theme?.colors?.accent} visible />
+          </View>
+        }
+      >
+        <Apollo>
+          <MaterialProvider theme={state.theme}>
+            <SafeAreaProvider>
+              <ImageViewer />
+              <NavigationContainer linking={LinkingConfiguration} theme={state.theme}>
+                <Wrapper>
+                  <RootNavigator />
+                </Wrapper>
+              </NavigationContainer>
 
-            <StatusBar />
-            <UserWizardScreen />
-            <NotificationArea />
-          </SafeAreaProvider>
-        </MaterialProvider>
-      </Apollo>
-    </React.Suspense>
+              <StatusBar />
+              <UserWizardScreen />
+              <NotificationArea />
+            </SafeAreaProvider>
+          </MaterialProvider>
+        </Apollo>
+      </React.Suspense>
+    </AppUpdate>
   );
 }
 function App() {

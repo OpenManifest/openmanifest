@@ -439,6 +439,7 @@ export type DropzoneUser = AnyResource & {
   permissions?: Maybe<Array<Permission>>;
   rigInspections?: Maybe<Array<RigInspection>>;
   role?: Maybe<UserRole>;
+  slots?: Maybe<SlotConnection>;
   transactions?: Maybe<TransactionConnection>;
   unseenNotifications: Scalars['Int'];
   updatedAt: Scalars['Int'];
@@ -452,6 +453,14 @@ export type DropzoneUserAvailableRigsArgs = {
 
 
 export type DropzoneUserNotificationsArgs = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+};
+
+
+export type DropzoneUserSlotsArgs = {
   after?: Maybe<Scalars['String']>;
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -1266,10 +1275,16 @@ export type Rig = AnyResource & {
   packValue?: Maybe<Scalars['Int']>;
   packingCard?: Maybe<Scalars['String']>;
   repackExpiresAt?: Maybe<Scalars['Int']>;
+  rigInspections?: Maybe<RigInspection>;
   rigType?: Maybe<Scalars['String']>;
   serial?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Int'];
   user?: Maybe<User>;
+};
+
+
+export type RigRigInspectionsArgs = {
+  dropzoneId: Scalars['Int'];
 };
 
 export type RigInput = {
@@ -1289,7 +1304,7 @@ export type RigInput = {
   canopySize?: Maybe<Scalars['Int']>;
 };
 
-export type RigInspection = {
+export type RigInspection = AnyResource & {
   __typename?: 'RigInspection';
   createdAt: Scalars['Int'];
   definition: Scalars['String'];
@@ -1325,6 +1340,26 @@ export type Slot = AnyResource & {
   ticketType?: Maybe<TicketType>;
   user?: Maybe<User>;
   wingLoading?: Maybe<Scalars['Float']>;
+};
+
+/** The connection type for Slot. */
+export type SlotConnection = {
+  __typename?: 'SlotConnection';
+  /** A list of edges. */
+  edges?: Maybe<Array<Maybe<SlotEdge>>>;
+  /** A list of nodes. */
+  nodes?: Maybe<Array<Maybe<Slot>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type SlotEdge = {
+  __typename?: 'SlotEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node?: Maybe<Slot>;
 };
 
 export type SlotInput = {
