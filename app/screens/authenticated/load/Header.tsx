@@ -16,16 +16,13 @@ interface ILoadHeader {
 }
 export default function UserHeader(props: ILoadHeader) {
   const { load, onEdit, canEdit, children } = props;
-  const { theme } = useAppSelector((root) => root.global);
+  const { theme, palette } = useAppSelector((root) => root.global);
   return (
     <LinearGradient
       start={{ x: 0.0, y: 0.25 }}
       end={{ x: 0.5, y: 1.0 }}
       style={styles.container}
-      colors={[
-        theme.dark ? theme.colors.surface : theme.colors.accent,
-        theme.dark ? theme.colors.surface : theme.colors.primary,
-      ]}
+      colors={[theme.colors.surface, theme.colors.surface]}
     >
       <View style={styles.actions}>
         {!canEdit ? null : (
@@ -45,8 +42,8 @@ export default function UserHeader(props: ILoadHeader) {
             <Avatar.Icon
               size={80}
               icon="shield-airplane"
-              color={theme.dark ? theme.colors.text : theme.colors.primary}
-              style={{ backgroundColor: theme.colors.surface }}
+              color={theme.dark ? theme.colors.text : palette.primary.dark}
+              style={{ backgroundColor: theme.dark ? palette.primary.dark : palette.primary.light }}
             />
           )}
         </View>
@@ -74,19 +71,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 16,
+    paddingHorizontal: 48,
+    marginBottom: 32,
+    marginTop: 32,
   },
   titleContainer: {
-    paddingLeft: 48,
+    paddingLeft: 8,
+    fontWeight: 'bold',
+    fontSize: 26,
     flex: 2 / 3,
     alignItems: 'flex-start',
     justifyContent: 'center',
   },
-  title: {
-    color: 'white',
-  },
-  paragraph: {
-    color: 'white',
-  },
+  title: {},
+  paragraph: {},
 });

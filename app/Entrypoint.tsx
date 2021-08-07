@@ -87,8 +87,10 @@ function Content() {
       dispatch(actions.global.toggleDarkMode());
     } else if (!isDarkMode && state.isDarkMode) {
       dispatch(actions.global.toggleDarkMode());
+    } else {
+      dispatch(actions.global.setPrimaryColor(state.theme.colors.primary));
     }
-  }, [dispatch, isDarkMode, state.isDarkMode]);
+  }, [dispatch, isDarkMode, state.isDarkMode, state.theme.colors.primary]);
 
   React.useEffect(() => {
     if (Platform.OS === 'web') {

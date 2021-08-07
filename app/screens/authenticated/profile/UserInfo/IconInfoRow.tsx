@@ -7,12 +7,11 @@ import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 interface IIconInfoRow {
   icon: IconSource;
   label: string;
-  iconColor?: string;
   variant?: 'dark' | 'light';
   onPress?(): void;
 }
 export default function IconInfoRow(props: IIconInfoRow) {
-  const { label, variant, icon, iconColor, onPress } = props;
+  const { label, variant, icon, onPress } = props;
 
   const theme = useTheme();
 

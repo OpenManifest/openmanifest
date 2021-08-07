@@ -9,7 +9,7 @@ export default ({config}) => {
     extra: {
       url: process.env.EXPO_ENV === 'production'
         ? "https://openmanifest.org/graphql"
-        : "http://172.20.10.2:5000/graphql"
+        : "https://openmanifest.org/graphql"
     },
     ios: {
       ...config.ios,

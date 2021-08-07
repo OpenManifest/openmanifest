@@ -1,8 +1,8 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Chip, useTheme } from 'react-native-paper';
-import color from 'color';
+import { Chip } from 'react-native-paper';
+import { useAppSelector } from '../state';
 import { Permission } from '../api/schema.d';
 
 export interface IBadgeProps {
@@ -19,6 +19,7 @@ export interface IBadgeProps {
 
 function Badge(props: IBadgeProps) {
   const { type, selected, disabled, onPress } = props;
+  const { palette } = useAppSelector((root) => root.global);
   const iconName = {
     actAsDZSO: 'shield-cross',
     actAsGCA: 'radio-handheld',
@@ -35,15 +36,12 @@ function Badge(props: IBadgeProps) {
     actAsRigInspector: 'Rig Inspector',
   }[type];
 
-  const theme = useTheme();
-  const primaryLight = color(theme.colors.primary).lighten(0.6).hex();
-  const primaryDark = color(theme.colors.primary).darken(0.3).hex();
   return (
     <Chip
       mode={selected ? 'outlined' : 'flat'}
       style={[
         styles.chip,
-        { borderColor: primaryDark },
+        { borderColor: palette.primary.dark },
         selected ? undefined : { opacity: 0.5 },
       ].filter(Boolean)}
       disabled={disabled}
@@ -53,11 +51,11 @@ function Badge(props: IBadgeProps) {
         <View style={{ marginRight: 8 }}>
           <MaterialCommunityIcons
             name={selected ? 'check' : iconName}
-            color={primaryDark}
+            color={palette.primary.dark}
             size={18}
           />
         </View>
-        <Text style={{ color: primaryDark }}>{label}</Text>
+        <Text style={{ color: palette.primary.dark }}>{label}</Text>
       </View>
     </Chip>
   );

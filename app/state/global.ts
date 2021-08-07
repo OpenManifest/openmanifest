@@ -5,6 +5,7 @@ import {
 } from '@react-navigation/native';
 import { DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme } from 'react-native-paper';
 import { Theme } from 'react-native-paper/lib/typescript/types';
+import color from 'color';
 import { Credential, User, Dropzone } from '../api/schema';
 
 const CombinedDefaultTheme: Theme = {
@@ -36,6 +37,18 @@ interface IGlobalState {
   permissions: string[];
 
   expoPushToken: string | null;
+  palette: Omit<typeof CombinedDefaultTheme.colors, 'primary' | 'accent'> & {
+    primary: {
+      light: string;
+      main: string;
+      dark: string;
+    };
+    accent: {
+      light: string;
+      main: string;
+      dark: string;
+    };
+  };
 
   theme: typeof CombinedDarkTheme | typeof CombinedDefaultTheme;
   isDarkMode: boolean;
@@ -49,6 +62,19 @@ export const initialState: IGlobalState = {
   credentials: null,
   expoPushToken: null,
   theme: CombinedDefaultTheme,
+  palette: {
+    ...CombinedDefaultTheme.colors,
+    primary: {
+      main: '#FF1414',
+      dark: '#991414',
+      light: '#FFAAAA',
+    },
+    accent: {
+      main: '#FFFFFF',
+      dark: '#FFFFFF',
+      light: '#FFFFFF',
+    },
+  },
   isDarkMode: false,
 };
 export default createSlice({
@@ -69,9 +95,35 @@ export default createSlice({
     },
     setPrimaryColor: (state: IGlobalState, action: PayloadAction<string>) => {
       state.theme.colors.primary = action.payload;
+      state.palette = {
+        ...state.theme.colors,
+        primary: {
+          dark: color(state.theme.colors.primary).darken(0.4).hex(),
+          main: state.theme.colors.primary,
+          light: color(state.theme.colors.primary).lighten(0.6).hex(),
+        },
+        accent: {
+          dark: color(state.theme.colors.accent).darken(0.4).hex(),
+          main: state.theme.colors.accent,
+          light: color(state.theme.colors.accent).lighten(0.6).hex(),
+        },
+      };
     },
     setAccentColor: (state: IGlobalState, action: PayloadAction<string>) => {
       state.theme.colors.accent = action.payload;
+      state.palette = {
+        ...state.theme.colors,
+        primary: {
+          dark: color(state.theme.colors.primary).darken(0.4).hex(),
+          main: state.theme.colors.primary,
+          light: color(state.theme.colors.primary).lighten(0.6).hex(),
+        },
+        accent: {
+          dark: color(state.theme.colors.accent).darken(0.4).hex(),
+          main: state.theme.colors.accent,
+          light: color(state.theme.colors.accent).lighten(0.8).hex(),
+        },
+      };
     },
     setDropzone: (state: IGlobalState, action: PayloadAction<Dropzone | null>) => {
       state.currentDropzone = action.payload;
@@ -84,6 +136,19 @@ export default createSlice({
       if (state.currentDropzone?.secondaryColor) {
         state.theme.colors.accent = state.currentDropzone?.secondaryColor;
       }
+      state.palette = {
+        ...state.theme.colors,
+        primary: {
+          dark: color(state.theme.colors.primary).darken(0.4).hex(),
+          main: state.theme.colors.primary,
+          light: color(state.theme.colors.primary).lighten(0.6).hex(),
+        },
+        accent: {
+          dark: color(state.theme.colors.accent).darken(0.4).hex(),
+          main: state.theme.colors.accent,
+          light: color(state.theme.colors.accent).lighten(0.6).hex(),
+        },
+      };
     },
     toggleDarkMode: (state: IGlobalState) => {
       state.isDarkMode = !state.isDarkMode;
@@ -96,6 +161,20 @@ export default createSlice({
       if (state.currentDropzone?.secondaryColor) {
         state.theme.colors.accent = state.currentDropzone?.secondaryColor;
       }
+
+      state.palette = {
+        ...state.theme.colors,
+        primary: {
+          dark: color(state.theme.colors.primary).darken(0.4).hex(),
+          main: state.theme.colors.primary,
+          light: color(state.theme.colors.primary).lighten(0.6).hex(),
+        },
+        accent: {
+          dark: color(state.theme.colors.accent).darken(0.4).hex(),
+          main: state.theme.colors.accent,
+          light: color(state.theme.colors.accent).lighten(0.6).hex(),
+        },
+      };
     },
     logout: (state: IGlobalState) => {
       Object.keys(initialState).forEach((key) => {

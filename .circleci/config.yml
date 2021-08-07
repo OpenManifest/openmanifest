@@ -185,6 +185,7 @@ jobs:
     executor: js
     environment:
       NODE_OPTIONS: --max_old_space_size=4096
+      EXPO_ENV: production
     steps:
       - checkout
       - add_yarn_binaries_to_path

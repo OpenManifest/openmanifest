@@ -15,7 +15,7 @@ interface INotification {
 
 export default function NotificationCard(props: INotification) {
   const { title, description, icon, timestamp, onPress } = props;
-  const theme = useAppSelector((root) => root.global.theme);
+  const { theme, palette } = useAppSelector((root) => root.global);
   return (
     <TouchableOpacity onPress={onPress}>
       <Card style={styles.notification} elevation={3}>
@@ -29,7 +29,7 @@ export default function NotificationCard(props: INotification) {
               <Avatar.Icon
                 size={55}
                 {...{ icon }}
-                color={theme.dark ? theme.colors.text : theme.colors.primary}
+                color={theme.dark ? theme.colors.text : palette.accent.light}
                 style={styles.avatarIcon}
               />
             )}
@@ -51,15 +51,21 @@ const styles = StyleSheet.create({
   },
   notificationTitle: {
     paddingLeft: 4,
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 12,
+    fontWeight: '600',
     marginBottom: 4,
   },
   notificationDescription: {
     paddingLeft: 4,
   },
   notificationContent: { paddingLeft: 0, paddingTop: 0, paddingRight: 0, paddingBottom: 0 },
-  notification: { margin: 0, marginVertical: 0, borderRadius: 2, width: '100%' },
+  notification: {
+    margin: 0,
+    paddingVertical: 8,
+    marginVertical: 0,
+    borderRadius: 2,
+    width: '100%',
+  },
   timestamp: {
     position: 'absolute',
     top: 4,

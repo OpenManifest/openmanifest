@@ -1,11 +1,19 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Avatar, IconButton, Menu, Paragraph, Title, TouchableRipple } from 'react-native-paper';
-import { LinearGradient } from 'expo-linear-gradient';
+import {
+  Avatar,
+  Divider,
+  IconButton,
+  Menu,
+  Paragraph,
+  Title,
+  TouchableRipple,
+} from 'react-native-paper';
 import format from 'date-fns/format';
 import color from 'color';
+import { openURL } from 'expo-linking';
 import useRestriction from '../../../../hooks/useRestriction';
-import { useAppDispatch, useAppSelector } from '../../../../state';
+import { actions, useAppDispatch, useAppSelector } from '../../../../state';
 import { DropzoneUser, Permission } from '../../../../api/schema.d';
 
 interface IUserHeader {
@@ -18,7 +26,7 @@ interface IUserHeader {
 }
 export default function UserHeader(props: IUserHeader) {
   const { dropzoneUser, variant, onEdit, canEdit, children, onPressAvatar } = props;
-  const { theme } = useAppSelector((root) => root.global);
+  const { theme, palette } = useAppSelector((root) => root.global);
   const [isContactOpen, setContactOpen] = React.useState<boolean>(false);
   const canUpdateUser = useRestriction(Permission.UpdateUser);
   const dispatch = useAppDispatch();
@@ -27,7 +35,7 @@ export default function UserHeader(props: IUserHeader) {
   const primaryDark = color(theme.colors.primary).darken(0.3).hex();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <View style={styles.actions}>
         {!canEdit ? null : (
           <IconButton
@@ -45,14 +53,14 @@ export default function UserHeader(props: IUserHeader) {
               <Avatar.Icon
                 size={80}
                 icon="account"
-                color={theme.dark ? theme.colors.text : theme.colors.primary}
-                style={{ backgroundColor: theme.colors.surface }}
+                color={theme.dark ? theme.colors.text : palette.primary.dark}
+                style={{ backgroundColor: palette.primary.light }}
               />
             ) : (
               <Avatar.Image
                 size={80}
                 source={{ uri: dropzoneUser?.user.image }}
-                style={{ backgroundColor: theme.colors.surface }}
+                style={{ backgroundColor: palette.primary.light }}
               />
             )}
           </TouchableRipple>
@@ -63,7 +71,7 @@ export default function UserHeader(props: IUserHeader) {
             visible={isContactOpen}
             anchor={
               <TouchableRipple onPress={() => setContactOpen(true)}>
-                <Title style={[styles.title, { color: primaryDark }]}>
+                <Title style={[styles.title, { color: primaryDark, fontSize: 26 }]}>
                   {dropzoneUser?.user?.name}
                 </Title>
               </TouchableRipple>
@@ -73,6 +81,9 @@ export default function UserHeader(props: IUserHeader) {
               onPress={() => {
                 setContactOpen(false);
                 // TODO: Send email
+                if (dropzoneUser?.user.email) {
+                  openURL(`mail:${dropzoneUser?.user.email}`);
+                }
               }}
               icon="email"
               title={dropzoneUser?.user?.email}
@@ -80,7 +91,9 @@ export default function UserHeader(props: IUserHeader) {
             <Menu.Item
               onPress={() => {
                 setContactOpen(false);
-                // TODO: Call phone
+                if (dropzoneUser?.user.email) {
+                  openURL(`tel:${dropzoneUser?.user.phone}`);
+                }
               }}
               icon="phone"
               title={dropzoneUser?.user?.phone}
@@ -88,7 +101,7 @@ export default function UserHeader(props: IUserHeader) {
             <Menu.Item
               onPress={() => {
                 setContactOpen(false);
-                if (canUpdateUser) {
+                if (canUpdateUser && dropzoneUser) {
                   dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser));
                 }
               }}
@@ -100,8 +113,13 @@ export default function UserHeader(props: IUserHeader) {
               }
             />
           </Menu>
-
-          <Paragraph style={[styles.paragraph, { color: textColor }]}>
+          <Divider style={{ width: '100%' }} />
+          <Paragraph
+            style={[
+              styles.paragraph,
+              { fontWeight: 'bold', fontSize: 14, paddingLeft: 4, color: textColor },
+            ]}
+          >
             {dropzoneUser?.role?.name?.replace('_', ' ').toUpperCase()}
           </Paragraph>
         </View>

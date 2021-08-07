@@ -114,7 +114,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
         ]}
       >
         {children}
-        <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>
+        <Button onPress={buttonAction} mode="contained" style={[styles.button]} loading={loading}>
           {buttonLabel}
         </Button>
       </BottomSheetScrollView>
@@ -125,9 +125,13 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
 const styles = StyleSheet.create({
   button: {
     width: '100%',
-    borderRadius: 16,
     padding: 5,
     alignSelf: 'flex-end',
+    borderRadius: 20,
+    height: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
   },
   contentContainer: {
     paddingHorizontal: 16,

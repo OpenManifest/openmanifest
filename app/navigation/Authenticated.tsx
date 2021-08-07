@@ -1,12 +1,12 @@
-import { useTheme } from 'react-native-paper';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 import { Appearance, StyleSheet, Text } from 'react-native';
 import AnimatedTabBar, { TabsConfig, BubbleTabBarItemConfig } from '@gorhom/animated-tabbar';
 import Animated from 'react-native-reanimated';
-import color from 'color';
+import c from 'color';
 
+import { useAppSelector } from '../state';
 import ManifestTab from './tabs/manifest';
 import UsersTab from './tabs/users';
 import NotificationsTab from './tabs/notifications';
@@ -27,24 +27,24 @@ const BottomTab = createBottomTabNavigator<IAuthenticatedTabParams>();
 
 const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 export default function AuthenticatedTabBar() {
-  const theme = useTheme();
+  const { theme, palette } = useAppSelector((root) => root.global);
   const isDarkMode = Appearance.getColorScheme() === 'dark';
 
   const canViewUsers = useRestriction(Permission.ReadUser);
 
-  const primaryLight = color(theme.colors.primary).lighten(0.6).hex();
+  const primaryLight = c(theme.colors.primary).lighten(0.6).hex();
 
   const tabs: TabsConfig<BubbleTabBarItemConfig> = React.useMemo(
     () => ({
       Manifest: {
         labelStyle: {
-          color: color(theme.colors.primary).darken(0.3).hex(),
+          color: theme.dark ? theme.colors.onSurface : palette.primary.dark,
         },
         icon: {
           component: ({ animatedFocus, size }) => (
             <MaterialCommunityIcons
               name="airplane"
-              color={color(theme.colors.primary).darken(0.3).hex()}
+              color={theme.dark ? theme.colors.onSurface : palette.primary.dark}
               style={[styles.icon, animatedFocus ? styles.iconActive : undefined]}
               {...{ size }}
             />
@@ -53,19 +53,19 @@ export default function AuthenticatedTabBar() {
           inactiveColor: theme.colors.primary,
         },
         background: {
-          activeColor: primaryLight,
+          activeColor: theme.dark ? palette.primary.dark : primaryLight,
           inactiveColor: theme.colors.surface,
         },
       },
       Notifications: {
         labelStyle: {
-          color: color(theme.colors.primary).darken(0.3).hex(),
+          color: theme.dark ? theme.colors.onSurface : palette.primary.dark,
         },
         icon: {
           component: ({ animatedFocus, size }) => (
             <MaterialCommunityIcons
               name="bell-outline"
-              color={color(theme.colors.primary).darken(0.3).hex()}
+              color={theme.dark ? theme.colors.onSurface : palette.primary.dark}
               style={[styles.icon, animatedFocus ? styles.iconActive : undefined]}
               {...{ size }}
             />
@@ -74,19 +74,19 @@ export default function AuthenticatedTabBar() {
           inactiveColor: theme.colors.primary,
         },
         background: {
-          activeColor: primaryLight,
+          activeColor: theme.dark ? palette.primary.dark : primaryLight,
           inactiveColor: theme.colors.surface,
         },
       },
       Users: {
         labelStyle: {
-          color: color(theme.colors.primary).darken(0.3).hex(),
+          color: theme.dark ? theme.colors.onSurface : palette.primary.dark,
         },
         icon: {
           component: ({ animatedFocus, size }) => (
             <AnimatedIcon
               name="account-group-outline"
-              color={color(theme.colors.primary).darken(0.3).hex()}
+              color={theme.dark ? theme.colors.onSurface : palette.primary.dark}
               style={[styles.icon, animatedFocus ? styles.iconActive : undefined]}
               {...{ size }}
             />
@@ -95,12 +95,20 @@ export default function AuthenticatedTabBar() {
           inactiveColor: theme.colors.primary,
         },
         background: {
-          activeColor: primaryLight,
+          activeColor: theme.dark ? palette.primary.dark : primaryLight,
           inactiveColor: theme.colors.surface,
         },
       },
     }),
-    [primaryLight, theme.colors.accent, theme.colors.primary, theme.colors.surface]
+    [
+      palette.primary.dark,
+      primaryLight,
+      theme.colors.accent,
+      theme.colors.onSurface,
+      theme.colors.primary,
+      theme.colors.surface,
+      theme.dark,
+    ]
   );
 
   return (
@@ -110,10 +118,11 @@ export default function AuthenticatedTabBar() {
         <AnimatedTabBar
           preset="bubble"
           tabs={tabs}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           animation="iconWithLabelOnFocus"
           inactiveOpacity={0.25}
           inactiveScale={0.5}
-          tabs={tabs}
           {...props}
         />
       )}
@@ -125,7 +134,7 @@ export default function AuthenticatedTabBar() {
         showLabel: true,
         adaptive: true,
         style: {
-          // backgroundColor: theme.dark ? theme.colors.backdrop : theme.colors.primary,
+          backgroundColor: theme.colors.background,
           borderTopWidth: StyleSheet.hairlineWidth,
           borderTopColor: '#CCCCCC',
         },

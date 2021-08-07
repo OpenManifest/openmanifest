@@ -1,17 +1,12 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import { useMutation } from '@apollo/client';
 import * as React from 'react';
 import { Platform, RefreshControl, StyleSheet, View } from 'react-native';
-import { Card, Chip, Divider, List, ProgressBar, useTheme } from 'react-native-paper';
-import format from 'date-fns/format';
+import { Card, Divider, List, ProgressBar, useTheme } from 'react-native-paper';
 import gql from 'graphql-tag';
-import { ScrollView } from 'react-native-gesture-handler';
-import { IconProps } from 'react-native-paper/lib/typescript/components/MaterialCommunityIcon';
 import * as ImagePicker from 'expo-image-picker';
 
 import { LinearGradient } from 'expo-linear-gradient';
-import color from 'color';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import { Mutation, Permission } from '../../../api/schema.d';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
@@ -127,13 +122,8 @@ export default function ProfileScreen() {
   const badges = dropzoneUser?.permissions?.filter((name) => /^actAs/.test(name)) || [];
 
   const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
-  const canUpdateUser = useRestriction(Permission.UpdateUser);
   const canViewOthersTransactions = useRestriction(Permission.ReadUserTransactions);
   const theme = useTheme();
-
-  const textColor = theme.colors.onSurface;
-  const primaryLight = color(theme.colors.primary).lighten(0.6).hex();
-  const primaryDark = color(theme.colors.primary).darken(0.3).hex();
 
   return (
     <LinearGradient
@@ -144,7 +134,7 @@ export default function ProfileScreen() {
     >
       {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
       <ScrollableScreen
-        style={{ backgroundColor: 'transparent' }}
+        style={{ backgroundColor: state.theme.colors.background }}
         contentContainerStyle={[styles.content, { backgroundColor: 'transparent' }]}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}
       >
@@ -161,6 +151,7 @@ export default function ProfileScreen() {
           >
             <PermissionBadges {...{ dropzoneUser, permissions: badges }} />
             <InfoGrid
+              style={{ height: 80 }}
               items={[
                 {
                   title: 'Funds',

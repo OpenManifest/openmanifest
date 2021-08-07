@@ -65,6 +65,7 @@ export default function LoadScreen() {
   const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
   const forms = useAppSelector((root) => root.forms);
+  const { palette, theme } = useAppSelector((root) => root.global);
   const route = useRoute<{ key: string; name: string; params: { load: Load } }>();
 
   const {
@@ -198,7 +199,7 @@ export default function LoadScreen() {
   const initialLoading = !detailedLoad?.slots?.length && loading;
 
   return (
-    <View style={{ flexGrow: 1 }}>
+    <View style={{ flexGrow: 1, backgroundColor: theme.colors.background }}>
       <Header load={load}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginVertical: 8 }}>
           <PlaneChip
@@ -220,21 +221,21 @@ export default function LoadScreen() {
             }}
             small
             backgroundColor="transparent"
-            color="white"
+            color={palette.primary.dark}
           />
           <GCAChip
             value={load?.gca}
             onSelect={updateGCA}
             small
             backgroundColor="transparent"
-            color="white"
+            color={palette.primary.dark}
           />
           <PilotChip
             value={load?.pilot}
             onSelect={updatePilot}
             small
             backgroundColor="transparent"
-            color="white"
+            color={palette.primary.dark}
           />
           <LoadMasterChip
             value={load?.loadMaster}
@@ -242,7 +243,7 @@ export default function LoadScreen() {
             onSelect={updateLoadMaster}
             small
             backgroundColor="transparent"
-            color="white"
+            color={palette.primary.dark}
           />
         </ScrollView>
         <InfoGrid

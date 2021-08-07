@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Surface } from 'react-native-paper';
+import color from 'color';
+import { useAppSelector } from '../../state';
 
 interface IPhonePreview {
   primaryColor?: string;
@@ -9,16 +11,20 @@ interface IPhonePreview {
 
 function PhonePreview(props: IPhonePreview) {
   const { primaryColor, secondaryColor } = props;
-
+  const { theme } = useAppSelector((root) => root.global);
+  const primaryLight = color(primaryColor).lighten(0.6).hex();
   return (
     <View>
       <Surface style={styles.previewContainer}>
-        <View style={[styles.previewAppBar, { backgroundColor: primaryColor }]} />
+        <View style={[styles.previewAppBar, { backgroundColor: theme.colors.surface }]} />
         <View style={[styles.previewLoadCard]} />
         <View style={[styles.previewLoadCard2]} />
         <View style={[styles.previewLoadCard3]} />
         <View style={[styles.previewButton, { backgroundColor: secondaryColor }]} />
-        <View style={[styles.previewTabBar, { backgroundColor: primaryColor }]} />
+        <View style={[styles.previewTabBar, { backgroundColor: theme.colors.surface }]} />
+        <View style={[styles.previewTabButton, { backgroundColor: primaryLight }]} />
+        <View style={[styles.previewTabButton2, { backgroundColor: primaryLight }]} />
+        <View style={[styles.previewTabButton3, { backgroundColor: primaryLight }]} />
       </Surface>
       <Text style={styles.label}>Phone</Text>
     </View>
@@ -39,7 +45,35 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: '#CCCCCC',
+    backgroundColor: '#EFEFEF',
     alignSelf: 'center',
+  },
+  previewTabButton: {
+    width: 25,
+    height: 9,
+    borderRadius: 4.5,
+    backgroundColor: 'blue',
+    position: 'absolute',
+    bottom: 4,
+    left: 30,
+  },
+  previewTabButton2: {
+    width: 9,
+    height: 9,
+    borderRadius: 4.5,
+    backgroundColor: 'blue',
+    position: 'absolute',
+    bottom: 4,
+    left: 59,
+  },
+  previewTabButton3: {
+    width: 9,
+    height: 9,
+    borderRadius: 4.5,
+    backgroundColor: 'blue',
+    position: 'absolute',
+    bottom: 4,
+    left: 70,
   },
 
   previewAppBar: {
@@ -66,7 +100,7 @@ const styles = StyleSheet.create({
     height: '20%',
     marginVertical: '2%',
     marginHorizontal: '2%',
-    backgroundColor: '#DDDDDD',
+    backgroundColor: '#FFFFFF',
     position: 'absolute',
     top: '15%',
   },
@@ -74,7 +108,7 @@ const styles = StyleSheet.create({
     width: '96%',
     height: '20%',
     borderRadius: 2,
-    backgroundColor: '#DDDDDD',
+    backgroundColor: '#FFFFFF',
     marginVertical: '2%',
     marginHorizontal: '2%',
     position: 'absolute',
@@ -85,7 +119,7 @@ const styles = StyleSheet.create({
     height: '20%',
     borderRadius: 2,
     marginVertical: '2%',
-    backgroundColor: '#DDDDDD',
+    backgroundColor: '#FFFFFF',
     marginHorizontal: '2%',
     position: 'absolute',
     top: '59%',
