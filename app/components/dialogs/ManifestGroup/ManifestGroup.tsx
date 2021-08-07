@@ -2,7 +2,7 @@ import { gql, useMutation } from '@apollo/client';
 import * as React from 'react';
 import { View, StyleSheet, Keyboard } from 'react-native';
 import { omit } from 'lodash';
-import { Button } from 'react-native-paper';
+import { Button, useTheme } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Mutation } from '../../../api/schema.d';
@@ -109,7 +109,6 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
   const { open, onClose, onSuccess } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.manifestGroup);
-  const globalState = useAppSelector((root) => root.global);
   const [mutationCreateSlots, mutationData] = useMutation<Mutation>(MUTATION_CREATE_SLOTS);
   const [tabIndex, setTabIndex] = React.useState(0);
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
@@ -265,10 +264,19 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
     }
   }, [memoizedClose, onDismiss, open, snapPoints?.length]);
 
+  const theme = useTheme();
+
   const HandleComponent = React.useMemo(
     () => () =>
-      <View style={[styles.sheetHeader, { backgroundColor: globalState.theme.colors.primary }]} />,
-    [globalState.theme.colors.primary]
+      (
+        <View
+          style={[
+            styles.sheetHeader,
+            { backgroundColor: theme.dark ? theme.colors.surface : theme.colors.primary },
+          ]}
+        />
+      ),
+    [theme.colors.primary, theme.colors.surface, theme.dark]
   );
 
   return (
@@ -280,7 +288,10 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
       backdropComponent={BottomSheetBackdrop}
       handleComponent={HandleComponent}
     >
-      <View style={{ backgroundColor: 'white', flexGrow: 1 }} testID="manifest-group-sheet">
+      <View
+        style={{ backgroundColor: theme.colors.surface, flexGrow: 1 }}
+        testID="manifest-group-sheet"
+      >
         <View pointerEvents={(state.fields.users?.value?.length || 0) > 0 ? undefined : 'none'}>
           <Tabs defaultIndex={tabIndex} mode="fixed" onChangeIndex={setTabIndex}>
             <TabScreen label="Create group">
@@ -299,7 +310,10 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
         ) : (
           <BottomSheetScrollView
             style={{ flex: 1, flexGrow: 1, width: '100%', height: '100%' }}
-            contentContainerStyle={[styles.sheet, { paddingBottom: keyboardVisible ? 400 : 80 }]}
+            contentContainerStyle={[
+              styles.sheet,
+              { paddingBottom: keyboardVisible ? 400 : 80, backgroundColor: theme.colors.surface },
+            ]}
           >
             <ManifestGroupForm />
             <View style={styles.buttonContainer}>
@@ -327,7 +341,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingHorizontal: 16,
-    backgroundColor: 'white',
   },
   contentContainer: {
     paddingHorizontal: 16,
@@ -335,7 +348,6 @@ const styles = StyleSheet.create({
   },
   userListContainer: {
     height: '100%',
-    backgroundColor: 'white',
     width: '100%',
     padding: 16,
   },
@@ -357,7 +369,6 @@ const styles = StyleSheet.create({
       width: 0,
       height: -4,
     },
-    backgroundColor: 'white',
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
   },

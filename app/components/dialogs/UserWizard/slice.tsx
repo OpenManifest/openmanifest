@@ -4,6 +4,10 @@ import { Rig, User } from '../../../api/schema.d';
 interface IUserWizardState {
   open: boolean;
   fields: {
+    skipRigSetup: {
+      value: boolean;
+      error: string | null;
+    };
     user: {
       value: User | null;
       error: string | null;
@@ -20,6 +24,10 @@ export const initialState: IUserWizardState = {
   fields: {
     user: {
       value: null,
+      error: null,
+    },
+    skipRigSetup: {
+      value: false,
       error: null,
     },
     rig: {

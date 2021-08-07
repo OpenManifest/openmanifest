@@ -1,30 +1,36 @@
-import { useIsFocused, useNavigation } from '@react-navigation/core';
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
-import { RefreshControl, StyleSheet, Text } from 'react-native';
-import { DataTable, ProgressBar } from 'react-native-paper';
-import format from 'date-fns/format';
+import { StyleSheet } from 'react-native';
+import { ProgressBar } from 'react-native-paper';
 
 import { FlatList } from 'react-native-gesture-handler';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import CreditsSheet from '../../../components/dialogs/CreditsDialog/Credits';
 
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import useDropzoneUser from '../../../api/hooks/useDropzoneUser';
 import TransactionCard from './TransactionCard';
 
-export default function ProfileScreen() {
+export default function TransactionsScreen() {
   const state = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
   const { currentUser } = useCurrentDropzone();
+  const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
   const { dropzoneUser, loading, refetch } = useDropzoneUser(
-    currentUser?.id ? Number(currentUser.id) : undefined
+    Number(route?.params?.userId) || Number(currentUser?.id)
   );
 
   const isFocused = useIsFocused();
   const navigation = useNavigation();
-  React.useEffect(() => navigation.setOptions({ title: 'Transactions' }), [navigation]);
+  React.useEffect(() => {
+    if (dropzoneUser?.user?.name && dropzoneUser?.id !== currentUser?.id) {
+      const [firstName] = dropzoneUser.user?.name.split(/\s/);
+      navigation.setOptions({ title: `${firstName}'s Transactions` });
+    } else {
+      navigation.setOptions({ title: 'Your Transactions' });
+    }
+  }, [currentUser?.id, dropzoneUser?.id, dropzoneUser?.user?.name, navigation]);
 
   React.useEffect(() => {
     if (isFocused) {

@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Text, View, StyleSheet, Platform } from 'react-native';
 import { Avatar, Card, Chip, Divider, Menu, ProgressBar } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import useRestriction from '../../../hooks/useRestriction';
 
@@ -63,7 +64,7 @@ export default function RigCard(props: IRigCardProps) {
 
       setUploading(true);
       // Upload image
-      const response = await updateRig.mutate({
+      await updateRig.mutate({
         id: Number(rig?.id),
         packingCard: `data:image/jpeg;base64,${result.base64}`,
       });
@@ -131,40 +132,48 @@ export default function RigCard(props: IRigCardProps) {
           <Menu.Item
             title="Upload new"
             icon="camera"
-            style={{ height: 24, marginVertical: 4 }}
+            style={{ paddingVertical: 0 }}
             onPress={() => {
               onPickImage();
               setPackingCardMenuOpen(false);
             }}
           />
-          <Divider />
+
           {!rig.packingCard ? null : (
-            <Menu.Item
-              title="View"
-              icon="eye"
-              style={{ height: 24, marginVertical: 4 }}
-              onPress={() => {
-                setPackingCardMenuOpen(false);
-                if (rig.packingCard) {
-                  dispatch(actions.imageViewer.setOpen(rig.packingCard));
-                }
-              }}
-            />
+            <>
+              <Divider />
+              <Menu.Item
+                title="View"
+                icon="eye"
+                style={{ paddingVertical: 0 }}
+                onPress={() => {
+                  setPackingCardMenuOpen(false);
+                  if (rig.packingCard) {
+                    dispatch(actions.imageViewer.setOpen(rig.packingCard));
+                  }
+                }}
+              />
+            </>
           )}
         </Menu>
 
         <Chip
           mode="outlined"
-          style={{
-            height: 24,
-            marginLeft: 8,
-            alignItems: 'center',
-            backgroundColor: rigInspection?.inspectedBy?.user?.name ? successColor : errorColor,
-          }}
+          style={[
+            styles.chip,
+            {
+              backgroundColor: rigInspection?.inspectedBy?.user?.name ? successColor : errorColor,
+            },
+          ]}
         >
-          <Text style={{ color: 'white' }}>
-            {rigInspection?.inspectedBy?.user?.name || 'Not inspected'}
-          </Text>
+          <View style={styles.innerChip}>
+            <View style={{ marginRight: 8 }}>
+              <MaterialCommunityIcons name="eye-check-outline" color="#FFFFFF" size={18} />
+            </View>
+            <Text style={{ color: 'white' }}>
+              {rigInspection?.inspectedBy?.user?.name || 'Not inspected'}
+            </Text>
+          </View>
         </Chip>
       </Card.Actions>
     </Card>
@@ -175,6 +184,19 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  chip: {
+    height: 24,
+    marginLeft: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  innerChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 30,
+    justifyContent: 'space-between',
+    flex: 1,
   },
   left: {
     flex: 0.25,

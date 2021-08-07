@@ -20,6 +20,7 @@ function AppBar({
   searchVisible,
   setSearchVisible,
 }: ISearchableAppBar) {
+  console.log({ searchVisible });
   return (
     <Appbar.Header>
       {previous ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
@@ -28,7 +29,7 @@ function AppBar({
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
-            value={searchText}
+            value={searchText || ''}
             onChangeText={(text) => onSearch(text)}
             autoFocus
           />
@@ -56,7 +57,6 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: 'transparent',
-    height: '100%',
     color: '#FFFFFF',
     fontSize: 20,
   },

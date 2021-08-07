@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 
-import { StyleSheet, Text } from 'react-native';
+import { Appearance, StyleSheet, Text } from 'react-native';
 import ManifestTab from './tabs/manifest';
 import UsersTab from './tabs/users';
 import NotificationsTab from './tabs/notifications';
@@ -24,6 +24,7 @@ const BottomTab = createBottomTabNavigator<IAuthenticatedTabParams>();
 
 export default function AuthenticatedTabBar() {
   const theme = useTheme();
+  const isDarkMode = Appearance.getColorScheme() === 'dark';
 
   const canViewUsers = useRestriction(Permission.ReadUser);
 
@@ -32,12 +33,12 @@ export default function AuthenticatedTabBar() {
       initialRouteName="Manifest"
       tabBarOptions={{
         activeTintColor: '#FFFFFF',
-        inactiveBackgroundColor: theme.colors.primary,
-        activeBackgroundColor: theme.colors.primary,
+        inactiveBackgroundColor: theme.dark ? theme.colors.surface : theme.colors.primary,
+        activeBackgroundColor: theme.dark ? theme.colors.surface : theme.colors.primary,
         inactiveTintColor: '#CCCCCC',
         showLabel: true,
         style: {
-          backgroundColor: theme.colors.primary,
+          backgroundColor: theme.dark ? 'transparent' : theme.colors.primary,
         },
       }}
     >
@@ -45,13 +46,23 @@ export default function AuthenticatedTabBar() {
         name="Manifest"
         component={ManifestTab}
         options={{
-          tabBarLabel: ({ focused }) =>
-            !focused ? null : <Text style={styles.label}>Manifest</Text>,
+          tabBarLabel: ({ focused, color }) =>
+            !focused ? null : (
+              <Text
+                style={[
+                  styles.label,
+                  { color: isDarkMode && focused ? theme.colors.primary : color },
+                ]}
+              >
+                Manifest
+              </Text>
+            ),
           tabBarIcon: ({ focused, color, size }) => (
             <MaterialCommunityIcons
               name="airplane"
-              {...{ color, size }}
               style={[styles.icon, focused ? styles.iconActive : undefined]}
+              {...{ size }}
+              color={isDarkMode && focused ? theme.colors.primary : color}
             />
           ),
           unmountOnBlur: true,
@@ -61,13 +72,23 @@ export default function AuthenticatedTabBar() {
         name="Notifications"
         component={NotificationsTab}
         options={{
-          tabBarLabel: ({ focused }) =>
-            !focused ? null : <Text style={styles.label}>Notifications</Text>,
+          tabBarLabel: ({ focused, color }) =>
+            !focused ? null : (
+              <Text
+                style={[
+                  styles.label,
+                  { color: isDarkMode && focused ? theme.colors.primary : color },
+                ]}
+              >
+                Notifications
+              </Text>
+            ),
           tabBarIcon: ({ focused, color, size }) => (
             <MaterialCommunityIcons
               name="bell"
               style={[styles.icon, focused ? styles.iconActive : undefined]}
-              {...{ color, size }}
+              {...{ size }}
+              color={isDarkMode && focused ? theme.colors.primary : color}
             />
           ),
           unmountOnBlur: true,
@@ -78,13 +99,24 @@ export default function AuthenticatedTabBar() {
           name="Users"
           component={UsersTab}
           options={{
-            tabBarLabel: ({ focused }) =>
-              !focused ? null : <Text style={styles.label}>Users</Text>,
+            tabBarLabel: ({ focused, color }) =>
+              !focused ? null : (
+                <Text
+                  style={[
+                    styles.label,
+                    { color: isDarkMode && focused ? theme.colors.primary : color },
+                  ]}
+                >
+                  Users
+                </Text>
+              ),
             tabBarIcon: ({ size, color, focused }) => (
               <MaterialCommunityIcons
                 {...{ size, color }}
                 name="account-group"
                 style={[styles.icon, focused ? styles.iconActive : undefined]}
+                {...{ size }}
+                color={isDarkMode && focused ? theme.colors.primary : color}
               />
             ),
             unmountOnBlur: true,
@@ -98,13 +130,12 @@ export default function AuthenticatedTabBar() {
 const styles = StyleSheet.create({
   icon: {
     opacity: 0.75,
-    color: '#FFFFFF',
   },
   iconActive: {
     opacity: 1.0,
   },
   label: {
     color: '#FFFFFF',
-    fontSize: 10,
+    fontSize: 12,
   },
 });

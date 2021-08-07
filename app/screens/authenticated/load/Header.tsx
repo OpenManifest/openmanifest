@@ -22,7 +22,10 @@ export default function UserHeader(props: ILoadHeader) {
       start={{ x: 0.0, y: 0.25 }}
       end={{ x: 0.5, y: 1.0 }}
       style={styles.container}
-      colors={[theme.colors.accent, theme.colors.primary]}
+      colors={[
+        theme.dark ? theme.colors.surface : theme.colors.accent,
+        theme.dark ? theme.colors.surface : theme.colors.primary,
+      ]}
     >
       <View style={styles.actions}>
         {!canEdit ? null : (
@@ -42,7 +45,7 @@ export default function UserHeader(props: ILoadHeader) {
             <Avatar.Icon
               size={80}
               icon="shield-airplane"
-              color={theme.colors.primary}
+              color={theme.dark ? theme.colors.text : theme.colors.primary}
               style={{ backgroundColor: theme.colors.surface }}
             />
           )}

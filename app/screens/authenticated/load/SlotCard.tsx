@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Avatar, Badge, Card, Chip } from 'react-native-paper';
+import { Avatar, Badge, Card, Chip, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ViewProps } from '../../../components/Themed';
 import { Slot } from '../../../api/schema';
@@ -14,6 +14,7 @@ interface ISlotCardProps {
 
 export default function SlotCard(props: ISlotCardProps) {
   const { slot, onPress, onDelete, style } = props;
+  const theme = useTheme();
 
   const hasPassenger = !!slot?.passengerName;
   return (
@@ -27,9 +28,18 @@ export default function SlotCard(props: ISlotCardProps) {
           title={slot?.dropzoneUser?.user.name || slot?.passengerName}
           left={() =>
             slot?.dropzoneUser?.user?.image ? (
-              <Avatar.Image source={{ uri: slot?.dropzoneUser?.user.image }} size={24} />
+              <Avatar.Image
+                style={{ backgroundColor: theme.colors.surface }}
+                source={{ uri: slot?.dropzoneUser?.user.image }}
+                size={24}
+              />
             ) : (
-              <Avatar.Icon icon="account" size={40} />
+              <Avatar.Icon
+                style={{ backgroundColor: theme.colors.surface }}
+                color={theme.dark ? theme.colors.text : theme.colors.primary}
+                icon="account"
+                size={40}
+              />
             )
           }
           right={() =>
@@ -106,7 +116,7 @@ export default function SlotCard(props: ISlotCardProps) {
               justifyContent: 'center',
             }}
           >
-            <MaterialCommunityIcons color="#333333" name="link-variant" size={30} />
+            <MaterialCommunityIcons color={theme.colors.onSurface} name="link-variant" size={30} />
           </View>
           <Card
             style={StyleSheet.flatten([
@@ -117,7 +127,14 @@ export default function SlotCard(props: ISlotCardProps) {
           >
             <Card.Title
               title={slot?.passengerName}
-              left={() => <Avatar.Icon icon="account-supervisor" size={40} />}
+              left={() => (
+                <Avatar.Icon
+                  icon="account-supervisor"
+                  color={theme.dark ? theme.colors.text : theme.colors.primary}
+                  style={{ backgroundColor: theme.colors.surface }}
+                  size={40}
+                />
+              )}
             />
             <Card.Content>
               <Text style={styles.passengerTitle}>P A S S E N G E R</Text>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { Badge, Card, Chip } from 'react-native-paper';
+import { Badge, Card, Chip, useTheme } from 'react-native-paper';
 import { isBefore } from 'date-fns';
 
 import PilotChip from '../../../../../components/chips/PilotChip';
@@ -29,6 +29,7 @@ const LOAD_BADGE_COLOR: { [K in LoadState]?: string } = {
 export default function LoadCard(props: ILoadCardSmall) {
   const { load: initialRecord, onPress } = props;
   const dispatch = useAppDispatch();
+  const theme = useTheme();
 
   const {
     data: load,
@@ -101,7 +102,7 @@ export default function LoadCard(props: ILoadCardSmall) {
       testID="load-card"
       style={{
         margin: 16,
-        borderRadius: 8,
+        borderRadius: 2,
         opacity: ['cancelled', 'landed'].includes(load?.state || '') ? 0.5 : 1.0,
       }}
       elevation={3}
@@ -129,11 +130,12 @@ export default function LoadCard(props: ILoadCardSmall) {
         }
       />
 
-      <Card.Content style={styles.cardContent}>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+      <Card.Content style={[styles.cardContent]}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', backgroundColor: 'transparent' }}>
           <PlaneChip
             value={load?.plane}
             small
+            color={theme.colors.onSurface}
             onSelect={async (plane) => {
               if ((load?.occupiedSlots || 0) > (plane.maxSlots || 0)) {
                 const diff = (load?.occupiedSlots || 0) - (plane.maxSlots || 0);
@@ -150,12 +152,23 @@ export default function LoadCard(props: ILoadCardSmall) {
               }
             }}
           />
-          <PilotChip value={load?.pilot} onSelect={updatePilot} small />
+          <PilotChip
+            color={theme.colors.onSurface}
+            value={load?.pilot}
+            onSelect={updatePilot}
+            small
+          />
           <Chip
             mode="outlined"
             icon="parachute"
-            style={styles.smallChip}
-            textStyle={styles.smallChipText}
+            style={{
+              marginHorizontal: 4,
+              backgroundColor: 'transparent',
+              height: 25,
+              alignItems: 'center',
+              borderColor: theme.colors.onSurface,
+            }}
+            textStyle={{ color: theme.colors.onSurface, fontSize: 12 }}
           >
             {load?.occupiedSlots || 0} / {load?.plane?.maxSlots}
           </Chip>

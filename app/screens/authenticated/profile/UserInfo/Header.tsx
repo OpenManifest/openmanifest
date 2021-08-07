@@ -19,9 +19,12 @@ export default function UserHeader(props: IUserHeader) {
   return (
     <LinearGradient
       start={{ x: 0.0, y: 0.25 }}
-      end={{ x: 0.5, y: 1.0 }}
+      end={{ x: 0.5, y: 0.75 }}
       style={styles.container}
-      colors={[theme.colors.accent, theme.colors.primary]}
+      colors={[
+        theme.dark ? theme.colors.surface : theme.colors.accent,
+        theme.dark ? theme.colors.surface : theme.colors.surface,
+      ]}
     >
       <View style={styles.actions}>
         {!canEdit ? null : (
@@ -40,7 +43,7 @@ export default function UserHeader(props: IUserHeader) {
               <Avatar.Icon
                 size={80}
                 icon="account"
-                color={theme.colors.primary}
+                color={theme.dark ? theme.colors.text : theme.colors.primary}
                 style={{ backgroundColor: theme.colors.surface }}
               />
             ) : (
@@ -71,6 +74,9 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   actions: {
+    position: 'absolute',
+    top: 0,
+    right: 8,
     flexDirection: 'row',
     justifyContent: 'flex-end',
   },
@@ -78,11 +84,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 32,
+    paddingTop: 16,
     marginBottom: 16,
   },
   titleContainer: {
-    paddingLeft: 48,
+    paddingLeft: 32,
+    paddingTop: 16,
     flex: 2 / 3,
     alignItems: 'flex-start',
     justifyContent: 'center',

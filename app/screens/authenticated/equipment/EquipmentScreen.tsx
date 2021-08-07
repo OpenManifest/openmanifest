@@ -1,4 +1,4 @@
-import { useIsFocused, useNavigation } from '@react-navigation/core';
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
@@ -18,9 +18,12 @@ export default function ProfileScreen() {
   const dispatch = useAppDispatch();
   const { currentUser } = useCurrentDropzone();
   const navigation = useNavigation();
-  React.useEffect(() => navigation.setOptions({ title: 'Equipment' }), [navigation]);
 
-  const { dropzoneUser, loading, refetch } = useDropzoneUser(Number(currentUser?.id));
+  const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
+
+  const { dropzoneUser, loading, refetch } = useDropzoneUser(
+    Number(route?.params?.userId) || Number(currentUser?.id)
+  );
 
   const isFocused = useIsFocused();
 
@@ -30,6 +33,14 @@ export default function ProfileScreen() {
     }
   }, [isFocused, refetch]);
 
+  React.useEffect(() => {
+    if (dropzoneUser?.user?.name && dropzoneUser?.id !== currentUser?.id) {
+      const [firstName] = dropzoneUser.user?.name.split(/\s/);
+      navigation.setOptions({ title: `${firstName}'s Equipment` });
+    } else {
+      navigation.setOptions({ title: 'Your Equipment' });
+    }
+  }, [currentUser?.id, dropzoneUser?.id, dropzoneUser?.user?.name, navigation]);
   const canUpdateUser = useRestriction(Permission.UpdateUser);
   return (
     <>
