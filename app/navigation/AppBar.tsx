@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Appbar, IconButton, Chip } from 'react-native-paper';
+import { Appbar, IconButton, Chip, useTheme } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { gql, useLazyQuery } from '@apollo/client';
 import { DrawerActions } from '@react-navigation/native';
@@ -75,9 +75,12 @@ function AppBar(props: IAppBarProps) {
     }
   }, [loadData, currentDropzoneId]);
 
+  const theme = useTheme();
   return (
     <>
-      <Appbar.Header>
+      <Appbar.Header
+        style={{ backgroundColor: theme.dark ? theme.colors.backdrop : theme.colors.surface }}
+      >
         {previous ? (
           <Appbar.BackAction onPress={navigation.goBack} />
         ) : (

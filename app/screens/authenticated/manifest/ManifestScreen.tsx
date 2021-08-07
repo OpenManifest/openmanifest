@@ -2,7 +2,7 @@ import { useIsFocused, useNavigation } from '@react-navigation/core';
 import * as React from 'react';
 import { Dimensions, RefreshControl, StyleSheet, useWindowDimensions } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { FAB, IconButton, Menu, ProgressBar } from 'react-native-paper';
+import { FAB, IconButton, Menu, ProgressBar, useTheme } from 'react-native-paper';
 
 import NoResults from '../../../components/NoResults';
 import { View } from '../../../components/Themed';
@@ -138,8 +138,9 @@ export default function ManifestScreen() {
   const loads = dropzone?.loads?.edges || [];
   const initialLoading = !loads?.length && loading;
 
+  const theme = useTheme();
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <ProgressBar visible={loading} indeterminate color={state.theme.colors.accent} />
 
       <View style={styles.container}>
@@ -162,6 +163,7 @@ export default function ManifestScreen() {
                 paddingTop: 35,
                 flex: 1,
                 height: Dimensions.get('window').height,
+                backgroundColor: theme.colors.background,
               }}
               testID="loads"
               keyExtractor={({ item }, idx) => `load-small-${item?.node?.id || idx}`}
@@ -170,6 +172,7 @@ export default function ManifestScreen() {
                 width: contentWidth,
                 alignSelf: 'center',
                 paddingBottom: 100,
+                backgroundColor: theme.colors.background,
               }}
               numColumns={numColumns}
               data={initialLoading ? [1, 1, 1, 1, 1] : loads}
@@ -270,7 +273,7 @@ export default function ManifestScreen() {
         open={forms.load.open}
         onClose={() => dispatch(actions.forms.load.setOpen(false))}
       />
-    </>
+    </View>
   );
 }
 

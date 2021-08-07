@@ -3,13 +3,15 @@ import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import { useMutation } from '@apollo/client';
 import * as React from 'react';
 import { Platform, RefreshControl, StyleSheet, View } from 'react-native';
-import { Card, Chip, Divider, List, ProgressBar } from 'react-native-paper';
+import { Card, Chip, Divider, List, ProgressBar, useTheme } from 'react-native-paper';
 import format from 'date-fns/format';
 import gql from 'graphql-tag';
 import { ScrollView } from 'react-native-gesture-handler';
 import { IconProps } from 'react-native-paper/lib/typescript/components/MaterialCommunityIcon';
 import * as ImagePicker from 'expo-image-picker';
 
+import { LinearGradient } from 'expo-linear-gradient';
+import color from 'color';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import { Mutation, Permission } from '../../../api/schema.d';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
@@ -127,12 +129,23 @@ export default function ProfileScreen() {
   const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
   const canUpdateUser = useRestriction(Permission.UpdateUser);
   const canViewOthersTransactions = useRestriction(Permission.ReadUserTransactions);
+  const theme = useTheme();
+
+  const textColor = theme.colors.onSurface;
+  const primaryLight = color(theme.colors.primary).lighten(0.6).hex();
+  const primaryDark = color(theme.colors.primary).darken(0.3).hex();
 
   return (
-    <>
+    <LinearGradient
+      start={{ x: 0.0, y: 0.25 }}
+      end={{ x: 0.5, y: 0.75 }}
+      style={StyleSheet.absoluteFill}
+      colors={[theme.colors.surface, theme.colors.surface]}
+    >
       {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
       <ScrollableScreen
-        contentContainerStyle={styles.content}
+        style={{ backgroundColor: 'transparent' }}
+        contentContainerStyle={[styles.content, { backgroundColor: 'transparent' }]}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}
       >
         {!dropzoneUser ? null : (
@@ -146,63 +159,7 @@ export default function ProfileScreen() {
             }}
             onPressAvatar={onPickImage}
           >
-            <ScrollView
-              horizontal
-              style={{ marginVertical: 8 }}
-              showsHorizontalScrollIndicator={false}
-            >
-              <Chip
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore This is a valid prop
-                icon={({ size }: IconProps) => (
-                  <MaterialCommunityIcons name="email" size={size} color="#FFFFFF" />
-                )}
-                mode="outlined"
-                style={styles.chip}
-                textStyle={styles.chipTitle}
-              >
-                {dropzoneUser?.user?.email || '-'}
-              </Chip>
-
-              <Chip
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore This is a valid prop
-                icon={({ size }: IconProps) => (
-                  <MaterialCommunityIcons name="phone" size={size} color="#FFFFFF" />
-                )}
-                mode="outlined"
-                style={styles.chip}
-                textStyle={styles.chipTitle}
-              >
-                {dropzoneUser?.user?.phone || '-'}
-              </Chip>
-
-              <Chip
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore This is a valid prop
-                icon={({ size }: IconProps) => (
-                  <MaterialCommunityIcons
-                    name="card-account-details-star-outline"
-                    size={size}
-                    color="#FFFFFF"
-                  />
-                )}
-                mode="outlined"
-                style={styles.chip}
-                textStyle={styles.chipTitle}
-                onPress={() => {
-                  if (canUpdateUser) {
-                    dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser));
-                  }
-                }}
-              >
-                {!dropzoneUser?.expiresAt
-                  ? 'Not a member'
-                  : format((dropzoneUser?.expiresAt || 0) * 1000, 'yyyy/MM/dd')}
-              </Chip>
-            </ScrollView>
-
-            <Divider style={styles.divider} />
+            <PermissionBadges {...{ dropzoneUser, permissions: badges }} />
             <InfoGrid
               items={[
                 {
@@ -224,13 +181,7 @@ export default function ProfileScreen() {
                 },
               ]}
             />
-            <Divider
-              style={[
-                styles.divider,
-                { height: StyleSheet.hairlineWidth, backgroundColor: 'white' },
-              ]}
-            />
-            <PermissionBadges {...{ dropzoneUser, permissions: badges }} />
+            <Divider style={styles.divider} />
           </Header>
         )}
         <View style={{ width: '100%' }}>
@@ -311,7 +262,7 @@ export default function ProfileScreen() {
         }}
         open={forms.user.open}
       />
-    </>
+    </LinearGradient>
   );
 }
 
