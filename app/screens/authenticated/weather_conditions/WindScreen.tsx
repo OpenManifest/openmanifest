@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Button, useTheme } from 'react-native-paper';
-import { Appearance, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 // eslint-disable-next-line max-len
 import useMutationCreateWeatherConditions from '../../../api/hooks/useMutationCreateWeatherConditions';
