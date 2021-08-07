@@ -54,8 +54,6 @@ export default function ProfileScreen() {
 
   // const [mutationMarkAsSeen, mutation] = useMutation<Mutation>(MUTATION_MARK_AS_SEEN);
 
-  const { currentUser } = useCurrentDropzone();
-
   return (
     <>
       {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}

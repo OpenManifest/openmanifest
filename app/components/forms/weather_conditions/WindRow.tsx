@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View, ViewStyle, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Card, List, Menu, TextInput } from 'react-native-paper';
+import { Card, List, Menu, TextInput, useTheme } from 'react-native-paper';
 import { Wind } from '../../../api/schema';
 
 export interface IWindRowProps extends Wind {
@@ -12,6 +12,7 @@ export default function WindRow(props: IWindRowProps) {
   const [altitudeMenuOpen, setAltitudeMenuOpen] = React.useState(false);
   const [_speed, _setSpeed] = React.useState(speed);
   const [_direction, _setDirection] = React.useState(direction);
+  const theme = useTheme();
 
   return (
     <Card style={styles.card} elevation={3}>
@@ -33,7 +34,9 @@ export default function WindRow(props: IWindRowProps) {
                 onPress={() => setAltitudeMenuOpen(true)}
               >
                 <List.Icon icon="arrow-up" style={styles.icon} />
-                <Text style={styles.altitudeOption}>{altitude?.toString()}</Text>
+                <Text style={[styles.altitudeOption, { color: theme.colors.onSurface }]}>
+                  {altitude?.toString()}
+                </Text>
               </TouchableOpacity>
             }
           >

@@ -23,7 +23,7 @@ export default function UserHeader(props: IUserHeader) {
       style={styles.container}
       colors={[
         theme.dark ? theme.colors.surface : theme.colors.accent,
-        theme.dark ? theme.colors.surface : theme.colors.surface,
+        theme.dark ? theme.colors.surface : theme.colors.primary,
       ]}
     >
       <View style={styles.actions}>

@@ -38,7 +38,7 @@ export default function AuthenticatedTabBar() {
         inactiveTintColor: '#CCCCCC',
         showLabel: true,
         style: {
-          backgroundColor: theme.dark ? 'transparent' : theme.colors.primary,
+          backgroundColor: theme.dark ? theme.colors.surface : theme.colors.primary,
         },
       }}
     >

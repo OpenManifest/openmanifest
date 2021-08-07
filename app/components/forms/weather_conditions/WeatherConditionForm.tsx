@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet, View, Text, KeyboardAvoidingView, TextInput, Platform } from 'react-native';
 import { set } from 'lodash';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
-import { Card, Divider, List } from 'react-native-paper';
+import { Card, Divider, List, useTheme } from 'react-native-paper';
 import WindRow from './WindRow';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import { Wind } from '../../../api/schema.d';
@@ -16,6 +16,7 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
   const state = useAppSelector((root) => root.forms.weather);
   const dispatch = useAppDispatch();
   const { value: winds } = state.fields.winds;
+  const theme = useTheme();
 
   const [temperature, setTemperature] = React.useState<number | null | undefined>(
     state.fields?.temperature?.value || 0
@@ -52,7 +53,10 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
       </View>
 
       <View style={styles.altitudeTempRow}>
-        <Card style={styles.temperatureCard} elevation={3}>
+        <Card
+          style={[styles.temperatureCard, { backgroundColor: theme.colors.surface }]}
+          elevation={3}
+        >
           <Card.Content style={styles.cardContent}>
             <List.Icon icon="thermometer" style={{ width: 20 }} />
             <TextInput
@@ -66,14 +70,14 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
                   setTemperature(Number(numbers));
                 }
               }}
-              style={styles.textField}
+              style={[styles.textField, { color: theme.colors.onSurface }]}
               keyboardType="numeric"
             />
           </Card.Content>
         </Card>
 
         <Card style={styles.jumpRunCard} elevation={3}>
-          <Card.Content style={styles.cardContent}>
+          <Card.Content style={[styles.cardContent, { backgroundColor: theme.colors.surface }]}>
             <List.Icon icon="compass" style={{ width: 20 }} />
             <TextInput
               value={jumpRun?.toString()}
@@ -85,7 +89,7 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
                 }
               }}
               keyboardType="numeric"
-              style={styles.textField}
+              style={[styles.textField, { color: theme.colors.onSurface }]}
             />
             <TouchableOpacity onPress={() => onPressJumpRun?.()}>
               <List.Icon icon="earth" color="#40AA40" style={{ width: 40 }} />

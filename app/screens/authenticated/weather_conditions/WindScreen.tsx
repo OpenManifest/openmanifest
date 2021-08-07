@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Button } from 'react-native-paper';
-import { StyleSheet, View } from 'react-native';
+import { Button, useTheme } from 'react-native-paper';
+import { Appearance, StyleSheet, View } from 'react-native';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 // eslint-disable-next-line max-len
 import useMutationCreateWeatherConditions from '../../../api/hooks/useMutationCreateWeatherConditions';
@@ -42,10 +42,14 @@ export default function WindScreen() {
     dispatch(actions.forms.weather.reset());
     dispatch(actions.forms.weather.setOpen(false));
   }, [mutationCreateWeatherConditions, state, dropzoneId, navigation, dispatch]);
+  const theme = useTheme();
 
   return (
-    <ScrollableScreen style={{ backgroundColor: '#F4F5F5' }}>
-      <WeatherConditionForm onPressJumpRun={() => navigation.navigate('JumpRunScreen')} />
+    <ScrollableScreen contentContainerStyle={{ backgroundColor: theme.colors.backdrop }}>
+      <WeatherConditionForm
+        onPressJumpRun={() => navigation.navigate('JumpRunScreen')}
+        variant={theme.dark ? 'light' : undefined}
+      />
       <View style={styles.buttons} pointerEvents="box-none">
         <Button
           loading={mutationCreateWeatherConditions.loading}
