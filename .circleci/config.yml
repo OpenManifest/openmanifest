@@ -120,7 +120,7 @@ workflows:
       - publish_app:
           filters:
             branches:
-              only: master
+              only: main
           requires:
             - bump_version
 
