@@ -1,8 +1,12 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  BottomTabBarOptions,
+  BottomTabBarProps,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
-import { Appearance, StyleSheet, Text } from 'react-native';
-import AnimatedTabBar, { TabsConfig, BubbleTabBarItemConfig } from '@gorhom/animated-tabbar';
+import { Appearance, Platform, StyleSheet, Text } from 'react-native';
+import type { TabsConfig, BubbleTabBarItemConfig } from '@gorhom/animated-tabbar';
 import Animated from 'react-native-reanimated';
 import c from 'color';
 
@@ -13,6 +17,8 @@ import NotificationsTab from './tabs/notifications';
 
 import useRestriction from '../hooks/useRestriction';
 import { Permission } from '../api/schema.d';
+
+import AnimatedTabBar from './AnimatedTabBar';
 
 export type IAuthenticatedTabParams = {
   Manifest: undefined;
@@ -114,24 +120,43 @@ export default function AuthenticatedTabBar() {
   return (
     <BottomTab.Navigator
       initialRouteName="Manifest"
-      tabBar={(props) => (
-        <AnimatedTabBar
-          preset="bubble"
-          tabs={tabs}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          animation="iconWithLabelOnFocus"
-          inactiveOpacity={0.25}
-          inactiveScale={0.5}
-          {...props}
-        />
-      )}
+      {...Platform.select({
+        web: {},
+        ios: {
+          tabBar: (props: BottomTabBarProps<BottomTabBarOptions>) => (
+            <AnimatedTabBar
+              preset="bubble"
+              tabs={tabs}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              animation="iconWithLabelOnFocus"
+              inactiveOpacity={0.25}
+              inactiveScale={0.5}
+              {...props}
+            />
+          ),
+        },
+        android: {
+          tabBar: (props: BottomTabBarProps<BottomTabBarOptions>) => (
+            <AnimatedTabBar
+              preset="bubble"
+              tabs={tabs}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              animation="iconWithLabelOnFocus"
+              inactiveOpacity={0.25}
+              inactiveScale={0.5}
+              {...props}
+            />
+          ),
+        },
+      })}
       tabBarOptions={{
         activeTintColor: '#FFFFFF',
         inactiveBackgroundColor: theme.dark ? theme.colors.backdrop : theme.colors.primary,
         activeBackgroundColor: theme.dark ? theme.colors.surface : theme.colors.primary,
         inactiveTintColor: '#CCCCCC',
-        showLabel: true,
+        showLabel: Platform.OS !== 'web',
         adaptive: true,
         style: {
           backgroundColor: theme.dark ? theme.colors.background : '#FFFFFF',
