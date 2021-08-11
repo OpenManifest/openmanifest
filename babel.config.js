@@ -9,7 +9,7 @@ module.exports = function(api) {
         "extensions": ['.js', '.jsx', '.es', '.es6', '.mjs', '.ts', '.tsx'],
         }
       ],
-      
+      '@babel/plugin-proposal-numeric-separator',
       ["module:react-native-dotenv", {
         "moduleName": "@env",
         "path": ".env",

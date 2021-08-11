@@ -134,7 +134,7 @@ export default function AuthenticatedTabBar() {
         showLabel: true,
         adaptive: true,
         style: {
-          backgroundColor: theme.colors.background,
+          backgroundColor: theme.dark ? theme.colors.background : '#FFFFFF',
           borderTopWidth: StyleSheet.hairlineWidth,
           borderTopColor: '#CCCCCC',
         },

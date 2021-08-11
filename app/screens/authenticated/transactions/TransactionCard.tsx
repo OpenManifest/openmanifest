@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Caption, Card, List, useTheme } from 'react-native-paper';
 import { format } from 'date-fns';
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { capitalize } from 'lodash';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { successColor } from '../../../constants/Colors';
 import { Transaction } from '../../../api/schema';
