@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as Update from 'expo-updates';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Button } from 'react-native-paper';
 import LottieView from 'lottie-react-native';
@@ -18,6 +18,9 @@ export default function AppUpdate(props: IAppUpdateProps) {
   const dispatch = useAppDispatch();
 
   const isUpdateAvailable = React.useCallback(async () => {
+    if (Platform.OS === 'web') {
+      return;
+    }
     const { isAvailable } = await Update.checkForUpdateAsync();
 
     if (isAvailable) {
@@ -26,6 +29,9 @@ export default function AppUpdate(props: IAppUpdateProps) {
   }, []);
 
   const onUpdate = React.useCallback(async () => {
+    if (Platform.OS === 'web') {
+      return;
+    }
     animation.current?.play();
     const { isNew } = await Update.fetchUpdateAsync();
     if (isNew) {
