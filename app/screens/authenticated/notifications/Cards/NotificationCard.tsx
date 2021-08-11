@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Avatar, Caption, Card, List } from 'react-native-paper';
 import { formatDistanceToNow } from 'date-fns';
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { useAppSelector } from '../../../../state';
 
 interface INotification {
