@@ -123,6 +123,7 @@ export default function ProfileScreen() {
 
   const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
   const canViewOthersTransactions = useRestriction(Permission.ReadUserTransactions);
+  const canUpdateUsers = useRestriction(Permission.UpdateUser);
   const theme = useTheme();
 
   return (
@@ -178,6 +179,19 @@ export default function ProfileScreen() {
         <View style={{ width: '100%' }}>
           <List.Subheader>Manage</List.Subheader>
           <Card style={{ margin: 8, marginRight: 8 }} elevation={1}>
+            {canUpdateUsers ? (
+              <>
+                <List.Item
+                  style={{ width: '100%', padding: 0 }}
+                  title="Access and Membership"
+                  left={() => <List.Icon icon="lock" />}
+                  onPress={() =>
+                    dropzoneUser ? dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser)) : null
+                  }
+                />
+                <Divider style={{ width: '100%' }} />
+              </>
+            ) : null}
             {isSelf || canViewOthersTransactions ? (
               <>
                 <List.Item

@@ -1,5 +1,40 @@
 schema: http://127.0.0.1:5000/graphql
 generates:
-  ./app/api/schema.d.ts:
+  ./app/api/opemmanifest.graphql:
     plugins:
+      - schema-ast
+  ./app/api/openmanifest.json:
+    plugins:
+      - introspection
+  ./app/api/schema.d.ts:
+    documents: ./app/api/**/*.gql
+    plugins:
+      - add:
+          content: /* eslint-disable */
       - typescript
+  ./app/api/operations.ts:
+    preset: import-types
+    presetConfig:
+      typesPath: ./schema.d
+    documents: ./app/api/**/*.gql
+    plugins:
+      - add:
+          content: /* eslint-disable */
+      - typescript-operations
+    config:
+      dedupeOperationSuffix: true
+      useTypeImports: true
+  ./app/api/reflection.tsx:
+    documents: ./app/api/**/*.gql
+    plugins:
+      - add:
+          content: /* eslint-disable */
+      - add:
+          content: import * as Operation from './operations';
+      - typescript-react-apollo
+    config:
+      dedupeOperationSuffix: true
+      importOperationTypesFrom: "Operation"
+      useTypeImports: true
+      withHooks: true
+      hooksSuffix: ""

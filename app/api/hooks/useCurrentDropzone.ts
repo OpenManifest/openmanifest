@@ -70,14 +70,71 @@ export const QUERY_DROPZONE = gql`
           }
         }
 
-        transactions {
+        purchases {
           edges {
             node {
               id
-              status
-              createdAt
-              message
-              amount
+              state
+              buyer {
+                ... on DropzoneUser {
+                  id
+                  user {
+                    id
+                    name
+                  }
+                }
+                ... on Dropzone {
+                  id
+                  name
+                }
+              }
+              seller {
+                ... on DropzoneUser {
+                  id
+                  user {
+                    id
+                    name
+                  }
+                }
+                ... on Dropzone {
+                  id
+                  name
+                }
+              }
+              receipts {
+                id
+                transactions {
+                  id
+                  transactionType
+                  status
+                  sender {
+                    ... on DropzoneUser {
+                      id
+                      user {
+                        id
+                        name
+                      }
+                    }
+                    ... on Dropzone {
+                      id
+                      name
+                    }
+                  }
+                  receiver {
+                    ... on DropzoneUser {
+                      id
+                      user {
+                        id
+                        name
+                      }
+                    }
+                    ... on Dropzone {
+                      id
+                      name
+                    }
+                  }
+                }
+              }
             }
           }
         }
