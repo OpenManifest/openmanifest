@@ -1,3 +1,29 @@
-mutation {
-  createOrder()
+#import "../fragments/orders.fragments.gql"
+mutation CreateOrder(
+  $buyer: WalletInput!
+  $seller: WalletInput!
+  $dropzoneId: Int!
+  $title: String
+  $amount: Int!
+) {
+  createOrder(
+    input: {
+      attributes: {
+        dropzoneId: $dropzoneId
+        title: $title
+        buyer: $buyer
+        seller: $seller
+        amount: $amount
+      }
+    }
+  ) {
+    fieldErrors {
+      field
+      message
+    }
+    errors
+    order {
+      ...order
+    }
+  }
 }

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DropzoneUser, Transaction } from '../../../api/schema.d';
+import { DropzoneUser, Transaction, TransactionType } from '../../../api/schema.d';
 
-type Fields = Pick<Transaction, 'amount' | 'status' | 'message'>;
+type Fields = Pick<Transaction, 'amount' | 'transactionType' | 'message'>;
 
 interface IDropzoneEditState {
   original: DropzoneUser | null;
@@ -22,8 +22,8 @@ export const initialState: IDropzoneEditState = {
       value: null,
       error: null,
     },
-    status: {
-      value: 'deposit',
+    transactionType: {
+      value: TransactionType.Deposit,
       error: null,
     },
     message: {

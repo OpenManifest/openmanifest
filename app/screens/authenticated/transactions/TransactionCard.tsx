@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { capitalize } from 'lodash';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import { successColor } from '../../../constants/Colors';
 import { Transaction } from '../../../api/schema';
 
@@ -28,9 +29,10 @@ function getIcon(status?: string | null) {
 export default function TransactionCard(props: ITransaction) {
   const { transaction, onPress } = props;
   const theme = useTheme();
+  const { currentUser } = useCurrentDropzone();
 
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} style={{ width: '100%' }}>
       <Card style={styles.transaction}>
         <Card.Content style={styles.transactionContent}>
           <Caption
@@ -40,22 +42,18 @@ export default function TransactionCard(props: ITransaction) {
               right: 8,
             }}
           >
-            {format(transaction?.createdAt * 1000, 'Mo MMM, h:mm aaa')}
+            {transaction?.createdAt && format(transaction?.createdAt * 1000, 'Mo MMM, h:mm aaa')}
           </Caption>
           <List.Item
-            title={capitalize(transaction.status || '')}
-            description={transaction.message || 'No message'}
+            description={capitalize(transaction.message || '')}
+            title={transaction.transactionType.toUpperCase()}
             style={{ width: '100%' }}
             titleStyle={styles.transactionTitle}
             descriptionStyle={styles.transactionDescription}
             left={() => (
               <View style={{ width: 165, alignItems: 'center', flexDirection: 'row' }}>
                 <MaterialCommunityIcons
-                  color={
-                    transaction.status && ['withdrawal', 'paid'].includes(transaction.status)
-                      ? '#FF1414'
-                      : successColor
-                  }
+                  color={transaction.amount < 0 ? '#FF1414' : successColor}
                   name={getIcon(transaction.status)}
                   size={36}
                   style={{ marginHorizontal: 16 }}
@@ -68,7 +66,9 @@ export default function TransactionCard(props: ITransaction) {
                     color: theme.colors.onSurface,
                   }}
                 >
-                  ${transaction.amount}
+                  {transaction.amount < 0
+                    ? `-$${transaction.amount * -1}`
+                    : `$${transaction.amount}`}
                 </Text>
               </View>
             )}

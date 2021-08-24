@@ -70,12 +70,17 @@ export const QUERY_DROPZONE = gql`
           }
         }
 
-        purchases {
+        orders {
           edges {
             node {
               id
+              title
               state
+              createdAt
+              title
+              amount
               buyer {
+                __typename
                 ... on DropzoneUser {
                   id
                   user {
@@ -89,6 +94,7 @@ export const QUERY_DROPZONE = gql`
                 }
               }
               seller {
+                __typename
                 ... on DropzoneUser {
                   id
                   user {
@@ -101,12 +107,46 @@ export const QUERY_DROPZONE = gql`
                   name
                 }
               }
+              item {
+                title
+                cost
+              }
+              item {
+                title
+                cost
+
+                ... on Slot {
+                  id
+
+                  ticketType {
+                    id
+                    name
+                    cost
+                  }
+
+                  extras {
+                    id
+                    name
+                    cost
+                  }
+                }
+                ... on TicketType {
+                  id
+                }
+                ... on Extra {
+                  id
+                  name
+                }
+              }
               receipts {
                 id
                 transactions {
                   id
+                  message
                   transactionType
                   status
+                  createdAt
+                  amount
                   sender {
                     ... on DropzoneUser {
                       id

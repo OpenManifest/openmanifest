@@ -1,6 +1,6 @@
 schema: http://127.0.0.1:5000/graphql
 generates:
-  ./app/api/opemmanifest.graphql:
+  ./app/api/openmanifest.graphql:
     plugins:
       - schema-ast
   ./app/api/openmanifest.json:

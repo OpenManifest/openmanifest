@@ -1,10 +1,11 @@
+/* eslint-disable no-underscore-dangle */
 import * as React from 'react';
 import { Caption, Card, Chip, List, useTheme } from 'react-native-paper';
 import { format } from 'date-fns';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { successColor } from '../../../constants/Colors';
-import { DropzoneUser, Order, OrderState } from '../../../api/schema';
+import { DropzoneUser, Order } from '../../../api/schema';
 
 interface IOrder {
   order: Order;
@@ -15,20 +16,20 @@ interface IOrder {
 function OrderItems(props: { item: Order['item'] }) {
   const { item } = props;
   // eslint-disable-next-line no-underscore-dangle
-  switch (item.__typename) {
+  switch (item?.__typename) {
     case 'Extra':
-      return <Chip>{item.name}</Chip>;
+      return <Chip mode="outlined">{item.title}</Chip>;
     case 'Slot':
       return (
         <>
-          <Chip>{item.ticketType}</Chip>
+          <Chip mode="outlined">{item.ticketType.name}</Chip>
           {item.extras?.map((extra) => (
-            <Chip>{extra.name}</Chip>
+            <Chip mode="outlined">{extra.name}</Chip>
           ))}
         </>
       );
     case 'TicketType':
-      return <Chip>{item.name}</Chip>;
+      return <Chip>{item.title}</Chip>;
     default:
       return null;
   }
@@ -36,7 +37,11 @@ function OrderItems(props: { item: Order['item'] }) {
 export default function OrderCard(props: IOrder) {
   const { order, dropzoneUser, onPress } = props;
   const theme = useTheme();
-  const icon = (order.buyer as DropzoneUser).id === dropzoneUser.id ? 'cash-minus' : 'cash-plus';
+  const icon =
+    (order.buyer.__typename === 'DropzoneUser' && (order.buyer as DropzoneUser)).id ===
+    dropzoneUser.id
+      ? 'cash-minus'
+      : 'cash-plus';
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -52,8 +57,7 @@ export default function OrderCard(props: IOrder) {
             {format(order?.createdAt * 1000, 'Mo MMM, h:mm aaa')}
           </Caption>
           <List.Item
-            title={`Order #${order.id}`}
-            description={<OrderItems item={order.item} />}
+            title={`#${order.id} ${order.title}`}
             style={{ width: '100%' }}
             titleStyle={styles.orderTitle}
             descriptionStyle={styles.orderDescription}
@@ -61,7 +65,11 @@ export default function OrderCard(props: IOrder) {
               <View style={{ width: 165, alignItems: 'center', flexDirection: 'row' }}>
                 <MaterialCommunityIcons
                   color={
-                    (order.buyer as DropzoneUser)?.id === dropzoneUser.id ? '#FF1414' : successColor
+                    // eslint-disable-next-line no-underscore-dangle
+                    order.buyer.__typename === 'DropzoneUser' &&
+                    (order.buyer as DropzoneUser)?.id === dropzoneUser.id
+                      ? '#FF1414'
+                      : successColor
                   }
                   name={icon}
                   size={36}

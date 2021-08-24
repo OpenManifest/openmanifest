@@ -51,7 +51,11 @@ export const QUERY_DROPZONE_USER = gql`
             node {
               id
               state
+              createdAt
+              amount
+              title
               buyer {
+                __typename
                 ... on DropzoneUser {
                   id
                   user {
@@ -65,6 +69,7 @@ export const QUERY_DROPZONE_USER = gql`
                 }
               }
               seller {
+                __typename
                 ... on DropzoneUser {
                   id
                   user {
@@ -77,12 +82,42 @@ export const QUERY_DROPZONE_USER = gql`
                   name
                 }
               }
+              item {
+                title
+                cost
+
+                ... on Slot {
+                  id
+
+                  ticketType {
+                    id
+                    name
+                    cost
+                  }
+
+                  extras {
+                    id
+                    name
+                    cost
+                  }
+                }
+                ... on TicketType {
+                  id
+                }
+                ... on Extra {
+                  id
+                  name
+                }
+              }
               receipts {
                 id
                 transactions {
                   id
                   transactionType
                   status
+                  createdAt
+                  amount
+                  message
                   sender {
                     ... on DropzoneUser {
                       id

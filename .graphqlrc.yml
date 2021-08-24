@@ -1,5 +1,5 @@
 schema: app/api/openmanifest.graphql
-documents: "app/**/*.{ts,tsx,js,jsx,graphql,gql}"
+documents: "app/**/*.{graphql,gql}"
 extensions:
   endpoints:
     default: http://localhost:5000

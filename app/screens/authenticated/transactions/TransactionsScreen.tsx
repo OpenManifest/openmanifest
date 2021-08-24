@@ -44,10 +44,16 @@ export default function TransactionsScreen() {
 
       <FlatList
         style={styles.flatList}
-        data={dropzoneUser?.purchases?.edges || []}
+        data={dropzoneUser?.orders?.edges || []}
         refreshing={false}
         onRefresh={refetch}
-        renderItem={({ item }) => <OrderCard order={item.node} {...{ dropzoneUser }} />}
+        renderItem={({ item }) => (
+          <OrderCard
+            onPress={() => navigation.navigate('OrderScreen', { order: item.node })}
+            order={item?.node}
+            {...{ dropzoneUser }}
+          />
+        )}
       />
 
       <CreditsSheet

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TextInput, HelperText, Divider, DataTable } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
+import { TransactionType } from '../../../api/schema.d';
 
 export default function CreditsForm() {
   const state = useAppSelector((root) => root.forms.credits);
@@ -11,7 +12,9 @@ export default function CreditsForm() {
   const amount = state.fields.amount.value || 0;
 
   const subtotal =
-    state.fields.status.value === 'deposit' ? amount + currentCredits : amount - currentCredits;
+    state.fields.transactionType.value === TransactionType.Deposit
+      ? amount + currentCredits
+      : amount - currentCredits;
   return (
     <>
       <TextInput
@@ -27,7 +30,7 @@ export default function CreditsForm() {
       <HelperText type={state.fields.message.error ? 'error' : 'info'}>
         {state.fields.message.error || ''}
       </HelperText>
-      {state.fields.status.value === 'deposit' ? (
+      {state.fields.transactionType.value === 'deposit' ? (
         <View>
           <TextInput
             style={styles.field}

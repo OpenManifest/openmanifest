@@ -6,6 +6,7 @@ import useMutationUpdateLoad from '../../../api/hooks/useMutationUpdateLoad';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
 import { Load, Permission, LoadState } from '../../../api/schema.d';
+import { useFinalizeLoadMutation } from '../../../api/reflection';
 import useRestriction from '../../../hooks/useRestriction';
 import { actions, useAppDispatch } from '../../../state';
 
@@ -21,6 +22,8 @@ export default function ActionButton(props: ILoadActionButtonProps) {
 
   const currentDropzone = useCurrentDropzone();
   const { currentUser } = currentDropzone;
+
+  const [mutationFinalizeLoad] = useFinalizeLoadMutation();
 
   const mutationUpdateLoad = useMutationUpdateLoad({
     onSuccess: () => null,
@@ -53,12 +56,13 @@ export default function ActionButton(props: ILoadActionButtonProps) {
   );
 
   const onLanded = React.useCallback(async () => {
-    await mutationUpdateLoad.mutate({
-      id: Number(load.id),
-      hasLanded: true,
-      state: LoadState.Landed,
+    await mutationFinalizeLoad({
+      variables: {
+        id: Number(load.id),
+        state: LoadState.Landed,
+      },
     });
-  }, [mutationUpdateLoad, load]);
+  }, [mutationFinalizeLoad, load]);
 
   const onManifest = React.useCallback(() => {
     if (!currentUser?.hasLicense) {
@@ -78,28 +82,6 @@ export default function ActionButton(props: ILoadActionButtonProps) {
         })
       );
     }
-
-    /*
-    // Allow user to manifest with dropzone rigs
-    if (!currentUser?.hasRigInspection) {
-      return dispatch(
-        actions.notifications.showSnackbar({
-          message: 'Your rig needs to be inspected before manifesting',
-          variant: 'warning',
-        })
-      );
-    }
-
-    
-    if (!currentUser?.hasReserveInDate) {
-      return dispatch(
-        actions.notifications.showSnackbar({
-          message: 'Your rig needs a reserve repack',
-          variant: 'warning',
-        })
-      );
-    }
-    */
 
     if (!currentUser?.hasExitWeight) {
       return dispatch(
@@ -212,7 +194,10 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       : {
           label: 'Cancel load',
           icon: 'delete-sweep',
-          onPress: () => updateLoadState(LoadState.Cancelled),
+          onPress: () =>
+            mutationFinalizeLoad({
+              variables: { id: Number(load.id), state: LoadState.Cancelled },
+            }),
         },
     ![LoadState.Cancelled].includes(load.state)
       ? null

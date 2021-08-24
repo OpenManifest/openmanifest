@@ -25,8 +25,10 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         onSuccess();
       }),
 
-    onFieldError: (field, message) =>
-      dispatch(actions.forms.manifest.setFieldError([field as keyof ManifestUserFields, message])),
+    onFieldError: (field, message) => {
+      console.log({ field, message });
+      dispatch(actions.forms.manifest.setFieldError([field as keyof ManifestUserFields, message]));
+    },
     onError: (message) =>
       dispatch(actions.notifications.showSnackbar({ message, variant: 'error' })),
   });

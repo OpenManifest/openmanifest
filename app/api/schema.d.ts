@@ -549,14 +549,15 @@ export type DropzoneUserInput = {
   userRoleId?: Maybe<Scalars['Int']>;
 };
 
-export type Extra = {
+export type Extra = SellableItem & {
   __typename?: 'Extra';
-  cost: Scalars['Int'];
+  cost: Scalars['Float'];
   createdAt: Scalars['Int'];
   dropzone: Dropzone;
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   ticketTypes: Array<TicketType>;
+  title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Int'];
 };
 
@@ -1067,11 +1068,12 @@ export type Order = AnyResource & {
   createdAt: Scalars['Int'];
   dropzone: Dropzone;
   id: Scalars['ID'];
-  item: SellableItem;
+  item?: Maybe<SellableItem>;
   orderNumber: Scalars['Int'];
   receipts?: Maybe<Array<Receipt>>;
   seller: Wallet;
   state: OrderState;
+  title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Int'];
 };
 
@@ -1096,12 +1098,13 @@ export type OrderEdge = {
 };
 
 export type OrderInput = {
+  title?: Maybe<Scalars['String']>;
   /** Any sales peer, e.g DropzoneUser or Dropzone */
   seller: WalletInput;
   /** Any buyer peer, e.g DropzoneUser or Dropzone */
   buyer: WalletInput;
   /** Total amount of the order */
-  amount: Scalars['String'];
+  amount: Scalars['Int'];
   sellableItem?: Maybe<SellableItemInput>;
   dropzoneId: Scalars['Int'];
 };
@@ -1461,7 +1464,10 @@ export type RigInspectionInput = {
   isOk?: Maybe<Scalars['Boolean']>;
 };
 
-export type SellableItem = Extra | Slot | TicketType;
+export type SellableItem = {
+  cost?: Maybe<Scalars['Float']>;
+  title?: Maybe<Scalars['String']>;
+};
 
 export type SellableItemInput = {
   /** Any sales peer, e.g DropzoneUser or Dropzone */
@@ -1477,9 +1483,9 @@ export enum SellableItemTypes {
   Slot = 'slot'
 }
 
-export type Slot = AnyResource & {
+export type Slot = AnyResource & SellableItem & {
   __typename?: 'Slot';
-  cost?: Maybe<Scalars['Int']>;
+  cost: Scalars['Float'];
   createdAt: Scalars['Int'];
   dropzoneUser?: Maybe<DropzoneUser>;
   exitWeight: Scalars['Int'];
@@ -1493,6 +1499,7 @@ export type Slot = AnyResource & {
   passengerName?: Maybe<Scalars['String']>;
   rig?: Maybe<Rig>;
   ticketType?: Maybe<TicketType>;
+  title?: Maybe<Scalars['String']>;
   user?: Maybe<User>;
   wingLoading?: Maybe<Scalars['Float']>;
 };
@@ -1538,11 +1545,11 @@ export type SlotUser = {
   passengerExitWeight?: Maybe<Scalars['Float']>;
 };
 
-export type TicketType = AnyResource & {
+export type TicketType = AnyResource & SellableItem & {
   __typename?: 'TicketType';
   allowManifestingSelf?: Maybe<Scalars['Boolean']>;
   altitude?: Maybe<Scalars['Int']>;
-  cost?: Maybe<Scalars['Float']>;
+  cost: Scalars['Float'];
   createdAt: Scalars['Int'];
   currency?: Maybe<Scalars['String']>;
   dropzone?: Maybe<Dropzone>;
@@ -1550,6 +1557,7 @@ export type TicketType = AnyResource & {
   id: Scalars['ID'];
   isTandem?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Int'];
 };
 
