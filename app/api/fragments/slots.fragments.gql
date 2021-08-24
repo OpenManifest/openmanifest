@@ -1,0 +1,45 @@
+fragment slot on Slot {
+  id
+  createdAt
+  exitWeight
+  passengerName
+  passengerExitWeight
+  wingLoading
+  dropzoneUser {
+    id
+    role {
+      id
+      name
+    }
+    user {
+      id
+      name
+      exitWeight
+      image
+      license {
+        id
+        name
+      }
+    }
+  }
+  ticketType {
+    id
+    name
+    altitude
+    isTandem
+
+    extras {
+      id
+      name
+      cost
+    }
+  }
+  jumpType {
+    id
+    name
+  }
+  extras {
+    id
+    name
+  }
+}
