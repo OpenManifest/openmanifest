@@ -24,8 +24,8 @@ interface IUserRigCard {
   isTandem?: boolean;
   selectedRig?: Rig;
 
-  passengerName?: string;
-  passengerWeight?: number;
+  passengerName?: string | null;
+  passengerWeight?: number | null;
   onRemove?(): void;
   onChangeExitWeight(weight: number): void;
   onChangeRig(rig: Rig): void;

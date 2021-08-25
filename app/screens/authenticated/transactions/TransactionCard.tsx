@@ -4,7 +4,6 @@ import { format } from 'date-fns';
 import { capitalize } from 'lodash';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import { successColor } from '../../../constants/Colors';
 import { Transaction } from '../../../api/schema';
 
@@ -29,7 +28,6 @@ function getIcon(status?: string | null) {
 export default function TransactionCard(props: ITransaction) {
   const { transaction, onPress } = props;
   const theme = useTheme();
-  const { currentUser } = useCurrentDropzone();
 
   return (
     <TouchableOpacity onPress={onPress} style={{ width: '100%' }}>

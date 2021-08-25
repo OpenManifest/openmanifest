@@ -26,7 +26,7 @@ export default function LoadCard(props: ILoadCardSmall) {
   const { theme, palette } = useAppSelector((root) => root.global);
   const LOAD_BADGE_COLOR: { [K in LoadState]?: string } = React.useMemo(
     () => ({
-      open: palette.accent.light,
+      open: palette.accent.main,
       cancelled: errorColor,
       boarding_call: warningColor,
     }),
@@ -106,7 +106,7 @@ export default function LoadCard(props: ILoadCardSmall) {
         borderRadius: 2,
         opacity: ['cancelled', 'landed'].includes(load?.state || '') ? 0.5 : 1.0,
       }}
-      elevation={3}
+      elevation={1}
       onPress={onPress}
     >
       <Badge

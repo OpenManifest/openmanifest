@@ -6,6 +6,7 @@ import first from 'lodash/first';
 type AvatarProps = typeof Avatar.Image extends React.ComponentType<infer P> ? P : never;
 
 interface IUserAvatarProps extends Omit<AvatarProps, 'source'> {
+  source?: AvatarProps['source'];
   image?: string;
   name: string;
 }

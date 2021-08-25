@@ -53,8 +53,6 @@ export default function UserHeader(props: IUserHeader) {
               <Avatar.Icon
                 size={80}
                 icon="account"
-                color={theme.dark ? theme.colors.text : palette.primary.dark}
-                style={{ backgroundColor: palette.primary.light }}
               />
             ) : (
               <Avatar.Image

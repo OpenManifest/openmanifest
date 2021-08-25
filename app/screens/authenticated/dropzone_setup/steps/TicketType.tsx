@@ -23,7 +23,7 @@ function TicketTypeWizardScreen(props: IWizardScreenProps) {
             style={styles.field}
             mode="outlined"
             error={!!state.fields.name.error}
-            value={state.fields.name.value}
+            value={state.fields.name.value || ''}
             onChangeText={(newValue) =>
               dispatch(actions.forms.ticketType.setField(['name', newValue]))
             }
@@ -74,7 +74,7 @@ function TicketTypeWizardScreen(props: IWizardScreenProps) {
                       ? {
                           '14000': 'Height',
                           '4000': 'Hop n Pop',
-                        }[state.fields.altitude.value.toString()]
+                        }[state.fields.altitude.value.toString() as '14000' | '4000']
                       : 'Custom'}
                   </Text>
                 </View>

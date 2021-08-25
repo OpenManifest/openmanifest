@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "module": "esnext",
     "baseUrl": "./",
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
@@ -16,7 +17,9 @@
   },
   "include": [
     "jest.setup.ts",
-    "app/**/*"
+    "app/**/*",
+    "png.d.ts",
+    ".eslintrc.js"
   ],
   "extends": "expo/tsconfig.base"
 }

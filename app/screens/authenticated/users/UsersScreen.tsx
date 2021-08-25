@@ -143,7 +143,6 @@ export default function UsersScreen() {
           ) : (
             <Card
               key={`user-${edge?.node?.id}`}
-              elevation={3}
               style={{ margin: 0, marginVertical: 0, borderRadius: 2, width: '100%' }}
             >
               <Card.Content
@@ -160,11 +159,9 @@ export default function UsersScreen() {
                       <Avatar.Icon
                         icon="account"
                         style={{
-                          backgroundColor: global.palette.primary.light,
                           alignSelf: 'center',
                           marginHorizontal: 22,
                         }}
-                        color={global.palette.primary.dark}
                         size={36}
                       />
                     ) : (

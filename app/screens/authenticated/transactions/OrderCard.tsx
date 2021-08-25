@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
-import { Caption, Card, Chip, List, useTheme } from 'react-native-paper';
+import { Caption, Card, List, useTheme } from 'react-native-paper';
 import { format } from 'date-fns';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,37 +9,18 @@ import { DropzoneUser, Order } from '../../../api/schema';
 
 interface IOrder {
   order: Order;
-  dropzoneUser: DropzoneUser;
+  dropzoneUser?: DropzoneUser | null;
   onPress?(): void;
 }
 
-function OrderItems(props: { item: Order['item'] }) {
-  const { item } = props;
-  // eslint-disable-next-line no-underscore-dangle
-  switch (item?.__typename) {
-    case 'Extra':
-      return <Chip mode="outlined">{item.title}</Chip>;
-    case 'Slot':
-      return (
-        <>
-          <Chip mode="outlined">{item.ticketType.name}</Chip>
-          {item.extras?.map((extra) => (
-            <Chip mode="outlined">{extra.name}</Chip>
-          ))}
-        </>
-      );
-    case 'TicketType':
-      return <Chip>{item.title}</Chip>;
-    default:
-      return null;
-  }
-}
 export default function OrderCard(props: IOrder) {
   const { order, dropzoneUser, onPress } = props;
   const theme = useTheme();
   const icon =
-    (order.buyer.__typename === 'DropzoneUser' && (order.buyer as DropzoneUser)).id ===
-    dropzoneUser.id
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    (order.buyer?.__typename === 'DropzoneUser' && (order.buyer as DropzoneUser))?.id ===
+    dropzoneUser?.id
       ? 'cash-minus'
       : 'cash-plus';
 
@@ -66,8 +47,11 @@ export default function OrderCard(props: IOrder) {
                 <MaterialCommunityIcons
                   color={
                     // eslint-disable-next-line no-underscore-dangle
+                    '__typename' in order.buyer &&
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     order.buyer.__typename === 'DropzoneUser' &&
-                    (order.buyer as DropzoneUser)?.id === dropzoneUser.id
+                    (order.buyer as DropzoneUser)?.id === dropzoneUser?.id
                       ? '#FF1414'
                       : successColor
                   }

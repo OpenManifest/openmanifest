@@ -1,11 +1,15 @@
 module.exports = {
+  project: './tsconfig.json',
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   // for expo projects using react native
   extends: [
     'universe/native',
     'airbnb-typescript-prettier',
-    'plugin:@typescript-eslint/recommended', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
-    'prettier/@typescript-eslint', // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
+    // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+    'plugin:@typescript-eslint/recommended',
+    // Uses eslint-config-prettier to disable ESLint rules from
+    // @typescript-eslint/eslint-plugin that would conflict with prettier
+    'prettier/@typescript-eslint',
     'plugin:prettier/recommended',
   ],
   ignorePatterns: ['**/*.d.ts'],

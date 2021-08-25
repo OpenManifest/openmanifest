@@ -88,6 +88,7 @@ export const store = configureStore({
     serializableCheck: {
       ignoredActions: ['persist/PERSIST'],
     },
+    immutableCheck: false,
   }),
 });
 

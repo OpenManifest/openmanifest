@@ -16,8 +16,8 @@ const { width } = Dimensions.get('window');
 
 interface IJumpRunMapProps {
   jumpRun: number;
-  lat?: number;
-  lng?: number;
+  lat?: number | null;
+  lng?: number | null;
 }
 
 const MAP_SIZE_PERCENTAGE = 1.0;

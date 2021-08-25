@@ -6,7 +6,6 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@g
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 import {
   DropzoneUser,
-  TransactionStatus,
   TransactionType,
   WalletableTypes,
 } from '../../../api/schema.d';
@@ -194,7 +193,7 @@ export default function CreditSheet(props: ICreditsSheet) {
             onChangeIndex={(newIndex) => {
               dispatch(
                 actions.forms.credits.setField([
-                  'status',
+                  'transactionType',
                   newIndex === 1 ? 'withdrawal' : 'deposit',
                 ])
               );

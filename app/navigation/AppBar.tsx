@@ -81,11 +81,11 @@ function AppBar(props: IAppBarProps) {
         style={{ backgroundColor: theme.dark ? theme.colors.background : theme.colors.surface }}
       >
         {previous ? (
-          <Appbar.BackAction onPress={navigation.goBack} />
+          <Appbar.BackAction onPress={navigation.goBack} color={theme.dark ? palette.primary.dark : palette.primary.main} />
         ) : (
           <IconButton
-            color={theme.dark ? palette.primary.dark : palette.primary.light}
-            icon="account-circle"
+            color={theme.dark ? palette.primary.dark : palette.primary.main}
+            icon="menu"
             size={32}
             onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
           />
@@ -99,9 +99,9 @@ function AppBar(props: IAppBarProps) {
           scene.descriptor.options.headerRight({ tintColor: 'white' })
         ) : (
           <Chip
-            style={{ borderColor: palette.primary.dark }}
-            mode="outlined"
-            textStyle={{ color: palette.primary.dark }}
+            style={{ backgroundColor: palette.accent.main }}
+            mode="flat"
+            textStyle={{ color: palette.surface }}
           >{`$${data?.dropzone?.currentUser?.credits || 0}`}</Chip>
         )}
       </Appbar.Header>

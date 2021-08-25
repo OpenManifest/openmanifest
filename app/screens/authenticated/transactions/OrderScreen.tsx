@@ -5,14 +5,7 @@ import { Text, View } from 'react-native';
 import color from 'color';
 import LottieView from 'lottie-react-native';
 import { successColor } from '../../../constants/Colors';
-import {
-  Dropzone,
-  DropzoneUser,
-  Order,
-  Receipt,
-  TransactionType,
-  Wallet,
-} from '../../../api/schema.d';
+import { Dropzone, DropzoneUser, Order, Receipt, Wallet } from '../../../api/schema.d';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import UserAvatar from '../../../components/UserAvatar';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
@@ -26,7 +19,7 @@ interface IReceiptCardProps {
 }
 
 function ReceiptCard(props: IReceiptCardProps) {
-  const { receipt, order, index } = props;
+  const { receipt, index } = props;
   const { currentUser } = useCurrentDropzone();
 
   const isUser = React.useCallback(

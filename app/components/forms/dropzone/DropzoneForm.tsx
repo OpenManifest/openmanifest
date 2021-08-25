@@ -165,7 +165,10 @@ export default function DropzoneForm(props: IDropzoneForm) {
           title="Primary color"
           helperText="Primary color is used for elements like the title bar and the tab bar"
           error={state.fields.primaryColor.error || null}
-          onChange={(color) => dispatch(actions.forms.dropzone.setField(['primaryColor', color]))}
+          onChange={(color) => {
+            dispatch(actions.forms.dropzone.setField(['primaryColor', color]));
+            dispatch(actions.global.setPrimaryColor(color));
+          }}
           value={state.fields.primaryColor.value || '#000000'}
         />
       </SkeletonContent>
@@ -178,7 +181,10 @@ export default function DropzoneForm(props: IDropzoneForm) {
           title="Accent color"
           helperText="Accent color is used for highlights, like buttons and loading bars"
           error={state.fields.secondaryColor.error}
-          onChange={(color) => dispatch(actions.forms.dropzone.setField(['secondaryColor', color]))}
+          onChange={(color) => {
+            dispatch(actions.forms.dropzone.setField(['secondaryColor', color]));
+            dispatch(actions.global.setAccentColor(color));
+          }}
           value={state.fields.secondaryColor.value || '#FFFFFF'}
         />
       </SkeletonContent>

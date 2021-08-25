@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Avatar, Drawer, List } from 'react-native-paper';
-import { LinearGradient } from 'expo-linear-gradient';
 import {
   DrawerActions,
   getFocusedRouteNameFromRoute,
@@ -11,8 +10,6 @@ import {
 import { ScrollView } from 'react-native-gesture-handler';
 import capitalize from 'lodash/capitalize';
 import SkeletonContent from 'react-native-skeleton-content';
-import { BlurView } from 'expo-blur';
-import c from 'color';
 import InfoGrid from '../../screens/authenticated/load/InfoGrid';
 import useRestriction from '../../hooks/useRestriction';
 import { Permission } from '../../api/schema.d';
@@ -21,7 +18,7 @@ import useQueryDropzones from '../../api/hooks/useQueryDropzones';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 
 export default function DrawerMenu() {
-  const { palette, theme } = useAppSelector((root) => root.global);
+  const { theme } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
   const { currentUser, dropzone, loading } = useCurrentDropzone();
   const { data } = useQueryDropzones({
