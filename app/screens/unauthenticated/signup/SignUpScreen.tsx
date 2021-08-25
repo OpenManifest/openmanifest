@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 60,
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
   button: {
     marginTop: 10,

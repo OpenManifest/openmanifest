@@ -52,7 +52,7 @@ const useAllowedJumpTypes = createQuery<
   {
     dropzoneId: number;
     userIds: number[];
-    isPublic: boolean;
+    isPublic: boolean | null;
   }
 >(QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES, {
   getPayload: (query) => ({

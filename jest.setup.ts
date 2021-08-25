@@ -2,6 +2,8 @@
 import '@testing-library/jest-dom';
 import 'react-native-gesture-handler/jestSetup';
 
+declare const global: { __reanimatedWorkletInit: ReturnType<typeof jest.fn> };
+
 global.__reanimatedWorkletInit = jest.fn();
 
 jest.mock('react-native-reanimated', () => {

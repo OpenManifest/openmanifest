@@ -8,7 +8,6 @@ import * as React from 'react';
 import { Appearance, Platform, StyleSheet, Text } from 'react-native';
 import type { TabsConfig, BubbleTabBarItemConfig } from '@gorhom/animated-tabbar';
 import Animated from 'react-native-reanimated';
-import c from 'color';
 
 import { useAppSelector } from '../state';
 import ManifestTab from './tabs/manifest';
@@ -38,83 +37,72 @@ export default function AuthenticatedTabBar() {
 
   const canViewUsers = useRestriction(Permission.ReadUser);
 
-  const primaryLight = c(theme.colors.primary).lighten(0.6).hex();
-
-  const tabs: TabsConfig<BubbleTabBarItemConfig> = React.useMemo(
+  const tabConfig = React.useMemo(
     () => ({
-      Manifest: {
-        labelStyle: {
-          color: theme.dark ? theme.colors.onSurface : palette.primary.dark,
-        },
-        icon: {
-          component: ({ animatedFocus, size }) => (
-            <MaterialCommunityIcons
-              name="airplane"
-              color={theme.dark ? theme.colors.onSurface : palette.primary.dark}
-              style={[styles.icon, animatedFocus ? styles.iconActive : undefined]}
-              {...{ size }}
-            />
-          ),
-          activeColor: theme.colors.accent,
-          inactiveColor: theme.colors.primary,
-        },
-        background: {
-          activeColor: theme.dark ? palette.primary.dark : primaryLight,
-          inactiveColor: theme.colors.surface,
-        },
+      labelStyle: {
+        color: theme.dark ? theme.colors.onSurface : palette.surface,
       },
-      Notifications: {
-        labelStyle: {
-          color: theme.dark ? theme.colors.onSurface : palette.primary.dark,
-        },
-        icon: {
-          component: ({ animatedFocus, size }) => (
-            <MaterialCommunityIcons
-              name="bell-outline"
-              color={theme.dark ? theme.colors.onSurface : palette.primary.dark}
-              style={[styles.icon, animatedFocus ? styles.iconActive : undefined]}
-              {...{ size }}
-            />
-          ),
-          activeColor: theme.colors.accent,
-          inactiveColor: theme.colors.primary,
-        },
-        background: {
-          activeColor: theme.dark ? palette.primary.dark : primaryLight,
-          inactiveColor: theme.colors.surface,
-        },
+      icon: {
+        activeColor: palette.surface,
+        inactiveColor: palette.primary.dark,
       },
-      Users: {
-        labelStyle: {
-          color: theme.dark ? theme.colors.onSurface : palette.primary.dark,
-        },
-        icon: {
-          component: ({ animatedFocus, size }) => (
-            <AnimatedIcon
-              name="account-group-outline"
-              color={theme.dark ? theme.colors.onSurface : palette.primary.dark}
-              style={[styles.icon, animatedFocus ? styles.iconActive : undefined]}
-              {...{ size }}
-            />
-          ),
-          activeColor: theme.colors.accent,
-          inactiveColor: theme.colors.primary,
-        },
-        background: {
-          activeColor: theme.dark ? palette.primary.dark : primaryLight,
-          inactiveColor: theme.colors.surface,
-        },
+      background: {
+        activeColor: palette.primary.main,
+        inactiveColor: theme.colors.surface,
       },
     }),
     [
       palette.primary.dark,
-      primaryLight,
-      theme.colors.accent,
+      palette.primary.main,
+      palette.surface,
       theme.colors.onSurface,
-      theme.colors.primary,
       theme.colors.surface,
       theme.dark,
     ]
+  );
+  const tabs: TabsConfig<BubbleTabBarItemConfig> = React.useMemo(
+    () => ({
+      Manifest: {
+        ...tabConfig,
+        icon: {
+          ...tabConfig.icon,
+          component: ({ animatedFocus, size, color }) => (
+            <AnimatedIcon
+              name="airplane"
+              style={[styles.icon, animatedFocus ? styles.iconActive : undefined]}
+              {...{ size, color: color as unknown as string }}
+            />
+          ),
+        },
+      },
+      Notifications: {
+        ...tabConfig,
+        icon: {
+          ...tabConfig.icon,
+          component: ({ animatedFocus, size, color }) => (
+            <AnimatedIcon
+              name="bell-outline"
+              style={[styles.icon, animatedFocus ? styles.iconActive : undefined]}
+              {...{ size, color: color as unknown as string }}
+            />
+          ),
+        },
+      },
+      Users: {
+        ...tabConfig,
+        icon: {
+          ...tabConfig.icon,
+          component: ({ animatedFocus, size, color }) => (
+            <AnimatedIcon
+              name="account-group-outline"
+              style={[styles.icon, animatedFocus ? styles.iconActive : undefined]}
+              {...{ size, color: color as unknown as string }}
+            />
+          ),
+        },
+      },
+    }),
+    [tabConfig]
   );
 
   return (

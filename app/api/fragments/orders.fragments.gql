@@ -1,0 +1,71 @@
+#import "./transactions.fragments.gql'
+fragment order on Order {
+  id
+  state
+  amount
+  title
+  orderNumber
+
+  buyer {
+    ... on DropzoneUser {
+      id
+      user {
+        id
+        name
+      }
+    }
+    ... on Dropzone {
+      id
+      name
+    }
+  }
+  seller {
+    ... on DropzoneUser {
+      id
+      user {
+        id
+        name
+      }
+    }
+    ... on Dropzone {
+      id
+      name
+    }
+  }
+  item {
+    title
+    cost
+
+    ... on Slot {
+      id
+
+      ticketType {
+        id
+        name
+        cost
+      }
+
+      extras {
+        id
+        name
+        cost
+      }
+    }
+    ... on TicketType {
+      id
+    }
+    ... on Extra {
+      id
+      name
+    }
+  }
+  receipts {
+    id
+    amountCents
+    createdAt
+    updatedAt
+    transactions {
+      ...transaction
+    }
+  }
+}

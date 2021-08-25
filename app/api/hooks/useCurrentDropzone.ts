@@ -70,14 +70,111 @@ export const QUERY_DROPZONE = gql`
           }
         }
 
-        transactions {
+        orders {
           edges {
             node {
               id
-              status
+              title
+              state
               createdAt
-              message
+              title
               amount
+              buyer {
+                __typename
+                ... on DropzoneUser {
+                  id
+                  user {
+                    id
+                    name
+                  }
+                }
+                ... on Dropzone {
+                  id
+                  name
+                }
+              }
+              seller {
+                __typename
+                ... on DropzoneUser {
+                  id
+                  user {
+                    id
+                    name
+                  }
+                }
+                ... on Dropzone {
+                  id
+                  name
+                }
+              }
+              item {
+                title
+                cost
+              }
+              item {
+                title
+                cost
+
+                ... on Slot {
+                  id
+
+                  ticketType {
+                    id
+                    name
+                    cost
+                  }
+
+                  extras {
+                    id
+                    name
+                    cost
+                  }
+                }
+                ... on TicketType {
+                  id
+                }
+                ... on Extra {
+                  id
+                  name
+                }
+              }
+              receipts {
+                id
+                transactions {
+                  id
+                  message
+                  transactionType
+                  status
+                  createdAt
+                  amount
+                  sender {
+                    ... on DropzoneUser {
+                      id
+                      user {
+                        id
+                        name
+                      }
+                    }
+                    ... on Dropzone {
+                      id
+                      name
+                    }
+                  }
+                  receiver {
+                    ... on DropzoneUser {
+                      id
+                      user {
+                        id
+                        name
+                      }
+                    }
+                    ... on Dropzone {
+                      id
+                      name
+                    }
+                  }
+                }
+              }
             }
           }
         }

@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
-import { Dropzone, DropzoneUser, Slot } from '../../api/schema.d';
+import { Dropzone, DropzoneUser, Order, Slot } from '../../api/schema.d';
 import { useAppSelector } from '../../state';
 import LoadScreen from '../../screens/authenticated/load/LoadScreen';
 // eslint-disable-next-line max-len
@@ -32,6 +32,7 @@ import DropzonePermissionScreen from '../../screens/authenticated/settings/Dropz
 import DropzoneMasterLogScreen from '../../screens/authenticated/settings/DropzoneMasterLogScreen';
 import UpdateExtraScreen from '../../screens/authenticated/extras/UpdateExtraScreen';
 import ExtrasScreen from '../../screens/authenticated/extras/ExtrasScreen';
+import OrderScreen from '../../screens/authenticated/transactions/OrderScreen';
 
 export type IManifestTabParams = {
   DropzoneScreen: undefined;
@@ -67,6 +68,9 @@ export type IManifestTabParams = {
   DropzoneRigsScreen: undefined;
   DropzonePermissionScreen: undefined;
   DropzoneMasterLogScreen: undefined;
+  OrderScreen: {
+    order: Order;
+  };
 };
 
 const Manifest = createStackNavigator<IManifestTabParams>();
@@ -139,8 +143,10 @@ export default function ManifestTab() {
       <Manifest.Screen
         name="TransactionsScreen"
         component={TransactionsScreen}
-        options={{ title: 'Transactions' }}
+        options={{ title: 'Account History' }}
       />
+
+      <Manifest.Screen name="OrderScreen" component={OrderScreen} options={{ title: 'Order' }} />
 
       <Manifest.Screen
         name="SettingsScreen"

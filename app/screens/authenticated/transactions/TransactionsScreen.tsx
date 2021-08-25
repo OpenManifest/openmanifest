@@ -9,7 +9,7 @@ import CreditsSheet from '../../../components/dialogs/CreditsDialog/Credits';
 
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import useDropzoneUser from '../../../api/hooks/useDropzoneUser';
-import TransactionCard from './TransactionCard';
+import OrderCard from './OrderCard';
 
 export default function TransactionsScreen() {
   const state = useAppSelector((root) => root.global);
@@ -44,10 +44,16 @@ export default function TransactionsScreen() {
 
       <FlatList
         style={styles.flatList}
-        data={dropzoneUser?.transactions?.edges || []}
+        data={dropzoneUser?.orders?.edges || []}
         refreshing={false}
         onRefresh={refetch}
-        renderItem={({ item }) => <TransactionCard transaction={item.node} />}
+        renderItem={({ item }) => (
+          <OrderCard
+            onPress={() => navigation.navigate('OrderScreen', { order: item.node })}
+            order={item?.node}
+            {...{ dropzoneUser }}
+          />
+        )}
       />
 
       <CreditsSheet

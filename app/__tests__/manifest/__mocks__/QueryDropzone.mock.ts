@@ -42,6 +42,7 @@ export const MOCK_QUERY_DROPZONE = (overrides?: IOverride) => ({
           offsetMiles: null,
           winds: [],
         },
+
         currentUser: {
           id: '123',
           credits: 100,
@@ -53,6 +54,9 @@ export const MOCK_QUERY_DROPZONE = (overrides?: IOverride) => ({
           hasLicense: true,
           permissions: [],
           expiresAt: null,
+          orders: {
+            edges: [],
+          },
 
           role: {
             id: '1',

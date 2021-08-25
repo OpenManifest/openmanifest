@@ -1,13 +1,13 @@
-import { gql, useMutation } from '@apollo/client';
 import * as React from 'react';
 import { View, StyleSheet, Keyboard } from 'react-native';
 import { Button } from 'react-native-paper';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
-import { DropzoneUser, Mutation } from '../../../api/schema.d';
+import { DropzoneUser, TransactionType, WalletableTypes } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import CreditsForm from '../../forms/credits/CreditsForm';
+import { useCreateOrderMutation } from '../../../api/reflection';
 
 interface ICreditsSheet {
   open?: boolean;
@@ -16,62 +16,12 @@ interface ICreditsSheet {
   onSuccess(): void;
 }
 
-const MUTATION_CREATE_TRANSACTION = gql`
-  mutation CreateTransaction(
-    $message: String
-    $status: String
-    $amount: Float
-    $dropzoneUserId: Int
-  ) {
-    createTransaction(
-      input: {
-        attributes: {
-          amount: $amount
-          dropzoneUserId: $dropzoneUserId
-          message: $message
-          status: $status
-        }
-      }
-    ) {
-      errors
-      fieldErrors {
-        field
-        message
-      }
-      transaction {
-        id
-        amount
-        message
-
-        dropzoneUser {
-          id
-          credits
-
-          transactions {
-            edges {
-              node {
-                id
-                status
-                amount
-                createdAt
-                message
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
 export default function CreditSheet(props: ICreditsSheet) {
   const { open, dropzoneUser, onClose } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.credits);
   const global = useAppSelector((root) => root.global);
-  const [mutationCreateTransaction, createData] = useMutation<Mutation>(
-    MUTATION_CREATE_TRANSACTION
-  );
+  const [mutationCreateOrder, createData] = useCreateOrderMutation();
 
   const validate = React.useCallback(() => {
     let hasErrors = false;
@@ -87,18 +37,48 @@ export default function CreditSheet(props: ICreditsSheet) {
     if (!validate()) {
       return;
     }
+
+    if (!dropzoneUser?.id || state.fields.amount.value === null || !global.currentDropzoneId) {
+      return;
+    }
+
     try {
-      const response = await mutationCreateTransaction({
+      const response = await mutationCreateOrder({
         variables: {
           amount: state.fields.amount.value,
-          message: state.fields.message.value,
-          status: state.fields.status.value,
-          dropzoneUserId: Number(dropzoneUser?.id),
+          title:
+            state.fields.message.value ||
+            `${
+              state.fields.transactionType.value === TransactionType.Deposit
+                ? 'Added funds'
+                : 'Withdrew funds'
+            }`,
+          seller:
+            state.fields.transactionType.value !== TransactionType.Deposit
+              ? {
+                  type: WalletableTypes.Dropzone,
+                  id: `${global.currentDropzoneId}`,
+                }
+              : {
+                  type: WalletableTypes.DropzoneUser,
+                  id: dropzoneUser.id,
+                },
+          buyer:
+            state.fields.transactionType.value === TransactionType.Deposit
+              ? {
+                  type: WalletableTypes.Dropzone,
+                  id: `${global.currentDropzoneId}`,
+                }
+              : {
+                  type: WalletableTypes.DropzoneUser,
+                  id: dropzoneUser.id,
+                },
+          dropzoneId: Number(global.currentDropzoneId),
         },
       });
-      const result = state.original?.id ? response.data?.updateRig : response.data?.createRig;
+      const { data: result } = response;
 
-      result?.fieldErrors?.map(({ field, message }) => {
+      result?.createOrder?.fieldErrors?.map(({ field, message }) => {
         switch (field) {
           case 'amount':
             return dispatch(actions.forms.credits.setFieldError(['amount', message]));
@@ -110,16 +90,16 @@ export default function CreditSheet(props: ICreditsSheet) {
             return null;
         }
       });
-      if (result?.errors?.length) {
+      if (result?.createOrder?.errors?.length) {
         dispatch(
           actions.notifications.showSnackbar({
-            message: result?.errors[0],
+            message: result?.createOrder?.errors[0],
             variant: 'error',
           })
         );
         return;
       }
-      if (!result?.fieldErrors?.length) {
+      if (!result?.createOrder?.fieldErrors?.length) {
         dispatch(actions.forms.credits.reset());
         props.onSuccess();
       }
@@ -133,12 +113,12 @@ export default function CreditSheet(props: ICreditsSheet) {
     }
   }, [
     validate,
-    mutationCreateTransaction,
+    dropzoneUser?.id,
     state.fields.amount.value,
     state.fields.message.value,
-    state.fields.status.value,
-    state.original?.id,
-    dropzoneUser?.id,
+    state.fields.transactionType?.value,
+    global.currentDropzoneId,
+    mutationCreateOrder,
     dispatch,
     props,
   ]);
@@ -209,7 +189,7 @@ export default function CreditSheet(props: ICreditsSheet) {
             onChangeIndex={(newIndex) => {
               dispatch(
                 actions.forms.credits.setField([
-                  'status',
+                  'transactionType',
                   newIndex === 1 ? 'withdrawal' : 'deposit',
                 ])
               );

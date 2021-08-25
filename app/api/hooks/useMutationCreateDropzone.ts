@@ -42,18 +42,18 @@ export const MUTATION_CREATE_DROPZONE = gql`
 export default createMutation<
   {
     name: string;
-    banner?: string;
+    banner?: string | null;
     federationId: number;
-    primaryColor: string;
-    secondaryColor: string;
-    lat: number;
-    lng: number;
+    primaryColor: string | null;
+    secondaryColor: string | null;
+    lat: number | null;
+    lng: number | null;
   },
   CreateDropzonePayload
 >(MUTATION_CREATE_DROPZONE, {
   getPayload: (result) => result.createDropzone,
   fieldErrorMap: {
-    federation: 'federationId',
+    federationId: 'federation',
   },
   validates: {
     name: [isRequired('Name is required')],

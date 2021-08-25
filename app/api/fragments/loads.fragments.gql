@@ -1,0 +1,46 @@
+#import "./slot.gql"
+
+fragment load on Load {
+  id
+  name
+  createdAt
+  dispatchAt
+  hasLanded
+  loadNumber
+  isFull
+  state
+  isOpen
+  weight
+  maxSlots
+  availableSlots
+  occupiedSlots
+  plane {
+    id
+    maxSlots
+    name
+  }
+  gca {
+    id
+    user {
+      id
+      name
+    }
+  }
+  pilot {
+    id
+    user {
+      id
+      name
+    }
+  }
+  loadMaster {
+    id
+    user {
+      id
+      name
+    }
+  }
+  slots {
+    ...slot
+  }
+}

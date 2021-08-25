@@ -33,7 +33,7 @@ function AircraftWizardScreen(props: IWizardScreenProps) {
             mode="outlined"
             label="Registration"
             error={!!state.fields.registration.error}
-            value={state.fields.registration.value}
+            value={state.fields.registration.value || ''}
             onChangeText={(newValue) =>
               dispatch(actions.forms.plane.setField(['registration', newValue]))
             }

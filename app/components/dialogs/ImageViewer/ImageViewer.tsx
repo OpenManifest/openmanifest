@@ -6,7 +6,6 @@ export default function ImageViewer() {
   const { open, image } = useAppSelector((root) => root.imageViewer);
   const dispatch = useAppDispatch();
 
-  console.log('Showing image', image);
   return (
     <ImageView
       images={image ? [{ uri: image, cache: 'default' }] : []}

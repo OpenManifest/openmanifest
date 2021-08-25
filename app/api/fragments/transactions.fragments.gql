@@ -1,0 +1,32 @@
+fragment transaction on Transaction {
+  id
+  transactionType
+  amount
+  status
+  sender {
+    ... on DropzoneUser {
+      id
+      user {
+        id
+        name
+      }
+    }
+    ... on Dropzone {
+      id
+      name
+    }
+  }
+  receiver {
+    ... on DropzoneUser {
+      id
+      user {
+        id
+        name
+      }
+    }
+    ... on Dropzone {
+      id
+      name
+    }
+  }
+}

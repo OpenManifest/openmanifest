@@ -66,7 +66,7 @@ export default function UpdateExtraScreen() {
 
   const validate = React.useCallback((): boolean => {
     let hasError = false;
-    if (state.fields.name.value.length < 3) {
+    if ((state.fields.name.value?.length || 0) < 3) {
       hasError = true;
       dispatch(actions.forms.extra.setFieldError(['name', 'Name is too short']));
     }
@@ -80,7 +80,7 @@ export default function UpdateExtraScreen() {
   }, [state.fields, dispatch]);
 
   const onSave = React.useCallback(async () => {
-    const { name, cost, ticketTypeIds } = state.fields;
+    const { name, cost, ticketTypes } = state.fields;
 
     if (validate()) {
       try {
@@ -90,7 +90,7 @@ export default function UpdateExtraScreen() {
             dropzoneId: Number(currentDropzone?.dropzone?.id),
             name: name.value,
             cost: cost.value,
-            ticketTypeIds: ticketTypeIds.value,
+            ticketTypeIds: ticketTypes.value?.map(({ id }) => id),
           },
         });
 

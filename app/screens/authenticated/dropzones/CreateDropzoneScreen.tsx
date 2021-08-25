@@ -34,8 +34,12 @@ export default function CreateDropzoneScreen() {
           onPress={() =>
             createDropzone.mutate({
               name: state.fields.name.value || '',
-              banner: state.fields.banner.value || null,
+              banner: state.fields.banner.value,
               federationId: Number(state.fields.federation.value?.id),
+              lat: state.fields.lat.value || null,
+              lng: state.fields.lng.value || null,
+              secondaryColor: state.fields.secondaryColor.value || null,
+              primaryColor: state.fields.primaryColor.value || null,
             })
           }
         >
