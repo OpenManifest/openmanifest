@@ -30,7 +30,7 @@ export default function LoadCard(props: ILoadCardSmall) {
       cancelled: errorColor,
       boarding_call: warningColor,
     }),
-    [palette.accent.light]
+    [palette.accent.main]
   );
   const {
     data: load,

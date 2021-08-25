@@ -8,7 +8,6 @@ import * as React from 'react';
 import { Appearance, Platform, StyleSheet, Text } from 'react-native';
 import type { TabsConfig, BubbleTabBarItemConfig } from '@gorhom/animated-tabbar';
 import Animated from 'react-native-reanimated';
-import c from 'color';
 
 import { useAppSelector } from '../state';
 import ManifestTab from './tabs/manifest';
@@ -37,7 +36,6 @@ export default function AuthenticatedTabBar() {
   const isDarkMode = Appearance.getColorScheme() === 'dark';
 
   const canViewUsers = useRestriction(Permission.ReadUser);
-
 
   const tabConfig = React.useMemo(
     () => ({

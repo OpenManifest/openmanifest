@@ -50,10 +50,7 @@ export default function UserHeader(props: IUserHeader) {
         <View style={{ flex: 1 / 3 }}>
           <TouchableRipple onPress={onPressAvatar}>
             {!dropzoneUser?.user?.image ? (
-              <Avatar.Icon
-                size={80}
-                icon="account"
-              />
+              <Avatar.Icon size={80} icon="account" />
             ) : (
               <Avatar.Image
                 size={80}
