@@ -1,5 +1,4 @@
 module.exports = {
-  project: './tsconfig.json',
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   // for expo projects using react native
   extends: [
