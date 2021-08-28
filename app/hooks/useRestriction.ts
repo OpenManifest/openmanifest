@@ -1,36 +1,26 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import * as React from 'react';
 import { Permission } from '../api/schema.d';
+import { useCurrentUserPermissionsLazyQuery } from '../api/reflection';
 import { useAppSelector } from '../state';
-
-export const QUERY_PERMISSIONS = gql`
-  query QueryPermissions($dropzoneId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      name
-      primaryColor
-      secondaryColor
-
-      currentUser {
-        id
-        role {
-          id
-          name
-        }
-        permissions
-      }
-    }
-  }
-`;
 
 export default function useRestriction(permission: Permission): boolean {
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 
-  const { data } = useQuery(QUERY_PERMISSIONS, {
+  const [execute, { data }] = useCurrentUserPermissionsLazyQuery({
     variables: {
       dropzoneId: Number(currentDropzoneId),
     },
   });
+
+  React.useEffect(() => {
+    if (currentDropzoneId) {
+      execute({
+        variables: {
+          dropzoneId: Number(currentDropzoneId),
+        },
+      });
+    }
+  }, [currentDropzoneId, execute]);
 
   const permissions = data?.dropzone?.currentUser?.permissions || [];
   return permissions?.includes(permission as Permission) || false;

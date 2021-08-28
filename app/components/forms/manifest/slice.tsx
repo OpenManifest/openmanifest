@@ -78,8 +78,10 @@ export default createSlice({
     ) => {
       const [field, value] = action.payload;
 
-      state.fields[field].value = value;
-      state.fields[field].error = null;
+      if (field in state.fields) {
+        state.fields[field].value = value;
+        state.fields[field].error = null;
+      }
     },
     setFieldError: <T extends keyof ISlotEditState['fields']>(
       state: ISlotEditState,
@@ -87,7 +89,9 @@ export default createSlice({
     ) => {
       const [field, error] = action.payload;
 
-      state.fields[field].error = error;
+      if (field in state.fields) {
+        state.fields[field].error = error;
+      }
     },
 
     setOpen: (state: ISlotEditState, action: PayloadAction<boolean | Slot>) => {

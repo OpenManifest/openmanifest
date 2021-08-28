@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { TextInput, HelperText, Divider, Chip, List } from 'react-native-paper';
+import NumberField from '../../input/number_input/NumberField';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import { Permission } from '../../../api/schema.d';
@@ -110,14 +111,10 @@ export default function ManifestForm() {
       <HelperText type={state.fields.rig.error ? 'error' : 'info'}>
         {state.fields.rig.error || ''}
       </HelperText>
-      <TextInput
-        style={styles.field}
-        mode="outlined"
-        label="Exit weight"
+      <NumberField
+        label="Exit weight (kg)"
         error={!!state.fields.exitWeight.error}
-        value={state.fields.exitWeight?.value?.toString() || ''}
-        keyboardType="number-pad"
-        right={() => <TextInput.Affix text="kg" />}
+        value={state.fields.exitWeight?.value}
         onChangeText={(newValue) =>
           dispatch(actions.forms.manifest.setField(['exitWeight', Number(newValue)]))
         }

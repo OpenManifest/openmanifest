@@ -162,6 +162,30 @@ export const OrderFragmentDoc = gql`
       name
     }
   }
+  item {
+    title
+    cost
+    ... on Slot {
+      id
+      ticketType {
+        id
+        name
+        cost
+      }
+      extras {
+        id
+        name
+        cost
+      }
+    }
+    ... on TicketType {
+      id
+    }
+    ... on Extra {
+      id
+      name
+    }
+  }
   receipts {
     id
     amountCents
@@ -359,3 +383,49 @@ export function useQueryDropzoneUserProfileLazyQuery(baseOptions?: Apollo.LazyQu
 export type QueryDropzoneUserProfileHookResult = ReturnType<typeof useQueryDropzoneUserProfile>;
 export type QueryDropzoneUserProfileLazyQueryHookResult = ReturnType<typeof useQueryDropzoneUserProfileLazyQuery>;
 export type QueryDropzoneUserProfileQueryResult = Apollo.QueryResult<Operation.QueryDropzoneUserProfileQuery, Operation.QueryDropzoneUserProfileQueryVariables>;
+export const CurrentUserPermissionsDocument = gql`
+    query CurrentUserPermissions($dropzoneId: Int!) {
+  dropzone(id: $dropzoneId) {
+    id
+    name
+    primaryColor
+    secondaryColor
+    currentUser {
+      id
+      role {
+        id
+        name
+      }
+      permissions
+    }
+  }
+}
+    `;
+
+/**
+ * __useCurrentUserPermissionsQuery__
+ *
+ * To run a query within a React component, call `useCurrentUserPermissionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCurrentUserPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCurrentUserPermissionsQuery({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *   },
+ * });
+ */
+export function useCurrentUserPermissionsQuery(baseOptions: Apollo.QueryHookOptions<Operation.CurrentUserPermissionsQuery, Operation.CurrentUserPermissionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.CurrentUserPermissionsQuery, Operation.CurrentUserPermissionsQueryVariables>(CurrentUserPermissionsDocument, options);
+      }
+export function useCurrentUserPermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.CurrentUserPermissionsQuery, Operation.CurrentUserPermissionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.CurrentUserPermissionsQuery, Operation.CurrentUserPermissionsQueryVariables>(CurrentUserPermissionsDocument, options);
+        }
+export type CurrentUserPermissionsQueryHookResult = ReturnType<typeof useCurrentUserPermissionsQuery>;
+export type CurrentUserPermissionsLazyQueryHookResult = ReturnType<typeof useCurrentUserPermissionsLazyQuery>;
+export type CurrentUserPermissionsQueryResult = Apollo.QueryResult<Operation.CurrentUserPermissionsQuery, Operation.CurrentUserPermissionsQueryVariables>;

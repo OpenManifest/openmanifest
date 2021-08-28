@@ -1002,6 +1002,9 @@ enum OrderState {
 
   """refunded"""
   refunded
+
+  """cancelled"""
+  cancelled
 }
 
 """Information about pagination in a connection."""

@@ -2,12 +2,20 @@ import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 
 import { setContext } from '@apollo/client/link/context';
+import { BatchHttpLink } from '@apollo/client/link/batch-http';
 import { onError } from '@apollo/client/link/error';
+import { RetryLink } from '@apollo/client/link/retry';
 import * as React from 'react';
 import Constants from 'expo-constants';
 import { actions, useAppDispatch, useAppSelector } from '../state';
 
 const httpLink = createHttpLink({
+  uri: Constants.manifest?.extra?.url,
+});
+
+const httpBatchLink = new BatchHttpLink({
+  batchDebounce: true,
+  batchMax: 10,
   uri: Constants.manifest?.extra?.url,
 });
 
@@ -82,7 +90,7 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
   const client = React.useMemo(
     () =>
       new ApolloClient({
-        link: errorLink.concat(authLink).concat(httpLink),
+        link: errorLink.concat(authLink).concat(new RetryLink()).concat(httpBatchLink),
         cache: new InMemoryCache(),
       }),
     [authLink, errorLink]

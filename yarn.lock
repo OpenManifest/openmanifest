@@ -12275,7 +12275,7 @@ prompts@^2.0.1, prompts@^2.2.1:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.5.10, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.5.10, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -12615,6 +12615,14 @@ react-native-mmkv-storage@^0.5.3:
   resolved "https://registry.npmjs.org/react-native-mmkv-storage/-/react-native-mmkv-storage-0.5.9.tgz#f4333c6fcae6475a786b1c0f907ae478bad2c91a"
   integrity sha512-SfjUIpC0pkhdLx1zKYkEkzqfb+sOus1nr/RoXcesLhjz/qRYmnDIULsrebl6peHTNRAbgmhgumr6MoFj0m7EFA==
 
+react-native-numeric-input@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.npmjs.org/react-native-numeric-input/-/react-native-numeric-input-1.9.0.tgz#e57a0c3d226935abc0b205dec11e662f25926013"
+  integrity sha512-PEtji6X0duniB/PrCl4DgBFSmjrQQaMxfZqGqbUjh1UalNX4ITdrPyctZK5BFs2/AbJq05tj/OYBNEGTiDIbPw==
+  dependencies:
+    prop-types "^15.6.1"
+    react-native-pixel-perfect "^1.0.1"
+
 react-native-pager-view@5.0.12:
   version "5.0.12"
   resolved "https://registry.npmjs.org/react-native-pager-view/-/react-native-pager-view-5.0.12.tgz#5106735d944e7f876b006377ab6a18859bf7730c"
@@ -12639,6 +12647,11 @@ react-native-paper@4.8.1:
     "@callstack/react-theme-provider" "^3.0.5"
     color "^3.1.2"
     react-native-iphone-x-helper "^1.3.1"
+
+react-native-pixel-perfect@^1.0.1:
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/react-native-pixel-perfect/-/react-native-pixel-perfect-1.0.2.tgz#8e6dc97e377caa4bd07f9e584ba438d53c0e25e8"
+  integrity sha512-0IvYCNkxuQbQC9q4tI+C3i6o38nbx916p7gBRBWuPxDhKBCuTkVV3VukcfW6vtjRlwQm6kwQcF9OtI+yUBt+YA==
 
 react-native-reanimated@2.1.0, react-native-reanimated@~2.2.0:
   version "2.2.0"

@@ -16,6 +16,7 @@ import { DropzoneUser, Query, Rig } from '../../../api/schema.d';
 import { useAppSelector } from '../../../state';
 import calculateWingLoading from '../../../utils/calculateWingLoading';
 import RigSelect from '../../input/dropdown_select/RigSelect';
+import NumberField from '../../input/number_input/NumberField';
 
 interface IUserRigCard {
   dropzoneUserId: number;
@@ -153,12 +154,10 @@ export default function UserRigCard(props: IUserRigCard) {
             />
           </View>
           <View style={styles.rowLast}>
-            <TextInput
-              value={!exitWeight ? '' : `${exitWeight}`}
-              onChangeText={(text: string) => onChangeExitWeight(Number(text))}
-              keyboardType="number-pad"
-              label="Exit weight"
-              mode="outlined"
+            <NumberField
+              value={!exitWeight ? 0 : exitWeight}
+              onChangeText={(num) => onChangeExitWeight(num)}
+              label="Exit weight (kg)"
             />
           </View>
         </View>
@@ -176,12 +175,10 @@ export default function UserRigCard(props: IUserRigCard) {
                 />
               </View>
               <View style={styles.rowLast}>
-                <TextInput
-                  value={!passengerWeight ? '' : `${passengerWeight}`}
-                  onChangeText={(text: string) => onChangePassengerWeight?.(Number(text))}
-                  keyboardType="number-pad"
-                  label="Exit weight"
-                  mode="outlined"
+                <NumberField
+                  value={!passengerWeight ? 0 : passengerWeight}
+                  onChangeText={(num) => onChangePassengerWeight?.(num)}
+                  label="Exit weight (kg)"
                 />
               </View>
             </View>
@@ -202,13 +199,14 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 16,
   },
   rowFirst: {
-    flex: 2 / 3,
+    flex: 2 / 4,
     marginRight: 4,
   },
   rowLast: {
-    flex: 1 / 3,
+    flex: 2 / 4,
   },
   actions: { justifyContent: 'flex-end' },
 });

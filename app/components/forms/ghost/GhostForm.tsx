@@ -2,6 +2,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Divider } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
+import NumberField from '../../input/number_input/NumberField';
 
 import LicenseChipSelect from '../../input/chip_select/LicenseChipSelect';
 import FederationSelect from '../../input/dropdown_select/FederationSelect';
@@ -65,16 +66,13 @@ export default function SlotForm() {
         {state.fields.email.error || ' '}
       </HelperText>
 
-      <TextInput
-        style={styles.field}
+      <NumberField
         mode="outlined"
-        label="Exit weight"
+        label="Exit weight (kg)"
         error={!!state.fields.exitWeight.error}
-        value={state.fields.exitWeight?.value?.toString() || ''}
-        keyboardType="numbers-and-punctuation"
-        right={() => <TextInput.Affix text="kg" />}
+        value={Number(state.fields.exitWeight?.value)}
         onChangeText={(newValue) =>
-          dispatch(actions.forms.ghost.setField(['exitWeight', newValue]))
+          dispatch(actions.forms.ghost.setField(['exitWeight', newValue?.toString()]))
         }
       />
 
