@@ -266,7 +266,7 @@ export default function useCurrentDropzone() {
     const localToken = pushToken;
 
     if (!currentDropzone.loading && currentDropzone.called) {
-      if (localToken && localToken !== remoteToken) {
+      if (localToken && localToken !== remoteToken && userId) {
         mutationUpdateUser.mutate({
           id: Number(userId),
           pushToken: localToken,

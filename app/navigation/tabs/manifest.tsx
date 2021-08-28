@@ -33,6 +33,7 @@ import DropzoneMasterLogScreen from '../../screens/authenticated/settings/Dropzo
 import UpdateExtraScreen from '../../screens/authenticated/extras/UpdateExtraScreen';
 import ExtrasScreen from '../../screens/authenticated/extras/ExtrasScreen';
 import OrderScreen from '../../screens/authenticated/transactions/OrderScreen';
+import RigInspectionScreen from '../../screens/authenticated/rig/RigInspectionScreen';
 
 export type IManifestTabParams = {
   DropzoneScreen: undefined;
@@ -68,6 +69,7 @@ export type IManifestTabParams = {
   DropzoneRigsScreen: undefined;
   DropzonePermissionScreen: undefined;
   DropzoneMasterLogScreen: undefined;
+  RigInspectionScreen: undefined;
   OrderScreen: {
     order: Order;
   };
@@ -178,6 +180,11 @@ export default function ManifestTab() {
         name="RigInspectionTemplateScreen"
         component={RigInspectionTemplateScreen}
         options={{ title: 'Rig Inspection Form' }}
+      />
+      <Manifest.Screen
+        name="RigInspectionScreen"
+        component={RigInspectionScreen}
+        options={{ title: 'Rig Inspection' }}
       />
       <Manifest.Screen
         name="DropzoneRigsScreen"

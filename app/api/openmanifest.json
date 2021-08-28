@@ -7980,6 +7980,12 @@
             "description": "refunded",
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "cancelled",
+            "description": "cancelled",
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "possibleTypes": null

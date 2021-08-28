@@ -52,6 +52,7 @@ export default function ProfileScreen() {
         contentContainerStyle={{ padding: 16 }}
         renderItem={({ item }) => (
           <RigCard
+            {...{ dropzoneUser }}
             onSuccessfulImageUpload={refetch}
             rig={item}
             rigInspection={dropzoneUser?.rigInspections?.find(

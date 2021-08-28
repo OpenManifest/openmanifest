@@ -1115,7 +1115,9 @@ export enum OrderState {
   /** completed */
   Completed = 'completed',
   /** refunded */
-  Refunded = 'refunded'
+  Refunded = 'refunded',
+  /** cancelled */
+  Cancelled = 'cancelled'
 }
 
 /** Information about pagination in a connection. */

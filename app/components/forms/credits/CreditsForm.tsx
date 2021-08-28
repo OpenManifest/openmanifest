@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { TextInput, HelperText, Divider, DataTable } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 import { TransactionType } from '../../../api/schema.d';
+import NumberField from '../../input/number_input/NumberField';
 
 export default function CreditsForm() {
   const state = useAppSelector((root) => root.forms.credits);
@@ -32,15 +33,12 @@ export default function CreditsForm() {
       </HelperText>
       {state.fields.transactionType.value === 'deposit' ? (
         <View>
-          <TextInput
-            style={styles.field}
-            mode="outlined"
+          <NumberField
             label="Add amount"
             error={!!state.fields.amount.error}
-            value={state.fields.amount.value?.toString() || ''}
-            keyboardType="number-pad"
-            onChangeText={(newValue: string) =>
-              dispatch(actions.forms.credits.setField(['amount', Number(newValue)]))
+            value={state.fields.amount.value}
+            onChangeText={(newValue) =>
+              dispatch(actions.forms.credits.setField(['amount', newValue]))
             }
           />
           <HelperText type={state.fields.amount.error ? 'error' : 'info'}>
@@ -69,15 +67,12 @@ export default function CreditsForm() {
         </View>
       ) : (
         <View>
-          <TextInput
-            style={styles.field}
-            mode="outlined"
+          <NumberField
             label="Withdraw amount"
             error={!!state.fields.amount.error}
-            value={state.fields.amount.value?.toString() || ''}
-            keyboardType="number-pad"
-            onChangeText={(newValue: string) =>
-              dispatch(actions.forms.credits.setField(['amount', Number(newValue)]))
+            value={state.fields.amount.value}
+            onChangeText={(newValue) =>
+              dispatch(actions.forms.credits.setField(['amount', newValue]))
             }
           />
           <HelperText type={state.fields.amount.error ? 'error' : 'info'}>

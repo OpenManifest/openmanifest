@@ -4,6 +4,7 @@ import { Text, View, StyleSheet, Platform } from 'react-native';
 import { Avatar, Card, Chip, Divider, Menu, ProgressBar, useTheme } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/core';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import useRestriction from '../../../hooks/useRestriction';
 
@@ -11,16 +12,17 @@ import useMutationUpdateRig from '../../../api/hooks/useMutationUpdateRig';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import { errorColor, successColor } from '../../../constants/Colors';
 
-import { Permission, Rig, RigInspection } from '../../../api/schema.d';
+import { DropzoneUser, Permission, Rig, RigInspection } from '../../../api/schema.d';
 
 export interface IRigCardProps {
   rig: Rig;
+  dropzoneUser?: DropzoneUser | null;
   rigInspection?: RigInspection;
   onSuccessfulImageUpload?(): void;
   onPress?(): void;
 }
 export default function RigCard(props: IRigCardProps) {
-  const { rig, rigInspection, onSuccessfulImageUpload, onPress } = props;
+  const { rig, rigInspection, dropzoneUser, onSuccessfulImageUpload, onPress } = props;
   const [isUploading, setUploading] = React.useState(false);
   const { accent } = useAppSelector((root) => root.global.theme.colors);
   const dispatch = useAppDispatch();
@@ -74,6 +76,7 @@ export default function RigCard(props: IRigCardProps) {
   }, [rig?.id, updateRig]);
 
   const canManageDropzoneRigs = useRestriction(Permission.UpdateDropzoneRig);
+  const navigation = useNavigation();
   const canUpdateRig =
     currentUser?.user?.id === rig.user?.id || (rig?.dropzone?.id && canManageDropzoneRigs);
 
@@ -176,6 +179,12 @@ export default function RigCard(props: IRigCardProps) {
               backgroundColor: rigInspection?.inspectedBy?.user?.name ? successColor : errorColor,
             },
           ]}
+          onPress={() => {
+            navigation.navigate('RigInspectionScreen', {
+              rig,
+              dropzoneUserId: Number(dropzoneUser?.id),
+            });
+          }}
         >
           <View style={styles.innerChip}>
             <View style={{ marginRight: 8 }}>
