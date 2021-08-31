@@ -390,6 +390,7 @@ export type DropzoneOrdersArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  startDate?: Maybe<Scalars['Int']>;
 };
 
 
@@ -497,6 +498,7 @@ export type DropzoneUserOrdersArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  startDate?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1966,6 +1968,7 @@ export type WalletOrdersArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  startDate?: Maybe<Scalars['Int']>;
 };
 
 

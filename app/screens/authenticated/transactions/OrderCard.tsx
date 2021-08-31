@@ -5,16 +5,18 @@ import { format } from 'date-fns';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { successColor } from '../../../constants/Colors';
-import { DropzoneUser, Order } from '../../../api/schema';
+import { Dropzone, DropzoneUser, Order } from '../../../api/schema';
+import UserAvatar from '../../../components/UserAvatar';
 
 interface IOrder {
   order: Order;
   dropzoneUser?: DropzoneUser | null;
+  showAvatar?: boolean;
   onPress?(): void;
 }
 
 export default function OrderCard(props: IOrder) {
-  const { order, dropzoneUser, onPress } = props;
+  const { order, dropzoneUser, showAvatar, onPress } = props;
   const theme = useTheme();
   const icon =
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -44,21 +46,38 @@ export default function OrderCard(props: IOrder) {
             descriptionStyle={styles.orderDescription}
             left={() => (
               <View style={{ width: 165, alignItems: 'center', flexDirection: 'row' }}>
-                <MaterialCommunityIcons
-                  color={
-                    // eslint-disable-next-line no-underscore-dangle
-                    '__typename' in order.buyer &&
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    order.buyer.__typename === 'DropzoneUser' &&
-                    (order.buyer as DropzoneUser)?.id === dropzoneUser?.id
-                      ? '#FF1414'
-                      : successColor
-                  }
-                  name={icon}
-                  size={36}
-                  style={{ marginHorizontal: 16 }}
-                />
+                {showAvatar ? (
+                  <UserAvatar
+                    style={{ alignSelf: 'center', marginHorizontal: 12 }}
+                    size={30}
+                    name={
+                      (order?.buyer as DropzoneUser)?.user?.name ||
+                      (order?.buyer as Dropzone).name ||
+                      ''
+                    }
+                    image={
+                      (order?.buyer as DropzoneUser).user?.image ||
+                      (order?.buyer as Dropzone).banner ||
+                      undefined
+                    }
+                  />
+                ) : (
+                  <MaterialCommunityIcons
+                    color={
+                      // eslint-disable-next-line no-underscore-dangle
+                      '__typename' in order.buyer &&
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore
+                      order.buyer.__typename === 'DropzoneUser' &&
+                      (order.buyer as DropzoneUser)?.id === dropzoneUser?.id
+                        ? '#FF1414'
+                        : successColor
+                    }
+                    name={icon}
+                    size={36}
+                    style={{ marginHorizontal: 16 }}
+                  />
+                )}
                 <Text
                   style={{
                     fontSize: 30,

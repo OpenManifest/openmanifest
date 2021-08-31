@@ -3,6 +3,233 @@ import * as Operation from './operations';
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
+export const CurrentUserEssentialsFragmentDoc = gql`
+    fragment currentUserEssentials on DropzoneUser {
+  id
+  credits
+  hasCredits
+  hasExitWeight
+  hasMembership
+  hasReserveInDate
+  hasRigInspection
+  hasLicense
+  permissions
+  expiresAt
+  role {
+    id
+    name
+  }
+}
+    `;
+export const CurrentUserDetailedFragmentDoc = gql`
+    fragment currentUserDetailed on DropzoneUser {
+  ...currentUserEssentials
+  rigInspections {
+    id
+    isOk
+    inspectedBy {
+      id
+      user {
+        id
+        name
+      }
+    }
+    rig {
+      id
+    }
+  }
+  orders {
+    edges {
+      node {
+        id
+        title
+        state
+        createdAt
+        title
+        amount
+        buyer {
+          __typename
+          ... on DropzoneUser {
+            id
+            user {
+              id
+              name
+            }
+          }
+          ... on Dropzone {
+            id
+            name
+          }
+        }
+        seller {
+          __typename
+          ... on DropzoneUser {
+            id
+            user {
+              id
+              name
+            }
+          }
+          ... on Dropzone {
+            id
+            name
+          }
+        }
+        item {
+          title
+          cost
+          ... on Slot {
+            id
+            ticketType {
+              id
+              name
+              cost
+            }
+            extras {
+              id
+              name
+              cost
+            }
+          }
+          ... on TicketType {
+            id
+          }
+          ... on Extra {
+            id
+            name
+          }
+        }
+        receipts {
+          id
+          transactions {
+            id
+            message
+            transactionType
+            status
+            createdAt
+            amount
+            sender {
+              ... on DropzoneUser {
+                id
+                user {
+                  id
+                  name
+                }
+              }
+              ... on Dropzone {
+                id
+                name
+              }
+            }
+            receiver {
+              ... on DropzoneUser {
+                id
+                user {
+                  id
+                  name
+                }
+              }
+              ... on Dropzone {
+                id
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  availableRigs {
+    name
+    id
+    make
+    model
+    canopySize
+    serial
+    user {
+      id
+    }
+  }
+  user {
+    id
+    name
+    exitWeight
+    email
+    phone
+    pushToken
+    image
+    rigs {
+      id
+      name
+      model
+      make
+      serial
+      canopySize
+      repackExpiresAt
+      packingCard
+      user {
+        id
+      }
+    }
+    jumpTypes {
+      id
+      name
+    }
+    license {
+      id
+      name
+    }
+  }
+}
+    ${CurrentUserEssentialsFragmentDoc}`;
+export const DropzoneEssentialsFragmentDoc = gql`
+    fragment dropzoneEssentials on Dropzone {
+  id
+  lat
+  lng
+  name
+  primaryColor
+  secondaryColor
+  planes {
+    id
+    name
+    registration
+  }
+  ticketTypes {
+    id
+    name
+  }
+}
+    `;
+export const DropzoneDetailedFragmentDoc = gql`
+    fragment dropzoneDetailed on Dropzone {
+  ...dropzoneEssentials
+  currentConditions {
+    id
+    jumpRun
+    temperature
+    offsetDirection
+    offsetMiles
+    winds {
+      altitude
+      speed
+      direction
+    }
+  }
+  loads(earliestTimestamp: $earliestTimestamp) {
+    edges {
+      node {
+        id
+        name
+        loadNumber
+        isOpen
+        maxSlots
+        state
+      }
+    }
+  }
+}
+    ${DropzoneEssentialsFragmentDoc}`;
 export const SlotFragmentDoc = gql`
     fragment slot on Slot {
   id
@@ -284,6 +511,49 @@ export function useFinalizeLoadMutation(baseOptions?: Apollo.MutationHookOptions
 export type FinalizeLoadMutationHookResult = ReturnType<typeof useFinalizeLoadMutation>;
 export type FinalizeLoadMutationResult = Apollo.MutationResult<Operation.FinalizeLoadMutation>;
 export type FinalizeLoadMutationOptions = Apollo.BaseMutationOptions<Operation.FinalizeLoadMutation, Operation.FinalizeLoadMutationVariables>;
+export const DropzoneTransactionsDocument = gql`
+    query DropzoneTransactions($dropzoneId: Int!, $after: String) {
+  dropzone(id: $dropzoneId) {
+    ...dropzoneEssentials
+    orders(after: $after) {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+  }
+}
+    ${DropzoneEssentialsFragmentDoc}`;
+
+/**
+ * __useDropzoneTransactionsQuery__
+ *
+ * To run a query within a React component, call `useDropzoneTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDropzoneTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDropzoneTransactionsQuery({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function useDropzoneTransactionsQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>(DropzoneTransactionsDocument, options);
+      }
+export function useDropzoneTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>(DropzoneTransactionsDocument, options);
+        }
+export type DropzoneTransactionsQueryHookResult = ReturnType<typeof useDropzoneTransactionsQuery>;
+export type DropzoneTransactionsLazyQueryHookResult = ReturnType<typeof useDropzoneTransactionsLazyQuery>;
+export type DropzoneTransactionsQueryResult = Apollo.QueryResult<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>;
 export const QueryDropzoneUserProfileDocument = gql`
     query QueryDropzoneUserProfile($dropzoneId: Int!, $dropzoneUserId: Int!) {
   dropzone(id: $dropzoneId) {

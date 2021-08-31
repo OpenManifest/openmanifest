@@ -8,7 +8,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 // Import your own reducer
 import { rootReducer, RootState } from '../state/store';
-import { QUERY_PERMISSIONS } from '../hooks/useRestriction';
+import { CurrentUserPermissionsDocument } from '../api/reflection';
 
 interface IRenderer extends RenderOptions {
   initialState?: RootState;
@@ -30,7 +30,7 @@ function render(
             ...(graphql || []),
             {
               request: {
-                query: QUERY_PERMISSIONS,
+                query: CurrentUserPermissionsDocument,
                 variables: {
                   dropzoneId: 1,
                 },

@@ -41,7 +41,7 @@ export default function UserHeader(props: IUserHeader) {
           <IconButton
             icon="pencil"
             size={20}
-            color={theme.colors.surface}
+            color={theme.colors.onSurface}
             onPress={() => (onEdit ? onEdit() : null)}
           />
         )}

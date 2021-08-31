@@ -367,6 +367,7 @@ type Dropzone implements AnyResource & Wallet {
 
     """Returns the last _n_ elements from the list."""
     last: Int
+    startDate: Int
   ): OrderConnection
   planes: [Plane!]!
   primaryColor: String
@@ -489,6 +490,7 @@ type DropzoneUser implements AnyResource & Wallet {
 
     """Returns the last _n_ elements from the list."""
     last: Int
+    startDate: Int
   ): OrderConnection
   permissions: [Permission!]
   purchases(
@@ -1873,6 +1875,7 @@ interface Wallet {
 
     """Returns the last _n_ elements from the list."""
     last: Int
+    startDate: Int
   ): OrderConnection
   purchases(
     """Returns the elements in the list that come after the specified cursor."""

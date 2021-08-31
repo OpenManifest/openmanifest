@@ -192,6 +192,33 @@ export default function DrawerMenu() {
               });
             }}
           />
+
+          <Drawer.Item
+            label="Log out"
+            icon="logout"
+            onPress={() => {
+              dispatch(actions.global.logout());
+              navigation.dispatch(DrawerActions.closeDrawer());
+            }}
+          />
+        </Drawer.Section>
+        <Drawer.Section title="Dropzone">
+          <Drawer.Item
+            label="Order Activity"
+            active={subRouteName === 'DropzoneTransactionsScreen'}
+            icon="cash"
+            onPress={() => {
+              navigation.navigate('Authenticated', {
+                screen: 'Authenticated',
+                params: {
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'DropzoneTransactionsScreen',
+                  },
+                },
+              });
+            }}
+          />
           {shouldShowSettings ? (
             <Drawer.Item
               active={routeName === 'Settings'}
@@ -210,14 +237,6 @@ export default function DrawerMenu() {
               }
             />
           ) : null}
-          <Drawer.Item
-            label="Log out"
-            icon="logout"
-            onPress={() => {
-              dispatch(actions.global.logout());
-              navigation.dispatch(DrawerActions.closeDrawer());
-            }}
-          />
         </Drawer.Section>
         <Drawer.Section title="Switch dropzone">
           {data?.edges?.map((edge) => (

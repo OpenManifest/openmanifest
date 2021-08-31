@@ -42,7 +42,7 @@ export default function ExtraForm() {
         mode="outlined"
         label="Name"
         error={!!state.fields.name.error}
-        value={state.fields.name.value}
+        value={state.fields.name.value || ''}
         onChangeText={(newValue) => dispatch(actions.forms.extra.setField(['name', newValue]))}
       />
       <HelperText type={state.fields.name.error ? 'error' : 'info'}>
@@ -69,13 +69,17 @@ export default function ExtraForm() {
           <Checkbox.Item
             label={ticket.name || ''}
             status={
-              state.fields.ticketTypeIds.value.includes(Number(ticket.id)) ? 'checked' : 'unchecked'
+              state.fields.ticketTypes.value?.map(({ id }) => id).includes(ticket.id)
+                ? 'checked'
+                : 'unchecked'
             }
             onPress={() =>
               dispatch(
                 actions.forms.extra.setField([
-                  'ticketTypeIds',
-                  xor(state.fields.ticketTypeIds.value, [Number(ticket.id)]),
+                  'ticketTypes',
+                  state.fields.ticketTypes.value?.map(({ id }) => id).includes(ticket.id)
+                    ? state.fields.ticketTypes.value?.filter(({ id }) => id !== ticket.id)
+                    : [...(state.fields.ticketTypes.value || []), ticket],
                 ])
               )
             }

@@ -1,0 +1,46 @@
+fragment dropzoneEssentials on Dropzone {
+  id
+  lat
+  lng
+  name
+  primaryColor
+  secondaryColor
+  planes {
+    id
+    name
+    registration
+  }
+  ticketTypes {
+    id
+    name
+  }
+}
+
+fragment dropzoneDetailed on Dropzone {
+  ...dropzoneEssentials,
+
+  currentConditions {
+    id
+    jumpRun
+    temperature
+    offsetDirection
+    offsetMiles
+    winds {
+      altitude
+      speed
+      direction
+    }
+  }
+  loads(earliestTimestamp: $earliestTimestamp) {
+    edges {
+      node {
+        id
+        name
+        loadNumber
+        isOpen
+        maxSlots
+        state
+      }
+    }
+  }
+}
