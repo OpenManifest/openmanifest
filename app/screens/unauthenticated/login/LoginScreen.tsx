@@ -109,6 +109,7 @@ export default function LoginScreen() {
           onChangeText={(newValue) => {
             dispatch(actions.screens.login.setPassword(newValue));
           }}
+          onSubmitEditing={onLogin}
           error={!!state.fields.password.error}
         />
         <HelperText type="error">{state.fields.password.error || ' '}</HelperText>

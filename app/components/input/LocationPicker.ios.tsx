@@ -83,89 +83,86 @@ export function LocationWizardStep(props: ILocationPickerProps) {
   const [internalRegion, setInternalRegion] = React.useState<Region | undefined>(region);
 
   return (
-    <>
-      <MapView
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        ref={map}
-        style={{
-          ...StyleSheet.absoluteFillObject,
-          marginTop: -50,
-        }}
-        initialRegion={region}
-        region={internalRegion}
-        onRegionChange={(_region) => {
-          setInternalRegion(_region);
-          if (!isAnimating) {
-            setCoordinateFade(false);
-            setDragging(true);
-          }
-        }}
-        onRegionChangeComplete={(r) => {
-          fadeOut.current?.stop();
-          fadeIn.current?.stop();
-          setAnimating(false);
-          setCoordinateFade(true);
-          setCoordinateFade(true);
-          setDragging(false);
-          props.onChange(r);
-        }}
-        minZoomLevel={7}
-        mapType="satellite"
-        zoomEnabled
-        scrollEnabled
-        focusable
-      />
-      <View style={StyleSheet.absoluteFill}>
-        {!region ? null : (
-          <View style={styles.markerFixed} pointerEvents="none">
-            <MaterialCommunityIcons
-              pointerEvents="none"
-              size={markerSize || 60}
-              style={{
-                color: '#ffffff',
-                textShadowColor: 'rgba(14,14,14,0.8)',
-                textShadowOffset: {
-                  width: 5,
-                  height: 5,
-                },
-                textShadowRadius: 10,
-                zIndex: 10,
-              }}
-              name={isDragging ? 'map-marker' : 'map-marker-check-outline'}
-            />
-            <Animated.Text
-              style={{
-                fontSize: labelSize || 30,
-                position: 'absolute',
-                bottom: '30%',
-                width: '100%',
-                opacity: opacity.current,
-                textAlign: 'center',
-                color: '#ffffff',
-                textShadowColor: 'rgba(14,14,14,0.8)',
-                textShadowOffset: {
-                  width: 3,
-                  height: 3,
-                },
-                textShadowRadius: 10,
-              }}
-            >
-              {region.latitude.toFixed(5)},{region.longitude.toFixed(5)}
-            </Animated.Text>
-          </View>
-        )}
+    <MapView
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      ref={map}
+      style={{
+        ...StyleSheet.absoluteFillObject,
+        marginTop: -50,
+      }}
+      initialRegion={region}
+      region={internalRegion}
+      onRegionChange={(_region) => {
+        setInternalRegion(_region);
+        if (!isAnimating) {
+          setCoordinateFade(false);
+          setDragging(true);
+        }
+      }}
+      onRegionChangeComplete={(r) => {
+        fadeOut.current?.stop();
+        fadeIn.current?.stop();
+        setAnimating(false);
+        setCoordinateFade(true);
+        setCoordinateFade(true);
+        setDragging(false);
+        props.onChange(r);
+      }}
+      minZoomLevel={7}
+      mapType="satellite"
+      zoomEnabled
+      scrollEnabled
+      focusable
+    >
+      {!region ? null : (
+        <View style={styles.markerFixed} pointerEvents="none">
+          <MaterialCommunityIcons
+            pointerEvents="none"
+            size={markerSize || 60}
+            style={{
+              color: '#ffffff',
+              textShadowColor: 'rgba(14,14,14,0.8)',
+              textShadowOffset: {
+                width: 5,
+                height: 5,
+              },
+              textShadowRadius: 10,
+              zIndex: 10,
+            }}
+            name={isDragging ? 'map-marker' : 'map-marker-check-outline'}
+          />
+          <Animated.Text
+            style={{
+              fontSize: labelSize || 30,
+              position: 'absolute',
+              bottom: '30%',
+              width: '100%',
+              opacity: opacity.current,
+              textAlign: 'center',
+              color: '#ffffff',
+              textShadowColor: 'rgba(14,14,14,0.8)',
+              textShadowOffset: {
+                width: 3,
+                height: 3,
+              },
+              textShadowRadius: 10,
+            }}
+          >
+            {region.latitude.toFixed(5)},{region.longitude.toFixed(5)}
+          </Animated.Text>
+        </View>
+      )}
 
-        <TouchableOpacity
-          style={styles.myLocation}
-          onPress={() => {
-            setUsersLocation();
-          }}
-        >
-          <MaterialIcons name="my-location" size={20} />
-        </TouchableOpacity>
-      </View>
-    </>
+      <TouchableOpacity
+        style={styles.myLocation}
+        onPress={() => {
+          setUsersLocation();
+        }}
+      >
+        <MaterialIcons name="my-location" size={20} />
+      </TouchableOpacity>
+    </MapView>
   );
 }
 

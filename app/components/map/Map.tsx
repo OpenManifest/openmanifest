@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View, ViewStyle } from 'react-native';
-import MapView, { Region } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import { calculateLatLngDelta } from '../../utils/calculateLatLngDelta';
 
 interface IMapProps {
@@ -80,7 +80,7 @@ function Map(props: IMapProps) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         ref={map}
-        // provider={PROVIDER_GOOGLE}
+        provider={PROVIDER_GOOGLE}
         style={{
           width: '100%',
           height: '100%',
@@ -101,10 +101,9 @@ function Map(props: IMapProps) {
         }}
         focusable={!!interactive}
         pointerEvents={interactive ? undefined : 'none'}
-        mapType="satellite"
-      >
-        {children}
-      </MapView>
+        mapType="hybrid"
+      />
+      {children}
     </View>
   );
 }

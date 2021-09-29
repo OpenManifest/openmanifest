@@ -33,6 +33,7 @@
       ]
     },
     "android": {
+      "package": "com.dangertechnologies.openmanifest",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ff1414"
