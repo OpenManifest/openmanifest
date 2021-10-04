@@ -1,4 +1,14 @@
+const BACKEND_ENVIRONMENTS = {
+  development: "http://127.0.0.1",
+  staging: "https://devapi.openmanifest.org/graphql",
+  default: "https://devapi.openmanifest.org/graphql",
+  production: "https://api.openmanifest.org/graphql",
+};
+
 export default ({ config }) => {
+  const environment = process.env.EXPO_ENV;
+
+
   return {
     ...config,
     name: 'OpenManifest',
@@ -7,10 +17,9 @@ export default ({ config }) => {
 
     // All values in extra will be passed to your app.
     extra: {
-      url:
-        process.env.EXPO_ENV === 'production'
-          ? 'https://openmanifest.org/graphql'
-          : 'http://172.20.10.13:5000/graphql',
+      url: BACKEND_ENVIRONMENTS[process.env.EXPO_ENV],
+      urls: BACKEND_ENVIRONMENTS,
+      environment: process.env.EXPO_ENV
     },
     ios: {
       ...config.ios,

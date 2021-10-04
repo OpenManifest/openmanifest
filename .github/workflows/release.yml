@@ -1,0 +1,40 @@
+name: Publish staging
+on:
+  push:
+    branches:
+      - main
+jobs:
+  publish-web-staging:
+    name: Install and publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - uses: expo/expo-github-action@v6
+        with:
+          expo-version: 4.x
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: yarn install
+      - run: yarn web:deploy:staging
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  publish-expo-staging:
+    name: Install and publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - uses: expo/expo-github-action@v6
+        with:
+          expo-version: 4.x
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: yarn install
+      - run: yarn expo:publish:staging
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
+          EXPO_ENV: staging
