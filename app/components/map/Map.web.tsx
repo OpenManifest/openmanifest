@@ -44,7 +44,7 @@ export default function Map(props: IMapProps) {
     // @ts-ignore
     map.current = component;
     try {
-      const { status } = await Location.requestPermissionsAsync();
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         return;
       }

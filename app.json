@@ -29,10 +29,13 @@
       "usesIcloudStorage": true,
       "associatedDomains": [
         "applinks:openmanifest.org",
-        "applinks:openmanifest.org?mode=developer"
+        "applinks:openmanifest.org?mode=developer",
+        "applinks:staging.openmanifest.org",
+        "applinks:staging.openmanifest.org?mode=developer"
       ]
     },
     "android": {
+      "package": "com.dangertechnologies.openmanifest",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ff1414"
@@ -44,6 +47,11 @@
             {
               "scheme": "https",
               "host": "openmanifest.org",
+              "pathPrefix": "/confirm"
+            },
+            {
+              "scheme": "https",
+              "host": "dev.openmanifest.org",
               "pathPrefix": "/confirm"
             }
           ],

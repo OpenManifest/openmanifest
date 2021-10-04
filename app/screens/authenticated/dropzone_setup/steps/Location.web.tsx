@@ -22,7 +22,7 @@ function LocationWizardStep(props: IWizardScreenProps) {
 
   const setUsersLocation = React.useCallback(async () => {
     try {
-      const { status } = await Location.requestPermissionsAsync();
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         console.log(status);
         return;

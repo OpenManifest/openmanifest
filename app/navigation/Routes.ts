@@ -1,9 +1,11 @@
+import { LinkingOptions } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
 
-export default {
+const options: LinkingOptions = {
   prefixes: [
     Linking.makeUrl('/'),
     'https://openmanifest.org',
+    'https://staging.openmanifest.org',
     'openmanifest://',
     'http://localhost:19006',
   ],
@@ -11,9 +13,6 @@ export default {
     screens: {
       confirm: {
         path: '/confirm',
-        params: {
-          account_confirmation_success: undefined,
-        },
       },
       Authenticated: {
         screens: {
@@ -41,3 +40,5 @@ export default {
     },
   },
 };
+
+export default options;

@@ -31,7 +31,7 @@ export default function WeatherBoard() {
   const canUpdate = useRestriction(Permission.UpdateWeatherConditions);
 
   const hasWeatherConditions = conditions?.id && conditions?.winds?.length && conditions?.jumpRun;
-  return loading || !called ? (
+  return (loading && !dropzone?.currentConditions) || !called ? (
     <SkeletonContent
       containerStyle={styles.card}
       isLoading

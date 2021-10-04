@@ -1,4 +1,4 @@
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 
 import { setContext } from '@apollo/client/link/context';
@@ -6,20 +6,23 @@ import { BatchHttpLink } from '@apollo/client/link/batch-http';
 import { onError } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
 import * as React from 'react';
+import * as Update from 'expo-updates';
 import Constants from 'expo-constants';
 import { actions, useAppDispatch, useAppSelector } from '../state';
 
-const httpLink = createHttpLink({
-  uri: Constants.manifest?.extra?.url,
-});
-
-const httpBatchLink = new BatchHttpLink({
-  batchDebounce: true,
-  batchMax: 10,
-  uri: Constants.manifest?.extra?.url,
-});
-
 export default function Apollo({ children }: { children: React.ReactNode }) {
+  const httpBatchLink = React.useMemo(
+    () =>
+      new BatchHttpLink({
+        batchDebounce: true,
+        batchMax: 10,
+        uri:
+          Update.releaseChannel in Constants.manifest?.extra?.urls
+            ? Constants.manifest?.extra?.urls[Update.releaseChannel]
+            : Constants.manifest?.extra?.url,
+      }),
+    []
+  );
   const credentials = useAppSelector((root) => root.global.credentials);
   const dispatch = useAppDispatch();
   // Log any GraphQL errors or network error that occurred
@@ -37,7 +40,7 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        if (graphQLErrors && process.env.EXPO_ENV !== 'production') {
+        if (graphQLErrors && process.env.EXPO_ENV === 'development') {
           graphQLErrors.forEach((err) => {
             const { message, locations, path, name, nodes } = err;
             dispatch(
@@ -55,7 +58,7 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
             console.log(operation);
           });
         }
-        if (networkError && process.env.EXPO_ENV !== 'production') {
+        if (networkError && process.env.EXPO_ENV === 'development') {
           dispatch(
             actions.notifications.showSnackbar({
               message: `[Network error]: ${networkError}`,
@@ -93,7 +96,7 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
         link: errorLink.concat(authLink).concat(new RetryLink()).concat(httpBatchLink),
         cache: new InMemoryCache(),
       }),
-    [authLink, errorLink]
+    [authLink, errorLink, httpBatchLink]
   );
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;

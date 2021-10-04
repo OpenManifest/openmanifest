@@ -20,7 +20,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
   const [center, setCenter] = React.useState<{ lat: number; lng: number }>();
   const setUsersLocation = React.useCallback(async () => {
     try {
-      const { status } = await Location.requestPermissionsAsync();
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         return;
       }

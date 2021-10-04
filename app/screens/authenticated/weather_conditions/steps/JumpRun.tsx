@@ -15,7 +15,7 @@ function WindsWizardScreen(props: IWizardScreenProps) {
   const [location, setLocation] = React.useState<Location.LocationObject['coords']>();
   const setUsersLocation = React.useCallback(async () => {
     try {
-      const { status } = await Location.requestPermissionsAsync();
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         return;
       }
