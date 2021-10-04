@@ -5,7 +5,7 @@ on:
       - main
 jobs:
   publish-web-staging:
-    name: Install and publish
+    name: Publish Web
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -22,7 +22,7 @@ jobs:
           NODE_OPTIONS: --max_old_space_size=4096
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   publish-expo-staging:
-    name: Install and publish
+    name: Publish Expo
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
