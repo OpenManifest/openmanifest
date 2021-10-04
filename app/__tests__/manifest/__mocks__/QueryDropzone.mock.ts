@@ -64,7 +64,6 @@ export const MOCK_QUERY_DROPZONE = (overrides?: IOverride) => ({
           },
 
           rigInspections: [],
-          transactions: null,
           availableRigs: [],
 
           user: {
@@ -123,7 +122,6 @@ export const MOCK_QUERY_DROPZONE = (overrides?: IOverride) => ({
                 loadNumber: 1,
                 isOpen: false,
                 maxSlots: 4,
-                isFull: true,
               },
             },
             {
@@ -134,7 +132,6 @@ export const MOCK_QUERY_DROPZONE = (overrides?: IOverride) => ({
                 state: LoadState.Open,
                 isOpen: true,
                 maxSlots: 16,
-                isFull: false,
               },
             },
           ],
