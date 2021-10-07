@@ -75,6 +75,30 @@ export default function WindScreen() {
         >
           Save
         </Button>
+        <Button
+          loading={mutationCreateWeatherConditions.loading}
+          mode="contained"
+          color={palette.primary.main}
+          disabled={mutationCreateWeatherConditions.loading}
+          style={[
+            styles.button,
+            {
+              borderRadius: 20,
+              height: 42,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 20,
+            },
+          ]}
+          labelStyle={{
+            color: 'white',
+          }}
+          onPress={async () => {
+            onSaveConditions();
+          }}
+        >
+          Reload conditions from MarkSchulz.net
+        </Button>
       </View>
     </ScrollableScreen>
   );

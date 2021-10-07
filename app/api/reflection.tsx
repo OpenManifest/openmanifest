@@ -511,6 +511,60 @@ export function useFinalizeLoadMutation(baseOptions?: Apollo.MutationHookOptions
 export type FinalizeLoadMutationHookResult = ReturnType<typeof useFinalizeLoadMutation>;
 export type FinalizeLoadMutationResult = Apollo.MutationResult<Operation.FinalizeLoadMutation>;
 export type FinalizeLoadMutationOptions = Apollo.BaseMutationOptions<Operation.FinalizeLoadMutation, Operation.FinalizeLoadMutationVariables>;
+export const ReloadWeatherDocument = gql`
+    mutation ReloadWeather($dropzone_id: Int!, $id: Int!) {
+  reloadWeatherCondition(input: {id: $id}) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    weatherCondition {
+      createdAt
+      exitSpotMiles
+      id
+      jumpRun
+      offsetDirection
+      offsetMiles
+      temperature
+      updatedAt
+      winds {
+        altitude
+        direction
+        speed
+        temperature
+      }
+    }
+  }
+}
+    `;
+export type ReloadWeatherMutationFn = Apollo.MutationFunction<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
+
+/**
+ * __useReloadWeatherMutation__
+ *
+ * To run a mutation, you first call `useReloadWeatherMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReloadWeatherMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [reloadWeatherMutation, { data, loading, error }] = useReloadWeatherMutation({
+ *   variables: {
+ *      dropzone_id: // value for 'dropzone_id'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useReloadWeatherMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>(ReloadWeatherDocument, options);
+      }
+export type ReloadWeatherMutationHookResult = ReturnType<typeof useReloadWeatherMutation>;
+export type ReloadWeatherMutationResult = Apollo.MutationResult<Operation.ReloadWeatherMutation>;
+export type ReloadWeatherMutationOptions = Apollo.BaseMutationOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
 export const DropzoneTransactionsDocument = gql`
     query DropzoneTransactions($dropzoneId: Int!, $after: String) {
   dropzone(id: $dropzoneId) {

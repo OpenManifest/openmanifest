@@ -28,5 +28,14 @@ export default ({ config }) => {
         googleMapsApiKey: process.env.GOOGLE_MAPS_IOS,
       },
     },
+    android: {
+      ...config.android,
+      config: {
+        ...config.android.config,
+        googleMaps: {
+          apiKey: process.env.GOOGLE_MAPS_ANDROID
+        }
+      }
+    }
   };
 };

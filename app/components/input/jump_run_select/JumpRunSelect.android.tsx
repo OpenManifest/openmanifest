@@ -6,7 +6,7 @@ import {
   PanGestureHandler,
   PanGestureHandlerEventPayload,
 } from 'react-native-gesture-handler';
-import MapView from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { calculateAngle } from '../../../utils/calculateAngle';
 import { mapDegreesToDirections } from '../../../utils/mapDegreesToDirection';
 import { calculateLatLngDelta } from '../../../utils/calculateLatLngDelta';
@@ -118,6 +118,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
         onLayout={(layout) => setRootLayout(layout.nativeEvent.layout)}
       >
         <MapView
+          provider={PROVIDER_GOOGLE}
           style={StyleSheet.absoluteFill}
           region={{
             latitude,
