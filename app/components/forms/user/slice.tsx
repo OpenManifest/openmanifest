@@ -97,8 +97,18 @@ export default createSlice({
       } else {
         state.original = action.payload.user;
         state.open = true;
-        state.federation.value = action.payload.license?.federation || null;
-
+        state.federation.value =
+          action.payload.license?.federation || action.payload?.dropzone?.federation || null;
+        if (
+          state.federation.value &&
+          action.payload.user?.userFederations?.find(
+            ({ federation }) => federation.id === state.federation.value?.id
+          )?.uid
+        ) {
+          state.fields.apfNumber.value = action.payload.user?.userFederations?.find(
+            ({ federation }) => federation.id === state.federation.value?.id
+          )?.uid;
+        }
         if (typeof action.payload !== 'boolean') {
           Object.keys(action.payload.user).forEach((key) => {
             const payloadKey = key as keyof typeof action.payload;

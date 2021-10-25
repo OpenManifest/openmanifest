@@ -4,7 +4,7 @@ import UserForm from '../forms/user/UserForm';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import DialogOrSheet from '../layout/DialogOrSheet';
 import useMutationUpdateUser from '../../api/hooks/useMutationUpdateUser';
-import { QUERY_DROPZONE } from '../../api/hooks/useCurrentDropzone';
+import useCurrentDropzone, { QUERY_DROPZONE } from '../../api/hooks/useCurrentDropzone';
 import { QUERY_DROPZONE_USER } from '../../api/hooks/useDropzoneUser';
 import { useJoinFederationMutation } from '../../api/reflection';
 import { UserFields } from '../forms/user/slice';
@@ -21,6 +21,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
   const state = useAppSelector((root) => root.forms.user);
   const dispatch = useAppDispatch();
   const [joinFederation] = useJoinFederationMutation();
+  const currentDropzone = useCurrentDropzone();
 
   const mutationUpdateUser = useMutationUpdateUser({
     onSuccess: (payload) => {
@@ -75,7 +76,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
       (state.fields.apfNumber?.value &&
         state.fields.apfNumber?.value !==
           state.original?.userFederations?.find(
-            ({ federation }) => federation.id === state.fields.license?.value?.federation?.id
+            ({ federation }) => federation.id === currentDropzone.federation?.id
           )?.uid)
     ) {
       await joinFederation({
@@ -87,12 +88,13 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
       });
     }
   }, [
+    currentDropzone.federation?.id,
     joinFederation,
     mutationUpdateUser,
     state.fields.apfNumber?.value,
     state.fields.email.value,
     state.fields.exitWeight?.value,
-    state.fields.license.value?.federation,
+    state.fields.license.value?.federation?.id,
     state.fields.license.value?.id,
     state.fields.name.value,
     state.fields.phone.value,

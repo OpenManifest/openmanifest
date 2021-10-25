@@ -50,7 +50,7 @@ function Badge(props: IBadgeProps) {
       <View style={styles.innerChip}>
         <View style={{ marginRight: 8 }}>
           <MaterialCommunityIcons
-            name={selected ? 'check' : iconName}
+            icon={selected ? 'check' : iconName}
             color={palette.primary.dark}
             size={18}
           />
