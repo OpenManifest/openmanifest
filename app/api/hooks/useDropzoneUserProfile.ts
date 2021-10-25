@@ -20,6 +20,11 @@ export const QUERY_DROPZONE_USER_PROFILE = gql`
           name
         }
 
+        license {
+          id
+          name
+        }
+
         user {
           id
           name

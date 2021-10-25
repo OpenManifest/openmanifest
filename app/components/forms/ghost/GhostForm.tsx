@@ -67,7 +67,6 @@ export default function SlotForm() {
       </HelperText>
 
       <NumberField
-        mode="outlined"
         label="Exit weight (kg)"
         error={!!state.fields.exitWeight.error}
         value={Number(state.fields.exitWeight?.value)}

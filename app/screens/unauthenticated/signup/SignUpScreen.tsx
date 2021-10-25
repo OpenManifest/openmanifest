@@ -50,10 +50,6 @@ export default function SignupScreen() {
         />
         <HelperText type="error">{state.fields.name.error || ''}</HelperText>
 
-        <HelperText type={state.fields.exitWeight.error ? 'error' : 'info'}>
-          {state.fields.exitWeight.error || ''}
-        </HelperText>
-
         <TextInput
           style={styles.field}
           mode="outlined"
@@ -66,18 +62,6 @@ export default function SignupScreen() {
         />
 
         <HelperText type="error">{state.fields.email.error || ''}</HelperText>
-
-        <TextInput
-          style={styles.field}
-          mode="outlined"
-          label="Phone"
-          error={!!state.fields.phone.error}
-          value={state.fields.phone.value}
-          onChangeText={(newValue) =>
-            dispatch(actions.screens.signup.setField(['phone', newValue]))
-          }
-        />
-        <HelperText type="error">{state.fields.phone.error || ''}</HelperText>
 
         <TextInput
           style={styles.field}

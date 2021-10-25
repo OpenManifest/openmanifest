@@ -43,6 +43,11 @@ const QUERY_DROPZONE_USERS_MANIFEST_DETAILS = gql`
       dropzoneUser(id: $dropzoneUserId) {
         id
 
+        license {
+          id
+          name
+        }
+
         user {
           id
           name
@@ -133,7 +138,7 @@ export default function UserRigCard(props: IUserRigCard) {
             {data?.role?.name}
           </Chip>
           <Chip style={{ marginHorizontal: 1 }} icon="ticket-account" mode="outlined" disabled>
-            {data?.user?.license?.name}
+            {data?.license?.name}
           </Chip>
           {!selectedRig || !exitWeight || !selectedRig.canopySize ? null : (
             <Chip style={{ marginHorizontal: 1 }} icon="escalator-down" mode="outlined" disabled>
@@ -150,7 +155,6 @@ export default function UserRigCard(props: IUserRigCard) {
               value={selectedRig}
               tandem={isTandem}
               autoSelectFirst
-              required
             />
           </View>
           <View style={styles.rowLast}>

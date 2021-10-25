@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Appbar, IconButton, Chip } from 'react-native-paper';
+import { Appbar, Badge, IconButton, Chip } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { gql, useLazyQuery } from '@apollo/client';
 import { DrawerActions } from '@react-navigation/native';
@@ -24,6 +24,10 @@ const QUERY_CURRENT_USER = gql`
             id
             repackExpiresAt
           }
+        }
+        license {
+          id
+          name
         }
 
         user {
@@ -95,7 +99,7 @@ function AppBar(props: IAppBarProps) {
         )}
         <Appbar.Content
           title={scene.descriptor.options.title}
-          titleStyle={{ fontWeight: 'bold', color: palette.primary.dark }}
+          titleStyle={{ fontWeight: 'bold', color: palette.primary.main }}
         />
 
         {scene.descriptor.options.headerRight ? (
@@ -133,7 +137,7 @@ function AppBar(props: IAppBarProps) {
             const currentUser = data?.dropzone?.currentUser;
 
             if (currentUser) {
-              dispatch(actions.forms.user.setOpen(currentUser.user));
+              dispatch(actions.forms.user.setOpen(currentUser));
               if (currentUser?.user?.rigs?.length) {
                 dispatch(actions.forms.rig.setOpen(currentUser.user.rigs[0]));
               }

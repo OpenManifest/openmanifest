@@ -150,6 +150,10 @@ export const CurrentUserDetailedFragmentDoc = gql`
       id
     }
   }
+  license {
+    id
+    name
+  }
   user {
     id
     name
@@ -511,60 +515,58 @@ export function useFinalizeLoadMutation(baseOptions?: Apollo.MutationHookOptions
 export type FinalizeLoadMutationHookResult = ReturnType<typeof useFinalizeLoadMutation>;
 export type FinalizeLoadMutationResult = Apollo.MutationResult<Operation.FinalizeLoadMutation>;
 export type FinalizeLoadMutationOptions = Apollo.BaseMutationOptions<Operation.FinalizeLoadMutation, Operation.FinalizeLoadMutationVariables>;
-export const ReloadWeatherDocument = gql`
-    mutation ReloadWeather($dropzone_id: Int!, $id: Int!) {
-  reloadWeatherCondition(input: {id: $id}) {
-    errors
-    fieldErrors {
-      field
-      message
-    }
-    weatherCondition {
-      createdAt
-      exitSpotMiles
+export const JoinFederationDocument = gql`
+    mutation JoinFederation($federationId: Int!, $uid: String, $licenseId: Int) {
+  joinFederation(
+    input: {attributes: {federationId: $federationId, uid: $uid, licenseId: $licenseId}}
+  ) {
+    user {
       id
-      jumpRun
-      offsetDirection
-      offsetMiles
-      temperature
-      updatedAt
-      winds {
-        altitude
-        direction
-        speed
-        temperature
+      name
+      nickname
+      userFederations {
+        federation {
+          id
+          name
+          slug
+        }
+        license {
+          id
+          name
+        }
       }
     }
   }
 }
     `;
-export type ReloadWeatherMutationFn = Apollo.MutationFunction<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
+export type JoinFederationMutationFn = Apollo.MutationFunction<Operation.JoinFederationMutation, Operation.JoinFederationMutationVariables>;
 
 /**
- * __useReloadWeatherMutation__
+ * __useJoinFederationMutation__
  *
- * To run a mutation, you first call `useReloadWeatherMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useReloadWeatherMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useJoinFederationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useJoinFederationMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [reloadWeatherMutation, { data, loading, error }] = useReloadWeatherMutation({
+ * const [joinFederationMutation, { data, loading, error }] = useJoinFederationMutation({
  *   variables: {
- *      dropzone_id: // value for 'dropzone_id'
- *      id: // value for 'id'
+ *      federationId: // value for 'federationId'
+ *      uid: // value for 'uid'
+ *      licenseId: // value for 'licenseId'
  *   },
  * });
  */
-export function useReloadWeatherMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>) {
+export function useJoinFederationMutation(baseOptions?: Apollo.MutationHookOptions<Operation.JoinFederationMutation, Operation.JoinFederationMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>(ReloadWeatherDocument, options);
+        return Apollo.useMutation<Operation.JoinFederationMutation, Operation.JoinFederationMutationVariables>(JoinFederationDocument, options);
       }
-export type ReloadWeatherMutationHookResult = ReturnType<typeof useReloadWeatherMutation>;
-export type ReloadWeatherMutationResult = Apollo.MutationResult<Operation.ReloadWeatherMutation>;
-export type ReloadWeatherMutationOptions = Apollo.BaseMutationOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
+export type JoinFederationMutationHookResult = ReturnType<typeof useJoinFederationMutation>;
+export type JoinFederationMutationResult = Apollo.MutationResult<Operation.JoinFederationMutation>;
+export type JoinFederationMutationOptions = Apollo.BaseMutationOptions<Operation.JoinFederationMutation, Operation.JoinFederationMutationVariables>;
 export const DropzoneTransactionsDocument = gql`
     query DropzoneTransactions($dropzoneId: Int!, $after: String) {
   dropzone(id: $dropzoneId) {

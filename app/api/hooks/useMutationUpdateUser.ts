@@ -51,6 +51,18 @@ const MUTATION_UPDATE_USER = gql`
           id
           name
         }
+        userFederations {
+          id
+          license {
+            id
+            name
+          }
+          federation {
+            id
+            name
+            slug
+          }
+        }
         license {
           id
           name

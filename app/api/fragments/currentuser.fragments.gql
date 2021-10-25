@@ -150,6 +150,11 @@ fragment currentUserDetailed on DropzoneUser {
     }
   }
 
+  license {
+    id
+    name
+  }
+
   user {
     id
     name

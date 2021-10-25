@@ -57,6 +57,10 @@ export const QUERY_LOAD = gql`
             id
             name
           }
+          license {
+            id
+            name
+          }
           user {
             id
             name

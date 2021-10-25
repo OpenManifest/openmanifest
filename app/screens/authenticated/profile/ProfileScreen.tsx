@@ -48,6 +48,18 @@ const MUTATION_UPDATE_IMAGE = gql`
           id
           name
         }
+        userFederations {
+          id
+          federation {
+            id
+            name
+            slug
+          }
+          license {
+            id
+            name
+          }
+        }
         license {
           id
           name
@@ -145,7 +157,7 @@ export default function ProfileScreen() {
             canEdit={isSelf}
             onEdit={() => {
               if (dropzoneUser?.user) {
-                dispatch(actions.forms.user.setOpen(dropzoneUser?.user));
+                dispatch(actions.forms.user.setOpen(dropzoneUser));
               }
             }}
             onPressAvatar={onPickImage}
@@ -165,7 +177,7 @@ export default function ProfileScreen() {
                 },
                 {
                   title: 'License',
-                  value: `${dropzoneUser?.user?.license?.name || '-'}`,
+                  value: `${dropzoneUser?.license?.name || '-'}`,
                 },
                 {
                   title: 'Exit weight',
@@ -179,6 +191,27 @@ export default function ProfileScreen() {
         <View style={{ width: '100%' }}>
           <List.Subheader>Manage</List.Subheader>
           <Card style={{ margin: 8, marginRight: 8 }} elevation={1}>
+            {isSelf ? (
+              <>
+                <List.Item
+                  style={{ width: '100%', padding: 0 }}
+                  title="Setup Wizard"
+                  left={() => <List.Icon icon="account-convert" />}
+                  right={() => <List.Icon icon="chevron-right" />}
+                  onPress={() => {
+                    if (dropzoneUser) {
+                      dispatch(actions.forms.user.setOpen(dropzoneUser));
+                      if (dropzoneUser?.user?.rigs?.length) {
+                        dispatch(actions.forms.rig.setOpen(dropzoneUser.user.rigs[0]));
+                      }
+
+                      dispatch(actions.forms.userWizard.setOpen(dropzoneUser.user));
+                    }
+                  }}
+                />
+                <Divider style={{ width: '100%' }} />
+              </>
+            ) : null}
             {canUpdateUsers ? (
               <>
                 <List.Item

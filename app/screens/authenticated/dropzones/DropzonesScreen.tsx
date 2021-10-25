@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     padding: 8,
     display: 'flex',
     flexGrow: 1,
-    backgroundColor: '#FF1414',
+    
   },
   dzIcon: {
     height: 150,

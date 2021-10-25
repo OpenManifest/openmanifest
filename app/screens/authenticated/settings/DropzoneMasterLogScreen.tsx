@@ -45,6 +45,13 @@ const QUERY_MASTER_LOG = gql`
 
           slots {
             id
+            dropzoneUser {
+              id
+              license {
+                id
+                name
+              }
+            }
             user {
               id
               name
