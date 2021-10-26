@@ -14,6 +14,7 @@ fragment slot on Slot {
     user {
       id
       name
+      nickname
       exitWeight
       image
       license {

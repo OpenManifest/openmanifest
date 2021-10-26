@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Snackbar } from 'react-native-paper';
 import LottieView from 'lottie-react-native';
 import { StyleSheet, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 import { useAppSelector, useAppDispatch } from '../../state';
 import slice from './slice';
 import usePalette from '../../hooks/usePalette';
@@ -30,6 +31,16 @@ const Notifications = () => {
       setAnimationState(AnimationState.opening);
     }
   }, [animationState, notification?.variant]);
+
+  React.useEffect(() => {
+    if (notification) {
+      Toast.show({
+        onHide: () => dispatch(actions.hideSnackbar()),
+        text1: notification.message,
+        type: notification.variant || 'success',
+      });
+    }
+  }, [dispatch, notification]);
 
   const variantStyle = {
     info: { backgroundColor: palette.info },
@@ -65,16 +76,13 @@ const Notifications = () => {
           />
         </View>
       )}
-      <Snackbar
-        testID="snackbar-message"
-        visible={!!notification}
-        onDismiss={() => dispatch(actions.hideSnackbar())}
-        duration={3000}
-        action={notification?.action}
-        style={!!notification?.variant && variantStyle[notification.variant]}
-      >
-        {notification?.message}
-      </Snackbar>
+      <Toast
+        ref={(ref) => Toast.setRef(ref)}
+        autoHide
+        visibilityTime={4000}
+        position="bottom"
+        type="success"
+      />
     </>
   );
 };

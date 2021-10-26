@@ -190,6 +190,10 @@ export const QUERY_DROPZONE = gql`
             id
           }
         }
+        license {
+          id
+          name
+        }
 
         user {
           id

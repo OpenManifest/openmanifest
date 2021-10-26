@@ -149,6 +149,10 @@ export const QUERY_DROPZONE_USER = gql`
             }
           }
         }
+        license {
+          id
+          name
+        }
         user {
           id
           name

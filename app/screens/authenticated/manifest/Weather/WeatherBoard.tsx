@@ -1,7 +1,16 @@
 import * as React from 'react';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { StyleSheet, ImageBackground, Text, View, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  ImageBackground,
+  Text,
+  View,
+  TouchableOpacity,
+  Animated,
+  Easing,
+} from 'react-native';
+
 import { Card, Divider, useTheme } from 'react-native-paper';
 import format from 'date-fns/format';
 import { orderBy } from 'lodash';
@@ -19,6 +28,9 @@ export default function WeatherBoard() {
   const { dropzone, loading, called } = useCurrentDropzone();
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
+  const [isExpanded, setExpanded] = React.useState(false);
+  const height = React.useRef(new Animated.Value(0));
+
   const theme = useTheme();
 
   const conditions = dropzone?.currentConditions;
@@ -31,6 +43,27 @@ export default function WeatherBoard() {
   const canUpdate = useRestriction(Permission.UpdateWeatherConditions);
 
   const hasWeatherConditions = conditions?.id && conditions?.winds?.length && conditions?.jumpRun;
+
+  React.useEffect(() => {
+    if (isExpanded) {
+      Animated.timing(height.current, {
+        toValue: 1,
+        duration: 300,
+
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: false,
+      }).start();
+    } else {
+      Animated.timing(height.current, {
+        toValue: 0,
+        duration: 300,
+
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [isExpanded]);
+
   return (loading && !dropzone?.currentConditions) || !called ? (
     <SkeletonContent
       containerStyle={styles.card}
@@ -38,133 +71,157 @@ export default function WeatherBoard() {
       layout={[{ key: 'root', height: 200, width: '100%' }]}
     />
   ) : (
-    <Card
-      style={styles.card}
-      elevation={3}
-      onPress={() => {
-        if (canUpdate && dropzone?.currentConditions) {
-          dispatch(actions.forms.weather.setOpen(dropzone?.currentConditions));
-          navigation.navigate('WindScreen');
-        }
+    <Animated.View
+      style={{
+        height: height.current.interpolate({ inputRange: [0, 1], outputRange: [200, 300] }),
       }}
     >
-      <ImageBackground
-        source={theme.dark ? nightBackground : weatherBackground}
-        style={{ ...StyleSheet.absoluteFillObject }}
-        resizeMode="cover"
+      <Card
+        style={styles.card}
+        elevation={3}
+        onPress={() => setExpanded(!isExpanded)}
+        onLongPress={() => {
+          if (canUpdate && dropzone?.currentConditions) {
+            dispatch(actions.forms.weather.setOpen(dropzone?.currentConditions));
+            navigation.navigate('WindScreen');
+          }
+        }}
       >
-        <Card.Content
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexGrow: 1,
-          }}
+        <ImageBackground
+          source={theme.dark ? nightBackground : weatherBackground}
+          style={{ ...StyleSheet.absoluteFillObject }}
+          resizeMode="cover"
         >
-          {!hasWeatherConditions ? (
-            <View style={styles.noData}>
-              <Text style={styles.noDataLabel}>No weather data</Text>
-            </View>
-          ) : (
-            <>
-              <View style={styles.top}>
-                <View style={styles.cell}>
-                  <FontAwesome
-                    name="calendar"
-                    color="#ffffff"
-                    size={20}
-                    style={{
-                      marginRight: 8,
-                    }}
-                  />
-                  <Text style={styles.date}>{format(date, 'LLL do, yy')}</Text>
-                </View>
-
-                <View style={[styles.cell, { justifyContent: 'flex-end', alignSelf: 'flex-end' }]}>
-                  <FontAwesome
-                    name="thermometer"
-                    color="#ffffff"
-                    size={20}
-                    style={{
-                      marginRight: 8,
-                    }}
-                  />
-                  <Text style={styles.temperature}>{temperature || '?'}</Text>
-                  <MaterialCommunityIcons name="temperature-celsius" color="#ffffff" size={20} />
-                </View>
+          <Card.Content
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexGrow: 1,
+            }}
+          >
+            {!hasWeatherConditions ? (
+              <View style={styles.noData}>
+                <Text style={styles.noDataLabel}>No weather data</Text>
               </View>
-              <View style={styles.bottom}>
-                <View style={styles.windboard}>
-                  <View style={styles.row}>
-                    <View style={styles.cell}>
-                      <Text style={styles.header}>Altitude</Text>
-                    </View>
-                    <View style={styles.cell}>
-                      <Text style={styles.header}>Wind</Text>
-                    </View>
-                    <View style={styles.cell}>
-                      <Text style={styles.header}>Direction</Text>
-                    </View>
+            ) : (
+              <>
+                <View style={styles.top}>
+                  <View style={styles.cell}>
+                    <FontAwesome
+                      name="calendar"
+                      color="#ffffff"
+                      size={20}
+                      style={{
+                        marginRight: 8,
+                      }}
+                    />
+                    <Text style={styles.date}>{format(date, 'LLL do, yy')}</Text>
                   </View>
-                  {orderBy(
-                    dropzone?.currentConditions?.winds || [],
-                    (item) => Number(item.altitude),
-                    'desc'
-                  ).map(({ speed: wind, direction, altitude }) => (
-                    <React.Fragment key={`wind-at-${altitude}`}>
-                      <Divider style={{ width: '100%', backgroundColor: 'white' }} />
-                      <View style={styles.row}>
-                        <View style={styles.cell}>
-                          <Text style={styles.value}>{altitude}</Text>
-                        </View>
-                        <View style={styles.cell}>
-                          <Text style={styles.value}>{wind}</Text>
-                        </View>
-                        <View style={[styles.cell, { justifyContent: 'center' }]}>
-                          <Text style={styles.value}>{direction}</Text>
-                          <FontAwesome
-                            name="long-arrow-down"
-                            size={14}
-                            style={
-                              direction && /\d+/.test(direction) && Number(direction) < 361
-                                ? {
-                                    transform: [
-                                      {
-                                        rotate: `${direction}deg`,
-                                      },
-                                    ],
-                                    marginLeft: 4,
-                                  }
-                                : { marginLeft: 4 }
-                            }
-                          />
-                        </View>
-                      </View>
-                    </React.Fragment>
-                  ))}
-                </View>
-                <View style={styles.jumpRun} pointerEvents="box-none">
-                  <Text style={[styles.header, { textAlign: 'center' }]}>
-                    Jump run {jumpRun}&deg;
-                  </Text>
-                  <TouchableOpacity
-                    style={{ width: '100%', height: '100%' }}
-                    disabled={!canUpdate}
-                    onPress={() => {
-                      if (dropzone?.currentConditions && canUpdate) {
-                        dispatch(actions.forms.weather.setOpen(dropzone.currentConditions));
-                        navigation.navigate('JumpRunScreen');
-                      }
-                    }}
+
+                  <View
+                    style={[styles.cell, { justifyContent: 'flex-end', alignSelf: 'flex-end' }]}
                   >
-                    <JumpRunMap jumpRun={jumpRun} lat={dropzone?.lat} lng={dropzone?.lng} />
-                  </TouchableOpacity>
+                    <FontAwesome
+                      name="thermometer"
+                      color="#ffffff"
+                      size={20}
+                      style={{
+                        marginRight: 8,
+                      }}
+                    />
+                    <Text style={styles.temperature}>{temperature || '?'}</Text>
+                    <MaterialCommunityIcons name="temperature-celsius" color="#ffffff" size={20} />
+                  </View>
                 </View>
-              </View>
-            </>
-          )}
-        </Card.Content>
-      </ImageBackground>
-    </Card>
+                <View style={styles.bottom}>
+                  <Animated.View
+                    style={[
+                      styles.windboard,
+                      {
+                        transform: [
+                          {
+                            translateY: height.current.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [0, -80],
+                              easing: Easing.inOut(Easing.ease),
+                            }),
+                          },
+                        ],
+                      },
+                    ]}
+                  >
+                    <View style={styles.row}>
+                      <View style={styles.cell}>
+                        <Text style={styles.header}>Altitude</Text>
+                      </View>
+                      <View style={styles.cell}>
+                        <Text style={styles.header}>Wind</Text>
+                      </View>
+                      <View style={styles.cell}>
+                        <Text style={styles.header}>Direction</Text>
+                      </View>
+                    </View>
+                    {orderBy(
+                      dropzone?.currentConditions?.winds || [],
+                      (item) => Number(item.altitude),
+                      'desc'
+                    ).map(({ speed: wind, direction, altitude }) => (
+                      <React.Fragment key={`wind-at-${altitude}`}>
+                        <Divider style={{ width: '100%', backgroundColor: 'white' }} />
+                        <View style={styles.row}>
+                          <View style={styles.cell}>
+                            <Text style={styles.value}>{altitude}</Text>
+                          </View>
+                          <View style={styles.cell}>
+                            <Text style={styles.value}>{wind}</Text>
+                          </View>
+                          <View style={[styles.cell, { justifyContent: 'center' }]}>
+                            <Text style={styles.value}>{direction}</Text>
+                            <FontAwesome
+                              name="long-arrow-down"
+                              size={14}
+                              style={
+                                direction && /\d+/.test(direction) && Number(direction) < 361
+                                  ? {
+                                      transform: [
+                                        {
+                                          rotate: `${direction}deg`,
+                                        },
+                                      ],
+                                      marginLeft: 4,
+                                    }
+                                  : { marginLeft: 4 }
+                              }
+                            />
+                          </View>
+                        </View>
+                      </React.Fragment>
+                    ))}
+                  </Animated.View>
+                  <View style={styles.jumpRun} pointerEvents="box-none">
+                    <Text style={[styles.header, { textAlign: 'center' }]}>
+                      Jump run {jumpRun}&deg;
+                    </Text>
+                    <TouchableOpacity
+                      style={{ width: '100%', height: '100%' }}
+                      disabled={!canUpdate}
+                      onPress={() => {
+                        if (dropzone?.currentConditions && canUpdate) {
+                          dispatch(actions.forms.weather.setOpen(dropzone.currentConditions));
+                          navigation.navigate('JumpRunScreen');
+                        }
+                      }}
+                    >
+                      <JumpRunMap jumpRun={jumpRun} lat={dropzone?.lat} lng={dropzone?.lng} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </>
+            )}
+          </Card.Content>
+        </ImageBackground>
+      </Card>
+    </Animated.View>
   );
 }
 
@@ -174,7 +231,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 30,
     marginHorizontal: 16,
-    height: 200,
+    // height: 200,
     overflow: 'hidden',
   },
   date: {

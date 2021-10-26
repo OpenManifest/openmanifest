@@ -4,8 +4,9 @@ import UserForm from '../forms/user/UserForm';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import DialogOrSheet from '../layout/DialogOrSheet';
 import useMutationUpdateUser from '../../api/hooks/useMutationUpdateUser';
-import { QUERY_DROPZONE } from '../../api/hooks/useCurrentDropzone';
+import useCurrentDropzone, { QUERY_DROPZONE } from '../../api/hooks/useCurrentDropzone';
 import { QUERY_DROPZONE_USER } from '../../api/hooks/useDropzoneUser';
+import { useJoinFederationMutation } from '../../api/reflection';
 import { UserFields } from '../forms/user/slice';
 
 interface IUpdateUserDialog {
@@ -19,6 +20,8 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
   const currentDropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
   const state = useAppSelector((root) => root.forms.user);
   const dispatch = useAppDispatch();
+  const [joinFederation] = useJoinFederationMutation();
+  const currentDropzone = useCurrentDropzone();
 
   const mutationUpdateUser = useMutationUpdateUser({
     onSuccess: (payload) => {
@@ -64,14 +67,40 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
       exitWeight: parseFloat(state.fields.exitWeight?.value || '50'),
       email: state.fields.email.value,
     });
+
+    // TODO: Set APF number from userFederation belonging to currentDropzone.federation
+    // and compare against that
+    if (
+      (state.fields.license.value?.id &&
+        state.original?.license?.id !== state.fields.license.value?.id) ||
+      (state.fields.apfNumber?.value &&
+        state.fields.apfNumber?.value !==
+          state.original?.userFederations?.find(
+            ({ federation }) => federation.id === currentDropzone.dropzone?.federation?.id
+          )?.uid)
+    ) {
+      await joinFederation({
+        variables: {
+          federationId: Number(state.fields.license.value?.federation?.id),
+          uid: state.fields?.apfNumber?.value,
+          licenseId: state.fields.license.value?.id ? Number(state.fields.license.value?.id) : null,
+        },
+      });
+    }
   }, [
+    currentDropzone.dropzone?.federation?.id,
+    joinFederation,
     mutationUpdateUser,
+    state.fields.apfNumber?.value,
     state.fields.email.value,
     state.fields.exitWeight?.value,
+    state.fields.license.value?.federation?.id,
     state.fields.license.value?.id,
     state.fields.name.value,
     state.fields.phone.value,
     state.original?.id,
+    state.original?.license?.id,
+    state.original?.userFederations,
   ]);
 
   const snapPoints = React.useMemo(() => [740], []);

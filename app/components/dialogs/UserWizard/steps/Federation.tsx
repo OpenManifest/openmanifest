@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Card, HelperText } from 'react-native-paper';
+import { Card, HelperText, TextInput } from 'react-native-paper';
 import LicenseChipSelect from '../../../input/chip_select/LicenseChipSelect';
 import FederationSelect from '../../../input/dropdown_select/FederationSelect';
 import WizardScreen, { IWizardScreenProps } from '../../../wizard/WizardScreen';
@@ -11,7 +11,7 @@ function FederationWizardSceen(props: IWizardScreenProps) {
   const dispatch = useAppDispatch();
 
   return (
-    <WizardScreen style={styles.container} {...props} title="What license do you have?">
+    <WizardScreen style={styles.container} {...props} title="Select affiliation">
       <View style={styles.content}>
         <Card style={styles.card}>
           <FederationSelect
@@ -23,21 +23,18 @@ function FederationWizardSceen(props: IWizardScreenProps) {
           </HelperText>
         </Card>
 
-        <Card style={{ padding: 16 }}>
-          {(state?.fields?.license?.value?.federation?.id || state?.federation?.value?.id) && (
-            <>
-              <LicenseChipSelect
-                value={state.fields.license.value}
-                federationId={Number(
-                  state?.fields?.license?.value?.federation?.id || state.federation?.value?.id
-                )}
-                onSelect={(value) => dispatch(actions.forms.user.setField(['license', value]))}
-              />
-              <HelperText type={state.fields.license.error ? 'error' : 'info'}>
-                {state.fields.license.error || ''}
-              </HelperText>
-            </>
-          )}
+        <Card style={styles.card}>
+          <TextInput
+            value={state.fields?.apfNumber?.value || ''}
+            mode="outlined"
+            onChangeText={(newValue) =>
+              dispatch(actions.forms.user.setField(['apfNumber', newValue]))
+            }
+            label={`${state.federation.value?.name} ID`}
+          />
+          <HelperText type={state.federation.error ? 'error' : 'info'}>
+            {state.federation.error || ''}
+          </HelperText>
         </Card>
       </View>
     </WizardScreen>

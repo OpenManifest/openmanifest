@@ -73,7 +73,7 @@ export default function SlotCard(props: ISlotCardProps) {
             mode="outlined"
             disabled
           >
-            {slot?.dropzoneUser?.user?.license?.name}
+            {slot?.dropzoneUser?.license?.name}
           </Chip>
           <Chip
             style={styles.infoChip}

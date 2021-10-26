@@ -7,6 +7,7 @@ const MUTATION_CREATE_GHOST = gql`
     $name: String!
     $phone: String
     $email: String!
+    $federationNumber: String
     $roleId: Int!
     $licenseId: Int
     $dropzoneId: Int!
@@ -16,6 +17,7 @@ const MUTATION_CREATE_GHOST = gql`
       input: {
         attributes: {
           roleId: $roleId
+          federationNumber: $federationNumber
           name: $name
           phone: $phone
           email: $email
@@ -40,6 +42,18 @@ const MUTATION_CREATE_GHOST = gql`
         jumpTypes {
           id
           name
+        }
+        userFederations {
+          id
+          license {
+            id
+            name
+          }
+          federation {
+            id
+            name
+            slug
+          }
         }
         license {
           id

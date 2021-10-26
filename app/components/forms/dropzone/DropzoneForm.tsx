@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   skeletonCardCheckbox: {
-    minHeight: 200,
+    minHeight: 116,
     marginVertical: 16,
     width: '100%',
   },

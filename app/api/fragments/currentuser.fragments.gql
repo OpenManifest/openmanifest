@@ -150,9 +150,15 @@ fragment currentUserDetailed on DropzoneUser {
     }
   }
 
+  license {
+    id
+    name
+  }
+
   user {
     id
     name
+    nickname
     exitWeight
     email
     phone

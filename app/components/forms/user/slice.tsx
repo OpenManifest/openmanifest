@@ -1,7 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Federation, User } from '../../../api/schema.d';
+import { DropzoneUser, Federation, User } from '../../../api/schema.d';
 
-export type UserFields = Pick<User, 'exitWeight' | 'rigs' | 'name' | 'phone' | 'email' | 'license'>;
+export type UserFields = Pick<
+  User,
+  'exitWeight' | 'rigs' | 'name' | 'phone' | 'email' | 'license' | 'apfNumber' | 'nickname'
+>;
 
 interface IUserEditState {
   original: User | null;
@@ -30,6 +33,10 @@ export const initialState: IUserEditState = {
       value: '',
       error: null,
     },
+    apfNumber: {
+      value: '',
+      error: null,
+    },
     email: {
       value: '',
       error: null,
@@ -39,6 +46,10 @@ export const initialState: IUserEditState = {
       error: null,
     },
     name: {
+      value: null,
+      error: null,
+    },
+    nickname: {
       value: null,
       error: null,
     },
@@ -78,22 +89,35 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOpen: (state: IUserEditState, action: PayloadAction<boolean | User>) => {
+    setOpen: (state: IUserEditState, action: PayloadAction<boolean | DropzoneUser>) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;
         state.fields = initialState.fields;
       } else {
-        state.original = action.payload;
+        state.original = action.payload.user;
         state.open = true;
-        state.federation.value = action.payload.license?.federation || null;
-        Object.keys(action.payload).forEach((key) => {
-          const payloadKey = key as keyof typeof action.payload;
-          if (payloadKey in state.fields) {
-            const typedKey = payloadKey as keyof typeof initialState['fields'];
-            state.fields[typedKey].value = action.payload[typedKey as typeof payloadKey];
-          }
-        });
+        state.federation.value =
+          action.payload.license?.federation || action.payload?.dropzone?.federation || null;
+        if (
+          state.federation.value &&
+          action.payload.user?.userFederations?.find(
+            ({ federation }) => federation.id === state.federation.value?.id
+          )?.uid
+        ) {
+          state.fields.apfNumber.value = action.payload.user?.userFederations?.find(
+            ({ federation }) => federation.id === state.federation.value?.id
+          )?.uid;
+        }
+        if (typeof action.payload !== 'boolean') {
+          Object.keys(action.payload.user).forEach((key) => {
+            const payloadKey = key as keyof typeof action.payload;
+            if (payloadKey in state.fields) {
+              const typedKey = payloadKey as keyof typeof initialState['fields'];
+              state.fields[typedKey].value = (action.payload as DropzoneUser).user[typedKey];
+            }
+          });
+        }
       }
     },
 
