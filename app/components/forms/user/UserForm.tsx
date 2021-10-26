@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Divider } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
+import NumberField from '../../input/number_input/NumberField';
 import LicenseChipSelect from '../../input/chip_select/LicenseChipSelect';
 import FederationSelect from '../../input/dropdown_select/FederationSelect';
 
@@ -46,6 +47,19 @@ export default function SlotForm() {
       <TextInput
         style={styles.field}
         mode="outlined"
+        label="Nickname"
+        error={!!state.fields.nickname.error}
+        value={state.fields.nickname?.value?.toString() || ''}
+        onChangeText={(newValue) => dispatch(actions.forms.user.setField(['nickname', newValue]))}
+      />
+
+      <HelperText type={state.fields.nickname.error ? 'error' : 'info'}>
+        {state.fields.nickname.error || ' '}
+      </HelperText>
+
+      <TextInput
+        style={styles.field}
+        mode="outlined"
         label="Email"
         error={!!state.fields.email.error}
         value={state.fields.email?.value?.toString() || ''}
@@ -69,15 +83,12 @@ export default function SlotForm() {
         {state.fields.phone.error || ''}
       </HelperText>
 
-      <TextInput
-        style={styles.field}
-        mode="outlined"
-        label="Exit weight"
-        error={!!state.fields.exitWeight.error}
-        value={state.fields.exitWeight?.value?.toString() || ''}
-        keyboardType="numbers-and-punctuation"
-        right={() => <TextInput.Affix text="kg" />}
-        onChangeText={(newValue) => dispatch(actions.forms.user.setField(['exitWeight', newValue]))}
+      <NumberField
+        value={!state.fields.exitWeight.value ? 0 : Number(state.fields.exitWeight.value)}
+        onChangeText={(num) =>
+          dispatch(actions.forms.user.setField(['exitWeight', num.toString()]))
+        }
+        label="Exit weight (kg)"
       />
 
       <HelperText type={state.fields.exitWeight.error ? 'error' : 'info'}>

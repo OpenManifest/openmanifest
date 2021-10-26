@@ -76,7 +76,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
       (state.fields.apfNumber?.value &&
         state.fields.apfNumber?.value !==
           state.original?.userFederations?.find(
-            ({ federation }) => federation.id === currentDropzone.federation?.id
+            ({ federation }) => federation.id === currentDropzone.dropzone?.federation?.id
           )?.uid)
     ) {
       await joinFederation({
@@ -88,7 +88,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
       });
     }
   }, [
-    currentDropzone.federation?.id,
+    currentDropzone.dropzone?.federation?.id,
     joinFederation,
     mutationUpdateUser,
     state.fields.apfNumber?.value,

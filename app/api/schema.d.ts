@@ -663,7 +663,7 @@ export type JoinFederationPayload = {
   clientMutationId?: Maybe<Scalars['String']>;
   errors?: Maybe<Array<Scalars['String']>>;
   fieldErrors?: Maybe<Array<FieldError>>;
-  user?: Maybe<User>;
+  userFederation?: Maybe<UserFederation>;
 };
 
 export type JumpType = {
@@ -1927,6 +1927,7 @@ export type UserFederation = AnyResource & {
   qualifications?: Maybe<Array<UserQualification>>;
   /** User Federation ID, e.g APF number */
   uid?: Maybe<Scalars['String']>;
+  user: User;
 };
 
 export type UserFederationInput = {

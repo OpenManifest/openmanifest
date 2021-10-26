@@ -25,7 +25,7 @@ function UserWizardScreen() {
   const state = useAppSelector((root) => root.forms.userWizard);
   const dispatch = useAppDispatch();
 
-  const [joinFederation] = useJoinFederationMutation();
+  const [joinFederation, mutationJoinFederation] = useJoinFederationMutation();
   const mutationUpdateUser = useMutationUpdateUser({
     onSuccess: (e) => true,
     onError: (message) =>
@@ -103,17 +103,17 @@ function UserWizardScreen() {
               federationId: Number(userForm.federation?.value?.id),
             },
           });
+          console.log({ data: mutationResult.data?.joinFederation });
+          const license = mutationResult?.data?.joinFederation?.userFederation?.license;
 
-          const result = mutationResult?.data?.joinFederation?.user?.userFederations?.find(
-            ({ federation }) => federation.id === userForm.federation?.value?.id
-          );
-
-          if (result?.license) {
-            dispatch(actions.forms.user.setField(['license', result?.license as License]));
+          if (license) {
+            dispatch(actions.forms.user.setField(['license', license as License]));
           }
         }
         return setIndex(index + 1);
-      } catch (_) {
+      } catch (e) {
+        console.log('Error');
+        console.log(e);
         return false;
       }
     },
@@ -136,14 +136,16 @@ function UserWizardScreen() {
 
       // Update user license
       try {
-        await joinFederation({
+        const response = await joinFederation({
           variables: {
             federationId: Number(userForm.federation?.value?.id),
             licenseId: Number(userForm.fields.license?.value?.id),
           },
         });
+        console.log({ data: response.data?.joinFederation });
         return setIndex(index + 1);
       } catch (_) {
+        console.log('Failed');
         return false;
       }
     },
@@ -302,20 +304,20 @@ function UserWizardScreen() {
             onBack={(index, setIndex) => {
               setIndex(index - 1);
             }}
-            loading={mutationUpdateUser.loading}
+            loading={mutationUpdateUser.loading || mutationJoinFederation.loading}
             onNext={onFederationNext}
           />
           <LicenseStep
-            backButtonLabel="Cancel"
+            backButtonLabel="Back"
             nextButtonLabel="Next"
             onBack={(index, setIndex) => {
               setIndex(index - 1);
             }}
-            loading={mutationUpdateUser.loading}
+            loading={mutationUpdateUser.loading || mutationJoinFederation.loading}
             onNext={onLicenseNext}
           />
           <AskForRigStep
-            backButtonLabel="Cancel"
+            backButtonLabel="Back"
             nextButtonLabel={state.fields.skipRigSetup.value ? 'Done' : 'Next'}
             onBack={(index, setIndex) => {
               setIndex(index - 1);

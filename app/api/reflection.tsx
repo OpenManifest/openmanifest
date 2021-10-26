@@ -520,19 +520,38 @@ export const JoinFederationDocument = gql`
   joinFederation(
     input: {attributes: {federationId: $federationId, uid: $uid, licenseId: $licenseId}}
   ) {
-    user {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    userFederation {
       id
-      name
-      nickname
-      userFederations {
-        federation {
-          id
-          name
-          slug
-        }
-        license {
-          id
-          name
+      uid
+      qualifications {
+        id
+        name
+        uid
+        expiresAt
+      }
+      license {
+        id
+        name
+      }
+      user {
+        id
+        name
+        nickname
+        userFederations {
+          federation {
+            id
+            name
+            slug
+          }
+          license {
+            id
+            name
+          }
         }
       }
     }

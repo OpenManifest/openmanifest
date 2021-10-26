@@ -680,7 +680,7 @@ type JoinFederationPayload {
   clientMutationId: String
   errors: [String!]
   fieldErrors: [FieldError!]
-  user: User
+  userFederation: UserFederation
 }
 
 type JumpType {
@@ -1829,6 +1829,7 @@ type UserFederation implements AnyResource {
 
   """User Federation ID, e.g APF number"""
   uid: String
+  user: User!
 }
 
 input UserFederationInput {

@@ -43,7 +43,7 @@ export type JoinFederationMutationVariables = Types.Exact<{
 }>;
 
 
-export type JoinFederationMutation = { __typename?: 'Mutation', joinFederation?: Types.Maybe<{ __typename?: 'JoinFederationPayload', user?: Types.Maybe<{ __typename?: 'User', id: string, name?: Types.Maybe<string>, nickname?: Types.Maybe<string>, userFederations?: Types.Maybe<Array<{ __typename?: 'UserFederation', federation: { __typename?: 'Federation', id: string, name?: Types.Maybe<string>, slug?: Types.Maybe<string> }, license?: Types.Maybe<{ __typename?: 'License', id: string, name?: Types.Maybe<string> }> }>> }> }> };
+export type JoinFederationMutation = { __typename?: 'Mutation', joinFederation?: Types.Maybe<{ __typename?: 'JoinFederationPayload', errors?: Types.Maybe<Array<string>>, fieldErrors?: Types.Maybe<Array<{ __typename?: 'FieldError', field: string, message: string }>>, userFederation?: Types.Maybe<{ __typename?: 'UserFederation', id: string, uid?: Types.Maybe<string>, qualifications?: Types.Maybe<Array<{ __typename?: 'UserQualification', id: string, name?: Types.Maybe<string>, uid?: Types.Maybe<string>, expiresAt?: Types.Maybe<number> }>>, license?: Types.Maybe<{ __typename?: 'License', id: string, name?: Types.Maybe<string> }>, user: { __typename?: 'User', id: string, name?: Types.Maybe<string>, nickname?: Types.Maybe<string>, userFederations?: Types.Maybe<Array<{ __typename?: 'UserFederation', federation: { __typename?: 'Federation', id: string, name?: Types.Maybe<string>, slug?: Types.Maybe<string> }, license?: Types.Maybe<{ __typename?: 'License', id: string, name?: Types.Maybe<string> }> }>> } }> }> };
 
 export type DropzoneTransactionsQueryVariables = Types.Exact<{
   dropzoneId: Types.Scalars['Int'];
