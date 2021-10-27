@@ -157,6 +157,7 @@ export const CurrentUserDetailedFragmentDoc = gql`
   user {
     id
     name
+    moderationRole
     nickname
     exitWeight
     email

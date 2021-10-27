@@ -15,6 +15,8 @@ export const QUERY_DROPZONE = gql`
       name
       primaryColor
       secondaryColor
+      isPublic
+      requestPublication
       planes {
         id
         name
@@ -49,6 +51,13 @@ export const QUERY_DROPZONE = gql`
         hasLicense
         permissions
         expiresAt
+
+        user {
+          id
+          nickname
+          name
+          moderationRole
+        }
 
         role {
           id

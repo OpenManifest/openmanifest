@@ -12,6 +12,7 @@ export type DropzoneFields = Pick<
   | 'lng'
   | 'lat'
   | 'isCreditSystemEnabled'
+  | 'requestPublication'
 >;
 
 interface IDropzoneEditState {
@@ -65,6 +66,10 @@ export const initialState: IDropzoneEditState = {
       value: false,
       error: null,
     },
+    requestPublication: {
+      value: false,
+      error: null,
+    },
   },
 };
 
@@ -104,7 +109,7 @@ export default createSlice({
           const payloadKey = key as keyof typeof action.payload;
           if (payloadKey in state.fields) {
             const typedKey = payloadKey as keyof typeof initialState['fields'];
-            state.fields[typedKey].value = action.payload[typedKey as typeof payloadKey];
+            state.fields[typedKey].value = (action.payload as Dropzone)[typedKey];
           }
         });
       }

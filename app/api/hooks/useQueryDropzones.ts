@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { createQuery } from '../createQuery';
-import { Query } from '../schema';
+import { Query, QueryDropzonesArgs } from '../schema';
 
 const QUERY_DROPZONES = gql`
   query QueryDropzones {
@@ -32,6 +32,6 @@ const QUERY_DROPZONES = gql`
   }
 `;
 
-export default createQuery<Query['dropzones'], never>(QUERY_DROPZONES, {
+export default createQuery<Query['dropzones'], QueryDropzonesArgs>(QUERY_DROPZONES, {
   getPayload: (query) => query?.dropzones,
 });

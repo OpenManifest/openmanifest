@@ -156,10 +156,12 @@ export const QUERY_DROPZONE_USER = gql`
         user {
           id
           name
+          nickname
           exitWeight
           email
           phone
           image
+          moderationRole
           rigs {
             id
             packingCard

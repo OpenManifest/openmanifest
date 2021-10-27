@@ -1,15 +1,18 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Button, TextInput, HelperText, Card, List, Checkbox } from 'react-native-paper';
 import { getDocumentAsync } from 'expo-document-picker';
 import { useQuery, gql } from '@apollo/client';
 import SkeletonContent from 'react-native-skeleton-content';
-import ColorPicker from '../../input/colorpicker';
+import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
+import ColorPicker from '../../input/colorpicker';
 import { Query } from '../../../api/schema';
 import { PhonePreview, WebPreview } from '../../theme_preview';
 import FederationSelect from '../../input/dropdown_select/FederationSelect';
 import LocationPicker from '../../input/LocationPicker';
+import { warningColor } from '../../../constants/Colors';
 
 const QUERY_FEDERATIONS = gql`
   query QueryFederations {
@@ -28,6 +31,7 @@ export default function DropzoneForm(props: IDropzoneForm) {
   const state = useAppSelector((root) => root.forms.dropzone);
   const dispatch = useAppDispatch();
   const { data, loading } = useQuery<Query>(QUERY_FEDERATIONS);
+  const { currentUser } = useCurrentDropzone();
 
   React.useEffect(() => {
     if (data?.federations?.length && !state.fields.federation?.value) {
@@ -195,6 +199,7 @@ export default function DropzoneForm(props: IDropzoneForm) {
       >
         <Card style={styles.card}>
           <List.Item
+            descriptionNumberOfLines={10}
             title="Use credit system"
             // eslint-disable-next-line max-len
             description="Users will be charged credits when a load is marked as landed and can't manifest with insufficient funds."
@@ -229,22 +234,74 @@ export default function DropzoneForm(props: IDropzoneForm) {
       >
         <Card style={styles.card}>
           <List.Item
-            title="Public"
-            description="Your dropzone will not be available in the app if this is disabled"
-            onPress={() =>
-              dispatch(actions.forms.dropzone.setField(['isPublic', !state.fields.isPublic.value]))
+            title={
+              state?.original?.requestPublication && !state.original?.isPublic
+                ? 'Awaiting review'
+                : 'Request Publication'
             }
-            left={() => (
-              <Checkbox
-                onPress={() =>
-                  dispatch(
-                    actions.forms.dropzone.setField(['isPublic', !state.fields.isPublic.value])
-                  )
-                }
-                status={state.fields.isPublic.value ? 'checked' : 'unchecked'}
-              />
-            )}
+            description={
+              state?.original?.requestPublication && !state.original?.isPublic
+                ? 'You will be contacted to verify the legitimacy of your dropzone before your dropzone is publicly available. This is to prevent illegitimate actors on the platform. Thank you for your patience and understanding.'
+                : 'Your dropzone will not be visible to other users until it is published. You can request a review to publish your dropzone, and may be contacted for verification on the email or phone number on your profile.'
+            }
+            descriptionNumberOfLines={10}
+            onPress={() => {
+              dispatch(
+                actions.forms.dropzone.setField([
+                  'requestPublication',
+                  !state.fields.requestPublication?.value,
+                ])
+              );
+              if (state.fields.isPublic) {
+                dispatch(
+                  actions.forms.dropzone.setField(['isPublic', !state.fields.isPublic?.value])
+                );
+              }
+            }}
+            left={(iconProps) => {
+              const extraProps = {
+                icon: undefined as IconSource | undefined,
+                color: undefined as string | undefined,
+              };
+
+              if (state.fields.requestPublication?.value) {
+                extraProps.icon = 'upload';
+              }
+
+              if (state.original?.requestPublication && state.fields.requestPublication?.value) {
+                extraProps.color = warningColor;
+                extraProps.icon = 'progress-upload';
+              }
+
+              if (state.original?.isPublic && state.fields?.isPublic.value) {
+                extraProps.icon = 'check';
+              }
+
+              if (!extraProps.icon) {
+                return <View style={{ width: 56, height: 56 }} />;
+              }
+
+              console.log({
+                extraProps,
+                public: state.fields.isPublic.value,
+                requestPublic: state.fields.requestPublication.value,
+              });
+              return <List.Icon {...iconProps} {...extraProps} />;
+            }}
           />
+          {currentUser?.user?.moderationRole === 'administrator' &&
+          state?.original?.requestPublication ? (
+            <Card.Actions>
+              <Button
+                onPress={() => dispatch(actions.forms.dropzone.setField(['isPublic', false]))}
+              >
+                Decline
+              </Button>
+              <Button onPress={() => dispatch(actions.forms.dropzone.setField(['isPublic', true]))}>
+                Accept
+              </Button>
+            </Card.Actions>
+          ) : null}
         </Card>
       </SkeletonContent>
     </>

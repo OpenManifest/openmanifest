@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { List, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
-import { useAppSelector } from '../../../state';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
 import useRestriction from '../../../hooks/useRestriction';
 import { Permission } from '../../../api/schema.d';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
-  const state = useAppSelector((root) => root.global);
+  const { data } = useCurrentDropzone();
   const theme = useTheme();
 
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
@@ -22,7 +22,7 @@ export default function SettingsScreen() {
             title="Configuration"
             onPress={() =>
               navigation.navigate('UpdateDropzoneScreen', {
-                dropzone: state.currentDropzone,
+                dropzone: data?.dropzone,
               })
             }
             left={() => <List.Icon color={theme.colors.text} icon="information-outline" />}

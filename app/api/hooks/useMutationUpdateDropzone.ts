@@ -6,6 +6,7 @@ const MUTATION_UPDATE_DROPZONE = gql`
   mutation UpdateDropzone(
     $id: Int!
     $name: String!
+    $requestPublication: Boolean
     $banner: String
     $federationId: Int!
     $lat: Float
@@ -23,6 +24,7 @@ const MUTATION_UPDATE_DROPZONE = gql`
           banner: $banner
           lat: $lat
           lng: $lng
+          requestPublication: $requestPublication
           federationId: $federationId
           primaryColor: $primaryColor
           secondaryColor: $secondaryColor
