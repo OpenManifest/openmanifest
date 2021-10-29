@@ -157,6 +157,7 @@ export const CurrentUserDetailedFragmentDoc = gql`
   user {
     id
     name
+    nickname
     exitWeight
     email
     phone
@@ -251,6 +252,7 @@ export const SlotFragmentDoc = gql`
     user {
       id
       name
+      nickname
       exitWeight
       image
       license {
@@ -428,6 +430,52 @@ export const OrderFragmentDoc = gql`
   }
 }
     ${TransactionFragmentDoc}`;
+export const ConfirmUserDocument = gql`
+    mutation ConfirmUser($token: String!) {
+  userConfirmRegistrationWithToken(confirmationToken: $token) {
+    authenticatable {
+      id
+      apfNumber
+      phone
+      pushToken
+      email
+    }
+    credentials {
+      accessToken
+      client
+      expiry
+      tokenType
+      uid
+    }
+  }
+}
+    `;
+export type ConfirmUserMutationFn = Apollo.MutationFunction<Operation.ConfirmUserMutation, Operation.ConfirmUserMutationVariables>;
+
+/**
+ * __useConfirmUserMutation__
+ *
+ * To run a mutation, you first call `useConfirmUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConfirmUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [confirmUserMutation, { data, loading, error }] = useConfirmUserMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useConfirmUserMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ConfirmUserMutation, Operation.ConfirmUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.ConfirmUserMutation, Operation.ConfirmUserMutationVariables>(ConfirmUserDocument, options);
+      }
+export type ConfirmUserMutationHookResult = ReturnType<typeof useConfirmUserMutation>;
+export type ConfirmUserMutationResult = Apollo.MutationResult<Operation.ConfirmUserMutation>;
+export type ConfirmUserMutationOptions = Apollo.BaseMutationOptions<Operation.ConfirmUserMutation, Operation.ConfirmUserMutationVariables>;
 export const CreateOrderDocument = gql`
     mutation CreateOrder($buyer: WalletInput!, $seller: WalletInput!, $dropzoneId: Int!, $title: String, $amount: Int!) {
   createOrder(
@@ -586,6 +634,60 @@ export function useJoinFederationMutation(baseOptions?: Apollo.MutationHookOptio
 export type JoinFederationMutationHookResult = ReturnType<typeof useJoinFederationMutation>;
 export type JoinFederationMutationResult = Apollo.MutationResult<Operation.JoinFederationMutation>;
 export type JoinFederationMutationOptions = Apollo.BaseMutationOptions<Operation.JoinFederationMutation, Operation.JoinFederationMutationVariables>;
+export const ReloadWeatherDocument = gql`
+    mutation ReloadWeather($dropzoneId: Int!, $id: Int!) {
+  reloadWeatherCondition(input: {id: $id}) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    weatherCondition {
+      createdAt
+      exitSpotMiles
+      id
+      jumpRun
+      offsetDirection
+      offsetMiles
+      temperature
+      updatedAt
+      winds {
+        altitude
+        direction
+        speed
+        temperature
+      }
+    }
+  }
+}
+    `;
+export type ReloadWeatherMutationFn = Apollo.MutationFunction<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
+
+/**
+ * __useReloadWeatherMutation__
+ *
+ * To run a mutation, you first call `useReloadWeatherMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReloadWeatherMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [reloadWeatherMutation, { data, loading, error }] = useReloadWeatherMutation({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useReloadWeatherMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>(ReloadWeatherDocument, options);
+      }
+export type ReloadWeatherMutationHookResult = ReturnType<typeof useReloadWeatherMutation>;
+export type ReloadWeatherMutationResult = Apollo.MutationResult<Operation.ReloadWeatherMutation>;
+export type ReloadWeatherMutationOptions = Apollo.BaseMutationOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
 export const DropzoneTransactionsDocument = gql`
     query DropzoneTransactions($dropzoneId: Int!, $after: String) {
   dropzone(id: $dropzoneId) {

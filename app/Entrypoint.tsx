@@ -10,7 +10,9 @@ import { Provider as MaterialProvider, ActivityIndicator, ProgressBar } from 're
 import { Appearance, Linking, Platform, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
+import * as Sentry from 'sentry-expo';
 import URI from 'urijs';
+import './PaperDatesPolyfill';
 import Wrapper from './EntrypointWrapper';
 
 import AppUpdate from './components/app_update/AppUpdate';
@@ -34,13 +36,19 @@ Notifications.setNotificationHandler({
   }),
 });
 
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  enableInExpoDevelopment: true,
+  debug: true,
+});
+
 async function registerForPushNotificationsAsync(): Promise<string | null> {
   let token: string | null = null;
   if (Constants.isDevice) {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestForegroundPermissionsAsync();
+      const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
     if (finalStatus !== 'granted') {

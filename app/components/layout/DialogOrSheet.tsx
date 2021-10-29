@@ -1,6 +1,6 @@
 import { sortBy, uniq } from 'lodash';
 import * as React from 'react';
-import { View, StyleSheet, Keyboard, Platform } from 'react-native';
+import { View, StyleSheet, Keyboard } from 'react-native';
 import { Button, Title, useTheme } from 'react-native-paper';
 import { BottomSheetModal, BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 

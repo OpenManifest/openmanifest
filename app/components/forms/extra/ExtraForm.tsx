@@ -3,7 +3,6 @@ import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, List } from 'react-native-paper';
-import { xor } from 'lodash';
 import { Query } from '../../../api/schema';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';

@@ -1,72 +1,24 @@
-import { gql, useMutation } from '@apollo/client';
 import * as React from 'react';
 import { Button, Dialog, Portal, ProgressBar } from 'react-native-paper';
-import { Mutation } from '../../../api/schema.d';
+import { useCreateOrderMutation } from '../../../api/reflection';
+import { DropzoneUser, TransactionType, WalletableTypes } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import CreditsForm from '../../forms/credits/CreditsForm';
 
 interface IDropzoneUserDialog {
   open?: boolean;
+  dropzoneUser?: DropzoneUser;
   onClose(): void;
   onSuccess(): void;
 }
 
-const MUTATION_CREATE_TRANSACTION = gql`
-  mutation CreatrTransaction(
-    $message: String
-    $status: String
-    $amount: Float
-    $dropzoneUserId: Int
-  ) {
-    createTransaction(
-      input: {
-        attributes: {
-          amount: $amount
-          dropzoneUserId: $dropzoneUserId
-          message: $message
-          status: $status
-        }
-      }
-    ) {
-      errors
-      fieldErrors {
-        field
-        message
-      }
-      transaction {
-        id
-        amount
-        message
-
-        dropzoneUser {
-          id
-          credits
-
-          transactions {
-            edges {
-              node {
-                id
-                status
-                amount
-                createdAt
-                message
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
 export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
-  const { open, onClose } = props;
+  const { open, onClose, dropzoneUser } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.credits);
   const globalState = useAppSelector((root) => root.global);
-  const [mutationCreateTransaction, createData] = useMutation<Mutation>(
-    MUTATION_CREATE_TRANSACTION
-  );
+  const [mutationCreateOrder, createData] = useCreateOrderMutation();
+  const global = useAppSelector((root) => root.global);
 
   const validate = React.useCallback(() => {
     let hasErrors = false;
@@ -82,18 +34,48 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
     if (!validate()) {
       return;
     }
+
+    if (!dropzoneUser?.id || state.fields.amount.value === null || !global.currentDropzoneId) {
+      return;
+    }
+
     try {
-      const response = await mutationCreateTransaction({
+      const response = await mutationCreateOrder({
         variables: {
           amount: state.fields.amount.value,
-          message: state.fields.message.value,
-          status: state.fields.status.value,
-          dropzoneUserId: Number(state.original?.id),
+          title:
+            state.fields.message.value ||
+            `${
+              state.fields.transactionType.value === TransactionType.Deposit
+                ? 'Added funds'
+                : 'Withdrew funds'
+            }`,
+          seller:
+            state.fields.transactionType.value !== TransactionType.Deposit
+              ? {
+                  type: WalletableTypes.Dropzone,
+                  id: `${global.currentDropzoneId}`,
+                }
+              : {
+                  type: WalletableTypes.DropzoneUser,
+                  id: dropzoneUser.id,
+                },
+          buyer:
+            state.fields.transactionType.value === TransactionType.Deposit
+              ? {
+                  type: WalletableTypes.Dropzone,
+                  id: `${global.currentDropzoneId}`,
+                }
+              : {
+                  type: WalletableTypes.DropzoneUser,
+                  id: dropzoneUser.id,
+                },
+          dropzoneId: Number(global.currentDropzoneId),
         },
       });
-      const result = state.original?.id ? response.data?.updateRig : response.data?.createRig;
+      const { data: result } = response;
 
-      result?.fieldErrors?.map(({ field, message }) => {
+      result?.createOrder?.fieldErrors?.map(({ field, message }) => {
         switch (field) {
           case 'amount':
             return dispatch(actions.forms.credits.setFieldError(['amount', message]));
@@ -105,16 +87,16 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
             return null;
         }
       });
-      if (result?.errors?.length) {
+      if (result?.createOrder?.errors?.length) {
         dispatch(
           actions.notifications.showSnackbar({
-            message: result?.errors[0],
+            message: result?.createOrder?.errors[0],
             variant: 'error',
           })
         );
         return;
       }
-      if (!result?.fieldErrors?.length) {
+      if (!result?.createOrder?.fieldErrors?.length) {
         dispatch(actions.forms.credits.reset());
         props.onSuccess();
       }
@@ -127,14 +109,15 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
       );
     }
   }, [
-    dispatch,
-    mutationCreateTransaction,
-    props,
+    validate,
+    dropzoneUser?.id,
     state.fields.amount.value,
     state.fields.message.value,
-    state.fields.status.value,
-    state.original?.id,
-    validate,
+    state.fields.transactionType.value,
+    global.currentDropzoneId,
+    mutationCreateOrder,
+    dispatch,
+    props,
   ]);
 
   return (

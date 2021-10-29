@@ -386,6 +386,7 @@ type Dropzone implements AnyResource & Wallet {
     """Returns the last _n_ elements from the list."""
     last: Int
   ): OrderConnection
+  requestPublication: Boolean!
   rigInspectionTemplate: FormTemplate
 
   """Get rigs for dropzone"""
@@ -437,6 +438,7 @@ input DropzoneInput {
   name: String!
   banner: String
   federationId: Int!
+  requestPublication: Boolean
   isPublic: Boolean
   lat: Float
   lng: Float
@@ -782,6 +784,20 @@ type MasterLog {
   updatedAt: Int!
 }
 
+enum ModerationRole {
+  """user"""
+  user
+
+  """support"""
+  support
+
+  """moderator"""
+  moderator
+
+  """administrator"""
+  administrator
+}
+
 type Mutation {
   createDropzone(
     """Parameters for CreateDropzone"""
@@ -941,7 +957,7 @@ type Notification {
   id: ID!
   isSeen: Boolean!
   message: String
-  notificationType: String
+  notificationType: NotificationType
   receivedBy: DropzoneUser!
   resource: AnyResource
   sentBy: DropzoneUser
@@ -971,6 +987,50 @@ type NotificationEdge {
 
 input NotificationInput {
   isSeen: Boolean!
+}
+
+enum NotificationType {
+  """system"""
+  system
+
+  """packjob_pending_confirm"""
+  packjob_pending_confirm
+
+  """packjob_confirmed"""
+  packjob_confirmed
+
+  """rig_pending_inspection"""
+  rig_pending_inspection
+
+  """boarding_call"""
+  boarding_call
+
+  """user_manifested"""
+  user_manifested
+
+  """credits_updated"""
+  credits_updated
+
+  """rig_inspection_completed"""
+  rig_inspection_completed
+
+  """rig_inspection_requested"""
+  rig_inspection_requested
+
+  """membership_updated"""
+  membership_updated
+
+  """boarding_call_canceled"""
+  boarding_call_canceled
+
+  """permission_granted"""
+  permission_granted
+
+  """permission_revoked"""
+  permission_revoked
+
+  """publication_requested"""
+  publication_requested
 }
 
 type Order implements AnyResource {
@@ -1271,6 +1331,8 @@ type Query {
 
     """Returns the last _n_ elements from the list."""
     last: Int
+    requestedPublication: Boolean
+    isPublic: Boolean
   ): DropzoneConnection!
 
   """Get ticket addons for a dropzone"""
@@ -1802,6 +1864,7 @@ type User implements AnyResource {
   image: String
   jumpTypes: [JumpType!]
   license: License
+  moderationRole: ModerationRole
   name: String
   nickname: String
   phone: String
