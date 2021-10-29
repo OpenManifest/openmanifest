@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Card, HelperText, TextInput } from 'react-native-paper';
-import LicenseChipSelect from '../../../input/chip_select/LicenseChipSelect';
 import FederationSelect from '../../../input/dropdown_select/FederationSelect';
 import WizardScreen, { IWizardScreenProps } from '../../../wizard/WizardScreen';
 import { actions, useAppDispatch, useAppSelector } from '../../../../state';

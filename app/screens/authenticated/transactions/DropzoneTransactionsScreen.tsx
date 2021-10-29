@@ -17,7 +17,7 @@ export default function TransactionsScreen() {
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
   const { currentUser } = useCurrentDropzone();
-  const [fetchTransactions, { data }] = useDropzoneTransactionsLazyQuery();
+  const [fetchTransactions] = useDropzoneTransactionsLazyQuery();
   const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
   const { dropzoneUser, loading, refetch } = useDropzoneUser(
     Number(route?.params?.userId) || Number(currentUser?.id)

@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { Snackbar } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useAppSelector, useAppDispatch } from '../../state';
 import LottieView from '../LottieView';
 import slice from './slice';
-import usePalette from '../../hooks/usePalette';
 import lottieDoneAnimation from '../../../assets/images/finished.json';
 
 const { actions } = slice;
@@ -18,7 +16,6 @@ enum AnimationState {
 const Notifications = () => {
   const state = useAppSelector((root) => root.notifications);
   const dispatch = useAppDispatch();
-  const palette = usePalette();
   const successAnimation = React.useRef<LottieView>(null);
   const [animationState, setAnimationState] = React.useState<AnimationState>(AnimationState.closed);
 
@@ -41,13 +38,6 @@ const Notifications = () => {
       });
     }
   }, [dispatch, notification]);
-
-  const variantStyle = {
-    info: { backgroundColor: palette.info },
-    success: { backgroundColor: palette.success },
-    error: { backgroundColor: palette.error },
-    warning: { backgroundColor: palette.warning },
-  };
 
   return (
     <>

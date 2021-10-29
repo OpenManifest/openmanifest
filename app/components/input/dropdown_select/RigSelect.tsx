@@ -2,7 +2,7 @@ import { useLazyQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { Text, View } from 'react-native';
-import { Badge, List, Menu, TextInput, useTheme } from 'react-native-paper';
+import { List, Menu, TextInput, useTheme } from 'react-native-paper';
 import { Rig, Query } from '../../../api/schema.d';
 import { useAppSelector } from '../../../state';
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Appbar, Badge, IconButton, Chip } from 'react-native-paper';
+import { Appbar, IconButton, Chip } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { gql, useLazyQuery } from '@apollo/client';
 import { DrawerActions } from '@react-navigation/native';
