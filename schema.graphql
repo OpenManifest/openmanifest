@@ -545,6 +545,7 @@ type Dropzone implements AnyResource & Wallet {
     """
     last: Int
   ): OrderConnection
+  requestPublication: Boolean!
   rigInspectionTemplate: FormTemplate
 
   """
@@ -623,6 +624,7 @@ input DropzoneInput {
   lng: Float
   name: String!
   primaryColor: String
+  requestPublication: Boolean
   secondaryColor: String
 }
 
@@ -1053,6 +1055,28 @@ type MasterLog {
   updatedAt: Int!
 }
 
+enum ModerationRole {
+  """
+  administrator
+  """
+  administrator
+
+  """
+  moderator
+  """
+  moderator
+
+  """
+  support
+  """
+  support
+
+  """
+  user
+  """
+  user
+}
+
 type Mutation {
   createDropzone(
     """
@@ -1282,7 +1306,7 @@ type Notification {
   id: ID!
   isSeen: Boolean!
   message: String
-  notificationType: String
+  notificationType: NotificationType
   receivedBy: DropzoneUser!
   resource: AnyResource
   sentBy: DropzoneUser
@@ -1326,6 +1350,78 @@ type NotificationEdge {
 
 input NotificationInput {
   isSeen: Boolean!
+}
+
+enum NotificationType {
+  """
+  boarding_call
+  """
+  boarding_call
+
+  """
+  boarding_call_canceled
+  """
+  boarding_call_canceled
+
+  """
+  credits_updated
+  """
+  credits_updated
+
+  """
+  membership_updated
+  """
+  membership_updated
+
+  """
+  packjob_confirmed
+  """
+  packjob_confirmed
+
+  """
+  packjob_pending_confirm
+  """
+  packjob_pending_confirm
+
+  """
+  permission_granted
+  """
+  permission_granted
+
+  """
+  permission_revoked
+  """
+  permission_revoked
+
+  """
+  publication_requested
+  """
+  publication_requested
+
+  """
+  rig_inspection_completed
+  """
+  rig_inspection_completed
+
+  """
+  rig_inspection_requested
+  """
+  rig_inspection_requested
+
+  """
+  rig_pending_inspection
+  """
+  rig_pending_inspection
+
+  """
+  system
+  """
+  system
+
+  """
+  user_manifested
+  """
+  user_manifested
 }
 
 type Order implements AnyResource {
@@ -1784,11 +1880,13 @@ type Query {
     Returns the first _n_ elements from the list.
     """
     first: Int
+    isPublic: Boolean
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
+    requestedPublication: Boolean
   ): DropzoneConnection!
 
   """
@@ -2481,6 +2579,7 @@ type User implements AnyResource {
   image: String
   jumpTypes: [JumpType!]
   license: License
+  moderationRole: ModerationRole
   name: String
   nickname: String
   phone: String

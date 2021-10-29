@@ -337,6 +337,7 @@ export type Dropzone = AnyResource & Wallet & {
   planes: Array<Plane>;
   primaryColor?: Maybe<Scalars['String']>;
   purchases?: Maybe<OrderConnection>;
+  requestPublication: Scalars['Boolean'];
   rigInspectionTemplate?: Maybe<FormTemplate>;
   /** Get rigs for dropzone */
   rigs?: Maybe<Array<Rig>>;
@@ -443,6 +444,7 @@ export type DropzoneInput = {
   name: Scalars['String'];
   banner?: Maybe<Scalars['String']>;
   federationId: Scalars['Int'];
+  requestPublication?: Maybe<Scalars['Boolean']>;
   isPublic?: Maybe<Scalars['Boolean']>;
   lat?: Maybe<Scalars['Float']>;
   lng?: Maybe<Scalars['Float']>;
@@ -764,6 +766,17 @@ export type MasterLog = {
   updatedAt: Scalars['Int'];
 };
 
+export enum ModerationRole {
+  /** user */
+  User = 'user',
+  /** support */
+  Support = 'support',
+  /** moderator */
+  Moderator = 'moderator',
+  /** administrator */
+  Administrator = 'administrator'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   createDropzone?: Maybe<CreateDropzonePayload>;
@@ -1065,7 +1078,7 @@ export type Notification = {
   id: Scalars['ID'];
   isSeen: Scalars['Boolean'];
   message?: Maybe<Scalars['String']>;
-  notificationType?: Maybe<Scalars['String']>;
+  notificationType?: Maybe<NotificationType>;
   receivedBy: DropzoneUser;
   resource?: Maybe<AnyResource>;
   sentBy?: Maybe<DropzoneUser>;
@@ -1095,6 +1108,37 @@ export type NotificationEdge = {
 export type NotificationInput = {
   isSeen: Scalars['Boolean'];
 };
+
+export enum NotificationType {
+  /** system */
+  System = 'system',
+  /** packjob_pending_confirm */
+  PackjobPendingConfirm = 'packjob_pending_confirm',
+  /** packjob_confirmed */
+  PackjobConfirmed = 'packjob_confirmed',
+  /** rig_pending_inspection */
+  RigPendingInspection = 'rig_pending_inspection',
+  /** boarding_call */
+  BoardingCall = 'boarding_call',
+  /** user_manifested */
+  UserManifested = 'user_manifested',
+  /** credits_updated */
+  CreditsUpdated = 'credits_updated',
+  /** rig_inspection_completed */
+  RigInspectionCompleted = 'rig_inspection_completed',
+  /** rig_inspection_requested */
+  RigInspectionRequested = 'rig_inspection_requested',
+  /** membership_updated */
+  MembershipUpdated = 'membership_updated',
+  /** boarding_call_canceled */
+  BoardingCallCanceled = 'boarding_call_canceled',
+  /** permission_granted */
+  PermissionGranted = 'permission_granted',
+  /** permission_revoked */
+  PermissionRevoked = 'permission_revoked',
+  /** publication_requested */
+  PublicationRequested = 'publication_requested'
+}
 
 export type Order = AnyResource & {
   __typename?: 'Order';
@@ -1350,6 +1394,8 @@ export type QueryDropzonesArgs = {
   before?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  requestedPublication?: Maybe<Scalars['Boolean']>;
+  isPublic?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -1902,6 +1948,7 @@ export type User = AnyResource & {
   image?: Maybe<Scalars['String']>;
   jumpTypes?: Maybe<Array<JumpType>>;
   license?: Maybe<License>;
+  moderationRole?: Maybe<ModerationRole>;
   name?: Maybe<Scalars['String']>;
   nickname?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;

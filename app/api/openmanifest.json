@@ -2791,6 +2791,22 @@
             "deprecationReason": null
           },
           {
+            "name": "requestPublication",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "rigInspectionTemplate",
             "description": null,
             "args": [],
@@ -3189,6 +3205,18 @@
                 "name": "Int",
                 "ofType": null
               }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "requestPublication",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -5924,6 +5952,41 @@
         "possibleTypes": null
       },
       {
+        "kind": "ENUM",
+        "name": "ModerationRole",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "user",
+            "description": "user",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "support",
+            "description": "support",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "moderator",
+            "description": "moderator",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "administrator",
+            "description": "administrator",
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "Mutation",
         "description": null,
@@ -7621,8 +7684,8 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
+              "kind": "ENUM",
+              "name": "NotificationType",
               "ofType": null
             },
             "isDeprecated": false,
@@ -7813,6 +7876,101 @@
         ],
         "interfaces": null,
         "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "NotificationType",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "system",
+            "description": "system",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "packjob_pending_confirm",
+            "description": "packjob_pending_confirm",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "packjob_confirmed",
+            "description": "packjob_confirmed",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "rig_pending_inspection",
+            "description": "rig_pending_inspection",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "boarding_call",
+            "description": "boarding_call",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "user_manifested",
+            "description": "user_manifested",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "credits_updated",
+            "description": "credits_updated",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "rig_inspection_completed",
+            "description": "rig_inspection_completed",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "rig_inspection_requested",
+            "description": "rig_inspection_requested",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "membership_updated",
+            "description": "membership_updated",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "boarding_call_canceled",
+            "description": "boarding_call_canceled",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "permission_granted",
+            "description": "permission_granted",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "permission_revoked",
+            "description": "permission_revoked",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "publication_requested",
+            "description": "publication_requested",
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
         "possibleTypes": null
       },
       {
@@ -9010,6 +9168,30 @@
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "requestedPublication",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "isPublic",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -13604,6 +13786,18 @@
             "type": {
               "kind": "OBJECT",
               "name": "License",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "moderationRole",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "ENUM",
+              "name": "ModerationRole",
               "ofType": null
             },
             "isDeprecated": false,

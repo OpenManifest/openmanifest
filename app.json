@@ -22,7 +22,7 @@
       "config": {
         "usesNonExemptEncryption": false
       },
-      "buildNumber": "26",
+      "buildNumber": "27",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
       "icon": "./assets/images/ios-icon.png",
@@ -51,7 +51,7 @@
             },
             {
               "scheme": "https",
-              "host": "dev.openmanifest.org",
+              "host": "staging.openmanifest.org",
               "pathPrefix": "/confirm"
             }
           ],

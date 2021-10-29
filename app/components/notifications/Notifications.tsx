@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Snackbar } from 'react-native-paper';
-import LottieView from 'lottie-react-native';
 import { StyleSheet, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useAppSelector, useAppDispatch } from '../../state';
+import LottieView from '../LottieView';
 import slice from './slice';
 import usePalette from '../../hooks/usePalette';
 import lottieDoneAnimation from '../../../assets/images/finished.json';

@@ -3,7 +3,7 @@ import * as Update from 'expo-updates';
 import { View, StyleSheet, Text, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Button } from 'react-native-paper';
-import LottieView from 'lottie-react-native';
+import LottieView from '../LottieView';
 import { actions, useAppDispatch } from '../../state';
 
 interface IAppUpdateProps {
