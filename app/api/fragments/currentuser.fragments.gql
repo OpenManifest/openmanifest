@@ -158,6 +158,7 @@ fragment currentUserDetailed on DropzoneUser {
   user {
     id
     name
+    moderationRole
     nickname
     exitWeight
     email

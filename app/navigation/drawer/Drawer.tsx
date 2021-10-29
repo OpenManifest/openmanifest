@@ -22,6 +22,9 @@ export default function DrawerMenu() {
   const dispatch = useAppDispatch();
   const { currentUser, dropzone, loading } = useCurrentDropzone();
   const { data } = useQueryDropzones({
+    variables: {
+      isPublic: true,
+    },
     onError: (err) => console.error(err),
   });
 

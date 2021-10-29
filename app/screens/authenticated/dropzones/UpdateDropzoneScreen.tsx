@@ -1,89 +1,16 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button, ProgressBar } from 'react-native-paper';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
 import { useNavigation, useRoute } from '@react-navigation/core';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
+import useMutationUpdateDropzone from '../../../api/hooks/useMutationUpdateDropzone';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import { View } from '../../../components/Themed';
-import { Dropzone, Mutation, Query } from '../../../api/schema';
+import { Dropzone } from '../../../api/schema';
 import DropzoneForm from '../../../components/forms/dropzone/DropzoneForm';
 import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-
-const QUERY_DROPZONE_DETAILS = gql`
-  query QueryDropzoneDetails($dropzoneId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      name
-      primaryColor
-      secondaryColor
-      lat
-      lng
-      planes {
-        id
-        name
-        registration
-      }
-      ticketTypes {
-        id
-        name
-      }
-    }
-  }
-`;
-
-const MUTATION_UPDATE_DROPZONE = gql`
-  mutation UpdateDropzone(
-    $id: Int!
-    $name: String!
-    $banner: String
-    $lat: Float
-    $lng: Float
-    $federationId: Int!
-    $primaryColor: String
-    $secondaryColor: String
-    $isCreditSystemEnabled: Boolean
-    $isPublic: Boolean
-  ) {
-    updateDropzone(
-      input: {
-        id: $id
-        attributes: {
-          name: $name
-          banner: $banner
-          lat: $lat
-          lng: $lng
-          federationId: $federationId
-          primaryColor: $primaryColor
-          secondaryColor: $secondaryColor
-          isCreditSystemEnabled: $isCreditSystemEnabled
-          isPublic: $isPublic
-        }
-      }
-    ) {
-      dropzone {
-        id
-        name
-        banner
-        primaryColor
-        secondaryColor
-        isCreditSystemEnabled
-        lat
-        lng
-
-        planes {
-          id
-          name
-        }
-
-        federation {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
 
 export default function UpdateDropzoneScreen() {
   const state = useAppSelector((root) => root.forms.dropzone);
@@ -94,18 +21,38 @@ export default function UpdateDropzoneScreen() {
   const { dropzone } = route.params;
   const navigation = useNavigation();
 
-  const { data, loading } = useQuery<Query>(QUERY_DROPZONE_DETAILS, {
-    variables: { dropzoneId: Number(dropzone.id) },
-  });
+  const { data, currentUser, loading } = useCurrentDropzone();
 
   React.useEffect(() => {
     if (data?.dropzone?.id) {
-      console.log('dz', data.dropzone);
       dispatch(actions.forms.dropzone.setOpen(data.dropzone));
     }
   }, [data?.dropzone, data?.dropzone?.id, dispatch]);
 
-  const [mutationUpdateDropzone, mutation] = useMutation<Mutation>(MUTATION_UPDATE_DROPZONE);
+  const mutationUpdateDropzone = useMutationUpdateDropzone({
+    onError: (message) =>
+      dispatch(
+        actions.notifications.showSnackbar({
+          message,
+          variant: 'error',
+        })
+      ),
+    onSuccess: (payload) => {
+      dispatch(
+        actions.global.setDropzone({
+          ...(globalState.currentDropzone || {}),
+          ...(payload.dropzone as Dropzone),
+        })
+      );
+      dispatch(
+        actions.notifications.showSnackbar({
+          message: `Your settings have been saved`,
+          variant: 'success',
+        })
+      );
+      navigation.goBack();
+    },
+  });
 
   const onSave = React.useCallback(async () => {
     let hasError = false;
@@ -118,6 +65,7 @@ export default function UpdateDropzoneScreen() {
       primaryColor,
       secondaryColor,
       isCreditSystemEnabled,
+      requestPublication,
       isPublic,
     } = state.fields;
 
@@ -128,22 +76,26 @@ export default function UpdateDropzoneScreen() {
 
     if (!hasError) {
       try {
-        const result = await mutationUpdateDropzone({
-          variables: {
-            id: Number(dropzone?.id),
-            name: name.value,
-            lat: lat.value,
-            lng: lng.value,
-            banner: banner.value || null,
-            primaryColor: primaryColor.value,
-            secondaryColor: secondaryColor.value,
-            federationId: Number(federation?.value?.id),
-            isCreditSystemEnabled: !!isCreditSystemEnabled,
-            isPublic: !!isPublic,
-          },
+        const result = await mutationUpdateDropzone.mutate({
+          id: Number(dropzone?.id),
+          name: name.value as string,
+          lat: lat.value,
+          lng: lng.value,
+          banner: banner.value || null,
+          primaryColor: primaryColor.value,
+          secondaryColor: secondaryColor.value,
+          federationId: Number(federation?.value?.id),
+          isCreditSystemEnabled: !!isCreditSystemEnabled,
+          isPublic:
+            isPublic?.value !== undefined &&
+            currentUser?.user.moderationRole &&
+            currentUser?.user.moderationRole !== 'user'
+              ? !!isPublic?.value
+              : null,
+          requestPublication: !!requestPublication?.value,
         });
 
-        result?.data?.updateDropzone?.fieldErrors?.map(({ field, message }) => {
+        result?.fieldErrors?.map(({ field, message }) => {
           switch (field) {
             case 'federation':
             case 'federation_id':
@@ -166,32 +118,6 @@ export default function UpdateDropzoneScreen() {
               return null;
           }
         });
-        if (result?.data?.updateDropzone?.errors?.length) {
-          return dispatch(
-            actions.notifications.showSnackbar({
-              message: result?.data?.updateDropzone?.errors[0],
-              variant: 'error',
-            })
-          );
-        }
-        if (!result?.data?.updateDropzone?.fieldErrors?.length) {
-          // No errors:
-          if (result.data?.updateDropzone?.dropzone) {
-            dispatch(
-              actions.global.setDropzone({
-                ...(globalState.currentDropzone || {}),
-                ...result?.data?.updateDropzone?.dropzone,
-              })
-            );
-            dispatch(
-              actions.notifications.showSnackbar({
-                message: `Saved`,
-                variant: 'success',
-              })
-            );
-            navigation.goBack();
-          }
-        }
         return null;
       } catch (error) {
         dispatch(
@@ -208,8 +134,7 @@ export default function UpdateDropzoneScreen() {
     dispatch,
     mutationUpdateDropzone,
     dropzone?.id,
-    globalState.currentDropzone,
-    navigation,
+    currentUser?.user.moderationRole,
   ]);
 
   return (
@@ -223,9 +148,9 @@ export default function UpdateDropzoneScreen() {
         <View style={styles.fields}>
           <Button
             mode="contained"
-            disabled={mutation.loading}
+            disabled={mutationUpdateDropzone.loading}
             onPress={onSave}
-            loading={mutation.loading}
+            loading={mutationUpdateDropzone.loading}
           >
             Save
           </Button>

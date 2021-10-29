@@ -7,6 +7,7 @@ import { ProgressBar } from 'react-native-paper';
 import { FlatList } from 'react-native-gesture-handler';
 import { useAppSelector } from '../../../state';
 import useNotifications from '../../../api/hooks/useNotifications';
+import { NotificationType } from '../../../api/schema.d';
 import NoResults from '../../../components/NoResults';
 
 import ManifestedCard from './Cards/Manifested';
@@ -14,6 +15,7 @@ import BoardingCallNotification from './Cards/BoardingCall';
 import FundsNotification from './Cards/Funds';
 import RigInspectionNotification from './Cards/RigInspection';
 import PermissionNotification from './Cards/Permission';
+import PublicationRequestNotification from './Cards/PublicationRequest';
 
 /* const MUTATION_MARK_AS_SEEN = gql`
   mutation MarkAsSeen($id: Int) {
@@ -70,18 +72,20 @@ export default function ProfileScreen() {
         }}
         renderItem={({ item: edge }) => {
           switch (edge?.node?.notificationType) {
-            case 'boarding_call':
+            case NotificationType.BoardingCall:
               return <BoardingCallNotification key={edge.node.id} notification={edge.node} />;
-            case 'user_manifested':
+            case NotificationType.UserManifested:
               return <ManifestedCard key={edge.node.id} notification={edge.node} />;
-            case 'credits_updated':
+            case NotificationType.CreditsUpdated:
               return <FundsNotification key={edge.node.id} notification={edge.node} />;
-            case 'rig_inspection_requested':
-            case 'rig_inspection_completed':
+            case NotificationType.RigInspectionRequested:
+            case NotificationType.RigInspectionCompleted:
               return <RigInspectionNotification key={edge.node.id} notification={edge.node} />;
-            case 'permission_granted':
-            case 'permission_revoked':
+            case NotificationType.PermissionGranted:
+            case NotificationType.PermissionRevoked:
               return <PermissionNotification key={edge.node.id} notification={edge.node} />;
+            case NotificationType.PublicationRequested:
+              return <PublicationRequestNotification key={edge.node.id} notification={edge.node} />;
             default:
               return null;
           }

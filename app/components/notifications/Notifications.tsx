@@ -1,4 +1,5 @@
 import * as React from 'react';
+import capitalize from 'lodash/capitalize';
 import { StyleSheet, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useAppSelector, useAppDispatch } from '../../state';
@@ -33,7 +34,8 @@ const Notifications = () => {
     if (notification) {
       Toast.show({
         onHide: () => dispatch(actions.hideSnackbar()),
-        text1: notification.message,
+        text1: capitalize(notification.variant),
+        text2: notification.message,
         type: notification.variant || 'success',
       });
     }
