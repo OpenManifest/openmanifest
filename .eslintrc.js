@@ -11,6 +11,11 @@ module.exports = {
     'prettier/@typescript-eslint',
     'plugin:prettier/recommended',
   ],
+  settings: {
+    'import/resolver': {
+      'babel-module': {},
+    },
+  },
   ignorePatterns: ['**/*.d.ts'],
   rules: {
     // Allowed with immer

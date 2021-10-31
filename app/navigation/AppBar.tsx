@@ -85,13 +85,9 @@ function AppBar(props: IAppBarProps) {
         style={{ backgroundColor: theme.dark ? theme.colors.background : theme.colors.surface }}
       >
         {previous ? (
-          <Appbar.BackAction
-            onPress={navigation.goBack}
-            color={theme.dark ? palette.primary.dark : palette.primary.main}
-          />
+          <Appbar.BackAction onPress={navigation.goBack} />
         ) : (
           <IconButton
-            color={theme.dark ? palette.primary.dark : palette.primary.main}
             icon="menu"
             size={32}
             onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
@@ -99,7 +95,7 @@ function AppBar(props: IAppBarProps) {
         )}
         <Appbar.Content
           title={scene.descriptor.options.title}
-          titleStyle={{ fontWeight: 'bold', color: palette.primary.main }}
+          titleStyle={{ fontWeight: 'bold' }}
         />
 
         {scene.descriptor.options.headerRight ? (

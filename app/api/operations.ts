@@ -60,6 +60,20 @@ export type ReloadWeatherMutationVariables = Types.Exact<{
 
 export type ReloadWeatherMutation = { __typename?: 'Mutation', reloadWeatherCondition?: Types.Maybe<{ __typename?: 'ReloadWeatherConditionPayload', errors?: Types.Maybe<Array<string>>, fieldErrors?: Types.Maybe<Array<{ __typename?: 'FieldError', field: string, message: string }>>, weatherCondition?: Types.Maybe<{ __typename?: 'WeatherCondition', createdAt: number, exitSpotMiles?: Types.Maybe<number>, id: string, jumpRun?: Types.Maybe<number>, offsetDirection?: Types.Maybe<number>, offsetMiles?: Types.Maybe<number>, temperature?: Types.Maybe<number>, updatedAt: number, winds?: Types.Maybe<Array<{ __typename?: 'Wind', altitude?: Types.Maybe<string>, direction?: Types.Maybe<string>, speed?: Types.Maybe<string>, temperature?: Types.Maybe<string> }>> }> }> };
 
+export type UserSignUpMutationVariables = Types.Exact<{
+  email: Types.Scalars['String'];
+  password: Types.Scalars['String'];
+  passwordConfirmation: Types.Scalars['String'];
+  name: Types.Scalars['String'];
+  phone: Types.Scalars['String'];
+  pushToken?: Types.Maybe<Types.Scalars['String']>;
+  exitWeight: Types.Scalars['Float'];
+  licenseId?: Types.Maybe<Types.Scalars['Int']>;
+}>;
+
+
+export type UserSignUpMutation = { __typename?: 'Mutation', userSignUp?: Types.Maybe<{ __typename?: 'UserSignUpPayload', errors?: Types.Maybe<Array<string>>, fieldErrors?: Types.Maybe<Array<{ __typename?: 'FieldError', field: string, message: string }>>, authenticatable?: Types.Maybe<{ __typename?: 'User', createdAt: number, email?: Types.Maybe<string>, id: string, name?: Types.Maybe<string>, phone?: Types.Maybe<string> }>, credentials?: Types.Maybe<{ __typename?: 'Credential', accessToken: string, tokenType: string, client: string, expiry: number, uid: string }> }> };
+
 export type DropzoneTransactionsQueryVariables = Types.Exact<{
   dropzoneId: Types.Scalars['Int'];
   after?: Types.Maybe<Types.Scalars['String']>;
