@@ -25,7 +25,7 @@ export function Step(props: IWizardStepProps) {
           <View>
             <GradientText
               style={{
-                marginTop: 48,
+                marginTop: 16,
                 textAlign: 'left',
                 fontWeight: 'bold',
                 fontSize: 72,

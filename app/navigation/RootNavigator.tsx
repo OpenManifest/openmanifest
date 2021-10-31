@@ -10,7 +10,8 @@ import AuthenticatedRoutes from './Authenticated';
 import LimboRoutes from './LimboRoutes';
 import UnauthenticatedRoutes from './Unauthenticated';
 import DropzonesScreen from '../screens/authenticated/dropzones/DropzonesScreen';
-import DropzoneSetupScreen from '../screens/authenticated/dropzone_setup/DropzoneSetupScreen';
+import DropzoneSetupScreen from '../screens/authenticated/dropzones/dropzone_wizard/DropzoneWizard';
+import UserSetupWizard from '../screens/authenticated/users/user_wizard/UserWizardScreen';
 import ConfirmUserScreen from '../screens/unauthenticated/signup/ConfirmUserScreen';
 import DrawerMenu from './drawer/Drawer';
 
@@ -22,6 +23,7 @@ export type TRootNavigatorRouteParams = {
   Dropzones: undefined;
   DropzonesScreen: undefined;
   DropzoneSetupScreen: undefined;
+  UserSetupWizard: undefined;
   NotFound: undefined;
 };
 
@@ -63,6 +65,7 @@ export default function RootNavigator() {
         <Stack.Screen name="Unauthenticated" component={UnauthenticatedRoutes} />
       )}
       <Stack.Screen name="DropzoneSetupScreen" component={DropzoneSetupScreen} />
+      <Stack.Screen name="UserSetupWizard" component={UserSetupWizard} />
       <Stack.Screen name="confirm" component={ConfirmUserScreen} />
       <Stack.Screen name="DropzonesScreen" component={DropzonesScreen} />
 

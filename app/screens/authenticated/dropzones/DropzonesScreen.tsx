@@ -116,7 +116,7 @@ export default function DropzonesScreen() {
           dispatch(actions.forms.plane.reset());
           dispatch(actions.forms.ticketType.reset());
           dispatch(actions.forms.dropzone.reset());
-          navigation.navigate('DropzoneSetupScreen');
+          navigation.navigate('DropzoneSetupWizard');
         }}
         label="Create dropzone"
       />

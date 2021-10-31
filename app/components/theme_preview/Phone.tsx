@@ -6,13 +6,12 @@ import { useAppSelector } from '../../state';
 
 interface IPhonePreview {
   primaryColor?: string;
-  secondaryColor?: string;
 }
 
 function PhonePreview(props: IPhonePreview) {
-  const { primaryColor, secondaryColor } = props;
-  const { theme } = useAppSelector((root) => root.global);
-  const primaryLight = color(primaryColor).lighten(0.6).hex();
+  const { primaryColor } = props;
+  const { theme, palette } = useAppSelector((root) => root.global);
+
   return (
     <View>
       <Surface style={styles.previewContainer}>
@@ -20,11 +19,11 @@ function PhonePreview(props: IPhonePreview) {
         <View style={[styles.previewLoadCard]} />
         <View style={[styles.previewLoadCard2]} />
         <View style={[styles.previewLoadCard3]} />
-        <View style={[styles.previewButton, { backgroundColor: secondaryColor }]} />
+        <View style={[styles.previewButton, { backgroundColor: primaryColor }]} />
         <View style={[styles.previewTabBar, { backgroundColor: theme.colors.surface }]} />
-        <View style={[styles.previewTabButton, { backgroundColor: primaryLight }]} />
-        <View style={[styles.previewTabButton2, { backgroundColor: primaryLight }]} />
-        <View style={[styles.previewTabButton3, { backgroundColor: primaryLight }]} />
+        <View style={[styles.previewTabButton, { backgroundColor: palette.placeholder }]} />
+        <View style={[styles.previewTabButton2, { backgroundColor: palette.placeholder }]} />
+        <View style={[styles.previewTabButton3, { backgroundColor: palette.placeholder }]} />
       </Surface>
       <Text style={styles.label}>Phone</Text>
     </View>
@@ -35,7 +34,6 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
     textAlign: 'center',
-    color: 'white',
     fontSize: 16,
     marginTop: 8,
   },

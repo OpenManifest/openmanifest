@@ -45,7 +45,7 @@ export default createMutation<
     banner?: string | null;
     federationId: number;
     primaryColor: string | null;
-    secondaryColor: string | null;
+    secondaryColor?: string | null;
     lat: number | null;
     lng: number | null;
   },

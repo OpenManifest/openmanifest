@@ -58,6 +58,8 @@ export default function PermissionListItem(props: IPermissionListItem) {
                       ? role.permissions.filter((name) => name !== permissionName)
                       : [...role.permissions, permissionName],
                   },
+                  errors: null,
+                  fieldErrors: null,
                 },
               },
             });

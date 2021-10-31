@@ -131,7 +131,7 @@ function AppBar(props: IAppBarProps) {
           isRigSetUp={!!data?.dropzone?.currentUser?.user?.rigs?.length}
           onSetupWizard={() => {
             const currentUser = data?.dropzone?.currentUser;
-
+            console.log('opening setup wizard');
             if (currentUser) {
               dispatch(actions.forms.user.setOpen(currentUser));
               if (currentUser?.user?.rigs?.length) {

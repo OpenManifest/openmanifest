@@ -143,7 +143,7 @@ export default function AuthenticatedTabBar() {
       tabBarOptions={{
         activeTintColor: theme.colors.primary,
         inactiveBackgroundColor: theme.dark ? theme.colors.backdrop : theme.colors.surface,
-        activeBackgroundColor: theme.dark ? theme.colors.surface : theme.colors.surface,
+        activeBackgroundColor: theme.colors.surface,
         inactiveTintColor: '#CCCCCC',
         showLabel: Platform.OS !== 'web',
         adaptive: true,

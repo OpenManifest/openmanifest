@@ -68,6 +68,10 @@ export default createSlice({
       }
     },
 
+    setOriginal: (state: IUserWizardState, action: PayloadAction<User>) => {
+      state.fields.user.value = action.payload;
+    },
+
     reset: (state: IUserWizardState) => {
       state.fields = initialState.fields;
     },

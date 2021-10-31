@@ -26,7 +26,6 @@ import NotificationArea from './components/notifications/Notifications';
 import LinkingConfiguration from './navigation/Routes';
 import RootNavigator from './navigation/RootNavigator';
 import { actions } from './state';
-import UserWizardScreen from './components/dialogs/UserWizard/UserWizardScreen';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -166,7 +165,6 @@ function Content() {
               </NavigationContainer>
 
               <StatusBar />
-              <UserWizardScreen />
               <NotificationArea />
             </SafeAreaProvider>
           </MaterialProvider>

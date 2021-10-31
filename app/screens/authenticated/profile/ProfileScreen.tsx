@@ -138,6 +138,10 @@ export default function ProfileScreen() {
   const canUpdateUsers = useRestriction(Permission.UpdateUser);
   const theme = useTheme();
 
+  const onUserSheetClose = React.useCallback(() => {
+    dispatch(actions.forms.user.setOpen(false));
+  }, [dispatch]);
+
   return (
     <LinearGradient
       start={{ x: 0.5, y: 0.5 }}
@@ -200,12 +204,11 @@ export default function ProfileScreen() {
                   right={() => <List.Icon icon="chevron-right" />}
                   onPress={() => {
                     if (dropzoneUser) {
-                      dispatch(actions.forms.user.setOpen(dropzoneUser));
+                      dispatch(actions.forms.user.setOriginal(dropzoneUser));
                       if (dropzoneUser?.user?.rigs?.length) {
-                        dispatch(actions.forms.rig.setOpen(dropzoneUser.user.rigs[0]));
+                        dispatch(actions.forms.rig.setOriginal(dropzoneUser.user.rigs[0]));
                       }
-
-                      dispatch(actions.forms.userWizard.setOpen(dropzoneUser.user));
+                      navigation.navigate('UserSetupWizard');
                     }
                   }}
                 />
@@ -294,7 +297,7 @@ export default function ProfileScreen() {
 
       <EditUserSheet
         dropzoneUserId={Number(dropzoneUser?.id)}
-        onClose={() => dispatch(actions.forms.user.setOpen(false))}
+        onClose={onUserSheetClose}
         onSuccess={() => {
           dispatch(actions.forms.user.setOpen(false));
         }}

@@ -92,6 +92,17 @@ export default createSlice({
       }
     },
 
+    setOriginal: (state: IRigEditState, action: PayloadAction<Rig>) => {
+      state.original = action.payload;
+      Object.keys(action.payload).forEach((key) => {
+        const payloadKey = key as keyof typeof action.payload;
+        if (payloadKey in state.fields) {
+          const typedKey = payloadKey as keyof typeof initialState['fields'];
+          state.fields[typedKey].value = action.payload[typedKey];
+        }
+      });
+    },
+
     reset: (state: IRigEditState) => {
       state.fields = initialState.fields;
       state.original = null;
