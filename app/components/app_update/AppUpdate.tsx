@@ -17,17 +17,6 @@ export default function AppUpdate(props: IAppUpdateProps) {
   const animation = React.useRef<LottieView>(null);
   const dispatch = useAppDispatch();
 
-  const isUpdateAvailable = React.useCallback(async () => {
-    if (Platform.OS === 'web') {
-      return;
-    }
-    const { isAvailable } = await Update.checkForUpdateAsync();
-
-    if (isAvailable) {
-      setOverlay(true);
-    }
-  }, []);
-
   const onUpdate = React.useCallback(async () => {
     if (Platform.OS === 'web') {
       return;
@@ -41,6 +30,16 @@ export default function AppUpdate(props: IAppUpdateProps) {
       dispatch(actions.notifications.showSnackbar({ message: 'New version installed' }));
     }
   }, [dispatch]);
+  const isUpdateAvailable = React.useCallback(async () => {
+    if (Platform.OS === 'web') {
+      return;
+    }
+    const { isAvailable } = await Update.checkForUpdateAsync();
+
+    if (isAvailable) {
+      onUpdate();
+    }
+  }, [onUpdate]);
 
   React.useEffect(() => {
     isUpdateAvailable();
