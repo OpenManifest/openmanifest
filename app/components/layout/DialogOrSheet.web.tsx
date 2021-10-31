@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Button, Dialog, Portal, ProgressBar } from 'react-native-paper';
+import { Button, Drawer, Portal, ProgressBar } from 'react-native-paper';
 import { useAppSelector } from '../../state';
 
 interface IBottomSheetProps {

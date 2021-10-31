@@ -38,3 +38,4 @@ jobs:
         env:
           NODE_OPTIONS: --max_old_space_size=4096
           EXPO_ENV: staging
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
