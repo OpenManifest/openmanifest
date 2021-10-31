@@ -6,6 +6,7 @@ import {
 import { DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme } from 'react-native-paper';
 import { Theme } from 'react-native-paper/lib/typescript/types';
 import color from 'color';
+import { primaryColor } from 'app/constants/Colors';
 import { Credential, User, Dropzone } from '../api/schema';
 
 const CombinedDefaultTheme: Theme = {
@@ -14,7 +15,8 @@ const CombinedDefaultTheme: Theme = {
   colors: {
     ...PaperDefaultTheme.colors,
     ...NavigationDefaultTheme.colors,
-    primary: '#333333',
+
+    primary: primaryColor,
   },
 };
 const CombinedDarkTheme = {
@@ -23,7 +25,7 @@ const CombinedDarkTheme = {
   colors: {
     ...PaperDarkTheme.colors,
     ...NavigationDarkTheme.colors,
-    primary: '#333333',
+    primary: primaryColor,
   },
 };
 

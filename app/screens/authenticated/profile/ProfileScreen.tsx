@@ -140,8 +140,8 @@ export default function ProfileScreen() {
 
   return (
     <LinearGradient
-      start={{ x: 0.0, y: 0.25 }}
-      end={{ x: 0.5, y: 0.75 }}
+      start={{ x: 0.5, y: 0.5 }}
+      end={{ x: 0.5, y: 1.0 }}
       style={StyleSheet.absoluteFill}
       colors={[theme.colors.surface, theme.colors.surface]}
     >

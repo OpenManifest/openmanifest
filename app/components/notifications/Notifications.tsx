@@ -5,7 +5,7 @@ import Toast from 'react-native-toast-message';
 import { useAppSelector, useAppDispatch } from '../../state';
 import LottieView from '../LottieView';
 import slice from './slice';
-import lottieDoneAnimation from '../../../assets/images/finished.json';
+import lottieDoneAnimation from '../../../assets/images/finished-2.json';
 
 const { actions } = slice;
 
@@ -55,6 +55,7 @@ const Notifications = () => {
           <LottieView
             loop={false}
             autoPlay
+            speed={1.2}
             onAnimationFinish={() => {
               setAnimationState(AnimationState.waiting);
               setTimeout(() => {
@@ -81,8 +82,8 @@ const Notifications = () => {
 
 const styles = StyleSheet.create({
   animation: {
-    height: 420,
-    width: 420,
+    height: 300,
+    width: 300,
   },
 });
 export default Notifications;

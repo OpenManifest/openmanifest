@@ -13,7 +13,12 @@
     "noEmit": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "strict": true
+    "strict": true,
+    "paths": {
+      "app/*": [
+        "app/*"
+      ]
+    }
   },
   "include": [
     "jest.setup.ts",
@@ -21,5 +26,5 @@
     "png.d.ts",
     ".eslintrc.js"
   ],
-  "extends": "expo/tsconfig.base"
+  "extends": "expo/tsconfig.base",
 }

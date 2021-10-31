@@ -6,8 +6,11 @@ module.exports = function (api) {
       [
         'module-resolver',
         {
-          root: ['./app'],
+          root: '.',
           extensions: ['.js', '.jsx', '.es', '.es6', '.mjs', '.ts', '.tsx'],
+          alias: {
+            "app/": "./app",
+          }
         },
       ],
       '@babel/plugin-proposal-numeric-separator',

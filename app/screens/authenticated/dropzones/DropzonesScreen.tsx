@@ -60,7 +60,7 @@ export default function DropzonesScreen() {
           paddingBottom: 100,
         }}
         ListEmptyComponent={() => (
-          <NoResults title="No dropzones?" subtitle="You can set one up!" color="#FFFFFF" />
+          <NoResults title="No dropzones?" subtitle="You can set one up!" />
         )}
         renderItem={({ item }) => {
           return (

@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { Image, KeyboardAvoidingView, StyleSheet } from 'react-native';
-import { Button, HelperText, TextInput } from 'react-native-paper';
+import { Image, ImageBackground, KeyboardAvoidingView, StyleSheet } from 'react-native';
+import { Card, Button, HelperText, TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { gql, useMutation } from '@apollo/client';
 
-import { View } from '../../../components/Themed';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import { Mutation } from '../../../api/schema';
@@ -12,7 +11,7 @@ import { primaryColor } from '../../../constants/Colors';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore PNGs are allowed
-import logo from '../../../../assets/images/logo.png';
+import logo from '../../../../assets/images/logo-black.png';
 
 const MUTATION_LOG_IN = gql`
   mutation UserLogin($email: String!, $password: String!) {
@@ -88,50 +87,60 @@ export default function LoginScreen() {
   }, [dispatch, mutationLogin, state.fields.email.value, state.fields.password.value]);
 
   return (
-    <View style={styles.container}>
+    <ImageBackground
+      source={require('assets/images/pattern.png')}
+      style={styles.container}
+      resizeMode="repeat"
+    >
       <Image source={logo} style={{ height: 300, width: '100%' }} resizeMode="contain" />
       <KeyboardAvoidingView style={styles.fields} behavior="padding">
-        <TextInput
-          label="Email"
-          mode="outlined"
-          value={state.fields.email.value}
-          onChangeText={(newValue) => {
-            dispatch(actions.screens.login.setEmail(newValue));
-          }}
-        />
-        <HelperText type="error">{state.fields.email.error || ' '}</HelperText>
+        <Card style={{ padding: 16, borderRadius: 8 }} elevation={3}>
+          <Card.Content>
+            <TextInput
+              label="Email"
+              mode="outlined"
+              value={state.fields.email.value}
+              onChangeText={(newValue) => {
+                dispatch(actions.screens.login.setEmail(newValue));
+              }}
+            />
+            <HelperText type="error">{state.fields.email.error}</HelperText>
 
-        <TextInput
-          label="Password"
-          mode="outlined"
-          value={state.fields.password.value}
-          secureTextEntry
-          onChangeText={(newValue) => {
-            dispatch(actions.screens.login.setPassword(newValue));
-          }}
-          onSubmitEditing={onLogin}
-          error={!!state.fields.password.error}
-        />
-        <HelperText type="error">{state.fields.password.error || ' '}</HelperText>
-        <Button
-          mode="contained"
-          labelStyle={styles.buttonLabel}
-          style={styles.button}
-          onPress={onLogin}
-          loading={data.loading}
-        >
-          Log in
-        </Button>
+            <TextInput
+              label="Password"
+              mode="outlined"
+              value={state.fields.password.value}
+              secureTextEntry
+              onChangeText={(newValue) => {
+                dispatch(actions.screens.login.setPassword(newValue));
+              }}
+              onSubmitEditing={onLogin}
+              error={!!state.fields.password.error}
+            />
 
-        <Button
-          labelStyle={styles.textButtonLabel}
-          style={styles.textButton}
-          onPress={() => navigation.navigate('SignUpScreen')}
-        >
-          Sign up
-        </Button>
+            <HelperText type="error">{state.fields.password.error || ' '}</HelperText>
+            <Button
+              mode="contained"
+              labelStyle={styles.buttonLabel}
+              style={styles.button}
+              onPress={onLogin}
+              loading={data.loading}
+            >
+              Log in
+            </Button>
+
+            <Button
+              labelStyle={styles.textButtonLabel}
+              style={styles.textButton}
+              // onPress={() => navigation.navigate('SignUpScreen')}
+              onPress={() => navigation.navigate('SignUpWizard')}
+            >
+              Sign up
+            </Button>
+          </Card.Content>
+        </Card>
       </KeyboardAvoidingView>
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -140,7 +149,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: primaryColor,
+    // backgroundColor: primaryColor,
     paddingTop: 10,
   },
   title: {
@@ -159,6 +168,8 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 10,
     backgroundColor: 'white',
+    borderColor: primaryColor,
+    borderWidth: 1,
     width: '100%',
   },
   buttonLabel: {
@@ -166,11 +177,12 @@ const styles = StyleSheet.create({
   },
   textButton: {
     marginTop: 10,
+    height: 56,
     backgroundColor: 'transparent',
     color: 'white',
     width: '100%',
   },
   textButtonLabel: {
-    color: '#FFFFFF',
+    // color: '#FFFFFF',
   },
 });

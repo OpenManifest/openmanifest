@@ -689,6 +689,74 @@ export function useReloadWeatherMutation(baseOptions?: Apollo.MutationHookOption
 export type ReloadWeatherMutationHookResult = ReturnType<typeof useReloadWeatherMutation>;
 export type ReloadWeatherMutationResult = Apollo.MutationResult<Operation.ReloadWeatherMutation>;
 export type ReloadWeatherMutationOptions = Apollo.BaseMutationOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
+export const UserSignUpDocument = gql`
+    mutation UserSignUp($email: String!, $password: String!, $passwordConfirmation: String!, $name: String!, $phone: String!, $pushToken: String, $exitWeight: Float!, $licenseId: Int) {
+  userSignUp(
+    email: $email
+    password: $password
+    passwordConfirmation: $passwordConfirmation
+    exitWeight: $exitWeight
+    name: $name
+    phone: $phone
+    pushToken: $pushToken
+    licenseId: $licenseId
+    confirmSuccessUrl: "https://openmanifest.org/confirm/"
+  ) {
+    fieldErrors {
+      field
+      message
+    }
+    errors
+    authenticatable {
+      createdAt
+      email
+      id
+      name
+      phone
+    }
+    credentials {
+      accessToken
+      tokenType
+      client
+      expiry
+      uid
+    }
+  }
+}
+    `;
+export type UserSignUpMutationFn = Apollo.MutationFunction<Operation.UserSignUpMutation, Operation.UserSignUpMutationVariables>;
+
+/**
+ * __useUserSignUpMutation__
+ *
+ * To run a mutation, you first call `useUserSignUpMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUserSignUpMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [userSignUpMutation, { data, loading, error }] = useUserSignUpMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *      passwordConfirmation: // value for 'passwordConfirmation'
+ *      name: // value for 'name'
+ *      phone: // value for 'phone'
+ *      pushToken: // value for 'pushToken'
+ *      exitWeight: // value for 'exitWeight'
+ *      licenseId: // value for 'licenseId'
+ *   },
+ * });
+ */
+export function useUserSignUpMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UserSignUpMutation, Operation.UserSignUpMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UserSignUpMutation, Operation.UserSignUpMutationVariables>(UserSignUpDocument, options);
+      }
+export type UserSignUpMutationHookResult = ReturnType<typeof useUserSignUpMutation>;
+export type UserSignUpMutationResult = Apollo.MutationResult<Operation.UserSignUpMutation>;
+export type UserSignUpMutationOptions = Apollo.BaseMutationOptions<Operation.UserSignUpMutation, Operation.UserSignUpMutationVariables>;
 export const DropzoneTransactionsDocument = gql`
     query DropzoneTransactions($dropzoneId: Int!, $after: String) {
   dropzone(id: $dropzoneId) {

@@ -47,13 +47,14 @@ export default function AuthenticatedTabBar() {
         inactiveColor: palette.primary.dark,
       },
       background: {
-        activeColor: palette.primary.main,
+        // activeColor: palette.primary.main,
+        activeColor: palette.placeholder,
         inactiveColor: theme.colors.surface,
       },
     }),
     [
+      palette.placeholder,
       palette.primary.dark,
-      palette.primary.main,
       palette.surface,
       theme.colors.onSurface,
       theme.colors.surface,
@@ -140,9 +141,9 @@ export default function AuthenticatedTabBar() {
         },
       })}
       tabBarOptions={{
-        activeTintColor: '#FFFFFF',
-        inactiveBackgroundColor: theme.dark ? theme.colors.backdrop : theme.colors.primary,
-        activeBackgroundColor: theme.dark ? theme.colors.surface : theme.colors.primary,
+        activeTintColor: theme.colors.primary,
+        inactiveBackgroundColor: theme.dark ? theme.colors.backdrop : theme.colors.surface,
+        activeBackgroundColor: theme.dark ? theme.colors.surface : theme.colors.surface,
         inactiveTintColor: '#CCCCCC',
         showLabel: Platform.OS !== 'web',
         adaptive: true,
