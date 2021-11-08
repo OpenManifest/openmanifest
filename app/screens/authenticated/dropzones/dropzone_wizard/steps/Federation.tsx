@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { HelperText } from 'react-native-paper';
-import FederationSelect from 'app/components/input/dropdown_select/FederationSelect';
+import FederationCardSelect from 'app/components/input/card_select/FederationCardSelect';
 import { Step, Fields, IWizardStepProps } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 
@@ -12,7 +12,7 @@ function Federation(props: IWizardStepProps) {
   return (
     <Step {...props} title="Affiliation">
       <Fields>
-        <FederationSelect
+        <FederationCardSelect
           value={state.fields.federation.value}
           onSelect={(value) => dispatch(actions.forms.dropzone.setField(['federation', value]))}
         />

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import MapView, { Region } from 'react-native-maps';
+import MapView, { Region, MarkerAnimated } from 'react-native-maps';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
 import * as Location from 'expo-location';
@@ -91,6 +91,7 @@ function LocationWizardStep(props: IWizardStepProps) {
         ref={map}
         style={StyleSheet.absoluteFill}
         initialRegion={region}
+        /*
         region={internalRegion}
         onRegionChange={(_region) => {
           if (!isAnimating) {
@@ -109,11 +110,28 @@ function LocationWizardStep(props: IWizardStepProps) {
           dispatch(actions.forms.dropzone.setField(['lat', r.latitude]));
           dispatch(actions.forms.dropzone.setField(['lng', r.longitude]));
         }}
+        */
         mapType="hybrid"
         zoomEnabled
         scrollEnabled
         focusable
       >
+        <MarkerAnimated
+          coordinate={
+            state.fields.lat.value && state.fields.lng.value
+              ? {
+                  longitude: state.fields.lat.value,
+                  latitude: state.fields.lng.value,
+                }
+              : internalRegion
+          }
+          draggable
+          onDragEnd={(ev) => {
+            const { latitude, longitude } = ev.nativeEvent.coordinate;
+            dispatch(actions.forms.dropzone.setField(['lat', latitude]));
+            dispatch(actions.forms.dropzone.setField(['lng', longitude]));
+          }}
+        />
         {!region ? null : (
           <View style={styles.markerFixed} pointerEvents="none">
             <MaterialCommunityIcons
