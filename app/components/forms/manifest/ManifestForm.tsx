@@ -101,7 +101,6 @@ export default function ManifestForm() {
       <Divider />
       {!state.fields.dropzoneUser ? null : (
         <RigSelect
-          required
           value={state.fields.rig.value}
           userId={Number(state.fields.dropzoneUser?.value?.user?.id)}
           dropzoneId={Number(currentDropzone?.dropzone?.id)}

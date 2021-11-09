@@ -7,6 +7,7 @@ import {
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
+import { useAppSelector } from 'app/state';
 import { IWizardStepProps } from './Step';
 import Dots from './Dots';
 
@@ -16,18 +17,23 @@ const WizardModal = createStackNavigator();
 export interface IWizardProps {
   name: string;
   dots?: boolean;
-  steps: IWizardStepDefinition[];
+  steps: (IWizardStepDefinition | null)[];
 }
 
 export interface IWizardStepDefinition {
   component: React.ComponentType<IWizardStepProps>;
+  // How many screens ahead to jump onNext, default: 1
+  nextIndexFactor?: number;
+  backIndexFactor?: number;
   onNext?(): Promise<void>;
+  onBack?(): Promise<void> | void;
 }
 export function Content(props: IWizardProps) {
   const { name, steps, dots } = props;
   const [currentIndex, setIndex] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const navigation = useNavigation();
+  const { palette } = useAppSelector((root) => root.global);
 
   return (
     <View style={StyleSheet.absoluteFill}>
@@ -76,11 +82,17 @@ export function Content(props: IWizardProps) {
             },
           }}
         >
-          {steps.map(({ component: Step }, index) => (
-            <WizardRoot.Screen name={`${name}${index}`}>
-              {(screenProps) => <Step {...screenProps} {...{ index }} />}
-            </WizardRoot.Screen>
-          ))}
+          {steps.map((definition, index) => {
+            if (!definition) {
+              return null;
+            }
+            const { component: Step } = definition;
+            return (
+              <WizardRoot.Screen name={`${name}${index}`}>
+                {(screenProps) => <Step {...screenProps} {...{ index }} />}
+              </WizardRoot.Screen>
+            );
+          })}
         </WizardRoot.Navigator>
         <View style={styles.actions}>
           <Button
@@ -88,15 +100,16 @@ export function Content(props: IWizardProps) {
             loading={loading}
             onPress={async () => {
               try {
-                if (steps[currentIndex].onNext) {
+                const nextIndex = steps[currentIndex]?.nextIndexFactor || 1;
+                if (steps[currentIndex]?.onNext) {
                   setLoading(true);
-                  await steps[currentIndex].onNext?.();
+                  await steps[currentIndex]?.onNext?.();
                 }
                 if (currentIndex === steps.length - 1) {
                   navigation.goBack();
                 } else {
-                  navigation.navigate(`${name}${currentIndex + 1}`);
-                  setIndex(currentIndex + 1);
+                  navigation.navigate(`${name}${currentIndex + nextIndex}`);
+                  setIndex(currentIndex + nextIndex);
                 }
               } catch {
                 return undefined;
@@ -106,7 +119,7 @@ export function Content(props: IWizardProps) {
 
               return undefined;
             }}
-            style={styles.next}
+            style={[styles.next, { backgroundColor: palette.placeholder }]}
             mode="contained"
           >
             {currentIndex === steps.length - 1 ? 'Done' : 'Next'}
@@ -115,11 +128,13 @@ export function Content(props: IWizardProps) {
             disabled={loading}
             mode="text"
             onPress={async () => {
+              const backIndexFactor = steps[currentIndex]?.backIndexFactor || 1;
+              steps[currentIndex]?.onBack?.();
               if (currentIndex === 0) {
                 navigation.goBack();
               } else {
-                navigation.navigate(`${name}${currentIndex - 1}`);
-                setIndex(currentIndex - 1 || 0);
+                navigation.navigate(`${name}${currentIndex - backIndexFactor}`);
+                setIndex(currentIndex - backIndexFactor || 0);
               }
               return undefined;
             }}

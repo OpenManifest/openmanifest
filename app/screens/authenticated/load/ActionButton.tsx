@@ -69,7 +69,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       return dispatch(
         actions.notifications.showSnackbar({
           message: 'You need to select a license on your user profile',
-          variant: 'warning',
+          variant: 'info',
         })
       );
     }
@@ -78,7 +78,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       return dispatch(
         actions.notifications.showSnackbar({
           message: 'Your membership is out of date',
-          variant: 'warning',
+          variant: 'info',
         })
       );
     }
@@ -87,7 +87,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       return dispatch(
         actions.notifications.showSnackbar({
           message: 'Update your exit weight on your profile before manifesting',
-          variant: 'warning',
+          variant: 'info',
         })
       );
     }
@@ -96,7 +96,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       return dispatch(
         actions.notifications.showSnackbar({
           message: 'You have no credits on your account',
-          variant: 'warning',
+          variant: 'info',
         })
       );
     }

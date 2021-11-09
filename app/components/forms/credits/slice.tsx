@@ -43,7 +43,6 @@ export default createSlice({
     ) => {
       const [field, value] = action.payload;
 
-      console.log({ field });
       state.fields[field].value = value;
       state.fields[field].error = null;
     },

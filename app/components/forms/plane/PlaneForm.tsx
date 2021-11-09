@@ -14,7 +14,7 @@ export default function DropzoneForm() {
         mode="outlined"
         label="Name"
         error={!!state.fields.name.error}
-        value={state.fields.name.value}
+        value={state.fields.name?.value || ''}
         onChangeText={(newValue) => dispatch(actions.forms.plane.setField(['name', newValue]))}
       />
       <HelperText type={state.fields.name.error ? 'error' : 'info'}>
@@ -26,7 +26,7 @@ export default function DropzoneForm() {
         mode="outlined"
         label="Registration"
         error={!!state.fields.registration.error}
-        value={state.fields.registration.value}
+        value={state.fields.registration?.value || ''}
         onChangeText={(newValue) =>
           dispatch(actions.forms.plane.setField(['registration', newValue]))
         }
@@ -70,7 +70,7 @@ export default function DropzoneForm() {
         mode="outlined"
         label="Max slots"
         error={!!state.fields.maxSlots.error}
-        value={state.fields.maxSlots?.value.toString()}
+        value={state.fields.maxSlots?.value?.toString() || ''}
         keyboardType="number-pad"
         onChangeText={(newValue) =>
           dispatch(actions.forms.plane.setField(['maxSlots', Number(newValue)]))

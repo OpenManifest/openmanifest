@@ -85,8 +85,6 @@ export default createSlice({
     },
 
     setOpen: (state: IGhostEditState, action: PayloadAction<boolean | User>) => {
-      console.log('Setting open');
-      console.log(action.payload);
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;

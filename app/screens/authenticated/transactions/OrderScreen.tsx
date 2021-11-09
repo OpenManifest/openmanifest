@@ -49,8 +49,6 @@ export default function OrderScreen() {
   const theme = useTheme();
   const { order } = route.params;
 
-  console.log('Order', route.params);
-
   const animation = React.useMemo(
     () =>
       JSON.parse(

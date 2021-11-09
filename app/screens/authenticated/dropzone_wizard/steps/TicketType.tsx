@@ -3,35 +3,31 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Card, HelperText, List, Menu, Paragraph, TextInput } from 'react-native-paper';
 import Slider from '@react-native-community/slider';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { actions, useAppDispatch, useAppSelector } from '../../../../state';
-import WizardScreen, { IWizardScreenProps } from '../../../../components/wizard/WizardScreen';
+import { Step, Fields, IWizardStepProps } from 'app/components/navigation_wizard';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
 
-function TicketTypeWizardScreen(props: IWizardScreenProps) {
+function TicketTypeWizardScreen(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.ticketType);
   const dispatch = useAppDispatch();
   const [altitudeMenuOpen, setAltitudeMenuOpen] = React.useState(false);
   const [price, setPrice] = React.useState(0);
 
   return (
-    <WizardScreen style={styles.container} {...props} title="Tickets">
-      <Paragraph style={styles.paragraph}>You can add more tickets later under Settings</Paragraph>
-
-      <View style={styles.content}>
-        <Card style={styles.card}>
-          <List.Subheader>Name</List.Subheader>
-          <TextInput
-            style={styles.field}
-            mode="outlined"
-            error={!!state.fields.name.error}
-            value={state.fields.name.value || ''}
-            onChangeText={(newValue) =>
-              dispatch(actions.forms.ticketType.setField(['name', newValue]))
-            }
-          />
-          <HelperText type={state.fields.name.error ? 'error' : 'info'}>
-            {state.fields.name.error || ''}
-          </HelperText>
-        </Card>
+    <Step {...props} title="Tickets">
+      <Fields>
+        <TextInput
+          style={styles.field}
+          mode="flat"
+          label="Name"
+          error={!!state.fields.name.error}
+          value={state.fields.name.value || ''}
+          onChangeText={(newValue) =>
+            dispatch(actions.forms.ticketType.setField(['name', newValue]))
+          }
+        />
+        <HelperText type={state.fields.name.error ? 'error' : 'info'}>
+          {state.fields.name.error || ''}
+        </HelperText>
 
         <Card style={styles.card} elevation={3}>
           <View style={styles.cardTitle}>
@@ -121,8 +117,11 @@ function TicketTypeWizardScreen(props: IWizardScreenProps) {
             />
           )}
         </Card>
-      </View>
-    </WizardScreen>
+        <Paragraph style={styles.paragraph}>
+          You can add more tickets later under Settings
+        </Paragraph>
+      </Fields>
+    </Step>
   );
 }
 
@@ -155,7 +154,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   paragraph: {
-    color: 'white',
     marginBottom: 8,
     fontWeight: 'bold',
     // fontSize: 25,
@@ -163,7 +161,7 @@ const styles = StyleSheet.create({
   },
   field: {
     marginBottom: 8,
-    marginHorizontal: 16,
+    // marginHorizontal: 16,
   },
   slider: {
     flexDirection: 'column',

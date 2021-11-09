@@ -115,6 +115,18 @@ export default createSlice({
       }
     },
 
+    setOriginal: (state: IDropzoneEditState, action: PayloadAction<Dropzone>) => {
+      state.original = action.payload;
+      state.open = true;
+      Object.keys(action.payload).forEach((key) => {
+        const payloadKey = key as keyof typeof action.payload;
+        if (payloadKey in state.fields) {
+          const typedKey = payloadKey as keyof typeof initialState['fields'];
+          state.fields[typedKey].value = (action.payload as Dropzone)[typedKey];
+        }
+      });
+    },
+
     reset: (state: IDropzoneEditState) => {
       state.fields = initialState.fields;
       state.original = null;

@@ -70,6 +70,15 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
+    setOriginal: (state: ITicketTypeEditState, action: PayloadAction<TicketType>) => {
+      state.original = action.payload;
+      state.open = true;
+      state.fields.altitude.value = action.payload.altitude || 0;
+      state.fields.cost.value = action.payload.cost || 0;
+      state.fields.allowManifestingSelf.value = action.payload.allowManifestingSelf || false;
+      state.fields.name.value = action.payload.name || '';
+    },
+
     setOpen: (state: ITicketTypeEditState, action: PayloadAction<boolean | TicketType>) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;

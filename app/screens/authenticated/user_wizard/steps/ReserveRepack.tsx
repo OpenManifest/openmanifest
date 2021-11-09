@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Card, HelperText, List } from 'react-native-paper';
-import DatePicker from '../../../input/date_picker/DatePicker';
-import WizardScreen, { IWizardScreenProps } from '../../../wizard/WizardScreen';
-import { actions, useAppDispatch, useAppSelector } from '../../../../state';
+import DatePicker from 'app/components/input/date_picker/DatePicker';
+import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
 
-function ReserveRepackWizardScreen(props: IWizardScreenProps) {
+function ReserveRepackStep(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.rig);
   const dispatch = useAppDispatch();
 
   return (
-    <WizardScreen style={styles.container} {...props} title="Next reserve repack?">
-      <View style={styles.content}>
+    <Step {...props} title="Next reserve repack?">
+      <Fields>
         <Card style={styles.card}>
           <List.Subheader>Due date</List.Subheader>
           <DatePicker
@@ -22,8 +22,8 @@ function ReserveRepackWizardScreen(props: IWizardScreenProps) {
             {state.fields.repackExpiresAt.error || ''}
           </HelperText>
         </Card>
-      </View>
-    </WizardScreen>
+      </Fields>
+    </Step>
   );
 }
 
@@ -50,4 +50,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ReserveRepackWizardScreen;
+export default ReserveRepackStep;

@@ -10,12 +10,12 @@ import {
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
 import * as Location from 'expo-location';
-import WizardScreen, { IWizardScreenProps } from '../../../../components/wizard/WizardScreen';
-import { actions, useAppDispatch, useAppSelector } from '../../../../state';
-import { calculateLatLngDelta } from '../../../../utils/calculateLatLngDelta';
-import Map from '../../../../components/map/Map';
+import { Step, IWizardStepProps } from 'app/components/navigation_wizard';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { calculateLatLngDelta } from 'app/utils/calculateLatLngDelta';
+import Map from 'app/components/map/Map';
 
-function LocationWizardStep(props: IWizardScreenProps) {
+function LocationWizardStep(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.dropzone);
   const dispatch = useAppDispatch();
   const [center, setCenter] = React.useState<{ lat: number; lng: number }>();
@@ -24,7 +24,6 @@ function LocationWizardStep(props: IWizardScreenProps) {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        console.log(status);
         return;
       }
       const location = await Location.getCurrentPositionAsync({});
@@ -75,7 +74,6 @@ function LocationWizardStep(props: IWizardScreenProps) {
     })
   );
   const setCoordinateFade = React.useCallback((visible: boolean) => {
-    console.log({ visible });
     (visible ? fadeIn : fadeOut).current.start();
   }, []);
 
@@ -83,12 +81,7 @@ function LocationWizardStep(props: IWizardScreenProps) {
   const [isDragging, setDragging] = React.useState(false);
 
   return (
-    <WizardScreen
-      disableScroll
-      style={styles.container}
-      containerStyle={{ paddingHorizontal: 0 }}
-      {...props}
-    >
+    <Step {...props} title="Location">
       <Map
         mapStyle={{
           ...StyleSheet.absoluteFillObject,
@@ -171,7 +164,7 @@ function LocationWizardStep(props: IWizardScreenProps) {
           )}
         </Animated.Text>
       </View>
-    </WizardScreen>
+    </Step>
   );
 }
 

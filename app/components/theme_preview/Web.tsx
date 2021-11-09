@@ -2,15 +2,16 @@ import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Surface } from 'react-native-paper';
 import color from 'color';
+import { useAppSelector } from 'app/state';
 
 interface IWebPreview {
   primaryColor?: string;
-  secondaryColor?: string;
 }
 
 function WebPreview(props: IWebPreview) {
-  const { primaryColor, secondaryColor } = props;
-  const primaryLight = color(primaryColor).lighten(0.6).hex();
+  const { primaryColor } = props;
+  const { palette } = useAppSelector((root) => root.global);
+
   return (
     <View>
       <Surface style={[styles.previewContainer, { backgroundColor: '#EFEFEF' }]}>
@@ -18,11 +19,11 @@ function WebPreview(props: IWebPreview) {
         <View style={[styles.previewLoadCard]} />
         <View style={[styles.previewLoadCard2]} />
         <View style={[styles.previewLoadCard3]} />
-        <View style={[styles.previewButton, { backgroundColor: secondaryColor }]} />
+        <View style={[styles.previewButton, { backgroundColor: primaryColor }]} />
         <View style={[styles.previewTabBar, { backgroundColor: '#FFFFFF' }]} />
-        <View style={[styles.previewTabButton, { backgroundColor: primaryLight }]} />
-        <View style={[styles.previewTabButton2, { backgroundColor: primaryLight }]} />
-        <View style={[styles.previewTabButton3, { backgroundColor: primaryLight }]} />
+        <View style={[styles.previewTabButton, { backgroundColor: palette.placeholder }]} />
+        <View style={[styles.previewTabButton2, { backgroundColor: palette.placeholder }]} />
+        <View style={[styles.previewTabButton3, { backgroundColor: palette.placeholder }]} />
       </Surface>
       <Text style={styles.label}>Web</Text>
     </View>
@@ -33,7 +34,6 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
     textAlign: 'center',
-    color: 'white',
     fontSize: 16,
     marginTop: 8,
   },

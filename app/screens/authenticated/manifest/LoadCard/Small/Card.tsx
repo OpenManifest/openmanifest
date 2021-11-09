@@ -3,16 +3,16 @@ import { StyleSheet } from 'react-native';
 import { Badge, Card, Chip } from 'react-native-paper';
 import { isBefore } from 'date-fns';
 
-import PilotChip from '../../../../../components/chips/PilotChip';
-import PlaneChip from '../../../../../components/chips/PlaneChip';
+import PilotChip from 'app/components/chips/PilotChip';
+import PlaneChip from 'app/components/chips/PlaneChip';
 
-import { View } from '../../../../../components/Themed';
-import { Load, Plane, DropzoneUser, LoadState } from '../../../../../api/schema.d';
-import { actions, useAppDispatch, useAppSelector } from '../../../../../state';
-import { errorColor, warningColor } from '../../../../../constants/Colors';
+import { View } from 'app/components/Themed';
+import { Load, Plane, DropzoneUser, LoadState } from 'app/api/schema.d';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { errorColor, warningColor } from 'app/constants/Colors';
+import useQueryLoad from 'app/api/hooks/useQueryLoad';
+import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
 import Countdown from '../Countdown';
-import useQueryLoad from '../../../../../api/hooks/useQueryLoad';
-import useMutationUpdateLoad from '../../../../../api/hooks/useMutationUpdateLoad';
 import Loading from './Loading';
 
 interface ILoadCardSmall {
@@ -104,6 +104,7 @@ export default function LoadCard(props: ILoadCardSmall) {
       style={{
         margin: 16,
         borderRadius: 2,
+        minWidth: 300,
         opacity: ['cancelled', 'landed'].includes(load?.state || '') ? 0.5 : 1.0,
       }}
       elevation={1}
@@ -133,8 +134,8 @@ export default function LoadCard(props: ILoadCardSmall) {
         }
       />
 
-      <Card.Content style={[styles.cardContent]}>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', backgroundColor: 'transparent' }}>
+      <Card.Content style={styles.cardContent}>
+        <View style={{ flexDirection: 'row', flexWrap: 'nowrap', backgroundColor: 'transparent' }}>
           <PlaneChip
             value={load?.plane}
             small
@@ -146,7 +147,7 @@ export default function LoadCard(props: ILoadCardSmall) {
                 dispatch(
                   actions.notifications.showSnackbar({
                     message: `You need to take ${diff} people off the load to fit on this plane`,
-                    variant: 'warning',
+                    variant: 'info',
                   })
                 );
               } else {

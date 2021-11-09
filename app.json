@@ -22,7 +22,10 @@
       "config": {
         "usesNonExemptEncryption": false
       },
-      "buildNumber": "27",
+      "infoPlist": {
+        "photosPermission": "OpenManifest needs access to photos to let you upload avatars"
+      },
+      "buildNumber": "28",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
       "icon": "./assets/images/ios-icon.png",

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import MapView, { Region } from 'react-native-maps';
+import MapView, { Region, Marker } from 'react-native-maps';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
 import * as Location from 'expo-location';
-import WizardScreen, { IWizardScreenProps } from '../../../../components/wizard/WizardScreen';
-import { actions, useAppDispatch, useAppSelector } from '../../../../state';
-import { calculateLatLngDelta } from '../../../../utils/calculateLatLngDelta';
+import { Step, IWizardStepProps } from 'app/components/navigation_wizard';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { calculateLatLngDelta } from 'app/utils/calculateLatLngDelta';
 
-function LocationWizardStep(props: IWizardScreenProps) {
+function LocationWizardStep(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.dropzone);
   const dispatch = useAppDispatch();
 
@@ -76,30 +76,24 @@ function LocationWizardStep(props: IWizardScreenProps) {
   );
   const setCoordinateFade = React.useCallback((visible: boolean) => {
     setAnimating(true);
-    console.log({ visible });
     (visible ? fadeIn : fadeOut).current.start(() => setAnimating(false));
   }, []);
 
+  const markerRef = React.useRef<Marker>(null);
   const [isDragging, setDragging] = React.useState<boolean>(false);
   const [internalRegion, setInternalRegion] = React.useState<Region | undefined>(region);
 
   return (
-    <WizardScreen
-      disableScroll
-      style={styles.container}
-      containerStyle={{ paddingHorizontal: 0 }}
-      {...props}
-    >
+    <Step {...props} title="Location">
       <MapView
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         ref={map}
-        style={{
-          ...StyleSheet.absoluteFillObject,
-          marginTop: -50,
-        }}
+        style={StyleSheet.absoluteFill}
         initialRegion={region}
-        region={internalRegion}
+        onTouchStart={() => {
+          markerRef.current?.hideCallout();
+        }}
         onRegionChange={(_region) => {
           if (!isAnimating) {
             setCoordinateFade(false);
@@ -122,8 +116,13 @@ function LocationWizardStep(props: IWizardScreenProps) {
         scrollEnabled
         focusable
       >
-        {!region ? null : (
-          <View style={styles.markerFixed} pointerEvents="none">
+        {!internalRegion ? null : (
+          <Marker
+            title={state.fields.name.value || undefined}
+            ref={markerRef}
+            flat
+            coordinate={internalRegion}
+          >
             <MaterialCommunityIcons
               pointerEvents="none"
               size={60}
@@ -139,7 +138,7 @@ function LocationWizardStep(props: IWizardScreenProps) {
               }}
               name={isDragging ? 'map-marker' : 'map-marker-check-outline'}
             />
-          </View>
+          </Marker>
         )}
       </MapView>
       <TouchableOpacity
@@ -175,7 +174,7 @@ function LocationWizardStep(props: IWizardScreenProps) {
           )}
         </Animated.Text>
       </View>
-    </WizardScreen>
+    </Step>
   );
 }
 

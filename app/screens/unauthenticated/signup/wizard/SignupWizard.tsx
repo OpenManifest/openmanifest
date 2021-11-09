@@ -50,35 +50,40 @@ export default function SignupWizard() {
       );
       throw new Error('Password mismatch');
     }
-    const result = await onSignUp({
-      variables: {
-        pushToken: globalState.expoPushToken,
-        email: state.fields.email.value,
-        name: state.fields.name.value,
-        exitWeight: state.fields.exitWeight.value,
-        password: state.fields.password.value,
-        passwordConfirmation: state.fields.passwordConfirmation.value,
-        licenseId: Number(state.fields.license?.value?.id) || null,
-        phone: state.fields.phone.value,
-      },
-    });
-
-    if (result?.data?.userSignUp?.fieldErrors?.length) {
-      result?.data?.userSignUp?.fieldErrors?.forEach(({ field, message }) => {
-        switch (field) {
-          case 'email':
-            dispatch(actions.screens.signup.setFieldError(['email', message]));
-            throw new Error('Email error');
-          case 'password':
-            dispatch(actions.screens.signup.setFieldError(['email', message]));
-            throw new Error('Email error');
-          case 'passwordConfirmation':
-            dispatch(actions.screens.signup.setFieldError(['email', message]));
-            throw new Error('Email error');
-          default:
-            return undefined;
-        }
+    try {
+      const result = await onSignUp({
+        variables: {
+          pushToken: globalState.expoPushToken,
+          email: state.fields.email.value,
+          name: state.fields.name.value,
+          exitWeight: state.fields.exitWeight.value,
+          password: state.fields.password.value,
+          passwordConfirmation: state.fields.passwordConfirmation.value,
+          licenseId: Number(state.fields.license?.value?.id) || null,
+          phone: state.fields.phone.value,
+        },
       });
+
+      if (result?.data?.userSignUp?.fieldErrors?.length) {
+        result?.data?.userSignUp?.fieldErrors?.forEach(({ field, message }) => {
+          switch (field) {
+            case 'email':
+              dispatch(actions.screens.signup.setFieldError(['email', message]));
+              throw new Error('Email error');
+            case 'password':
+              dispatch(actions.screens.signup.setFieldError(['password', message]));
+              throw new Error('Password error');
+            case 'passwordConfirmation':
+              dispatch(actions.screens.signup.setFieldError(['passwordConfirmation', message]));
+              throw new Error('Email error');
+            default:
+              return undefined;
+          }
+        });
+      }
+    } catch (e) {
+      dispatch(actions.screens.signup.setFieldError(['passwordConfirmation', e.message]));
+      throw new Error();
     }
   }, [
     dispatch,

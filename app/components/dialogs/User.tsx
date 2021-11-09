@@ -4,9 +4,9 @@ import UserForm from '../forms/user/UserForm';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import DialogOrSheet from '../layout/DialogOrSheet';
 import useMutationUpdateUser from '../../api/hooks/useMutationUpdateUser';
-import useCurrentDropzone, { QUERY_DROPZONE } from '../../api/hooks/useCurrentDropzone';
+import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
 import { QUERY_DROPZONE_USER } from '../../api/hooks/useDropzoneUser';
-import { useJoinFederationMutation } from '../../api/reflection';
+import { useJoinFederationMutation, QueryDropzoneDocument } from '../../api/reflection';
 import { UserFields } from '../forms/user/slice';
 
 interface IUpdateUserDialog {
@@ -41,7 +41,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
     mutation: {
       refetchQueries: [
         {
-          query: QUERY_DROPZONE,
+          query: QueryDropzoneDocument,
           variables: {
             dropzoneId: currentDropzoneId,
             earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
