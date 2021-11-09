@@ -1,0 +1,7 @@
+#import "../fragments/dropzones.fragments.gql"
+
+query QueryDropzone($dropzoneId: Int!, $earliestTimestamp: Int) {
+  dropzone(id: $dropzoneId) {
+    ...dropzoneExtensive
+  }
+}

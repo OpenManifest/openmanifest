@@ -1,0 +1,24 @@
+fragment rigEssentials on Rig {
+  id
+  name
+  make
+  model
+  serial
+  canopySize
+  repackExpiresAt
+  packValue
+  maintainedAt
+  rigType
+  packingCard
+}
+
+fragment userRigDetailed on Rig {
+  ...rigEssentials
+
+  user {
+    id
+    rigs {
+      ...rigEssentials
+    }
+  }
+}
