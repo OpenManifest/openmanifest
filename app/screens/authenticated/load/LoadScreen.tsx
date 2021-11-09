@@ -211,7 +211,7 @@ export default function LoadScreen() {
                 dispatch(
                   actions.notifications.showSnackbar({
                     message: `You need to take ${diff} people off the load to fit on this plane`,
-                    variant: 'warning',
+                    variant: 'info',
                   })
                 );
               } else {

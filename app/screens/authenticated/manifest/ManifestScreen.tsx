@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Dimensions, RefreshControl, StyleSheet, useWindowDimensions } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { FAB, IconButton, Menu, ProgressBar, useTheme } from 'react-native-paper';
+import checkDropzoneSetupComplete from 'app/utils/checkDropzoneSetupComplete';
 
 import NoResults from '../../../components/NoResults';
 import { View } from '../../../components/Themed';
@@ -22,12 +23,33 @@ export default function ManifestScreen() {
   const state = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
   const manifestScreen = useAppSelector((root) => root.screens.manifest);
+  const setup = useAppSelector((root) => root.screens.dropzoneWizard);
   const dispatch = useAppDispatch();
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
+  const [isSetupCheckComplete, setSetupCheckComplete] = React.useState(false);
   const { dropzone, currentUser, loading, refetch, fetchMore } = useCurrentDropzone();
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
+
+  React.useEffect(() => {
+    if (dropzone && isFocused) {
+      const dropzoneWizardIndex = checkDropzoneSetupComplete(dropzone);
+      console.log({ dropzoneWizardIndex });
+
+      if (dropzoneWizardIndex) {
+        dispatch(actions.screens.dropzoneWizard.setIndex(dropzoneWizardIndex));
+        dispatch(actions.forms.dropzone.setOriginal(dropzone));
+        if (dropzone?.planes?.length) {
+          dispatch(actions.forms.plane.setOriginal(dropzone.planes[0]));
+        }
+        if (dropzone?.ticketTypes?.length) {
+          dispatch(actions.forms.ticketType.setOriginal(dropzone.ticketTypes[0]));
+        }
+        navigation.navigate('DropzoneSetupScreen');
+      }
+    }
+  }, [dispatch, dropzone, isFocused, navigation, setup.completed, isSetupCheckComplete]);
 
   React.useEffect(() => {
     if (isFocused && dropzone?.name) {
@@ -72,7 +94,7 @@ export default function ManifestScreen() {
         return dispatch(
           actions.notifications.showSnackbar({
             message: 'You need to select a license on your user profile',
-            variant: 'warning',
+            variant: 'info',
           })
         );
       }
@@ -81,7 +103,7 @@ export default function ManifestScreen() {
         return dispatch(
           actions.notifications.showSnackbar({
             message: 'Your membership is out of date',
-            variant: 'warning',
+            variant: 'info',
           })
         );
       }
@@ -90,7 +112,7 @@ export default function ManifestScreen() {
         return dispatch(
           actions.notifications.showSnackbar({
             message: 'Your rig needs to be inspected before manifesting',
-            variant: 'warning',
+            variant: 'info',
           })
         );
       }
@@ -99,7 +121,7 @@ export default function ManifestScreen() {
         return dispatch(
           actions.notifications.showSnackbar({
             message: 'Your rig needs a reserve repack',
-            variant: 'warning',
+            variant: 'info',
           })
         );
       }
@@ -108,7 +130,7 @@ export default function ManifestScreen() {
         return dispatch(
           actions.notifications.showSnackbar({
             message: 'Update your exit weight on your profile before manifesting',
-            variant: 'warning',
+            variant: 'info',
           })
         );
       }
@@ -117,7 +139,7 @@ export default function ManifestScreen() {
         return dispatch(
           actions.notifications.showSnackbar({
             message: 'You have no credits on your account',
-            variant: 'warning',
+            variant: 'info',
           })
         );
       }
@@ -132,7 +154,7 @@ export default function ManifestScreen() {
 
   const { width } = useWindowDimensions();
 
-  let cardWidth = (manifestScreen.display === 'cards' ? 335 : 550) + 32;
+  let cardWidth = (manifestScreen.display === 'cards' ? 338 : 550) + 32;
   cardWidth = cardWidth > width ? width - 32 : cardWidth;
   const numColumns = Math.floor(width / cardWidth) || 1;
   const contentWidth = cardWidth * numColumns;

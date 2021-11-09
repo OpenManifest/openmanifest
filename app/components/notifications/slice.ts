@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface INotification {
   message: string;
-  variant?: 'error' | 'success' | 'warning';
+  variant?: 'error' | 'success' | 'info';
   action?: {
     label: string;
     onPress: () => void;

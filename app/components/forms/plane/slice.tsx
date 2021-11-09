@@ -87,6 +87,17 @@ export default createSlice({
       }
     },
 
+    setOriginal: (state: IPlaneEditState, action: PayloadAction<Plane>) => {
+      state.original = action.payload;
+      state.open = true;
+      state.fields.hours.value = action.payload.hours || 0;
+      state.fields.minSlots.value = action.payload.minSlots || 0;
+      state.fields.maxSlots.value = action.payload.maxSlots || 3;
+      state.fields.name.value = action.payload.name || '';
+      state.fields.registration.value = action.payload.registration || '';
+      state.fields.nextMaintenanceHours.value = action.payload.nextMaintenanceHours || 0;
+    },
+
     reset: (state: IPlaneEditState) => {
       state.fields = initialState.fields;
       state.original = null;

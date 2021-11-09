@@ -55,7 +55,6 @@ async function registerForPushNotificationsAsync(): Promise<string | null> {
       return null;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
   } else {
     console.warn('Must use physical device for Push Notifications');
   }
@@ -116,7 +115,7 @@ function Content() {
         dispatch(
           actions.notifications.showSnackbar({
             message: notification.request.content.body,
-            variant: 'warning',
+            variant: 'info',
           })
         );
       }
@@ -126,7 +125,7 @@ function Content() {
     // interacts with a notification (works when app is foregrounded,
     // backgrounded, or killed)
     responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-      console.log(response);
+      console.log({ notification: response });
     });
 
     Linking.addEventListener('url', onOutsideLink);

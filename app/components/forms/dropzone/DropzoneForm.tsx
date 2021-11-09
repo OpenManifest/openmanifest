@@ -52,8 +52,6 @@ export default function DropzoneForm(props: IDropzoneForm) {
     }
   }, [dispatch]);
 
-  console.log(state.fields);
-
   return (
     <>
       <SkeletonContent
@@ -147,15 +145,9 @@ export default function DropzoneForm(props: IDropzoneForm) {
               width: '100%',
             }}
           >
-            <PhonePreview
-              primaryColor={state.fields.primaryColor.value || '#000000'}
-              secondaryColor={state.fields.secondaryColor.value || '#FFFFFF'}
-            />
+            <PhonePreview primaryColor={state.fields.primaryColor.value || '#000000'} />
 
-            <WebPreview
-              primaryColor={state.fields.primaryColor.value || '#000000'}
-              secondaryColor={state.fields.secondaryColor.value || '#FFFFFF'}
-            />
+            <WebPreview primaryColor={state.fields.primaryColor.value || '#000000'} />
           </Card.Content>
         </Card>
       </SkeletonContent>
@@ -174,22 +166,6 @@ export default function DropzoneForm(props: IDropzoneForm) {
             dispatch(actions.global.setPrimaryColor(color));
           }}
           value={state.fields.primaryColor.value || '#000000'}
-        />
-      </SkeletonContent>
-      <SkeletonContent
-        isLoading={loading || outsideLoading}
-        containerStyle={styles.skeletonCardColorPicker}
-        layout={[{ key: 'box', height: 200, width: '100%' }]}
-      >
-        <ColorPicker
-          title="Accent color"
-          helperText="Accent color is used for highlights, like buttons and loading bars"
-          error={state.fields.secondaryColor.error}
-          onChange={(color) => {
-            dispatch(actions.forms.dropzone.setField(['secondaryColor', color]));
-            dispatch(actions.global.setAccentColor(color));
-          }}
-          value={state.fields.secondaryColor.value || '#FFFFFF'}
         />
       </SkeletonContent>
       <SkeletonContent
@@ -277,16 +253,10 @@ export default function DropzoneForm(props: IDropzoneForm) {
                 extraProps.icon = 'check';
               }
 
-              if (!extraProps.icon) {
-                return <View style={{ width: 56, height: 56 }} />;
+              if (extraProps.icon) {
+                return <List.Icon {...iconProps} {...extraProps} />;
               }
-
-              console.log({
-                extraProps,
-                public: state.fields.isPublic.value,
-                requestPublic: state.fields.requestPublication.value,
-              });
-              return <List.Icon {...iconProps} {...extraProps} />;
+              return <View style={{ width: 56, height: 56 }} />;
             }}
           />
           {currentUser?.user?.moderationRole === 'administrator' &&

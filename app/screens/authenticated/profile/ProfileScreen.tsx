@@ -1,27 +1,27 @@
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import { useMutation } from '@apollo/client';
 import * as React from 'react';
-import { Platform, RefreshControl, StyleSheet, View } from 'react-native';
-import { Card, Divider, List, ProgressBar, useTheme } from 'react-native-paper';
+import { Platform, RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Card, Divider, List, ProgressBar } from 'react-native-paper';
 import gql from 'graphql-tag';
 import * as ImagePicker from 'expo-image-picker';
+import Skeleton from 'react-native-skeleton-content';
 
-import { LinearGradient } from 'expo-linear-gradient';
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import { Mutation, Permission } from '../../../api/schema.d';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import DropzoneUserDialog from '../../../components/dialogs/DropzoneUserDialog';
-import CreditsSheet from '../../../components/dialogs/CreditsDialog/Credits';
-import RigDialog from '../../../components/dialogs/Rig';
-import EditUserSheet from '../../../components/dialogs/User';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { Mutation, Permission } from 'app/api/schema.d';
+import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import DropzoneUserDialog from 'app/components/dialogs/DropzoneUserDialog';
+import CreditsSheet from 'app/components/dialogs/CreditsDialog/Credits';
+import RigDialog from 'app/components/dialogs/Rig';
+import EditUserSheet from 'app/components/dialogs/User';
+
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+// eslint-disable-next-line max-len
+import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
+import useRestriction from 'app/hooks/useRestriction';
 
 import Header from './UserInfo/Header';
 import InfoGrid from './UserInfo/InfoGrid';
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
-// eslint-disable-next-line max-len
-import useDropzoneUserProfile from '../../../api/hooks/useDropzoneUserProfile';
-import useRestriction from '../../../hooks/useRestriction';
-
 import PermissionBadges from './UserInfo/PermissionBadges';
 
 import SlotCard from './SlotCard';
@@ -136,122 +136,147 @@ export default function ProfileScreen() {
   const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
   const canViewOthersTransactions = useRestriction(Permission.ReadUserTransactions);
   const canUpdateUsers = useRestriction(Permission.UpdateUser);
-  const theme = useTheme();
+  const onCloseRigForm = React.useCallback(
+    () => dispatch(actions.forms.rig.setOpen(false)),
+    [dispatch]
+  );
 
   const onUserSheetClose = React.useCallback(() => {
     dispatch(actions.forms.user.setOpen(false));
   }, [dispatch]);
 
+  const windowDimensions = useWindowDimensions();
+  const wrappingHeaderItemWidth =
+    windowDimensions.width > 600 ? windowDimensions.width / 2 : windowDimensions.width;
+
   return (
-    <LinearGradient
-      start={{ x: 0.5, y: 0.5 }}
-      end={{ x: 0.5, y: 1.0 }}
-      style={StyleSheet.absoluteFill}
-      colors={[theme.colors.surface, theme.colors.surface]}
-    >
+    <View style={StyleSheet.absoluteFill}>
       {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
       <ScrollableScreen
         style={{ backgroundColor: state.theme.colors.background }}
         contentContainerStyle={[styles.content, { backgroundColor: 'transparent' }]}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}
       >
-        {!dropzoneUser ? null : (
-          <Header
-            dropzoneUser={dropzoneUser}
-            canEdit={isSelf}
-            onEdit={() => {
-              if (dropzoneUser?.user) {
-                dispatch(actions.forms.user.setOpen(dropzoneUser));
-              }
-            }}
-            onPressAvatar={onPickImage}
-          >
-            <PermissionBadges {...{ dropzoneUser, permissions: badges }} />
-            <InfoGrid
-              style={{ height: 80 }}
-              items={[
-                {
-                  title: 'Funds',
-                  value: `$${dropzoneUser?.credits || 0}`,
-                  onPress: () => {
-                    if (dropzoneUser && canAddTransaction) {
-                      dispatch(actions.forms.credits.setOpen(dropzoneUser));
-                    }
-                  },
-                },
-                {
-                  title: 'License',
-                  value: `${dropzoneUser?.license?.name || '-'}`,
-                },
-                {
-                  title: 'Exit weight',
-                  value: Math.round(Number(dropzoneUser?.user?.exitWeight)).toString() || '-',
-                },
-              ]}
-            />
-            <Divider style={styles.divider} />
-          </Header>
-        )}
-        <View style={{ width: '100%' }}>
-          <List.Subheader>Manage</List.Subheader>
-          <Card style={{ margin: 8, marginRight: 8 }} elevation={1}>
-            {isSelf ? (
-              <>
-                <List.Item
-                  style={{ width: '100%', padding: 0 }}
-                  title="Setup Wizard"
-                  left={() => <List.Icon icon="account-convert" />}
-                  right={() => <List.Icon icon="chevron-right" />}
-                  onPress={() => {
-                    if (dropzoneUser) {
-                      dispatch(actions.forms.user.setOriginal(dropzoneUser));
-                      if (dropzoneUser?.user?.rigs?.length) {
-                        dispatch(actions.forms.rig.setOriginal(dropzoneUser.user.rigs[0]));
+        <View style={styles.wrappingHeader}>
+          <View style={{ width: wrappingHeaderItemWidth }}>
+            {!dropzoneUser ? (
+              <Skeleton
+                key="profile-header"
+                containerStyle={{
+                  height: 256,
+                  width: '100%',
+                }}
+                isLoading
+                layout={[{ key: 'header', width: '100%', height: '100%', borderRadius: 8 }]}
+              />
+            ) : (
+              <Header
+                dropzoneUser={dropzoneUser}
+                canEdit={isSelf}
+                onEdit={() => {
+                  if (dropzoneUser?.user) {
+                    dispatch(actions.forms.user.setOpen(dropzoneUser));
+                  }
+                }}
+                onPressAvatar={onPickImage}
+              >
+                <PermissionBadges {...{ dropzoneUser, permissions: badges }} />
+                <InfoGrid
+                  style={{ height: 80 }}
+                  items={[
+                    {
+                      title: 'Funds',
+                      value: `$${dropzoneUser?.credits || 0}`,
+                      onPress: () => {
+                        if (dropzoneUser && canAddTransaction) {
+                          dispatch(actions.forms.credits.setOpen(dropzoneUser));
+                        }
+                      },
+                    },
+                    {
+                      title: 'License',
+                      value: `${dropzoneUser?.license?.name || '-'}`,
+                    },
+                    {
+                      title: 'Exit weight',
+                      value: Math.round(Number(dropzoneUser?.user?.exitWeight)).toString() || '-',
+                    },
+                  ]}
+                />
+                <Divider style={styles.divider} />
+              </Header>
+            )}
+          </View>
+          <View style={{ width: wrappingHeaderItemWidth }}>
+            {windowDimensions.width === wrappingHeaderItemWidth ? (
+              <List.Subheader>Manage</List.Subheader>
+            ) : null}
+            <Card
+              style={{
+                minHeight: windowDimensions.width === wrappingHeaderItemWidth ? undefined : 256,
+                paddingTop: 8,
+              }}
+              elevation={1}
+            >
+              {isSelf ? (
+                <>
+                  <List.Item
+                    style={{ width: '100%', padding: 0 }}
+                    title="Setup Wizard"
+                    left={() => <List.Icon icon="account-convert" />}
+                    right={() => <List.Icon icon="chevron-right" />}
+                    onPress={() => {
+                      if (dropzoneUser) {
+                        dispatch(actions.forms.user.setOriginal(dropzoneUser));
+                        if (dropzoneUser?.user?.rigs?.length) {
+                          dispatch(actions.forms.rig.setOriginal(dropzoneUser.user.rigs[0]));
+                        }
+                        navigation.navigate('UserSetupWizard');
                       }
-                      navigation.navigate('UserSetupWizard');
+                    }}
+                  />
+                  <Divider style={{ width: '100%' }} />
+                </>
+              ) : null}
+              {canUpdateUsers ? (
+                <>
+                  <List.Item
+                    style={{ width: '100%', padding: 0 }}
+                    title="Access and Membership"
+                    left={() => <List.Icon icon="lock" />}
+                    onPress={() =>
+                      dropzoneUser
+                        ? dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser))
+                        : null
                     }
-                  }}
-                />
-                <Divider style={{ width: '100%' }} />
-              </>
-            ) : null}
-            {canUpdateUsers ? (
-              <>
-                <List.Item
-                  style={{ width: '100%', padding: 0 }}
-                  title="Access and Membership"
-                  left={() => <List.Icon icon="lock" />}
-                  onPress={() =>
-                    dropzoneUser ? dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser)) : null
-                  }
-                />
-                <Divider style={{ width: '100%' }} />
-              </>
-            ) : null}
-            {isSelf || canViewOthersTransactions ? (
-              <>
-                <List.Item
-                  style={{ width: '100%', padding: 0 }}
-                  title="Transactions"
-                  left={() => <List.Icon icon="cash" />}
-                  right={() => <List.Icon icon="chevron-right" />}
-                  onPress={() =>
-                    navigation.navigate('TransactionsScreen', { userId: dropzoneUser?.id })
-                  }
-                />
-                <Divider style={{ width: '100%' }} />
-              </>
-            ) : null}
-            <List.Item
-              style={{ width: '100%', padding: 0 }}
-              title="Equipment"
-              left={() => <List.Icon icon="parachute" />}
-              right={() => <List.Icon icon="chevron-right" />}
-              onPress={() => navigation.navigate('EquipmentScreen', { userId: dropzoneUser?.id })}
-            />
-          </Card>
+                  />
+                  <Divider style={{ width: '100%' }} />
+                </>
+              ) : null}
+              {isSelf || canViewOthersTransactions ? (
+                <>
+                  <List.Item
+                    style={{ width: '100%', padding: 0 }}
+                    title="Transactions"
+                    left={() => <List.Icon icon="cash" />}
+                    right={() => <List.Icon icon="chevron-right" />}
+                    onPress={() =>
+                      navigation.navigate('TransactionsScreen', { userId: dropzoneUser?.id })
+                    }
+                  />
+                  <Divider style={{ width: '100%' }} />
+                </>
+              ) : null}
+              <List.Item
+                style={{ width: '100%', padding: 0 }}
+                title="Equipment"
+                left={() => <List.Icon icon="parachute" />}
+                right={() => <List.Icon icon="chevron-right" />}
+                onPress={() => navigation.navigate('EquipmentScreen', { userId: dropzoneUser?.id })}
+              />
+            </Card>
+          </View>
         </View>
-
         <View style={{ width: '100%' }}>
           <List.Subheader>History</List.Subheader>
           <Card style={{ margin: 8, marginHorizontal: 0 }} elevation={1}>
@@ -270,7 +295,7 @@ export default function ProfileScreen() {
       </ScrollableScreen>
 
       <RigDialog
-        onClose={() => dispatch(actions.forms.rig.setOpen(false))}
+        onClose={onCloseRigForm}
         onSuccess={() => requestAnimationFrame(() => dispatch(actions.forms.rig.setOpen(false)))}
         open={forms.rig.open}
         userId={Number(dropzoneUser?.user?.id)}
@@ -303,7 +328,7 @@ export default function ProfileScreen() {
         }}
         open={forms.user.open}
       />
-    </LinearGradient>
+    </View>
   );
 }
 
@@ -316,6 +341,8 @@ const styles = StyleSheet.create({
     paddingBottom: 56,
     paddingHorizontal: 0,
   },
+  wrappingHeader: { width: '100%', flexDirection: 'row', flexWrap: 'wrap' },
+  wrappingHeaderItem: {},
   divider: {
     height: 1,
     width: '100%',

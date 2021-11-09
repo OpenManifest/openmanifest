@@ -21,7 +21,7 @@ const MUTATION_UPDATE_TICKET_TYPE = gql`
           altitude: $altitude
           allowManifestingSelf: $allowManifestingSelf
           isTandem: $isTandem
-          extrasIds: $extraIds
+          extraIds: $extraIds
         }
       }
     ) {

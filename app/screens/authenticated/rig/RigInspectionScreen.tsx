@@ -5,13 +5,14 @@ import gql from 'graphql-tag';
 import * as React from 'react';
 import { Button, Card, Checkbox, Divider } from 'react-native-paper';
 import { KeyboardAvoidingView } from 'react-native';
-import RigInspectionForm from '../../../components/forms/rig_inspection/RigInspectionForm';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import useCurrentDropzone, { QUERY_DROPZONE } from '../../../api/hooks/useCurrentDropzone';
-import { Mutation, Query, Rig, Permission } from '../../../api/schema.d';
-import useRestriction from '../../../hooks/useRestriction';
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import { QUERY_DROPZONE_USER } from '../../../api/hooks/useDropzoneUser';
+import RigInspectionForm from 'app/components/forms/rig_inspection/RigInspectionForm';
+import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import { QueryDropzoneDocument } from 'app/api/reflection';
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { Mutation, Query, Rig, Permission } from 'app/api/schema.d';
+import useRestriction from 'app/hooks/useRestriction';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { QUERY_DROPZONE_USER } from 'app/api/hooks/useDropzoneUser';
 import RigCard from '../equipment/RigCard';
 
 const QUERY_RIG_INSPECTIONS = gql`
@@ -187,7 +188,7 @@ export default function RigInspectionScreen() {
           });
 
           const currentDz = client.readQuery<Query>({
-            query: QUERY_DROPZONE,
+            query: QueryDropzoneDocument,
             variables: {
               dropzoneId: Number(currentDropzone?.dropzone?.id),
               earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
@@ -196,7 +197,7 @@ export default function RigInspectionScreen() {
 
           if (currentDz?.dropzone?.currentUser?.id === rigInspection?.dropzoneUser?.id) {
             client.writeQuery({
-              query: QUERY_DROPZONE,
+              query: QueryDropzoneDocument,
               variables: {
                 dropzoneId: Number(currentDropzone?.dropzone?.id),
                 earliestTimestamp: startOfDay(new Date()).getTime() / 1000,

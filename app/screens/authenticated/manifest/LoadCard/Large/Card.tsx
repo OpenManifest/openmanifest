@@ -289,7 +289,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                   dispatch(
                     actions.notifications.showSnackbar({
                       message: `You need to take ${diff} people off the load to fit on this plane`,
-                      variant: 'warning',
+                      variant: 'info',
                     })
                   );
                 } else {
@@ -488,7 +488,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                   return dispatch(
                     actions.notifications.showSnackbar({
                       message: 'You must select a load master before this load can be finalized',
-                      variant: 'warning',
+                      variant: 'info',
                     })
                   );
                 }
@@ -497,7 +497,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                   return dispatch(
                     actions.notifications.showSnackbar({
                       message: 'You must select a pilot before this load can be finalized',
-                      variant: 'warning',
+                      variant: 'info',
                     })
                   );
                 }

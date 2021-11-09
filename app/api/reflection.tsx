@@ -3,6 +3,61 @@ import * as Operation from './operations';
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
+export const DropzoneEssentialsFragmentDoc = gql`
+    fragment dropzoneEssentials on Dropzone {
+  id
+  lat
+  lng
+  name
+  primaryColor
+  secondaryColor
+  isPublic
+  requestPublication
+  planes {
+    id
+    name
+    registration
+  }
+  ticketTypes {
+    id
+    name
+  }
+}
+    `;
+export const DropzoneDetailedFragmentDoc = gql`
+    fragment dropzoneDetailed on Dropzone {
+  ...dropzoneEssentials
+  federation {
+    id
+    name
+    slug
+  }
+  currentConditions {
+    id
+    jumpRun
+    temperature
+    offsetDirection
+    offsetMiles
+    winds {
+      altitude
+      speed
+      direction
+    }
+  }
+  loads(earliestTimestamp: $earliestTimestamp) {
+    edges {
+      node {
+        id
+        name
+        loadNumber
+        isOpen
+        maxSlots
+        state
+      }
+    }
+  }
+}
+    ${DropzoneEssentialsFragmentDoc}`;
 export const CurrentUserEssentialsFragmentDoc = gql`
     fragment currentUserEssentials on DropzoneUser {
   id
@@ -24,6 +79,12 @@ export const CurrentUserEssentialsFragmentDoc = gql`
 export const CurrentUserDetailedFragmentDoc = gql`
     fragment currentUserDetailed on DropzoneUser {
   ...currentUserEssentials
+  user {
+    id
+    nickname
+    name
+    moderationRole
+  }
   rigInspections {
     id
     isOk
@@ -157,8 +218,6 @@ export const CurrentUserDetailedFragmentDoc = gql`
   user {
     id
     name
-    moderationRole
-    nickname
     exitWeight
     email
     phone
@@ -188,54 +247,15 @@ export const CurrentUserDetailedFragmentDoc = gql`
   }
 }
     ${CurrentUserEssentialsFragmentDoc}`;
-export const DropzoneEssentialsFragmentDoc = gql`
-    fragment dropzoneEssentials on Dropzone {
-  id
-  lat
-  lng
-  name
-  primaryColor
-  secondaryColor
-  planes {
-    id
-    name
-    registration
-  }
-  ticketTypes {
-    id
-    name
+export const DropzoneExtensiveFragmentDoc = gql`
+    fragment dropzoneExtensive on Dropzone {
+  ...dropzoneDetailed
+  currentUser {
+    ...currentUserDetailed
   }
 }
-    `;
-export const DropzoneDetailedFragmentDoc = gql`
-    fragment dropzoneDetailed on Dropzone {
-  ...dropzoneEssentials
-  currentConditions {
-    id
-    jumpRun
-    temperature
-    offsetDirection
-    offsetMiles
-    winds {
-      altitude
-      speed
-      direction
-    }
-  }
-  loads(earliestTimestamp: $earliestTimestamp) {
-    edges {
-      node {
-        id
-        name
-        loadNumber
-        isOpen
-        maxSlots
-        state
-      }
-    }
-  }
-}
-    ${DropzoneEssentialsFragmentDoc}`;
+    ${DropzoneDetailedFragmentDoc}
+${CurrentUserDetailedFragmentDoc}`;
 export const SlotFragmentDoc = gql`
     fragment slot on Slot {
   id
@@ -431,6 +451,32 @@ export const OrderFragmentDoc = gql`
   }
 }
     ${TransactionFragmentDoc}`;
+export const RigEssentialsFragmentDoc = gql`
+    fragment rigEssentials on Rig {
+  id
+  name
+  make
+  model
+  serial
+  canopySize
+  repackExpiresAt
+  packValue
+  maintainedAt
+  rigType
+  packingCard
+}
+    `;
+export const UserRigDetailedFragmentDoc = gql`
+    fragment userRigDetailed on Rig {
+  ...rigEssentials
+  user {
+    id
+    rigs {
+      ...rigEssentials
+    }
+  }
+}
+    ${RigEssentialsFragmentDoc}`;
 export const ConfirmUserDocument = gql`
     mutation ConfirmUser($token: String!) {
   userConfirmRegistrationWithToken(confirmationToken: $token) {
@@ -523,6 +569,56 @@ export function useCreateOrderMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMutation>;
 export type CreateOrderMutationResult = Apollo.MutationResult<Operation.CreateOrderMutation>;
 export type CreateOrderMutationOptions = Apollo.BaseMutationOptions<Operation.CreateOrderMutation, Operation.CreateOrderMutationVariables>;
+export const CreateRigDocument = gql`
+    mutation CreateRig($make: String, $name: String, $model: String, $serial: String, $rigType: String, $canopySize: Int, $repackExpiresAt: Int, $userId: Int, $dropzoneId: Int) {
+  createRig(
+    input: {attributes: {name: $name, make: $make, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, dropzoneId: $dropzoneId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    rig {
+      ...userRigDetailed
+    }
+  }
+}
+    ${UserRigDetailedFragmentDoc}`;
+export type CreateRigMutationFn = Apollo.MutationFunction<Operation.CreateRigMutation, Operation.CreateRigMutationVariables>;
+
+/**
+ * __useCreateRigMutation__
+ *
+ * To run a mutation, you first call `useCreateRigMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateRigMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createRigMutation, { data, loading, error }] = useCreateRigMutation({
+ *   variables: {
+ *      make: // value for 'make'
+ *      name: // value for 'name'
+ *      model: // value for 'model'
+ *      serial: // value for 'serial'
+ *      rigType: // value for 'rigType'
+ *      canopySize: // value for 'canopySize'
+ *      repackExpiresAt: // value for 'repackExpiresAt'
+ *      userId: // value for 'userId'
+ *      dropzoneId: // value for 'dropzoneId'
+ *   },
+ * });
+ */
+export function useCreateRigMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateRigMutation, Operation.CreateRigMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.CreateRigMutation, Operation.CreateRigMutationVariables>(CreateRigDocument, options);
+      }
+export type CreateRigMutationHookResult = ReturnType<typeof useCreateRigMutation>;
+export type CreateRigMutationResult = Apollo.MutationResult<Operation.CreateRigMutation>;
+export type CreateRigMutationOptions = Apollo.BaseMutationOptions<Operation.CreateRigMutation, Operation.CreateRigMutationVariables>;
 export const FinalizeLoadDocument = gql`
     mutation FinalizeLoad($id: Int!, $state: LoadState!) {
   finalizeLoad(input: {id: $id, state: $state}) {
@@ -689,6 +785,58 @@ export function useReloadWeatherMutation(baseOptions?: Apollo.MutationHookOption
 export type ReloadWeatherMutationHookResult = ReturnType<typeof useReloadWeatherMutation>;
 export type ReloadWeatherMutationResult = Apollo.MutationResult<Operation.ReloadWeatherMutation>;
 export type ReloadWeatherMutationOptions = Apollo.BaseMutationOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
+export const UpdateRigDocument = gql`
+    mutation UpdateRig($id: Int!, $name: String, $make: String, $model: String, $serial: String, $rigType: String, $canopySize: Int, $packingCard: String, $repackExpiresAt: Int, $userId: Int, $dropzoneId: Int) {
+  updateRig(
+    input: {id: $id, attributes: {name: $name, make: $make, packingCard: $packingCard, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, dropzoneId: $dropzoneId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    rig {
+      ...userRigDetailed
+    }
+  }
+}
+    ${UserRigDetailedFragmentDoc}`;
+export type UpdateRigMutationFn = Apollo.MutationFunction<Operation.UpdateRigMutation, Operation.UpdateRigMutationVariables>;
+
+/**
+ * __useUpdateRigMutation__
+ *
+ * To run a mutation, you first call `useUpdateRigMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRigMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRigMutation, { data, loading, error }] = useUpdateRigMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      make: // value for 'make'
+ *      model: // value for 'model'
+ *      serial: // value for 'serial'
+ *      rigType: // value for 'rigType'
+ *      canopySize: // value for 'canopySize'
+ *      packingCard: // value for 'packingCard'
+ *      repackExpiresAt: // value for 'repackExpiresAt'
+ *      userId: // value for 'userId'
+ *      dropzoneId: // value for 'dropzoneId'
+ *   },
+ * });
+ */
+export function useUpdateRigMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateRigMutation, Operation.UpdateRigMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateRigMutation, Operation.UpdateRigMutationVariables>(UpdateRigDocument, options);
+      }
+export type UpdateRigMutationHookResult = ReturnType<typeof useUpdateRigMutation>;
+export type UpdateRigMutationResult = Apollo.MutationResult<Operation.UpdateRigMutation>;
+export type UpdateRigMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateRigMutation, Operation.UpdateRigMutationVariables>;
 export const UserSignUpDocument = gql`
     mutation UserSignUp($email: String!, $password: String!, $passwordConfirmation: String!, $name: String!, $phone: String!, $pushToken: String, $exitWeight: Float!, $licenseId: Int) {
   userSignUp(
@@ -757,6 +905,42 @@ export function useUserSignUpMutation(baseOptions?: Apollo.MutationHookOptions<O
 export type UserSignUpMutationHookResult = ReturnType<typeof useUserSignUpMutation>;
 export type UserSignUpMutationResult = Apollo.MutationResult<Operation.UserSignUpMutation>;
 export type UserSignUpMutationOptions = Apollo.BaseMutationOptions<Operation.UserSignUpMutation, Operation.UserSignUpMutationVariables>;
+export const QueryDropzoneDocument = gql`
+    query QueryDropzone($dropzoneId: Int!, $earliestTimestamp: Int) {
+  dropzone(id: $dropzoneId) {
+    ...dropzoneExtensive
+  }
+}
+    ${DropzoneExtensiveFragmentDoc}`;
+
+/**
+ * __useQueryDropzone__
+ *
+ * To run a query within a React component, call `useQueryDropzone` and pass it any options that fit your needs.
+ * When your component renders, `useQueryDropzone` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useQueryDropzone({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *      earliestTimestamp: // value for 'earliestTimestamp'
+ *   },
+ * });
+ */
+export function useQueryDropzone(baseOptions: Apollo.QueryHookOptions<Operation.QueryDropzoneQuery, Operation.QueryDropzoneQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.QueryDropzoneQuery, Operation.QueryDropzoneQueryVariables>(QueryDropzoneDocument, options);
+      }
+export function useQueryDropzoneLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.QueryDropzoneQuery, Operation.QueryDropzoneQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.QueryDropzoneQuery, Operation.QueryDropzoneQueryVariables>(QueryDropzoneDocument, options);
+        }
+export type QueryDropzoneHookResult = ReturnType<typeof useQueryDropzone>;
+export type QueryDropzoneLazyQueryHookResult = ReturnType<typeof useQueryDropzoneLazyQuery>;
+export type QueryDropzoneQueryResult = Apollo.QueryResult<Operation.QueryDropzoneQuery, Operation.QueryDropzoneQueryVariables>;
 export const DropzoneTransactionsDocument = gql`
     query DropzoneTransactions($dropzoneId: Int!, $after: String) {
   dropzone(id: $dropzoneId) {

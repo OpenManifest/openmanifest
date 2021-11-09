@@ -10,8 +10,8 @@ import AuthenticatedRoutes from './Authenticated';
 import LimboRoutes from './LimboRoutes';
 import UnauthenticatedRoutes from './Unauthenticated';
 import DropzonesScreen from '../screens/authenticated/dropzones/DropzonesScreen';
-import DropzoneSetupScreen from '../screens/authenticated/dropzones/dropzone_wizard/DropzoneWizard';
-import UserSetupWizard from '../screens/authenticated/users/user_wizard/UserWizardScreen';
+import DropzoneSetupScreen from '../screens/authenticated/dropzone_wizard/DropzoneWizard';
+import UserSetupWizard from '../screens/authenticated/user_wizard/UserWizardScreen';
 import ConfirmUserScreen from '../screens/unauthenticated/signup/ConfirmUserScreen';
 import DrawerMenu from './drawer/Drawer';
 

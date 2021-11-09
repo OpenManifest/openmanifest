@@ -3,19 +3,19 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import startOfDay from 'date-fns/startOfDay';
 import { ScrollView } from 'react-native-gesture-handler';
-import { QUERY_DROPZONE_USERS } from '../../../../api/hooks/useQueryDropzoneUsers';
-import { QUERY_PERMISSION_USER } from '../../../../components/chips/GcaChip';
+import { QUERY_DROPZONE_USERS } from 'app/api/hooks/useQueryDropzoneUsers';
+import { QUERY_PERMISSION_USER } from 'app/components/chips/GcaChip';
 
-import { actions, useAppDispatch, useAppSelector } from '../../../../state';
-import { DropzoneUser, Permission, Query } from '../../../../api/schema.d';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { DropzoneUser, Permission, Query } from 'app/api/schema.d';
 
-import { QUERY_DROPZONE } from '../../../../api/hooks/useCurrentDropzone';
+import { QueryDropzoneDocument } from 'app/api/reflection';
 // eslint-disable-next-line max-len
-import { QUERY_DROPZONE_USER_PROFILE } from '../../../../api/hooks/useDropzoneUserProfile';
-import Badge, { IBadgeProps } from '../../../../components/Badge';
-import useRestriction from '../../../../hooks/useRestriction';
-import useMutationRevokePermission from '../../../../api/hooks/useMutationRevokePermission';
-import useMutationGrantPermission from '../../../../api/hooks/useMutationGrantPermission';
+import { QUERY_DROPZONE_USER_PROFILE } from 'app/api/hooks/useDropzoneUserProfile';
+import Badge, { IBadgeProps } from 'app/components/Badge';
+import useRestriction from 'app/hooks/useRestriction';
+import useMutationRevokePermission from 'app/api/hooks/useMutationRevokePermission';
+import useMutationGrantPermission from 'app/api/hooks/useMutationGrantPermission';
 
 interface IPermissionBadgesProps {
   permissions: Permission[];
@@ -39,7 +39,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
     mutation: {
       refetchQueries: [
         {
-          query: QUERY_DROPZONE,
+          query: QueryDropzoneDocument,
           variables: {
             dropzoneId: state.currentDropzoneId,
             earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
@@ -65,7 +65,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
     mutation: {
       refetchQueries: [
         {
-          query: QUERY_DROPZONE,
+          query: QueryDropzoneDocument,
           variables: {
             dropzoneId: state.currentDropzoneId,
             earliestTimestamp: startOfDay(new Date()).getTime() / 1000,

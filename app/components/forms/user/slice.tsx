@@ -90,7 +90,6 @@ export default createSlice({
     },
 
     setOriginal: (state: IUserEditState, action: PayloadAction<DropzoneUser>) => {
-      console.log('SETTING USER', action.payload);
       state.original = action.payload.user;
       state.federation.value =
         action.payload.license?.federation || action.payload?.dropzone?.federation || null;
@@ -114,7 +113,6 @@ export default createSlice({
     },
 
     setOpen: (state: IUserEditState, action: PayloadAction<boolean | DropzoneUser>) => {
-      console.log('SETTING USER 2', action.payload);
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;

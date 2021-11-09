@@ -22,6 +22,9 @@ export interface IWizardProps {
 
 export interface IWizardStepDefinition {
   component: React.ComponentType<IWizardStepProps>;
+  // How many screens ahead to jump onNext, default: 1
+  nextIndexFactor?: number;
+  backIndexFactor?: number;
   onNext?(): Promise<void>;
   onBack?(): Promise<void> | void;
 }
@@ -97,6 +100,7 @@ export function Content(props: IWizardProps) {
             loading={loading}
             onPress={async () => {
               try {
+                const nextIndex = steps[currentIndex]?.nextIndexFactor || 1;
                 if (steps[currentIndex]?.onNext) {
                   setLoading(true);
                   await steps[currentIndex]?.onNext?.();
@@ -104,8 +108,8 @@ export function Content(props: IWizardProps) {
                 if (currentIndex === steps.length - 1) {
                   navigation.goBack();
                 } else {
-                  navigation.navigate(`${name}${currentIndex + 1}`);
-                  setIndex(currentIndex + 1);
+                  navigation.navigate(`${name}${currentIndex + nextIndex}`);
+                  setIndex(currentIndex + nextIndex);
                 }
               } catch {
                 return undefined;
@@ -124,12 +128,13 @@ export function Content(props: IWizardProps) {
             disabled={loading}
             mode="text"
             onPress={async () => {
+              const backIndexFactor = steps[currentIndex]?.backIndexFactor || 1;
               steps[currentIndex]?.onBack?.();
               if (currentIndex === 0) {
                 navigation.goBack();
               } else {
-                navigation.navigate(`${name}${currentIndex - 1}`);
-                setIndex(currentIndex - 1 || 0);
+                navigation.navigate(`${name}${currentIndex - backIndexFactor}`);
+                setIndex(currentIndex - backIndexFactor || 0);
               }
               return undefined;
             }}

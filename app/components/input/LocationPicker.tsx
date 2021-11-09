@@ -1,14 +1,12 @@
 import * as React from 'react';
-import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
-import MapView, { Region } from 'react-native-maps';
+import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
+import MapView, { Marker, Region } from 'react-native-maps';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
 import * as Location from 'expo-location';
 import { calculateLatLngDelta } from '../../utils/calculateLatLngDelta';
 
 interface ILocationPickerProps {
-  markerSize?: number;
-  labelSize?: number;
   value?: {
     lat: number;
     lng: number;
@@ -16,7 +14,7 @@ interface ILocationPickerProps {
   onChange(region: Region): void;
 }
 export function LocationWizardStep(props: ILocationPickerProps) {
-  const { markerSize, labelSize, value, onChange } = props;
+  const { value, onChange } = props;
   const setUsersLocation = React.useCallback(async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -72,6 +70,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
       useNativeDriver: true,
     })
   );
+  const markerRef = React.useRef<Marker>(null);
 
   const map = React.useRef<MapView>();
   const setCoordinateFade = React.useCallback((visible: boolean) => {
@@ -115,13 +114,12 @@ export function LocationWizardStep(props: ILocationPickerProps) {
         zoomEnabled
         scrollEnabled
         focusable
-      />
-      <View style={StyleSheet.absoluteFill}>
-        {!region ? null : (
-          <View style={styles.markerFixed} pointerEvents="none">
+      >
+        {!internalRegion ? null : (
+          <Marker ref={markerRef} flat coordinate={internalRegion}>
             <MaterialCommunityIcons
               pointerEvents="none"
-              size={markerSize || 60}
+              size={60}
               style={{
                 color: '#ffffff',
                 textShadowColor: 'rgba(14,14,14,0.8)',
@@ -134,37 +132,18 @@ export function LocationWizardStep(props: ILocationPickerProps) {
               }}
               name={isDragging ? 'map-marker' : 'map-marker-check-outline'}
             />
-            <Animated.Text
-              style={{
-                fontSize: labelSize || 30,
-                position: 'absolute',
-                bottom: '30%',
-                width: '100%',
-                opacity: opacity.current,
-                textAlign: 'center',
-                color: '#ffffff',
-                textShadowColor: 'rgba(14,14,14,0.8)',
-                textShadowOffset: {
-                  width: 3,
-                  height: 3,
-                },
-                textShadowRadius: 10,
-              }}
-            >
-              {region.latitude.toFixed(5)},{region.longitude.toFixed(5)}
-            </Animated.Text>
-          </View>
+          </Marker>
         )}
+      </MapView>
 
-        <TouchableOpacity
-          style={styles.myLocation}
-          onPress={() => {
-            setUsersLocation();
-          }}
-        >
-          <MaterialIcons name="my-location" size={20} />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        style={styles.myLocation}
+        onPress={() => {
+          setUsersLocation();
+        }}
+      >
+        <MaterialIcons name="my-location" size={20} />
+      </TouchableOpacity>
     </>
   );
 }

@@ -4,8 +4,8 @@ import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import { calculateLatLngDelta } from '../../utils/calculateLatLngDelta';
 
 interface IMapProps {
-  width: number;
-  height: number;
+  width: number | string;
+  height: number | string;
   position?: {
     x: number;
     y: number;
