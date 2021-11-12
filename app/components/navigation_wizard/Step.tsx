@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import GradientText from '../GradientText';
 
 export interface IWizardStepProps {
@@ -10,7 +10,10 @@ export interface IWizardStepProps {
 
 export function Fields({ children }: { children: React.ReactNode }) {
   return (
-    <KeyboardAvoidingView style={styles.fields} behavior="padding">
+    <KeyboardAvoidingView
+      style={styles.fields}
+      behavior={Platform.OS === 'android' ? undefined : 'padding'}
+    >
       <View style={styles.fieldContent}>{children}</View>
     </KeyboardAvoidingView>
   );

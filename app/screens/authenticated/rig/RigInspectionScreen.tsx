@@ -4,7 +4,7 @@ import { startOfDay } from 'date-fns';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { Button, Card, Checkbox, Divider } from 'react-native-paper';
-import { KeyboardAvoidingView } from 'react-native';
+import { KeyboardAvoidingView, Platform } from 'react-native';
 import RigInspectionForm from 'app/components/forms/rig_inspection/RigInspectionForm';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import { QueryDropzoneDocument } from 'app/api/reflection';
@@ -276,7 +276,7 @@ export default function RigInspectionScreen() {
   return (
     <ScrollableScreen>
       <KeyboardAvoidingView
-        behavior="position"
+        behavior={Platform.OS === 'android' ? undefined : 'padding'}
         style={{
           width: '100%',
           flexGrow: 1,

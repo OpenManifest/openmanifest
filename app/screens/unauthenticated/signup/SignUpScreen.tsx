@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Image, KeyboardAvoidingView, StyleSheet } from 'react-native';
+import { Image, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
@@ -38,7 +38,10 @@ export default function SignupScreen() {
 
   return (
     <ScrollableScreen style={styles.container} contentContainerStyle={styles.content}>
-      <KeyboardAvoidingView style={styles.fields} behavior="position">
+      <KeyboardAvoidingView
+        style={styles.fields}
+        behavior={Platform.OS === 'android' ? undefined : 'padding'}
+      >
         <Image source={logo} style={{ width: '100%', height: 200 }} resizeMode="contain" />
         <TextInput
           style={styles.field}

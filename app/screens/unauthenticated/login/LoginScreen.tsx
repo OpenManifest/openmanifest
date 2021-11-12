@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Image, ImageBackground, KeyboardAvoidingView, StyleSheet } from 'react-native';
+import { Image, ImageBackground, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { Card, Button, HelperText, TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { gql, useMutation } from '@apollo/client';
@@ -88,12 +88,16 @@ export default function LoginScreen() {
 
   return (
     <ImageBackground
+      // eslint-disable-next-line global-require
       source={require('assets/images/pattern.png')}
       style={styles.container}
       resizeMode="repeat"
     >
       <Image source={logo} style={{ height: 300, width: '100%' }} resizeMode="contain" />
-      <KeyboardAvoidingView style={styles.fields} behavior="padding">
+      <KeyboardAvoidingView
+        style={styles.fields}
+        behavior={Platform.OS === 'android' ? undefined : 'padding'}
+      >
         <Card style={{ padding: 16, borderRadius: 8 }} elevation={3}>
           <Card.Content>
             <TextInput

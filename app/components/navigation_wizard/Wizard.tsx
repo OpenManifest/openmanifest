@@ -4,7 +4,7 @@ import {
   HeaderStyleInterpolators,
   TransitionSpecs,
 } from '@react-navigation/stack';
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import { useAppSelector } from 'app/state';
@@ -42,7 +42,10 @@ export function Content(props: IWizardProps) {
           <Dots count={steps.length} index={currentIndex} />
         </View>
       )}
-      <KeyboardAvoidingView style={styles.content} behavior="padding">
+      <KeyboardAvoidingView
+        style={styles.content}
+        behavior={Platform.OS === 'android' ? undefined : 'padding'}
+      >
         <WizardRoot.Navigator
           screenOptions={{
             headerShown: false,

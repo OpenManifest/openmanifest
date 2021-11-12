@@ -86,7 +86,7 @@
     "@react-google-maps/api": "^2.2.0",
     "@react-native-async-storage/async-storage": "~1.15.0",
     "@react-native-community/datetimepicker": "3.5.2",
-    "@react-native-community/masked-view": "^0.1.11",
+    "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/slider": "3.0.3",
     "@react-navigation/bottom-tabs": "5.11.2",
     "@react-navigation/core": "^5.14.4",
