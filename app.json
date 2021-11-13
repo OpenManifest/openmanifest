@@ -4,7 +4,7 @@
     "slug": "openmanifest",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.png",
+    "icon": "./assets/images/android-icon.png",
     "scheme": "openmanifest",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -40,9 +40,10 @@
     "android": {
       "package": "com.dangertechnologies.openmanifest",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ff1414"
       },
+      "versionCode": 2,
       "intentFilters": [
         {
           "action": "VIEW",

@@ -13,7 +13,6 @@ const BACKEND_ENVIRONMENTS = {
 export default ({ config }: ConfigContext): ExpoConfig => {
   const environment = process.env.EXPO_ENV;
 
-
   const conf = {
     ...config,
     name: 'OpenManifest',

@@ -8,21 +8,24 @@ import { RetryLink } from '@apollo/client/link/retry';
 import * as React from 'react';
 import * as Update from 'expo-updates';
 import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 import { actions, useAppDispatch, useAppSelector } from '../state';
 
 export default function Apollo({ children }: { children: React.ReactNode }) {
-  const httpBatchLink = React.useMemo(
-    () =>
-      new BatchHttpLink({
-        batchDebounce: true,
-        batchMax: 10,
-        uri:
-          Update.releaseChannel in Constants.manifest?.extra?.urls
-            ? Constants.manifest?.extra?.urls[Update.releaseChannel]
-            : Constants.manifest?.extra?.url,
-      }),
-    []
-  );
+  const httpBatchLink = React.useMemo(() => {
+    console.log('Environment', Constants.manifest?.extra);
+    console.log('Release channel', Update.releaseChannel);
+    const environment =
+      Platform.OS === 'web' ? Constants.manifest?.extra?.environment : Update.releaseChannel;
+    return new BatchHttpLink({
+      batchDebounce: true,
+      batchMax: 10,
+      uri:
+        environment in Constants.manifest?.extra?.urls
+          ? Constants.manifest?.extra?.urls[environment]
+          : Constants.manifest?.extra?.url,
+    });
+  }, []);
   const credentials = useAppSelector((root) => root.global.credentials);
   const dispatch = useAppDispatch();
   // Log any GraphQL errors or network error that occurred
