@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Wizard } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useUserSignUpMutation } from 'app/api/reflection';
+import checkPasswordComplexity from 'app/utils/checkPasswordComplexity';
 import PasswordStep from './steps/Password';
 import EmailStep from './steps/Email';
 import PasswordConfirmationStep from './steps/PasswordConfirmation';
@@ -27,18 +28,8 @@ export default function SignupWizard() {
   }, [dispatch, state.fields.email.value]);
 
   const validatePassword = React.useCallback(async () => {
-    const pattern =
-      // eslint-disable-next-line max-len
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-    const passwordRegex = new RegExp(pattern);
-
-    if (!passwordRegex.test(state.fields.password.value)) {
-      dispatch(
-        actions.screens.signup.setFieldError([
-          'password',
-          'Must contain at least one lowercase letter, one uppercase letter and one digit',
-        ])
-      );
+    if (!checkPasswordComplexity(state.fields.password.value)) {
+      dispatch(actions.screens.signup.setFieldError(['password', 'Password too weak']));
       throw new Error('Invalid email');
     }
   }, [dispatch, state.fields.password.value]);
