@@ -1,7 +1,8 @@
 import { gql, useMutation } from '@apollo/client';
+import PermissionBadges from 'app/screens/authenticated/profile/UserInfo/PermissionBadges';
 import * as React from 'react';
-import { Button, Dialog, Portal, ProgressBar } from 'react-native-paper';
-import { DropzoneUser, Mutation } from '../../api/schema.d';
+import { Button, Dialog, List, Portal, ProgressBar } from 'react-native-paper';
+import { DropzoneUser, Mutation, Permission } from '../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import DropzoneUserForm from '../forms/dropzone_user/DropzoneUserForm';
 
@@ -136,6 +137,20 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         <Dialog.Title>{`${state?.original?.id ? 'Edit' : 'New'} dropzone user`}</Dialog.Title>
         <Dialog.Content>
           <DropzoneUserForm />
+          {state.original ? (
+            <>
+              <List.Subheader style={{ paddingLeft: 0 }}>Acting permissions</List.Subheader>
+              <PermissionBadges
+                dropzoneUser={state.original}
+                permissions={[
+                  Permission.ActAsDzso,
+                  Permission.ActAsGca,
+                  Permission.ActAsLoadMaster,
+                  Permission.ActAsPilot,
+                ]}
+              />
+            </>
+          ) : null}
         </Dialog.Content>
         <Dialog.Actions style={{ justifyContent: 'flex-end' }}>
           <Button
