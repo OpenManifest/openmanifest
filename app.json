@@ -43,7 +43,7 @@
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ff1414"
       },
-      "versionCode": 2,
+      "versionCode": 3,
       "intentFilters": [
         {
           "action": "VIEW",

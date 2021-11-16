@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/core';
 import { useAppSelector } from 'app/state';
 import { IWizardStepProps } from './Step';
 import Dots from './Dots';
+import ScrollableScreen from '../layout/ScrollableScreen';
 
 const WizardRoot = createStackNavigator();
 const WizardModal = createStackNavigator();
@@ -36,7 +37,7 @@ export function Content(props: IWizardProps) {
   const { palette } = useAppSelector((root) => root.global);
 
   return (
-    <View style={StyleSheet.absoluteFill}>
+    <ScrollableScreen style={StyleSheet.absoluteFill}>
       {!dots ? null : (
         <View style={styles.dots}>
           <Dots count={steps.length} index={currentIndex} />
@@ -146,7 +147,7 @@ export function Content(props: IWizardProps) {
           </Button>
         </View>
       </KeyboardAvoidingView>
-    </View>
+    </ScrollableScreen>
   );
 }
 

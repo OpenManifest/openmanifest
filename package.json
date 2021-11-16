@@ -29,7 +29,7 @@
     "ios:build:prod": "EXPO_ENV=production expo build:ios -t archive --skip-credentials-check --release-channel production",
     "android:start:dev": "EXPO_ENV=development expo start --android",
     "android:start:prod": "EXPO_ENV=production expo start --android",
-    "android:build": "EXPO_ENV=production expo build:android",
+    "android:build": "EXPO_ENV=production expo build:android --release-channel production",
     "android:build:staging": "EXPO_ENV=staging expo build:android",
     "android:build:prod": "EXPO_ENV=production expo build:android --release-channel production",
     "expo:publish:staging": "EXPO_ENV=staging expo publish",
