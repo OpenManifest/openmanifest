@@ -1,9 +1,11 @@
-import { gql, useMutation } from '@apollo/client';
+import { gql, useApolloClient, useMutation } from '@apollo/client';
 import PermissionBadges from 'app/screens/authenticated/profile/UserInfo/PermissionBadges';
 import * as React from 'react';
 import { Button, Dialog, List, Portal, ProgressBar } from 'react-native-paper';
-import { DropzoneUser, Mutation, Permission } from '../../api/schema.d';
-import { actions, useAppDispatch, useAppSelector } from '../../state';
+import { DropzoneUser, Mutation, Permission } from 'app/api/schema.d';
+import { DropzoneUserProfileFragment } from 'app/api/operations';
+import { DropzoneUserProfileFragmentDoc } from 'app/api/reflection';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import DropzoneUserForm from '../forms/dropzone_user/DropzoneUserForm';
 
 interface IDropzoneUserDialog {
@@ -45,6 +47,17 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.dropzoneUser);
   const globalState = useAppSelector((root) => root.global);
+  const client = useApolloClient();
+  const getCachedUser = React.useCallback(
+    () =>
+      !state.original
+        ? null
+        : client.readFragment<DropzoneUserProfileFragment>({
+            fragment: DropzoneUserProfileFragmentDoc,
+            id: client.cache.identify(state.original!),
+          }),
+    [client, state.original]
+  );
   const [mutationUpdateDropzoneUser, createData] = useMutation<Mutation>(
     MUTATION_EDIT_DROPZONE_USER
   );
@@ -137,17 +150,16 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         <Dialog.Title>{`${state?.original?.id ? 'Edit' : 'New'} dropzone user`}</Dialog.Title>
         <Dialog.Content>
           <DropzoneUserForm />
-          {state.original ? (
+          {state.original && getCachedUser() ? (
             <>
               <List.Subheader style={{ paddingLeft: 0 }}>Acting permissions</List.Subheader>
               <PermissionBadges
-                dropzoneUser={state.original}
-                permissions={[
-                  Permission.ActAsDzso,
-                  Permission.ActAsGca,
-                  Permission.ActAsLoadMaster,
-                  Permission.ActAsPilot,
-                ]}
+                dropzoneUser={getCachedUser() as DropzoneUser}
+                permissions={
+                  (getCachedUser() as DropzoneUser).permissions?.filter((name) =>
+                    /^actAs/.test(name)
+                  ) as Permission[]
+                }
               />
             </>
           ) : null}

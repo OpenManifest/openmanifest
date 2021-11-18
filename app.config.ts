@@ -36,7 +36,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     extra: {
       url: BACKEND_ENVIRONMENTS[process.env.EXPO_ENV],
       urls: BACKEND_ENVIRONMENTS,
-      environment: process.env.EXPO_ENV
+      environment: process.env.EXPO_ENV,
+      googleMapsAndroid: process.env.GOOGLE_MAPS_ANDROID,
+      googleMapsIos: process.env.GOOGLE_MAPS_IOS,
+      googleMapsWeb: process.env.GOOGLE_MAPS_WEB
     },
     ios: {
       ...config.ios,

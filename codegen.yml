@@ -1,4 +1,4 @@
-schema: ./app/api/openmanifest.graphql
+schema: http://localhost:5000/graphql
 generates:
   ./app/api/openmanifest.graphql:
     plugins:

@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import MapView, { Region, Marker } from 'react-native-maps';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
 import * as Location from 'expo-location';
 import { Step, IWizardStepProps } from 'app/components/navigation_wizard';
+import AddressSearchBar from 'app/components/input/search/AddressSearchBar';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { calculateLatLngDelta } from 'app/utils/calculateLatLngDelta';
 
 function LocationWizardStep(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.dropzone);
+  const [searchText, setSearchText] = React.useState('');
   const dispatch = useAppDispatch();
 
   const setUsersLocation = React.useCallback(async () => {
@@ -151,7 +153,16 @@ function LocationWizardStep(props: IWizardStepProps) {
       </TouchableOpacity>
 
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Pick location</Text>
+        <AddressSearchBar
+          value={searchText}
+          onChange={setSearchText}
+          autocomplete
+          onSelect={(item) => {
+            dispatch(actions.forms.dropzone.setField(['lat', item.latitude]));
+            dispatch(actions.forms.dropzone.setField(['lng', item.longitude]));
+            map.current?.animateCamera({ center: item });
+          }}
+        />
         <Animated.Text
           style={{
             fontSize: 24,
@@ -186,9 +197,10 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     position: 'absolute',
-    top: 140,
+    top: 32,
     left: 0,
     width: '100%',
+    paddingHorizontal: 16,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'flex-start',

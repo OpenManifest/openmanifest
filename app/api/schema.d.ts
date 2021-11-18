@@ -622,6 +622,14 @@ export type FormTemplateInput = {
   dropzoneId?: Maybe<Scalars['Int']>;
 };
 
+export type GeocodedLocation = {
+  __typename?: 'GeocodedLocation';
+  formattedString?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  lat?: Maybe<Scalars['Float']>;
+  lng: Scalars['Float'];
+};
+
 export type GhostInput = {
   name: Scalars['String'];
   email: Scalars['String'];
@@ -1229,12 +1237,16 @@ export enum Permission {
   ReadLoad = 'readLoad',
   /** createSlot */
   CreateSlot = 'createSlot',
+  /** createDoubleSlot */
+  CreateDoubleSlot = 'createDoubleSlot',
   /** updateSlot */
   UpdateSlot = 'updateSlot',
   /** deleteSlot */
   DeleteSlot = 'deleteSlot',
   /** createUserSlot */
   CreateUserSlot = 'createUserSlot',
+  /** createUserDoubleSlot */
+  CreateUserDoubleSlot = 'createUserDoubleSlot',
   /** createUserSlotWithSelf */
   CreateUserSlotWithSelf = 'createUserSlotWithSelf',
   /** updateUserSlot */
@@ -1365,6 +1377,8 @@ export type Query = {
   extras: Array<Extra>;
   /** Available federations */
   federations: Array<Federation>;
+  /** Find location by searching */
+  geocode?: Maybe<GeocodedLocation>;
   /** Load base64 images as graphql */
   image?: Maybe<Scalars['String']>;
   /** Get all jump types */
@@ -1401,6 +1415,11 @@ export type QueryDropzonesArgs = {
 
 export type QueryExtrasArgs = {
   dropzoneId: Scalars['Int'];
+};
+
+
+export type QueryGeocodeArgs = {
+  search: Scalars['String'];
 };
 
 

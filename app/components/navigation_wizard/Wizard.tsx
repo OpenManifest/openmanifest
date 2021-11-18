@@ -37,7 +37,7 @@ export function Content(props: IWizardProps) {
   const { palette } = useAppSelector((root) => root.global);
 
   return (
-    <ScrollableScreen style={StyleSheet.absoluteFill}>
+    <View style={StyleSheet.absoluteFill}>
       {!dots ? null : (
         <View style={styles.dots}>
           <Dots count={steps.length} index={currentIndex} />
@@ -147,7 +147,7 @@ export function Content(props: IWizardProps) {
           </Button>
         </View>
       </KeyboardAvoidingView>
-    </ScrollableScreen>
+    </View>
   );
 }
 

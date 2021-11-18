@@ -14,9 +14,12 @@ import { Step, IWizardStepProps } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { calculateLatLngDelta } from 'app/utils/calculateLatLngDelta';
 import Map from 'app/components/map/Map';
+import AddressSearchBar from 'app/components/input/search/AddressSearchBar';
+import { useIsFocused } from '@react-navigation/core';
 
 function LocationWizardStep(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.dropzone);
+  const [searchText, setSearchText] = React.useState('');
   const dispatch = useAppDispatch();
   const [center, setCenter] = React.useState<{ lat: number; lng: number }>();
 
@@ -79,9 +82,14 @@ function LocationWizardStep(props: IWizardStepProps) {
 
   const { height, width } = useWindowDimensions();
   const [isDragging, setDragging] = React.useState(false);
+  const isFocused = useIsFocused();
+
+  if (!isFocused) {
+    return null;
+  }
 
   return (
-    <Step {...props} title="Location">
+    <Step {...props} title="Location" hideContentUntilNavigatedTo>
       <Map
         mapStyle={{
           ...StyleSheet.absoluteFillObject,
@@ -141,7 +149,17 @@ function LocationWizardStep(props: IWizardStepProps) {
       </TouchableOpacity>
 
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Pick location</Text>
+        <View style={{ width: 300, alignSelf: 'flex-start', marginLeft: 32 }}>
+          <AddressSearchBar
+            value={searchText}
+            onChange={setSearchText}
+            autocomplete
+            onSelect={(item) => {
+              dispatch(actions.forms.dropzone.setField(['lat', item.lat]));
+              dispatch(actions.forms.dropzone.setField(['lng', item.lng]));
+            }}
+          />
+        </View>
         <Animated.Text
           style={{
             fontSize: 24,
@@ -176,7 +194,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     position: 'absolute',
-    top: 140,
+    top: 32,
     left: 0,
     width: '100%',
     flexDirection: 'column',

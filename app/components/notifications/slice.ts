@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import isEqual from 'lodash/isEqual';
+import last from 'lodash/last';
 
 interface INotification {
   message: string;
@@ -22,7 +24,9 @@ export default createSlice({
       state.queue = newQueue;
     },
     showSnackbar: (state: INotificationState, action: PayloadAction<INotification>) => {
-      state.queue.push(action.payload);
+      if (!isEqual(last(state.queue), action.payload)) {
+        state.queue.push(action.payload);
+      }
     },
   },
 });
