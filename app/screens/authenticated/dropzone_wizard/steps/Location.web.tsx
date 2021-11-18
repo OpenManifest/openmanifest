@@ -149,7 +149,7 @@ function LocationWizardStep(props: IWizardStepProps) {
       </TouchableOpacity>
 
       <View style={styles.titleContainer}>
-        <View style={{ width: 300, alignSelf: 'flex-start', marginLeft: 32 }}>
+        <View style={{ width: 300, display: 'none', alignSelf: 'flex-start', marginLeft: 32 }}>
           <AddressSearchBar
             value={searchText}
             onChange={setSearchText}

@@ -153,7 +153,7 @@ function LocationWizardStep(props: IWizardStepProps) {
       </TouchableOpacity>
 
       <View style={styles.titleContainer}>
-        <AddressSearchBar
+        {/* <AddressSearchBar
           value={searchText}
           onChange={setSearchText}
           autocomplete
@@ -162,7 +162,7 @@ function LocationWizardStep(props: IWizardStepProps) {
             dispatch(actions.forms.dropzone.setField(['lng', item.longitude]));
             map.current?.animateCamera({ center: item });
           }}
-        />
+        /> */}
         <Animated.Text
           style={{
             fontSize: 24,
