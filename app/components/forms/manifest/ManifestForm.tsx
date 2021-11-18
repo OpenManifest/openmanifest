@@ -50,7 +50,7 @@ export default function ManifestForm() {
     <>
       <JumpTypeChipSelect
         value={state.fields.jumpType.value}
-        userId={Number(state?.fields?.dropzoneUser?.value?.user?.id) || null}
+        userId={Number(state?.fields?.dropzoneUser?.value?.id) || null}
         onSelect={(value) => dispatch(actions.forms.manifest.setField(['jumpType', value]))}
       />
       <HelperText type={state.fields.jumpType.error ? 'error' : 'info'}>

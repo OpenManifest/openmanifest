@@ -305,7 +305,6 @@ function DropzoneSetupScreen() {
       dots
       name="DropzoneWizard"
       steps={[
-        { component: LocationStep },
         {
           onBack: () => {
             dispatch(actions.forms.ticketType.setOpen(false));
