@@ -231,7 +231,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
 
   return (
     <Portal>
-      <Dialog visible={!!open} style={{ maxHeight: 500 }}>
+      <Dialog visible={!!open} style={{ maxWidth: 500, alignSelf: 'center' }}>
         <ProgressBar
           indeterminate
           visible={mutationData.loading}

@@ -3,8 +3,8 @@ import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import { startOfDay } from 'date-fns';
 import gql from 'graphql-tag';
 import * as React from 'react';
-import { Button, Card, Checkbox, Divider } from 'react-native-paper';
-import { KeyboardAvoidingView, Platform } from 'react-native';
+import { Button, Card, Checkbox, Divider, Paragraph } from 'react-native-paper';
+import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import RigInspectionForm from 'app/components/forms/rig_inspection/RigInspectionForm';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import { QueryDropzoneDocument } from 'app/api/reflection';
@@ -290,7 +290,14 @@ export default function RigInspectionScreen() {
           <Card.Title title={data?.dropzone?.rigInspectionTemplate?.name} />
 
           <Card.Content>
-            <RigInspectionForm />
+            {canInspect ? null : (
+              <Paragraph>
+                You need Rig Inspector permissions to update this form, but you can still view it.
+              </Paragraph>
+            )}
+            <View style={{ flex: 1, flexGrow: 1, opacity: canInspect ? 1.0 : 0.6 }}>
+              <RigInspectionForm />
+            </View>
 
             <Divider />
             <Checkbox.Item

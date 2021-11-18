@@ -4715,6 +4715,73 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "GeocodedLocation",
+        "description": null,
+        "fields": [
+          {
+            "name": "formattedString",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "lat",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "lng",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "INPUT_OBJECT",
         "name": "GhostInput",
         "description": null,
@@ -8534,6 +8601,12 @@
             "deprecationReason": null
           },
           {
+            "name": "createDoubleSlot",
+            "description": "createDoubleSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "updateSlot",
             "description": "updateSlot",
             "isDeprecated": false,
@@ -8548,6 +8621,12 @@
           {
             "name": "createUserSlot",
             "description": "createUserSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createUserDoubleSlot",
+            "description": "createUserDoubleSlot",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -9272,6 +9351,35 @@
                   }
                 }
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "geocode",
+            "description": "Find location by searching",
+            "args": [
+              {
+                "name": "search",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "GeocodedLocation",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

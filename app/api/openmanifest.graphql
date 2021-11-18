@@ -639,6 +639,13 @@ input FormTemplateInput {
   dropzoneId: Int
 }
 
+type GeocodedLocation {
+  formattedString: String
+  id: ID!
+  lat: Float
+  lng: Float!
+}
+
 input GhostInput {
   name: String!
   email: String!
@@ -1138,6 +1145,9 @@ enum Permission {
   """createSlot"""
   createSlot
 
+  """createDoubleSlot"""
+  createDoubleSlot
+
   """updateSlot"""
   updateSlot
 
@@ -1146,6 +1156,9 @@ enum Permission {
 
   """createUserSlot"""
   createUserSlot
+
+  """createUserDoubleSlot"""
+  createUserDoubleSlot
 
   """createUserSlotWithSelf"""
   createUserSlotWithSelf
@@ -1340,6 +1353,9 @@ type Query {
 
   """Available federations"""
   federations: [Federation!]!
+
+  """Find location by searching"""
+  geocode(search: String!): GeocodedLocation
 
   """Load base64 images as graphql"""
   image(id: Int!): String

@@ -1,0 +1,65 @@
+fragment dropzoneUserProfile on DropzoneUser {
+  id
+  credits
+  expiresAt
+  permissions
+
+  role {
+    id
+    name
+  }
+
+  user {
+    id
+    name
+    exitWeight
+    email
+    phone
+    image
+    rigs {
+      id
+      name
+      model
+      make
+      serial
+      canopySize
+      repackExpiresAt
+    }
+    jumpTypes {
+      id
+      name
+    }
+    license {
+      id
+      name
+      federation {
+        id
+        name
+      }
+    }
+  }
+
+  slots {
+    edges {
+      node {
+        id
+        createdAt
+        load {
+          id
+          name
+          loadNumber
+          dispatchAt
+          createdAt
+        }
+        jumpType {
+          id
+          name
+        }
+        ticketType {
+          id
+          name
+        }
+      }
+    }
+  }
+}

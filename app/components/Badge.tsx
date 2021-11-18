@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Chip } from 'react-native-paper';
+import { GlyphMap } from '@expo/vector-icons/build/createIconSet';
 import { useAppSelector } from '../state';
 import { Permission } from '../api/schema.d';
 
@@ -21,19 +22,19 @@ function Badge(props: IBadgeProps) {
   const { type, selected, disabled, onPress } = props;
   const { palette } = useAppSelector((root) => root.global);
   const iconName = {
-    actAsDZSO: 'shield-cross',
-    actAsGCA: 'radio-handheld',
-    actAsLoadMaster: 'shield-account',
-    actAsPilot: 'shield-airplane',
-    actAsRigInspector: 'shield-search',
+    [Permission.ActAsDzso]: 'shield-cross',
+    [Permission.ActAsGca]: 'radio-handheld',
+    [Permission.ActAsLoadMaster]: 'shield-account',
+    [Permission.ActAsPilot]: 'shield-airplane',
+    [Permission.ActAsRigInspector]: 'shield-search',
   }[type];
 
   const label = {
-    actAsDZSO: 'DZSO',
-    actAsGCA: 'GCA',
-    actAsLoadMaster: 'Load Master',
-    actAsPilot: 'Pilot',
-    actAsRigInspector: 'Rig Inspector',
+    [Permission.ActAsDzso]: 'DZSO',
+    [Permission.ActAsGca]: 'GCA',
+    [Permission.ActAsLoadMaster]: 'Load Master',
+    [Permission.ActAsPilot]: 'Pilot',
+    [Permission.ActAsRigInspector]: 'Rig Inspector',
   }[type];
 
   return (
@@ -50,7 +51,9 @@ function Badge(props: IBadgeProps) {
       <View style={styles.innerChip}>
         <View style={{ marginRight: 8 }}>
           <MaterialCommunityIcons
-            icon={selected ? 'check' : iconName}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            name={selected ? 'check' : iconName}
             color={palette.primary.dark}
             size={18}
           />

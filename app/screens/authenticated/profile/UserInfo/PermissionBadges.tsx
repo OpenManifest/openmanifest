@@ -1,4 +1,3 @@
-import { useRoute } from '@react-navigation/core';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import startOfDay from 'date-fns/startOfDay';
@@ -25,7 +24,6 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
   const { permissions, dropzoneUser } = props;
   const state = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
-  const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
 
   const canGrantPermission = useRestriction(Permission.GrantPermission);
 
@@ -49,7 +47,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
           query: QUERY_DROPZONE_USER_PROFILE,
           variables: {
             dropzoneId: state.currentDropzoneId,
-            dropzoneUserId: Number(route.params.userId),
+            dropzoneUserId: Number(dropzoneUser.id),
           },
         },
       ],
@@ -75,7 +73,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
           query: QUERY_DROPZONE_USER_PROFILE,
           variables: {
             dropzoneId: state.currentDropzoneId,
-            dropzoneUserId: Number(route.params.userId),
+            dropzoneUserId: Number(dropzoneUser.id),
           },
         },
       ],

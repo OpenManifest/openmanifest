@@ -3,6 +3,70 @@ import * as Operation from './operations';
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
+export const DropzoneUserProfileFragmentDoc = gql`
+    fragment dropzoneUserProfile on DropzoneUser {
+  id
+  credits
+  expiresAt
+  permissions
+  role {
+    id
+    name
+  }
+  user {
+    id
+    name
+    exitWeight
+    email
+    phone
+    image
+    rigs {
+      id
+      name
+      model
+      make
+      serial
+      canopySize
+      repackExpiresAt
+    }
+    jumpTypes {
+      id
+      name
+    }
+    license {
+      id
+      name
+      federation {
+        id
+        name
+      }
+    }
+  }
+  slots {
+    edges {
+      node {
+        id
+        createdAt
+        load {
+          id
+          name
+          loadNumber
+          dispatchAt
+          createdAt
+        }
+        jumpType {
+          id
+          name
+        }
+        ticketType {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+    `;
 export const DropzoneEssentialsFragmentDoc = gql`
     fragment dropzoneEssentials on Dropzone {
   id
@@ -990,70 +1054,11 @@ export const QueryDropzoneUserProfileDocument = gql`
     id
     name
     dropzoneUser(id: $dropzoneUserId) {
-      id
-      credits
-      expiresAt
-      permissions
-      role {
-        id
-        name
-      }
-      user {
-        id
-        name
-        exitWeight
-        email
-        phone
-        image
-        rigs {
-          id
-          name
-          model
-          make
-          serial
-          canopySize
-          repackExpiresAt
-        }
-        jumpTypes {
-          id
-          name
-        }
-        license {
-          id
-          name
-          federation {
-            id
-            name
-          }
-        }
-      }
-      slots {
-        edges {
-          node {
-            id
-            createdAt
-            load {
-              id
-              name
-              loadNumber
-              dispatchAt
-              createdAt
-            }
-            jumpType {
-              id
-              name
-            }
-            ticketType {
-              id
-              name
-            }
-          }
-        }
-      }
+      ...dropzoneUserProfile
     }
   }
 }
-    `;
+    ${DropzoneUserProfileFragmentDoc}`;
 
 /**
  * __useQueryDropzoneUserProfile__
@@ -1083,6 +1088,44 @@ export function useQueryDropzoneUserProfileLazyQuery(baseOptions?: Apollo.LazyQu
 export type QueryDropzoneUserProfileHookResult = ReturnType<typeof useQueryDropzoneUserProfile>;
 export type QueryDropzoneUserProfileLazyQueryHookResult = ReturnType<typeof useQueryDropzoneUserProfileLazyQuery>;
 export type QueryDropzoneUserProfileQueryResult = Apollo.QueryResult<Operation.QueryDropzoneUserProfileQuery, Operation.QueryDropzoneUserProfileQueryVariables>;
+export const AddressToLocationDocument = gql`
+    query AddressToLocation($search: String!) {
+  geocode(search: $search) {
+    formattedString
+    id
+    lat
+    lng
+  }
+}
+    `;
+
+/**
+ * __useAddressToLocationQuery__
+ *
+ * To run a query within a React component, call `useAddressToLocationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAddressToLocationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAddressToLocationQuery({
+ *   variables: {
+ *      search: // value for 'search'
+ *   },
+ * });
+ */
+export function useAddressToLocationQuery(baseOptions: Apollo.QueryHookOptions<Operation.AddressToLocationQuery, Operation.AddressToLocationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.AddressToLocationQuery, Operation.AddressToLocationQueryVariables>(AddressToLocationDocument, options);
+      }
+export function useAddressToLocationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.AddressToLocationQuery, Operation.AddressToLocationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.AddressToLocationQuery, Operation.AddressToLocationQueryVariables>(AddressToLocationDocument, options);
+        }
+export type AddressToLocationQueryHookResult = ReturnType<typeof useAddressToLocationQuery>;
+export type AddressToLocationLazyQueryHookResult = ReturnType<typeof useAddressToLocationLazyQuery>;
+export type AddressToLocationQueryResult = Apollo.QueryResult<Operation.AddressToLocationQuery, Operation.AddressToLocationQueryVariables>;
 export const CurrentUserPermissionsDocument = gql`
     query CurrentUserPermissions($dropzoneId: Int!) {
   dropzone(id: $dropzoneId) {
