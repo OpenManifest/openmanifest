@@ -1,11 +1,16 @@
 import * as React from 'react';
-import { LayoutRectangle, View, ViewStyle } from 'react-native';
+import { LayoutRectangle, StyleSheet, View, ViewStyle } from 'react-native';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 /* eslint-disable import/no-unresolved */
 import { GOOGLE_MAPS_WEB } from '@env';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Location from 'expo-location';
+import { useIsFocused } from '@react-navigation/core';
 import { calculateLatLngDelta } from '../../utils/calculateLatLngDelta';
+
+// Used if user location cant be used and we have no other fallback
+// This points to Brisbane:
+const DEFAULT_COORDS = { lat: -27.4705, lng: 153.026 };
 
 interface IMapProps {
   width: number | string;
@@ -29,37 +34,53 @@ interface IMapProps {
   onDragEnd?(coords: { lat: number; lng: number }): void;
 }
 export default function Map(props: IMapProps) {
-  const { width, height, position, children, center, coords, shape, interactive, onDragEnd } =
-    props;
-  const { isLoaded } = useJsApiLoader({
+  const {
+    width,
+    height,
+    position,
+    children,
+    center,
+    coords: _coords,
+    shape,
+    interactive,
+    onDragEnd,
+  } = props;
+  const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_WEB,
     id: 'google-maps-script',
   });
 
   const { containerStyle, mapStyle } = props;
   const map = React.useRef<GoogleMap>(null);
+  const coords = _coords || DEFAULT_COORDS;
 
-  const onLoad = React.useCallback(async (component: GoogleMap) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    map.current = component;
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        return;
+  const onLoad = React.useCallback(
+    async (component: GoogleMap) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      map.current = component;
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          return;
+        }
+        // const location = await Location.getCurrentPositionAsync({});
+        // const lat = coords?.lat || location.coords.latitude;
+        // const lng = coords?.lng || location.coords.longitude;
+      } catch (error) {
+        console.log({ error });
+      } finally {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const bounds = new window.google.maps.LatLngBounds(coords);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        map.current?.fitBounds(bounds);
+        map.current?.panTo?.(coords);
       }
-      // const location = await Location.getCurrentPositionAsync({});
-      // const lat = coords?.lat || location.coords.latitude;
-      // const lng = coords?.lng || location.coords.longitude;
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const bounds = new window.google.maps.LatLngBounds();
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      map.current?.fitBounds(bounds);
-    }
-  }, []);
+    },
+    [coords]
+  );
 
   const onUnmount = React.useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -67,43 +88,10 @@ export default function Map(props: IMapProps) {
     map.current = null;
   }, []);
 
-  const delayedPanningTimer = React.useRef<ReturnType<typeof setTimeout>>();
-
-  const panDelayed = React.useCallback((lat: number, lng: number) => {
-    if (delayedPanningTimer) {
-      // clearTimeout(delayedPanningTimer.current);
-      // delayedPanningTimer.current = null;
-    }
-    return;
-    if (map.current?.panTo) {
-      console.log('PANNING', lat, lng);
-      map.current?.panTo?.({ lat, lng });
-
-      const latDelta = calculateLatLngDelta(lat, 0.5);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const bounds = new window.google.maps.LatLngBounds(
-        { lat: lat - latDelta, lng: lng - latDelta },
-        { lat: lat + latDelta, lng: lng + latDelta }
-      );
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      map.current?.fitBounds(bounds);
-    } else {
-      console.log('DELAYING PANNING TO ', lat, lng, map.current);
-      delayedPanningTimer.current = setTimeout(() => panDelayed(lat, lng), 500);
-    }
-  }, []);
-
-  React.useEffect(() => {
-    if (center) {
-      console.log({ center, coords });
-      panDelayed(center.lat, center.lng);
-    }
-  }, [center, coords, panDelayed]);
-
   const [rootLayout, setRootLayout] = React.useState<LayoutRectangle>();
-  return !isLoaded ? null : (
+  const isFocused = useIsFocused();
+
+  return !isLoaded || !isFocused ? null : (
     <View
       onLayout={({ nativeEvent }) => setRootLayout(nativeEvent.layout)}
       style={{
@@ -119,12 +107,15 @@ export default function Map(props: IMapProps) {
       pointerEvents={interactive ? undefined : 'none'}
     >
       <GoogleMap
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         onLoad={(component: GoogleMap) => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           map.current = component;
           onLoad(component);
         }}
+        ref={map}
         center={coords}
         onDragEnd={() => {
           onDragEnd?.({
@@ -137,7 +128,7 @@ export default function Map(props: IMapProps) {
           });
         }}
         onUnmount={onUnmount}
-        // provider={PROVIDER_GOOGLE}
+        mapTypeId={google.maps.MapTypeId.HYBRID}
         mapContainerStyle={{
           width: '100%',
           height: '100%',
@@ -150,9 +141,10 @@ export default function Map(props: IMapProps) {
           zoom: 15,
           fullscreenControl: false,
           streetViewControl: false,
+          center: coords,
           mapTypeControl: false,
+          mapTypeId: google.maps.MapTypeId.HYBRID,
           zoomControl: false,
-          mapTypeId: 'satellite',
         }}
       >
         {children}

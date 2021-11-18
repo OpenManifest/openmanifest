@@ -871,6 +871,13 @@ input FormTemplateInput {
   name: String
 }
 
+type GeocodedLocation {
+  formattedString: String
+  id: ID!
+  lat: Float
+  lng: Float!
+}
+
 input GhostInput {
   dropzoneId: Int!
   email: String!
@@ -1568,6 +1575,11 @@ enum Permission {
   actAsRigInspector
 
   """
+  createDoubleSlot
+  """
+  createDoubleSlot
+
+  """
   createDropzoneRig
   """
   createDropzoneRig
@@ -1621,6 +1633,11 @@ enum Permission {
   createUser
   """
   createUser
+
+  """
+  createUserDoubleSlot
+  """
+  createUserDoubleSlot
 
   """
   createUserSlot
@@ -1898,6 +1915,11 @@ type Query {
   Available federations
   """
   federations: [Federation!]!
+
+  """
+  Find location by searching
+  """
+  geocode(search: String!): GeocodedLocation
 
   """
   Load base64 images as graphql

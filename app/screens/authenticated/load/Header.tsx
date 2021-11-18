@@ -37,7 +37,11 @@ export default function UserHeader(props: ILoadHeader) {
       <View style={styles.avatarContainer}>
         <View style={{ flex: 1 / 3 }}>
           {load?.dispatchAt && isAfter(load.dispatchAt * 1000, new Date()) ? (
-            <Countdown end={new Date(load.dispatchAt * 1000)} variant="light" size={80} />
+            <Countdown
+              end={new Date(load.dispatchAt * 1000)}
+              variant={theme.dark ? 'light' : 'dark'}
+              size={80}
+            />
           ) : (
             <Avatar.Icon
               size={80}

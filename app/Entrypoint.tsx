@@ -12,6 +12,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
 import * as Sentry from 'sentry-expo';
 import URI from 'urijs';
+import Geocoder from 'react-native-geocoding';
+import { setGoogleApiKey } from 'expo-location';
+/* eslint-disable import/no-unresolved */
 import './PaperDatesPolyfill';
 import Wrapper from './EntrypointWrapper';
 
@@ -70,6 +73,15 @@ async function registerForPushNotificationsAsync(): Promise<string | null> {
 
   return token || null;
 }
+
+const googleMapsApiKey = Platform.select({
+  ios: Constants.manifest?.extra?.googleMapsIos,
+  android: Constants.manifest?.extra?.googleMapsAndroid,
+  web: Constants.manifest?.extra?.googleMapsWeb,
+});
+
+Geocoder.init(googleMapsApiKey);
+setGoogleApiKey(googleMapsApiKey);
 
 function Content() {
   const state = useAppSelector((root) => root.global);

@@ -1,4 +1,5 @@
-import { createStackNavigator } from '@react-navigation/stack';
+import { HeaderStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
+
 import * as React from 'react';
 import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
 import { Dropzone, DropzoneUser, Order, Slot } from '../../api/schema.d';
@@ -88,6 +89,7 @@ export default function ManifestTab() {
       screenOptions={{
         headerShown: !!(globalState.credentials && globalState.currentDropzone),
         header: (props) => <AppBar {...props} />,
+        headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
         cardStyle: {
           flex: 1,
         },

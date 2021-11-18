@@ -1,5 +1,7 @@
 import * as React from 'react';
+import { View } from 'react-native';
 import { Button, Dialog, Portal, ProgressBar } from 'react-native-paper';
+import { Tabs, TabScreen } from 'react-native-paper-tabs';
 import { useCreateOrderMutation } from '../../../api/reflection';
 import { DropzoneUser, TransactionType, WalletableTypes } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
@@ -122,13 +124,37 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
 
   return (
     <Portal>
-      <Dialog visible={!!open}>
+      <Dialog visible={!!open} style={{ maxWidth: 500, alignSelf: 'center' }}>
+        <View>
+          <Tabs
+            defaultIndex={0} // default = 0
+            onChangeIndex={(newIndex) => {
+              dispatch(
+                actions.forms.credits.setField([
+                  'transactionType',
+                  newIndex === 1 ? 'withdrawal' : 'deposit',
+                ])
+              );
+            }}
+            mode="fixed"
+          >
+            <TabScreen label="Deposit" icon="arrow-up">
+              <View />
+            </TabScreen>
+            <TabScreen label="Withdraw" icon="arrow-down">
+              <View />
+            </TabScreen>
+          </Tabs>
+        </View>
         <ProgressBar
           indeterminate
           visible={createData.loading}
           color={globalState.theme.colors.accent}
         />
-        <CreditsForm />
+        <Dialog.Content>
+          <CreditsForm />
+        </Dialog.Content>
+
         <Dialog.Actions style={{ justifyContent: 'flex-end' }}>
           <Button
             onPress={() => {

@@ -1,10 +1,13 @@
+import { useIsFocused } from '@react-navigation/core';
 import * as React from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import GradientText from '../GradientText';
 
 export interface IWizardStepProps {
   title?: React.ReactText;
   children?: React.ReactNode;
+  hideContentUntilNavigatedTo?: boolean;
   index: number;
 }
 
@@ -19,8 +22,12 @@ export function Fields({ children }: { children: React.ReactNode }) {
   );
 }
 export function Step(props: IWizardStepProps) {
-  const { children, title } = props;
+  const { children, title, hideContentUntilNavigatedTo } = props;
 
+  const isFocused = useIsFocused();
+  if (!isFocused && hideContentUntilNavigatedTo) {
+    return null;
+  }
   return (
     <View style={styles.container}>
       {title && (
@@ -39,7 +46,9 @@ export function Step(props: IWizardStepProps) {
           </View>
         </View>
       )}
-      <View style={styles.content}>{children}</View>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content}>
+        {children}
+      </ScrollView>
     </View>
   );
 }
