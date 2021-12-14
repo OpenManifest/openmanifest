@@ -1,0 +1,9 @@
+fragment userEssentials on User {
+  id
+  name
+  nickname
+  phone
+  email
+  exitWeight
+  moderationRole
+}

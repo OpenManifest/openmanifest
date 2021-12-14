@@ -1,9 +1,17 @@
 import * as React from 'react';
-import { Image, ImageBackground, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import {
+  Image,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+} from 'react-native';
 import { Card, Button, HelperText, TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { gql, useMutation } from '@apollo/client';
 
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import { Mutation } from '../../../api/schema';
@@ -136,11 +144,13 @@ export default function LoginScreen() {
             <Button
               labelStyle={styles.textButtonLabel}
               style={styles.textButton}
-              // onPress={() => navigation.navigate('SignUpScreen')}
               onPress={() => navigation.navigate('SignUpWizard')}
             >
               Sign up
             </Button>
+            <TouchableOpacity onPress={() => navigation.navigate('RecoverPasswordScreen')}>
+              <Text style={styles.forgotPassword}>Forgot your password?</Text>
+            </TouchableOpacity>
           </Card.Content>
         </Card>
       </KeyboardAvoidingView>
@@ -159,6 +169,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+  },
+
+  forgotPassword: {
+    color: 'rgb(50, 50, 50)',
   },
 
   fields: {

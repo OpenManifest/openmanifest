@@ -1,0 +1,85 @@
+import * as React from 'react';
+import { Wizard } from 'app/components/navigation_wizard';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useUpdateLostPasswordMutation } from 'app/api/reflection';
+import checkPasswordComplexity from 'app/utils/checkPasswordComplexity';
+import { User } from 'app/api/schema.d';
+import { useRoute } from '@react-navigation/core';
+import DoneStep from './steps/Done';
+import PasswordStep from './steps/Password';
+import PasswordConfirmationStep from './steps/PasswordConfirmation';
+
+export default function SignupWizard() {
+  const state = useAppSelector((root) => root.screens.signup);
+  const dispatch = useAppDispatch();
+  const route = useRoute<{
+    key: string;
+    name: string;
+    // eslint-disable-next-line camelcase
+    params?: { token?: string };
+  }>();
+
+  const [updatePassword] = useUpdateLostPasswordMutation();
+
+  const onChangePassword = React.useCallback(async () => {
+    try {
+      if (state.fields.password.value !== state.fields.passwordConfirmation.value) {
+        throw new Error('Password mismatch. Did you type exactly the same password?');
+      }
+      if (!route.params?.token) {
+        throw new Error('Security token missing - try clicking the link in the email again');
+      }
+      const result = await updatePassword({
+        variables: {
+          password: state.fields.password.value,
+          passwordConfirmation: state.fields.passwordConfirmation.value,
+          token: route.params.token,
+        },
+      });
+      console.log(result?.data?.userUpdatePasswordWithToken);
+      if (result?.data?.userUpdatePasswordWithToken?.authenticatable) {
+        dispatch(
+          actions.global.setUser(result.data.userUpdatePasswordWithToken.authenticatable as User)
+        );
+
+        if (result?.data?.userUpdatePasswordWithToken?.credentials) {
+          dispatch(
+            actions.global.setCredentials(result.data.userUpdatePasswordWithToken.credentials)
+          );
+        }
+      }
+      if (result.errors?.length) {
+        throw new Error(result.errors[0].message);
+      }
+      throw new Error('Password change failed');
+    } catch (e) {
+      dispatch(actions.screens.signup.setFieldError(['passwordConfirmation', e.message]));
+      throw new Error();
+    }
+  }, [
+    dispatch,
+    route.params?.token,
+    state.fields.password.value,
+    state.fields.passwordConfirmation.value,
+    updatePassword,
+  ]);
+
+  const validatePassword = React.useCallback(async () => {
+    if (!checkPasswordComplexity(state.fields.password.value)) {
+      dispatch(actions.screens.signup.setFieldError(['password', 'Password too weak']));
+      throw new Error('Password too weak');
+    }
+  }, [dispatch, state.fields.password.value]);
+
+  return (
+    <Wizard
+      dots
+      name="ChangePasswordWizard"
+      steps={[
+        { onNext: validatePassword, component: PasswordStep },
+        { onNext: onChangePassword, component: PasswordConfirmationStep },
+        { component: DoneStep },
+      ]}
+    />
+  );
+}

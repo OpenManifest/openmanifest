@@ -1,3 +1,7 @@
+#import "./orders.fragments.gql"
+#import "./transactions.fragments.gql"
+#import "./users.fragments.gql"
+
 fragment currentUserEssentials on DropzoneUser {
   id
   credits
@@ -19,181 +23,80 @@ fragment currentUserEssentials on DropzoneUser {
 fragment currentUserDetailed on DropzoneUser {
   ...currentUserEssentials,
 
+  user {
+    ...userEssentials
+  }
+
+
+  rigInspections {
+    id
+    isOk
+    inspectedBy {
+      id
+      user {
+        id
+        name
+      }
+    }
+    rig {
+      id
+    }
+  }
+
+  orders {
+    edges {
+      node {
+        ...orderEssentials
+      }
+    }
+  }
+  availableRigs {
+    name
+    id
+    make
+    model
+    canopySize
+    serial
+
     user {
       id
-      nickname
-      name
-      moderationRole
     }
+  }
+  license {
+    id
+    name
+  }
 
+  user {
+    id
+    name
+    exitWeight
+    email
+    phone
+    pushToken
+    image
 
-    rigInspections {
+    rigs {
       id
-      isOk
-      inspectedBy {
-        id
-        user {
-          id
-          name
-        }
-      }
-      rig {
-        id
-      }
-    }
-
-    orders {
-      edges {
-        node {
-          id
-          title
-          state
-          createdAt
-          title
-          amount
-          buyer {
-            __typename
-            ... on DropzoneUser {
-              id
-              user {
-                id
-                name
-              }
-            }
-            ... on Dropzone {
-              id
-              name
-            }
-          }
-          seller {
-            __typename
-            ... on DropzoneUser {
-              id
-              user {
-                id
-                name
-              }
-            }
-            ... on Dropzone {
-              id
-              name
-            }
-          }
-          
-          item {
-            title
-            cost
-
-            ... on Slot {
-              id
-
-              ticketType {
-                id
-                name
-                cost
-              }
-
-              extras {
-                id
-                name
-                cost
-              }
-            }
-            ... on TicketType {
-              id
-            }
-            ... on Extra {
-              id
-              name
-            }
-          }
-          receipts {
-            id
-            transactions {
-              id
-              message
-              transactionType
-              status
-              createdAt
-              amount
-              sender {
-                ... on DropzoneUser {
-                  id
-                  user {
-                    id
-                    name
-                  }
-                }
-                ... on Dropzone {
-                  id
-                  name
-                }
-              }
-              receiver {
-                ... on DropzoneUser {
-                  id
-                  user {
-                    id
-                    name
-                  }
-                }
-                ... on Dropzone {
-                  id
-                  name
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    availableRigs {
       name
-      id
-      make
       model
-      canopySize
+      make
       serial
+      canopySize
+      repackExpiresAt
+      packingCard
 
       user {
         id
       }
     }
+    jumpTypes {
+      id
+      name
+    }
     license {
       id
       name
     }
-
-    user {
-      id
-      name
-      exitWeight
-      email
-      phone
-      pushToken
-      image
-
-      rigs {
-        id
-        name
-        model
-        make
-        serial
-        canopySize
-        repackExpiresAt
-        packingCard
-
-        user {
-          id
-        }
-      }
-      jumpTypes {
-        id
-        name
-      }
-      license {
-        id
-        name
-      }
-    }
+  }
 }

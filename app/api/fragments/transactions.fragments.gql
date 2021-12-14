@@ -1,4 +1,4 @@
-fragment transaction on Transaction {
+fragment transactionEssentials on Transaction {
   id
   transactionType
   amount

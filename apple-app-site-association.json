@@ -10,7 +10,9 @@
       {
         "appID": "R3PC2YD7K4.com.dangertechnologies.openmanifest",
         "paths": [
-          "/confirm/*"
+          "/confirm/*",
+          "/reset-password/*",
+          "/reset-password"
         ],
         "components": [
           {

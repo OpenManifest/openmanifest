@@ -140,14 +140,125 @@ export const CurrentUserEssentialsFragmentDoc = gql`
   }
 }
     `;
+export const UserEssentialsFragmentDoc = gql`
+    fragment userEssentials on User {
+  id
+  name
+  nickname
+  phone
+  email
+  exitWeight
+  moderationRole
+}
+    `;
+export const TransactionEssentialsFragmentDoc = gql`
+    fragment transactionEssentials on Transaction {
+  id
+  transactionType
+  amount
+  status
+  sender {
+    ... on DropzoneUser {
+      id
+      user {
+        id
+        name
+      }
+    }
+    ... on Dropzone {
+      id
+      name
+    }
+  }
+  receiver {
+    ... on DropzoneUser {
+      id
+      user {
+        id
+        name
+      }
+    }
+    ... on Dropzone {
+      id
+      name
+    }
+  }
+}
+    `;
+export const OrderEssentialsFragmentDoc = gql`
+    fragment orderEssentials on Order {
+  id
+  state
+  amount
+  title
+  orderNumber
+  createdAt
+  buyer {
+    ... on DropzoneUser {
+      id
+      user {
+        id
+        name
+      }
+    }
+    ... on Dropzone {
+      id
+      name
+    }
+  }
+  seller {
+    ... on DropzoneUser {
+      id
+      user {
+        id
+        name
+      }
+    }
+    ... on Dropzone {
+      id
+      name
+    }
+  }
+  item {
+    title
+    cost
+    ... on Slot {
+      id
+      ticketType {
+        id
+        name
+        cost
+      }
+      extras {
+        id
+        name
+        cost
+      }
+    }
+    ... on TicketType {
+      id
+    }
+    ... on Extra {
+      id
+      name
+    }
+  }
+  receipts {
+    id
+    amountCents
+    createdAt
+    updatedAt
+    transactions {
+      ...transactionEssentials
+    }
+  }
+}
+    ${TransactionEssentialsFragmentDoc}`;
 export const CurrentUserDetailedFragmentDoc = gql`
     fragment currentUserDetailed on DropzoneUser {
   ...currentUserEssentials
   user {
-    id
-    nickname
-    name
-    moderationRole
+    ...userEssentials
   }
   rigInspections {
     id
@@ -166,101 +277,7 @@ export const CurrentUserDetailedFragmentDoc = gql`
   orders {
     edges {
       node {
-        id
-        title
-        state
-        createdAt
-        title
-        amount
-        buyer {
-          __typename
-          ... on DropzoneUser {
-            id
-            user {
-              id
-              name
-            }
-          }
-          ... on Dropzone {
-            id
-            name
-          }
-        }
-        seller {
-          __typename
-          ... on DropzoneUser {
-            id
-            user {
-              id
-              name
-            }
-          }
-          ... on Dropzone {
-            id
-            name
-          }
-        }
-        item {
-          title
-          cost
-          ... on Slot {
-            id
-            ticketType {
-              id
-              name
-              cost
-            }
-            extras {
-              id
-              name
-              cost
-            }
-          }
-          ... on TicketType {
-            id
-          }
-          ... on Extra {
-            id
-            name
-          }
-        }
-        receipts {
-          id
-          transactions {
-            id
-            message
-            transactionType
-            status
-            createdAt
-            amount
-            sender {
-              ... on DropzoneUser {
-                id
-                user {
-                  id
-                  name
-                }
-              }
-              ... on Dropzone {
-                id
-                name
-              }
-            }
-            receiver {
-              ... on DropzoneUser {
-                id
-                user {
-                  id
-                  name
-                }
-              }
-              ... on Dropzone {
-                id
-                name
-              }
-            }
-          }
-        }
+        ...orderEssentials
       }
     }
   }
@@ -310,7 +327,9 @@ export const CurrentUserDetailedFragmentDoc = gql`
     }
   }
 }
-    ${CurrentUserEssentialsFragmentDoc}`;
+    ${CurrentUserEssentialsFragmentDoc}
+${UserEssentialsFragmentDoc}
+${OrderEssentialsFragmentDoc}`;
 export const DropzoneExtensiveFragmentDoc = gql`
     fragment dropzoneExtensive on Dropzone {
   ...dropzoneDetailed
@@ -413,108 +432,6 @@ export const LoadFragmentDoc = gql`
   }
 }
     ${SlotFragmentDoc}`;
-export const TransactionFragmentDoc = gql`
-    fragment transaction on Transaction {
-  id
-  transactionType
-  amount
-  status
-  sender {
-    ... on DropzoneUser {
-      id
-      user {
-        id
-        name
-      }
-    }
-    ... on Dropzone {
-      id
-      name
-    }
-  }
-  receiver {
-    ... on DropzoneUser {
-      id
-      user {
-        id
-        name
-      }
-    }
-    ... on Dropzone {
-      id
-      name
-    }
-  }
-}
-    `;
-export const OrderFragmentDoc = gql`
-    fragment order on Order {
-  id
-  state
-  amount
-  title
-  orderNumber
-  buyer {
-    ... on DropzoneUser {
-      id
-      user {
-        id
-        name
-      }
-    }
-    ... on Dropzone {
-      id
-      name
-    }
-  }
-  seller {
-    ... on DropzoneUser {
-      id
-      user {
-        id
-        name
-      }
-    }
-    ... on Dropzone {
-      id
-      name
-    }
-  }
-  item {
-    title
-    cost
-    ... on Slot {
-      id
-      ticketType {
-        id
-        name
-        cost
-      }
-      extras {
-        id
-        name
-        cost
-      }
-    }
-    ... on TicketType {
-      id
-    }
-    ... on Extra {
-      id
-      name
-    }
-  }
-  receipts {
-    id
-    amountCents
-    createdAt
-    updatedAt
-    transactions {
-      ...transaction
-    }
-  }
-}
-    ${TransactionFragmentDoc}`;
 export const RigEssentialsFragmentDoc = gql`
     fragment rigEssentials on Rig {
   id
@@ -598,11 +515,11 @@ export const CreateOrderDocument = gql`
     }
     errors
     order {
-      ...order
+      ...orderEssentials
     }
   }
 }
-    ${OrderFragmentDoc}`;
+    ${OrderEssentialsFragmentDoc}`;
 export type CreateOrderMutationFn = Apollo.MutationFunction<Operation.CreateOrderMutation, Operation.CreateOrderMutationVariables>;
 
 /**
@@ -795,8 +712,42 @@ export function useJoinFederationMutation(baseOptions?: Apollo.MutationHookOptio
 export type JoinFederationMutationHookResult = ReturnType<typeof useJoinFederationMutation>;
 export type JoinFederationMutationResult = Apollo.MutationResult<Operation.JoinFederationMutation>;
 export type JoinFederationMutationOptions = Apollo.BaseMutationOptions<Operation.JoinFederationMutation, Operation.JoinFederationMutationVariables>;
+export const RecoverPasswordDocument = gql`
+    mutation RecoverPassword($email: String!, $redirectUrl: String!) {
+  userSendPasswordReset(email: $email, redirectUrl: $redirectUrl) {
+    message
+  }
+}
+    `;
+export type RecoverPasswordMutationFn = Apollo.MutationFunction<Operation.RecoverPasswordMutation, Operation.RecoverPasswordMutationVariables>;
+
+/**
+ * __useRecoverPasswordMutation__
+ *
+ * To run a mutation, you first call `useRecoverPasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRecoverPasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [recoverPasswordMutation, { data, loading, error }] = useRecoverPasswordMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      redirectUrl: // value for 'redirectUrl'
+ *   },
+ * });
+ */
+export function useRecoverPasswordMutation(baseOptions?: Apollo.MutationHookOptions<Operation.RecoverPasswordMutation, Operation.RecoverPasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.RecoverPasswordMutation, Operation.RecoverPasswordMutationVariables>(RecoverPasswordDocument, options);
+      }
+export type RecoverPasswordMutationHookResult = ReturnType<typeof useRecoverPasswordMutation>;
+export type RecoverPasswordMutationResult = Apollo.MutationResult<Operation.RecoverPasswordMutation>;
+export type RecoverPasswordMutationOptions = Apollo.BaseMutationOptions<Operation.RecoverPasswordMutation, Operation.RecoverPasswordMutationVariables>;
 export const ReloadWeatherDocument = gql`
-    mutation ReloadWeather($dropzoneId: Int!, $id: Int!) {
+    mutation ReloadWeather($id: Int!) {
   reloadWeatherCondition(input: {id: $id}) {
     errors
     fieldErrors {
@@ -837,7 +788,6 @@ export type ReloadWeatherMutationFn = Apollo.MutationFunction<Operation.ReloadWe
  * @example
  * const [reloadWeatherMutation, { data, loading, error }] = useReloadWeatherMutation({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
  *      id: // value for 'id'
  *   },
  * });
@@ -849,6 +799,54 @@ export function useReloadWeatherMutation(baseOptions?: Apollo.MutationHookOption
 export type ReloadWeatherMutationHookResult = ReturnType<typeof useReloadWeatherMutation>;
 export type ReloadWeatherMutationResult = Apollo.MutationResult<Operation.ReloadWeatherMutation>;
 export type ReloadWeatherMutationOptions = Apollo.BaseMutationOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
+export const UpdateLostPasswordDocument = gql`
+    mutation UpdateLostPassword($password: String!, $passwordConfirmation: String!, $token: String!) {
+  userUpdatePasswordWithToken(
+    password: $password
+    passwordConfirmation: $passwordConfirmation
+    resetPasswordToken: $token
+  ) {
+    authenticatable {
+      ...userEssentials
+    }
+    credentials {
+      accessToken
+      client
+      expiry
+      tokenType
+      uid
+    }
+  }
+}
+    ${UserEssentialsFragmentDoc}`;
+export type UpdateLostPasswordMutationFn = Apollo.MutationFunction<Operation.UpdateLostPasswordMutation, Operation.UpdateLostPasswordMutationVariables>;
+
+/**
+ * __useUpdateLostPasswordMutation__
+ *
+ * To run a mutation, you first call `useUpdateLostPasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateLostPasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateLostPasswordMutation, { data, loading, error }] = useUpdateLostPasswordMutation({
+ *   variables: {
+ *      password: // value for 'password'
+ *      passwordConfirmation: // value for 'passwordConfirmation'
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useUpdateLostPasswordMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateLostPasswordMutation, Operation.UpdateLostPasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateLostPasswordMutation, Operation.UpdateLostPasswordMutationVariables>(UpdateLostPasswordDocument, options);
+      }
+export type UpdateLostPasswordMutationHookResult = ReturnType<typeof useUpdateLostPasswordMutation>;
+export type UpdateLostPasswordMutationResult = Apollo.MutationResult<Operation.UpdateLostPasswordMutation>;
+export type UpdateLostPasswordMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateLostPasswordMutation, Operation.UpdateLostPasswordMutationVariables>;
 export const UpdateRigDocument = gql`
     mutation UpdateRig($id: Int!, $name: String, $make: String, $model: String, $serial: String, $rigType: String, $canopySize: Int, $packingCard: String, $repackExpiresAt: Int, $userId: Int, $dropzoneId: Int) {
   updateRig(
