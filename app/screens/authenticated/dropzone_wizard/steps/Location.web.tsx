@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  Animated,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { Animated, StyleSheet, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
 import * as Location from 'expo-location';

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
 import { HelperText, TextInput } from 'react-native-paper';
 import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';

@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Dropzone } from 'app/api/schema.d';
 
 export enum DropzoneWizardStep {
   Name = 0,

@@ -149,6 +149,11 @@ export const UserEssentialsFragmentDoc = gql`
   email
   exitWeight
   moderationRole
+  image
+  license {
+    id
+    name
+  }
 }
     `;
 export const TransactionEssentialsFragmentDoc = gql`
@@ -339,8 +344,43 @@ export const DropzoneExtensiveFragmentDoc = gql`
 }
     ${DropzoneDetailedFragmentDoc}
 ${CurrentUserDetailedFragmentDoc}`;
-export const SlotFragmentDoc = gql`
-    fragment slot on Slot {
+export const DropzoneUserEssentialsFragmentDoc = gql`
+    fragment dropzoneUserEssentials on DropzoneUser {
+  id
+  role {
+    id
+    name
+  }
+  license {
+    id
+    name
+  }
+  user {
+    ...userEssentials
+  }
+}
+    ${UserEssentialsFragmentDoc}`;
+export const TicketTypeEssentialsFragmentDoc = gql`
+    fragment ticketTypeEssentials on TicketType {
+  id
+  name
+  altitude
+  isTandem
+  extras {
+    id
+    name
+    cost
+  }
+}
+    `;
+export const JumpTypeEssentialsFragmentDoc = gql`
+    fragment jumpTypeEssentials on JumpType {
+  id
+  name
+}
+    `;
+export const SlotDetailsFragmentDoc = gql`
+    fragment slotDetails on Slot {
   id
   createdAt
   exitWeight
@@ -348,46 +388,24 @@ export const SlotFragmentDoc = gql`
   passengerExitWeight
   wingLoading
   dropzoneUser {
-    id
-    role {
-      id
-      name
-    }
-    user {
-      id
-      name
-      nickname
-      exitWeight
-      image
-      license {
-        id
-        name
-      }
-    }
+    ...dropzoneUserEssentials
   }
   ticketType {
-    id
-    name
-    altitude
-    isTandem
-    extras {
-      id
-      name
-      cost
-    }
+    ...ticketTypeEssentials
   }
   jumpType {
-    id
-    name
+    ...jumpTypeEssentials
   }
   extras {
     id
     name
   }
 }
-    `;
-export const LoadFragmentDoc = gql`
-    fragment load on Load {
+    ${DropzoneUserEssentialsFragmentDoc}
+${TicketTypeEssentialsFragmentDoc}
+${JumpTypeEssentialsFragmentDoc}`;
+export const LoadDetailsFragmentDoc = gql`
+    fragment loadDetails on Load {
   id
   name
   createdAt
@@ -428,10 +446,18 @@ export const LoadFragmentDoc = gql`
     }
   }
   slots {
-    ...slot
+    ...slotDetails
   }
 }
-    ${SlotFragmentDoc}`;
+    ${SlotDetailsFragmentDoc}`;
+export const PlaneEssentialsFragmentDoc = gql`
+    fragment planeEssentials on Plane {
+  id
+  maxSlots
+  name
+  registration
+}
+    `;
 export const RigEssentialsFragmentDoc = gql`
     fragment rigEssentials on Rig {
   id
@@ -609,11 +635,11 @@ export const FinalizeLoadDocument = gql`
     }
     errors
     load {
-      ...load
+      ...loadDetails
     }
   }
 }
-    ${LoadFragmentDoc}`;
+    ${LoadDetailsFragmentDoc}`;
 export type FinalizeLoadMutationFn = Apollo.MutationFunction<Operation.FinalizeLoadMutation, Operation.FinalizeLoadMutationVariables>;
 
 /**
@@ -1124,6 +1150,41 @@ export function useAddressToLocationLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type AddressToLocationQueryHookResult = ReturnType<typeof useAddressToLocationQuery>;
 export type AddressToLocationLazyQueryHookResult = ReturnType<typeof useAddressToLocationLazyQuery>;
 export type AddressToLocationQueryResult = Apollo.QueryResult<Operation.AddressToLocationQuery, Operation.AddressToLocationQueryVariables>;
+export const LoadDocument = gql`
+    query Load($id: Int!) {
+  load(id: $id) {
+    ...loadDetails
+  }
+}
+    ${LoadDetailsFragmentDoc}`;
+
+/**
+ * __useLoadQuery__
+ *
+ * To run a query within a React component, call `useLoadQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLoadQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLoadQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLoadQuery(baseOptions: Apollo.QueryHookOptions<Operation.LoadQuery, Operation.LoadQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.LoadQuery, Operation.LoadQueryVariables>(LoadDocument, options);
+      }
+export function useLoadLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.LoadQuery, Operation.LoadQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.LoadQuery, Operation.LoadQueryVariables>(LoadDocument, options);
+        }
+export type LoadQueryHookResult = ReturnType<typeof useLoadQuery>;
+export type LoadLazyQueryHookResult = ReturnType<typeof useLoadLazyQuery>;
+export type LoadQueryResult = Apollo.QueryResult<Operation.LoadQuery, Operation.LoadQueryVariables>;
 export const CurrentUserPermissionsDocument = gql`
     query CurrentUserPermissions($dropzoneId: Int!) {
   dropzone(id: $dropzoneId) {

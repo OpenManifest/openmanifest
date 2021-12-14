@@ -54,7 +54,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         ? null
         : client.readFragment<DropzoneUserProfileFragment>({
             fragment: DropzoneUserProfileFragmentDoc,
-            id: client.cache.identify(state.original!),
+            id: client.cache.identify(state.original),
           }),
     [client, state.original]
   );

@@ -1,3 +1,18 @@
+fragment dropzoneUserEssentials on DropzoneUser {
+  id
+  role {
+    id
+    name
+  }
+  license {
+    id
+    name
+  }
+  user {
+    ...userEssentials
+  }
+}
+
 fragment dropzoneUserProfile on DropzoneUser {
   id
   credits

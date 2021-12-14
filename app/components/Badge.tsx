@@ -2,7 +2,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Chip } from 'react-native-paper';
-import { GlyphMap } from '@expo/vector-icons/build/createIconSet';
 import { useAppSelector } from '../state';
 import { Permission } from '../api/schema.d';
 

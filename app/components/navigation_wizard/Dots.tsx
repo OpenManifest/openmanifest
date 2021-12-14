@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import usePalette from 'app/hooks/usePalette';
 import { useAppSelector } from 'app/state';
 
 interface IDotsProps {

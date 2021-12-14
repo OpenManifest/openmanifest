@@ -1,6 +1,6 @@
 #import "./slot.gql"
 
-fragment load on Load {
+fragment loadDetails on Load {
   id
   name
   createdAt
@@ -41,6 +41,6 @@ fragment load on Load {
     }
   }
   slots {
-    ...slot
+    ...slotDetails
   }
 }

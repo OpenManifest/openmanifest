@@ -1,0 +1,5 @@
+query Load($id: Int!) {
+  load(id: $id) {
+    ...loadDetails
+  }
+}

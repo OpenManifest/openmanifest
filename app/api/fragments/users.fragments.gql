@@ -6,4 +6,9 @@ fragment userEssentials on User {
   email
   exitWeight
   moderationRole
+  image
+  license {
+    id
+    name
+  }
 }

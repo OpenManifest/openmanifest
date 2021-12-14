@@ -17,7 +17,7 @@ export default function AddressSearchBar(props: IAddressSearchBarProps) {
   const { value, onChange: onChangeText, onSelect } = props;
   const [suggestions, setSuggestions] = React.useState<GeocodedLocation[]>([]);
   const [selected, setSelected] = React.useState<GeocodedLocation>();
-  const [fetchLocation, { data, loading }] = useAddressToLocationLazyQuery();
+  const [fetchLocation, { data }] = useAddressToLocationLazyQuery();
 
   const fetchSuggestions = React.useCallback(
     (search: string) => {

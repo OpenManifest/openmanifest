@@ -34,6 +34,7 @@ import DropzoneMasterLogScreen from '../../screens/authenticated/settings/Dropzo
 import UpdateExtraScreen from '../../screens/authenticated/extras/UpdateExtraScreen';
 import ExtrasScreen from '../../screens/authenticated/extras/ExtrasScreen';
 import OrderScreen from '../../screens/authenticated/transactions/OrderScreen';
+// eslint-disable-next-line max-len
 import DropzoneTransactionsScreen from '../../screens/authenticated/transactions/DropzoneTransactionsScreen';
 import RigInspectionScreen from '../../screens/authenticated/rig/RigInspectionScreen';
 

@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Card, HelperText, List, TextInput } from 'react-native-paper';
+import { HelperText, List, TextInput } from 'react-native-paper';
 import Slider from '@react-native-community/slider';
 import { Step, Fields, IWizardStepProps } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 
 function AircraftWizardScreen(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.plane);
-  const [minSlots, setMinSlots] = React.useState(state?.fields?.minSlots?.value || 0);
   const [maxSlots, setMaxSlots] = React.useState(state?.fields?.maxSlots?.value || 0);
   const dispatch = useAppDispatch();
 

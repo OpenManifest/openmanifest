@@ -1,14 +1,15 @@
-import { Load, LoadState } from '../../../api/schema.d';
-import { QUERY_LOAD } from '../../../api/hooks/useQueryLoad';
+import { LoadState } from '../../../api/schema.d';
+import { LoadDetailsFragment, LoadQuery } from '../../../api/operations';
+import { LoadDocument } from '../../../api/reflection';
 
-export const MOCK_QUERY_LOAD = (override: Partial<Load>) => ({
+export const MOCK_QUERY_LOAD = (override: Partial<LoadDetailsFragment>) => ({
   request: {
-    query: QUERY_LOAD,
+    query: LoadDocument,
     variables: {
       id: 1,
     },
   },
-  result: () => {
+  result: (): { data: LoadQuery } => {
     return {
       data: {
         load: {
@@ -77,7 +78,7 @@ export const MOCK_QUERY_LOAD = (override: Partial<Load>) => ({
                 altitude: 14000,
                 isTandem: false,
 
-                extras: null,
+                extras: [],
               },
 
               jumpType: {
@@ -115,7 +116,7 @@ export const MOCK_QUERY_LOAD = (override: Partial<Load>) => ({
                 altitude: 4000,
                 isTandem: false,
 
-                extras: null,
+                extras: [],
               },
 
               jumpType: {
@@ -160,11 +161,11 @@ export const MOCK_QUERY_LOAD = (override: Partial<Load>) => ({
                 id: '3',
                 name: 'Tandem',
               },
-              extras: [{ id: '1', name: 'Outside camera', cost: 120 }],
+              extras: [{ id: '1', name: 'Outside camera' }],
             },
           ],
           ...override,
-        } as Load,
+        },
       },
     };
   },

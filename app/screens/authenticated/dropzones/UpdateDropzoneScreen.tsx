@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button, ProgressBar } from 'react-native-paper';
-import { gql } from '@apollo/client';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import useMutationUpdateDropzone from '../../../api/hooks/useMutationUpdateDropzone';
