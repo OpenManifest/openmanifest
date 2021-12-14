@@ -4,7 +4,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useUpdateLostPasswordMutation } from 'app/api/reflection';
 import checkPasswordComplexity from 'app/utils/checkPasswordComplexity';
 import { User } from 'app/api/schema.d';
-import { useRoute } from '@react-navigation/core';
+import { useNavigation, useRoute } from '@react-navigation/core';
 import DoneStep from './steps/Done';
 import PasswordStep from './steps/Password';
 import PasswordConfirmationStep from './steps/PasswordConfirmation';
@@ -36,17 +36,12 @@ export default function SignupWizard() {
           token: route.params.token,
         },
       });
-      console.log(result?.data?.userUpdatePasswordWithToken);
+
       if (result?.data?.userUpdatePasswordWithToken?.authenticatable) {
         dispatch(
           actions.global.setUser(result.data.userUpdatePasswordWithToken.authenticatable as User)
         );
-
-        if (result?.data?.userUpdatePasswordWithToken?.credentials) {
-          dispatch(
-            actions.global.setCredentials(result.data.userUpdatePasswordWithToken.credentials)
-          );
-        }
+        return;
       }
       if (result.errors?.length) {
         throw new Error(result.errors[0].message);
@@ -64,6 +59,8 @@ export default function SignupWizard() {
     updatePassword,
   ]);
 
+  const navigation = useNavigation();
+
   const validatePassword = React.useCallback(async () => {
     if (!checkPasswordComplexity(state.fields.password.value)) {
       dispatch(actions.screens.signup.setFieldError(['password', 'Password too weak']));
@@ -71,14 +68,21 @@ export default function SignupWizard() {
     }
   }, [dispatch, state.fields.password.value]);
 
+  const onFinished = React.useCallback(async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    navigation.replace('Unauthenticated', { screen: 'LoginScreen' });
+    throw new Error('Error thrown to prevent navigation.goBack');
+  }, [navigation]);
+
   return (
     <Wizard
       dots
       name="ChangePasswordWizard"
       steps={[
-        { onNext: validatePassword, component: PasswordStep },
+        { onBack: navigation.goBack, onNext: validatePassword, component: PasswordStep },
         { onNext: onChangePassword, component: PasswordConfirmationStep },
-        { component: DoneStep },
+        { component: DoneStep, onNext: onFinished },
       ]}
     />
   );
