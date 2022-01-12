@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Slot } from '../../../api/schema.d';
+import { SlotDetailsFragment, SlotExhaustiveFragment } from 'app/api/operations';
 
 export type ManifestUserFields = Pick<
-  Slot,
+  SlotExhaustiveFragment,
   | 'jumpType'
   | 'load'
   | 'ticketType'
@@ -15,7 +15,7 @@ export type ManifestUserFields = Pick<
 >;
 
 interface ISlotEditState {
-  original: Slot | null;
+  original: SlotDetailsFragment | null;
   open: boolean;
   fields: {
     [K in keyof ManifestUserFields]-?: {
@@ -94,7 +94,7 @@ export default createSlice({
       }
     },
 
-    setOpen: (state: ISlotEditState, action: PayloadAction<boolean | Slot>) => {
+    setOpen: (state: ISlotEditState, action: PayloadAction<boolean | SlotDetailsFragment>) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;

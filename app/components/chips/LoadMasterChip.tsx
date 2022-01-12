@@ -1,16 +1,17 @@
+import { SlotDetailsFragment } from 'app/api/operations';
 import * as React from 'react';
 import { Chip, Menu, useTheme } from 'react-native-paper';
-import { Slot, DropzoneUser, Permission } from '../../api/schema.d';
+import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
 
 interface ILoadMasterChipSelect {
-  value?: DropzoneUser | null;
+  value?: { id: string; user: { id: string; name?: string | null } } | null;
   small?: boolean;
   backgroundColor?: string;
   color?: string;
 
-  slots: Slot[];
-  onSelect(user: DropzoneUser): void;
+  slots: SlotDetailsFragment[];
+  onSelect(user: { id: string; user: { id: string; name?: string | null } }): void;
 }
 
 export default function LoadMasterChip(props: ILoadMasterChipSelect) {

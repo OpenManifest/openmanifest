@@ -13,6 +13,15 @@ export const DropzoneUserProfileFragmentDoc = gql`
     id
     name
   }
+  availableRigs {
+    id
+    name
+    model
+    make
+    serial
+    canopySize
+    repackExpiresAt
+  }
   user {
     id
     name
@@ -77,6 +86,8 @@ export const DropzoneEssentialsFragmentDoc = gql`
   secondaryColor
   isPublic
   requestPublication
+  banner
+  isCreditSystemEnabled
   planes {
     id
     name
@@ -150,6 +161,7 @@ export const UserEssentialsFragmentDoc = gql`
   exitWeight
   moderationRole
   image
+  apfNumber
   license {
     id
     name
@@ -344,6 +356,14 @@ export const DropzoneExtensiveFragmentDoc = gql`
 }
     ${DropzoneDetailedFragmentDoc}
 ${CurrentUserDetailedFragmentDoc}`;
+export const PlaneEssentialsFragmentDoc = gql`
+    fragment planeEssentials on Plane {
+  id
+  maxSlots
+  name
+  registration
+}
+    `;
 export const DropzoneUserEssentialsFragmentDoc = gql`
     fragment dropzoneUserEssentials on DropzoneUser {
   id
@@ -365,6 +385,7 @@ export const TicketTypeEssentialsFragmentDoc = gql`
   id
   name
   altitude
+  cost
   isTandem
   extras {
     id
@@ -387,6 +408,7 @@ export const SlotDetailsFragmentDoc = gql`
   passengerName
   passengerExitWeight
   wingLoading
+  groupNumber
   dropzoneUser {
     ...dropzoneUserEssentials
   }
@@ -404,6 +426,61 @@ export const SlotDetailsFragmentDoc = gql`
     ${DropzoneUserEssentialsFragmentDoc}
 ${TicketTypeEssentialsFragmentDoc}
 ${JumpTypeEssentialsFragmentDoc}`;
+export const RigEssentialsFragmentDoc = gql`
+    fragment rigEssentials on Rig {
+  id
+  name
+  make
+  model
+  serial
+  canopySize
+  repackExpiresAt
+  packValue
+  maintainedAt
+  rigType
+  packingCard
+}
+    `;
+export const UserRigDetailedFragmentDoc = gql`
+    fragment userRigDetailed on Rig {
+  ...rigEssentials
+  user {
+    id
+    rigs {
+      ...rigEssentials
+    }
+  }
+}
+    ${RigEssentialsFragmentDoc}`;
+export const UserDetailedFragmentDoc = gql`
+    fragment userDetailed on User {
+  ...userEssentials
+  rigs {
+    ...userRigDetailed
+  }
+}
+    ${UserEssentialsFragmentDoc}
+${UserRigDetailedFragmentDoc}`;
+export const DropzoneUserDetailsFragmentDoc = gql`
+    fragment dropzoneUserDetails on DropzoneUser {
+  id
+  role {
+    id
+    name
+  }
+  license {
+    id
+    name
+  }
+  user {
+    ...userDetailed
+  }
+  availableRigs {
+    ...rigEssentials
+  }
+}
+    ${UserDetailedFragmentDoc}
+${RigEssentialsFragmentDoc}`;
 export const LoadDetailsFragmentDoc = gql`
     fragment loadDetails on Load {
   id
@@ -450,40 +527,23 @@ export const LoadDetailsFragmentDoc = gql`
   }
 }
     ${SlotDetailsFragmentDoc}`;
-export const PlaneEssentialsFragmentDoc = gql`
-    fragment planeEssentials on Plane {
-  id
-  maxSlots
-  name
-  registration
-}
-    `;
-export const RigEssentialsFragmentDoc = gql`
-    fragment rigEssentials on Rig {
-  id
-  name
-  make
-  model
-  serial
-  canopySize
-  repackExpiresAt
-  packValue
-  maintainedAt
-  rigType
-  packingCard
-}
-    `;
-export const UserRigDetailedFragmentDoc = gql`
-    fragment userRigDetailed on Rig {
-  ...rigEssentials
-  user {
-    id
-    rigs {
-      ...rigEssentials
-    }
+export const SlotExhaustiveFragmentDoc = gql`
+    fragment slotExhaustive on Slot {
+  ...slotDetails
+  dropzoneUser {
+    ...dropzoneUserDetails
+  }
+  load {
+    ...loadDetails
+  }
+  rig {
+    ...rigEssentials
   }
 }
-    ${RigEssentialsFragmentDoc}`;
+    ${SlotDetailsFragmentDoc}
+${DropzoneUserDetailsFragmentDoc}
+${LoadDetailsFragmentDoc}
+${RigEssentialsFragmentDoc}`;
 export const ConfirmUserDocument = gql`
     mutation ConfirmUser($token: String!) {
   userConfirmRegistrationWithToken(confirmationToken: $token) {
@@ -1072,6 +1132,61 @@ export function useDropzoneTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type DropzoneTransactionsQueryHookResult = ReturnType<typeof useDropzoneTransactionsQuery>;
 export type DropzoneTransactionsLazyQueryHookResult = ReturnType<typeof useDropzoneTransactionsLazyQuery>;
 export type DropzoneTransactionsQueryResult = Apollo.QueryResult<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>;
+export const DropzoneUsersDocument = gql`
+    query DropzoneUsers($dropzoneId: Int!, $search: String, $permissions: [Permission!], $first: Int, $after: String, $licensed: Boolean) {
+  dropzone(id: $dropzoneId) {
+    id
+    name
+    dropzoneUsers(
+      licensed: $licensed
+      search: $search
+      permissions: $permissions
+      first: $first
+      after: $after
+    ) {
+      edges {
+        cursor
+        node {
+          ...dropzoneUserEssentials
+        }
+      }
+    }
+  }
+}
+    ${DropzoneUserEssentialsFragmentDoc}`;
+
+/**
+ * __useDropzoneUsersQuery__
+ *
+ * To run a query within a React component, call `useDropzoneUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDropzoneUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDropzoneUsersQuery({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *      search: // value for 'search'
+ *      permissions: // value for 'permissions'
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *      licensed: // value for 'licensed'
+ *   },
+ * });
+ */
+export function useDropzoneUsersQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>(DropzoneUsersDocument, options);
+      }
+export function useDropzoneUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>(DropzoneUsersDocument, options);
+        }
+export type DropzoneUsersQueryHookResult = ReturnType<typeof useDropzoneUsersQuery>;
+export type DropzoneUsersLazyQueryHookResult = ReturnType<typeof useDropzoneUsersLazyQuery>;
+export type DropzoneUsersQueryResult = Apollo.QueryResult<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>;
 export const QueryDropzoneUserProfileDocument = gql`
     query QueryDropzoneUserProfile($dropzoneId: Int!, $dropzoneUserId: Int!) {
   dropzone(id: $dropzoneId) {
@@ -1150,6 +1265,48 @@ export function useAddressToLocationLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type AddressToLocationQueryHookResult = ReturnType<typeof useAddressToLocationQuery>;
 export type AddressToLocationLazyQueryHookResult = ReturnType<typeof useAddressToLocationLazyQuery>;
 export type AddressToLocationQueryResult = Apollo.QueryResult<Operation.AddressToLocationQuery, Operation.AddressToLocationQueryVariables>;
+export const AllowedJumpTypesDocument = gql`
+    query AllowedJumpTypes($dropzoneId: Int!, $userIds: [Int!]!) {
+  dropzone(id: $dropzoneId) {
+    id
+    allowedJumpTypes(userId: $userIds) {
+      ...jumpTypeEssentials
+    }
+  }
+  jumpTypes {
+    ...jumpTypeEssentials
+  }
+}
+    ${JumpTypeEssentialsFragmentDoc}`;
+
+/**
+ * __useAllowedJumpTypesQuery__
+ *
+ * To run a query within a React component, call `useAllowedJumpTypesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllowedJumpTypesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAllowedJumpTypesQuery({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *      userIds: // value for 'userIds'
+ *   },
+ * });
+ */
+export function useAllowedJumpTypesQuery(baseOptions: Apollo.QueryHookOptions<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>(AllowedJumpTypesDocument, options);
+      }
+export function useAllowedJumpTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>(AllowedJumpTypesDocument, options);
+        }
+export type AllowedJumpTypesQueryHookResult = ReturnType<typeof useAllowedJumpTypesQuery>;
+export type AllowedJumpTypesLazyQueryHookResult = ReturnType<typeof useAllowedJumpTypesLazyQuery>;
+export type AllowedJumpTypesQueryResult = Apollo.QueryResult<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>;
 export const LoadDocument = gql`
     query Load($id: Int!) {
   load(id: $id) {
@@ -1185,6 +1342,41 @@ export function useLoadLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Opera
 export type LoadQueryHookResult = ReturnType<typeof useLoadQuery>;
 export type LoadLazyQueryHookResult = ReturnType<typeof useLoadLazyQuery>;
 export type LoadQueryResult = Apollo.QueryResult<Operation.LoadQuery, Operation.LoadQueryVariables>;
+export const PlanesDocument = gql`
+    query Planes($dropzoneId: Int!) {
+  planes(dropzoneId: $dropzoneId) {
+    ...planeEssentials
+  }
+}
+    ${PlaneEssentialsFragmentDoc}`;
+
+/**
+ * __usePlanesQuery__
+ *
+ * To run a query within a React component, call `usePlanesQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePlanesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePlanesQuery({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *   },
+ * });
+ */
+export function usePlanesQuery(baseOptions: Apollo.QueryHookOptions<Operation.PlanesQuery, Operation.PlanesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.PlanesQuery, Operation.PlanesQueryVariables>(PlanesDocument, options);
+      }
+export function usePlanesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.PlanesQuery, Operation.PlanesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.PlanesQuery, Operation.PlanesQueryVariables>(PlanesDocument, options);
+        }
+export type PlanesQueryHookResult = ReturnType<typeof usePlanesQuery>;
+export type PlanesLazyQueryHookResult = ReturnType<typeof usePlanesLazyQuery>;
+export type PlanesQueryResult = Apollo.QueryResult<Operation.PlanesQuery, Operation.PlanesQueryVariables>;
 export const CurrentUserPermissionsDocument = gql`
     query CurrentUserPermissions($dropzoneId: Int!) {
   dropzone(id: $dropzoneId) {
@@ -1231,3 +1423,47 @@ export function useCurrentUserPermissionsLazyQuery(baseOptions?: Apollo.LazyQuer
 export type CurrentUserPermissionsQueryHookResult = ReturnType<typeof useCurrentUserPermissionsQuery>;
 export type CurrentUserPermissionsLazyQueryHookResult = ReturnType<typeof useCurrentUserPermissionsLazyQuery>;
 export type CurrentUserPermissionsQueryResult = Apollo.QueryResult<Operation.CurrentUserPermissionsQuery, Operation.CurrentUserPermissionsQueryVariables>;
+export const AllowedTicketTypesDocument = gql`
+    query AllowedTicketTypes($dropzoneId: Int!, $onlyPublicTickets: Boolean) {
+  dropzone(id: $dropzoneId) {
+    id
+    ticketTypes(isPublic: $onlyPublicTickets) {
+      ...ticketTypeEssentials
+      extras {
+        id
+        cost
+        name
+      }
+    }
+  }
+}
+    ${TicketTypeEssentialsFragmentDoc}`;
+
+/**
+ * __useAllowedTicketTypesQuery__
+ *
+ * To run a query within a React component, call `useAllowedTicketTypesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllowedTicketTypesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAllowedTicketTypesQuery({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *      onlyPublicTickets: // value for 'onlyPublicTickets'
+ *   },
+ * });
+ */
+export function useAllowedTicketTypesQuery(baseOptions: Apollo.QueryHookOptions<Operation.AllowedTicketTypesQuery, Operation.AllowedTicketTypesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.AllowedTicketTypesQuery, Operation.AllowedTicketTypesQueryVariables>(AllowedTicketTypesDocument, options);
+      }
+export function useAllowedTicketTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.AllowedTicketTypesQuery, Operation.AllowedTicketTypesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.AllowedTicketTypesQuery, Operation.AllowedTicketTypesQueryVariables>(AllowedTicketTypesDocument, options);
+        }
+export type AllowedTicketTypesQueryHookResult = ReturnType<typeof useAllowedTicketTypesQuery>;
+export type AllowedTicketTypesLazyQueryHookResult = ReturnType<typeof useAllowedTicketTypesLazyQuery>;
+export type AllowedTicketTypesQueryResult = Apollo.QueryResult<Operation.AllowedTicketTypesQuery, Operation.AllowedTicketTypesQueryVariables>;

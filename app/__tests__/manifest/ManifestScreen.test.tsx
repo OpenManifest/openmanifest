@@ -1,9 +1,10 @@
 import * as React from 'react';
 import '@testing-library/jest-native';
+import { Permission } from 'app/api/schema.d';
 import set from 'lodash/set';
 import { render, waitFor } from '../../__mocks__/render';
-import { MOCK_QUERY_DROPZONE } from './__mocks__/QueryDropzone.mock';
-import { MOCK_QUERY_ALLOWED_TICKET_TYPES } from './__mocks__/QueryAllowedTicketTypes.mock';
+import MOCK_QUERY_DROPZONE from './__mocks__/QueryDropzone.mock';
+import MOCK_QUERY_ALLOWED_TICKET_TYPES from './__mocks__/QueryAllowedTicketTypes.mock';
 import { MOCK_QUERY_ALLOWED_JUMP_TYPES } from './__mocks__/QueryAllowedJumpTypes.mock';
 import * as appRedux from '../../state';
 
@@ -22,10 +23,10 @@ describe('<ManifestScreen />', () => {
     const screen = render(<ManifestScreen />, {
       graphql: [
         MOCK_QUERY_DROPZONE(),
-        MOCK_QUERY_ALLOWED_TICKET_TYPES,
-        MOCK_QUERY_ALLOWED_JUMP_TYPES,
+        MOCK_QUERY_ALLOWED_TICKET_TYPES(),
+        MOCK_QUERY_ALLOWED_JUMP_TYPES(),
       ],
-      permissions: ['readLoad', 'updateSlot'],
+      permissions: [Permission.ReadLoad, Permission.UpdateSlot],
       initialState,
     });
 
@@ -48,10 +49,10 @@ describe('<ManifestScreen />', () => {
     const screen = render(<ManifestScreen />, {
       graphql: [
         set({ ...MOCK_QUERY_DROPZONE() }, 'result.data.dropzone.loads.edges', null),
-        MOCK_QUERY_ALLOWED_TICKET_TYPES,
-        MOCK_QUERY_ALLOWED_JUMP_TYPES,
+        MOCK_QUERY_ALLOWED_TICKET_TYPES(),
+        MOCK_QUERY_ALLOWED_JUMP_TYPES(),
       ],
-      permissions: ['readLoad', 'updateSlot'],
+      permissions: [Permission.ReadLoad, Permission.UpdateSlot],
       initialState,
     });
 

@@ -2,6 +2,7 @@ fragment ticketTypeEssentials on TicketType {
   id
   name
   altitude
+  cost
   isTandem
 
   extras {

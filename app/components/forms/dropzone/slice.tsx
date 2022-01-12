@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { DropzoneExtensiveFragment } from 'app/api/operations';
 import { Dropzone } from '../../../api/schema.d';
 
 export type DropzoneFields = Pick<
-  Dropzone,
+  DropzoneExtensiveFragment,
   | 'federation'
   | 'name'
   | 'secondaryColor'
@@ -16,7 +17,7 @@ export type DropzoneFields = Pick<
 >;
 
 interface IDropzoneEditState {
-  original: Dropzone | null;
+  original: DropzoneExtensiveFragment | null;
   open: boolean;
   fields: {
     [K in keyof DropzoneFields]-?: {
@@ -97,7 +98,10 @@ export default createSlice({
       }
     },
 
-    setOpen: (state: IDropzoneEditState, action: PayloadAction<boolean | Dropzone>) => {
+    setOpen: (
+      state: IDropzoneEditState,
+      action: PayloadAction<boolean | DropzoneExtensiveFragment>
+    ) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;
@@ -115,7 +119,7 @@ export default createSlice({
       }
     },
 
-    setOriginal: (state: IDropzoneEditState, action: PayloadAction<Dropzone>) => {
+    setOriginal: (state: IDropzoneEditState, action: PayloadAction<DropzoneExtensiveFragment>) => {
       state.original = action.payload;
       state.open = true;
       Object.keys(action.payload).forEach((key) => {

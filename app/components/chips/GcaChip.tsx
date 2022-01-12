@@ -1,44 +1,19 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import { useDropzoneUsersQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { Chip, Menu, useTheme } from 'react-native-paper';
-import { Query, DropzoneUser, Permission } from '../../api/schema.d';
+
+import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
 import { useAppSelector } from '../../state';
 
 interface IGCAChipSelect {
-  value?: DropzoneUser | null;
+  value?: { id: string; user: { id: string; name?: string | null } } | null;
   small?: boolean;
   backgroundColor?: string;
   color?: string;
 
-  onSelect(user: DropzoneUser): void;
+  onSelect(user: { id: string; user: { id: string; name?: string | null } }): void;
 }
-
-export const QUERY_PERMISSION_USER = gql`
-  query QueryGCAUsers($dropzoneId: Int!, $permissions: [Permission!]) {
-    dropzone(id: $dropzoneId) {
-      id
-      name
-
-      dropzoneUsers(permissions: $permissions) {
-        edges {
-          node {
-            id
-            role {
-              id
-              name
-            }
-            user {
-              id
-              name
-            }
-          }
-        }
-      }
-    }
-  }
-`;
 
 export default function GCAChip(props: IGCAChipSelect) {
   const { small, color: assignedColor, backgroundColor, onSelect, value } = props;
@@ -47,10 +22,10 @@ export default function GCAChip(props: IGCAChipSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 
-  const { data } = useQuery<Query>(QUERY_PERMISSION_USER, {
+  const { data } = useDropzoneUsersQuery({
     variables: {
       dropzoneId: Number(currentDropzoneId),
-      permissions: ['actAsGCA'],
+      permissions: [Permission.ActAsGca],
     },
   });
   const allowed = useRestriction(Permission.UpdateLoad);

@@ -8,6 +8,8 @@ fragment dropzoneEssentials on Dropzone {
   secondaryColor
   isPublic
   requestPublication
+  banner
+  isCreditSystemEnabled
   planes {
     id
     name

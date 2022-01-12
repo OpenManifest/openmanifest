@@ -7,8 +7,16 @@ fragment userEssentials on User {
   exitWeight
   moderationRole
   image
+  apfNumber
   license {
     id
     name
+  }
+}
+
+fragment userDetailed on User {
+  ...userEssentials
+  rigs {
+    ...userRigDetailed
   }
 }

@@ -1,9 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SlotUser, Slot, DropzoneUser, Rig } from '../../../api/schema.d';
+import { DropzoneUserProfileFragment, SlotExhaustiveFragment } from 'app/api/operations';
+import { SlotUser, Slot, Rig } from '../../../api/schema.d';
 
 export type SlotUserWithRig = SlotUser & { rig?: Rig };
 
-interface IFields extends Pick<Slot, 'jumpType' | 'load' | 'ticketType' | 'extras'> {
+interface IFields
+  extends Pick<SlotExhaustiveFragment, 'jumpType' | 'load' | 'ticketType' | 'extras'> {
   users: SlotUserWithRig[];
 }
 
@@ -79,7 +81,10 @@ export default createSlice({
       state.fields.extras.value = action.payload.find((i) => i)?.extras;
     },
 
-    setDropzoneUsers: (state: ISlotEditState, action: PayloadAction<DropzoneUser[]>) => {
+    setDropzoneUsers: (
+      state: ISlotEditState,
+      action: PayloadAction<DropzoneUserProfileFragment[]>
+    ) => {
       state.fields.users.value = action.payload.map<SlotUser>((dzUser) => ({
         id: Number(dzUser.id),
         rigId: Number(dzUser?.availableRigs?.find(({ id }) => id)?.id),

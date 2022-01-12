@@ -1,0 +1,12 @@
+query AllowedJumpTypes($dropzoneId: Int!, $userIds: [Int!]!) {
+  dropzone(id: $dropzoneId) {
+    id
+
+    allowedJumpTypes(userId: $userIds) {
+      ...jumpTypeEssentials
+    }
+  }
+  jumpTypes {
+    ...jumpTypeEssentials
+  }
+}

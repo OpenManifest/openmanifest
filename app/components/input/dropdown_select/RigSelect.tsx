@@ -1,21 +1,22 @@
 import { useLazyQuery } from '@apollo/client';
+import { UserRigDetailedFragment } from 'app/api/operations';
 import gql from 'graphql-tag';
 import * as React from 'react';
 import { Text, View } from 'react-native';
 import { List, Menu, TextInput, useTheme } from 'react-native-paper';
-import { Rig, Query } from '../../../api/schema.d';
+import { Query } from '../../../api/schema.d';
 import { useAppSelector } from '../../../state';
 
 interface IRigSelect {
   dropzoneId?: number;
   userId?: number;
-  value?: Rig | null;
+  value?: UserRigDetailedFragment | null;
   tandem?: boolean;
   autoSelectFirst?: boolean;
-  onSelect(rig: Rig): void;
+  onSelect(rig: UserRigDetailedFragment): void;
 }
 
-function RigTitle(props: { rig: Rig }): JSX.Element {
+function RigTitle(props: { rig: UserRigDetailedFragment }): JSX.Element {
   const theme = useTheme();
   const { rig } = props;
   const name = rig?.name || `${rig?.make} ${rig?.model}`;

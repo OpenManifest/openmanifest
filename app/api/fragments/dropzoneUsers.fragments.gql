@@ -13,6 +13,24 @@ fragment dropzoneUserEssentials on DropzoneUser {
   }
 }
 
+fragment dropzoneUserDetails on DropzoneUser {
+  id
+  role {
+    id
+    name
+  }
+  license {
+    id
+    name
+  }
+  user {
+    ...userDetailed
+  }
+  availableRigs {
+    ...rigEssentials
+  }
+}
+
 fragment dropzoneUserProfile on DropzoneUser {
   id
   credits
@@ -22,6 +40,15 @@ fragment dropzoneUserProfile on DropzoneUser {
   role {
     id
     name
+  }
+  availableRigs {
+    id
+    name
+    model
+    make
+    serial
+    canopySize
+    repackExpiresAt
   }
 
   user {

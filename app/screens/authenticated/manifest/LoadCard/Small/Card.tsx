@@ -7,11 +7,12 @@ import PilotChip from 'app/components/chips/PilotChip';
 import PlaneChip from 'app/components/chips/PlaneChip';
 
 import { View } from 'app/components/Themed';
-import { Load, Plane, DropzoneUser, LoadState } from 'app/api/schema.d';
+import { Load, LoadState } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { errorColor, warningColor } from 'app/constants/Colors';
 import useQueryLoad from 'app/api/hooks/useQueryLoad';
 import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
+import { DropzoneUserEssentialsFragment, PlaneEssentialsFragment } from 'app/api/operations';
 import Countdown from '../Countdown';
 import Loading from './Loading';
 
@@ -62,7 +63,7 @@ export default function LoadCard(props: ILoadCardSmall) {
   });
 
   const updatePilot = React.useCallback(
-    async (pilot: DropzoneUser) => {
+    async (pilot: DropzoneUserEssentialsFragment) => {
       if (!load?.id) {
         return;
       }
@@ -75,7 +76,7 @@ export default function LoadCard(props: ILoadCardSmall) {
   );
 
   const updatePlane = React.useCallback(
-    async (plane: Plane) => {
+    async (plane: PlaneEssentialsFragment) => {
       if (!load?.id) {
         return;
       }

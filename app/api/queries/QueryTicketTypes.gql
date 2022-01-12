@@ -1,0 +1,15 @@
+query AllowedTicketTypes($dropzoneId: Int!, $onlyPublicTickets: Boolean) {
+  dropzone(id: $dropzoneId) {
+    id
+
+    ticketTypes(isPublic: $onlyPublicTickets) {
+      ...ticketTypeEssentials
+
+      extras {
+        id
+        cost
+        name
+      }
+    }
+  }
+}
