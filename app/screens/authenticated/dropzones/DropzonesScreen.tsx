@@ -1,49 +1,18 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, FlatList, Dimensions, View } from 'react-native';
 import { Card, Title, FAB, Avatar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { DropzoneExtensiveFragment } from 'app/api/operations';
+import { useQueryDropzones } from 'app/api/reflection';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import { Query } from '../../../api/schema.d';
 
 import NoResults from '../../../components/NoResults';
-
-const QUERY_DROPZONES = gql`
-  query QueryDropzones {
-    dropzones {
-      edges {
-        node {
-          id
-          name
-          primaryColor
-          secondaryColor
-          banner
-          ticketTypes {
-            id
-            name
-            cost
-            allowManifestingSelf
-            currency
-          }
-          planes {
-            id
-            name
-            registration
-            minSlots
-            maxSlots
-          }
-        }
-      }
-    }
-  }
-`;
 
 export default function DropzonesScreen() {
   const dispatch = useAppDispatch();
   const globalState = useAppSelector((root) => root.global);
-  const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONES);
+  const { data, loading, refetch } = useQueryDropzones();
   const navigation = useNavigation();
 
   return (
@@ -72,7 +41,7 @@ export default function DropzonesScreen() {
               onPress={async () => {
                 if (item?.node) {
                   const shouldPushRoute = !!globalState.currentDropzoneId;
-                  dispatch(actions.global.setDropzone(item.node));
+                  dispatch(actions.global.setDropzone(item.node as DropzoneExtensiveFragment));
 
                   if (shouldPushRoute) {
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

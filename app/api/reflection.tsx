@@ -3,151 +3,25 @@ import * as Operation from './operations';
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
-export const DropzoneUserProfileFragmentDoc = gql`
-    fragment dropzoneUserProfile on DropzoneUser {
+export const RigEssentialsFragmentDoc = gql`
+    fragment rigEssentials on Rig {
   id
-  credits
-  expiresAt
-  permissions
-  role {
-    id
-    name
-  }
-  availableRigs {
-    id
-    name
-    model
-    make
-    serial
-    canopySize
-    repackExpiresAt
-  }
+  name
+  make
+  model
+  serial
+  canopySize
+  repackExpiresAt
+  packValue
+  maintainedAt
+  rigType
+  packingCard
   user {
     id
     name
-    exitWeight
-    email
-    phone
-    image
-    rigs {
-      id
-      name
-      model
-      make
-      serial
-      canopySize
-      repackExpiresAt
-    }
-    jumpTypes {
-      id
-      name
-    }
-    license {
-      id
-      name
-      federation {
-        id
-        name
-      }
-    }
   }
-  slots {
-    edges {
-      node {
-        id
-        createdAt
-        load {
-          id
-          name
-          loadNumber
-          dispatchAt
-          createdAt
-        }
-        jumpType {
-          id
-          name
-        }
-        ticketType {
-          id
-          name
-        }
-      }
-    }
-  }
-}
-    `;
-export const DropzoneEssentialsFragmentDoc = gql`
-    fragment dropzoneEssentials on Dropzone {
-  id
-  lat
-  lng
-  name
-  primaryColor
-  secondaryColor
-  isPublic
-  requestPublication
-  banner
-  isCreditSystemEnabled
-  planes {
+  dropzone {
     id
-    name
-    registration
-  }
-  ticketTypes {
-    id
-    name
-  }
-}
-    `;
-export const DropzoneDetailedFragmentDoc = gql`
-    fragment dropzoneDetailed on Dropzone {
-  ...dropzoneEssentials
-  federation {
-    id
-    name
-    slug
-  }
-  currentConditions {
-    id
-    jumpRun
-    temperature
-    offsetDirection
-    offsetMiles
-    winds {
-      altitude
-      speed
-      direction
-    }
-  }
-  loads(earliestTimestamp: $earliestTimestamp) {
-    edges {
-      node {
-        id
-        name
-        loadNumber
-        isOpen
-        maxSlots
-        state
-      }
-    }
-  }
-}
-    ${DropzoneEssentialsFragmentDoc}`;
-export const CurrentUserEssentialsFragmentDoc = gql`
-    fragment currentUserEssentials on DropzoneUser {
-  id
-  credits
-  hasCredits
-  hasExitWeight
-  hasMembership
-  hasReserveInDate
-  hasRigInspection
-  hasLicense
-  permissions
-  expiresAt
-  role {
-    id
-    name
   }
 }
     `;
@@ -168,6 +42,55 @@ export const UserEssentialsFragmentDoc = gql`
   }
 }
     `;
+export const DropzoneUserEssentialsFragmentDoc = gql`
+    fragment dropzoneUserEssentials on DropzoneUser {
+  id
+  role {
+    id
+    name
+  }
+  license {
+    id
+    name
+  }
+  user {
+    ...userEssentials
+  }
+}
+    ${UserEssentialsFragmentDoc}`;
+export const RigInspectionEssentialsFragmentDoc = gql`
+    fragment rigInspectionEssentials on RigInspection {
+  id
+  isOk
+  inspectedBy {
+    ...dropzoneUserEssentials
+  }
+  rig {
+    ...rigEssentials
+  }
+}
+    ${DropzoneUserEssentialsFragmentDoc}
+${RigEssentialsFragmentDoc}`;
+export const UserRigDetailedFragmentDoc = gql`
+    fragment userRigDetailed on Rig {
+  ...rigEssentials
+  user {
+    id
+    rigs {
+      ...rigEssentials
+    }
+  }
+}
+    ${RigEssentialsFragmentDoc}`;
+export const UserDetailedFragmentDoc = gql`
+    fragment userDetailed on User {
+  ...userEssentials
+  rigs {
+    ...userRigDetailed
+  }
+}
+    ${UserEssentialsFragmentDoc}
+${UserRigDetailedFragmentDoc}`;
 export const TransactionEssentialsFragmentDoc = gql`
     fragment transactionEssentials on Transaction {
   id
@@ -271,115 +194,6 @@ export const OrderEssentialsFragmentDoc = gql`
   }
 }
     ${TransactionEssentialsFragmentDoc}`;
-export const CurrentUserDetailedFragmentDoc = gql`
-    fragment currentUserDetailed on DropzoneUser {
-  ...currentUserEssentials
-  user {
-    ...userEssentials
-  }
-  rigInspections {
-    id
-    isOk
-    inspectedBy {
-      id
-      user {
-        id
-        name
-      }
-    }
-    rig {
-      id
-    }
-  }
-  orders {
-    edges {
-      node {
-        ...orderEssentials
-      }
-    }
-  }
-  availableRigs {
-    name
-    id
-    make
-    model
-    canopySize
-    serial
-    user {
-      id
-    }
-  }
-  license {
-    id
-    name
-  }
-  user {
-    id
-    name
-    exitWeight
-    email
-    phone
-    pushToken
-    image
-    rigs {
-      id
-      name
-      model
-      make
-      serial
-      canopySize
-      repackExpiresAt
-      packingCard
-      user {
-        id
-      }
-    }
-    jumpTypes {
-      id
-      name
-    }
-    license {
-      id
-      name
-    }
-  }
-}
-    ${CurrentUserEssentialsFragmentDoc}
-${UserEssentialsFragmentDoc}
-${OrderEssentialsFragmentDoc}`;
-export const DropzoneExtensiveFragmentDoc = gql`
-    fragment dropzoneExtensive on Dropzone {
-  ...dropzoneDetailed
-  currentUser {
-    ...currentUserDetailed
-  }
-}
-    ${DropzoneDetailedFragmentDoc}
-${CurrentUserDetailedFragmentDoc}`;
-export const PlaneEssentialsFragmentDoc = gql`
-    fragment planeEssentials on Plane {
-  id
-  maxSlots
-  name
-  registration
-}
-    `;
-export const DropzoneUserEssentialsFragmentDoc = gql`
-    fragment dropzoneUserEssentials on DropzoneUser {
-  id
-  role {
-    id
-    name
-  }
-  license {
-    id
-    name
-  }
-  user {
-    ...userEssentials
-  }
-}
-    ${UserEssentialsFragmentDoc}`;
 export const TicketTypeEssentialsFragmentDoc = gql`
     fragment ticketTypeEssentials on TicketType {
   id
@@ -387,6 +201,7 @@ export const TicketTypeEssentialsFragmentDoc = gql`
   altitude
   cost
   isTandem
+  allowManifestingSelf
   extras {
     id
     name
@@ -400,8 +215,8 @@ export const JumpTypeEssentialsFragmentDoc = gql`
   name
 }
     `;
-export const SlotDetailsFragmentDoc = gql`
-    fragment slotDetails on Slot {
+export const SlotEssentialsFragmentDoc = gql`
+    fragment slotEssentials on Slot {
   id
   createdAt
   exitWeight
@@ -409,9 +224,6 @@ export const SlotDetailsFragmentDoc = gql`
   passengerExitWeight
   wingLoading
   groupNumber
-  dropzoneUser {
-    ...dropzoneUserEssentials
-  }
   ticketType {
     ...ticketTypeEssentials
   }
@@ -423,44 +235,209 @@ export const SlotDetailsFragmentDoc = gql`
     name
   }
 }
-    ${DropzoneUserEssentialsFragmentDoc}
-${TicketTypeEssentialsFragmentDoc}
+    ${TicketTypeEssentialsFragmentDoc}
 ${JumpTypeEssentialsFragmentDoc}`;
-export const RigEssentialsFragmentDoc = gql`
-    fragment rigEssentials on Rig {
+export const DropzoneUserProfileFragmentDoc = gql`
+    fragment dropzoneUserProfile on DropzoneUser {
   id
-  name
-  make
-  model
-  serial
-  canopySize
-  repackExpiresAt
-  packValue
-  maintainedAt
-  rigType
-  packingCard
-}
-    `;
-export const UserRigDetailedFragmentDoc = gql`
-    fragment userRigDetailed on Rig {
-  ...rigEssentials
-  user {
+  credits
+  expiresAt
+  permissions
+  role {
     id
-    rigs {
-      ...rigEssentials
+    name
+  }
+  availableRigs {
+    ...rigEssentials
+  }
+  rigInspections {
+    ...rigInspectionEssentials
+  }
+  user {
+    ...userDetailed
+  }
+  orders {
+    edges {
+      node {
+        ...orderEssentials
+      }
+    }
+  }
+  slots {
+    edges {
+      node {
+        ...slotEssentials
+      }
     }
   }
 }
-    ${RigEssentialsFragmentDoc}`;
-export const UserDetailedFragmentDoc = gql`
-    fragment userDetailed on User {
-  ...userEssentials
-  rigs {
+    ${RigEssentialsFragmentDoc}
+${RigInspectionEssentialsFragmentDoc}
+${UserDetailedFragmentDoc}
+${OrderEssentialsFragmentDoc}
+${SlotEssentialsFragmentDoc}`;
+export const DropzoneEssentialsFragmentDoc = gql`
+    fragment dropzoneEssentials on Dropzone {
+  id
+  lat
+  lng
+  name
+  primaryColor
+  secondaryColor
+  isPublic
+  requestPublication
+  banner
+  isCreditSystemEnabled
+}
+    `;
+export const PlaneEssentialsFragmentDoc = gql`
+    fragment planeEssentials on Plane {
+  id
+  minSlots
+  maxSlots
+  name
+  registration
+}
+    `;
+export const WeatherConditionEssentialsFragmentDoc = gql`
+    fragment weatherConditionEssentials on WeatherCondition {
+  id
+  jumpRun
+  temperature
+  offsetDirection
+  offsetMiles
+  createdAt
+  exitSpotMiles
+  winds {
+    temperature
+    altitude
+    speed
+    direction
+  }
+}
+    `;
+export const DropzoneDetailedFragmentDoc = gql`
+    fragment dropzoneDetailed on Dropzone {
+  ...dropzoneEssentials
+  federation {
+    id
+    name
+    slug
+  }
+  planes {
+    ...planeEssentials
+  }
+  ticketTypes {
+    ...ticketTypeEssentials
+  }
+  currentConditions {
+    ...weatherConditionEssentials
+  }
+  loads(earliestTimestamp: $earliestTimestamp) {
+    edges {
+      node {
+        id
+        name
+        loadNumber
+        isOpen
+        maxSlots
+        state
+      }
+    }
+  }
+}
+    ${DropzoneEssentialsFragmentDoc}
+${PlaneEssentialsFragmentDoc}
+${TicketTypeEssentialsFragmentDoc}
+${WeatherConditionEssentialsFragmentDoc}`;
+export const CurrentUserEssentialsFragmentDoc = gql`
+    fragment currentUserEssentials on DropzoneUser {
+  id
+  credits
+  hasCredits
+  hasExitWeight
+  hasMembership
+  hasReserveInDate
+  hasRigInspection
+  hasLicense
+  permissions
+  expiresAt
+  role {
+    id
+    name
+  }
+}
+    `;
+export const CurrentUserFragmentDoc = gql`
+    fragment currentUser on User {
+  ...userDetailed
+  pushToken
+  jumpTypes {
+    id
+    name
+  }
+}
+    ${UserDetailedFragmentDoc}`;
+export const CurrentUserDetailedFragmentDoc = gql`
+    fragment currentUserDetailed on DropzoneUser {
+  ...currentUserEssentials
+  rigInspections {
+    ...rigInspectionEssentials
+  }
+  orders {
+    edges {
+      node {
+        ...orderEssentials
+      }
+    }
+  }
+  availableRigs {
+    ...rigEssentials
+  }
+  license {
+    id
+    name
+  }
+  user {
+    ...currentUser
+  }
+}
+    ${CurrentUserEssentialsFragmentDoc}
+${RigInspectionEssentialsFragmentDoc}
+${OrderEssentialsFragmentDoc}
+${RigEssentialsFragmentDoc}
+${CurrentUserFragmentDoc}`;
+export const DropzoneExtensiveFragmentDoc = gql`
+    fragment dropzoneExtensive on Dropzone {
+  ...dropzoneDetailed
+  currentUser {
+    ...currentUserDetailed
+  }
+}
+    ${DropzoneDetailedFragmentDoc}
+${CurrentUserDetailedFragmentDoc}`;
+export const RigInspectionDetailedFragmentDoc = gql`
+    fragment rigInspectionDetailed on RigInspection {
+  ...rigInspectionEssentials
+  rig {
     ...userRigDetailed
   }
 }
-    ${UserEssentialsFragmentDoc}
+    ${RigInspectionEssentialsFragmentDoc}
 ${UserRigDetailedFragmentDoc}`;
+export const SlotDetailsFragmentDoc = gql`
+    fragment slotDetails on Slot {
+  ...slotEssentials
+  rig {
+    ...rigEssentials
+  }
+  dropzoneUser {
+    ...dropzoneUserEssentials
+  }
+}
+    ${SlotEssentialsFragmentDoc}
+${RigEssentialsFragmentDoc}
+${DropzoneUserEssentialsFragmentDoc}`;
 export const DropzoneUserDetailsFragmentDoc = gql`
     fragment dropzoneUserDetails on DropzoneUser {
   id
@@ -481,8 +458,8 @@ export const DropzoneUserDetailsFragmentDoc = gql`
 }
     ${UserDetailedFragmentDoc}
 ${RigEssentialsFragmentDoc}`;
-export const LoadDetailsFragmentDoc = gql`
-    fragment loadDetails on Load {
+export const LoadEssentialsFragmentDoc = gql`
+    fragment loadEssentials on Load {
   id
   name
   createdAt
@@ -496,6 +473,11 @@ export const LoadDetailsFragmentDoc = gql`
   maxSlots
   availableSlots
   occupiedSlots
+}
+    `;
+export const LoadDetailsFragmentDoc = gql`
+    fragment loadDetails on Load {
+  ...loadEssentials
   plane {
     id
     maxSlots
@@ -526,7 +508,8 @@ export const LoadDetailsFragmentDoc = gql`
     ...slotDetails
   }
 }
-    ${SlotDetailsFragmentDoc}`;
+    ${LoadEssentialsFragmentDoc}
+${SlotDetailsFragmentDoc}`;
 export const SlotExhaustiveFragmentDoc = gql`
     fragment slotExhaustive on Slot {
   ...slotDetails
@@ -590,6 +573,55 @@ export function useConfirmUserMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ConfirmUserMutationHookResult = ReturnType<typeof useConfirmUserMutation>;
 export type ConfirmUserMutationResult = Apollo.MutationResult<Operation.ConfirmUserMutation>;
 export type ConfirmUserMutationOptions = Apollo.BaseMutationOptions<Operation.ConfirmUserMutation, Operation.ConfirmUserMutationVariables>;
+export const CreateDropzoneDocument = gql`
+    mutation CreateDropzone($name: String!, $banner: String, $federationId: Int!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String, $earliestTimestamp: Int) {
+  createDropzone(
+    input: {attributes: {name: $name, banner: $banner, federationId: $federationId, primaryColor: $primaryColor, secondaryColor: $secondaryColor, lat: $lat, lng: $lng}}
+  ) {
+    fieldErrors {
+      field
+      message
+    }
+    errors
+    dropzone {
+      ...dropzoneExtensive
+    }
+  }
+}
+    ${DropzoneExtensiveFragmentDoc}`;
+export type CreateDropzoneMutationFn = Apollo.MutationFunction<Operation.CreateDropzoneMutation, Operation.CreateDropzoneMutationVariables>;
+
+/**
+ * __useCreateDropzoneMutation__
+ *
+ * To run a mutation, you first call `useCreateDropzoneMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDropzoneMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDropzoneMutation, { data, loading, error }] = useCreateDropzoneMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      banner: // value for 'banner'
+ *      federationId: // value for 'federationId'
+ *      lat: // value for 'lat'
+ *      lng: // value for 'lng'
+ *      primaryColor: // value for 'primaryColor'
+ *      secondaryColor: // value for 'secondaryColor'
+ *      earliestTimestamp: // value for 'earliestTimestamp'
+ *   },
+ * });
+ */
+export function useCreateDropzoneMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateDropzoneMutation, Operation.CreateDropzoneMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.CreateDropzoneMutation, Operation.CreateDropzoneMutationVariables>(CreateDropzoneDocument, options);
+      }
+export type CreateDropzoneMutationHookResult = ReturnType<typeof useCreateDropzoneMutation>;
+export type CreateDropzoneMutationResult = Apollo.MutationResult<Operation.CreateDropzoneMutation>;
+export type CreateDropzoneMutationOptions = Apollo.BaseMutationOptions<Operation.CreateDropzoneMutation, Operation.CreateDropzoneMutationVariables>;
 export const CreateOrderDocument = gql`
     mutation CreateOrder($buyer: WalletInput!, $seller: WalletInput!, $dropzoneId: Int!, $title: String, $amount: Int!) {
   createOrder(
@@ -885,6 +917,59 @@ export function useReloadWeatherMutation(baseOptions?: Apollo.MutationHookOption
 export type ReloadWeatherMutationHookResult = ReturnType<typeof useReloadWeatherMutation>;
 export type ReloadWeatherMutationResult = Apollo.MutationResult<Operation.ReloadWeatherMutation>;
 export type ReloadWeatherMutationOptions = Apollo.BaseMutationOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
+export const UpdateDropzoneDocument = gql`
+    mutation UpdateDropzone($id: Int!, $name: String!, $requestPublication: Boolean, $banner: String, $federationId: Int!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String, $isCreditSystemEnabled: Boolean, $isPublic: Boolean, $earliestTimestamp: Int) {
+  updateDropzone(
+    input: {id: $id, attributes: {name: $name, banner: $banner, lat: $lat, lng: $lng, requestPublication: $requestPublication, federationId: $federationId, primaryColor: $primaryColor, secondaryColor: $secondaryColor, isCreditSystemEnabled: $isCreditSystemEnabled, isPublic: $isPublic}}
+  ) {
+    fieldErrors {
+      field
+      message
+    }
+    errors
+    dropzone {
+      ...dropzoneExtensive
+    }
+  }
+}
+    ${DropzoneExtensiveFragmentDoc}`;
+export type UpdateDropzoneMutationFn = Apollo.MutationFunction<Operation.UpdateDropzoneMutation, Operation.UpdateDropzoneMutationVariables>;
+
+/**
+ * __useUpdateDropzoneMutation__
+ *
+ * To run a mutation, you first call `useUpdateDropzoneMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDropzoneMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDropzoneMutation, { data, loading, error }] = useUpdateDropzoneMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      requestPublication: // value for 'requestPublication'
+ *      banner: // value for 'banner'
+ *      federationId: // value for 'federationId'
+ *      lat: // value for 'lat'
+ *      lng: // value for 'lng'
+ *      primaryColor: // value for 'primaryColor'
+ *      secondaryColor: // value for 'secondaryColor'
+ *      isCreditSystemEnabled: // value for 'isCreditSystemEnabled'
+ *      isPublic: // value for 'isPublic'
+ *      earliestTimestamp: // value for 'earliestTimestamp'
+ *   },
+ * });
+ */
+export function useUpdateDropzoneMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateDropzoneMutation, Operation.UpdateDropzoneMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateDropzoneMutation, Operation.UpdateDropzoneMutationVariables>(UpdateDropzoneDocument, options);
+      }
+export type UpdateDropzoneMutationHookResult = ReturnType<typeof useUpdateDropzoneMutation>;
+export type UpdateDropzoneMutationResult = Apollo.MutationResult<Operation.UpdateDropzoneMutation>;
+export type UpdateDropzoneMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateDropzoneMutation, Operation.UpdateDropzoneMutationVariables>;
 export const UpdateLostPasswordDocument = gql`
     mutation UpdateLostPassword($password: String!, $passwordConfirmation: String!, $token: String!) {
   userUpdatePasswordWithToken(
@@ -1227,6 +1312,46 @@ export function useQueryDropzoneUserProfileLazyQuery(baseOptions?: Apollo.LazyQu
 export type QueryDropzoneUserProfileHookResult = ReturnType<typeof useQueryDropzoneUserProfile>;
 export type QueryDropzoneUserProfileLazyQueryHookResult = ReturnType<typeof useQueryDropzoneUserProfileLazyQuery>;
 export type QueryDropzoneUserProfileQueryResult = Apollo.QueryResult<Operation.QueryDropzoneUserProfileQuery, Operation.QueryDropzoneUserProfileQueryVariables>;
+export const QueryDropzonesDocument = gql`
+    query QueryDropzones($isPublic: Boolean, $requestedPublication: Boolean) {
+  dropzones(isPublic: $isPublic, requestedPublication: $requestedPublication) {
+    edges {
+      node {
+        ...dropzoneEssentials
+      }
+    }
+  }
+}
+    ${DropzoneEssentialsFragmentDoc}`;
+
+/**
+ * __useQueryDropzones__
+ *
+ * To run a query within a React component, call `useQueryDropzones` and pass it any options that fit your needs.
+ * When your component renders, `useQueryDropzones` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useQueryDropzones({
+ *   variables: {
+ *      isPublic: // value for 'isPublic'
+ *      requestedPublication: // value for 'requestedPublication'
+ *   },
+ * });
+ */
+export function useQueryDropzones(baseOptions?: Apollo.QueryHookOptions<Operation.QueryDropzonesQuery, Operation.QueryDropzonesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.QueryDropzonesQuery, Operation.QueryDropzonesQueryVariables>(QueryDropzonesDocument, options);
+      }
+export function useQueryDropzonesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.QueryDropzonesQuery, Operation.QueryDropzonesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.QueryDropzonesQuery, Operation.QueryDropzonesQueryVariables>(QueryDropzonesDocument, options);
+        }
+export type QueryDropzonesHookResult = ReturnType<typeof useQueryDropzones>;
+export type QueryDropzonesLazyQueryHookResult = ReturnType<typeof useQueryDropzonesLazyQuery>;
+export type QueryDropzonesQueryResult = Apollo.QueryResult<Operation.QueryDropzonesQuery, Operation.QueryDropzonesQueryVariables>;
 export const AddressToLocationDocument = gql`
     query AddressToLocation($search: String!) {
   geocode(search: $search) {

@@ -1,48 +1,22 @@
-// Calculate password entropy for what would otherwise be
-// the minimum required entropy:
-// - 1 uppercase (26)
-// - 1 lowercase (26)
-// - 1 digit (10)
-const entropy = {
-  uppercase: 26,
-  lowercase: 26,
-  digit: 10,
-  specials: 32,
-};
-
-export const minimumEntropy = (entropy.uppercase + entropy.lowercase + entropy.digit) ** 10;
-
-export function calculateComplexity(password: string) {
-  const charsetLength = [
-    password.split('').some((character) => /[A-Z]/.test(character)) ? entropy.uppercase : 0,
-    password.split('').some((character) => /[a-z]/.test(character)) ? entropy.lowercase : 0,
-    password.split('').some((character) => /[0-9]/.test(character)) ? entropy.digit : 0,
-    password.split('').some((character) => /\W/.test(character)) ? entropy.specials : 0,
-  ].reduce((a, b) => a + b, 0);
-  return charsetLength ** password.length;
-}
+import { passwordStrength } from 'check-password-strength';
 
 export enum PasswordStrength {
-  weak,
-  ok,
-  strong,
+  TooWeak,
+  Weak,
+  Acceptable,
+  Strong,
 }
-
-export function getPasswordStrength(password: string) {
-  const passwordEntropy = calculateComplexity(password);
-
-  if (passwordEntropy < minimumEntropy) {
-    return PasswordStrength.weak;
-  }
-
-  if (passwordEntropy > minimumEntropy && passwordEntropy < minimumEntropy * 3) {
-    return PasswordStrength.ok;
-  }
-  return PasswordStrength.strong;
-}
-
 export default function checkPasswordComplexity(password: string) {
-  const passwordEntropy = calculateComplexity(password);
+  const score = passwordStrength<PasswordStrength>(
+    password,
+    [
+      { value: PasswordStrength.TooWeak, id: 0, minDiversity: 0, minLength: 0 },
+      { value: PasswordStrength.Weak, id: 1, minDiversity: 2, minLength: 8 },
+      { value: PasswordStrength.Acceptable, id: 2, minDiversity: 3, minLength: 10 },
+      { value: PasswordStrength.Strong, id: 3, minDiversity: 4, minLength: 16 },
+    ],
+    '!@#$%^&*()_+{}:"<>?[]\\|;\',./'
+  );
 
-  return Number(passwordEntropy - minimumEntropy) > 0;
+  return score.value;
 }

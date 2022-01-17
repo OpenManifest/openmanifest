@@ -7,12 +7,15 @@ import { Button, Card, Checkbox, Divider, Paragraph } from 'react-native-paper';
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import RigInspectionForm from 'app/components/forms/rig_inspection/RigInspectionForm';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
-import { QueryDropzoneDocument } from 'app/api/reflection';
+import { QueryDropzoneDocument, QueryDropzoneUserProfileDocument } from 'app/api/reflection';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { Mutation, Query, Rig, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import { QUERY_DROPZONE_USER } from 'app/api/hooks/useDropzoneUser';
+import {
+  QueryDropzoneUserProfileQuery,
+  QueryDropzoneUserProfileQueryVariables,
+} from 'app/api/operations';
 import RigCard from '../equipment/RigCard';
 
 const QUERY_RIG_INSPECTIONS = gql`
@@ -179,8 +182,11 @@ export default function RigInspectionScreen() {
         },
         update: async (client, mutationResult) => {
           const rigInspection = mutationResult.data?.createRigInspection?.rigInspection;
-          const result = client.readQuery<Query>({
-            query: QUERY_DROPZONE_USER,
+          const result = client.readQuery<
+            QueryDropzoneUserProfileQuery,
+            QueryDropzoneUserProfileQueryVariables
+          >({
+            query: QueryDropzoneUserProfileDocument,
             variables: {
               dropzoneId: Number(currentDropzone?.dropzone?.id),
               dropzoneUserId: Number(rigInspection?.dropzoneUser?.id),
@@ -234,7 +240,7 @@ export default function RigInspectionScreen() {
           };
 
           client.writeQuery({
-            query: QUERY_DROPZONE_USER,
+            query: QueryDropzoneUserProfileDocument,
             variables: {
               dropzoneId: Number(currentDropzone?.dropzone?.id),
               dropzoneUserId: Number(rigInspection?.dropzoneUser?.id),

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { List, Menu, Title } from 'react-native-paper';
 import useQueryDropzoneUsers from '../../../api/hooks/useQueryDropzoneUsers';
-import { DropzoneUser } from '../../../api/schema.d';
+import { DropzoneUser, Permission } from '../../../api/schema.d';
 import { useAppSelector } from '../../../state';
 
 interface IDropzoneUserSelect {
-  requiredPermissions: string[];
+  requiredPermissions: Permission[];
   value: DropzoneUser | null;
   required?: boolean;
   label: string;

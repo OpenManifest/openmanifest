@@ -19,6 +19,7 @@ import {
   DropzoneUserEssentialsFragment,
   PlaneEssentialsFragment,
   SlotDetailsFragment,
+  SlotEssentialsFragment,
 } from 'app/api/operations';
 import useCurrentDropzone from '../../../../../api/hooks/useCurrentDropzone';
 import GCAChip from '../../../../../components/chips/GcaChip';
@@ -39,8 +40,8 @@ interface ILoadCardLarge {
   load: Load;
   controlsVisible: boolean;
   onManifestGroup(): void;
-  onSlotGroupPress(slots: SlotDetailsFragment[]): void;
-  onSlotPress(slot: SlotDetailsFragment): void;
+  onSlotGroupPress(slots: SlotEssentialsFragment[]): void;
+  onSlotPress(slot: SlotEssentialsFragment): void;
   onManifest(): void;
 }
 
@@ -58,7 +59,7 @@ export default function LoadCard(props: ILoadCardLarge) {
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDispatchOpen, setDispatchOpen] = React.useState(false);
 
-  const { data, loading, refetch, error } = useLoadQuery({
+  const { data, loading, refetch } = useLoadQuery({
     variables: {
       id: Number(initialRecord.id),
     },
@@ -215,19 +216,6 @@ export default function LoadCard(props: ILoadCardLarge) {
     (canManifestGroup || canManifestGroupWithSelfOnly) &&
     !load?.hasLanded &&
     (!load?.dispatchAt || load.dispatchAt > new Date().getTime() / 1000);
-  console.log({
-    canEditSelf,
-    canEditOthers,
-    canManifestSelf,
-    showGroupIcon,
-    loading,
-    canManifestGroup,
-    canManifestGroupWithSelfOnly,
-    showManifestButton,
-    controlsVisible,
-    load,
-    error,
-  });
 
   if (loading) {
     return <LoadingCard />;

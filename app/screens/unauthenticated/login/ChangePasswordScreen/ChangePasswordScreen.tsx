@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Wizard } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useUpdateLostPasswordMutation } from 'app/api/reflection';
-import checkPasswordComplexity from 'app/utils/checkPasswordComplexity';
+import checkPasswordComplexity, { PasswordStrength } from 'app/utils/checkPasswordComplexity';
 import { User } from 'app/api/schema.d';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import DoneStep from './steps/Done';
@@ -62,7 +62,7 @@ export default function SignupWizard() {
   const navigation = useNavigation();
 
   const validatePassword = React.useCallback(async () => {
-    if (!checkPasswordComplexity(state.fields.password.value)) {
+    if (checkPasswordComplexity(state.fields.password.value) < PasswordStrength.Acceptable) {
       dispatch(actions.screens.signup.setFieldError(['password', 'Password too weak']));
       throw new Error('Password too weak');
     }

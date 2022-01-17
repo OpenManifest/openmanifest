@@ -1,6 +1,6 @@
 import startOfDay from 'date-fns/startOfDay';
 import addDays from 'date-fns/addDays';
-import { Plane, LoadState } from '../../../api/schema.d';
+import { LoadState } from '../../../api/schema.d';
 import { QueryDropzoneDocument } from '../../../api/reflection';
 import { QueryDropzoneQuery, QueryDropzoneQueryVariables } from '../../../api/operations';
 import createMock from './createMockedQuery.mock';
@@ -13,9 +13,11 @@ export default createMock<QueryDropzoneQueryVariables, QueryDropzoneQuery>(
   },
   {
     dropzone: {
+      __typename: 'Dropzone',
       id: '1',
       lat: -10.24124,
       lng: 54.123123,
+      banner: null,
       name: 'Skydive Jest',
       primaryColor: '#000000',
       secondaryColor: '#FFFFFF',
@@ -28,13 +30,37 @@ export default createMock<QueryDropzoneQueryVariables, QueryDropzoneQuery>(
         slug: 'apf',
       },
       planes: [
-        { id: '1', name: 'C182', registration: 'ABC-123' } as Plane,
-        { id: '2', name: 'Caravan', registration: 'CDE-456' } as Plane,
+        { id: '1', name: 'C182', registration: 'ABC-123' },
+        { id: '2', name: 'Caravan', registration: 'CDE-456' },
       ],
       ticketTypes: [
-        { id: '1', name: 'Height' },
-        { id: '2', name: 'Tandem' },
-        { id: '3', name: 'Hop n Pop' },
+        {
+          id: '1',
+          name: 'Height',
+          cost: 123,
+          extras: [],
+          allowManifestingSelf: true,
+          altitude: 14000,
+          isTandem: false,
+        },
+        {
+          id: '2',
+          name: 'Tandem',
+          extras: [],
+          cost: 199,
+          allowManifestingSelf: false,
+          altitude: 14000,
+          isTandem: true,
+        },
+        {
+          id: '3',
+          name: 'Hop n Pop',
+          cost: 10,
+          allowManifestingSelf: true,
+          altitude: 4000,
+          extras: [],
+          isTandem: false,
+        },
       ],
       currentConditions: {
         id: '1',
@@ -42,11 +68,17 @@ export default createMock<QueryDropzoneQueryVariables, QueryDropzoneQuery>(
         temperature: -1,
         offsetDirection: null,
         offsetMiles: null,
+        createdAt: new Date().getTime(),
+        exitSpotMiles: null,
         winds: [],
       },
 
       currentUser: {
         id: '123',
+        license: {
+          id: '1',
+          name: 'Certifiate D',
+        },
         credits: 100,
         hasCredits: true,
         hasExitWeight: true,

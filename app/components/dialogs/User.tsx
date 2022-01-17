@@ -1,12 +1,15 @@
 import * as React from 'react';
 import { startOfDay } from 'date-fns';
+import {
+  useJoinFederationMutation,
+  QueryDropzoneDocument,
+  QueryDropzoneUserProfileDocument,
+} from 'app/api/reflection';
 import UserForm from '../forms/user/UserForm';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import DialogOrSheet from '../layout/DialogOrSheet';
 import useMutationUpdateUser from '../../api/hooks/useMutationUpdateUser';
 import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
-import { QUERY_DROPZONE_USER } from '../../api/hooks/useDropzoneUser';
-import { useJoinFederationMutation, QueryDropzoneDocument } from '../../api/reflection';
 import { UserFields } from '../forms/user/slice';
 
 interface IUpdateUserDialog {
@@ -48,7 +51,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
           },
         },
         {
-          query: QUERY_DROPZONE_USER,
+          query: QueryDropzoneUserProfileDocument,
           variables: {
             dropzoneId: currentDropzoneId,
             dropzoneUserId,

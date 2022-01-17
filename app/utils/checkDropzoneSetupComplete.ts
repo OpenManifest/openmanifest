@@ -1,7 +1,7 @@
-import { Dropzone } from 'app/api/schema.d';
+import { DropzoneDetailedFragment } from 'app/api/operations';
 import { DropzoneWizardStep } from 'app/screens/authenticated/dropzone_wizard/slice';
 
-export default function checkDropzoneSetupComplete(dropzone: Dropzone) {
+export default function checkDropzoneSetupComplete(dropzone: DropzoneDetailedFragment) {
   const completed = {
     [DropzoneWizardStep.Name]: false,
     [DropzoneWizardStep.Federation]: false,

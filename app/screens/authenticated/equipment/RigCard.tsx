@@ -5,6 +5,11 @@ import { Avatar, Card, Chip, Divider, Menu, ProgressBar, useTheme } from 'react-
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/core';
+import {
+  RigInspectionEssentialsFragment,
+  RigEssentialsFragment,
+  DropzoneUserEssentialsFragment,
+} from 'app/api/operations';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import useRestriction from '../../../hooks/useRestriction';
 
@@ -12,12 +17,12 @@ import useMutationUpdateRig from '../../../api/hooks/useMutationUpdateRig';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import { errorColor, successColor } from '../../../constants/Colors';
 
-import { DropzoneUser, Permission, Rig, RigInspection } from '../../../api/schema.d';
+import { Permission } from '../../../api/schema.d';
 
 export interface IRigCardProps {
-  rig: Rig;
-  dropzoneUser?: DropzoneUser | null;
-  rigInspection?: RigInspection;
+  rig: RigEssentialsFragment;
+  dropzoneUser?: DropzoneUserEssentialsFragment | null;
+  rigInspection?: RigInspectionEssentialsFragment;
   onSuccessfulImageUpload?(): void;
   onPress?(): void;
 }

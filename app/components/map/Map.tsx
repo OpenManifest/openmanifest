@@ -64,6 +64,8 @@ function Map(props: IMapProps) {
       style={{
         width,
         height,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore Width is always a number here but must have string/number type for crossenv
         borderRadius: shape === 'round' ? width / 2 : undefined,
         overflow: 'hidden',
         ...(position?.y && position?.x

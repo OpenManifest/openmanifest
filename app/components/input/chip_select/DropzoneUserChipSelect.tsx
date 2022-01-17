@@ -2,7 +2,7 @@ import { uniqBy } from 'lodash';
 import * as React from 'react';
 import { List } from 'react-native-paper';
 import useQueryDropzoneUsers from '../../../api/hooks/useQueryDropzoneUsers';
-import { DropzoneUser } from '../../../api/schema.d';
+import { DropzoneUser, Permission } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import ChipSelect from './ChipSelect';
 import ChipSelectSkeleton from './ChipSelectSkeleton';
@@ -11,7 +11,7 @@ interface IDropzoneUserChipSelect {
   value?: DropzoneUser | null;
   label: string;
   icon?: string;
-  requiredPermissions: string[];
+  requiredPermissions: Permission[];
   onLoadingStateChanged?(loading: boolean): void;
   onSelect(dzuser: DropzoneUser): void;
 }

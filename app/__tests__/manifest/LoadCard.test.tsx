@@ -6,7 +6,7 @@ import mockQueryLoad from './__mocks__/QueryLoad.mock';
 import mockQueryDropzoneUsers from './__mocks__/QueryDropzoneUsers.mock';
 import mockQueryDropzone from './__mocks__/QueryDropzone.mock';
 import mockQueryPlanes from './__mocks__/QueryPlane.mock';
-import { fireEvent, render, waitFor } from '../../__mocks__/render';
+import { render, waitFor } from '../../__mocks__/render';
 
 const initialState = {
   ...appRedux.initialState,
@@ -273,7 +273,7 @@ describe('<LoadCard />', () => {
       expect(screen.queryAllByTestId('manifest-group-button').length).toBe(0);
     });
 
-    screen = render(
+    const screen2 = render(
       <LoadCard
         load={{ id: '1', maxSlots: 10 } as Load}
         onManifest={() => null}
@@ -290,8 +290,9 @@ describe('<LoadCard />', () => {
     );
 
     await waitFor(async () => {
-      console.log(screen.toJSON());
-      expect(screen.getByTestId('manifest-group-button')).toBeTruthy();
+      console.log('JSON:');
+      console.log(screen2.toJSON());
+      expect(screen2.getByTestId('manifest-group-button')).toBeTruthy();
     });
 
     screen = render(

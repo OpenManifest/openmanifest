@@ -12,6 +12,8 @@ function GradientText(props: TextProps & { children: React.ReactText }) {
         style={{
           opacity: 1,
           background: `linear-gradient(45deg, ${palette.primary.dark}, ${palette.primary.main})`,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore This is ok in web
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
           'background-clip': 'text',

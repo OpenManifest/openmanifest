@@ -1,4 +1,4 @@
-fragment slotDetails on Slot {
+fragment slotEssentials on Slot {
   id
   createdAt
   exitWeight
@@ -6,9 +6,6 @@ fragment slotDetails on Slot {
   passengerExitWeight
   wingLoading
   groupNumber
-  dropzoneUser {
-    ...dropzoneUserEssentials
-  }
   ticketType {
     ...ticketTypeEssentials
   }
@@ -18,6 +15,16 @@ fragment slotDetails on Slot {
   extras {
     id
     name
+  }
+}
+
+fragment slotDetails on Slot {
+  ...slotEssentials
+  rig {
+    ...rigEssentials
+  }
+  dropzoneUser {
+    ...dropzoneUserEssentials
   }
 }
 

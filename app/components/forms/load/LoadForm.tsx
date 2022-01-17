@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Permission } from 'app/api/schema.d';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, Divider } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
@@ -54,7 +55,7 @@ export default function LoadForm() {
           label="GCA"
           onSelect={(dzUser) => dispatch(actions.forms.load.setField(['gca', dzUser]))}
           value={state.fields.gca.value || null}
-          requiredPermissions={['actAsGCA']}
+          requiredPermissions={[Permission.ActAsGca]}
         />
         <HelperText type={state.fields.gca.error ? 'error' : 'info'}>
           {state.fields.gca.error || ''}
@@ -64,7 +65,7 @@ export default function LoadForm() {
           label="Pilot"
           onSelect={(dzUser) => dispatch(actions.forms.load.setField(['pilot', dzUser]))}
           value={state.fields.pilot.value || null}
-          requiredPermissions={['actAsPilot']}
+          requiredPermissions={[Permission.ActAsPilot]}
         />
         <HelperText type={state.fields.pilot.error ? 'error' : 'info'}>
           {state.fields.pilot.error || ''}

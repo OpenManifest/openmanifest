@@ -1,27 +1,30 @@
 import { LoadState } from '../../../api/schema.d';
-import { LoadQuery, LoadQueryVariables } from '../../../api/operations';
+import { LoadEssentialsFragment, LoadQuery, LoadQueryVariables } from '../../../api/operations';
 import { LoadDocument } from '../../../api/reflection';
 import createMockedQuery from './createMockedQuery.mock';
 
+const loadEssentials: LoadEssentialsFragment = {
+  __typename: 'Load',
+  id: '1',
+  name: 'Test Load',
+  createdAt: Math.floor(new Date().getTime() / 1000 - 30 * 60 * 60),
+  dispatchAt: null,
+  hasLanded: false,
+  loadNumber: 1,
+  isFull: false,
+  state: LoadState.Open,
+  isOpen: true,
+  weight: 100,
+  maxSlots: 10,
+  availableSlots: 7,
+  occupiedSlots: 3,
+};
 export default createMockedQuery<LoadQueryVariables, LoadQuery>(
   LoadDocument,
   { id: 1 },
   {
     load: {
-      __typename: 'Load',
-      id: '1',
-      name: 'Test Load',
-      createdAt: Math.floor(new Date().getTime() / 1000 - 30 * 60 * 60),
-      dispatchAt: null,
-      hasLanded: false,
-      loadNumber: 1,
-      isFull: false,
-      state: LoadState.Open,
-      isOpen: true,
-      weight: 100,
-      maxSlots: 10,
-      availableSlots: 7,
-      occupiedSlots: 3,
+      ...loadEssentials,
 
       plane: {
         __typename: 'Plane',

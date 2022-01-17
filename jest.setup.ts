@@ -1,10 +1,14 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+import { cleanup } from '@testing-library/react-native';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import '@testing-library/jest-dom';
 import 'react-native-gesture-handler/jestSetup';
 
 declare const global: { __reanimatedWorkletInit: ReturnType<typeof jest.fn> };
 
 global.__reanimatedWorkletInit = jest.fn();
+
+afterEach(cleanup);
 
 jest.mock('react-native-reanimated', () => {
   return {

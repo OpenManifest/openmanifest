@@ -37,19 +37,21 @@ export default function UpdateDropzoneScreen() {
         })
       ),
     onSuccess: (payload) => {
-      dispatch(
-        actions.global.setDropzone({
-          ...(globalState.currentDropzone || {}),
-          ...(payload.dropzone as Dropzone),
-        })
-      );
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: `Your settings have been saved`,
-          variant: 'success',
-        })
-      );
-      navigation.goBack();
+      if (payload?.dropzone?.id) {
+        dispatch(
+          actions.global.setDropzone({
+            ...(globalState.currentDropzone || {}),
+            ...payload?.dropzone,
+          })
+        );
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: `Your settings have been saved`,
+            variant: 'success',
+          })
+        );
+        navigation.goBack();
+      }
     },
   });
 

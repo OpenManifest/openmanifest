@@ -20,3 +20,12 @@ fragment userDetailed on User {
     ...userRigDetailed
   }
 }
+
+fragment currentUser on User {
+  ...userDetailed
+  pushToken
+  jumpTypes {
+    id
+    name
+  }
+}

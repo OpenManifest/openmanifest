@@ -1,17 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Plane } from '../../../api/schema.d';
+import { PlaneEssentialsFragment } from 'app/api/operations';
 
-export type PlaneFields = Pick<
-  Plane,
-  'name' | 'registration' | 'minSlots' | 'maxSlots' | 'hours' | 'nextMaintenanceHours'
->;
+export type PlaneFields = Omit<PlaneEssentialsFragment, 'id' | '__typename'>;
 
 interface IPlaneEditState {
-  original: Plane | null;
+  original: PlaneEssentialsFragment | null;
   open: boolean;
   fields: {
     [K in keyof PlaneFields]-?: {
-      value: Plane[K] | null;
+      value: PlaneEssentialsFragment[K] | null;
       error: string | null;
     };
   };
@@ -35,14 +32,6 @@ export const initialState: IPlaneEditState = {
     },
     maxSlots: {
       value: 4,
-      error: null,
-    },
-    hours: {
-      value: null,
-      error: null,
-    },
-    nextMaintenanceHours: {
-      value: null,
       error: null,
     },
   },
@@ -70,7 +59,7 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOpen: (state: IPlaneEditState, action: PayloadAction<boolean | Plane>) => {
+    setOpen: (state: IPlaneEditState, action: PayloadAction<boolean | PlaneEssentialsFragment>) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;
@@ -78,24 +67,20 @@ export default createSlice({
       } else {
         state.original = action.payload;
         state.open = true;
-        state.fields.hours.value = action.payload.hours || 0;
         state.fields.minSlots.value = action.payload.minSlots || 0;
         state.fields.maxSlots.value = action.payload.maxSlots || 3;
         state.fields.name.value = action.payload.name || '';
         state.fields.registration.value = action.payload.registration || '';
-        state.fields.nextMaintenanceHours.value = action.payload.nextMaintenanceHours || 0;
       }
     },
 
-    setOriginal: (state: IPlaneEditState, action: PayloadAction<Plane>) => {
+    setOriginal: (state: IPlaneEditState, action: PayloadAction<PlaneEssentialsFragment>) => {
       state.original = action.payload;
       state.open = true;
-      state.fields.hours.value = action.payload.hours || 0;
       state.fields.minSlots.value = action.payload.minSlots || 0;
       state.fields.maxSlots.value = action.payload.maxSlots || 3;
       state.fields.name.value = action.payload.name || '';
       state.fields.registration.value = action.payload.registration || '';
-      state.fields.nextMaintenanceHours.value = action.payload.nextMaintenanceHours || 0;
     },
 
     reset: (state: IPlaneEditState) => {

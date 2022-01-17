@@ -42,41 +42,20 @@ fragment dropzoneUserProfile on DropzoneUser {
     name
   }
   availableRigs {
-    id
-    name
-    model
-    make
-    serial
-    canopySize
-    repackExpiresAt
+    ...rigEssentials
+  }
+  rigInspections {
+    ...rigInspectionEssentials
   }
 
   user {
-    id
-    name
-    exitWeight
-    email
-    phone
-    image
-    rigs {
-      id
-      name
-      model
-      make
-      serial
-      canopySize
-      repackExpiresAt
-    }
-    jumpTypes {
-      id
-      name
-    }
-    license {
-      id
-      name
-      federation {
-        id
-        name
+    ...userDetailed
+  }
+
+  orders {
+    edges {
+      node {
+        ...orderEssentials
       }
     }
   }
@@ -84,23 +63,7 @@ fragment dropzoneUserProfile on DropzoneUser {
   slots {
     edges {
       node {
-        id
-        createdAt
-        load {
-          id
-          name
-          loadNumber
-          dispatchAt
-          createdAt
-        }
-        jumpType {
-          id
-          name
-        }
-        ticketType {
-          id
-          name
-        }
+        ...slotEssentials
       }
     }
   }

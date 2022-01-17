@@ -16,7 +16,7 @@ describe('<ManifestScreen />', () => {
       ...appRedux.initialState,
       global: {
         ...appRedux.initialState.global,
-        currentDropzoneId: 2,
+        currentDropzoneId: 1,
       },
     };
 
@@ -31,7 +31,6 @@ describe('<ManifestScreen />', () => {
     });
 
     await waitFor(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 0));
       const loads = screen.queryAllByTestId('load-card');
 
       expect(loads.length).toBe(2);
@@ -43,7 +42,7 @@ describe('<ManifestScreen />', () => {
       ...appRedux.initialState,
       global: {
         ...appRedux.initialState.global,
-        currentDropzoneId: 2,
+        currentDropzoneId: 1,
       },
     };
     const screen = render(<ManifestScreen />, {
@@ -71,7 +70,7 @@ describe('<ManifestScreen />', () => {
       ...appRedux.initialState,
       global: {
         ...appRedux.initialState.global,
-        currentDropzoneId: 2,
+        currentDropzoneId: 1,
       },
       screens: {
         ...appRedux.initialState.screens,
@@ -111,7 +110,7 @@ describe('<ManifestScreen />', () => {
       ...appRedux.initialState,
       global: {
         ...appRedux.initialState.global,
-        currentDropzoneId: 2,
+        currentDropzoneId: 1,
       },
       screens: {
         ...appRedux.initialState.screens,
@@ -152,7 +151,7 @@ describe('<ManifestScreen />', () => {
       ...appRedux.initialState,
       global: {
         ...appRedux.initialState.global,
-        currentDropzoneId: 2,
+        currentDropzoneId: 1,
       },
       screens: {
         ...appRedux.initialState.screens,

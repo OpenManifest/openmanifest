@@ -38,21 +38,6 @@ export default function DropzoneForm() {
       <TextInput
         style={styles.field}
         mode="outlined"
-        label="hours"
-        error={!!state.fields.hours.error}
-        value={state.fields.hours?.value?.toString()}
-        placeholder="Optional"
-        onChangeText={(newValue) =>
-          dispatch(actions.forms.plane.setField(['hours', Number(newValue)]))
-        }
-      />
-      <HelperText type={state.fields.hours.error ? 'error' : 'info'}>
-        {state.fields.hours.error || ''}
-      </HelperText>
-
-      <TextInput
-        style={styles.field}
-        mode="outlined"
         label="Min slots"
         error={!!state.fields.minSlots.error}
         value={state.fields.minSlots.value?.toString()}

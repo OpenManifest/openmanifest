@@ -26,10 +26,10 @@ interface IRenderer extends RenderOptions {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore Ok
 class MyMockLink extends MockLink {
-  private mockedResponsesByKey: { [key: string]: MockedResponse<Record<string, any>> };
+  private mockedResponsesByKey: { [key: string]: MockedResponse<Record<string, unknown>> };
 
   constructor(
-    readonly mockedResponses: MockedResponse<Record<string, any>>[],
+    readonly mockedResponses: MockedResponse<Record<string, unknown>>[],
     addTypename?: boolean
   ) {
     super(mockedResponses, addTypename);

@@ -10,15 +10,6 @@ fragment dropzoneEssentials on Dropzone {
   requestPublication
   banner
   isCreditSystemEnabled
-  planes {
-    id
-    name
-    registration
-  }
-  ticketTypes {
-    id
-    name
-  }
 }
 
 fragment dropzoneDetailed on Dropzone {
@@ -30,17 +21,15 @@ fragment dropzoneDetailed on Dropzone {
     slug
   }
 
+  planes {
+    ...planeEssentials
+  }
+  ticketTypes {
+    ...ticketTypeEssentials
+  }
+
   currentConditions {
-    id
-    jumpRun
-    temperature
-    offsetDirection
-    offsetMiles
-    winds {
-      altitude
-      speed
-      direction
-    }
+    ...weatherConditionEssentials
   }
   loads(earliestTimestamp: $earliestTimestamp) {
     edges {

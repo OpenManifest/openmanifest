@@ -4,6 +4,7 @@ fragment ticketTypeEssentials on TicketType {
   altitude
   cost
   isTandem
+  allowManifestingSelf
 
   extras {
     id

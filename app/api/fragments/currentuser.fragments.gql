@@ -23,24 +23,8 @@ fragment currentUserEssentials on DropzoneUser {
 fragment currentUserDetailed on DropzoneUser {
   ...currentUserEssentials,
 
-  user {
-    ...userEssentials
-  }
-
-
   rigInspections {
-    id
-    isOk
-    inspectedBy {
-      id
-      user {
-        id
-        name
-      }
-    }
-    rig {
-      id
-    }
+    ...rigInspectionEssentials
   }
 
   orders {
@@ -51,16 +35,7 @@ fragment currentUserDetailed on DropzoneUser {
     }
   }
   availableRigs {
-    name
-    id
-    make
-    model
-    canopySize
-    serial
-
-    user {
-      id
-    }
+    ...rigEssentials
   }
   license {
     id
@@ -68,35 +43,6 @@ fragment currentUserDetailed on DropzoneUser {
   }
 
   user {
-    id
-    name
-    exitWeight
-    email
-    phone
-    pushToken
-    image
-
-    rigs {
-      id
-      name
-      model
-      make
-      serial
-      canopySize
-      repackExpiresAt
-      packingCard
-
-      user {
-        id
-      }
-    }
-    jumpTypes {
-      id
-      name
-    }
-    license {
-      id
-      name
-    }
+    ...currentUser
   }
 }
