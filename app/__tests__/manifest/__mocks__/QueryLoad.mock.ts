@@ -62,8 +62,14 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           dropzoneUser: {
             __typename: 'DropzoneUser',
             id: '1',
+            hasCredits: true,
+            hasExitWeight: true,
+            hasLicense: true,
+            hasMembership: true,
+            expiresAt: null,
             role: {
               id: '1',
+              dropzoneId: 1,
               name: 'fun_jumper',
             },
             user: {
@@ -77,11 +83,6 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
               id: '1',
               name: 'Amy Hops',
               exitWeight: '100',
-              license: {
-                __typename: 'License',
-                id: '1',
-                name: 'Certificate A',
-              },
             },
             license: {
               __typename: 'License',
@@ -119,9 +120,14 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           dropzoneUser: {
             __typename: 'DropzoneUser',
             id: '2',
-
+            hasCredits: true,
+            hasExitWeight: true,
+            hasLicense: true,
+            hasMembership: true,
+            expiresAt: null,
             role: {
               id: '1',
+              dropzoneId: 1,
               name: 'fun_jumper',
             },
             user: {
@@ -135,10 +141,6 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
               moderationRole: null,
               nickname: null,
               phone: null,
-              license: {
-                id: '1',
-                name: 'Certificate A',
-              },
             },
             license: {
               __typename: 'License',
@@ -177,8 +179,14 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           dropzoneUser: {
             __typename: 'DropzoneUser',
             id: '3',
+            hasCredits: true,
+            hasExitWeight: true,
+            hasLicense: true,
+            hasMembership: true,
+            expiresAt: null,
             role: {
               __typename: 'UserRole',
+              dropzoneId: 1,
               id: '1',
               name: 'fun_jumper',
             },
@@ -193,10 +201,6 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
               moderationRole: null,
               nickname: null,
               phone: null,
-              license: {
-                id: '3',
-                name: 'Certificate C',
-              },
             },
             license: {
               __typename: 'License',

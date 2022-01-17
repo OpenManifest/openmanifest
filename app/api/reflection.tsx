@@ -3,6 +3,82 @@ import * as Operation from './operations';
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
+export const RoleEssentialsFragmentDoc = gql`
+    fragment roleEssentials on UserRole {
+  id
+  name
+  dropzoneId
+}
+    `;
+export const LicenseEssentialsFragmentDoc = gql`
+    fragment licenseEssentials on License {
+  id
+  name
+}
+    `;
+export const UserEssentialsFragmentDoc = gql`
+    fragment userEssentials on User {
+  id
+  name
+  nickname
+  phone
+  email
+  exitWeight
+  moderationRole
+  image
+  apfNumber
+}
+    `;
+export const DropzoneUserEssentialsFragmentDoc = gql`
+    fragment dropzoneUserEssentials on DropzoneUser {
+  id
+  expiresAt
+  hasCredits
+  hasMembership
+  hasLicense
+  hasExitWeight
+  role {
+    ...roleEssentials
+  }
+  license {
+    ...licenseEssentials
+  }
+  user {
+    ...userEssentials
+  }
+}
+    ${RoleEssentialsFragmentDoc}
+${LicenseEssentialsFragmentDoc}
+${UserEssentialsFragmentDoc}`;
+export const FederationEssentialsFragmentDoc = gql`
+    fragment federationEssentials on Federation {
+  id
+  name
+  slug
+}
+    `;
+export const LicenseDetailsFragmentDoc = gql`
+    fragment licenseDetails on License {
+  ...licenseEssentials
+  federation {
+    ...federationEssentials
+  }
+}
+    ${LicenseEssentialsFragmentDoc}
+${FederationEssentialsFragmentDoc}`;
+export const UserFederationEssentialsFragmentDoc = gql`
+    fragment userFederationEssentials on UserFederation {
+  id
+  uid
+  federation {
+    ...federationEssentials
+  }
+  license {
+    ...licenseEssentials
+  }
+}
+    ${FederationEssentialsFragmentDoc}
+${LicenseEssentialsFragmentDoc}`;
 export const RigEssentialsFragmentDoc = gql`
     fragment rigEssentials on Rig {
   id
@@ -25,52 +101,6 @@ export const RigEssentialsFragmentDoc = gql`
   }
 }
     `;
-export const UserEssentialsFragmentDoc = gql`
-    fragment userEssentials on User {
-  id
-  name
-  nickname
-  phone
-  email
-  exitWeight
-  moderationRole
-  image
-  apfNumber
-  license {
-    id
-    name
-  }
-}
-    `;
-export const DropzoneUserEssentialsFragmentDoc = gql`
-    fragment dropzoneUserEssentials on DropzoneUser {
-  id
-  role {
-    id
-    name
-  }
-  license {
-    id
-    name
-  }
-  user {
-    ...userEssentials
-  }
-}
-    ${UserEssentialsFragmentDoc}`;
-export const RigInspectionEssentialsFragmentDoc = gql`
-    fragment rigInspectionEssentials on RigInspection {
-  id
-  isOk
-  inspectedBy {
-    ...dropzoneUserEssentials
-  }
-  rig {
-    ...rigEssentials
-  }
-}
-    ${DropzoneUserEssentialsFragmentDoc}
-${RigEssentialsFragmentDoc}`;
 export const UserRigDetailedFragmentDoc = gql`
     fragment userRigDetailed on Rig {
   ...rigEssentials
@@ -85,12 +115,47 @@ export const UserRigDetailedFragmentDoc = gql`
 export const UserDetailedFragmentDoc = gql`
     fragment userDetailed on User {
   ...userEssentials
+  userFederations {
+    ...userFederationEssentials
+  }
   rigs {
     ...userRigDetailed
   }
 }
     ${UserEssentialsFragmentDoc}
+${UserFederationEssentialsFragmentDoc}
 ${UserRigDetailedFragmentDoc}`;
+export const DropzoneUserDetailsFragmentDoc = gql`
+    fragment dropzoneUserDetails on DropzoneUser {
+  ...dropzoneUserEssentials
+  credits
+  license {
+    ...licenseDetails
+  }
+  user {
+    ...userDetailed
+  }
+  availableRigs {
+    ...rigEssentials
+  }
+}
+    ${DropzoneUserEssentialsFragmentDoc}
+${LicenseDetailsFragmentDoc}
+${UserDetailedFragmentDoc}
+${RigEssentialsFragmentDoc}`;
+export const RigInspectionEssentialsFragmentDoc = gql`
+    fragment rigInspectionEssentials on RigInspection {
+  id
+  isOk
+  inspectedBy {
+    ...dropzoneUserEssentials
+  }
+  rig {
+    ...rigEssentials
+  }
+}
+    ${DropzoneUserEssentialsFragmentDoc}
+${RigEssentialsFragmentDoc}`;
 export const TransactionEssentialsFragmentDoc = gql`
     fragment transactionEssentials on Transaction {
   id
@@ -237,24 +302,51 @@ export const SlotEssentialsFragmentDoc = gql`
 }
     ${TicketTypeEssentialsFragmentDoc}
 ${JumpTypeEssentialsFragmentDoc}`;
-export const DropzoneUserProfileFragmentDoc = gql`
-    fragment dropzoneUserProfile on DropzoneUser {
-  id
-  credits
-  expiresAt
-  permissions
-  role {
-    id
-    name
-  }
-  availableRigs {
+export const SlotDetailsFragmentDoc = gql`
+    fragment slotDetails on Slot {
+  ...slotEssentials
+  rig {
     ...rigEssentials
   }
+  dropzoneUser {
+    ...dropzoneUserEssentials
+  }
+}
+    ${SlotEssentialsFragmentDoc}
+${RigEssentialsFragmentDoc}
+${DropzoneUserEssentialsFragmentDoc}`;
+export const LoadEssentialsFragmentDoc = gql`
+    fragment loadEssentials on Load {
+  id
+  name
+  createdAt
+  dispatchAt
+  hasLanded
+  loadNumber
+  isFull
+  state
+  isOpen
+  weight
+  maxSlots
+  availableSlots
+  occupiedSlots
+}
+    `;
+export const UserSlotDetailsFragmentDoc = gql`
+    fragment userSlotDetails on Slot {
+  ...slotDetails
+  load {
+    ...loadEssentials
+  }
+}
+    ${SlotDetailsFragmentDoc}
+${LoadEssentialsFragmentDoc}`;
+export const DropzoneUserProfileFragmentDoc = gql`
+    fragment dropzoneUserProfile on DropzoneUser {
+  ...dropzoneUserDetails
+  permissions
   rigInspections {
     ...rigInspectionEssentials
-  }
-  user {
-    ...userDetailed
   }
   orders {
     edges {
@@ -266,16 +358,15 @@ export const DropzoneUserProfileFragmentDoc = gql`
   slots {
     edges {
       node {
-        ...slotEssentials
+        ...userSlotDetails
       }
     }
   }
 }
-    ${RigEssentialsFragmentDoc}
+    ${DropzoneUserDetailsFragmentDoc}
 ${RigInspectionEssentialsFragmentDoc}
-${UserDetailedFragmentDoc}
 ${OrderEssentialsFragmentDoc}
-${SlotEssentialsFragmentDoc}`;
+${UserSlotDetailsFragmentDoc}`;
 export const DropzoneEssentialsFragmentDoc = gql`
     fragment dropzoneEssentials on Dropzone {
   id
@@ -363,11 +454,10 @@ export const CurrentUserEssentialsFragmentDoc = gql`
   permissions
   expiresAt
   role {
-    id
-    name
+    ...roleEssentials
   }
 }
-    `;
+    ${RoleEssentialsFragmentDoc}`;
 export const CurrentUserFragmentDoc = gql`
     fragment currentUser on User {
   ...userDetailed
@@ -425,56 +515,12 @@ export const RigInspectionDetailedFragmentDoc = gql`
 }
     ${RigInspectionEssentialsFragmentDoc}
 ${UserRigDetailedFragmentDoc}`;
-export const SlotDetailsFragmentDoc = gql`
-    fragment slotDetails on Slot {
-  ...slotEssentials
-  rig {
-    ...rigEssentials
-  }
-  dropzoneUser {
-    ...dropzoneUserEssentials
-  }
+export const RoleDetailedFragmentDoc = gql`
+    fragment roleDetailed on UserRole {
+  ...roleEssentials
+  permissions
 }
-    ${SlotEssentialsFragmentDoc}
-${RigEssentialsFragmentDoc}
-${DropzoneUserEssentialsFragmentDoc}`;
-export const DropzoneUserDetailsFragmentDoc = gql`
-    fragment dropzoneUserDetails on DropzoneUser {
-  id
-  role {
-    id
-    name
-  }
-  license {
-    id
-    name
-  }
-  user {
-    ...userDetailed
-  }
-  availableRigs {
-    ...rigEssentials
-  }
-}
-    ${UserDetailedFragmentDoc}
-${RigEssentialsFragmentDoc}`;
-export const LoadEssentialsFragmentDoc = gql`
-    fragment loadEssentials on Load {
-  id
-  name
-  createdAt
-  dispatchAt
-  hasLanded
-  loadNumber
-  isFull
-  state
-  isOpen
-  weight
-  maxSlots
-  availableSlots
-  occupiedSlots
-}
-    `;
+    ${RoleEssentialsFragmentDoc}`;
 export const LoadDetailsFragmentDoc = gql`
     fragment loadDetails on Load {
   ...loadEssentials
@@ -759,6 +805,53 @@ export function useFinalizeLoadMutation(baseOptions?: Apollo.MutationHookOptions
 export type FinalizeLoadMutationHookResult = ReturnType<typeof useFinalizeLoadMutation>;
 export type FinalizeLoadMutationResult = Apollo.MutationResult<Operation.FinalizeLoadMutation>;
 export type FinalizeLoadMutationOptions = Apollo.BaseMutationOptions<Operation.FinalizeLoadMutation, Operation.FinalizeLoadMutationVariables>;
+export const GrantPermissionDocument = gql`
+    mutation GrantPermission($dropzoneUserId: Int!, $permissionName: Permission!) {
+  grantPermission(input: {id: $dropzoneUserId, permission: $permissionName}) {
+    fieldErrors {
+      message
+      field
+    }
+    errors
+    dropzoneUser {
+      ...dropzoneUserEssentials
+      permissions
+    }
+    fieldErrors {
+      field
+      message
+    }
+    errors
+  }
+}
+    ${DropzoneUserEssentialsFragmentDoc}`;
+export type GrantPermissionMutationFn = Apollo.MutationFunction<Operation.GrantPermissionMutation, Operation.GrantPermissionMutationVariables>;
+
+/**
+ * __useGrantPermissionMutation__
+ *
+ * To run a mutation, you first call `useGrantPermissionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGrantPermissionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [grantPermissionMutation, { data, loading, error }] = useGrantPermissionMutation({
+ *   variables: {
+ *      dropzoneUserId: // value for 'dropzoneUserId'
+ *      permissionName: // value for 'permissionName'
+ *   },
+ * });
+ */
+export function useGrantPermissionMutation(baseOptions?: Apollo.MutationHookOptions<Operation.GrantPermissionMutation, Operation.GrantPermissionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.GrantPermissionMutation, Operation.GrantPermissionMutationVariables>(GrantPermissionDocument, options);
+      }
+export type GrantPermissionMutationHookResult = ReturnType<typeof useGrantPermissionMutation>;
+export type GrantPermissionMutationResult = Apollo.MutationResult<Operation.GrantPermissionMutation>;
+export type GrantPermissionMutationOptions = Apollo.BaseMutationOptions<Operation.GrantPermissionMutation, Operation.GrantPermissionMutationVariables>;
 export const JoinFederationDocument = gql`
     mutation JoinFederation($federationId: Int!, $uid: String, $licenseId: Int) {
   joinFederation(
@@ -917,6 +1010,53 @@ export function useReloadWeatherMutation(baseOptions?: Apollo.MutationHookOption
 export type ReloadWeatherMutationHookResult = ReturnType<typeof useReloadWeatherMutation>;
 export type ReloadWeatherMutationResult = Apollo.MutationResult<Operation.ReloadWeatherMutation>;
 export type ReloadWeatherMutationOptions = Apollo.BaseMutationOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
+export const RevokePermissionDocument = gql`
+    mutation RevokePermission($dropzoneUserId: Int!, $permissionName: Permission!) {
+  revokePermission(input: {id: $dropzoneUserId, permission: $permissionName}) {
+    fieldErrors {
+      message
+      field
+    }
+    errors
+    dropzoneUser {
+      ...dropzoneUserEssentials
+      permissions
+    }
+    fieldErrors {
+      field
+      message
+    }
+    errors
+  }
+}
+    ${DropzoneUserEssentialsFragmentDoc}`;
+export type RevokePermissionMutationFn = Apollo.MutationFunction<Operation.RevokePermissionMutation, Operation.RevokePermissionMutationVariables>;
+
+/**
+ * __useRevokePermissionMutation__
+ *
+ * To run a mutation, you first call `useRevokePermissionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRevokePermissionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [revokePermissionMutation, { data, loading, error }] = useRevokePermissionMutation({
+ *   variables: {
+ *      dropzoneUserId: // value for 'dropzoneUserId'
+ *      permissionName: // value for 'permissionName'
+ *   },
+ * });
+ */
+export function useRevokePermissionMutation(baseOptions?: Apollo.MutationHookOptions<Operation.RevokePermissionMutation, Operation.RevokePermissionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.RevokePermissionMutation, Operation.RevokePermissionMutationVariables>(RevokePermissionDocument, options);
+      }
+export type RevokePermissionMutationHookResult = ReturnType<typeof useRevokePermissionMutation>;
+export type RevokePermissionMutationResult = Apollo.MutationResult<Operation.RevokePermissionMutation>;
+export type RevokePermissionMutationOptions = Apollo.BaseMutationOptions<Operation.RevokePermissionMutation, Operation.RevokePermissionMutationVariables>;
 export const UpdateDropzoneDocument = gql`
     mutation UpdateDropzone($id: Int!, $name: String!, $requestPublication: Boolean, $banner: String, $federationId: Int!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String, $isCreditSystemEnabled: Boolean, $isPublic: Boolean, $earliestTimestamp: Int) {
   updateDropzone(
@@ -1352,6 +1492,40 @@ export function useQueryDropzonesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type QueryDropzonesHookResult = ReturnType<typeof useQueryDropzones>;
 export type QueryDropzonesLazyQueryHookResult = ReturnType<typeof useQueryDropzonesLazyQuery>;
 export type QueryDropzonesQueryResult = Apollo.QueryResult<Operation.QueryDropzonesQuery, Operation.QueryDropzonesQueryVariables>;
+export const FederationsDocument = gql`
+    query Federations {
+  federations {
+    ...federationEssentials
+  }
+}
+    ${FederationEssentialsFragmentDoc}`;
+
+/**
+ * __useFederationsQuery__
+ *
+ * To run a query within a React component, call `useFederationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFederationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFederationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFederationsQuery(baseOptions?: Apollo.QueryHookOptions<Operation.FederationsQuery, Operation.FederationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.FederationsQuery, Operation.FederationsQueryVariables>(FederationsDocument, options);
+      }
+export function useFederationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.FederationsQuery, Operation.FederationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.FederationsQuery, Operation.FederationsQueryVariables>(FederationsDocument, options);
+        }
+export type FederationsQueryHookResult = ReturnType<typeof useFederationsQuery>;
+export type FederationsLazyQueryHookResult = ReturnType<typeof useFederationsLazyQuery>;
+export type FederationsQueryResult = Apollo.QueryResult<Operation.FederationsQuery, Operation.FederationsQueryVariables>;
 export const AddressToLocationDocument = gql`
     query AddressToLocation($search: String!) {
   geocode(search: $search) {
@@ -1432,6 +1606,41 @@ export function useAllowedJumpTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type AllowedJumpTypesQueryHookResult = ReturnType<typeof useAllowedJumpTypesQuery>;
 export type AllowedJumpTypesLazyQueryHookResult = ReturnType<typeof useAllowedJumpTypesLazyQuery>;
 export type AllowedJumpTypesQueryResult = Apollo.QueryResult<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>;
+export const LicensesDocument = gql`
+    query Licenses($federationId: Int) {
+  licenses(federationId: $federationId) {
+    ...licenseDetails
+  }
+}
+    ${LicenseDetailsFragmentDoc}`;
+
+/**
+ * __useLicensesQuery__
+ *
+ * To run a query within a React component, call `useLicensesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLicensesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLicensesQuery({
+ *   variables: {
+ *      federationId: // value for 'federationId'
+ *   },
+ * });
+ */
+export function useLicensesQuery(baseOptions?: Apollo.QueryHookOptions<Operation.LicensesQuery, Operation.LicensesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.LicensesQuery, Operation.LicensesQueryVariables>(LicensesDocument, options);
+      }
+export function useLicensesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.LicensesQuery, Operation.LicensesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.LicensesQuery, Operation.LicensesQueryVariables>(LicensesDocument, options);
+        }
+export type LicensesQueryHookResult = ReturnType<typeof useLicensesQuery>;
+export type LicensesLazyQueryHookResult = ReturnType<typeof useLicensesLazyQuery>;
+export type LicensesQueryResult = Apollo.QueryResult<Operation.LicensesQuery, Operation.LicensesQueryVariables>;
 export const LoadDocument = gql`
     query Load($id: Int!) {
   load(id: $id) {
@@ -1512,14 +1721,13 @@ export const CurrentUserPermissionsDocument = gql`
     currentUser {
       id
       role {
-        id
-        name
+        ...roleEssentials
       }
       permissions
     }
   }
 }
-    `;
+    ${RoleEssentialsFragmentDoc}`;
 
 /**
  * __useCurrentUserPermissionsQuery__
@@ -1548,6 +1756,45 @@ export function useCurrentUserPermissionsLazyQuery(baseOptions?: Apollo.LazyQuer
 export type CurrentUserPermissionsQueryHookResult = ReturnType<typeof useCurrentUserPermissionsQuery>;
 export type CurrentUserPermissionsLazyQueryHookResult = ReturnType<typeof useCurrentUserPermissionsLazyQuery>;
 export type CurrentUserPermissionsQueryResult = Apollo.QueryResult<Operation.CurrentUserPermissionsQuery, Operation.CurrentUserPermissionsQueryVariables>;
+export const RolesDocument = gql`
+    query Roles($dropzoneId: Int!, $selectable: Boolean) {
+  dropzone(id: $dropzoneId) {
+    id
+    roles(selectable: $selectable) {
+      ...roleEssentials
+    }
+  }
+}
+    ${RoleEssentialsFragmentDoc}`;
+
+/**
+ * __useRolesQuery__
+ *
+ * To run a query within a React component, call `useRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRolesQuery({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *      selectable: // value for 'selectable'
+ *   },
+ * });
+ */
+export function useRolesQuery(baseOptions: Apollo.QueryHookOptions<Operation.RolesQuery, Operation.RolesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.RolesQuery, Operation.RolesQueryVariables>(RolesDocument, options);
+      }
+export function useRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.RolesQuery, Operation.RolesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.RolesQuery, Operation.RolesQueryVariables>(RolesDocument, options);
+        }
+export type RolesQueryHookResult = ReturnType<typeof useRolesQuery>;
+export type RolesLazyQueryHookResult = ReturnType<typeof useRolesLazyQuery>;
+export type RolesQueryResult = Apollo.QueryResult<Operation.RolesQuery, Operation.RolesQueryVariables>;
 export const AllowedTicketTypesDocument = gql`
     query AllowedTicketTypes($dropzoneId: Int!, $onlyPublicTickets: Boolean) {
   dropzone(id: $dropzoneId) {

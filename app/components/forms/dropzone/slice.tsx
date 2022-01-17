@@ -1,9 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DropzoneExtensiveFragment } from 'app/api/operations';
-import { Dropzone } from '../../../api/schema.d';
+import { DropzoneDetailedFragment, DropzoneExtensiveFragment } from 'app/api/operations';
 
 export type DropzoneFields = Pick<
-  DropzoneExtensiveFragment,
+  DropzoneDetailedFragment,
   | 'federation'
   | 'name'
   | 'secondaryColor'
@@ -21,7 +20,7 @@ interface IDropzoneEditState {
   open: boolean;
   fields: {
     [K in keyof DropzoneFields]-?: {
-      value: Dropzone[K] | null;
+      value: DropzoneDetailedFragment[K] | null;
       error: string | null;
     };
   };
@@ -113,7 +112,7 @@ export default createSlice({
           const payloadKey = key as keyof typeof action.payload;
           if (payloadKey in state.fields) {
             const typedKey = payloadKey as keyof typeof initialState['fields'];
-            state.fields[typedKey].value = (action.payload as Dropzone)[typedKey];
+            state.fields[typedKey].value = (action.payload as DropzoneDetailedFragment)[typedKey];
           }
         });
       }
@@ -126,7 +125,7 @@ export default createSlice({
         const payloadKey = key as keyof typeof action.payload;
         if (payloadKey in state.fields) {
           const typedKey = payloadKey as keyof typeof initialState['fields'];
-          state.fields[typedKey].value = (action.payload as Dropzone)[typedKey];
+          state.fields[typedKey].value = (action.payload as DropzoneDetailedFragment)[typedKey];
         }
       });
     },

@@ -1,29 +1,19 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import { FederationEssentialsFragment } from 'app/api/operations';
+import { useFederationsQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { List, Menu, TextInput } from 'react-native-paper';
-import { Federation, Query } from '../../../api/schema.d';
 
 interface IFederationSelect {
-  value?: Federation | null;
-  onSelect(jt: Federation): void;
+  value?: FederationEssentialsFragment | null;
+  onSelect(jt: FederationEssentialsFragment): void;
 }
-
-const QUERY_FEDERATIONS = gql`
-  query Federations {
-    federations {
-      id
-      name
-    }
-  }
-`;
 
 export default function FederationSelect(props: IFederationSelect) {
   const { value, onSelect } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
 
-  const { data } = useQuery<Query>(QUERY_FEDERATIONS);
+  const { data } = useFederationsQuery();
 
   React.useEffect(() => {
     if (data?.federations?.length === 1 && !value) {

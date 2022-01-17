@@ -1,17 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RigEssentialsFragment } from 'app/api/operations';
 import { Rig } from '../../../api/schema.d';
 
 export type RigFields = Pick<
-  Rig,
+  RigEssentialsFragment,
   'make' | 'model' | 'serial' | 'canopySize' | 'repackExpiresAt' | 'rigType' | 'name'
 >;
 
 interface IRigEditState {
-  original: Rig | null;
+  original: RigEssentialsFragment | null;
   open: boolean;
   fields: {
     [K in keyof RigFields]-?: {
-      value: Rig[K] | null;
+      value: RigEssentialsFragment[K] | null;
       error: string | null;
     };
   };
@@ -92,7 +93,7 @@ export default createSlice({
       }
     },
 
-    setOriginal: (state: IRigEditState, action: PayloadAction<Rig>) => {
+    setOriginal: (state: IRigEditState, action: PayloadAction<RigEssentialsFragment>) => {
       state.original = action.payload;
       Object.keys(action.payload).forEach((key) => {
         const payloadKey = key as keyof typeof action.payload;

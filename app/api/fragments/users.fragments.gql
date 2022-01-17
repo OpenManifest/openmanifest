@@ -8,14 +8,13 @@ fragment userEssentials on User {
   moderationRole
   image
   apfNumber
-  license {
-    id
-    name
-  }
 }
 
 fragment userDetailed on User {
   ...userEssentials
+  userFederations {
+    ...userFederationEssentials
+  }
   rigs {
     ...userRigDetailed
   }

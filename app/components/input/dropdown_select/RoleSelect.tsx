@@ -1,36 +1,24 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import { RoleEssentialsFragment } from 'app/api/operations';
+import { useRolesQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { List, Menu } from 'react-native-paper';
-import { Query, UserRole } from '../../../api/schema.d';
 import { useAppSelector } from '../../../state';
 
 interface IRoleSelect {
-  value?: UserRole | null;
+  value?: RoleEssentialsFragment | null;
   required?: boolean;
   disabled?: boolean;
-  onSelect(jt: UserRole): void;
+  onSelect(jt: RoleEssentialsFragment): void;
 }
-
-const QUERY_ROLES = gql`
-  query RolesQuery($dropzoneId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      roles(selectable: true) {
-        id
-        name
-      }
-    }
-  }
-`;
 
 export default function RoleSelect(props: IRoleSelect) {
   const { onSelect, disabled, required, value } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector((root) => root.global);
-  const { data } = useQuery<Query>(QUERY_ROLES, {
+  const { data } = useRolesQuery({
     variables: {
       dropzoneId: Number(currentDropzoneId),
+      selectable: true,
     },
   });
   return (

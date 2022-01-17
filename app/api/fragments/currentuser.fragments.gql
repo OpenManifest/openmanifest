@@ -15,8 +15,7 @@ fragment currentUserEssentials on DropzoneUser {
   expiresAt
 
   role {
-    id
-    name
+    ...roleEssentials
   }
 }
 

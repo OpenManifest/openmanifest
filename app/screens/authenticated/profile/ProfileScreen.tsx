@@ -172,7 +172,7 @@ export default function ProfileScreen() {
             ) : (
               <Header
                 dropzoneUser={dropzoneUser}
-                canEdit={isSelf}
+                canEdit={isSelf || canUpdateUsers}
                 onEdit={() => {
                   if (dropzoneUser?.user) {
                     dispatch(actions.forms.user.setOpen(dropzoneUser));

@@ -94,6 +94,7 @@ export default createMock<QueryDropzoneQueryVariables, QueryDropzoneQuery>(
 
         role: {
           id: '1',
+          dropzoneId: 1,
           name: 'fun_jumper',
         },
 
@@ -142,7 +143,6 @@ export default createMock<QueryDropzoneQueryVariables, QueryDropzoneQuery>(
             { id: '1', name: 'Freefly' },
             { id: '2', name: 'Angle/Tracking' },
           ],
-          license: { id: '1', name: 'Certificate C' },
         },
       },
       loads: {

@@ -12,12 +12,13 @@ import {
 import format from 'date-fns/format';
 import color from 'color';
 import { openURL } from 'expo-linking';
-import useRestriction from '../../../../hooks/useRestriction';
-import { actions, useAppDispatch, useAppSelector } from '../../../../state';
-import { DropzoneUser, Permission } from '../../../../api/schema.d';
+import { DropzoneUserProfileFragment } from 'app/api/operations';
+import { Permission } from 'app/api/schema.d';
+import useRestriction from 'app/hooks/useRestriction';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
 
 interface IUserHeader {
-  dropzoneUser?: DropzoneUser;
+  dropzoneUser?: DropzoneUserProfileFragment;
   canEdit?: boolean;
   children?: React.ReactNode;
   variant?: 'dark' | 'light';

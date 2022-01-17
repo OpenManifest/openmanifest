@@ -32,6 +32,7 @@ function AppBar({
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
+            placeholder="Search users..."
             value={searchText || ''}
             onChangeText={(text) => onSearch(text)}
             autoFocus
@@ -43,13 +44,23 @@ function AppBar({
           titleStyle={{ fontWeight: 'bold' }}
         />
       )}
-      <MaterialIcons
-        name="search"
-        onPress={() => setSearchVisible(!searchVisible)}
-        color="#FFFFFF"
-        size={24}
-        style={styles.icon}
-      />
+      {searchVisible ? (
+        <MaterialIcons
+          name="close"
+          onPress={() => setSearchVisible(!searchVisible)}
+          color={theme.colors.text}
+          size={24}
+          style={styles.icon}
+        />
+      ) : (
+        <MaterialIcons
+          name="search"
+          onPress={() => setSearchVisible(!searchVisible)}
+          color={theme.colors.text}
+          size={24}
+          style={styles.icon}
+        />
+      )}
     </Appbar.Header>
   );
 }

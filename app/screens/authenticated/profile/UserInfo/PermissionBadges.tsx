@@ -2,10 +2,14 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import startOfDay from 'date-fns/startOfDay';
 import { ScrollView } from 'react-native-gesture-handler';
-import { DropzoneUsersQuery, DropzoneUsersQueryVariables } from 'app/api/operations';
+import {
+  DropzoneUserEssentialsFragment,
+  DropzoneUsersQuery,
+  DropzoneUsersQueryVariables,
+} from 'app/api/operations';
 
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import { DropzoneUser, Permission } from 'app/api/schema.d';
+import { Permission } from 'app/api/schema.d';
 
 import {
   QueryDropzoneDocument,
@@ -14,7 +18,6 @@ import {
   QueryDropzoneUserProfileDocument,
 } from 'app/api/reflection';
 // eslint-disable-next-line max-len
-import { QUERY_DROPZONE_USER_PROFILE } from 'app/api/hooks/useDropzoneUserProfile';
 import Badge, { IBadgeProps } from 'app/components/Badge';
 import useRestriction from 'app/hooks/useRestriction';
 import useMutationRevokePermission from 'app/api/hooks/useMutationRevokePermission';
@@ -22,7 +25,7 @@ import useMutationGrantPermission from 'app/api/hooks/useMutationGrantPermission
 
 interface IPermissionBadgesProps {
   permissions: Permission[];
-  dropzoneUser: DropzoneUser;
+  dropzoneUser: DropzoneUserEssentialsFragment;
 }
 export default function PermissionBadges(props: IPermissionBadgesProps) {
   const { permissions, dropzoneUser } = props;
@@ -48,7 +51,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
           },
         },
         {
-          query: QUERY_DROPZONE_USER_PROFILE,
+          query: QueryDropzoneUserProfileDocument,
           variables: {
             dropzoneId: state.currentDropzoneId,
             dropzoneUserId: Number(dropzoneUser.id),

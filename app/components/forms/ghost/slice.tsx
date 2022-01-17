@@ -1,14 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Federation, User, DropzoneUser } from '../../../api/schema.d';
+import { DropzoneUserDetailsFragment, FederationEssentialsFragment } from 'app/api/operations';
+import { User } from '../../../api/schema.d';
 
-export type GhostFields = Pick<User, 'exitWeight' | 'name' | 'phone' | 'email' | 'license'> &
-  Pick<DropzoneUser, 'role'>;
+export type GhostFields = Pick<User, 'exitWeight' | 'name' | 'phone' | 'email'> &
+  Pick<DropzoneUserDetailsFragment, 'role' | 'license'>;
 
 interface IGhostEditState {
   original: User | null;
   open: boolean;
   federation: {
-    value: Federation | null;
+    value: FederationEssentialsFragment | null;
     error: null;
   };
   fields: {
@@ -58,7 +59,10 @@ export default createSlice({
   name: 'forms/ghost',
   initialState,
   reducers: {
-    setFederation: (state: IGhostEditState, action: PayloadAction<Federation>) => {
+    setFederation: (
+      state: IGhostEditState,
+      action: PayloadAction<FederationEssentialsFragment>
+    ) => {
       state.federation.value = action.payload;
     },
     setField: <T extends keyof IGhostEditState['fields']>(

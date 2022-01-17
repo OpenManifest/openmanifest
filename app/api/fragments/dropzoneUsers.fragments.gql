@@ -1,12 +1,15 @@
 fragment dropzoneUserEssentials on DropzoneUser {
   id
+  expiresAt
+  hasCredits
+  hasMembership
+  hasLicense
+  hasExitWeight
   role {
-    id
-    name
+    ...roleEssentials
   }
   license {
-    id
-    name
+    ...licenseEssentials
   }
   user {
     ...userEssentials
@@ -14,14 +17,10 @@ fragment dropzoneUserEssentials on DropzoneUser {
 }
 
 fragment dropzoneUserDetails on DropzoneUser {
-  id
-  role {
-    id
-    name
-  }
+  ...dropzoneUserEssentials
+  credits
   license {
-    id
-    name
+    ...licenseDetails
   }
   user {
     ...userDetailed
@@ -32,24 +31,11 @@ fragment dropzoneUserDetails on DropzoneUser {
 }
 
 fragment dropzoneUserProfile on DropzoneUser {
-  id
-  credits
-  expiresAt
+  ...dropzoneUserDetails
   permissions
 
-  role {
-    id
-    name
-  }
-  availableRigs {
-    ...rigEssentials
-  }
   rigInspections {
     ...rigInspectionEssentials
-  }
-
-  user {
-    ...userDetailed
   }
 
   orders {
@@ -63,7 +49,7 @@ fragment dropzoneUserProfile on DropzoneUser {
   slots {
     edges {
       node {
-        ...slotEssentials
+        ...userSlotDetails
       }
     }
   }

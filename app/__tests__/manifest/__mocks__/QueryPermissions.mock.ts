@@ -20,6 +20,7 @@ export default createMockedQuery<CurrentUserPermissionsQueryVariables, CurrentUs
         role: {
           id: '1',
           name: 'jest',
+          dropzoneId: 1,
         },
         permissions: [],
       },
