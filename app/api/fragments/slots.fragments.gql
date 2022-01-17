@@ -1,46 +1,49 @@
-fragment slot on Slot {
+fragment slotEssentials on Slot {
   id
   createdAt
   exitWeight
   passengerName
   passengerExitWeight
   wingLoading
-  dropzoneUser {
-    id
-    role {
-      id
-      name
-    }
-    user {
-      id
-      name
-      nickname
-      exitWeight
-      image
-      license {
-        id
-        name
-      }
-    }
-  }
+  groupNumber
   ticketType {
-    id
-    name
-    altitude
-    isTandem
-
-    extras {
-      id
-      name
-      cost
-    }
+    ...ticketTypeEssentials
   }
   jumpType {
-    id
-    name
+    ...jumpTypeEssentials
   }
   extras {
     id
     name
+  }
+}
+
+fragment slotDetails on Slot {
+  ...slotEssentials
+  rig {
+    ...rigEssentials
+  }
+  dropzoneUser {
+    ...dropzoneUserEssentials
+  }
+}
+
+fragment userSlotDetails on Slot {
+  ...slotDetails,
+  load {
+    ...loadEssentials
+  }
+}
+
+fragment slotExhaustive on Slot {
+  ...slotDetails
+  dropzoneUser {
+    ...dropzoneUserDetails
+  }
+  load {
+    ...loadDetails
+  }
+  rig {
+    ...rigEssentials
   }
 }

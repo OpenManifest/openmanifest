@@ -23,7 +23,7 @@ mutation CreateOrder(
     }
     errors
     order {
-      ...order
+      ...orderEssentials
     }
   }
 }

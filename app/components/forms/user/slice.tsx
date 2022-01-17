@@ -1,21 +1,27 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DropzoneUser, Federation, User } from '../../../api/schema.d';
+import {
+  DropzoneUserDetailsFragment,
+  FederationEssentialsFragment,
+  LicenseDetailsFragment,
+  UserDetailedFragment,
+} from 'app/api/operations';
+import { DropzoneUser } from 'app/api/schema.d';
 
 export type UserFields = Pick<
-  User,
-  'exitWeight' | 'rigs' | 'name' | 'phone' | 'email' | 'license' | 'apfNumber' | 'nickname'
+  UserDetailedFragment & { license: LicenseDetailsFragment },
+  'exitWeight' | 'rigs' | 'name' | 'phone' | 'email' | 'apfNumber' | 'nickname' | 'license'
 >;
 
 interface IUserEditState {
-  original: User | null;
+  original: UserDetailedFragment | null;
   open: boolean;
   federation: {
-    value: Federation | null;
+    value: FederationEssentialsFragment | null;
     error: null;
   };
   fields: {
     [K in keyof UserFields]-?: {
-      value: User[K] | null;
+      value: UserFields[K] | null;
       error: string | null;
     };
   };
@@ -68,7 +74,7 @@ export default createSlice({
   name: 'forms/user',
   initialState,
   reducers: {
-    setFederation: (state: IUserEditState, action: PayloadAction<Federation>) => {
+    setFederation: (state: IUserEditState, action: PayloadAction<FederationEssentialsFragment>) => {
       state.federation.value = action.payload;
     },
     setField: <T extends keyof IUserEditState['fields']>(
@@ -89,10 +95,12 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOriginal: (state: IUserEditState, action: PayloadAction<DropzoneUser>) => {
+    setOriginal: (state: IUserEditState, action: PayloadAction<DropzoneUserDetailsFragment>) => {
       state.original = action.payload.user;
       state.federation.value =
-        action.payload.license?.federation || action.payload?.dropzone?.federation || null;
+        action.payload.license?.federation ||
+        action.payload?.user?.userFederations?.find((i) => i)?.federation ||
+        null;
       if (
         state.federation.value &&
         action.payload.user?.userFederations?.find(
@@ -112,7 +120,10 @@ export default createSlice({
       });
     },
 
-    setOpen: (state: IUserEditState, action: PayloadAction<boolean | DropzoneUser>) => {
+    setOpen: (
+      state: IUserEditState,
+      action: PayloadAction<boolean | DropzoneUserDetailsFragment>
+    ) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;
@@ -121,7 +132,9 @@ export default createSlice({
         state.original = action.payload.user;
         state.open = true;
         state.federation.value =
-          action.payload.license?.federation || action.payload?.dropzone?.federation || null;
+          action.payload.license?.federation ||
+          action.payload.user?.userFederations?.find((i) => i)?.federation ||
+          null;
         if (
           state.federation.value &&
           action.payload.user?.userFederations?.find(

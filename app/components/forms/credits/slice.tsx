@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DropzoneUser, Transaction, TransactionType } from '../../../api/schema.d';
+import { DropzoneUserDetailsFragment } from 'app/api/operations';
+import { Transaction, TransactionType } from '../../../api/schema.d';
 
 type Fields = Pick<Transaction, 'amount' | 'transactionType' | 'message'>;
 
 interface IDropzoneEditState {
-  original: DropzoneUser | null;
+  original: DropzoneUserDetailsFragment | null;
   open: boolean;
   fields: {
     [K in keyof Fields]-?: {
@@ -56,7 +57,10 @@ export default createSlice({
         state.fields[field as T].error = error;
       }
     },
-    setOpen: (state: IDropzoneEditState, action: PayloadAction<DropzoneUser | boolean>) => {
+    setOpen: (
+      state: IDropzoneEditState,
+      action: PayloadAction<DropzoneUserDetailsFragment | boolean>
+    ) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;

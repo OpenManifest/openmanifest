@@ -1,17 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TicketType } from '../../../api/schema.d';
+import { TicketTypeEssentialsFragment } from 'app/api/operations';
 
 export type TicketTypeFields = Pick<
-  TicketType,
+  TicketTypeEssentialsFragment,
   'name' | 'cost' | 'isTandem' | 'allowManifestingSelf' | 'altitude' | 'extras'
 >;
 
 interface ITicketTypeEditState {
-  original: TicketType | null;
+  original: TicketTypeEssentialsFragment | null;
   open: boolean;
   fields: {
     [K in keyof TicketTypeFields]-?: {
-      value: TicketType[K] | null;
+      value: TicketTypeEssentialsFragment[K] | null;
       error: string | null;
     };
   };
@@ -70,7 +70,10 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOriginal: (state: ITicketTypeEditState, action: PayloadAction<TicketType>) => {
+    setOriginal: (
+      state: ITicketTypeEditState,
+      action: PayloadAction<TicketTypeEssentialsFragment>
+    ) => {
       state.original = action.payload;
       state.open = true;
       state.fields.altitude.value = action.payload.altitude || 0;
@@ -79,7 +82,10 @@ export default createSlice({
       state.fields.name.value = action.payload.name || '';
     },
 
-    setOpen: (state: ITicketTypeEditState, action: PayloadAction<boolean | TicketType>) => {
+    setOpen: (
+      state: ITicketTypeEditState,
+      action: PayloadAction<boolean | TicketTypeEssentialsFragment>
+    ) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;

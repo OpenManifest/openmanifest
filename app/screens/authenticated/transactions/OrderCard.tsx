@@ -4,13 +4,17 @@ import { Caption, Card, List, useTheme } from 'react-native-paper';
 import { format } from 'date-fns';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {
+  DropzoneEssentialsFragment,
+  DropzoneUserEssentialsFragment,
+  OrderEssentialsFragment,
+} from 'app/api/operations';
 import { successColor } from '../../../constants/Colors';
-import { Dropzone, DropzoneUser, Order } from '../../../api/schema';
 import UserAvatar from '../../../components/UserAvatar';
 
 interface IOrder {
-  order: Order;
-  dropzoneUser?: DropzoneUser | null;
+  order: OrderEssentialsFragment;
+  dropzoneUser?: DropzoneUserEssentialsFragment | null;
   showAvatar?: boolean;
   onPress?(): void;
 }
@@ -51,13 +55,13 @@ export default function OrderCard(props: IOrder) {
                     style={{ alignSelf: 'center', marginHorizontal: 12 }}
                     size={30}
                     name={
-                      (order?.buyer as DropzoneUser)?.user?.name ||
-                      (order?.buyer as Dropzone).name ||
+                      (order?.buyer as DropzoneUserEssentialsFragment)?.user?.name ||
+                      (order?.buyer as DropzoneEssentialsFragment).name ||
                       ''
                     }
                     image={
-                      (order?.buyer as DropzoneUser).user?.image ||
-                      (order?.buyer as Dropzone).banner ||
+                      (order?.buyer as DropzoneUserEssentialsFragment).user?.image ||
+                      (order?.buyer as DropzoneEssentialsFragment).banner ||
                       undefined
                     }
                   />
@@ -69,7 +73,7 @@ export default function OrderCard(props: IOrder) {
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       // @ts-ignore
                       order.buyer.__typename === 'DropzoneUser' &&
-                      (order.buyer as DropzoneUser)?.id === dropzoneUser?.id
+                      (order.buyer as DropzoneUserEssentialsFragment)?.id === dropzoneUser?.id
                         ? '#FF1414'
                         : successColor
                     }

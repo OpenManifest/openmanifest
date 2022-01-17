@@ -1,4 +1,4 @@
-mutation ReloadWeather($dropzoneId: Int!, $id: Int!) {
+mutation ReloadWeather($id: Int!) {
   reloadWeatherCondition(input: { id: $id }) {
     errors
     fieldErrors {

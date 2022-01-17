@@ -5,13 +5,11 @@ import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
 import * as Location from 'expo-location';
 import { Step, IWizardStepProps } from 'app/components/navigation_wizard';
-import AddressSearchBar from 'app/components/input/search/AddressSearchBar';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { calculateLatLngDelta } from 'app/utils/calculateLatLngDelta';
 
 function LocationWizardStep(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.dropzone);
-  const [searchText, setSearchText] = React.useState('');
   const dispatch = useAppDispatch();
 
   const setUsersLocation = React.useCallback(async () => {

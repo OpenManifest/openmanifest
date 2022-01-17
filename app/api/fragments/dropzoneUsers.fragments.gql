@@ -1,40 +1,47 @@
-fragment dropzoneUserProfile on DropzoneUser {
+fragment dropzoneUserEssentials on DropzoneUser {
   id
-  credits
   expiresAt
+  hasCredits
+  hasMembership
+  hasLicense
+  hasExitWeight
+  role {
+    ...roleEssentials
+  }
+  license {
+    ...licenseEssentials
+  }
+  user {
+    ...userEssentials
+  }
+}
+
+fragment dropzoneUserDetails on DropzoneUser {
+  ...dropzoneUserEssentials
+  credits
+  license {
+    ...licenseDetails
+  }
+  user {
+    ...userDetailed
+  }
+  availableRigs {
+    ...rigEssentials
+  }
+}
+
+fragment dropzoneUserProfile on DropzoneUser {
+  ...dropzoneUserDetails
   permissions
 
-  role {
-    id
-    name
+  rigInspections {
+    ...rigInspectionEssentials
   }
 
-  user {
-    id
-    name
-    exitWeight
-    email
-    phone
-    image
-    rigs {
-      id
-      name
-      model
-      make
-      serial
-      canopySize
-      repackExpiresAt
-    }
-    jumpTypes {
-      id
-      name
-    }
-    license {
-      id
-      name
-      federation {
-        id
-        name
+  orders {
+    edges {
+      node {
+        ...orderEssentials
       }
     }
   }
@@ -42,23 +49,7 @@ fragment dropzoneUserProfile on DropzoneUser {
   slots {
     edges {
       node {
-        id
-        createdAt
-        load {
-          id
-          name
-          loadNumber
-          dispatchAt
-          createdAt
-        }
-        jumpType {
-          id
-          name
-        }
-        ticketType {
-          id
-          name
-        }
+        ...userSlotDetails
       }
     }
   }

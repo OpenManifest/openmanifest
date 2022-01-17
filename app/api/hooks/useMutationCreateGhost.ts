@@ -87,9 +87,9 @@ export default createMutation<MutationCreateGhostArgs['input']['attributes'], Cr
       roleId: [isRequired('You must select a role')],
     },
     fieldErrorMap: {
-      license: 'licenseId',
-      exit_weight: 'exitWeight',
-      role: 'roleId',
+      licenseId: 'license',
+      exitWeight: 'exit_weight',
+      roleId: 'role',
     },
   }
 );

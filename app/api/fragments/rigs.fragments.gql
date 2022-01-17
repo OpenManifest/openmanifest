@@ -10,6 +10,14 @@ fragment rigEssentials on Rig {
   maintainedAt
   rigType
   packingCard
+
+  user {
+    id
+    name
+  }
+  dropzone {
+    id
+  }
 }
 
 fragment userRigDetailed on Rig {

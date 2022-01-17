@@ -1,0 +1,41 @@
+mutation UpdateDropzone(
+  $id: Int!
+  $name: String!
+  $requestPublication: Boolean
+  $banner: String
+  $federationId: Int!
+  $lat: Float
+  $lng: Float
+  $primaryColor: String
+  $secondaryColor: String
+  $isCreditSystemEnabled: Boolean
+  $isPublic: Boolean
+  $earliestTimestamp: Int
+) {
+  updateDropzone(
+    input: {
+      id: $id
+      attributes: {
+        name: $name
+        banner: $banner
+        lat: $lat
+        lng: $lng
+        requestPublication: $requestPublication
+        federationId: $federationId
+        primaryColor: $primaryColor
+        secondaryColor: $secondaryColor
+        isCreditSystemEnabled: $isCreditSystemEnabled
+        isPublic: $isPublic
+      }
+    }
+  ) {
+    fieldErrors {
+      field
+      message
+    }
+    errors
+    dropzone {
+      ...dropzoneExtensive
+    }
+  }
+}

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Wizard } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useUserSignUpMutation } from 'app/api/reflection';
-import checkPasswordComplexity from 'app/utils/checkPasswordComplexity';
+import checkPasswordComplexity, { PasswordStrength } from 'app/utils/checkPasswordComplexity';
 import PasswordStep from './steps/Password';
 import EmailStep from './steps/Email';
 import PasswordConfirmationStep from './steps/PasswordConfirmation';
@@ -28,7 +28,7 @@ export default function SignupWizard() {
   }, [dispatch, state.fields.email.value]);
 
   const validatePassword = React.useCallback(async () => {
-    if (!checkPasswordComplexity(state.fields.password.value)) {
+    if (checkPasswordComplexity(state.fields.password.value) < PasswordStrength.Acceptable) {
       dispatch(actions.screens.signup.setFieldError(['password', 'Password too weak']));
       throw new Error('Invalid email');
     }

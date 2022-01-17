@@ -14,6 +14,13 @@ import addMinutes from 'date-fns/addMinutes';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 
 import { useNavigation } from '@react-navigation/native';
+import { useLoadQuery } from 'app/api/reflection';
+import {
+  DropzoneUserEssentialsFragment,
+  PlaneEssentialsFragment,
+  SlotDetailsFragment,
+  SlotEssentialsFragment,
+} from 'app/api/operations';
 import useCurrentDropzone from '../../../../../api/hooks/useCurrentDropzone';
 import GCAChip from '../../../../../components/chips/GcaChip';
 import LoadMasterChip from '../../../../../components/chips/LoadMasterChip';
@@ -21,12 +28,11 @@ import PilotChip from '../../../../../components/chips/PilotChip';
 import PlaneChip from '../../../../../components/chips/PlaneChip';
 
 import { View } from '../../../../../components/Themed';
-import { Load, Permission, Plane, Slot, DropzoneUser } from '../../../../../api/schema.d';
+import { Load, Permission } from '../../../../../api/schema.d';
 import useRestriction from '../../../../../hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from '../../../../../state';
 import SwipeActions from '../../../../../components/layout/SwipeActions';
 import LoadingCard from '../Small/Loading';
-import useQueryLoad from '../../../../../api/hooks/useQueryLoad';
 import useMutationUpdateLoad from '../../../../../api/hooks/useMutationUpdateLoad';
 import useMutationDeleteSlot from '../../../../../api/hooks/useMutationDeleteSlot';
 
@@ -34,8 +40,8 @@ interface ILoadCardLarge {
   load: Load;
   controlsVisible: boolean;
   onManifestGroup(): void;
-  onSlotGroupPress(slots: Slot[]): void;
-  onSlotPress(slot: Slot): void;
+  onSlotGroupPress(slots: SlotEssentialsFragment[]): void;
+  onSlotPress(slot: SlotEssentialsFragment): void;
   onManifest(): void;
 }
 
@@ -53,17 +59,13 @@ export default function LoadCard(props: ILoadCardLarge) {
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDispatchOpen, setDispatchOpen] = React.useState(false);
 
-  const {
-    data: load,
-    loading,
-    refetch,
-  } = useQueryLoad({
+  const { data, loading, refetch } = useLoadQuery({
     variables: {
       id: Number(initialRecord.id),
     },
-    showSnackbarErrors: true,
-    // pollInterval: 30000,
+    onError: console.error,
   });
+  const load = React.useMemo(() => data?.load, [data?.load]);
   const currentDropzone = useCurrentDropzone();
   const { currentUser } = currentDropzone;
 
@@ -103,7 +105,7 @@ export default function LoadCard(props: ILoadCardLarge) {
   });
 
   const onDeleteSlot = React.useCallback(
-    async (slot: Slot) => {
+    async (slot: SlotDetailsFragment) => {
       await mutationDeleteSlot.mutate({
         id: Number(slot.id),
       });
@@ -112,7 +114,7 @@ export default function LoadCard(props: ILoadCardLarge) {
   );
 
   const updatePilot = React.useCallback(
-    async (pilot: DropzoneUser) => {
+    async (pilot: DropzoneUserEssentialsFragment) => {
       if (!load?.id) {
         return;
       }
@@ -125,7 +127,7 @@ export default function LoadCard(props: ILoadCardLarge) {
   );
 
   const updateGCA = React.useCallback(
-    async (gca: DropzoneUser) => {
+    async (gca: DropzoneUserEssentialsFragment) => {
       if (!load?.id) {
         return;
       }
@@ -138,7 +140,7 @@ export default function LoadCard(props: ILoadCardLarge) {
   );
 
   const updatePlane = React.useCallback(
-    async (plane: Plane) => {
+    async (plane: PlaneEssentialsFragment) => {
       if (!load?.id) {
         return;
       }
@@ -151,7 +153,7 @@ export default function LoadCard(props: ILoadCardLarge) {
   );
 
   const updateLoadMaster = React.useCallback(
-    async (lm: DropzoneUser) => {
+    async (lm: DropzoneUserEssentialsFragment) => {
       if (!load?.id) {
         return;
       }
@@ -237,7 +239,7 @@ export default function LoadCard(props: ILoadCardLarge) {
               backgroundColor: 'transparent',
             }}
           >
-            <Text>{`Load ${load?.loadNumber || 0}`}</Text>
+            <Text testID="title">{`Load ${load?.loadNumber || 0}`}</Text>
             <View style={{ flexGrow: 1 }} />
             {showGroupIcon && (
               <IconButton
@@ -317,7 +319,7 @@ export default function LoadCard(props: ILoadCardLarge) {
             const slotGroup = load?.slots?.filter(
               ({ groupNumber }) => groupNumber && groupNumber === slot.groupNumber
             );
-            const isCurrentUser = slot?.user?.id === currentUser?.id;
+            const isCurrentUser = slot?.dropzoneUser?.id === currentUser?.id;
 
             return (
               <SwipeActions
@@ -333,7 +335,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                   testID="slot-row"
                   disabled={!!load?.hasLanded}
                   onPress={() => {
-                    if (slot.user?.id === currentUser?.id) {
+                    if (slot.dropzoneUser?.id === currentUser?.id) {
                       if (canEditSelf) {
                         if (slotGroup?.length) {
                           onSlotGroupPress(slotGroup);

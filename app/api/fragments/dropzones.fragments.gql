@@ -8,15 +8,8 @@ fragment dropzoneEssentials on Dropzone {
   secondaryColor
   isPublic
   requestPublication
-  planes {
-    id
-    name
-    registration
-  }
-  ticketTypes {
-    id
-    name
-  }
+  banner
+  isCreditSystemEnabled
 }
 
 fragment dropzoneDetailed on Dropzone {
@@ -28,17 +21,15 @@ fragment dropzoneDetailed on Dropzone {
     slug
   }
 
+  planes {
+    ...planeEssentials
+  }
+  ticketTypes {
+    ...ticketTypeEssentials
+  }
+
   currentConditions {
-    id
-    jumpRun
-    temperature
-    offsetDirection
-    offsetMiles
-    winds {
-      altitude
-      speed
-      direction
-    }
+    ...weatherConditionEssentials
   }
   loads(earliestTimestamp: $earliestTimestamp) {
     edges {

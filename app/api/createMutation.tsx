@@ -64,12 +64,12 @@ export function createMutation<
   Payload extends {
     fieldErrors?: Maybe<FieldError[]>;
     errors?: Maybe<string[]>;
-  }
+  } | null
 >(
   mutation: DocumentNode,
   options: {
     // Get payload from root field in mutation
-    getPayload: (rootField: Mutation) => Maybe<Payload>;
+    getPayload: (rootField: { [K in keyof Mutation]: Maybe<Payload> }) => Maybe<Payload>;
     fieldErrorMap?: {
       // Map serverFieldName: tsFieldName
       [K in keyof InputType]?: string;

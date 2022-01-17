@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from 'react';
-import { LayoutRectangle, StyleSheet, View, ViewStyle } from 'react-native';
+import { LayoutRectangle, View, ViewStyle } from 'react-native';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 /* eslint-disable import/no-unresolved */
 import { GOOGLE_MAPS_WEB } from '@env';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Location from 'expo-location';
 import { useIsFocused } from '@react-navigation/core';
-import { calculateLatLngDelta } from '../../utils/calculateLatLngDelta';
 
 // Used if user location cant be used and we have no other fallback
 // This points to Brisbane:
@@ -45,7 +45,7 @@ export default function Map(props: IMapProps) {
     interactive,
     onDragEnd,
   } = props;
-  const { isLoaded, loadError } = useJsApiLoader({
+  const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_WEB,
     id: 'google-maps-script',
   });

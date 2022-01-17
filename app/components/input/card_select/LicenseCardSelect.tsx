@@ -1,41 +1,26 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import { LicenseDetailsFragment, LicenseEssentialsFragment } from 'app/api/operations';
+import { useLicensesQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { License, Query } from '../../../api/schema.d';
 import CardSelect from './CardSelect';
 
 interface ILicenseSelect {
-  value?: License | null;
+  value?: LicenseEssentialsFragment | null;
   federationId?: number | null;
-  onSelect(jt: License): void;
+  onSelect(jt: LicenseDetailsFragment): void;
 }
-
-const QUERY_LICENSES = gql`
-  query Licenses($federationId: Int) {
-    licenses(federationId: $federationId) {
-      id
-      name
-
-      federation {
-        id
-        name
-      }
-    }
-  }
-`;
 
 export default function LicenseCardSelect(props: ILicenseSelect) {
   const { federationId, onSelect, value } = props;
-  const { data } = useQuery<Query>(QUERY_LICENSES, {
+  const { data } = useLicensesQuery({
     variables: {
       federationId,
     },
   });
   return (
-    <CardSelect<License>
+    <CardSelect<LicenseDetailsFragment>
       autoSelectFirst
       items={data?.licenses || []}
-      selected={[value].filter(Boolean) as License[]}
+      selected={[value].filter(Boolean) as LicenseDetailsFragment[]}
       isSelected={(item) => item.id === value?.id}
       renderItemLabel={(license) => license?.name}
       onChangeSelected={([first]) => (first ? onSelect(first) : null)}

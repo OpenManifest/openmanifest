@@ -1,6 +1,6 @@
 #import "./slot.gql"
 
-fragment load on Load {
+fragment loadEssentials on Load {
   id
   name
   createdAt
@@ -14,6 +14,10 @@ fragment load on Load {
   maxSlots
   availableSlots
   occupiedSlots
+}
+
+fragment loadDetails on Load {
+  ...loadEssentials
   plane {
     id
     maxSlots
@@ -41,6 +45,6 @@ fragment load on Load {
     }
   }
   slots {
-    ...slot
+    ...slotDetails
   }
 }

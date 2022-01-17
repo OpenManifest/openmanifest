@@ -167,7 +167,7 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
   ]);
 
   const onSave = React.useCallback(async () => {
-    const { name, registration, maxSlots, minSlots, hours, nextMaintenanceHours } = state.fields;
+    const { name, registration, maxSlots, minSlots } = state.fields;
 
     const mutation = state.original?.id ? mutationUpdatePlane : mutationCreatePlane;
 
@@ -182,8 +182,6 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
             registration: registration.value,
             minSlots: minSlots.value,
             maxSlots: maxSlots.value,
-            hours: hours.value,
-            nextMaintenanceHours: nextMaintenanceHours.value,
           },
         });
 
@@ -198,12 +196,6 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
                 return dispatch(actions.forms.plane.setFieldError(['name', message]));
               case 'min_slots':
                 return dispatch(actions.forms.plane.setFieldError(['minSlots', message]));
-              case 'hours':
-                return dispatch(actions.forms.plane.setFieldError(['hours', message]));
-              case 'next_maintenance_hours':
-                return dispatch(
-                  actions.forms.plane.setFieldError(['nextMaintenanceHours', message])
-                );
               case 'registration':
                 return dispatch(actions.forms.plane.setFieldError(['registration', message]));
               default:

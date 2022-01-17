@@ -13,13 +13,15 @@ import DropzonesScreen from '../screens/authenticated/dropzones/DropzonesScreen'
 import DropzoneSetupScreen from '../screens/authenticated/dropzone_wizard/DropzoneWizard';
 import UserSetupWizard from '../screens/authenticated/user_wizard/UserWizardScreen';
 import ConfirmUserScreen from '../screens/unauthenticated/signup/ConfirmUserScreen';
+import ChangePasswordScreen from '../screens/unauthenticated/login/ChangePasswordScreen';
 import DrawerMenu from './drawer/Drawer';
 
 export type TRootNavigatorRouteParams = {
   Authenticated: undefined;
   Unauthenticated: undefined;
   // eslint-disable-next-line camelcase
-  confirm: { account_confirmation_success?: boolean };
+  confirm: { token?: string };
+  ChangePasswordScreen: { token?: string };
   Dropzones: undefined;
   DropzonesScreen: undefined;
   DropzoneSetupScreen: undefined;
@@ -67,6 +69,7 @@ export default function RootNavigator() {
       <Stack.Screen name="DropzoneSetupScreen" component={DropzoneSetupScreen} />
       <Stack.Screen name="UserSetupWizard" component={UserSetupWizard} />
       <Stack.Screen name="confirm" component={ConfirmUserScreen} />
+      <Stack.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
       <Stack.Screen name="DropzonesScreen" component={DropzonesScreen} />
 
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />

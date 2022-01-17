@@ -2,15 +2,22 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import startOfDay from 'date-fns/startOfDay';
 import { ScrollView } from 'react-native-gesture-handler';
-import { QUERY_DROPZONE_USERS } from 'app/api/hooks/useQueryDropzoneUsers';
-import { QUERY_PERMISSION_USER } from 'app/components/chips/GcaChip';
+import {
+  DropzoneUserEssentialsFragment,
+  DropzoneUsersQuery,
+  DropzoneUsersQueryVariables,
+} from 'app/api/operations';
 
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import { DropzoneUser, Permission, Query } from 'app/api/schema.d';
+import { Permission } from 'app/api/schema.d';
 
-import { QueryDropzoneDocument } from 'app/api/reflection';
+import {
+  QueryDropzoneDocument,
+  CurrentUserPermissionsDocument,
+  DropzoneUsersDocument,
+  QueryDropzoneUserProfileDocument,
+} from 'app/api/reflection';
 // eslint-disable-next-line max-len
-import { QUERY_DROPZONE_USER_PROFILE } from 'app/api/hooks/useDropzoneUserProfile';
 import Badge, { IBadgeProps } from 'app/components/Badge';
 import useRestriction from 'app/hooks/useRestriction';
 import useMutationRevokePermission from 'app/api/hooks/useMutationRevokePermission';
@@ -18,7 +25,7 @@ import useMutationGrantPermission from 'app/api/hooks/useMutationGrantPermission
 
 interface IPermissionBadgesProps {
   permissions: Permission[];
-  dropzoneUser: DropzoneUser;
+  dropzoneUser: DropzoneUserEssentialsFragment;
 }
 export default function PermissionBadges(props: IPermissionBadgesProps) {
   const { permissions, dropzoneUser } = props;
@@ -44,7 +51,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
           },
         },
         {
-          query: QUERY_DROPZONE_USER_PROFILE,
+          query: QueryDropzoneUserProfileDocument,
           variables: {
             dropzoneId: state.currentDropzoneId,
             dropzoneUserId: Number(dropzoneUser.id),
@@ -70,7 +77,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
           },
         },
         {
-          query: QUERY_DROPZONE_USER_PROFILE,
+          query: QueryDropzoneUserProfileDocument,
           variables: {
             dropzoneId: state.currentDropzoneId,
             dropzoneUserId: Number(dropzoneUser.id),
@@ -116,7 +123,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
                     {
                       refetchQueries: [
                         {
-                          query: QUERY_DROPZONE_USERS,
+                          query: DropzoneUsersDocument,
                           variables: {
                             dropzoneId: state.currentDropzoneId,
                             permissions: [permission],
@@ -124,20 +131,22 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
                         },
                       ],
                       update: async (client, { data }) => {
-                        const c = client.readQuery<Query>({
-                          query: QUERY_PERMISSION_USER,
-                          variables: {
-                            permissions: [permission],
-                            dropzoneId: Number(state.currentDropzoneId),
-                          },
-                        });
+                        const c = client.readQuery<DropzoneUsersQuery, DropzoneUsersQueryVariables>(
+                          {
+                            query: DropzoneUsersDocument,
+                            variables: {
+                              permissions: [permission],
+                              dropzoneId: Number(state.currentDropzoneId),
+                            },
+                          }
+                        );
 
                         const updatedList = (c?.dropzone?.dropzoneUsers?.edges || []).filter(
                           (edge) => edge?.node?.id !== dropzoneUser?.id
                         );
 
-                        client.writeQuery({
-                          query: QUERY_PERMISSION_USER,
+                        client.writeQuery<DropzoneUsersQuery, DropzoneUsersQueryVariables>({
+                          query: DropzoneUsersDocument,
                           variables: {
                             permissions: [permission],
                             dropzoneId: Number(state.currentDropzoneId),
@@ -146,6 +155,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
                             ...c,
                             dropzone: {
                               ...c?.dropzone,
+                              id: `${state.currentDropzoneId}`,
                               dropzoneUsers: {
                                 edges: updatedList,
                               },
@@ -175,7 +185,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
                     {
                       refetchQueries: [
                         {
-                          query: QUERY_DROPZONE_USERS,
+                          query: DropzoneUsersDocument,
                           variables: {
                             dropzoneId: state.currentDropzoneId,
                             permissions: [permission],
@@ -183,13 +193,15 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
                         },
                       ],
                       update: async (client, { data }) => {
-                        const c = client.readQuery<Query>({
-                          query: QUERY_PERMISSION_USER,
-                          variables: {
-                            permissions: [permission],
-                            dropzoneId: Number(state.currentDropzoneId),
-                          },
-                        });
+                        const c = client.readQuery<DropzoneUsersQuery, DropzoneUsersQueryVariables>(
+                          {
+                            query: DropzoneUsersDocument,
+                            variables: {
+                              permissions: [permission],
+                              dropzoneId: Number(state.currentDropzoneId),
+                            },
+                          }
+                        );
 
                         const current = c?.dropzone?.dropzoneUsers?.edges || [];
                         const shouldUpdate = !!current.find(
@@ -226,7 +238,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
                           },
                         };
                         client.writeQuery({
-                          query: QUERY_PERMISSION_USER,
+                          query: CurrentUserPermissionsDocument,
                           variables: {
                             dropzoneId: Number(state.currentDropzoneId),
                             permissions: [permission],

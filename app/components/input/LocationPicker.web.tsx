@@ -77,7 +77,6 @@ export function LocationWizardStep(props: ILocationPickerProps) {
 
   return (
     <Map
-      defaultZoom={3}
       position={{
         x: 0,
         y: 0,

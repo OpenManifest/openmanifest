@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, TextInput, HelperText, Card, List, Checkbox } from 'react-native-paper';
@@ -254,6 +255,8 @@ export default function DropzoneForm(props: IDropzoneForm) {
               }
 
               if (extraProps.icon) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore This is ok
                 return <List.Icon {...iconProps} {...extraProps} />;
               }
               return <View style={{ width: 56, height: 56 }} />;

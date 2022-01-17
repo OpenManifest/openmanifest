@@ -13,17 +13,17 @@ function PasswordStep(props: IPasswordComplexityIndicatorProps) {
 
   return (
     <>
-      <Text style={styles.title}>{['Weak', 'Acceptable', 'Strong'][strength]}</Text>
+      <Text style={styles.title}>{['Too weak', 'Weak', 'Acceptable', 'Strong'][strength]}</Text>
       <View style={styles.indicator}>
         <View style={indicatorStyle[strength]} />
-        {[PasswordStrength.weak].includes(strength) ? (
+        {strength < PasswordStrength.Acceptable ? (
           <View style={[styles.indicatorInactive, { flex: 1 / 3 }]} />
         ) : null}
-        {[PasswordStrength.weak, PasswordStrength.ok].includes(strength) ? (
+        {[PasswordStrength.Weak, PasswordStrength.Acceptable].includes(strength) ? (
           <View
             style={[
               styles.indicatorInactive,
-              { flex: strength === PasswordStrength.weak ? 1 / 3 : 1 / 2 },
+              { flex: strength < PasswordStrength.Acceptable ? 1 / 3 : 1 / 2 },
             ]}
           />
         ) : null}

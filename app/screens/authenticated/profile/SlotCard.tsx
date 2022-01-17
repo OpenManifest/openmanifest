@@ -3,10 +3,10 @@ import { Caption, Card, List, useTheme } from 'react-native-paper';
 import { format } from 'date-fns';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Slot } from '../../../api/schema';
+import { UserSlotDetailsFragment } from 'app/api/operations';
 
 interface ISlot {
-  slot: Slot;
+  slot: UserSlotDetailsFragment;
   onPress?(): void;
 }
 

@@ -8,7 +8,7 @@ mutation FinalizeLoad($id: Int!, $state: LoadState!) {
     }
     errors
     load {
-      ...load
+      ...loadDetails
     }
   }
 }

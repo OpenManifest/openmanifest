@@ -1,34 +1,19 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import { PlaneEssentialsFragment } from 'app/api/operations';
 import * as React from 'react';
 import { Chip, Menu, useTheme } from 'react-native-paper';
-import { Plane, Permission, Query } from '../../api/schema.d';
+import { usePlanesQuery } from '../../api/reflection';
+import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
 import { useAppSelector } from '../../state';
 
 interface IPlaneChipSelect {
-  value?: Plane | null;
+  value?: PlaneEssentialsFragment | null;
   small?: boolean;
   backgroundColor?: string;
   color?: string;
 
-  onSelect(dzUser: Plane): void;
+  onSelect(dzUser: PlaneEssentialsFragment): void;
 }
-
-const QUERY_PLANES = gql`
-  query QueryChipPlanes($dropzoneId: Int!) {
-    planes(dropzoneId: $dropzoneId) {
-      id
-      name
-      registration
-      hours
-      minSlots
-      maxSlots
-      nextMaintenanceHours
-      createdAt
-    }
-  }
-`;
 
 export default function PlaneChip(props: IPlaneChipSelect) {
   const { small, color: assignedColor, backgroundColor, value, onSelect } = props;
@@ -37,7 +22,7 @@ export default function PlaneChip(props: IPlaneChipSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 
-  const { data } = useQuery<Query>(QUERY_PLANES, {
+  const { data } = usePlanesQuery({
     variables: {
       dropzoneId: Number(currentDropzoneId),
     },
@@ -90,7 +75,7 @@ export default function PlaneChip(props: IPlaneChipSelect) {
           key={`lm-plane-chip-${plane.id}`}
           onPress={() => {
             setMenuOpen(false);
-            onSelect(plane as Plane);
+            onSelect(plane);
           }}
           title={plane.name}
         />

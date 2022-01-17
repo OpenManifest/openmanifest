@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DropzoneUser } from '../../../api/schema.d';
+import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 
 interface IManifestScreenState {
   isSearchVisible: boolean;
-  selectedUsers: DropzoneUser[];
+  selectedUsers: DropzoneUserEssentialsFragment[];
   searchText: string;
   display: 'list' | 'cards';
 }
@@ -19,7 +19,10 @@ export default createSlice({
   name: 'manifestScreen',
   initialState,
   reducers: {
-    setSelected: (state: IManifestScreenState, action: PayloadAction<DropzoneUser[]>) => {
+    setSelected: (
+      state: IManifestScreenState,
+      action: PayloadAction<DropzoneUserEssentialsFragment[]>
+    ) => {
       state.selectedUsers = action.payload;
     },
     setSearchText: (state: IManifestScreenState, action: PayloadAction<string>) => {

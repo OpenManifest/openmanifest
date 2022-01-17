@@ -1,18 +1,16 @@
-import { useQuery } from '@apollo/client';
 import { startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useAppSelector } from '../../state';
-import { Query } from '../schema';
-import { QueryDropzoneDocument } from '../reflection';
+import { useQueryDropzone } from '../reflection';
 import useMutationUpdateUser from './useMutationUpdateUser';
 
 export default function useCurrentDropzone() {
   const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
   const pushToken = useAppSelector((root) => root.global.expoPushToken);
 
-  const currentDropzone = useQuery<Query>(QueryDropzoneDocument, {
+  const currentDropzone = useQueryDropzone({
     variables: {
-      dropzoneId,
+      dropzoneId: Number(dropzoneId),
       earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
     },
     fetchPolicy: 'cache-and-network',

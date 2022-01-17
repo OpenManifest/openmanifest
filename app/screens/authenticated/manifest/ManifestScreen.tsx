@@ -26,7 +26,7 @@ export default function ManifestScreen() {
   const setup = useAppSelector((root) => root.screens.dropzoneWizard);
   const dispatch = useAppDispatch();
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
-  const [isSetupCheckComplete, setSetupCheckComplete] = React.useState(false);
+  const [isSetupCheckComplete] = React.useState(false);
   const { dropzone, currentUser, loading, refetch, fetchMore } = useCurrentDropzone();
 
   const navigation = useNavigation();
@@ -226,7 +226,9 @@ export default function ManifestScreen() {
                     }}
                     onSlotGroupPress={(slots) => {
                       dispatch(actions.forms.manifestGroup.reset());
-                      dispatch(actions.forms.manifestGroup.setFromSlots(slots));
+                      dispatch(
+                        actions.forms.manifestGroup.setFromSlots({ load: edge.node, slots })
+                      );
                       dispatch(actions.forms.manifestGroup.setField(['load', edge.node]));
                       navigation.navigate('ManifestGroupScreen');
                     }}

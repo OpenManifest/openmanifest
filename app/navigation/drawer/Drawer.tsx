@@ -10,11 +10,12 @@ import {
 import { ScrollView } from 'react-native-gesture-handler';
 import capitalize from 'lodash/capitalize';
 import SkeletonContent from 'react-native-skeleton-content';
+import { useQueryDropzones } from 'app/api/reflection';
+import { DropzoneExtensiveFragment } from 'app/api/operations';
 import InfoGrid from '../../screens/authenticated/load/InfoGrid';
 import useRestriction from '../../hooks/useRestriction';
 import { Permission } from '../../api/schema.d';
 import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
-import useQueryDropzones from '../../api/hooks/useQueryDropzones';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 
 export default function DrawerMenu() {
@@ -242,7 +243,7 @@ export default function DrawerMenu() {
           ) : null}
         </Drawer.Section>
         <Drawer.Section title="Switch dropzone">
-          {data?.edges?.map((edge) => (
+          {data?.dropzones?.edges?.map((edge) => (
             <Drawer.Item
               key={`${edge?.node?.id}-dz`}
               label={edge?.node?.name || ''}
@@ -250,7 +251,7 @@ export default function DrawerMenu() {
               active={dropzone?.id === edge?.node?.id}
               onPress={() => {
                 if (edge?.node) {
-                  dispatch(actions.global.setDropzone(edge.node));
+                  dispatch(actions.global.setDropzone(edge.node as DropzoneExtensiveFragment));
                   navigation.navigate('Authenticated', {
                     screen: 'Authenticated',
                   });

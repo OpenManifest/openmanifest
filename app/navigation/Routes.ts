@@ -14,6 +14,9 @@ const options: LinkingOptions = {
       confirm: {
         path: '/confirm',
       },
+      ChangePasswordScreen: {
+        path: '/change-password',
+      },
       Authenticated: {
         screens: {
           HomeScreen: '/home',

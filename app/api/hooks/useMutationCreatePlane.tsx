@@ -71,7 +71,7 @@ export default createMutation<
 >(MUTATION_CREATE_PLANE, {
   getPayload: (result) => result.createPlane,
   fieldErrorMap: {
-    dropzone: 'dropzoneId',
+    dropzoneId: 'dropzone',
   },
   validates: {
     name: [isRequired('Name is required')],

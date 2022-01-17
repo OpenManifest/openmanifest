@@ -1,10 +1,11 @@
 #import "./transactions.fragments.gql'
-fragment order on Order {
+fragment orderEssentials on Order {
   id
   state
   amount
   title
   orderNumber
+  createdAt
 
   buyer {
     ... on DropzoneUser {
@@ -65,7 +66,7 @@ fragment order on Order {
     createdAt
     updatedAt
     transactions {
-      ...transaction
+      ...transactionEssentials
     }
   }
 }

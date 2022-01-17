@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Card, HelperText, List } from 'react-native-paper';
 import DatePicker from 'app/components/input/date_picker/DatePicker';
 import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard';

@@ -4,14 +4,15 @@ import { Button } from 'react-native-paper';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
-import { DropzoneUser, TransactionType, WalletableTypes } from '../../../api/schema.d';
+import { DropzoneUserEssentialsFragment } from 'app/api/operations';
+import { TransactionType, WalletableTypes } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import CreditsForm from '../../forms/credits/CreditsForm';
 import { useCreateOrderMutation } from '../../../api/reflection';
 
 interface ICreditsSheet {
   open?: boolean;
-  dropzoneUser?: DropzoneUser;
+  dropzoneUser?: DropzoneUserEssentialsFragment;
   onClose(): void;
   onSuccess(): void;
 }

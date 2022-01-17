@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button, ProgressBar } from 'react-native-paper';
-import { gql } from '@apollo/client';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import useMutationUpdateDropzone from '../../../api/hooks/useMutationUpdateDropzone';
@@ -38,19 +37,21 @@ export default function UpdateDropzoneScreen() {
         })
       ),
     onSuccess: (payload) => {
-      dispatch(
-        actions.global.setDropzone({
-          ...(globalState.currentDropzone || {}),
-          ...(payload.dropzone as Dropzone),
-        })
-      );
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: `Your settings have been saved`,
-          variant: 'success',
-        })
-      );
-      navigation.goBack();
+      if (payload?.dropzone?.id) {
+        dispatch(
+          actions.global.setDropzone({
+            ...(globalState.currentDropzone || {}),
+            ...payload?.dropzone,
+          })
+        );
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: `Your settings have been saved`,
+            variant: 'success',
+          })
+        );
+        navigation.goBack();
+      }
     },
   });
 

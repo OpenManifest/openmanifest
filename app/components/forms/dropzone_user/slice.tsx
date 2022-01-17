@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DropzoneUser } from '../../../api/schema.d';
+import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 
-type Fields = Pick<DropzoneUser, 'role' | 'expiresAt'>;
+type Fields = Pick<DropzoneUserEssentialsFragment, 'role' | 'expiresAt'>;
 
 interface IDropzoneUserEditState {
-  original: DropzoneUser | null;
+  original: DropzoneUserEssentialsFragment | null;
   open: boolean;
   fields: {
     [K in keyof Fields]-?: {
-      value: DropzoneUser[K] | null;
+      value: DropzoneUserEssentialsFragment[K] | null;
       error: string | null;
     };
   };
@@ -51,7 +51,10 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOpen: (state: IDropzoneUserEditState, action: PayloadAction<boolean | DropzoneUser>) => {
+    setOpen: (
+      state: IDropzoneUserEditState,
+      action: PayloadAction<boolean | DropzoneUserEssentialsFragment>
+    ) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;

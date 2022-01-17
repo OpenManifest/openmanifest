@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { Card } from 'react-native-paper';
 import { Step, Fields, IWizardStepProps } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import CardSelect from 'app/components/input/card_select/CardSelect';

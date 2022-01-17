@@ -1,0 +1,33 @@
+mutation CreateDropzone(
+  $name: String!
+  $banner: String
+  $federationId: Int!
+  $lat: Float
+  $lng: Float
+  $primaryColor: String
+  $secondaryColor: String
+  $earliestTimestamp: Int
+) {
+  createDropzone(
+    input: {
+      attributes: {
+        name: $name
+        banner: $banner
+        federationId: $federationId
+        primaryColor: $primaryColor
+        secondaryColor: $secondaryColor
+        lat: $lat
+        lng: $lng
+      }
+    }
+  ) {
+    fieldErrors {
+      field
+      message
+    }
+    errors
+    dropzone {
+      ...dropzoneExtensive
+    }
+  }
+}

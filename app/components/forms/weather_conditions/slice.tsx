@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { WeatherCondition } from '../../../api/schema.d';
+import { WeatherConditionEssentialsFragment } from 'app/api/operations';
 
 type Fields = Pick<
-  WeatherCondition,
+  WeatherConditionEssentialsFragment,
   'winds' | 'exitSpotMiles' | 'jumpRun' | 'offsetDirection' | 'temperature'
 >;
 
 interface IWeatherConditionEditState {
-  original: WeatherCondition | null;
+  original: WeatherConditionEssentialsFragment | null;
   open: boolean;
   fields: {
     [K in keyof Fields]-?: {
@@ -73,7 +73,7 @@ export default createSlice({
 
     setOpen: (
       state: IWeatherConditionEditState,
-      action: PayloadAction<boolean | WeatherCondition>
+      action: PayloadAction<boolean | WeatherConditionEssentialsFragment>
     ) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
@@ -87,7 +87,9 @@ export default createSlice({
             const payloadKey = key as keyof typeof action.payload;
             if (payloadKey in state.fields) {
               const typedKey = payloadKey as keyof typeof initialState['fields'];
-              state.fields[typedKey].value = (action.payload as WeatherCondition)[typedKey];
+              state.fields[typedKey].value = (action.payload as WeatherConditionEssentialsFragment)[
+                typedKey
+              ];
             }
           });
         }

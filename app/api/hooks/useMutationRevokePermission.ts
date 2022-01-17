@@ -1,38 +1,11 @@
-import gql from 'graphql-tag';
 import { createMutation, isRequired } from '../createMutation';
-import { RevokePermissionPayload } from '../schema';
-
-export const MUTATION_REVOKE_PERMISSION = gql`
-  mutation RevokePermission($dropzoneUserId: Int!, $permissionName: Permission!) {
-    revokePermission(input: { id: $dropzoneUserId, permission: $permissionName }) {
-      dropzoneUser {
-        id
-        permissions
-        user {
-          id
-          name
-        }
-        role {
-          id
-          name
-        }
-      }
-      fieldErrors {
-        field
-        message
-      }
-      errors
-    }
-  }
-`;
+import { RevokePermissionMutation, RevokePermissionMutationVariables } from '../operations';
+import { RevokePermissionDocument } from '../reflection';
 
 export default createMutation<
-  {
-    dropzoneUserId: number;
-    permissionName: string;
-  },
-  RevokePermissionPayload
->(MUTATION_REVOKE_PERMISSION, {
+  RevokePermissionMutationVariables,
+  Required<RevokePermissionMutation>['revokePermission']
+>(RevokePermissionDocument, {
   getPayload: (result) => result.revokePermission,
   validates: {
     permissionName: [isRequired('Permission name is required')],

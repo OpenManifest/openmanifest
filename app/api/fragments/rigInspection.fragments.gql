@@ -1,0 +1,16 @@
+fragment rigInspectionEssentials on RigInspection {
+  id
+  isOk
+  inspectedBy {
+    ...dropzoneUserEssentials
+  }
+  rig {
+    ...rigEssentials
+  }
+}
+fragment rigInspectionDetailed on RigInspection {
+  ...rigInspectionEssentials,
+  rig {
+    ...userRigDetailed
+  }
+}

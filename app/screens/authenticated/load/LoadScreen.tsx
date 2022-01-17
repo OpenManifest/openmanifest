@@ -5,6 +5,7 @@ import { Card } from 'react-native-paper';
 
 import { useNavigation, useRoute } from '@react-navigation/core';
 import SkeletonContent from 'react-native-skeleton-content';
+import { PlaneEssentialsFragment } from 'app/api/operations';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import GCAChip from '../../../components/chips/GcaChip';
 import LoadMasterChip from '../../../components/chips/LoadMasterChip';
@@ -14,7 +15,7 @@ import ManifestUserSheet from '../../../components/dialogs/ManifestUser/Manifest
 import ManifestGroupSheet from '../../../components/dialogs/ManifestGroup/ManifestGroup';
 
 import { View } from '../../../components/Themed';
-import { Load, Permission, Plane, Slot, DropzoneUser, LoadState } from '../../../api/schema.d';
+import { Load, Permission, Slot, DropzoneUser, LoadState } from '../../../api/schema.d';
 import useRestriction from '../../../hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import SlotCard from './SlotCard';
@@ -148,7 +149,7 @@ export default function LoadScreen() {
   );
 
   const updatePlane = React.useCallback(
-    async (plane: Plane) => {
+    async (plane: PlaneEssentialsFragment) => {
       await mutationUpdateLoad.mutate({
         id: Number(load.id),
         planeId: Number(plane.id),
@@ -306,7 +307,7 @@ export default function LoadScreen() {
                 const onSlotGroupPress = () => {
                   if (slotGroup) {
                     dispatch(actions.forms.manifestGroup.reset());
-                    dispatch(actions.forms.manifestGroup.setFromSlots(slotGroup));
+                    dispatch(actions.forms.manifestGroup.setFromSlots({ slots: slotGroup, load }));
                     dispatch(actions.forms.manifestGroup.setField(['load', load]));
                     navigation.navigate('ManifestGroupScreen');
                   }

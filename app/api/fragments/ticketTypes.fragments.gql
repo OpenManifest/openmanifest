@@ -1,0 +1,14 @@
+fragment ticketTypeEssentials on TicketType {
+  id
+  name
+  altitude
+  cost
+  isTandem
+  allowManifestingSelf
+
+  extras {
+    id
+    name
+    cost
+  }
+}

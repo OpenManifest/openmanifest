@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Surface } from 'react-native-paper';
-import color from 'color';
 import { useAppSelector } from '../../state';
 
 interface IPhonePreview {

@@ -26,7 +26,7 @@ export default function ManifestForm() {
         );
       }
 
-      if (!state.fields.rig.value && state.fields.dropzoneUser.value.user?.rigs?.length) {
+      if (!state.fields.rig.value && state.fields.dropzoneUser.value?.user?.rigs?.length) {
         dispatch(
           actions.forms.manifest.setField(['rig', state.fields.dropzoneUser?.value?.user.rigs[0]])
         );

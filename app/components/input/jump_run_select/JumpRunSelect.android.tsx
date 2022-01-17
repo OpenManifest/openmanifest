@@ -32,7 +32,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
 
   const hypothenuse = Math.hypot(MAP_WIDTH, MAP_HEIGHT);
 
-  const { latitude, longitude, value, onChange, title } = props;
+  const { latitude, longitude, value, onChange } = props;
   const [isDragging, setDragging] = React.useState(false);
   const [jumpRun, setJumpRun] = React.useState(value || 0);
 

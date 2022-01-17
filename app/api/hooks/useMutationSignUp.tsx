@@ -45,7 +45,7 @@ export const MUTATION_USER_SIGNUP = gql`
 export default createMutation<MutationUserSignUpArgs, UserSignUpPayload>(MUTATION_USER_SIGNUP, {
   getPayload: (result) => result.userSignUp,
   fieldErrorMap: {
-    license: 'licenseId',
+    licenseId: 'license',
   },
   validates: {
     name: [isRequired('Name is required')],
