@@ -1,0 +1,7 @@
+mutation ArchiveTicketType($id: Int!) {
+  archiveTicketType(input: { id: $id  }) {
+    ticketType {
+      ...ticketTypeEssentials
+    }
+  }
+}

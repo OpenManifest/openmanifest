@@ -67,6 +67,34 @@ export type CurrentUserFragment = { __typename?: 'User', pushToken?: Types.Maybe
 
 export type WeatherConditionEssentialsFragment = { __typename?: 'WeatherCondition', id: string, jumpRun?: Types.Maybe<number>, temperature?: Types.Maybe<number>, offsetDirection?: Types.Maybe<number>, offsetMiles?: Types.Maybe<number>, createdAt: number, exitSpotMiles?: Types.Maybe<number>, winds?: Types.Maybe<Array<{ __typename?: 'Wind', temperature?: Types.Maybe<string>, altitude?: Types.Maybe<string>, speed?: Types.Maybe<string>, direction?: Types.Maybe<string> }>> };
 
+export type ArchivePlaneMutationVariables = Types.Exact<{
+  id: Types.Scalars['Int'];
+}>;
+
+
+export type ArchivePlaneMutation = { __typename?: 'Mutation', deletePlane?: Types.Maybe<{ __typename?: 'DeletePlanePayload', plane?: Types.Maybe<{ __typename?: 'Plane', id: string, minSlots?: Types.Maybe<number>, maxSlots?: Types.Maybe<number>, name?: Types.Maybe<string>, registration?: Types.Maybe<string> }> }> };
+
+export type ArchiveRigMutationVariables = Types.Exact<{
+  id: Types.Scalars['Int'];
+}>;
+
+
+export type ArchiveRigMutation = { __typename?: 'Mutation', archiveRig?: Types.Maybe<{ __typename?: 'DeleteRigPayload', rig?: Types.Maybe<{ __typename?: 'Rig', id: string, name?: Types.Maybe<string>, make?: Types.Maybe<string>, model?: Types.Maybe<string>, serial?: Types.Maybe<string>, canopySize?: Types.Maybe<number>, repackExpiresAt?: Types.Maybe<number>, packValue?: Types.Maybe<number>, maintainedAt?: Types.Maybe<number>, rigType?: Types.Maybe<string>, packingCard?: Types.Maybe<string>, user?: Types.Maybe<{ __typename?: 'User', id: string, name?: Types.Maybe<string> }>, dropzone?: Types.Maybe<{ __typename?: 'Dropzone', id: string }> }> }> };
+
+export type ArchiveTicketTypeMutationVariables = Types.Exact<{
+  id: Types.Scalars['Int'];
+}>;
+
+
+export type ArchiveTicketTypeMutation = { __typename?: 'Mutation', archiveTicketType?: Types.Maybe<{ __typename?: 'DeleteTicketPayload', ticketType?: Types.Maybe<{ __typename?: 'TicketType', id: string, name?: Types.Maybe<string>, altitude?: Types.Maybe<number>, cost: number, isTandem?: Types.Maybe<boolean>, allowManifestingSelf?: Types.Maybe<boolean>, extras: Array<{ __typename?: 'Extra', id: string, name?: Types.Maybe<string>, cost: number }> }> }> };
+
+export type ArchiveUserMutationVariables = Types.Exact<{
+  id: Types.Scalars['Int'];
+}>;
+
+
+export type ArchiveUserMutation = { __typename?: 'Mutation', deleteUser?: Types.Maybe<{ __typename?: 'DeleteUserPayload', errors?: Types.Maybe<Array<string>>, fieldErrors?: Types.Maybe<Array<{ __typename?: 'FieldError', field: string, message: string }>>, dropzoneUser?: Types.Maybe<{ __typename?: 'DropzoneUser', id: string, expiresAt?: Types.Maybe<number>, hasCredits: boolean, hasMembership: boolean, hasLicense: boolean, hasExitWeight: boolean, role?: Types.Maybe<{ __typename?: 'UserRole', id: string, name?: Types.Maybe<string>, dropzoneId: number }>, license?: Types.Maybe<{ __typename?: 'License', id: string, name?: Types.Maybe<string> }>, user: { __typename?: 'User', id: string, name?: Types.Maybe<string>, nickname?: Types.Maybe<string>, phone?: Types.Maybe<string>, email?: Types.Maybe<string>, exitWeight?: Types.Maybe<string>, moderationRole?: Types.Maybe<Types.ModerationRole>, image?: Types.Maybe<string>, apfNumber?: Types.Maybe<string> } }> }> };
+
 export type ConfirmUserMutationVariables = Types.Exact<{
   token: Types.Scalars['String'];
 }>;

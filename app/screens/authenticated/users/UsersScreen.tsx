@@ -1,43 +1,16 @@
-import { useQuery } from '@apollo/client';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Avatar, Card, FAB, List, ProgressBar, useTheme } from 'react-native-paper';
 
 import { FlatList } from 'react-native-gesture-handler';
 import SkeletonContent from 'react-native-skeleton-content';
-import NoResults from '../../../components/NoResults';
-import { Permission, Query } from '../../../api/schema.d';
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import useRestriction from '../../../hooks/useRestriction';
-import CreateGhostDialog from '../../../components/dialogs/Ghost';
-
-const QUERY_DROPZONE_USERS = gql`
-  query QueryDropzoneUsersSearch($dropzoneId: Int!, $search: String) {
-    dropzone(id: $dropzoneId) {
-      id
-      name
-
-      dropzoneUsers(search: $search) {
-        edges {
-          node {
-            id
-            role {
-              id
-              name
-            }
-            user {
-              id
-              image
-              name
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+import NoResults from 'app/components/NoResults';
+import { Permission } from 'app/api/schema.d';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import useRestriction from 'app/hooks/useRestriction';
+import CreateGhostDialog from 'app/components/dialogs/Ghost';
+import { useDropzoneUsersQuery } from 'app/api/reflection';
 
 function UserCardSkeleton() {
   const theme = useTheme();
@@ -86,12 +59,12 @@ export default function UsersScreen() {
   const ghostForm = useAppSelector((root) => root.forms.ghost);
   const dispatch = useAppDispatch();
 
-  const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONE_USERS, {
+  const { data, loading, refetch } = useDropzoneUsersQuery({
     variables: {
       dropzoneId: Number(global.currentDropzoneId),
       search: state.searchText,
     },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
   });
 
   const navigation = useNavigation();

@@ -1,0 +1,7 @@
+mutation ArchiveRig($id: Int!) {
+  archiveRig(input: { id: $id  }) {
+    rig {
+      ...rigEssentials
+    }
+  }
+}

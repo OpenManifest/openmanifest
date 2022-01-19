@@ -64,6 +64,22 @@ export default function WeatherBoard() {
     }
   }, [isExpanded]);
 
+  const onEditWindboard = React.useCallback(() => {
+    if (canUpdate && dropzone?.currentConditions) {
+      dispatch(actions.forms.weather.setOpen(dropzone?.currentConditions));
+      navigation.navigate('WindScreen');
+    }
+  }, [canUpdate, dispatch, dropzone?.currentConditions, navigation]);
+
+  const onEditJumprun = React.useCallback(() => {
+    if (dropzone?.currentConditions && canUpdate) {
+      dispatch(actions.forms.weather.setOpen(dropzone.currentConditions));
+      navigation.navigate('JumpRunScreen');
+    }
+  }, [canUpdate, dispatch, dropzone?.currentConditions, navigation]);
+
+  const defaultBackground = theme.dark ? nightBackground : weatherBackground;
+
   return (loading && !dropzone?.currentConditions) || !called ? (
     <SkeletonContent
       containerStyle={styles.card}
@@ -80,15 +96,10 @@ export default function WeatherBoard() {
         style={styles.card}
         elevation={3}
         onPress={() => setExpanded(!isExpanded)}
-        onLongPress={() => {
-          if (canUpdate && dropzone?.currentConditions) {
-            dispatch(actions.forms.weather.setOpen(dropzone?.currentConditions));
-            navigation.navigate('WindScreen');
-          }
-        }}
+        onLongPress={onEditWindboard}
       >
         <ImageBackground
-          source={theme.dark ? nightBackground : weatherBackground}
+          source={dropzone?.banner ? { uri: dropzone.banner } : defaultBackground}
           style={{ ...StyleSheet.absoluteFillObject }}
           resizeMode="cover"
         >
@@ -205,12 +216,8 @@ export default function WeatherBoard() {
                     <TouchableOpacity
                       style={{ width: '100%', height: '100%' }}
                       disabled={!canUpdate}
-                      onPress={() => {
-                        if (dropzone?.currentConditions && canUpdate) {
-                          dispatch(actions.forms.weather.setOpen(dropzone.currentConditions));
-                          navigation.navigate('JumpRunScreen');
-                        }
-                      }}
+                      onLongPress={onEditJumprun}
+                      onPress={onEditWindboard}
                     >
                       <JumpRunMap jumpRun={jumpRun} lat={dropzone?.lat} lng={dropzone?.lng} />
                     </TouchableOpacity>

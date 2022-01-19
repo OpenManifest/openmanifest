@@ -1,0 +1,7 @@
+mutation ArchivePlane($id: Int!) {
+  deletePlane(input: { id: $id  }) {
+    plane {
+      ...planeEssentials
+    }
+  }
+}
