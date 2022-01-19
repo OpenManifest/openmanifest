@@ -209,6 +209,7 @@ export const OrderEssentialsFragmentDoc = gql`
     ... on Dropzone {
       id
       name
+      banner
     }
   }
   seller {
@@ -222,6 +223,7 @@ export const OrderEssentialsFragmentDoc = gql`
     ... on Dropzone {
       id
       name
+      banner
     }
   }
   item {
@@ -573,6 +575,156 @@ export const SlotExhaustiveFragmentDoc = gql`
 ${DropzoneUserDetailsFragmentDoc}
 ${LoadDetailsFragmentDoc}
 ${RigEssentialsFragmentDoc}`;
+export const ArchivePlaneDocument = gql`
+    mutation ArchivePlane($id: Int!) {
+  deletePlane(input: {id: $id}) {
+    plane {
+      ...planeEssentials
+    }
+  }
+}
+    ${PlaneEssentialsFragmentDoc}`;
+export type ArchivePlaneMutationFn = Apollo.MutationFunction<Operation.ArchivePlaneMutation, Operation.ArchivePlaneMutationVariables>;
+
+/**
+ * __useArchivePlaneMutation__
+ *
+ * To run a mutation, you first call `useArchivePlaneMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useArchivePlaneMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [archivePlaneMutation, { data, loading, error }] = useArchivePlaneMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useArchivePlaneMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ArchivePlaneMutation, Operation.ArchivePlaneMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.ArchivePlaneMutation, Operation.ArchivePlaneMutationVariables>(ArchivePlaneDocument, options);
+      }
+export type ArchivePlaneMutationHookResult = ReturnType<typeof useArchivePlaneMutation>;
+export type ArchivePlaneMutationResult = Apollo.MutationResult<Operation.ArchivePlaneMutation>;
+export type ArchivePlaneMutationOptions = Apollo.BaseMutationOptions<Operation.ArchivePlaneMutation, Operation.ArchivePlaneMutationVariables>;
+export const ArchiveRigDocument = gql`
+    mutation ArchiveRig($id: Int!) {
+  archiveRig(input: {id: $id}) {
+    rig {
+      ...rigEssentials
+    }
+  }
+}
+    ${RigEssentialsFragmentDoc}`;
+export type ArchiveRigMutationFn = Apollo.MutationFunction<Operation.ArchiveRigMutation, Operation.ArchiveRigMutationVariables>;
+
+/**
+ * __useArchiveRigMutation__
+ *
+ * To run a mutation, you first call `useArchiveRigMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useArchiveRigMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [archiveRigMutation, { data, loading, error }] = useArchiveRigMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useArchiveRigMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ArchiveRigMutation, Operation.ArchiveRigMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.ArchiveRigMutation, Operation.ArchiveRigMutationVariables>(ArchiveRigDocument, options);
+      }
+export type ArchiveRigMutationHookResult = ReturnType<typeof useArchiveRigMutation>;
+export type ArchiveRigMutationResult = Apollo.MutationResult<Operation.ArchiveRigMutation>;
+export type ArchiveRigMutationOptions = Apollo.BaseMutationOptions<Operation.ArchiveRigMutation, Operation.ArchiveRigMutationVariables>;
+export const ArchiveTicketTypeDocument = gql`
+    mutation ArchiveTicketType($id: Int!) {
+  archiveTicketType(input: {id: $id}) {
+    fieldErrors {
+      field
+      message
+    }
+    errors
+    ticketType {
+      ...ticketTypeEssentials
+    }
+  }
+}
+    ${TicketTypeEssentialsFragmentDoc}`;
+export type ArchiveTicketTypeMutationFn = Apollo.MutationFunction<Operation.ArchiveTicketTypeMutation, Operation.ArchiveTicketTypeMutationVariables>;
+
+/**
+ * __useArchiveTicketTypeMutation__
+ *
+ * To run a mutation, you first call `useArchiveTicketTypeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useArchiveTicketTypeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [archiveTicketTypeMutation, { data, loading, error }] = useArchiveTicketTypeMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useArchiveTicketTypeMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ArchiveTicketTypeMutation, Operation.ArchiveTicketTypeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.ArchiveTicketTypeMutation, Operation.ArchiveTicketTypeMutationVariables>(ArchiveTicketTypeDocument, options);
+      }
+export type ArchiveTicketTypeMutationHookResult = ReturnType<typeof useArchiveTicketTypeMutation>;
+export type ArchiveTicketTypeMutationResult = Apollo.MutationResult<Operation.ArchiveTicketTypeMutation>;
+export type ArchiveTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.ArchiveTicketTypeMutation, Operation.ArchiveTicketTypeMutationVariables>;
+export const ArchiveUserDocument = gql`
+    mutation ArchiveUser($id: Int!) {
+  deleteUser(input: {id: $id}) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    dropzoneUser {
+      ...dropzoneUserEssentials
+    }
+  }
+}
+    ${DropzoneUserEssentialsFragmentDoc}`;
+export type ArchiveUserMutationFn = Apollo.MutationFunction<Operation.ArchiveUserMutation, Operation.ArchiveUserMutationVariables>;
+
+/**
+ * __useArchiveUserMutation__
+ *
+ * To run a mutation, you first call `useArchiveUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useArchiveUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [archiveUserMutation, { data, loading, error }] = useArchiveUserMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useArchiveUserMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ArchiveUserMutation, Operation.ArchiveUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.ArchiveUserMutation, Operation.ArchiveUserMutationVariables>(ArchiveUserDocument, options);
+      }
+export type ArchiveUserMutationHookResult = ReturnType<typeof useArchiveUserMutation>;
+export type ArchiveUserMutationResult = Apollo.MutationResult<Operation.ArchiveUserMutation>;
+export type ArchiveUserMutationOptions = Apollo.BaseMutationOptions<Operation.ArchiveUserMutation, Operation.ArchiveUserMutationVariables>;
 export const ConfirmUserDocument = gql`
     mutation ConfirmUser($token: String!) {
   userConfirmRegistrationWithToken(confirmationToken: $token) {
@@ -1839,3 +1991,41 @@ export function useAllowedTicketTypesLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type AllowedTicketTypesQueryHookResult = ReturnType<typeof useAllowedTicketTypesQuery>;
 export type AllowedTicketTypesLazyQueryHookResult = ReturnType<typeof useAllowedTicketTypesLazyQuery>;
 export type AllowedTicketTypesQueryResult = Apollo.QueryResult<Operation.AllowedTicketTypesQuery, Operation.AllowedTicketTypesQueryVariables>;
+export const QueryTicketTypeDocument = gql`
+    query QueryTicketType($dropzoneId: Int!) {
+  dropzone(id: $dropzoneId) {
+    id
+    ticketTypes {
+      ...ticketTypeEssentials
+    }
+  }
+}
+    ${TicketTypeEssentialsFragmentDoc}`;
+
+/**
+ * __useQueryTicketType__
+ *
+ * To run a query within a React component, call `useQueryTicketType` and pass it any options that fit your needs.
+ * When your component renders, `useQueryTicketType` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useQueryTicketType({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *   },
+ * });
+ */
+export function useQueryTicketType(baseOptions: Apollo.QueryHookOptions<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>(QueryTicketTypeDocument, options);
+      }
+export function useQueryTicketTypeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>(QueryTicketTypeDocument, options);
+        }
+export type QueryTicketTypeHookResult = ReturnType<typeof useQueryTicketType>;
+export type QueryTicketTypeLazyQueryHookResult = ReturnType<typeof useQueryTicketTypeLazyQuery>;
+export type QueryTicketTypeQueryResult = Apollo.QueryResult<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>;

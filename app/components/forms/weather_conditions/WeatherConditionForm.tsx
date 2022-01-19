@@ -40,7 +40,7 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.fields.jumpRun.value, state.fields.temperature.value, setTemperature]);
   return (
-    <KeyboardAvoidingView behavior="position" style={styles.content}>
+    <KeyboardAvoidingView behavior="height" style={styles.content}>
       <View style={styles.row}>
         <Text
           style={[styles.headerTemperature, { color: variant === 'light' ? 'white' : 'black' }]}
@@ -112,6 +112,7 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
       <FlatList
         data={winds}
         keyExtractor={({ item }, index) => `wind.${index}`}
+        scrollEnabled={false}
         renderItem={({ item: wind, index }) => {
           return (
             <WindRow

@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar, Switch } from 'react-native-paper';
+import { useArchiveTicketTypeMutation } from 'app/api/reflection';
 import { Mutation, Permission, Query } from '../../../api/schema.d';
 
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
@@ -12,26 +13,7 @@ import TicketTypesDialog from '../../../components/dialogs/TicketType';
 import SwipeActions from '../../../components/layout/SwipeActions';
 import useRestriction from '../../../hooks/useRestriction';
 
-const QUERY_TICKET_TYPE = gql`
-  query QueryTicketType($dropzoneId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      ticketTypes {
-        id
-        cost
-        currency
-        name
-        altitude
-        allowManifestingSelf
-
-        extras {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
+const QUERY_TICKET_TYPE = gql``;
 
 const MUTATION_UPDATE_TICKET_TYPE = gql`
   mutation UpdateTicketTypePublic($id: Int!, $allowManifestingSelf: Boolean) {
@@ -60,33 +42,6 @@ const MUTATION_UPDATE_TICKET_TYPE = gql`
   }
 `;
 
-const MUTATION_DELETE_TICKET_TYPE = gql`
-  mutation DeleteTicketType($id: Int!) {
-    deleteTicketType(input: { id: $id }) {
-      ticketType {
-        id
-        dropzone {
-          id
-          ticketTypes {
-            id
-            cost
-            currency
-            name
-            altitude
-            allowManifestingSelf
-
-            extras {
-              id
-              name
-            }
-          }
-        }
-      }
-      errors
-    }
-  }
-`;
-
 export default function TicketTypesScreen() {
   const state = useAppSelector((root) => root.global);
   const form = useAppSelector((root) => root.forms.ticketType);
@@ -105,7 +60,7 @@ export default function TicketTypesScreen() {
     }
   }, [isFocused, refetch]);
   const [mutationUpdateTicketType] = useMutation<Mutation>(MUTATION_UPDATE_TICKET_TYPE);
-  const [mutationDeleteTicketType] = useMutation<Mutation>(MUTATION_DELETE_TICKET_TYPE);
+  const [mutationDeleteTicketType] = useArchiveTicketTypeMutation();
 
   React.useEffect(() => {
     if (route.name === 'TicketTypesScreen') {
@@ -139,10 +94,10 @@ export default function TicketTypesScreen() {
                   variables: { id: Number(ticketType.id) },
                 });
 
-                if (result?.deleteTicketType?.errors?.length) {
+                if (result?.archiveTicketType?.errors?.length) {
                   dispatch(
                     actions.notifications.showSnackbar({
-                      message: result?.deleteTicketType?.errors[0],
+                      message: result?.archiveTicketType?.errors[0],
                       variant: 'error',
                     })
                   );

@@ -1,8 +1,7 @@
 import * as React from 'react';
-import capitalize from 'lodash/capitalize';
 import { StyleSheet, View } from 'react-native';
 import Toast from 'react-native-toast-message';
-import { useAppSelector, useAppDispatch } from '../../state';
+import { useAppSelector, useAppDispatch } from 'app/state';
 import LottieView from '../LottieView';
 import slice from './slice';
 import lottieDoneAnimation from '../../../assets/images/finished-2.json';
@@ -34,8 +33,7 @@ const Notifications = () => {
     if (notification) {
       Toast.show({
         onHide: () => dispatch(actions.hideSnackbar()),
-        text1: capitalize(notification.variant),
-        text2: notification.message,
+        text1: notification.message,
         type: notification.variant || 'success',
       });
     }

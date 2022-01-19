@@ -1,28 +1,20 @@
 /* eslint-disable max-len */
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, TextInput, HelperText, Card, List, Checkbox } from 'react-native-paper';
-import { getDocumentAsync } from 'expo-document-picker';
-import { useQuery, gql } from '@apollo/client';
+import { Button, TextInput, HelperText, Card, List, Checkbox, useTheme } from 'react-native-paper';
 import SkeletonContent from 'react-native-skeleton-content';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
-import { actions, useAppSelector, useAppDispatch } from '../../../state';
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
+import * as ImagePicker from 'expo-image-picker';
+import { actions, useAppSelector, useAppDispatch } from 'app/state';
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { warningColor } from 'app/constants/Colors';
+import { useFederationsQuery } from 'app/api/reflection';
 import ColorPicker from '../../input/colorpicker';
-import { Query } from '../../../api/schema';
 import { PhonePreview, WebPreview } from '../../theme_preview';
 import FederationSelect from '../../input/dropdown_select/FederationSelect';
 import LocationPicker from '../../input/LocationPicker';
-import { warningColor } from '../../../constants/Colors';
-
-const QUERY_FEDERATIONS = gql`
-  query QueryFederations {
-    federations {
-      id
-      name
-    }
-  }
-`;
+import weatherBackground from '../../../../assets/images/weather.png';
+import nightBackground from '../../../../assets/images/night.png';
 
 interface IDropzoneForm {
   loading: boolean;
@@ -31,8 +23,9 @@ export default function DropzoneForm(props: IDropzoneForm) {
   const { loading: outsideLoading } = props;
   const state = useAppSelector((root) => root.forms.dropzone);
   const dispatch = useAppDispatch();
-  const { data, loading } = useQuery<Query>(QUERY_FEDERATIONS);
+  const { data, loading } = useFederationsQuery();
   const { currentUser } = useCurrentDropzone();
+  const theme = useTheme();
 
   React.useEffect(() => {
     if (data?.federations?.length && !state.fields.federation?.value) {
@@ -42,16 +35,22 @@ export default function DropzoneForm(props: IDropzoneForm) {
 
   const onPickImage = React.useCallback(async () => {
     try {
-      const result = (await getDocumentAsync({
-        multiple: false,
-        type: 'image',
-      })) as { uri: string };
-
-      dispatch(actions.forms.dropzone.setField(['banner', result.uri as string]));
+      const result = (await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.1,
+        base64: true,
+      })) as { base64: string };
+      dispatch(
+        actions.forms.dropzone.setField(['banner', `data:image/jpeg;base64,${result.base64}`])
+      );
     } catch (e) {
       console.log(e);
     }
   }, [dispatch]);
+
+  const weatherBoardImage = theme.dark ? nightBackground : weatherBackground;
 
   return (
     <>
@@ -63,12 +62,21 @@ export default function DropzoneForm(props: IDropzoneForm) {
         <Card style={styles.card}>
           <Card.Title title="Banner" />
           <Card.Cover
-            source={{
-              uri: state.fields.banner.value || 'https://picsum.photos/700',
-            }}
+            source={
+              state.fields.banner.value
+                ? {
+                    uri: state.fields.banner.value,
+                  }
+                : weatherBoardImage
+            }
             resizeMode="cover"
             style={{ width: '100%' }}
           />
+          <Card.Content style={{ paddingLeft: 0, paddingRight: 0 }}>
+            <HelperText type="info">
+              Your banner is displayed on the weather board and on the dropzone selection screen
+            </HelperText>
+          </Card.Content>
           <Card.Actions style={{ justifyContent: 'flex-end' }}>
             <Button onPress={onPickImage}>Upload</Button>
           </Card.Actions>

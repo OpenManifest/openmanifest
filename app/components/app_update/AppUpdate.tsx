@@ -3,6 +3,8 @@ import * as Update from 'expo-updates';
 import { View, StyleSheet, Text, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Button } from 'react-native-paper';
+// eslint-disable-next-line camelcase
+import * as fonts from '@expo-google-fonts/roboto';
 import LottieView from '../LottieView';
 import { actions, useAppDispatch } from '../../state';
 
@@ -12,6 +14,11 @@ interface IAppUpdateProps {
 
 export default function AppUpdate(props: IAppUpdateProps) {
   const { children } = props;
+  const { useFonts, __metadata__, ...rest } = fonts;
+  const [fontsLoaded] = fonts.useFonts({
+    ...rest,
+  });
+
   const [overlay, setOverlay] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const animation = React.useRef<LottieView>(null);
@@ -45,6 +52,9 @@ export default function AppUpdate(props: IAppUpdateProps) {
     isUpdateAvailable();
   }, [isUpdateAvailable]);
 
+  if (!fontsLoaded) {
+    return null;
+  }
   return (
     <View style={{ flex: 1 }}>
       {children}
