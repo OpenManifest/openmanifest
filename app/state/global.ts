@@ -13,6 +13,12 @@ import { DropzoneExtensiveFragment } from '../api/operations';
 const CombinedDefaultTheme: Theme = {
   ...PaperDefaultTheme,
   ...NavigationDefaultTheme,
+  fonts: {
+    light: { fontFamily: 'Roboto_300Light', fontWeight: '300' },
+    thin: { fontFamily: 'Roboto_100Thin', fontWeight: '100' },
+    medium: { fontFamily: 'Roboto_500Medium', fontWeight: '500' },
+    regular: { fontFamily: 'Roboto_400Regular', fontWeight: '400' },
+  },
   colors: {
     ...PaperDefaultTheme.colors,
     ...NavigationDefaultTheme.colors,
@@ -23,6 +29,12 @@ const CombinedDefaultTheme: Theme = {
 const CombinedDarkTheme = {
   ...PaperDarkTheme,
   ...NavigationDarkTheme,
+  fonts: {
+    light: { fontFamily: 'Roboto_300Light', fontWeight: '300' as const },
+    thin: { fontFamily: 'Roboto_100Thin', fontWeight: '100' as const },
+    medium: { fontFamily: 'Roboto_500Medium', fontWeight: '500' as const },
+    regular: { fontFamily: 'Roboto_400Regular', fontWeight: '400' as const },
+  },
   colors: {
     ...PaperDarkTheme.colors,
     ...NavigationDarkTheme.colors,

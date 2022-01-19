@@ -13,3 +13,12 @@ query AllowedTicketTypes($dropzoneId: Int!, $onlyPublicTickets: Boolean) {
     }
   }
 }
+
+query QueryTicketType($dropzoneId: Int!) {
+    dropzone(id: $dropzoneId) {
+      id
+      ticketTypes {
+        ...ticketTypeEssentials
+      }
+    }
+  }

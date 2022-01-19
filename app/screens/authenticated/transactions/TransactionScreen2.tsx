@@ -1,17 +1,14 @@
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
-import { SectionList, StyleSheet, View } from 'react-native';
-import { List, ProgressBar } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { ProgressBar } from 'react-native-paper';
 
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import CreditsSheet from 'app/components/dialogs/CreditsDialog/Credits';
+import { FlatList } from 'react-native-gesture-handler';
+import { actions, useAppDispatch, useAppSelector } from '../../../state';
+import CreditsSheet from '../../../components/dialogs/CreditsDialog/Credits';
 
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
-import useDropzoneUser from 'app/api/hooks/useDropzoneUser';
-import { groupBy, map } from 'lodash';
-import { formatDistance, parseISO, startOfDay, differenceInDays, format } from 'date-fns';
-import enAU from 'date-fns/locale/en-AU';
-import { OrderEssentialsFragment } from 'app/api/operations';
+import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
+import useDropzoneUser from '../../../api/hooks/useDropzoneUser';
 import OrderCard from './OrderCard';
 
 export default function TransactionsScreen() {
@@ -42,36 +39,18 @@ export default function TransactionsScreen() {
   }, [isFocused, refetch]);
 
   return (
-    <View style={{ flexGrow: 1, backgroundColor: state.theme.colors.surface }}>
+    <>
       {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
 
-      <SectionList
-        sections={map(
-          groupBy(dropzoneUser?.orders?.edges, (e) =>
-            startOfDay((e?.node?.createdAt || 0) * 1000).toISOString()
-          ),
-          (data, t) => {
-            const date = parseISO(t);
-            const title =
-              differenceInDays(new Date(), date) > 7
-                ? format(date, 'dd MMM, yyyy')
-                : formatDistance(date, new Date(), { addSuffix: true, locale: enAU });
-            return {
-              title,
-              data,
-            };
-          }
-        )}
-        renderSectionHeader={({ section: { title } }) => <List.Subheader>{title}</List.Subheader>}
+      <FlatList
         style={styles.flatList}
         data={dropzoneUser?.orders?.edges || []}
         refreshing={false}
         onRefresh={refetch}
         renderItem={({ item }) => (
           <OrderCard
-            showAvatar
-            onPress={() => navigation.navigate('OrderScreen', { order: item?.node })}
-            order={item?.node as OrderEssentialsFragment}
+            onPress={() => navigation.navigate('OrderScreen', { order: item.node })}
+            order={item?.node}
             {...{ dropzoneUser }}
           />
         )}
@@ -83,7 +62,7 @@ export default function TransactionsScreen() {
         open={forms.credits.open}
         dropzoneUser={dropzoneUser || undefined}
       />
-    </View>
+    </>
   );
 }
 

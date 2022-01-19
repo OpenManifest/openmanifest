@@ -199,7 +199,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
               variables: { id: Number(load.id), state: LoadState.Cancelled },
             }),
         },
-    ![LoadState.Cancelled].includes(load.state)
+    ![LoadState.Cancelled, LoadState.Landed].includes(load.state)
       ? null
       : {
           label: 'Re-open load',

@@ -121,6 +121,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     width: '100%',
     maxWidth: 404,
-    marginBottom: 100,
+    marginBottom: 0,
   },
 });

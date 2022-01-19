@@ -209,6 +209,7 @@ export const OrderEssentialsFragmentDoc = gql`
     ... on Dropzone {
       id
       name
+      banner
     }
   }
   seller {
@@ -222,6 +223,7 @@ export const OrderEssentialsFragmentDoc = gql`
     ... on Dropzone {
       id
       name
+      banner
     }
   }
   item {
@@ -646,6 +648,11 @@ export type ArchiveRigMutationOptions = Apollo.BaseMutationOptions<Operation.Arc
 export const ArchiveTicketTypeDocument = gql`
     mutation ArchiveTicketType($id: Int!) {
   archiveTicketType(input: {id: $id}) {
+    fieldErrors {
+      field
+      message
+    }
+    errors
     ticketType {
       ...ticketTypeEssentials
     }
@@ -1984,3 +1991,41 @@ export function useAllowedTicketTypesLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type AllowedTicketTypesQueryHookResult = ReturnType<typeof useAllowedTicketTypesQuery>;
 export type AllowedTicketTypesLazyQueryHookResult = ReturnType<typeof useAllowedTicketTypesLazyQuery>;
 export type AllowedTicketTypesQueryResult = Apollo.QueryResult<Operation.AllowedTicketTypesQuery, Operation.AllowedTicketTypesQueryVariables>;
+export const QueryTicketTypeDocument = gql`
+    query QueryTicketType($dropzoneId: Int!) {
+  dropzone(id: $dropzoneId) {
+    id
+    ticketTypes {
+      ...ticketTypeEssentials
+    }
+  }
+}
+    ${TicketTypeEssentialsFragmentDoc}`;
+
+/**
+ * __useQueryTicketType__
+ *
+ * To run a query within a React component, call `useQueryTicketType` and pass it any options that fit your needs.
+ * When your component renders, `useQueryTicketType` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useQueryTicketType({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *   },
+ * });
+ */
+export function useQueryTicketType(baseOptions: Apollo.QueryHookOptions<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>(QueryTicketTypeDocument, options);
+      }
+export function useQueryTicketTypeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>(QueryTicketTypeDocument, options);
+        }
+export type QueryTicketTypeHookResult = ReturnType<typeof useQueryTicketType>;
+export type QueryTicketTypeLazyQueryHookResult = ReturnType<typeof useQueryTicketTypeLazyQuery>;
+export type QueryTicketTypeQueryResult = Apollo.QueryResult<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>;

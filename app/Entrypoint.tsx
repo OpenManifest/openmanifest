@@ -12,6 +12,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
 import * as Sentry from 'sentry-expo';
 import URI from 'urijs';
+
 import Geocoder from 'react-native-geocoding';
 import { setGoogleApiKey } from 'expo-location';
 /* eslint-disable import/no-unresolved */
@@ -163,7 +164,7 @@ function Content() {
         }
       >
         <Apollo>
-          <MaterialProvider theme={state.theme}>
+          <MaterialProvider theme={state.theme as ReactNativePaper.Theme}>
             <SafeAreaProvider>
               <ImageViewer />
               <NavigationContainer
