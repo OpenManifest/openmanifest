@@ -201,52 +201,60 @@ export default function LoadScreen() {
 
   return (
     <View style={{ flexGrow: 1, backgroundColor: theme.colors.background }}>
-      <Header load={load}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginVertical: 8 }}>
-          <PlaneChip
-            value={load?.plane}
-            onSelect={async (plane) => {
-              if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
-                const diff = (load?.slots?.length || 0) - (plane.maxSlots || 0);
+      <Header
+        load={load}
+        renderBadges={() => (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{ marginVertical: 8 }}
+          >
+            <PlaneChip
+              value={load?.plane}
+              onSelect={async (plane) => {
+                if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
+                  const diff = (load?.slots?.length || 0) - (plane.maxSlots || 0);
 
-                dispatch(
-                  actions.notifications.showSnackbar({
-                    message: `You need to take ${diff} people off the load to fit on this plane`,
-                    variant: 'info',
-                  })
-                );
-              } else {
-                await updatePlane(plane);
-                refetch();
-              }
-            }}
-            small
-            backgroundColor="transparent"
-            color={palette.primary.dark}
-          />
-          <GCAChip
-            value={load?.gca}
-            onSelect={updateGCA}
-            small
-            backgroundColor="transparent"
-            color={palette.primary.dark}
-          />
-          <PilotChip
-            value={load?.pilot}
-            onSelect={updatePilot}
-            small
-            backgroundColor="transparent"
-            color={palette.primary.dark}
-          />
-          <LoadMasterChip
-            value={load?.loadMaster}
-            slots={load.slots || []}
-            onSelect={updateLoadMaster}
-            small
-            backgroundColor="transparent"
-            color={palette.primary.dark}
-          />
-        </ScrollView>
+                  dispatch(
+                    actions.notifications.showSnackbar({
+                      message: `You need to take ${diff} people off the load to fit on this plane`,
+                      variant: 'info',
+                    })
+                  );
+                } else {
+                  await updatePlane(plane);
+                  refetch();
+                }
+              }}
+              small
+              backgroundColor="transparent"
+              color={palette.primary.dark}
+            />
+            <GCAChip
+              value={load?.gca}
+              onSelect={updateGCA}
+              small
+              backgroundColor="transparent"
+              color={palette.primary.dark}
+            />
+            <PilotChip
+              value={load?.pilot}
+              onSelect={updatePilot}
+              small
+              backgroundColor="transparent"
+              color={palette.primary.dark}
+            />
+            <LoadMasterChip
+              value={load?.loadMaster}
+              slots={load.slots || []}
+              onSelect={updateLoadMaster}
+              small
+              backgroundColor="transparent"
+              color={palette.primary.dark}
+            />
+          </ScrollView>
+        )}
+      >
         <InfoGrid
           items={[
             {

@@ -199,7 +199,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
       testID="user-profile-fab"
       open={fabOpen}
       visible={!!dropzoneUser?.id}
-      icon={fabOpen ? 'close' : 'account-cog'}
+      icon={fabOpen ? 'close' : 'account-edit'}
       fabStyle={{
         marginLeft: 16,
         marginBottom: 16,
