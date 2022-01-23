@@ -61,6 +61,12 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
     }
   }, [dispatch, dropzoneUser]);
 
+  const onClickEdit = React.useCallback(() => {
+    if (dropzoneUser?.user) {
+      dispatch(actions.forms.user.setOpen(dropzoneUser));
+    }
+  }, [dispatch, dropzoneUser]);
+
   const isSelf = React.useMemo(
     () => currentUser?.id === dropzoneUser?.id,
     [currentUser?.id, dropzoneUser?.id]
@@ -122,6 +128,13 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
   const fabActions = React.useMemo(
     () =>
       [
+        isSelf && canUpdateUsers
+          ? {
+              icon: 'pencil',
+              label: 'Edit',
+              onPress: onClickEdit,
+            }
+          : null,
         {
           icon: 'account-convert',
           label: 'Setup Wizard',
@@ -173,6 +186,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
       isSelf,
       onClickAccessAndMembership,
       onClickAddFunds,
+      onClickEdit,
       onClickEquipment,
       onClickSetupWizard,
       onClickTransactions,

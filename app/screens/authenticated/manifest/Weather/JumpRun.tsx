@@ -94,12 +94,12 @@ function JumpRunMap(props: IJumpRunMapProps) {
   }, [jumpRun]);
 
   const planeStartPosition = getPointOnCircle({
-    x: origin.originX,
-    y: origin.originY,
+    x: origin.x,
+    y: origin.y,
     degrees: jumpRun,
     offsetX: 0,
     offsetY: 0,
-    radius: MAP_SIZE / 2,
+    radius: rootLayout.height / 2,
   });
 
   const position = React.useMemo(() => ({ x: 0, y: 0 }), []);

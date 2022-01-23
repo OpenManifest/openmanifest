@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Paragraph, Button } from 'react-native-paper';
+import { Paragraph, Button, useTheme } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
 
 interface ISetupWarning {
@@ -16,9 +16,12 @@ interface ISetupWarning {
 
 function Warning(props: { title: string; action?: () => void }) {
   const { action, title } = props;
+  const theme = useTheme();
   return (
-    <View style={styles.warning}>
-      <Paragraph style={{ color: 'white', flex: 7 / 10, flexGrow: 2 }}>{title}</Paragraph>
+    <View style={[styles.warning, { backgroundColor: theme.colors.onSurface }]}>
+      <Paragraph style={{ color: theme.colors.surface, flex: 7 / 10, flexGrow: 2 }}>
+        {title}
+      </Paragraph>
       {!action ? null : (
         <Button onPress={action} style={{ flex: 1 / 10, flexShrink: 1 }}>
           Fix

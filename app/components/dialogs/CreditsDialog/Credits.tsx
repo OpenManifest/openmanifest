@@ -153,7 +153,7 @@ export default function CreditSheet(props: ICreditsSheet) {
   };
 
   const hide = () => {
-    sheetRef.current?.dismiss(300);
+    sheetRef.current?.dismiss({ duration: 300 });
     setTimeout(onDismiss, 350);
   };
 

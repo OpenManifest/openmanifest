@@ -2,8 +2,8 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import {
   Avatar,
+  Caption,
   Divider,
-  IconButton,
   Menu,
   Paragraph,
   Title,
@@ -16,17 +16,24 @@ import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import startCase from 'lodash/startCase';
 
 interface IUserHeader {
   dropzoneUser?: DropzoneUserProfileFragment;
-  canEdit?: boolean;
   children?: React.ReactNode;
   variant?: 'dark' | 'light';
   onPressAvatar?(): void;
-  onEdit?(): void;
 }
+
+const badgesInitials = {
+  [Permission.ActAsLoadMaster]: 'LM',
+  [Permission.ActAsPilot]: 'Pilot',
+  [Permission.ActAsRigInspector]: 'Rig.Insp',
+  [Permission.ActAsGca]: 'GCA',
+  [Permission.ActAsDzso]: 'DZSO',
+};
 export default function UserHeader(props: IUserHeader) {
-  const { dropzoneUser, variant, onEdit, canEdit, children, onPressAvatar } = props;
+  const { dropzoneUser, variant, children, onPressAvatar } = props;
   const { theme, palette } = useAppSelector((root) => root.global);
   const [isContactOpen, setContactOpen] = React.useState<boolean>(false);
   const canUpdateUser = useRestriction(Permission.UpdateUser);
@@ -35,18 +42,11 @@ export default function UserHeader(props: IUserHeader) {
   const textColor = variant === 'light' ? theme.colors.surface : theme.colors.onSurface;
   const primaryDark = color(theme.colors.primary).darken(0.3).hex();
 
+  const actingPermissions = (
+    dropzoneUser?.permissions?.filter((name) => /^actAs/.test(name)) || []
+  ).map((str) => badgesInitials[str as keyof typeof badgesInitials]);
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
-      <View style={styles.actions}>
-        {!canEdit ? null : (
-          <IconButton
-            icon="pencil"
-            size={20}
-            color={theme.colors.onSurface}
-            onPress={() => (onEdit ? onEdit() : null)}
-          />
-        )}
-      </View>
       <View style={styles.avatarContainer}>
         <View style={{ flex: 1 / 3 }}>
           <TouchableRipple onPress={onPressAvatar}>
@@ -117,6 +117,11 @@ export default function UserHeader(props: IUserHeader) {
             ]}
           >
             {dropzoneUser?.role?.name?.replace('_', ' ').toUpperCase()}
+            {actingPermissions.length ? (
+              <Caption style={{ marginTop: 4 }}>
+                {` ${actingPermissions.map(startCase).join(', ')}`}
+              </Caption>
+            ) : null}
           </Paragraph>
         </View>
       </View>

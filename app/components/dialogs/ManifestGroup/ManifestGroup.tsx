@@ -148,7 +148,7 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
 
   React.useEffect(() => {
     if (state.fields.ticketType?.value?.isTandem) {
-      sheetRef?.current?.snapTo(0);
+      sheetRef?.current?.snapToIndex(0);
     }
   }, [state.fields.ticketType?.value?.isTandem]);
 
@@ -167,9 +167,9 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
   React.useEffect(() => {
     if (open) {
       sheetRef.current?.present();
-      sheetRef.current?.snapTo(snapPoints?.length - 1, 300);
+      sheetRef.current?.snapToIndex(snapPoints?.length - 1, { duration: 300 });
     } else {
-      sheetRef.current?.dismiss(300);
+      sheetRef.current?.dismiss({ duration: 300 });
       setTimeout(onDismiss, 350);
     }
   }, [memoizedClose, onDismiss, open, snapPoints?.length]);
