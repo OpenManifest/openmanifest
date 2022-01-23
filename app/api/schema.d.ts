@@ -2044,8 +2044,7 @@ export type User = AnyResource & {
   exitWeight?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   image?: Maybe<Scalars['String']>;
-  jumpTypes?: Maybe<Array<JumpType>>;
-  license?: Maybe<License>;
+  licenses?: Maybe<Array<License>>;
   moderationRole?: Maybe<ModerationRole>;
   name?: Maybe<Scalars['String']>;
   nickname?: Maybe<Scalars['String']>;

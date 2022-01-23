@@ -23,8 +23,4 @@ fragment userDetailed on User {
 fragment currentUser on User {
   ...userDetailed
   pushToken
-  jumpTypes {
-    id
-    name
-  }
 }

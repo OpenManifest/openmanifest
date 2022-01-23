@@ -2732,8 +2732,7 @@ type User implements AnyResource {
   exitWeight: String
   id: ID!
   image: String
-  jumpTypes: [JumpType!]
-  license: License
+  licenses: [License!]
   moderationRole: ModerationRole
   name: String
   nickname: String

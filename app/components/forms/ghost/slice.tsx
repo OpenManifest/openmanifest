@@ -1,12 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { DropzoneUserDetailsFragment, FederationEssentialsFragment } from 'app/api/operations';
+import {
+  DropzoneUserDetailsFragment,
+  FederationEssentialsFragment,
+  UserDetailedFragment,
+} from 'app/api/operations';
 import { User } from '../../../api/schema.d';
 
 export type GhostFields = Pick<User, 'exitWeight' | 'name' | 'phone' | 'email'> &
   Pick<DropzoneUserDetailsFragment, 'role' | 'license'>;
 
 interface IGhostEditState {
-  original: User | null;
+  original: UserDetailedFragment | null;
   open: boolean;
   federation: {
     value: FederationEssentialsFragment | null;
@@ -88,22 +92,38 @@ export default createSlice({
       }
     },
 
-    setOpen: (state: IGhostEditState, action: PayloadAction<boolean | User>) => {
+    setOpen: (
+      state: IGhostEditState,
+      action: PayloadAction<boolean | DropzoneUserDetailsFragment>
+    ) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;
         state.fields = initialState.fields;
       } else {
-        state.original = action.payload;
+        state.original = action.payload.user;
         state.open = true;
         state.federation.value = action.payload.license?.federation || null;
-        Object.keys(action.payload).forEach((key) => {
-          const payloadKey = key as keyof typeof action.payload;
-          if (payloadKey in state.fields) {
-            const typedKey = payloadKey as keyof typeof initialState['fields'];
-            state.fields[typedKey].value = action.payload[typedKey as typeof payloadKey];
-          }
-        });
+        state.fields.license.value = action.payload.license || null;
+
+        if (typeof action.payload !== 'boolean') {
+          Object.keys(action.payload.user).forEach((key) => {
+            const payloadKey = key as keyof typeof action.payload;
+            if (payloadKey in state.fields) {
+              const typedKey = payloadKey as keyof typeof initialState['fields'];
+
+              if (typedKey === 'license' || typedKey === 'role') {
+                state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment)[
+                  typedKey
+                ];
+              } else {
+                state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment).user[
+                  typedKey
+                ];
+              }
+            }
+          });
+        }
       }
     },
 

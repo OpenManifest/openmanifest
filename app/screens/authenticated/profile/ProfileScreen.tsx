@@ -1,14 +1,20 @@
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
-import { useMutation } from '@apollo/client';
 import * as React from 'react';
-import { Platform, RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { Card, Divider, ProgressBar } from 'react-native-paper';
-import gql from 'graphql-tag';
+import {
+  Platform,
+  RefreshControl,
+  SectionList,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import { Card, Divider, List, ProgressBar } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import Skeleton from 'react-native-skeleton-content';
+import enAU from 'date-fns/locale/en-AU';
 
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import { Mutation, Permission } from 'app/api/schema.d';
+import { Permission } from 'app/api/schema.d';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import DropzoneUserDialog from 'app/components/dialogs/DropzoneUserDialog';
 import CreditsSheet from 'app/components/dialogs/CreditsDialog/Credits';
@@ -19,61 +25,16 @@ import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 // eslint-disable-next-line max-len
 import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
 import useRestriction from 'app/hooks/useRestriction';
+import { useUpdateUserMutation } from 'app/api/reflection';
 
+import { groupBy, map } from 'lodash';
+import { differenceInDays, format, formatDistance, parseISO, startOfDay } from 'date-fns';
 import Header from './UserInfo/Header';
 import InfoGrid from './UserInfo/InfoGrid';
 import PermissionBadges from './UserInfo/PermissionBadges';
 
 import SlotCard from './SlotCard';
 import UserActionsButton from './UserActions';
-
-const MUTATION_UPDATE_IMAGE = gql`
-  mutation UpdateUserImage($id: Int, $image: String) {
-    updateUser(input: { id: $id, attributes: { image: $image } }) {
-      user {
-        id
-        name
-        exitWeight
-        email
-        image
-        phone
-        rigs {
-          id
-          name
-          model
-          make
-          serial
-          canopySize
-        }
-        jumpTypes {
-          id
-          name
-        }
-        userFederations {
-          id
-          federation {
-            id
-            name
-            slug
-          }
-          license {
-            id
-            name
-          }
-        }
-        license {
-          id
-          name
-
-          federation {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
-`;
 
 export default function ProfileScreen() {
   const state = useAppSelector((root) => root.global);
@@ -97,7 +58,7 @@ export default function ProfileScreen() {
     }
   }, [isFocused, refetch]);
 
-  const [mutationUpdateUser] = useMutation<Mutation>(MUTATION_UPDATE_IMAGE);
+  const [mutationUpdateUser] = useUpdateUserMutation();
 
   React.useEffect(() => {
     (async () => {
@@ -213,16 +174,41 @@ export default function ProfileScreen() {
           </View>
           <View style={{ width: '100%' }}>
             <Card style={{ marginHorizontal: 0 }} elevation={1}>
-              {dropzoneUser?.slots?.edges?.map((edge) =>
-                edge?.node ? (
-                  <SlotCard
-                    slot={edge.node}
-                    onPress={() => {
-                      navigation.navigate('LoadScreen', { load: edge.node });
-                    }}
-                  />
-                ) : null
-              )}
+              <SectionList
+                sections={map(
+                  groupBy(dropzoneUser?.slots?.edges, (e) =>
+                    startOfDay((e?.node?.createdAt || 0) * 1000).toISOString()
+                  ),
+                  (d, t) => {
+                    const date = parseISO(t);
+                    const title =
+                      differenceInDays(new Date(), date) > 7
+                        ? format(date, 'dd MMM, yyyy')
+                        : formatDistance(date, new Date(), { addSuffix: true, locale: enAU });
+                    return {
+                      title,
+                      data: d,
+                    };
+                  }
+                )}
+                renderSectionHeader={({ section: { title } }) => (
+                  <List.Subheader style={{ marginVertical: 16 }}>{title}</List.Subheader>
+                )}
+                style={{ flex: 1, paddingTop: 0 }}
+                data={dropzoneUser?.orders?.edges || []}
+                refreshing={false}
+                onRefresh={refetch}
+                renderItem={({ item }) =>
+                  !item?.node ? null : (
+                    <SlotCard
+                      slot={item.node}
+                      onPress={() => {
+                        navigation.navigate('LoadScreen', { load: item.node?.load });
+                      }}
+                    />
+                  )
+                }
+              />
             </Card>
           </View>
         </ScrollableScreen>

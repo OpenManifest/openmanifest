@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Text,
 } from 'react-native';
-import { Card, Button, HelperText, TextInput } from 'react-native-paper';
+import { Card, Button, HelperText, TextInput, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -25,6 +25,7 @@ export default function LoginScreen() {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const [mutationLogin, data] = useLoginMutation();
+  const theme = useTheme();
 
   const onLogin = React.useCallback(async () => {
     // eslint-disable-next-line
@@ -111,7 +112,7 @@ export default function LoginScreen() {
             <Button
               mode="contained"
               labelStyle={styles.buttonLabel}
-              style={styles.button}
+              style={[styles.button, { backgroundColor: theme.colors.surface }]}
               onPress={onLogin}
               loading={data.loading}
             >

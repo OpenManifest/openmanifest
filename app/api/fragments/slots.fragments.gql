@@ -6,6 +6,7 @@ fragment slotEssentials on Slot {
   passengerExitWeight
   wingLoading
   groupNumber
+  cost
   ticketType {
     ...ticketTypeEssentials
   }

@@ -8,35 +8,9 @@ import LicenseChipSelect from '../../input/chip_select/LicenseChipSelect';
 import FederationSelect from '../../input/dropdown_select/FederationSelect';
 import RoleSelect from '../../input/dropdown_select/RoleSelect';
 
-export default function SlotForm() {
+export default function GhostForm() {
   const state = useAppSelector((root) => root.forms.ghost);
   const dispatch = useAppDispatch();
-
-  React.useEffect(() => {
-    if (state.original) {
-      if (!state.fields.exitWeight.value) {
-        dispatch(
-          actions.forms.ghost.setField([
-            'exitWeight',
-            state.original.exitWeight?.toString() || '60',
-          ])
-        );
-      }
-
-      if (!state.fields.license.value && state.original?.license?.id) {
-        if (state.original.license.federation) {
-          dispatch(actions.forms.ghost.setFederation(state.original.license.federation));
-        }
-        dispatch(actions.forms.ghost.setField(['license', state.original.license]));
-      }
-    }
-  }, [
-    dispatch,
-    state.fields.exitWeight.value,
-    state.fields.license.value,
-    state.original,
-    state.original?.id,
-  ]);
 
   return (
     <>
