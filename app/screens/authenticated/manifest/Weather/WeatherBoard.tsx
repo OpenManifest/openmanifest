@@ -99,8 +99,8 @@ export default function WeatherBoard() {
         onLongPress={onEditWindboard}
       >
         <ImageBackground
-          source={dropzone?.banner ? { uri: dropzone.banner } : defaultBackground}
-          style={{ ...StyleSheet.absoluteFillObject }}
+          source={defaultBackground}
+          style={{ ...StyleSheet.absoluteFillObject, opacity: 0.75 }}
           resizeMode="cover"
         >
           <Card.Content
@@ -240,6 +240,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     // height: 200,
     overflow: 'hidden',
+    backgroundColor: 'transparent',
   },
   date: {
     flex: 1,
@@ -340,8 +341,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   jumpRun: {
-    width: 105,
-    height: 105,
+    width: 94,
+    height: 94,
+    marginBottom: 8,
     flexDirection: 'column',
     alignItems: 'flex-end',
   },

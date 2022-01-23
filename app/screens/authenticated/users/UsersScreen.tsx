@@ -26,7 +26,7 @@ function UserCardSkeleton() {
         flexDirection: 'row',
       }}
       layout={[
-        { key: 'user-avatar', height: 36, width: 36, marginHorizontal: 12, borderRadius: 36 / 2 },
+        { key: 'user-avatar', height: 48, width: 48, marginHorizontal: 12, borderRadius: 48 / 2 },
         {
           key: 'list-container',
           flexDirection: 'column',
@@ -84,9 +84,10 @@ export default function UsersScreen() {
 
   const users = data?.dropzone?.dropzoneUsers?.edges || [];
   const initialLoading = !users?.length && loading;
+  const theme = useTheme();
 
   return (
-    <>
+    <View style={{ flexGrow: 1, backgroundColor: theme.colors.surface }}>
       <ProgressBar indeterminate color={global.theme.colors.accent} visible={loading} />
       {users?.length ? null : (
         <View style={styles.empty}>
@@ -119,7 +120,7 @@ export default function UsersScreen() {
               style={{ margin: 0, marginVertical: 0, borderRadius: 2, width: '100%' }}
             >
               <Card.Content
-                style={{ paddingLeft: 0, paddingTop: 0, paddingRight: 0, paddingBottom: 0 }}
+                style={{ paddingLeft: 0, paddingTop: 4, paddingRight: 0, paddingBottom: 4 }}
               >
                 <List.Item
                   style={{ width: '100%' }}
@@ -135,7 +136,7 @@ export default function UsersScreen() {
                           alignSelf: 'center',
                           marginHorizontal: 22,
                         }}
-                        size={36}
+                        size={48}
                       />
                     ) : (
                       <Avatar.Image
@@ -145,7 +146,7 @@ export default function UsersScreen() {
                           marginHorizontal: 22,
                           backgroundColor: global.palette.primary.light,
                         }}
-                        size={36}
+                        size={48}
                       />
                     )
                   }
@@ -181,7 +182,7 @@ export default function UsersScreen() {
           });
         }}
       />
-    </>
+    </View>
   );
 }
 

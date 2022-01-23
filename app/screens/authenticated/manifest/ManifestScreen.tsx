@@ -1,6 +1,12 @@
 import { useIsFocused, useNavigation } from '@react-navigation/core';
 import * as React from 'react';
-import { Dimensions, RefreshControl, StyleSheet, useWindowDimensions } from 'react-native';
+import {
+  Dimensions,
+  ImageBackground,
+  RefreshControl,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { FAB, IconButton, Menu, ProgressBar, useTheme } from 'react-native-paper';
 import checkDropzoneSetupComplete from 'app/utils/checkDropzoneSetupComplete';
@@ -164,7 +170,7 @@ export default function ManifestScreen() {
 
   const theme = useTheme();
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View style={{ flex: 1 }}>
       <ProgressBar visible={loading} indeterminate color={state.theme.colors.accent} />
 
       <View style={styles.container}>
@@ -176,8 +182,16 @@ export default function ManifestScreen() {
               width: '100%',
               flex: 1,
               height: Dimensions.get('window').height,
+              backgroundColor: theme.colors.background,
             }}
           >
+            {dropzone?.banner && (
+              <ImageBackground
+                source={{ uri: dropzone.banner }}
+                style={{ position: 'absolute', top: -8, left: 0, width: '100%', height: 340 }}
+                resizeMode="cover"
+              />
+            )}
             <FlatList
               ListHeaderComponent={() => <WeatherConditions />}
               ListEmptyComponent={() => (
@@ -187,7 +201,6 @@ export default function ManifestScreen() {
                 paddingTop: 35,
                 flex: 1,
                 height: Dimensions.get('window').height,
-                backgroundColor: theme.colors.background,
               }}
               testID="loads"
               keyExtractor={({ item }, idx) => `load-small-${item?.node?.id || idx}`}
@@ -196,7 +209,6 @@ export default function ManifestScreen() {
                 width: contentWidth,
                 alignSelf: 'center',
                 paddingBottom: 100,
-                backgroundColor: theme.colors.background,
               }}
               numColumns={numColumns}
               data={initialLoading ? [1, 1, 1, 1, 1] : loads}

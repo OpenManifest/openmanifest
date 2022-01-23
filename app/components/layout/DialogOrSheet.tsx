@@ -56,7 +56,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
   const hide = () => {
     'worklet';
 
-    sheetRef.current?.dismiss(300);
+    sheetRef.current?.dismiss({ duration: 300 });
     setTimeout(onDismiss, 350);
   };
 
@@ -102,7 +102,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
 
   return (
     <BottomSheetModal
-      dismissOnPanDown
+      enableDismissOnClose
       onDismiss={onDismiss}
       ref={sheetRef}
       snapPoints={snappingPoints}

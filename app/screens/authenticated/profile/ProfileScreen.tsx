@@ -31,7 +31,6 @@ import { groupBy, map } from 'lodash';
 import { differenceInDays, format, formatDistance, parseISO, startOfDay } from 'date-fns';
 import Header from './UserInfo/Header';
 import InfoGrid from './UserInfo/InfoGrid';
-import PermissionBadges from './UserInfo/PermissionBadges';
 
 import SlotCard from './SlotCard';
 import UserActionsButton from './UserActions';
@@ -43,7 +42,6 @@ export default function ProfileScreen() {
   const navigation = useNavigation();
   const { currentUser } = useCurrentDropzone();
   const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
-  const isSelf = currentUser?.id === route.params.userId;
 
   const { dropzoneUser, loading, refetch } = useDropzoneUserProfile(
     Number(route.params.userId) || Number(currentUser?.id)
@@ -93,10 +91,7 @@ export default function ProfileScreen() {
     }
   }, [dropzoneUser?.user?.id, mutationUpdateUser]);
 
-  const badges = dropzoneUser?.permissions?.filter((name) => /^actAs/.test(name)) || [];
-
   const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
-  const canUpdateUsers = useRestriction(Permission.UpdateUser);
   const onCloseRigForm = React.useCallback(
     () => dispatch(actions.forms.rig.setOpen(false)),
     [dispatch]
@@ -134,17 +129,7 @@ export default function ProfileScreen() {
                   layout={[{ key: 'header', width: '100%', height: '100%', borderRadius: 8 }]}
                 />
               ) : (
-                <Header
-                  dropzoneUser={dropzoneUser}
-                  canEdit={isSelf || canUpdateUsers}
-                  onEdit={() => {
-                    if (dropzoneUser?.user) {
-                      dispatch(actions.forms.user.setOpen(dropzoneUser));
-                    }
-                  }}
-                  onPressAvatar={onPickImage}
-                >
-                  <PermissionBadges {...{ dropzoneUser, permissions: badges }} />
+                <Header dropzoneUser={dropzoneUser} onPressAvatar={onPickImage}>
                   <InfoGrid
                     style={{ height: 80 }}
                     items={[
