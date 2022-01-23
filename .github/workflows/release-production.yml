@@ -25,8 +25,8 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./web-build-prod
+          deploy_key: ${{ secrets.WEB_DEPLOY_KEY_PRODUCTION }}
           external_repository: OpenManifest/openmanifest-web
           cname: openmanifest.org
   publish-expo-production:
