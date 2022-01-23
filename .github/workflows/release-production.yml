@@ -1,10 +1,10 @@
-name: Publish staging
+name: Publish production
 on:
-  push:
+  workflow_dispatch:
     branches:
       - main
 jobs:
-  publish-web-staging:
+  publish-web-production:
     name: Publish Web
     runs-on: ubuntu-latest
     steps:
@@ -17,19 +17,19 @@ jobs:
           expo-version: 4.x
           token: ${{ secrets.EXPO_TOKEN }}
       - run: yarn install
-      - run: yarn ts:graphql:staging && yarn typecheck
+      - run: yarn ts:graphql:production && yarn typecheck
         name: Ensure server compatibility
-      - run: yarn web:build:staging
+      - run: yarn web:build:production
         env:
           NODE_OPTIONS: --max_old_space_size=4096
       - run: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./web-build-staging
-          external_repository: OpenManifest/openmanifest-web-staging
-          cname: staging.openmanifest.org
-  publish-expo-staging:
+          publish_dir: ./web-build-prod
+          external_repository: OpenManifest/openmanifest-web
+          cname: openmanifest.org
+  publish-expo-production:
     name: Publish Expo
     runs-on: ubuntu-latest
     steps:
@@ -42,10 +42,10 @@ jobs:
           expo-version: 4.x
           token: ${{ secrets.EXPO_TOKEN }}
       - run: yarn install
-      - run: yarn ts:graphql:staging && yarn typecheck
+      - run: yarn ts:graphql:production && yarn typecheck
         name: Ensure server compatibility
-      - run: yarn expo:publish:staging
+      - run: yarn expo:publish:prod
         env:
           NODE_OPTIONS: --max_old_space_size=4096
-          EXPO_ENV: staging
+          EXPO_ENV: production
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}

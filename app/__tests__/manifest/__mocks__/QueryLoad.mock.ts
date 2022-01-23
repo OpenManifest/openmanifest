@@ -61,6 +61,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
         {
           __typename: 'Slot',
           id: '1',
+          cost: 100,
           createdAt: (new Date().getTime() - 120000) / 1000,
           exitWeight: 100,
           passengerName: null,
@@ -119,6 +120,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
         {
           __typename: 'Slot',
           id: '2',
+          cost: 100,
           createdAt: (new Date().getTime() - 180000) / 1000,
           exitWeight: 70,
           passengerName: null,
@@ -175,6 +177,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           extras: null,
         },
         {
+          cost: 100,
           __typename: 'Slot',
           id: '3',
           groupNumber: 0,
