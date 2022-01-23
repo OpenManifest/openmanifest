@@ -48,7 +48,7 @@ export default function UserHeader(props: IUserHeader) {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <View style={styles.avatarContainer}>
-        <View style={{ flex: 1 / 3 }}>
+        <View style={{ flex: 1 / 3, alignItems: 'center', justifyContent: 'center' }}>
           <TouchableRipple onPress={onPressAvatar}>
             {!dropzoneUser?.user?.image ? (
               <Avatar.Icon size={80} icon="account" />

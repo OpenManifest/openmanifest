@@ -1,13 +1,6 @@
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
-import {
-  Platform,
-  RefreshControl,
-  SectionList,
-  StyleSheet,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { Platform, RefreshControl, SectionList, StyleSheet, View } from 'react-native';
 import { Card, Divider, List, ProgressBar } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import Skeleton from 'react-native-skeleton-content';
@@ -101,10 +94,6 @@ export default function ProfileScreen() {
     dispatch(actions.forms.user.setOpen(false));
   }, [dispatch]);
 
-  const windowDimensions = useWindowDimensions();
-  const wrappingHeaderItemWidth =
-    windowDimensions.width > 600 ? windowDimensions.width / 2 : windowDimensions.width;
-
   return (
     <>
       <View style={StyleSheet.absoluteFill}>
@@ -117,7 +106,7 @@ export default function ProfileScreen() {
           refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}
         >
           <View style={styles.wrappingHeader}>
-            <View style={{ width: wrappingHeaderItemWidth }}>
+            <View style={{ width: '100%' }}>
               {!dropzoneUser ? (
                 <Skeleton
                   key="profile-header"

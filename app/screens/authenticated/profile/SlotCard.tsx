@@ -45,7 +45,7 @@ export default function SlotCard(props: ISlot) {
             left={() => (
               <View
                 style={{
-                  flex: 1,
+                  width: 100,
                   alignItems: 'center',
                   flexDirection: 'row',
                   justifyContent: 'center',
@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 6,
+    flexGrow: 1,
   },
   jumpType: {
     fontSize: 16,
@@ -82,6 +83,8 @@ const styles = StyleSheet.create({
   },
   transactionDescription: {
     paddingLeft: 0,
+    flexGrow: 1,
+    minWidth: 150,
   },
   transactionContent: { paddingLeft: 0, paddingRight: 4, paddingTop: 8, paddingBottom: 8 },
   transaction: { margin: 0, marginBottom: 0, marginVertical: 0, borderRadius: 2, width: '100%' },

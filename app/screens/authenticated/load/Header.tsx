@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Avatar, IconButton, Paragraph, Title } from 'react-native-paper';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Avatar, Paragraph, Title } from 'react-native-paper';
 
 import isAfter from 'date-fns/isAfter';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,13 +10,14 @@ import Countdown from '../manifest/LoadCard/Countdown';
 
 interface ILoadHeader {
   load?: LoadEssentialsFragment;
-  canEdit?: boolean;
   children?: React.ReactNode;
-  onEdit?(): void;
+  renderBadges?: React.ComponentType<object>;
 }
 export default function UserHeader(props: ILoadHeader) {
-  const { load, onEdit, canEdit, children } = props;
+  const { load, renderBadges: RenderBadges, children } = props;
   const { theme, palette } = useAppSelector((root) => root.global);
+  const { width } = useWindowDimensions();
+
   return (
     <LinearGradient
       start={{ x: 0.0, y: 0.25 }}
@@ -24,18 +25,8 @@ export default function UserHeader(props: ILoadHeader) {
       style={styles.container}
       colors={[theme.colors.surface, theme.colors.surface]}
     >
-      <View style={styles.actions}>
-        {!canEdit ? null : (
-          <IconButton
-            icon="pencil"
-            size={20}
-            color={theme.colors.surface}
-            onPress={() => (onEdit ? onEdit() : null)}
-          />
-        )}
-      </View>
       <View style={styles.avatarContainer}>
-        <View style={{ flex: 1 / 3 }}>
+        <View style={{ flex: 1 / 3, alignItems: 'center', justifyContent: 'center' }}>
           {load?.dispatchAt && isAfter(load.dispatchAt * 1000, new Date()) ? (
             <Countdown
               end={new Date(load.dispatchAt * 1000)}
@@ -53,9 +44,15 @@ export default function UserHeader(props: ILoadHeader) {
         </View>
         <View style={styles.titleContainer}>
           <Title style={styles.title}>Load #{load?.loadNumber}</Title>
-          <Paragraph style={styles.paragraph}>{load?.name}</Paragraph>
+          {RenderBadges && width > 600 ? (
+            <RenderBadges />
+          ) : (
+            <Paragraph style={styles.paragraph}>{load?.name}</Paragraph>
+          )}
         </View>
       </View>
+
+      {RenderBadges && width < 600 ? <RenderBadges /> : null}
 
       {children}
     </LinearGradient>
