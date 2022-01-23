@@ -127,7 +127,9 @@ export default function LoginScreen() {
               Sign up
             </Button>
             <TouchableOpacity onPress={() => navigation.navigate('RecoverPasswordScreen')}>
-              <Text style={styles.forgotPassword}>Forgot your password?</Text>
+              <Text style={theme.dark ? styles.forgotPasswordDark : styles.forgotPassword}>
+                Forgot your password?
+              </Text>
             </TouchableOpacity>
           </Card.Content>
         </Card>
@@ -151,6 +153,9 @@ const styles = StyleSheet.create({
 
   forgotPassword: {
     color: 'rgb(50, 50, 50)',
+  },
+  forgotPasswordDark: {
+    color: 'rgb(180, 180, 180)',
   },
 
   fields: {
