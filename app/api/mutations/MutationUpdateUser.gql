@@ -1,0 +1,36 @@
+mutation UpdateUser(
+  $id: Int
+  $name: String
+  $phone: String
+  $email: String
+  $image: String
+  $pushToken: String
+  $nickname: String
+  $licenseId: Int
+  $exitWeight: Float
+) {
+  updateUser(
+    input: {
+      id: $id
+      attributes: {
+        pushToken: $pushToken
+        name: $name
+        phone: $phone
+        email: $email
+        image: $image
+        nickname: $nickname
+        licenseId: $licenseId
+        exitWeight: $exitWeight
+      }
+    }
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    user {
+      ...userDetailed
+    }
+  }
+}

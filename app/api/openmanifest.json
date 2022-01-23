@@ -14369,7 +14369,7 @@
             "deprecationReason": null
           },
           {
-            "name": "jumpTypes",
+            "name": "licenses",
             "description": null,
             "args": [],
             "type": {
@@ -14380,22 +14380,10 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "JumpType",
+                  "name": "License",
                   "ofType": null
                 }
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "license",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "License",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

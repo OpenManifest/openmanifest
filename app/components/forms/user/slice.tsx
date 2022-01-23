@@ -5,10 +5,9 @@ import {
   LicenseDetailsFragment,
   UserDetailedFragment,
 } from 'app/api/operations';
-import { DropzoneUser } from 'app/api/schema.d';
 
 export type UserFields = Pick<
-  UserDetailedFragment & { license: LicenseDetailsFragment },
+  UserDetailedFragment & { license?: LicenseDetailsFragment },
   'exitWeight' | 'rigs' | 'name' | 'phone' | 'email' | 'apfNumber' | 'nickname' | 'license'
 >;
 
@@ -115,7 +114,15 @@ export default createSlice({
         const payloadKey = key as keyof typeof action.payload;
         if (payloadKey in state.fields) {
           const typedKey = payloadKey as keyof typeof initialState['fields'];
-          state.fields[typedKey].value = (action.payload as DropzoneUser).user[typedKey];
+          if (typedKey === 'license') {
+            state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment)[
+              typedKey
+            ];
+          } else {
+            state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment).user[
+              typedKey
+            ];
+          }
         }
       });
     },
@@ -139,7 +146,16 @@ export default createSlice({
             const payloadKey = key as keyof typeof action.payload;
             if (payloadKey in state.fields) {
               const typedKey = payloadKey as keyof typeof initialState['fields'];
-              state.fields[typedKey].value = (action.payload as DropzoneUser).user[typedKey];
+
+              if (typedKey === 'license') {
+                state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment)[
+                  typedKey
+                ];
+              } else {
+                state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment).user[
+                  typedKey
+                ];
+              }
             }
           });
         }

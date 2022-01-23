@@ -293,6 +293,7 @@ export const SlotEssentialsFragmentDoc = gql`
   passengerExitWeight
   wingLoading
   groupNumber
+  cost
   ticketType {
     ...ticketTypeEssentials
   }
@@ -466,10 +467,6 @@ export const CurrentUserFragmentDoc = gql`
     fragment currentUser on User {
   ...userDetailed
   pushToken
-  jumpTypes {
-    id
-    name
-  }
 }
     ${UserDetailedFragmentDoc}`;
 export const CurrentUserDetailedFragmentDoc = gql`
@@ -1049,6 +1046,55 @@ export function useCreateRigInspectionMutation(baseOptions?: Apollo.MutationHook
 export type CreateRigInspectionMutationHookResult = ReturnType<typeof useCreateRigInspectionMutation>;
 export type CreateRigInspectionMutationResult = Apollo.MutationResult<Operation.CreateRigInspectionMutation>;
 export type CreateRigInspectionMutationOptions = Apollo.BaseMutationOptions<Operation.CreateRigInspectionMutation, Operation.CreateRigInspectionMutationVariables>;
+export const CreateGhostDocument = gql`
+    mutation CreateGhost($name: String!, $phone: String, $email: String!, $federationNumber: String, $roleId: Int!, $licenseId: Int, $dropzoneId: Int!, $exitWeight: Float!) {
+  createGhost(
+    input: {attributes: {roleId: $roleId, federationNumber: $federationNumber, name: $name, phone: $phone, email: $email, dropzoneId: $dropzoneId, licenseId: $licenseId, exitWeight: $exitWeight}}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    user {
+      ...userDetailed
+    }
+  }
+}
+    ${UserDetailedFragmentDoc}`;
+export type CreateGhostMutationFn = Apollo.MutationFunction<Operation.CreateGhostMutation, Operation.CreateGhostMutationVariables>;
+
+/**
+ * __useCreateGhostMutation__
+ *
+ * To run a mutation, you first call `useCreateGhostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateGhostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createGhostMutation, { data, loading, error }] = useCreateGhostMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      phone: // value for 'phone'
+ *      email: // value for 'email'
+ *      federationNumber: // value for 'federationNumber'
+ *      roleId: // value for 'roleId'
+ *      licenseId: // value for 'licenseId'
+ *      dropzoneId: // value for 'dropzoneId'
+ *      exitWeight: // value for 'exitWeight'
+ *   },
+ * });
+ */
+export function useCreateGhostMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateGhostMutation, Operation.CreateGhostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.CreateGhostMutation, Operation.CreateGhostMutationVariables>(CreateGhostDocument, options);
+      }
+export type CreateGhostMutationHookResult = ReturnType<typeof useCreateGhostMutation>;
+export type CreateGhostMutationResult = Apollo.MutationResult<Operation.CreateGhostMutation>;
+export type CreateGhostMutationOptions = Apollo.BaseMutationOptions<Operation.CreateGhostMutation, Operation.CreateGhostMutationVariables>;
 export const FinalizeLoadDocument = gql`
     mutation FinalizeLoad($id: Int!, $state: LoadState!) {
   finalizeLoad(input: {id: $id, state: $state}) {
@@ -1941,6 +1987,56 @@ export function useUpdateTicketTypeMutation(baseOptions?: Apollo.MutationHookOpt
 export type UpdateTicketTypeMutationHookResult = ReturnType<typeof useUpdateTicketTypeMutation>;
 export type UpdateTicketTypeMutationResult = Apollo.MutationResult<Operation.UpdateTicketTypeMutation>;
 export type UpdateTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>;
+export const UpdateUserDocument = gql`
+    mutation UpdateUser($id: Int, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $licenseId: Int, $exitWeight: Float) {
+  updateUser(
+    input: {id: $id, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, licenseId: $licenseId, exitWeight: $exitWeight}}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    user {
+      ...userDetailed
+    }
+  }
+}
+    ${UserDetailedFragmentDoc}`;
+export type UpdateUserMutationFn = Apollo.MutationFunction<Operation.UpdateUserMutation, Operation.UpdateUserMutationVariables>;
+
+/**
+ * __useUpdateUserMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      phone: // value for 'phone'
+ *      email: // value for 'email'
+ *      image: // value for 'image'
+ *      pushToken: // value for 'pushToken'
+ *      nickname: // value for 'nickname'
+ *      licenseId: // value for 'licenseId'
+ *      exitWeight: // value for 'exitWeight'
+ *   },
+ * });
+ */
+export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateUserMutation, Operation.UpdateUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateUserMutation, Operation.UpdateUserMutationVariables>(UpdateUserDocument, options);
+      }
+export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
+export type UpdateUserMutationResult = Apollo.MutationResult<Operation.UpdateUserMutation>;
+export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateUserMutation, Operation.UpdateUserMutationVariables>;
 export const UserSignUpDocument = gql`
     mutation UserSignUp($email: String!, $password: String!, $passwordConfirmation: String!, $name: String!, $phone: String!, $pushToken: String, $exitWeight: Float!, $licenseId: Int) {
   userSignUp(

@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { Caption, Card, List, useTheme } from 'react-native-paper';
-import { format } from 'date-fns';
+import { Avatar, Card, List, useTheme } from 'react-native-paper';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { UserSlotDetailsFragment } from 'app/api/operations';
 
 interface ISlot {
@@ -17,18 +15,9 @@ export default function SlotCard(props: ISlot) {
     <TouchableOpacity onPress={onPress} style={{ width: '100%' }}>
       <Card style={styles.transaction}>
         <Card.Content style={styles.transactionContent}>
-          <Caption
-            style={{
-              position: 'absolute',
-              top: 0,
-              right: 8,
-            }}
-          >
-            {format((slot?.load?.dispatchAt || slot.createdAt) * 1000, 'Mo MMM, h:mm aaa')}
-          </Caption>
           <List.Item
-            title={`Load #${slot.load.loadNumber}`}
-            description={slot.ticketType?.name}
+            description={`on Load #${slot.load.loadNumber}`}
+            title={slot.jumpType?.name}
             style={{ width: '100%' }}
             titleStyle={styles.transactionTitle}
             descriptionStyle={styles.transactionDescription}
@@ -41,8 +30,15 @@ export default function SlotCard(props: ISlot) {
                   flexDirection: 'row',
                 }}
               >
-                <Text style={[styles.jumpType, { color: theme.colors.onSurface }]}>
-                  {slot.jumpType?.name}
+                <Text
+                  style={[
+                    styles.jumpType,
+                    {
+                      color: theme.colors.onSurface,
+                    },
+                  ]}
+                >
+                  -${slot.cost?.toFixed(2)}
                 </Text>
               </View>
             )}
@@ -55,10 +51,10 @@ export default function SlotCard(props: ISlot) {
                   justifyContent: 'center',
                 }}
               >
-                <MaterialCommunityIcons
-                  color={theme.colors.text}
-                  name="parachute-outline"
-                  size={36}
+                <Avatar.Icon
+                  icon="parachute-outline"
+                  size={48}
+                  style={{ alignSelf: 'center', marginHorizontal: 12 }}
                 />
               </View>
             )}
@@ -73,14 +69,20 @@ const styles = StyleSheet.create({
   avatarIcon: {},
   transactionTitle: {
     paddingLeft: 0,
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500',
-    marginBottom: 4,
+    marginBottom: 6,
   },
-  jumpType: { fontSize: 24, marginLeft: 4, fontWeight: '100', textAlign: 'center' },
+  jumpType: {
+    fontSize: 16,
+    fontFamily: 'Roboto_400Regular',
+    fontWeight: '400',
+    textAlign: 'center',
+    alignSelf: 'center',
+  },
   transactionDescription: {
     paddingLeft: 0,
   },
-  transactionContent: { paddingLeft: 0, paddingRight: 4, paddingTop: 4, paddingBottom: 4 },
+  transactionContent: { paddingLeft: 0, paddingRight: 4, paddingTop: 8, paddingBottom: 8 },
   transaction: { margin: 0, marginBottom: 0, marginVertical: 0, borderRadius: 2, width: '100%' },
 });

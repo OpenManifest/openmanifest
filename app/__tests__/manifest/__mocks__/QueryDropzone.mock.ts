@@ -140,11 +140,6 @@ export default createMock<QueryDropzoneQueryVariables, QueryDropzoneQuery>(
               },
             },
           ],
-
-          jumpTypes: [
-            { id: '1', name: 'Freefly' },
-            { id: '2', name: 'Angle/Tracking' },
-          ],
         },
       },
       loads: {
