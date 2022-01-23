@@ -1,0 +1,14 @@
+mutation UpdateDropzoneUser($userRoleId: Int, $expiresAt: Int, $dropzoneUserId: Int) {
+  updateDropzoneUser(
+    input: { id: $dropzoneUserId, attributes: { userRoleId: $userRoleId, expiresAt: $expiresAt } }
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    dropzoneUser {
+      ...dropzoneUserDetails
+    }
+  }
+}

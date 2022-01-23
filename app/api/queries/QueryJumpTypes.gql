@@ -1,9 +1,19 @@
-query AllowedJumpTypes($dropzoneId: Int!, $userIds: [Int!]!) {
+query JumpTypes($allowedForDropzoneUserIds: [Int!]) {
+  jumpTypes(dropzoneUserIds: $allowedForDropzoneUserIds) {
+    ...jumpTypeEssentials
+  }
+}
+
+query AllowedJumpTypes($dropzoneId: Int!, $allowedForDropzoneUserIds: [Int!]!, $isPublic: Boolean) {
   dropzone(id: $dropzoneId) {
     id
 
-    allowedJumpTypes(userId: $userIds) {
+    allowedJumpTypes(userId: $allowedForDropzoneUserIds) {
       ...jumpTypeEssentials
+    }
+
+    ticketTypes(isPublic: $isPublic) {
+      ...ticketTypeEssentials
     }
   }
   jumpTypes {

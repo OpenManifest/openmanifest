@@ -10,9 +10,9 @@ import { View } from 'app/components/Themed';
 import { Load, LoadState } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { errorColor, warningColor } from 'app/constants/Colors';
-import useQueryLoad from 'app/api/hooks/useQueryLoad';
 import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
 import { DropzoneUserEssentialsFragment, PlaneEssentialsFragment } from 'app/api/operations';
+import { useLoadQuery } from 'app/api/reflection';
 import Countdown from '../Countdown';
 import Loading from './Loading';
 
@@ -33,17 +33,14 @@ export default function LoadCard(props: ILoadCardSmall) {
     }),
     [palette.accent.main]
   );
-  const {
-    data: load,
-    loading,
-    refetch,
-  } = useQueryLoad({
+  const { data, loading, refetch } = useLoadQuery({
     variables: {
       id: Number(initialRecord.id),
     },
-    showSnackbarErrors: true,
     pollInterval: 30000,
   });
+
+  const load = React.useMemo(() => data?.load, [data?.load]);
 
   const mutationUpdateLoad = useMutationUpdateLoad({
     onSuccess: () =>

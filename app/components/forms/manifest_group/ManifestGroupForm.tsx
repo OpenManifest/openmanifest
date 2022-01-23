@@ -1,77 +1,29 @@
 import * as React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { HelperText, Divider, Chip, List, Card } from 'react-native-paper';
-import gql from 'graphql-tag';
 import { uniqBy } from 'lodash';
+import { useAllowedJumpTypesQuery } from 'app/api/reflection';
 
-import { actions, useAppSelector, useAppDispatch } from '../../../state';
+import { actions, useAppSelector, useAppDispatch } from 'app/state';
 
-import useRestriction from '../../../hooks/useRestriction';
+import useRestriction from 'app/hooks/useRestriction';
+import { JumpType, Permission, TicketType } from 'app/api/schema.d';
 import ChipSelect from '../../input/chip_select/ChipSelect';
-import { createQuery } from '../../../api/createQuery';
-import { JumpType, Permission, TicketType } from '../../../api/schema.d';
 
 import UserRigCard from './UserRigCard';
-
-const QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES = gql`
-  query DropzoneUsersAllowedJumpTypes($dropzoneId: Int!, $userIds: [Int!]!, $isPublic: Boolean) {
-    dropzone(id: $dropzoneId) {
-      id
-
-      allowedJumpTypes(userId: $userIds) {
-        id
-        name
-      }
-
-      ticketTypes(isPublic: $isPublic) {
-        id
-        name
-        cost
-        isTandem
-
-        extras {
-          id
-          cost
-          name
-        }
-      }
-    }
-    jumpTypes {
-      id
-      name
-    }
-  }
-`;
-
-const useAllowedJumpTypes = createQuery<
-  {
-    jumpTypes: JumpType[];
-    allowedJumpTypes: JumpType[];
-    ticketTypes: TicketType[];
-  },
-  {
-    dropzoneId: number;
-    userIds: number[];
-    isPublic: boolean | null;
-  }
->(QUERY_DROPZONE_USERS_ALLOWED_JUMP_TYPES, {
-  getPayload: (query) => ({
-    allowedJumpTypes: query?.dropzone?.allowedJumpTypes || [],
-    ticketTypes: query?.dropzone?.ticketTypes || [],
-    jumpTypes: query?.jumpTypes || [],
-  }),
-});
 
 export default function SlotForm() {
   const state = useAppSelector((root) => root.forms.manifestGroup);
   const globalState = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
   const canManifestOthers = useRestriction(Permission.CreateUserSlot);
-  const { data } = useAllowedJumpTypes({
+  const { data } = useAllowedJumpTypesQuery({
     variables: {
-      userIds: state.fields.users?.value?.map((slotUser) => slotUser.id) as number[],
-      dropzoneId: globalState.currentDropzoneId as number,
+      allowedForDropzoneUserIds: state.fields.users?.value?.map(
+        (slotUser) => slotUser.id
+      ) as number[],
       isPublic: canManifestOthers ? null : true,
+      dropzoneId: Number(globalState.currentDropzoneId),
     },
     onError: console.error,
   });
@@ -87,14 +39,14 @@ export default function SlotForm() {
             autoSelectFirst
             items={
               uniqBy(
-                [...(data?.allowedJumpTypes || []), ...(data?.jumpTypes || [])],
+                [...(data?.dropzone?.allowedJumpTypes || []), ...(data?.jumpTypes || [])],
                 ({ id }) => id
               ) || []
             }
             selected={state.fields.jumpType.value ? [state.fields.jumpType.value] : []}
             renderItemLabel={(jumpType: JumpType) => jumpType.name}
             isDisabled={(jumpType: JumpType) =>
-              !data?.allowedJumpTypes?.map(({ id }) => id).includes(jumpType.id)
+              !data?.dropzone?.allowedJumpTypes?.map(({ id }) => id).includes(jumpType.id)
             }
             onChangeSelected={([first]) =>
               dispatch(actions.forms.manifestGroup.setField(['jumpType', first as JumpType]))
@@ -112,7 +64,7 @@ export default function SlotForm() {
         <Card.Content>
           <ChipSelect
             autoSelectFirst
-            items={data?.ticketTypes || []}
+            items={data?.dropzone?.ticketTypes || []}
             selected={state.fields.ticketType.value ? [state.fields.ticketType.value] : []}
             renderItemLabel={(ticketType: TicketType) => ticketType.name}
             onChangeSelected={([first]) =>

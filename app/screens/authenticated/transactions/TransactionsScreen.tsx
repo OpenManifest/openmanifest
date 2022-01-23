@@ -7,11 +7,11 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import CreditsSheet from 'app/components/dialogs/CreditsDialog/Credits';
 
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
-import useDropzoneUser from 'app/api/hooks/useDropzoneUser';
 import { groupBy, map } from 'lodash';
 import { formatDistance, parseISO, startOfDay, differenceInDays, format } from 'date-fns';
 import enAU from 'date-fns/locale/en-AU';
 import { OrderEssentialsFragment } from 'app/api/operations';
+import { useQueryDropzoneUserProfile } from 'app/api/reflection';
 import OrderCard from './OrderCard';
 
 export default function TransactionsScreen() {
@@ -20,8 +20,15 @@ export default function TransactionsScreen() {
   const dispatch = useAppDispatch();
   const { currentUser } = useCurrentDropzone();
   const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
-  const { dropzoneUser, loading, refetch } = useDropzoneUser(
-    Number(route?.params?.userId) || Number(currentUser?.id)
+  const { data, loading, refetch } = useQueryDropzoneUserProfile({
+    variables: {
+      dropzoneId: Number(state.currentDropzoneId),
+      dropzoneUserId: Number(route?.params?.userId) || Number(currentUser?.id),
+    },
+  });
+  const dropzoneUser = React.useMemo(
+    () => data?.dropzone?.dropzoneUser,
+    [data?.dropzone?.dropzoneUser]
   );
 
   const isFocused = useIsFocused();
@@ -50,7 +57,7 @@ export default function TransactionsScreen() {
           groupBy(dropzoneUser?.orders?.edges, (e) =>
             startOfDay((e?.node?.createdAt || 0) * 1000).toISOString()
           ),
-          (data, t) => {
+          (d, t) => {
             const date = parseISO(t);
             const title =
               differenceInDays(new Date(), date) > 7
@@ -58,7 +65,7 @@ export default function TransactionsScreen() {
                 : formatDistance(date, new Date(), { addSuffix: true, locale: enAU });
             return {
               title,
-              data,
+              data: d,
             };
           }
         )}

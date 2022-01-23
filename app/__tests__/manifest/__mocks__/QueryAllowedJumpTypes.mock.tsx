@@ -10,11 +10,13 @@ export const MOCK_QUERY_ALLOWED_JUMP_TYPES = createMockedQuery<
   {
     dropzoneId: 1,
 
-    userIds: [],
+    allowedForDropzoneUserIds: [],
   },
   {
     dropzone: {
       id: '1',
+
+      ticketTypes: [],
 
       allowedJumpTypes: [
         { id: '1', name: 'Freefly' },

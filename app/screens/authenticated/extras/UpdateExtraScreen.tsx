@@ -1,53 +1,18 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { gql, useMutation } from '@apollo/client';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { actions, useAppSelector, useAppDispatch } from '../../../state';
+import { actions, useAppSelector, useAppDispatch } from 'app/state';
 
-import { View } from '../../../components/Themed';
-import { actions as snackbar } from '../../../components/notifications';
+import { View } from 'app/components/Themed';
+import { actions as snackbar } from 'app/components/notifications';
 
-import { Mutation, Extra } from '../../../api/schema';
-import ExtraForm from '../../../components/forms/extra/ExtraForm';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
-
-const MUTATION_UPDATE_EXTRA = gql`
-  mutation UpdateExtra(
-    $id: Int!
-    $name: String
-    $ticketTypeIds: [Int!]
-    $cost: Float
-    $dropzoneId: Int
-  ) {
-    updateExtra(
-      input: {
-        id: $id
-        attributes: {
-          name: $name
-          ticketTypeIds: $ticketTypeIds
-          cost: $cost
-          dropzoneId: $dropzoneId
-        }
-      }
-    ) {
-      extra {
-        id
-        name
-
-        ticketTypes {
-          id
-          name
-          cost
-          altitude
-          allowManifestingSelf
-        }
-      }
-    }
-  }
-`;
+import { Extra } from 'app/api/schema.d';
+import ExtraForm from 'app/components/forms/extra/ExtraForm';
+import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useUpdateExtraMutation } from 'app/api/reflection';
 
 export default function UpdateExtraScreen() {
   const currentDropzone = useCurrentDropzone();
@@ -62,7 +27,7 @@ export default function UpdateExtraScreen() {
     dispatch(actions.forms.extra.setOpen(extra));
   }, [dispatch, extra, extra.id]);
 
-  const [mutationUpdateExtra, data] = useMutation<Mutation>(MUTATION_UPDATE_EXTRA);
+  const [mutationUpdateExtra, data] = useUpdateExtraMutation();
 
   const validate = React.useCallback((): boolean => {
     let hasError = false;
@@ -90,7 +55,7 @@ export default function UpdateExtraScreen() {
             dropzoneId: Number(currentDropzone?.dropzone?.id),
             name: name.value,
             cost: cost.value,
-            ticketTypeIds: ticketTypes.value?.map(({ id }) => id),
+            ticketTypeIds: ticketTypes.value?.map(({ id }) => Number(id)),
           },
         });
 

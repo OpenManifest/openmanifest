@@ -92,6 +92,7 @@ export const RigEssentialsFragmentDoc = gql`
   maintainedAt
   rigType
   packingCard
+  isPublic
   user {
     id
     name
@@ -147,6 +148,7 @@ export const RigInspectionEssentialsFragmentDoc = gql`
     fragment rigInspectionEssentials on RigInspection {
   id
   isOk
+  definition
   inspectedBy {
     ...dropzoneUserEssentials
   }
@@ -508,6 +510,23 @@ export const DropzoneExtensiveFragmentDoc = gql`
 }
     ${DropzoneDetailedFragmentDoc}
 ${CurrentUserDetailedFragmentDoc}`;
+export const TicketTypeExtraEssentialsFragmentDoc = gql`
+    fragment ticketTypeExtraEssentials on Extra {
+  id
+  name
+  createdAt
+  cost
+}
+    `;
+export const TicketTypeExtraDetailedFragmentDoc = gql`
+    fragment ticketTypeExtraDetailed on Extra {
+  ...ticketTypeExtraEssentials
+  ticketTypes {
+    ...ticketTypeEssentials
+  }
+}
+    ${TicketTypeExtraEssentialsFragmentDoc}
+${TicketTypeEssentialsFragmentDoc}`;
 export const RigInspectionDetailedFragmentDoc = gql`
     fragment rigInspectionDetailed on RigInspection {
   ...rigInspectionEssentials
@@ -517,6 +536,23 @@ export const RigInspectionDetailedFragmentDoc = gql`
 }
     ${RigInspectionEssentialsFragmentDoc}
 ${UserRigDetailedFragmentDoc}`;
+export const RigInspectionMutationEssentialsFragmentDoc = gql`
+    fragment rigInspectionMutationEssentials on RigInspection {
+  ...rigInspectionDetailed
+  formTemplate {
+    id
+    definition
+  }
+  dropzoneUser {
+    ...dropzoneUserEssentials
+    rigInspections {
+      ...rigInspectionEssentials
+    }
+  }
+}
+    ${RigInspectionDetailedFragmentDoc}
+${DropzoneUserEssentialsFragmentDoc}
+${RigInspectionEssentialsFragmentDoc}`;
 export const RoleDetailedFragmentDoc = gql`
     fragment roleDetailed on UserRole {
   ...roleEssentials
@@ -527,36 +563,24 @@ export const LoadDetailsFragmentDoc = gql`
     fragment loadDetails on Load {
   ...loadEssentials
   plane {
-    id
-    maxSlots
-    name
+    ...planeEssentials
   }
   gca {
-    id
-    user {
-      id
-      name
-    }
+    ...dropzoneUserEssentials
   }
   pilot {
-    id
-    user {
-      id
-      name
-    }
+    ...dropzoneUserEssentials
   }
   loadMaster {
-    id
-    user {
-      id
-      name
-    }
+    ...dropzoneUserEssentials
   }
   slots {
     ...slotDetails
   }
 }
     ${LoadEssentialsFragmentDoc}
+${PlaneEssentialsFragmentDoc}
+${DropzoneUserEssentialsFragmentDoc}
 ${SlotDetailsFragmentDoc}`;
 export const SlotExhaustiveFragmentDoc = gql`
     fragment slotExhaustive on Slot {
@@ -578,6 +602,11 @@ ${RigEssentialsFragmentDoc}`;
 export const ArchivePlaneDocument = gql`
     mutation ArchivePlane($id: Int!) {
   deletePlane(input: {id: $id}) {
+    fieldErrors {
+      field
+      message
+    }
+    errors
     plane {
       ...planeEssentials
     }
@@ -613,6 +642,11 @@ export type ArchivePlaneMutationOptions = Apollo.BaseMutationOptions<Operation.A
 export const ArchiveRigDocument = gql`
     mutation ArchiveRig($id: Int!) {
   archiveRig(input: {id: $id}) {
+    fieldErrors {
+      field
+      message
+    }
+    errors
     rig {
       ...rigEssentials
     }
@@ -866,6 +900,60 @@ export function useCreateOrderMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMutation>;
 export type CreateOrderMutationResult = Apollo.MutationResult<Operation.CreateOrderMutation>;
 export type CreateOrderMutationOptions = Apollo.BaseMutationOptions<Operation.CreateOrderMutation, Operation.CreateOrderMutationVariables>;
+export const CreatePlaneDocument = gql`
+    mutation CreatePlane($name: String!, $registration: String!, $dropzoneId: Int!, $minSlots: Int!, $maxSlots: Int!, $hours: Int, $nextMaintenanceHours: Int) {
+  createPlane(
+    input: {attributes: {name: $name, registration: $registration, dropzoneId: $dropzoneId, minSlots: $minSlots, maxSlots: $maxSlots, hours: $hours, nextMaintenanceHours: $nextMaintenanceHours}}
+  ) {
+    plane {
+      ...planeEssentials
+      dropzone {
+        id
+        planes {
+          ...planeEssentials
+        }
+      }
+    }
+    fieldErrors {
+      field
+      message
+    }
+    errors
+  }
+}
+    ${PlaneEssentialsFragmentDoc}`;
+export type CreatePlaneMutationFn = Apollo.MutationFunction<Operation.CreatePlaneMutation, Operation.CreatePlaneMutationVariables>;
+
+/**
+ * __useCreatePlaneMutation__
+ *
+ * To run a mutation, you first call `useCreatePlaneMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreatePlaneMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createPlaneMutation, { data, loading, error }] = useCreatePlaneMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      registration: // value for 'registration'
+ *      dropzoneId: // value for 'dropzoneId'
+ *      minSlots: // value for 'minSlots'
+ *      maxSlots: // value for 'maxSlots'
+ *      hours: // value for 'hours'
+ *      nextMaintenanceHours: // value for 'nextMaintenanceHours'
+ *   },
+ * });
+ */
+export function useCreatePlaneMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreatePlaneMutation, Operation.CreatePlaneMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.CreatePlaneMutation, Operation.CreatePlaneMutationVariables>(CreatePlaneDocument, options);
+      }
+export type CreatePlaneMutationHookResult = ReturnType<typeof useCreatePlaneMutation>;
+export type CreatePlaneMutationResult = Apollo.MutationResult<Operation.CreatePlaneMutation>;
+export type CreatePlaneMutationOptions = Apollo.BaseMutationOptions<Operation.CreatePlaneMutation, Operation.CreatePlaneMutationVariables>;
 export const CreateRigDocument = gql`
     mutation CreateRig($make: String, $name: String, $model: String, $serial: String, $rigType: String, $canopySize: Int, $repackExpiresAt: Int, $userId: Int, $dropzoneId: Int) {
   createRig(
@@ -916,6 +1004,51 @@ export function useCreateRigMutation(baseOptions?: Apollo.MutationHookOptions<Op
 export type CreateRigMutationHookResult = ReturnType<typeof useCreateRigMutation>;
 export type CreateRigMutationResult = Apollo.MutationResult<Operation.CreateRigMutation>;
 export type CreateRigMutationOptions = Apollo.BaseMutationOptions<Operation.CreateRigMutation, Operation.CreateRigMutationVariables>;
+export const CreateRigInspectionDocument = gql`
+    mutation CreateRigInspection($dropzoneId: Int, $rigId: Int, $isOk: Boolean, $definition: String) {
+  createRigInspection(
+    input: {attributes: {dropzoneId: $dropzoneId, rigId: $rigId, isOk: $isOk, definition: $definition}}
+  ) {
+    rigInspection {
+      ...rigInspectionMutationEssentials
+    }
+    fieldErrors {
+      field
+      message
+    }
+    errors
+  }
+}
+    ${RigInspectionMutationEssentialsFragmentDoc}`;
+export type CreateRigInspectionMutationFn = Apollo.MutationFunction<Operation.CreateRigInspectionMutation, Operation.CreateRigInspectionMutationVariables>;
+
+/**
+ * __useCreateRigInspectionMutation__
+ *
+ * To run a mutation, you first call `useCreateRigInspectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateRigInspectionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createRigInspectionMutation, { data, loading, error }] = useCreateRigInspectionMutation({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *      rigId: // value for 'rigId'
+ *      isOk: // value for 'isOk'
+ *      definition: // value for 'definition'
+ *   },
+ * });
+ */
+export function useCreateRigInspectionMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateRigInspectionMutation, Operation.CreateRigInspectionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.CreateRigInspectionMutation, Operation.CreateRigInspectionMutationVariables>(CreateRigInspectionDocument, options);
+      }
+export type CreateRigInspectionMutationHookResult = ReturnType<typeof useCreateRigInspectionMutation>;
+export type CreateRigInspectionMutationResult = Apollo.MutationResult<Operation.CreateRigInspectionMutation>;
+export type CreateRigInspectionMutationOptions = Apollo.BaseMutationOptions<Operation.CreateRigInspectionMutation, Operation.CreateRigInspectionMutationVariables>;
 export const FinalizeLoadDocument = gql`
     mutation FinalizeLoad($id: Int!, $state: LoadState!) {
   finalizeLoad(input: {id: $id, state: $state}) {
@@ -1075,6 +1208,150 @@ export function useJoinFederationMutation(baseOptions?: Apollo.MutationHookOptio
 export type JoinFederationMutationHookResult = ReturnType<typeof useJoinFederationMutation>;
 export type JoinFederationMutationResult = Apollo.MutationResult<Operation.JoinFederationMutation>;
 export type JoinFederationMutationOptions = Apollo.BaseMutationOptions<Operation.JoinFederationMutation, Operation.JoinFederationMutationVariables>;
+export const LoginDocument = gql`
+    mutation Login($email: String!, $password: String!) {
+  userLogin(email: $email, password: $password) {
+    authenticatable {
+      id
+      email
+      name
+      phone
+      createdAt
+      updatedAt
+    }
+    credentials {
+      accessToken
+      tokenType
+      client
+      expiry
+      uid
+    }
+  }
+}
+    `;
+export type LoginMutationFn = Apollo.MutationFunction<Operation.LoginMutation, Operation.LoginMutationVariables>;
+
+/**
+ * __useLoginMutation__
+ *
+ * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginMutation, { data, loading, error }] = useLoginMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<Operation.LoginMutation, Operation.LoginMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.LoginMutation, Operation.LoginMutationVariables>(LoginDocument, options);
+      }
+export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
+export type LoginMutationResult = Apollo.MutationResult<Operation.LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<Operation.LoginMutation, Operation.LoginMutationVariables>;
+export const ManifestGroupDocument = gql`
+    mutation ManifestGroup($jumpTypeId: Int, $extraIds: [Int!], $loadId: Int, $ticketTypeId: Int, $userGroup: [SlotUser!]!) {
+  createSlots(
+    input: {attributes: {jumpTypeId: $jumpTypeId, extraIds: $extraIds, loadId: $loadId, ticketTypeId: $ticketTypeId, userGroup: $userGroup}}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    load {
+      ...loadDetails
+    }
+  }
+}
+    ${LoadDetailsFragmentDoc}`;
+export type ManifestGroupMutationFn = Apollo.MutationFunction<Operation.ManifestGroupMutation, Operation.ManifestGroupMutationVariables>;
+
+/**
+ * __useManifestGroupMutation__
+ *
+ * To run a mutation, you first call `useManifestGroupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManifestGroupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manifestGroupMutation, { data, loading, error }] = useManifestGroupMutation({
+ *   variables: {
+ *      jumpTypeId: // value for 'jumpTypeId'
+ *      extraIds: // value for 'extraIds'
+ *      loadId: // value for 'loadId'
+ *      ticketTypeId: // value for 'ticketTypeId'
+ *      userGroup: // value for 'userGroup'
+ *   },
+ * });
+ */
+export function useManifestGroupMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ManifestGroupMutation, Operation.ManifestGroupMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.ManifestGroupMutation, Operation.ManifestGroupMutationVariables>(ManifestGroupDocument, options);
+      }
+export type ManifestGroupMutationHookResult = ReturnType<typeof useManifestGroupMutation>;
+export type ManifestGroupMutationResult = Apollo.MutationResult<Operation.ManifestGroupMutation>;
+export type ManifestGroupMutationOptions = Apollo.BaseMutationOptions<Operation.ManifestGroupMutation, Operation.ManifestGroupMutationVariables>;
+export const ManifestUserDocument = gql`
+    mutation ManifestUser($jumpTypeId: Int, $extraIds: [Int!], $loadId: Int, $rigId: Int, $ticketTypeId: Int, $dropzoneUserId: Int, $exitWeight: Float, $passengerName: String, $passengerExitWeight: Float) {
+  createSlot(
+    input: {attributes: {jumpTypeId: $jumpTypeId, extraIds: $extraIds, loadId: $loadId, rigId: $rigId, ticketTypeId: $ticketTypeId, dropzoneUserId: $dropzoneUserId, exitWeight: $exitWeight, passengerExitWeight: $passengerExitWeight, passengerName: $passengerName}}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    slot {
+      ...slotExhaustive
+    }
+  }
+}
+    ${SlotExhaustiveFragmentDoc}`;
+export type ManifestUserMutationFn = Apollo.MutationFunction<Operation.ManifestUserMutation, Operation.ManifestUserMutationVariables>;
+
+/**
+ * __useManifestUserMutation__
+ *
+ * To run a mutation, you first call `useManifestUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useManifestUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [manifestUserMutation, { data, loading, error }] = useManifestUserMutation({
+ *   variables: {
+ *      jumpTypeId: // value for 'jumpTypeId'
+ *      extraIds: // value for 'extraIds'
+ *      loadId: // value for 'loadId'
+ *      rigId: // value for 'rigId'
+ *      ticketTypeId: // value for 'ticketTypeId'
+ *      dropzoneUserId: // value for 'dropzoneUserId'
+ *      exitWeight: // value for 'exitWeight'
+ *      passengerName: // value for 'passengerName'
+ *      passengerExitWeight: // value for 'passengerExitWeight'
+ *   },
+ * });
+ */
+export function useManifestUserMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ManifestUserMutation, Operation.ManifestUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.ManifestUserMutation, Operation.ManifestUserMutationVariables>(ManifestUserDocument, options);
+      }
+export type ManifestUserMutationHookResult = ReturnType<typeof useManifestUserMutation>;
+export type ManifestUserMutationResult = Apollo.MutationResult<Operation.ManifestUserMutation>;
+export type ManifestUserMutationOptions = Apollo.BaseMutationOptions<Operation.ManifestUserMutation, Operation.ManifestUserMutationVariables>;
 export const RecoverPasswordDocument = gql`
     mutation RecoverPassword($email: String!, $redirectUrl: String!) {
   userSendPasswordReset(email: $email, redirectUrl: $redirectUrl) {
@@ -1262,6 +1539,91 @@ export function useUpdateDropzoneMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateDropzoneMutationHookResult = ReturnType<typeof useUpdateDropzoneMutation>;
 export type UpdateDropzoneMutationResult = Apollo.MutationResult<Operation.UpdateDropzoneMutation>;
 export type UpdateDropzoneMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateDropzoneMutation, Operation.UpdateDropzoneMutationVariables>;
+export const UpdateDropzoneUserDocument = gql`
+    mutation UpdateDropzoneUser($userRoleId: Int, $expiresAt: Int, $dropzoneUserId: Int) {
+  updateDropzoneUser(
+    input: {id: $dropzoneUserId, attributes: {userRoleId: $userRoleId, expiresAt: $expiresAt}}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    dropzoneUser {
+      ...dropzoneUserDetails
+    }
+  }
+}
+    ${DropzoneUserDetailsFragmentDoc}`;
+export type UpdateDropzoneUserMutationFn = Apollo.MutationFunction<Operation.UpdateDropzoneUserMutation, Operation.UpdateDropzoneUserMutationVariables>;
+
+/**
+ * __useUpdateDropzoneUserMutation__
+ *
+ * To run a mutation, you first call `useUpdateDropzoneUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDropzoneUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDropzoneUserMutation, { data, loading, error }] = useUpdateDropzoneUserMutation({
+ *   variables: {
+ *      userRoleId: // value for 'userRoleId'
+ *      expiresAt: // value for 'expiresAt'
+ *      dropzoneUserId: // value for 'dropzoneUserId'
+ *   },
+ * });
+ */
+export function useUpdateDropzoneUserMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateDropzoneUserMutation, Operation.UpdateDropzoneUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateDropzoneUserMutation, Operation.UpdateDropzoneUserMutationVariables>(UpdateDropzoneUserDocument, options);
+      }
+export type UpdateDropzoneUserMutationHookResult = ReturnType<typeof useUpdateDropzoneUserMutation>;
+export type UpdateDropzoneUserMutationResult = Apollo.MutationResult<Operation.UpdateDropzoneUserMutation>;
+export type UpdateDropzoneUserMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateDropzoneUserMutation, Operation.UpdateDropzoneUserMutationVariables>;
+export const UpdateExtraDocument = gql`
+    mutation UpdateExtra($id: Int!, $name: String, $ticketTypeIds: [Int!], $cost: Float, $dropzoneId: Int) {
+  updateExtra(
+    input: {id: $id, attributes: {name: $name, ticketTypeIds: $ticketTypeIds, cost: $cost, dropzoneId: $dropzoneId}}
+  ) {
+    extra {
+      ...ticketTypeExtraDetailed
+    }
+  }
+}
+    ${TicketTypeExtraDetailedFragmentDoc}`;
+export type UpdateExtraMutationFn = Apollo.MutationFunction<Operation.UpdateExtraMutation, Operation.UpdateExtraMutationVariables>;
+
+/**
+ * __useUpdateExtraMutation__
+ *
+ * To run a mutation, you first call `useUpdateExtraMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateExtraMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateExtraMutation, { data, loading, error }] = useUpdateExtraMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      ticketTypeIds: // value for 'ticketTypeIds'
+ *      cost: // value for 'cost'
+ *      dropzoneId: // value for 'dropzoneId'
+ *   },
+ * });
+ */
+export function useUpdateExtraMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateExtraMutation, Operation.UpdateExtraMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateExtraMutation, Operation.UpdateExtraMutationVariables>(UpdateExtraDocument, options);
+      }
+export type UpdateExtraMutationHookResult = ReturnType<typeof useUpdateExtraMutation>;
+export type UpdateExtraMutationResult = Apollo.MutationResult<Operation.UpdateExtraMutation>;
+export type UpdateExtraMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateExtraMutation, Operation.UpdateExtraMutationVariables>;
 export const UpdateLostPasswordDocument = gql`
     mutation UpdateLostPassword($password: String!, $passwordConfirmation: String!, $token: String!) {
   userUpdatePasswordWithToken(
@@ -1310,10 +1672,71 @@ export function useUpdateLostPasswordMutation(baseOptions?: Apollo.MutationHookO
 export type UpdateLostPasswordMutationHookResult = ReturnType<typeof useUpdateLostPasswordMutation>;
 export type UpdateLostPasswordMutationResult = Apollo.MutationResult<Operation.UpdateLostPasswordMutation>;
 export type UpdateLostPasswordMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateLostPasswordMutation, Operation.UpdateLostPasswordMutationVariables>;
+export const UpdatePlaneDocument = gql`
+    mutation UpdatePlane($id: Int!, $name: String!, $registration: String!, $minSlots: Int!, $maxSlots: Int!, $hours: Int, $nextMaintenanceHours: Int) {
+  updatePlane(
+    input: {id: $id, attributes: {name: $name, registration: $registration, minSlots: $minSlots, maxSlots: $maxSlots, hours: $hours, nextMaintenanceHours: $nextMaintenanceHours}}
+  ) {
+    plane {
+      ...planeEssentials
+      dropzone {
+        id
+        name
+        planes {
+          id
+          name
+          registration
+          minSlots
+          maxSlots
+          hours
+          nextMaintenanceHours
+        }
+      }
+    }
+    fieldErrors {
+      field
+      message
+    }
+    errors
+  }
+}
+    ${PlaneEssentialsFragmentDoc}`;
+export type UpdatePlaneMutationFn = Apollo.MutationFunction<Operation.UpdatePlaneMutation, Operation.UpdatePlaneMutationVariables>;
+
+/**
+ * __useUpdatePlaneMutation__
+ *
+ * To run a mutation, you first call `useUpdatePlaneMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePlaneMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePlaneMutation, { data, loading, error }] = useUpdatePlaneMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      registration: // value for 'registration'
+ *      minSlots: // value for 'minSlots'
+ *      maxSlots: // value for 'maxSlots'
+ *      hours: // value for 'hours'
+ *      nextMaintenanceHours: // value for 'nextMaintenanceHours'
+ *   },
+ * });
+ */
+export function useUpdatePlaneMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdatePlaneMutation, Operation.UpdatePlaneMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdatePlaneMutation, Operation.UpdatePlaneMutationVariables>(UpdatePlaneDocument, options);
+      }
+export type UpdatePlaneMutationHookResult = ReturnType<typeof useUpdatePlaneMutation>;
+export type UpdatePlaneMutationResult = Apollo.MutationResult<Operation.UpdatePlaneMutation>;
+export type UpdatePlaneMutationOptions = Apollo.BaseMutationOptions<Operation.UpdatePlaneMutation, Operation.UpdatePlaneMutationVariables>;
 export const UpdateRigDocument = gql`
-    mutation UpdateRig($id: Int!, $name: String, $make: String, $model: String, $serial: String, $rigType: String, $canopySize: Int, $packingCard: String, $repackExpiresAt: Int, $userId: Int, $dropzoneId: Int) {
+    mutation UpdateRig($id: Int!, $name: String, $make: String, $model: String, $serial: String, $isPublic: Boolean, $rigType: String, $canopySize: Int, $packingCard: String, $repackExpiresAt: Int, $userId: Int, $dropzoneId: Int) {
   updateRig(
-    input: {id: $id, attributes: {name: $name, make: $make, packingCard: $packingCard, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, dropzoneId: $dropzoneId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
+    input: {id: $id, attributes: {name: $name, make: $make, packingCard: $packingCard, isPublic: $isPublic, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, dropzoneId: $dropzoneId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
   ) {
     errors
     fieldErrors {
@@ -1346,6 +1769,7 @@ export type UpdateRigMutationFn = Apollo.MutationFunction<Operation.UpdateRigMut
  *      make: // value for 'make'
  *      model: // value for 'model'
  *      serial: // value for 'serial'
+ *      isPublic: // value for 'isPublic'
  *      rigType: // value for 'rigType'
  *      canopySize: // value for 'canopySize'
  *      packingCard: // value for 'packingCard'
@@ -1362,6 +1786,161 @@ export function useUpdateRigMutation(baseOptions?: Apollo.MutationHookOptions<Op
 export type UpdateRigMutationHookResult = ReturnType<typeof useUpdateRigMutation>;
 export type UpdateRigMutationResult = Apollo.MutationResult<Operation.UpdateRigMutation>;
 export type UpdateRigMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateRigMutation, Operation.UpdateRigMutationVariables>;
+export const UpdateRigInspectionTemplateDocument = gql`
+    mutation UpdateRigInspectionTemplate($dropzoneId: Int, $formId: Int, $definition: String) {
+  updateFormTemplate(
+    input: {id: $formId, attributes: {dropzoneId: $dropzoneId, definition: $definition}}
+  ) {
+    formTemplate {
+      id
+      name
+      definition
+    }
+    fieldErrors {
+      field
+      message
+    }
+    errors
+  }
+}
+    `;
+export type UpdateRigInspectionTemplateMutationFn = Apollo.MutationFunction<Operation.UpdateRigInspectionTemplateMutation, Operation.UpdateRigInspectionTemplateMutationVariables>;
+
+/**
+ * __useUpdateRigInspectionTemplateMutation__
+ *
+ * To run a mutation, you first call `useUpdateRigInspectionTemplateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRigInspectionTemplateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRigInspectionTemplateMutation, { data, loading, error }] = useUpdateRigInspectionTemplateMutation({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *      formId: // value for 'formId'
+ *      definition: // value for 'definition'
+ *   },
+ * });
+ */
+export function useUpdateRigInspectionTemplateMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateRigInspectionTemplateMutation, Operation.UpdateRigInspectionTemplateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateRigInspectionTemplateMutation, Operation.UpdateRigInspectionTemplateMutationVariables>(UpdateRigInspectionTemplateDocument, options);
+      }
+export type UpdateRigInspectionTemplateMutationHookResult = ReturnType<typeof useUpdateRigInspectionTemplateMutation>;
+export type UpdateRigInspectionTemplateMutationResult = Apollo.MutationResult<Operation.UpdateRigInspectionTemplateMutation>;
+export type UpdateRigInspectionTemplateMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateRigInspectionTemplateMutation, Operation.UpdateRigInspectionTemplateMutationVariables>;
+export const UpdateRoleDocument = gql`
+    mutation UpdateRole($roleId: Int!, $permissionName: String!, $enabled: Boolean!) {
+  updateRole(input: {id: $roleId, permission: $permissionName, enabled: $enabled}) {
+    role {
+      id
+      name
+      permissions
+    }
+    fieldErrors {
+      field
+      message
+    }
+    errors
+  }
+}
+    `;
+export type UpdateRoleMutationFn = Apollo.MutationFunction<Operation.UpdateRoleMutation, Operation.UpdateRoleMutationVariables>;
+
+/**
+ * __useUpdateRoleMutation__
+ *
+ * To run a mutation, you first call `useUpdateRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRoleMutation, { data, loading, error }] = useUpdateRoleMutation({
+ *   variables: {
+ *      roleId: // value for 'roleId'
+ *      permissionName: // value for 'permissionName'
+ *      enabled: // value for 'enabled'
+ *   },
+ * });
+ */
+export function useUpdateRoleMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateRoleMutation, Operation.UpdateRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateRoleMutation, Operation.UpdateRoleMutationVariables>(UpdateRoleDocument, options);
+      }
+export type UpdateRoleMutationHookResult = ReturnType<typeof useUpdateRoleMutation>;
+export type UpdateRoleMutationResult = Apollo.MutationResult<Operation.UpdateRoleMutation>;
+export type UpdateRoleMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateRoleMutation, Operation.UpdateRoleMutationVariables>;
+export const UpdateTicketTypeDocument = gql`
+    mutation UpdateTicketType($id: Int!, $name: String, $cost: Float, $altitude: Int, $allowManifestingSelf: Boolean, $isTandem: Boolean, $extraIds: [Int!]) {
+  updateTicketType(
+    input: {id: $id, attributes: {name: $name, cost: $cost, altitude: $altitude, allowManifestingSelf: $allowManifestingSelf, isTandem: $isTandem, extraIds: $extraIds}}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    ticketType {
+      ...ticketTypeEssentials
+      id
+      name
+      altitude
+      cost
+      allowManifestingSelf
+      extras {
+        id
+        name
+        cost
+      }
+      dropzone {
+        ...dropzoneEssentials
+        ticketTypes {
+          ...ticketTypeEssentials
+        }
+      }
+    }
+  }
+}
+    ${TicketTypeEssentialsFragmentDoc}
+${DropzoneEssentialsFragmentDoc}`;
+export type UpdateTicketTypeMutationFn = Apollo.MutationFunction<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>;
+
+/**
+ * __useUpdateTicketTypeMutation__
+ *
+ * To run a mutation, you first call `useUpdateTicketTypeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTicketTypeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTicketTypeMutation, { data, loading, error }] = useUpdateTicketTypeMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      cost: // value for 'cost'
+ *      altitude: // value for 'altitude'
+ *      allowManifestingSelf: // value for 'allowManifestingSelf'
+ *      isTandem: // value for 'isTandem'
+ *      extraIds: // value for 'extraIds'
+ *   },
+ * });
+ */
+export function useUpdateTicketTypeMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>(UpdateTicketTypeDocument, options);
+      }
+export type UpdateTicketTypeMutationHookResult = ReturnType<typeof useUpdateTicketTypeMutation>;
+export type UpdateTicketTypeMutationResult = Apollo.MutationResult<Operation.UpdateTicketTypeMutation>;
+export type UpdateTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>;
 export const UserSignUpDocument = gql`
     mutation UserSignUp($email: String!, $password: String!, $passwordConfirmation: String!, $name: String!, $phone: String!, $pushToken: String, $exitWeight: Float!, $licenseId: Int) {
   userSignUp(
@@ -1466,6 +2045,44 @@ export function useQueryDropzoneLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type QueryDropzoneHookResult = ReturnType<typeof useQueryDropzone>;
 export type QueryDropzoneLazyQueryHookResult = ReturnType<typeof useQueryDropzoneLazyQuery>;
 export type QueryDropzoneQueryResult = Apollo.QueryResult<Operation.QueryDropzoneQuery, Operation.QueryDropzoneQueryVariables>;
+export const DropzoneRigsDocument = gql`
+    query DropzoneRigs($dropzoneId: Int!) {
+  dropzone(id: $dropzoneId) {
+    id
+    rigs {
+      ...rigEssentials
+    }
+  }
+}
+    ${RigEssentialsFragmentDoc}`;
+
+/**
+ * __useDropzoneRigsQuery__
+ *
+ * To run a query within a React component, call `useDropzoneRigsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDropzoneRigsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDropzoneRigsQuery({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *   },
+ * });
+ */
+export function useDropzoneRigsQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>(DropzoneRigsDocument, options);
+      }
+export function useDropzoneRigsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>(DropzoneRigsDocument, options);
+        }
+export type DropzoneRigsQueryHookResult = ReturnType<typeof useDropzoneRigsQuery>;
+export type DropzoneRigsLazyQueryHookResult = ReturnType<typeof useDropzoneRigsLazyQuery>;
+export type DropzoneRigsQueryResult = Apollo.QueryResult<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>;
 export const DropzoneTransactionsDocument = gql`
     query DropzoneTransactions($dropzoneId: Int!, $after: String) {
   dropzone(id: $dropzoneId) {
@@ -1564,11 +2181,71 @@ export function useDropzoneUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type DropzoneUsersQueryHookResult = ReturnType<typeof useDropzoneUsersQuery>;
 export type DropzoneUsersLazyQueryHookResult = ReturnType<typeof useDropzoneUsersLazyQuery>;
 export type DropzoneUsersQueryResult = Apollo.QueryResult<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>;
+export const DropzoneUsersDetailedDocument = gql`
+    query DropzoneUsersDetailed($dropzoneId: Int!, $search: String, $permissions: [Permission!], $first: Int, $after: String, $licensed: Boolean) {
+  dropzone(id: $dropzoneId) {
+    id
+    name
+    dropzoneUsers(
+      licensed: $licensed
+      search: $search
+      permissions: $permissions
+      first: $first
+      after: $after
+    ) {
+      edges {
+        cursor
+        node {
+          ...dropzoneUserDetails
+        }
+      }
+    }
+  }
+}
+    ${DropzoneUserDetailsFragmentDoc}`;
+
+/**
+ * __useDropzoneUsersDetailedQuery__
+ *
+ * To run a query within a React component, call `useDropzoneUsersDetailedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDropzoneUsersDetailedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDropzoneUsersDetailedQuery({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *      search: // value for 'search'
+ *      permissions: // value for 'permissions'
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *      licensed: // value for 'licensed'
+ *   },
+ * });
+ */
+export function useDropzoneUsersDetailedQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>(DropzoneUsersDetailedDocument, options);
+      }
+export function useDropzoneUsersDetailedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>(DropzoneUsersDetailedDocument, options);
+        }
+export type DropzoneUsersDetailedQueryHookResult = ReturnType<typeof useDropzoneUsersDetailedQuery>;
+export type DropzoneUsersDetailedLazyQueryHookResult = ReturnType<typeof useDropzoneUsersDetailedLazyQuery>;
+export type DropzoneUsersDetailedQueryResult = Apollo.QueryResult<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>;
 export const QueryDropzoneUserProfileDocument = gql`
     query QueryDropzoneUserProfile($dropzoneId: Int!, $dropzoneUserId: Int!) {
   dropzone(id: $dropzoneId) {
     id
     name
+    rigInspectionTemplate {
+      id
+      name
+      definition
+    }
     dropzoneUser(id: $dropzoneUserId) {
       ...dropzoneUserProfile
     }
@@ -1644,6 +2321,41 @@ export function useQueryDropzonesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type QueryDropzonesHookResult = ReturnType<typeof useQueryDropzones>;
 export type QueryDropzonesLazyQueryHookResult = ReturnType<typeof useQueryDropzonesLazyQuery>;
 export type QueryDropzonesQueryResult = Apollo.QueryResult<Operation.QueryDropzonesQuery, Operation.QueryDropzonesQueryVariables>;
+export const TicketTypeExtrasDocument = gql`
+    query TicketTypeExtras($dropzoneId: Int!) {
+  extras(dropzoneId: $dropzoneId) {
+    ...ticketTypeExtraDetailed
+  }
+}
+    ${TicketTypeExtraDetailedFragmentDoc}`;
+
+/**
+ * __useTicketTypeExtrasQuery__
+ *
+ * To run a query within a React component, call `useTicketTypeExtrasQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTicketTypeExtrasQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTicketTypeExtrasQuery({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *   },
+ * });
+ */
+export function useTicketTypeExtrasQuery(baseOptions: Apollo.QueryHookOptions<Operation.TicketTypeExtrasQuery, Operation.TicketTypeExtrasQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.TicketTypeExtrasQuery, Operation.TicketTypeExtrasQueryVariables>(TicketTypeExtrasDocument, options);
+      }
+export function useTicketTypeExtrasLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.TicketTypeExtrasQuery, Operation.TicketTypeExtrasQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.TicketTypeExtrasQuery, Operation.TicketTypeExtrasQueryVariables>(TicketTypeExtrasDocument, options);
+        }
+export type TicketTypeExtrasQueryHookResult = ReturnType<typeof useTicketTypeExtrasQuery>;
+export type TicketTypeExtrasLazyQueryHookResult = ReturnType<typeof useTicketTypeExtrasLazyQuery>;
+export type TicketTypeExtrasQueryResult = Apollo.QueryResult<Operation.TicketTypeExtrasQuery, Operation.TicketTypeExtrasQueryVariables>;
 export const FederationsDocument = gql`
     query Federations {
   federations {
@@ -1716,19 +2428,58 @@ export function useAddressToLocationLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type AddressToLocationQueryHookResult = ReturnType<typeof useAddressToLocationQuery>;
 export type AddressToLocationLazyQueryHookResult = ReturnType<typeof useAddressToLocationLazyQuery>;
 export type AddressToLocationQueryResult = Apollo.QueryResult<Operation.AddressToLocationQuery, Operation.AddressToLocationQueryVariables>;
+export const JumpTypesDocument = gql`
+    query JumpTypes($allowedForDropzoneUserIds: [Int!]) {
+  jumpTypes(dropzoneUserIds: $allowedForDropzoneUserIds) {
+    ...jumpTypeEssentials
+  }
+}
+    ${JumpTypeEssentialsFragmentDoc}`;
+
+/**
+ * __useJumpTypesQuery__
+ *
+ * To run a query within a React component, call `useJumpTypesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useJumpTypesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useJumpTypesQuery({
+ *   variables: {
+ *      allowedForDropzoneUserIds: // value for 'allowedForDropzoneUserIds'
+ *   },
+ * });
+ */
+export function useJumpTypesQuery(baseOptions?: Apollo.QueryHookOptions<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>(JumpTypesDocument, options);
+      }
+export function useJumpTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>(JumpTypesDocument, options);
+        }
+export type JumpTypesQueryHookResult = ReturnType<typeof useJumpTypesQuery>;
+export type JumpTypesLazyQueryHookResult = ReturnType<typeof useJumpTypesLazyQuery>;
+export type JumpTypesQueryResult = Apollo.QueryResult<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>;
 export const AllowedJumpTypesDocument = gql`
-    query AllowedJumpTypes($dropzoneId: Int!, $userIds: [Int!]!) {
+    query AllowedJumpTypes($dropzoneId: Int!, $allowedForDropzoneUserIds: [Int!]!, $isPublic: Boolean) {
   dropzone(id: $dropzoneId) {
     id
-    allowedJumpTypes(userId: $userIds) {
+    allowedJumpTypes(userId: $allowedForDropzoneUserIds) {
       ...jumpTypeEssentials
+    }
+    ticketTypes(isPublic: $isPublic) {
+      ...ticketTypeEssentials
     }
   }
   jumpTypes {
     ...jumpTypeEssentials
   }
 }
-    ${JumpTypeEssentialsFragmentDoc}`;
+    ${JumpTypeEssentialsFragmentDoc}
+${TicketTypeEssentialsFragmentDoc}`;
 
 /**
  * __useAllowedJumpTypesQuery__
@@ -1743,7 +2494,8 @@ export const AllowedJumpTypesDocument = gql`
  * const { data, loading, error } = useAllowedJumpTypesQuery({
  *   variables: {
  *      dropzoneId: // value for 'dropzoneId'
- *      userIds: // value for 'userIds'
+ *      allowedForDropzoneUserIds: // value for 'allowedForDropzoneUserIds'
+ *      isPublic: // value for 'isPublic'
  *   },
  * });
  */
@@ -1908,16 +2660,97 @@ export function useCurrentUserPermissionsLazyQuery(baseOptions?: Apollo.LazyQuer
 export type CurrentUserPermissionsQueryHookResult = ReturnType<typeof useCurrentUserPermissionsQuery>;
 export type CurrentUserPermissionsLazyQueryHookResult = ReturnType<typeof useCurrentUserPermissionsLazyQuery>;
 export type CurrentUserPermissionsQueryResult = Apollo.QueryResult<Operation.CurrentUserPermissionsQuery, Operation.CurrentUserPermissionsQueryVariables>;
+export const RigInspectionTemplateDocument = gql`
+    query RigInspectionTemplate($dropzoneId: Int!) {
+  dropzone(id: $dropzoneId) {
+    id
+    rigInspectionTemplate {
+      id
+      name
+      definition
+    }
+  }
+}
+    `;
+
+/**
+ * __useRigInspectionTemplateQuery__
+ *
+ * To run a query within a React component, call `useRigInspectionTemplateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRigInspectionTemplateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRigInspectionTemplateQuery({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *   },
+ * });
+ */
+export function useRigInspectionTemplateQuery(baseOptions: Apollo.QueryHookOptions<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>(RigInspectionTemplateDocument, options);
+      }
+export function useRigInspectionTemplateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>(RigInspectionTemplateDocument, options);
+        }
+export type RigInspectionTemplateQueryHookResult = ReturnType<typeof useRigInspectionTemplateQuery>;
+export type RigInspectionTemplateLazyQueryHookResult = ReturnType<typeof useRigInspectionTemplateLazyQuery>;
+export type RigInspectionTemplateQueryResult = Apollo.QueryResult<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>;
+export const AvailableRigsDocument = gql`
+    query AvailableRigs($dropzoneUserId: Int!, $isTandem: Boolean, $loadId: Int) {
+  availableRigs(
+    dropzoneUserId: $dropzoneUserId
+    isTandem: $isTandem
+    loadId: $loadId
+  ) {
+    ...userRigDetailed
+  }
+}
+    ${UserRigDetailedFragmentDoc}`;
+
+/**
+ * __useAvailableRigsQuery__
+ *
+ * To run a query within a React component, call `useAvailableRigsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAvailableRigsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAvailableRigsQuery({
+ *   variables: {
+ *      dropzoneUserId: // value for 'dropzoneUserId'
+ *      isTandem: // value for 'isTandem'
+ *      loadId: // value for 'loadId'
+ *   },
+ * });
+ */
+export function useAvailableRigsQuery(baseOptions: Apollo.QueryHookOptions<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>(AvailableRigsDocument, options);
+      }
+export function useAvailableRigsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>(AvailableRigsDocument, options);
+        }
+export type AvailableRigsQueryHookResult = ReturnType<typeof useAvailableRigsQuery>;
+export type AvailableRigsLazyQueryHookResult = ReturnType<typeof useAvailableRigsLazyQuery>;
+export type AvailableRigsQueryResult = Apollo.QueryResult<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>;
 export const RolesDocument = gql`
     query Roles($dropzoneId: Int!, $selectable: Boolean) {
   dropzone(id: $dropzoneId) {
     id
     roles(selectable: $selectable) {
-      ...roleEssentials
+      ...roleDetailed
     }
   }
 }
-    ${RoleEssentialsFragmentDoc}`;
+    ${RoleDetailedFragmentDoc}`;
 
 /**
  * __useRolesQuery__
@@ -1991,41 +2824,42 @@ export function useAllowedTicketTypesLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type AllowedTicketTypesQueryHookResult = ReturnType<typeof useAllowedTicketTypesQuery>;
 export type AllowedTicketTypesLazyQueryHookResult = ReturnType<typeof useAllowedTicketTypesLazyQuery>;
 export type AllowedTicketTypesQueryResult = Apollo.QueryResult<Operation.AllowedTicketTypesQuery, Operation.AllowedTicketTypesQueryVariables>;
-export const QueryTicketTypeDocument = gql`
-    query QueryTicketType($dropzoneId: Int!) {
-  dropzone(id: $dropzoneId) {
-    id
-    ticketTypes {
-      ...ticketTypeEssentials
-    }
+export const TicketTypesDocument = gql`
+    query TicketTypes($dropzoneId: Int!, $allowManifestingSelf: Boolean) {
+  ticketTypes(
+    dropzoneId: $dropzoneId
+    allowManifestingSelf: $allowManifestingSelf
+  ) {
+    ...ticketTypeEssentials
   }
 }
     ${TicketTypeEssentialsFragmentDoc}`;
 
 /**
- * __useQueryTicketType__
+ * __useTicketTypesQuery__
  *
- * To run a query within a React component, call `useQueryTicketType` and pass it any options that fit your needs.
- * When your component renders, `useQueryTicketType` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useTicketTypesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTicketTypesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useQueryTicketType({
+ * const { data, loading, error } = useTicketTypesQuery({
  *   variables: {
  *      dropzoneId: // value for 'dropzoneId'
+ *      allowManifestingSelf: // value for 'allowManifestingSelf'
  *   },
  * });
  */
-export function useQueryTicketType(baseOptions: Apollo.QueryHookOptions<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>) {
+export function useTicketTypesQuery(baseOptions: Apollo.QueryHookOptions<Operation.TicketTypesQuery, Operation.TicketTypesQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>(QueryTicketTypeDocument, options);
+        return Apollo.useQuery<Operation.TicketTypesQuery, Operation.TicketTypesQueryVariables>(TicketTypesDocument, options);
       }
-export function useQueryTicketTypeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>) {
+export function useTicketTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.TicketTypesQuery, Operation.TicketTypesQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>(QueryTicketTypeDocument, options);
+          return Apollo.useLazyQuery<Operation.TicketTypesQuery, Operation.TicketTypesQueryVariables>(TicketTypesDocument, options);
         }
-export type QueryTicketTypeHookResult = ReturnType<typeof useQueryTicketType>;
-export type QueryTicketTypeLazyQueryHookResult = ReturnType<typeof useQueryTicketTypeLazyQuery>;
-export type QueryTicketTypeQueryResult = Apollo.QueryResult<Operation.QueryTicketTypeQuery, Operation.QueryTicketTypeQueryVariables>;
+export type TicketTypesQueryHookResult = ReturnType<typeof useTicketTypesQuery>;
+export type TicketTypesLazyQueryHookResult = ReturnType<typeof useTicketTypesLazyQuery>;
+export type TicketTypesQueryResult = Apollo.QueryResult<Operation.TicketTypesQuery, Operation.TicketTypesQueryVariables>;

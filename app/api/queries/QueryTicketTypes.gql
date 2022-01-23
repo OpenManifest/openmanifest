@@ -14,11 +14,8 @@ query AllowedTicketTypes($dropzoneId: Int!, $onlyPublicTickets: Boolean) {
   }
 }
 
-query QueryTicketType($dropzoneId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      ticketTypes {
-        ...ticketTypeEssentials
-      }
-    }
+query TicketTypes($dropzoneId: Int!, $allowManifestingSelf: Boolean) {
+  ticketTypes(dropzoneId: $dropzoneId, allowManifestingSelf: $allowManifestingSelf) {
+    ...ticketTypeEssentials
   }
+}

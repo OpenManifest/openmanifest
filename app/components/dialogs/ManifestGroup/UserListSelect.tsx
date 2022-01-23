@@ -1,55 +1,14 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Avatar, Button, Checkbox, Divider, List, Searchbar } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useDropzoneUsersDetailedQuery } from 'app/api/reflection';
 
 import NoResults from '../../NoResults';
-import { DropzoneUser, Permission, Query } from '../../../api/schema.d';
+import { DropzoneUser, Permission } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import useRestriction from '../../../hooks/useRestriction';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
-
-const QUERY_DROPZONE_USERS = gql`
-  query QueryDropzoneUsersSearch($dropzoneId: Int!, $search: String) {
-    dropzone(id: $dropzoneId) {
-      id
-      name
-
-      dropzoneUsers(search: $search, licensed: true) {
-        edges {
-          node {
-            id
-            role {
-              id
-              name
-            }
-            user {
-              id
-              image
-              name
-              exitWeight
-            }
-
-            availableRigs {
-              id
-              name
-              make
-              model
-              canopySize
-              serial
-
-              user {
-                id
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
 
 interface IUserListSelect {
   onNext(): void;
@@ -60,8 +19,7 @@ export default function UserListSelect(props: IUserListSelect) {
   const dispatch = useAppDispatch();
   const [searchText, setSearchText] = React.useState('');
   const { currentDropzoneId } = useAppSelector((root) => root.global);
-
-  const { data } = useQuery<Query>(QUERY_DROPZONE_USERS, {
+  const { data } = useDropzoneUsersDetailedQuery({
     variables: {
       dropzoneId: Number(currentDropzoneId),
       search: searchText,

@@ -21,3 +21,27 @@ query DropzoneUsers(
     }
   }
 }
+
+
+query DropzoneUsersDetailed(
+  $dropzoneId: Int!,
+  $search: String,
+  $permissions: [Permission!],
+  $first: Int,
+  $after: String,
+  $licensed: Boolean
+) {
+  dropzone(id: $dropzoneId) {
+    id
+    name
+
+    dropzoneUsers(licensed: $licensed, search: $search, permissions: $permissions, first: $first, after: $after) {
+      edges {
+        cursor
+        node {
+          ...dropzoneUserDetails
+        }
+      }
+    }
+  }
+}

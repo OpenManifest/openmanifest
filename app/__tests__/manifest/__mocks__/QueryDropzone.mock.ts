@@ -113,6 +113,7 @@ export default createMock<QueryDropzoneQueryVariables, QueryDropzoneQuery>(
           rigs: [
             {
               id: '1',
+              isPublic: true,
               name: 'Primary',
               packingCard: null,
               make: 'Vector',
@@ -128,6 +129,7 @@ export default createMock<QueryDropzoneQueryVariables, QueryDropzoneQuery>(
               id: '2',
               name: 'Pond',
               make: 'Mirage',
+              isPublic: true,
               packingCard: null,
               model: 'G4.1',
               serial: '34567',

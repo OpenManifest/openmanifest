@@ -4,16 +4,17 @@ import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 
 import { FlatList } from 'react-native-gesture-handler';
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import { Permission } from '../../../api/schema.d';
-import RigDialog from '../../../components/dialogs/Rig';
+import { useQueryDropzoneUserProfile } from 'app/api/reflection';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { Permission } from 'app/api/schema.d';
+import RigDialog from 'app/components/dialogs/Rig';
 
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
-import useDropzoneUser from '../../../api/hooks/useDropzoneUser';
-import useRestriction from '../../../hooks/useRestriction';
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import useRestriction from 'app/hooks/useRestriction';
 import RigCard from './RigCard';
 
 export default function ProfileScreen() {
+  const globalState = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
   const { currentUser } = useCurrentDropzone();
@@ -21,8 +22,16 @@ export default function ProfileScreen() {
 
   const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
 
-  const { dropzoneUser, loading, refetch } = useDropzoneUser(
-    Number(route?.params?.userId) || Number(currentUser?.id)
+  const { data, loading, refetch } = useQueryDropzoneUserProfile({
+    variables: {
+      dropzoneId: Number(globalState.currentDropzoneId),
+      dropzoneUserId: Number(route?.params?.userId) || Number(currentUser?.id),
+    },
+  });
+
+  const dropzoneUser = React.useMemo(
+    () => data?.dropzone?.dropzoneUser,
+    [data?.dropzone?.dropzoneUser]
   );
 
   const isFocused = useIsFocused();

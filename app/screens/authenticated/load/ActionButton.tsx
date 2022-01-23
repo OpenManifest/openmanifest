@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { FAB, Portal } from 'react-native-paper';
 import addMinutes from 'date-fns/addMinutes';
+import { LoadDetailsFragment } from 'app/api/operations';
 
-import useMutationUpdateLoad from '../../../api/hooks/useMutationUpdateLoad';
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
+import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 
-import { Load, Permission, LoadState } from '../../../api/schema.d';
-import { useFinalizeLoadMutation } from '../../../api/reflection';
-import useRestriction from '../../../hooks/useRestriction';
-import { actions, useAppDispatch } from '../../../state';
+import { Permission, LoadState } from 'app/api/schema.d';
+import { useFinalizeLoadMutation } from 'app/api/reflection';
+import useRestriction from 'app/hooks/useRestriction';
+import { actions, useAppDispatch } from 'app/state';
 
 interface ILoadActionButtonProps {
-  load: Load;
+  load: LoadDetailsFragment;
 }
 
 export default function ActionButton(props: ILoadActionButtonProps) {

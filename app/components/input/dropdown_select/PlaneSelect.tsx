@@ -1,37 +1,20 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import { PlaneEssentialsFragment } from 'app/api/operations';
+import { usePlanesQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { List, Menu } from 'react-native-paper';
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
-import { Plane, Query } from '../../../api/schema.d';
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 
 interface IPlaneSelect {
-  value?: Plane | null;
+  value?: PlaneEssentialsFragment | null;
   required?: boolean;
-  onSelect(plane: Plane): void;
+  onSelect(plane: PlaneEssentialsFragment): void;
 }
-
-const QUERY_PLANES = gql`
-  query QueryPlanes($dropzoneId: Int!) {
-    planes(dropzoneId: $dropzoneId) {
-      id
-      name
-      registration
-      hours
-      minSlots
-      maxSlots
-      nextMaintenanceHours
-      createdAt
-    }
-  }
-`;
-
 export default function PlaneSelect(props: IPlaneSelect) {
   const { onSelect, value, required } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const currentDropzone = useCurrentDropzone();
 
-  const { data } = useQuery<Query>(QUERY_PLANES, {
+  const { data } = usePlanesQuery({
     variables: {
       dropzoneId: Number(currentDropzone?.dropzone?.id),
     },

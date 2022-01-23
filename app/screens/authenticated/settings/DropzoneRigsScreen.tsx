@@ -1,90 +1,28 @@
-import { useMutation, useQuery } from '@apollo/client';
 import { useIsFocused } from '@react-navigation/core';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar } from 'react-native-paper';
 import { format } from 'date-fns';
 import { Switch } from 'react-native-gesture-handler';
-import { Mutation, Permission, Query } from '../../../api/schema.d';
+import { useDropzoneRigsQuery, useUpdateRigMutation } from 'app/api/reflection';
+import { Permission } from 'app/api/schema.d';
 
-import { actions, useAppSelector, useAppDispatch } from '../../../state';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import RigDialog from '../../../components/dialogs/Rig';
-import useRestriction from '../../../hooks/useRestriction';
-
-const QUERY_DROPZONE_RIGS = gql`
-  query QueryDropzoneRigs($dropzoneId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      rigs {
-        id
-        name
-        make
-        isPublic
-        model
-        serial
-        rigType
-        repackExpiresAt
-        canopySize
-        packValue
-      }
-    }
-  }
-`;
-
-const MUTATION_UPDATE_RIG = gql`
-  mutation UpdateDropzoneRig($id: Int!, $isPublic: Boolean) {
-    updateRig(input: { id: $id, attributes: { isPublic: $isPublic } }) {
-      errors
-      fieldErrors {
-        field
-        message
-      }
-      rig {
-        id
-        name
-        make
-        model
-        serial
-        isPublic
-        canopySize
-        repackExpiresAt
-        packValue
-        maintainedAt
-        rigType
-
-        dropzone {
-          id
-          rigs {
-            id
-            name
-            make
-            model
-            isPublic
-            serial
-            canopySize
-            repackExpiresAt
-            packValue
-            maintainedAt
-          }
-        }
-      }
-    }
-  }
-`;
+import { actions, useAppSelector, useAppDispatch } from 'app/state';
+import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import RigDialog from 'app/components/dialogs/Rig';
+import useRestriction from 'app/hooks/useRestriction';
 
 export default function DropzoneRigsScreen() {
   const state = useAppSelector((root) => root.global);
   const rigForm = useAppSelector((root) => root.forms.rig);
-  const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONE_RIGS, {
+  const { data, loading, refetch } = useDropzoneRigsQuery({
     variables: {
       dropzoneId: Number(state.currentDropzoneId),
     },
   });
   const dispatch = useAppDispatch();
   const isFocused = useIsFocused();
-  const [mutationUpdateRig, updateData] = useMutation<Mutation>(MUTATION_UPDATE_RIG);
+  const [mutationUpdateRig, updateData] = useUpdateRigMutation();
 
   const canCreateRig = useRestriction(Permission.CreateDropzoneRig);
 

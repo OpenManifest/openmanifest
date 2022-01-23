@@ -6,6 +6,7 @@ import { Card } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import SkeletonContent from 'react-native-skeleton-content';
 import { PlaneEssentialsFragment } from 'app/api/operations';
+import { useLoadQuery } from 'app/api/reflection';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import GCAChip from '../../../components/chips/GcaChip';
 import LoadMasterChip from '../../../components/chips/LoadMasterChip';
@@ -22,7 +23,6 @@ import SlotCard from './SlotCard';
 import ActionButton from './ActionButton';
 import Header from './Header';
 import InfoGrid from './InfoGrid';
-import useQueryLoad from '../../../api/hooks/useQueryLoad';
 import useMutationDeleteSlot from '../../../api/hooks/useMutationDeleteSlot';
 import useMutationUpdateLoad from '../../../api/hooks/useMutationUpdateLoad';
 
@@ -69,18 +69,18 @@ export default function LoadScreen() {
   const { palette, theme } = useAppSelector((root) => root.global);
   const route = useRoute<{ key: string; name: string; params: { load: Load } }>();
 
-  const {
-    data: detailedLoad,
-    loading,
-    refetch,
-  } = useQueryLoad({
+  const { data, loading, refetch } = useLoadQuery({
     variables: {
       id: Number(route.params.load.id),
     },
     pollInterval: 30000,
   });
 
-  const load = detailedLoad || route.params.load;
+  const detailedLoad = React.useMemo(() => data?.load, [data?.load]);
+  const load = React.useMemo(
+    () => detailedLoad || route.params.load,
+    [detailedLoad, route.params.load]
+  );
   const currentDropzone = useCurrentDropzone();
   const { currentUser } = currentDropzone;
 

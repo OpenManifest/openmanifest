@@ -9,11 +9,9 @@ import JumpTypeChipSelect from '../../input/chip_select/JumpTypeChipSelect';
 import TicketTypeChipSelect from '../../input/chip_select/TicketTypeChipSelect';
 import useRestriction from '../../../hooks/useRestriction';
 import RigSelect from '../../input/dropdown_select/RigSelect';
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
 export default function ManifestForm() {
   const dispatch = useAppDispatch();
-  const currentDropzone = useCurrentDropzone();
   const state = useAppSelector((root) => root.forms.manifest);
   React.useEffect(() => {
     if (state.fields.dropzoneUser?.value) {
@@ -102,8 +100,7 @@ export default function ManifestForm() {
       {!state.fields.dropzoneUser ? null : (
         <RigSelect
           value={state.fields.rig.value}
-          userId={Number(state.fields.dropzoneUser?.value?.user?.id)}
-          dropzoneId={Number(currentDropzone?.dropzone?.id)}
+          dropzoneUserId={Number(state.fields.dropzoneUser?.value?.id)}
           onSelect={(value) => dispatch(actions.forms.manifest.setField(['rig', value]))}
         />
       )}

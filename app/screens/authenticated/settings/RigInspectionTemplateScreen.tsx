@@ -1,63 +1,38 @@
-import { useMutation, useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { Button, Card } from 'react-native-paper';
 // eslint-disable-next-line max-len
-import RigInspectionTemplateForm from '../../../components/forms/rig_inspection_template/RigInspectionTemplateForm';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
-import { Mutation, Permission, Query } from '../../../api/schema.d';
-import useRestriction from '../../../hooks/useRestriction';
+import {
+  useRigInspectionTemplateQuery,
+  useUpdateRigInspectionTemplateMutation,
+} from 'app/api/reflection';
+// eslint-disable-next-line max-len
+import RigInspectionTemplateForm from 'app/components/forms/rig_inspection_template/RigInspectionTemplateForm';
+import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { FormTemplate, Permission } from 'app/api/schema.d';
+import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
-
-const QUERY_RIG_INSPECTION = gql`
-  query RigInspection($dropzoneId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      rigInspectionTemplate {
-        id
-        name
-        definition
-      }
-    }
-  }
-`;
-
-const MUTATION_UPDATE_FORM = gql`
-  mutation UpdateRigInspectionTemplate($dropzoneId: Int, $formId: Int, $definition: String) {
-    updateFormTemplate(
-      input: { id: $formId, attributes: { dropzoneId: $dropzoneId, definition: $definition } }
-    ) {
-      formTemplate {
-        id
-        name
-        definition
-      }
-      fieldErrors {
-        field
-        message
-      }
-      errors
-    }
-  }
-`;
 
 export default function RigInspectionTemplateScreen() {
   const state = useAppSelector((root) => root.forms.rigInspectionTemplate);
   const currentDropzone = useCurrentDropzone();
   const dispatch = useAppDispatch();
-  const { data } = useQuery<Query>(QUERY_RIG_INSPECTION, {
+  const { data } = useRigInspectionTemplateQuery({
     variables: {
       dropzoneId: Number(currentDropzone?.dropzone?.id),
     },
   });
 
   const canEdit = useRestriction(Permission.UpdateFormTemplate);
-  const [mutationUpdateForm, mutation] = useMutation<Mutation>(MUTATION_UPDATE_FORM);
+  const [mutationUpdateForm, mutation] = useUpdateRigInspectionTemplateMutation();
 
   React.useEffect(() => {
     if (data?.dropzone?.rigInspectionTemplate) {
-      dispatch(actions.forms.rigInspectionTemplate.setOpen(data.dropzone.rigInspectionTemplate));
+      dispatch(
+        actions.forms.rigInspectionTemplate.setOpen(
+          data.dropzone.rigInspectionTemplate as FormTemplate
+        )
+      );
     }
   }, [data?.dropzone.rigInspectionTemplate, dispatch]);
 

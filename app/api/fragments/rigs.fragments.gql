@@ -10,6 +10,7 @@ fragment rigEssentials on Rig {
   maintainedAt
   rigType
   packingCard
+  isPublic
 
   user {
     id

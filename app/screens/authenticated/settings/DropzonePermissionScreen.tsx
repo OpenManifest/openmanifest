@@ -1,6 +1,4 @@
-import { useQuery } from '@apollo/client';
 import { useIsFocused } from '@react-navigation/core';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Card, List } from 'react-native-paper';
@@ -8,23 +6,10 @@ import { Tabs, TabScreen } from 'react-native-paper-tabs';
 
 import { capitalize } from 'lodash';
 import SkeletonContent from 'react-native-skeleton-content';
-import { Query } from '../../../api/schema.d';
-import { useAppSelector } from '../../../state';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import PermissionListItem from '../../../components/permissions/PermissionListItem';
-
-const QUERY_DROPZONE_PERMISSIONS = gql`
-  query QueryDropzoneRigs($dropzoneId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      roles {
-        id
-        name
-        permissions
-      }
-    }
-  }
-`;
+import { useRolesQuery } from 'app/api/reflection';
+import { useAppSelector } from 'app/state';
+import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import PermissionListItem from 'app/components/permissions/PermissionListItem';
 
 /**
  * 
@@ -102,7 +87,7 @@ const QUERY_DROPZONE_PERMISSIONS = gql`
  */
 export default function DropzonePermissionScreen() {
   const state = useAppSelector((root) => root.global);
-  const { data, loading, refetch } = useQuery<Query>(QUERY_DROPZONE_PERMISSIONS, {
+  const { data, loading, refetch } = useRolesQuery({
     variables: {
       dropzoneId: Number(state.currentDropzoneId),
     },

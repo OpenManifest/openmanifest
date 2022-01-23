@@ -1,39 +1,21 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { List, Menu } from 'react-native-paper';
-import { TicketType, Query } from '../../../api/schema.d';
-import { useAppSelector } from '../../../state';
+import { TicketTypeEssentialsFragment } from 'app/api/operations';
+import { useTicketTypesQuery } from 'app/api/reflection';
+import { useAppSelector } from 'app/state';
 
 interface ITicketTypeSelect {
-  value?: TicketType | null;
+  value?: TicketTypeEssentialsFragment | null;
   required?: boolean;
   allowManifestingSelf?: boolean | null;
-  onSelect(jt: TicketType): void;
+  onSelect(jt: TicketTypeEssentialsFragment): void;
 }
-
-const QUERY_TICKET_TYPES = gql`
-  query TicketTypes($allowManifestingSelf: Boolean, $dropzoneId: Int!) {
-    ticketTypes(allowManifestingSelf: $allowManifestingSelf, dropzoneId: $dropzoneId) {
-      id
-      name
-      isTandem
-      cost
-
-      extras {
-        id
-        name
-        cost
-      }
-    }
-  }
-`;
 
 export default function TicketTypeSelect(props: ITicketTypeSelect) {
   const { allowManifestingSelf, value, required } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector((root) => root.global);
-  const { data } = useQuery<Query>(QUERY_TICKET_TYPES, {
+  const { data } = useTicketTypesQuery({
     variables: {
       dropzoneId: Number(currentDropzoneId),
       allowManifestingSelf,

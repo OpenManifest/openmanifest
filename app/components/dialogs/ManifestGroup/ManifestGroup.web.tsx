@@ -1,11 +1,10 @@
-import { gql, useMutation } from '@apollo/client';
+import { useManifestGroupMutation } from 'app/api/reflection';
 import { omit } from 'lodash';
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Dialog, Portal } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
-import { Mutation } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import ManifestGroupForm from '../../forms/manifest_group/ManifestGroupForm';
 import UserListSelect from './UserListSelect';
@@ -15,100 +14,11 @@ interface IManifestUserDialog {
   onClose(): void;
 }
 
-const MUTATION_CREATE_SLOTS = gql`
-  mutation CreateSlot(
-    $jumpTypeId: Int
-    $extraIds: [Int!]
-    $loadId: Int
-    $ticketTypeId: Int
-    $userGroup: [SlotUser!]!
-  ) {
-    createSlots(
-      input: {
-        attributes: {
-          jumpTypeId: $jumpTypeId
-          extraIds: $extraIds
-          loadId: $loadId
-          ticketTypeId: $ticketTypeId
-          userGroup: $userGroup
-        }
-      }
-    ) {
-      errors
-      fieldErrors {
-        field
-        message
-      }
-
-      load {
-        id
-        name
-        loadNumber
-        createdAt
-        dispatchAt
-        hasLanded
-        maxSlots
-        isFull
-        isOpen
-        plane {
-          id
-          name
-        }
-        gca {
-          id
-          user {
-            id
-            name
-          }
-        }
-        pilot {
-          id
-          user {
-            id
-            name
-          }
-        }
-        loadMaster {
-          id
-          user {
-            id
-            name
-          }
-        }
-        slots {
-          id
-          createdAt
-          user {
-            id
-            name
-          }
-          passengerName
-          passengerExitWeight
-          ticketType {
-            id
-            name
-            isTandem
-            altitude
-          }
-          jumpType {
-            id
-            name
-          }
-          extras {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
-`;
-
 export default function ManifestUserDialog(props: IManifestUserDialog) {
   const { open, onClose } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.manifestGroup);
-  const [mutationCreateSlots, mutationData] = useMutation<Mutation>(MUTATION_CREATE_SLOTS);
+  const [mutationCreateSlots, mutationData] = useManifestGroupMutation();
   const [tabIndex, setTabIndex] = React.useState(0);
 
   const validate = React.useCallback(() => {
@@ -133,7 +43,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     return !hasErrors;
   }, [dispatch, state.fields.jumpType.value?.id, state.fields.ticketType.value?.id]);
   const onManifest = React.useCallback(async () => {
-    if (!validate()) {
+    if (!validate() || !state.fields.users.value?.length) {
       return;
     }
     try {

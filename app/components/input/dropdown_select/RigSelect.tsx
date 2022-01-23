@@ -1,15 +1,12 @@
-import { useLazyQuery } from '@apollo/client';
 import { UserRigDetailedFragment } from 'app/api/operations';
-import gql from 'graphql-tag';
+import { useAvailableRigsLazyQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { Text, View } from 'react-native';
 import { List, Menu, TextInput, useTheme } from 'react-native-paper';
-import { Query } from '../../../api/schema.d';
-import { useAppSelector } from '../../../state';
+import { useAppSelector } from 'app/state';
 
 interface IRigSelect {
-  dropzoneId?: number;
-  userId?: number;
+  dropzoneUserId?: number;
   value?: UserRigDetailedFragment | null;
   tandem?: boolean;
   autoSelectFirst?: boolean;
@@ -40,54 +37,31 @@ function RigTitle(props: { rig: UserRigDetailedFragment }): JSX.Element {
   );
 }
 
-const QUERY_RIGS = gql`
-  query QueryAvailableRigs($dropzoneId: Int!, $userId: Int!, $isTandem: Boolean) {
-    dropzone(id: $dropzoneId) {
-      id
-      dropzoneUser(userId: $userId) {
-        id
-        availableRigs(isTandem: $isTandem) {
-          id
-          make
-          model
-          canopySize
-          serial
-
-          user {
-            id
-          }
-        }
-      }
-    }
-  }
-`;
-
 export default function RigSelect(props: IRigSelect) {
-  const { userId, value, autoSelectFirst, onSelect, dropzoneId, tandem } = props;
+  const { dropzoneUserId, value, autoSelectFirst, onSelect, tandem } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 
-  const [fetchRigs, { data }] = useLazyQuery<Query>(QUERY_RIGS, {
+  const [fetchRigs, { data }] = useAvailableRigsLazyQuery({
     fetchPolicy: 'cache-and-network',
   });
 
   React.useEffect(() => {
-    if (userId && dropzoneId) {
+    if (dropzoneUserId) {
       fetchRigs({
         variables: {
-          dropzoneId: currentDropzoneId,
-          userId: Number(userId),
+          dropzoneUserId,
           isTandem: tandem || undefined,
         },
       });
     }
-  }, [userId, dropzoneId, fetchRigs, currentDropzoneId, tandem]);
+  }, [fetchRigs, currentDropzoneId, tandem, dropzoneUserId]);
 
   React.useEffect(() => {
-    if (!value && autoSelectFirst && data?.dropzone?.dropzoneUser?.availableRigs?.length) {
-      onSelect(data.dropzone.dropzoneUser.availableRigs[0]);
+    if (!value && autoSelectFirst && data?.availableRigs?.length) {
+      onSelect(data.availableRigs[0]);
     }
-  }, [autoSelectFirst, data?.dropzone.dropzoneUser?.availableRigs, onSelect, value]);
+  }, [autoSelectFirst, data?.availableRigs, onSelect, value]);
 
   return (
     <Menu
@@ -108,7 +82,7 @@ export default function RigSelect(props: IRigSelect) {
         />
       }
     >
-      {data?.dropzone?.dropzoneUser?.availableRigs?.map((rig) => (
+      {data?.availableRigs?.map((rig) => (
         <Menu.Item
           key={`rig-select-${rig.id}`}
           onPress={() => {

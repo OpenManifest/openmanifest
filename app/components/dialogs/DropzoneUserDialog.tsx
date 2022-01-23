@@ -1,46 +1,18 @@
-import { gql, useApolloClient, useMutation } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 import PermissionBadges from 'app/screens/authenticated/profile/UserInfo/PermissionBadges';
 import * as React from 'react';
 import { Button, Dialog, List, Portal, ProgressBar } from 'react-native-paper';
-import { DropzoneUser, Mutation, Permission } from 'app/api/schema.d';
-import { DropzoneUserProfileFragment } from 'app/api/operations';
-import { DropzoneUserProfileFragmentDoc } from 'app/api/reflection';
+import { DropzoneUser, Permission } from 'app/api/schema.d';
+import { DropzoneUserEssentialsFragment, DropzoneUserProfileFragment } from 'app/api/operations';
+import { DropzoneUserProfileFragmentDoc, useUpdateDropzoneUserMutation } from 'app/api/reflection';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import DropzoneUserForm from '../forms/dropzone_user/DropzoneUserForm';
 
 interface IDropzoneUserDialog {
   open?: boolean;
   onClose(): void;
-  onSuccess(user: DropzoneUser): void;
+  onSuccess(user: DropzoneUserEssentialsFragment): void;
 }
-
-const MUTATION_EDIT_DROPZONE_USER = gql`
-  mutation UpdateDropzoneUser($userRoleId: Int, $expiresAt: Int, $dropzoneUserId: Int) {
-    updateDropzoneUser(
-      input: { id: $dropzoneUserId, attributes: { userRoleId: $userRoleId, expiresAt: $expiresAt } }
-    ) {
-      errors
-      fieldErrors {
-        field
-        message
-      }
-      dropzoneUser {
-        id
-        credits
-        expiresAt
-        role {
-          id
-          name
-        }
-
-        user {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
 
 export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   const { open } = props;
@@ -59,9 +31,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
           }),
     [client, state.original]
   );
-  const [mutationUpdateDropzoneUser, createData] = useMutation<Mutation>(
-    MUTATION_EDIT_DROPZONE_USER
-  );
+  const [mutationUpdateDropzoneUser, createData] = useUpdateDropzoneUserMutation();
 
   const validate = React.useCallback(() => {
     let hasErrors = false;

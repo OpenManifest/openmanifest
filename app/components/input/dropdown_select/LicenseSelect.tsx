@@ -1,35 +1,20 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import { LicenseEssentialsFragment } from 'app/api/operations';
+import { useLicensesQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { List, Menu } from 'react-native-paper';
-import { License, Query } from '../../../api/schema.d';
 
 interface ILicenseSelect {
-  value?: License | null;
+  value?: LicenseEssentialsFragment | null;
   required?: boolean;
   federationId?: number | null;
-  onSelect(jt: License): void;
+  onSelect(jt: LicenseEssentialsFragment): void;
 }
-
-const QUERY_LICENSES = gql`
-  query Licenses($federationId: Int) {
-    licenses(federationId: $federationId) {
-      id
-      name
-
-      federation {
-        id
-        name
-      }
-    }
-  }
-`;
 
 export default function LicenseSelect(props: ILicenseSelect) {
   const { onSelect, value, required, federationId } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
 
-  const { data } = useQuery<Query>(QUERY_LICENSES, {
+  const { data } = useLicensesQuery({
     variables: {
       federationId,
     },
