@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RigEssentialsFragment } from 'app/api/operations';
-import { Rig } from '../../../api/schema.d';
 
 export type RigFields = Pick<
   RigEssentialsFragment,
@@ -75,7 +74,7 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOpen: (state: IRigEditState, action: PayloadAction<boolean | Rig>) => {
+    setOpen: (state: IRigEditState, action: PayloadAction<boolean | RigEssentialsFragment>) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;

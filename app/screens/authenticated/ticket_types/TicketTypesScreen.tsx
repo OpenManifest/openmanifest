@@ -1,52 +1,25 @@
-import { useMutation, useQuery } from '@apollo/client';
 import { useIsFocused, useRoute } from '@react-navigation/core';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar, Switch } from 'react-native-paper';
-import { useArchiveTicketTypeMutation } from 'app/api/reflection';
-import { Mutation, Permission, Query } from '../../../api/schema.d';
+import {
+  useArchiveTicketTypeMutation,
+  useTicketTypesQuery,
+  useUpdateTicketTypeMutation,
+} from 'app/api/reflection';
+import { Permission } from 'app/api/schema.d';
 
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import TicketTypesDialog from '../../../components/dialogs/TicketType';
-import SwipeActions from '../../../components/layout/SwipeActions';
-import useRestriction from '../../../hooks/useRestriction';
-
-const QUERY_TICKET_TYPE = gql``;
-
-const MUTATION_UPDATE_TICKET_TYPE = gql`
-  mutation UpdateTicketTypePublic($id: Int!, $allowManifestingSelf: Boolean) {
-    updateTicketType(
-      input: { id: $id, attributes: { allowManifestingSelf: $allowManifestingSelf } }
-    ) {
-      ticketType {
-        id
-        name
-        altitude
-        cost
-        allowManifestingSelf
-        isTandem
-        extras {
-          id
-          name
-          cost
-        }
-      }
-      fieldErrors {
-        field
-        message
-      }
-      errors
-    }
-  }
-`;
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import TicketTypesDialog from 'app/components/dialogs/TicketType';
+import SwipeActions from 'app/components/layout/SwipeActions';
+import useRestriction from 'app/hooks/useRestriction';
 
 export default function TicketTypesScreen() {
   const state = useAppSelector((root) => root.global);
   const form = useAppSelector((root) => root.forms.ticketType);
   const dispatch = useAppDispatch();
-  const { data, loading, refetch } = useQuery<Query>(QUERY_TICKET_TYPE, {
+  const { data, loading, refetch } = useTicketTypesQuery({
     variables: {
       dropzoneId: Number(state.currentDropzoneId),
     },
@@ -59,7 +32,7 @@ export default function TicketTypesScreen() {
       refetch();
     }
   }, [isFocused, refetch]);
-  const [mutationUpdateTicketType] = useMutation<Mutation>(MUTATION_UPDATE_TICKET_TYPE);
+  const [mutationUpdateTicketType] = useUpdateTicketTypeMutation();
   const [mutationDeleteTicketType] = useArchiveTicketTypeMutation();
 
   React.useEffect(() => {
@@ -84,7 +57,7 @@ export default function TicketTypesScreen() {
           <DataTable.Title numeric>Public</DataTable.Title>
         </DataTable.Header>
 
-        {data?.dropzone?.ticketTypes?.map((ticketType) => (
+        {data?.ticketTypes?.map((ticketType) => (
           <SwipeActions
             rightAction={{
               label: 'Delete',

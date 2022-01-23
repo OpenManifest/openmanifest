@@ -1,26 +1,10 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import { useTicketTypeExtrasQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, Menu, List, Divider } from 'react-native-paper';
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
-import { Extra, Query } from '../../../api/schema';
-import { actions, useAppSelector, useAppDispatch } from '../../../state';
-
-const QUERY_EXTRAS = gql`
-  query QueryExtras($dropzoneId: Int!) {
-    extras(dropzoneId: $dropzoneId) {
-      id
-      cost
-      name
-
-      ticketTypes {
-        id
-        name
-      }
-    }
-  }
-`;
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { actions, useAppSelector, useAppDispatch } from 'app/state';
+import { TicketTypeExtraEssentialsFragment } from 'app/api/operations';
 
 const ALTITUDE_LABEL_MAP: { [key: string]: string } = {
   '14000': 'Height',
@@ -33,7 +17,7 @@ export default function TicketTypeForm() {
   const currentDropzone = useCurrentDropzone();
 
   const [altitudeMenuOpen, setAltitudeMenuOpen] = React.useState(false);
-  const { data } = useQuery<Query>(QUERY_EXTRAS, {
+  const { data } = useTicketTypeExtrasQuery({
     variables: {
       dropzoneId: Number(currentDropzone?.dropzone?.id),
     },
@@ -184,7 +168,12 @@ export default function TicketTypeForm() {
                   'extras',
                   state.fields.extras.value?.map(({ id }) => id).includes(extra.id)
                     ? state.fields.extras.value?.filter(({ id }) => id !== extra.id)
-                    : [...(state.fields.extras?.value as Required<Extra[]>), extra],
+                    : [
+                        ...(state.fields.extras?.value as Required<
+                          TicketTypeExtraEssentialsFragment[]
+                        >),
+                        extra,
+                      ],
                 ])
               )
             }

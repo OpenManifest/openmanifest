@@ -9,45 +9,22 @@ import {
 } from 'react-native';
 import { Card, Button, HelperText, TextInput } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { gql, useMutation } from '@apollo/client';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { actions, useAppSelector, useAppDispatch } from '../../../state';
+import { useLoginMutation } from 'app/api/reflection';
+import { actions, useAppSelector, useAppDispatch } from 'app/state';
 
-import { Mutation } from '../../../api/schema';
-import { primaryColor } from '../../../constants/Colors';
+import { primaryColor } from 'app/constants/Colors';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore PNGs are allowed
 import logo from '../../../../assets/images/logo-black.png';
 
-const MUTATION_LOG_IN = gql`
-  mutation UserLogin($email: String!, $password: String!) {
-    userLogin(email: $email, password: $password) {
-      authenticatable {
-        id
-        email
-        name
-        phone
-        createdAt
-        updatedAt
-      }
-      credentials {
-        accessToken
-        tokenType
-        client
-        expiry
-        uid
-      }
-    }
-  }
-`;
-
 export default function LoginScreen() {
   const state = useAppSelector((root) => root.screens.login);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
-  const [mutationLogin, data] = useMutation<Mutation>(MUTATION_LOG_IN);
+  const [mutationLogin, data] = useLoginMutation();
 
   const onLogin = React.useCallback(async () => {
     // eslint-disable-next-line

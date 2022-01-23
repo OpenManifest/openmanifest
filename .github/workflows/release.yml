@@ -17,6 +17,8 @@ jobs:
           expo-version: 4.x
           token: ${{ secrets.EXPO_TOKEN }}
       - run: yarn install
+      - run: yarn ts:graphql:staging && yarn typecheck
+        name: Ensure server compatibility
       - run: yarn web:deploy:staging
         env:
           NODE_OPTIONS: --max_old_space_size=4096
@@ -34,6 +36,8 @@ jobs:
           expo-version: 4.x
           token: ${{ secrets.EXPO_TOKEN }}
       - run: yarn install
+      - run: yarn ts:graphql:staging && yarn typecheck
+        name: Ensure server compatibility
       - run: yarn expo:publish:staging
         env:
           NODE_OPTIONS: --max_old_space_size=4096

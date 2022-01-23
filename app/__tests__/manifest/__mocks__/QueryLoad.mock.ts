@@ -35,6 +35,10 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
       gca: {
         __typename: 'DropzoneUser',
         id: '1',
+        hasCredits: true,
+        hasExitWeight: true,
+        hasMembership: true,
+        hasLicense: false,
         user: {
           id: '1',
           name: 'jest',
@@ -43,6 +47,10 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
       pilot: {
         __typename: 'DropzoneUser',
         id: '2',
+        hasCredits: true,
+        hasExitWeight: true,
+        hasMembership: true,
+        hasLicense: false,
         user: {
           id: '2',
           name: 'Jess I. Canflie',

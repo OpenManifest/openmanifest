@@ -1,34 +1,15 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Checkbox, List } from 'react-native-paper';
-import { Query } from '../../../api/schema';
+import { useTicketTypesQuery } from 'app/api/reflection';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
-
-const QUERY_TICKET_TYPES = gql`
-  query QueryTicketType($dropzoneId: Int!) {
-    ticketTypes(dropzoneId: $dropzoneId) {
-      id
-      cost
-      currency
-      name
-      allowManifestingSelf
-
-      extras {
-        id
-        name
-      }
-    }
-  }
-`;
 
 export default function ExtraForm() {
   const state = useAppSelector((root) => root.forms.extra);
   const dispatch = useAppDispatch();
   const currentDropzone = useCurrentDropzone();
-  const { data } = useQuery<Query>(QUERY_TICKET_TYPES, {
+  const { data } = useTicketTypesQuery({
     variables: {
       dropzoneId: Number(currentDropzone?.dropzone?.id),
     },

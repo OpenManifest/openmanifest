@@ -4,12 +4,12 @@ import { Avatar, IconButton, Paragraph, Title } from 'react-native-paper';
 
 import isAfter from 'date-fns/isAfter';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useAppSelector } from '../../../state';
-import { Load } from '../../../api/schema';
+import { LoadEssentialsFragment } from 'app/api/operations';
+import { useAppSelector } from 'app/state';
 import Countdown from '../manifest/LoadCard/Countdown';
 
 interface ILoadHeader {
-  load?: Load;
+  load?: LoadEssentialsFragment;
   canEdit?: boolean;
   children?: React.ReactNode;
   onEdit?(): void;

@@ -20,7 +20,7 @@ export default function JumpTypeChipSelect(props: IJumpTypeSelect) {
   const { currentDropzoneId } = useAppSelector((root) => root.global);
   const { data, loading } = useAllowedJumpTypesQuery({
     variables: {
-      userIds: [Number(userId) || null].filter(Boolean) as number[],
+      allowedForDropzoneUserIds: [Number(userId) || null].filter(Boolean) as number[],
       dropzoneId: Number(currentDropzoneId),
     },
     onError: console.error,

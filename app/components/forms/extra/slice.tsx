@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Extra } from '../../../api/schema.d';
+import { TicketTypeExtraDetailedFragment } from 'app/api/operations';
 
-export type ExtraFields = Pick<Extra, 'name' | 'cost' | 'ticketTypes'>;
+export type ExtraFields = Pick<TicketTypeExtraDetailedFragment, 'name' | 'cost' | 'ticketTypes'>;
 interface IExtraEditState {
-  original: Extra | null;
+  original: TicketTypeExtraDetailedFragment | null;
   open: boolean;
   fields: {
     [K in keyof ExtraFields]-?: {
-      value: Extra[K] | null;
+      value: TicketTypeExtraDetailedFragment[K] | null;
       error: string | null;
     };
   };
@@ -54,7 +54,10 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOpen: (state: IExtraEditState, action: PayloadAction<boolean | Extra>) => {
+    setOpen: (
+      state: IExtraEditState,
+      action: PayloadAction<boolean | TicketTypeExtraDetailedFragment>
+    ) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;

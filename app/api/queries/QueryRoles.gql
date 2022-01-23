@@ -2,7 +2,7 @@ query Roles($dropzoneId: Int!, $selectable: Boolean) {
   dropzone(id: $dropzoneId) {
     id
     roles(selectable: $selectable) {
-      ...roleEssentials
+      ...roleDetailed
     }
   }
 }

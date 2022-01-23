@@ -1,32 +1,25 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import { JumpTypeEssentialsFragment } from 'app/api/operations';
+import { useAllowedJumpTypesQuery } from 'app/api/reflection';
+import { useAppSelector } from 'app/state';
 import * as React from 'react';
 import { List, Menu } from 'react-native-paper';
-import { JumpType, Query } from '../../../api/schema.d';
 
 interface IJumpTypeSelect {
-  value?: JumpType | null;
+  value?: JumpTypeEssentialsFragment | null;
   required?: boolean;
-  userId?: number | null;
-  onSelect(jt: JumpType): void;
+  allowedForDropzoneUserIds?: number[] | null;
+  onSelect(jt: JumpTypeEssentialsFragment): void;
 }
 
-const QUERY_JUMP_TYPES = gql`
-  query JumpTypes($allowedForUserId: Int) {
-    jumpTypes(allowedForUserId: $allowedForUserId) {
-      id
-      name
-    }
-  }
-`;
-
 export default function JumpTypeSelect(props: IJumpTypeSelect) {
-  const { userId, onSelect, value, required } = props;
+  const { allowedForDropzoneUserIds, onSelect, value, required } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
+  const { currentDropzoneId } = useAppSelector((state) => state.global);
 
-  const { data } = useQuery<Query>(QUERY_JUMP_TYPES, {
+  const { data } = useAllowedJumpTypesQuery({
     variables: {
-      allowedForUserId: userId,
+      dropzoneId: Number(currentDropzoneId),
+      allowedForDropzoneUserIds: allowedForDropzoneUserIds as number[],
     },
   });
   return (

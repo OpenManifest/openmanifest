@@ -1,40 +1,21 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB, DataTable, ProgressBar } from 'react-native-paper';
-import { View } from '../../../components/Themed';
-import { Permission, Query } from '../../../api/schema.d';
+import { useTicketTypeExtrasQuery } from 'app/api/reflection';
+import { View } from 'app/components/Themed';
+import { Permission } from 'app/api/schema.d';
 
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import NoResults from '../../../components/NoResults';
-import TicketTypeExtraDialog from '../../../components/dialogs/TicketTypeExtra';
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
-import useRestriction from '../../../hooks/useRestriction';
-
-const QUERY_TICKET_TYPE = gql`
-  query QueryExtra($dropzoneId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      extras {
-        id
-        cost
-        name
-        ticketTypes {
-          id
-          altitude
-          name
-        }
-      }
-    }
-  }
-`;
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import NoResults from 'app/components/NoResults';
+import TicketTypeExtraDialog from 'app/components/dialogs/TicketTypeExtra';
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import useRestriction from 'app/hooks/useRestriction';
 
 export default function ExtrasScreen() {
   const currentDropzone = useCurrentDropzone();
   const globalState = useAppSelector((root) => root.global);
   const formState = useAppSelector((root) => root.forms.extra);
-  const { data, loading } = useQuery<Query>(QUERY_TICKET_TYPE, {
+  const { data, loading } = useTicketTypeExtrasQuery({
     variables: {
       dropzoneId: Number(currentDropzone?.dropzone?.id),
     },
@@ -52,7 +33,7 @@ export default function ExtrasScreen() {
             <DataTable.Title numeric>Cost</DataTable.Title>
           </DataTable.Header>
 
-          {data?.dropzone?.extras?.map((extra) => (
+          {data?.extras?.map((extra) => (
             <DataTable.Row
               onPress={() => {
                 dispatch(actions.forms.extra.setOpen(extra));
@@ -64,7 +45,7 @@ export default function ExtrasScreen() {
             </DataTable.Row>
           ))}
         </DataTable>
-        {!loading && !data?.dropzone?.extras?.length && (
+        {!loading && !data?.extras?.length && (
           <NoResults
             title="No ticket addons"
             // eslint-disable-next-line max-len

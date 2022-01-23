@@ -1,0 +1,5 @@
+query TicketTypeExtras($dropzoneId: Int!) {
+  extras(dropzoneId: $dropzoneId) {
+    ...ticketTypeExtraDetailed
+  }
+}

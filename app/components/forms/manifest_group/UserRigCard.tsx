@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { useQueryDropzoneUserProfile } from 'app/api/reflection';
 import * as React from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
 import {
@@ -11,10 +11,9 @@ import {
   List,
   Button,
 } from 'react-native-paper';
-import { createQuery } from '../../../api/createQuery';
-import { DropzoneUser, Query, Rig } from '../../../api/schema.d';
-import { useAppSelector } from '../../../state';
-import calculateWingLoading from '../../../utils/calculateWingLoading';
+import { Rig } from 'app/api/schema.d';
+import { useAppSelector } from 'app/state';
+import calculateWingLoading from 'app/utils/calculateWingLoading';
 import RigSelect from '../../input/dropdown_select/RigSelect';
 import NumberField from '../../input/number_input/NumberField';
 
@@ -34,59 +33,6 @@ interface IUserRigCard {
   onChangePassengerWeight?(weight: number): void;
 }
 
-const QUERY_DROPZONE_USERS_MANIFEST_DETAILS = gql`
-  query QueryDropzoneUsersManifestDetails($dropzoneId: Int!, $dropzoneUserId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      name
-
-      dropzoneUser(id: $dropzoneUserId) {
-        id
-
-        license {
-          id
-          name
-        }
-
-        user {
-          id
-          name
-          exitWeight
-          license {
-            id
-            name
-          }
-          rigs {
-            id
-            name
-            make
-            model
-            canopySize
-          }
-        }
-        role {
-          id
-          name
-        }
-        user {
-          id
-          name
-          image
-        }
-      }
-    }
-  }
-`;
-const useQueryDropzoneUsersDetails = createQuery<
-  Query['dropzone']['dropzoneUser'],
-  {
-    dropzoneId: number;
-    dropzoneUserId: number;
-  }
->(QUERY_DROPZONE_USERS_MANIFEST_DETAILS, {
-  getPayload: (query) => query?.dropzone?.dropzoneUser as DropzoneUser | null,
-});
-
 export default function UserRigCard(props: IUserRigCard) {
   const {
     dropzoneId,
@@ -104,7 +50,7 @@ export default function UserRigCard(props: IUserRigCard) {
   } = props;
   const { global: globalState } = useAppSelector((root) => root);
 
-  const { data, loading } = useQueryDropzoneUsersDetails({
+  const { data, loading } = useQueryDropzoneUserProfile({
     variables: {
       dropzoneUserId,
       dropzoneId,
@@ -113,18 +59,18 @@ export default function UserRigCard(props: IUserRigCard) {
   });
 
   React.useEffect(() => {
-    if (!exitWeight && data?.user?.exitWeight) {
-      onChangeExitWeight(Number(data.user.exitWeight));
+    if (!exitWeight && data?.dropzone?.dropzoneUser?.user?.exitWeight) {
+      onChangeExitWeight(Number(data.dropzone.dropzoneUser.user.exitWeight));
     }
-  }, [data?.user.exitWeight, exitWeight, onChangeExitWeight]);
+  }, [data?.dropzone?.dropzoneUser?.user.exitWeight, exitWeight, onChangeExitWeight]);
   return (
     <Card style={{ marginHorizontal: 16, marginBottom: 16 }} elevation={3}>
       <ProgressBar indeterminate color={globalState.theme.colors.accent} visible={loading} />
       <Card.Title
-        title={data?.user.name}
+        title={data?.dropzone?.dropzoneUser?.user.name}
         left={() =>
-          data?.user?.image ? (
-            <Avatar.Image source={{ uri: data.user.image }} size={24} />
+          data?.dropzone?.dropzoneUser?.user?.image ? (
+            <Avatar.Image source={{ uri: data.dropzone.dropzoneUser.user.image }} size={24} />
           ) : (
             <Avatar.Icon icon="account" size={24} />
           )
@@ -135,10 +81,10 @@ export default function UserRigCard(props: IUserRigCard) {
         <Divider style={{ marginBottom: 8 }} />
         <ScrollView horizontal>
           <Chip style={{ marginHorizontal: 1 }} icon="lock" mode="outlined" disabled>
-            {data?.role?.name}
+            {data?.dropzone?.dropzoneUser?.role?.name}
           </Chip>
           <Chip style={{ marginHorizontal: 1 }} icon="ticket-account" mode="outlined" disabled>
-            {data?.license?.name}
+            {data?.dropzone?.dropzoneUser?.license?.name}
           </Chip>
           {!selectedRig || !exitWeight || !selectedRig.canopySize ? null : (
             <Chip style={{ marginHorizontal: 1 }} icon="escalator-down" mode="outlined" disabled>
@@ -149,8 +95,7 @@ export default function UserRigCard(props: IUserRigCard) {
         <View style={styles.row}>
           <View style={styles.rowFirst}>
             <RigSelect
-              userId={dropzoneUserId}
-              dropzoneId={dropzoneId}
+              dropzoneUserId={dropzoneUserId}
               onSelect={onChangeRig}
               value={selectedRig}
               tandem={isTandem}

@@ -1,131 +1,10 @@
 import * as React from 'react';
-import { gql, useMutation } from '@apollo/client';
+import { useCreatePlaneMutation, useUpdatePlaneMutation } from 'app/api/reflection';
 import { actions, useAppSelector, useAppDispatch } from '../../state';
 
-import { Mutation } from '../../api/schema';
 import PlaneForm from '../forms/plane/PlaneForm';
 import DialogOrSheet from '../layout/DialogOrSheet';
 import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
-
-const MUTATION_UPDATE_PLANE = gql`
-  mutation UpdatePlane(
-    $id: Int!
-    $name: String!
-    $registration: String!
-    $minSlots: Int!
-    $maxSlots: Int!
-    $hours: Int
-    $nextMaintenanceHours: Int
-  ) {
-    updatePlane(
-      input: {
-        id: $id
-        attributes: {
-          name: $name
-          registration: $registration
-          minSlots: $minSlots
-          maxSlots: $maxSlots
-          hours: $hours
-          nextMaintenanceHours: $nextMaintenanceHours
-        }
-      }
-    ) {
-      plane {
-        id
-        name
-        registration
-        minSlots
-        maxSlots
-        hours
-        nextMaintenanceHours
-
-        dropzone {
-          id
-          name
-          planes {
-            id
-            name
-            registration
-            minSlots
-            maxSlots
-            hours
-            nextMaintenanceHours
-          }
-        }
-      }
-      fieldErrors {
-        field
-        message
-      }
-      errors
-    }
-  }
-`;
-
-const MUTATION_CREATE_PLANE = gql`
-  mutation CreatePlane(
-    $name: String!
-    $registration: String!
-    $dropzoneId: Int!
-    $minSlots: Int!
-    $maxSlots: Int!
-    $hours: Int
-    $nextMaintenanceHours: Int
-  ) {
-    createPlane(
-      input: {
-        attributes: {
-          name: $name
-          registration: $registration
-          dropzoneId: $dropzoneId
-          minSlots: $minSlots
-          maxSlots: $maxSlots
-          hours: $hours
-          nextMaintenanceHours: $nextMaintenanceHours
-        }
-      }
-    ) {
-      plane {
-        ...plane
-
-        dropzone {
-          id
-          planes {
-            ...plane
-          }
-        }
-      }
-      fieldErrors {
-        field
-        message
-      }
-      errors
-    }
-  }
-  fragment plane on Plane {
-    id
-    name
-    registration
-    minSlots
-    maxSlots
-    hours
-    nextMaintenanceHours
-
-    dropzone {
-      id
-      name
-      planes {
-        id
-        name
-        registration
-        minSlots
-        maxSlots
-        hours
-        nextMaintenanceHours
-      }
-    }
-  }
-`;
 
 interface IPlaneDialogProps {
   open: boolean;
@@ -138,8 +17,8 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
   const state = useAppSelector((root) => root.forms.plane);
   const dispatch = useAppDispatch();
 
-  const [mutationCreatePlane, create] = useMutation<Mutation>(MUTATION_CREATE_PLANE);
-  const [mutationUpdatePlane, update] = useMutation<Mutation>(MUTATION_UPDATE_PLANE);
+  const [mutationCreatePlane, create] = useCreatePlaneMutation();
+  const [mutationUpdatePlane, update] = useUpdatePlaneMutation();
 
   const validate = React.useCallback((): boolean => {
     let hasError = false;
@@ -166,26 +45,85 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
     state.fields.registration.value,
   ]);
 
-  const onSave = React.useCallback(async () => {
+  const onUpdatePlane = React.useCallback(async () => {
     const { name, registration, maxSlots, minSlots } = state.fields;
-
-    const mutation = state.original?.id ? mutationUpdatePlane : mutationCreatePlane;
 
     if (validate()) {
       try {
-        const result = await mutation({
+        const result = await mutationUpdatePlane({
           variables: {
-            ...(state.original?.id
-              ? { id: Number(state.original.id) }
-              : { dropzoneId: Number(currentDropzone?.dropzone?.id) }),
-            name: name.value,
-            registration: registration.value,
-            minSlots: minSlots.value,
-            maxSlots: maxSlots.value,
+            id: Number(state.original?.id),
+            name: name.value || '',
+            registration: registration.value || '',
+            minSlots: minSlots.value || 0,
+            maxSlots: maxSlots.value || 0,
           },
         });
 
-        const payload = state.original?.id ? result?.data?.updatePlane : result?.data?.createPlane;
+        const payload = result?.data?.updatePlane;
+
+        if (payload?.fieldErrors?.length) {
+          payload.fieldErrors.forEach(({ field, message }) => {
+            switch (field) {
+              case 'max_slots':
+                return dispatch(actions.forms.plane.setFieldError(['maxSlots', message]));
+              case 'name':
+                return dispatch(actions.forms.plane.setFieldError(['name', message]));
+              case 'min_slots':
+                return dispatch(actions.forms.plane.setFieldError(['minSlots', message]));
+              case 'registration':
+                return dispatch(actions.forms.plane.setFieldError(['registration', message]));
+              default:
+                return null;
+            }
+          });
+          return;
+        }
+
+        if (payload?.errors?.length) {
+          payload.errors.forEach((message) =>
+            dispatch(actions.notifications.showSnackbar({ message, variant: 'error' }))
+          );
+        }
+
+        if (payload?.plane) {
+          const plane = payload?.plane;
+          dispatch(
+            actions.notifications.showSnackbar({
+              message: `Added plane ${plane.name}`,
+              variant: 'success',
+            })
+          );
+          onClose();
+          dispatch(actions.forms.plane.reset());
+        }
+      } catch (error) {
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: error.message,
+            variant: 'error',
+          })
+        );
+      }
+    }
+  }, [dispatch, mutationUpdatePlane, onClose, state.fields, state.original?.id, validate]);
+
+  const onCreate = React.useCallback(async () => {
+    const { name, registration, maxSlots, minSlots } = state.fields;
+
+    if (validate()) {
+      try {
+        const result = await mutationCreatePlane({
+          variables: {
+            dropzoneId: Number(currentDropzone?.dropzone?.id),
+            name: name.value || '',
+            registration: registration.value || '',
+            minSlots: minSlots.value || 0,
+            maxSlots: maxSlots.value || 0,
+          },
+        });
+
+        const payload = result?.data?.createPlane;
 
         if (payload?.fieldErrors?.length) {
           payload.fieldErrors.forEach(({ field, message }) => {
@@ -235,12 +173,17 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
     currentDropzone?.dropzone?.id,
     dispatch,
     mutationCreatePlane,
-    mutationUpdatePlane,
     onClose,
     state.fields,
-    state.original?.id,
     validate,
   ]);
+
+  const onSave = React.useMemo(() => {
+    if (state.original?.id) {
+      return onUpdatePlane;
+    }
+    return onCreate;
+  }, [onCreate, onUpdatePlane, state.original?.id]);
 
   const snapPoints = React.useMemo(() => [580, '80%'], []);
   const onDialogClose = React.useCallback(() => {

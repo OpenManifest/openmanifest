@@ -1,39 +1,22 @@
-import { useMutation } from '@apollo/client';
-import gql from 'graphql-tag';
+import { useUpdateRoleMutation } from 'app/api/reflection';
 import * as React from 'react';
 import { List, Switch } from 'react-native-paper';
-import { Mutation, Permission, UserRole } from '../../api/schema.d';
-import useRestriction from '../../hooks/useRestriction';
-import { actions, useAppDispatch } from '../../state';
+import { actions, useAppDispatch } from 'app/state';
+import { Permission } from 'app/api/schema.d';
+import useRestriction from 'app/hooks/useRestriction';
+import { RoleDetailedFragment } from 'app/api/operations';
 
 interface IPermissionListItem {
   title: string;
   description?: string;
-  role: UserRole;
+  role: RoleDetailedFragment;
   permissionName: string;
 }
-
-const MUTATION_UPDATE_ROLE = gql`
-  mutation UpdateRole($roleId: Int!, $permissionName: String!, $enabled: Boolean!) {
-    updateRole(input: { id: $roleId, permission: $permissionName, enabled: $enabled }) {
-      role {
-        id
-        name
-        permissions
-      }
-      fieldErrors {
-        field
-        message
-      }
-      errors
-    }
-  }
-`;
 
 export default function PermissionListItem(props: IPermissionListItem) {
   const { title, description, role, permissionName } = props;
   const canChangePermissions = useRestriction(Permission.GrantPermission);
-  const [mutationUpdatePermission] = useMutation<Mutation>(MUTATION_UPDATE_ROLE);
+  const [mutationUpdatePermission] = useUpdateRoleMutation();
   const dispatch = useAppDispatch();
 
   return (

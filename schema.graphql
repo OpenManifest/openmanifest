@@ -333,6 +333,8 @@ type DeleteDropzonePayload {
   """
   clientMutationId: String
   dropzone: Dropzone
+  errors: [String!]
+  fieldErrors: [FieldError!]
 }
 
 """
@@ -354,6 +356,8 @@ type DeleteLoadPayload {
   A unique identifier for the client performing the mutation.
   """
   clientMutationId: String
+  errors: [String!]
+  fieldErrors: [FieldError!]
   load: Load
 }
 
@@ -684,7 +688,14 @@ type DropzoneUser implements AnyResource & Wallet {
   """
   Get user rigs that have been inspected and marked as OK + dropzone rigs
   """
-  availableRigs(isTandem: Boolean): [Rig!]
+  availableRigs(
+    isTandem: Boolean
+
+    """
+    Filter out rigs already occupied for a load
+    """
+    loadId: Int
+  ): [Rig!]
   createdAt: Int!
   credits: Int
   dropzone: Dropzone!
@@ -1984,6 +1995,19 @@ input PlaneInput {
 
 type Query {
   """
+  Get user rigs that have been inspected and marked as OK + dropzone rigs
+  """
+  availableRigs(
+    dropzoneUserId: Int!
+    isTandem: Boolean
+
+    """
+    Filter out rigs already occupied for a load
+    """
+    loadId: Int
+  ): [Rig!]
+
+  """
   Get dropzone details
   """
   dropzone(id: Int!): Dropzone!
@@ -2038,7 +2062,7 @@ type Query {
   """
   Get all jump types
   """
-  jumpTypes(allowedForUserId: Int): [JumpType!]!
+  jumpTypes(dropzoneUserIds: [Int!]): [JumpType!]!
 
   """
   Get all licenses for a federation

@@ -1,15 +1,18 @@
-import { useMutation, useQuery } from '@apollo/client';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import { startOfDay } from 'date-fns';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { Button, Card, Checkbox, Divider, Paragraph } from 'react-native-paper';
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import RigInspectionForm from 'app/components/forms/rig_inspection/RigInspectionForm';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
-import { QueryDropzoneDocument, QueryDropzoneUserProfileDocument } from 'app/api/reflection';
+import {
+  QueryDropzoneDocument,
+  QueryDropzoneUserProfileDocument,
+  useCreateRigInspectionMutation,
+  useQueryDropzoneUserProfile,
+} from 'app/api/reflection';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
-import { Mutation, Query, Rig, Permission } from 'app/api/schema.d';
+import { Query, Rig, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import {
@@ -17,101 +20,6 @@ import {
   QueryDropzoneUserProfileQueryVariables,
 } from 'app/api/operations';
 import RigCard from '../equipment/RigCard';
-
-const QUERY_RIG_INSPECTIONS = gql`
-  query RigInspections($dropzoneUserId: Int, $dropzoneId: Int!, $userId: Int) {
-    dropzone(id: $dropzoneId) {
-      id
-
-      rigInspectionTemplate {
-        id
-        name
-        definition
-      }
-
-      dropzoneUser(id: $dropzoneUserId, userId: $userId) {
-        id
-        rigInspections {
-          id
-          isOk
-          definition
-          rig {
-            id
-            name
-          }
-          inspectedBy {
-            id
-            user {
-              id
-              name
-            }
-          }
-          formTemplate {
-            id
-            name
-            definition
-          }
-        }
-      }
-    }
-  }
-`;
-
-const MUTATION_CREATE_RIG_INSPECTION = gql`
-  mutation CreateRigInspection($dropzoneId: Int, $rigId: Int, $isOk: Boolean, $definition: String) {
-    createRigInspection(
-      input: {
-        attributes: { dropzoneId: $dropzoneId, rigId: $rigId, isOk: $isOk, definition: $definition }
-      }
-    ) {
-      rigInspection {
-        id
-        isOk
-        definition
-        dropzoneUser {
-          id
-          rigInspections {
-            id
-            isOk
-            rig {
-              id
-            }
-            inspectedBy {
-              id
-              user {
-                id
-                name
-              }
-            }
-          }
-        }
-        inspectedBy {
-          id
-          user {
-            id
-            name
-          }
-        }
-        rig {
-          id
-          name
-          make
-          model
-        }
-
-        formTemplate {
-          id
-          definition
-        }
-      }
-      fieldErrors {
-        field
-        message
-      }
-      errors
-    }
-  }
-`;
 
 export default function RigInspectionScreen() {
   const state = useAppSelector((root) => root.forms.rigInspection);
@@ -123,12 +31,11 @@ export default function RigInspectionScreen() {
     name: string;
     params: { rig: Rig; dropzoneUserId: number; userId: number };
   }>();
-  const { rig, dropzoneUserId, userId } = route.params;
-  const { data, refetch } = useQuery<Query>(QUERY_RIG_INSPECTIONS, {
+  const { rig, dropzoneUserId } = route.params;
+  const { data, refetch } = useQueryDropzoneUserProfile({
     variables: {
       dropzoneId: Number(currentDropzone?.dropzone?.id),
       dropzoneUserId,
-      userId,
     },
   });
 
@@ -139,9 +46,7 @@ export default function RigInspectionScreen() {
   }, [isFocused, refetch]);
 
   const canInspect = useRestriction(Permission.ActAsRigInspector);
-  const [mutationCreateRigInspection, mutation] = useMutation<Mutation>(
-    MUTATION_CREATE_RIG_INSPECTION
-  );
+  const [mutationCreateRigInspection, mutation] = useCreateRigInspectionMutation();
   const navigation = useNavigation();
   React.useEffect(() => {
     const hasExistingRigInspection = data?.dropzone?.dropzoneUser?.rigInspections?.some(

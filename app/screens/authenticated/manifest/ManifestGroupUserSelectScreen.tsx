@@ -1,47 +1,20 @@
-import { useQuery } from '@apollo/client';
 import { useIsFocused, useNavigation } from '@react-navigation/core';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Avatar, Checkbox, Divider, FAB, List, ProgressBar } from 'react-native-paper';
 
-import NoResults from '../../../components/NoResults';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import { DropzoneUser, Query } from '../../../api/schema';
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
-
-const QUERY_DROPZONE_USERS = gql`
-  query QueryDropzoneUsersSearch($dropzoneId: Int!, $search: String) {
-    dropzone(id: $dropzoneId) {
-      id
-      name
-
-      dropzoneUsers(search: $search, licensed: true) {
-        edges {
-          node {
-            id
-            role {
-              id
-              name
-            }
-            user {
-              id
-              image
-              name
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+import NoResults from 'app/components/NoResults';
+import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import { DropzoneUser } from 'app/api/schema.d';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useDropzoneUsersQuery } from 'app/api/reflection';
 
 export default function ManifestGroupUserSelectScreen() {
   const global = useAppSelector((root) => root.global);
   const manifest = useAppSelector((root) => root.screens.manifest);
   const dispatch = useAppDispatch();
 
-  const { data, loading } = useQuery<Query>(QUERY_DROPZONE_USERS, {
+  const { data, loading } = useDropzoneUsersQuery({
     variables: {
       dropzoneId: Number(global.currentDropzoneId),
       search: manifest.searchText,

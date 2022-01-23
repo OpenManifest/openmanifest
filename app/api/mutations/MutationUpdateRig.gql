@@ -5,6 +5,7 @@ mutation UpdateRig(
     $make: String
     $model: String
     $serial: String
+    $isPublic: Boolean
     $rigType: String
     $canopySize: Int
     $packingCard: String
@@ -19,6 +20,7 @@ mutation UpdateRig(
           name: $name
           make: $make
           packingCard: $packingCard
+          isPublic: $isPublic
           model: $model
           serial: $serial
           repackExpiresAt: $repackExpiresAt

@@ -1,63 +1,10 @@
 import * as React from 'react';
 import { Appbar, IconButton, Chip } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
-import { gql, useLazyQuery } from '@apollo/client';
 import { DrawerActions } from '@react-navigation/native';
-import { Query } from '../api/schema';
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { actions, useAppDispatch, useAppSelector } from '../state';
 import SetupWarning from './SetupWarning';
-
-const QUERY_CURRENT_USER = gql`
-  query QueryDropzone($dropzoneId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      isCreditSystemEnabled
-
-      currentUser {
-        id
-        credits
-        expiresAt
-
-        rigInspections {
-          id
-          rig {
-            id
-            repackExpiresAt
-          }
-        }
-        license {
-          id
-          name
-        }
-
-        user {
-          id
-          name
-          exitWeight
-          email
-          phone
-          rigs {
-            id
-            name
-            model
-            make
-            serial
-            canopySize
-            repackExpiresAt
-          }
-          jumpTypes {
-            id
-            name
-          }
-          license {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
-`;
 
 interface IAppBarProps extends StackHeaderProps {
   hideWarnings?: boolean;
@@ -65,19 +12,9 @@ interface IAppBarProps extends StackHeaderProps {
 
 function AppBar(props: IAppBarProps) {
   const { navigation, previous, scene, hideWarnings } = props;
-  const { currentDropzoneId, palette, theme } = useAppSelector((root) => root.global);
+  const { palette, theme } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
-  const [loadData, { data, loading }] = useLazyQuery<Query>(QUERY_CURRENT_USER, {
-    variables: {
-      dropzoneId: Number(currentDropzoneId),
-    },
-  });
-
-  React.useEffect(() => {
-    if (currentDropzoneId) {
-      loadData();
-    }
-  }, [loadData, currentDropzoneId]);
+  const { currentUser, loading, dropzone } = useCurrentDropzone();
 
   return (
     <>
@@ -105,32 +42,30 @@ function AppBar(props: IAppBarProps) {
             style={{ backgroundColor: palette.accent.main }}
             mode="flat"
             textStyle={{ color: palette.surface }}
-          >{`$${data?.dropzone?.currentUser?.credits || 0}`}</Chip>
+          >{`$${currentUser?.credits || 0}`}</Chip>
         )}
       </Appbar.Header>
       {hideWarnings ? null : (
         <SetupWarning
-          credits={data?.dropzone?.currentUser?.credits || 0}
+          credits={currentUser?.credits || 0}
           loading={loading}
-          isCreditSystemEnabled={!!data?.dropzone?.isCreditSystemEnabled}
-          isExitWeightDefined={!!data?.dropzone?.currentUser?.user?.exitWeight}
+          isCreditSystemEnabled={!!dropzone?.isCreditSystemEnabled}
+          isExitWeightDefined={!!currentUser?.user?.exitWeight}
           isMembershipInDate={
-            !!data?.dropzone?.currentUser?.expiresAt &&
-            data?.dropzone?.currentUser?.expiresAt > new Date().getTime() / 1000
+            !!currentUser?.expiresAt && currentUser?.expiresAt > new Date().getTime() / 1000
           }
           isReserveInDate={
-            !!data?.dropzone?.currentUser?.user?.rigs?.some((rig) => {
-              const isRigInspected = data.dropzone?.currentUser?.rigInspections?.map(
+            !!currentUser?.user?.rigs?.some((rig) => {
+              const isRigInspected = dropzone?.currentUser?.rigInspections?.map(
                 (inspection) => inspection?.rig?.id === rig.id
               );
               const isRepackInDate = (rig.repackExpiresAt || 0) > new Date().getTime() / 1000;
               return isRigInspected && isRepackInDate;
             })
           }
-          isRigInspectionComplete={!!data?.dropzone?.currentUser?.rigInspections?.length}
-          isRigSetUp={!!data?.dropzone?.currentUser?.user?.rigs?.length}
+          isRigInspectionComplete={!!currentUser?.rigInspections?.length}
+          isRigSetUp={!!currentUser?.user?.rigs?.length}
           onSetupWizard={() => {
-            const currentUser = data?.dropzone?.currentUser;
             console.log('opening setup wizard');
             if (currentUser) {
               dispatch(actions.forms.user.setOriginal(currentUser));

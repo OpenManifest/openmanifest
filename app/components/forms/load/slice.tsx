@@ -1,17 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Load } from '../../../api/schema.d';
+import { LoadDetailsFragment } from 'app/api/operations';
 
 export type LoadFields = Pick<
-  Load,
+  LoadDetailsFragment,
   'name' | 'gca' | 'dispatchAt' | 'isOpen' | 'loadMaster' | 'pilot' | 'maxSlots' | 'plane'
 >;
 
 interface ILoadEditState {
-  original: Load | null;
+  original: LoadDetailsFragment | null;
   open: boolean;
   fields: {
     [K in keyof LoadFields]-?: {
-      value: Load[K] | null;
+      value: LoadDetailsFragment[K] | null;
       error: string | null;
     };
   };
@@ -78,7 +78,7 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOpen: (state: ILoadEditState, action: PayloadAction<boolean | Load>) => {
+    setOpen: (state: ILoadEditState, action: PayloadAction<boolean | LoadDetailsFragment>) => {
       if (typeof action.payload === 'boolean') {
         state.open = action.payload;
         state.original = null;

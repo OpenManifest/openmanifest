@@ -4,11 +4,11 @@ import { StyleSheet } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 
 import { FlatList } from 'react-native-gesture-handler';
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import CreditsSheet from '../../../components/dialogs/CreditsDialog/Credits';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import CreditsSheet from 'app/components/dialogs/CreditsDialog/Credits';
 
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
-import useDropzoneUser from '../../../api/hooks/useDropzoneUser';
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useQueryDropzoneUserProfile } from 'app/api/reflection';
 import OrderCard from './OrderCard';
 
 export default function TransactionsScreen() {
@@ -17,8 +17,15 @@ export default function TransactionsScreen() {
   const dispatch = useAppDispatch();
   const { currentUser } = useCurrentDropzone();
   const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
-  const { dropzoneUser, loading, refetch } = useDropzoneUser(
-    Number(route?.params?.userId) || Number(currentUser?.id)
+  const { data, loading, refetch } = useQueryDropzoneUserProfile({
+    variables: {
+      dropzoneId: Number(state?.currentDropzoneId),
+      dropzoneUserId: Number(route?.params?.userId) || Number(currentUser?.id),
+    },
+  });
+  const dropzoneUser = React.useMemo(
+    () => data?.dropzone?.dropzoneUser,
+    [data?.dropzone?.dropzoneUser]
   );
 
   const isFocused = useIsFocused();

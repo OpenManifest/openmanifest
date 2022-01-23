@@ -16,12 +16,13 @@ import {
   CurrentUserPermissionsDocument,
   DropzoneUsersDocument,
   QueryDropzoneUserProfileDocument,
+  useGrantPermissionMutation,
+  useRevokePermissionMutation,
 } from 'app/api/reflection';
 // eslint-disable-next-line max-len
 import Badge, { IBadgeProps } from 'app/components/Badge';
 import useRestriction from 'app/hooks/useRestriction';
-import useMutationRevokePermission from 'app/api/hooks/useMutationRevokePermission';
-import useMutationGrantPermission from 'app/api/hooks/useMutationGrantPermission';
+import mutationHandlers from 'app/api/utils/createErrorHandler';
 
 interface IPermissionBadgesProps {
   permissions: Permission[];
@@ -34,56 +35,153 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
 
   const canGrantPermission = useRestriction(Permission.GrantPermission);
 
-  const revokePermission = useMutationRevokePermission({
-    onSuccess: (payload) => {
-      dispatch(actions.notifications.showSnackbar({ message: 'Permission revoked' }));
-    },
-    onError: (error) => {
-      dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' }));
-    },
-    mutation: {
-      refetchQueries: [
-        {
-          query: QueryDropzoneDocument,
-          variables: {
-            dropzoneId: state.currentDropzoneId,
-            earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
+  const [revoke] = useRevokePermissionMutation({
+    ...mutationHandlers({
+      onSuccess: (payload) => {
+        dispatch(actions.notifications.showSnackbar({ message: 'Permission revoked' }));
+      },
+      onError: (error) => {
+        dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' }));
+      },
+    }),
+    refetchQueries: [
+      {
+        query: QueryDropzoneDocument,
+        variables: {
+          dropzoneId: state.currentDropzoneId,
+          earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
+        },
+      },
+      {
+        query: QueryDropzoneUserProfileDocument,
+        variables: {
+          dropzoneId: state.currentDropzoneId,
+          dropzoneUserId: Number(dropzoneUser.id),
+        },
+      },
+    ],
+    update: async (client, { data }, { variables }) => {
+      const c = client.readQuery<DropzoneUsersQuery, DropzoneUsersQueryVariables>({
+        query: DropzoneUsersDocument,
+        variables: {
+          permissions: [variables?.permissionName].filter(Boolean) as Permission[],
+          dropzoneId: Number(state.currentDropzoneId),
+        },
+      });
+
+      const updatedList = (c?.dropzone?.dropzoneUsers?.edges || []).filter(
+        (edge) => edge?.node?.id !== dropzoneUser?.id
+      );
+
+      client.writeQuery<DropzoneUsersQuery, DropzoneUsersQueryVariables>({
+        query: DropzoneUsersDocument,
+        variables: {
+          permissions: [variables?.permissionName].filter(Boolean) as Permission[],
+          dropzoneId: Number(state.currentDropzoneId),
+        },
+        data: {
+          ...c,
+          dropzone: {
+            ...c?.dropzone,
+            id: `${state.currentDropzoneId}`,
+            dropzoneUsers: {
+              edges: updatedList,
+            },
           },
         },
-        {
-          query: QueryDropzoneUserProfileDocument,
-          variables: {
-            dropzoneId: state.currentDropzoneId,
-            dropzoneUserId: Number(dropzoneUser.id),
+      });
+
+      return {
+        data: {
+          ...c,
+          dropzone: {
+            ...c?.dropzone,
+            dropzoneUsers: {
+              edges: updatedList,
+            },
           },
         },
-      ],
+      };
     },
   });
-  const grantPermission = useMutationGrantPermission({
-    onSuccess: (payload) => {
-      dispatch(actions.notifications.showSnackbar({ message: 'Permission granted' }));
-    },
-    onError: (error) => {
-      dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' }));
-    },
-    mutation: {
-      refetchQueries: [
-        {
-          query: QueryDropzoneDocument,
-          variables: {
-            dropzoneId: state.currentDropzoneId,
-            earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
+  const [grant] = useGrantPermissionMutation({
+    ...mutationHandlers({
+      onSuccess: (payload) => {
+        dispatch(actions.notifications.showSnackbar({ message: 'Permission granted' }));
+      },
+      onError: (error) => {
+        dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' }));
+      },
+    }),
+    refetchQueries: [
+      {
+        query: QueryDropzoneDocument,
+        variables: {
+          dropzoneId: state.currentDropzoneId,
+          earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
+        },
+      },
+      {
+        query: QueryDropzoneUserProfileDocument,
+        variables: {
+          dropzoneId: state.currentDropzoneId,
+          dropzoneUserId: Number(dropzoneUser.id),
+        },
+      },
+    ],
+    update: async (client, { data }, { variables }) => {
+      const c = client.readQuery<DropzoneUsersQuery, DropzoneUsersQueryVariables>({
+        query: DropzoneUsersDocument,
+        variables: {
+          permissions: [variables?.permissionName].filter(Boolean) as Permission[],
+          dropzoneId: Number(state.currentDropzoneId),
+        },
+      });
+
+      const current = c?.dropzone?.dropzoneUsers?.edges || [];
+      const shouldUpdate = !!current.find((edge) => edge?.node?.id === dropzoneUser?.id);
+
+      const updatedGcaList = shouldUpdate
+        ? [
+            ...(c?.dropzone?.dropzoneUsers?.edges || []).map((edge) =>
+              edge?.node?.id !== dropzoneUser?.id
+                ? edge
+                : {
+                    ...edge,
+                    node: {
+                      ...edge?.node,
+                      ...data?.grantPermission?.dropzoneUser,
+                    },
+                  }
+            ),
+          ]
+        : [
+            ...(c?.dropzone?.dropzoneUsers?.edges || []),
+            {
+              node: data?.grantPermission?.dropzoneUser,
+            },
+          ];
+      const newData = {
+        ...c,
+        dropzone: {
+          ...c?.dropzone,
+          dropzoneUsers: {
+            edges: updatedGcaList,
           },
         },
-        {
-          query: QueryDropzoneUserProfileDocument,
-          variables: {
-            dropzoneId: state.currentDropzoneId,
-            dropzoneUserId: Number(dropzoneUser.id),
-          },
+      };
+      client.writeQuery({
+        query: CurrentUserPermissionsDocument,
+        variables: {
+          dropzoneId: Number(state.currentDropzoneId),
+          permissions: [variables?.permissionName],
         },
-      ],
+        data: newData,
+      });
+
+      return {
+        data: newData,
+      };
     },
   });
 
@@ -115,143 +213,18 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
               !canGrantPermission
                 ? null
                 : badges.includes(permission)
-                ? revokePermission.mutate(
-                    {
+                ? revoke({
+                    variables: {
                       permissionName: permission,
                       dropzoneUserId: Number(dropzoneUser?.id),
                     },
-                    {
-                      refetchQueries: [
-                        {
-                          query: DropzoneUsersDocument,
-                          variables: {
-                            dropzoneId: state.currentDropzoneId,
-                            permissions: [permission],
-                          },
-                        },
-                      ],
-                      update: async (client, { data }) => {
-                        const c = client.readQuery<DropzoneUsersQuery, DropzoneUsersQueryVariables>(
-                          {
-                            query: DropzoneUsersDocument,
-                            variables: {
-                              permissions: [permission],
-                              dropzoneId: Number(state.currentDropzoneId),
-                            },
-                          }
-                        );
-
-                        const updatedList = (c?.dropzone?.dropzoneUsers?.edges || []).filter(
-                          (edge) => edge?.node?.id !== dropzoneUser?.id
-                        );
-
-                        client.writeQuery<DropzoneUsersQuery, DropzoneUsersQueryVariables>({
-                          query: DropzoneUsersDocument,
-                          variables: {
-                            permissions: [permission],
-                            dropzoneId: Number(state.currentDropzoneId),
-                          },
-                          data: {
-                            ...c,
-                            dropzone: {
-                              ...c?.dropzone,
-                              id: `${state.currentDropzoneId}`,
-                              dropzoneUsers: {
-                                edges: updatedList,
-                              },
-                            },
-                          },
-                        });
-
-                        return {
-                          data: {
-                            ...c,
-                            dropzone: {
-                              ...c?.dropzone,
-                              dropzoneUsers: {
-                                edges: updatedList,
-                              },
-                            },
-                          },
-                        };
-                      },
-                    }
-                  )
-                : grantPermission.mutate(
-                    {
+                  })
+                : grant({
+                    variables: {
                       permissionName: permission,
                       dropzoneUserId: Number(dropzoneUser?.id),
                     },
-                    {
-                      refetchQueries: [
-                        {
-                          query: DropzoneUsersDocument,
-                          variables: {
-                            dropzoneId: state.currentDropzoneId,
-                            permissions: [permission],
-                          },
-                        },
-                      ],
-                      update: async (client, { data }) => {
-                        const c = client.readQuery<DropzoneUsersQuery, DropzoneUsersQueryVariables>(
-                          {
-                            query: DropzoneUsersDocument,
-                            variables: {
-                              permissions: [permission],
-                              dropzoneId: Number(state.currentDropzoneId),
-                            },
-                          }
-                        );
-
-                        const current = c?.dropzone?.dropzoneUsers?.edges || [];
-                        const shouldUpdate = !!current.find(
-                          (edge) => edge?.node?.id === dropzoneUser?.id
-                        );
-
-                        const updatedGcaList = shouldUpdate
-                          ? [
-                              ...(c?.dropzone?.dropzoneUsers?.edges || []).map((edge) =>
-                                edge?.node?.id !== dropzoneUser?.id
-                                  ? edge
-                                  : {
-                                      ...edge,
-                                      node: {
-                                        ...edge?.node,
-                                        ...data?.grantPermission?.dropzoneUser,
-                                      },
-                                    }
-                              ),
-                            ]
-                          : [
-                              ...(c?.dropzone?.dropzoneUsers?.edges || []),
-                              {
-                                node: data?.grantPermission?.dropzoneUser,
-                              },
-                            ];
-                        const newData = {
-                          ...c,
-                          dropzone: {
-                            ...c?.dropzone,
-                            dropzoneUsers: {
-                              edges: updatedGcaList,
-                            },
-                          },
-                        };
-                        client.writeQuery({
-                          query: CurrentUserPermissionsDocument,
-                          variables: {
-                            dropzoneId: Number(state.currentDropzoneId),
-                            permissions: [permission],
-                          },
-                          data: newData,
-                        });
-
-                        return {
-                          data: newData,
-                        };
-                      },
-                    }
-                  )
+                  })
             }
           />
         )

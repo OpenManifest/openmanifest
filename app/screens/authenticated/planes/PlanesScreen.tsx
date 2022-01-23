@@ -1,68 +1,27 @@
-import { useMutation, useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar } from 'react-native-paper';
 import { useIsFocused } from '@react-navigation/core';
-import { Mutation, Permission, Query } from '../../../api/schema.d';
+import { useArchivePlaneMutation, usePlanesQuery } from 'app/api/reflection';
+import { Permission } from 'app/api/schema.d';
 
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import NoResults from '../../../components/NoResults';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import PlaneDialog from '../../../components/dialogs/Plane';
-import useRestriction from '../../../hooks/useRestriction';
-import SwipeActions from '../../../components/layout/SwipeActions';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import NoResults from 'app/components/NoResults';
+import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import PlaneDialog from 'app/components/dialogs/Plane';
+import useRestriction from 'app/hooks/useRestriction';
+import SwipeActions from 'app/components/layout/SwipeActions';
 
-const QUERY_PLANES = gql`
-  query QueryPlanes($dropzoneId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      planes {
-        id
-        name
-        registration
-        hours
-        minSlots
-        maxSlots
-        nextMaintenanceHours
-        createdAt
-      }
-    }
-  }
-`;
-
-const MUTATION_DELETE_PLANE = gql`
-  mutation DeletePlane($id: Int!) {
-    deletePlane(input: { id: $id }) {
-      errors
-      plane {
-        id
-        dropzone {
-          id
-          planes {
-            name
-            registration
-            hours
-            minSlots
-            maxSlots
-            nextMaintenanceHours
-            createdAt
-          }
-        }
-      }
-    }
-  }
-`;
 export default function PlanesScreen() {
   const global = useAppSelector((root) => root.global);
   const state = useAppSelector((root) => root.forms.plane);
-  const { data, loading, refetch } = useQuery<Query>(QUERY_PLANES, {
+  const { data, loading, refetch } = usePlanesQuery({
     variables: {
       dropzoneId: Number(global.currentDropzoneId),
     },
   });
 
-  const [deletePlane] = useMutation<Mutation>(MUTATION_DELETE_PLANE);
+  const [deletePlane] = useArchivePlaneMutation();
   const dispatch = useAppDispatch();
 
   const isFocused = useIsFocused();
@@ -83,21 +42,21 @@ export default function PlanesScreen() {
       >
         <ProgressBar visible={loading} color={global.theme.colors.accent} />
 
-        {data?.dropzone?.planes?.length ? null : (
+        {data?.planes?.length ? null : (
           <NoResults
             title="No planes?"
             subtitle="You need to have at least one plane to manifest loads"
           />
         )}
 
-        {!data?.dropzone?.planes?.length ? null : (
+        {!data?.planes?.length ? null : (
           <DataTable>
             <DataTable.Header>
               <DataTable.Title>Name</DataTable.Title>
               <DataTable.Title numeric>Registration</DataTable.Title>
               <DataTable.Title numeric>Slots</DataTable.Title>
             </DataTable.Header>
-            {data?.dropzone?.planes?.map((plane) => (
+            {data?.planes?.map((plane) => (
               <SwipeActions
                 key={`plane-${plane.id}`}
                 disabled={!canDeletePlane}

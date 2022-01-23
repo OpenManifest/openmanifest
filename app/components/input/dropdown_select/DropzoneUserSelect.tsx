@@ -1,6 +1,6 @@
+import { useDropzoneUsersQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { List, Menu, Title } from 'react-native-paper';
-import useQueryDropzoneUsers from '../../../api/hooks/useQueryDropzoneUsers';
 import { DropzoneUser, Permission } from '../../../api/schema.d';
 import { useAppSelector } from '../../../state';
 
@@ -17,7 +17,7 @@ export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const globalState = useAppSelector((root) => root.global);
 
-  const { data, refetch } = useQueryDropzoneUsers({
+  const { data, refetch } = useDropzoneUsersQuery({
     variables: {
       dropzoneId: globalState.currentDropzoneId as number,
       permissions: requiredPermissions,
@@ -33,7 +33,7 @@ export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
         anchor={
           <List.Item
             onPress={() => {
-              if (!data?.edges?.length) {
+              if (!data?.dropzone?.dropzoneUsers?.edges?.length) {
                 refetch();
               }
               setMenuOpen(true);
@@ -45,7 +45,7 @@ export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
           />
         }
       >
-        {data?.edges?.map((edge) => (
+        {data?.dropzone?.dropzoneUsers?.edges?.map((edge) => (
           <Menu.Item
             key={`user-select-${edge?.node?.id}`}
             style={{ width: '100%' }}

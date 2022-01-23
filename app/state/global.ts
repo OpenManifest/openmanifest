@@ -7,8 +7,8 @@ import { DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme } from '
 import { Theme } from 'react-native-paper/lib/typescript/types';
 import color from 'color';
 import { primaryColor } from 'app/constants/Colors';
-import { Credential, User } from '../api/schema';
-import { DropzoneExtensiveFragment } from '../api/operations';
+import { DropzoneExtensiveFragment, UserDetailedFragment } from '../api/operations';
+import { Credential } from '../api/schema';
 
 const CombinedDefaultTheme: Theme = {
   ...PaperDefaultTheme,
@@ -45,7 +45,7 @@ const CombinedDarkTheme = {
 interface IGlobalState {
   currentDropzoneId: number | null;
   // @deprecated
-  currentUser: User | null;
+  currentUser: UserDetailedFragment | null;
   credentials: Credential | null;
   // @deprecated
   currentDropzone: DropzoneExtensiveFragment | null;
@@ -99,7 +99,7 @@ export default createSlice({
     setCredentials: (state: IGlobalState, action: PayloadAction<Credential>) => {
       state.credentials = action.payload;
     },
-    setUser: (state: IGlobalState, action: PayloadAction<User>) => {
+    setUser: (state: IGlobalState, action: PayloadAction<UserDetailedFragment>) => {
       state.currentUser = action.payload;
     },
     setExpoPushToken: (state: IGlobalState, action: PayloadAction<string>) => {

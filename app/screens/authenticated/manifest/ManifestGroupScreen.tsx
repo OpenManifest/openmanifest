@@ -1,112 +1,22 @@
-import { gql, useMutation } from '@apollo/client';
 import * as React from 'react';
 import { omit } from 'lodash';
 import { Button, Card, ProgressBar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
-import ScrollableScreen from '../../../components/layout/ScrollableScreen';
-import { Mutation } from '../../../api/schema.d';
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import ManifestGroupForm from '../../../components/forms/manifest_group/ManifestGroupForm';
+import { useManifestGroupMutation } from 'app/api/reflection';
+import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import ManifestGroupForm from 'app/components/forms/manifest_group/ManifestGroupForm';
 
 interface IManifestGroupScreen {
   onSuccess(): void;
 }
-
-const MUTATION_CREATE_SLOTS = gql`
-  mutation CreateMultipleSlot(
-    $jumpTypeId: Int
-    $extraIds: [Int!]
-    $loadId: Int
-    $ticketTypeId: Int
-    $userGroup: [SlotUser!]!
-  ) {
-    createSlots(
-      input: {
-        attributes: {
-          jumpTypeId: $jumpTypeId
-          extraIds: $extraIds
-          loadId: $loadId
-          ticketTypeId: $ticketTypeId
-          userGroup: $userGroup
-        }
-      }
-    ) {
-      errors
-      fieldErrors {
-        field
-        message
-      }
-
-      load {
-        id
-        name
-        loadNumber
-        createdAt
-        dispatchAt
-        hasLanded
-        maxSlots
-        isFull
-        isOpen
-        plane {
-          id
-          name
-        }
-        gca {
-          id
-          user {
-            id
-            name
-          }
-        }
-        pilot {
-          id
-          user {
-            id
-            name
-          }
-        }
-        loadMaster {
-          id
-          user {
-            id
-            name
-          }
-        }
-        slots {
-          id
-          createdAt
-          user {
-            id
-            name
-          }
-          passengerName
-          passengerExitWeight
-          ticketType {
-            id
-            name
-            isTandem
-            altitude
-          }
-          jumpType {
-            id
-            name
-          }
-          extras {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
-`;
 
 export default function ManifestGroupScreen(props: IManifestGroupScreen) {
   const { onSuccess } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.manifestGroup);
   const globalState = useAppSelector((root) => root.global);
-  const [mutationCreateSlots, mutationData] = useMutation<Mutation>(MUTATION_CREATE_SLOTS);
+  const [mutationCreateSlots, mutationData] = useManifestGroupMutation();
   const navigation = useNavigation();
 
   const validate = React.useCallback(() => {
@@ -132,7 +42,7 @@ export default function ManifestGroupScreen(props: IManifestGroupScreen) {
   }, [dispatch, state.fields.jumpType.value?.id, state.fields.ticketType.value?.id]);
 
   const onManifest = React.useCallback(async () => {
-    if (!validate()) {
+    if (!validate() || !state.fields.users.value?.length) {
       return;
     }
     try {
@@ -142,13 +52,13 @@ export default function ManifestGroupScreen(props: IManifestGroupScreen) {
           ticketTypeId: Number(state.fields.ticketType.value?.id),
           extraIds: state.fields.extras?.value?.map(({ id }) => Number(id)),
           loadId: Number(state.fields.load.value?.id),
-          userGroup: state.fields.users.value?.map((slotUserWithRig) =>
+          userGroup: state.fields.users.value.map((slotUserWithRig) =>
             omit(slotUserWithRig, ['rig'])
           ),
         },
       });
 
-      result.data?.createSlot?.fieldErrors?.map(({ field, message }) => {
+      result.data?.createSlots?.fieldErrors?.map(({ field, message }) => {
         switch (field) {
           case 'jump_type':
             return dispatch(actions.forms.manifestGroup.setFieldError(['jumpType', message]));

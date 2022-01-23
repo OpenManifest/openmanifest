@@ -1,8 +1,7 @@
-import { gql, useMutation } from '@apollo/client';
+import { useManifestUserMutation } from 'app/api/reflection';
 import * as React from 'react';
 import { ScrollView } from 'react-native';
 import { Button, Dialog, Portal, ProgressBar } from 'react-native-paper';
-import { Mutation } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import SlotForm from '../../forms/manifest/ManifestForm';
 
@@ -12,119 +11,12 @@ interface IManifestUserDialog {
   onSuccess(): void;
 }
 
-const MUTATION_CREATE_SLOT = gql`
-  mutation CreateSlot(
-    $jumpTypeId: Int
-    $extraIds: [Int!]
-    $loadId: Int
-    $rigId: Int
-    $ticketTypeId: Int
-    $dropzoneUserId: Int
-    $exitWeight: Float
-    $passengerName: String
-    $passengerExitWeight: Float
-  ) {
-    createSlot(
-      input: {
-        attributes: {
-          jumpTypeId: $jumpTypeId
-          extraIds: $extraIds
-          loadId: $loadId
-          rigId: $rigId
-          ticketTypeId: $ticketTypeId
-          dropzoneUserId: $dropzoneUserId
-          exitWeight: $exitWeight
-          passengerExitWeight: $passengerExitWeight
-          passengerName: $passengerName
-        }
-      }
-    ) {
-      errors
-      fieldErrors {
-        field
-        message
-      }
-      slot {
-        id
-        jumpType {
-          id
-          name
-        }
-        extras {
-          id
-          name
-        }
-        exitWeight
-        load {
-          id
-          name
-          createdAt
-          dispatchAt
-          hasLanded
-          maxSlots
-          isFull
-          isOpen
-          plane {
-            id
-            name
-          }
-          gca {
-            id
-            user {
-              id
-              name
-            }
-          }
-          pilot {
-            id
-            user {
-              id
-              name
-            }
-          }
-          loadMaster {
-            id
-            user {
-              id
-              name
-            }
-          }
-          slots {
-            id
-            createdAt
-            user {
-              id
-              name
-            }
-            passengerName
-            passengerExitWeight
-            ticketType {
-              id
-              name
-              isTandem
-              altitude
-            }
-            jumpType {
-              id
-              name
-            }
-            extras {
-              id
-              name
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
 export default function ManifestUserDialog(props: IManifestUserDialog) {
   const { onSuccess, open } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.manifest);
   const globalState = useAppSelector((root) => root.global);
-  const [mutationCreateSlot, mutationData] = useMutation<Mutation>(MUTATION_CREATE_SLOT);
+  const [mutationCreateSlot, mutationData] = useManifestUserMutation();
 
   const validate = React.useCallback(() => {
     let hasErrors = false;

@@ -3,6 +3,11 @@ query QueryDropzoneUserProfile($dropzoneId: Int!, $dropzoneUserId: Int!) {
   dropzone(id: $dropzoneId) {
     id
     name
+    rigInspectionTemplate {
+      id
+      name
+      definition
+    }
 
     dropzoneUser(id: $dropzoneUserId) {
       ...dropzoneUserProfile
