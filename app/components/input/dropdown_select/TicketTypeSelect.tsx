@@ -12,7 +12,7 @@ interface ITicketTypeSelect {
 }
 
 export default function TicketTypeSelect(props: ITicketTypeSelect) {
-  const { allowManifestingSelf, value, required } = props;
+  const { allowManifestingSelf, value, required, onSelect } = props;
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector((root) => root.global);
   const { data } = useTicketTypesQuery({
@@ -43,7 +43,7 @@ export default function TicketTypeSelect(props: ITicketTypeSelect) {
             key={`ticket-type-select-${ticketType.id}`}
             onPress={() => {
               setMenuOpen(false);
-              props.onSelect(ticketType);
+              onSelect(ticketType);
             }}
             title={ticketType.name || '-'}
           />

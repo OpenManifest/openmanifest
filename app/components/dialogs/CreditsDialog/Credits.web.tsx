@@ -15,7 +15,7 @@ interface IDropzoneUserDialog {
 }
 
 export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
-  const { open, onClose, dropzoneUser } = props;
+  const { open, onClose, dropzoneUser, onSuccess } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.credits);
   const globalState = useAppSelector((root) => root.global);
@@ -100,7 +100,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
       }
       if (!result?.createOrder?.fieldErrors?.length) {
         dispatch(actions.forms.credits.reset());
-        props.onSuccess();
+        onSuccess();
       }
     } catch (error) {
       dispatch(
@@ -119,7 +119,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
     global.currentDropzoneId,
     mutationCreateOrder,
     dispatch,
-    props,
+    onSuccess,
   ]);
 
   return (

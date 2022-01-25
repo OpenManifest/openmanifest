@@ -13,7 +13,7 @@ import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import useRestriction from 'app/hooks/useRestriction';
 import RigCard from './RigCard';
 
-export default function ProfileScreen() {
+export default function EquipmentScreen() {
   const globalState = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();

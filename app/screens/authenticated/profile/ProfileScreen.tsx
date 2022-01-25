@@ -1,10 +1,10 @@
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
-import { Platform, RefreshControl, SectionList, StyleSheet, View } from 'react-native';
-import { Card, Divider, List, ProgressBar } from 'react-native-paper';
+import { Platform, RefreshControl, StyleSheet, View } from 'react-native';
+import { Divider, ProgressBar } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import Skeleton from 'react-native-skeleton-content';
-import enAU from 'date-fns/locale/en-AU';
+import { Tabs, TabScreen } from 'react-native-paper-tabs';
 
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { Permission } from 'app/api/schema.d';
@@ -20,13 +20,13 @@ import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
 import useRestriction from 'app/hooks/useRestriction';
 import { useUpdateUserMutation } from 'app/api/reflection';
 
-import { groupBy, map } from 'lodash';
-import { differenceInDays, format, formatDistance, parseISO, startOfDay } from 'date-fns';
 import Header from './UserInfo/Header';
 import InfoGrid from './UserInfo/InfoGrid';
 
-import SlotCard from './SlotCard';
 import UserActionsButton from './UserActions';
+import EquipmentTab from './tabs/Equipment';
+import JumpHistoryTab from './tabs/JumpHistory';
+import TransactionsTab from './tabs/Transactions';
 
 export default function ProfileScreen() {
   const state = useAppSelector((root) => root.global);
@@ -41,6 +41,7 @@ export default function ProfileScreen() {
   );
 
   const isFocused = useIsFocused();
+  const [defaultIndex, onChangeIndex] = React.useState(0);
 
   React.useEffect(() => navigation.setOptions({ title: 'Profile' }), [navigation]);
   React.useEffect(() => {
@@ -145,47 +146,27 @@ export default function ProfileScreen() {
                 </Header>
               )}
             </View>
-          </View>
-          <View style={{ width: '100%' }}>
-            <Card style={{ marginHorizontal: 0 }} elevation={1}>
-              <SectionList
-                sections={map(
-                  groupBy(dropzoneUser?.slots?.edges, (e) =>
-                    startOfDay((e?.node?.createdAt || 0) * 1000).toISOString()
-                  ),
-                  (d, t) => {
-                    const date = parseISO(t);
-                    const title =
-                      differenceInDays(new Date(), date) > 7
-                        ? format(date, 'dd MMM, yyyy')
-                        : formatDistance(date, new Date(), { addSuffix: true, locale: enAU });
-                    return {
-                      title,
-                      data: d,
-                    };
-                  }
-                )}
-                renderSectionHeader={({ section: { title } }) => (
-                  <List.Subheader style={{ marginVertical: 16 }}>{title}</List.Subheader>
-                )}
-                style={{ flex: 1, paddingTop: 0 }}
-                data={dropzoneUser?.orders?.edges || []}
-                refreshing={false}
-                onRefresh={refetch}
-                renderItem={({ item }) =>
-                  !item?.node ? null : (
-                    <SlotCard
-                      slot={item.node}
-                      onPress={() => {
-                        navigation.navigate('LoadScreen', { load: item.node?.load });
-                      }}
-                    />
-                  )
-                }
-              />
-            </Card>
+
+            <Tabs
+              {...{ defaultIndex, onChangeIndex }}
+              mode="fixed"
+              style={{ backgroundColor: state.theme.colors.surface, height: 100 }}
+            >
+              <TabScreen label="Jumps">
+                <View style={{ height: 5, width: 5 }} />
+              </TabScreen>
+              <TabScreen label="Funds">
+                <View style={{ height: 5, width: 5 }} />
+              </TabScreen>
+              <TabScreen label="Equipment">
+                <View style={{ height: 5, width: 5 }} />
+              </TabScreen>
+            </Tabs>
           </View>
         </ScrollableScreen>
+        {defaultIndex === 0 ? <JumpHistoryTab {...{ dropzoneUser }} /> : null}
+        {defaultIndex === 1 ? <EquipmentTab {...{ dropzoneUser }} /> : null}
+        {defaultIndex === 2 ? <TransactionsTab {...{ dropzoneUser }} /> : null}
 
         <RigDialog
           onClose={onCloseRigForm}

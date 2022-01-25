@@ -12,7 +12,7 @@ interface IManifestUserDialog {
 }
 
 export default function ManifestUserDialog(props: IManifestUserDialog) {
-  const { onSuccess, open } = props;
+  const { onSuccess, open, onClose } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.manifest);
   const globalState = useAppSelector((root) => root.global);
@@ -142,7 +142,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
           <Button
             onPress={() => {
               dispatch(actions.forms.manifest.reset());
-              props.onClose();
+              onClose();
             }}
           >
             Cancel

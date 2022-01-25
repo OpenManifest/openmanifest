@@ -1,42 +1,41 @@
 import { HeaderStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 
 import * as React from 'react';
-import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
-import { Dropzone, DropzoneUser, Order, Slot } from '../../api/schema.d';
-import { useAppSelector } from '../../state';
-import LoadScreen from '../../screens/authenticated/load/LoadScreen';
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { Dropzone, DropzoneUser, Order, Slot } from 'app/api/schema.d';
+import { useAppSelector } from 'app/state';
+import LoadScreen from 'app/screens/authenticated/load/LoadScreen';
 // eslint-disable-next-line max-len
-import WeatherConditionsScreen from '../../screens/authenticated/weather_conditions/WeatherConditionsScreen';
-import JumpRunScreen from '../../screens/authenticated/weather_conditions/JumpRunScreen';
-import WindScreen from '../../screens/authenticated/weather_conditions/WindScreen';
-import AppBar from '../AppBar';
+import WeatherConditionsScreen from 'app/screens/authenticated/weather_conditions/WeatherConditionsScreen';
+import JumpRunScreen from 'app/screens/authenticated/weather_conditions/JumpRunScreen';
+import WindScreen from 'app/screens/authenticated/weather_conditions/WindScreen';
 
-import ManifestScreen from '../../screens/authenticated/manifest/ManifestScreen';
-import ManifestGroupScreen from '../../screens/authenticated/manifest/ManifestGroupScreen';
+import ManifestScreen from 'app/screens/authenticated/manifest/ManifestScreen';
 // eslint-disable-next-line max-len
-import ManifestGroupUserSelectScreen from '../../screens/authenticated/manifest/ManifestGroupUserSelectScreen';
-import ProfileScreen from '../../screens/authenticated/profile/ProfileScreen';
-import NotificationsScreen from '../../screens/authenticated/notifications/NotificationsScreen';
-import TransactionsScreen from '../../screens/authenticated/transactions/TransactionsScreen';
-import EquipmentScreen from '../../screens/authenticated/equipment/EquipmentScreen';
+import ProfileScreen from 'app/screens/authenticated/profile/ProfileScreen';
+import NotificationsScreen from 'app/screens/authenticated/notifications/NotificationsScreen';
+import TransactionsScreen from 'app/screens/authenticated/transactions/TransactionsScreen';
+import EquipmentScreen from 'app/screens/authenticated/equipment/EquipmentScreen';
 
 // Settings
-import SettingsScreen from '../../screens/authenticated/settings/SettingsScreen';
-import TicketTypeSettingsScreen from '../../screens/authenticated/ticket_types/TicketTypesScreen';
-import UpdateDropzoneScreen from '../../screens/authenticated/dropzones/UpdateDropzoneScreen';
-import PlanesScreen from '../../screens/authenticated/planes/PlanesScreen';
+import SettingsScreen from 'app/screens/authenticated/settings/SettingsScreen';
+import TicketTypeSettingsScreen from 'app/screens/authenticated/ticket_types/TicketTypesScreen';
+import UpdateDropzoneScreen from 'app/screens/authenticated/dropzones/UpdateDropzoneScreen';
+import PlanesScreen from 'app/screens/authenticated/planes/PlanesScreen';
 // eslint-disable-next-line max-len
-import RigInspectionTemplateScreen from '../../screens/authenticated/settings/RigInspectionTemplateScreen';
-import DropzoneRigsScreen from '../../screens/authenticated/settings/DropzoneRigsScreen';
+import RigInspectionTemplateScreen from 'app/screens/authenticated/settings/RigInspectionTemplateScreen';
+import DropzoneRigsScreen from 'app/screens/authenticated/settings/DropzoneRigsScreen';
 // eslint-disable-next-line max-len
-import DropzonePermissionScreen from '../../screens/authenticated/settings/DropzonePermissionScreen';
-import DropzoneMasterLogScreen from '../../screens/authenticated/settings/DropzoneMasterLogScreen';
-import UpdateExtraScreen from '../../screens/authenticated/extras/UpdateExtraScreen';
-import ExtrasScreen from '../../screens/authenticated/extras/ExtrasScreen';
-import OrderScreen from '../../screens/authenticated/transactions/OrderScreen';
+import DropzonePermissionScreen from 'app/screens/authenticated/settings/DropzonePermissionScreen';
+import DropzoneMasterLogScreen from 'app/screens/authenticated/settings/DropzoneMasterLogScreen';
+import UpdateExtraScreen from 'app/screens/authenticated/extras/UpdateExtraScreen';
+import ExtrasScreen from 'app/screens/authenticated/extras/ExtrasScreen';
+import OrderScreen from 'app/screens/authenticated/transactions/OrderScreen';
 // eslint-disable-next-line max-len
-import DropzoneTransactionsScreen from '../../screens/authenticated/transactions/DropzoneTransactionsScreen';
-import RigInspectionScreen from '../../screens/authenticated/rig/RigInspectionScreen';
+import DropzoneTransactionsScreen from 'app/screens/authenticated/transactions/DropzoneTransactionsScreen';
+import RigInspectionScreen from 'app/screens/authenticated/rig/RigInspectionScreen';
+
+import AppBar from '../AppBar';
 
 export type IManifestTabParams = {
   DropzoneScreen: undefined;
@@ -117,16 +116,6 @@ export default function ManifestTab() {
         options={{ title: 'Jump Run' }}
       />
       <Manifest.Screen name="LoadScreen" component={LoadScreen} options={{ title: 'Load' }} />
-      <Manifest.Screen
-        name="ManifestGroupScreen"
-        component={ManifestGroupScreen}
-        options={{ title: 'Manifest group' }}
-      />
-      <Manifest.Screen
-        name="ManifestGroupUserSelectScreen"
-        component={ManifestGroupUserSelectScreen}
-        options={{ title: 'Select users' }}
-      />
 
       {/* PROFILE */}
       <Manifest.Screen

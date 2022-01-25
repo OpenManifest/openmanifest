@@ -26,6 +26,7 @@ export default function ProfileRoutes() {
 
   return (
     <Profile.Navigator
+      mode="modal"
       screenOptions={{
         headerShown: true,
         header: (props) => <AppBar {...props} hideWarnings />,

@@ -106,10 +106,9 @@ export default function AuthenticatedTabBar() {
     [tabConfig]
   );
 
-  return (
-    <BottomTab.Navigator
-      initialRouteName="Manifest"
-      {...Platform.select({
+  const tabBarProps = React.useMemo(
+    () =>
+      Platform.select({
         web: {},
         ios: {
           tabBar: (props: BottomTabBarProps<BottomTabBarOptions>) => (
@@ -139,21 +138,35 @@ export default function AuthenticatedTabBar() {
             />
           ),
         },
-      })}
-      tabBarOptions={{
-        activeTintColor: theme.colors.primary,
-        inactiveBackgroundColor: theme.dark ? theme.colors.backdrop : theme.colors.surface,
-        activeBackgroundColor: theme.colors.surface,
-        inactiveTintColor: '#CCCCCC',
-        showLabel: Platform.OS !== 'web',
-        adaptive: true,
-        style: {
-          backgroundColor: theme.dark ? theme.colors.background : '#FFFFFF',
-          borderTopWidth: StyleSheet.hairlineWidth,
-          borderTopColor: '#CCCCCC',
-        },
-      }}
-    >
+      }),
+    [tabs]
+  );
+
+  const tabBarOptions = React.useMemo(
+    () => ({
+      activeTintColor: theme.colors.primary,
+      inactiveBackgroundColor: theme.dark ? theme.colors.backdrop : theme.colors.surface,
+      activeBackgroundColor: theme.colors.surface,
+      inactiveTintColor: '#CCCCCC',
+      showLabel: Platform.OS !== 'web',
+      adaptive: true,
+      style: {
+        backgroundColor: theme.dark ? theme.colors.background : '#FFFFFF',
+        borderTopWidth: StyleSheet.hairlineWidth,
+        borderTopColor: '#CCCCCC',
+      },
+    }),
+    [
+      theme.colors.backdrop,
+      theme.colors.background,
+      theme.colors.primary,
+      theme.colors.surface,
+      theme.dark,
+    ]
+  );
+
+  return (
+    <BottomTab.Navigator initialRouteName="Manifest" {...tabBarProps} {...{ tabBarOptions }}>
       <BottomTab.Screen
         name="Manifest"
         component={ManifestTab}
@@ -172,8 +185,8 @@ export default function AuthenticatedTabBar() {
           tabBarIcon: ({ focused, color, size }) => (
             <MaterialCommunityIcons
               name="airplane"
-              style={[styles.icon, focused ? styles.iconActive : undefined]}
               {...{ size }}
+              style={[styles.icon, focused ? styles.iconActive : undefined]}
               color={isDarkMode && focused ? theme.colors.primary : color}
             />
           ),
@@ -227,7 +240,6 @@ export default function AuthenticatedTabBar() {
                 {...{ size, color }}
                 name="account-group"
                 style={[styles.icon, focused ? styles.iconActive : undefined]}
-                {...{ size }}
                 color={isDarkMode && focused ? theme.colors.primary : color}
               />
             ),

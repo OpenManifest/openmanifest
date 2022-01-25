@@ -15,7 +15,7 @@ interface IDropzoneUserDialog {
 }
 
 export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
-  const { open } = props;
+  const { open, onClose, onSuccess } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.dropzoneUser);
   const globalState = useAppSelector((root) => root.global);
@@ -88,7 +88,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         return;
       }
       if (!result?.fieldErrors?.length && result?.dropzoneUser) {
-        props.onSuccess(result.dropzoneUser);
+        onSuccess(result.dropzoneUser);
       } else {
         console.error(result?.fieldErrors);
       }
@@ -103,7 +103,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   }, [
     dispatch,
     mutationUpdateDropzoneUser,
-    props,
+    onSuccess,
     state.fields.expiresAt.value,
     state.fields.role.value?.id,
     state.original?.id,
@@ -139,7 +139,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
           <Button
             onPress={() => {
               dispatch(actions.forms.dropzoneUser.reset());
-              props.onClose();
+              onClose();
             }}
           >
             Cancel

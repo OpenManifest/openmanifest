@@ -55,7 +55,7 @@ export default function RootNavigator() {
         globalState.currentDropzone ? (
           <Stack.Screen name="Authenticated">
             {() => (
-              <Drawer.Navigator drawerContent={() => <DrawerMenu />}>
+              <Drawer.Navigator drawerContent={() => <DrawerMenu />} drawerType="back">
                 <Drawer.Screen name="Authenticated" component={AuthenticatedRoutes} />
               </Drawer.Navigator>
             )}

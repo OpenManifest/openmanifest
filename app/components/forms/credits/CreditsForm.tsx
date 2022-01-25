@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TextInput, HelperText, Divider, DataTable } from 'react-native-paper';
-import { actions, useAppSelector, useAppDispatch } from '../../../state';
-import { TransactionType } from '../../../api/schema.d';
+import { actions, useAppSelector, useAppDispatch } from 'app/state';
+import { TransactionType } from 'app/api/schema.d';
 import NumberField from '../../input/number_input/NumberField';
 
 export default function CreditsForm() {

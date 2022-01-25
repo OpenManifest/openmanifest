@@ -17,7 +17,7 @@ interface IBottomSheetProps {
 }
 
 export default function DialogOrSheet(props: IBottomSheetProps) {
-  const { buttonLabel, buttonAction, title, loading, open, children } = props;
+  const { buttonLabel, buttonAction, title, loading, open, children, onClose } = props;
   const globalState = useAppSelector((root) => root.global);
 
   return (
@@ -33,7 +33,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
         <Dialog.Actions style={{ justifyContent: 'flex-end' }}>
           <Button
             onPress={() => {
-              props.onClose();
+              onClose();
             }}
           >
             Cancel

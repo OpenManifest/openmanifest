@@ -85,7 +85,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         return;
       }
       if (!result.data?.createSlots?.fieldErrors?.length) {
-        props.onClose();
+        onClose();
       }
     } catch (error) {
       dispatch(
@@ -98,7 +98,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
   }, [
     dispatch,
     mutationCreateSlots,
-    props,
+    onClose,
     state.fields.extras?.value,
     state.fields.jumpType.value?.id,
     state.fields.load.value?.id,
