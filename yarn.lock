@@ -2158,13 +2158,13 @@
     fast-deep-equal "^3.1.3"
     supercluster "^7.1.3"
 
-"@gorhom/animated-tabbar@2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@gorhom/animated-tabbar/-/animated-tabbar-2.1.2.tgz#084b0d8f5173cc15a49471701d253276d0c368d2"
-  integrity sha512-wfzDdVXi/xP6P75+U3icZzq/3CAB5jc6lWMmrSfbsIDDgN4iMsCs/F6X2vXuP8o2iW23PK/ATRzoTRBk0YTTqA==
+"@gorhom/animated-tabbar@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@gorhom/animated-tabbar/-/animated-tabbar-2.1.1.tgz#2f804646403b9838e9d24af1e994b706262f9515"
+  integrity sha512-KN+fsmqen3g+w0sDPJSnlUrNUtKno+t/4M39+V0rg78v2tM9q7TVlp23SunsY3CmssT+IRVfGX3iMNkzgOzIdQ==
   dependencies:
     lodash.isequal "^4.5.0"
-    react-native-redash "14.2.4"
+    react-native-redash "15.7.3"
 
 "@gorhom/bottom-sheet@4.1.5":
   version "4.1.5"
@@ -7598,10 +7598,10 @@ expo-device@~4.1.0:
   dependencies:
     ua-parser-js "^0.7.19"
 
-expo-document-picker@~10.1.0:
-  version "10.1.0"
-  resolved "https://registry.yarnpkg.com/expo-document-picker/-/expo-document-picker-10.1.0.tgz#c4ade71241c1dfb42e62dd8715e6ee4e956d6da9"
-  integrity sha512-zt4zGHii4efanElPeK0uJ8yAgO4S5gkKrplxr7DkfDK97LrJBqYJodE52ZCj967nVGhyXtfMi5dKDY5FG+QXdA==
+expo-document-picker@~10.1.1:
+  version "10.1.1"
+  resolved "https://registry.yarnpkg.com/expo-document-picker/-/expo-document-picker-10.1.1.tgz#e71cbcd30fbf607eb587161ccb214142eb381acd"
+  integrity sha512-/ge49Qb5yDr3NKymK/ZR0lmfO3S1zEd4laW00IYhaT0E6okuHqqPg/HXxQM3ULXoEHcnzpy1+LRxuwD8Z6op3g==
   dependencies:
     "@expo/config-plugins" "^4.0.2"
     uuid "^3.3.2"
@@ -13306,17 +13306,7 @@ react-native-pixel-perfect@^1.0.1:
   resolved "https://registry.npmjs.org/react-native-pixel-perfect/-/react-native-pixel-perfect-1.0.2.tgz#8e6dc97e377caa4bd07f9e584ba438d53c0e25e8"
   integrity sha512-0IvYCNkxuQbQC9q4tI+C3i6o38nbx916p7gBRBWuPxDhKBCuTkVV3VukcfW6vtjRlwQm6kwQcF9OtI+yUBt+YA==
 
-react-native-reanimated@~2.2.0:
-  version "2.2.0"
-  resolved "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-2.2.0.tgz#a6412c56b4e591d1f00fac949f62d0c72c357c78"
-  integrity sha512-lOJDd+5w1gY6DHGXG2jD1dsjzQmXQ2699HUc3IztvI2WP4zUT+UAA+zSG+5JiBS5DUnTL8YhhkmUQmr1KNGO5w==
-  dependencies:
-    "@babel/plugin-transform-object-assign" "^7.10.4"
-    fbjs "^3.0.0"
-    mockdate "^3.0.2"
-    string-hash-64 "^1.0.3"
-
-react-native-reanimated@~2.3.1:
+react-native-reanimated@2.3.1, react-native-reanimated@~2.2.0, react-native-reanimated@~2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-2.3.1.tgz#c7abad48f9e6c84610b0d5e270088ecd61750382"
   integrity sha512-nzjVqwkB8eeyPKT2KoiA9EEz17ZMFSGMoOTC17Z9b5nE2Z4ZHjHM5EKhY0TlwzXFUuJAE9PhOfxF0wIO/maZSA==
@@ -13329,18 +13319,9 @@ react-native-reanimated@~2.3.1:
     react-native-screens "^3.4.0"
     string-hash-64 "^1.0.3"
 
-react-native-redash@14.2.4:
-  version "14.2.4"
-  resolved "https://registry.yarnpkg.com/react-native-redash/-/react-native-redash-14.2.4.tgz#5dbb4b2f1a7441bb304fe3494b89e0dc9010c8ef"
-  integrity sha512-/1R9UxXv3ffKcrbxolqa2B247Cgd3ikyEm2q1VlBng77Es6PAD4LAOXQ83pBavvwNfOsbhF3ebkbMpJcLaVt3Q==
-  dependencies:
-    abs-svg-path "^0.1.1"
-    normalize-svg-path "^1.0.1"
-    parse-svg-path "^0.1.2"
-
-react-native-redash@^16.0.11, react-native-redash@^16.1.1:
+react-native-redash@15.7.3, react-native-redash@16.1.1, react-native-redash@^16.0.11, react-native-redash@^16.1.1:
   version "16.1.1"
-  resolved "https://registry.npmjs.org/react-native-redash/-/react-native-redash-16.1.1.tgz#784cdf55672043aab9f15ae8c965dcbae8b119ba"
+  resolved "https://registry.yarnpkg.com/react-native-redash/-/react-native-redash-16.1.1.tgz#784cdf55672043aab9f15ae8c965dcbae8b119ba"
   integrity sha512-pD3GMNqRz/5bUnX0ni4MMOBlVwH2dJnd7u6M80VqYGI87IfcuP6Sn1z171r0nUUeYvJ7blJQs0OKKmTsJIbWew==
   dependencies:
     abs-svg-path "^0.1.1"

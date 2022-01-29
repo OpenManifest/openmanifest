@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as appRedux from '../../state';
-import LoadCard from '../../screens/authenticated/manifest/LoadCard/Large/Card';
+import LoadCard from '../../screens/authenticated/dropzone/manifest/LoadCard/Large/Card';
 import { Load, Permission } from '../../api/schema.d';
 import mockQueryLoad from './__mocks__/QueryLoad.mock';
 import mockQueryDropzoneUsers from './__mocks__/QueryDropzoneUsers.mock';

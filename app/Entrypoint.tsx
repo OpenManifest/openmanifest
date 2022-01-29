@@ -27,8 +27,8 @@ import ImageViewer from './components/dialogs/ImageViewer/ImageViewer';
 
 import useCachedResources from './hooks/useCachedResources';
 import NotificationArea from './components/notifications/Notifications';
-import LinkingConfiguration from './navigation/Routes';
-import RootNavigator from './navigation/RootNavigator';
+import { options as LinkingConfiguration } from './screens/Routes';
+import RootNavigator from './screens/routes';
 import { actions } from './state';
 
 Notifications.setNotificationHandler({

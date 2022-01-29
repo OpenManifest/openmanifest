@@ -1,9 +1,9 @@
-import * as users from './authenticated/users/slice';
+import * as users from './authenticated/user/user_list/slice';
 import * as login from './unauthenticated/login/slice';
-import * as manifest from './authenticated/manifest/slice';
+import * as manifest from './authenticated/dropzone/manifest/slice';
 import * as signup from './unauthenticated/signup/slice';
-import * as dropzoneWizard from './authenticated/dropzone_wizard/slice';
-import * as userWizard from './authenticated/user_wizard/slice';
+import * as dropzoneWizard from './authenticated/wizards/dropzone_wizard/slice';
+import * as userWizard from './authenticated/wizards/user_wizard/slice';
 
 export const initialState = {
   manifest: manifest.initialState,

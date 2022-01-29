@@ -83,7 +83,7 @@
     "@formatjs/intl-pluralrules": "4.3.1",
     "@formatjs/intl-relativetimeformat": "9.5.1",
     "@fseehawer/react-circular-slider": "2.3.9",
-    "@gorhom/animated-tabbar": "2.1.2",
+    "@gorhom/animated-tabbar": "2.1.1",
     "@gorhom/bottom-sheet": "4.1.5",
     "@react-google-maps/api": "2.7.0",
     "@react-native-async-storage/async-storage": "~1.15.0",
@@ -108,7 +108,7 @@
     "expo-blur": "~11.0.0",
     "expo-constants": "~13.0.1",
     "expo-device": "~4.1.0",
-    "expo-document-picker": "~10.1.0",
+    "expo-document-picker": "~10.1.1",
     "expo-font": "~10.0.4",
     "expo-image-picker": "~12.0.1",
     "expo-linear-gradient": "~11.0.0",
@@ -160,7 +160,9 @@
     "urijs": "^1.19.6"
   },
   "resolutions": {
-    "expo-linear-gradient": "11.0.0"
+    "expo-linear-gradient": "11.0.0",
+    "react-native-reanimated": "2.3.1",
+    "react-native-redash": "16.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

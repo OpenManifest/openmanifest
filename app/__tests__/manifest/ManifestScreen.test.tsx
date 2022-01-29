@@ -8,7 +8,7 @@ import MOCK_QUERY_ALLOWED_TICKET_TYPES from './__mocks__/QueryAllowedTicketTypes
 import { MOCK_QUERY_ALLOWED_JUMP_TYPES } from './__mocks__/QueryAllowedJumpTypes.mock';
 import * as appRedux from '../../state';
 
-import ManifestScreen from '../../screens/authenticated/manifest/ManifestScreen';
+import ManifestScreen from '../../screens/authenticated/dropzone/manifest/ManifestScreen';
 
 describe('<ManifestScreen />', () => {
   it('should show LoadCards for every load', async () => {

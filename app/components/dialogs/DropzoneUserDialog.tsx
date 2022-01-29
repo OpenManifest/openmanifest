@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/client';
-import PermissionBadges from 'app/screens/authenticated/profile/UserInfo/PermissionBadges';
+import PermissionBadges from 'app/screens/authenticated/user/profile/UserInfo/PermissionBadges';
 import * as React from 'react';
 import { Button, Dialog, List, Portal, ProgressBar } from 'react-native-paper';
 import { DropzoneUser, Permission } from 'app/api/schema.d';
