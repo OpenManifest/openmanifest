@@ -6,7 +6,7 @@ import enAU from 'date-fns/locale/en-AU';
 
 import { groupBy, map } from 'lodash';
 import { differenceInDays, format, formatDistance, parseISO, startOfDay } from 'date-fns';
-import { DropzoneUserProfileFragment } from 'app/api/operations';
+import { DropzoneUserProfileFragment, LoadDetailsFragment } from 'app/api/operations';
 
 import SlotCard from '../SlotCard';
 
@@ -43,11 +43,22 @@ export default function JumpHistoryTab(props: IJumpHistoryTab) {
         data={dropzoneUser?.orders?.edges || []}
         refreshing={false}
         renderItem={({ item }) =>
-          !item?.node ? null : (
+          !item?.node?.load ? null : (
             <SlotCard
               slot={item.node}
               onPress={() => {
-                navigation.navigate('LoadScreen', { load: item.node?.load });
+                navigation.navigate('Authenticated', {
+                  screen: 'Drawer',
+                  params: {
+                    screen: 'Manifest',
+                    params: {
+                      screen: 'LoadScreen',
+                      params: {
+                        load: item.node?.load as LoadDetailsFragment
+                      }
+                    }
+                  }
+                })
               }}
             />
           )

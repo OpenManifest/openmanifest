@@ -11,7 +11,7 @@ interface IAppBarProps extends StackHeaderProps {
 }
 
 function AppBar(props: IAppBarProps) {
-  const { navigation, previous, scene, hideWarnings } = props;
+  const { navigation, hideWarnings, back, options } = props;
   const { palette, theme } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
   const { currentUser, loading, dropzone } = useCurrentDropzone();
@@ -21,7 +21,7 @@ function AppBar(props: IAppBarProps) {
       <Appbar.Header
         style={{ backgroundColor: theme.dark ? theme.colors.background : theme.colors.surface }}
       >
-        {previous ? (
+        {back ? (
           <Appbar.BackAction onPress={navigation.goBack} />
         ) : (
           <IconButton
@@ -31,12 +31,12 @@ function AppBar(props: IAppBarProps) {
           />
         )}
         <Appbar.Content
-          title={scene.descriptor.options.title}
+          title={options.title}
           titleStyle={{ fontWeight: 'bold' }}
         />
 
-        {scene.descriptor.options.headerRight ? (
-          scene.descriptor.options.headerRight({ tintColor: 'white' })
+        {options.headerRight ? (
+          options.headerRight({ tintColor: 'white' })
         ) : (
           <Chip
             style={{ backgroundColor: palette.accent.main }}

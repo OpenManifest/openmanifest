@@ -3,13 +3,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Avatar, Badge, Card, Chip, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ViewProps } from '../../../components/Themed';
-import { Slot } from '../../../api/schema';
+import { SlotDetailsFragment } from 'app/api/operations';
 
 interface ISlotCardProps {
-  slot: Slot;
+  slot: SlotDetailsFragment;
   style?: ViewProps['style'];
-  onPress?(slot: Slot): void;
-  onDelete?(slot: Slot): void;
+  onPress?(slot: SlotDetailsFragment): void;
+  onDelete?(slot: SlotDetailsFragment): void;
 }
 
 export default function SlotCard(props: ISlotCardProps) {

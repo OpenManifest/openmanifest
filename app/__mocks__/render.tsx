@@ -45,7 +45,6 @@ class MyMockLink extends MockLink {
         this.addMockedResponse(mockedResponse);
       });
     }
-    return this;
   }
 
   request(operation: Operation) {

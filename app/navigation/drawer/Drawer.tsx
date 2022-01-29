@@ -32,7 +32,8 @@ export default function DrawerMenu() {
   const navigation = useNavigation();
   const route = useRoute();
   const routeName = getFocusedRouteNameFromRoute(route);
-  const navState = navigation.dangerouslyGetState();
+  const navState = navigation.getState();
+
   const subNavState = navState.routes[navState.index].state;
   // eslint-disable-next-line
   // @ts-ignore
@@ -94,7 +95,7 @@ export default function DrawerMenu() {
           style={styles.profileAvatar}
           onPress={() => {
             navigation.navigate('Authenticated', {
-              screen: 'Authenticated',
+              screen: 'Drawer',
               params: {
                 screen: 'Manifest',
                 params: {
@@ -127,9 +128,12 @@ export default function DrawerMenu() {
             icon="home"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Authenticated',
+                screen: 'Drawer',
                 params: {
-                  screen: 'ManifestScreen',
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'ManifestScreen'
+                  }
                 },
               });
             }}
@@ -140,7 +144,7 @@ export default function DrawerMenu() {
             icon="account"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Authenticated',
+                screen: 'Drawer',
                 params: {
                   screen: 'Manifest',
                   params: {
@@ -156,11 +160,12 @@ export default function DrawerMenu() {
             icon="parachute"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Authenticated',
+                screen: 'Drawer',
                 params: {
                   screen: 'Manifest',
                   params: {
                     screen: 'EquipmentScreen',
+                    params: { userId: Number(currentUser?.id) }
                   },
                 },
               });
@@ -173,7 +178,7 @@ export default function DrawerMenu() {
             icon="bell"
             onPress={() =>
               navigation.navigate('Authenticated', {
-                screen: 'Authenticated',
+                screen: 'Drawer',
                 params: {
                   screen: 'Notifications',
                 },
@@ -186,11 +191,12 @@ export default function DrawerMenu() {
             icon="cash"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Authenticated',
+                screen: 'Drawer',
                 params: {
                   screen: 'Manifest',
                   params: {
                     screen: 'TransactionsScreen',
+                    params: { userId: Number(currentUser?.id) }
                   },
                 },
               });
@@ -213,7 +219,7 @@ export default function DrawerMenu() {
             icon="cash"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Authenticated',
+                screen: 'Drawer',
                 params: {
                   screen: 'Manifest',
                   params: {
@@ -230,7 +236,7 @@ export default function DrawerMenu() {
               icon="cog"
               onPress={() =>
                 navigation.navigate('Authenticated', {
-                  screen: 'Authenticated',
+                  screen: 'Drawer',
                   params: {
                     screen: 'Manifest',
                     params: {
@@ -253,7 +259,13 @@ export default function DrawerMenu() {
                 if (edge?.node) {
                   dispatch(actions.global.setDropzone(edge.node as DropzoneExtensiveFragment));
                   navigation.navigate('Authenticated', {
-                    screen: 'Authenticated',
+                    screen: 'Drawer',
+                    params: {
+                      screen: 'Manifest',
+                      params: {
+                        screen: 'ManifestScreen'
+                      }
+                    }
                   });
                 }
               }}

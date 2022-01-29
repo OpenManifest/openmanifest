@@ -111,6 +111,7 @@ export function Content(props: IWizardProps) {
                 if (currentIndex === steps.length - 1) {
                   navigation.goBack();
                 } else {
+                  // @ts-ignore These are dynamically created screens
                   navigation.navigate(`${name}${currentIndex + nextIndex}`);
                   setIndex(currentIndex + nextIndex);
                 }
@@ -136,6 +137,7 @@ export function Content(props: IWizardProps) {
               if (currentIndex === 0) {
                 navigation.goBack();
               } else {
+                // @ts-ignore These are dynamically created screens
                 navigation.navigate(`${name}${currentIndex - backIndexFactor}`);
                 setIndex(currentIndex - backIndexFactor || 0);
               }
@@ -153,7 +155,7 @@ export function Content(props: IWizardProps) {
 export function Wizard(props: IWizardProps) {
   const { name } = props;
   return (
-    <WizardModal.Navigator mode="modal" screenOptions={{ headerShown: false }}>
+    <WizardModal.Navigator screenOptions={{ headerShown: false, presentation: 'modal' }}>
       <WizardModal.Screen {...{ name }}>{() => <Content {...props} />}</WizardModal.Screen>
     </WizardModal.Navigator>
   );

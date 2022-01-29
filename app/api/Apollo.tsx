@@ -21,7 +21,7 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
       batchDebounce: true,
       batchMax: 10,
       uri:
-        environment in Constants.manifest?.extra?.urls
+        environment in Constants!.manifest!.extra!.urls
           ? Constants.manifest?.extra?.urls[environment]
           : Constants.manifest?.extra?.url,
     });

@@ -17,6 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useLoadQuery } from 'app/api/reflection';
 import {
   DropzoneUserEssentialsFragment,
+  LoadDetailsFragment,
   PlaneEssentialsFragment,
   SlotDetailsFragment,
   SlotEssentialsFragment,
@@ -28,7 +29,7 @@ import PilotChip from '../../../../../components/chips/PilotChip';
 import PlaneChip from '../../../../../components/chips/PlaneChip';
 
 import { View } from '../../../../../components/Themed';
-import { Load, Permission } from '../../../../../api/schema.d';
+import { Permission } from '../../../../../api/schema.d';
 import useRestriction from '../../../../../hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from '../../../../../state';
 import SwipeActions from '../../../../../components/layout/SwipeActions';
@@ -37,7 +38,7 @@ import useMutationUpdateLoad from '../../../../../api/hooks/useMutationUpdateLoa
 import useMutationDeleteSlot from '../../../../../api/hooks/useMutationDeleteSlot';
 
 interface ILoadCardLarge {
-  load: Load;
+  load: LoadDetailsFragment;
   controlsVisible: boolean;
   onManifestGroup(): void;
   onSlotGroupPress(slots: SlotEssentialsFragment[]): void;
@@ -392,7 +393,18 @@ export default function LoadCard(props: ILoadCardLarge) {
             <DataTable.Row
               key={`${load?.id}-empty-slot-${i}`}
               testID="slot-row"
-              onPress={() => navigation.navigate('LoadScreen', { load })}
+              onPress={() =>
+                navigation.navigate('Authenticated', {
+                  screen: 'Drawer',
+                  params: {
+                    screen: 'Manifest',
+                    params: {
+                      screen: 'LoadScreen',
+                      params: { load: load as LoadDetailsFragment }
+                    }
+                  }
+                })
+              }
             >
               <DataTable.Cell>
                 <Paragraph style={styles.slotText}>- Available -</Paragraph>

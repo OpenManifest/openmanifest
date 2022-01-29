@@ -62,12 +62,14 @@ export default function LoginScreen() {
           dispatch(actions.global.setUser(result.data.userLogin.authenticatable));
         }
       } catch (e) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: e.message,
-            variant: 'error',
-          })
-        );
+        if (e instanceof Error) {
+          dispatch(
+            actions.notifications.showSnackbar({
+              message: e.message,
+              variant: 'error',
+            })
+          );
+        }
       }
     }
   }, [dispatch, mutationLogin, state.fields.email.value, state.fields.password.value]);
@@ -122,11 +124,11 @@ export default function LoginScreen() {
             <Button
               labelStyle={styles.textButtonLabel}
               style={styles.textButton}
-              onPress={() => navigation.navigate('SignUpWizard')}
+              onPress={() => navigation.navigate('Unauthenticated', { screen: 'SignUpWizard' })}
             >
               Sign up
             </Button>
-            <TouchableOpacity onPress={() => navigation.navigate('RecoverPasswordScreen')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Unauthenticated', { screen: 'RecoverPasswordScreen' })}>
               <Text style={theme.dark ? styles.forgotPasswordDark : styles.forgotPassword}>
                 Forgot your password?
               </Text>

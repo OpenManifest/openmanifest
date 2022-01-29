@@ -67,14 +67,30 @@ export default function WeatherBoard() {
   const onEditWindboard = React.useCallback(() => {
     if (canUpdate && dropzone?.currentConditions) {
       dispatch(actions.forms.weather.setOpen(dropzone?.currentConditions));
-      navigation.navigate('WindScreen');
+      navigation.navigate('Authenticated', {
+        screen: 'Drawer',
+        params: {
+          screen: 'Manifest',
+          params: {
+            screen: 'WindScreen'
+          }
+        }
+      });
     }
   }, [canUpdate, dispatch, dropzone?.currentConditions, navigation]);
 
   const onEditJumprun = React.useCallback(() => {
     if (dropzone?.currentConditions && canUpdate) {
       dispatch(actions.forms.weather.setOpen(dropzone.currentConditions));
-      navigation.navigate('JumpRunScreen');
+      navigation.navigate('Authenticated', {
+        screen: 'Drawer',
+        params: {
+          screen: 'Manifest',
+          params: {
+            screen: 'JumpRunScreen'
+          }
+        }
+      });
     }
   }, [canUpdate, dispatch, dropzone?.currentConditions, navigation]);
 

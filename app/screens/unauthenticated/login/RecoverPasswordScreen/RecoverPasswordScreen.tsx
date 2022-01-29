@@ -21,8 +21,10 @@ export default function SignupWizard() {
       });
       console.log(result?.data?.userSendPasswordReset?.message);
     } catch (e) {
-      dispatch(actions.screens.signup.setFieldError(['email', e.message]));
-      throw new Error();
+      if (e instanceof Error) {
+        dispatch(actions.screens.signup.setFieldError(['email', e.message]));
+      }
+      throw e;
     }
   }, [dispatch, onRecover, state.fields.email.value]);
 

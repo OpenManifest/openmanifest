@@ -15,6 +15,18 @@ interface IManifestUserDialog {
   onSuccess?(): void;
 }
 
+function HandleComponent() {
+  const { theme } = useAppSelector((state) => state.global);
+  return (
+    <View
+      style={[
+        styles.sheetHeader,
+        { backgroundColor: theme.dark ? theme.colors.surface : theme.colors.primary },
+      ]}
+    />
+  );
+}
+
 export default function ManifestGroupDialog(props: IManifestUserDialog) {
   const { open, onClose, onSuccess } = props;
   const dispatch = useAppDispatch();
@@ -125,12 +137,14 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
         requestAnimationFrame(() => onSuccess?.());
       }
     } catch (error) {
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: error.message,
-          variant: 'error',
-        })
-      );
+      if (error instanceof Error) {
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: error.message,
+            variant: 'error',
+          })
+        );
+      }
     }
   }, [
     dispatch,
@@ -175,19 +189,6 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
   }, [memoizedClose, onDismiss, open, snapPoints?.length]);
 
   const theme = useTheme();
-
-  const HandleComponent = React.useMemo(
-    () => () =>
-      (
-        <View
-          style={[
-            styles.sheetHeader,
-            { backgroundColor: theme.dark ? theme.colors.surface : theme.colors.primary },
-          ]}
-        />
-      ),
-    [theme.colors.primary, theme.colors.surface, theme.dark]
-  );
 
   return (
     <BottomSheetModal

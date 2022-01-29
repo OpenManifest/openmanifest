@@ -73,30 +73,32 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
   }, [onDismiss, open]);
   const theme = useTheme();
   const HandleComponent = React.useMemo(
-    () => () =>
-      !title ? (
-        <View
-          style={[
-            styles.sheetHeader,
-            { shadowColor: theme.colors.onSurface, backgroundColor: theme.colors.surface },
-          ]}
-        >
-          <View style={styles.handle} />
-        </View>
-      ) : (
-        <View
-          style={[
-            styles.sheetHeaderWithTitle,
-            {
-              shadowColor: theme.colors.onSurface,
-              backgroundColor: theme.colors.surface,
-            },
-          ]}
-        >
-          <View style={styles.handle} />
-          <Title>{title}</Title>
-        </View>
-      ),
+    () =>
+      function () {
+        return !title ? (
+          <View
+            style={[
+              styles.sheetHeader,
+              { shadowColor: theme.colors.onSurface, backgroundColor: theme.colors.surface },
+            ]}
+          >
+            <View style={styles.handle} />
+          </View>
+        ) : (
+          <View
+            style={[
+              styles.sheetHeaderWithTitle,
+              {
+                shadowColor: theme.colors.onSurface,
+                backgroundColor: theme.colors.surface,
+              },
+            ]}
+          >
+            <View style={styles.handle} />
+            <Title>{title}</Title>
+          </View>
+        );
+      },
     [theme.colors.onSurface, theme.colors.surface, title]
   );
 

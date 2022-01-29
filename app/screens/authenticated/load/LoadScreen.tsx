@@ -5,7 +5,7 @@ import { Card } from 'react-native-paper';
 
 import { useNavigation, useRoute } from '@react-navigation/core';
 import SkeletonContent from 'react-native-skeleton-content';
-import { PlaneEssentialsFragment } from 'app/api/operations';
+import { PlaneEssentialsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { useLoadQuery } from 'app/api/reflection';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 import GCAChip from '../../../components/chips/GcaChip';
@@ -61,6 +61,21 @@ function SlotSkeleton({ width }: { width: number }) {
     />
   );
 }
+
+const loadingFragment: SlotDetailsFragment = {
+  id: '__LOADING__',
+  cost: 0,
+  createdAt: 0,
+  exitWeight: 0,
+  groupNumber: 0,
+  extras: null,
+  jumpType: null,
+  passengerExitWeight: null,
+  __typename: 'Slot',
+  passengerName: null,
+  ticketType: null,
+  wingLoading: null
+};
 
 export default function LoadScreen() {
   const dispatch = useAppDispatch();
@@ -182,9 +197,10 @@ export default function LoadScreen() {
 
   const navigation = useNavigation();
 
-  const slots: (Slot | 2)[] = Array.from({
+  const slots: SlotDetailsFragment[] = Array.from({
     length: (load?.slots?.length || 0) + (load?.availableSlots || 0),
-  }).map((_, index) => ((load?.slots?.length || 0) > index ? (load.slots as Slot[])[index] : 2));
+  }).map((_, index) =>
+    ((load?.slots?.length || 0) > index ? (load.slots as SlotDetailsFragment[])[index] : { ...loadingFragment, id: '__AVAILABLE__' } ));
 
   const maxSlots = load?.maxSlots || load?.plane?.maxSlots || 0;
   const occupiedSlots = maxSlots - (load?.availableSlots || 0);
@@ -275,9 +291,9 @@ export default function LoadScreen() {
           ]}
         />
       </Header>
-      <FlatList
+      <FlatList<SlotDetailsFragment>
         testID="slots"
-        keyExtractor={(item, idx) => `slot-${item?.id || idx}`}
+        keyExtractor={(_, idx) => `slot-${idx}`}
         style={{ flex: 1, height: Dimensions.get('window').height }}
         contentContainerStyle={{
           width: contentWidth,
@@ -287,16 +303,16 @@ export default function LoadScreen() {
         }}
         numColumns={numColumns}
         horizontal={false}
-        data={!initialLoading ? slots : [1, 1, 1, 1, 1, 1, 1, 1]}
+        data={!initialLoading ? slots : new Array(8).fill(loadingFragment)}
         refreshing={loading}
         onRefresh={refetch}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}
         renderItem={({ item: node, index }) => {
-          if (node === 1) {
+          if (node.id === '__LOADING__') {
             return <SlotSkeleton width={cardWidth} />;
           }
 
-          return node === 2 ? (
+          return node.id === '__AVAILABLE__' ? (
             <AvailableSlotCard key={`empty-slot-${index}`} width={cardWidth} />
           ) : (
             <SlotCard
@@ -317,7 +333,7 @@ export default function LoadScreen() {
                     dispatch(actions.forms.manifestGroup.reset());
                     dispatch(actions.forms.manifestGroup.setFromSlots({ slots: slotGroup, load }));
                     dispatch(actions.forms.manifestGroup.setField(['load', load]));
-                    navigation.navigate('ManifestGroupScreen');
+                    // FIXME: Open ManifestGroup Drawer
                   }
                 };
                 const onSlotPress = () => {
@@ -325,7 +341,7 @@ export default function LoadScreen() {
                   dispatch(actions.forms.manifest.setField(['load', load]));
                 };
 
-                if (slot.user?.id === currentUser?.id) {
+                if (slot.dropzoneUser?.id === currentUser?.id) {
                   if (canEditSelf) {
                     if (slotGroup?.length) {
                       onSlotGroupPress();

@@ -30,7 +30,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
       if (dropzoneUser?.user?.rigs?.length) {
         dispatch(actions.forms.rig.setOriginal(dropzoneUser.user.rigs[0]));
       }
-      navigation.navigate('UserSetupWizard');
+      navigation.navigate('UserSetupWizardScreen');
     }
   }, [dispatch, dropzoneUser, navigation]);
 
@@ -45,14 +45,31 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
     if (!dropzoneUser?.id) {
       return;
     }
-    navigation.navigate('TransactionsScreen', { userId: dropzoneUser?.id });
+    navigation.navigate('Authenticated', {
+      screen: 'Drawer',
+      params: {
+        screen: 'Manifest',
+        params: {
+          screen: 'TransactionsScreen',
+          params: { userId: Number(dropzoneUser?.id) }
+        }
+      }
+    });
   }, [dropzoneUser?.id, navigation]);
 
   const onClickEquipment = React.useCallback(() => {
     if (!dropzoneUser?.id) {
       return;
     }
-    navigation.navigate('EquipmentScreen', { userId: dropzoneUser?.id });
+    navigation.navigate('Authenticated', {
+      screen: 'Drawer',
+      params: {
+        screen: 'Manifest',
+        params: {
+          screen: 'EquipmentScreen', params: { userId: Number(dropzoneUser?.id) }
+        }
+      }
+    });
   }, [dropzoneUser?.id, navigation]);
 
   const onClickAddFunds = React.useCallback(() => {

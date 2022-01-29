@@ -97,12 +97,14 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         onSuccess();
       }
     } catch (error) {
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: error.message,
-          variant: 'error',
-        })
-      );
+      if (error instanceof Error) {
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: error.message,
+            variant: 'error',
+          })
+        );
+      }
     }
   }, [
     dispatch,

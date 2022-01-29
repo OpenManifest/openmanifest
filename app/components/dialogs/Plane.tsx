@@ -98,12 +98,14 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
           dispatch(actions.forms.plane.reset());
         }
       } catch (error) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: error.message,
-            variant: 'error',
-          })
-        );
+        if (error instanceof Error) {
+          dispatch(
+            actions.notifications.showSnackbar({
+              message: error.message,
+              variant: 'error',
+            })
+          );
+        }
       }
     }
   }, [dispatch, mutationUpdatePlane, onClose, state.fields, state.original?.id, validate]);
@@ -161,12 +163,14 @@ export default function CreatePlaneScreen(props: IPlaneDialogProps) {
           dispatch(actions.forms.plane.reset());
         }
       } catch (error) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: error.message,
-            variant: 'error',
-          })
-        );
+        if (error instanceof Error) {
+          dispatch(
+            actions.notifications.showSnackbar({
+              message: error.message,
+              variant: 'error',
+            })
+          );
+        }
       }
     }
   }, [

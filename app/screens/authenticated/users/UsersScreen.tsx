@@ -11,6 +11,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import CreateGhostDialog from 'app/components/dialogs/Ghost';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
+import { DropzoneUserEssentialsFragment, UserEssentialsFragment } from 'app/api/operations';
 
 function UserCardSkeleton() {
   const theme = useTheme();
@@ -53,6 +54,17 @@ function UserCardSkeleton() {
     />
   );
 }
+
+const loadingFragment: DropzoneUserEssentialsFragment = {
+  id: '__LOADING__',
+  hasCredits: false,
+  hasExitWeight: false,
+  hasLicense: false,
+  hasMembership: false,
+  user: {
+    id: '__LOADING__'
+  }
+};
 export default function UsersScreen() {
   const global = useAppSelector((root) => root.global);
   const state = useAppSelector((root) => root.screens.users);
@@ -94,15 +106,15 @@ export default function UsersScreen() {
           <NoResults title="No users" subtitle="" />
         </View>
       )}
-      <FlatList
-        data={initialLoading ? [1, 1, 1, 11, 1, 1, 1, 1] : users}
+      <FlatList<DropzoneUserEssentialsFragment>
+        data={initialLoading ? new Array(8).fill(loadingFragment) : users.map((edge) => edge?.node)}
         onRefresh={() =>
           refetch({
             dropzoneId: Number(global.currentDropzoneId),
             search: state.searchText,
           })
         }
-        keyExtractor={({ item }, idx) => `user-${item?.node?.id || idx}`}
+        keyExtractor={(item, idx) => `user-${item?.id || idx}`}
         style={{
           flex: 1,
           paddingTop: 0,
@@ -111,12 +123,12 @@ export default function UsersScreen() {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
         numColumns={numColumns}
         contentContainerStyle={{ width: '100%', alignSelf: 'center' }}
-        renderItem={({ item: edge }) =>
-          edge === 1 ? (
+        renderItem={({ item }) =>
+          item.id === '__LOADING__' ? (
             <UserCardSkeleton />
           ) : (
             <Card
-              key={`user-${edge?.node?.id}`}
+              key={`user-${item?.id}`}
               style={{ margin: 0, marginVertical: 0, borderRadius: 2, width: '100%' }}
             >
               <Card.Content
@@ -124,12 +136,12 @@ export default function UsersScreen() {
               >
                 <List.Item
                   style={{ width: '100%' }}
-                  title={edge?.node?.user.name}
+                  title={item?.user.name}
                   titleStyle={{ fontWeight: 'bold' }}
                   descriptionStyle={{ fontSize: 12 }}
-                  description={edge?.node?.role?.name?.replace('_', ' ').toUpperCase()}
+                  description={item?.role?.name?.replace('_', ' ').toUpperCase()}
                   left={() =>
-                    !edge?.node?.user?.image ? (
+                    !item?.user?.image ? (
                       <Avatar.Icon
                         icon="account"
                         style={{
@@ -140,7 +152,7 @@ export default function UsersScreen() {
                       />
                     ) : (
                       <Avatar.Image
-                        source={{ uri: edge?.node?.user.image }}
+                        source={{ uri: item?.user.image }}
                         style={{
                           alignSelf: 'center',
                           marginHorizontal: 22,
@@ -152,8 +164,17 @@ export default function UsersScreen() {
                   }
                   right={() => <List.Icon icon="chevron-right" />}
                   onPress={() =>
-                    navigation.navigate('UserProfileScreen', {
-                      userId: edge?.node?.id,
+                    navigation.navigate('Authenticated', {
+                      screen: 'Drawer',
+                      params: {
+                        screen: 'Users',
+                        params: {
+                          screen: 'UserProfileScreen',
+                          params: {
+                            userId: Number(item?.id),
+                          }
+                        }
+                      }
                     })
                   }
                 />

@@ -48,8 +48,10 @@ export default function SignupWizard() {
       }
       throw new Error('Password change failed');
     } catch (e) {
-      dispatch(actions.screens.signup.setFieldError(['passwordConfirmation', e.message]));
-      throw new Error();
+      if (e instanceof Error) {
+        dispatch(actions.screens.signup.setFieldError(['passwordConfirmation', e.message]));
+      }
+      throw e;
     }
   }, [
     dispatch,

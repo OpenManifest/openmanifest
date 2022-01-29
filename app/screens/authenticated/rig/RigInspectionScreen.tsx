@@ -167,12 +167,14 @@ export default function RigInspectionScreen() {
       dispatch(actions.forms.rigInspection.reset());
       navigation.goBack();
     } catch (error) {
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: error.message,
-          variant: 'error',
-        })
-      );
+      if (error instanceof Error) {
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: error.message,
+            variant: 'error',
+          })
+        );
+      }
     }
   }, [
     mutationCreateRigInspection,

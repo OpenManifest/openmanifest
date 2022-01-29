@@ -86,13 +86,14 @@ export default createSlice({
       } else {
         state.original = action.payload;
         state.open = true;
-        Object.keys(action.payload).forEach((key) => {
-          const payloadKey = key as keyof typeof action.payload;
-          if (payloadKey in state.fields) {
-            const typedKey = payloadKey as keyof typeof initialState['fields'];
-            state.fields[typedKey].value = action.payload[typedKey as typeof payloadKey];
-          }
-        });
+        state.fields.dispatchAt.value = action.payload.dispatchAt;
+        state.fields.gca.value = action.payload.gca;
+        state.fields.isOpen.value = action.payload.isOpen;
+        state.fields.loadMaster.value = action.payload.loadMaster;
+        state.fields.maxSlots.value = action.payload.maxSlots;
+        state.fields.name.value = action.payload.name;
+        state.fields.pilot.value = action.payload.pilot;
+        state.fields.plane.value = action.payload.plane;
       }
     },
 

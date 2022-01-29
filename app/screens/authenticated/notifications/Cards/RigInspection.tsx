@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import NotificationCard from './NotificationCard';
 import { Notification, Rig } from '../../../../api/schema';
+import { RigEssentialsFragment } from 'app/api/operations';
 
 interface INotification {
   notification: Notification;
@@ -22,16 +23,28 @@ export default function RigInspectionNotification(props: INotification) {
       icon={notification.notificationType === 'rig_inspection_requested' ? 'eye' : 'parachute'}
       onPress={() =>
         notification.notificationType === 'rig_inspection_requested'
-          ? navigation.navigate('RigInspectionScreen', {
-              rig: (notification.resource as Rig).id,
-              dropzoneUserId: (notification.resource as Rig).user?.id,
-            })
-          : navigation.navigate('Manifest', {
-              screen: 'Profile',
+          ? navigation.navigate('Authenticated', {
+            screen: 'Drawer',
+            params: {
+              screen: 'Manifest',
+              params: {
+                screen: 'RigInspectionScreen',
+                params: {
+                  rig: (notification.resource as RigEssentialsFragment),
+                  dropzoneUserId: Number((notification.resource as RigEssentialsFragment).user?.id),
+                }
+              }
+            }
+          })
+          : navigation.navigate('Authenticated', {
+            screen: 'Drawer',
+            params: {
+              screen: 'Manifest',
               params: {
                 screen: 'ProfileScreen',
               },
-            })
+            }
+          })
       }
     />
   );

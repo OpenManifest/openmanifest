@@ -64,7 +64,9 @@ export default function UpdateExtraScreen() {
           navigation.goBack();
         }
       } catch (error) {
-        dispatch(snackbar.showSnackbar({ message: error.message, variant: 'error' }));
+        if (error instanceof Error) {
+          dispatch(snackbar.showSnackbar({ message: error.message, variant: 'error' }));
+        }
       }
     }
   }, [

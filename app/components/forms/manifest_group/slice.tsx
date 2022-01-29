@@ -110,13 +110,11 @@ export default createSlice({
       } else {
         state.original = action.payload;
         state.open = true;
-        Object.keys(action.payload).forEach((key) => {
-          const payloadKey = key as keyof typeof action.payload;
-          if (payloadKey in state.fields) {
-            const typedKey = payloadKey as keyof typeof initialState['fields'];
-            state.fields[typedKey].value = action.payload[typedKey as typeof payloadKey];
-          }
-        });
+        state.fields.extras.value = action.payload.extras;
+        state.fields.jumpType.value = action.payload.jumpType;
+        state.fields.load.value = action.payload.load;
+        state.fields.users.value = action.payload.users;
+        state.fields.ticketType.value = action.payload.ticketType;
       }
     },
 

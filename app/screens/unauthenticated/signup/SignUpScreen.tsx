@@ -28,7 +28,7 @@ export default function SignupScreen() {
         })
       );
 
-      navigation.navigate('LoginScreen');
+      navigation.navigate('Unauthenticated', { screen: 'LoginScreen' });
       // Credentials are received on login only now. Return
       return null;
     },

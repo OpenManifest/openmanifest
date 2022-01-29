@@ -40,6 +40,7 @@ export default function DatePicker(props: IDatepicker) {
 
       <Modal visible={open}>
         <DatePickerModal
+          locale="en"
           visible={open}
           mode="single"
           onDismiss={onDismissSingle}

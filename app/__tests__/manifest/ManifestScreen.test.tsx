@@ -56,7 +56,9 @@ describe('<ManifestScreen />', () => {
     });
 
     await waitFor(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
       const loads = screen.queryAllByTestId('load-card');
       const text = screen.queryByText(/No loads/);
 

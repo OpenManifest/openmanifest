@@ -44,9 +44,19 @@ export default function TransactionsTab(props: IJumpHistoryTab) {
         data={dropzoneUser?.orders?.edges || []}
         refreshing={false}
         renderItem={({ item }) => (
+          !item?.node ? null :
           <OrderCard
             showAvatar
-            onPress={() => navigation.navigate('OrderScreen', { order: item?.node })}
+            onPress={() => navigation.navigate('Authenticated', {
+              screen: 'Drawer',
+              params: {
+                screen: 'Manifest',
+                params: {
+                  screen: 'OrderScreen',
+                  params: { order: item?.node as Required<typeof item.node> }
+                }
+              }
+            })}
             order={item?.node as OrderEssentialsFragment}
             {...{ dropzoneUser }}
           />

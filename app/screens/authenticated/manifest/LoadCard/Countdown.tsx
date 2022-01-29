@@ -25,7 +25,7 @@ const CountdownCircleTimer = Platform.select({
       default: defaultExport,
     }))
   ),
-});
+}) as React.ComponentType<any>;
 
 interface ICountdownProps {
   end: Date;

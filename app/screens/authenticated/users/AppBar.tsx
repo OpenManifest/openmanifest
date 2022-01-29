@@ -14,9 +14,9 @@ interface ISearchableAppBar extends StackHeaderProps {
 
 function AppBar({
   navigation,
-  previous,
-  scene,
   onSearch,
+  options,
+  back,
   searchText,
   searchVisible,
   setSearchVisible,
@@ -26,7 +26,7 @@ function AppBar({
     <Appbar.Header
       style={{ backgroundColor: theme.dark ? theme.colors.background : theme.colors.surface }}
     >
-      {previous ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
+      {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
       {searchVisible ? <Appbar.BackAction onPress={() => setSearchVisible(false)} /> : null}
       {searchVisible ? (
         <View style={styles.inputContainer}>
@@ -40,7 +40,7 @@ function AppBar({
         </View>
       ) : (
         <Appbar.Content
-          title={scene.descriptor.options.title}
+          title={options.title}
           titleStyle={{ fontWeight: 'bold' }}
         />
       )}

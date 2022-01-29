@@ -55,8 +55,19 @@ export default function TransactionsScreen() {
         refreshing={false}
         onRefresh={refetch}
         renderItem={({ item }) => (
+          !item?.node ? null :
           <OrderCard
-            onPress={() => navigation.navigate('OrderScreen', { order: item.node })}
+            onPress={() =>
+              !item?.node ? null : navigation.navigate('Authenticated', {
+                screen: 'Drawer',
+                params: {
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'OrderScreen',
+                    params: { order: item?.node }
+                  }
+                }
+              })}
             order={item?.node}
             showAvatar
             {...{ dropzoneUser }}

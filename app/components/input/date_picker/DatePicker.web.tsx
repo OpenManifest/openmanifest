@@ -15,28 +15,26 @@ export default function DatePicker(props: IDatepicker) {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <>
-      <Menu
-        onDismiss={() => setOpen(false)}
-        visible={open}
-        anchor={
-          <List.Item
-            onPress={() => setOpen(true)}
-            disabled={!!disabled}
-            title={label}
-            description={timestamp ? format(timestamp * 1000, 'yyyy/MM/dd') : 'No date selected'}
-            left={() => <List.Icon icon="calendar" />}
-          />
-        }
-      >
-        <DayPicker
-          selectedDays={timestamp ? [new Date(timestamp * 1000)] : []}
-          onDayClick={(date) => {
-            onChange(date.getTime() / 1000);
-            setOpen(false);
-          }}
+    <Menu
+      onDismiss={() => setOpen(false)}
+      visible={open}
+      anchor={
+        <List.Item
+          onPress={() => setOpen(true)}
+          disabled={!!disabled}
+          title={label}
+          description={timestamp ? format(timestamp * 1000, 'yyyy/MM/dd') : 'No date selected'}
+          left={() => <List.Icon icon="calendar" />}
         />
-      </Menu>
-    </>
+      }
+    >
+      <DayPicker
+        selectedDays={timestamp ? [new Date(timestamp * 1000)] : []}
+        onDayClick={(date) => {
+          onChange(date.getTime() / 1000);
+          setOpen(false);
+        }}
+      />
+    </Menu>
   );
 }

@@ -102,13 +102,14 @@ export default createSlice({
       } else {
         state.original = action.payload;
         state.open = true;
-        Object.keys(action.payload).forEach((key) => {
-          const payloadKey = key as keyof typeof action.payload;
-          if (payloadKey in state.fields) {
-            const typedKey = payloadKey as keyof typeof initialState['fields'];
-            state.fields[typedKey].value = action.payload[typedKey as typeof payloadKey];
-          }
-        });
+        state.fields.jumpType.value = action.payload.jumpType;
+        state.fields.extras.value = action.payload.extras;
+        state.fields.rig.value = action.payload.rig;
+        state.fields.ticketType.value = action.payload.ticketType;
+        state.fields.dropzoneUser.value = action.payload.dropzoneUser;
+        state.fields.exitWeight.value = action.payload.exitWeight;
+        state.fields.passengerName.value = action.payload.passengerName;
+        state.fields.passengerExitWeight.value = action.payload.passengerExitWeight;
       }
     },
 

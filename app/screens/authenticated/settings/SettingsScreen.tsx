@@ -21,8 +21,17 @@ export default function SettingsScreen() {
           <List.Item
             title="Configuration"
             onPress={() =>
-              navigation.navigate('UpdateDropzoneScreen', {
-                dropzone: data?.dropzone,
+              !data?.dropzone ? null : navigation.navigate('Authenticated', {
+                screen: 'Drawer',
+                params: {
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'UpdateDropzoneScreen',
+                    params: {
+                      dropzone: data?.dropzone,
+                    }
+                  }
+                }
               })
             }
             left={() => <List.Icon color={theme.colors.text} icon="information-outline" />}
@@ -32,43 +41,113 @@ export default function SettingsScreen() {
         <List.Item
           title="Permissions"
           left={() => <List.Icon color={theme.colors.text} icon="lock" />}
-          onPress={() => navigation.navigate('DropzonePermissionScreen')}
+          onPress={() =>
+            navigation.navigate('Authenticated', {
+              screen: 'Drawer',
+              params: {
+                screen: 'Manifest',
+                params: {
+                  screen: 'DropzonePermissionScreen'
+                }
+              }
+            })
+          }
         />
         <List.Item
           title="Aircrafts"
-          onPress={() => navigation.navigate('PlanesScreen')}
+          onPress={() =>
+            navigation.navigate('Authenticated', {
+              screen: 'Drawer',
+              params: {
+                screen: 'Manifest',
+                params: {
+                  screen: 'PlanesScreen'
+                }
+              }
+            })
+          }
           left={() => <List.Icon color={theme.colors.text} icon="airplane" />}
         />
         <List.Item
           title="Rigs"
           left={() => <List.Icon color={theme.colors.text} icon="parachute" />}
           description="Dropzone rigs, e.g tandems and student rigs"
-          onPress={() => navigation.navigate('DropzoneRigsScreen')}
+          onPress={() =>
+            navigation.navigate('Authenticated', {
+              screen: 'Drawer',
+              params: {
+                screen: 'Manifest',
+                params: {
+                  screen: 'DropzoneRigsScreen'
+                }
+              }
+            })
+          }
         />
         <List.Item
           disabled={!canUpdateRigInspectionTemplate}
           title="Rig Inspection Template"
           left={() => <List.Icon color={theme.colors.text} icon="check" />}
-          onPress={() => navigation.navigate('RigInspectionTemplateScreen')}
+          onPress={() =>
+            navigation.navigate('Authenticated', {
+              screen: 'Drawer',
+              params: {
+                screen: 'Manifest',
+                params: {
+                  screen: 'RigInspectionTemplateScreen'
+                }
+              }
+            })
+          }
         />
         <List.Item
           title="Master Log"
           left={() => <List.Icon color={theme.colors.text} icon="parachute" />}
           description="View historic data for daily operations"
-          onPress={() => navigation.navigate('DropzoneMasterLogScreen')}
+          onPress={() =>
+            navigation.navigate('Authenticated', {
+              screen: 'Drawer',
+              params: {
+                screen: 'Manifest',
+                params: {
+                  screen: 'DropzoneMasterLogScreen'
+                }
+              }
+            })
+          }
         />
       </List.Section>
 
       <List.Section title="Tickets" style={{ width: '100%' }}>
         <List.Item
           title="Ticket types"
-          onPress={() => navigation.navigate('TicketTypesScreen')}
+          onPress={() =>
+            navigation.navigate('Authenticated', {
+              screen: 'Drawer',
+              params: {
+                screen: 'Manifest',
+                params: {
+                  screen: 'TicketTypesScreen'
+                }
+              }
+            })
+          }
           left={() => <List.Icon color={theme.colors.text} icon="ticket" />}
           description="Manage ticket prices and accessibility"
         />
         <List.Item
           title="Ticket add-ons"
-          onPress={() => navigation.navigate('ExtrasScreen')}
+          onPress={() =>
+            navigation.navigate('Authenticated', {
+              screen: 'Drawer',
+              params: {
+                screen: 'Manifest',
+                params: {
+                  screen: 'ExtrasScreen'
+                }
+              }
+            })
+          }
           left={() => <List.Icon color={theme.colors.text} icon="plus" />}
           description="Supplementary tickets like coach, camera, night jumpi"
         />

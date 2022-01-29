@@ -30,7 +30,7 @@ export type TRootNavigatorRouteParams = {
 };
 
 export type TDrawerNavigatorRouteParams = {
-  Authenticated: undefined;
+  Drawer: undefined;
   Profile: undefined;
   Settings: undefined;
 };
@@ -55,8 +55,8 @@ export default function RootNavigator() {
         globalState.currentDropzone ? (
           <Stack.Screen name="Authenticated">
             {() => (
-              <Drawer.Navigator drawerContent={() => <DrawerMenu />} drawerType="back">
-                <Drawer.Screen name="Authenticated" component={AuthenticatedRoutes} />
+              <Drawer.Navigator drawerContent={() => <DrawerMenu />} screenOptions={{ drawerType: 'back' }}>
+                <Drawer.Screen name="Drawer" component={AuthenticatedRoutes} />
               </Drawer.Navigator>
             )}
           </Stack.Screen>

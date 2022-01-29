@@ -1,5 +1,4 @@
 import {
-  BottomTabBarOptions,
   BottomTabBarProps,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
@@ -111,7 +110,7 @@ export default function AuthenticatedTabBar() {
       Platform.select({
         web: {},
         ios: {
-          tabBar: (props: BottomTabBarProps<BottomTabBarOptions>) => (
+          tabBar: (props: BottomTabBarProps) => (
             <AnimatedTabBar
               preset="bubble"
               tabs={tabs}
@@ -125,7 +124,7 @@ export default function AuthenticatedTabBar() {
           ),
         },
         android: {
-          tabBar: (props: BottomTabBarProps<BottomTabBarOptions>) => (
+          tabBar: (props: BottomTabBarProps) => (
             <AnimatedTabBar
               preset="bubble"
               tabs={tabs}

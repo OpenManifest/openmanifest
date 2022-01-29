@@ -26,9 +26,9 @@ export default function ProfileRoutes() {
 
   return (
     <Profile.Navigator
-      mode="modal"
       screenOptions={{
         headerShown: true,
+        presentation: 'modal',
         header: (props) => <AppBar {...props} hideWarnings />,
         cardStyle: {
           flex: 1,

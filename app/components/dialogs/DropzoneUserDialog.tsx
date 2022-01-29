@@ -93,12 +93,14 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         console.error(result?.fieldErrors);
       }
     } catch (error) {
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: error.message,
-          variant: 'error',
-        })
-      );
+      if (error instanceof Error) {
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: error.message,
+            variant: 'error',
+          })
+        );
+      }
     }
   }, [
     dispatch,

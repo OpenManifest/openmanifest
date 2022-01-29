@@ -13,7 +13,7 @@ enum AnimationState {
   waiting,
   closed,
 }
-const Notifications = () => {
+function Notifications() {
   const state = useAppSelector((root) => root.notifications);
   const dispatch = useAppDispatch();
   const successAnimation = React.useRef<LottieView>(null);
@@ -68,7 +68,6 @@ const Notifications = () => {
         </View>
       )}
       <Toast
-        ref={(ref) => Toast.setRef(ref)}
         autoHide
         visibilityTime={4000}
         position="bottom"
@@ -76,7 +75,7 @@ const Notifications = () => {
       />
     </>
   );
-};
+}
 
 const styles = StyleSheet.create({
   animation: {

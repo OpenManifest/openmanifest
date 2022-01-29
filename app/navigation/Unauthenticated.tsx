@@ -18,8 +18,8 @@ export default function Unauthenticated() {
         cardStyle: {
           flex: 1,
         },
+        presentation: 'modal'
       }}
-      mode="modal"
     >
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="SignUpScreen" component={SignUpScreen} />

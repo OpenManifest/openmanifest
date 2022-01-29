@@ -7,17 +7,17 @@ import PilotChip from 'app/components/chips/PilotChip';
 import PlaneChip from 'app/components/chips/PlaneChip';
 
 import { View } from 'app/components/Themed';
-import { Load, LoadState } from 'app/api/schema.d';
+import { LoadState } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { errorColor, warningColor } from 'app/constants/Colors';
 import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
-import { DropzoneUserEssentialsFragment, PlaneEssentialsFragment } from 'app/api/operations';
+import { DropzoneUserEssentialsFragment, LoadDetailsFragment, PlaneEssentialsFragment } from 'app/api/operations';
 import { useLoadQuery } from 'app/api/reflection';
 import Countdown from '../Countdown';
 import Loading from './Loading';
 
 interface ILoadCardSmall {
-  load: Load;
+  load: LoadDetailsFragment;
   onPress(): void;
 }
 

@@ -17,8 +17,13 @@ interface ICreditsSheet {
   onSuccess(): void;
 }
 
+function HandleComponent() {
+  const { theme } = useAppSelector((state) => state.global);
+  return <View style={[styles.sheetHeader, { backgroundColor: theme.colors.primary }]} />;
+}
+
 export default function CreditSheet(props: ICreditsSheet) {
-  const { open, dropzoneUser, onClose } = props;
+  const { open, dropzoneUser, onClose, onSuccess } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.credits);
   const global = useAppSelector((root) => root.global);
@@ -102,15 +107,17 @@ export default function CreditSheet(props: ICreditsSheet) {
       }
       if (!result?.createOrder?.fieldErrors?.length) {
         dispatch(actions.forms.credits.reset());
-        props.onSuccess();
+        onSuccess();
       }
     } catch (error) {
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: error.message,
-          variant: 'error',
-        })
-      );
+      if (error instanceof Error) {
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: error.message,
+            variant: 'error',
+          })
+        );
+      }
     }
   }, [
     validate,
@@ -167,12 +174,6 @@ export default function CreditSheet(props: ICreditsSheet) {
     // Intentional to not open/close the sheet every time these change
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDismiss, open]);
-
-  const HandleComponent = React.useMemo(
-    () => () =>
-      <View style={[styles.sheetHeader, { backgroundColor: global.theme.colors.primary }]} />,
-    [global.theme.colors.primary]
-  );
 
   return (
     <BottomSheetModal

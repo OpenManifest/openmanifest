@@ -185,9 +185,18 @@ export default function RigCard(props: IRigCardProps) {
             },
           ]}
           onPress={() => {
-            navigation.navigate('RigInspectionScreen', {
-              rig,
-              dropzoneUserId: Number(dropzoneUser?.id),
+            navigation.navigate('Authenticated', {
+              screen: 'Drawer',
+              params: {
+                screen: 'Manifest',
+                params: {
+                  screen: 'RigInspectionScreen',
+                  params: {
+                    rig,
+                    dropzoneUserId: Number(dropzoneUser?.id),
+                  }
+                }
+              }
             });
           }}
         >

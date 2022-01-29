@@ -77,7 +77,18 @@ export default function TransactionsScreen() {
         renderItem={({ item }) => (
           <OrderCard
             showAvatar
-            onPress={() => navigation.navigate('OrderScreen', { order: item?.node })}
+            onPress={() =>
+              !item?.node ? null : navigation.navigate('Authenticated', {
+                screen: 'Drawer',
+                params: {
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'OrderScreen',
+                    params: { order: item?.node }
+                  }
+                }
+              })
+            }
             order={item?.node as OrderEssentialsFragment}
             {...{ dropzoneUser }}
           />
