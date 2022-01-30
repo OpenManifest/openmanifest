@@ -8,7 +8,12 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider as MaterialProvider, ActivityIndicator, ProgressBar } from 'react-native-paper';
 import { Appearance, Linking, Platform, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigationState,
+  getFocusedRouteNameFromRoute,
+  getPathFromState,
+} from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
 import * as Sentry from 'sentry-expo';
 import URI from 'urijs';
@@ -37,6 +42,16 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
+function recursivelyGetRouteName(state: NavigationState, prev: string[] = []): string {
+  const subNavState = state.routes[state.index].state;
+  const hasSubRoutes = subNavState?.index !== undefined && subNavState.routes[subNavState.index];
+  const subState = hasSubRoutes ? subNavState.routes[subNavState.index].state : undefined;
+  const routeName = getFocusedRouteNameFromRoute(state.routes[state.index]) || 'Oops';
+  if (subState) {
+    return recursivelyGetRouteName(subState as NavigationState, [...prev, routeName]) || routeName;
+  }
+  return [...prev, routeName].join('/');
+}
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -153,6 +168,20 @@ function Content() {
     };
   }, [dispatch]);
 
+  const onRouteChange = React.useCallback(
+    (s?: NavigationState) => {
+      if (s) {
+        const [path] = getPathFromState(s).split(/\?/);
+        const [screenName] = path.split(/\//).reverse();
+        console.log('--- Nav State--', screenName);
+        if (state.currentRouteName !== screenName) {
+          dispatch(actions.global.setCurrentRouteName(screenName));
+        }
+      }
+    },
+    [dispatch, state.currentRouteName]
+  );
+
   return (
     <AppUpdate>
       <React.Suspense
@@ -167,6 +196,7 @@ function Content() {
             <SafeAreaProvider>
               <ImageViewer />
               <NavigationContainer
+                onStateChange={onRouteChange}
                 linking={LinkingConfiguration}
                 theme={state.theme as unknown as never}
               >

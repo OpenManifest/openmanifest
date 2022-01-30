@@ -100,11 +100,16 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
 
   return (
     <BottomSheetModal
+      enableContentPanningGesture
       enableDismissOnClose
+      enableOverDrag
+      enablePanDownToClose
+      enableHandlePanningGesture
+      name="abc"
       onDismiss={onDismiss}
       ref={sheetRef}
       snapPoints={snappingPoints}
-      backdropComponent={BottomSheetBackdrop}
+      backdropComponent={(a) => <BottomSheetBackdrop {...a} pressBehavior="close" />}
       index={(snappingPoints?.length || 1) - 1}
       handleComponent={HandleComponent}
     >
@@ -115,7 +120,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
         ]}
       >
         {children}
-        <Button onPress={buttonAction} mode="contained" style={[styles.button]} loading={loading}>
+        <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>
           {buttonLabel}
         </Button>
       </BottomSheetScrollView>

@@ -18,20 +18,8 @@ import { Permission } from '../../api/schema.d';
 import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 
-function recursivelyGetRouteName(state: NavigationState, prev: string[] = []): string {
-  const subNavState = state.routes[state.index].state;
-  const hasSubRoutes = subNavState?.index !== undefined && subNavState.routes[subNavState.index];
-  const subState = hasSubRoutes ? subNavState.routes[subNavState.index].state : undefined;
-  const routeName = getFocusedRouteNameFromRoute(state.routes[state.index]) || 'Oops';
-  if (subState) {
-    return recursivelyGetRouteName(subState as NavigationState, [...prev, routeName]) || routeName;
-  }
-  console.log({ state });
-  return [...prev, routeName].join('/');
-}
-
 export default function DrawerMenu() {
-  const { theme } = useAppSelector((root) => root.global);
+  const { theme, currentRouteName: routeName } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
   const { currentUser, dropzone, loading } = useCurrentDropzone();
   const { data } = useQueryDropzones({
@@ -43,7 +31,6 @@ export default function DrawerMenu() {
 
   const navigation = useNavigation();
 
-  const routeName = recursivelyGetRouteName(navigation.getState());
   console.log({ routeName });
 
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
