@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Avatar, Drawer, List } from 'react-native-paper';
-import {
-  DrawerActions,
-  getFocusedRouteNameFromRoute,
-  NavigationState,
-  useNavigation,
-} from '@react-navigation/native';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import capitalize from 'lodash/capitalize';
 import SkeletonContent from 'app/components/Skeleton';
