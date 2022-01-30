@@ -1,0 +1,10 @@
+{
+  "include": [
+    "jest.setup.ts",
+    "app/**/*",
+    "png.d.ts",
+    ".eslintrc.js",
+    "babel.config.js"
+  ],
+  "extends": "./tsconfig.json",
+}
