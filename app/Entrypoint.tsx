@@ -1,4 +1,4 @@
-import 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
@@ -193,21 +193,23 @@ function Content() {
       >
         <Apollo>
           <MaterialProvider theme={state.theme as ReactNativePaper.Theme}>
-            <SafeAreaProvider>
-              <ImageViewer />
-              <NavigationContainer
-                onStateChange={onRouteChange}
-                linking={LinkingConfiguration}
-                theme={state.theme as unknown as never}
-              >
-                <Wrapper>
-                  <RootNavigator />
-                </Wrapper>
-              </NavigationContainer>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <SafeAreaProvider>
+                <ImageViewer />
+                <NavigationContainer
+                  onStateChange={onRouteChange}
+                  linking={LinkingConfiguration}
+                  theme={state.theme as unknown as never}
+                >
+                  <Wrapper>
+                    <RootNavigator />
+                  </Wrapper>
+                </NavigationContainer>
 
-              <StatusBar />
-              <NotificationArea />
-            </SafeAreaProvider>
+                <StatusBar />
+                <NotificationArea />
+              </SafeAreaProvider>
+            </GestureHandlerRootView>
           </MaterialProvider>
         </Apollo>
       </React.Suspense>
