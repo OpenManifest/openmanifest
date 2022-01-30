@@ -14,9 +14,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   const conf = {
     ...config,
     name: 'OpenManifest',
-    version: '1.0.0',
     slug: 'openmanifest',
-
     hooks: {
       postPublish: [
         {

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Open Manifest",
     "slug": "openmanifest",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/android-icon.png",
     "scheme": "openmanifest",
@@ -25,7 +25,7 @@
       "infoPlist": {
         "photosPermission": "OpenManifest needs access to photos to let you upload avatars"
       },
-      "buildNumber": "29",
+      "buildNumber": "30",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
       "icon": "./assets/images/ios-icon.png",
@@ -39,11 +39,20 @@
     },
     "android": {
       "package": "com.dangertechnologies.openmanifest",
+      "permissions": [
+        "CAMERA",
+        "MEDIA_LIBRARY",
+        "CAMERA_ROLL",
+        "NOTIFICATIONS",
+        "ACCESS_COARSE_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ff1414"
       },
-      "versionCode": 3,
+      "versionCode": 6,
       "intentFilters": [
         {
           "action": "VIEW",
