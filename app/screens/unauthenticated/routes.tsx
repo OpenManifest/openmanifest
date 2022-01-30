@@ -6,7 +6,6 @@ import SignupWizard from 'app/screens/unauthenticated/signup/wizard/SignupWizard
 import LoginScreen from './login/LoginScreen';
 import SignUpScreen from './signup/SignUpScreen';
 
-
 export type UnauthenticatedRoutes = {
   LoginScreen: undefined;
   SignUpScreen: undefined;
@@ -27,7 +26,7 @@ export default function Unauthenticated() {
         cardStyle: {
           flex: 1,
         },
-        presentation: 'modal'
+        presentation: 'modal',
       }}
     >
       <Stack.Screen name="LoginScreen" component={LoginScreen} />

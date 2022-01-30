@@ -1,26 +1,48 @@
 module.exports = {
   parser: '@typescript-eslint/parser', // Specifies the ESLint parser
   // for expo projects using react native
-  extends: [
-    'universe/native',
-    'airbnb-typescript-prettier',
-    // Uses the recommended rules from the @typescript-eslint/eslint-plugin
-    'plugin:@typescript-eslint/recommended',
-    // Uses eslint-config-prettier to disable ESLint rules from
-    // @typescript-eslint/eslint-plugin that would conflict with prettier
-    'prettier/@typescript-eslint',
-    'plugin:prettier/recommended',
-  ],
+  extends: ['universe/native', 'plugin:prettier/recommended'],
+  plugins: ['@typescript-eslint'],
   settings: {
     'import/resolver': {
       'babel-module': {},
     },
   },
+  parserOptions: {
+    project: './tsconfig.json',
+  },
   ignorePatterns: ['**/*.d.ts'],
+  overrrides: {
+    settings: {
+      'import/resolver': {
+        'babel-module': {},
+      },
+    },
+    files: ['*.ts', '*.tsx'], // Your TypeScript files extension
+
+    // As mentioned in the comments, you should extend TypeScript plugins here,
+    // instead of extending them outside the `overrides`.
+    // If you don't want to extend any rules, you don't need an `extends` attribute.
+    extends: [
+      'airbnb-typescript-prettier',
+      // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+      'plugin:@typescript-eslint/recommended',
+      // Uses eslint-config-prettier to disable ESLint rules from
+      // @typescript-eslint/eslint-plugin that would conflict with prettier
+      'prettier/@typescript-eslint',
+    ],
+
+    parserOptions: {
+      project: ['./tsconfig.json'], // Specify it only for TypeScript files
+    },
+  },
   rules: {
     // Allowed with immer
     'no-underscore-dangle': 0,
     'no-param-reassign': 0,
+
+    // FIXME: Turn this on and fix all usecases
+    'react/no-unstable-nested-components': 0,
 
     'max-len': [1, { code: 100 }],
 

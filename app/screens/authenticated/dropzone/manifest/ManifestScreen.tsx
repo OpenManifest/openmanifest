@@ -13,18 +13,18 @@ import checkDropzoneSetupComplete from 'app/utils/checkDropzoneSetupComplete';
 
 import NoResults from 'app/components/NoResults';
 import { View } from 'app/components/Themed';
-import { Load, LoadState, Permission } from 'app/api/schema.d';
+import { LoadState, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import LoadDialog from 'app/components/dialogs/Load';
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { LoadDetailsFragment } from 'app/api/operations';
 import GetStarted from '../../../../components/GetStarted';
 import LoadCardSmall from './LoadCard/Small/Card';
 import LoadCardLarge from './LoadCard/Large/Card';
-import LoadDialog from 'app/components/dialogs/Load';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import WeatherConditions from './Weather/WeatherBoard';
 import LoadingCardLarge from './LoadCard/Large/Loading';
 import LoadingCardSmall from './LoadCard/Small/Loading';
-import { LoadDetailsFragment } from 'app/api/operations';
 
 const loadingFragment: LoadDetailsFragment = {
   id: '__LOADING__',
@@ -40,7 +40,7 @@ const loadingFragment: LoadDetailsFragment = {
   },
   state: LoadState.Open,
   weight: 0,
-}
+};
 export default function ManifestScreen() {
   const state = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
@@ -209,84 +209,85 @@ export default function ManifestScreen() {
                 resizeMode="cover"
               />
             )}
-              <FlatList<LoadDetailsFragment>
-                ListHeaderComponent={() => <WeatherConditions />}
-                ListEmptyComponent={() => (
-                  <NoResults title="No loads so far today" subtitle="How's the weather?" />
-                )}
-                style={{
-                  paddingTop: 35,
-                  flex: 1,
-                  height: Dimensions.get('window').height,
-                }}
-                testID="loads"
-                keyExtractor={(item, idx) => `load-small-${item?.id || idx}-${idx}`}
-                key={`loads-columns-${numColumns}`}
-                contentContainerStyle={{
-                  width: contentWidth,
-                  alignSelf: 'center',
-                  paddingBottom: 100,
-                }}
-                numColumns={numColumns}
-                data={initialLoading ? new Array(5).fill(loadingFragment) : loads?.map((edge) => edge?.node)}
-                refreshControl={
-                  <RefreshControl refreshing={loading} onRefresh={() => fetchMore({})} />
-                }
-                renderItem={({ item: load, index }) => {
-                  // 1 means loading, because null and undefined
-                  // get filtered out
-                  if (load.id === '__LOADING__') {
-                    return manifestScreen.display === 'list' ? (
-                      <LoadingCardLarge key={`loading-card-${index}`} />
-                    ) : (
-                      <LoadingCardSmall key={`loading-card-${index}`} />
-                    );
-                  }
+            <FlatList<LoadDetailsFragment>
+              ListHeaderComponent={() => <WeatherConditions />}
+              ListEmptyComponent={() => (
+                <NoResults title="No loads so far today" subtitle="How's the weather?" />
+              )}
+              style={{
+                paddingTop: 35,
+                flex: 1,
+                height: Dimensions.get('window').height,
+              }}
+              testID="loads"
+              keyExtractor={(item, idx) => `load-small-${item?.id || idx}-${idx}`}
+              key={`loads-columns-${numColumns}`}
+              contentContainerStyle={{
+                width: contentWidth,
+                alignSelf: 'center',
+                paddingBottom: 100,
+              }}
+              numColumns={numColumns}
+              data={
+                initialLoading
+                  ? new Array(5).fill(loadingFragment)
+                  : loads?.map((edge) => edge?.node)
+              }
+              refreshControl={
+                <RefreshControl refreshing={loading} onRefresh={() => fetchMore({})} />
+              }
+              renderItem={({ item: load, index }) => {
+                // 1 means loading, because null and undefined
+                // get filtered out
+                if (load.id === '__LOADING__') {
                   return manifestScreen.display === 'list' ? (
-                    <LoadCardLarge
-                      controlsVisible={false}
-                      key={`load-${load?.id}`}
-                      load={load}
-                      onSlotPress={(slot) => {
-                        if (load) {
-                          dispatch(actions.forms.manifest.setOpen(slot));
-                          dispatch(actions.forms.manifest.setField(['load', load]));
-                        }
-                      }}
-                      onSlotGroupPress={(slots) => {
-                        dispatch(actions.forms.manifestGroup.reset());
-                        dispatch(
-                          actions.forms.manifestGroup.setFromSlots({ load, slots })
-                        );
-                        dispatch(actions.forms.manifestGroup.setField(['load', load]));
-                        // FIXME: Open manifest group drawer
-                      }}
-                      onManifest={() => {
-                        onManifest(load);
-                      }}
-                      onManifestGroup={() => {
-                        dispatch(actions.forms.manifestGroup.reset());
-                        dispatch(actions.forms.manifestGroup.setOpen(true));
-                        dispatch(actions.forms.manifestGroup.setField(['load', load]));
-                      }}
-                    />
+                    <LoadingCardLarge key={`loading-card-${index}`} />
                   ) : (
-                    <LoadCardSmall
-                      key={`load-${load?.id}`}
-                      load={load}
-                      onPress={() =>
-                        navigation.navigate(
-                          'Authenticated', {
-                          screen: 'Drawer',
-                          params: {
-                            screen: 'Manifest',
-                            params: {
-                              screen: 'LoadScreen',
-                              params: { loadId: load?.id }
-                            }
-                          }
-                        })
+                    <LoadingCardSmall key={`loading-card-${index}`} />
+                  );
+                }
+                return manifestScreen.display === 'list' ? (
+                  <LoadCardLarge
+                    controlsVisible={false}
+                    key={`load-${load?.id}`}
+                    load={load}
+                    onSlotPress={(slot) => {
+                      if (load) {
+                        dispatch(actions.forms.manifest.setOpen(slot));
+                        dispatch(actions.forms.manifest.setField(['load', load]));
                       }
+                    }}
+                    onSlotGroupPress={(slots) => {
+                      dispatch(actions.forms.manifestGroup.reset());
+                      dispatch(actions.forms.manifestGroup.setFromSlots({ load, slots }));
+                      dispatch(actions.forms.manifestGroup.setField(['load', load]));
+                      // FIXME: Open manifest group drawer
+                    }}
+                    onManifest={() => {
+                      onManifest(load);
+                    }}
+                    onManifestGroup={() => {
+                      dispatch(actions.forms.manifestGroup.reset());
+                      dispatch(actions.forms.manifestGroup.setOpen(true));
+                      dispatch(actions.forms.manifestGroup.setField(['load', load]));
+                    }}
+                  />
+                ) : (
+                  <LoadCardSmall
+                    key={`load-${load?.id}`}
+                    load={load}
+                    onPress={() =>
+                      navigation.navigate('Authenticated', {
+                        screen: 'Drawer',
+                        params: {
+                          screen: 'Manifest',
+                          params: {
+                            screen: 'LoadScreen',
+                            params: { loadId: load?.id },
+                          },
+                        },
+                      })
+                    }
                   />
                 );
               }}

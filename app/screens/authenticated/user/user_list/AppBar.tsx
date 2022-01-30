@@ -39,10 +39,7 @@ function AppBar({
           />
         </View>
       ) : (
-        <Appbar.Content
-          title={options.title}
-          titleStyle={{ fontWeight: 'bold' }}
-        />
+        <Appbar.Content title={options.title} titleStyle={{ fontWeight: 'bold' }} />
       )}
       {searchVisible ? (
         <MaterialIcons

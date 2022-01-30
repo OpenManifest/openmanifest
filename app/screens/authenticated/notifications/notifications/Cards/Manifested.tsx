@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import NotificationCard from './NotificationCard';
-import { SlotExhaustiveFragment } from 'app/api/operations';
 import { Notification } from 'app/api/schema.d';
+import NotificationCard from './NotificationCard';
 
 interface INotification {
   notification: Notification;
@@ -18,7 +17,8 @@ export default function ManifestedNotification(props: INotification) {
       timestamp={notification.createdAt}
       icon="airplane"
       onPress={() =>
-        notification?.resource?.id && navigation.navigate('Authenticated', {
+        notification?.resource?.id &&
+        navigation.navigate('Authenticated', {
           screen: 'Drawer',
           params: {
             screen: 'Manifest',
@@ -26,8 +26,8 @@ export default function ManifestedNotification(props: INotification) {
               screen: 'LoadScreen',
               initial: false,
               params: { loadId: notification?.resource?.id },
-            }
-          }
+            },
+          },
         })
       }
     />

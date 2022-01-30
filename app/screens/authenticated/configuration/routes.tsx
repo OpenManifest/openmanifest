@@ -2,7 +2,8 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
-
+import { DropzoneEssentialsFragment } from 'app/api/operations';
+import { NavigationProp, useNavigation } from '@react-navigation/core';
 import SettingsMenuScreen from './settings_menu/SettingsMenuScreen';
 import TicketTypeSettingsScreen from './ticket_types/TicketTypesScreen';
 import DropzoneSettingsScreen from './dropzone_settings/DropzoneSettingsScreen';
@@ -13,8 +14,6 @@ import DropzonePermissionScreen from './permissions/PermissionsScreen';
 import DropzoneMasterLogScreen from './master_log/MasterLogScreen';
 import DropzoneTransactionsScreen from './transactions/DropzoneTransactionsScreen';
 import ExtrasScreen from './extras/ExtrasScreen';
-import { DropzoneEssentialsFragment } from 'app/api/operations';
-import { NavigationProp, useNavigation } from '@react-navigation/core';
 
 export type ConfigurationRoutes = {
   DropzoneSettingsScreen: { dropzone: DropzoneEssentialsFragment };
@@ -55,7 +54,11 @@ export default function SettingsTab() {
         component={DropzoneSettingsScreen}
         options={{ title: 'Basic settings' }}
       />
-      <Configuration.Screen name="AircraftsScreen" component={PlanesScreen} options={{ title: 'Planes' }} />
+      <Configuration.Screen
+        name="AircraftsScreen"
+        component={PlanesScreen}
+        options={{ title: 'Planes' }}
+      />
       <Configuration.Screen
         name="TicketTypesScreen"
         component={TicketTypeSettingsScreen}

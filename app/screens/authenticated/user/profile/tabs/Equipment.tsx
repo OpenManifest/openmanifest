@@ -15,22 +15,25 @@ export default function EquipmentTab(props: IJumpHistoryTab) {
   const { dropzoneUser, tabIndex, currentTabIndex } = props;
   const dispatch = useAppDispatch();
   return (
-    <View animation={currentTabIndex < tabIndex ? "slideInRight" : "slideInLeft"} duration={200} easing="ease-in-out" style={{ padding: 8 }}>
-      {
-        dropzoneUser?.user?.rigs?.map((item) =>
-          <RigCard
-            {...{ dropzoneUser }}
-            onSuccessfulImageUpload={() => null}
-            rig={item}
-            rigInspection={dropzoneUser?.rigInspections?.find(
-              (insp) => insp.rig?.id === item.id && insp.isOk
-            )}
-            onPress={() => {
-              dispatch(actions.forms.rig.setOpen(item));
-            }}
-          />
-        )
-      }
+    <View
+      animation={currentTabIndex < tabIndex ? 'slideInRight' : 'slideInLeft'}
+      duration={200}
+      easing="ease-in-out"
+      style={{ padding: 8 }}
+    >
+      {dropzoneUser?.user?.rigs?.map((item) => (
+        <RigCard
+          {...{ dropzoneUser }}
+          onSuccessfulImageUpload={() => null}
+          rig={item}
+          rigInspection={dropzoneUser?.rigInspections?.find(
+            (insp) => insp.rig?.id === item.id && insp.isOk
+          )}
+          onPress={() => {
+            dispatch(actions.forms.rig.setOpen(item));
+          }}
+        />
+      ))}
     </View>
   );
 }

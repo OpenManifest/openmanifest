@@ -30,6 +30,63 @@ export default function OrderCard(props: IOrder) {
     // @ts-ignore
     isSelfBuyer === dropzoneUser?.id ? 'cash-minus' : 'cash-plus';
 
+  const right = React.useCallback(
+    () => (
+      <Text
+        style={{
+          fontSize: 16,
+          fontFamily: 'Roboto_400Regular',
+          fontWeight: '400',
+          textAlign: 'center',
+          alignSelf: 'center',
+          color: theme.colors.onSurface,
+        }}
+      >
+        {`${isSelfBuyer ? '-$' : '$'}${order.amount.toFixed(2)}`}
+      </Text>
+    ),
+    [isSelfBuyer, order.amount, theme.colors.onSurface]
+  );
+
+  const left = React.useCallback(
+    () => (
+      <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+        {showAvatar ? (
+          <UserAvatar
+            style={{ alignSelf: 'center', marginHorizontal: 12 }}
+            size={60}
+            name={
+              (order?.seller as DropzoneUserEssentialsFragment)?.user?.name ||
+              (order?.seller as DropzoneEssentialsFragment).name ||
+              ''
+            }
+            image={
+              (order?.seller as DropzoneUserEssentialsFragment).user?.image ||
+              (order?.seller as DropzoneEssentialsFragment).banner ||
+              undefined
+            }
+          />
+        ) : (
+          <MaterialCommunityIcons
+            color={
+              // eslint-disable-next-line no-underscore-dangle
+              '__typename' in order.buyer &&
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              order.buyer.__typename === 'DropzoneUser' &&
+              (order.buyer as DropzoneUserEssentialsFragment)?.id === dropzoneUser?.id
+                ? '#FF1414'
+                : successColor
+            }
+            name={icon}
+            size={36}
+            style={{ marginHorizontal: 16 }}
+          />
+        )}
+      </View>
+    ),
+    [dropzoneUser?.id, icon, order.buyer, order?.seller, showAvatar]
+  );
   return (
     <TouchableOpacity onPress={onPress}>
       <Card style={styles.order}>
@@ -40,56 +97,7 @@ export default function OrderCard(props: IOrder) {
             titleStyle={styles.orderTitle}
             description={order.title || null}
             descriptionStyle={styles.orderDescription}
-            right={() => (
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontFamily: 'Roboto_400Regular',
-                  fontWeight: '400',
-                  textAlign: 'center',
-                  alignSelf: 'center',
-                  color: theme.colors.onSurface,
-                }}
-              >
-                {`${isSelfBuyer ? '-$' : '$'}${order.amount.toFixed(2)}`}
-              </Text>
-            )}
-            left={() => (
-              <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                {showAvatar ? (
-                  <UserAvatar
-                    style={{ alignSelf: 'center', marginHorizontal: 12 }}
-                    size={60}
-                    name={
-                      (order?.seller as DropzoneUserEssentialsFragment)?.user?.name ||
-                      (order?.seller as DropzoneEssentialsFragment).name ||
-                      ''
-                    }
-                    image={
-                      (order?.seller as DropzoneUserEssentialsFragment).user?.image ||
-                      (order?.seller as DropzoneEssentialsFragment).banner ||
-                      undefined
-                    }
-                  />
-                ) : (
-                  <MaterialCommunityIcons
-                    color={
-                      // eslint-disable-next-line no-underscore-dangle
-                      '__typename' in order.buyer &&
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-ignore
-                      order.buyer.__typename === 'DropzoneUser' &&
-                      (order.buyer as DropzoneUserEssentialsFragment)?.id === dropzoneUser?.id
-                        ? '#FF1414'
-                        : successColor
-                    }
-                    name={icon}
-                    size={36}
-                    style={{ marginHorizontal: 16 }}
-                  />
-                )}
-              </View>
-            )}
+            {...{ right, left }}
           />
         </Card.Content>
       </Card>

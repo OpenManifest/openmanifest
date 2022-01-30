@@ -124,11 +124,11 @@ export default function CreditSheet(props: ICreditsSheet) {
     dropzoneUser?.id,
     state.fields.amount.value,
     state.fields.message.value,
-    state.fields.transactionType?.value,
+    state.fields.transactionType.value,
     global.currentDropzoneId,
     mutationCreateOrder,
     dispatch,
-    props,
+    onSuccess,
   ]);
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
   const onKeyboardVisible = () => setKeyboardVisible(true);

@@ -30,10 +30,7 @@ function AppBar(props: IAppBarProps) {
             onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
           />
         )}
-        <Appbar.Content
-          title={options.title}
-          titleStyle={{ fontWeight: 'bold' }}
-        />
+        <Appbar.Content title={options.title} titleStyle={{ fontWeight: 'bold' }} />
 
         {options.headerRight ? (
           options.headerRight({ tintColor: 'white' })

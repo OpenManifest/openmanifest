@@ -1,6 +1,6 @@
 import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
-import { FlatList, Platform, RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { FlatList, Platform, RefreshControl, StyleSheet, View } from 'react-native';
 import { Divider, ProgressBar } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import Skeleton from 'app/components/Skeleton';
@@ -27,8 +27,8 @@ import TabBar, { ProfileTab } from './tabs';
 export type ProfileRoute = {
   ProfileScreen: {
     userId: string;
-  }
-}
+  };
+};
 export default function ProfileScreen() {
   const state = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
@@ -96,8 +96,18 @@ export default function ProfileScreen() {
     dispatch(actions.forms.user.setOpen(false));
   }, [dispatch]);
 
-  const { width } = useWindowDimensions();
-
+  const getContent = React.useCallback(
+    ({ index }: { index: number }) => {
+      if (index === 0) {
+        return <TabBar onChange={onChangeIndex} />;
+      }
+      if (dropzoneUser) {
+        return <ProfileTab active={defaultIndex} {...{ dropzoneUser }} />;
+      }
+      return null;
+    },
+    [defaultIndex, dropzoneUser]
+  );
   return (
     <>
       <View style={StyleSheet.absoluteFill}>
@@ -109,57 +119,51 @@ export default function ProfileScreen() {
           contentContainerStyle={[styles.content, { backgroundColor: 'transparent' }]}
           refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}
           keyExtractor={(_, idx) => `profile-${idx}`}
-          ListHeaderComponent={() =>
-          <View style={styles.wrappingHeader}>
-            <View style={{ width: '100%' }}>
-              {!dropzoneUser ? (
-                <Skeleton
-                  key="profile-header"
-                  containerStyle={{
-                    height: 256,
-                    width: '100%',
-                  }}
-                  isLoading
-                  layout={[{ key: 'header', width: '100%', height: '100%', borderRadius: 8 }]}
-                />
-              ) : (
-                <Header dropzoneUser={dropzoneUser} onPressAvatar={onPickImage}>
-                  <InfoGrid
-                    style={{ height: 80 }}
-                    items={[
-                      {
-                        title: 'Funds',
-                        value: `$${dropzoneUser?.credits || 0}`,
-                        onPress: () => {
-                          if (dropzoneUser && canAddTransaction) {
-                            dispatch(actions.forms.credits.setOpen(dropzoneUser));
-                          }
-                        },
-                      },
-                      {
-                        title: 'License',
-                        value: `${dropzoneUser?.license?.name || '-'}`,
-                      },
-                      {
-                        title: 'Exit weight',
-                        value: Math.round(Number(dropzoneUser?.user?.exitWeight)).toString() || '-',
-                      },
-                    ]}
+          ListHeaderComponent={() => (
+            <View style={styles.wrappingHeader}>
+              <View style={{ width: '100%' }}>
+                {!dropzoneUser ? (
+                  <Skeleton
+                    key="profile-header"
+                    containerStyle={{
+                      height: 256,
+                      width: '100%',
+                    }}
+                    isLoading
+                    layout={[{ key: 'header', width: '100%', height: '100%', borderRadius: 8 }]}
                   />
-                  <Divider style={styles.divider} />
-                </Header>
-              )}
+                ) : (
+                  <Header dropzoneUser={dropzoneUser} onPressAvatar={onPickImage}>
+                    <InfoGrid
+                      style={{ height: 80 }}
+                      items={[
+                        {
+                          title: 'Funds',
+                          value: `$${dropzoneUser?.credits || 0}`,
+                          onPress: () => {
+                            if (dropzoneUser && canAddTransaction) {
+                              dispatch(actions.forms.credits.setOpen(dropzoneUser));
+                            }
+                          },
+                        },
+                        {
+                          title: 'License',
+                          value: `${dropzoneUser?.license?.name || '-'}`,
+                        },
+                        {
+                          title: 'Exit weight',
+                          value:
+                            Math.round(Number(dropzoneUser?.user?.exitWeight)).toString() || '-',
+                        },
+                      ]}
+                    />
+                    <Divider style={styles.divider} />
+                  </Header>
+                )}
+              </View>
             </View>
-            </View>}
-          renderItem={({ index }) =>
-            index === 0
-              ? (
-                <TabBar onChange={onChangeIndex} />
-              )
-              : (
-                dropzoneUser ? <ProfileTab active={defaultIndex} {...{ dropzoneUser }} /> : null
-              )
-          }
+          )}
+          renderItem={getContent}
           data={[null, null]}
         />
 

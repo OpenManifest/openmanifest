@@ -181,7 +181,7 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
   React.useEffect(() => {
     if (open) {
       sheetRef.current?.present();
-      sheetRef.current?.snapToIndex(snapPoints?.length - 1, { duration: 300 });
+      sheetRef.current?.snapToIndex((snapPoints?.length || 1) - 1, { duration: 300 });
     } else {
       sheetRef.current?.dismiss({ duration: 300 });
       setTimeout(onDismiss, 350);

@@ -119,7 +119,7 @@ export default function RigInspectionTemplateForm() {
           fabStyle={{
             marginLeft: 16,
             marginBottom: 48,
-            backgroundColor: theme.colors.primary
+            backgroundColor: theme.colors.primary,
           }}
           actions={[
             {

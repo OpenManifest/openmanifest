@@ -226,7 +226,6 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     ...(canUpdateLoad ? workflowActions : []),
   ];
 
-
   return (
     <Portal>
       <FAB.Group
@@ -236,7 +235,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
         fabStyle={{
           marginLeft: 16,
           marginBottom: 100,
-          backgroundColor: theme.colors.primary
+          backgroundColor: theme.colors.primary,
         }}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore

@@ -2,6 +2,8 @@ import { HeaderStyleInterpolators, createStackNavigator } from '@react-navigatio
 
 import * as React from 'react';
 import { useAppSelector } from 'app/state';
+import AppBar from 'app/components/appbar/AppBar';
+import { NavigatorScreenParams } from '@react-navigation/core';
 import LoadScreen, { LoadScreenRoute } from './load/LoadScreen';
 // eslint-disable-next-line max-len
 import WeatherConditionsScreen from './weather_conditions/WeatherConditionsScreen';
@@ -10,26 +12,19 @@ import WindScreen from './weather_conditions/WindScreen';
 
 import ManifestScreen from './manifest/ManifestScreen';
 
-import AppBar from 'app/components/appbar/AppBar';
-import { NavigationProp, NavigatorScreenParams, useNavigation } from '@react-navigation/core';
-import { LoadDetailsFragment } from 'app/api/operations';
 import User, { UserRoutes } from '../user/routes';
 import Configuration, { ConfigurationRoutes } from '../configuration/routes';
 
 export type DropzoneRoutes = {
-  WeatherConditionsScreen: undefined
-  WindScreen: undefined
-  ManifestScreen: undefined
-  JumpRunScreen: undefined
+  WeatherConditionsScreen: undefined;
+  WindScreen: undefined;
+  ManifestScreen: undefined;
+  JumpRunScreen: undefined;
   User: NavigatorScreenParams<UserRoutes>;
   Configuration: NavigatorScreenParams<ConfigurationRoutes>;
 } & LoadScreenRoute;
 
 const Manifest = createStackNavigator<DropzoneRoutes>();
-
-export function useDropzoneNavigation() {
-  return useNavigation<NavigationProp<DropzoneRoutes>>();
-}
 
 export default function ManifestTab() {
   const globalState = useAppSelector((root) => root.global);
@@ -73,10 +68,7 @@ export default function ManifestTab() {
         options={{ headerShown: false, presentation: 'modal' }}
       />
 
-      <Manifest.Screen
-        name="Configuration"
-        component={Configuration}
-      />
+      <Manifest.Screen name="Configuration" component={Configuration} />
     </Manifest.Navigator>
   );
 }

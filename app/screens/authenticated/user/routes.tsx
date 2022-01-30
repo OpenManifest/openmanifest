@@ -1,9 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import { NavigationProp, useNavigation } from '@react-navigation/core';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
-import { OrderEssentialsFragment, RigEssentialsFragment } from 'app/api/operations';
 
 import UsersScreen, { UserListRoute } from './user_list/UsersScreen';
 import SearchableAppBar from './user_list/AppBar';
@@ -13,15 +11,16 @@ import OrdersScreen, { OrdersRoute } from './orders/OrdersScreen';
 import EquipmentScreen, { EquipmentRoute } from './equipment/EquipmentScreen';
 import OrderReceiptScreen, { OrderReceiptRoute } from './order_receipt/OrderScreen';
 
-export type UserRoutes = EquipmentRoute & OrderReceiptRoute & RigInspectionRoute & ProfileRoute & UserListRoute & OrdersRoute;
+export type UserRoutes = EquipmentRoute &
+  OrderReceiptRoute &
+  RigInspectionRoute &
+  ProfileRoute &
+  UserListRoute &
+  OrdersRoute;
 
 const Users = createStackNavigator<UserRoutes>();
 
-export function useUserNavigation() {
-  return useNavigation<NavigationProp<UserRoutes>>();
-}
-
-export default function UserRoutes() {
+export default function Routes() {
   const { isSearchVisible, searchText } = useAppSelector((root) => root.screens.users);
   const dispatch = useAppDispatch();
   const { currentUser } = useCurrentDropzone();
@@ -74,7 +73,11 @@ export default function UserRoutes() {
         component={EquipmentScreen}
         options={{ title: 'Equipment' }}
       />
-      <Users.Screen name="OrderReceiptScreen" component={OrderReceiptScreen} options={{ title: 'Order' }} />
+      <Users.Screen
+        name="OrderReceiptScreen"
+        component={OrderReceiptScreen}
+        options={{ title: 'Order' }}
+      />
     </Users.Navigator>
   );
 }

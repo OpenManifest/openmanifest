@@ -6,15 +6,13 @@ import * as React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import DrawerMenu from 'app/components/drawer/Drawer';
 
-import NotFoundScreen from '../screens/NotFoundScreen';
+import NotFoundScreen from './NotFoundScreen';
 import { useAppSelector } from '../state/store';
 
-import Authenticated, { AuthenticatedRoutes } from '../screens/authenticated/routes';
+import Authenticated, { AuthenticatedRoutes } from './authenticated/routes';
 import Limbo, { LimboRoutes } from './limbo/routes';
 import Unauthenticated, { UnauthenticatedRoutes } from './unauthenticated/routes';
 import Wizards, { WizardRoutes } from './wizards/routes';
-
-
 
 export const options: LinkingOptions<ReactNavigation.RootParamList> = {
   prefixes: [
@@ -45,8 +43,8 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                       DropzoneSettingsScreen: '/dropzone/configuration/basic',
                       PermissionScreen: '/dropzone/configuration/permissions',
                       RigInspectionTemplateScreen: '/dropzone/configuration/rig-inspection',
-                      TransactionsScreen: '/dropzone/transactions'
-                    }
+                      TransactionsScreen: '/dropzone/transactions',
+                    },
                   },
                   JumpRunScreen: '/dropzone/weather/jumprun',
                   WeatherConditionsScreen: '/dropzone/weather',
@@ -58,11 +56,11 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                       EquipmentScreen: '/dropzone/user/:userId/equipment',
                       OrdersScreen: '/dropzone/user/:userId/transactions',
                       OrderReceiptScreen: '/dropzone/user/:userId/transactions/:orderId/receipt',
-                      RigInspectionScreen: '/dropzone/user/:dropzoneUserId/rig-inspection/:rig'
-                    }
+                      RigInspectionScreen: '/dropzone/user/:dropzoneUserId/rig-inspection/:rig',
+                    },
                   },
                   WindScreen: '/dropzone/weather/winds',
-                }
+                },
               },
               Users: {
                 screens: {
@@ -71,16 +69,16 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                   EquipmentScreen: '/user/:userId/equipment',
                   OrdersScreen: '/user/:userId/transactions',
                   OrderReceiptScreen: '/user/:userId/transactions/:orderId/receipt',
-                  RigInspectionScreen: '/user/:dropzoneUserId/rig-inspection/:rig'
-                }
+                  RigInspectionScreen: '/user/:dropzoneUserId/rig-inspection/:rig',
+                },
               },
               Notifications: {
                 screens: {
-                  NotificationsScreen: '/notifications'
-                }
-              }
-            }
-          }
+                  NotificationsScreen: '/notifications',
+                },
+              },
+            },
+          },
         },
       },
       Unauthenticated: {
@@ -94,30 +92,30 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
         screens: {
           ConfirmUserScreen: '/confirm',
           RecoverPasswordScreen: '/recover-password',
-          ChangePasswordScreen: '/change-password'
-        }
-      }
+          ChangePasswordScreen: '/change-password',
+        },
+      },
       // FIXME: Remove in release
       // NotFound: '*',
     },
   },
 };
 
-
 export type Routes = {
   Authenticated: NavigatorScreenParams<{
-    Drawer: NavigatorScreenParams<AuthenticatedRoutes>
+    Drawer: NavigatorScreenParams<AuthenticatedRoutes>;
   }>;
   Unauthenticated: NavigatorScreenParams<UnauthenticatedRoutes>;
   Limbo: NavigatorScreenParams<LimboRoutes>;
   Wizards: NavigatorScreenParams<WizardRoutes>;
   NotFound: undefined;
-}
+};
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace ReactNavigation {
-    interface RootParamList extends Routes {
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
+    interface RootParamList extends Routes {}
   }
 }
 
@@ -133,6 +131,7 @@ const Drawer = createDrawerNavigator<TDrawerNavigatorRouteParams>();
 export default function RootNavigator() {
   const globalState = useAppSelector((root) => root.global);
 
+  const drawerContent = React.useCallback(() => <DrawerMenu />, []);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -146,7 +145,10 @@ export default function RootNavigator() {
         globalState.currentDropzone ? (
           <Stack.Screen name="Authenticated">
             {() => (
-              <Drawer.Navigator drawerContent={() => <DrawerMenu />} screenOptions={{ drawerType: 'back', headerShown: false }}>
+              <Drawer.Navigator
+                {...{ drawerContent }}
+                screenOptions={{ drawerType: 'back', headerShown: false }}
+              >
                 <Drawer.Screen name="Drawer" component={Authenticated} />
               </Drawer.Navigator>
             )}

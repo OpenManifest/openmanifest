@@ -1,4 +1,4 @@
-import { useIsFocused, useNavigation } from '@react-navigation/core';
+import { useIsFocused } from '@react-navigation/core';
 import * as React from 'react';
 import { RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Avatar, Card, FAB, List, ProgressBar, useTheme } from 'react-native-paper';
@@ -12,7 +12,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import CreateGhostDialog from 'app/components/dialogs/Ghost';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
-import { useUserNavigation } from '../routes';
+import { useUserNavigation } from '../useUserNavigation';
 
 function UserCardSkeleton() {
   const theme = useTheme();
@@ -63,13 +63,13 @@ const loadingFragment: DropzoneUserEssentialsFragment = {
   hasLicense: false,
   hasMembership: false,
   user: {
-    id: '__LOADING__'
-  }
+    id: '__LOADING__',
+  },
 };
 
 export type UserListRoute = {
-  UserListScreen: undefined
-}
+  UserListScreen: undefined;
+};
 
 export default function UsersScreen() {
   const global = useAppSelector((root) => root.global);

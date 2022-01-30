@@ -6,7 +6,6 @@ import {
   getFocusedRouteNameFromRoute,
   NavigationState,
   useNavigation,
-  useRoute,
 } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import capitalize from 'lodash/capitalize';
@@ -44,7 +43,6 @@ export default function DrawerMenu() {
 
   const navigation = useNavigation();
 
-  const route = useRoute();
   const routeName = recursivelyGetRouteName(navigation.getState());
   console.log({ routeName });
 

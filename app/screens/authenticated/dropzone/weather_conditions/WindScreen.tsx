@@ -47,15 +47,15 @@ export default function WindScreen() {
   return (
     <ScrollableScreen contentContainerStyle={{ backgroundColor: theme.colors.background }}>
       <WeatherConditionForm
-        onPressJumpRun={() => 
+        onPressJumpRun={() =>
           navigation.navigate('Authenticated', {
             screen: 'Drawer',
             params: {
               screen: 'Manifest',
               params: {
-                screen: 'JumpRunScreen'
-              }
-            }
+                screen: 'JumpRunScreen',
+              },
+            },
           })
         }
         variant={theme.dark ? 'light' : undefined}

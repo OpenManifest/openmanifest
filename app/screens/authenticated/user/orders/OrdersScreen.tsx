@@ -1,4 +1,4 @@
-import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { RouteProp, useIsFocused, useRoute } from '@react-navigation/core';
 import * as React from 'react';
 import { SectionList, StyleSheet, View } from 'react-native';
 import { List, ProgressBar } from 'react-native-paper';
@@ -13,13 +13,13 @@ import enAU from 'date-fns/locale/en-AU';
 import { OrderEssentialsFragment } from 'app/api/operations';
 import { useQueryDropzoneUserProfile } from 'app/api/reflection';
 import OrderCard from '../../../../components/orders/OrderCard';
-import { useUserNavigation } from '../routes';
+import { useUserNavigation } from '../useUserNavigation';
 
 export type OrdersRoute = {
   OrdersScreen: {
     userId: string;
-  }
-}
+  };
+};
 export default function OrdersScreen() {
   const state = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
@@ -41,7 +41,7 @@ export default function OrdersScreen() {
   const navigation = useUserNavigation();
   React.useEffect(() => {
     if (dropzoneUser?.user?.name && dropzoneUser?.id !== currentUser?.id) {
-      const [firstName] = dropzoneUser.user?.name.split(/\s/);
+      const [firstName] = dropzoneUser.user?.name?.split(/\s/) || [];
       navigation.setOptions({ title: `${firstName}'s Transactions` });
     } else {
       navigation.setOptions({ title: 'Your Transactions' });
@@ -56,7 +56,9 @@ export default function OrdersScreen() {
 
   return (
     <View style={{ flexGrow: 1, backgroundColor: state.theme.colors.surface }}>
-      {loading && <ProgressBar color={state.theme.colors.primary} indeterminate visible={loading} />}
+      {loading && (
+        <ProgressBar color={state.theme.colors.primary} indeterminate visible={loading} />
+      )}
 
       <SectionList
         sections={map(
@@ -84,13 +86,12 @@ export default function OrdersScreen() {
           <OrderCard
             showAvatar
             onPress={() =>
-              !item?.node || !dropzoneUser ? null : navigation.navigate(
-                'OrderReceiptScreen',
-                {
-                  orderId: item?.node?.id,
-                  userId: dropzoneUser.id
-                }
-              )
+              !item?.node || !dropzoneUser
+                ? null
+                : navigation.navigate('OrderReceiptScreen', {
+                    orderId: item?.node?.id,
+                    userId: dropzoneUser.id,
+                  })
             }
             order={item?.node as OrderEssentialsFragment}
             {...{ dropzoneUser }}

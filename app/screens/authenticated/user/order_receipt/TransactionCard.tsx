@@ -38,10 +38,10 @@ export default function TransactionCard(props: ITransaction) {
               position: 'absolute',
               top: 4,
               right: 8,
-              color: theme.colors.onSurface
+              color: theme.colors.onSurface,
             }}
           >
-            {transaction?.createdAt && format(transaction?.createdAt * 1000, 'Mo MMM, h:mm aaa')}
+            {transaction?.createdAt && format(transaction.createdAt * 1000, 'Mo MMM, h:mm aaa')}
           </Caption>
           <List.Item
             description={capitalize(transaction.message || '')}

@@ -5,29 +5,29 @@ import { Text, View } from 'react-native';
 import color from 'color';
 import { successColor } from 'app/constants/Colors';
 import LottieView from 'app/components/LottieView';
-import { Dropzone, DropzoneUser, Order, Receipt, Wallet } from 'app/api/schema.d';
+import { Dropzone, DropzoneUser } from 'app/api/schema.d';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import UserAvatar from 'app/components/UserAvatar';
 import lottieTicketAnimation from 'app/../assets/images/ticket.json';
-import ReceiptCard from './ReceiptCard';
-import { OrderEssentialsFragment } from 'app/api/operations';
 import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
-
+import ReceiptCard from './ReceiptCard';
 
 export type OrderReceiptRoute = {
   OrderReceiptScreen: {
     orderId: string;
     userId: string;
-  }
-}
+  };
+};
 export default function OrderScreen() {
   const route = useRoute<RouteProp<OrderReceiptRoute, 'OrderReceiptScreen'>>();
   const theme = useTheme();
   const { orderId, userId } = route.params;
   const { dropzoneUser } = useDropzoneUserProfile(Number(userId));
-  const order = React.useMemo(() =>
-    dropzoneUser?.orders?.edges?.map((edge) => edge?.node).find((node) => node?.id === orderId),
-  [dropzoneUser?.orders?.edges]);
+  const order = React.useMemo(
+    () =>
+      dropzoneUser?.orders?.edges?.map((edge) => edge?.node).find((node) => node?.id === orderId),
+    [dropzoneUser?.orders?.edges, orderId]
+  );
 
   const animation = React.useMemo(
     () =>
@@ -66,7 +66,7 @@ export default function OrderScreen() {
                   fontSize: 26,
                   marginLeft: 16,
                   width: '100%',
-                  color: theme.colors.onSurface
+                  color: theme.colors.onSurface,
                 }}
               >{`Order #${order?.id || ''}`}</Text>
               <Text
@@ -78,7 +78,7 @@ export default function OrderScreen() {
                   marginLeft: 16,
                   width: '100%',
                   marginBottom: 48,
-                  color: theme.colors.onSurface
+                  color: theme.colors.onSurface,
                 }}
               >
                 {order?.title}

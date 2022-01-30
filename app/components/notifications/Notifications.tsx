@@ -67,12 +67,7 @@ function Notifications() {
           />
         </View>
       )}
-      <Toast
-        autoHide
-        visibilityTime={4000}
-        position="bottom"
-        type="success"
-      />
+      <Toast autoHide visibilityTime={4000} position="bottom" type="success" />
     </>
   );
 }

@@ -3,7 +3,7 @@ import { Dimensions, RefreshControl, useWindowDimensions } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { Card } from 'react-native-paper';
 
-import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { RouteProp, useIsFocused, useRoute } from '@react-navigation/core';
 import SkeletonContent from 'app/components/Skeleton';
 import { PlaneEssentialsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { useLoadQuery } from 'app/api/reflection';
@@ -16,15 +16,16 @@ import ManifestUserSheet from 'app/components/dialogs/ManifestUser/ManifestUser'
 import ManifestGroupSheet from 'app/components/dialogs/ManifestGroup/ManifestGroup';
 
 import { View } from 'app/components/Themed';
-import { Load, Permission, Slot, DropzoneUser, LoadState } from 'app/api/schema.d';
+import { Permission, Slot, DropzoneUser, LoadState } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import useMutationDeleteSlot from 'app/api/hooks/useMutationDeleteSlot';
+import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
+
 import SlotCard from './SlotCard';
 import ActionButton from './ActionButton';
 import Header from './Header';
 import InfoGrid from './InfoGrid';
-import useMutationDeleteSlot from 'app/api/hooks/useMutationDeleteSlot';
-import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
 
 function AvailableSlotCard({ width }: { width: number }) {
   return (
@@ -74,13 +75,13 @@ const loadingFragment: SlotDetailsFragment = {
   __typename: 'Slot',
   passengerName: null,
   ticketType: null,
-  wingLoading: null
+  wingLoading: null,
 };
 
 export type LoadScreenRoute = {
   LoadScreen: {
     loadId: string;
-  }
+  };
 };
 
 export default function LoadScreen() {
@@ -199,11 +200,13 @@ export default function LoadScreen() {
     }
   }, [isExpanded, load?.maxSlots]);
 
-
   const slots: SlotDetailsFragment[] = Array.from({
     length: (load?.slots?.length || 0) + (load?.availableSlots || 0),
   }).map((_, index) =>
-    ((load?.slots?.length || 0) > index ? (load?.slots as SlotDetailsFragment[])[index] : { ...loadingFragment, id: '__AVAILABLE__' } ));
+    (load?.slots?.length || 0) > index
+      ? (load?.slots as SlotDetailsFragment[])[index]
+      : { ...loadingFragment, id: '__AVAILABLE__' }
+  );
 
   const maxSlots = load?.maxSlots || load?.plane?.maxSlots || 0;
   const occupiedSlots = maxSlots - (load?.availableSlots || 0);

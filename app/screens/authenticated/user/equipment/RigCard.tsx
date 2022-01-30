@@ -4,7 +4,6 @@ import { Text, View, StyleSheet, Platform } from 'react-native';
 import { Avatar, Card, Chip, Divider, Menu, ProgressBar, useTheme } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/core';
 import {
   RigInspectionEssentialsFragment,
   RigEssentialsFragment,
@@ -18,7 +17,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { errorColor, successColor } from 'app/constants/Colors';
 
 import { Permission } from 'app/api/schema.d';
-import { useUserNavigation } from '../routes';
+import { useUserNavigation } from '../useUserNavigation';
 
 export interface IRigCardProps {
   rig: RigEssentialsFragment;
@@ -87,7 +86,7 @@ export default function RigCard(props: IRigCardProps) {
     currentUser?.user?.id === rig.user?.id || (rig?.dropzone?.id && canManageDropzoneRigs);
 
   const theme = useTheme();
-  
+
   return (
     <Card onPress={onPress} style={{ marginVertical: 16 }}>
       <ProgressBar visible={isUploading} indeterminate color={accent} />
@@ -190,7 +189,7 @@ export default function RigCard(props: IRigCardProps) {
             navigation.navigate('RigInspectionScreen', {
               rigId: rig.id,
               dropzoneUserId: dropzoneUser?.id as string,
-            })
+            });
           }}
         >
           <View style={styles.innerChip}>

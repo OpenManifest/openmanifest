@@ -13,7 +13,9 @@ export default function NoResults({ title, color, subtitle }: INoResults) {
   return (
     <View style={styles.empty}>
       <Title style={{ color: color || theme.colors.onSurface }}>{title}</Title>
-      <Paragraph style={{ color: color || theme.colors.onSurface, textAlign: 'center' }}>{subtitle}</Paragraph>
+      <Paragraph style={{ color: color || theme.colors.onSurface, textAlign: 'center' }}>
+        {subtitle}
+      </Paragraph>
     </View>
   );
 }

@@ -11,7 +11,11 @@ import { LoadState } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { errorColor, warningColor } from 'app/constants/Colors';
 import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
-import { DropzoneUserEssentialsFragment, LoadDetailsFragment, PlaneEssentialsFragment } from 'app/api/operations';
+import {
+  DropzoneUserEssentialsFragment,
+  LoadDetailsFragment,
+  PlaneEssentialsFragment,
+} from 'app/api/operations';
 import { useLoadQuery } from 'app/api/reflection';
 import Countdown from '../Countdown';
 import Loading from './Loading';
@@ -126,7 +130,7 @@ export default function LoadCard(props: ILoadCardSmall) {
         right={() =>
           !load?.dispatchAt || isBefore(new Date(), load?.dispatchAt) ? null : (
             <View style={{ marginRight: 16 }}>
-              <Countdown end={new Date(load?.dispatchAt * 1000)} />
+              <Countdown end={new Date(load.dispatchAt * 1000)} />
             </View>
           )
         }

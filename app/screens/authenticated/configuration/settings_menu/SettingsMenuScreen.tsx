@@ -22,21 +22,23 @@ export default function SettingsScreen() {
           <List.Item
             title="Configuration"
             onPress={() =>
-              !data?.dropzone ? null : navigation.navigate('Authenticated', {
-                screen: 'Drawer',
-                params: {
-                  screen: 'Manifest',
-                  params: {
-                    screen: 'Configuration',
+              !data?.dropzone
+                ? null
+                : navigation.navigate('Authenticated', {
+                    screen: 'Drawer',
                     params: {
-                      screen: 'DropzoneSettingsScreen',
+                      screen: 'Manifest',
                       params: {
-                        dropzone: data?.dropzone as DropzoneEssentialsFragment,
-                      }
-                    }
-                  }
-                }
-              })
+                        screen: 'Configuration',
+                        params: {
+                          screen: 'DropzoneSettingsScreen',
+                          params: {
+                            dropzone: data?.dropzone as DropzoneEssentialsFragment,
+                          },
+                        },
+                      },
+                    },
+                  })
             }
             left={() => <List.Icon color={theme.colors.text} icon="information-outline" />}
             description="Set up name, branding and other settings"
@@ -53,10 +55,10 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'PermissionScreen'
-                  }
-                }
-              }
+                    screen: 'PermissionScreen',
+                  },
+                },
+              },
             })
           }
         />
@@ -70,10 +72,10 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'AircraftsScreen'
-                  }
-                }
-              }
+                    screen: 'AircraftsScreen',
+                  },
+                },
+              },
             })
           }
           left={() => <List.Icon color={theme.colors.text} icon="airplane" />}
@@ -90,10 +92,10 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'DropzoneRigsScreen'
-                  }
-                }
-              }
+                    screen: 'DropzoneRigsScreen',
+                  },
+                },
+              },
             })
           }
         />
@@ -109,10 +111,10 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'RigInspectionTemplateScreen'
-                  }
-                }
-              }
+                    screen: 'RigInspectionTemplateScreen',
+                  },
+                },
+              },
             })
           }
         />
@@ -128,10 +130,10 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'MasterLogScreen'
-                  }
-                }
-              }
+                    screen: 'MasterLogScreen',
+                  },
+                },
+              },
             })
           }
         />
@@ -148,10 +150,10 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'TicketTypesScreen'
-                  }
-                }
-              }
+                    screen: 'TicketTypesScreen',
+                  },
+                },
+              },
             })
           }
           left={() => <List.Icon color={theme.colors.text} icon="ticket" />}
@@ -167,10 +169,10 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'ExtrasScreen'
-                  }
-                }
-              }
+                    screen: 'ExtrasScreen',
+                  },
+                },
+              },
             })
           }
           left={() => <List.Icon color={theme.colors.text} icon="plus" />}

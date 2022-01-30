@@ -1,7 +1,4 @@
-import {
-  BottomTabBarProps,
-  createBottomTabNavigator,
-} from '@react-navigation/bottom-tabs';
+import { BottomTabBarProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 import { Appearance, Platform, StyleSheet, Text } from 'react-native';
@@ -13,24 +10,20 @@ import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
 import AnimatedTabBar from 'app/components/bottom_tabs/AnimatedTabBar';
 
+import { NavigatorScreenParams } from '@react-navigation/core';
 import ManifestTab, { DropzoneRoutes } from './dropzone/routes';
 import UsersTab, { UserRoutes } from './user/routes';
 import NotificationsTab, { NotificationRoutes } from './notifications/routes';
-import { NavigationProp, NavigatorScreenParams, useNavigation } from '@react-navigation/core';
-
 
 export type AuthenticatedRoutes = {
   Manifest: NavigatorScreenParams<DropzoneRoutes>;
-  Users:  NavigatorScreenParams<UserRoutes>;
-  Notifications:  NavigatorScreenParams<NotificationRoutes>;
+  Users: NavigatorScreenParams<UserRoutes>;
+  Notifications: NavigatorScreenParams<NotificationRoutes>;
 };
 
 const BottomTab = createBottomTabNavigator<AuthenticatedRoutes>();
 const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
-export function useAuthenticatedNavigation() {
-  return useNavigation<NavigationProp<UserRoutes>>();
-}
 export default function AuthenticatedTabBar() {
   const { theme, palette } = useAppSelector((root) => root.global);
   const isDarkMode = Appearance.getColorScheme() === 'dark';
@@ -154,7 +147,7 @@ export default function AuthenticatedTabBar() {
         backgroundColor: theme.dark ? theme.colors.background : '#FFFFFF',
         borderTopWidth: StyleSheet.hairlineWidth,
         borderTopColor: '#CCCCCC',
-      }
+      },
     }),
     [
       theme.colors.backdrop,
@@ -166,11 +159,7 @@ export default function AuthenticatedTabBar() {
   );
 
   return (
-    <BottomTab.Navigator
-      initialRouteName="Manifest"
-      {...tabBarProps}
-      {...{ screenOptions }}
-    >
+    <BottomTab.Navigator initialRouteName="Manifest" {...tabBarProps} {...{ screenOptions }}>
       <BottomTab.Screen
         name="Manifest"
         component={ManifestTab}

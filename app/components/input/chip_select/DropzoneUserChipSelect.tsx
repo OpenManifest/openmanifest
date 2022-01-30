@@ -1,6 +1,6 @@
 import { uniqBy } from 'lodash';
 import * as React from 'react';
-import { Avatar, Chip, List } from 'react-native-paper';
+import { List } from 'react-native-paper';
 import { Permission } from 'app/api/schema.d';
 import { useAppSelector } from 'app/state';
 import { useDropzoneUsersQuery } from 'app/api/reflection';

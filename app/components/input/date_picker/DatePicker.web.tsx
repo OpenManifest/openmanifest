@@ -14,6 +14,7 @@ export default function DatePicker(props: IDatepicker) {
   const { disabled, label, timestamp, onChange } = props;
   const [open, setOpen] = React.useState(false);
 
+  const left = React.useCallback(() => <List.Icon icon="calendar" />, []);
   return (
     <Menu
       onDismiss={() => setOpen(false)}
@@ -24,7 +25,7 @@ export default function DatePicker(props: IDatepicker) {
           disabled={!!disabled}
           title={label}
           description={timestamp ? format(timestamp * 1000, 'yyyy/MM/dd') : 'No date selected'}
-          left={() => <List.Icon icon="calendar" />}
+          left={left}
         />
       }
     >

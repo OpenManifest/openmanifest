@@ -128,7 +128,9 @@ export default function LoginScreen() {
             >
               Sign up
             </Button>
-            <TouchableOpacity onPress={() => navigation.navigate('Unauthenticated', { screen: 'RecoverPasswordScreen' })}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Wizards', { screen: 'RecoverPasswordScreen' })}
+            >
               <Text style={theme.dark ? styles.forgotPasswordDark : styles.forgotPassword}>
                 Forgot your password?
               </Text>

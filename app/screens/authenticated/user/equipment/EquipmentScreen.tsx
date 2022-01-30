@@ -16,8 +16,8 @@ import RigCard from './RigCard';
 export type EquipmentRoute = {
   EquipmentScreen: {
     userId: string;
-  }
-}
+  };
+};
 export default function EquipmentScreen() {
   const globalState = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
@@ -49,7 +49,7 @@ export default function EquipmentScreen() {
 
   React.useEffect(() => {
     if (dropzoneUser?.user?.name && dropzoneUser?.id !== currentUser?.id) {
-      const [firstName] = dropzoneUser.user?.name.split(/\s/);
+      const [firstName] = dropzoneUser.user?.name.split(/\s/) || [];
       navigation.setOptions({ title: `${firstName}'s Equipment` });
     } else {
       navigation.setOptions({ title: 'Your Equipment' });

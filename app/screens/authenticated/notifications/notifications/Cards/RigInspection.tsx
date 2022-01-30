@@ -1,8 +1,8 @@
 import * as React from 'react';
-import NotificationCard from './NotificationCard';
 import { Notification } from 'app/api/schema.d';
 import { RigEssentialsFragment } from 'app/api/operations';
-import { useNotificationNavigation } from '../../routes';
+import NotificationCard from './NotificationCard';
+import { useNotificationNavigation } from '../../useNotificationNavigation';
 
 interface INotification {
   notification: Notification;
@@ -28,11 +28,13 @@ export default function RigInspectionNotification(props: INotification) {
               params: {
                 rigId: (notification.resource as RigEssentialsFragment).id,
                 dropzoneUserId: (notification.resource as RigEssentialsFragment).user?.id as string,
-              }
+              },
             })
           : navigation.navigate('User', {
               screen: 'ProfileScreen',
-              params: { userId: (notification.resource as RigEssentialsFragment).user?.id as string }
+              params: {
+                userId: (notification.resource as RigEssentialsFragment).user?.id as string,
+              },
             })
       }
     />

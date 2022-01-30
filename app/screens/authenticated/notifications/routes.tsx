@@ -3,9 +3,9 @@ import * as React from 'react';
 
 import AppBar from 'app/components/appbar/AppBar';
 
+import { NavigatorScreenParams } from '@react-navigation/core';
 import NotificationsScreen from './notifications/NotificationsScreen';
 import Users, { UserRoutes } from '../user/routes';
-import { NavigationProp, NavigatorScreenParams, useNavigation } from '@react-navigation/core';
 
 export type NotificationRoutes = {
   NotificationsScreen: undefined;
@@ -14,10 +14,6 @@ export type NotificationRoutes = {
 };
 
 const Notification = createStackNavigator<NotificationRoutes>();
-
-export function useNotificationNavigation() {
-  return useNavigation<NavigationProp<NotificationRoutes>>();
-}
 
 export default function Notifications() {
   return (
@@ -37,10 +33,7 @@ export default function Notifications() {
         options={{ title: 'Notifications' }}
       />
 
-      <Notification.Screen
-        name="User"
-        component={Users}
-      />
+      <Notification.Screen name="User" component={Users} />
     </Notification.Navigator>
   );
 }

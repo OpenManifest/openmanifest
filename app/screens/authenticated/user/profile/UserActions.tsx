@@ -10,8 +10,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import { Alert } from 'react-native';
 import { DropzoneUsersDocument, useArchiveUserMutation } from 'app/api/reflection';
 import { errorColor, infoColor, successColor, warningColor } from 'app/constants/Colors';
-import { useUserNavigation } from '../routes';
-import { useAuthenticatedNavigation } from '../../routes';
+import { useUserNavigation } from '../useUserNavigation';
 
 type PropsOf<T> = T extends React.ComponentType<infer P> ? P : never;
 type FABActions = PropsOf<typeof FAB.Group>['actions'];
@@ -36,7 +35,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
       }
       rootNavigator.navigate('Wizards', { screen: 'UserWizardScreen' });
     }
-  }, [dispatch, dropzoneUser, navigation]);
+  }, [dispatch, dropzoneUser, rootNavigator]);
 
   const onClickAccessAndMembership = React.useCallback(() => {
     if (!dropzoneUser) {
@@ -207,7 +206,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
       fabStyle={{
         marginLeft: 16,
         marginBottom: 16,
-        backgroundColor: theme.colors.primary
+        backgroundColor: theme.colors.primary,
       }}
       onStateChange={({ open }) => setFabOpen(open)}
       actions={fabActions}

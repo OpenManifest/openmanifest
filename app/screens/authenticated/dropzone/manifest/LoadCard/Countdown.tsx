@@ -25,6 +25,7 @@ const CountdownCircleTimer = Platform.select({
       default: defaultExport,
     }))
   ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }) as React.ComponentType<any>;
 
 interface ICountdownProps {

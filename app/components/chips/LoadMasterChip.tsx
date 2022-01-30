@@ -74,7 +74,11 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
           titleStyle={styles.menuItemTitle}
           title={
             <>
-              <UserAvatar name={slot?.dropzoneUser?.user?.name|| ''} image={slot?.dropzoneUser?.user?.image || undefined} size={24} />
+              <UserAvatar
+                name={slot?.dropzoneUser?.user?.name || ''}
+                image={slot?.dropzoneUser?.user?.image || undefined}
+                size={24}
+              />
               <Text>{slot?.dropzoneUser?.user?.name}</Text>
             </>
           }
@@ -87,6 +91,6 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
 const styles = StyleSheet.create({
   menuItemTitle: {
     display: 'flex',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 });

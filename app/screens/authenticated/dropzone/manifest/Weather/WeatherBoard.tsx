@@ -16,12 +16,12 @@ import format from 'date-fns/format';
 import { orderBy } from 'lodash';
 import { useNavigation } from '@react-navigation/native';
 import SkeletonContent from 'app/components/Skeleton';
-import weatherBackground from '../../../../../../assets/images/weather.png';
-import nightBackground from '../../../../../../assets/images/night.png';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { actions, useAppDispatch } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
+import nightBackground from '../../../../../../assets/images/night.png';
+import weatherBackground from '../../../../../../assets/images/weather.png';
 import JumpRunMap from './JumpRun';
 
 export default function WeatherBoard() {
@@ -36,7 +36,7 @@ export default function WeatherBoard() {
   const conditions = dropzone?.currentConditions;
 
   const date = dropzone?.currentConditions?.createdAt
-    ? new Date(dropzone?.currentConditions?.createdAt * 1000)
+    ? new Date(dropzone.currentConditions.createdAt * 1000)
     : new Date();
   const jumpRun = dropzone?.currentConditions?.jumpRun || 0;
   const temperature = dropzone?.currentConditions?.temperature || 0;
@@ -72,9 +72,9 @@ export default function WeatherBoard() {
         params: {
           screen: 'Manifest',
           params: {
-            screen: 'WindScreen'
-          }
-        }
+            screen: 'WindScreen',
+          },
+        },
       });
     }
   }, [canUpdate, dispatch, dropzone?.currentConditions, navigation]);
@@ -87,9 +87,9 @@ export default function WeatherBoard() {
         params: {
           screen: 'Manifest',
           params: {
-            screen: 'JumpRunScreen'
-          }
-        }
+            screen: 'JumpRunScreen',
+          },
+        },
       });
     }
   }, [canUpdate, dispatch, dropzone?.currentConditions, navigation]);
@@ -235,7 +235,7 @@ export default function WeatherBoard() {
                       onLongPress={onEditJumprun}
                       onPress={onEditWindboard}
                     >
-                      { /* <JumpRunMap jumpRun={jumpRun} lat={dropzone?.lat} lng={dropzone?.lng} /> */ }
+                      <JumpRunMap jumpRun={jumpRun} lat={dropzone?.lat} lng={dropzone?.lng} />
                     </TouchableOpacity>
                   </View>
                 </View>

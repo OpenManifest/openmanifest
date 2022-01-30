@@ -32,7 +32,6 @@ export default function SwipeActions(props: ISwipeActions) {
       inputRange: [-150, 0],
       outputRange: [0, 10],
     });
-    
 
     return (
       <TouchableOpacity

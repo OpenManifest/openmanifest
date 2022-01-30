@@ -1,11 +1,11 @@
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import * as React from 'react';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { useAppSelector } from 'app/state';
 import { View } from 'react-native';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 import JumpHistoryTab from './JumpHistory';
-import FundTab from './Transactions'
-import EquipmentTab from './Equipment'
+import FundTab from './Transactions';
+import EquipmentTab from './Equipment';
 
 // const ProfileTabs = createMaterialTopTabNavigator();
 
@@ -16,26 +16,36 @@ interface IProfileTabsProps {
 export enum ProfileTabs {
   Funds,
   Jumps,
-  Equipment
+  Equipment,
 }
 
-export function ProfileTab(props: { active: ProfileTabs, dropzoneUser: DropzoneUserProfileFragment }) {
+export function ProfileTab(props: {
+  active: ProfileTabs;
+  dropzoneUser: DropzoneUserProfileFragment;
+}) {
   const { active, dropzoneUser } = props;
   if (active === ProfileTabs.Funds) {
-    return <FundTab { ...{ dropzoneUser }} tabIndex={ProfileTabs.Funds} currentTabIndex={active} />
+    return <FundTab {...{ dropzoneUser }} tabIndex={ProfileTabs.Funds} currentTabIndex={active} />;
   }
   if (active === ProfileTabs.Equipment) {
-    return <EquipmentTab { ...{ dropzoneUser }} tabIndex={ProfileTabs.Equipment} currentTabIndex={active} />
+    return (
+      <EquipmentTab
+        {...{ dropzoneUser }}
+        tabIndex={ProfileTabs.Equipment}
+        currentTabIndex={active}
+      />
+    );
   }
   if (active === ProfileTabs.Jumps) {
-    return <JumpHistoryTab {...{ dropzoneUser }} tabIndex={ProfileTabs.Jumps} currentTabIndex={active} />
+    return (
+      <JumpHistoryTab {...{ dropzoneUser }} tabIndex={ProfileTabs.Jumps} currentTabIndex={active} />
+    );
   }
   return null;
 }
 export default function TabBar(props: IProfileTabsProps) {
   const { onChange } = props;
-  const { colors, dark } = useAppSelector(state => state.global.theme);
-  const { currentUser } = useCurrentDropzone();
+  const { colors, dark } = useAppSelector((state) => state.global.theme);
 
   return (
     <Tabs
@@ -54,6 +64,6 @@ export default function TabBar(props: IProfileTabsProps) {
       <TabScreen label="Equipment" icon="parachute" key="equipment" onPress={() => onChange(2)}>
         <View />
       </TabScreen>
-      </Tabs>
+    </Tabs>
   );
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import NotificationCard from './NotificationCard';
 import { Notification } from 'app/api/schema.d';
+import NotificationCard from './NotificationCard';
 
 interface INotification {
   notification: Notification;

@@ -28,7 +28,7 @@ function UserWizardScreen() {
 
   const [joinFederation] = useJoinFederationMutation();
   const mutationUpdateUser = useMutationUpdateUser({
-    onSuccess: (e) => true,
+    onSuccess: () => null,
     onError: (message) =>
       dispatch(actions.notifications.showSnackbar({ message, variant: 'error' })),
     onFieldError: (field, value) =>

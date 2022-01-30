@@ -33,9 +33,9 @@ import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import SwipeActions from 'app/components/layout/SwipeActions';
-import LoadingCard from '../Small/Loading';
 import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
 import useMutationDeleteSlot from 'app/api/hooks/useMutationDeleteSlot';
+import LoadingCard from '../Small/Loading';
 
 interface ILoadCardLarge {
   load: LoadDetailsFragment;
@@ -394,15 +394,16 @@ export default function LoadCard(props: ILoadCardLarge) {
               key={`${load?.id}-empty-slot-${i}`}
               testID="slot-row"
               onPress={() =>
-                load?.id && navigation.navigate('Authenticated', {
+                load?.id &&
+                navigation.navigate('Authenticated', {
                   screen: 'Drawer',
                   params: {
                     screen: 'Manifest',
                     params: {
                       screen: 'LoadScreen',
-                      params: { loadId: load?.id }
-                    }
-                  }
+                      params: { loadId: load?.id },
+                    },
+                  },
                 })
               }
             >

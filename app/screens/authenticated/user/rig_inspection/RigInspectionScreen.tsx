@@ -12,7 +12,7 @@ import {
   useQueryDropzoneUserProfile,
 } from 'app/api/reflection';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
-import { Query, Rig, Permission } from 'app/api/schema.d';
+import { Query, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import {
@@ -25,8 +25,8 @@ export type RigInspectionRoute = {
   RigInspectionScreen: {
     rigId: string;
     dropzoneUserId: string;
-  }
-}
+  };
+};
 export default function RigInspectionScreen() {
   const state = useAppSelector((root) => root.forms.rigInspection);
   const currentDropzone = useCurrentDropzone();
@@ -41,7 +41,10 @@ export default function RigInspectionScreen() {
     },
   });
 
-  const rig = React.useMemo(() => data?.dropzone?.dropzoneUser?.user?.rigs?.find(({ id }) => id === rigId), [data?.dropzone?.dropzoneUser?.user?.rigs]);
+  const rig = React.useMemo(
+    () => data?.dropzone?.dropzoneUser?.user?.rigs?.find(({ id }) => id === rigId),
+    [data?.dropzone?.dropzoneUser?.user?.rigs, rigId]
+  );
 
   const isFocused = useIsFocused();
 
@@ -54,7 +57,8 @@ export default function RigInspectionScreen() {
   const navigation = useNavigation();
   React.useEffect(() => {
     const hasExistingRigInspection = data?.dropzone?.dropzoneUser?.rigInspections?.some(
-      (inspection) => inspection.rig?.id?.toString() === rig?.id?.toString() && inspection.definition
+      (inspection) =>
+        inspection.rig?.id?.toString() === rig?.id?.toString() && inspection.definition
     );
 
     if (hasExistingRigInspection) {

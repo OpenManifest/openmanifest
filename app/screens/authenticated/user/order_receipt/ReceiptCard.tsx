@@ -2,7 +2,12 @@ import * as React from 'react';
 import { List } from 'react-native-paper';
 import { Wallet } from 'app/api/schema.d';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
-import { DropzoneEssentialsFragment, DropzoneUserEssentialsFragment, OrderEssentialsFragment, ReceiptEssentialsFragment } from 'app/api/operations';
+import {
+  DropzoneEssentialsFragment,
+  DropzoneUserEssentialsFragment,
+  OrderEssentialsFragment,
+  ReceiptEssentialsFragment,
+} from 'app/api/operations';
 import TransactionCard from './TransactionCard';
 
 interface IReceiptCardProps {
