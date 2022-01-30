@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { FAB } from 'react-native-paper';
+import { FAB, useTheme } from 'react-native-paper';
 import { actions, useAppDispatch } from 'app/state';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { useNavigation } from '@react-navigation/core';
@@ -11,6 +11,7 @@ import { Alert } from 'react-native';
 import { DropzoneUsersDocument, useArchiveUserMutation } from 'app/api/reflection';
 import { errorColor, infoColor, successColor, warningColor } from 'app/constants/Colors';
 import { useUserNavigation } from '../routes';
+import { useAuthenticatedNavigation } from '../../routes';
 
 type PropsOf<T> = T extends React.ComponentType<infer P> ? P : never;
 type FABActions = PropsOf<typeof FAB.Group>['actions'];
@@ -24,6 +25,8 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
 
   const dispatch = useAppDispatch();
   const navigation = useUserNavigation();
+  const rootNavigator = useNavigation();
+  const theme = useTheme();
 
   const onClickSetupWizard = React.useCallback(() => {
     if (dropzoneUser) {
@@ -31,7 +34,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
       if (dropzoneUser?.user?.rigs?.length) {
         dispatch(actions.forms.rig.setOriginal(dropzoneUser.user.rigs[0]));
       }
-      navigation.navigate('UserSetupWizardScreen');
+      rootNavigator.navigate('Wizards', { screen: 'UserWizardScreen' });
     }
   }, [dispatch, dropzoneUser, navigation]);
 
@@ -46,14 +49,14 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
     if (!dropzoneUser?.id) {
       return;
     }
-    navigation.navigate('OrdersScreen', { userId: Number(dropzoneUser?.id) });
+    navigation.navigate('OrdersScreen', { userId: dropzoneUser?.id });
   }, [dropzoneUser?.id, navigation]);
 
   const onClickEquipment = React.useCallback(() => {
     if (!dropzoneUser?.id) {
       return;
     }
-    navigation.navigate('EquipmentScreen', { userId: Number(dropzoneUser?.id) });
+    navigation.navigate('EquipmentScreen', { userId: dropzoneUser?.id });
   }, [dropzoneUser?.id, navigation]);
 
   const onClickAddFunds = React.useCallback(() => {
@@ -204,6 +207,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
       fabStyle={{
         marginLeft: 16,
         marginBottom: 16,
+        backgroundColor: theme.colors.primary
       }}
       onStateChange={({ open }) => setFabOpen(open)}
       actions={fabActions}

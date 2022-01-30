@@ -188,8 +188,8 @@ export default function RigCard(props: IRigCardProps) {
           ]}
           onPress={() => {
             navigation.navigate('RigInspectionScreen', {
-              rig,
-              dropzoneUserId: Number(dropzoneUser?.id),
+              rigId: rig.id,
+              dropzoneUserId: dropzoneUser?.id as string,
             })
           }}
         >

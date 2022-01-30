@@ -23,7 +23,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
   return (
     <Portal>
       <Dialog visible={!!open} dismissable={false} style={{ maxWidth: 500, alignSelf: 'center' }}>
-        <ProgressBar indeterminate visible={loading} color={globalState.theme.colors.accent} />
+        <ProgressBar indeterminate visible={loading} color={globalState.theme.colors.primary} />
         <Dialog.Title>{title}</Dialog.Title>
         <Dialog.Content pointerEvents="box-none">
           <Dialog.ScrollArea>

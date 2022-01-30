@@ -48,7 +48,7 @@ export default function TicketTypesScreen() {
       contentContainerStyle={[styles.content, { backgroundColor: 'white' }]}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
     >
-      <ProgressBar visible={loading} color={state.theme.colors.accent} />
+      <ProgressBar visible={loading} color={state.theme.colors.primary} />
       <DataTable>
         <DataTable.Header>
           <DataTable.Title>Name</DataTable.Title>
@@ -106,8 +106,8 @@ export default function TicketTypesScreen() {
       </DataTable>
 
       <FAB
-        style={styles.fab}
         small
+        style={[styles.fab, { backgroundColor: state.theme.colors.primary }]}
         visible={canCreateTicketTypes}
         icon="plus"
         onPress={() => dispatch(actions.forms.ticketType.setOpen(true))}

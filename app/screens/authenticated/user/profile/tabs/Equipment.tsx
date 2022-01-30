@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { FlatList } from 'react-native';
-import { Card } from 'react-native-paper';
+import { View } from 'react-native-animatable';
 
 import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { actions, useAppDispatch } from 'app/state';
@@ -9,19 +8,16 @@ import RigCard from '../../equipment/RigCard';
 
 export interface IJumpHistoryTab {
   dropzoneUser?: DropzoneUserProfileFragment | null;
+  tabIndex: number;
+  currentTabIndex: number;
 }
 export default function EquipmentTab(props: IJumpHistoryTab) {
-  const { dropzoneUser } = props;
+  const { dropzoneUser, tabIndex, currentTabIndex } = props;
   const dispatch = useAppDispatch();
   return (
-    <Card style={{ marginHorizontal: 0 }} elevation={1}>
-      <FlatList
-        data={dropzoneUser?.user?.rigs || []}
-        numColumns={1}
-        style={{ flex: 1 }}
-        scrollEnabled={false}
-        contentContainerStyle={{ padding: 16 }}
-        renderItem={({ item }) => (
+    <View animation={currentTabIndex < tabIndex ? "slideInRight" : "slideInLeft"} duration={200} easing="ease-in-out" style={{ padding: 8 }}>
+      {
+        dropzoneUser?.user?.rigs?.map((item) =>
           <RigCard
             {...{ dropzoneUser }}
             onSuccessfulImageUpload={() => null}
@@ -33,8 +29,8 @@ export default function EquipmentTab(props: IJumpHistoryTab) {
               dispatch(actions.forms.rig.setOpen(item));
             }}
           />
-        )}
-      />
-    </Card>
+        )
+      }
+    </View>
   );
 }

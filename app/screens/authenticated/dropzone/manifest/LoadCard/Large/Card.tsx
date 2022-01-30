@@ -268,7 +268,7 @@ export default function LoadCard(props: ILoadCardLarge) {
       />
       <ProgressBar
         visible={loading || mutationUpdateLoad.loading || mutationDeleteSlot.loading}
-        color={state.theme.colors.accent}
+        color={state.theme.colors.primary}
       />
       <Card.Content
         style={{
@@ -394,13 +394,13 @@ export default function LoadCard(props: ILoadCardLarge) {
               key={`${load?.id}-empty-slot-${i}`}
               testID="slot-row"
               onPress={() =>
-                navigation.navigate('Authenticated', {
+                load?.id && navigation.navigate('Authenticated', {
                   screen: 'Drawer',
                   params: {
                     screen: 'Manifest',
                     params: {
                       screen: 'LoadScreen',
-                      params: { load: load as LoadDetailsFragment }
+                      params: { loadId: load?.id }
                     }
                   }
                 })

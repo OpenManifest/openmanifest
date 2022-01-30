@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FAB, Portal } from 'react-native-paper';
+import { FAB, Portal, useTheme } from 'react-native-paper';
 import addMinutes from 'date-fns/addMinutes';
 import { LoadDetailsFragment } from 'app/api/operations';
 
@@ -10,6 +10,7 @@ import { Permission, LoadState } from 'app/api/schema.d';
 import { useFinalizeLoadMutation } from 'app/api/reflection';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch } from 'app/state';
+import isSameDay from 'date-fns/isSameDay';
 
 interface ILoadActionButtonProps {
   load: LoadDetailsFragment;
@@ -108,6 +109,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     return null;
   }, [currentUser, dispatch, load]);
 
+  const theme = useTheme();
   const canUpdateLoad = useRestriction(Permission.UpdateLoad);
 
   const canManifestSelf = useRestriction(Permission.CreateSlot);
@@ -153,15 +155,17 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     },
   ];
 
+  const isToday = isSameDay(new Date(), load.createdAt * 1000);
+
   const manifestActions = [
-    !showManifestButton
+    !showManifestButton || !isToday
       ? null
       : {
           label: 'Manifest me',
           icon: 'account',
           onPress: () => onManifest(),
         },
-    !showGroupIcon
+    !showGroupIcon || !isToday
       ? null
       : {
           label: 'Manifest group',
@@ -200,7 +204,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
               variables: { id: Number(load.id), state: LoadState.Cancelled },
             }),
         },
-    ![LoadState.Cancelled, LoadState.Landed].includes(load.state)
+    ![LoadState.Cancelled, LoadState.Landed].includes(load.state) || !isToday
       ? null
       : {
           label: 'Re-open load',
@@ -218,9 +222,10 @@ export default function ActionButton(props: ILoadActionButtonProps) {
 
   const buttonActions = [
     ...(isOpen ? manifestActions : []),
-    ...(canUpdateLoad && [LoadState.Open].includes(load?.state) ? callActions : []),
+    ...(canUpdateLoad && [LoadState.Open].includes(load?.state) && isToday ? callActions : []),
     ...(canUpdateLoad ? workflowActions : []),
   ];
+
 
   return (
     <Portal>
@@ -231,6 +236,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
         fabStyle={{
           marginLeft: 16,
           marginBottom: 100,
+          backgroundColor: theme.colors.primary
         }}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore

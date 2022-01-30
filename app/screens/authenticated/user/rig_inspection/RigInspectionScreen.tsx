@@ -1,4 +1,4 @@
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import { startOfDay } from 'date-fns';
 import * as React from 'react';
 import { Button, Card, Checkbox, Divider, Paragraph } from 'react-native-paper';
@@ -21,23 +21,27 @@ import {
 } from 'app/api/operations';
 import RigCard from '../equipment/RigCard';
 
+export type RigInspectionRoute = {
+  RigInspectionScreen: {
+    rigId: string;
+    dropzoneUserId: string;
+  }
+}
 export default function RigInspectionScreen() {
   const state = useAppSelector((root) => root.forms.rigInspection);
   const currentDropzone = useCurrentDropzone();
   const dispatch = useAppDispatch();
 
-  const route = useRoute<{
-    key: string;
-    name: string;
-    params: { rig: Rig; dropzoneUserId: number; userId: number };
-  }>();
-  const { rig, dropzoneUserId } = route.params;
+  const route = useRoute<RouteProp<RigInspectionRoute>>();
+  const { rigId, dropzoneUserId } = route.params;
   const { data, refetch } = useQueryDropzoneUserProfile({
     variables: {
       dropzoneId: Number(currentDropzone?.dropzone?.id),
-      dropzoneUserId,
+      dropzoneUserId: Number(dropzoneUserId),
     },
   });
+
+  const rig = React.useMemo(() => data?.dropzone?.dropzoneUser?.user?.rigs?.find(({ id }) => id === rigId), [data?.dropzone?.dropzoneUser?.user?.rigs]);
 
   const isFocused = useIsFocused();
 
@@ -50,12 +54,12 @@ export default function RigInspectionScreen() {
   const navigation = useNavigation();
   React.useEffect(() => {
     const hasExistingRigInspection = data?.dropzone?.dropzoneUser?.rigInspections?.some(
-      (inspection) => inspection.rig?.id?.toString() === rig.id?.toString() && inspection.definition
+      (inspection) => inspection.rig?.id?.toString() === rig?.id?.toString() && inspection.definition
     );
 
     if (hasExistingRigInspection) {
       const inspection = data?.dropzone?.dropzoneUser?.rigInspections?.find(
-        (record) => record.rig?.id === rig.id
+        (record) => record.rig?.id === rig?.id
       );
 
       if (inspection) {
@@ -73,7 +77,7 @@ export default function RigInspectionScreen() {
     data?.dropzone?.dropzoneUser?.rigInspections,
     data?.dropzone.rigInspectionTemplate?.definition,
     dispatch,
-    rig.id,
+    rig?.id,
   ]);
 
   const createRigInspection = React.useCallback(async () => {
@@ -81,7 +85,7 @@ export default function RigInspectionScreen() {
       await mutationCreateRigInspection({
         variables: {
           dropzoneId: Number(currentDropzone?.dropzone?.id),
-          rigId: Number(rig.id),
+          rigId: Number(rig?.id),
           definition: JSON.stringify(state.fields),
           isOk: !!state.ok,
         },
@@ -179,7 +183,7 @@ export default function RigInspectionScreen() {
   }, [
     mutationCreateRigInspection,
     currentDropzone?.dropzone?.id,
-    rig.id,
+    rig?.id,
     state.fields,
     state.ok,
     dispatch,
@@ -197,7 +201,7 @@ export default function RigInspectionScreen() {
           backgroundColor: 'transparent',
         }}
       >
-        <RigCard rig={rig} />
+        {rig && <RigCard {...{ rig }} />}
 
         <Card style={{ width: '100%' }}>
           <Card.Title title={data?.dropzone?.rigInspectionTemplate?.name} />

@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { SectionList } from 'react-native';
-import { Card, List } from 'react-native-paper';
+import { View } from 'react-native-animatable';
+import { List } from 'react-native-paper';
 
 import { DropzoneUserProfileFragment, OrderEssentialsFragment } from 'app/api/operations';
 
-import { useNavigation } from '@react-navigation/core';
 import { groupBy, map } from 'lodash';
 import startOfDay from 'date-fns/startOfDay';
 import parseISO from 'date-fns/parseISO';
@@ -17,43 +16,46 @@ import { useUserNavigation } from '../../routes';
 
 export interface IJumpHistoryTab {
   dropzoneUser?: DropzoneUserProfileFragment | null;
+  tabIndex: number;
+  currentTabIndex: number;
 }
 export default function TransactionsTab(props: IJumpHistoryTab) {
-  const { dropzoneUser } = props;
+  const { dropzoneUser, tabIndex, currentTabIndex } = props;
   const navigation = useUserNavigation();
+  const sections = React.useMemo(() =>
+    map(
+      groupBy(dropzoneUser?.orders?.edges, (e) =>
+        startOfDay((e?.node?.createdAt || 0) * 1000).toISOString()
+      ),
+      (d, t) => {
+        const date = parseISO(t);
+        const title =
+          differenceInDays(new Date(), date) > 7
+            ? format(date, 'dd MMM, yyyy')
+            : formatDistance(date, new Date(), { addSuffix: true, locale: enAU });
+        return {
+          title,
+          data: d,
+        };
+      }
+    ), []);
   return (
-    <Card style={{ marginHorizontal: 0 }} elevation={1}>
-      <SectionList
-        sections={map(
-          groupBy(dropzoneUser?.orders?.edges, (e) =>
-            startOfDay((e?.node?.createdAt || 0) * 1000).toISOString()
-          ),
-          (d, t) => {
-            const date = parseISO(t);
-            const title =
-              differenceInDays(new Date(), date) > 7
-                ? format(date, 'dd MMM, yyyy')
-                : formatDistance(date, new Date(), { addSuffix: true, locale: enAU });
-            return {
-              title,
-              data: d,
-            };
-          }
-        )}
-        renderSectionHeader={({ section: { title } }) => <List.Subheader>{title}</List.Subheader>}
-        // style={styles.flatList}
-        data={dropzoneUser?.orders?.edges || []}
-        refreshing={false}
-        renderItem={({ item }) => (
+    <View animation={currentTabIndex > tabIndex ? "slideInLeft" : "slideInRight"} easing="ease-in-out" duration={200}>
+      {sections.map(({ title, data }) =>
+      <>
+        <List.Subheader style={{ marginTop: 16, marginBottom: 4 }}>{title}</List.Subheader>
+        {data.map((item) =>
           !item?.node ? null :
           <OrderCard
             showAvatar
-            onPress={() => navigation.navigate('OrderReceiptScreen', { order: item?.node as Required<typeof item.node> })}
+            onPress={() =>
+              item?.node?.id && dropzoneUser && navigation.navigate('OrderReceiptScreen', { orderId: item?.node?.id, userId: dropzoneUser?.id })}
             order={item?.node as OrderEssentialsFragment}
             {...{ dropzoneUser }}
           />
         )}
-      />
-    </Card>
+        </>
+      )}
+    </View>
   );
 }

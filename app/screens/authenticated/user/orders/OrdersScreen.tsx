@@ -1,4 +1,4 @@
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
 import { SectionList, StyleSheet, View } from 'react-native';
 import { List, ProgressBar } from 'react-native-paper';
@@ -15,12 +15,17 @@ import { useQueryDropzoneUserProfile } from 'app/api/reflection';
 import OrderCard from '../../../../components/orders/OrderCard';
 import { useUserNavigation } from '../routes';
 
+export type OrdersRoute = {
+  OrdersScreen: {
+    userId: string;
+  }
+}
 export default function OrdersScreen() {
   const state = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
   const { currentUser } = useCurrentDropzone();
-  const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
+  const route = useRoute<RouteProp<OrdersRoute>>();
   const { data, loading, refetch } = useQueryDropzoneUserProfile({
     variables: {
       dropzoneId: Number(state.currentDropzoneId),
@@ -51,7 +56,7 @@ export default function OrdersScreen() {
 
   return (
     <View style={{ flexGrow: 1, backgroundColor: state.theme.colors.surface }}>
-      {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
+      {loading && <ProgressBar color={state.theme.colors.primary} indeterminate visible={loading} />}
 
       <SectionList
         sections={map(
@@ -79,9 +84,12 @@ export default function OrdersScreen() {
           <OrderCard
             showAvatar
             onPress={() =>
-              !item?.node ? null : navigation.navigate(
+              !item?.node || !dropzoneUser ? null : navigation.navigate(
                 'OrderReceiptScreen',
-                { order: item?.node }
+                {
+                  orderId: item?.node?.id,
+                  userId: dropzoneUser.id
+                }
               )
             }
             order={item?.node as OrderEssentialsFragment}

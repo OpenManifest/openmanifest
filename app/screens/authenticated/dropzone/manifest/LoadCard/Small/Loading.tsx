@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Skeleton from 'react-native-skeleton-content';
+import Skeleton from 'app/components/Skeleton';
 
 export default function LoadingCard() {
   return (

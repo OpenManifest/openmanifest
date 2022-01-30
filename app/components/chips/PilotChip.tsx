@@ -1,6 +1,6 @@
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { Chip, Menu, useTheme } from 'react-native-paper';
+import { Avatar, Chip, Menu, useTheme } from 'react-native-paper';
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
 import { useAppSelector } from '../../state';
@@ -76,6 +76,7 @@ export default function PilotChip(props: IPilotChipSelect) {
               onSelect(edge.node);
             }
           }}
+          icon={edge?.node?.user?.image ? { uri: edge?.node?.user?.image } : 'account'}
           title={edge?.node?.user?.name}
         />
       ))}

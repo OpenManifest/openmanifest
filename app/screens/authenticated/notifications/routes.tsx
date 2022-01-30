@@ -1,20 +1,27 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
-import AppBar from 'app/components/AppBar/AppBar';
+import AppBar from 'app/components/appbar/AppBar';
 
 import NotificationsScreen from './notifications/NotificationsScreen';
+import Users, { UserRoutes } from '../user/routes';
+import { NavigationProp, NavigatorScreenParams, useNavigation } from '@react-navigation/core';
 
 export type NotificationRoutes = {
   NotificationsScreen: undefined;
   RigInspectionScreen: undefined;
+  User: NavigatorScreenParams<UserRoutes>;
 };
 
-const Profile = createStackNavigator<NotificationRoutes>();
+const Notification = createStackNavigator<NotificationRoutes>();
+
+export function useNotificationNavigation() {
+  return useNavigation<NavigationProp<NotificationRoutes>>();
+}
 
 export default function Notifications() {
   return (
-    <Profile.Navigator
+    <Notification.Navigator
       screenOptions={{
         headerShown: true,
         header: (props) => <AppBar {...props} hideWarnings />,
@@ -24,11 +31,16 @@ export default function Notifications() {
       }}
       initialRouteName="NotificationsScreen"
     >
-      <Profile.Screen
+      <Notification.Screen
         name="NotificationsScreen"
         component={NotificationsScreen}
         options={{ title: 'Notifications' }}
       />
-    </Profile.Navigator>
+
+      <Notification.Screen
+        name="User"
+        component={Users}
+      />
+    </Notification.Navigator>
   );
 }

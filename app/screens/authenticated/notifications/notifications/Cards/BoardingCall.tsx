@@ -18,14 +18,14 @@ export default function BoardingCallNotification(props: INotification) {
       timestamp={notification.createdAt}
       icon="airplane-takeoff"
       onPress={() =>
-        navigation.navigate('Authenticated', {
+        notification?.resource?.id && navigation.navigate('Authenticated', {
           screen: 'Drawer',
           params: {
             screen: 'Manifest',
             params: {
               screen: 'LoadScreen',
                 initial: false,
-                params: { load: notification.resource as Load },
+                params: { loadId: notification.resource.id },
               }
           }
         })

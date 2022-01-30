@@ -47,7 +47,7 @@ export default function TransactionsScreen() {
 
   return (
     <>
-      {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
+      {loading && <ProgressBar color={state.theme.colors.primary} indeterminate visible={loading} />}
 
       <FlatList
         style={styles.flatList}
@@ -61,10 +61,13 @@ export default function TransactionsScreen() {
               !item?.node ? null : navigation.navigate('Authenticated', {
                 screen: 'Drawer',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'Users',
                   params: {
-                    screen: 'OrderScreen',
-                    params: { order: item?.node }
+                    screen: 'OrderReceiptScreen',
+                    params: {
+                      orderId: item?.node?.id,
+                      userId: item?.node?.buyer?.id
+                    },
                   }
                 }
               })}

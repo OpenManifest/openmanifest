@@ -4,6 +4,7 @@ import { Avatar, Badge, Card, Chip, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ViewProps } from 'app/components/Themed';
 import { SlotDetailsFragment } from 'app/api/operations';
+import { useDropzoneNavigation } from '../routes';
 
 interface ISlotCardProps {
   slot: SlotDetailsFragment;
@@ -17,10 +18,12 @@ export default function SlotCard(props: ISlotCardProps) {
   const theme = useTheme();
 
   const hasPassenger = !!slot?.passengerName;
+  const navigation = useDropzoneNavigation();
   return (
     <>
       <Card
-        onPress={() => onPress?.(slot)}
+        onPress={() => slot.dropzoneUser?.id && navigation.navigate('User', { screen: 'ProfileScreen', params: { userId: slot.dropzoneUser?.id }})}
+        onLongPress={() => onPress?.(slot)}
         elevation={3}
         style={StyleSheet.flatten([styles.card, { marginBottom: hasPassenger ? -4 : 12 }, style])}
       >

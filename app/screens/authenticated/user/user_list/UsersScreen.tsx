@@ -4,7 +4,7 @@ import { RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-nat
 import { Avatar, Card, FAB, List, ProgressBar, useTheme } from 'react-native-paper';
 
 import { FlatList } from 'react-native-gesture-handler';
-import SkeletonContent from 'react-native-skeleton-content';
+import SkeletonContent from 'app/components/Skeleton';
 import NoResults from 'app/components/NoResults';
 import { Permission } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
@@ -66,6 +66,11 @@ const loadingFragment: DropzoneUserEssentialsFragment = {
     id: '__LOADING__'
   }
 };
+
+export type UserListRoute = {
+  UserListScreen: undefined
+}
+
 export default function UsersScreen() {
   const global = useAppSelector((root) => root.global);
   const state = useAppSelector((root) => root.screens.users);
@@ -101,7 +106,7 @@ export default function UsersScreen() {
 
   return (
     <View style={{ flexGrow: 1, backgroundColor: theme.colors.surface }}>
-      <ProgressBar indeterminate color={global.theme.colors.accent} visible={loading} />
+      <ProgressBar indeterminate color={global.theme.colors.primary} visible={loading} />
       {users?.length ? null : (
         <View style={styles.empty}>
           <NoResults title="No users" subtitle="" />
@@ -166,7 +171,7 @@ export default function UsersScreen() {
                   right={() => <List.Icon icon="chevron-right" />}
                   onPress={() =>
                     navigation.navigate('ProfileScreen', {
-                      userId: Number(item?.id),
+                      userId: item?.id,
                     })
                   }
                 />
@@ -178,7 +183,7 @@ export default function UsersScreen() {
 
       {canCreateUser && (
         <FAB
-          style={styles.fab}
+          style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           small
           icon="plus"
           onPress={() => dispatch(actions.forms.ghost.setOpen(true))}

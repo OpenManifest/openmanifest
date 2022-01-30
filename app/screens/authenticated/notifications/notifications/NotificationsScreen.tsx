@@ -7,7 +7,7 @@ import { ProgressBar } from 'react-native-paper';
 import { FlatList } from 'react-native-gesture-handler';
 import { useAppSelector } from '../../../../state';
 import useNotifications from '../../../../api/hooks/useNotifications';
-import { NotificationType } from 'app/schema.d';
+import { NotificationType } from 'app/api/schema.d';
 import NoResults from '../../../../components/NoResults';
 
 import ManifestedCard from './Cards/Manifested';
@@ -58,7 +58,7 @@ export default function ProfileScreen() {
 
   return (
     <>
-      {loading && <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />}
+      {loading && <ProgressBar color={state.theme.colors.primary} indeterminate visible={loading} />}
       {notifications?.edges?.length ? null : (
         <View style={styles.empty}>
           <NoResults title="No notifications" subtitle="Notifications will show up here" />

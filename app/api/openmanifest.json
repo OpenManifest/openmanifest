@@ -113,8 +113,8 @@
       },
       {
         "kind": "SCALAR",
-        "name": "ID",
-        "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
+        "name": "Boolean",
+        "description": "The `Boolean` scalar type represents `true` or `false`.",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -156,16 +156,6 @@
             "deprecationReason": null
           }
         ],
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "String",
-        "description": "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
-        "fields": null,
-        "inputFields": null,
         "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
@@ -268,18 +258,6 @@
             "deprecationReason": null
           },
           {
-            "name": "id",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "clientMutationId",
             "description": "A unique identifier for the client performing the mutation.",
             "type": {
@@ -290,18 +268,20 @@
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "Int",
-        "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
-        "fields": null,
-        "inputFields": null,
         "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
@@ -899,11 +879,11 @@
             "deprecationReason": null
           },
           {
-            "name": "id",
-            "description": null,
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -911,11 +891,11 @@
             "deprecationReason": null
           },
           {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
+            "name": "id",
+            "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -1442,11 +1422,11 @@
             "deprecationReason": null
           },
           {
-            "name": "id",
-            "description": null,
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -1454,11 +1434,11 @@
             "deprecationReason": null
           },
           {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
+            "name": "id",
+            "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -1643,6 +1623,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "type": {
@@ -1653,18 +1645,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -1757,6 +1737,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "type": {
@@ -1767,18 +1759,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -1871,6 +1851,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "type": {
@@ -1881,18 +1873,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -1985,6 +1965,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "type": {
@@ -1995,18 +1987,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -2099,6 +2079,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "type": {
@@ -2109,18 +2101,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -2213,6 +2193,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "type": {
@@ -2223,18 +2215,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -2327,6 +2307,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": "The ID of the dropzone user to delete",
             "type": {
@@ -2337,18 +2329,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -2638,6 +2618,18 @@
                 "deprecationReason": null
               },
               {
+                "name": "licensed",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "permissions",
                 "description": null,
                 "type": {
@@ -2663,18 +2655,6 @@
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "licensed",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -2835,6 +2815,18 @@
                 "deprecationReason": null
               },
               {
+                "name": "earliestTimestamp",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "first",
                 "description": "Returns the first _n_ elements from the list.",
                 "type": {
@@ -2849,18 +2841,6 @@
               {
                 "name": "last",
                 "description": "Returns the last _n_ elements from the list.",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "earliestTimestamp",
-                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -3351,26 +3331,6 @@
         "possibleTypes": null
       },
       {
-        "kind": "SCALAR",
-        "name": "Boolean",
-        "description": "The `Boolean` scalar type represents `true` or `false`.",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "Float",
-        "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
         "kind": "OBJECT",
         "name": "DropzoneConnection",
         "description": "The connection type for Dropzone.",
@@ -3475,22 +3435,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "name",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "banner",
             "description": null,
             "type": {
@@ -3519,7 +3463,7 @@
             "deprecationReason": null
           },
           {
-            "name": "requestPublication",
+            "name": "isCreditSystemEnabled",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -3567,6 +3511,22 @@
             "deprecationReason": null
           },
           {
+            "name": "name",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "primaryColor",
             "description": null,
             "type": {
@@ -3579,11 +3539,11 @@
             "deprecationReason": null
           },
           {
-            "name": "secondaryColor",
+            "name": "requestPublication",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Boolean",
               "ofType": null
             },
             "defaultValue": null,
@@ -3591,11 +3551,11 @@
             "deprecationReason": null
           },
           {
-            "name": "isCreditSystemEnabled",
+            "name": "secondaryColor",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Boolean",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -4396,11 +4356,11 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "expiresAt",
+            "name": "credits",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "Float",
               "ofType": null
             },
             "defaultValue": null,
@@ -4408,11 +4368,11 @@
             "deprecationReason": null
           },
           {
-            "name": "credits",
+            "name": "expiresAt",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Float",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -4588,18 +4548,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "name",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "cost",
             "description": null,
             "type": {
@@ -4617,6 +4565,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -4781,6 +4741,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": null,
             "type": {
@@ -4807,18 +4779,6 @@
                 "name": "LoadState",
                 "ofType": null
               }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -4901,6 +4861,16 @@
         ],
         "inputFields": null,
         "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "Float",
+        "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
       },
@@ -4994,18 +4964,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "name",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "definition",
             "description": null,
             "type": {
@@ -5023,6 +4981,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -5108,7 +5078,23 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "name",
+            "name": "dropzoneId",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "email",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -5124,7 +5110,47 @@
             "deprecationReason": null
           },
           {
-            "name": "email",
+            "name": "exitWeight",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "federationNumber",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "licenseId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -5152,38 +5178,6 @@
             "deprecationReason": null
           },
           {
-            "name": "exitWeight",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "dropzoneId",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "roleId",
             "description": null,
             "type": {
@@ -5194,30 +5188,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "licenseId",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "federationNumber",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -5235,16 +5205,12 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "permission",
-            "description": null,
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "Permission",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -5263,12 +5229,16 @@
             "deprecationReason": null
           },
           {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
+            "name": "permission",
+            "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "Permission",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -5351,6 +5321,26 @@
         ],
         "inputFields": null,
         "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "ID",
+        "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "Int",
+        "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
       },
@@ -6062,11 +6052,11 @@
             "deprecationReason": null
           },
           {
-            "name": "name",
+            "name": "gcaId",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -6074,11 +6064,11 @@
             "deprecationReason": null
           },
           {
-            "name": "maxSlots",
+            "name": "hasLanded",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "Boolean",
               "ofType": null
             },
             "defaultValue": null,
@@ -6098,11 +6088,35 @@
             "deprecationReason": null
           },
           {
-            "name": "hasLanded",
+            "name": "loadMasterId",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Boolean",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "maxSlots",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -6123,30 +6137,6 @@
           },
           {
             "name": "planeId",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "gcaId",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "loadMasterId",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -6183,14 +6173,14 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "open",
-            "description": "open",
+            "name": "boarding_call",
+            "description": "boarding_call",
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "boarding_call",
-            "description": "boarding_call",
+            "name": "cancelled",
+            "description": "cancelled",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -6207,8 +6197,8 @@
             "deprecationReason": null
           },
           {
-            "name": "cancelled",
-            "description": "cancelled",
+            "name": "open",
+            "description": "open",
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -6347,14 +6337,8 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "user",
-            "description": "user",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "support",
-            "description": "support",
+            "name": "administrator",
+            "description": "administrator",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -6365,8 +6349,14 @@
             "deprecationReason": null
           },
           {
-            "name": "administrator",
-            "description": "administrator",
+            "name": "support",
+            "description": "support",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "user",
+            "description": "user",
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -7542,6 +7532,18 @@
             "description": null,
             "args": [
               {
+                "name": "confirmUrl",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "email",
                 "description": null,
                 "type": {
@@ -7584,18 +7586,6 @@
                     "name": "String",
                     "ofType": null
                   }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "confirmUrl",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -7660,7 +7650,7 @@
             "description": null,
             "args": [
               {
-                "name": "email",
+                "name": "confirmUrl",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -7676,7 +7666,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "confirmUrl",
+                "name": "email",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -7795,54 +7785,6 @@
             "description": null,
             "args": [
               {
-                "name": "email",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "password",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "passwordConfirmation",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
                 "name": "confirmSuccessUrl",
                 "description": null,
                 "type": {
@@ -7855,7 +7797,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "phone",
+                "name": "email",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -7887,6 +7829,18 @@
                 "deprecationReason": null
               },
               {
+                "name": "licenseId",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "name",
                 "description": null,
                 "type": {
@@ -7902,43 +7856,6 @@
                 "isDeprecated": false,
                 "deprecationReason": null
               },
-              {
-                "name": "licenseId",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "pushToken",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "UserSignUpPayload",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "userUpdatePassword",
-            "description": null,
-            "args": [
               {
                 "name": "password",
                 "description": null,
@@ -7972,12 +7889,85 @@
                 "deprecationReason": null
               },
               {
+                "name": "phone",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "pushToken",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UserSignUpPayload",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "userUpdatePassword",
+            "description": null,
+            "args": [
+              {
                 "name": "currentPassword",
                 "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "password",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "passwordConfirmation",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -8332,38 +8322,14 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "system",
-            "description": "system",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "packjob_pending_confirm",
-            "description": "packjob_pending_confirm",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "packjob_confirmed",
-            "description": "packjob_confirmed",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "rig_pending_inspection",
-            "description": "rig_pending_inspection",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "boarding_call",
             "description": "boarding_call",
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "user_manifested",
-            "description": "user_manifested",
+            "name": "boarding_call_canceled",
+            "description": "boarding_call_canceled",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -8374,26 +8340,20 @@
             "deprecationReason": null
           },
           {
-            "name": "rig_inspection_completed",
-            "description": "rig_inspection_completed",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "rig_inspection_requested",
-            "description": "rig_inspection_requested",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "membership_updated",
             "description": "membership_updated",
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "boarding_call_canceled",
-            "description": "boarding_call_canceled",
+            "name": "packjob_confirmed",
+            "description": "packjob_confirmed",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "packjob_pending_confirm",
+            "description": "packjob_pending_confirm",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -8412,6 +8372,36 @@
           {
             "name": "publication_requested",
             "description": "publication_requested",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "rig_inspection_completed",
+            "description": "rig_inspection_completed",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "rig_inspection_requested",
+            "description": "rig_inspection_requested",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "rig_pending_inspection",
+            "description": "rig_pending_inspection",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "system",
+            "description": "system",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "user_manifested",
+            "description": "user_manifested",
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -8728,26 +8718,14 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "title",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "seller",
-            "description": "Any sales peer, e.g DropzoneUser or Dropzone",
+            "name": "amount",
+            "description": "Total amount of the order",
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "INPUT_OBJECT",
-                "name": "WalletInput",
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             },
@@ -8772,8 +8750,8 @@
             "deprecationReason": null
           },
           {
-            "name": "amount",
-            "description": "Total amount of the order",
+            "name": "dropzoneId",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -8800,16 +8778,28 @@
             "deprecationReason": null
           },
           {
-            "name": "dropzoneId",
-            "description": null,
+            "name": "seller",
+            "description": "Any sales peer, e.g DropzoneUser or Dropzone",
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
+                "kind": "INPUT_OBJECT",
+                "name": "WalletInput",
                 "ofType": null
               }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "title",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -8829,8 +8819,8 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "pending",
-            "description": "pending",
+            "name": "cancelled",
+            "description": "cancelled",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -8841,14 +8831,14 @@
             "deprecationReason": null
           },
           {
-            "name": "refunded",
-            "description": "refunded",
+            "name": "pending",
+            "description": "pending",
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "cancelled",
-            "description": "cancelled",
+            "name": "refunded",
+            "description": "refunded",
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -8931,374 +8921,8 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "updateDropzone",
-            "description": "updateDropzone",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deleteDropzone",
-            "description": "deleteDropzone",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "undeleteDropzone",
-            "description": "undeleteDropzone",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updateWeatherConditions",
-            "description": "updateWeatherConditions",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createLoad",
-            "description": "createLoad",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updateLoad",
-            "description": "updateLoad",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deleteLoad",
-            "description": "deleteLoad",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "readLoad",
-            "description": "readLoad",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createSlot",
-            "description": "createSlot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createDoubleSlot",
-            "description": "createDoubleSlot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updateSlot",
-            "description": "updateSlot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deleteSlot",
-            "description": "deleteSlot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createUserSlot",
-            "description": "createUserSlot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createUserDoubleSlot",
-            "description": "createUserDoubleSlot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createUserSlotWithSelf",
-            "description": "createUserSlotWithSelf",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updateUserSlot",
-            "description": "updateUserSlot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deleteUserSlot",
-            "description": "deleteUserSlot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "undeleteUserSlot",
-            "description": "undeleteUserSlot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createStudentSlot",
-            "description": "createStudentSlot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updateStudentSlot",
-            "description": "updateStudentSlot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deleteStudentSlot",
-            "description": "deleteStudentSlot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "undeleteStudentSlot",
-            "description": "undeleteStudentSlot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createTicketType",
-            "description": "createTicketType",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updateTicketType",
-            "description": "updateTicketType",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deleteTicketType",
-            "description": "deleteTicketType",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "undeleteTicketType",
-            "description": "undeleteTicketType",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createExtra",
-            "description": "createExtra",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updateExtra",
-            "description": "updateExtra",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deleteExtra",
-            "description": "deleteExtra",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "readExtra",
-            "description": "readExtra",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "undeleteExtra",
-            "description": "undeleteExtra",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createPlane",
-            "description": "createPlane",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updatePlane",
-            "description": "updatePlane",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deletePlane",
-            "description": "deletePlane",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "undeletePlane",
-            "description": "undeletePlane",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createRig",
-            "description": "createRig",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updateRig",
-            "description": "updateRig",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deleteRig",
-            "description": "deleteRig",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "readRig",
-            "description": "readRig",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "undeleteRig",
-            "description": "undeleteRig",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createDropzoneRig",
-            "description": "createDropzoneRig",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updateDropzoneRig",
-            "description": "updateDropzoneRig",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deleteDropzoneRig",
-            "description": "deleteDropzoneRig",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "readDropzoneRig",
-            "description": "readDropzoneRig",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "undeleteDropzoneRig",
-            "description": "undeleteDropzoneRig",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "readPermissions",
-            "description": "readPermissions",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updatePermissions",
-            "description": "updatePermissions",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createPackjob",
-            "description": "createPackjob",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updatePackjob",
-            "description": "updatePackjob",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deletePackjob",
-            "description": "deletePackjob",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "readPackjob",
-            "description": "readPackjob",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createFormTemplate",
-            "description": "createFormTemplate",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updateFormTemplate",
-            "description": "updateFormTemplate",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deleteFormTemplate",
-            "description": "deleteFormTemplate",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "readFormTemplate",
-            "description": "readFormTemplate",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "readUser",
-            "description": "readUser",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updateUser",
-            "description": "updateUser",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deleteUser",
-            "description": "deleteUser",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createUser",
-            "description": "createUser",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "undeleteUser",
-            "description": "undeleteUser",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "actAsPilot",
-            "description": "actAsPilot",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "actAsLoadMaster",
-            "description": "actAsLoadMaster",
+            "name": "actAsDZSO",
+            "description": "actAsDZSO",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -9309,8 +8933,14 @@
             "deprecationReason": null
           },
           {
-            "name": "actAsDZSO",
-            "description": "actAsDZSO",
+            "name": "actAsLoadMaster",
+            "description": "actAsLoadMaster",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "actAsPilot",
+            "description": "actAsPilot",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -9321,14 +8951,176 @@
             "deprecationReason": null
           },
           {
+            "name": "createDoubleSlot",
+            "description": "createDoubleSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createDropzoneRig",
+            "description": "createDropzoneRig",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createExtra",
+            "description": "createExtra",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createFormTemplate",
+            "description": "createFormTemplate",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createLoad",
+            "description": "createLoad",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createPackjob",
+            "description": "createPackjob",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createPlane",
+            "description": "createPlane",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createRig",
+            "description": "createRig",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createSlot",
+            "description": "createSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createStudentSlot",
+            "description": "createStudentSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createTicketType",
+            "description": "createTicketType",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createUser",
+            "description": "createUser",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createUserDoubleSlot",
+            "description": "createUserDoubleSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createUserSlot",
+            "description": "createUserSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createUserSlotWithSelf",
+            "description": "createUserSlotWithSelf",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "createUserTransaction",
             "description": "createUserTransaction",
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "readUserTransactions",
-            "description": "readUserTransactions",
+            "name": "deleteDropzone",
+            "description": "deleteDropzone",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleteDropzoneRig",
+            "description": "deleteDropzoneRig",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleteExtra",
+            "description": "deleteExtra",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleteFormTemplate",
+            "description": "deleteFormTemplate",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleteLoad",
+            "description": "deleteLoad",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deletePackjob",
+            "description": "deletePackjob",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deletePlane",
+            "description": "deletePlane",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleteRig",
+            "description": "deleteRig",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleteSlot",
+            "description": "deleteSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleteStudentSlot",
+            "description": "deleteStudentSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleteTicketType",
+            "description": "deleteTicketType",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleteUser",
+            "description": "deleteUser",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleteUserSlot",
+            "description": "deleteUserSlot",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -9339,8 +9131,206 @@
             "deprecationReason": null
           },
           {
+            "name": "readDropzoneRig",
+            "description": "readDropzoneRig",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "readExtra",
+            "description": "readExtra",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "readFormTemplate",
+            "description": "readFormTemplate",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "readLoad",
+            "description": "readLoad",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "readPackjob",
+            "description": "readPackjob",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "readPermissions",
+            "description": "readPermissions",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "readRig",
+            "description": "readRig",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "readUser",
+            "description": "readUser",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "readUserTransactions",
+            "description": "readUserTransactions",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "revokePermission",
             "description": "revokePermission",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "undeleteDropzone",
+            "description": "undeleteDropzone",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "undeleteDropzoneRig",
+            "description": "undeleteDropzoneRig",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "undeleteExtra",
+            "description": "undeleteExtra",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "undeletePlane",
+            "description": "undeletePlane",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "undeleteRig",
+            "description": "undeleteRig",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "undeleteStudentSlot",
+            "description": "undeleteStudentSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "undeleteTicketType",
+            "description": "undeleteTicketType",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "undeleteUser",
+            "description": "undeleteUser",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "undeleteUserSlot",
+            "description": "undeleteUserSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updateDropzone",
+            "description": "updateDropzone",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updateDropzoneRig",
+            "description": "updateDropzoneRig",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updateExtra",
+            "description": "updateExtra",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updateFormTemplate",
+            "description": "updateFormTemplate",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updateLoad",
+            "description": "updateLoad",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updatePackjob",
+            "description": "updatePackjob",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updatePermissions",
+            "description": "updatePermissions",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updatePlane",
+            "description": "updatePlane",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updateRig",
+            "description": "updateRig",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updateSlot",
+            "description": "updateSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updateStudentSlot",
+            "description": "updateStudentSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updateTicketType",
+            "description": "updateTicketType",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updateUser",
+            "description": "updateUser",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updateUserSlot",
+            "description": "updateUserSlot",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updateWeatherConditions",
+            "description": "updateWeatherConditions",
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -9507,11 +9497,11 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "name",
+            "name": "dropzoneId",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -9519,7 +9509,7 @@
             "deprecationReason": null
           },
           {
-            "name": "minSlots",
+            "name": "hours",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -9543,7 +9533,7 @@
             "deprecationReason": null
           },
           {
-            "name": "dropzoneId",
+            "name": "minSlots",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -9555,11 +9545,11 @@
             "deprecationReason": null
           },
           {
-            "name": "hours",
+            "name": "name",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -9735,6 +9725,18 @@
                 "deprecationReason": null
               },
               {
+                "name": "isPublic",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "last",
                 "description": "Returns the last _n_ elements from the list.",
                 "type": {
@@ -9748,18 +9750,6 @@
               },
               {
                 "name": "requestedPublication",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "isPublic",
                 "description": null,
                 "type": {
                   "kind": "SCALAR",
@@ -10050,30 +10040,6 @@
                 "deprecationReason": null
               },
               {
-                "name": "first",
-                "description": "Returns the first _n_ elements from the list.",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "last",
-                "description": "Returns the last _n_ elements from the list.",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
                 "name": "dropzoneId",
                 "description": null,
                 "type": {
@@ -10092,6 +10058,30 @@
               {
                 "name": "earliestTimestamp",
                 "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "first",
+                "description": "Returns the first _n_ elements from the list.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "last",
+                "description": "Returns the last _n_ elements from the list.",
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
@@ -10160,6 +10150,18 @@
             "description": "Get ticket types for a dropzone",
             "args": [
               {
+                "name": "allowManifestingSelf",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "dropzoneId",
                 "description": null,
                 "type": {
@@ -10170,18 +10172,6 @@
                     "name": "Int",
                     "ofType": null
                   }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "allowManifestingSelf",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -10213,6 +10203,18 @@
             "description": null,
             "args": [
               {
+                "name": "redirectUrl",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "resetPasswordToken",
                 "description": null,
                 "type": {
@@ -10223,18 +10225,6 @@
                     "name": "String",
                     "ofType": null
                   }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "redirectUrl",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -10432,11 +10422,11 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "id",
-            "description": null,
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -10456,11 +10446,11 @@
             "deprecationReason": null
           },
           {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
+            "name": "id",
+            "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -10554,16 +10544,12 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "permission",
-            "description": null,
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "Permission",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -10582,12 +10568,16 @@
             "deprecationReason": null
           },
           {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
+            "name": "permission",
+            "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "Permission",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -10934,11 +10924,47 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "name",
+            "name": "canopySize",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "dropzoneId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "isPublic",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "maintainedAt",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -10970,7 +10996,7 @@
             "deprecationReason": null
           },
           {
-            "name": "serial",
+            "name": "name",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -10994,42 +11020,6 @@
             "deprecationReason": null
           },
           {
-            "name": "repackExpiresAt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "maintainedAt",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "dropzoneId",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "packingCard",
             "description": null,
             "type": {
@@ -11042,7 +11032,7 @@
             "deprecationReason": null
           },
           {
-            "name": "userId",
+            "name": "repackExpiresAt",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -11066,11 +11056,11 @@
             "deprecationReason": null
           },
           {
-            "name": "isPublic",
+            "name": "serial",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Boolean",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -11078,7 +11068,7 @@
             "deprecationReason": null
           },
           {
-            "name": "canopySize",
+            "name": "userId",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -11258,30 +11248,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "dropzoneId",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "rigId",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "definition",
             "description": null,
             "type": {
@@ -11294,11 +11260,35 @@
             "deprecationReason": null
           },
           {
+            "name": "dropzoneId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "isOk",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "rigId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -11368,22 +11358,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "type",
-            "description": "Any sales peer, e.g DropzoneUser or Dropzone",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "SellableItemTypes",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "id",
             "description": "ID of the record",
             "type": {
@@ -11392,6 +11366,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "ID",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "type",
+            "description": "Any sales peer, e.g DropzoneUser or Dropzone",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "SellableItemTypes",
                 "ofType": null
               }
             },
@@ -11413,25 +11403,25 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "pack",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ticketType",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "extra",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
+            "name": "pack",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "slot",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ticketType",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -11814,54 +11804,6 @@
             "deprecationReason": null
           },
           {
-            "name": "ticketTypeId",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "jumpTypeId",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "loadId",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "rigId",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "exitWeight",
             "description": null,
             "type": {
@@ -11894,31 +11836,23 @@
             "deprecationReason": null
           },
           {
-            "name": "userGroup",
+            "name": "jumpTypeId",
             "description": null,
             "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "SlotUser",
-                  "ofType": null
-                }
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "passengerName",
+            "name": "loadId",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -11936,45 +11870,14 @@
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
-          }
-        ],
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "INPUT_OBJECT",
-        "name": "SlotUser",
-        "description": null,
-        "fields": null,
-        "inputFields": [
-          {
-            "name": "id",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
           },
           {
-            "name": "exitWeight",
+            "name": "passengerName",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -11993,12 +11896,75 @@
             "deprecationReason": null
           },
           {
-            "name": "passengerName",
+            "name": "ticketTypeId",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "userGroup",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "SlotUser",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "SlotUser",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "exitWeight",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -12015,8 +11981,42 @@
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "passengerName",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "rigId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "String",
+        "description": "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
+        "fields": null,
+        "inputFields": null,
         "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
@@ -12222,35 +12222,11 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "currency",
+            "name": "allowManifestingSelf",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "cost",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "name",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
+              "name": "Boolean",
               "ofType": null
             },
             "defaultValue": null,
@@ -12270,11 +12246,23 @@
             "deprecationReason": null
           },
           {
-            "name": "allowManifestingSelf",
+            "name": "cost",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Boolean",
+              "name": "Float",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "currency",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -12287,18 +12275,6 @@
             "type": {
               "kind": "SCALAR",
               "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "isTandem",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
               "ofType": null
             },
             "defaultValue": null,
@@ -12320,6 +12296,30 @@
                   "ofType": null
                 }
               }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "isTandem",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -12528,7 +12528,7 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "reserved",
+            "name": "cancelled",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -12540,7 +12540,7 @@
             "deprecationReason": null
           },
           {
-            "name": "cancelled",
+            "name": "reserved",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -12557,7 +12557,19 @@
         "interfaces": null,
         "enumValues": [
           {
+            "name": "deposit",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "purchase",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "refund",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -12569,19 +12581,7 @@
             "deprecationReason": null
           },
           {
-            "name": "deposit",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "withdrawal",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "refund",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -12595,22 +12595,6 @@
         "description": "Autogenerated input type of UpdateDropzone",
         "fields": null,
         "inputFields": [
-          {
-            "name": "id",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
           {
             "name": "attributes",
             "description": null,
@@ -12634,6 +12618,22 @@
               "kind": "SCALAR",
               "name": "String",
               "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -12742,11 +12742,11 @@
             "deprecationReason": null
           },
           {
-            "name": "id",
-            "description": null,
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -12754,11 +12754,11 @@
             "deprecationReason": null
           },
           {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
+            "name": "id",
+            "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -12868,11 +12868,11 @@
             "deprecationReason": null
           },
           {
-            "name": "id",
-            "description": null,
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -12880,11 +12880,11 @@
             "deprecationReason": null
           },
           {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
+            "name": "id",
+            "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -12994,11 +12994,11 @@
             "deprecationReason": null
           },
           {
-            "name": "id",
-            "description": null,
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -13006,11 +13006,11 @@
             "deprecationReason": null
           },
           {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
+            "name": "id",
+            "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -13104,22 +13104,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "id",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "attributes",
             "description": null,
             "type": {
@@ -13142,6 +13126,22 @@
               "kind": "SCALAR",
               "name": "String",
               "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -13250,11 +13250,11 @@
             "deprecationReason": null
           },
           {
-            "name": "id",
-            "description": null,
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -13262,11 +13262,11 @@
             "deprecationReason": null
           },
           {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
+            "name": "id",
+            "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -13360,22 +13360,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "id",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "attributes",
             "description": null,
             "type": {
@@ -13398,6 +13382,22 @@
               "kind": "SCALAR",
               "name": "String",
               "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -13506,11 +13506,11 @@
             "deprecationReason": null
           },
           {
-            "name": "id",
-            "description": null,
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -13518,11 +13518,11 @@
             "deprecationReason": null
           },
           {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
+            "name": "id",
+            "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -13557,11 +13557,11 @@
             "deprecationReason": null
           },
           {
-            "name": "id",
-            "description": null,
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -13569,11 +13569,11 @@
             "deprecationReason": null
           },
           {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
+            "name": "id",
+            "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -13742,16 +13742,12 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "permission",
-            "description": null,
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -13786,12 +13782,16 @@
             "deprecationReason": null
           },
           {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
+            "name": "permission",
+            "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -13884,22 +13884,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "id",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "attributes",
             "description": null,
             "type": {
@@ -13922,6 +13906,22 @@
               "kind": "SCALAR",
               "name": "String",
               "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -14014,22 +14014,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "id",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "attributes",
             "description": null,
             "type": {
@@ -14052,6 +14036,22 @@
               "kind": "SCALAR",
               "name": "String",
               "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -14160,11 +14160,11 @@
             "deprecationReason": null
           },
           {
-            "name": "id",
-            "description": null,
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -14172,11 +14172,11 @@
             "deprecationReason": null
           },
           {
-            "name": "clientMutationId",
-            "description": "A unique identifier for the client performing the mutation.",
+            "name": "id",
+            "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -14687,8 +14687,79 @@
             "deprecationReason": null
           },
           {
+            "name": "licenseId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "uid",
             "description": "User Federation ID, e.g APF number",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "UserInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "apfNumber",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "email",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "exitWeight",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "image",
+            "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
@@ -14709,18 +14780,7 @@
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
-          }
-        ],
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "INPUT_OBJECT",
-        "name": "UserInput",
-        "description": null,
-        "fields": null,
-        "inputFields": [
+          },
           {
             "name": "name",
             "description": null,
@@ -14746,42 +14806,6 @@
             "deprecationReason": null
           },
           {
-            "name": "pushToken",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "image",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "apfNumber",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "phone",
             "description": null,
             "type": {
@@ -14794,35 +14818,11 @@
             "deprecationReason": null
           },
           {
-            "name": "email",
+            "name": "pushToken",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "licenseId",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "exitWeight",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
               "ofType": null
             },
             "defaultValue": null,
@@ -15612,22 +15612,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "type",
-            "description": "Any model with an account, e.g DropzoneUser or Dropzone",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "WalletableTypes",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "id",
             "description": "ID of the record",
             "type": {
@@ -15636,6 +15620,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "ID",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "type",
+            "description": "Any model with an account, e.g DropzoneUser or Dropzone",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "WalletableTypes",
                 "ofType": null
               }
             },
@@ -15657,13 +15657,13 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "dropzoneUser",
+            "name": "dropzone",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "dropzone",
+            "name": "dropzoneUser",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -15817,19 +15817,23 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "winds",
+            "name": "dropzoneId",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "temperature",
+            "name": "exitSpotMiles",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -15853,11 +15857,11 @@
             "deprecationReason": null
           },
           {
-            "name": "exitSpotMiles",
+            "name": "offsetDirection",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,
@@ -15877,11 +15881,11 @@
             "deprecationReason": null
           },
           {
-            "name": "offsetDirection",
+            "name": "temperature",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -15889,16 +15893,12 @@
             "deprecationReason": null
           },
           {
-            "name": "dropzoneId",
+            "name": "winds",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -15952,6 +15952,529 @@
           },
           {
             "name": "temperature",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "__Directive",
+        "description": "A Directive provides a way to describe alternate runtime execution and type validation behavior in a GraphQL document.\n\nIn some cases, you need to provide options to alter GraphQL's execution behavior in ways field arguments will not suffice, such as conditionally including or skipping a field. Directives provide this by describing additional information to the executor.",
+        "fields": [
+          {
+            "name": "name",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "description",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "isRepeatable",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "locations",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "__DirectiveLocation",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "args",
+            "description": null,
+            "args": [
+              {
+                "name": "includeDeprecated",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                },
+                "defaultValue": "false",
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "__InputValue",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "__DirectiveLocation",
+        "description": "A Directive can be adjacent to many parts of the GraphQL language, a __DirectiveLocation describes one such possible adjacencies.",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "QUERY",
+            "description": "Location adjacent to a query operation.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "MUTATION",
+            "description": "Location adjacent to a mutation operation.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SUBSCRIPTION",
+            "description": "Location adjacent to a subscription operation.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "FIELD",
+            "description": "Location adjacent to a field.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "FRAGMENT_DEFINITION",
+            "description": "Location adjacent to a fragment definition.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "FRAGMENT_SPREAD",
+            "description": "Location adjacent to a fragment spread.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "INLINE_FRAGMENT",
+            "description": "Location adjacent to an inline fragment.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "VARIABLE_DEFINITION",
+            "description": "Location adjacent to a variable definition.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SCHEMA",
+            "description": "Location adjacent to a schema definition.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SCALAR",
+            "description": "Location adjacent to a scalar definition.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "OBJECT",
+            "description": "Location adjacent to an object type definition.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "FIELD_DEFINITION",
+            "description": "Location adjacent to a field definition.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ARGUMENT_DEFINITION",
+            "description": "Location adjacent to an argument definition.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "INTERFACE",
+            "description": "Location adjacent to an interface definition.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNION",
+            "description": "Location adjacent to a union definition.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ENUM",
+            "description": "Location adjacent to an enum definition.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ENUM_VALUE",
+            "description": "Location adjacent to an enum value definition.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "INPUT_OBJECT",
+            "description": "Location adjacent to an input object type definition.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "INPUT_FIELD_DEFINITION",
+            "description": "Location adjacent to an input object field definition.",
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "__EnumValue",
+        "description": "One possible value for a given Enum. Enum values are unique values, not a placeholder for a string or numeric value. However an Enum value is returned in a JSON response as a string.",
+        "fields": [
+          {
+            "name": "name",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "description",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "isDeprecated",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deprecationReason",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "__Field",
+        "description": "Object and Interface types are described by a list of Fields, each of which has a name, potentially a list of arguments, and a return type.",
+        "fields": [
+          {
+            "name": "name",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "description",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "args",
+            "description": null,
+            "args": [
+              {
+                "name": "includeDeprecated",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                },
+                "defaultValue": "false",
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "__InputValue",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "type",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "__Type",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "isDeprecated",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deprecationReason",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "__InputValue",
+        "description": "Arguments provided to Fields or Directives and the input fields of an InputObject are represented as Input Values which describe their type and optionally a default value.",
+        "fields": [
+          {
+            "name": "name",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "description",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "type",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "__Type",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "defaultValue",
+            "description": "A GraphQL-formatted string representing the default value for this input value.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "isDeprecated",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deprecationReason",
             "description": null,
             "args": [],
             "type": {
@@ -16351,519 +16874,34 @@
           }
         ],
         "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "__Field",
-        "description": "Object and Interface types are described by a list of Fields, each of which has a name, potentially a list of arguments, and a return type.",
-        "fields": [
-          {
-            "name": "name",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "description",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "args",
-            "description": null,
-            "args": [
-              {
-                "name": "includeDeprecated",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                },
-                "defaultValue": "false",
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "__InputValue",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "type",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "__Type",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "isDeprecated",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deprecationReason",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "__InputValue",
-        "description": "Arguments provided to Fields or Directives and the input fields of an InputObject are represented as Input Values which describe their type and optionally a default value.",
-        "fields": [
-          {
-            "name": "name",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "description",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "type",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "__Type",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "defaultValue",
-            "description": "A GraphQL-formatted string representing the default value for this input value.",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "isDeprecated",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deprecationReason",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "__EnumValue",
-        "description": "One possible value for a given Enum. Enum values are unique values, not a placeholder for a string or numeric value. However an Enum value is returned in a JSON response as a string.",
-        "fields": [
-          {
-            "name": "name",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "description",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "isDeprecated",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deprecationReason",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "__Directive",
-        "description": "A Directive provides a way to describe alternate runtime execution and type validation behavior in a GraphQL document.\n\nIn some cases, you need to provide options to alter GraphQL's execution behavior in ways field arguments will not suffice, such as conditionally including or skipping a field. Directives provide this by describing additional information to the executor.",
-        "fields": [
-          {
-            "name": "name",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "description",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "isRepeatable",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "locations",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "__DirectiveLocation",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "args",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "__InputValue",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "ENUM",
-        "name": "__DirectiveLocation",
-        "description": "A Directive can be adjacent to many parts of the GraphQL language, a __DirectiveLocation describes one such possible adjacencies.",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
-          {
-            "name": "QUERY",
-            "description": "Location adjacent to a query operation.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "MUTATION",
-            "description": "Location adjacent to a mutation operation.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "SUBSCRIPTION",
-            "description": "Location adjacent to a subscription operation.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "FIELD",
-            "description": "Location adjacent to a field.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "FRAGMENT_DEFINITION",
-            "description": "Location adjacent to a fragment definition.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "FRAGMENT_SPREAD",
-            "description": "Location adjacent to a fragment spread.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "INLINE_FRAGMENT",
-            "description": "Location adjacent to an inline fragment.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "VARIABLE_DEFINITION",
-            "description": "Location adjacent to a variable definition.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "SCHEMA",
-            "description": "Location adjacent to a schema definition.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "SCALAR",
-            "description": "Location adjacent to a scalar definition.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "OBJECT",
-            "description": "Location adjacent to an object type definition.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "FIELD_DEFINITION",
-            "description": "Location adjacent to a field definition.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ARGUMENT_DEFINITION",
-            "description": "Location adjacent to an argument definition.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "INTERFACE",
-            "description": "Location adjacent to an interface definition.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "UNION",
-            "description": "Location adjacent to a union definition.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ENUM",
-            "description": "Location adjacent to an enum definition.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ENUM_VALUE",
-            "description": "Location adjacent to an enum value definition.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "INPUT_OBJECT",
-            "description": "Location adjacent to an input object type definition.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "INPUT_FIELD_DEFINITION",
-            "description": "Location adjacent to an input object field definition.",
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "possibleTypes": null
       }
     ],
     "directives": [
+      {
+        "name": "deprecated",
+        "description": "Marks an element of a GraphQL schema as no longer supported.",
+        "isRepeatable": false,
+        "locations": [
+          "ARGUMENT_DEFINITION",
+          "ENUM_VALUE",
+          "FIELD_DEFINITION",
+          "INPUT_FIELD_DEFINITION"
+        ],
+        "args": [
+          {
+            "name": "reason",
+            "description": "Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted using the Markdown syntax, as specified by [CommonMark](https://commonmark.org/).",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": "\"No longer supported\"",
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ]
+      },
       {
         "name": "include",
         "description": "Directs the executor to include this field or fragment only when the `if` argument is true.",
@@ -16915,31 +16953,6 @@
               }
             },
             "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ]
-      },
-      {
-        "name": "deprecated",
-        "description": "Marks an element of a GraphQL schema as no longer supported.",
-        "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-          "ARGUMENT_DEFINITION",
-          "INPUT_FIELD_DEFINITION",
-          "ENUM_VALUE"
-        ],
-        "args": [
-          {
-            "name": "reason",
-            "description": "Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted using the Markdown syntax, as specified by [CommonMark](https://commonmark.org/).",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": "\"No longer supported\"",
             "isDeprecated": false,
             "deprecationReason": null
           }

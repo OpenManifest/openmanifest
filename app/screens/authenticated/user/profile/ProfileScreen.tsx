@@ -1,14 +1,12 @@
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
-import { Platform, RefreshControl, StyleSheet, View } from 'react-native';
+import { FlatList, Platform, RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Divider, ProgressBar } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
-import Skeleton from 'react-native-skeleton-content';
-import { Tabs, TabScreen } from 'react-native-paper-tabs';
+import Skeleton from 'app/components/Skeleton';
 
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { Permission } from 'app/api/schema.d';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import DropzoneUserDialog from 'app/components/dialogs/DropzoneUserDialog';
 import CreditsSheet from 'app/components/dialogs/CreditsDialog/Credits';
 import RigDialog from 'app/components/dialogs/Rig';
@@ -24,24 +22,27 @@ import Header from './UserInfo/Header';
 import InfoGrid from './UserInfo/InfoGrid';
 
 import UserActionsButton from './UserActions';
-import EquipmentTab from './tabs/Equipment';
-import JumpHistoryTab from './tabs/JumpHistory';
-import TransactionsTab from './tabs/Transactions';
+import TabBar, { ProfileTab } from './tabs';
 
+export type ProfileRoute = {
+  ProfileScreen: {
+    userId: string;
+  }
+}
 export default function ProfileScreen() {
   const state = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const { currentUser } = useCurrentDropzone();
-  const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
+  const route = useRoute<RouteProp<ProfileRoute>>();
 
   const { dropzoneUser, loading, refetch } = useDropzoneUserProfile(
     Number(route.params.userId) || Number(currentUser?.id)
   );
 
   const isFocused = useIsFocused();
-  const [defaultIndex, onChangeIndex] = React.useState(0);
+  const [defaultIndex, onChangeIndex] = React.useState(1);
 
   React.useEffect(() => navigation.setOptions({ title: 'Profile' }), [navigation]);
   React.useEffect(() => {
@@ -95,17 +96,20 @@ export default function ProfileScreen() {
     dispatch(actions.forms.user.setOpen(false));
   }, [dispatch]);
 
+  const { width } = useWindowDimensions();
+
   return (
     <>
       <View style={StyleSheet.absoluteFill}>
         {loading && (
-          <ProgressBar color={state.theme.colors.accent} indeterminate visible={loading} />
+          <ProgressBar color={state.theme.colors.primary} indeterminate visible={loading} />
         )}
-        <ScrollableScreen
+        <FlatList
           style={{ backgroundColor: state.theme.colors.background }}
           contentContainerStyle={[styles.content, { backgroundColor: 'transparent' }]}
           refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}
-        >
+          keyExtractor={(_, idx) => `profile-${idx}`}
+          ListHeaderComponent={() =>
           <View style={styles.wrappingHeader}>
             <View style={{ width: '100%' }}>
               {!dropzoneUser ? (
@@ -146,27 +150,18 @@ export default function ProfileScreen() {
                 </Header>
               )}
             </View>
-
-            <Tabs
-              {...{ defaultIndex, onChangeIndex }}
-              mode="fixed"
-              style={{ backgroundColor: state.theme.colors.surface, height: 100 }}
-            >
-              <TabScreen label="Jumps">
-                <View style={{ height: 5, width: 5 }} />
-              </TabScreen>
-              <TabScreen label="Funds">
-                <View style={{ height: 5, width: 5 }} />
-              </TabScreen>
-              <TabScreen label="Equipment">
-                <View style={{ height: 5, width: 5 }} />
-              </TabScreen>
-            </Tabs>
-          </View>
-        </ScrollableScreen>
-        {defaultIndex === 0 ? <JumpHistoryTab {...{ dropzoneUser }} /> : null}
-        {defaultIndex === 1 ? <EquipmentTab {...{ dropzoneUser }} /> : null}
-        {defaultIndex === 2 ? <TransactionsTab {...{ dropzoneUser }} /> : null}
+            </View>}
+          renderItem={({ index }) =>
+            index === 0
+              ? (
+                <TabBar onChange={onChangeIndex} />
+              )
+              : (
+                dropzoneUser ? <ProfileTab active={defaultIndex} {...{ dropzoneUser }} /> : null
+              )
+          }
+          data={[null, null]}
+        />
 
         <RigDialog
           onClose={onCloseRigForm}
@@ -213,7 +208,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    flexGrow: 1,
+    // flexGrow: 1,
     paddingBottom: 56,
     paddingHorizontal: 0,
   },

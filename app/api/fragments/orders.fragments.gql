@@ -64,12 +64,15 @@ fragment orderEssentials on Order {
     }
   }
   receipts {
-    id
-    amountCents
-    createdAt
-    updatedAt
-    transactions {
-      ...transactionEssentials
-    }
+    ...receiptEssentials
+  }
+}
+fragment receiptEssentials on Receipt {
+  id
+  amountCents
+  createdAt
+  updatedAt
+  transactions {
+    ...transactionEssentials
   }
 }

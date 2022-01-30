@@ -36,7 +36,7 @@ function ConfirmUserScreen() {
             dispatch(
               actions.global.setUser(data.userConfirmRegistrationWithToken.authenticatable as User)
             );
-            navigation.navigate('DropzonesScreen');
+            navigation.navigate('Limbo', { screen: 'DropzoneSelectScreen' });
           } else {
             setError(true);
           }

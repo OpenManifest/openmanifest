@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { FAB } from 'react-native-paper';
+import { FAB, useTheme } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
 import * as Location from 'expo-location';
@@ -15,6 +15,7 @@ export default function JumpRunScreen() {
   const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
+  const theme = useTheme();
 
   const mutationCreateWeatherConditions = useMutationCreateWeatherConditions({
     onSuccess: () => null,
@@ -84,7 +85,7 @@ export default function JumpRunScreen() {
         }
       />
       <FAB
-        style={styles.fab}
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         small
         icon="check"
         loading={mutationCreateWeatherConditions.loading}

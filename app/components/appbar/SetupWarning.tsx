@@ -18,8 +18,8 @@ function Warning(props: { title: string; action?: () => void }) {
   const { action, title } = props;
   const theme = useTheme();
   return (
-    <View style={[styles.warning, { backgroundColor: theme.colors.onSurface }]}>
-      <Paragraph style={{ color: theme.colors.surface, flex: 7 / 10, flexGrow: 2 }}>
+    <View style={[styles.warning, { backgroundColor: theme.colors.primary }]}>
+      <Paragraph style={{ color: theme.colors.onSurface, flex: 7 / 10, flexGrow: 2 }}>
         {title}
       </Paragraph>
       {!action ? null : (

@@ -1,5 +1,5 @@
 import { DropzoneDetailedFragment } from 'app/api/operations';
-import { DropzoneWizardStep } from 'app/screens/authenticated/wizards/dropzone_wizard/slice';
+import { DropzoneWizardStep } from 'app/screens/wizards/dropzone_wizard/slice';
 
 export default function checkDropzoneSetupComplete(dropzone: DropzoneDetailedFragment) {
   const completed = {

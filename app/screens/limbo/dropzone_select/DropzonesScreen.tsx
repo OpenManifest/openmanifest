@@ -78,14 +78,14 @@ export default function DropzonesScreen() {
       />
 
       <FAB
-        style={styles.fab}
+        style={[styles.fab, { backgroundColor: globalState.theme.colors.primary }]}
         small
         icon="plus"
         onPress={() => {
           dispatch(actions.forms.plane.reset());
           dispatch(actions.forms.ticketType.reset());
           dispatch(actions.forms.dropzone.reset());
-          navigation.navigate('DropzoneSetupScreen');
+          navigation.navigate('Wizards', { screen: 'DropzoneWizardScreen' });
         }}
         label="Create dropzone"
       />

@@ -1,4 +1,4 @@
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
@@ -13,6 +13,11 @@ import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import useRestriction from 'app/hooks/useRestriction';
 import RigCard from './RigCard';
 
+export type EquipmentRoute = {
+  EquipmentScreen: {
+    userId: string;
+  }
+}
 export default function EquipmentScreen() {
   const globalState = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
@@ -20,7 +25,7 @@ export default function EquipmentScreen() {
   const { currentUser } = useCurrentDropzone();
   const navigation = useNavigation();
 
-  const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
+  const route = useRoute<RouteProp<EquipmentRoute, 'EquipmentScreen'>>();
 
   const { data, loading, refetch } = useQueryDropzoneUserProfile({
     variables: {
@@ -75,9 +80,9 @@ export default function EquipmentScreen() {
       />
 
       <FAB
-        style={styles.fab}
-        visible={canUpdateUser}
         small
+        style={[styles.fab, { backgroundColor: globalState.theme.colors.primary }]}
+        visible={canUpdateUser}
         icon="plus"
         onPress={() => dispatch(actions.forms.rig.setOpen(true))}
         label="Add rig"

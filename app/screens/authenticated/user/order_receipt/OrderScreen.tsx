@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRoute } from '@react-navigation/core';
+import { RouteProp, useRoute } from '@react-navigation/core';
 import { Button, Card, Divider, List, useTheme } from 'react-native-paper';
 import { Text, View } from 'react-native';
 import color from 'color';
@@ -8,46 +8,26 @@ import LottieView from 'app/components/LottieView';
 import { Dropzone, DropzoneUser, Order, Receipt, Wallet } from 'app/api/schema.d';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import UserAvatar from 'app/components/UserAvatar';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import lottieTicketAnimation from 'app/../assets/images/ticket.json';
-import TransactionCard from './TransactionCard';
+import ReceiptCard from './ReceiptCard';
+import { OrderEssentialsFragment } from 'app/api/operations';
+import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
 
-interface IReceiptCardProps {
-  receipt: Receipt;
-  index: number;
-  order: Order;
-}
 
-function ReceiptCard(props: IReceiptCardProps) {
-  const { receipt, index } = props;
-  const { currentUser } = useCurrentDropzone();
-
-  const isUser = React.useCallback(
-    (entity: Wallet | Dropzone | DropzoneUser) => {
-      return (
-        '__typename' in entity &&
-        entity.__typename === 'DropzoneUser' &&
-        entity.id === currentUser?.id
-      );
-    },
-    [currentUser]
-  );
-
-  return (
-    <>
-      <List.Subheader>{`Receipt #${index + 1}`}</List.Subheader>
-      {receipt?.transactions
-        .filter((transaction) => isUser(transaction.receiver))
-        .map((transaction) => (
-          <TransactionCard {...{ transaction }} />
-        ))}
-    </>
-  );
+export type OrderReceiptRoute = {
+  OrderReceiptScreen: {
+    orderId: string;
+    userId: string;
+  }
 }
 export default function OrderScreen() {
-  const route = useRoute<{ key: string; name: string; params: { order: Order } }>();
+  const route = useRoute<RouteProp<OrderReceiptRoute, 'OrderReceiptScreen'>>();
   const theme = useTheme();
-  const { order } = route.params;
+  const { orderId, userId } = route.params;
+  const { dropzoneUser } = useDropzoneUserProfile(Number(userId));
+  const order = React.useMemo(() =>
+    dropzoneUser?.orders?.edges?.map((edge) => edge?.node).find((node) => node?.id === orderId),
+  [dropzoneUser?.orders?.edges]);
 
   const animation = React.useMemo(
     () =>
@@ -86,8 +66,9 @@ export default function OrderScreen() {
                   fontSize: 26,
                   marginLeft: 16,
                   width: '100%',
+                  color: theme.colors.onSurface
                 }}
-              >{`Order #${order.id}`}</Text>
+              >{`Order #${order?.id || ''}`}</Text>
               <Text
                 style={{
                   fontWeight: 'bold',
@@ -97,12 +78,13 @@ export default function OrderScreen() {
                   marginLeft: 16,
                   width: '100%',
                   marginBottom: 48,
+                  color: theme.colors.onSurface
                 }}
               >
-                {order.title}
+                {order?.title}
               </Text>
               <Button mode="outlined" color={successColor} style={{ borderRadius: 16, margin: 8 }}>
-                {order.state}
+                {order?.state}
               </Button>
             </View>
           </View>

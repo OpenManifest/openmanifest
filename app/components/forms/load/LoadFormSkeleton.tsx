@@ -1,5 +1,5 @@
 import * as React from 'react';
-import SkeletonContent from 'react-native-skeleton-content';
+import SkeletonContent from 'app/components/Skeleton';
 
 export default function LoadFormSkeleton() {
   return (

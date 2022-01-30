@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Paragraph } from 'react-native-paper';
 import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard/Step';
 import LottieView from 'app/components/LottieView';
-import lottieDoneAnimation from '../../../../../../assets/images/finished-2.json';
+import lottieDoneAnimation from '../../../../../assets/images/finished-2.json';
 
 function DoneStep(props: IWizardStepProps) {
   return (

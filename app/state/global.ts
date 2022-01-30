@@ -8,7 +8,7 @@ import { Theme } from 'react-native-paper/lib/typescript/types';
 import color from 'color';
 import { primaryColor } from 'app/constants/Colors';
 import { DropzoneExtensiveFragment, UserDetailedFragment } from '../api/operations';
-import { Credential } from '../api/schema';
+import { Credential } from '../api/schema.d';
 
 const CombinedDefaultTheme: Theme = {
   ...PaperDefaultTheme,
@@ -167,15 +167,23 @@ export default createSlice({
     },
     toggleDarkMode: (state: IGlobalState) => {
       state.isDarkMode = !state.isDarkMode;
-      state.theme = state.isDarkMode ? CombinedDarkTheme : CombinedDefaultTheme;
+      state.theme = state.isDarkMode
+        ? {
+          ...CombinedDarkTheme,
+          colors: {
+            ...CombinedDarkTheme.colors,
+            primary: state.currentDropzone?.primaryColor || CombinedDarkTheme.colors.primary,
+            accent: state.currentDropzone?.secondaryColor || CombinedDarkTheme.colors.accent,
+          }
+        } : {
+          ...CombinedDefaultTheme,
+          colors: {
+            ...CombinedDefaultTheme.colors,
+            primary: state.currentDropzone?.primaryColor || CombinedDefaultTheme.colors.primary,
+            accent: state.currentDropzone?.secondaryColor || CombinedDefaultTheme.colors.accent,
+          }
+        };
 
-      if (state.currentDropzone?.primaryColor) {
-        state.theme.colors.primary = state.currentDropzone?.primaryColor;
-      }
-
-      if (state.currentDropzone?.secondaryColor) {
-        state.theme.colors.accent = state.currentDropzone?.secondaryColor;
-      }
 
       state.palette = {
         ...state.theme.colors,

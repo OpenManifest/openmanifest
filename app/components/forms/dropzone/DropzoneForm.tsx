@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, TextInput, HelperText, Card, List, Checkbox, useTheme } from 'react-native-paper';
-import SkeletonContent from 'react-native-skeleton-content';
+import SkeletonContent from 'app/components/Skeleton';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import * as ImagePicker from 'expo-image-picker';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';

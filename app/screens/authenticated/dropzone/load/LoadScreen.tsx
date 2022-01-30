@@ -3,8 +3,8 @@ import { Dimensions, RefreshControl, useWindowDimensions } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { Card } from 'react-native-paper';
 
-import { useNavigation, useRoute } from '@react-navigation/core';
-import SkeletonContent from 'react-native-skeleton-content';
+import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import SkeletonContent from 'app/components/Skeleton';
 import { PlaneEssentialsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { useLoadQuery } from 'app/api/reflection';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
@@ -77,25 +77,28 @@ const loadingFragment: SlotDetailsFragment = {
   wingLoading: null
 };
 
+export type LoadScreenRoute = {
+  LoadScreen: {
+    loadId: string;
+  }
+};
+
 export default function LoadScreen() {
   const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
   const forms = useAppSelector((root) => root.forms);
   const { palette, theme } = useAppSelector((root) => root.global);
-  const route = useRoute<{ key: string; name: string; params: { load: Load } }>();
+  const route = useRoute<RouteProp<LoadScreenRoute>>();
+  const loadId = route?.params?.loadId;
 
   const { data, loading, refetch } = useLoadQuery({
     variables: {
-      id: Number(route.params.load.id),
+      id: Number(route.params.loadId),
     },
     pollInterval: 30000,
   });
 
-  const detailedLoad = React.useMemo(() => data?.load, [data?.load]);
-  const load = React.useMemo(
-    () => detailedLoad || route.params.load,
-    [detailedLoad, route.params.load]
-  );
+  const load = React.useMemo(() => data?.load, [data?.load]);
   const currentDropzone = useCurrentDropzone();
   const { currentUser } = currentDropzone;
 
@@ -103,7 +106,7 @@ export default function LoadScreen() {
     onSuccess: () =>
       dispatch(
         actions.notifications.showSnackbar({
-          message: `Load #${load.loadNumber} updated`,
+          message: `Load #${load?.loadNumber} updated`,
           variant: 'success',
         })
       ),
@@ -120,7 +123,7 @@ export default function LoadScreen() {
       dispatch(
         actions.notifications.showSnackbar({
           message: `${payload.slot?.dropzoneUser?.user?.name || 'User'} has been taken off load #${
-            load.loadNumber
+            load?.loadNumber
           }`,
           variant: 'success',
         })
@@ -146,41 +149,41 @@ export default function LoadScreen() {
   const updatePilot = React.useCallback(
     async (pilot: DropzoneUser) => {
       await mutationUpdateLoad.mutate({
-        id: Number(load.id),
+        id: Number(loadId),
         pilotId: Number(pilot.id),
       });
     },
-    [mutationUpdateLoad, load.id]
+    [mutationUpdateLoad, loadId]
   );
 
   const updateGCA = React.useCallback(
     async (gca: DropzoneUser) => {
       await mutationUpdateLoad.mutate({
-        id: Number(load.id),
+        id: Number(loadId),
         gcaId: Number(gca.id),
       });
     },
-    [mutationUpdateLoad, load.id]
+    [mutationUpdateLoad, loadId]
   );
 
   const updatePlane = React.useCallback(
     async (plane: PlaneEssentialsFragment) => {
       await mutationUpdateLoad.mutate({
-        id: Number(load.id),
+        id: Number(loadId),
         planeId: Number(plane.id),
       });
     },
-    [mutationUpdateLoad, load.id]
+    [mutationUpdateLoad, loadId]
   );
 
   const updateLoadMaster = React.useCallback(
     async (lm: DropzoneUser) => {
       await mutationUpdateLoad.mutate({
-        id: Number(load.id),
+        id: Number(loadId),
         loadMasterId: Number(lm.id),
       });
     },
-    [mutationUpdateLoad, load.id]
+    [mutationUpdateLoad, loadId]
   );
 
   const canEditSelf = useRestriction(Permission.UpdateSlot);
@@ -188,6 +191,7 @@ export default function LoadScreen() {
 
   const canRemoveSelf = useRestriction(Permission.DeleteSlot);
   const canRemoveOthers = useRestriction(Permission.DeleteUserSlot);
+  const isFocused = useIsFocused();
 
   React.useEffect(() => {
     if (load?.maxSlots && load?.maxSlots < 5 && !isExpanded) {
@@ -195,12 +199,11 @@ export default function LoadScreen() {
     }
   }, [isExpanded, load?.maxSlots]);
 
-  const navigation = useNavigation();
 
   const slots: SlotDetailsFragment[] = Array.from({
     length: (load?.slots?.length || 0) + (load?.availableSlots || 0),
   }).map((_, index) =>
-    ((load?.slots?.length || 0) > index ? (load.slots as SlotDetailsFragment[])[index] : { ...loadingFragment, id: '__AVAILABLE__' } ));
+    ((load?.slots?.length || 0) > index ? (load?.slots as SlotDetailsFragment[])[index] : { ...loadingFragment, id: '__AVAILABLE__' } ));
 
   const maxSlots = load?.maxSlots || load?.plane?.maxSlots || 0;
   const occupiedSlots = maxSlots - (load?.availableSlots || 0);
@@ -213,7 +216,7 @@ export default function LoadScreen() {
   let contentWidth = (cardWidth + padding) * numColumns + padding;
   contentWidth = width < contentWidth ? width : contentWidth;
 
-  const initialLoading = !detailedLoad?.slots?.length && loading;
+  const initialLoading = !load?.slots?.length && loading;
 
   return (
     <View style={{ flexGrow: 1, backgroundColor: theme.colors.background }}>
@@ -244,29 +247,29 @@ export default function LoadScreen() {
               }}
               small
               backgroundColor="transparent"
-              color={palette.primary.dark}
+              color={palette.onSurface}
             />
             <GCAChip
               value={load?.gca}
               onSelect={updateGCA}
               small
               backgroundColor="transparent"
-              color={palette.primary.dark}
+              color={palette.onSurface}
             />
             <PilotChip
               value={load?.pilot}
               onSelect={updatePilot}
               small
               backgroundColor="transparent"
-              color={palette.primary.dark}
+              color={palette.onSurface}
             />
             <LoadMasterChip
               value={load?.loadMaster}
-              slots={load.slots || []}
+              slots={load?.slots || []}
               onSelect={updateLoadMaster}
               small
               backgroundColor="transparent"
-              color={palette.primary.dark}
+              color={palette.onSurface}
             />
           </ScrollView>
         )}
@@ -281,7 +284,7 @@ export default function LoadScreen() {
                 [LoadState.Cancelled]: 'Cancelled',
                 [LoadState.InFlight]: 'In air',
                 [LoadState.Landed]: 'Landed',
-              }[load?.state],
+              }[load?.state || LoadState.Open],
             },
             { title: 'Slots', value: `${occupiedSlots}/${maxSlots}` },
             {
@@ -329,7 +332,7 @@ export default function LoadScreen() {
                   ({ groupNumber }) => groupNumber && groupNumber === slot.groupNumber
                 );
                 const onSlotGroupPress = () => {
-                  if (slotGroup) {
+                  if (slotGroup && load) {
                     dispatch(actions.forms.manifestGroup.reset());
                     dispatch(actions.forms.manifestGroup.setFromSlots({ slots: slotGroup, load }));
                     dispatch(actions.forms.manifestGroup.setField(['load', load]));
@@ -361,7 +364,7 @@ export default function LoadScreen() {
           );
         }}
       />
-      <ActionButton load={load} />
+      {load && isFocused ? <ActionButton load={load} /> : null}
       <ManifestUserSheet
         open={forms.manifest.open}
         onClose={() => dispatch(actions.forms.manifest.setOpen(false))}

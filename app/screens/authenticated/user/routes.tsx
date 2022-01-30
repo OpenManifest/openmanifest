@@ -1,26 +1,19 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-
-import UsersScreen from './user_list/UsersScreen';
-import SearchableAppBar from './user_list/AppBar';
-import RigInspectionScreen from './rig/RigInspectionScreen';
-import ProfileScreen from './profile/ProfileScreen';
-import OrdersScreen from './orders/OrdersScreen';
-import EquipmentScreen from './equipment/EquipmentScreen';
 import { NavigationProp, useNavigation } from '@react-navigation/core';
-import OrderReceiptScreen from './order_receipt/OrderScreen';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { OrderEssentialsFragment, RigEssentialsFragment } from 'app/api/operations';
 
-export type UserRoutes = {
-  OrdersScreen: { userId: number };
-  OrderReceiptScreen: { order: OrderEssentialsFragment };
-  EquipmentScreen: { userId: number };
-  RigInspectionScreen: { rig: RigEssentialsFragment; dropzoneUserId: number; };
-  UsersScreen: undefined
-  ProfileScreen: { userId: number }
-}
+import UsersScreen, { UserListRoute } from './user_list/UsersScreen';
+import SearchableAppBar from './user_list/AppBar';
+import RigInspectionScreen, { RigInspectionRoute } from './rig_inspection/RigInspectionScreen';
+import ProfileScreen, { ProfileRoute } from './profile/ProfileScreen';
+import OrdersScreen, { OrdersRoute } from './orders/OrdersScreen';
+import EquipmentScreen, { EquipmentRoute } from './equipment/EquipmentScreen';
+import OrderReceiptScreen, { OrderReceiptRoute } from './order_receipt/OrderScreen';
+
+export type UserRoutes = EquipmentRoute & OrderReceiptRoute & RigInspectionRoute & ProfileRoute & UserListRoute & OrdersRoute;
 
 const Users = createStackNavigator<UserRoutes>();
 
@@ -54,7 +47,7 @@ export default function UserRoutes() {
       }}
     >
       <Users.Screen
-        name="UsersScreen"
+        name="UserListScreen"
         component={UsersScreen}
         options={{ title: 'Dropzone users' }}
       />
@@ -63,7 +56,7 @@ export default function UserRoutes() {
         component={ProfileScreen}
         options={{ title: 'User' }}
         initialParams={{
-          userId: Number(currentUser?.id),
+          userId: currentUser?.id,
         }}
       />
       <Users.Screen

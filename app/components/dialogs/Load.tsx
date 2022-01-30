@@ -4,7 +4,7 @@ import useMutationCreateLoad from '../../api/hooks/useMutationCreateLoad';
 import { actions, useAppSelector, useAppDispatch } from '../../state';
 import { actions as snackbar } from '../notifications';
 
-import { Load } from '../../api/schema';
+import { Load } from '../../api/schema.d';
 import LoadForm from '../forms/load/LoadForm';
 import DialogOrSheet from '../layout/DialogOrSheet';
 import { LoadFields } from '../forms/load/slice';

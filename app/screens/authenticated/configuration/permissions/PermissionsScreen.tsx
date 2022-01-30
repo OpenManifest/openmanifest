@@ -5,7 +5,7 @@ import { Card, List } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 
 import { capitalize } from 'lodash';
-import SkeletonContent from 'react-native-skeleton-content';
+import SkeletonContent from 'app/components/Skeleton';
 import { useRolesQuery } from 'app/api/reflection';
 import { useAppSelector } from 'app/state';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';

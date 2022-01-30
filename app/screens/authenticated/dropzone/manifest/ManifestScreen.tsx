@@ -68,7 +68,7 @@ export default function ManifestScreen() {
         if (dropzone?.ticketTypes?.length) {
           dispatch(actions.forms.ticketType.setOriginal(dropzone.ticketTypes[0]));
         }
-        navigation.navigate('DropzoneSetupScreen');
+        navigation.navigate('Wizards', { screen: 'DropzoneWizardScreen' });
       }
     }
   }, [dispatch, dropzone, isFocused, navigation, setup.completed, isSetupCheckComplete]);
@@ -98,7 +98,8 @@ export default function ManifestScreen() {
     }
 
     if (dropzone?.secondaryColor && dropzone?.secondaryColor !== state.theme?.colors?.accent) {
-      dispatch(actions.global.setPrimaryColor(dropzone.secondaryColor));
+      // dispatch(actions.global.setAccentColor(dropzone.secondaryColor));
+      console.log('Accent color disabled');
     }
   }, [
     dispatch,
@@ -187,7 +188,7 @@ export default function ManifestScreen() {
   const theme = useTheme();
   return (
     <View style={{ flex: 1 }}>
-      <ProgressBar visible={loading} indeterminate color={state.theme.colors.accent} />
+      <ProgressBar visible={loading} indeterminate color={state.theme.colors.primary} />
 
       <View style={styles.container}>
         {!initialLoading && !isSetupComplete ? (
@@ -281,7 +282,7 @@ export default function ManifestScreen() {
                             screen: 'Manifest',
                             params: {
                               screen: 'LoadScreen',
-                              params: { load: load }
+                              params: { loadId: load?.id }
                             }
                           }
                         })
@@ -294,7 +295,7 @@ export default function ManifestScreen() {
         )}
         {canCreateLoad && isSetupComplete && (
           <FAB
-            style={styles.fab}
+            style={[styles.fab, { backgroundColor: theme.colors.primary }]}
             small
             icon="plus"
             onPress={() => dispatch(actions.forms.load.setOpen(true))}

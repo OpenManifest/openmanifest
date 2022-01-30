@@ -40,7 +40,7 @@ export default function PlanesScreen() {
       <ScrollableScreen
         refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
       >
-        <ProgressBar visible={loading} color={global.theme.colors.accent} />
+        <ProgressBar visible={loading} color={global.theme.colors.primary} />
 
         {data?.planes?.length ? null : (
           <NoResults
@@ -95,7 +95,7 @@ export default function PlanesScreen() {
         )}
 
         <FAB
-          style={styles.fab}
+          style={[styles.fab, { backgroundColor: global.theme.colors.primary }]}
           visible={canCreatePlane}
           small
           icon="plus"

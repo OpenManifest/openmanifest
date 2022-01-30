@@ -129,7 +129,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         <ProgressBar
           indeterminate
           visible={mutationData.loading}
-          color={globalState.theme.colors.accent}
+          color={globalState.theme.colors.primary}
         />
         <Dialog.Title>
           {/* eslint-disable-next-line max-len */}

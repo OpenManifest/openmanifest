@@ -151,7 +151,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         <ProgressBar
           indeterminate
           visible={createData.loading}
-          color={globalState.theme.colors.accent}
+          color={globalState.theme.colors.primary}
         />
         <Dialog.Content>
           <CreditsForm />

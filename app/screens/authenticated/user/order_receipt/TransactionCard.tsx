@@ -5,10 +5,10 @@ import { capitalize } from 'lodash';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { successColor } from 'app/constants/Colors';
-import { Transaction } from 'app/api/schema';
+import { TransactionEssentialsFragment } from 'app/api/operations';
 
 interface ITransaction {
-  transaction: Transaction;
+  transaction: TransactionEssentialsFragment;
   onPress?(): void;
 }
 
@@ -38,6 +38,7 @@ export default function TransactionCard(props: ITransaction) {
               position: 'absolute',
               top: 4,
               right: 8,
+              color: theme.colors.onSurface
             }}
           >
             {transaction?.createdAt && format(transaction?.createdAt * 1000, 'Mo MMM, h:mm aaa')}

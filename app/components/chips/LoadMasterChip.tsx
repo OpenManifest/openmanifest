@@ -1,8 +1,10 @@
 import { SlotDetailsFragment } from 'app/api/operations';
 import * as React from 'react';
-import { Chip, Menu, useTheme } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { Chip, Menu, useTheme, Text } from 'react-native-paper';
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
+import UserAvatar from '../UserAvatar';
 
 interface ILoadMasterChipSelect {
   value?: { id: string; user: { id: string; name?: string | null } } | null;
@@ -69,9 +71,22 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
               onSelect(slot.dropzoneUser);
             }
           }}
-          title={slot?.dropzoneUser?.user?.name}
+          titleStyle={styles.menuItemTitle}
+          title={
+            <>
+              <UserAvatar name={slot?.dropzoneUser?.user?.name|| ''} image={slot?.dropzoneUser?.user?.image || undefined} size={24} />
+              <Text>{slot?.dropzoneUser?.user?.name}</Text>
+            </>
+          }
         />
       ))}
     </Menu>
   );
 }
+
+const styles = StyleSheet.create({
+  menuItemTitle: {
+    display: 'flex',
+    alignItems: 'center'
+  }
+});

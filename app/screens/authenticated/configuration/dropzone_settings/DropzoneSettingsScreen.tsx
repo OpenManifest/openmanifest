@@ -7,7 +7,7 @@ import useMutationUpdateDropzone from 'app/api/hooks/useMutationUpdateDropzone';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 
 import { View } from 'app/components/Themed';
-import { Dropzone } from 'app/api/schema';
+import { Dropzone } from 'app/api/schema.d';
 import DropzoneForm from 'app/components/forms/dropzone/DropzoneForm';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 
@@ -142,9 +142,9 @@ export default function UpdateDropzoneScreen() {
 
   return (
     <>
-      <ProgressBar indeterminate color={globalState.theme.colors.accent} visible={loading} />
+      <ProgressBar indeterminate color={globalState.theme.colors.primary} visible={loading} />
       <ScrollableScreen
-        style={{ backgroundColor: '#f4f5f5' }}
+        style={{ backgroundColor: globalState.theme.colors.background }}
         contentContainerStyle={styles.content}
       >
         <DropzoneForm loading={loading} />

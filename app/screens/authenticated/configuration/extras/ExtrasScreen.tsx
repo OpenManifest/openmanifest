@@ -25,7 +25,7 @@ export default function ExtrasScreen() {
 
   return (
     <>
-      <ProgressBar visible={loading} indeterminate color={globalState.theme.colors.accent} />
+      <ProgressBar visible={loading} indeterminate color={globalState.theme.colors.primary} />
       <View style={styles.container}>
         <DataTable>
           <DataTable.Header>
@@ -54,7 +54,7 @@ export default function ExtrasScreen() {
         )}
 
         <FAB
-          style={styles.fab}
+          style={[styles.fab, { backgroundColor: globalState.theme.colors.primary }]}
           visible={canCreateExtras}
           small
           icon="plus"

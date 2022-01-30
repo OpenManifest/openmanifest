@@ -5,37 +5,32 @@ import {
   DrawerActions,
   getFocusedRouteNameFromRoute,
   NavigationState,
-  ParamListBase,
-  RouteProp,
   useNavigation,
-  useNavigationState,
   useRoute,
 } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import capitalize from 'lodash/capitalize';
-import SkeletonContent from 'react-native-skeleton-content';
+import SkeletonContent from 'app/components/Skeleton';
 import { useQueryDropzones } from 'app/api/reflection';
 import { DropzoneExtensiveFragment } from 'app/api/operations';
 import InfoGrid from 'app/screens/authenticated/dropzone/load/InfoGrid';
 import useRestriction from '../../hooks/useRestriction';
-import { Permission } from '../../api/schema';
+import { Permission } from '../../api/schema.d';
 import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 
-function recursivelyGetRouteName(state: NavigationState): string {
+function recursivelyGetRouteName(state: NavigationState, prev: string[] = []): string {
   const subNavState = state.routes[state.index].state;
   const hasSubRoutes = subNavState?.index !== undefined && subNavState.routes[subNavState.index];
   const subState = hasSubRoutes ? subNavState.routes[subNavState.index].state : undefined;
-
+  const routeName = getFocusedRouteNameFromRoute(state.routes[state.index]) || 'Oops';
   if (subState) {
-    return recursivelyGetRouteName(subState as NavigationState);
+    return recursivelyGetRouteName(subState as NavigationState, [...prev, routeName]) || routeName;
   }
-  const subNavRoutes = subNavState?.routes[subNavState.index as number];
-  if (!subNavRoutes) {
-    return '';
-  }
-  return getFocusedRouteNameFromRoute(state.routes[state.index]) || 'Oops';
+  console.log({ state });
+  return [...prev, routeName].join('/');
 }
+
 export default function DrawerMenu() {
   const { theme } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
@@ -48,12 +43,9 @@ export default function DrawerMenu() {
   });
 
   const navigation = useNavigation();
+
   const route = useRoute();
   const routeName = recursivelyGetRouteName(navigation.getState());
-  console.log({ routeName });
-
-  // eslint-disable-next-line
-  // @ts-ignore
   console.log({ routeName });
 
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
@@ -117,10 +109,10 @@ export default function DrawerMenu() {
                   params: {
                     screen: 'ProfileScreen',
                     params: {
-                      userId: Number(currentUser?.id)
-                    }
+                      userId: currentUser?.id as string,
+                    },
                   },
-                }
+                },
               },
             });
           }}
@@ -152,8 +144,8 @@ export default function DrawerMenu() {
                 params: {
                   screen: 'Manifest',
                   params: {
-                    screen: 'ManifestScreen'
-                  }
+                    screen: 'ManifestScreen',
+                  },
                 },
               });
             }}
@@ -172,10 +164,10 @@ export default function DrawerMenu() {
                     params: {
                       screen: 'ProfileScreen',
                       params: {
-                        userId: Number(currentUser?.id)
-                      }
+                        userId: currentUser?.id as string,
+                      },
                     },
-                  }
+                  },
                 },
               });
             }}
@@ -193,9 +185,9 @@ export default function DrawerMenu() {
                     screen: 'User',
                     params: {
                       screen: 'EquipmentScreen',
-                      params: { userId: Number(currentUser?.id) }
+                      params: { userId: currentUser?.id as string },
                     },
-                  }
+                  },
                 },
               });
             }}
@@ -203,7 +195,7 @@ export default function DrawerMenu() {
 
           <Drawer.Item
             label="Notifications"
-            active={routeName === 'Notifications'}
+            active={routeName === 'NotificationsScreen'}
             icon="bell"
             onPress={() =>
               navigation.navigate('Authenticated', {
@@ -211,8 +203,8 @@ export default function DrawerMenu() {
                 params: {
                   screen: 'Notifications',
                   params: {
-                    screen: 'NotificationsScreen'
-                  }
+                    screen: 'NotificationsScreen',
+                  },
                 },
               })
             }
@@ -230,8 +222,8 @@ export default function DrawerMenu() {
                     screen: 'User',
                     params: {
                       screen: 'OrdersScreen',
-                      params: { userId: Number(currentUser?.id) }
-                    }
+                      params: { userId: currentUser?.id as string },
+                    },
                   },
                 },
               });
@@ -260,8 +252,8 @@ export default function DrawerMenu() {
                   params: {
                     screen: 'Configuration',
                     params: {
-                      screen: 'DropzoneTransactionsScreen',
-                    }
+                      screen: 'TransactionsScreen',
+                    },
                   },
                 },
               });
@@ -280,8 +272,8 @@ export default function DrawerMenu() {
                     params: {
                       screen: 'Configuration',
                       params: {
-                        screen: 'SettingsMenuScreen'
-                      }
+                        screen: 'SettingsMenuScreen',
+                      },
                     },
                   },
                 })
@@ -304,9 +296,9 @@ export default function DrawerMenu() {
                     params: {
                       screen: 'Manifest',
                       params: {
-                        screen: 'ManifestScreen'
-                      }
-                    }
+                        screen: 'ManifestScreen',
+                      },
+                    },
                   });
                 }
               }}
@@ -316,7 +308,7 @@ export default function DrawerMenu() {
             label="Create new"
             icon="plus"
             onPress={() => {
-              navigation.navigate('DropzoneSetupScreen');
+              navigation.navigate('Wizards', { screen: 'DropzoneWizardScreen' });
             }}
           />
         </Drawer.Section>

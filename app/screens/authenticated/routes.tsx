@@ -10,13 +10,13 @@ import Animated from 'react-native-reanimated';
 
 import { useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
-import { Permission } from 'app/api/schema';
+import { Permission } from 'app/api/schema.d';
 import AnimatedTabBar from 'app/components/bottom_tabs/AnimatedTabBar';
 
 import ManifestTab, { DropzoneRoutes } from './dropzone/routes';
 import UsersTab, { UserRoutes } from './user/routes';
 import NotificationsTab, { NotificationRoutes } from './notifications/routes';
-import { NavigatorScreenParams } from '@react-navigation/core';
+import { NavigationProp, NavigatorScreenParams, useNavigation } from '@react-navigation/core';
 
 
 export type AuthenticatedRoutes = {
@@ -28,6 +28,9 @@ export type AuthenticatedRoutes = {
 const BottomTab = createBottomTabNavigator<AuthenticatedRoutes>();
 const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
+export function useAuthenticatedNavigation() {
+  return useNavigation<NavigationProp<UserRoutes>>();
+}
 export default function AuthenticatedTabBar() {
   const { theme, palette } = useAppSelector((root) => root.global);
   const isDarkMode = Appearance.getColorScheme() === 'dark';

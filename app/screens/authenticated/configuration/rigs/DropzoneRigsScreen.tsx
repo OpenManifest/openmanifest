@@ -1,7 +1,7 @@
 import { useIsFocused } from '@react-navigation/core';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
-import { FAB, DataTable, ProgressBar } from 'react-native-paper';
+import { FAB, DataTable, ProgressBar, useTheme } from 'react-native-paper';
 import { format } from 'date-fns';
 import { Switch } from 'react-native-gesture-handler';
 import { useDropzoneRigsQuery, useUpdateRigMutation } from 'app/api/reflection';
@@ -25,6 +25,7 @@ export default function DropzoneRigsScreen() {
   const [mutationUpdateRig, updateData] = useUpdateRigMutation();
 
   const canCreateRig = useRestriction(Permission.CreateDropzoneRig);
+  const theme = useTheme();
 
   React.useEffect(() => {
     if (isFocused) {
@@ -38,7 +39,7 @@ export default function DropzoneRigsScreen() {
       contentContainerStyle={[styles.content, { backgroundColor: 'white' }]}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}
     >
-      <ProgressBar visible={loading || updateData.loading} color={state.theme.colors.accent} />
+      <ProgressBar visible={loading || updateData.loading} color={state.theme.colors.primary} />
       <DataTable>
         <DataTable.Header>
           <DataTable.Title>Container</DataTable.Title>
@@ -100,7 +101,7 @@ export default function DropzoneRigsScreen() {
 
       <FAB
         visible={canCreateRig}
-        style={styles.fab}
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         small
         icon="plus"
         onPress={() => dispatch(actions.forms.rig.setOpen(true))}

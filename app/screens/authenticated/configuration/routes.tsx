@@ -2,7 +2,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
-import { Dropzone } from 'app/api/schema';
 
 import SettingsMenuScreen from './settings_menu/SettingsMenuScreen';
 import TicketTypeSettingsScreen from './ticket_types/TicketTypesScreen';
@@ -15,6 +14,7 @@ import DropzoneMasterLogScreen from './master_log/MasterLogScreen';
 import DropzoneTransactionsScreen from './transactions/DropzoneTransactionsScreen';
 import ExtrasScreen from './extras/ExtrasScreen';
 import { DropzoneEssentialsFragment } from 'app/api/operations';
+import { NavigationProp, useNavigation } from '@react-navigation/core';
 
 export type ConfigurationRoutes = {
   DropzoneSettingsScreen: { dropzone: DropzoneEssentialsFragment };
@@ -32,7 +32,9 @@ export type ConfigurationRoutes = {
 
 const Configuration = createStackNavigator<ConfigurationRoutes>();
 
-
+export function useConfigurationNavigation() {
+  return useNavigation<NavigationProp<ConfigurationRoutes>>();
+}
 export default function SettingsTab() {
   return (
     <Configuration.Navigator

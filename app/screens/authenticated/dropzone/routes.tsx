@@ -1,10 +1,8 @@
 import { HeaderStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 
 import * as React from 'react';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
-import { Dropzone, DropzoneUser, Order, Slot } from 'app/api/schema.d';
 import { useAppSelector } from 'app/state';
-import LoadScreen from './load/LoadScreen';
+import LoadScreen, { LoadScreenRoute } from './load/LoadScreen';
 // eslint-disable-next-line max-len
 import WeatherConditionsScreen from './weather_conditions/WeatherConditionsScreen';
 import JumpRunScreen from './weather_conditions/JumpRunScreen';
@@ -12,34 +10,29 @@ import WindScreen from './weather_conditions/WindScreen';
 
 import ManifestScreen from './manifest/ManifestScreen';
 
-import AppBar from 'app/components/AppBar/AppBar';
+import AppBar from 'app/components/appbar/AppBar';
 import { NavigationProp, NavigatorScreenParams, useNavigation } from '@react-navigation/core';
 import { LoadDetailsFragment } from 'app/api/operations';
 import User, { UserRoutes } from '../user/routes';
 import Configuration, { ConfigurationRoutes } from '../configuration/routes';
 
 export type DropzoneRoutes = {
-  DropzoneScreen: undefined
   WeatherConditionsScreen: undefined
   WindScreen: undefined
   ManifestScreen: undefined
   JumpRunScreen: undefined
-  LoadScreen: {
-    load: LoadDetailsFragment;
-  };
   User: NavigatorScreenParams<UserRoutes>;
   Configuration: NavigatorScreenParams<ConfigurationRoutes>;
-};
+} & LoadScreenRoute;
 
 const Manifest = createStackNavigator<DropzoneRoutes>();
 
-export function useDropzoneRoutes() {
+export function useDropzoneNavigation() {
   return useNavigation<NavigationProp<DropzoneRoutes>>();
 }
 
 export default function ManifestTab() {
   const globalState = useAppSelector((root) => root.global);
-  const { currentUser } = useCurrentDropzone();
 
   return (
     <Manifest.Navigator
@@ -53,7 +46,7 @@ export default function ManifestTab() {
       }}
     >
       <Manifest.Screen
-        name="DropzoneScreen"
+        name="ManifestScreen"
         component={ManifestScreen}
         options={{ title: 'Manifest' }}
       />
@@ -77,6 +70,7 @@ export default function ManifestTab() {
       <Manifest.Screen
         name="User"
         component={User}
+        options={{ headerShown: false, presentation: 'modal' }}
       />
 
       <Manifest.Screen

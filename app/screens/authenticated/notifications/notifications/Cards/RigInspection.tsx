@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useNavigation } from '@react-navigation/native';
 import NotificationCard from './NotificationCard';
-import { Notification, Rig } from 'app/schema.d';
+import { Notification } from 'app/api/schema.d';
 import { RigEssentialsFragment } from 'app/api/operations';
+import { useNotificationNavigation } from '../../routes';
 
 interface INotification {
   notification: Notification;
@@ -10,7 +10,7 @@ interface INotification {
 
 export default function RigInspectionNotification(props: INotification) {
   const { notification } = props;
-  const navigation = useNavigation();
+  const navigation = useNotificationNavigation();
   return (
     <NotificationCard
       title={
@@ -23,28 +23,17 @@ export default function RigInspectionNotification(props: INotification) {
       icon={notification.notificationType === 'rig_inspection_requested' ? 'eye' : 'parachute'}
       onPress={() =>
         notification.notificationType === 'rig_inspection_requested'
-          ? navigation.navigate('Authenticated', {
-            screen: 'Drawer',
-            params: {
-              screen: 'Manifest',
+          ? navigation.navigate('User', {
+              screen: 'RigInspectionScreen',
               params: {
-                screen: 'RigInspectionScreen',
-                params: {
-                  rig: (notification.resource as RigEssentialsFragment),
-                  dropzoneUserId: Number((notification.resource as RigEssentialsFragment).user?.id),
-                }
+                rigId: (notification.resource as RigEssentialsFragment).id,
+                dropzoneUserId: (notification.resource as RigEssentialsFragment).user?.id as string,
               }
-            }
-          })
-          : navigation.navigate('Authenticated', {
-            screen: 'Drawer',
-            params: {
-              screen: 'Manifest',
-              params: {
-                screen: 'ProfileScreen',
-              },
-            }
-          })
+            })
+          : navigation.navigate('User', {
+              screen: 'ProfileScreen',
+              params: { userId: (notification.resource as RigEssentialsFragment).user?.id as string }
+            })
       }
     />
   );

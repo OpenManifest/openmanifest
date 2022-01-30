@@ -39,9 +39,9 @@ function AppBar(props: IAppBarProps) {
           options.headerRight({ tintColor: 'white' })
         ) : (
           <Chip
-            style={{ backgroundColor: palette.accent.main }}
+            style={{ backgroundColor: palette.background }}
             mode="flat"
-            textStyle={{ color: palette.surface }}
+            textStyle={{ color: palette.onSurface }}
           >{`$${currentUser?.credits || 0}`}</Chip>
         )}
       </Appbar.Header>

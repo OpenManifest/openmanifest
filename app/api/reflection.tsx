@@ -2,7 +2,7 @@
 import * as Operation from './operations';
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
-const defaultOptions =  {}
+const defaultOptions = {} as const;
 export const RoleEssentialsFragmentDoc = gql`
     fragment roleEssentials on UserRole {
   id
@@ -164,6 +164,8 @@ export const TransactionEssentialsFragmentDoc = gql`
   transactionType
   amount
   status
+  createdAt
+  message
   sender {
     ... on DropzoneUser {
       id
@@ -192,6 +194,17 @@ export const TransactionEssentialsFragmentDoc = gql`
   }
 }
     `;
+export const ReceiptEssentialsFragmentDoc = gql`
+    fragment receiptEssentials on Receipt {
+  id
+  amountCents
+  createdAt
+  updatedAt
+  transactions {
+    ...transactionEssentials
+  }
+}
+    ${TransactionEssentialsFragmentDoc}`;
 export const OrderEssentialsFragmentDoc = gql`
     fragment orderEssentials on Order {
   id
@@ -253,16 +266,10 @@ export const OrderEssentialsFragmentDoc = gql`
     }
   }
   receipts {
-    id
-    amountCents
-    createdAt
-    updatedAt
-    transactions {
-      ...transactionEssentials
-    }
+    ...receiptEssentials
   }
 }
-    ${TransactionEssentialsFragmentDoc}`;
+    ${ReceiptEssentialsFragmentDoc}`;
 export const TicketTypeEssentialsFragmentDoc = gql`
     fragment ticketTypeEssentials on TicketType {
   id
