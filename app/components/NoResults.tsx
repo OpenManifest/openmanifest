@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ViewProps } from 'react-native';
 import { Paragraph, Title, useTheme } from 'react-native-paper';
 import { View } from './Themed';
 
-interface INoResults {
+interface INoResults extends ViewProps {
   title: string;
   subtitle: string;
   color?: string;
 }
-export default function NoResults({ title, color, subtitle }: INoResults) {
+export default function NoResults({ title, color, subtitle, ...rest }: INoResults) {
   const theme = useTheme();
   return (
-    <View style={styles.empty}>
+    <View {...rest} style={StyleSheet.flatten([styles.empty, rest?.style])}>
       <Title style={{ color: color || theme.colors.onSurface }}>{title}</Title>
       <Paragraph style={{ color: color || theme.colors.onSurface, textAlign: 'center' }}>
         {subtitle}

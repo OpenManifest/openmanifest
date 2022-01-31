@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { List, useTheme } from 'react-native-paper';
+import { Divider, List, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
@@ -16,7 +16,7 @@ export default function SettingsScreen() {
   const canUpdateRigInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
 
   return (
-    <ScrollableScreen>
+    <ScrollableScreen contentContainerStyle={{ backgroundColor: theme.colors.surface }}>
       <List.Section title="Dropzone" style={{ width: '100%' }}>
         {!canUpdateDropzone ? null : (
           <List.Item
@@ -44,8 +44,10 @@ export default function SettingsScreen() {
             description="Set up name, branding and other settings"
           />
         )}
+        <Divider />
         <List.Item
           title="Permissions"
+          description="Grant or revoke access to define who can do what at this dropzone"
           left={() => <List.Icon color={theme.colors.text} icon="lock" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
@@ -62,6 +64,7 @@ export default function SettingsScreen() {
             })
           }
         />
+        <Divider />
         <List.Item
           title="Aircrafts"
           onPress={() =>
@@ -99,6 +102,7 @@ export default function SettingsScreen() {
             })
           }
         />
+        <Divider />
         <List.Item
           disabled={!canUpdateRigInspectionTemplate}
           title="Rig Inspection Template"
@@ -118,6 +122,7 @@ export default function SettingsScreen() {
             })
           }
         />
+        <Divider />
         <List.Item
           title="Master Log"
           left={() => <List.Icon color={theme.colors.text} icon="parachute" />}
@@ -159,6 +164,7 @@ export default function SettingsScreen() {
           left={() => <List.Icon color={theme.colors.text} icon="ticket" />}
           description="Manage ticket prices and accessibility"
         />
+        <Divider />
         <List.Item
           title="Ticket add-ons"
           onPress={() =>

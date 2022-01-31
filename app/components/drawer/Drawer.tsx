@@ -135,18 +135,12 @@ export default function DrawerMenu() {
             active={routeName === 'ProfileScreen'}
             icon="account"
             onPress={() => {
-              navigation.navigate('Authenticated', {
-                screen: 'Drawer',
+              navigation.navigate('Wizards', {
+                screen: 'User',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'ProfileScreen',
                   params: {
-                    screen: 'User',
-                    params: {
-                      screen: 'ProfileScreen',
-                      params: {
-                        userId: currentUser?.id as string,
-                      },
-                    },
+                    userId: currentUser?.id as string,
                   },
                 },
               });
@@ -191,7 +185,7 @@ export default function DrawerMenu() {
           />
           <Drawer.Item
             label="Transactions"
-            active={routeName === 'TransactionsScreen'}
+            active={routeName === 'OrdersScreen'}
             icon="cash"
             onPress={() => {
               navigation.navigate('Authenticated', {

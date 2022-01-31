@@ -28,27 +28,30 @@ export default function Routes() {
   return (
     <Users.Navigator
       screenOptions={{
-        headerShown: true,
-        header: (props) => (
-          <SearchableAppBar
-            {...props}
-            searchText={searchText}
-            searchVisible={isSearchVisible}
-            setSearchVisible={(visible) =>
-              dispatch(actions.screens.users.setSearchVisible(visible))
-            }
-            onSearch={(text) => dispatch(actions.screens.users.setSearchText(text))}
-          />
-        ),
         cardStyle: {
           flex: 1,
         },
+        presentation: 'modal',
       }}
     >
       <Users.Screen
         name="UserListScreen"
         component={UsersScreen}
-        options={{ title: 'Dropzone users' }}
+        options={{
+          title: 'Dropzone users',
+          headerShown: true,
+          header: (props) => (
+            <SearchableAppBar
+              {...props}
+              searchText={searchText}
+              searchVisible={isSearchVisible}
+              setSearchVisible={(visible) =>
+                dispatch(actions.screens.users.setSearchVisible(visible))
+              }
+              onSearch={(text) => dispatch(actions.screens.users.setSearchText(text))}
+            />
+          ),
+        }}
       />
       <Users.Screen
         name="ProfileScreen"

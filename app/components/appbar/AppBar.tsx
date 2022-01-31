@@ -36,7 +36,13 @@ function AppBar(props: IAppBarProps) {
           options.headerRight({ tintColor: 'white' })
         ) : (
           <Chip
-            style={{ backgroundColor: palette.background }}
+            style={{
+              backgroundColor: palette.background,
+              height: 36,
+              padding: 4,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
             mode="flat"
             textStyle={{ color: palette.onSurface }}
           >{`$${currentUser?.credits || 0}`}</Chip>

@@ -44,7 +44,8 @@
   "jest": {
     "preset": "jest-expo",
     "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry|react-native-iphone-x-helper/.*)"
+      "node_modules/(?!(jest-)?(@react-native|react-native)|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry|react-native-iphone-x-helper/.*)",
+      "node_modules/(?!(@react-native|react-native|react-native-iphone-x-helper|react-native-skeleton-content|react-native-paper|expo-linear-gradient|react-native-reanimateds)/).*/"
     ],
     "testPathIgnorePatterns": [
       "/__mocks__/.*.mock.ts"

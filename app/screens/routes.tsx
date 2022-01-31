@@ -49,16 +49,6 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                   JumpRunScreen: '/dropzone/weather/jumprun',
                   WeatherConditionsScreen: '/dropzone/weather',
                   LoadScreen: '/dropzone/load/:loadId',
-                  User: {
-                    screens: {
-                      UserListScreen: '/dropzone/users',
-                      ProfileScreen: '/dropzone/user/:userId',
-                      EquipmentScreen: '/dropzone/user/:userId/equipment',
-                      OrdersScreen: '/dropzone/user/:userId/transactions',
-                      OrderReceiptScreen: '/dropzone/user/:userId/transactions/:orderId/receipt',
-                      RigInspectionScreen: '/dropzone/user/:dropzoneUserId/rig-inspection/:rig',
-                    },
-                  },
                   WindScreen: '/dropzone/weather/winds',
                 },
               },
@@ -93,6 +83,16 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
           ConfirmUserScreen: '/confirm',
           RecoverPasswordScreen: '/recover-password',
           ChangePasswordScreen: '/change-password',
+          User: {
+            screens: {
+              UserListScreen: '/modal/users',
+              ProfileScreen: '/modal/user/:userId',
+              EquipmentScreen: '/modal/user/:userId/equipment',
+              OrdersScreen: '/modal/user/:userId/transactions',
+              OrderReceiptScreen: '/modal/user/:userId/transactions/:orderId/receipt',
+              RigInspectionScreen: '/modal/user/:dropzoneUserId/rig-inspection/:rig',
+            },
+          },
         },
       },
       // FIXME: Remove in release
@@ -102,9 +102,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
 };
 
 export type Routes = {
-  Authenticated: NavigatorScreenParams<{
-    Drawer: NavigatorScreenParams<AuthenticatedRoutes>;
-  }>;
+  Authenticated: NavigatorScreenParams<DrawerRoutes>;
   Unauthenticated: NavigatorScreenParams<UnauthenticatedRoutes>;
   Limbo: NavigatorScreenParams<LimboRoutes>;
   Wizards: NavigatorScreenParams<WizardRoutes>;
@@ -119,19 +117,30 @@ declare global {
   }
 }
 
-export type TDrawerNavigatorRouteParams = {
-  Drawer: undefined;
+export type DrawerRoutes = {
+  Drawer: NavigatorScreenParams<AuthenticatedRoutes>;
 };
 
 // A root stack navigator is often used for displaying modals on top of all other content
 // Read more here: https://reactnavigation.org/docs/modal
 const Stack = createStackNavigator<Routes>();
-const Drawer = createDrawerNavigator<TDrawerNavigatorRouteParams>();
+const Drawer = createDrawerNavigator<DrawerRoutes>();
+
+function DrawerNavigator() {
+  const drawerContent = React.useCallback(() => <DrawerMenu />, []);
+  return (
+    <Drawer.Navigator
+      {...{ drawerContent }}
+      screenOptions={{ drawerType: 'back', headerShown: false }}
+    >
+      <Drawer.Screen name="Drawer" component={Authenticated} />
+    </Drawer.Navigator>
+  );
+}
 
 export default function RootNavigator() {
   const globalState = useAppSelector((root) => root.global);
 
-  const drawerContent = React.useCallback(() => <DrawerMenu />, []);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -143,16 +152,7 @@ export default function RootNavigator() {
     >
       {globalState.credentials ? (
         globalState.currentDropzone ? (
-          <Stack.Screen name="Authenticated">
-            {() => (
-              <Drawer.Navigator
-                {...{ drawerContent }}
-                screenOptions={{ drawerType: 'back', headerShown: false }}
-              >
-                <Drawer.Screen name="Drawer" component={Authenticated} />
-              </Drawer.Navigator>
-            )}
-          </Stack.Screen>
+          <Stack.Screen name="Authenticated" component={DrawerNavigator} />
         ) : (
           <Stack.Screen name="Limbo" component={Limbo} />
         )

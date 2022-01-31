@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { Paragraph, Button, useTheme } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
+import Color from 'color';
+import { useNavigation } from '@react-navigation/core';
+import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 
 interface ISetupWarning {
   credits: number;
@@ -17,13 +20,19 @@ interface ISetupWarning {
 function Warning(props: { title: string; action?: () => void }) {
   const { action, title } = props;
   const theme = useTheme();
+  const textColor =
+    Color(theme.colors.primary).contrast(Color(theme.colors.onSurface)) < 11
+      ? theme.colors.surface
+      : theme.colors.onSurface;
   return (
     <View style={[styles.warning, { backgroundColor: theme.colors.primary }]}>
-      <Paragraph style={{ color: theme.colors.onSurface, flex: 7 / 10, flexGrow: 2 }}>
-        {title}
-      </Paragraph>
+      <Paragraph style={{ color: textColor, flex: 7 / 10, flexGrow: 2 }}>{title}</Paragraph>
       {!action ? null : (
-        <Button onPress={action} style={{ flex: 1 / 10, flexShrink: 1 }}>
+        <Button
+          onPress={action}
+          style={{ flex: 1 / 10, flexShrink: 1 }}
+          labelStyle={{ color: textColor }}
+        >
           Fix
         </Button>
       )}
@@ -43,7 +52,8 @@ export default function SetupWarning(props: ISetupWarning) {
     isRigInspectionComplete,
     onSetupWizard,
   } = props;
-
+  const navigation = useNavigation();
+  const { currentUser } = useCurrentDropzone();
   if (loading) {
     return null;
   }
@@ -70,7 +80,22 @@ export default function SetupWarning(props: ISetupWarning) {
   if (!isReserveInDate) {
     return (
       // eslint-disable-next-line max-len
-      <Warning title="Your reserve repack is due. You cannot manifest if your repack is out of date." />
+      <Warning
+        title="Your reserve repack is due. You can update the repack date on your profile"
+        action={() =>
+          currentUser?.id &&
+          navigation.navigate('Authenticated', {
+            screen: 'Drawer',
+            params: {
+              screen: 'Manifest',
+              params: {
+                screen: 'User',
+                params: { screen: 'EquipmentScreen', params: { userId: currentUser.id } },
+              },
+            },
+          })
+        }
+      />
     );
   }
   if (isCreditSystemEnabled && !credits && !loading) {

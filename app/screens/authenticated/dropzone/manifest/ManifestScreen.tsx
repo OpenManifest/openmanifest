@@ -212,7 +212,11 @@ export default function ManifestScreen() {
             <FlatList<LoadDetailsFragment>
               ListHeaderComponent={() => <WeatherConditions />}
               ListEmptyComponent={() => (
-                <NoResults title="No loads so far today" subtitle="How's the weather?" />
+                <NoResults
+                  style={{ marginTop: 156 }}
+                  title="No loads so far today"
+                  subtitle="How's the weather?"
+                />
               )}
               style={{
                 paddingTop: 35,
