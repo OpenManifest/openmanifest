@@ -2,6 +2,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { NavigationProp, NavigatorScreenParams, useNavigation } from '@react-navigation/core';
 
+import { SafeAreaView } from 'react-native-safe-area-context';
 import DropzoneWizardScreen from './dropzone_wizard/DropzoneWizard';
 import UserWizardScreen from './user_wizard/UserWizardScreen';
 import RecoverPasswordScreen from './recover_password/RecoverPasswordScreen';
@@ -26,19 +27,21 @@ export function useWizardRoutes() {
 
 export default function Routes() {
   return (
-    <Wizards.Navigator
-      screenOptions={{
-        headerShown: false,
-        presentation: 'modal',
-        cardStyle: { flex: 1 },
-      }}
-    >
-      <Wizards.Screen name="DropzoneWizardScreen" component={DropzoneWizardScreen} />
-      <Wizards.Screen name="UserWizardScreen" component={UserWizardScreen} />
-      <Wizards.Screen name="RecoverPasswordScreen" component={RecoverPasswordScreen} />
-      <Wizards.Screen name="ConfirmUserScreen" component={ConfirmUserScreen} />
-      <Wizards.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
-      <Wizards.Screen name="User" component={User} />
-    </Wizards.Navigator>
+    <SafeAreaView>
+      <Wizards.Navigator
+        screenOptions={{
+          headerShown: false,
+          presentation: 'modal',
+          cardStyle: { flex: 1 },
+        }}
+      >
+        <Wizards.Screen name="DropzoneWizardScreen" component={DropzoneWizardScreen} />
+        <Wizards.Screen name="UserWizardScreen" component={UserWizardScreen} />
+        <Wizards.Screen name="RecoverPasswordScreen" component={RecoverPasswordScreen} />
+        <Wizards.Screen name="ConfirmUserScreen" component={ConfirmUserScreen} />
+        <Wizards.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
+        <Wizards.Screen name="User" component={User} />
+      </Wizards.Navigator>
+    </SafeAreaView>
   );
 }
