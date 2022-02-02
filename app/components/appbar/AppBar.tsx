@@ -72,6 +72,7 @@ function AppBar(props: IAppBarProps) {
             console.log('opening setup wizard');
             if (currentUser) {
               dispatch(actions.forms.user.setOriginal(currentUser));
+              console.log(currentUser);
               if (currentUser?.user?.rigs?.length) {
                 dispatch(actions.forms.rig.setOriginal(currentUser.user.rigs[0]));
               }

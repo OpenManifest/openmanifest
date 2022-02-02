@@ -23,7 +23,11 @@
         "usesNonExemptEncryption": false
       },
       "infoPlist": {
-        "photosPermission": "OpenManifest needs access to photos to let you upload avatars"
+        "photosPermission": "OpenManifest needs access to photos to let you upload avatars",
+        "fbAppId": "686479516065674",
+        "fbAppName": "OpenManifest",
+        "fbAppUrl": "https://openmanifest.org",
+        "facebookScheme": "fb686479516065674"
       },
       "buildNumber": "30",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",

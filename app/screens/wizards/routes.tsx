@@ -27,21 +27,19 @@ export function useWizardRoutes() {
 
 export default function Routes() {
   return (
-    <SafeAreaView>
-      <Wizards.Navigator
-        screenOptions={{
-          headerShown: false,
-          presentation: 'modal',
-          cardStyle: { flex: 1 },
-        }}
-      >
-        <Wizards.Screen name="DropzoneWizardScreen" component={DropzoneWizardScreen} />
-        <Wizards.Screen name="UserWizardScreen" component={UserWizardScreen} />
-        <Wizards.Screen name="RecoverPasswordScreen" component={RecoverPasswordScreen} />
-        <Wizards.Screen name="ConfirmUserScreen" component={ConfirmUserScreen} />
-        <Wizards.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
-        <Wizards.Screen name="User" component={User} />
-      </Wizards.Navigator>
-    </SafeAreaView>
+    <Wizards.Navigator
+      screenOptions={{
+        headerShown: false,
+        presentation: 'modal',
+        cardStyle: { flex: 1 },
+      }}
+    >
+      <Wizards.Screen name="DropzoneWizardScreen" component={DropzoneWizardScreen} />
+      <Wizards.Screen name="UserWizardScreen" component={UserWizardScreen} />
+      <Wizards.Screen name="RecoverPasswordScreen" component={RecoverPasswordScreen} />
+      <Wizards.Screen name="ConfirmUserScreen" component={ConfirmUserScreen} />
+      <Wizards.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
+      <Wizards.Screen name="User" component={User} />
+    </Wizards.Navigator>
   );
 }

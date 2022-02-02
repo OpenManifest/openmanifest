@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { HelperText, Menu, TextInput } from 'react-native-paper';
+import { HelperText, Menu, Surface, TextInput } from 'react-native-paper';
 import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 
@@ -19,14 +19,16 @@ function RigWizardScreen(props: IWizardStepProps) {
           visible={isMenuOpen}
           anchor={
             <TouchableOpacity onPress={() => setMenuOpen(true)}>
-              <TextInput
-                pointerEvents="box-only"
-                style={styles.field}
-                mode="outlined"
-                error={!!state.fields.make.error}
-                value={isOtherMake ? 'Other' : state.fields.make.value || 'Select manufacturer'}
-                disabled
-              />
+              <Surface style={styles.card}>
+                <TextInput
+                  pointerEvents="box-only"
+                  style={{ backgroundColor: 'transparent' }}
+                  mode="flat"
+                  error={!!state.fields.make.error}
+                  value={isOtherMake ? 'Other' : state.fields.make.value || 'Select manufacturer'}
+                  disabled
+                />
+              </Surface>
             </TouchableOpacity>
           }
         >
@@ -60,43 +62,51 @@ function RigWizardScreen(props: IWizardStepProps) {
           />
         </Menu>
         {!isOtherMake ? null : (
-          <TextInput
-            style={styles.field}
-            mode="flat"
-            label="Other manufacturer"
-            error={!!state.fields.make.error}
-            value={state.fields.make.value || ''}
-            onChangeText={(newValue) => dispatch(actions.forms.rig.setField(['make', newValue]))}
-          />
+          <Surface style={styles.card}>
+            <TextInput
+              style={{ backgroundColor: 'transparent' }}
+              mode="flat"
+              label="Other manufacturer"
+              error={!!state.fields.make.error}
+              value={state.fields.make.value || ''}
+              onChangeText={(newValue) => dispatch(actions.forms.rig.setField(['make', newValue]))}
+            />
+          </Surface>
+        )}
+        {state.fields.make.error && (
+          <HelperText type={state.fields.make.error ? 'error' : 'info'}>
+            {state.fields.make.error || ''}
+          </HelperText>
         )}
 
-        <HelperText type={state.fields.make.error ? 'error' : 'info'}>
-          {state.fields.make.error || ''}
-        </HelperText>
-
-        <TextInput
-          style={styles.field}
-          mode="flat"
-          label="Model"
-          error={!!state.fields.model.error}
-          value={state.fields.model.value || ''}
-          onChangeText={(newValue) => dispatch(actions.forms.rig.setField(['model', newValue]))}
-        />
-        <HelperText type={state.fields.model.error ? 'error' : 'info'}>
-          {state.fields.model.error || 'e.g G4.1'}
-        </HelperText>
-
-        <TextInput
-          style={styles.field}
-          mode="flat"
-          label="Serial number"
-          error={!!state.fields.serial.error}
-          value={state.fields.serial.value || ''}
-          onChangeText={(newValue) => dispatch(actions.forms.rig.setField(['serial', newValue]))}
-        />
-        <HelperText type={state.fields.serial.error ? 'error' : 'info'}>
-          {state.fields.serial.error || ''}
-        </HelperText>
+        <Surface style={styles.card}>
+          <TextInput
+            style={{ backgroundColor: 'transparent' }}
+            mode="flat"
+            label="Model"
+            error={!!state.fields.model.error}
+            value={state.fields.model.value || ''}
+            onChangeText={(newValue) => dispatch(actions.forms.rig.setField(['model', newValue]))}
+          />
+          <HelperText type={state.fields.model.error ? 'error' : 'info'}>
+            {state.fields.model.error || 'e.g G4.1'}
+          </HelperText>
+        </Surface>
+        <Surface style={styles.card}>
+          <TextInput
+            style={{ backgroundColor: 'transparent' }}
+            mode="flat"
+            label="Serial number"
+            error={!!state.fields.serial.error}
+            value={state.fields.serial.value || ''}
+            onChangeText={(newValue) => dispatch(actions.forms.rig.setField(['serial', newValue]))}
+          />
+          {state.fields.serial.error && (
+            <HelperText type={state.fields.serial.error ? 'error' : 'info'}>
+              {state.fields.serial.error}
+            </HelperText>
+          )}
+        </Surface>
       </Fields>
     </Step>
   );
@@ -117,7 +127,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     flexDirection: 'column',
   },
-  card: { padding: 16, marginVertical: 16 },
+  card: { marginVertical: 8 },
   title: {
     color: 'white',
     marginBottom: 16,

@@ -174,21 +174,21 @@ export default createSlice({
       state.isDarkMode = !state.isDarkMode;
       state.theme = state.isDarkMode
         ? {
-          ...CombinedDarkTheme,
-          colors: {
-            ...CombinedDarkTheme.colors,
-            primary: state.currentDropzone?.primaryColor || CombinedDarkTheme.colors.primary,
-            accent: state.currentDropzone?.secondaryColor || CombinedDarkTheme.colors.accent,
-          },
-        }
+            ...CombinedDarkTheme,
+            colors: {
+              ...CombinedDarkTheme.colors,
+              primary: state.currentDropzone?.primaryColor || CombinedDarkTheme.colors.primary,
+              accent: state.currentDropzone?.secondaryColor || CombinedDarkTheme.colors.accent,
+            },
+          }
         : {
-          ...CombinedDefaultTheme,
-          colors: {
-            ...CombinedDefaultTheme.colors,
-            primary: state.currentDropzone?.primaryColor || CombinedDefaultTheme.colors.primary,
-            accent: state.currentDropzone?.secondaryColor || CombinedDefaultTheme.colors.accent,
-          },
-        };
+            ...CombinedDefaultTheme,
+            colors: {
+              ...CombinedDefaultTheme.colors,
+              primary: state.currentDropzone?.primaryColor || CombinedDefaultTheme.colors.primary,
+              accent: state.currentDropzone?.secondaryColor || CombinedDefaultTheme.colors.accent,
+            },
+          };
 
       state.palette = {
         ...state.theme.colors,

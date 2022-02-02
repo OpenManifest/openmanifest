@@ -25,6 +25,7 @@ import LoadCardLarge from './LoadCard/Large/Card';
 import WeatherConditions from './Weather/WeatherBoard';
 import LoadingCardLarge from './LoadCard/Large/Loading';
 import LoadingCardSmall from './LoadCard/Small/Loading';
+import SetupProfileCard from './SetupProfileCard';
 
 const loadingFragment: LoadDetailsFragment = {
   id: '__LOADING__',
@@ -41,6 +42,8 @@ const loadingFragment: LoadDetailsFragment = {
   state: LoadState.Open,
   weight: 0,
 };
+
+const setupProfileCardFragment = { ...loadingFragment, id: '__SETUP_PROFILE_CARD__' };
 export default function ManifestScreen() {
   const state = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
@@ -53,9 +56,10 @@ export default function ManifestScreen() {
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
+  const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
 
   React.useEffect(() => {
-    if (dropzone && isFocused) {
+    if (dropzone && isFocused && canUpdateDropzone) {
       const dropzoneWizardIndex = checkDropzoneSetupComplete(dropzone);
       console.log({ dropzoneWizardIndex });
 
@@ -71,7 +75,15 @@ export default function ManifestScreen() {
         navigation.navigate('Wizards', { screen: 'DropzoneWizardScreen' });
       }
     }
-  }, [dispatch, dropzone, isFocused, navigation, setup.completed, isSetupCheckComplete]);
+  }, [
+    dispatch,
+    dropzone,
+    isFocused,
+    navigation,
+    setup.completed,
+    isSetupCheckComplete,
+    canUpdateDropzone,
+  ]);
 
   React.useEffect(() => {
     if (isFocused && dropzone?.name) {
@@ -182,10 +194,93 @@ export default function ManifestScreen() {
   const numColumns = Math.floor(width / cardWidth) || 1;
   const contentWidth = cardWidth * numColumns;
 
-  const loads = dropzone?.loads?.edges || [];
+  const loads: LoadDetailsFragment[] = React.useMemo(
+    () => (dropzone?.loads?.edges?.map((edge) => edge?.node) as LoadDetailsFragment[]) || [],
+    [dropzone?.loads?.edges]
+  );
   const initialLoading = !loads?.length && loading;
 
   const theme = useTheme();
+
+  const data = React.useMemo(
+    () =>
+      [
+        !currentUser?.hasExitWeight || !currentUser?.hasLicense || !currentUser.user?.name
+          ? setupProfileCardFragment
+          : null,
+        ...(initialLoading ? new Array(5).fill(loadingFragment) : loads),
+      ].filter(Boolean),
+    [
+      currentUser?.hasExitWeight,
+      currentUser?.hasLicense,
+      currentUser?.user?.name,
+      initialLoading,
+      loads,
+    ]
+  );
+
+  const renderItem = React.useCallback(
+    ({ item: load, index }: { item: LoadDetailsFragment; index: number }) => {
+      // 1 means loading, because null and undefined
+      // get filtered out
+      if (load.id === '__LOADING__') {
+        return manifestScreen.display === 'list' ? (
+          <LoadingCardLarge key={`loading-card-${index}`} />
+        ) : (
+          <LoadingCardSmall key={`loading-card-${index}`} />
+        );
+      }
+
+      if (load.id === '__SETUP_PROFILE_CARD__') {
+        return <SetupProfileCard />;
+      }
+      return manifestScreen.display === 'list' ? (
+        <LoadCardLarge
+          controlsVisible={false}
+          key={`load-${load?.id}`}
+          load={load}
+          onSlotPress={(slot) => {
+            if (load) {
+              dispatch(actions.forms.manifest.setOpen(slot));
+              dispatch(actions.forms.manifest.setField(['load', load]));
+            }
+          }}
+          onSlotGroupPress={(slots) => {
+            dispatch(actions.forms.manifestGroup.reset());
+            dispatch(actions.forms.manifestGroup.setFromSlots({ load, slots }));
+            dispatch(actions.forms.manifestGroup.setField(['load', load]));
+            // FIXME: Open manifest group drawer
+          }}
+          onManifest={() => {
+            onManifest(load);
+          }}
+          onManifestGroup={() => {
+            dispatch(actions.forms.manifestGroup.reset());
+            dispatch(actions.forms.manifestGroup.setOpen(true));
+            dispatch(actions.forms.manifestGroup.setField(['load', load]));
+          }}
+        />
+      ) : (
+        <LoadCardSmall
+          key={`load-${load?.id}`}
+          load={load}
+          onPress={() =>
+            navigation.navigate('Authenticated', {
+              screen: 'Drawer',
+              params: {
+                screen: 'Manifest',
+                params: {
+                  screen: 'LoadScreen',
+                  params: { loadId: load?.id },
+                },
+              },
+            })
+          }
+        />
+      );
+    },
+    [dispatch, manifestScreen.display, navigation, onManifest]
+  );
   return (
     <View style={{ flex: 1 }}>
       <ProgressBar visible={loading} indeterminate color={state.theme.colors.primary} />
@@ -232,69 +327,10 @@ export default function ManifestScreen() {
                 paddingBottom: 100,
               }}
               numColumns={numColumns}
-              data={
-                initialLoading
-                  ? new Array(5).fill(loadingFragment)
-                  : loads?.map((edge) => edge?.node)
-              }
+              {...{ data, renderItem }}
               refreshControl={
                 <RefreshControl refreshing={loading} onRefresh={() => fetchMore({})} />
               }
-              renderItem={({ item: load, index }) => {
-                // 1 means loading, because null and undefined
-                // get filtered out
-                if (load.id === '__LOADING__') {
-                  return manifestScreen.display === 'list' ? (
-                    <LoadingCardLarge key={`loading-card-${index}`} />
-                  ) : (
-                    <LoadingCardSmall key={`loading-card-${index}`} />
-                  );
-                }
-                return manifestScreen.display === 'list' ? (
-                  <LoadCardLarge
-                    controlsVisible={false}
-                    key={`load-${load?.id}`}
-                    load={load}
-                    onSlotPress={(slot) => {
-                      if (load) {
-                        dispatch(actions.forms.manifest.setOpen(slot));
-                        dispatch(actions.forms.manifest.setField(['load', load]));
-                      }
-                    }}
-                    onSlotGroupPress={(slots) => {
-                      dispatch(actions.forms.manifestGroup.reset());
-                      dispatch(actions.forms.manifestGroup.setFromSlots({ load, slots }));
-                      dispatch(actions.forms.manifestGroup.setField(['load', load]));
-                      // FIXME: Open manifest group drawer
-                    }}
-                    onManifest={() => {
-                      onManifest(load);
-                    }}
-                    onManifestGroup={() => {
-                      dispatch(actions.forms.manifestGroup.reset());
-                      dispatch(actions.forms.manifestGroup.setOpen(true));
-                      dispatch(actions.forms.manifestGroup.setField(['load', load]));
-                    }}
-                  />
-                ) : (
-                  <LoadCardSmall
-                    key={`load-${load?.id}`}
-                    load={load}
-                    onPress={() =>
-                      navigation.navigate('Authenticated', {
-                        screen: 'Drawer',
-                        params: {
-                          screen: 'Manifest',
-                          params: {
-                            screen: 'LoadScreen',
-                            params: { loadId: load?.id },
-                          },
-                        },
-                      })
-                    }
-                  />
-                );
-              }}
             />
           </View>
         )}

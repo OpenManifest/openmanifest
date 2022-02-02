@@ -15,6 +15,7 @@ function ReserveRepackStep(props: IWizardStepProps) {
         <Card style={styles.card}>
           <List.Subheader>Due date</List.Subheader>
           <DatePicker
+            label="Reserve repack due date"
             timestamp={state.fields.repackExpiresAt.value || new Date().getTime() / 1000}
             onChange={(time) => dispatch(actions.forms.rig.setField(['repackExpiresAt', time]))}
           />

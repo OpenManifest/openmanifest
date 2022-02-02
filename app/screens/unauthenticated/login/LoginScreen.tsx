@@ -6,6 +6,7 @@ import {
   Platform,
   StyleSheet,
   Text,
+  View,
 } from 'react-native';
 import { Card, Button, HelperText, TextInput, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
@@ -18,13 +19,16 @@ import { primaryColor } from 'app/constants/Colors';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore PNGs are allowed
+import LottieView from 'app/components/LottieView';
 import logo from '../../../../assets/images/logo-black.png';
+import FacebookButton, { useLoginWithFacebook } from './FacebookButton';
 
 export default function LoginScreen() {
   const state = useAppSelector((root) => root.screens.login);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const [mutationLogin, data] = useLoginMutation();
+  const [loginWithFacebook, loginWithFacebookMutation] = useLoginWithFacebook();
   const theme = useTheme();
 
   const onLogin = React.useCallback(async () => {
@@ -74,6 +78,7 @@ export default function LoginScreen() {
     }
   }, [dispatch, mutationLogin, state.fields.email.value, state.fields.password.value]);
 
+  const loading = loginWithFacebookMutation?.loading || data?.loading;
   return (
     <ImageBackground
       // eslint-disable-next-line global-require
@@ -88,38 +93,70 @@ export default function LoginScreen() {
       >
         <Card style={{ padding: 16, borderRadius: 8 }} elevation={3}>
           <Card.Content>
-            <TextInput
-              label="Email"
-              mode="outlined"
-              value={state.fields.email.value}
-              onChangeText={(newValue) => {
-                dispatch(actions.screens.login.setEmail(newValue));
-              }}
-            />
-            <HelperText type="error">{state.fields.email.error}</HelperText>
+            {loading ? (
+              <View
+                style={{
+                  width: '100%',
+                  height: 200,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <LottieView
+                  autoPlay
+                  loop
+                  style={{
+                    alignSelf: 'center',
+                    marginTop: 24,
+                    marginBottom: 32,
+                  }}
+                  // eslint-disable-next-line global-require
+                  source={require('../../../../assets/images/loading.json')}
+                />
+              </View>
+            ) : (
+              <>
+                <TextInput
+                  label="Email"
+                  mode="outlined"
+                  value={state.fields.email.value}
+                  disabled={loading}
+                  onChangeText={(newValue) => {
+                    dispatch(actions.screens.login.setEmail(newValue));
+                  }}
+                />
+                <HelperText type="error">{state.fields.email.error}</HelperText>
 
-            <TextInput
-              label="Password"
-              mode="outlined"
-              value={state.fields.password.value}
-              secureTextEntry
-              onChangeText={(newValue) => {
-                dispatch(actions.screens.login.setPassword(newValue));
-              }}
-              onSubmitEditing={onLogin}
-              error={!!state.fields.password.error}
-            />
+                <TextInput
+                  label="Password"
+                  mode="outlined"
+                  disabled={loading}
+                  value={state.fields.password.value}
+                  secureTextEntry
+                  onChangeText={(newValue) => {
+                    dispatch(actions.screens.login.setPassword(newValue));
+                  }}
+                  onSubmitEditing={onLogin}
+                  error={!!state.fields.password.error}
+                />
 
-            <HelperText type="error">{state.fields.password.error || ' '}</HelperText>
+                <HelperText type="error">{state.fields.password.error || ' '}</HelperText>
+              </>
+            )}
             <Button
               mode="contained"
+              disabled={loading}
               labelStyle={styles.buttonLabel}
               style={[styles.button, { backgroundColor: theme.colors.surface }]}
               onPress={onLogin}
-              loading={data.loading}
             >
-              Log in
+              {loading ? 'Authenticating...' : 'Log in'}
             </Button>
+            <FacebookButton
+              disabled={loading}
+              style={{ marginTop: 8 }}
+              onPress={loginWithFacebook}
+            />
 
             <Button
               labelStyle={styles.textButtonLabel}
