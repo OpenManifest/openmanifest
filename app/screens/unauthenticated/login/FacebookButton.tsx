@@ -19,7 +19,7 @@ export function useLoginWithFacebook(
   const onLogin = React.useCallback(async () => {
     try {
       await Facebook.initializeAsync({
-        appId: '<APP_ID>',
+        appId: '686479516065674',
       });
       const { type, token, ...rest } = (await Facebook.logInWithReadPermissionsAsync({
         permissions: ['public_profile', 'email'],
