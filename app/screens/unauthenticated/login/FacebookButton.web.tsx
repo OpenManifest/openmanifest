@@ -4,7 +4,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { MutationFunctionOptions, MutationResult } from '@apollo/client';
 import { LoginWithFacebookMutation, LoginWithFacebookMutationVariables } from 'app/api/operations';
 import Button, { ReactFacebookFailureResponse, ReactFacebookLoginInfo } from 'react-facebook-login';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 type Extract<T> = T extends React.ComponentType<infer P> ? P : never;
 
@@ -59,16 +59,7 @@ export default function FacebookButton(
       <Button
         appId="686479516065674"
         reAuthenticate
-        buttonStyle={{
-          height: 25,
-          fontSize: 14,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          borderRadius: 4,
-          marginTop: 16,
-        }}
+        buttonStyle={styles.webButton}
         autoLoad
         fields="email,name,picture"
         // buttonStyle={{ height: 100 }}
@@ -88,3 +79,16 @@ export default function FacebookButton(
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  webButton: {
+    height: 25,
+    fontSize: 14,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    borderRadius: 4,
+    marginTop: 16,
+  },
+});

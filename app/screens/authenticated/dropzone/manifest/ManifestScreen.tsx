@@ -199,6 +199,7 @@ export default function ManifestScreen() {
     [dropzone?.loads?.edges]
   );
   const initialLoading = !loads?.length && loading;
+  console.log({ initialLoading });
 
   const theme = useTheme();
 
@@ -223,6 +224,7 @@ export default function ManifestScreen() {
     ({ item: load, index }: { item: LoadDetailsFragment; index: number }) => {
       // 1 means loading, because null and undefined
       // get filtered out
+      console.log('CARDID', load.id);
       if (load.id === '__LOADING__') {
         return manifestScreen.display === 'list' ? (
           <LoadingCardLarge key={`loading-card-${index}`} />

@@ -45,8 +45,7 @@
   "jest": {
     "preset": "jest-expo",
     "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?(@react-native|react-native)|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry|react-native-iphone-x-helper/.*)",
-      "node_modules/(?!(@react-native|react-native|react-native-iphone-x-helper|react-native-skeleton-content|react-native-paper|expo-linear-gradient|react-native-reanimateds)/).*/"
+      "node_modules/(?!(jest-)?(@react-native|expo-modules-core|react-native)|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry|react-native-iphone-x-helper|react-native-reanimated|expo-linear-gradient/.*)"
     ],
     "testPathIgnorePatterns": [
       "/__mocks__/.*.mock.ts"
@@ -169,7 +168,8 @@
   "resolutions": {
     "expo-linear-gradient": "11.0.0",
     "react-native-reanimated": "2.3.1",
-    "react-native-redash": "16.1.1"
+    "react-native-redash": "16.1.1",
+    "@jest/create-cache-key-function": "^27.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

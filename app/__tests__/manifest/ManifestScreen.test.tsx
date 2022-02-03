@@ -60,7 +60,7 @@ describe('<ManifestScreen />', () => {
         setTimeout(resolve, 0);
       });
       const loads = screen.queryAllByTestId('load-card');
-      const text = screen.queryByText(/No loads/);
+      const text = screen.queryByText(/Setup/);
 
       expect(loads.length).toBe(0);
       expect(text).toBeTruthy();
