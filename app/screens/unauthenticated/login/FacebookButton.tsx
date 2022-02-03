@@ -37,13 +37,6 @@ export function useLoginWithFacebook(
         const { data } = await onLoginWithFacebook({
           variables: {
             pushToken: expoPushToken || null,
-            email: json.email,
-
-            // Don't worry, these are only set because
-            // Devise mutation requires them. These will
-            // be overridden and not usable for logging in
-            password: `${json.email}-fb-login`,
-            passwordConfirmation: `${json.email}-fb-login`,
             token,
           },
         });

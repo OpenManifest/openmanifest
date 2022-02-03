@@ -1,8 +1,8 @@
 Arguments: 
-  /Users/amnesthesia/.nvm/versions/node/v16.13.2/bin/node /Users/amnesthesia/.nvm/versions/node/v16.13.2/bin/yarn test
+  /Users/amnesthesia/.nvm/versions/node/v16.13.2/bin/node /Users/amnesthesia/.nvm/versions/node/v16.13.2/bin/yarn add react-facebook-logi
 
 PATH: 
-  /Users/amnesthesia/.rvm/gems/ruby-3.0.0/bin:/Users/amnesthesia/.rvm/gems/ruby-3.0.0@global/bin:/Users/amnesthesia/.rvm/rubies/ruby-3.0.0/bin:/Users/amnesthesia/.nvm/versions/node/v16.13.2/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/amnesthesia/.rvm/gems/ruby-3.0.0/bin:/Users/amnesthesia/.rvm/gems/ruby-3.0.0@global/bin:/Users/amnesthesia/.rvm/rubies/ruby-3.0.0/bin:/Users/amnesthesia/.nvm/versions/node/v16.13.2/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/amnesthesia/.rvm/bin:/Users/amnesthesia/.rvm/bin
+  /Users/amnesthesia/.rvm/gems/ruby-3.0.0/bin:/Users/amnesthesia/.rvm/gems/ruby-3.0.0@global/bin:/Users/amnesthesia/.rvm/rubies/ruby-3.0.0/bin:/opt/homebrew/opt/openjdk/bin:/Users/amnesthesia/.nvm/versions/node/v16.13.2/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/amnesthesia/.rvm/gems/ruby-3.0.0/bin:/Users/amnesthesia/.rvm/gems/ruby-3.0.0@global/bin:/Users/amnesthesia/.rvm/rubies/ruby-3.0.0/bin:/opt/homebrew/opt/openjdk/bin:/Users/amnesthesia/.nvm/versions/node/v16.13.2/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/amnesthesia/.rvm/bin:/Users/amnesthesia/.rvm/bin
 
 Yarn version: 
   1.22.17
@@ -14,12 +14,17 @@ Platform:
   darwin arm64
 
 Trace: 
-  SyntaxError: /Users/amnesthesia/Dev/openmanifest/package.json: Unexpected token ] in JSON at position 3827
-      at JSON.parse (<anonymous>)
-      at /Users/amnesthesia/.nvm/versions/node/v16.13.2/lib/node_modules/yarn/lib/cli.js:1625:59
-      at Generator.next (<anonymous>)
-      at step (/Users/amnesthesia/.nvm/versions/node/v16.13.2/lib/node_modules/yarn/lib/cli.js:310:30)
-      at /Users/amnesthesia/.nvm/versions/node/v16.13.2/lib/node_modules/yarn/lib/cli.js:321:13
+  Error: https://registry.yarnpkg.com/react-facebook-logi: Not found
+      at Request.params.callback [as _callback] (/Users/amnesthesia/.nvm/versions/node/v16.13.2/lib/node_modules/yarn/lib/cli.js:67029:18)
+      at Request.self.callback (/Users/amnesthesia/.nvm/versions/node/v16.13.2/lib/node_modules/yarn/lib/cli.js:140883:22)
+      at Request.emit (node:events:390:28)
+      at Request.<anonymous> (/Users/amnesthesia/.nvm/versions/node/v16.13.2/lib/node_modules/yarn/lib/cli.js:141855:10)
+      at Request.emit (node:events:390:28)
+      at IncomingMessage.<anonymous> (/Users/amnesthesia/.nvm/versions/node/v16.13.2/lib/node_modules/yarn/lib/cli.js:141777:12)
+      at Object.onceWrapper (node:events:509:28)
+      at IncomingMessage.emit (node:events:402:35)
+      at endReadableNT (node:internal/streams/readable:1343:12)
+      at processTicksAndRejections (node:internal/process/task_queues:83:21)
 
 npm manifest: 
   {
@@ -68,7 +73,8 @@ npm manifest:
     "jest": {
       "preset": "jest-expo",
       "transformIgnorePatterns": [
-        "node_modules/(?!(jest-)?|\\@react-native|react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry|react-native-iphone-x-helper/.*)",
+        "node_modules/(?!(jest-)?(@react-native|react-native)|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry|react-native-iphone-x-helper/.*)",
+        "node_modules/(?!(@react-native|react-native|react-native-iphone-x-helper|react-native-skeleton-content|react-native-paper|expo-linear-gradient|react-native-reanimateds)/).*/"
       ],
       "testPathIgnorePatterns": [
         "/__mocks__/.*.mock.ts"
@@ -134,6 +140,7 @@ npm manifest:
       "expo-constants": "~13.0.1",
       "expo-device": "~4.1.0",
       "expo-document-picker": "~10.1.1",
+      "expo-facebook": "~12.1.0",
       "expo-font": "~10.0.4",
       "expo-image-picker": "~12.0.1",
       "expo-linear-gradient": "~11.0.0",
@@ -211,6 +218,7 @@ npm manifest:
       "@testing-library/jest-native": "4.0.4",
       "@testing-library/react-native": "^9.0.0",
       "@types/color": "^3.0.2",
+      "@types/facebook-js-sdk": "^3.3.5",
       "@types/jest": "27.4.0",
       "@types/lodash": "4.14.178",
       "@types/react": "17.0.15",
@@ -3803,6 +3811,11 @@ Lockfile:
     integrity sha512-INiJl6sfNn8iyC5paxVzqiVUEj2boIlFki02uRTAkKwAj++7aAF+ZfEv/XrIeBa0XI/fTZuDHW8rEEcEVnON+Q==
     dependencies:
       "@types/color-convert" "*"
+  
+  "@types/facebook-js-sdk@^3.3.5":
+    version "3.3.5"
+    resolved "https://registry.yarnpkg.com/@types/facebook-js-sdk/-/facebook-js-sdk-3.3.5.tgz#67ba5a73def60d498dbf66bd399aea29b2644e1d"
+    integrity sha512-80UAq9UoDzDDpsRXxV2ci1R+g/durNJTEzqh3ES4YkswW5T2lWAUuAghUWruw/H849ZhugyQqeaLHKF0iapReg==
   
   "@types/geojson@^7946.0.7":
     version "7946.0.8"
@@ -7867,6 +7880,13 @@ Lockfile:
     version "3.0.4"
     resolved "https://registry.yarnpkg.com/expo-error-recovery/-/expo-error-recovery-3.0.4.tgz#de85c8c6b387d9b1e532256600882f2c2704383a"
     integrity sha512-7z2V7n9Yvm9/ogm4I1KgcsQZfgyDMSOBVHk8pA3IY0jL8+tXTyTrStxHsPXRjE8HHeYikfTRBIeFsh/1wWY7oA==
+  
+  expo-facebook@~12.1.0:
+    version "12.1.0"
+    resolved "https://registry.yarnpkg.com/expo-facebook/-/expo-facebook-12.1.0.tgz#0e884bc8d20d01fe55946ef4c944b224803c7959"
+    integrity sha512-GSPWkVaMBXLtIPgnJm8DRXy4QwFV90QTlfQuH2sHW4AWYsl1hBVB6eLNEUeP/jGjJSsf/SRshc3PAyLuNKtXtg==
+    dependencies:
+      "@expo/config-plugins" "^4.0.2"
   
   expo-file-system@~13.1.0:
     version "13.1.2"

@@ -86,30 +86,19 @@ export default function LoginScreen() {
       style={styles.container}
       resizeMode="repeat"
     >
-      <Image source={logo} style={{ height: 300, width: '100%' }} resizeMode="contain" />
+      <Image source={logo} style={styles.logo} resizeMode="contain" />
       <KeyboardAvoidingView
         style={styles.fields}
         behavior={Platform.OS === 'android' ? undefined : 'padding'}
       >
-        <Card style={{ padding: 16, borderRadius: 8 }} elevation={3}>
+        <Card style={styles.card} elevation={3}>
           <Card.Content>
             {loading ? (
-              <View
-                style={{
-                  width: '100%',
-                  height: 200,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
+              <View style={styles.animationContainer}>
                 <LottieView
                   autoPlay
                   loop
-                  style={{
-                    alignSelf: 'center',
-                    marginTop: 24,
-                    marginBottom: 32,
-                  }}
+                  style={styles.loadingAnimation}
                   // eslint-disable-next-line global-require
                   source={require('../../../../assets/images/loading.json')}
                 />
@@ -186,6 +175,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     // backgroundColor: primaryColor,
     paddingTop: 10,
+  },
+  logo: { height: 300, width: '100%' },
+  card: { padding: 16, borderRadius: 8 },
+  animationContainer: {
+    width: '100%',
+    height: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingAnimation: {
+    alignSelf: 'center',
+    marginTop: 24,
+    marginBottom: 32,
+    height: 156,
+    width: '100%',
   },
   title: {
     fontSize: 20,
