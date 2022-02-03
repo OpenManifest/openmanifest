@@ -33,10 +33,10 @@
         "fbAppUrl": "https://openmanifest.org",
         "facebookScheme": "fb686479516065674"
       },
-      "buildNumber": "31",
+      "buildNumber": "32",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
-      "icon": "./assets/images/logo-black.png",
+      "icon": "./assets/images/logo-black-white-bg.png",
       "usesIcloudStorage": true,
       "associatedDomains": [
         "applinks:openmanifest.org",
@@ -57,7 +57,7 @@
         "WRITE_EXTERNAL_STORAGE"
       ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo-black.png",
+        "foregroundImage": "./assets/images/logo-black-white-bg.png",
         "backgroundColor": "#F4F4F4"
       },
       "versionCode": 7,
