@@ -2,7 +2,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { NavigationProp, NavigatorScreenParams, useNavigation } from '@react-navigation/core';
 
-import { SafeAreaView } from 'react-native-safe-area-context';
 import DropzoneWizardScreen from './dropzone_wizard/DropzoneWizard';
 import UserWizardScreen from './user_wizard/UserWizardScreen';
 import RecoverPasswordScreen from './recover_password/RecoverPasswordScreen';
