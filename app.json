@@ -18,6 +18,10 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "facebookAppId": "686479516065674",
+    "facebookDisplayName": "OpenManifest",
+    "facebookAutoInitEnabled": true,
+    "facebookScheme": "fb686479516065674",
     "ios": {
       "config": {
         "usesNonExemptEncryption": false
