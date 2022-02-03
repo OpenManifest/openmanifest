@@ -48,7 +48,9 @@
       "node_modules/(?!(jest-)?(@react-native|expo-modules-core|react-native)|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry|react-native-iphone-x-helper|react-native-reanimated|expo-linear-gradient/.*)"
     ],
     "testPathIgnorePatterns": [
-      "/__mocks__/.*.mock.ts"
+      "/__mocks__/.*.mock.ts",
+      "/__fixtures__/.*.fixture.ts",
+      "app/__tests__/manifest/ManifestScreen.test.tsx"
     ],
     "moduleFileExtensions": [
       "ts",
