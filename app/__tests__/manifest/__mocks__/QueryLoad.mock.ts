@@ -1,5 +1,12 @@
+import { merge } from 'lodash';
 import { LoadState } from '../../../api/schema.d';
-import { LoadEssentialsFragment, LoadQuery, LoadQueryVariables } from '../../../api/operations';
+import {
+  DropzoneUserDetailsFragment,
+  DropzoneUserEssentialsFragment,
+  LoadEssentialsFragment,
+  LoadQuery,
+  LoadQueryVariables,
+} from '../../../api/operations';
 import { LoadDocument } from '../../../api/reflection';
 import createMockedQuery from './createMockedQuery.mock';
 
@@ -19,46 +26,85 @@ const loadEssentials: LoadEssentialsFragment = {
   availableSlots: 7,
   occupiedSlots: 3,
 };
+
+const dropzoneUserEssentials: DropzoneUserEssentialsFragment = {
+  __typename: 'DropzoneUser',
+  id: '1',
+  user: {
+    id: '1',
+    name: 'jest',
+  },
+  hasCredits: true,
+  hasExitWeight: true,
+  hasMembership: true,
+  hasLicense: false,
+  license: null,
+  role: {
+    id: '1',
+    name: 'jest',
+    dropzoneId: 1,
+  },
+  expiresAt: null,
+};
+
+const dropzoneUserDetails: DropzoneUserDetailsFragment = merge(dropzoneUserEssentials, {
+  __typename: 'DropzoneUser',
+  id: '1',
+  role: {
+    id: '1',
+    dropzoneId: 1,
+    name: 'fun_jumper',
+  },
+  user: {
+    __typename: 'User',
+    apfNumber: null,
+    email: null,
+    image: null,
+    moderationRole: null,
+    nickname: null,
+    phone: null,
+    id: '1',
+    name: 'Amy Hops',
+    exitWeight: '100',
+  },
+  license: {
+    __typename: 'License',
+    id: '1',
+    name: 'Certificate A',
+  },
+});
 export default createMockedQuery<LoadQueryVariables, LoadQuery>(
   LoadDocument,
   { id: 1 },
   {
     load: {
       ...loadEssentials,
-
       plane: {
         __typename: 'Plane',
+        minSlots: 0,
+        registration: 'ABC123',
         id: '1',
         maxSlots: 10,
         name: 'Beaver',
       },
-      gca: {
-        __typename: 'DropzoneUser',
+      gca: merge(dropzoneUserEssentials, {
         id: '1',
-        hasCredits: true,
-        hasExitWeight: true,
-        hasMembership: true,
-        hasLicense: false,
         user: {
           id: '1',
           name: 'jest',
         },
-      },
-      pilot: {
-        __typename: 'DropzoneUser',
+      }),
+      pilot: merge(dropzoneUserEssentials, {
         id: '2',
-        hasCredits: true,
-        hasExitWeight: true,
-        hasMembership: true,
-        hasLicense: false,
         user: {
           id: '2',
           name: 'Jess I. Canflie',
         },
-      },
+      }),
       loadMaster: null,
       slots: [
         {
+          rig: null,
           __typename: 'Slot',
           id: '1',
           cost: 100,
@@ -68,38 +114,9 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           passengerExitWeight: null,
           wingLoading: 1.3,
           groupNumber: 0,
-          dropzoneUser: {
-            __typename: 'DropzoneUser',
-            id: '1',
-            hasCredits: true,
-            hasExitWeight: true,
-            hasLicense: true,
-            hasMembership: true,
-            expiresAt: null,
-            role: {
-              id: '1',
-              dropzoneId: 1,
-              name: 'fun_jumper',
-            },
-            user: {
-              __typename: 'User',
-              apfNumber: null,
-              email: null,
-              image: null,
-              moderationRole: null,
-              nickname: null,
-              phone: null,
-              id: '1',
-              name: 'Amy Hops',
-              exitWeight: '100',
-            },
-            license: {
-              __typename: 'License',
-              id: '1',
-              name: 'Certificate A',
-            },
-          },
+          dropzoneUser: dropzoneUserDetails,
           ticketType: {
+            allowManifestingSelf: true,
             __typename: 'TicketType',
             id: '1',
             cost: 10,
@@ -118,6 +135,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           extras: null,
         },
         {
+          rig: null,
           __typename: 'Slot',
           id: '2',
           cost: 100,
@@ -127,40 +145,22 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           passengerExitWeight: null,
           wingLoading: 1.3,
           groupNumber: 0,
-          dropzoneUser: {
-            __typename: 'DropzoneUser',
+          dropzoneUser: merge(dropzoneUserDetails, {
             id: '2',
-            hasCredits: true,
-            hasExitWeight: true,
-            hasLicense: true,
-            hasMembership: true,
-            expiresAt: null,
-            role: {
-              id: '1',
-              dropzoneId: 1,
-              name: 'fun_jumper',
-            },
             user: {
-              __typename: 'User',
               id: '2',
               name: 'Ali Falls',
               exitWeight: '100',
-              apfNumber: null,
-              email: null,
-              image: null,
-              moderationRole: null,
-              nickname: null,
-              phone: null,
             },
             license: {
-              __typename: 'License',
               id: '1',
               name: 'Certificate A',
             },
-          },
+          }),
           ticketType: {
             __typename: 'TicketType',
             id: '2',
+            allowManifestingSelf: true,
             cost: 10,
             name: 'Hop n Pop',
             altitude: 4000,
@@ -177,6 +177,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           extras: null,
         },
         {
+          rig: null,
           cost: 100,
           __typename: 'Slot',
           id: '3',
@@ -187,42 +188,24 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           passengerExitWeight: null,
 
           wingLoading: 1.3,
-          dropzoneUser: {
-            __typename: 'DropzoneUser',
+          dropzoneUser: merge(dropzoneUserDetails, {
             id: '3',
-            hasCredits: true,
-            hasExitWeight: true,
-            hasLicense: true,
-            hasMembership: true,
-            expiresAt: null,
-            role: {
-              __typename: 'UserRole',
-              dropzoneId: 1,
-              id: '1',
-              name: 'fun_jumper',
-            },
             user: {
               __typename: 'User',
               id: '3',
               name: 'John Stumble',
               exitWeight: '100',
-              apfNumber: null,
-              email: null,
-              image: null,
-              moderationRole: null,
-              nickname: null,
-              phone: null,
             },
             license: {
-              __typename: 'License',
               id: '3',
               name: 'Certificate C',
             },
-          },
+          }),
           ticketType: {
             __typename: 'TicketType',
             id: '3',
             cost: 10,
+            allowManifestingSelf: true,
             name: 'Height',
             altitude: 14000,
             isTandem: false,

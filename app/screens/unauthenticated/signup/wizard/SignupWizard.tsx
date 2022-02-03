@@ -73,7 +73,9 @@ export default function SignupWizard() {
         });
       }
     } catch (e) {
-      dispatch(actions.screens.signup.setFieldError(['passwordConfirmation', e.message]));
+      if (e instanceof Error) {
+        dispatch(actions.screens.signup.setFieldError(['passwordConfirmation', e.message]));
+      }
       throw new Error();
     }
   }, [

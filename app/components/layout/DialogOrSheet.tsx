@@ -72,41 +72,44 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDismiss, open]);
   const theme = useTheme();
-  const HandleComponent = React.useMemo(
-    () => () =>
-      !title ? (
-        <View
-          style={[
-            styles.sheetHeader,
-            { shadowColor: theme.colors.onSurface, backgroundColor: theme.colors.surface },
-          ]}
-        >
-          <View style={styles.handle} />
-        </View>
-      ) : (
-        <View
-          style={[
-            styles.sheetHeaderWithTitle,
-            {
-              shadowColor: theme.colors.onSurface,
-              backgroundColor: theme.colors.surface,
-            },
-          ]}
-        >
-          <View style={styles.handle} />
-          <Title>{title}</Title>
-        </View>
-      ),
-    [theme.colors.onSurface, theme.colors.surface, title]
-  );
+  const HandleComponent = React.useCallback(() => {
+    return !title ? (
+      <View
+        style={[
+          styles.sheetHeader,
+          { shadowColor: theme.colors.onSurface, backgroundColor: theme.colors.surface },
+        ]}
+      >
+        <View style={styles.handle} />
+      </View>
+    ) : (
+      <View
+        style={[
+          styles.sheetHeaderWithTitle,
+          {
+            shadowColor: theme.colors.onSurface,
+            backgroundColor: theme.colors.surface,
+          },
+        ]}
+      >
+        <View style={styles.handle} />
+        <Title>{title}</Title>
+      </View>
+    );
+  }, [theme.colors.onSurface, theme.colors.surface, title]);
 
   return (
     <BottomSheetModal
+      enableContentPanningGesture
       enableDismissOnClose
+      enableOverDrag
+      enablePanDownToClose
+      enableHandlePanningGesture
+      name="abc"
       onDismiss={onDismiss}
       ref={sheetRef}
       snapPoints={snappingPoints}
-      backdropComponent={BottomSheetBackdrop}
+      backdropComponent={(a) => <BottomSheetBackdrop {...a} pressBehavior="close" />}
       index={(snappingPoints?.length || 1) - 1}
       handleComponent={HandleComponent}
     >
@@ -117,7 +120,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
         ]}
       >
         {children}
-        <Button onPress={buttonAction} mode="contained" style={[styles.button]} loading={loading}>
+        <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>
           {buttonLabel}
         </Button>
       </BottomSheetScrollView>

@@ -12,8 +12,8 @@ import { Platform } from 'react-native';
 import { actions, useAppDispatch, useAppSelector } from '../state';
 
 export default function Apollo({ children }: { children: React.ReactNode }) {
+  console.log('Environment', Constants?.manifest?.extra);
   const httpBatchLink = React.useMemo(() => {
-    console.log('Environment', Constants.manifest?.extra);
     console.log('Release channel', Update.releaseChannel);
     const environment =
       Platform.OS === 'web' ? Constants.manifest?.extra?.environment : Update.releaseChannel;
@@ -21,7 +21,7 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
       batchDebounce: true,
       batchMax: 10,
       uri:
-        environment in Constants.manifest?.extra?.urls
+        environment in (Constants?.manifest?.extra?.urls || {})
           ? Constants.manifest?.extra?.urls[environment]
           : Constants.manifest?.extra?.url,
     });

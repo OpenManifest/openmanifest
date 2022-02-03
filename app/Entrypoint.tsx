@@ -1,4 +1,4 @@
-import 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider as MaterialProvider, ActivityIndicator, ProgressBar } from 'react-native-paper';
 import { Appearance, Linking, Platform, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationState, getPathFromState } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
 import * as Sentry from 'sentry-expo';
 import URI from 'urijs';
@@ -27,8 +27,7 @@ import ImageViewer from './components/dialogs/ImageViewer/ImageViewer';
 
 import useCachedResources from './hooks/useCachedResources';
 import NotificationArea from './components/notifications/Notifications';
-import LinkingConfiguration from './navigation/Routes';
-import RootNavigator from './navigation/RootNavigator';
+import RootNavigator, { options as LinkingConfiguration } from './screens/routes';
 import { actions } from './state';
 
 Notifications.setNotificationHandler({
@@ -154,31 +153,48 @@ function Content() {
     };
   }, [dispatch]);
 
+  const onRouteChange = React.useCallback(
+    (s?: NavigationState) => {
+      if (s) {
+        const [path] = getPathFromState(s).split(/\?/);
+        const [screenName] = path.split(/\//).reverse();
+        console.log('--- Nav State--', screenName);
+        if (state.currentRouteName !== screenName) {
+          dispatch(actions.global.setCurrentRouteName(screenName));
+        }
+      }
+    },
+    [dispatch, state.currentRouteName]
+  );
+
   return (
     <AppUpdate>
       <React.Suspense
         fallback={
           <View style={{ flex: 1, flexGrow: 1 }}>
-            <ProgressBar indeterminate color={state?.theme?.colors?.accent} visible />
+            <ProgressBar indeterminate color={state?.theme?.colors?.primary} visible />
           </View>
         }
       >
         <Apollo>
           <MaterialProvider theme={state.theme as ReactNativePaper.Theme}>
-            <SafeAreaProvider>
-              <ImageViewer />
-              <NavigationContainer
-                linking={LinkingConfiguration}
-                theme={state.theme as unknown as never}
-              >
-                <Wrapper>
-                  <RootNavigator />
-                </Wrapper>
-              </NavigationContainer>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <SafeAreaProvider>
+                <ImageViewer />
+                <NavigationContainer
+                  onStateChange={onRouteChange}
+                  linking={LinkingConfiguration}
+                  theme={state.theme as unknown as never}
+                >
+                  <Wrapper>
+                    <RootNavigator />
+                  </Wrapper>
+                </NavigationContainer>
 
-              <StatusBar />
-              <NotificationArea />
-            </SafeAreaProvider>
+                <StatusBar />
+                <NotificationArea />
+              </SafeAreaProvider>
+            </GestureHandlerRootView>
           </MaterialProvider>
         </Apollo>
       </React.Suspense>

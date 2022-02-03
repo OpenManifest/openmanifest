@@ -11,6 +11,11 @@ const ALTITUDE_LABEL_MAP: { [key: string]: string } = {
   '4000': 'Hop n Pop',
 };
 
+const ALTITUDE_ICON_MAP: { [key: string]: string } = {
+  '14000': 'airplane-takeoff',
+  '4000': 'parachute',
+};
+
 export default function TicketTypeForm() {
   const state = useAppSelector((root) => root.forms.ticketType);
   const dispatch = useAppDispatch();
@@ -72,7 +77,7 @@ export default function TicketTypeForm() {
                   icon={
                     state.fields.altitude.value &&
                     state.fields.altitude.value.toString() in ALTITUDE_LABEL_MAP
-                      ? ALTITUDE_LABEL_MAP[state.fields.altitude.value.toString()]
+                      ? ALTITUDE_ICON_MAP[state.fields.altitude.value.toString()]
                       : 'pencil-plus'
                   }
                 />

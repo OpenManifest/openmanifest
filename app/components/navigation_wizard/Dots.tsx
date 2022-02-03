@@ -14,6 +14,8 @@ export default function Dots(props: IDotsProps) {
     <View style={{ flexDirection: 'row' }}>
       {Array.from({ length: count }).map((_, idx) => (
         <View
+          // eslint-disable-next-line react/no-array-index-key
+          key={`paginatiom-dot-${idx}`}
           style={[
             idx === index ? styles.activeDot : styles.inactiveDot,
             { backgroundColor: idx === index ? palette.primary.main : palette.primary.light },

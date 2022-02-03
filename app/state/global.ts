@@ -8,7 +8,7 @@ import { Theme } from 'react-native-paper/lib/typescript/types';
 import color from 'color';
 import { primaryColor } from 'app/constants/Colors';
 import { DropzoneExtensiveFragment, UserDetailedFragment } from '../api/operations';
-import { Credential } from '../api/schema';
+import { Credential } from '../api/schema.d';
 
 const CombinedDefaultTheme: Theme = {
   ...PaperDefaultTheme,
@@ -52,6 +52,7 @@ interface IGlobalState {
   permissions: string[];
 
   expoPushToken: string | null;
+  currentRouteName: string;
   palette: Omit<typeof CombinedDefaultTheme.colors, 'primary' | 'accent'> & {
     primary: {
       light: string;
@@ -76,6 +77,7 @@ export const initialState: IGlobalState = {
   permissions: [],
   credentials: null,
   expoPushToken: null,
+  currentRouteName: '',
   theme: CombinedDefaultTheme,
   palette: {
     ...CombinedDefaultTheme.colors,
@@ -104,6 +106,9 @@ export default createSlice({
     },
     setExpoPushToken: (state: IGlobalState, action: PayloadAction<string>) => {
       state.expoPushToken = action.payload;
+    },
+    setCurrentRouteName: (state: IGlobalState, action: PayloadAction<string>) => {
+      state.currentRouteName = action.payload;
     },
     setPermissions: (state: IGlobalState, action: PayloadAction<string[]>) => {
       state.permissions = action.payload;
@@ -167,15 +172,23 @@ export default createSlice({
     },
     toggleDarkMode: (state: IGlobalState) => {
       state.isDarkMode = !state.isDarkMode;
-      state.theme = state.isDarkMode ? CombinedDarkTheme : CombinedDefaultTheme;
-
-      if (state.currentDropzone?.primaryColor) {
-        state.theme.colors.primary = state.currentDropzone?.primaryColor;
-      }
-
-      if (state.currentDropzone?.secondaryColor) {
-        state.theme.colors.accent = state.currentDropzone?.secondaryColor;
-      }
+      state.theme = state.isDarkMode
+        ? {
+            ...CombinedDarkTheme,
+            colors: {
+              ...CombinedDarkTheme.colors,
+              primary: state.currentDropzone?.primaryColor || CombinedDarkTheme.colors.primary,
+              accent: state.currentDropzone?.secondaryColor || CombinedDarkTheme.colors.accent,
+            },
+          }
+        : {
+            ...CombinedDefaultTheme,
+            colors: {
+              ...CombinedDefaultTheme.colors,
+              primary: state.currentDropzone?.primaryColor || CombinedDefaultTheme.colors.primary,
+              accent: state.currentDropzone?.secondaryColor || CombinedDefaultTheme.colors.accent,
+            },
+          };
 
       state.palette = {
         ...state.theme.colors,

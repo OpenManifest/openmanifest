@@ -27,18 +27,21 @@ function Wizard(props: IWizardProps) {
   const ref = React.useRef<SwiperFlatList>(null);
   const count = React.Children.count(children);
 
+  const value = React.useMemo(
+    () => ({
+      index,
+      count,
+      setIndex: (idx: number) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        ref.current?.scrollToIndex({ index: idx, animated: true });
+      },
+    }),
+    [count, index]
+  );
+
   return (
-    <WizardContext.Provider
-      value={{
-        index,
-        count,
-        setIndex: (idx) => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          ref.current?.scrollToIndex({ index: idx, animated: true });
-        },
-      }}
-    >
+    <WizardContext.Provider value={value}>
       <View style={[styles.container]}>
         <SwiperFlatList
           showPagination

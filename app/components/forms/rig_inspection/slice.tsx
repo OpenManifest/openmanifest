@@ -30,7 +30,9 @@ export default createSlice({
         state.fields = JSON.parse(action.payload);
       } catch (error) {
         console.log(action.payload);
-        console.error('Failed to read rig inspection template', error.message, action.payload);
+        if (error instanceof Error) {
+          console.error('Failed to read rig inspection template', error.message, action.payload);
+        }
       }
     },
 

@@ -2,8 +2,7 @@
 import * as React from 'react';
 import { LayoutRectangle, View, ViewStyle } from 'react-native';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
-/* eslint-disable import/no-unresolved */
-import { GOOGLE_MAPS_WEB } from '@env';
+import Constants from 'expo-constants';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as Location from 'expo-location';
 import { useIsFocused } from '@react-navigation/core';
@@ -46,7 +45,7 @@ export default function Map(props: IMapProps) {
     onDragEnd,
   } = props;
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: GOOGLE_MAPS_WEB,
+    googleMapsApiKey: Constants.manifest?.extra?.googleMapsWeb,
     id: 'google-maps-script',
   });
 

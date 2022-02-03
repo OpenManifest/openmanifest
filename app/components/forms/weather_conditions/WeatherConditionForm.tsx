@@ -110,8 +110,8 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
       </View>
       <Divider />
       <FlatList
-        data={winds}
-        keyExtractor={({ item }, index) => `wind.${index}`}
+        data={winds as Required<typeof winds>}
+        keyExtractor={(item, index) => `wind.${item.altitude}.${index}`}
         scrollEnabled={false}
         renderItem={({ item: wind, index }) => {
           return (

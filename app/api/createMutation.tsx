@@ -35,10 +35,9 @@ export function isRequired(message: string) {
 export function isEmail(message: string) {
   return {
     message,
-    pattern: new RegExp(
+    pattern:
       // eslint-disable-next-line max-len,no-useless-escape
-      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    ),
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
   };
 }
 
@@ -162,7 +161,9 @@ export function createMutation<
           }
           return payload;
         } catch (err) {
-          onError?.(err.message);
+          if (err instanceof Error) {
+            onError?.(err.message);
+          }
         }
         return undefined;
       },

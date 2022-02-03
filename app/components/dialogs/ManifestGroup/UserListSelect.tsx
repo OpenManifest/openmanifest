@@ -15,6 +15,7 @@ interface IUserListSelect {
 }
 
 export default function UserListSelect(props: IUserListSelect) {
+  const { onNext } = props;
   const { screens } = useAppSelector((root) => root);
   const dispatch = useAppDispatch();
   const [searchText, setSearchText] = React.useState('');
@@ -95,7 +96,7 @@ export default function UserListSelect(props: IUserListSelect) {
       <Button
         onPress={() => {
           dispatch(actions.forms.manifestGroup.setDropzoneUsers(screens.manifest.selectedUsers));
-          props.onNext();
+          onNext();
         }}
         style={styles.button}
         mode="contained"

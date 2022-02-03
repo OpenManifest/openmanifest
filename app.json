@@ -2,7 +2,7 @@
   "expo": {
     "name": "Open Manifest",
     "slug": "openmanifest",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/android-icon.png",
     "scheme": "openmanifest",
@@ -18,17 +18,25 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "facebookAppId": "686479516065674",
+    "facebookDisplayName": "OpenManifest",
+    "facebookAutoInitEnabled": true,
+    "facebookScheme": "fb686479516065674",
     "ios": {
       "config": {
         "usesNonExemptEncryption": false
       },
       "infoPlist": {
-        "photosPermission": "OpenManifest needs access to photos to let you upload avatars"
+        "photosPermission": "OpenManifest needs access to photos to let you upload avatars",
+        "fbAppId": "686479516065674",
+        "fbAppName": "OpenManifest",
+        "fbAppUrl": "https://openmanifest.org",
+        "facebookScheme": "fb686479516065674"
       },
-      "buildNumber": "28",
+      "buildNumber": "32",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
-      "icon": "./assets/images/ios-icon.png",
+      "icon": "./assets/images/logo-black-white-bg.png",
       "usesIcloudStorage": true,
       "associatedDomains": [
         "applinks:openmanifest.org",
@@ -39,11 +47,20 @@
     },
     "android": {
       "package": "com.dangertechnologies.openmanifest",
+      "permissions": [
+        "CAMERA",
+        "MEDIA_LIBRARY",
+        "CAMERA_ROLL",
+        "NOTIFICATIONS",
+        "ACCESS_COARSE_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo.png",
-        "backgroundColor": "#ff1414"
+        "foregroundImage": "./assets/images/logo-black-white-bg.png",
+        "backgroundColor": "#F4F4F4"
       },
-      "versionCode": 3,
+      "versionCode": 7,
       "intentFilters": [
         {
           "action": "VIEW",

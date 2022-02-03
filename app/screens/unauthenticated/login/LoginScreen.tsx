@@ -6,6 +6,7 @@ import {
   Platform,
   StyleSheet,
   Text,
+  View,
 } from 'react-native';
 import { Card, Button, HelperText, TextInput, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
@@ -18,13 +19,16 @@ import { primaryColor } from 'app/constants/Colors';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore PNGs are allowed
+import LottieView from 'app/components/LottieView';
 import logo from '../../../../assets/images/logo-black.png';
+import FacebookButton, { useLoginWithFacebook } from './FacebookButton';
 
 export default function LoginScreen() {
   const state = useAppSelector((root) => root.screens.login);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const [mutationLogin, data] = useLoginMutation();
+  const [loginWithFacebook, loginWithFacebookMutation] = useLoginWithFacebook();
   const theme = useTheme();
 
   const onLogin = React.useCallback(async () => {
@@ -62,16 +66,19 @@ export default function LoginScreen() {
           dispatch(actions.global.setUser(result.data.userLogin.authenticatable));
         }
       } catch (e) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: e.message,
-            variant: 'error',
-          })
-        );
+        if (e instanceof Error) {
+          dispatch(
+            actions.notifications.showSnackbar({
+              message: e.message,
+              variant: 'error',
+            })
+          );
+        }
       }
     }
   }, [dispatch, mutationLogin, state.fields.email.value, state.fields.password.value]);
 
+  const loading = loginWithFacebookMutation?.loading || data?.loading;
   return (
     <ImageBackground
       // eslint-disable-next-line global-require
@@ -79,54 +86,77 @@ export default function LoginScreen() {
       style={styles.container}
       resizeMode="repeat"
     >
-      <Image source={logo} style={{ height: 300, width: '100%' }} resizeMode="contain" />
+      <Image source={logo} style={styles.logo} resizeMode="contain" />
       <KeyboardAvoidingView
         style={styles.fields}
         behavior={Platform.OS === 'android' ? undefined : 'padding'}
       >
-        <Card style={{ padding: 16, borderRadius: 8 }} elevation={3}>
+        <Card style={styles.card} elevation={3}>
           <Card.Content>
-            <TextInput
-              label="Email"
-              mode="outlined"
-              value={state.fields.email.value}
-              onChangeText={(newValue) => {
-                dispatch(actions.screens.login.setEmail(newValue));
-              }}
-            />
-            <HelperText type="error">{state.fields.email.error}</HelperText>
+            {loading ? (
+              <View style={styles.animationContainer}>
+                <LottieView
+                  autoPlay
+                  loop
+                  style={styles.loadingAnimation}
+                  // eslint-disable-next-line global-require
+                  source={require('../../../../assets/images/loading.json')}
+                />
+              </View>
+            ) : (
+              <>
+                <TextInput
+                  label="Email"
+                  mode="outlined"
+                  value={state.fields.email.value}
+                  disabled={loading}
+                  onChangeText={(newValue) => {
+                    dispatch(actions.screens.login.setEmail(newValue));
+                  }}
+                />
+                <HelperText type="error">{state.fields.email.error}</HelperText>
 
-            <TextInput
-              label="Password"
-              mode="outlined"
-              value={state.fields.password.value}
-              secureTextEntry
-              onChangeText={(newValue) => {
-                dispatch(actions.screens.login.setPassword(newValue));
-              }}
-              onSubmitEditing={onLogin}
-              error={!!state.fields.password.error}
-            />
+                <TextInput
+                  label="Password"
+                  mode="outlined"
+                  disabled={loading}
+                  value={state.fields.password.value}
+                  secureTextEntry
+                  onChangeText={(newValue) => {
+                    dispatch(actions.screens.login.setPassword(newValue));
+                  }}
+                  onSubmitEditing={onLogin}
+                  error={!!state.fields.password.error}
+                />
 
-            <HelperText type="error">{state.fields.password.error || ' '}</HelperText>
+                <HelperText type="error">{state.fields.password.error || ' '}</HelperText>
+              </>
+            )}
             <Button
               mode="contained"
+              disabled={loading}
               labelStyle={styles.buttonLabel}
               style={[styles.button, { backgroundColor: theme.colors.surface }]}
               onPress={onLogin}
-              loading={data.loading}
             >
-              Log in
+              {loading ? 'Authenticating...' : 'Log in'}
             </Button>
+            <FacebookButton
+              disabled={loading}
+              style={{ marginTop: 8 }}
+              onPress={loginWithFacebook}
+            />
 
             <Button
               labelStyle={styles.textButtonLabel}
               style={styles.textButton}
-              onPress={() => navigation.navigate('SignUpWizard')}
+              onPress={() => navigation.navigate('Unauthenticated', { screen: 'SignUpWizard' })}
             >
               Sign up
             </Button>
-            <TouchableOpacity onPress={() => navigation.navigate('RecoverPasswordScreen')}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Wizards', { screen: 'RecoverPasswordScreen' })}
+            >
               <Text style={theme.dark ? styles.forgotPasswordDark : styles.forgotPassword}>
                 Forgot your password?
               </Text>
@@ -145,6 +175,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     // backgroundColor: primaryColor,
     paddingTop: 10,
+  },
+  logo: { height: 300, width: '100%' },
+  card: { padding: 16, borderRadius: 8 },
+  animationContainer: {
+    width: '100%',
+    height: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingAnimation: {
+    alignSelf: 'center',
+    marginTop: 24,
+    marginBottom: 32,
+    height: 156,
+    width: '100%',
   },
   title: {
     fontSize: 20,

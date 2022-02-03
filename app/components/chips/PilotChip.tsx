@@ -76,6 +76,7 @@ export default function PilotChip(props: IPilotChipSelect) {
               onSelect(edge.node);
             }
           }}
+          icon={edge?.node?.user?.image ? { uri: edge?.node?.user?.image } : 'account'}
           title={edge?.node?.user?.name}
         />
       ))}

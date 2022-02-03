@@ -15,7 +15,7 @@ interface IDropzoneUserDialog {
 }
 
 export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
-  const { open, onClose, dropzoneUser } = props;
+  const { open, onClose, dropzoneUser, onSuccess } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.credits);
   const globalState = useAppSelector((root) => root.global);
@@ -100,15 +100,17 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
       }
       if (!result?.createOrder?.fieldErrors?.length) {
         dispatch(actions.forms.credits.reset());
-        props.onSuccess();
+        onSuccess();
       }
     } catch (error) {
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: error.message,
-          variant: 'error',
-        })
-      );
+      if (error instanceof Error) {
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: error.message,
+            variant: 'error',
+          })
+        );
+      }
     }
   }, [
     validate,
@@ -119,7 +121,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
     global.currentDropzoneId,
     mutationCreateOrder,
     dispatch,
-    props,
+    onSuccess,
   ]);
 
   return (
@@ -149,7 +151,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         <ProgressBar
           indeterminate
           visible={createData.loading}
-          color={globalState.theme.colors.accent}
+          color={globalState.theme.colors.primary}
         />
         <Dialog.Content>
           <CreditsForm />

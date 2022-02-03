@@ -12,7 +12,7 @@ interface IManifestUserDialog {
 }
 
 export default function ManifestUserDialog(props: IManifestUserDialog) {
-  const { onSuccess, open } = props;
+  const { onSuccess, open, onClose } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.manifest);
   const globalState = useAppSelector((root) => root.global);
@@ -97,12 +97,14 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         onSuccess();
       }
     } catch (error) {
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: error.message,
-          variant: 'error',
-        })
-      );
+      if (error instanceof Error) {
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: error.message,
+            variant: 'error',
+          })
+        );
+      }
     }
   }, [
     dispatch,
@@ -127,7 +129,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         <ProgressBar
           indeterminate
           visible={mutationData.loading}
-          color={globalState.theme.colors.accent}
+          color={globalState.theme.colors.primary}
         />
         <Dialog.Title>
           {/* eslint-disable-next-line max-len */}
@@ -142,7 +144,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
           <Button
             onPress={() => {
               dispatch(actions.forms.manifest.reset());
-              props.onClose();
+              onClose();
             }}
           >
             Cancel

@@ -10,6 +10,7 @@ import {
   IconButton,
   Portal,
   TextInput,
+  useTheme,
 } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
@@ -24,6 +25,7 @@ export default function RigInspectionTemplateForm() {
   const [fabOpen, setFabOpen] = React.useState(false);
 
   const dispatch = useAppDispatch();
+  const theme = useTheme();
 
   return (
     <>
@@ -117,6 +119,7 @@ export default function RigInspectionTemplateForm() {
           fabStyle={{
             marginLeft: 16,
             marginBottom: 48,
+            backgroundColor: theme.colors.primary,
           }}
           actions={[
             {

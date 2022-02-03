@@ -16,11 +16,17 @@ module.exports = {
       'babel-module': {},
     },
   },
+  parserOptions: {
+    project: './tsconfig.eslint.json',
+  },
   ignorePatterns: ['**/*.d.ts'],
   rules: {
     // Allowed with immer
     'no-underscore-dangle': 0,
     'no-param-reassign': 0,
+
+    // FIXME: Turn this on and fix all usecases
+    'react/no-unstable-nested-components': 0,
 
     'max-len': [1, { code: 100 }],
 

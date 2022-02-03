@@ -26,7 +26,7 @@ function RigTitle(props: { rig: UserRigDetailedFragment }): JSX.Element {
           style={{
             padding: 2,
             paddingHorizontal: 4,
-            backgroundColor: theme.colors.accent,
+            backgroundColor: theme.colors.primary,
             borderRadius: 16,
           }}
         >

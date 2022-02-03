@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet, View, ViewStyle, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Card, List, Menu, TextInput, useTheme } from 'react-native-paper';
-import { Wind } from '../../../api/schema';
+import { Wind } from '../../../api/schema.d';
 
 export interface IWindRowProps extends Wind {
   onChange(field: keyof Wind, value: number): void;

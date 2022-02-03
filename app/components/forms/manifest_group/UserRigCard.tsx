@@ -65,7 +65,7 @@ export default function UserRigCard(props: IUserRigCard) {
   }, [data?.dropzone?.dropzoneUser?.user.exitWeight, exitWeight, onChangeExitWeight]);
   return (
     <Card style={{ marginHorizontal: 16, marginBottom: 16 }} elevation={3}>
-      <ProgressBar indeterminate color={globalState.theme.colors.accent} visible={loading} />
+      <ProgressBar indeterminate color={globalState.theme.colors.primary} visible={loading} />
       <Card.Title
         title={data?.dropzone?.dropzoneUser?.user.name}
         left={() =>

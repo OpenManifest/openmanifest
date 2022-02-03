@@ -2,7 +2,7 @@
 import * as Operation from './operations';
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
-const defaultOptions =  {}
+const defaultOptions = {} as const;
 export const RoleEssentialsFragmentDoc = gql`
     fragment roleEssentials on UserRole {
   id
@@ -164,6 +164,8 @@ export const TransactionEssentialsFragmentDoc = gql`
   transactionType
   amount
   status
+  createdAt
+  message
   sender {
     ... on DropzoneUser {
       id
@@ -192,6 +194,17 @@ export const TransactionEssentialsFragmentDoc = gql`
   }
 }
     `;
+export const ReceiptEssentialsFragmentDoc = gql`
+    fragment receiptEssentials on Receipt {
+  id
+  amountCents
+  createdAt
+  updatedAt
+  transactions {
+    ...transactionEssentials
+  }
+}
+    ${TransactionEssentialsFragmentDoc}`;
 export const OrderEssentialsFragmentDoc = gql`
     fragment orderEssentials on Order {
   id
@@ -253,16 +266,10 @@ export const OrderEssentialsFragmentDoc = gql`
     }
   }
   receipts {
-    id
-    amountCents
-    createdAt
-    updatedAt
-    transactions {
-      ...transactionEssentials
-    }
+    ...receiptEssentials
   }
 }
-    ${TransactionEssentialsFragmentDoc}`;
+    ${ReceiptEssentialsFragmentDoc}`;
 export const TicketTypeEssentialsFragmentDoc = gql`
     fragment ticketTypeEssentials on TicketType {
   id
@@ -1302,6 +1309,58 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<Operat
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<Operation.LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<Operation.LoginMutation, Operation.LoginMutationVariables>;
+export const LoginWithFacebookDocument = gql`
+    mutation LoginWithFacebook($token: String!, $pushToken: String) {
+  loginWithFacebook(
+    token: $token
+    pushToken: $pushToken
+    confirmUrl: "https://openmanifest.org/confirm/"
+  ) {
+    authenticatable {
+      id
+      email
+      name
+      phone
+      createdAt
+      updatedAt
+    }
+    credentials {
+      accessToken
+      tokenType
+      client
+      expiry
+      uid
+    }
+  }
+}
+    `;
+export type LoginWithFacebookMutationFn = Apollo.MutationFunction<Operation.LoginWithFacebookMutation, Operation.LoginWithFacebookMutationVariables>;
+
+/**
+ * __useLoginWithFacebookMutation__
+ *
+ * To run a mutation, you first call `useLoginWithFacebookMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginWithFacebookMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginWithFacebookMutation, { data, loading, error }] = useLoginWithFacebookMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *      pushToken: // value for 'pushToken'
+ *   },
+ * });
+ */
+export function useLoginWithFacebookMutation(baseOptions?: Apollo.MutationHookOptions<Operation.LoginWithFacebookMutation, Operation.LoginWithFacebookMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.LoginWithFacebookMutation, Operation.LoginWithFacebookMutationVariables>(LoginWithFacebookDocument, options);
+      }
+export type LoginWithFacebookMutationHookResult = ReturnType<typeof useLoginWithFacebookMutation>;
+export type LoginWithFacebookMutationResult = Apollo.MutationResult<Operation.LoginWithFacebookMutation>;
+export type LoginWithFacebookMutationOptions = Apollo.BaseMutationOptions<Operation.LoginWithFacebookMutation, Operation.LoginWithFacebookMutationVariables>;
 export const ManifestGroupDocument = gql`
     mutation ManifestGroup($jumpTypeId: Int, $extraIds: [Int!], $loadId: Int, $ticketTypeId: Int, $userGroup: [SlotUser!]!) {
   createSlots(

@@ -107,7 +107,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
           setCoordinateFade(true);
           setCoordinateFade(true);
           setDragging(false);
-          props.onChange(r);
+          onChange(r);
         }}
         minZoomLevel={7}
         mapType="satellite"

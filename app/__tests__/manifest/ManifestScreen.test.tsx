@@ -8,7 +8,7 @@ import MOCK_QUERY_ALLOWED_TICKET_TYPES from './__mocks__/QueryAllowedTicketTypes
 import { MOCK_QUERY_ALLOWED_JUMP_TYPES } from './__mocks__/QueryAllowedJumpTypes.mock';
 import * as appRedux from '../../state';
 
-import ManifestScreen from '../../screens/authenticated/manifest/ManifestScreen';
+import ManifestScreen from '../../screens/authenticated/dropzone/manifest/ManifestScreen';
 
 describe('<ManifestScreen />', () => {
   it('should show LoadCards for every load', async () => {
@@ -56,9 +56,11 @@ describe('<ManifestScreen />', () => {
     });
 
     await waitFor(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
       const loads = screen.queryAllByTestId('load-card');
-      const text = screen.queryByText(/No loads/);
+      const text = screen.queryByText(/Setup/);
 
       expect(loads.length).toBe(0);
       expect(text).toBeTruthy();

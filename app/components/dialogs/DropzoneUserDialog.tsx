@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/client';
-import PermissionBadges from 'app/screens/authenticated/profile/UserInfo/PermissionBadges';
+import PermissionBadges from 'app/screens/authenticated/user/profile/UserInfo/PermissionBadges';
 import * as React from 'react';
 import { Button, Dialog, List, Portal, ProgressBar } from 'react-native-paper';
 import { DropzoneUser, Permission } from 'app/api/schema.d';
@@ -15,7 +15,7 @@ interface IDropzoneUserDialog {
 }
 
 export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
-  const { open } = props;
+  const { open, onClose, onSuccess } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.dropzoneUser);
   const globalState = useAppSelector((root) => root.global);
@@ -88,22 +88,24 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         return;
       }
       if (!result?.fieldErrors?.length && result?.dropzoneUser) {
-        props.onSuccess(result.dropzoneUser);
+        onSuccess(result.dropzoneUser);
       } else {
         console.error(result?.fieldErrors);
       }
     } catch (error) {
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: error.message,
-          variant: 'error',
-        })
-      );
+      if (error instanceof Error) {
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: error.message,
+            variant: 'error',
+          })
+        );
+      }
     }
   }, [
     dispatch,
     mutationUpdateDropzoneUser,
-    props,
+    onSuccess,
     state.fields.expiresAt.value,
     state.fields.role.value?.id,
     state.original?.id,
@@ -116,7 +118,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         <ProgressBar
           indeterminate
           visible={createData.loading}
-          color={globalState.theme.colors.accent}
+          color={globalState.theme.colors.primary}
         />
         <Dialog.Title>{`${state?.original?.id ? 'Edit' : 'New'} dropzone user`}</Dialog.Title>
         <Dialog.Content>
@@ -139,7 +141,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
           <Button
             onPress={() => {
               dispatch(actions.forms.dropzoneUser.reset());
-              props.onClose();
+              onClose();
             }}
           >
             Cancel
