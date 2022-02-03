@@ -36,7 +36,7 @@
       "buildNumber": "30",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
-      "icon": "./assets/images/ios-icon.png",
+      "icon": "./assets/images/logo-black.png",
       "usesIcloudStorage": true,
       "associatedDomains": [
         "applinks:openmanifest.org",
@@ -57,8 +57,8 @@
         "WRITE_EXTERNAL_STORAGE"
       ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo.png",
-        "backgroundColor": "#ff1414"
+        "foregroundImage": "./assets/images/logo-black.png",
+        "backgroundColor": "#F4F4F4"
       },
       "versionCode": 6,
       "intentFilters": [
