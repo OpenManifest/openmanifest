@@ -81,7 +81,7 @@ export default function LoginScreen() {
   }, [dispatch, mutationLogin, state.fields.email.value, state.fields.password.value]);
 
   const loading =
-    loginWithFacebookMutation?.loading || data?.loading || loginWithAppleMutation.loading;
+    loginWithFacebookMutation?.loading || data?.loading || loginWithAppleMutation?.loading;
   return (
     <ImageBackground
       source={
