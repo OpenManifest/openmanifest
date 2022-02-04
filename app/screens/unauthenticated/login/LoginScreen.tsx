@@ -16,12 +16,13 @@ import { useLoginMutation } from 'app/api/reflection';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 
 import { primaryColor } from 'app/constants/Colors';
+import Divider from 'app/components/Divider';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore PNGs are allowed
 import LottieView from 'app/components/LottieView';
-import logo from '../../../../assets/images/logo-black.png';
 import FacebookButton, { useLoginWithFacebook } from './FacebookButton';
+import AppleButton, { useLoginWithApple } from './AppleButton';
+import logoDark from '../../../../assets/images/logo-black.png';
+import logoLight from '../../../../assets/images/logo-white.png';
 
 export default function LoginScreen() {
   const state = useAppSelector((root) => root.screens.login);
@@ -29,6 +30,7 @@ export default function LoginScreen() {
   const navigation = useNavigation();
   const [mutationLogin, data] = useLoginMutation();
   const [loginWithFacebook, loginWithFacebookMutation] = useLoginWithFacebook();
+  const [loginWithApple, loginWithAppleMutation] = useLoginWithApple();
   const theme = useTheme();
 
   const onLogin = React.useCallback(async () => {
@@ -78,15 +80,21 @@ export default function LoginScreen() {
     }
   }, [dispatch, mutationLogin, state.fields.email.value, state.fields.password.value]);
 
-  const loading = loginWithFacebookMutation?.loading || data?.loading;
+  const loading =
+    loginWithFacebookMutation?.loading || data?.loading || loginWithAppleMutation?.loading;
   return (
     <ImageBackground
-      // eslint-disable-next-line global-require
-      source={require('assets/images/pattern.png')}
+      source={
+        theme.dark
+          ? // eslint-disable-next-line global-require
+            require('assets/images/webb-dark.png')
+          : // eslint-disable-next-line global-require
+            require('assets/images/pattern.png')
+      }
       style={styles.container}
       resizeMode="repeat"
     >
-      <Image source={logo} style={styles.logo} resizeMode="contain" />
+      <Image source={theme.dark ? logoLight : logoDark} style={styles.logo} resizeMode="contain" />
       <KeyboardAvoidingView
         style={styles.fields}
         behavior={Platform.OS === 'android' ? undefined : 'padding'}
@@ -135,17 +143,24 @@ export default function LoginScreen() {
             <Button
               mode="contained"
               disabled={loading}
-              labelStyle={styles.buttonLabel}
-              style={[styles.button, { backgroundColor: theme.colors.surface }]}
+              labelStyle={{ color: theme.colors.onSurface }}
+              style={[
+                styles.button,
+                { backgroundColor: theme.colors.surface, borderColor: theme.colors.surface },
+              ]}
               onPress={onLogin}
             >
               {loading ? 'Authenticating...' : 'Log in'}
             </Button>
+
+            <Divider>or</Divider>
             <FacebookButton
               disabled={loading}
               style={{ marginTop: 8 }}
               onPress={loginWithFacebook}
             />
+
+            <AppleButton onPress={loginWithApple} style={{ width: '100%', flex: 1 }} />
 
             <Button
               labelStyle={styles.textButtonLabel}
@@ -217,9 +232,6 @@ const styles = StyleSheet.create({
     borderColor: primaryColor,
     borderWidth: 1,
     width: '100%',
-  },
-  buttonLabel: {
-    color: '#FF1414',
   },
   textButton: {
     marginTop: 10,

@@ -26,6 +26,7 @@
       "config": {
         "usesNonExemptEncryption": false
       },
+      "usesAppleSignIn": true,
       "infoPlist": {
         "photosPermission": "OpenManifest needs access to photos to let you upload avatars",
         "fbAppId": "686479516065674",
@@ -33,7 +34,7 @@
         "fbAppUrl": "https://openmanifest.org",
         "facebookScheme": "fb686479516065674"
       },
-      "buildNumber": "32",
+      "buildNumber": "33",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
       "icon": "./assets/images/logo-black-white-bg.png",

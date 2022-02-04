@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Paragraph, Button, useTheme } from 'react-native-paper';
+import { Paragraph, useTheme, IconButton } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
 import Color from 'color';
 import { useNavigation } from '@react-navigation/core';
@@ -26,15 +26,15 @@ function Warning(props: { title: string; action?: () => void }) {
       : theme.colors.onSurface;
   return (
     <View style={[styles.warning, { backgroundColor: theme.colors.primary }]}>
-      <Paragraph style={{ color: textColor, flex: 7 / 10, flexGrow: 2 }}>{title}</Paragraph>
+      <Paragraph
+        style={{ color: textColor, flex: 7 / 10, flexGrow: 1 }}
+        adjustsFontSizeToFit
+        allowFontScaling
+      >
+        {title}
+      </Paragraph>
       {!action ? null : (
-        <Button
-          onPress={action}
-          style={{ flex: 1 / 10, flexShrink: 1 }}
-          labelStyle={{ color: textColor }}
-        >
-          Fix
-        </Button>
+        <IconButton icon="launch" color={textColor} onPress={action} style={{ width: 24 }} />
       )}
     </View>
   );

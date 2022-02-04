@@ -1309,6 +1309,60 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<Operat
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<Operation.LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<Operation.LoginMutation, Operation.LoginMutationVariables>;
+export const LoginWithAppleDocument = gql`
+    mutation LoginWithApple($token: String!, $userIdentity: String!, $pushToken: String) {
+  loginWithApple(
+    token: $token
+    userIdentity: $userIdentity
+    pushToken: $pushToken
+    confirmUrl: "https://openmanifest.org/confirm/"
+  ) {
+    authenticatable {
+      id
+      email
+      name
+      phone
+      createdAt
+      updatedAt
+    }
+    credentials {
+      accessToken
+      tokenType
+      client
+      expiry
+      uid
+    }
+  }
+}
+    `;
+export type LoginWithAppleMutationFn = Apollo.MutationFunction<Operation.LoginWithAppleMutation, Operation.LoginWithAppleMutationVariables>;
+
+/**
+ * __useLoginWithAppleMutation__
+ *
+ * To run a mutation, you first call `useLoginWithAppleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginWithAppleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginWithAppleMutation, { data, loading, error }] = useLoginWithAppleMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *      userIdentity: // value for 'userIdentity'
+ *      pushToken: // value for 'pushToken'
+ *   },
+ * });
+ */
+export function useLoginWithAppleMutation(baseOptions?: Apollo.MutationHookOptions<Operation.LoginWithAppleMutation, Operation.LoginWithAppleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.LoginWithAppleMutation, Operation.LoginWithAppleMutationVariables>(LoginWithAppleDocument, options);
+      }
+export type LoginWithAppleMutationHookResult = ReturnType<typeof useLoginWithAppleMutation>;
+export type LoginWithAppleMutationResult = Apollo.MutationResult<Operation.LoginWithAppleMutation>;
+export type LoginWithAppleMutationOptions = Apollo.BaseMutationOptions<Operation.LoginWithAppleMutation, Operation.LoginWithAppleMutationVariables>;
 export const LoginWithFacebookDocument = gql`
     mutation LoginWithFacebook($token: String!, $pushToken: String) {
   loginWithFacebook(

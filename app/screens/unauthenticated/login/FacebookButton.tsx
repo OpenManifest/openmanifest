@@ -64,7 +64,13 @@ export default function FacebookButton(
     Partial<Pick<Extract<typeof Button>, 'mode' | 'color' | 'icon'>>
 ) {
   return (
-    <Button icon="facebook" mode="contained" color="#3b5998" {...props}>
+    <Button
+      icon="facebook"
+      mode="contained"
+      color="#3b5998"
+      labelStyle={{ fontSize: 11 }}
+      {...props}
+    >
       Login with Facebook
     </Button>
   );
