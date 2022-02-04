@@ -9,6 +9,7 @@ import { useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
 import AnimatedTabBar from 'app/components/bottom_tabs/AnimatedTabBar';
+import { useTheme } from 'react-native-paper';
 
 import { NavigatorScreenParams } from '@react-navigation/core';
 import ManifestTab, { DropzoneRoutes } from './dropzone/routes';
@@ -25,10 +26,11 @@ const BottomTab = createBottomTabNavigator<AuthenticatedRoutes>();
 const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
 export default function AuthenticatedTabBar() {
-  const { theme, palette } = useAppSelector((root) => root.global);
+  const { palette } = useAppSelector((root) => root.global);
   const isDarkMode = Appearance.getColorScheme() === 'dark';
 
   const canViewUsers = useRestriction(Permission.ReadUser);
+  const theme = useTheme();
 
   const tabConfig = React.useMemo(
     () => ({
@@ -108,6 +110,12 @@ export default function AuthenticatedTabBar() {
             <AnimatedTabBar
               preset="bubble"
               tabs={tabs}
+              style={{
+                borderTopColor: 'gray',
+                borderTopWidth: StyleSheet.hairlineWidth,
+                backgroundColor: theme.colors.background,
+              }}
+              {...props}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               animation="iconWithLabelOnFocus"
@@ -132,7 +140,7 @@ export default function AuthenticatedTabBar() {
           ),
         },
       }),
-    [tabs]
+    [tabs, theme.colors.background]
   );
 
   const screenOptions = React.useMemo(

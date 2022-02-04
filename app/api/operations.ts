@@ -220,6 +220,15 @@ export type LoginMutationVariables = Types.Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', userLogin?: { __typename?: 'UserLoginPayload', authenticatable: { __typename?: 'User', id: string, email?: string | null | undefined, name?: string | null | undefined, phone?: string | null | undefined, createdAt: number, updatedAt: number }, credentials: { __typename?: 'Credential', accessToken: string, tokenType: string, client: string, expiry: number, uid: string } } | null | undefined };
 
+export type LoginWithAppleMutationVariables = Types.Exact<{
+  token: Types.Scalars['String'];
+  userIdentity: Types.Scalars['String'];
+  pushToken?: Types.InputMaybe<Types.Scalars['String']>;
+}>;
+
+
+export type LoginWithAppleMutation = { __typename?: 'Mutation', loginWithApple?: { __typename?: 'ApplePayload', authenticatable?: { __typename?: 'User', id: string, email?: string | null | undefined, name?: string | null | undefined, phone?: string | null | undefined, createdAt: number, updatedAt: number } | null | undefined, credentials?: { __typename?: 'Credential', accessToken: string, tokenType: string, client: string, expiry: number, uid: string } | null | undefined } | null | undefined };
+
 export type LoginWithFacebookMutationVariables = Types.Exact<{
   token: Types.Scalars['String'];
   pushToken?: Types.InputMaybe<Types.Scalars['String']>;

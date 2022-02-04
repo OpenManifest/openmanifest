@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Appbar, IconButton, Chip } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
-import { DrawerActions } from '@react-navigation/native';
+import { DrawerActions, useNavigation } from '@react-navigation/core';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import SetupWarning from './SetupWarning';
@@ -11,11 +11,12 @@ interface IAppBarProps extends StackHeaderProps {
 }
 
 function AppBar(props: IAppBarProps) {
-  const { navigation, hideWarnings, back, options } = props;
+  const { hideWarnings, back, options } = props;
   const { palette, theme } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
   const { currentUser, loading, dropzone } = useCurrentDropzone();
 
+  const navigation = useNavigation();
   return (
     <>
       <Appbar.Header
@@ -77,7 +78,9 @@ function AppBar(props: IAppBarProps) {
                 dispatch(actions.forms.rig.setOriginal(currentUser.user.rigs[0]));
               }
 
-              navigation.navigate('UserSetupWizard');
+              navigation.navigate('Wizards', {
+                screen: 'UserWizardScreen',
+              });
             }
           }}
         />

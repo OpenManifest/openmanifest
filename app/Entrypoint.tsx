@@ -100,6 +100,18 @@ function Content() {
 
   const isDarkMode = Appearance.getColorScheme() === 'dark';
 
+  /// Listen to changes in Appearance and set dark mode theme in state
+  React.useEffect(() => {
+    const subscription = Appearance.addChangeListener(({ colorScheme }) => {
+      if (colorScheme === 'dark' && !state.isDarkMode) {
+        dispatch(actions.global.toggleDarkMode());
+      } else if (!isDarkMode && state.isDarkMode) {
+        dispatch(actions.global.toggleDarkMode());
+      }
+    });
+    return () => subscription?.remove?.();
+  }, [dispatch, isDarkMode, state.isDarkMode, state.theme.colors.background]);
+
   React.useEffect(() => {
     if (isDarkMode && !state.isDarkMode) {
       dispatch(actions.global.toggleDarkMode());
