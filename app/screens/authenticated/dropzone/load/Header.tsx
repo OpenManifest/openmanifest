@@ -6,7 +6,6 @@ import isAfter from 'date-fns/isAfter';
 import { LinearGradient } from 'expo-linear-gradient';
 import { LoadEssentialsFragment } from 'app/api/operations';
 import { useAppSelector } from 'app/state';
-import isSameDay from 'date-fns/isSameDay';
 import { format } from 'date-fns/esm';
 import Countdown from '../manifest/LoadCard/Countdown';
 
@@ -45,12 +44,10 @@ export default function UserHeader(props: ILoadHeader) {
           )}
         </View>
         <View style={styles.titleContainer}>
-          <Title style={styles.title}>
-            Load #{load?.loadNumber}
-            {load?.createdAt && !isSameDay(new Date(), load.createdAt * 1000)
-              ? `  (${format(load.createdAt * 1000, 'dd LLLL, yyyy')})`
-              : null}
-          </Title>
+          <Title style={styles.title}>Load #{load?.loadNumber}</Title>
+          <Paragraph style={styles.paragraph}>
+            {load?.createdAt && format(load.createdAt * 1000, 'dd LLLL, yyyy')}
+          </Paragraph>
           {RenderBadges && width > 600 ? (
             <RenderBadges />
           ) : (

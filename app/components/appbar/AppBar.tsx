@@ -45,7 +45,10 @@ function AppBar(props: IAppBarProps) {
               justifyContent: 'center',
             }}
             mode="flat"
-            textStyle={{ color: palette.onSurface }}
+            textStyle={{
+              color: palette.onSurface,
+              fontFamily: 'Roboto_700Bold',
+            }}
           >{`$${currentUser?.credits || 0}`}</Chip>
         )}
       </Appbar.Header>

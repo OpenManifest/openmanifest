@@ -7,6 +7,7 @@ import { DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme } from '
 import { Theme } from 'react-native-paper/lib/typescript/types';
 import color from 'color';
 import { primaryColor } from 'app/constants/Colors';
+import merge from 'lodash/merge';
 import { DropzoneExtensiveFragment, UserDetailedFragment } from '../api/operations';
 import { Credential } from '../api/schema.d';
 
@@ -170,25 +171,19 @@ export default createSlice({
         },
       };
     },
-    toggleDarkMode: (state: IGlobalState) => {
-      state.isDarkMode = !state.isDarkMode;
-      state.theme = state.isDarkMode
-        ? {
-            ...CombinedDarkTheme,
-            colors: {
-              ...CombinedDarkTheme.colors,
-              primary: state.currentDropzone?.primaryColor || CombinedDarkTheme.colors.primary,
-              accent: state.currentDropzone?.secondaryColor || CombinedDarkTheme.colors.accent,
-            },
-          }
-        : {
-            ...CombinedDefaultTheme,
-            colors: {
-              ...CombinedDefaultTheme.colors,
-              primary: state.currentDropzone?.primaryColor || CombinedDefaultTheme.colors.primary,
-              accent: state.currentDropzone?.secondaryColor || CombinedDefaultTheme.colors.accent,
-            },
-          };
+    setAppearance: (state: IGlobalState, action: PayloadAction<'light' | 'dark'>): IGlobalState => {
+      const current = state.isDarkMode ? 'dark' : 'light';
+      state.isDarkMode = current === 'dark';
+
+      if (current === action.payload) {
+        return state;
+      }
+      state.theme = merge({}, state.isDarkMode ? CombinedDarkTheme : CombinedDefaultTheme, {
+        colors: {
+          primary: state.currentDropzone?.primaryColor || CombinedDarkTheme.colors.primary,
+          accent: state.currentDropzone?.secondaryColor || CombinedDarkTheme.colors.accent,
+        },
+      });
 
       state.palette = {
         ...state.theme.colors,
@@ -203,6 +198,7 @@ export default createSlice({
           light: color(state.theme.colors.accent).lighten(0.6).hex(),
         },
       };
+      return state;
     },
     logout: (state: IGlobalState) => {
       Object.keys(initialState).forEach((key) => {

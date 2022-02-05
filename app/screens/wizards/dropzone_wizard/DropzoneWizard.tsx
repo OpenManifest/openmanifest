@@ -21,6 +21,7 @@ import ThemingStep from './steps/Theming';
 import DoneStep from './steps/Done';
 import PermissionStep from './steps/Permissions';
 import TicketTypeStep from './steps/TicketType';
+import LogoStep from './steps/Logo';
 
 function DropzoneSetupScreen() {
   const aircraft = useAppSelector((root) => root.forms.plane);
@@ -110,7 +111,7 @@ function DropzoneSetupScreen() {
       ? await mutationCreateDropzone.mutate({
           federationId: Number(dropzone.fields.federation.value?.id),
           name: dropzone.fields.name.value || '',
-          banner: '',
+          banner: dropzone.fields.banner.value || '',
           primaryColor: dropzone.fields.primaryColor.value,
           secondaryColor: dropzone.fields.secondaryColor.value,
           lat: dropzone.fields.lat.value as number,
@@ -166,6 +167,7 @@ function DropzoneSetupScreen() {
     }
   }, [
     dispatch,
+    dropzone.fields.banner.value,
     dropzone.fields.federation.value?.id,
     dropzone.fields.lat.value,
     dropzone.fields.lng.value,
@@ -323,6 +325,10 @@ function DropzoneSetupScreen() {
         },
         { component: LocationStep },
         { component: ThemingStep, onNext: onThemingNext },
+        {
+          onNext: Promise.resolve,
+          component: LogoStep,
+        },
         { component: AircraftStep, onNext: onAircraftNext },
         { component: TicketTypeStep, onNext: onTicketTypeNext },
         {

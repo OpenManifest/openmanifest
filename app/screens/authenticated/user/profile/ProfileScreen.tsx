@@ -1,7 +1,7 @@
 import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
-import { Divider, ProgressBar } from 'react-native-paper';
+import { Chip, Divider, ProgressBar } from 'react-native-paper';
 import Skeleton from 'app/components/Skeleton';
 
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
@@ -18,6 +18,8 @@ import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
 import useRestriction from 'app/hooks/useRestriction';
 import { useUpdateUserMutation } from 'app/api/reflection';
 
+import { errorColor, successColor } from 'app/constants/Colors';
+import { format } from 'date-fns';
 import Header from './UserInfo/Header';
 import InfoGrid from './UserInfo/InfoGrid';
 
@@ -43,13 +45,40 @@ export default function ProfileScreen() {
   const pickImage = useImagePicker();
   const isFocused = useIsFocused();
   const [defaultIndex, onChangeIndex] = React.useState(1);
+  const onClickAccessAndMembership = React.useCallback(() => {
+    if (!dropzoneUser) {
+      return;
+    }
+    dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser));
+  }, [dispatch, dropzoneUser]);
+  const headerRight = React.useCallback(
+    () =>
+      !currentUser?.expiresAt ? null : (
+        <Chip
+          onPress={onClickAccessAndMembership}
+          style={{
+            marginRight: 16,
+            height: 24,
+            backgroundColor:
+              currentUser.expiresAt * 1000 < new Date().getTime() ? errorColor : successColor,
+          }}
+          textStyle={{ color: 'white', marginTop: 0 }}
+        >
+          {format(currentUser.expiresAt * 1000, 'dd/MM/yy')}
+        </Chip>
+      ),
+    [currentUser?.expiresAt, onClickAccessAndMembership]
+  );
 
   React.useEffect(() => navigation.setOptions({ title: 'Profile' }), [navigation]);
   React.useEffect(() => {
     if (isFocused) {
+      navigation.setOptions({
+        headerRight,
+      });
       refetch();
     }
-  }, [isFocused, refetch]);
+  }, [headerRight, isFocused, navigation, refetch]);
 
   const [mutationUpdateUser] = useUpdateUserMutation();
 
@@ -187,7 +216,7 @@ export default function ProfileScreen() {
           open={forms.user.open}
         />
       </View>
-      <UserActionsButton {...{ dropzoneUser }} />
+      <UserActionsButton {...{ dropzoneUser }} visible={isFocused} />
     </>
   );
 }

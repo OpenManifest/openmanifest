@@ -104,7 +104,6 @@ function JumpRunMap(props: IJumpRunMapProps) {
 
   const position = React.useMemo(() => ({ x: 0, y: 0 }), []);
   const coords = React.useMemo(() => (lat && lng ? { lat, lng } : undefined), [lat, lng]);
-  return null;
 
   return (
     <View

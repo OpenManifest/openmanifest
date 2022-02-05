@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { Chip, Menu, useTheme } from 'react-native-paper';
@@ -31,16 +32,23 @@ export default function PilotChip(props: IPilotChipSelect) {
   return !allowed ? (
     <Chip
       mode="outlined"
-      icon="radio-handheld"
       selectedColor={color}
       style={{
+        padding: 8,
         marginHorizontal: 4,
         backgroundColor,
         height: small ? 25 : undefined,
         alignItems: 'center',
         borderColor: color || undefined,
       }}
-      textStyle={{ color, fontSize: small ? 12 : undefined }}
+      icon={(iconProps) => (
+        <MaterialCommunityIcons
+          name="shield-airplane"
+          {...iconProps}
+          style={{ marginTop: 0, marginBottom: 3 }}
+        />
+      )}
+      textStyle={{ marginTop: 0, color, fontSize: small ? 12 : undefined }}
     >
       {value?.user?.name || 'No pilot'}
     </Chip>
@@ -51,16 +59,26 @@ export default function PilotChip(props: IPilotChipSelect) {
       anchor={
         <Chip
           mode="outlined"
-          icon="shield-airplane"
+          icon={(iconProps) => (
+            <MaterialCommunityIcons
+              name="shield-airplane"
+              {...iconProps}
+              style={{ marginTop: 0, marginBottom: 3 }}
+            />
+          )}
           selectedColor={color}
           style={{
-            marginHorizontal: 4,
             backgroundColor,
             height: small ? 25 : undefined,
             alignItems: 'center',
             borderColor: color || undefined,
           }}
-          textStyle={{ color, fontSize: small ? 12 : undefined }}
+          textStyle={{
+            marginTop: 0,
+            alignSelf: 'center',
+            color,
+            fontSize: small ? 12 : undefined,
+          }}
           onPress={() => setMenuOpen(true)}
         >
           {value?.id ? value?.user?.name : 'No pilot'}

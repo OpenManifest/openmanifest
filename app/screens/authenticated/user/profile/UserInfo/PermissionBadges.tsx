@@ -18,6 +18,7 @@ import {
   QueryDropzoneUserProfileDocument,
   useGrantPermissionMutation,
   useRevokePermissionMutation,
+  DropzoneUsersDetailedDocument,
 } from 'app/api/reflection';
 // eslint-disable-next-line max-len
 import Badge, { IBadgeProps } from 'app/components/Badge';
@@ -52,6 +53,8 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
           earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
         },
       },
+      { query: DropzoneUsersDocument },
+      { query: DropzoneUsersDetailedDocument },
       {
         query: QueryDropzoneUserProfileDocument,
         variables: {

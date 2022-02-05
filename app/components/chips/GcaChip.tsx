@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { Chip, Menu, useTheme } from 'react-native-paper';
@@ -33,7 +34,6 @@ export default function GCAChip(props: IGCAChipSelect) {
   return !allowed ? (
     <Chip
       mode="outlined"
-      icon="radio-handheld"
       selectedColor={color}
       style={{
         marginHorizontal: 4,
@@ -42,7 +42,14 @@ export default function GCAChip(props: IGCAChipSelect) {
         alignItems: 'center',
         borderColor: color || undefined,
       }}
-      textStyle={{ color, fontSize: small ? 12 : undefined }}
+      icon={(iconProps) => (
+        <MaterialCommunityIcons
+          name="radio-handheld"
+          {...iconProps}
+          style={{ marginTop: 0, marginBottom: 3 }}
+        />
+      )}
+      textStyle={{ marginTop: 0, color, fontSize: small ? 12 : undefined }}
     >
       {value?.user?.name || 'No gca'}
     </Chip>
@@ -53,7 +60,13 @@ export default function GCAChip(props: IGCAChipSelect) {
       anchor={
         <Chip
           mode="outlined"
-          icon="radio-handheld"
+          icon={(iconProps) => (
+            <MaterialCommunityIcons
+              name="radio-handheld"
+              {...iconProps}
+              style={{ marginTop: 0, marginBottom: 3 }}
+            />
+          )}
           selectedColor={color}
           onPress={() => setMenuOpen(true)}
           style={{
@@ -63,7 +76,7 @@ export default function GCAChip(props: IGCAChipSelect) {
             alignItems: 'center',
             borderColor: color || undefined,
           }}
-          textStyle={{ color, fontSize: small ? 12 : undefined }}
+          textStyle={{ marginTop: 0, color, fontSize: small ? 12 : undefined }}
         >
           {value?.id ? value?.user?.name : 'No gca'}
         </Chip>

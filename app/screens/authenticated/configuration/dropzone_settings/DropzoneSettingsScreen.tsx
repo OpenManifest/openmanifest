@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { Button, ProgressBar } from 'react-native-paper';
+import { FAB, ProgressBar } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import useMutationUpdateDropzone from 'app/api/hooks/useMutationUpdateDropzone';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 
-import { View } from 'app/components/Themed';
-import { Dropzone } from 'app/api/schema.d';
+import { Dropzone, Permission } from 'app/api/schema.d';
 import DropzoneForm from 'app/components/forms/dropzone/DropzoneForm';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import useRestriction from 'app/hooks/useRestriction';
+import { DropzoneEssentialsFragment } from 'app/api/operations';
 
 export default function UpdateDropzoneScreen() {
   const state = useAppSelector((root) => root.forms.dropzone);
@@ -140,25 +141,40 @@ export default function UpdateDropzoneScreen() {
     currentUser?.user.moderationRole,
   ]);
 
+  const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
+
+  const isDirty: boolean = React.useMemo(() => {
+    return ['banner', 'isCreditSystemEnabled', 'name', 'primaryColor', 'lat', 'lng'].some(
+      (field) =>
+        state.original &&
+        field in state.original &&
+        state.original[field as keyof DropzoneEssentialsFragment] !==
+          state.fields[field as keyof typeof state.fields].value
+    );
+  }, [state]);
   return (
     <>
       <ProgressBar indeterminate color={globalState.theme.colors.primary} visible={loading} />
       <ScrollableScreen
-        style={{ backgroundColor: globalState.theme.colors.background }}
+        style={{
+          width: '100%',
+          paddingTop: 0,
+          marginTop: 0,
+          backgroundColor: globalState.theme.colors.background,
+        }}
         contentContainerStyle={styles.content}
       >
         <DropzoneForm loading={loading} />
-        <View style={styles.fields}>
-          <Button
-            mode="contained"
-            disabled={mutationUpdateDropzone.loading}
-            onPress={onSave}
-            loading={mutationUpdateDropzone.loading}
-          >
-            Save
-          </Button>
-        </View>
       </ScrollableScreen>
+      <FAB
+        style={[styles.fab, { backgroundColor: globalState.theme.colors.primary }]}
+        visible={Boolean(canUpdateDropzone && isDirty)}
+        disabled={!isDirty || mutationUpdateDropzone.loading}
+        small
+        icon="check"
+        onPress={onSave}
+        label="Save"
+      />
     </>
   );
 }
@@ -169,14 +185,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     display: 'flex',
   },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+  },
   content: {
     display: 'flex',
     flexGrow: 1,
-    alignSelf: 'center',
-    alignItems: 'center',
+    paddingLeft: 0,
+    paddingRight: 0,
+    paddingTop: 0,
+    marginTop: 0,
     width: '100%',
-    maxWidth: 500,
-    padding: 48,
   },
   title: {
     fontSize: 20,

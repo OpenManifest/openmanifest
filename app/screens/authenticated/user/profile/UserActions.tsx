@@ -16,9 +16,10 @@ type PropsOf<T> = T extends React.ComponentType<infer P> ? P : never;
 type FABActions = PropsOf<typeof FAB.Group>['actions'];
 interface IUserActionsButtonProps {
   dropzoneUser?: DropzoneUserProfileFragment | null;
+  visible?: boolean;
 }
 export default function UserActionsButton(props: IUserActionsButtonProps) {
-  const { dropzoneUser } = props;
+  const { dropzoneUser, visible } = props;
   const { currentUser } = useCurrentDropzone();
   const [fabOpen, setFabOpen] = React.useState(false);
 
@@ -201,7 +202,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
     <FAB.Group
       testID="user-profile-fab"
       open={fabOpen}
-      visible={!!dropzoneUser?.id}
+      visible={(!!dropzoneUser?.id && visible) || false}
       icon={fabOpen ? 'close' : 'account-edit'}
       fabStyle={{
         marginLeft: 16,
