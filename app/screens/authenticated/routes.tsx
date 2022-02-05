@@ -113,7 +113,7 @@ export default function AuthenticatedTabBar() {
               style={{
                 borderTopColor: 'gray',
                 borderTopWidth: StyleSheet.hairlineWidth,
-                backgroundColor: theme.colors.background,
+                backgroundColor: theme.dark ? theme.colors.background : theme.colors.surface,
               }}
               {...props}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -140,7 +140,7 @@ export default function AuthenticatedTabBar() {
           ),
         },
       }),
-    [tabs, theme.colors.background]
+    [tabs, theme.colors.background, theme.colors.surface, theme.dark]
   );
 
   const screenOptions = React.useMemo(

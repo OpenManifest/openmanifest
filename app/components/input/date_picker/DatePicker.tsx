@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import * as React from 'react';
 import { List, Modal } from 'react-native-paper';
-import { DatePickerModal } from 'react-native-paper-dates/src';
+import { DatePickerModal } from 'react-native-paper-dates';
 
 interface IDatepicker {
   label?: string;

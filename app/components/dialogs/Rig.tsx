@@ -20,7 +20,11 @@ export default function RigDialog(props: IRigDialog) {
   const state = useAppSelector((root) => root.forms.rig);
 
   const updateRig = useMutationUpdateRig({
-    onSuccess: (payload) => requestAnimationFrame(() => onSuccess()),
+    onSuccess: (payload) =>
+      requestAnimationFrame(() => {
+        console.log(payload);
+        onSuccess();
+      }),
 
     onFieldError: (field, message) =>
       dispatch(actions.forms.rig.setFieldError([field as keyof RigFields, message])),
@@ -39,7 +43,7 @@ export default function RigDialog(props: IRigDialog) {
 
   const onSave = React.useCallback(async () => {
     if (state.original?.id) {
-      await updateRig.mutate({
+      const params = {
         id: Number(state.original?.id),
         name: state.fields.name.value,
         make: state.fields.make.value,
@@ -50,9 +54,12 @@ export default function RigDialog(props: IRigDialog) {
         repackExpiresAt: state.fields.repackExpiresAt.value,
         userId: userId ? Number(userId) : null,
         dropzoneId: dropzoneId ? Number(dropzoneId) : null,
-      });
+      };
+      console.log(params);
+      const d = await updateRig.mutate(params);
+      console.log(d);
     } else {
-      await createRig.mutate({
+      const x = await createRig.mutate({
         name: state.fields.name.value,
         make: state.fields.make.value,
         model: state.fields.model.value,
@@ -63,6 +70,7 @@ export default function RigDialog(props: IRigDialog) {
         userId: userId ? Number(userId) : null,
         dropzoneId: dropzoneId ? Number(dropzoneId) : null,
       });
+      console.log(x);
     }
   }, [
     createRig,
@@ -94,7 +102,7 @@ export default function RigDialog(props: IRigDialog) {
       snapPoints={snapPoints}
       onClose={onDialogClose}
       buttonAction={onSave}
-      buttonLabel="Save"
+      buttonLabel="Savezz"
       loading={isLoading}
     >
       <RigForm showTypeSelect={!!dropzoneId} />

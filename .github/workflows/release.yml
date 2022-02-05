@@ -42,7 +42,7 @@ jobs:
           expo-version: 4.x
           token: ${{ secrets.EXPO_TOKEN }}
       - run: yarn install
-      - run: exit 0 || yarn ts:graphql:staging && yarn typecheck
+      - run: yarn ts:graphql:staging && yarn typecheck
         name: Ensure server compatibility
       - run: yarn expo:publish:staging
         env:

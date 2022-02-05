@@ -8,7 +8,15 @@ import {
 
 export type UserFields = Pick<
   UserDetailedFragment & { license?: LicenseDetailsFragment },
-  'exitWeight' | 'rigs' | 'name' | 'phone' | 'email' | 'apfNumber' | 'nickname' | 'license'
+  | 'exitWeight'
+  | 'rigs'
+  | 'name'
+  | 'phone'
+  | 'email'
+  | 'apfNumber'
+  | 'nickname'
+  | 'license'
+  | 'image'
 >;
 
 interface IUserEditState {
@@ -36,6 +44,10 @@ export const initialState: IUserEditState = {
   fields: {
     exitWeight: {
       value: '',
+      error: null,
+    },
+    image: {
+      value: null,
       error: null,
     },
     apfNumber: {

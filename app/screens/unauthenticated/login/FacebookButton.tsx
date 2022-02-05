@@ -47,6 +47,7 @@ export function useLoginWithFacebook(
         }
       }
     } catch (e) {
+      console.error(e);
       if (e instanceof Error) {
         dispatch(
           actions.notifications.showSnackbar({

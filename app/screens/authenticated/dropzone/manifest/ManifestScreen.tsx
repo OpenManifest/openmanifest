@@ -206,7 +206,8 @@ export default function ManifestScreen() {
   const data = React.useMemo(
     () =>
       [
-        !currentUser?.hasExitWeight || !currentUser?.hasLicense || !currentUser.user?.name
+        !initialLoading &&
+        (!currentUser?.hasExitWeight || !currentUser?.hasLicense || !currentUser.user?.name)
           ? setupProfileCardFragment
           : null,
         ...(initialLoading ? new Array(5).fill(loadingFragment) : loads),

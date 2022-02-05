@@ -19,6 +19,7 @@ import ReserveRepackStep from './steps/ReserveRepack';
 import AskForRigStep from './steps/AskForRig';
 import WingloadingStep from './steps/Wingloading';
 import DoneStep from './steps/Done';
+import AvatarStep from './steps/Avatar';
 
 function UserWizardScreen() {
   const userForm = useAppSelector((root) => root.forms.user);
@@ -126,6 +127,9 @@ function UserWizardScreen() {
         },
       });
       if (response.data?.joinFederation?.errors) {
+        response.data?.joinFederation?.errors?.map((message) =>
+          dispatch(actions.forms.user.setFieldError(['license', message]))
+        );
         throw new Error();
       }
     } catch (e) {
@@ -248,6 +252,28 @@ function UserWizardScreen() {
     mutationUpdateUser,
   ]);
 
+  const onImageNext = React.useCallback(async () => {
+    try {
+      if (
+        userForm.fields.image?.value &&
+        userForm.fields.image?.value !== userForm.original?.image
+      ) {
+        // Upload image
+        await mutationUpdateUser.mutate({
+          id: Number(userForm?.original?.id),
+          image: userForm.fields.image.value,
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, [
+    mutationUpdateUser,
+    userForm.fields.image.value,
+    userForm.original?.id,
+    userForm.original?.image,
+  ]);
+
   return (
     <Wizard
       name="UserWizard"
@@ -264,6 +290,7 @@ function UserWizardScreen() {
           },
         },
         { component: NicknameStep, onNext: onNicknameNext },
+        { component: AvatarStep, onNext: onImageNext },
         { component: FederationStep, onNext: onFederationNext },
         userForm.federation?.value?.id && userForm?.federation?.value?.name?.toLowerCase() === 'apf'
           ? { component: FederationNumberStep, onNext: onFederationNumberNext }

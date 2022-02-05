@@ -260,7 +260,13 @@ export default function DrawerMenu() {
             <Drawer.Item
               key={`${edge?.node?.id}-dz`}
               label={edge?.node?.name || ''}
-              icon="map-marker"
+              icon={
+                edge?.node?.banner
+                  ? ({ size }) => (
+                      <Avatar.Image source={{ uri: edge?.node?.banner as string }} {...{ size }} />
+                    )
+                  : 'map-marker'
+              }
               active={dropzone?.id === edge?.node?.id}
               onPress={() => {
                 if (edge?.node) {

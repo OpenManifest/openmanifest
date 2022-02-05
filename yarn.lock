@@ -13327,9 +13327,10 @@ react-native-pager-view@5.4.9:
   resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-5.4.9.tgz#c0d40847cfeda5a4e729b53271b0ee0fedff3eb5"
   integrity sha512-D6tzxpwMGdl6CXgtskGWhKRc5cJakCazESRGt7PkqnpyiH3N35ft1KmR82pCSQetAFlytFiToeu3a/dG5CELvA==
 
-react-native-paper-dates@web-ridge/react-native-paper-dates:
+react-native-paper-dates@0.8.6:
   version "0.8.6"
-  resolved "https://codeload.github.com/web-ridge/react-native-paper-dates/tar.gz/18e18998ff9d917f36fce620e1e930ff3c35a743"
+  resolved "https://registry.yarnpkg.com/react-native-paper-dates/-/react-native-paper-dates-0.8.6.tgz#b0dee6c63ec4dc5b5ffd1f34e9a5808e3fa9ca1a"
+  integrity sha512-GmV5OStoOtiS2s4k0KRTJfTzjj53/H+AIOWN7mMyqtVMq186V0wrPxthv2wCQMKy/4fyS63E8mDdmwRiLDyAMw==
   dependencies:
     color "^3.2.1"
 
