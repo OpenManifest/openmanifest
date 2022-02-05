@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Paragraph, useTheme, IconButton } from 'react-native-paper';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import Color from 'color';
 import { useNavigation } from '@react-navigation/core';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
@@ -19,6 +19,7 @@ interface ISetupWarning {
 
 function Warning(props: { title: string; action?: () => void }) {
   const { action, title } = props;
+  const { width } = useWindowDimensions();
   const theme = useTheme();
   const textColor =
     Color(theme.colors.primary).contrast(Color(theme.colors.onSurface)) < 11
@@ -27,14 +28,16 @@ function Warning(props: { title: string; action?: () => void }) {
   return (
     <View style={[styles.warning, { backgroundColor: theme.colors.primary }]}>
       <Paragraph
-        style={{ color: textColor, flex: 7 / 10, flexGrow: 1 }}
+        style={{ width: action ? width - 56 : width, color: textColor, flexGrow: 1 }}
         adjustsFontSizeToFit
         allowFontScaling
       >
         {title}
       </Paragraph>
       {!action ? null : (
-        <IconButton icon="launch" color={textColor} onPress={action} style={{ width: 24 }} />
+        <View style={{ width: 40 }}>
+          <IconButton icon="launch" color={textColor} onPress={action} style={{ width: 24 }} />
+        </View>
       )}
     </View>
   );
@@ -54,6 +57,7 @@ export default function SetupWarning(props: ISetupWarning) {
   } = props;
   const navigation = useNavigation();
   const { currentUser } = useCurrentDropzone();
+
   if (loading) {
     return null;
   }
@@ -113,6 +117,6 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: 'black',
     justifyContent: 'space-between',
-    paddingHorizontal: 32,
+    paddingHorizontal: 16,
   },
 });

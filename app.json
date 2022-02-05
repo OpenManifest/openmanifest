@@ -34,7 +34,7 @@
         "fbAppUrl": "https://openmanifest.org",
         "facebookScheme": "fb686479516065674"
       },
-      "buildNumber": "33",
+      "buildNumber": "34",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
       "icon": "./assets/images/logo-black-white-bg.png",

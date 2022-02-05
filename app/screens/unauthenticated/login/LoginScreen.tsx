@@ -23,6 +23,8 @@ import FacebookButton, { useLoginWithFacebook } from './FacebookButton';
 import AppleButton, { useLoginWithApple } from './AppleButton';
 import logoDark from '../../../../assets/images/logo-black.png';
 import logoLight from '../../../../assets/images/logo-white.png';
+import backgroundDark from '../../../../assets/images/webb-dark.png';
+import backgroundLight from '../../../../assets/images/pattern.png';
 
 export default function LoginScreen() {
   const state = useAppSelector((root) => root.screens.login);
@@ -84,13 +86,7 @@ export default function LoginScreen() {
     loginWithFacebookMutation?.loading || data?.loading || loginWithAppleMutation?.loading;
   return (
     <ImageBackground
-      source={
-        theme.dark
-          ? // eslint-disable-next-line global-require
-            require('assets/images/webb-dark.png')
-          : // eslint-disable-next-line global-require
-            require('assets/images/pattern.png')
-      }
+      source={theme.dark ? backgroundDark : backgroundLight}
       style={styles.container}
       resizeMode="repeat"
     >
@@ -152,6 +148,15 @@ export default function LoginScreen() {
             >
               {loading ? 'Authenticating...' : 'Log in'}
             </Button>
+            {loading ? null : (
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Wizards', { screen: 'RecoverPasswordScreen' })}
+              >
+                <Text style={theme.dark ? styles.forgotPasswordDark : styles.forgotPassword}>
+                  Forgot your password?
+                </Text>
+              </TouchableOpacity>
+            )}
 
             <Divider>or</Divider>
             <FacebookButton
@@ -169,13 +174,6 @@ export default function LoginScreen() {
             >
               Sign up
             </Button>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Wizards', { screen: 'RecoverPasswordScreen' })}
-            >
-              <Text style={theme.dark ? styles.forgotPasswordDark : styles.forgotPassword}>
-                Forgot your password?
-              </Text>
-            </TouchableOpacity>
           </Card.Content>
         </Card>
       </KeyboardAvoidingView>
@@ -212,9 +210,11 @@ const styles = StyleSheet.create({
   },
 
   forgotPassword: {
+    marginTop: 8,
     color: 'rgb(50, 50, 50)',
   },
   forgotPasswordDark: {
+    marginTop: 8,
     color: 'rgb(180, 180, 180)',
   },
 
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   button: {
-    marginTop: 10,
+    marginVertical: 4,
     backgroundColor: 'white',
     borderColor: primaryColor,
     borderWidth: 1,
