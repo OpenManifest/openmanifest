@@ -40,14 +40,14 @@ export default function SlotCard(props: ISlotCardProps) {
               <Avatar.Image
                 style={{ backgroundColor: theme.colors.surface }}
                 source={{ uri: slot?.dropzoneUser?.user.image }}
-                size={24}
+                size={42}
               />
             ) : (
               <Avatar.Icon
                 style={{ backgroundColor: theme.colors.surface }}
                 color={theme.dark ? theme.colors.text : theme.colors.primary}
                 icon="account"
-                size={40}
+                size={42}
               />
             )
           }

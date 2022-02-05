@@ -17,6 +17,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { errorColor, successColor } from 'app/constants/Colors';
 
 import { Permission } from 'app/api/schema.d';
+import { AvailableRigsDocument, DropzoneUsersDetailedDocument } from 'app/api/reflection';
 import { useUserNavigation } from '../useUserNavigation';
 
 export interface IRigCardProps {
@@ -35,6 +36,9 @@ export default function RigCard(props: IRigCardProps) {
   const pickImage = useImagePicker();
 
   const updateRig = useMutationUpdateRig({
+    mutation: {
+      refetchQueries: [AvailableRigsDocument, DropzoneUsersDetailedDocument],
+    },
     onSuccess: () => {
       setUploading(false);
       onSuccessfulImageUpload?.();
@@ -122,6 +126,7 @@ export default function RigCard(props: IRigCardProps) {
               mode="outlined"
               icon="camera"
               style={{ height: 24, alignItems: 'center' }}
+              textStyle={{ marginTop: 0 }}
               onPress={() => {
                 if (canUpdateRig) {
                   setPackingCardMenuOpen(true);

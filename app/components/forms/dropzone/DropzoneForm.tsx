@@ -1,20 +1,33 @@
 /* eslint-disable max-len */
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, TextInput, HelperText, Card, List, Checkbox, useTheme } from 'react-native-paper';
+import {
+  Button,
+  TextInput,
+  HelperText,
+  Card,
+  List,
+  Checkbox,
+  useTheme,
+  TouchableRipple,
+  Avatar,
+  Title,
+} from 'react-native-paper';
 import SkeletonContent from 'app/components/Skeleton';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import LottieView from 'app/components/LottieView';
 import { warningColor } from 'app/constants/Colors';
 import { useFederationsQuery } from 'app/api/reflection';
 import useImagePicker from 'app/hooks/useImagePicker';
+import { useNavigation } from '@react-navigation/core';
 import ColorPicker from '../../input/colorpicker';
 import { PhonePreview, WebPreview } from '../../theme_preview';
 import FederationSelect from '../../input/dropdown_select/FederationSelect';
 import LocationPicker from '../../input/LocationPicker';
-import weatherBackground from '../../../../assets/images/weather.png';
-import nightBackground from '../../../../assets/images/night.png';
+import imagePickDark from '../../../../assets/images/image-pick.json';
+import imagePickLight from '../../../../assets/images/image-pick-light.json';
 
 interface IDropzoneForm {
   loading: boolean;
@@ -45,36 +58,59 @@ export default function DropzoneForm(props: IDropzoneForm) {
     }
   }, [dispatch, pickImage]);
 
-  const weatherBoardImage = theme.dark ? nightBackground : weatherBackground;
+  const navigation = useNavigation();
+
+  React.useEffect(() => {
+    navigation.setOptions({ title: state.fields.name.value });
+  }, [navigation, state.fields.name.value]);
 
   return (
     <>
       <SkeletonContent
         isLoading={loading || outsideLoading}
-        containerStyle={styles.skeletonCard}
+        containerStyle={[styles.skeletonCard, { marginTop: 0, paddingHorizontal: 0 }]}
         layout={[{ key: 'box', height: 300, width: '100%' }]}
       >
-        <Card style={styles.card}>
-          <Card.Title title="Banner" />
-          <Card.Cover
-            source={
-              state.fields.banner.value
-                ? {
-                    uri: state.fields.banner.value,
-                  }
-                : weatherBoardImage
-            }
-            resizeMode="cover"
-            style={{ width: '100%' }}
-          />
-          <Card.Content style={{ paddingLeft: 0, paddingRight: 0 }}>
-            <HelperText type="info">
+        <Card
+          style={[
+            styles.card,
+            {
+              paddingLeft: 0,
+              paddingRight: 0,
+              paddingHorizontal: 0,
+              marginLeft: 0,
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+            },
+          ]}
+        >
+          <Card.Content style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <TouchableRipple onPress={onPickImage} style={{ width: 185 }}>
+              {!state?.fields?.banner?.value ? (
+                <LottieView
+                  style={{ height: 175, width: 175 }}
+                  autoPlay
+                  loop={false}
+                  // eslint-disable-next-line global-require
+                  source={theme.dark ? imagePickLight : imagePickDark}
+                />
+              ) : (
+                <Avatar.Image
+                  size={175}
+                  source={{ uri: state?.fields?.banner?.value }}
+                  style={{
+                    borderWidth: StyleSheet.hairlineWidth,
+                    backgroundColor: theme.colors.primary,
+                  }}
+                />
+              )}
+            </TouchableRipple>
+            <Title>{state.fields.name.value}</Title>
+            <HelperText type="info" style={{ marginTop: 16 }}>
               Your banner is displayed on the weather board and on the dropzone selection screen
             </HelperText>
           </Card.Content>
-          <Card.Actions style={{ justifyContent: 'flex-end' }}>
-            <Button onPress={onPickImage}>Upload</Button>
-          </Card.Actions>
         </Card>
       </SkeletonContent>
       <SkeletonContent
@@ -287,16 +323,19 @@ export default function DropzoneForm(props: IDropzoneForm) {
 const styles = StyleSheet.create({
   skeletonCard: {
     marginVertical: 16,
+    paddingHorizontal: 24,
     width: '100%',
   },
   skeletonCardColorPicker: {
     marginVertical: 16,
     minHeight: 200,
     width: '100%',
+    paddingHorizontal: 24,
   },
   skeletonCardCheckbox: {
     minHeight: 116,
     marginVertical: 16,
+    paddingHorizontal: 24,
     width: '100%',
   },
   card: {

@@ -98,29 +98,19 @@ function Content() {
     console.log(intendedRoute);
   };
 
-  const isDarkMode = Appearance.getColorScheme() === 'dark';
+  const listener = React.useRef<ReturnType<typeof Appearance.addChangeListener>>(
+    Appearance.addChangeListener(({ colorScheme }) => {
+      if (colorScheme) {
+        dispatch(actions.global.setAppearance(colorScheme));
+      }
+    })
+  );
 
   /// Listen to changes in Appearance and set dark mode theme in state
   React.useEffect(() => {
-    const subscription = Appearance.addChangeListener(({ colorScheme }) => {
-      if (colorScheme === 'dark' && !state.isDarkMode) {
-        dispatch(actions.global.toggleDarkMode());
-      } else if (!isDarkMode && state.isDarkMode) {
-        dispatch(actions.global.toggleDarkMode());
-      }
-    });
-    return () => subscription?.remove?.();
-  }, [dispatch, isDarkMode, state.isDarkMode, state.theme.colors.background]);
-
-  React.useEffect(() => {
-    if (isDarkMode && !state.isDarkMode) {
-      dispatch(actions.global.toggleDarkMode());
-    } else if (!isDarkMode && state.isDarkMode) {
-      dispatch(actions.global.toggleDarkMode());
-    } else {
-      dispatch(actions.global.setPrimaryColor(state.theme.colors.primary));
-    }
-  }, [dispatch, isDarkMode, state.isDarkMode, state.theme.colors.primary]);
+    const handler = listener?.current;
+    return () => handler.remove?.();
+  }, [dispatch, state.isDarkMode, state.theme.colors.background]);
 
   React.useEffect(() => {
     if (Platform.OS === 'web') {

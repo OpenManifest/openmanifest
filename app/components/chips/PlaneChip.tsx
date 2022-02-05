@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { PlaneEssentialsFragment } from 'app/api/operations';
 import * as React from 'react';
 import { Chip, Menu, useTheme } from 'react-native-paper';
@@ -43,6 +44,7 @@ export default function PlaneChip(props: IPlaneChipSelect) {
       textStyle={{
         color,
         fontSize: small ? 12 : undefined,
+        marginTop: 0,
       }}
     >
       {value?.name || 'No plane'}
@@ -54,16 +56,23 @@ export default function PlaneChip(props: IPlaneChipSelect) {
       anchor={
         <Chip
           mode="outlined"
-          icon="airplane"
+          icon={(iconProps) => (
+            <MaterialCommunityIcons
+              name="airplane-takeoff"
+              {...iconProps}
+              style={{ marginTop: 0, marginBottom: 3 }}
+            />
+          )}
           selectedColor={color}
           style={{
             marginHorizontal: 4,
             backgroundColor,
+            marginTop: 0,
             height: small ? 25 : undefined,
             alignItems: 'center',
             borderColor: color || undefined,
           }}
-          textStyle={{ color, fontSize: small ? 12 : undefined }}
+          textStyle={{ marginTop: 0, color, fontSize: small ? 12 : undefined }}
           onPress={() => allowed && setMenuOpen(true)}
         >
           {value?.name || 'No plane'}

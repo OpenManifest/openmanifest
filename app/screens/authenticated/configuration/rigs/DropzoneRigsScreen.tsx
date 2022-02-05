@@ -4,7 +4,12 @@ import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar, useTheme } from 'react-native-paper';
 import { format } from 'date-fns';
 import { Switch } from 'react-native-gesture-handler';
-import { useDropzoneRigsQuery, useUpdateRigMutation } from 'app/api/reflection';
+import {
+  AvailableRigsDocument,
+  DropzoneUsersDetailedDocument,
+  useDropzoneRigsQuery,
+  useUpdateRigMutation,
+} from 'app/api/reflection';
 import { Permission } from 'app/api/schema.d';
 
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
@@ -71,6 +76,7 @@ export default function DropzoneRigsScreen() {
                       id: Number(rig.id),
                       isPublic: !rig.isPublic,
                     },
+                    refetchQueries: [AvailableRigsDocument, DropzoneUsersDetailedDocument],
                   });
 
                   if (result?.updateRig?.errors?.length) {

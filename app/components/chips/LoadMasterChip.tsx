@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SlotDetailsFragment } from 'app/api/operations';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
@@ -26,7 +27,13 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
   return !allowed ? (
     <Chip
       mode="outlined"
-      icon="shield-account"
+      icon={(iconProps) => (
+        <MaterialCommunityIcons
+          name="shield-account"
+          {...iconProps}
+          style={{ marginTop: 0, marginBottom: 3 }}
+        />
+      )}
       selectedColor={color}
       style={{
         marginHorizontal: 4,
@@ -35,7 +42,7 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
         alignItems: 'center',
         borderColor: color || undefined,
       }}
-      textStyle={{ color, fontSize: small ? 12 : undefined }}
+      textStyle={{ color, fontSize: small ? 12 : undefined, marginTop: 0 }}
     >
       {value?.user?.name || 'No loadmaster'}
     </Chip>
@@ -46,7 +53,13 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
       anchor={
         <Chip
           mode="outlined"
-          icon="shield-account"
+          icon={(iconProps) => (
+            <MaterialCommunityIcons
+              name="shield-account"
+              {...iconProps}
+              style={{ marginTop: 0, marginBottom: 3 }}
+            />
+          )}
           selectedColor={color}
           style={{
             marginHorizontal: 4,
@@ -55,7 +68,7 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
             alignItems: 'center',
             borderColor: color || undefined,
           }}
-          textStyle={{ color, fontSize: small ? 12 : undefined }}
+          textStyle={{ color, fontSize: small ? 12 : undefined, marginTop: 0 }}
           onPress={() => allowed && setMenuOpen(true)}
         >
           {value?.id ? value?.user?.name : 'No loadmaster'}
