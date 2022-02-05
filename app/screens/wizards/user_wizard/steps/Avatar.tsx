@@ -1,32 +1,27 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Avatar, Paragraph, TouchableRipple, useTheme } from 'react-native-paper';
-import * as ImagePicker from 'expo-image-picker';
 import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import useImagePicker from 'app/hooks/useImagePicker';
 
 function AvatarStep(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.user);
   const dispatch = useAppDispatch();
   const theme = useTheme();
+  const pickImage = useImagePicker();
   const onPickImage = React.useCallback(async () => {
     try {
-      const result = (await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.1,
-        base64: true,
-      })) as { base64: string };
+      const base64 = await pickImage();
 
-      if (result?.base64) {
+      if (base64) {
         // Upload image
-        dispatch(actions.forms.user.setField(['image', `data:image/jpeg;base64,${result.base64}`]));
+        dispatch(actions.forms.user.setField(['image', `data:image/jpeg;base64,${base64}`]));
       }
     } catch (e) {
       console.log(e);
     }
-  }, [dispatch]);
+  }, [dispatch, pickImage]);
 
   return (
     <Step {...props} title="Avatar">

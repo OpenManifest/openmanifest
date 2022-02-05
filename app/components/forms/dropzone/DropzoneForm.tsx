@@ -4,11 +4,11 @@ import { StyleSheet, View } from 'react-native';
 import { Button, TextInput, HelperText, Card, List, Checkbox, useTheme } from 'react-native-paper';
 import SkeletonContent from 'app/components/Skeleton';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
-import * as ImagePicker from 'expo-image-picker';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { warningColor } from 'app/constants/Colors';
 import { useFederationsQuery } from 'app/api/reflection';
+import useImagePicker from 'app/hooks/useImagePicker';
 import ColorPicker from '../../input/colorpicker';
 import { PhonePreview, WebPreview } from '../../theme_preview';
 import FederationSelect from '../../input/dropdown_select/FederationSelect';
@@ -26,6 +26,7 @@ export default function DropzoneForm(props: IDropzoneForm) {
   const { data, loading } = useFederationsQuery();
   const { currentUser } = useCurrentDropzone();
   const theme = useTheme();
+  const pickImage = useImagePicker();
 
   React.useEffect(() => {
     if (data?.federations?.length && !state.fields.federation?.value) {
@@ -35,20 +36,14 @@ export default function DropzoneForm(props: IDropzoneForm) {
 
   const onPickImage = React.useCallback(async () => {
     try {
-      const result = (await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.1,
-        base64: true,
-      })) as { base64: string };
-      dispatch(
-        actions.forms.dropzone.setField(['banner', `data:image/jpeg;base64,${result.base64}`])
-      );
+      const base64 = await pickImage();
+      if (base64) {
+        dispatch(actions.forms.dropzone.setField(['banner', `data:image/jpeg;base64,${base64}`]));
+      }
     } catch (e) {
       console.log(e);
     }
-  }, [dispatch]);
+  }, [dispatch, pickImage]);
 
   const weatherBoardImage = theme.dark ? nightBackground : weatherBackground;
 

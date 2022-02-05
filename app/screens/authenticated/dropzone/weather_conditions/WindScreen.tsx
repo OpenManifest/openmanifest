@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Button } from 'react-native-paper';
+import { Button, HelperText } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 // eslint-disable-next-line max-len
@@ -87,7 +87,7 @@ export default function WindScreen() {
         </Button>
         <Button
           loading={mutationCreateWeatherConditions.loading}
-          mode="contained"
+          mode="outlined"
           color={palette.primary.main}
           disabled={mutationCreateWeatherConditions.loading}
           style={[
@@ -100,15 +100,16 @@ export default function WindScreen() {
               marginTop: 20,
             },
           ]}
-          labelStyle={{
-            color: 'white',
-          }}
           onPress={async () => {
             onSaveConditions();
           }}
         >
-          Reload conditions from MarkSchulz.net
+          Reload Conditions
         </Button>
+        <HelperText type="info">
+          Winds aloft and temperature are retrieved from MarkSchulze.net's amazing Winds Aloft
+          service.
+        </HelperText>
       </View>
     </ScrollableScreen>
   );

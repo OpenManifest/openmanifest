@@ -1,8 +1,7 @@
 import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
-import { FlatList, Platform, RefreshControl, StyleSheet, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { Divider, ProgressBar } from 'react-native-paper';
-import * as ImagePicker from 'expo-image-picker';
 import Skeleton from 'app/components/Skeleton';
 
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
@@ -12,6 +11,7 @@ import CreditsSheet from 'app/components/dialogs/CreditsDialog/Credits';
 import RigDialog from 'app/components/dialogs/Rig';
 import EditUserSheet from 'app/components/dialogs/User';
 
+import useImagePicker from 'app/hooks/useImagePicker';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 // eslint-disable-next-line max-len
 import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
@@ -40,7 +40,7 @@ export default function ProfileScreen() {
   const { dropzoneUser, loading, refetch } = useDropzoneUserProfile(
     Number(route.params.userId) || Number(currentUser?.id)
   );
-
+  const pickImage = useImagePicker();
   const isFocused = useIsFocused();
   const [defaultIndex, onChangeIndex] = React.useState(1);
 
@@ -53,38 +53,23 @@ export default function ProfileScreen() {
 
   const [mutationUpdateUser] = useUpdateUserMutation();
 
-  React.useEffect(() => {
-    (async () => {
-      if (Platform.OS !== 'web') {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-          console.error('Sorry, we need camera roll permissions to make this work!');
-        }
-      }
-    })();
-  }, []);
-
   const onPickImage = React.useCallback(async () => {
     try {
-      const result = (await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.1,
-        base64: true,
-      })) as { base64: string };
+      const base64 = await pickImage();
 
-      // Upload image
-      await mutationUpdateUser({
-        variables: {
-          id: Number(dropzoneUser?.user?.id),
-          image: `data:image/jpeg;base64,${result.base64}`,
-        },
-      });
+      if (base64) {
+        // Upload image
+        await mutationUpdateUser({
+          variables: {
+            id: Number(dropzoneUser?.user?.id),
+            image: `data:image/jpeg;base64,${base64}`,
+          },
+        });
+      }
     } catch (e) {
       console.log(e);
     }
-  }, [dropzoneUser?.user?.id, mutationUpdateUser]);
+  }, [dropzoneUser?.user?.id, mutationUpdateUser, pickImage]);
 
   const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
   const onCloseRigForm = React.useCallback(

@@ -1,8 +1,7 @@
 import { format } from 'date-fns';
 import * as React from 'react';
-import { Text, View, StyleSheet, Platform } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import { Avatar, Card, Chip, Divider, Menu, ProgressBar, useTheme } from 'react-native-paper';
-import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   RigInspectionEssentialsFragment,
@@ -11,6 +10,7 @@ import {
 } from 'app/api/operations';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import useRestriction from 'app/hooks/useRestriction';
+import useImagePicker from 'app/hooks/useImagePicker';
 
 import useMutationUpdateRig from 'app/api/hooks/useMutationUpdateRig';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
@@ -32,6 +32,7 @@ export default function RigCard(props: IRigCardProps) {
   const { accent } = useAppSelector((root) => root.global.theme.colors);
   const dispatch = useAppDispatch();
   const { currentUser } = useCurrentDropzone();
+  const pickImage = useImagePicker();
 
   const updateRig = useMutationUpdateRig({
     onSuccess: () => {
@@ -48,37 +49,21 @@ export default function RigCard(props: IRigCardProps) {
     },
   });
   const [isPackingCardMenuOpen, setPackingCardMenuOpen] = React.useState<boolean>(false);
-  React.useEffect(() => {
-    (async () => {
-      if (Platform.OS !== 'web') {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-          console.error('Sorry, we need camera roll permissions to make this work!');
-        }
-      }
-    })();
-  }, []);
 
   const onPickImage = React.useCallback(async () => {
     try {
-      const result = (await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.1,
-        base64: true,
-      })) as { base64: string };
+      const result = pickImage();
 
       setUploading(true);
       // Upload image
       await updateRig.mutate({
         id: Number(rig?.id),
-        packingCard: `data:image/jpeg;base64,${result.base64}`,
+        packingCard: `data:image/jpeg;base64,${result}`,
       });
     } catch (e) {
       console.log(e);
     }
-  }, [rig?.id, updateRig]);
+  }, [pickImage, rig?.id, updateRig]);
 
   const canManageDropzoneRigs = useRestriction(Permission.UpdateDropzoneRig);
   const navigation = useUserNavigation();
