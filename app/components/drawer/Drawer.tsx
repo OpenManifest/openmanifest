@@ -303,6 +303,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   skeleton: {
+    marginLeft: 32,
     height: 50,
     width: '100%',
     paddingHorizontal: 8,
@@ -310,6 +311,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   profileAvatar: {
+    marginLeft: 32,
     marginBottom: 16,
   },
   profileAvatarTitle: {

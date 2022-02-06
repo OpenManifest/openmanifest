@@ -69,7 +69,7 @@ export default function SlotCard(props: ISlotCardProps) {
           <Chip
             style={styles.infoChip}
             textStyle={styles.chipText}
-            icon="lock"
+            icon={(iconProps) => <MaterialCommunityIcons name="lock" {...iconProps} />}
             mode="outlined"
             disabled
           >
@@ -78,7 +78,13 @@ export default function SlotCard(props: ISlotCardProps) {
           <Chip
             style={styles.infoChip}
             textStyle={styles.chipText}
-            icon="ticket-account"
+            icon={(iconProps) => (
+              <MaterialCommunityIcons
+                name="airplane-takeoff"
+                {...iconProps}
+                style={{ marginTop: 0, marginBottom: 3 }}
+              />
+            )}
             mode="outlined"
             disabled
           >
@@ -87,7 +93,13 @@ export default function SlotCard(props: ISlotCardProps) {
           <Chip
             style={styles.infoChip}
             textStyle={styles.chipText}
-            icon="human-handsup"
+            icon={(iconProps) => (
+              <MaterialCommunityIcons
+                name="human-handsup"
+                {...iconProps}
+                style={{ marginTop: 0, marginBottom: 3 }}
+              />
+            )}
             mode="outlined"
             disabled
           >
@@ -96,7 +108,13 @@ export default function SlotCard(props: ISlotCardProps) {
           <Chip
             style={styles.infoChip}
             textStyle={styles.chipText}
-            icon="arrow-up-bold"
+            icon={(iconProps) => (
+              <MaterialCommunityIcons
+                name="ticket-outline"
+                {...iconProps}
+                style={{ marginTop: 0, marginBottom: 3 }}
+              />
+            )}
             mode="outlined"
             disabled
           >
@@ -106,7 +124,13 @@ export default function SlotCard(props: ISlotCardProps) {
             <Chip
               style={styles.chip}
               textStyle={styles.chipText}
-              icon="escalator-down"
+              icon={(iconProps) => (
+                <MaterialCommunityIcons
+                  name="escalator-down"
+                  {...iconProps}
+                  style={{ marginTop: 0, marginBottom: 3 }}
+                />
+              )}
               mode="outlined"
               disabled
             >
@@ -125,7 +149,12 @@ export default function SlotCard(props: ISlotCardProps) {
               justifyContent: 'center',
             }}
           >
-            <MaterialCommunityIcons color={theme.colors.onSurface} name="link-variant" size={30} />
+            <MaterialCommunityIcons
+              color={theme.colors.onSurface}
+              name="link-variant"
+              size={30}
+              style={{ marginTop: 0, marginBottom: 3 }}
+            />
           </View>
           <Card
             style={StyleSheet.flatten([
@@ -138,7 +167,9 @@ export default function SlotCard(props: ISlotCardProps) {
               title={slot?.passengerName}
               left={() => (
                 <Avatar.Icon
-                  icon="account-supervisor"
+                  icon={(iconProps) => (
+                    <MaterialCommunityIcons name="account-supervisor" {...iconProps} />
+                  )}
                   color={theme.dark ? theme.colors.text : theme.colors.primary}
                   style={{ backgroundColor: theme.colors.surface }}
                   size={40}
@@ -174,6 +205,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   chipText: {
+    marginTop: 0,
     fontSize: 12,
   },
   passengerChip: {
