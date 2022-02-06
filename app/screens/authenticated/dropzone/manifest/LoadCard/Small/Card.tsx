@@ -174,7 +174,7 @@ export default function LoadCard(props: ILoadCardSmall) {
               alignItems: 'center',
               borderColor: theme.colors.onSurface,
             }}
-            textStyle={{ color: theme.colors.onSurface, fontSize: 12 }}
+            textStyle={{ color: theme.colors.onSurface, fontSize: 12, marginTop: 0 }}
           >
             {load?.occupiedSlots || 0} / {load?.plane?.maxSlots}
           </Chip>

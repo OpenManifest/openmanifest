@@ -19,7 +19,7 @@ module.exports = {
   parserOptions: {
     project: './tsconfig.eslint.json',
   },
-  ignorePatterns: ['**/*.d.ts'],
+  ignorePatterns: ['**/*.d.ts', 'node_modules'],
   rules: {
     // Allowed with immer
     'no-underscore-dangle': 0,

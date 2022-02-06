@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#292929"
+      "backgroundColor": "#111111"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -34,7 +34,7 @@
         "fbAppUrl": "https://openmanifest.org",
         "facebookScheme": "fb686479516065674"
       },
-      "buildNumber": "34",
+      "buildNumber": "35",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
       "icon": "./assets/images/logo-black-white-bg.png",
@@ -61,7 +61,7 @@
         "foregroundImage": "./assets/images/logo-black-white-bg.png",
         "backgroundColor": "#F4F4F4"
       },
-      "versionCode": 7,
+      "versionCode": 8,
       "intentFilters": [
         {
           "action": "VIEW",
