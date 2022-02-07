@@ -1,5 +1,5 @@
 import startOfDay from 'date-fns/startOfDay';
-import { dropzoneExtensive } from 'app/__tests__/__fixtures__/dropzone.fixture';
+import { dropzoneExtensive } from 'app/__fixtures__/dropzone.fixture';
 import { QueryDropzoneDocument } from '../../../api/reflection';
 import { QueryDropzoneQuery, QueryDropzoneQueryVariables } from '../../../api/operations';
 import createMock from './createMockedQuery.mock';

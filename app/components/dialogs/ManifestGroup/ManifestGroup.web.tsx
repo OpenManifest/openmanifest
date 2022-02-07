@@ -1,9 +1,8 @@
 import { useManifestGroupMutation } from 'app/api/reflection';
+import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import { omit } from 'lodash';
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { Button, Dialog, Portal } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import ManifestGroupForm from '../../forms/manifest_group/ManifestGroupForm';
@@ -110,46 +109,60 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
   ]);
 
   return (
-    <Portal>
-      <Dialog visible={!!open} onDismiss={onClose}>
-        <View style={{ backgroundColor: 'white' }} testID="manifest-group-sheet">
-          <View pointerEvents={(state.fields.users?.value?.length || 0) > 0 ? undefined : 'none'}>
-            <Tabs defaultIndex={tabIndex} mode="fixed" onChangeIndex={setTabIndex}>
-              <TabScreen label="Create group">
-                <View />
-              </TabScreen>
-              <TabScreen label="Configure jump">
-                <View />
-              </TabScreen>
-            </Tabs>
-          </View>
-
-          {tabIndex === 0 ? (
-            <View style={styles.userListContainer}>
-              <UserListSelect onNext={() => setTabIndex(1)} />
-            </View>
-          ) : (
-            <ScrollView contentContainerStyle={{ paddingBottom: 200, flexGrow: 1 }}>
-              <ManifestGroupForm />
-              <View style={styles.buttonContainer}>
-                <Button
-                  onPress={onManifest}
-                  loading={mutationData.loading}
-                  mode="contained"
-                  style={styles.button}
-                >
-                  Save
-                </Button>
-              </View>
-            </ScrollView>
-          )}
+    <DialogOrSheet
+      // eslint-disable-next-line max-len
+      loading={mutationData.loading}
+      {...{ open }}
+      disablePadding
+      buttonLabel={tabIndex === 0 ? 'Next' : 'Manifest'}
+      onClose={() => {
+        dispatch(actions.forms.manifest.reset());
+        onClose();
+      }}
+      buttonAction={() => (tabIndex === 0 ? setTabIndex(1) : onManifest())}
+    >
+      <View style={styles.wrapper} testID="manifest-group-sheet">
+        <View pointerEvents={(state.fields.users?.value?.length || 0) > 0 ? undefined : 'none'}>
+          <Tabs defaultIndex={tabIndex} mode="fixed" onChangeIndex={setTabIndex}>
+            <TabScreen label="Create group">
+              <View />
+            </TabScreen>
+            <TabScreen label="Configure jump">
+              <View />
+            </TabScreen>
+          </Tabs>
         </View>
-      </Dialog>
-    </Portal>
+
+        {tabIndex === 0 ? (
+          <View style={styles.userListContainer}>
+            <UserListSelect
+              containerProps={{
+                style: {
+                  height: '100%',
+                },
+              }}
+              hideButton
+              onNext={() => setTabIndex(1)}
+            />
+          </View>
+        ) : (
+          <ManifestGroupForm />
+        )}
+      </View>
+    </DialogOrSheet>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: { backgroundColor: 'white', height: '90%' },
+  dialog: {
+    minWidth: 560,
+    maxWidth: 800,
+    height: 560,
+    borderRadius: 8,
+    overflow: 'hidden',
+    alignSelf: 'center',
+  },
   button: {
     width: '100%',
     borderRadius: 16,

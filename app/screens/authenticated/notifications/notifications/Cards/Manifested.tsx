@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { Notification } from 'app/api/schema.d';
+import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
 import NotificationCard from './NotificationCard';
 
 interface INotification {
@@ -9,7 +9,7 @@ interface INotification {
 
 export default function ManifestedNotification(props: INotification) {
   const { notification } = props;
-  const navigation = useNavigation();
+  const navigation = useAuthenticatedNavigation();
   return (
     <NotificationCard
       title="Manifest"
@@ -18,16 +18,10 @@ export default function ManifestedNotification(props: INotification) {
       icon="airplane"
       onPress={() =>
         notification?.resource?.id &&
-        navigation.navigate('Authenticated', {
-          screen: 'Drawer',
-          params: {
-            screen: 'Manifest',
-            params: {
-              screen: 'LoadScreen',
-              initial: false,
-              params: { loadId: notification?.resource?.id },
-            },
-          },
+        navigation.navigate('Manifest', {
+          screen: 'LoadScreen',
+          initial: false,
+          params: { loadId: notification?.resource?.id },
         })
       }
     />

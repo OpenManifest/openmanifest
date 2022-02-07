@@ -10,7 +10,7 @@ interface IBottomSheetProps {
   children: React.ReactNode;
   loading?: boolean;
   title?: string;
-
+  disablePadding?: boolean;
   snapPoints?: (string | number)[];
   buttonAction?(): void;
   onClose(): void;

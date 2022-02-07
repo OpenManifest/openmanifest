@@ -1,11 +1,11 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SlotDetailsFragment } from 'app/api/operations';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { Chip, Menu, useTheme, Text } from 'react-native-paper';
+import { Menu, useTheme, Text } from 'react-native-paper';
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
 import UserAvatar from '../UserAvatar';
+import Chip from './Chip';
 
 interface ILoadMasterChipSelect {
   value?: { id: string; user: { id: string; name?: string | null } } | null;
@@ -25,25 +25,7 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
   const allowed = useRestriction(Permission.UpdateLoad);
 
   return !allowed ? (
-    <Chip
-      mode="outlined"
-      icon={(iconProps) => (
-        <MaterialCommunityIcons
-          name="shield-account"
-          {...iconProps}
-          style={{ marginTop: 0, marginBottom: 3 }}
-        />
-      )}
-      selectedColor={color}
-      style={{
-        marginHorizontal: 4,
-        backgroundColor,
-        height: small ? 25 : undefined,
-        alignItems: 'center',
-        borderColor: color || undefined,
-      }}
-      textStyle={{ color, fontSize: small ? 12 : undefined, marginTop: 0 }}
-    >
+    <Chip {...{ backgroundColor, small, color }} icon="shield-account">
       {value?.user?.name || 'No loadmaster'}
     </Chip>
   ) : (
@@ -52,23 +34,8 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
       visible={isMenuOpen}
       anchor={
         <Chip
-          mode="outlined"
-          icon={(iconProps) => (
-            <MaterialCommunityIcons
-              name="shield-account"
-              {...iconProps}
-              style={{ marginTop: 0, marginBottom: 3 }}
-            />
-          )}
-          selectedColor={color}
-          style={{
-            marginHorizontal: 4,
-            backgroundColor,
-            height: small ? 25 : undefined,
-            alignItems: 'center',
-            borderColor: color || undefined,
-          }}
-          textStyle={{ color, fontSize: small ? 12 : undefined, marginTop: 0 }}
+          {...{ backgroundColor, small, color }}
+          icon="shield-account"
           onPress={() => allowed && setMenuOpen(true)}
         >
           {value?.id ? value?.user?.name : 'No loadmaster'}

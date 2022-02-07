@@ -12,6 +12,7 @@ import { NavigationContainer, NavigationState, getPathFromState } from '@react-n
 import { registerRootComponent } from 'expo';
 import * as Sentry from 'sentry-expo';
 import URI from 'urijs';
+import { PortalProvider } from '@gorhom/portal';
 
 import Geocoder from 'react-native-geocoding';
 import { setGoogleApiKey } from 'expo-location';
@@ -181,21 +182,23 @@ function Content() {
         <Apollo>
           <MaterialProvider theme={state.theme as ReactNativePaper.Theme}>
             <GestureHandlerRootView style={{ flex: 1 }}>
-              <SafeAreaProvider>
-                <ImageViewer />
-                <NavigationContainer
-                  onStateChange={onRouteChange}
-                  linking={LinkingConfiguration}
-                  theme={state.theme as unknown as never}
-                >
-                  <Wrapper>
-                    <RootNavigator />
-                  </Wrapper>
-                </NavigationContainer>
+              <PortalProvider>
+                <SafeAreaProvider>
+                  <ImageViewer />
+                  <NavigationContainer
+                    onStateChange={onRouteChange}
+                    linking={LinkingConfiguration}
+                    theme={state.theme as unknown as never}
+                  >
+                    <Wrapper>
+                      <RootNavigator />
+                    </Wrapper>
+                  </NavigationContainer>
 
-                <StatusBar />
-                <NotificationArea />
-              </SafeAreaProvider>
+                  <StatusBar />
+                  <NotificationArea />
+                </SafeAreaProvider>
+              </PortalProvider>
             </GestureHandlerRootView>
           </MaterialProvider>
         </Apollo>

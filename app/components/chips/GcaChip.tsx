@@ -1,7 +1,7 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { Chip, Menu, useTheme } from 'react-native-paper';
+import { Menu, useTheme } from 'react-native-paper';
+import Chip from './Chip';
 
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
@@ -32,25 +32,7 @@ export default function GCAChip(props: IGCAChipSelect) {
   const allowed = useRestriction(Permission.UpdateLoad);
 
   return !allowed ? (
-    <Chip
-      mode="outlined"
-      selectedColor={color}
-      style={{
-        marginHorizontal: 4,
-        backgroundColor,
-        height: small ? 25 : undefined,
-        alignItems: 'center',
-        borderColor: color || undefined,
-      }}
-      icon={(iconProps) => (
-        <MaterialCommunityIcons
-          name="radio-handheld"
-          {...iconProps}
-          style={{ marginTop: 0, marginBottom: 3 }}
-        />
-      )}
-      textStyle={{ marginTop: 0, color, fontSize: small ? 12 : undefined }}
-    >
+    <Chip {...{ backgroundColor, small, color }} icon="radio-handheld">
       {value?.user?.name || 'No gca'}
     </Chip>
   ) : (
@@ -59,24 +41,9 @@ export default function GCAChip(props: IGCAChipSelect) {
       visible={isMenuOpen}
       anchor={
         <Chip
-          mode="outlined"
-          icon={(iconProps) => (
-            <MaterialCommunityIcons
-              name="radio-handheld"
-              {...iconProps}
-              style={{ marginTop: 0, marginBottom: 3 }}
-            />
-          )}
-          selectedColor={color}
+          {...{ backgroundColor, small, color }}
           onPress={() => setMenuOpen(true)}
-          style={{
-            marginHorizontal: 4,
-            backgroundColor,
-            height: small ? 25 : undefined,
-            alignItems: 'center',
-            borderColor: color || undefined,
-          }}
-          textStyle={{ marginTop: 0, color, fontSize: small ? 12 : undefined }}
+          icon="radio-handheld"
         >
           {value?.id ? value?.user?.name : 'No gca'}
         </Chip>

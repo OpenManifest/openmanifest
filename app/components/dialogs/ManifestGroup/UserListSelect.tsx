@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ViewProps } from 'react-native';
 import { Avatar, Button, Checkbox, Divider, List, Searchbar } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDropzoneUsersDetailedQuery } from 'app/api/reflection';
@@ -11,11 +11,13 @@ import useRestriction from '../../../hooks/useRestriction';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
 interface IUserListSelect {
+  hideButton?: boolean;
+  containerProps?: ViewProps;
   onNext(): void;
 }
 
 export default function UserListSelect(props: IUserListSelect) {
-  const { onNext } = props;
+  const { hideButton, onNext, containerProps } = props;
   const { screens } = useAppSelector((root) => root);
   const dispatch = useAppDispatch();
   const [searchText, setSearchText] = React.useState('');
@@ -34,7 +36,7 @@ export default function UserListSelect(props: IUserListSelect) {
   return (
     <>
       <Searchbar value={searchText} onChangeText={setSearchText} placeholder="Search skydivers" />
-      <View style={{ height: 380 }}>
+      <View style={{ height: 380 }} {...containerProps}>
         <ScrollView contentContainerStyle={{ paddingTop: 16 }}>
           {!data?.dropzone?.dropzoneUsers?.edges?.length && (
             <NoResults title="No users" subtitle="" />
@@ -93,16 +95,18 @@ export default function UserListSelect(props: IUserListSelect) {
           ))}
         </ScrollView>
       </View>
-      <Button
-        onPress={() => {
-          dispatch(actions.forms.manifestGroup.setDropzoneUsers(screens.manifest.selectedUsers));
-          onNext();
-        }}
-        style={styles.button}
-        mode="contained"
-      >
-        Next
-      </Button>
+      {hideButton ? null : (
+        <Button
+          onPress={() => {
+            dispatch(actions.forms.manifestGroup.setDropzoneUsers(screens.manifest.selectedUsers));
+            onNext();
+          }}
+          style={styles.button}
+          mode="contained"
+        >
+          Next
+        </Button>
+      )}
     </>
   );
 }

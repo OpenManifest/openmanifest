@@ -25,15 +25,18 @@ export default function SettingsScreen() {
               !data?.dropzone
                 ? null
                 : navigation.navigate('Authenticated', {
-                    screen: 'Drawer',
+                    screen: 'LeftDrawer',
                     params: {
-                      screen: 'Manifest',
+                      screen: 'RightDrawer',
                       params: {
-                        screen: 'Configuration',
+                        screen: 'Manifest',
                         params: {
-                          screen: 'DropzoneSettingsScreen',
+                          screen: 'Configuration',
                           params: {
-                            dropzone: data?.dropzone as DropzoneEssentialsFragment,
+                            screen: 'DropzoneSettingsScreen',
+                            params: {
+                              dropzone: data?.dropzone as DropzoneEssentialsFragment,
+                            },
                           },
                         },
                       },
@@ -51,13 +54,16 @@ export default function SettingsScreen() {
           left={() => <List.Icon color={theme.colors.text} icon="lock" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
-                screen: 'Manifest',
+                screen: 'RightDrawer',
                 params: {
-                  screen: 'Configuration',
+                  screen: 'Manifest',
                   params: {
-                    screen: 'PermissionScreen',
+                    screen: 'Configuration',
+                    params: {
+                      screen: 'PermissionScreen',
+                    },
                   },
                 },
               },
@@ -69,13 +75,16 @@ export default function SettingsScreen() {
           title="Aircrafts"
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
-                screen: 'Manifest',
+                screen: 'RightDrawer',
                 params: {
-                  screen: 'Configuration',
+                  screen: 'Manifest',
                   params: {
-                    screen: 'AircraftsScreen',
+                    screen: 'Configuration',
+                    params: {
+                      screen: 'AircraftsScreen',
+                    },
                   },
                 },
               },
@@ -89,13 +98,16 @@ export default function SettingsScreen() {
           description="Dropzone rigs, e.g tandems and student rigs"
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
-                screen: 'Manifest',
+                screen: 'RightDrawer',
                 params: {
-                  screen: 'Configuration',
+                  screen: 'Manifest',
                   params: {
-                    screen: 'DropzoneRigsScreen',
+                    screen: 'Configuration',
+                    params: {
+                      screen: 'DropzoneRigsScreen',
+                    },
                   },
                 },
               },
@@ -109,13 +121,16 @@ export default function SettingsScreen() {
           left={() => <List.Icon color={theme.colors.text} icon="check" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
-                screen: 'Manifest',
+                screen: 'RightDrawer',
                 params: {
-                  screen: 'Configuration',
+                  screen: 'Manifest',
                   params: {
-                    screen: 'RigInspectionTemplateScreen',
+                    screen: 'Configuration',
+                    params: {
+                      screen: 'RigInspectionTemplateScreen',
+                    },
                   },
                 },
               },
@@ -129,13 +144,16 @@ export default function SettingsScreen() {
           description="View historic data for daily operations"
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
-                screen: 'Manifest',
+                screen: 'RightDrawer',
                 params: {
-                  screen: 'Configuration',
+                  screen: 'Manifest',
                   params: {
-                    screen: 'MasterLogScreen',
+                    screen: 'Configuration',
+                    params: {
+                      screen: 'MasterLogScreen',
+                    },
                   },
                 },
               },
@@ -149,13 +167,16 @@ export default function SettingsScreen() {
           title="Ticket types"
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
-                screen: 'Manifest',
+                screen: 'RightDrawer',
                 params: {
-                  screen: 'Configuration',
+                  screen: 'Manifest',
                   params: {
-                    screen: 'TicketTypesScreen',
+                    screen: 'Configuration',
+                    params: {
+                      screen: 'TicketTypesScreen',
+                    },
                   },
                 },
               },
@@ -169,13 +190,16 @@ export default function SettingsScreen() {
           title="Ticket add-ons"
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
-                screen: 'Manifest',
+                screen: 'RightDrawer',
                 params: {
-                  screen: 'Configuration',
+                  screen: 'Manifest',
                   params: {
-                    screen: 'ExtrasScreen',
+                    screen: 'Configuration',
+                    params: {
+                      screen: 'ExtrasScreen',
+                    },
                   },
                 },
               },

@@ -19,6 +19,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import LoadDialog from 'app/components/dialogs/Load';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { LoadDetailsFragment } from 'app/api/operations';
+
 import GetStarted from '../../../../components/GetStarted';
 import LoadCardSmall from './LoadCard/Small/Card';
 import LoadCardLarge from './LoadCard/Large/Card';
@@ -269,12 +270,15 @@ export default function ManifestScreen() {
           load={load}
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
-                screen: 'Manifest',
+                screen: 'RightDrawer',
                 params: {
-                  screen: 'LoadScreen',
-                  params: { loadId: load?.id },
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'LoadScreen',
+                    params: { loadId: load?.id },
+                  },
                 },
               },
             })

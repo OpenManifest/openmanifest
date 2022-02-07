@@ -3,16 +3,14 @@ import * as Linking from 'expo-linking';
 /* eslint-disable no-nested-ternary */
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import DrawerMenu from 'app/components/drawer/Drawer';
 
 import NotFoundScreen from './NotFoundScreen';
 import { useAppSelector } from '../state/store';
 
-import Authenticated, { AuthenticatedRoutes } from './authenticated/routes';
 import Limbo, { LimboRoutes } from './limbo/routes';
 import Unauthenticated, { UnauthenticatedRoutes } from './unauthenticated/routes';
 import Wizards, { WizardRoutes } from './wizards/routes';
+import LeftDrawer, { LeftDrawerRoutes } from './drawers/UserDrawer';
 
 export const options: LinkingOptions<ReactNavigation.RootParamList> = {
   prefixes: [
@@ -26,45 +24,49 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
     screens: {
       Authenticated: {
         screens: {
-          Drawer: {
+          LeftDrawer: {
             screens: {
-              Manifest: {
+              RightDrawer: {
                 screens: {
-                  ManifestScreen: '/dropzone/manifest',
-                  Configuration: {
+                  Manifest: {
                     screens: {
-                      AircraftScreen: '/dropzone/configuration/aircraft/:planeId',
-                      TicketTypesScreen: '/dropzone/configuration/ticket-types',
-                      DropzoneRigsScreen: '/dropzone/configuration/rigs',
-                      ExtrasScreen: '/dropzone/ticket-types/extra',
-                      MasterLogScreen: '/dropzone/master-log',
-                      SettingsMenuScreen: '/dropzone/configuration',
-                      AircraftsScreen: '/dropzone/configuration/aircrafts',
-                      DropzoneSettingsScreen: '/dropzone/configuration/basic',
-                      PermissionScreen: '/dropzone/configuration/permissions',
-                      RigInspectionTemplateScreen: '/dropzone/configuration/rig-inspection',
-                      TransactionsScreen: '/dropzone/transactions',
+                      ManifestScreen: '/dropzone/manifest',
+                      Configuration: {
+                        screens: {
+                          AircraftScreen: '/dropzone/configuration/aircraft/:planeId',
+                          TicketTypesScreen: '/dropzone/configuration/ticket-types',
+                          DropzoneRigsScreen: '/dropzone/configuration/rigs',
+                          ExtrasScreen: '/dropzone/ticket-types/extra',
+                          MasterLogScreen: '/dropzone/master-log',
+                          SettingsMenuScreen: '/dropzone/configuration',
+                          AircraftsScreen: '/dropzone/configuration/aircrafts',
+                          DropzoneSettingsScreen: '/dropzone/configuration/basic',
+                          PermissionScreen: '/dropzone/configuration/permissions',
+                          RigInspectionTemplateScreen: '/dropzone/configuration/rig-inspection',
+                          TransactionsScreen: '/dropzone/transactions',
+                        },
+                      },
+                      JumpRunScreen: '/dropzone/weather/jumprun',
+                      WeatherConditionsScreen: '/dropzone/weather',
+                      LoadScreen: '/dropzone/load/:loadId',
+                      WindScreen: '/dropzone/weather/winds',
                     },
                   },
-                  JumpRunScreen: '/dropzone/weather/jumprun',
-                  WeatherConditionsScreen: '/dropzone/weather',
-                  LoadScreen: '/dropzone/load/:loadId',
-                  WindScreen: '/dropzone/weather/winds',
-                },
-              },
-              Users: {
-                screens: {
-                  UserListScreen: '/users',
-                  ProfileScreen: '/user/:userId',
-                  EquipmentScreen: '/user/:userId/equipment',
-                  OrdersScreen: '/user/:userId/transactions',
-                  OrderReceiptScreen: '/user/:userId/transactions/:orderId/receipt',
-                  RigInspectionScreen: '/user/:dropzoneUserId/rig-inspection/:rig',
-                },
-              },
-              Notifications: {
-                screens: {
-                  NotificationsScreen: '/notifications',
+                  Users: {
+                    screens: {
+                      UserListScreen: '/users',
+                      ProfileScreen: '/user/:userId',
+                      EquipmentScreen: '/user/:userId/equipment',
+                      OrdersScreen: '/user/:userId/transactions',
+                      OrderReceiptScreen: '/user/:userId/transactions/:orderId/receipt',
+                      RigInspectionScreen: '/user/:dropzoneUserId/rig-inspection/:rig',
+                    },
+                  },
+                  Notifications: {
+                    screens: {
+                      NotificationsScreen: '/notifications',
+                    },
+                  },
                 },
               },
             },
@@ -102,40 +104,20 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
 };
 
 export type Routes = {
-  Authenticated: NavigatorScreenParams<DrawerRoutes>;
+  Authenticated: NavigatorScreenParams<LeftDrawerRoutes>;
   Unauthenticated: NavigatorScreenParams<UnauthenticatedRoutes>;
   Limbo: NavigatorScreenParams<LimboRoutes>;
   Wizards: NavigatorScreenParams<WizardRoutes>;
   NotFound: undefined;
 };
 
+const Stack = createStackNavigator<Routes>();
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace ReactNavigation {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
     interface RootParamList extends Routes {}
   }
-}
-
-export type DrawerRoutes = {
-  Drawer: NavigatorScreenParams<AuthenticatedRoutes>;
-};
-
-// A root stack navigator is often used for displaying modals on top of all other content
-// Read more here: https://reactnavigation.org/docs/modal
-const Stack = createStackNavigator<Routes>();
-const Drawer = createDrawerNavigator<DrawerRoutes>();
-
-function DrawerNavigator() {
-  const drawerContent = React.useCallback(() => <DrawerMenu />, []);
-  return (
-    <Drawer.Navigator
-      {...{ drawerContent }}
-      screenOptions={{ drawerType: 'back', headerShown: false }}
-    >
-      <Drawer.Screen name="Drawer" component={Authenticated} />
-    </Drawer.Navigator>
-  );
 }
 
 export default function RootNavigator() {
@@ -152,7 +134,7 @@ export default function RootNavigator() {
     >
       {globalState.credentials ? (
         globalState.currentDropzone ? (
-          <Stack.Screen name="Authenticated" component={DrawerNavigator} />
+          <Stack.Screen name="Authenticated" component={LeftDrawer} />
         ) : (
           <Stack.Screen name="Limbo" component={Limbo} />
         )

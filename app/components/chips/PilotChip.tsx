@@ -1,10 +1,10 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { Chip, Menu, useTheme } from 'react-native-paper';
+import { Menu, useTheme } from 'react-native-paper';
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
 import { useAppSelector } from '../../state';
+import Chip from './Chip';
 
 interface IPilotChipSelect {
   small?: boolean;
@@ -30,26 +30,7 @@ export default function PilotChip(props: IPilotChipSelect) {
   const allowed = useRestriction(Permission.UpdateLoad);
 
   return !allowed ? (
-    <Chip
-      mode="outlined"
-      selectedColor={color}
-      style={{
-        padding: 8,
-        marginHorizontal: 4,
-        backgroundColor,
-        height: small ? 25 : undefined,
-        alignItems: 'center',
-        borderColor: color || undefined,
-      }}
-      icon={(iconProps) => (
-        <MaterialCommunityIcons
-          name="shield-airplane"
-          {...iconProps}
-          style={{ marginTop: 0, marginBottom: 3 }}
-        />
-      )}
-      textStyle={{ marginTop: 0, color, fontSize: small ? 12 : undefined }}
-    >
+    <Chip {...{ backgroundColor, small, color }} icon="shield-airplane">
       {value?.user?.name || 'No pilot'}
     </Chip>
   ) : (
@@ -58,27 +39,8 @@ export default function PilotChip(props: IPilotChipSelect) {
       visible={isMenuOpen}
       anchor={
         <Chip
-          mode="outlined"
-          icon={(iconProps) => (
-            <MaterialCommunityIcons
-              name="shield-airplane"
-              {...iconProps}
-              style={{ marginTop: 0, marginBottom: 3 }}
-            />
-          )}
-          selectedColor={color}
-          style={{
-            backgroundColor,
-            height: small ? 25 : undefined,
-            alignItems: 'center',
-            borderColor: color || undefined,
-          }}
-          textStyle={{
-            marginTop: 0,
-            alignSelf: 'center',
-            color,
-            fontSize: small ? 12 : undefined,
-          }}
+          {...{ backgroundColor, small, color }}
+          icon="shield-airplane"
           onPress={() => setMenuOpen(true)}
         >
           {value?.id ? value?.user?.name : 'No pilot'}

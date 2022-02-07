@@ -1,13 +1,13 @@
 import { isEqual, pick, xorBy } from 'lodash';
 import * as React from 'react';
-import { View } from 'react-native';
-import { Chip } from 'react-native-paper';
+import { Platform, View } from 'react-native';
+import Chip, { ChipProps } from 'app/components/chips/Chip';
 
 interface IChipSelect<T extends Record<string, unknown> | string> {
   items: T[];
   selected: T[];
   autoSelectFirst?: boolean;
-  icon?: string;
+  icon?: ChipProps['icon'];
   isSelected?(item: T): boolean;
   isDisabled?(item: T): boolean;
   renderItemLabel(item: T): React.ReactNode;
@@ -33,23 +33,29 @@ function ChipSelect<T extends Record<string, unknown> | string>(props: IChipSele
 
   return (
     <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-      {items.map((item) => (
-        <Chip
-          key={JSON.stringify(item)}
-          mode="outlined"
-          icon={!selected.some((value) => isEqual(item, value)) && icon ? icon : undefined}
-          style={{ margin: 1 }}
-          disabled={isDisabled?.(item) || false}
-          selected={isSelected ? isSelected(item) : selected.some((value) => isEqual(item, value))}
-          onPress={() =>
-            onChangeSelected(
-              selected.length === 1 ? [item] : xorBy(selected, [item], JSON.stringify)
-            )
-          }
-        >
-          {renderItemLabel(item)}
-        </Chip>
-      ))}
+      {items.map((item) => {
+        const isItemSelected = isSelected
+          ? isSelected(item)
+          : selected.some((value) => isEqual(item, value));
+        return (
+          <Chip
+            key={JSON.stringify(item)}
+            small
+            mode={!isItemSelected ? 'flat' : 'outlined'}
+            icon={!selected.some((value) => isEqual(item, value)) && icon ? icon : undefined}
+            style={{ margin: Platform.OS === 'web' ? 4 : 1 }}
+            disabled={isDisabled?.(item) || false}
+            selected={isItemSelected}
+            onPress={() =>
+              onChangeSelected(
+                selected.length === 1 ? [item] : xorBy(selected, [item], JSON.stringify)
+              )
+            }
+          >
+            {renderItemLabel(item)}
+          </Chip>
+        );
+      })}
     </View>
   );
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList, Platform } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,7 +19,8 @@ export default function DropzonesScreen() {
     <SafeAreaView style={styles.container}>
       <FlatList
         data={data?.dropzones?.edges || []}
-        numColumns={2}
+        numColumns={Platform.OS === 'web' ? undefined : 2}
+        horizontal={Platform.OS === 'web'}
         refreshing={loading}
         onRefresh={() => refetch()}
         style={styles.flatlist}

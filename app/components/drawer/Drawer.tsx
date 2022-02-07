@@ -81,15 +81,18 @@ export default function DrawerMenu() {
           style={styles.profileAvatar}
           onPress={() => {
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
-                screen: 'Manifest',
+                screen: 'RightDrawer',
                 params: {
-                  screen: 'User',
+                  screen: 'Manifest',
                   params: {
-                    screen: 'ProfileScreen',
+                    screen: 'User',
                     params: {
-                      userId: currentUser?.id as string,
+                      screen: 'ProfileScreen',
+                      params: {
+                        userId: currentUser?.id as string,
+                      },
                     },
                   },
                 },
@@ -120,11 +123,14 @@ export default function DrawerMenu() {
             icon="home"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Drawer',
+                screen: 'LeftDrawer',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'RightDrawer',
                   params: {
-                    screen: 'ManifestScreen',
+                    screen: 'Manifest',
+                    params: {
+                      screen: 'ManifestScreen',
+                    },
                   },
                 },
               });
@@ -152,14 +158,17 @@ export default function DrawerMenu() {
             icon="parachute"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Drawer',
+                screen: 'LeftDrawer',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'RightDrawer',
                   params: {
-                    screen: 'User',
+                    screen: 'Manifest',
                     params: {
-                      screen: 'EquipmentScreen',
-                      params: { userId: currentUser?.id as string },
+                      screen: 'User',
+                      params: {
+                        screen: 'EquipmentScreen',
+                        params: { userId: currentUser?.id as string },
+                      },
                     },
                   },
                 },
@@ -173,11 +182,14 @@ export default function DrawerMenu() {
             icon="bell"
             onPress={() =>
               navigation.navigate('Authenticated', {
-                screen: 'Drawer',
+                screen: 'LeftDrawer',
                 params: {
-                  screen: 'Notifications',
+                  screen: 'RightDrawer',
                   params: {
-                    screen: 'NotificationsScreen',
+                    screen: 'Notifications',
+                    params: {
+                      screen: 'NotificationsScreen',
+                    },
                   },
                 },
               })
@@ -189,14 +201,17 @@ export default function DrawerMenu() {
             icon="cash"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Drawer',
+                screen: 'LeftDrawer',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'RightDrawer',
                   params: {
-                    screen: 'User',
+                    screen: 'Manifest',
                     params: {
-                      screen: 'OrdersScreen',
-                      params: { userId: currentUser?.id as string },
+                      screen: 'User',
+                      params: {
+                        screen: 'OrdersScreen',
+                        params: { userId: currentUser?.id as string },
+                      },
                     },
                   },
                 },
@@ -220,13 +235,16 @@ export default function DrawerMenu() {
             icon="cash"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Drawer',
+                screen: 'LeftDrawer',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'RightDrawer',
                   params: {
-                    screen: 'Configuration',
+                    screen: 'Manifest',
                     params: {
-                      screen: 'TransactionsScreen',
+                      screen: 'Configuration',
+                      params: {
+                        screen: 'TransactionsScreen',
+                      },
                     },
                   },
                 },
@@ -240,13 +258,16 @@ export default function DrawerMenu() {
               icon="cog"
               onPress={() =>
                 navigation.navigate('Authenticated', {
-                  screen: 'Drawer',
+                  screen: 'LeftDrawer',
                   params: {
-                    screen: 'Manifest',
+                    screen: 'RightDrawer',
                     params: {
-                      screen: 'Configuration',
+                      screen: 'Manifest',
                       params: {
-                        screen: 'SettingsMenuScreen',
+                        screen: 'Configuration',
+                        params: {
+                          screen: 'SettingsMenuScreen',
+                        },
                       },
                     },
                   },
@@ -272,11 +293,14 @@ export default function DrawerMenu() {
                 if (edge?.node) {
                   dispatch(actions.global.setDropzone(edge.node as DropzoneExtensiveFragment));
                   navigation.navigate('Authenticated', {
-                    screen: 'Drawer',
+                    screen: 'LeftDrawer',
                     params: {
-                      screen: 'Manifest',
+                      screen: 'RightDrawer',
                       params: {
-                        screen: 'ManifestScreen',
+                        screen: 'Manifest',
+                        params: {
+                          screen: 'ManifestScreen',
+                        },
                       },
                     },
                   });

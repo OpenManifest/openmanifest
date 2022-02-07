@@ -1,11 +1,11 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { PlaneEssentialsFragment } from 'app/api/operations';
 import * as React from 'react';
-import { Chip, Menu, useTheme } from 'react-native-paper';
+import { Menu, useTheme } from 'react-native-paper';
 import { usePlanesQuery } from '../../api/reflection';
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
 import { useAppSelector } from '../../state';
+import Chip from './Chip';
 
 interface IPlaneChipSelect {
   value?: PlaneEssentialsFragment | null;
@@ -31,22 +31,7 @@ export default function PlaneChip(props: IPlaneChipSelect) {
   const allowed = useRestriction(Permission.UpdateLoad);
 
   return !allowed ? (
-    <Chip
-      mode="outlined"
-      icon="airplane-takeoff"
-      selectedColor={color}
-      style={{
-        marginHorizontal: 4,
-        backgroundColor,
-        height: small ? 25 : undefined,
-        alignItems: 'center',
-      }}
-      textStyle={{
-        color,
-        fontSize: small ? 12 : undefined,
-        marginTop: 0,
-      }}
-    >
+    <Chip {...{ backgroundColor, small, color }} icon="airplane-takeoff">
       {value?.name || 'No plane'}
     </Chip>
   ) : (
@@ -55,24 +40,8 @@ export default function PlaneChip(props: IPlaneChipSelect) {
       visible={isMenuOpen}
       anchor={
         <Chip
-          mode="outlined"
-          icon={(iconProps) => (
-            <MaterialCommunityIcons
-              name="airplane-takeoff"
-              {...iconProps}
-              style={{ marginTop: 0, marginBottom: 3 }}
-            />
-          )}
-          selectedColor={color}
-          style={{
-            marginHorizontal: 4,
-            backgroundColor,
-            marginTop: 0,
-            height: small ? 25 : undefined,
-            alignItems: 'center',
-            borderColor: color || undefined,
-          }}
-          textStyle={{ marginTop: 0, color, fontSize: small ? 12 : undefined }}
+          {...{ backgroundColor, small, color }}
+          icon="airplane-takeoff"
           onPress={() => allowed && setMenuOpen(true)}
         >
           {value?.name || 'No plane'}

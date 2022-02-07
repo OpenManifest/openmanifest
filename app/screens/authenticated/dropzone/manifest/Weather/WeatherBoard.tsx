@@ -14,11 +14,11 @@ import {
 import { Card, Divider, useTheme } from 'react-native-paper';
 import format from 'date-fns/format';
 import { orderBy } from 'lodash';
-import { useNavigation } from '@react-navigation/native';
 import SkeletonContent from 'app/components/Skeleton';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { actions, useAppDispatch } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
+import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
 import { Permission } from 'app/api/schema.d';
 import nightBackground from '../../../../../../assets/images/night.png';
 import weatherBackground from '../../../../../../assets/images/weather.png';
@@ -27,7 +27,7 @@ import JumpRunMap from './JumpRun';
 export default function WeatherBoard() {
   const { dropzone, loading, called } = useCurrentDropzone();
   const dispatch = useAppDispatch();
-  const navigation = useNavigation();
+  const navigation = useAuthenticatedNavigation();
   const [isExpanded, setExpanded] = React.useState(false);
   const height = React.useRef(new Animated.Value(0));
 
@@ -67,14 +67,8 @@ export default function WeatherBoard() {
   const onEditWindboard = React.useCallback(() => {
     if (canUpdate && dropzone?.currentConditions) {
       dispatch(actions.forms.weather.setOpen(dropzone?.currentConditions));
-      navigation.navigate('Authenticated', {
-        screen: 'Drawer',
-        params: {
-          screen: 'Manifest',
-          params: {
-            screen: 'WindScreen',
-          },
-        },
+      navigation.navigate('Manifest', {
+        screen: 'WindScreen',
       });
     }
   }, [canUpdate, dispatch, dropzone?.currentConditions, navigation]);
@@ -82,14 +76,8 @@ export default function WeatherBoard() {
   const onEditJumprun = React.useCallback(() => {
     if (dropzone?.currentConditions && canUpdate) {
       dispatch(actions.forms.weather.setOpen(dropzone.currentConditions));
-      navigation.navigate('Authenticated', {
-        screen: 'Drawer',
-        params: {
-          screen: 'Manifest',
-          params: {
-            screen: 'JumpRunScreen',
-          },
-        },
+      navigation.navigate('Manifest', {
+        screen: 'JumpRunScreen',
       });
     }
   }, [canUpdate, dispatch, dropzone?.currentConditions, navigation]);

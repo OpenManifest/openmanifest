@@ -13,7 +13,6 @@ import {
 import addMinutes from 'date-fns/addMinutes';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 
-import { useNavigation } from '@react-navigation/native';
 import { useLoadQuery } from 'app/api/reflection';
 import {
   DropzoneUserEssentialsFragment,
@@ -35,6 +34,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import SwipeActions from 'app/components/layout/SwipeActions';
 import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
 import useMutationDeleteSlot from 'app/api/hooks/useMutationDeleteSlot';
+import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
 import LoadingCard from '../Small/Loading';
 
 interface ILoadCardLarge {
@@ -191,7 +191,7 @@ export default function LoadCard(props: ILoadCardLarge) {
     });
   }, [load?.id, mutationUpdateLoad]);
 
-  const navigation = useNavigation();
+  const navigation = useAuthenticatedNavigation();
   const canUpdateLoad = useRestriction(Permission.UpdateLoad);
 
   const canEditSelf = useRestriction(Permission.UpdateSlot);
@@ -395,15 +395,9 @@ export default function LoadCard(props: ILoadCardLarge) {
               testID="slot-row"
               onPress={() =>
                 load?.id &&
-                navigation.navigate('Authenticated', {
-                  screen: 'Drawer',
-                  params: {
-                    screen: 'Manifest',
-                    params: {
-                      screen: 'LoadScreen',
-                      params: { loadId: load?.id },
-                    },
-                  },
+                navigation.navigate('Manifest', {
+                  screen: 'LoadScreen',
+                  params: { loadId: load?.id },
                 })
               }
             >
