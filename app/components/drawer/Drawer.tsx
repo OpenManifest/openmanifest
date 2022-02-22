@@ -83,16 +83,13 @@ export default function DrawerMenu() {
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',
               params: {
-                screen: 'RightDrawer',
+                screen: 'Manifest',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'User',
                   params: {
-                    screen: 'User',
+                    screen: 'ProfileScreen',
                     params: {
-                      screen: 'ProfileScreen',
-                      params: {
-                        userId: currentUser?.id as string,
-                      },
+                      userId: currentUser?.id as string,
                     },
                   },
                 },
@@ -125,12 +122,9 @@ export default function DrawerMenu() {
               navigation.navigate('Authenticated', {
                 screen: 'LeftDrawer',
                 params: {
-                  screen: 'RightDrawer',
+                  screen: 'Manifest',
                   params: {
-                    screen: 'Manifest',
-                    params: {
-                      screen: 'ManifestScreen',
-                    },
+                    screen: 'ManifestScreen',
                   },
                 },
               });
@@ -160,15 +154,12 @@ export default function DrawerMenu() {
               navigation.navigate('Authenticated', {
                 screen: 'LeftDrawer',
                 params: {
-                  screen: 'RightDrawer',
+                  screen: 'Manifest',
                   params: {
-                    screen: 'Manifest',
+                    screen: 'User',
                     params: {
-                      screen: 'User',
-                      params: {
-                        screen: 'EquipmentScreen',
-                        params: { userId: currentUser?.id as string },
-                      },
+                      screen: 'EquipmentScreen',
+                      params: { userId: currentUser?.id as string },
                     },
                   },
                 },
@@ -184,12 +175,9 @@ export default function DrawerMenu() {
               navigation.navigate('Authenticated', {
                 screen: 'LeftDrawer',
                 params: {
-                  screen: 'RightDrawer',
+                  screen: 'Notifications',
                   params: {
-                    screen: 'Notifications',
-                    params: {
-                      screen: 'NotificationsScreen',
-                    },
+                    screen: 'NotificationsScreen',
                   },
                 },
               })
@@ -203,15 +191,12 @@ export default function DrawerMenu() {
               navigation.navigate('Authenticated', {
                 screen: 'LeftDrawer',
                 params: {
-                  screen: 'RightDrawer',
+                  screen: 'Manifest',
                   params: {
-                    screen: 'Manifest',
+                    screen: 'User',
                     params: {
-                      screen: 'User',
-                      params: {
-                        screen: 'OrdersScreen',
-                        params: { userId: currentUser?.id as string },
-                      },
+                      screen: 'OrdersScreen',
+                      params: { userId: currentUser?.id as string },
                     },
                   },
                 },
@@ -237,14 +222,11 @@ export default function DrawerMenu() {
               navigation.navigate('Authenticated', {
                 screen: 'LeftDrawer',
                 params: {
-                  screen: 'RightDrawer',
+                  screen: 'Manifest',
                   params: {
-                    screen: 'Manifest',
+                    screen: 'Configuration',
                     params: {
-                      screen: 'Configuration',
-                      params: {
-                        screen: 'TransactionsScreen',
-                      },
+                      screen: 'TransactionsScreen',
                     },
                   },
                 },
@@ -260,14 +242,11 @@ export default function DrawerMenu() {
                 navigation.navigate('Authenticated', {
                   screen: 'LeftDrawer',
                   params: {
-                    screen: 'RightDrawer',
+                    screen: 'Manifest',
                     params: {
-                      screen: 'Manifest',
+                      screen: 'Configuration',
                       params: {
-                        screen: 'Configuration',
-                        params: {
-                          screen: 'SettingsMenuScreen',
-                        },
+                        screen: 'SettingsMenuScreen',
                       },
                     },
                   },
@@ -295,12 +274,9 @@ export default function DrawerMenu() {
                   navigation.navigate('Authenticated', {
                     screen: 'LeftDrawer',
                     params: {
-                      screen: 'RightDrawer',
+                      screen: 'Manifest',
                       params: {
-                        screen: 'Manifest',
-                        params: {
-                          screen: 'ManifestScreen',
-                        },
+                        screen: 'ManifestScreen',
                       },
                     },
                   });

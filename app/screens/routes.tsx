@@ -26,47 +26,43 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
         screens: {
           LeftDrawer: {
             screens: {
-              RightDrawer: {
+              Manifest: {
                 screens: {
-                  Manifest: {
+                  ManifestScreen: '/dropzone/manifest',
+                  Configuration: {
                     screens: {
-                      ManifestScreen: '/dropzone/manifest',
-                      Configuration: {
-                        screens: {
-                          AircraftScreen: '/dropzone/configuration/aircraft/:planeId',
-                          TicketTypesScreen: '/dropzone/configuration/ticket-types',
-                          DropzoneRigsScreen: '/dropzone/configuration/rigs',
-                          ExtrasScreen: '/dropzone/ticket-types/extra',
-                          MasterLogScreen: '/dropzone/master-log',
-                          SettingsMenuScreen: '/dropzone/configuration',
-                          AircraftsScreen: '/dropzone/configuration/aircrafts',
-                          DropzoneSettingsScreen: '/dropzone/configuration/basic',
-                          PermissionScreen: '/dropzone/configuration/permissions',
-                          RigInspectionTemplateScreen: '/dropzone/configuration/rig-inspection',
-                          TransactionsScreen: '/dropzone/transactions',
-                        },
-                      },
-                      JumpRunScreen: '/dropzone/weather/jumprun',
-                      WeatherConditionsScreen: '/dropzone/weather',
-                      LoadScreen: '/dropzone/load/:loadId',
-                      WindScreen: '/dropzone/weather/winds',
+                      AircraftScreen: '/dropzone/configuration/aircraft/:planeId',
+                      TicketTypesScreen: '/dropzone/configuration/ticket-types',
+                      DropzoneRigsScreen: '/dropzone/configuration/rigs',
+                      ExtrasScreen: '/dropzone/ticket-types/extra',
+                      MasterLogScreen: '/dropzone/master-log',
+                      SettingsMenuScreen: '/dropzone/configuration',
+                      AircraftsScreen: '/dropzone/configuration/aircrafts',
+                      DropzoneSettingsScreen: '/dropzone/configuration/basic',
+                      PermissionScreen: '/dropzone/configuration/permissions',
+                      RigInspectionTemplateScreen: '/dropzone/configuration/rig-inspection',
+                      TransactionsScreen: '/dropzone/transactions',
                     },
                   },
-                  Users: {
-                    screens: {
-                      UserListScreen: '/users',
-                      ProfileScreen: '/user/:userId',
-                      EquipmentScreen: '/user/:userId/equipment',
-                      OrdersScreen: '/user/:userId/transactions',
-                      OrderReceiptScreen: '/user/:userId/transactions/:orderId/receipt',
-                      RigInspectionScreen: '/user/:dropzoneUserId/rig-inspection/:rig',
-                    },
-                  },
-                  Notifications: {
-                    screens: {
-                      NotificationsScreen: '/notifications',
-                    },
-                  },
+                  JumpRunScreen: '/dropzone/weather/jumprun',
+                  WeatherConditionsScreen: '/dropzone/weather',
+                  LoadScreen: '/dropzone/load/:loadId',
+                  WindScreen: '/dropzone/weather/winds',
+                },
+              },
+              Users: {
+                screens: {
+                  UserListScreen: '/users',
+                  ProfileScreen: '/user/:userId',
+                  EquipmentScreen: '/user/:userId/equipment',
+                  OrdersScreen: '/user/:userId/transactions',
+                  OrderReceiptScreen: '/user/:userId/transactions/:orderId/receipt',
+                  RigInspectionScreen: '/user/:dropzoneUserId/rig-inspection/:rig',
+                },
+              },
+              Notifications: {
+                screens: {
+                  NotificationsScreen: '/notifications',
                 },
               },
             },

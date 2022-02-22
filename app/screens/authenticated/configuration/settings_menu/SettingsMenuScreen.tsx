@@ -27,16 +27,13 @@ export default function SettingsScreen() {
                 : navigation.navigate('Authenticated', {
                     screen: 'LeftDrawer',
                     params: {
-                      screen: 'RightDrawer',
+                      screen: 'Manifest',
                       params: {
-                        screen: 'Manifest',
+                        screen: 'Configuration',
                         params: {
-                          screen: 'Configuration',
+                          screen: 'DropzoneSettingsScreen',
                           params: {
-                            screen: 'DropzoneSettingsScreen',
-                            params: {
-                              dropzone: data?.dropzone as DropzoneEssentialsFragment,
-                            },
+                            dropzone: data?.dropzone as DropzoneEssentialsFragment,
                           },
                         },
                       },
@@ -56,14 +53,11 @@ export default function SettingsScreen() {
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',
               params: {
-                screen: 'RightDrawer',
+                screen: 'Manifest',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'Configuration',
                   params: {
-                    screen: 'Configuration',
-                    params: {
-                      screen: 'PermissionScreen',
-                    },
+                    screen: 'PermissionScreen',
                   },
                 },
               },
@@ -77,14 +71,11 @@ export default function SettingsScreen() {
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',
               params: {
-                screen: 'RightDrawer',
+                screen: 'Manifest',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'Configuration',
                   params: {
-                    screen: 'Configuration',
-                    params: {
-                      screen: 'AircraftsScreen',
-                    },
+                    screen: 'AircraftsScreen',
                   },
                 },
               },
@@ -100,14 +91,11 @@ export default function SettingsScreen() {
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',
               params: {
-                screen: 'RightDrawer',
+                screen: 'Manifest',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'Configuration',
                   params: {
-                    screen: 'Configuration',
-                    params: {
-                      screen: 'DropzoneRigsScreen',
-                    },
+                    screen: 'DropzoneRigsScreen',
                   },
                 },
               },
@@ -123,14 +111,11 @@ export default function SettingsScreen() {
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',
               params: {
-                screen: 'RightDrawer',
+                screen: 'Manifest',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'Configuration',
                   params: {
-                    screen: 'Configuration',
-                    params: {
-                      screen: 'RigInspectionTemplateScreen',
-                    },
+                    screen: 'RigInspectionTemplateScreen',
                   },
                 },
               },
@@ -146,14 +131,11 @@ export default function SettingsScreen() {
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',
               params: {
-                screen: 'RightDrawer',
+                screen: 'Manifest',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'Configuration',
                   params: {
-                    screen: 'Configuration',
-                    params: {
-                      screen: 'MasterLogScreen',
-                    },
+                    screen: 'MasterLogScreen',
                   },
                 },
               },
@@ -169,14 +151,11 @@ export default function SettingsScreen() {
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',
               params: {
-                screen: 'RightDrawer',
+                screen: 'Manifest',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'Configuration',
                   params: {
-                    screen: 'Configuration',
-                    params: {
-                      screen: 'TicketTypesScreen',
-                    },
+                    screen: 'TicketTypesScreen',
                   },
                 },
               },
@@ -192,14 +171,11 @@ export default function SettingsScreen() {
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',
               params: {
-                screen: 'RightDrawer',
+                screen: 'Manifest',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'Configuration',
                   params: {
-                    screen: 'Configuration',
-                    params: {
-                      screen: 'ExtrasScreen',
-                    },
+                    screen: 'ExtrasScreen',
                   },
                 },
               },

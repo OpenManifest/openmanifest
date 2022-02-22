@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Dialog, IconButton, ProgressBar, useTheme } from 'react-native-paper';
-import { StyleSheet } from 'react-native';
-import Drawer from '@mui/material/drawer';
+import { Portal } from '@gorhom/portal';
+import { DrawerActions, useNavigation } from '@react-navigation/core';
+import { StyleSheet, View } from 'react-native';
 
 interface IBottomSheetProps {
   open?: boolean;
@@ -18,24 +19,38 @@ interface IBottomSheetProps {
   onClose(): void;
 }
 
+function CloseOnUnmount({ onUnmount }: { onUnmount: () => void }) {
+  React.useEffect(() => {
+    return () => {
+      onUnmount();
+    };
+  }, [onUnmount]);
+  return <View />;
+}
+
 function DialogOrSheet(props: IBottomSheetProps) {
   const { buttonLabel, disablePadding, buttonAction, title, loading, open, children, onClose } =
     props;
+  const navigation = useNavigation();
   const theme = useTheme();
 
+  React.useEffect(() => {
+    if (open) {
+      console.log('Opening drawer');
+      navigation.dispatch(DrawerActions.openDrawer());
+    } else {
+      console.log('Closing drawer');
+      navigation.dispatch(DrawerActions.closeDrawer());
+    }
+  }, [navigation, onClose, open]);
+
+  if (!open) {
+    return null;
+  }
+
   return (
-    <Drawer
-      {...{ open, onClose }}
-      anchor="right"
-      PaperProps={{ style: { width: 400, zIndex: 950 } }}
-      style={{ zIndex: 950 }}
-    >
-      <ProgressBar
-        indeterminate
-        color={theme?.colors?.primary}
-        visible={loading}
-        style={{ width: '100%' }}
-      />
+    <Portal hostName="drawer">
+      <ProgressBar indeterminate color={theme?.colors?.primary} visible={loading} />
       {!title ? null : (
         <Dialog.Title numberOfLines={1}>
           {title}
@@ -57,7 +72,8 @@ function DialogOrSheet(props: IBottomSheetProps) {
           {buttonLabel}
         </Button>
       </Dialog.Actions>
-    </Drawer>
+      <CloseOnUnmount onUnmount={onClose} />
+    </Portal>
   );
 }
 
@@ -77,4 +93,4 @@ const styles = StyleSheet.create({
   close: { position: 'absolute', top: 4, right: 4 },
 });
 
-export default DialogOrSheet;
+export default React.memo(DialogOrSheet, (prev, next) => prev.open === next.open);

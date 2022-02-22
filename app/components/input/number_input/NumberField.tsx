@@ -2,20 +2,21 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { TextInput, useTheme } from 'react-native-paper';
+import TextInput from 'app/components/input/text/TextField';
+import { TextInput as T, useTheme } from 'react-native-paper';
 
 interface INumberFieldProps {
-  error?: boolean;
+  error?: string | null;
   label?: string;
   value?: number | null;
-  onChangeText(newValue: number): void;
+  onChange(newValue: number): void;
 }
 export default function NumberField(props: INumberFieldProps) {
-  const { onChangeText: onChangeValue, ...rest } = props;
+  const { onChange: onChangeValue, ...rest } = props;
   const { value } = rest;
   const theme = useTheme();
 
-  const onChangeText = React.useCallback(
+  const onChange = React.useCallback(
     (text: string) => {
       if (/\d/.test(text)) {
         const [numbers] = text.match(/^\-?\d+/) || ['0'];
@@ -27,12 +28,12 @@ export default function NumberField(props: INumberFieldProps) {
   return (
     <TextInput
       {...rest}
-      {...{ onChangeText }}
+      {...{ onChange }}
       value={`${value || 0}`}
-      mode="outlined"
       keyboardType="number-pad"
+      style={{ backgroundColor: 'transparent' }}
       right={
-        <TextInput.Affix
+        <T.Affix
           textStyle={{
             height: '100%',
           }}

@@ -12,7 +12,7 @@ interface IManifestUserDialog {
 }
 
 export default function ManifestUserDialog(props: IManifestUserDialog) {
-  const { onSuccess, open, onClose } = props;
+  const { onSuccess, open, onClose: _onClose } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.manifest);
   const [mutationCreateSlot, mutationData] = useManifestUserMutation();
@@ -129,17 +129,20 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     validate,
   ]);
 
+  const onClose = React.useCallback(() => {
+    dispatch(actions.forms.manifest.reset());
+    dispatch(actions.forms.manifest.setOpen(false));
+    _onClose();
+  }, [dispatch, _onClose]);
+
+  console.log(state.fields);
   return (
     <DialogOrSheet
       // eslint-disable-next-line max-len
       title={`Manifest ${state?.fields?.dropzoneUser?.value?.user?.name} on ${state.fields.load?.value?.name}`}
       loading={mutationData.loading}
-      {...{ open }}
+      {...{ open, onClose }}
       buttonLabel="Manifest"
-      onClose={() => {
-        dispatch(actions.forms.manifest.reset());
-        onClose();
-      }}
       buttonAction={onManifest}
     >
       <SlotForm />

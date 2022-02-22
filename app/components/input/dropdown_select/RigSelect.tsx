@@ -2,8 +2,9 @@ import { UserRigDetailedFragment } from 'app/api/operations';
 import { useAvailableRigsLazyQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { Text, View } from 'react-native';
-import { List, Menu, TextInput, useTheme } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import { useAppSelector } from 'app/state';
+import Select from '../select/Select';
 
 interface IRigSelect {
   dropzoneUserId?: number;
@@ -39,7 +40,6 @@ function RigTitle(props: { rig: UserRigDetailedFragment }): JSX.Element {
 
 export default function RigSelect(props: IRigSelect) {
   const { dropzoneUserId, value, autoSelectFirst, onSelect, tandem } = props;
-  const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 
   const [fetchRigs, { data }] = useAvailableRigsLazyQuery({
@@ -63,36 +63,26 @@ export default function RigSelect(props: IRigSelect) {
     }
   }, [autoSelectFirst, data?.availableRigs, onSelect, value]);
 
+  const options = React.useMemo(
+    () =>
+      data?.availableRigs?.map((rig) => ({
+        label: rig?.name || [rig?.make, rig?.model].join(' '),
+        value: rig as UserRigDetailedFragment,
+      })) || [],
+    [data?.availableRigs]
+  );
+
+  const selected = React.useMemo(
+    () => data?.availableRigs?.find((node) => node?.id === value?.id),
+    [data?.availableRigs, value?.id]
+  );
+
   return (
-    <Menu
-      onDismiss={() => setMenuOpen(false)}
-      visible={isMenuOpen}
-      anchor={
-        <TextInput
-          onTouchEnd={() => setMenuOpen(true)}
-          label="Select rig"
-          value={
-            value
-              ? `${value?.name || `${value?.make} ${value?.model}`} (${value?.canopySize} sqft)`
-              : undefined
-          }
-          left={() => <List.Icon icon="parachute" />}
-          editable={false}
-          mode="outlined"
-        />
-      }
-    >
-      {data?.availableRigs?.map((rig) => (
-        <Menu.Item
-          key={`rig-select-${rig.id}`}
-          onPress={() => {
-            setMenuOpen(false);
-            onSelect(rig);
-          }}
-          style={{ width: '100%' }}
-          title={<RigTitle rig={rig} />}
-        />
-      ))}
-    </Menu>
+    <Select<UserRigDetailedFragment>
+      label="Select rig"
+      value={selected}
+      options={options}
+      onChange={onSelect}
+    />
   );
 }

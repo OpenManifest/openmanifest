@@ -18,8 +18,8 @@ import SkeletonContent from 'app/components/Skeleton';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { actions, useAppDispatch } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
-import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
 import { Permission } from 'app/api/schema.d';
+import { useNavigation } from '@react-navigation/core';
 import nightBackground from '../../../../../../assets/images/night.png';
 import weatherBackground from '../../../../../../assets/images/weather.png';
 import JumpRunMap from './JumpRun';
@@ -27,7 +27,7 @@ import JumpRunMap from './JumpRun';
 export default function WeatherBoard() {
   const { dropzone, loading, called } = useCurrentDropzone();
   const dispatch = useAppDispatch();
-  const navigation = useAuthenticatedNavigation();
+  const navigation = useNavigation();
   const [isExpanded, setExpanded] = React.useState(false);
   const height = React.useRef(new Animated.Value(0));
 
@@ -67,8 +67,12 @@ export default function WeatherBoard() {
   const onEditWindboard = React.useCallback(() => {
     if (canUpdate && dropzone?.currentConditions) {
       dispatch(actions.forms.weather.setOpen(dropzone?.currentConditions));
-      navigation.navigate('Manifest', {
-        screen: 'WindScreen',
+      navigation.navigate('Authenticated', {
+        screen: 'LeftDrawer',
+        params: {
+          screen: 'Manifest',
+          params: { screen: 'WindScreen' },
+        },
       });
     }
   }, [canUpdate, dispatch, dropzone?.currentConditions, navigation]);
@@ -76,8 +80,12 @@ export default function WeatherBoard() {
   const onEditJumprun = React.useCallback(() => {
     if (dropzone?.currentConditions && canUpdate) {
       dispatch(actions.forms.weather.setOpen(dropzone.currentConditions));
-      navigation.navigate('Manifest', {
-        screen: 'JumpRunScreen',
+      navigation.navigate('Authenticated', {
+        screen: 'LeftDrawer',
+        params: {
+          screen: 'Manifest',
+          params: { screen: 'JumpRunScreen' },
+        },
       });
     }
   }, [canUpdate, dispatch, dropzone?.currentConditions, navigation]);

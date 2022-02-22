@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TextInput, HelperText, Divider } from 'react-native-paper';
+import TextInput from 'app/components/input/text/TextField';
+import { HelperText, Divider } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import NumberField from '../../input/number_input/NumberField';
@@ -33,11 +34,10 @@ export default function SlotForm() {
     <>
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Name"
-        error={!!state.fields.name.error}
+        error={state.fields.name.error}
         value={state.fields.name?.value?.toString() || ''}
-        onChangeText={(newValue) => dispatch(actions.forms.user.setField(['name', newValue]))}
+        onChange={(newValue) => dispatch(actions.forms.user.setField(['name', newValue]))}
       />
 
       <HelperText type={state.fields.name.error ? 'error' : 'info'}>
@@ -46,11 +46,10 @@ export default function SlotForm() {
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Nickname"
-        error={!!state.fields.nickname.error}
+        error={state.fields.nickname.error}
         value={state.fields.nickname?.value?.toString() || ''}
-        onChangeText={(newValue) => dispatch(actions.forms.user.setField(['nickname', newValue]))}
+        onChange={(newValue) => dispatch(actions.forms.user.setField(['nickname', newValue]))}
       />
 
       <HelperText type={state.fields.nickname.error ? 'error' : 'info'}>
@@ -59,41 +58,26 @@ export default function SlotForm() {
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Email"
-        error={!!state.fields.email.error}
+        error={state.fields.email.error}
         value={state.fields.email?.value?.toString() || ''}
-        onChangeText={(newValue) => dispatch(actions.forms.user.setField(['email', newValue]))}
+        onChange={(newValue) => dispatch(actions.forms.user.setField(['email', newValue]))}
       />
-
-      <HelperText type={state.fields.email.error ? 'error' : 'info'}>
-        {state.fields.email.error || ' '}
-      </HelperText>
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Phone"
-        error={!!state.fields.phone.error}
+        error={state.fields.phone.error}
         value={state.fields.phone?.value?.toString() || ''}
-        onChangeText={(newValue) => dispatch(actions.forms.user.setField(['phone', newValue]))}
+        onChange={(newValue) => dispatch(actions.forms.user.setField(['phone', newValue]))}
       />
-
-      <HelperText type={state.fields.phone.error ? 'error' : 'info'}>
-        {state.fields.phone.error || ''}
-      </HelperText>
 
       <NumberField
         value={!state.fields.exitWeight.value ? 0 : Number(state.fields.exitWeight.value)}
-        onChangeText={(num) =>
-          dispatch(actions.forms.user.setField(['exitWeight', num.toString()]))
-        }
+        error={state.fields.exitWeight.error}
+        onChange={(num) => dispatch(actions.forms.user.setField(['exitWeight', num.toString()]))}
         label="Exit weight (kg)"
       />
-
-      <HelperText type={state.fields.exitWeight.error ? 'error' : 'info'}>
-        {state.fields.exitWeight.error || ''}
-      </HelperText>
 
       <Divider />
 

@@ -59,14 +59,11 @@ export default function JumpHistoryTab(props: IJumpHistoryTab) {
                     navigation.navigate('Authenticated', {
                       screen: 'LeftDrawer',
                       params: {
-                        screen: 'RightDrawer',
+                        screen: 'Manifest',
                         params: {
-                          screen: 'Manifest',
+                          screen: 'LoadScreen',
                           params: {
-                            screen: 'LoadScreen',
-                            params: {
-                              loadId: item.node?.load?.id,
-                            },
+                            loadId: item.node?.load?.id,
                           },
                         },
                       },

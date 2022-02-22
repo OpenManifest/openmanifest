@@ -18,11 +18,11 @@ export default function UserAvatar(props: IUserAvatarProps) {
     .join('');
 
   return !image ? (
-    <Avatar.Text label={initals} {...rest} />
+    <Avatar.Text label={initals} {...rest} style={{ alignSelf: 'center', marginRight: 12 }} />
   ) : (
     <Avatar.Image
       source={{ uri: image }}
-      style={{ alignSelf: 'center', marginHorizontal: 12 }}
+      style={{ alignSelf: 'center', marginRight: 12 }}
       size={32}
       {...rest}
     />

@@ -3,7 +3,7 @@ import { Appbar, IconButton, Chip } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/core';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
-import { useOpenUserDrawer } from 'app/screens/drawers/UserDrawerContext';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import SetupWarning from './SetupWarning';
 
@@ -18,7 +18,7 @@ function AppBar(props: IAppBarProps) {
   const { currentUser, loading, dropzone } = useCurrentDropzone();
 
   const navigation = useNavigation();
-  const { openDrawer } = useOpenUserDrawer();
+  const { openDrawer } = useNavigation<DrawerNavigationProp<any>>();
   return (
     <>
       <Appbar.Header

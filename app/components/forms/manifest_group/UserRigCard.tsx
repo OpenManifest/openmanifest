@@ -105,7 +105,7 @@ export default function UserRigCard(props: IUserRigCard) {
           <View style={styles.rowLast}>
             <NumberField
               value={!exitWeight ? 0 : exitWeight}
-              onChangeText={(num) => onChangeExitWeight(num)}
+              onChange={(num) => onChangeExitWeight(num)}
               label="Exit weight (kg)"
             />
           </View>
@@ -126,7 +126,7 @@ export default function UserRigCard(props: IUserRigCard) {
               <View style={styles.rowLast}>
                 <NumberField
                   value={!passengerWeight ? 0 : passengerWeight}
-                  onChangeText={(num) => onChangePassengerWeight?.(num)}
+                  onChange={(num) => onChangePassengerWeight?.(num)}
                   label="Exit weight (kg)"
                 />
               </View>

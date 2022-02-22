@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TextInput, HelperText, Divider } from 'react-native-paper';
+import TextInput from 'app/components/input/text/TextField';
+import { HelperText, Divider } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 import NumberField from '../../input/number_input/NumberField';
 
@@ -16,42 +17,28 @@ export default function GhostForm() {
     <>
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Name"
-        error={!!state.fields.name.error}
+        error={state.fields.name.error}
         value={state.fields.name?.value?.toString() || ''}
-        onChangeText={(newValue) => dispatch(actions.forms.ghost.setField(['name', newValue]))}
+        onChange={(newValue) => dispatch(actions.forms.ghost.setField(['name', newValue]))}
       />
-
-      <HelperText type={state.fields.name.error ? 'error' : 'info'}>
-        {state.fields.name.error || ' '}
-      </HelperText>
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Email"
-        error={!!state.fields.email.error}
+        error={state.fields.email.error}
         value={state.fields.email?.value?.toString() || ''}
-        onChangeText={(newValue) => dispatch(actions.forms.ghost.setField(['email', newValue]))}
+        onChange={(newValue) => dispatch(actions.forms.ghost.setField(['email', newValue]))}
       />
-
-      <HelperText type={state.fields.email.error ? 'error' : 'info'}>
-        {state.fields.email.error || ' '}
-      </HelperText>
 
       <NumberField
         label="Exit weight (kg)"
-        error={!!state.fields.exitWeight.error}
+        error={state.fields.exitWeight.error}
         value={Number(state.fields.exitWeight?.value)}
-        onChangeText={(newValue) =>
+        onChange={(newValue) =>
           dispatch(actions.forms.ghost.setField(['exitWeight', newValue?.toString()]))
         }
       />
-
-      <HelperText type={state.fields.exitWeight.error ? 'error' : 'info'}>
-        {state.fields.exitWeight.error || ''}
-      </HelperText>
 
       <Divider />
 

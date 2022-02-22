@@ -65,15 +65,12 @@ export default function TransactionsScreen() {
                   : navigation.navigate('Authenticated', {
                       screen: 'LeftDrawer',
                       params: {
-                        screen: 'RightDrawer',
+                        screen: 'Users',
                         params: {
-                          screen: 'Users',
+                          screen: 'OrderReceiptScreen',
                           params: {
-                            screen: 'OrderReceiptScreen',
-                            params: {
-                              orderId: item?.node?.id,
-                              userId: item?.node?.buyer?.id,
-                            },
+                            orderId: item?.node?.id,
+                            userId: item?.node?.buyer?.id,
                           },
                         },
                       },

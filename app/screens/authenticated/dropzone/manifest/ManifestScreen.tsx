@@ -272,13 +272,10 @@ export default function ManifestScreen() {
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',
               params: {
-                screen: 'RightDrawer',
+                screen: 'Manifest',
                 params: {
-                  screen: 'Manifest',
-                  params: {
-                    screen: 'LoadScreen',
-                    params: { loadId: load?.id },
-                  },
+                  screen: 'LoadScreen',
+                  params: { loadId: load?.id },
                 },
               },
             })

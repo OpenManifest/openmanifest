@@ -74,6 +74,8 @@
   },
   "dependencies": {
     "@apollo/client": "3.5.8",
+    "@emotion/react": "^11.8.1",
+    "@emotion/styled": "^11.8.1",
     "@expo-google-fonts/inter": "^0.2.2",
     "@expo-google-fonts/roboto": "^0.2.2",
     "@expo/vector-icons": "^12.0.0",
@@ -89,6 +91,7 @@
     "@gorhom/animated-tabbar": "2.1.1",
     "@gorhom/bottom-sheet": "4.1.5",
     "@gorhom/portal": "1.0.12",
+    "@mui/material": "5.4.3",
     "@react-google-maps/api": "2.7.0",
     "@react-native-async-storage/async-storage": "~1.15.0",
     "@react-native-community/datetimepicker": "4.0.0",

@@ -1,7 +1,8 @@
 import { useTicketTypeExtrasQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TextInput, HelperText, Checkbox, Menu, List, Divider } from 'react-native-paper';
+import TextInput from 'app/components/input/text/TextField';
+import { HelperText, Checkbox, Menu, List, Divider } from 'react-native-paper';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 import { TicketTypeExtraEssentialsFragment } from 'app/api/operations';
@@ -32,23 +33,19 @@ export default function TicketTypeForm() {
     <>
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Name"
-        error={!!state.fields.name.error}
+        error={state.fields.name.error}
         value={state.fields.name.value || ''}
-        onChangeText={(newValue) => dispatch(actions.forms.ticketType.setField(['name', newValue]))}
+        helperText="Name of the ticket users will see"
+        onChange={(newValue) => dispatch(actions.forms.ticketType.setField(['name', newValue]))}
       />
-      <HelperText type={state.fields.name.error ? 'error' : 'info'}>
-        {state.fields.name.error || 'Name of the ticket users will see'}
-      </HelperText>
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Price"
-        error={!!state.fields.cost.error}
+        error={state.fields.cost.error}
         value={state.fields.cost?.value?.toString()}
-        onChangeText={(newValue) =>
+        onChange={(newValue) =>
           dispatch(actions.forms.ticketType.setField(['cost', Number(newValue)]))
         }
       />
@@ -114,11 +111,10 @@ export default function TicketTypeForm() {
         {(!state.fields.altitude.value || ![4000, 14000].includes(state.fields.altitude.value)) && (
           <TextInput
             style={styles.field}
-            mode="outlined"
             label="Custom altitude"
-            error={!!state.fields.altitude.error}
+            error={state.fields.altitude.error}
             value={state.fields.altitude?.value?.toString()}
-            onChangeText={(newValue) =>
+            onChange={(newValue) =>
               dispatch(actions.forms.ticketType.setField(['altitude', Number(newValue)]))
             }
           />

@@ -1,10 +1,9 @@
-import { SlotDetailsFragment } from 'app/api/operations';
+import { DropzoneUserEssentialsFragment, SlotDetailsFragment } from 'app/api/operations';
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { Menu, useTheme, Text } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
-import UserAvatar from '../UserAvatar';
+import Select, { ISelectOption } from '../input/select/Select';
 import Chip from './Chip';
 
 interface ILoadMasterChipSelect {
@@ -21,56 +20,45 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
   const { small, color: assignedColor, backgroundColor, value, onSelect, slots } = props;
   const theme = useTheme();
   const color = assignedColor || theme.colors.onSurface;
-  const [isMenuOpen, setMenuOpen] = React.useState(false);
   const allowed = useRestriction(Permission.UpdateLoad);
+
+  const options = React.useMemo(
+    () =>
+      slots?.map((slot) => ({
+        label: slot?.dropzoneUser?.user?.name || '',
+        value: slot?.dropzoneUser as DropzoneUserEssentialsFragment,
+        avatar: slot?.dropzoneUser?.user?.image,
+      })) || [],
+    [slots]
+  );
+
+  const selected = React.useMemo(
+    () => slots?.map((slot) => slot?.dropzoneUser)?.find((node) => node?.id === value?.id),
+    [slots, value?.id]
+  );
+
+  const renderAnchor: React.FC<{
+    item?: ISelectOption<DropzoneUserEssentialsFragment>;
+    openMenu(): void;
+  }> = React.useCallback(
+    ({ item, openMenu }) => (
+      <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="shield-account">
+        {item?.label || 'No LM'}
+      </Chip>
+    ),
+    [backgroundColor, color, small]
+  );
 
   return !allowed ? (
     <Chip {...{ backgroundColor, small, color }} icon="shield-account">
-      {value?.user?.name || 'No loadmaster'}
+      {value?.user?.name || 'No LM'}
     </Chip>
   ) : (
-    <Menu
-      onDismiss={() => setMenuOpen(false)}
-      visible={isMenuOpen}
-      anchor={
-        <Chip
-          {...{ backgroundColor, small, color }}
-          icon="shield-account"
-          onPress={() => allowed && setMenuOpen(true)}
-        >
-          {value?.id ? value?.user?.name : 'No loadmaster'}
-        </Chip>
-      }
-    >
-      {slots?.map((slot) => (
-        <Menu.Item
-          key={`lm-chip-${slot.id}`}
-          onPress={() => {
-            setMenuOpen(false);
-            if (slot?.dropzoneUser) {
-              onSelect(slot.dropzoneUser);
-            }
-          }}
-          titleStyle={styles.menuItemTitle}
-          title={
-            <>
-              <UserAvatar
-                name={slot?.dropzoneUser?.user?.name || ''}
-                image={slot?.dropzoneUser?.user?.image || undefined}
-                size={24}
-              />
-              <Text>{slot?.dropzoneUser?.user?.name}</Text>
-            </>
-          }
-        />
-      ))}
-    </Menu>
+    <Select<DropzoneUserEssentialsFragment>
+      value={selected}
+      options={options}
+      renderAnchor={renderAnchor}
+      onChange={onSelect}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  menuItemTitle: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-});

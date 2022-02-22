@@ -35,7 +35,7 @@ import SwipeActions from 'app/components/layout/SwipeActions';
 import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
 import useMutationDeleteSlot from 'app/api/hooks/useMutationDeleteSlot';
 import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
-import LoadingCard from '../Small/Loading';
+import LoadingCard from './Loading';
 
 interface ILoadCardLarge {
   load: LoadDetailsFragment;

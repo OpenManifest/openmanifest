@@ -91,13 +91,10 @@ export default function SetupWarning(props: ISetupWarning) {
           navigation.navigate('Authenticated', {
             screen: 'LeftDrawer',
             params: {
-              screen: 'RightDrawer',
+              screen: 'Manifest',
               params: {
-                screen: 'Manifest',
-                params: {
-                  screen: 'User',
-                  params: { screen: 'EquipmentScreen', params: { userId: currentUser.id } },
-                },
+                screen: 'User',
+                params: { screen: 'EquipmentScreen', params: { userId: currentUser.id } },
               },
             },
           })

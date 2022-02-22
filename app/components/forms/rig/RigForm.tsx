@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TextInput, HelperText } from 'react-native-paper';
+import TextInput from 'app/components/input/text/TextField';
+import { HelperText } from 'react-native-paper';
 
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
@@ -23,33 +24,26 @@ export default function RigForm(props: IRigForm) {
     <View>
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Name"
-        error={!!state.fields.name.error}
+        error={state.fields.name.error}
         value={state.fields.name.value || ''}
-        onChangeText={(newValue) => dispatch(actions.forms.rig.setField(['name', newValue]))}
+        helperText="You can give your equipment a nickname"
+        onChange={(newValue) => dispatch(actions.forms.rig.setField(['name', newValue]))}
       />
-      <HelperText type={state.fields.name.error ? 'error' : 'info'}>
-        {state.fields.name.error || 'You can give your equipment a nickname'}
-      </HelperText>
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Make"
-        error={!!state.fields.make.error}
+        helperText="e.g Javelin, Mirage"
+        error={state.fields.make.error}
         value={state.fields.make.value || ''}
-        onChangeText={(newValue) => dispatch(actions.forms.rig.setField(['make', newValue]))}
+        onChange={(newValue) => dispatch(actions.forms.rig.setField(['make', newValue]))}
       />
-      <HelperText type={state.fields.make.error ? 'error' : 'info'}>
-        {state.fields.make.error || 'e.g Javelin, Mirage'}
-      </HelperText>
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Model"
-        error={!!state.fields.model.error}
+        error={state.fields.model.error}
         value={state.fields.model.value || ''}
         onChangeText={(newValue) => dispatch(actions.forms.rig.setField(['model', newValue]))}
       />
@@ -59,9 +53,8 @@ export default function RigForm(props: IRigForm) {
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Serial"
-        error={!!state.fields.serial.error}
+        error={state.fields.serial.error}
         value={state.fields.serial.value || ''}
         onChangeText={(newValue) => dispatch(actions.forms.rig.setField(['serial', newValue]))}
       />
@@ -71,9 +64,8 @@ export default function RigForm(props: IRigForm) {
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Current canopy size"
-        error={!!state.fields.canopySize.error}
+        error={state.fields.canopySize.error}
         value={state.fields.canopySize.value?.toString() || ''}
         keyboardType="number-pad"
         onChangeText={(newValue) =>
