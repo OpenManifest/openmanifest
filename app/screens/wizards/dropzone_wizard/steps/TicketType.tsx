@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Card, HelperText, List, Menu, Paragraph, TextInput } from 'react-native-paper';
+import { Card, HelperText, List, Paragraph } from 'react-native-paper';
 import Slider from '@react-native-community/slider';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Step, Fields, IWizardStepProps } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import AltitudeSelect from 'app/components/input/dropdown_select/AltitudeSelect';
+import TextInput from 'app/components/input/text/TextField';
 
 function TicketTypeWizardScreen(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.ticketType);
   const dispatch = useAppDispatch();
-  const [altitudeMenuOpen, setAltitudeMenuOpen] = React.useState(false);
   const [price, setPrice] = React.useState(0);
 
   return (
@@ -19,7 +19,7 @@ function TicketTypeWizardScreen(props: IWizardStepProps) {
           style={styles.field}
           mode="flat"
           label="Name"
-          error={!!state.fields.name.error}
+          error={state.fields.name.error}
           value={state.fields.name.value || ''}
           onChangeText={(newValue) =>
             dispatch(actions.forms.ticketType.setField(['name', newValue]))
@@ -56,62 +56,18 @@ function TicketTypeWizardScreen(props: IWizardStepProps) {
         </Card>
 
         <Card style={styles.card} elevation={3}>
-          <Menu
-            onDismiss={() => setAltitudeMenuOpen(false)}
-            visible={altitudeMenuOpen}
-            contentStyle={{ width: 300 }}
-            anchor={
-              <TouchableOpacity onPress={() => setAltitudeMenuOpen(true)}>
-                <View style={styles.cardTitle}>
-                  <List.Subheader>Altitude</List.Subheader>
-                  <Text style={styles.cardValue}>
-                    {state.fields.altitude.value &&
-                    [4000, 14000].includes(state.fields.altitude.value)
-                      ? {
-                          '14000': 'Height',
-                          '4000': 'Hop n Pop',
-                        }[state.fields.altitude.value.toString() as '14000' | '4000']
-                      : 'Custom'}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            }
-          >
-            <List.Item
-              onPress={() => {
-                dispatch(actions.forms.ticketType.setField(['altitude', 4000]));
-                setAltitudeMenuOpen(false);
-              }}
-              title="Hop n Pop"
-              right={() => <List.Icon icon="parachute" />}
-            />
-            <List.Item
-              onPress={() => {
-                dispatch(actions.forms.ticketType.setField(['altitude', 14000]));
-                setAltitudeMenuOpen(false);
-              }}
-              title="Height"
-              right={() => <List.Icon icon="airplane-takeoff" />}
-            />
-            <List.Item
-              onPress={() => {
-                dispatch(actions.forms.ticketType.setField(['altitude', 7000]));
-                setAltitudeMenuOpen(false);
-              }}
-              title="Other"
-              right={() => <List.Icon icon="parachute" />}
-            />
-          </Menu>
-
+          <AltitudeSelect
+            onChange={(value) => dispatch(actions.forms.ticketType.setField(['altitude', value]))}
+            value={state.fields.altitude.value || 14000}
+          />
           {(!state.fields.altitude.value ||
             ![4000, 14000].includes(state.fields.altitude.value)) && (
             <TextInput
               style={styles.field}
-              mode="outlined"
               label="Custom altitude"
-              error={!!state.fields.altitude.error}
+              error={state.fields.altitude.error}
               value={state.fields.altitude?.value?.toString()}
-              onChangeText={(newValue) =>
+              onChange={(newValue) =>
                 dispatch(actions.forms.ticketType.setField(['altitude', Number(newValue)]))
               }
             />

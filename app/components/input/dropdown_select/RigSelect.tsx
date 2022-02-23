@@ -1,47 +1,36 @@
 import { UserRigDetailedFragment } from 'app/api/operations';
 import { useAvailableRigsLazyQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { Text, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { useAppSelector } from 'app/state';
-import Select from '../select/Select';
+import Chip from 'app/components/chips/Chip';
+import Select, { ISelectOption } from '../select/Select';
 
 interface IRigSelect {
   dropzoneUserId?: number;
   value?: UserRigDetailedFragment | null;
   tandem?: boolean;
+  small?: boolean;
+  backgroundColor?: string;
+  color?: string;
   autoSelectFirst?: boolean;
   onSelect(rig: UserRigDetailedFragment): void;
 }
 
-function RigTitle(props: { rig: UserRigDetailedFragment }): JSX.Element {
-  const theme = useTheme();
-  const { rig } = props;
-  const name = rig?.name || `${rig?.make} ${rig?.model}`;
-
-  return (
-    <>
-      <Text>{`${name} (${rig?.canopySize} sqft)`}</Text>
-      {!rig.user ? (
-        <View
-          style={{
-            padding: 2,
-            paddingHorizontal: 4,
-            backgroundColor: theme.colors.primary,
-            borderRadius: 16,
-          }}
-        >
-          <Text style={{ fontSize: 10, color: 'white' }}>Dropzone rig</Text>
-        </View>
-      ) : null}
-    </>
-  );
-}
-
 export default function RigSelect(props: IRigSelect) {
-  const { dropzoneUserId, value, autoSelectFirst, onSelect, tandem } = props;
+  const {
+    dropzoneUserId,
+    value,
+    small,
+    color: assignedColor,
+    backgroundColor,
+    autoSelectFirst,
+    onSelect,
+    tandem,
+  } = props;
   const { currentDropzoneId } = useAppSelector((root) => root.global);
-
+  const theme = useTheme();
+  const color = assignedColor || theme.colors.onSurface;
   const [fetchRigs, { data }] = useAvailableRigsLazyQuery({
     fetchPolicy: 'cache-and-network',
   });
@@ -77,11 +66,22 @@ export default function RigSelect(props: IRigSelect) {
     [data?.availableRigs, value?.id]
   );
 
+  const renderAnchor: React.FC<{
+    item?: ISelectOption<UserRigDetailedFragment>;
+    openMenu(): void;
+  }> = React.useCallback(
+    ({ item, openMenu }) => (
+      <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="parachute">
+        {item?.label || 'No Rig'}
+      </Chip>
+    ),
+    [backgroundColor, color, small]
+  );
+
   return (
     <Select<UserRigDetailedFragment>
-      label="Select rig"
+      {...{ options, renderAnchor }}
       value={selected}
-      options={options}
       onChange={onSelect}
     />
   );

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import TextInput from 'app/components/input/text/TextField';
-import { HelperText } from 'react-native-paper';
+import { HelperText, Provider } from 'react-native-paper';
 
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
@@ -58,9 +58,6 @@ export default function RigForm(props: IRigForm) {
         value={state.fields.serial.value || ''}
         onChangeText={(newValue) => dispatch(actions.forms.rig.setField(['serial', newValue]))}
       />
-      <HelperText type={state.fields.serial.error ? 'error' : 'info'}>
-        {state.fields.serial.error || ''}
-      </HelperText>
 
       <TextInput
         style={styles.field}
@@ -68,13 +65,11 @@ export default function RigForm(props: IRigForm) {
         error={state.fields.canopySize.error}
         value={state.fields.canopySize.value?.toString() || ''}
         keyboardType="number-pad"
+        helperText="Size of canopy in container"
         onChangeText={(newValue) =>
           dispatch(actions.forms.rig.setField(['canopySize', Number(newValue)]))
         }
       />
-      <HelperText type={state.fields.canopySize.error ? 'error' : 'info'}>
-        {state.fields.canopySize.error || 'Size of canopy in container'}
-      </HelperText>
 
       {!showTypeSelect ? null : (
         <ChipSelect<string>

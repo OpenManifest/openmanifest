@@ -110,7 +110,7 @@ function Content() {
   /// Listen to changes in Appearance and set dark mode theme in state
   React.useEffect(() => {
     const handler = listener?.current;
-    return () => handler.remove?.();
+    return () => handler?.remove?.();
   }, [dispatch, state.isDarkMode, state.theme.colors.background]);
 
   React.useEffect(() => {

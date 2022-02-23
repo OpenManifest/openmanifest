@@ -1,38 +1,26 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { HelperText, Menu, Surface, TextInput } from 'react-native-paper';
+import { HelperText, Surface, TextInput } from 'react-native-paper';
 import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import Select from 'app/components/input/select/Select';
 
 function RigWizardScreen(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.rig);
   const dispatch = useAppDispatch();
-  const [isMenuOpen, setMenuOpen] = React.useState(false);
   const [isOtherMake, setIsOtherMake] = React.useState(false);
 
   return (
     <Step {...props} title="Your rig">
       <Fields>
-        <Menu
-          onDismiss={() => setMenuOpen(false)}
-          visible={isMenuOpen}
-          anchor={
-            <TouchableOpacity onPress={() => setMenuOpen(true)}>
-              <Surface style={styles.card}>
-                <TextInput
-                  pointerEvents="box-only"
-                  style={{ backgroundColor: 'transparent' }}
-                  mode="flat"
-                  error={!!state.fields.make.error}
-                  value={isOtherMake ? 'Other' : state.fields.make.value || 'Select manufacturer'}
-                  disabled
-                />
-              </Surface>
-            </TouchableOpacity>
-          }
-        >
-          {[
+        <Select<string>
+          label="Manufacturer"
+          onChange={(value) => {
+            setIsOtherMake(value === 'other');
+            dispatch(actions.forms.rig.setField(['make', value]));
+          }}
+          value={state.fields.make.value}
+          options={[
             'Icon',
             'Javelin',
             'Mirage',
@@ -42,25 +30,10 @@ function RigWizardScreen(props: IWizardStepProps) {
             'Parachutes de France',
             'Parachute Systems',
             'Racer',
-          ].map((make) => (
-            <Menu.Item
-              onPress={() => {
-                setMenuOpen(false);
-                setIsOtherMake(false);
-                dispatch(actions.forms.rig.setField(['make', make]));
-              }}
-              title={make}
-            />
-          ))}
-          <Menu.Item
-            onPress={() => {
-              setMenuOpen(false);
-              dispatch(actions.forms.rig.setField(['make', '']));
-              setIsOtherMake(true);
-            }}
-            title="Other"
-          />
-        </Menu>
+          ]
+            .map((label) => ({ label, value: label }))
+            .concat([{ label: 'Other', value: 'other' }])}
+        />
         {!isOtherMake ? null : (
           <Surface style={styles.card}>
             <TextInput

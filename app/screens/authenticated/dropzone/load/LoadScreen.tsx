@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native';
 
 import { RouteProp, useIsFocused, useRoute } from '@react-navigation/core';
 import {
@@ -223,55 +224,71 @@ export default function LoadScreen() {
       <Header
         load={load}
         renderBadges={() => (
-          <ScrollView
+          <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
             style={{ marginVertical: 8 }}
-          >
-            <PlaneChip
-              value={load?.plane}
-              onSelect={async (plane) => {
-                if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
-                  const diff = (load?.slots?.length || 0) - (plane.maxSlots || 0);
+            data={['plane', 'pilot', 'gca', 'loadMaster']}
+            renderItem={({ item }) => {
+              switch (item) {
+                case 'plane':
+                  return (
+                    <PlaneChip
+                      value={load?.plane}
+                      onSelect={async (plane) => {
+                        if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
+                          const diff = (load?.slots?.length || 0) - (plane.maxSlots || 0);
 
-                  dispatch(
-                    actions.notifications.showSnackbar({
-                      message: `You need to take ${diff} people off the load to fit on this plane`,
-                      variant: 'info',
-                    })
+                          dispatch(
+                            actions.notifications.showSnackbar({
+                              message: `You need to take ${diff} people off the load to fit on this plane`,
+                              variant: 'info',
+                            })
+                          );
+                        } else {
+                          await updatePlane(plane);
+                          refetch();
+                        }
+                      }}
+                      small
+                      backgroundColor="transparent"
+                      color={palette.onSurface}
+                    />
                   );
-                } else {
-                  await updatePlane(plane);
-                  refetch();
-                }
-              }}
-              small
-              backgroundColor="transparent"
-              color={palette.onSurface}
-            />
-            <GCAChip
-              value={load?.gca}
-              onSelect={updateGCA}
-              small
-              backgroundColor="transparent"
-              color={palette.onSurface}
-            />
-            <PilotChip
-              value={load?.pilot}
-              onSelect={updatePilot}
-              small
-              backgroundColor="transparent"
-              color={palette.onSurface}
-            />
-            <LoadMasterChip
-              value={load?.loadMaster}
-              slots={load?.slots || []}
-              onSelect={updateLoadMaster}
-              small
-              backgroundColor="transparent"
-              color={palette.onSurface}
-            />
-          </ScrollView>
+                case 'gca':
+                  return (
+                    <GCAChip
+                      value={load?.gca}
+                      onSelect={updateGCA}
+                      small
+                      backgroundColor="transparent"
+                      color={palette.onSurface}
+                    />
+                  );
+                case 'pilot':
+                  return (
+                    <PilotChip
+                      value={load?.pilot}
+                      onSelect={updatePilot}
+                      small
+                      backgroundColor="transparent"
+                      color={palette.onSurface}
+                    />
+                  );
+                default:
+                  return (
+                    <LoadMasterChip
+                      value={load?.loadMaster}
+                      slots={load?.slots || []}
+                      onSelect={updateLoadMaster}
+                      small
+                      backgroundColor="transparent"
+                      color={palette.onSurface}
+                    />
+                  );
+              }
+            }}
+          />
         )}
       >
         <InfoGrid

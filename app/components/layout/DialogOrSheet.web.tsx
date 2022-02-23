@@ -14,21 +14,30 @@ interface IBottomSheetProps {
 
   // eslint-disable-next-line react/no-unused-prop-types
   snapPoints?: (string | number)[];
+  scrollable?: boolean;
   buttonAction?(): void;
   onClose(): void;
 }
 
 function DialogOrSheet(props: IBottomSheetProps) {
-  const { buttonLabel, disablePadding, buttonAction, title, loading, open, children, onClose } =
-    props;
+  const {
+    buttonLabel,
+    disablePadding,
+    scrollable,
+    buttonAction,
+    title,
+    loading,
+    open,
+    children,
+    onClose,
+  } = props;
   const theme = useTheme();
 
   return (
     <Drawer
       {...{ open, onClose }}
       anchor="right"
-      PaperProps={{ style: { width: 400, zIndex: 950 } }}
-      style={{ zIndex: 950 }}
+      PaperProps={{ style: { width: 400, overflowY: 'hidden' } }}
     >
       <ProgressBar
         indeterminate
@@ -42,15 +51,22 @@ function DialogOrSheet(props: IBottomSheetProps) {
           <IconButton icon="close" style={styles.close} size={24} onPress={onClose} />
         </Dialog.Title>
       )}
-      <Dialog.Content pointerEvents="box-none" style={styles.noPadding}>
-        <Dialog.ScrollArea
-          style={StyleSheet.flatten([
-            disablePadding ? styles.noPadding : styles.defaultPadding,
-            { paddingTop: title ? 24 : 0 },
-          ])}
-        >
-          <ScrollView>{children}</ScrollView>
-        </Dialog.ScrollArea>
+      <Dialog.Content
+        pointerEvents="box-none"
+        style={[styles.noPadding, scrollable ? {} : { height: 'calc(100% - 120px)' }]}
+      >
+        {scrollable ? (
+          <Dialog.ScrollArea
+            style={StyleSheet.flatten([
+              disablePadding ? styles.noPadding : styles.defaultPadding,
+              { paddingTop: title ? 24 : 0 },
+            ])}
+          >
+            <ScrollView>{children}</ScrollView>
+          </Dialog.ScrollArea>
+        ) : (
+          children
+        )}
       </Dialog.Content>
       <Dialog.Actions style={{ justifyContent: 'flex-end' }}>
         <Button mode="contained" onPress={buttonAction} style={styles.button}>

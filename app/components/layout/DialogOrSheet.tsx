@@ -10,6 +10,7 @@ interface IBottomSheetProps {
   children: React.ReactNode;
   loading?: boolean;
   title?: string;
+  scrollable?: boolean;
   disablePadding?: boolean;
   snapPoints?: (string | number)[];
   buttonAction?(): void;
@@ -17,7 +18,17 @@ interface IBottomSheetProps {
 }
 
 export default function DialogOrSheet(props: IBottomSheetProps) {
-  const { open, snapPoints, onClose, title, buttonLabel, buttonAction, loading, children } = props;
+  const {
+    open,
+    snapPoints,
+    onClose,
+    scrollable,
+    title,
+    buttonLabel,
+    buttonAction,
+    loading,
+    children,
+  } = props;
   const sheetRef = React.useRef<BottomSheetModal>(null);
   const snappingPoints = React.useMemo(
     () => sortBy(uniq([0, ...(snapPoints || [600])])).filter((s) => s !== 0),
@@ -113,17 +124,26 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
       index={(snappingPoints?.length || 1) - 1}
       handleComponent={HandleComponent}
     >
-      <BottomSheetScrollView
-        contentContainerStyle={[
-          styles.sheet,
-          { paddingBottom: keyboardVisible ? 400 : 80, backgroundColor: theme.colors.surface },
-        ]}
-      >
-        {children}
-        <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>
-          {buttonLabel}
-        </Button>
-      </BottomSheetScrollView>
+      {scrollable !== false ? (
+        <BottomSheetScrollView
+          contentContainerStyle={[
+            styles.sheet,
+            { paddingBottom: keyboardVisible ? 400 : 80, backgroundColor: theme.colors.surface },
+          ]}
+        >
+          {children}
+          <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>
+            {buttonLabel}
+          </Button>
+        </BottomSheetScrollView>
+      ) : (
+        <>
+          {children}
+          <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>
+            {buttonLabel}
+          </Button>
+        </>
+      )}
     </BottomSheetModal>
   );
 }

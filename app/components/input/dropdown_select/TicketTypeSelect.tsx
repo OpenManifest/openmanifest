@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { List, Menu } from 'react-native-paper';
 import { TicketTypeEssentialsFragment } from 'app/api/operations';
 import { useTicketTypesQuery } from 'app/api/reflection';
 import { useAppSelector } from 'app/state';
+import Select from '../select/Select';
 
 interface ITicketTypeSelect {
   value?: TicketTypeEssentialsFragment | null;
@@ -12,8 +12,7 @@ interface ITicketTypeSelect {
 }
 
 export default function TicketTypeSelect(props: ITicketTypeSelect) {
-  const { allowManifestingSelf, value, required, onSelect } = props;
-  const [isMenuOpen, setMenuOpen] = React.useState(false);
+  const { allowManifestingSelf, value, onSelect } = props;
   const { currentDropzoneId } = useAppSelector((root) => root.global);
   const { data } = useTicketTypesQuery({
     variables: {
@@ -22,33 +21,13 @@ export default function TicketTypeSelect(props: ITicketTypeSelect) {
     },
   });
 
-  return (
-    <>
-      <List.Subheader>Ticket</List.Subheader>
-      <Menu
-        onDismiss={() => setMenuOpen(false)}
-        visible={isMenuOpen}
-        anchor={
-          <List.Item
-            onPress={() => {
-              setMenuOpen(true);
-            }}
-            title={value?.name || 'Please select ticket type'}
-            description={!required ? 'Optional' : null}
-          />
-        }
-      >
-        {data?.ticketTypes?.map((ticketType) => (
-          <Menu.Item
-            key={`ticket-type-select-${ticketType.id}`}
-            onPress={() => {
-              setMenuOpen(false);
-              onSelect(ticketType);
-            }}
-            title={ticketType.name || '-'}
-          />
-        ))}
-      </Menu>
-    </>
+  const options = React.useMemo(
+    () =>
+      data?.ticketTypes?.map((node) => ({
+        label: node?.name || '',
+        value: node as TicketTypeEssentialsFragment,
+      })) || [],
+    [data?.ticketTypes]
   );
+  return <Select<TicketTypeEssentialsFragment> {...{ value, options }} onChange={onSelect} />;
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { HelperText, TextInput } from 'react-native-paper';
+import { HelperText, TextInput, useTheme } from 'react-native-paper';
 
 type Extract<T> = T extends React.ComponentType<infer U> ? U : never;
 interface ITextFieldProps
@@ -11,13 +11,16 @@ interface ITextFieldProps
   onChange?(newValue: string): void;
 }
 export default function TextField(props: ITextFieldProps) {
-  const { error, helperText, onChangeText, onChange, style, ...rest } = props;
+  const { error, helperText, onChangeText: setText, onChange, style, ...rest } = props;
+  const onChangeText = onChange || setText;
+  const theme = useTheme();
   return (
     <>
       <TextInput
         mode="outlined"
-        style={StyleSheet.flatten([styles.field, style])}
+        style={StyleSheet.flatten([styles.field, { backgroundColor: theme.colors.surface }, style])}
         {...rest}
+        {...{ onChangeText }}
         error={!!error}
       />
       <HelperText type={error ? 'error' : 'info'}>{error || helperText || ''}</HelperText>

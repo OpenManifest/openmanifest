@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { List, Menu, Text } from 'react-native-paper';
-import { StyleSheet } from 'react-native';
-import UserAvatar from 'app/components/UserAvatar';
+import { List, Provider } from 'react-native-paper';
+import Menu, { MenuItem } from 'app/components/popover/Menu';
+import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 
 export interface ISelectOption<T> {
   label: string;
   value: T;
-  icon?: React.ReactElement;
+  icon?: IconSource;
   avatar?: string | null;
 }
 interface ISelectProps<T> {
@@ -27,27 +27,29 @@ interface IAnchorProps<T> {
 function Anchor<T>(props: IAnchorProps<T>): JSX.Element {
   const { item, openMenu } = props;
   return (
-    <Menu.Item
+    <MenuItem
       key={`select-option-${item?.label}`}
       onPress={openMenu}
       title={item?.label}
       icon="chevron-down"
-      style={{ width: '100%' }}
     />
   );
 }
 
 export default function Select<T>(props: ISelectProps<T>) {
   const { label, options, onChange, value, renderAnchor } = props;
-  const [visible, setVisible] = React.useState<boolean>(false);
+  const [open, setOpen] = React.useState<boolean>(false);
 
   const onDismiss = React.useCallback(() => {
-    setVisible(false);
+    setOpen(false);
   }, []);
 
   const onOpen = React.useCallback(() => {
-    setVisible(true);
-  }, []);
+    if (!options?.length) {
+      return;
+    }
+    setOpen(true);
+  }, [options?.length]);
 
   const createSelectHandler = React.useCallback(
     (option: ISelectOption<T>) => () => {
@@ -75,46 +77,23 @@ export default function Select<T>(props: ISelectProps<T>) {
   const showAvatars = React.useMemo(() => options?.some((option) => option.avatar), [options]);
 
   return (
-    <>
+    <Provider>
       {label ? <List.Subheader>{label}</List.Subheader> : null}
-      <Menu
-        {...{ visible, onDismiss, anchor }}
-        style={{ zIndex: 10000 }}
-        contentStyle={{ zIndex: 10000 }}
-      >
+      <Menu {...{ open, setOpen, anchor }}>
         {options?.map((option) => (
-          <Menu.Item
+          <MenuItem
             key={`select-option-${option.label}`}
             onPress={createSelectHandler(option)}
-            style={{ height: 36, marginLeft: 0, marginRight: 0 }}
-            title={option.label}
+            title={option.label || ''}
+            icon={option.icon}
             {...(!showAvatars
               ? {}
               : {
-                  titleStyle: styles.menuItemTitle,
-                  title: (
-                    <>
-                      <UserAvatar
-                        name={option?.label}
-                        image={option?.avatar || undefined}
-                        size={24}
-                      />
-                      <Text>{option?.label}</Text>
-                    </>
-                  ),
+                  avatar: { name: option.label || '', image: option.avatar || undefined },
                 })}
           />
         ))}
       </Menu>
-    </>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  menuItemTitle: {
-    display: 'flex',
-    alignItems: 'center',
-    marginLeft: 0,
-    marginRight: 0,
-  },
-});

@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { List, Menu } from 'react-native-paper';
+import { List } from 'react-native-paper';
 import DayPicker from 'react-day-picker';
+import Menu from 'app/components/popover/Menu';
 import 'react-day-picker/lib/style.css';
 import format from 'date-fns/format';
+import { View } from 'react-native';
 
 interface IDatepicker {
   label: string;
@@ -17,8 +19,7 @@ export default function DatePicker(props: IDatepicker) {
   const left = React.useCallback(() => <List.Icon icon="calendar" />, []);
   return (
     <Menu
-      onDismiss={() => setOpen(false)}
-      visible={open}
+      {...{ open, setOpen }}
       anchor={
         <List.Item
           onPress={() => setOpen(true)}
@@ -29,13 +30,15 @@ export default function DatePicker(props: IDatepicker) {
         />
       }
     >
-      <DayPicker
-        selectedDays={timestamp ? [new Date(timestamp * 1000)] : []}
-        onDayClick={(date) => {
-          onChange(date.getTime() / 1000);
-          setOpen(false);
-        }}
-      />
+      <View style={{ zIndex: 1500 }}>
+        <DayPicker
+          selectedDays={timestamp ? [new Date(timestamp * 1000)] : []}
+          onDayClick={(date) => {
+            onChange(date.getTime() / 1000);
+            setOpen(false);
+          }}
+        />
+      </View>
     </Menu>
   );
 }

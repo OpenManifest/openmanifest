@@ -5,7 +5,6 @@ import {
   Card,
   DataTable,
   IconButton,
-  Menu,
   Paragraph,
   ProgressBar,
   Text,
@@ -26,6 +25,7 @@ import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
 import PilotChip from 'app/components/chips/PilotChip';
 import PlaneChip from 'app/components/chips/PlaneChip';
+import Menu, { MenuItem } from 'app/components/popover/Menu';
 
 import { View } from 'app/components/Themed';
 import { Permission } from 'app/api/schema.d';
@@ -439,8 +439,8 @@ export default function LoadCard(props: ILoadCardLarge) {
             </Button>
           ) : (
             <Menu
-              onDismiss={() => setDispatchOpen(false)}
-              visible={isDispatchOpen}
+              setOpen={setDispatchOpen}
+              open={isDispatchOpen}
               anchor={
                 <Button
                   mode="outlined"
@@ -451,7 +451,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                 </Button>
               }
             >
-              <Menu.Item
+              <MenuItem
                 testID="dispatch-call"
                 onPress={() => {
                   setDispatchOpen(false);
@@ -459,7 +459,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                 }}
                 title="20 minute call"
               />
-              <Menu.Item
+              <MenuItem
                 testID="dispatch-call"
                 onPress={() => {
                   setDispatchOpen(false);
@@ -467,7 +467,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                 }}
                 title="15 minute call"
               />
-              <Menu.Item
+              <MenuItem
                 testID="dispatch-call"
                 onPress={() => {
                   setDispatchOpen(false);
@@ -475,7 +475,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                 }}
                 title="10 minute call"
               />
-              <Menu.Item
+              <MenuItem
                 onPress={() => {
                   setDispatchOpen(false);
                   updateCall(5);

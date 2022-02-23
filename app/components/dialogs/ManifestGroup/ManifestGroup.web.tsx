@@ -18,7 +18,14 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.manifestGroup);
   const [mutationCreateSlots, mutationData] = useManifestGroupMutation();
+  const { screens } = useAppSelector((root) => root);
   const [tabIndex, setTabIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    if (!state?.fields?.users?.value?.length) {
+      setTabIndex(0);
+    }
+  }, [state?.fields?.users?.value?.length]);
 
   const validate = React.useCallback(() => {
     let hasErrors = false;
@@ -41,6 +48,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
 
     return !hasErrors;
   }, [dispatch, state.fields.jumpType.value?.id, state.fields.ticketType.value?.id]);
+
   const onManifest = React.useCallback(async () => {
     if (!validate() || !state.fields.users.value?.length) {
       return;
@@ -61,6 +69,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       result.data?.createSlots?.fieldErrors?.map(({ field, message }) => {
         switch (field) {
           case 'jump_type':
+          case 'jump_type_id':
             return dispatch(actions.forms.manifestGroup.setFieldError(['jumpType', message]));
           case 'load':
             return dispatch(actions.forms.manifestGroup.setFieldError(['load', message]));
@@ -108,6 +117,15 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     validate,
   ]);
 
+  const onNext = React.useCallback(() => {
+    if (tabIndex === 0) {
+      dispatch(actions.forms.manifestGroup.setDropzoneUsers(screens.manifest.selectedUsers));
+      setTabIndex(1);
+    } else {
+      onManifest();
+    }
+  }, [dispatch, onManifest, screens.manifest.selectedUsers, tabIndex]);
+
   return (
     <DialogOrSheet
       // eslint-disable-next-line max-len
@@ -116,10 +134,12 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       disablePadding
       buttonLabel={tabIndex === 0 ? 'Next' : 'Manifest'}
       onClose={() => {
-        dispatch(actions.forms.manifest.reset());
+        setTabIndex(0);
+        dispatch(actions.forms.manifestGroup.reset());
         onClose();
       }}
-      buttonAction={() => (tabIndex === 0 ? setTabIndex(1) : onManifest())}
+      buttonAction={onNext}
+      scrollable={false}
     >
       <View style={styles.wrapper} testID="manifest-group-sheet">
         <View pointerEvents={(state.fields.users?.value?.length || 0) > 0 ? undefined : 'none'}>
@@ -138,9 +158,11 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
             <UserListSelect
               containerProps={{
                 style: {
-                  height: '100%',
+                  marginTop: 8,
+                  height: 'calc(100% - 216px)',
                 },
               }}
+              scrollable
               hideButton
               onNext={() => setTabIndex(1)}
             />
@@ -154,15 +176,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
 }
 
 const styles = StyleSheet.create({
-  wrapper: { backgroundColor: 'white', height: '90%' },
-  dialog: {
-    minWidth: 560,
-    maxWidth: 800,
-    height: 560,
-    borderRadius: 8,
-    overflow: 'hidden',
-    alignSelf: 'center',
-  },
+  wrapper: { backgroundColor: 'white' },
   button: {
     width: '100%',
     borderRadius: 16,
@@ -177,7 +191,7 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   userListContainer: {
-    height: '100%',
+    height: 'calc(100% - 200px)',
     backgroundColor: 'white',
     width: '100%',
     padding: 16,

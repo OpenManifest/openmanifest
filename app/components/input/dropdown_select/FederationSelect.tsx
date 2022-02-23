@@ -1,8 +1,8 @@
 import { FederationEssentialsFragment } from 'app/api/operations';
 import { useFederationsQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { List, Menu, TextInput } from 'react-native-paper';
+import { List } from 'react-native-paper';
+import Select from '../select/Select';
 
 interface IFederationSelect {
   value?: FederationEssentialsFragment | null;
@@ -11,7 +11,6 @@ interface IFederationSelect {
 
 export default function FederationSelect(props: IFederationSelect) {
   const { value, onSelect } = props;
-  const [isMenuOpen, setMenuOpen] = React.useState(false);
 
   const { data } = useFederationsQuery();
 
@@ -21,38 +20,28 @@ export default function FederationSelect(props: IFederationSelect) {
     }
   }, [data?.federations, onSelect, value]);
 
+  const options = React.useMemo(
+    () =>
+      data?.federations?.map((node) => ({
+        label: node?.name || '',
+        value: node as FederationEssentialsFragment,
+      })) || [],
+    [data?.federations]
+  );
+
+  const selected = React.useMemo(
+    () => options?.map((option) => option.value).find((node) => node?.id === value?.id),
+    [options, value?.id]
+  );
+
   return (
     <>
       <List.Subheader>Federation</List.Subheader>
-      <Menu
-        onDismiss={() => setMenuOpen(false)}
-        visible={isMenuOpen}
-        anchor={
-          <TouchableOpacity
-            onPress={() => {
-              setMenuOpen(true);
-            }}
-          >
-            <TextInput
-              mode="outlined"
-              disabled
-              style={{ minWidth: 200 }}
-              value={value?.name || 'Please select federation'}
-            />
-          </TouchableOpacity>
-        }
-      >
-        {data?.federations?.map((federation) => (
-          <Menu.Item
-            onPress={() => {
-              setMenuOpen(false);
-              onSelect(federation);
-            }}
-            title={federation.name || '-'}
-            key={`federation-select-${federation.id}`}
-          />
-        ))}
-      </Menu>
+      <Select<FederationEssentialsFragment>
+        value={selected}
+        options={options}
+        onChange={onSelect}
+      />
     </>
   );
 }

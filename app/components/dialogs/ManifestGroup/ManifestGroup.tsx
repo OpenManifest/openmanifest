@@ -37,6 +37,11 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
 
   const onKeyboardVisible = () => setKeyboardVisible(true);
   const onKeyboardHidden = () => setKeyboardVisible(false);
+  React.useEffect(() => {
+    if (!state?.fields?.users?.value?.length) {
+      setTabIndex(0);
+    }
+  }, [state?.fields?.users?.value?.length]);
 
   React.useEffect(() => {
     Keyboard.addListener('keyboardDidShow', onKeyboardVisible);
@@ -111,6 +116,7 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
       result.data?.createSlots?.fieldErrors?.map(({ field, message }) => {
         switch (field) {
           case 'jump_type':
+          case 'jump_type_id':
             return dispatch(actions.forms.manifestGroup.setFieldError(['jumpType', message]));
           case 'load':
             return dispatch(actions.forms.manifestGroup.setFieldError(['load', message]));

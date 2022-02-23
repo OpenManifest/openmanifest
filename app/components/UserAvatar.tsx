@@ -7,8 +7,8 @@ type AvatarProps = typeof Avatar.Image extends React.ComponentType<infer P> ? P 
 
 interface IUserAvatarProps extends Omit<AvatarProps, 'source'> {
   source?: AvatarProps['source'];
-  image?: string;
-  name: string;
+  image?: string | null;
+  name?: string | null;
 }
 export default function UserAvatar(props: IUserAvatarProps) {
   const { name, image, source: _, ...rest } = props;
@@ -18,7 +18,7 @@ export default function UserAvatar(props: IUserAvatarProps) {
     .join('');
 
   return !image ? (
-    <Avatar.Text label={initals} {...rest} style={{ alignSelf: 'center', marginRight: 12 }} />
+    <Avatar.Text label={initals || ''} {...rest} style={{ alignSelf: 'center', marginRight: 12 }} />
   ) : (
     <Avatar.Image
       source={{ uri: image }}

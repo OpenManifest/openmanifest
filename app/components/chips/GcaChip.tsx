@@ -72,8 +72,8 @@ export default function GCAChip(props: IGCAChipSelect) {
     <Select<DropzoneUserEssentialsFragment>
       value={selected}
       options={options}
-      renderAnchor={renderAnchor}
       onChange={onSelect}
+      renderAnchor={renderAnchor}
     />
   );
 }

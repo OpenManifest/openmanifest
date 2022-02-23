@@ -49,7 +49,7 @@ export default function PlaneChip(props: IPlaneChipSelect) {
     openMenu(): void;
   }> = React.useCallback(
     ({ item, openMenu }) => (
-      <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="radio-handheld">
+      <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="airplane">
         {item?.label || 'No Plane'}
       </Chip>
     ),
@@ -57,7 +57,7 @@ export default function PlaneChip(props: IPlaneChipSelect) {
   );
 
   return !allowed ? (
-    <Chip {...{ backgroundColor, small, color }} icon="radio-handheld">
+    <Chip {...{ backgroundColor, small, color }} icon="airplane">
       {value?.name || 'No Plane'}
     </Chip>
   ) : (

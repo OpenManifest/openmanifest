@@ -4,8 +4,9 @@ import { Avatar, Button, Checkbox, Divider, List, Searchbar } from 'react-native
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDropzoneUsersDetailedQuery } from 'app/api/reflection';
 
+import { xorBy } from 'lodash';
 import NoResults from '../../NoResults';
-import { DropzoneUser, Permission } from '../../../api/schema.d';
+import { Permission } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import useRestriction from '../../../hooks/useRestriction';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
@@ -13,11 +14,12 @@ import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 interface IUserListSelect {
   hideButton?: boolean;
   containerProps?: ViewProps;
+  scrollable?: boolean;
   onNext(): void;
 }
 
 export default function UserListSelect(props: IUserListSelect) {
-  const { hideButton, onNext, containerProps } = props;
+  const { hideButton, onNext, containerProps, scrollable } = props;
   const { screens } = useAppSelector((root) => root);
   const dispatch = useAppDispatch();
   const [searchText, setSearchText] = React.useState('');
@@ -33,11 +35,20 @@ export default function UserListSelect(props: IUserListSelect) {
   const canManifestGroup = useRestriction(Permission.CreateUserSlot);
   const canManifestGroupWithSelfOnly = useRestriction(Permission.CreateUserSlotWithSelf);
 
+  const Wrapper = React.useCallback(
+    ({ children }: { children: React.ReactNode }) =>
+      scrollable ? (
+        <ScrollView contentContainerStyle={{ paddingTop: 16 }}>{children}</ScrollView>
+      ) : (
+        <View>{children}</View>
+      ),
+    [scrollable]
+  );
   return (
     <>
       <Searchbar value={searchText} onChangeText={setSearchText} placeholder="Search skydivers" />
-      <View style={{ height: 380 }} {...containerProps}>
-        <ScrollView contentContainerStyle={{ paddingTop: 16 }}>
+      <View {...containerProps}>
+        <Wrapper>
           {!data?.dropzone?.dropzoneUsers?.edges?.length && (
             <NoResults title="No users" subtitle="" />
           )}
@@ -79,21 +90,19 @@ export default function UserListSelect(props: IUserListSelect) {
                   !canManifestGroup
                 }
                 onPress={() => {
-                  dispatch(
-                    actions.screens.manifest.setSelected(
-                      screens.manifest.selectedUsers?.find(({ id }) => id === `${edge?.node?.id}`)
-                        ? screens.manifest.selectedUsers?.filter(
-                            ({ id }) => id !== `${edge?.node?.id}`
-                          )
-                        : ([...screens.manifest.selectedUsers, edge?.node] as DropzoneUser[])
-                    )
-                  );
+                  if (edge?.node) {
+                    dispatch(
+                      actions.screens.manifest.setSelected(
+                        xorBy(screens.manifest.selectedUsers, [edge.node], 'id')
+                      )
+                    );
+                  }
                 }}
               />
               <Divider style={{ width: '100%' }} key={`divider-${edge?.node?.id}`} />
             </React.Fragment>
           ))}
-        </ScrollView>
+        </Wrapper>
       </View>
       {hideButton ? null : (
         <Button

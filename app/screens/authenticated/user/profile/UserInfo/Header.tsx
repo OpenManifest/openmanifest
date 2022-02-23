@@ -1,14 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import {
-  Avatar,
-  Caption,
-  Divider,
-  Menu,
-  Paragraph,
-  Title,
-  TouchableRipple,
-} from 'react-native-paper';
+import { Avatar, Caption, Divider, Paragraph, Title, TouchableRipple } from 'react-native-paper';
 import format from 'date-fns/format';
 import color from 'color';
 import { openURL } from 'expo-linking';
@@ -17,6 +9,7 @@ import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import startCase from 'lodash/startCase';
+import Menu, { MenuItem } from 'app/components/popover/Menu';
 
 interface IUserHeader {
   dropzoneUser?: DropzoneUserProfileFragment;
@@ -63,8 +56,8 @@ export default function UserHeader(props: IUserHeader) {
         </View>
         <View style={styles.titleContainer}>
           <Menu
-            onDismiss={() => setContactOpen(false)}
-            visible={isContactOpen}
+            setOpen={setContactOpen}
+            open={isContactOpen}
             anchor={
               <TouchableRipple onPress={() => setContactOpen(true)}>
                 <Title style={[styles.title, { color: primaryDark, fontSize: 26 }]}>
@@ -73,7 +66,7 @@ export default function UserHeader(props: IUserHeader) {
               </TouchableRipple>
             }
           >
-            <Menu.Item
+            <MenuItem
               onPress={() => {
                 setContactOpen(false);
                 // TODO: Send email
@@ -84,7 +77,7 @@ export default function UserHeader(props: IUserHeader) {
               icon="email"
               title={dropzoneUser?.user?.email}
             />
-            <Menu.Item
+            <MenuItem
               onPress={() => {
                 setContactOpen(false);
                 if (dropzoneUser?.user.email) {
@@ -94,7 +87,7 @@ export default function UserHeader(props: IUserHeader) {
               icon="phone"
               title={dropzoneUser?.user?.phone}
             />
-            <Menu.Item
+            <MenuItem
               onPress={() => {
                 setContactOpen(false);
                 if (canUpdateUser && dropzoneUser) {

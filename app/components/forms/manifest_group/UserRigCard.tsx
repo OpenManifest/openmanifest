@@ -1,19 +1,12 @@
 import { useQueryDropzoneUserProfile } from 'app/api/reflection';
 import * as React from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
-import {
-  Avatar,
-  Card,
-  TextInput,
-  ProgressBar,
-  Chip,
-  Divider,
-  List,
-  Button,
-} from 'react-native-paper';
+import { Card, TextInput, ProgressBar, Divider, List, Button } from 'react-native-paper';
 import { Rig } from 'app/api/schema.d';
 import { useAppSelector } from 'app/state';
 import calculateWingLoading from 'app/utils/calculateWingLoading';
+import Chip from 'app/components/chips/Chip';
+import UserAvatar from 'app/components/UserAvatar';
 import RigSelect from '../../input/dropdown_select/RigSelect';
 import NumberField from '../../input/number_input/NumberField';
 
@@ -64,44 +57,43 @@ export default function UserRigCard(props: IUserRigCard) {
     }
   }, [data?.dropzone?.dropzoneUser?.user.exitWeight, exitWeight, onChangeExitWeight]);
   return (
-    <Card style={{ marginHorizontal: 16, marginBottom: 16 }} elevation={3}>
+    <Card style={{ marginHorizontal: 16, marginBottom: 16 }} elevation={1}>
       <ProgressBar indeterminate color={globalState.theme.colors.primary} visible={loading} />
       <Card.Title
         title={data?.dropzone?.dropzoneUser?.user.name}
-        left={() =>
-          data?.dropzone?.dropzoneUser?.user?.image ? (
-            <Avatar.Image source={{ uri: data.dropzone.dropzoneUser.user.image }} size={24} />
-          ) : (
-            <Avatar.Icon icon="account" size={24} />
-          )
-        }
+        left={() => (
+          <UserAvatar
+            name={data?.dropzone?.dropzoneUser?.user?.name}
+            image={data?.dropzone?.dropzoneUser?.user?.image}
+            size={36}
+          />
+        )}
       />
 
       <Card.Content>
         <Divider style={{ marginBottom: 8 }} />
-        <ScrollView horizontal>
-          <Chip style={{ marginHorizontal: 1 }} icon="lock" mode="outlined" disabled>
-            {data?.dropzone?.dropzoneUser?.role?.name}
-          </Chip>
-          <Chip style={{ marginHorizontal: 1 }} icon="ticket-account" mode="outlined" disabled>
-            {data?.dropzone?.dropzoneUser?.license?.name}
-          </Chip>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <RigSelect
+            small
+            dropzoneUserId={dropzoneUserId}
+            onSelect={onChangeRig}
+            value={selectedRig}
+            tandem={isTandem}
+            autoSelectFirst
+          />
           {!selectedRig || !exitWeight || !selectedRig.canopySize ? null : (
-            <Chip style={{ marginHorizontal: 1 }} icon="escalator-down" mode="outlined" disabled>
+            <Chip small icon="escalator-down" mode="outlined" disabled>
               {calculateWingLoading(exitWeight, selectedRig.canopySize)}
             </Chip>
           )}
+          <Chip small icon="lock" mode="outlined" disabled>
+            {data?.dropzone?.dropzoneUser?.role?.name}
+          </Chip>
+          <Chip small icon="ticket-account" mode="outlined" disabled>
+            {data?.dropzone?.dropzoneUser?.license?.name}
+          </Chip>
         </ScrollView>
         <View style={styles.row}>
-          <View style={styles.rowFirst}>
-            <RigSelect
-              dropzoneUserId={dropzoneUserId}
-              onSelect={onChangeRig}
-              value={selectedRig}
-              tandem={isTandem}
-              autoSelectFirst
-            />
-          </View>
           <View style={styles.rowLast}>
             <NumberField
               value={!exitWeight ? 0 : exitWeight}

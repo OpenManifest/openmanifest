@@ -25,13 +25,14 @@ export default function NumberField(props: INumberFieldProps) {
     },
     [onChangeValue]
   );
+
   return (
     <TextInput
       {...rest}
       {...{ onChange }}
       value={`${value || 0}`}
       keyboardType="number-pad"
-      style={{ backgroundColor: 'transparent' }}
+      style={{ backgroundColor: theme.colors.surface }}
       right={
         <T.Affix
           textStyle={{
