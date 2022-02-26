@@ -68,7 +68,11 @@ export default function ManifestTab() {
         options={{ headerShown: false, presentation: 'modal' }}
       />
 
-      <Manifest.Screen name="Configuration" component={Configuration} />
+      <Manifest.Screen
+        name="Configuration"
+        component={Configuration}
+        options={{ headerShown: false }}
+      />
     </Manifest.Navigator>
   );
 }

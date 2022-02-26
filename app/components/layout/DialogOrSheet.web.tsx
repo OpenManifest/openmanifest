@@ -53,9 +53,12 @@ function DialogOrSheet(props: IBottomSheetProps) {
       )}
       <Dialog.Content
         pointerEvents="box-none"
-        style={[styles.noPadding, scrollable ? {} : { height: 'calc(100% - 120px)' }]}
+        style={[
+          styles.noPadding,
+          scrollable !== false ? {} : { height: 'calc(100% - 80px)', paddingBottom: 0 },
+        ]}
       >
-        {scrollable ? (
+        {scrollable !== false ? (
           <Dialog.ScrollArea
             style={StyleSheet.flatten([
               disablePadding ? styles.noPadding : styles.defaultPadding,
@@ -68,7 +71,7 @@ function DialogOrSheet(props: IBottomSheetProps) {
           children
         )}
       </Dialog.Content>
-      <Dialog.Actions style={{ justifyContent: 'flex-end' }}>
+      <Dialog.Actions style={{ justifyContent: 'flex-end', backgroundColor: 'transparent' }}>
         <Button mode="contained" onPress={buttonAction} style={styles.button}>
           {buttonLabel}
         </Button>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
-import { FlatList } from 'react-native';
+import { FlatList, Platform } from 'react-native';
 
 import { RouteProp, useIsFocused, useRoute } from '@react-navigation/core';
 import {
@@ -165,8 +165,15 @@ export default function LoadScreen() {
       const onSlotGroupPress = () => {
         if (slotGroup && load) {
           dispatch(actions.forms.manifestGroup.reset());
-          dispatch(actions.forms.manifestGroup.setFromSlots({ slots: slotGroup, load }));
+          dispatch(actions.forms.manifestGroup.setOpen(true));
+          dispatch(
+            actions.forms.manifestGroup.setFromSlots({
+              slots: slotGroup?.length ? slotGroup : [slot],
+              load,
+            })
+          );
           dispatch(actions.forms.manifestGroup.setField(['load', load]));
+
           // FIXME: Open ManifestGroup Drawer
         }
       };
@@ -175,19 +182,13 @@ export default function LoadScreen() {
         dispatch(actions.forms.manifest.setField(['load', load]));
       };
 
-      if (slot.dropzoneUser?.id === currentUser?.id) {
+      if ((canEditSelf && slot.dropzoneUser?.id === currentUser?.id) || canEditOthers) {
         if (canEditSelf) {
-          if (slotGroup?.length) {
+          if (slotGroup?.length || Platform.OS === 'web') {
             onSlotGroupPress();
           } else {
             onSlotSinglePress();
           }
-        }
-      } else if (canEditOthers) {
-        if (slotGroup?.length) {
-          onSlotGroupPress();
-        } else {
-          onSlotSinglePress();
         }
       }
     },

@@ -1,12 +1,17 @@
-import { useManifestGroupMutation } from 'app/api/reflection';
+import { AppBar, Fade, IconButton, LinearProgress, Toolbar, Typography } from '@mui/material';
+import AvatarGroup from '@mui/material/AvatarGroup';
+import { DropzoneUserProfileFragment } from 'app/api/operations';
+import { useManifestGroupMutation, useQueryDropzoneUserProfileLazyQuery } from 'app/api/reflection';
+import DropzoneUserAutocomplete from 'app/components/autocomplete/DropzoneUserAutocomplete.web';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
-import { omit } from 'lodash';
+import UserAvatar from 'app/components/UserAvatar';
+import { omit, pick } from 'lodash';
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Tabs, TabScreen } from 'react-native-paper-tabs';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Dialog } from 'react-native-paper';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import ManifestGroupForm from '../../forms/manifest_group/ManifestGroupForm';
-import UserListSelect from './UserListSelect';
 
 interface IManifestUserDialog {
   open?: boolean;
@@ -16,16 +21,9 @@ interface IManifestUserDialog {
 export default function ManifestUserDialog(props: IManifestUserDialog) {
   const { open, onClose } = props;
   const dispatch = useAppDispatch();
+  const globalState = useAppSelector((root) => root.global);
   const state = useAppSelector((root) => root.forms.manifestGroup);
   const [mutationCreateSlots, mutationData] = useManifestGroupMutation();
-  const { screens } = useAppSelector((root) => root);
-  const [tabIndex, setTabIndex] = React.useState(0);
-
-  React.useEffect(() => {
-    if (!state?.fields?.users?.value?.length) {
-      setTabIndex(0);
-    }
-  }, [state?.fields?.users?.value?.length]);
 
   const validate = React.useCallback(() => {
     let hasErrors = false;
@@ -61,7 +59,13 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
           extraIds: state.fields.extras?.value?.map(({ id }) => Number(id)),
           loadId: Number(state.fields.load.value?.id),
           userGroup: state.fields.users.value?.map((slotUserWithRig) =>
-            omit(slotUserWithRig, ['rig'])
+            pick(slotUserWithRig, [
+              'id',
+              'rigId',
+              'exitWeight',
+              'passengerName',
+              'passengerExitWeight',
+            ])
           ),
         },
       });
@@ -117,70 +121,68 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     validate,
   ]);
 
-  const onNext = React.useCallback(() => {
-    if (tabIndex === 0) {
-      dispatch(actions.forms.manifestGroup.setDropzoneUsers(screens.manifest.selectedUsers));
-      setTabIndex(1);
-    } else {
-      onManifest();
-    }
-  }, [dispatch, onManifest, screens.manifest.selectedUsers, tabIndex]);
+  // dispatch(actions.forms.manifestGroup.setDropzoneUsers(screens.manifest.selectedUsers));
 
+  const [fetchProfile, { loading }] = useQueryDropzoneUserProfileLazyQuery();
+  const onSelectUser = React.useCallback(
+    (profile: DropzoneUserProfileFragment) => {
+      dispatch(actions.forms.manifestGroup.setDropzoneUsers([profile]));
+    },
+    [dispatch]
+  );
   return (
     <DialogOrSheet
       // eslint-disable-next-line max-len
       loading={mutationData.loading}
       {...{ open }}
       disablePadding
-      buttonLabel={tabIndex === 0 ? 'Next' : 'Manifest'}
+      buttonLabel="Manifest"
       onClose={() => {
-        setTabIndex(0);
         dispatch(actions.forms.manifestGroup.reset());
         onClose();
       }}
-      buttonAction={onNext}
+      buttonAction={onManifest}
       scrollable={false}
     >
       <View style={styles.wrapper} testID="manifest-group-sheet">
-        <View pointerEvents={(state.fields.users?.value?.length || 0) > 0 ? undefined : 'none'}>
-          <Tabs defaultIndex={tabIndex} mode="fixed" onChangeIndex={setTabIndex}>
-            <TabScreen label="Create group">
-              <View />
-            </TabScreen>
-            <TabScreen label="Configure jump">
-              <View />
-            </TabScreen>
-          </Tabs>
-        </View>
-
-        {tabIndex === 0 ? (
-          <View style={styles.userListContainer}>
-            <UserListSelect
-              containerProps={{
-                style: {
-                  marginTop: 8,
-                  height: 'calc(100% - 216px)',
-                },
+        <AppBar position="static">
+          <Toolbar>
+            <DropzoneUserAutocomplete
+              color="white"
+              placeholder="Search skydivers..."
+              onChange={(user) => {
+                fetchProfile({
+                  variables: {
+                    dropzoneId: Number(globalState.currentDropzoneId),
+                    dropzoneUserId: Number(user.id),
+                  },
+                }).then((result) => {
+                  if (result.data?.dropzone.dropzoneUser) {
+                    onSelectUser(result.data?.dropzone.dropzoneUser);
+                  }
+                });
               }}
-              scrollable
-              hideButton
-              onNext={() => setTabIndex(1)}
             />
-          </View>
-        ) : (
+          </Toolbar>
+        </AppBar>
+        <Fade in={loading || mutationData.loading}>
+          <LinearProgress variant="indeterminate" />
+        </Fade>
+        <ScrollView testID="scroll-area">
           <ManifestGroupForm />
-        )}
+        </ScrollView>
       </View>
     </DialogOrSheet>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: { backgroundColor: 'white' },
+  wrapper: { height: '100%' },
   button: {
     width: '100%',
     borderRadius: 16,
     padding: 5,
+    paddingTop: 0,
   },
   buttonContainer: {
     paddingHorizontal: 16,

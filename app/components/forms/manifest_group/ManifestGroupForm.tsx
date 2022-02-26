@@ -47,8 +47,8 @@ export default function SlotForm() {
           isDisabled={(jumpType: JumpType) =>
             !data?.dropzone?.allowedJumpTypes?.map(({ id }) => id).includes(jumpType.id)
           }
-          onChangeSelected={([first]) =>
-            dispatch(actions.forms.manifestGroup.setField(['jumpType', first as JumpType]))
+          onChangeSelected={([firstUser]) =>
+            dispatch(actions.forms.manifestGroup.setField(['jumpType', firstUser as JumpType]))
           }
         />
 
@@ -62,8 +62,8 @@ export default function SlotForm() {
           items={data?.dropzone?.ticketTypes || []}
           selected={state.fields.ticketType.value ? [state.fields.ticketType.value] : []}
           renderItemLabel={(ticketType: TicketType) => ticketType.name}
-          onChangeSelected={([first]) =>
-            dispatch(actions.forms.manifestGroup.setField(['ticketType', first as TicketType]))
+          onChangeSelected={([firstUser]) =>
+            dispatch(actions.forms.manifestGroup.setField(['ticketType', firstUser as TicketType]))
           }
         />
         <HelperText type={state.fields.ticketType.error ? 'error' : 'info'}>
@@ -105,7 +105,7 @@ export default function SlotForm() {
       </HelperText>
       <Divider />
 
-      <View style={{ paddingHorizontal: 16 }}>
+      <View style={{ paddingHorizontal: 16, paddingTop: 16, flexGrow: 1 }}>
         <List.Subheader>Group</List.Subheader>
         {state.fields?.users?.value?.map((slotUser) => (
           <UserRigCard

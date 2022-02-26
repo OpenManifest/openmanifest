@@ -2,32 +2,32 @@ import { useQueryDropzoneUserProfile } from 'app/api/reflection';
 import * as React from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
 import { Card, TextInput, ProgressBar, Divider, List, Button } from 'react-native-paper';
+import { Rig } from 'app/api/schema.d';
 import { useAppSelector } from 'app/state';
 import calculateWingLoading from 'app/utils/calculateWingLoading';
 import Chip from 'app/components/chips/Chip';
 import UserAvatar from 'app/components/UserAvatar';
-import { RigEssentialsFragment } from 'app/api/operations';
+import { NumberFieldType } from 'app/components/input/number_input/NumberField.web';
 import RigSelect from '../../input/dropdown_select/RigSelect';
-import NumberField, { NumberFieldType } from '../../input/number_input/NumberField';
-import TextField from '../../input/text/TextField';
+import NumberField from '../../input/number_input/NumberField';
 
 interface IUserRigCard {
   dropzoneUserId: number;
   dropzoneId: number;
   exitWeight?: number;
   isTandem?: boolean;
-  selectedRig?: RigEssentialsFragment;
+  selectedRig?: Rig;
 
   passengerName?: string | null;
   passengerWeight?: number | null;
   onRemove?(): void;
   onChangeExitWeight(weight: number): void;
-  onChangeRig(rig: RigEssentialsFragment): void;
+  onChangeRig(rig: Rig): void;
   onChangePassengerName?(name: string): void;
   onChangePassengerWeight?(weight: number): void;
 }
 
-export default function UserRigCard(props: IUserRigCard) {
+export default function UserCard(props: IUserRigCard) {
   const {
     dropzoneId,
     dropzoneUserId,
@@ -69,30 +69,11 @@ export default function UserRigCard(props: IUserRigCard) {
             size={36}
           />
         )}
-        titleStyle={{ paddingRight: 0 }}
-        right={() => (
-          <View style={{ maxWidth: 85, marginRight: 16 }}>
-            <NumberField
-              value={!exitWeight ? 0 : exitWeight}
-              mode="flat"
-              variant={NumberFieldType.Weight}
-              onChange={(num) => onChangeExitWeight(num)}
-            />
-          </View>
-        )}
       />
 
       <Card.Content>
         <Divider style={{ marginBottom: 8 }} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <RigSelect
-            small
-            dropzoneUserId={dropzoneUserId}
-            onSelect={onChangeRig}
-            value={selectedRig}
-            tandem={isTandem}
-            autoSelectFirst
-          />
           {!selectedRig || !exitWeight || !selectedRig.canopySize ? null : (
             <Chip small icon="escalator-down" mode="outlined" disabled>
               {calculateWingLoading(exitWeight, selectedRig.canopySize)}
@@ -105,6 +86,26 @@ export default function UserRigCard(props: IUserRigCard) {
             {data?.dropzone?.dropzoneUser?.license?.name}
           </Chip>
         </ScrollView>
+        <View style={styles.row}>
+          <View style={styles.rowFirst}>
+            <RigSelect
+              small
+              dropzoneUserId={dropzoneUserId}
+              onSelect={onChangeRig}
+              value={selectedRig}
+              tandem={isTandem}
+              autoSelectFirst
+            />
+          </View>
+          <View style={styles.rowLast}>
+            <NumberField
+              value={!exitWeight ? 0 : exitWeight}
+              onChange={(num) => onChangeExitWeight(num)}
+              label="Exit weight (kg)"
+              variant={NumberFieldType.Weight}
+            />
+          </View>
+        </View>
         {!isTandem ? null : (
           <>
             <Divider />

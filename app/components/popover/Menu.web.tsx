@@ -6,6 +6,7 @@ import { Avatar, ListItemAvatar, ListItemIcon, ListItemText } from '@mui/materia
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import first from 'lodash/first';
+import UserAvatar from '../UserAvatar';
 
 interface IPopoverMenuProps {
   open: boolean;
@@ -23,39 +24,6 @@ interface IMenuItemProps {
   onPress(): void;
 }
 
-function stringToColor(string: string) {
-  let hash = 0;
-  let i;
-
-  /* eslint-disable no-bitwise */
-  for (i = 0; i < string.length; i += 1) {
-    hash = string.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
-  let color = '#';
-
-  for (i = 0; i < 3; i += 1) {
-    const value = (hash >> (i * 8)) & 0xff;
-    color += `00${value.toString(16)}`.substr(-2);
-  }
-  /* eslint-enable no-bitwise */
-
-  return color;
-}
-
-function stringAvatar(name: string) {
-  const initials = name
-    ?.split(/\s/g)
-    .map((n) => first(n))
-    .join('');
-  return {
-    sx: {
-      bgcolor: stringToColor(name),
-    },
-    children: initials,
-  };
-}
-
 export function MenuItem(props: IMenuItemProps) {
   const { title, bold, onPress, avatar, icon, testID } = props;
   return (
@@ -71,11 +39,7 @@ export function MenuItem(props: IMenuItemProps) {
       )}
       {!avatar ? null : (
         <ListItemAvatar>
-          <Avatar
-            {...stringAvatar(title || 'Dropzone User')}
-            src={avatar.image}
-            style={{ height: 32, width: 32 }}
-          />
+          <UserAvatar name={avatar.name} image={avatar?.image} size={32} />
         </ListItemAvatar>
       )}
       <ListItemText>{title}</ListItemText>

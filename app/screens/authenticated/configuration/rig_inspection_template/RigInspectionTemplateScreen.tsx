@@ -12,6 +12,7 @@ import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { FormTemplate, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useWindowDimensions, View } from 'react-native';
 
 export default function RigInspectionTemplateScreen() {
   const state = useAppSelector((root) => root.forms.rigInspectionTemplate);
@@ -69,27 +70,27 @@ export default function RigInspectionTemplateScreen() {
     dispatch,
   ]);
 
+  const { width } = useWindowDimensions();
   return (
-    <ScrollableScreen>
-      <Card style={{ width: '100%' }}>
-        <Card.Title title="Rig Inspection Form Template" />
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <ScrollableScreen style={{ marginTop: 16, width: width > 550 ? 550 : '100%' }}>
+        <Card style={{ width: '100%' }}>
+          <Card.Title title="Rig Inspection Form Template" />
 
-        <Card.Content>
-          <RigInspectionTemplateForm />
-        </Card.Content>
-
-        <Card.Actions>
-          <Button
-            disabled={!canEdit}
-            mode="contained"
-            loading={mutation.loading}
-            onPress={() => updateForm()}
-            style={{ width: '100%' }}
-          >
-            Save template
-          </Button>
-        </Card.Actions>
-      </Card>
-    </ScrollableScreen>
+          <Card.Content>
+            <RigInspectionTemplateForm />
+          </Card.Content>
+        </Card>
+        <Button
+          disabled={!canEdit}
+          mode="contained"
+          loading={mutation.loading}
+          onPress={() => updateForm()}
+          style={{ width: '100%', marginTop: 16, borderRadius: 20 }}
+        >
+          Save template
+        </Button>
+      </ScrollableScreen>
+    </View>
   );
 }

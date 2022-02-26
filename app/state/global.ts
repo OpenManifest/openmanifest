@@ -14,6 +14,7 @@ import { Credential } from '../api/schema.d';
 const CombinedDefaultTheme: Theme = {
   ...PaperDefaultTheme,
   ...NavigationDefaultTheme,
+
   fonts: {
     light: { fontFamily: 'Roboto_300Light', fontWeight: '300' },
     thin: { fontFamily: 'Roboto_100Thin', fontWeight: '100' },
@@ -27,9 +28,10 @@ const CombinedDefaultTheme: Theme = {
     primary: primaryColor,
   },
 };
-const CombinedDarkTheme = {
+const CombinedDarkTheme: Theme = {
   ...PaperDarkTheme,
   ...NavigationDarkTheme,
+
   fonts: {
     light: { fontFamily: 'Roboto_300Light', fontWeight: '300' as const },
     thin: { fontFamily: 'Roboto_100Thin', fontWeight: '100' as const },
@@ -173,17 +175,24 @@ export default createSlice({
     },
     setAppearance: (state: IGlobalState, action: PayloadAction<'light' | 'dark'>): IGlobalState => {
       const current = state.isDarkMode ? 'dark' : 'light';
-      state.isDarkMode = current === 'dark';
+      state.isDarkMode = action.payload === 'dark';
 
+      console.log('Setting appearance to', action.payload);
       if (current === action.payload) {
+        console.log('-- NO CHANGE - Already set to ', current);
         return state;
       }
-      state.theme = merge({}, state.isDarkMode ? CombinedDarkTheme : CombinedDefaultTheme, {
-        colors: {
-          primary: state.currentDropzone?.primaryColor || CombinedDarkTheme.colors.primary,
-          accent: state.currentDropzone?.secondaryColor || CombinedDarkTheme.colors.accent,
-        },
-      });
+      console.log('Changing theme..');
+      state.theme = merge(
+        {},
+        action.payload === 'dark' ? CombinedDarkTheme : CombinedDefaultTheme,
+        {
+          colors: {
+            primary: state.currentDropzone?.primaryColor || CombinedDarkTheme.colors.primary,
+            accent: state.currentDropzone?.secondaryColor || CombinedDarkTheme.colors.accent,
+          },
+        }
+      );
 
       state.palette = {
         ...state.theme.colors,

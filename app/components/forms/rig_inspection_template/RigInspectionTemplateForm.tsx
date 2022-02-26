@@ -38,13 +38,14 @@ export default function RigInspectionTemplateForm() {
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
+                justifyContent: 'flex-end',
               }}
             >
               <View style={{ flexGrow: 1 }} onTouchEnd={() => setNewItem({ ...item, index })}>
                 <RigInspectionItem config={item} value={item?.value || ''} onChange={() => null} />
               </View>
               <IconButton
-                icon="delete"
+                icon="minus-circle"
                 onPress={() =>
                   dispatch(
                     actions.forms.rigInspectionTemplate.setFields(

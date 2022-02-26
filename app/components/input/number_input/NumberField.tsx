@@ -5,14 +5,23 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import TextInput from 'app/components/input/text/TextField';
 import { TextInput as T, useTheme } from 'react-native-paper';
 
+export enum NumberFieldType {
+  Cash = 'cash',
+  Weight = 'weight',
+  CanopySize = 'canopySize',
+}
 interface INumberFieldProps {
   error?: string | null;
   label?: string;
+  helperText?: string;
+  disabled?: boolean;
   value?: number | null;
+  mode?: 'outlined' | 'flat';
+  variant?: NumberFieldType | null;
   onChange(newValue: number): void;
 }
 export default function NumberField(props: INumberFieldProps) {
-  const { onChange: onChangeValue, ...rest } = props;
+  const { onChange: onChangeValue, mode, disabled, ...rest } = props;
   const { value } = rest;
   const theme = useTheme();
 
@@ -29,7 +38,7 @@ export default function NumberField(props: INumberFieldProps) {
   return (
     <TextInput
       {...rest}
-      {...{ onChange }}
+      {...{ onChange, mode, disabled }}
       value={`${value || 0}`}
       keyboardType="number-pad"
       style={{ backgroundColor: theme.colors.surface }}

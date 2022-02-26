@@ -1,7 +1,7 @@
-import { useIsFocused } from '@react-navigation/core';
+import { useIsFocused, useNavigation } from '@react-navigation/core';
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { Card, List } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Card, List, useTheme } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 
 import { capitalize } from 'lodash';
@@ -86,6 +86,7 @@ import PermissionListItem from 'app/components/permissions/PermissionListItem';
     :readUserTransactions,
  */
 export default function DropzonePermissionScreen() {
+  const theme = useTheme();
   const state = useAppSelector((root) => root.global);
   const { data, loading, refetch } = useRolesQuery({
     variables: {
@@ -94,33 +95,41 @@ export default function DropzonePermissionScreen() {
   });
   const isFocused = useIsFocused();
 
+  const navigation = useNavigation();
   React.useEffect(() => {
     if (isFocused) {
+      navigation.setOptions({ title: 'Permissions' });
       refetch();
     }
-  }, [isFocused, refetch]);
+  }, [isFocused, navigation, refetch]);
 
   return loading || !data?.dropzone?.roles?.length ? (
-    <SkeletonContent
-      isLoading
-      containerStyle={{
-        flexGrow: 1,
-        paddingHorizontal: 16,
-      }}
-      layout={[
-        {
-          key: 'first',
-          height: 175,
-          marginTop: 70,
-          marginBottom: 35,
-          width: '100%',
-        },
-        { key: 'second', height: 175, marginBottom: 35, width: '100%' },
-        { key: 'third', height: 175, marginBottom: 35, width: '100%' },
-        { key: 'fourth', height: 175, marginBottom: 35, width: '100%' },
-        { key: 'fifth', height: 175, marginBottom: 35, width: '100%' },
-      ]}
-    />
+    <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ maxWidth: 550 }}>
+        <SkeletonContent
+          isLoading
+          containerStyle={{
+            width: '100%',
+            flex: 1,
+            flexGrow: 1,
+            paddingHorizontal: 16,
+          }}
+          layout={[
+            {
+              key: 'first',
+              height: 175,
+              marginTop: 70,
+              marginBottom: 35,
+              width: '100%',
+            },
+            { key: 'second', height: 175, marginBottom: 35, width: '100%' },
+            { key: 'third', height: 175, marginBottom: 35, width: '100%' },
+            { key: 'fourth', height: 175, marginBottom: 35, width: '100%' },
+            { key: 'fifth', height: 175, marginBottom: 35, width: '100%' },
+          ]}
+        />
+      </View>
+    </View>
   ) : (
     <Tabs
       defaultIndex={0}
@@ -143,6 +152,7 @@ export default function DropzonePermissionScreen() {
               maxWidth: 500,
               width: '100%',
               alignSelf: 'center',
+              backgroundColor: 'transparent',
             }}
           >
             <Card style={styles.card}>
@@ -164,7 +174,11 @@ export default function DropzonePermissionScreen() {
 
             <Card style={styles.card}>
               <List.Section title="Manifest" style={{ width: '100%' }}>
-                <List.Accordion title="Loads">
+                <List.Accordion
+                  title="Loads"
+                  style={{ backgroundColor: theme.colors.surface }}
+                  style={{ backgroundColor: theme.colors.surface }}
+                >
                   <PermissionListItem
                     role={role}
                     permissionName="readLoad"
@@ -190,7 +204,10 @@ export default function DropzonePermissionScreen() {
                   />
                 </List.Accordion>
 
-                <List.Accordion title="Manifesting">
+                <List.Accordion
+                  title="Manifesting"
+                  style={{ backgroundColor: theme.colors.surface }}
+                >
                   <PermissionListItem
                     role={role}
                     permissionName="createSlot"
@@ -264,7 +281,7 @@ export default function DropzonePermissionScreen() {
             </Card>
             <Card style={styles.card}>
               <List.Section title="Administration" style={{ width: '100%' }}>
-                <List.Accordion title="Dropzone">
+                <List.Accordion title="Dropzone" style={{ backgroundColor: theme.colors.surface }}>
                   <PermissionListItem
                     role={role}
                     permissionName="updateDropzone"
@@ -279,7 +296,10 @@ export default function DropzonePermissionScreen() {
                   />
                 </List.Accordion>
 
-                <List.Accordion title="Ticket types">
+                <List.Accordion
+                  title="Ticket types"
+                  style={{ backgroundColor: theme.colors.surface }}
+                >
                   <PermissionListItem
                     role={role}
                     permissionName="createTicketType"
@@ -301,7 +321,10 @@ export default function DropzonePermissionScreen() {
                   />
                 </List.Accordion>
 
-                <List.Accordion title="Ticket addons">
+                <List.Accordion
+                  title="Ticket addons"
+                  style={{ backgroundColor: theme.colors.surface }}
+                >
                   <PermissionListItem
                     role={role}
                     permissionName="createExtra"
@@ -323,7 +346,7 @@ export default function DropzonePermissionScreen() {
                   />
                 </List.Accordion>
 
-                <List.Accordion title="Planes">
+                <List.Accordion title="Planes" style={{ backgroundColor: theme.colors.surface }}>
                   <PermissionListItem
                     role={role}
                     permissionName="createPlane"
@@ -346,7 +369,7 @@ export default function DropzonePermissionScreen() {
                   />
                 </List.Accordion>
 
-                <List.Accordion title="Rigs">
+                <List.Accordion title="Rigs" style={{ backgroundColor: theme.colors.surface }}>
                   <PermissionListItem
                     role={role}
                     permissionName="createDropzoneRig"

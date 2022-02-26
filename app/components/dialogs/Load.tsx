@@ -70,6 +70,7 @@ export default function LoadDialog(props: ILoadDialog) {
       open={open}
       onClose={onClose}
       buttonAction={onSave}
+      scrollable
       buttonLabel="Create"
       snapPoints={snapPoints}
       loading={createLoad.loading}

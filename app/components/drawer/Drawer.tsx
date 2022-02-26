@@ -26,8 +26,6 @@ export default function DrawerMenu() {
 
   const navigation = useNavigation();
 
-  console.log({ routeName });
-
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
   const canUpdatePlane = useRestriction(Permission.UpdatePlane);
   const canUpdateTicketTypes = useRestriction(Permission.UpdateTicketType);

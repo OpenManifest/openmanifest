@@ -6,7 +6,7 @@ import * as React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { Provider as MaterialProvider, ActivityIndicator, ProgressBar } from 'react-native-paper';
+import { ActivityIndicator, ProgressBar } from 'react-native-paper';
 import { Appearance, Linking, Platform, View } from 'react-native';
 import { NavigationContainer, NavigationState, getPathFromState } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
@@ -30,6 +30,7 @@ import useCachedResources from './hooks/useCachedResources';
 import NotificationArea from './components/notifications/Notifications';
 import RootNavigator, { options as LinkingConfiguration } from './screens/routes';
 import { actions } from './state';
+import ThemeProvider from './ThemeProvider';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -101,6 +102,7 @@ function Content() {
 
   const listener = React.useRef<ReturnType<typeof Appearance.addChangeListener>>(
     Appearance.addChangeListener(({ colorScheme }) => {
+      console.log({ colorScheme });
       if (colorScheme) {
         dispatch(actions.global.setAppearance(colorScheme));
       }
@@ -180,7 +182,7 @@ function Content() {
         }
       >
         <Apollo>
-          <MaterialProvider theme={state.theme as ReactNativePaper.Theme}>
+          <ThemeProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
               <PortalProvider>
                 <SafeAreaProvider>
@@ -200,7 +202,7 @@ function Content() {
                 </SafeAreaProvider>
               </PortalProvider>
             </GestureHandlerRootView>
-          </MaterialProvider>
+          </ThemeProvider>
         </Apollo>
       </React.Suspense>
     </AppUpdate>

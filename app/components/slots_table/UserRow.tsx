@@ -117,7 +117,7 @@ export default function UserRow(props: ISlotsTableProps) {
         ) : null}
         {fields?.includes(SlotFields.WingLoading) ? (
           <DataTable.Cell numeric>
-            <Paragraph style={styles.slotText}>{slot?.wingLoading || '-'}</Paragraph>
+            <Paragraph style={styles.slotText}>{slot?.wingLoading?.toFixed(2) || '-'}</Paragraph>
           </DataTable.Cell>
         ) : null}
         {!fields || fields.includes(SlotFields.JumpType) ? (

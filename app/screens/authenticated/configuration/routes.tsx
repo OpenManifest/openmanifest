@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { DropzoneEssentialsFragment } from 'app/api/operations';
 import { NavigationProp, useNavigation } from '@react-navigation/core';
+import AppBar from 'app/components/appbar/AppBar';
 import SettingsMenuScreen from './settings_menu/SettingsMenuScreen';
 import TicketTypeSettingsScreen from './ticket_types/TicketTypesScreen';
 import DropzoneSettingsScreen from './dropzone_settings/DropzoneSettingsScreen';
@@ -38,7 +39,8 @@ export default function SettingsTab() {
   return (
     <Configuration.Navigator
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
+        header: (props) => <AppBar {...props} />,
         cardStyle: {
           flex: 1,
         },

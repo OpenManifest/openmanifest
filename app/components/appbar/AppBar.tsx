@@ -12,12 +12,14 @@ interface IAppBarProps extends StackHeaderProps {
 }
 
 function AppBar(props: IAppBarProps) {
+  const { currentRouteName: routeName } = useAppSelector((root) => root.global);
   const { hideWarnings, back, options } = props;
   const { palette, theme } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
   const { currentUser, loading, dropzone } = useCurrentDropzone();
 
   const navigation = useNavigation();
+  console.log({ routeName });
   const { openDrawer } = useNavigation<DrawerNavigationProp<any>>();
   return (
     <>
