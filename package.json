@@ -166,7 +166,7 @@
     "redux": "4.1.2",
     "redux-persist": "^6.0.0",
     "sentry-expo": "^4.0.0",
-    "urijs": "^1.19.6"
+    "urijs": "^1.19.9"
   },
   "resolutions": {
     "expo-linear-gradient": "11.0.0",
