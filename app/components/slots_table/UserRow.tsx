@@ -84,14 +84,22 @@ export default function UserRow(props: ISlotsTableProps) {
         }}
         pointerEvents="none"
       >
-        <DataTable.Cell>
+        <DataTable.Cell
+          style={{
+            paddingLeft: 0,
+            paddingRight: 0,
+            marginLeft: 0,
+            flexWrap: 'nowrap',
+            alignItems: 'center',
+          }}
+        >
           <UserAvatar
-            size={24}
+            size={20}
             name={slot?.dropzoneUser?.user?.nickname || slot?.dropzoneUser?.user?.name || ''}
             source={
               slot?.dropzoneUser?.user?.image ? { uri: slot?.dropzoneUser?.user?.image } : undefined
             }
-            style={{ marginRight: 24 }}
+            // style={{ marginRight: 24 }}
           />
           <Paragraph style={styles.slotText}>
             {slot?.dropzoneUser?.user?.nickname}
@@ -161,5 +169,6 @@ export default function UserRow(props: ISlotsTableProps) {
 const styles = StyleSheet.create({
   slotText: {
     fontSize: 12,
+    alignSelf: 'center',
   },
 });

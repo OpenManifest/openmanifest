@@ -21,15 +21,25 @@ export default function UserAvatar(props: IUserAvatarProps) {
     <Avatar.Text
       label={initals || ''}
       {...rest}
-      style={{ alignSelf: 'center' }}
+      style={{
+        alignSelf: 'center',
+        height: size || 32,
+        width: size || 32,
+        borderRadius: (size || 32) / 2,
+      }}
       size={size || 32}
     />
   ) : (
     <Avatar.Image
       source={{ uri: image }}
-      style={{ alignSelf: 'center' }}
-      size={size || 32}
       {...rest}
+      style={{
+        alignSelf: 'center',
+        height: size || 32,
+        width: size || 32,
+        borderRadius: (size || 32) / 2,
+      }}
+      size={size || 32}
     />
   );
 }

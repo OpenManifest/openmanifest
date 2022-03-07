@@ -1,10 +1,11 @@
 import { useQueryDropzoneUserProfile } from 'app/api/reflection';
 import * as React from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
-import { Card, TextInput, ProgressBar, Divider, List, Button } from 'react-native-paper';
+import { Card, ProgressBar, Divider, List, Button } from 'react-native-paper';
 import { useAppSelector } from 'app/state';
 import calculateWingLoading from 'app/utils/calculateWingLoading';
 import Chip from 'app/components/chips/Chip';
+import TextInput from 'app/components/input/text/TextField';
 import UserAvatar from 'app/components/UserAvatar';
 import { RigEssentialsFragment } from 'app/api/operations';
 import RigSelect from '../../input/dropdown_select/RigSelect';
@@ -70,7 +71,7 @@ export default function UserRigCard(props: IUserRigCard) {
         )}
         titleStyle={{ paddingRight: 0 }}
         right={() => (
-          <View style={{ maxWidth: 85, marginRight: 16 }}>
+          <View style={{ maxWidth: 100, marginRight: 16 }}>
             <NumberField
               value={!exitWeight ? 0 : exitWeight}
               mode="flat"
@@ -111,10 +112,10 @@ export default function UserRigCard(props: IUserRigCard) {
             <View style={styles.row}>
               <View style={styles.rowFirst}>
                 <TextInput
+                  mode="flat"
                   value={passengerName || ''}
                   onChangeText={(text: string) => onChangePassengerName?.(text)}
                   label="Passenger name"
-                  mode="outlined"
                 />
               </View>
               <View style={styles.rowLast}>

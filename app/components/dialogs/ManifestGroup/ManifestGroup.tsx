@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { View, StyleSheet, Keyboard } from 'react-native';
-import { omit } from 'lodash';
+import { View, Keyboard } from 'react-native';
+import { pick } from 'lodash';
 import { useTheme } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
-import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useManifestGroupMutation } from 'app/api/reflection';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
@@ -103,7 +103,13 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
           extraIds: state.fields.extras?.value?.map(({ id }) => Number(id)),
           loadId: Number(state.fields.load.value?.id),
           userGroup: state.fields.users.value?.map((slotUserWithRig) =>
-            omit(slotUserWithRig, ['rig'])
+            pick(slotUserWithRig, [
+              'id',
+              'rigId',
+              'exitWeight',
+              'passengerName',
+              'passengerExitWeight',
+            ])
           ),
         },
       });
