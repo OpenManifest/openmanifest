@@ -1,50 +1,35 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
+import { Avatar } from 'react-native-paper';
 
 import first from 'lodash/first';
 
-interface IUserAvatarProps {
+type AvatarProps = typeof Avatar.Image extends React.ComponentType<infer P> ? P : never;
+
+interface IUserAvatarProps extends Omit<AvatarProps, 'source'> {
+  source?: AvatarProps['source'];
   image?: string | null;
   name?: string | null;
-  size?: number;
 }
-
-function stringToColor(string: string) {
-  let hash = 0;
-  let i;
-
-  /* eslint-disable no-bitwise */
-  for (i = 0; i < string.length; i += 1) {
-    hash = string.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
-  let color = '#';
-
-  for (i = 0; i < 3; i += 1) {
-    const value = (hash >> (i * 8)) & 0xff;
-    color += `00${value.toString(16)}`.substr(-2);
-  }
-  /* eslint-enable no-bitwise */
-
-  return color;
-}
-
 export default function UserAvatar(props: IUserAvatarProps) {
-  const { name, image, size } = props;
-  const initials = name
+  const { name, image, source: _, size, ...rest } = props;
+  const initals = name
     ?.split(/\s/g)
     .map((n) => first(n))
     .join('');
 
-  return (
-    <Avatar
-      sx={{
-        bgcolor: stringToColor(name || 'Dropzone User'),
-      }}
-      style={{ height: size, width: size, alignSelf: 'center', marginRight: 12 }}
-      src={image || undefined}
-    >
-      {initials}
-    </Avatar>
+  return !image ? (
+    <Avatar.Text
+      label={initals || ''}
+      {...rest}
+      style={{ alignSelf: 'center' }}
+      size={size || 32}
+    />
+  ) : (
+    <Avatar.Image
+      source={{ uri: image }}
+      style={{ alignSelf: 'center' }}
+      size={size || 32}
+      {...rest}
+    />
   );
 }

@@ -1,0 +1,193 @@
+diff --git a/node_modules/react-native-reanimated/ios/REAModule.m b/node_modules/react-native-reanimated/ios/REAModule.m
+index b1aa768..5e2ac8d 100644
+--- a/node_modules/react-native-reanimated/ios/REAModule.m
++++ b/node_modules/react-native-reanimated/ios/REAModule.m
+@@ -153,6 +153,7 @@ RCT_EXPORT_METHOD(triggerRender)
+ 
+ - (void)uiManagerWillPerformMounting:(RCTUIManager *)uiManager
+ {
++  [_nodesManager tryToFlushUpdateBuffer];
+   if (_operations.count == 0) {
+     return;
+   }
+diff --git a/node_modules/react-native-reanimated/ios/REANodesManager.h b/node_modules/react-native-reanimated/ios/REANodesManager.h
+index 0a6a002..371764a 100644
+--- a/node_modules/react-native-reanimated/ios/REANodesManager.h
++++ b/node_modules/react-native-reanimated/ios/REANodesManager.h
+@@ -12,12 +12,12 @@ typedef void (^REAEventHandler)(NSString *eventName, id<RCTEvent> event);
+ 
+ @interface REANodesManager : NSObject
+ 
+-@property (nonatomic, weak, nullable) RCTUIManager *uiManager;
+-@property (nonatomic, weak, nullable) REAModule *reanimatedModule;
+-@property (nonatomic, readonly) CFTimeInterval currentAnimationTimestamp;
++@property(nonatomic, weak, nullable) RCTUIManager *uiManager;
++@property(nonatomic, weak, nullable) REAModule *reanimatedModule;
++@property(nonatomic, readonly) CFTimeInterval currentAnimationTimestamp;
+ 
+-@property (nonatomic, nullable) NSSet<NSString *> *uiProps;
+-@property (nonatomic, nullable) NSSet<NSString *> *nativeProps;
++@property(nonatomic, nullable) NSSet<NSString *> *uiProps;
++@property(nonatomic, nullable) NSSet<NSString *> *nativeProps;
+ 
+ - (nonnull instancetype)initWithModule:(REAModule *)reanimatedModule uiManager:(nonnull RCTUIManager *)uiManager;
+ 
+@@ -78,4 +78,6 @@ typedef void (^REAEventHandler)(NSString *eventName, id<RCTEvent> event);
+ 
+ - (void)setValueForNodeID:(nonnull NSNumber *)nodeID value:(nonnull NSNumber *)newValue;
+ 
++- (void)tryToFlushUpdateBuffer;
++
+ @end
+diff --git a/node_modules/react-native-reanimated/ios/REANodesManager.m b/node_modules/react-native-reanimated/ios/REANodesManager.m
+index 7fe56e7..916d578 100644
+--- a/node_modules/react-native-reanimated/ios/REANodesManager.m
++++ b/node_modules/react-native-reanimated/ios/REANodesManager.m
+@@ -46,6 +46,17 @@
+ 
+ @end
+ 
++@interface ComponentUpdate : NSObject
++
++@property (nonnull) NSMutableDictionary *props;
++@property (nonnull) NSNumber *viewTag;
++@property (nonnull) NSString *viewName;
++
++@end
++
++@implementation ComponentUpdate
++@end
++
+ @implementation RCTUIManager (SyncUpdates)
+ 
+ - (BOOL)hasEnqueuedUICommands
+@@ -99,6 +110,9 @@
+   BOOL _tryRunBatchUpdatesSynchronously;
+   REAEventHandler _eventHandler;
+   volatile void (^_mounting)(void);
++  NSMutableDictionary<NSNumber *, ComponentUpdate *> *_componentUpdateBuffer;
++  NSLock *_componentUpdateBufferLock;
++  NSMutableDictionary<NSNumber *, UIView *> *_viewRegistry;
+ }
+ 
+ - (instancetype)initWithModule:(REAModule *)reanimatedModule uiManager:(RCTUIManager *)uiManager
+@@ -113,6 +127,9 @@
+     _wantRunUpdates = NO;
+     _onAnimationCallbacks = [NSMutableArray new];
+     _operationsInBatch = [NSMutableArray new];
++    _componentUpdateBuffer = [NSMutableDictionary new];
++    _componentUpdateBufferLock = [[NSLock alloc] init];
++    _viewRegistry = [_uiManager valueForKey:@"_viewRegistry"];
+   }
+ 
+   _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(onAnimationFrame:)];
+@@ -492,6 +509,11 @@
+   _nativeProps = nativeProps;
+ }
+ 
++- (BOOL)isNativeViewFullyMounted:(ComponentUpdate *)lastSnapshot viewTag:(NSNumber *)viewTag
++{
++  return _viewRegistry[viewTag].superview == nil || lastSnapshot != nil;
++}
++
+ - (void)setValueForNodeID:(nonnull NSNumber *)nodeID value:(nonnull NSNumber *)newValue
+ {
+   RCTAssertParam(nodeID);
+@@ -506,6 +528,26 @@
+       ofViewWithTag:(nonnull NSNumber *)viewTag
+            withName:(nonnull NSString *)viewName
+ {
++  [_componentUpdateBufferLock lock];
++  ComponentUpdate *lastSnapshot = _componentUpdateBuffer[viewTag];
++  if ([self isNativeViewFullyMounted:lastSnapshot viewTag:viewTag]) {
++    if (lastSnapshot == nil) {
++      ComponentUpdate *propsSnapshot = [ComponentUpdate new];
++      propsSnapshot.props = [props mutableCopy];
++      propsSnapshot.viewTag = viewTag;
++      propsSnapshot.viewName = viewName;
++      _componentUpdateBuffer[viewTag] = propsSnapshot;
++    } else {
++      NSMutableDictionary *lastProps = lastSnapshot.props;
++      for (NSString *key in props) {
++        [lastProps setValue:props[key] forKey:key];
++      }
++    }
++    [_componentUpdateBufferLock unlock];
++    return;
++  }
++  [_componentUpdateBufferLock unlock];
++
+   // TODO: refactor PropsNode to also use this function
+   NSMutableDictionary *uiProps = [NSMutableDictionary new];
+   NSMutableDictionary *nativeProps = [NSMutableDictionary new];
+@@ -553,4 +595,36 @@
+   return result;
+ }
+ 
++- (void)tryToFlushUpdateBuffer
++{
++  [_componentUpdateBufferLock lock];
++  if (_componentUpdateBuffer.count == 0) {
++    [_componentUpdateBufferLock unlock];
++    return;
++  }
++  [_componentUpdateBufferLock unlock];
++
++  __weak typeof(self) weakSelf = self;
++  [_uiManager addUIBlock:^(__unused RCTUIManager *manager, __unused NSDictionary<NSNumber *, UIView *> *viewRegistry) {
++    __typeof__(self) strongSelf = weakSelf;
++    if (strongSelf == nil) {
++      return;
++    }
++    [strongSelf->_componentUpdateBufferLock lock];
++    NSMutableDictionary *componentUpdateBuffer = [strongSelf->_componentUpdateBuffer copy];
++    strongSelf->_componentUpdateBuffer = [NSMutableDictionary new];
++    [strongSelf->_componentUpdateBufferLock unlock];
++    for (NSNumber *tag in componentUpdateBuffer) {
++      ComponentUpdate *componentUpdate = componentUpdateBuffer[tag];
++      if (componentUpdate == Nil) {
++        continue;
++      }
++      [strongSelf updateProps:componentUpdate.props
++                ofViewWithTag:componentUpdate.viewTag
++                     withName:componentUpdate.viewName];
++    }
++    [strongSelf performOperations];
++  }];
++}
++
+ @end
+diff --git a/node_modules/react-native-reanimated/src/createAnimatedComponent.tsx b/node_modules/react-native-reanimated/src/createAnimatedComponent.tsx
+index 843811a..53f0a21 100644
+--- a/node_modules/react-native-reanimated/src/createAnimatedComponent.tsx
++++ b/node_modules/react-native-reanimated/src/createAnimatedComponent.tsx
+@@ -605,14 +605,10 @@ export default function createAnimatedComponent(
+             if (style && style.viewDescriptors) {
+               // this is how we recognize styles returned by useAnimatedStyle
+               style.viewsRef.add(this);
+-              if (this._isFirstRender) {
+-                return {
+-                  ...style.initial.value,
+-                  ...initialUpdaterRun<StyleProps>(style.initial.updater),
+-                };
+-              } else {
+-                return style.initial.value;
+-              }
++              return {
++                ...style.initial.value,
++                ...initialUpdaterRun<StyleProps>(style.initial.updater),
++              };
+             } else {
+               return style;
+             }
+@@ -670,10 +666,6 @@ export default function createAnimatedComponent(
+         props.animatedStyle = this.animatedStyle;
+       }
+ 
+-      if (this._isFirstRender) {
+-        this._isFirstRender = false;
+-      }
+-
+       const platformProps = Platform.select({
+         web: {},
+         default: { collapsable: false },

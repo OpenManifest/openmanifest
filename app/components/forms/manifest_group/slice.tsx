@@ -104,7 +104,7 @@ export default createSlice({
     ) => {
       state.fields.users.value = xorBy(
         state.fields.users.value,
-        action.payload.map<SlotUser>((dzUser) => {
+        action.payload?.map<SlotUser>((dzUser) => {
           const autoSelectedRig = dzUser?.user?.rigs?.length
             ? first(dzUser.user.rigs)
             : first(dzUser.availableRigs);

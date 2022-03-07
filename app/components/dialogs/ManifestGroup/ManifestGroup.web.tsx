@@ -1,15 +1,12 @@
-import { AppBar, Fade, IconButton, LinearProgress, Toolbar, Typography } from '@mui/material';
-import AvatarGroup from '@mui/material/AvatarGroup';
+import { AppBar, Fade, LinearProgress, Toolbar } from '@mui/material';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { useManifestGroupMutation, useQueryDropzoneUserProfileLazyQuery } from 'app/api/reflection';
 import DropzoneUserAutocomplete from 'app/components/autocomplete/DropzoneUserAutocomplete.web';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
-import UserAvatar from 'app/components/UserAvatar';
-import { omit, pick } from 'lodash';
+import { pick } from 'lodash';
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Dialog } from 'react-native-paper';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import ManifestGroupForm from '../../forms/manifest_group/ManifestGroupForm';
 

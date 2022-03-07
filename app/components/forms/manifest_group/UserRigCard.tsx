@@ -9,7 +9,6 @@ import UserAvatar from 'app/components/UserAvatar';
 import { RigEssentialsFragment } from 'app/api/operations';
 import RigSelect from '../../input/dropdown_select/RigSelect';
 import NumberField, { NumberFieldType } from '../../input/number_input/NumberField';
-import TextField from '../../input/text/TextField';
 
 interface IUserRigCard {
   dropzoneUserId: number;

@@ -174,11 +174,7 @@ export default function DropzonePermissionScreen() {
 
             <Card style={styles.card}>
               <List.Section title="Manifest" style={{ width: '100%' }}>
-                <List.Accordion
-                  title="Loads"
-                  style={{ backgroundColor: theme.colors.surface }}
-                  style={{ backgroundColor: theme.colors.surface }}
-                >
+                <List.Accordion title="Loads" style={{ backgroundColor: theme.colors.surface }}>
                   <PermissionListItem
                     role={role}
                     permissionName="readLoad"

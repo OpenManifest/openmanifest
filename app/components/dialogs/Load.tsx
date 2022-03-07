@@ -67,6 +67,7 @@ export default function LoadDialog(props: ILoadDialog) {
 
   return (
     <DialogOrSheet
+      name="create-load"
       open={open}
       onClose={onClose}
       buttonAction={onSave}

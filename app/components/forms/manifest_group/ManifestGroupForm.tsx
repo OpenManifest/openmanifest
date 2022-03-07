@@ -8,11 +8,106 @@ import { actions, useAppSelector, useAppDispatch } from 'app/state';
 
 import useRestriction from 'app/hooks/useRestriction';
 import { JumpType, Permission, TicketType } from 'app/api/schema.d';
+import { RigEssentialsFragment, TicketTypeExtraEssentialsFragment } from 'app/api/operations';
 import ChipSelect from '../../input/chip_select/ChipSelect';
 
 import UserRigCard from './UserRigCard';
+import { SlotUserWithRig } from './slice';
 
-export default function SlotForm() {
+interface IUserCardProps {
+  slotUser: SlotUserWithRig;
+}
+
+function UserCard(props: IUserCardProps) {
+  const { slotUser } = props;
+  const state = useAppSelector((root) => root.forms.manifestGroup);
+  const globalState = useAppSelector((root) => root.global);
+  const dispatch = useAppDispatch();
+
+  const isTandem = !!state.fields.ticketType.value?.isTandem;
+
+  const onChangeExitWeight = React.useCallback(
+    (exitWeight: number) =>
+      dispatch(
+        actions.forms.manifestGroup.setField([
+          'users',
+          state.fields.users.value?.map((user) =>
+            user.id === slotUser.id ? { ...slotUser, exitWeight } : user
+          ),
+        ])
+      ),
+    [dispatch, slotUser, state.fields.users.value]
+  );
+
+  const onRemove = React.useCallback(
+    () =>
+      dispatch(
+        actions.forms.manifestGroup.setField([
+          'users',
+          state.fields.users.value?.filter((user) => user.id !== slotUser.id),
+        ])
+      ),
+    [dispatch, slotUser.id, state.fields.users.value]
+  );
+
+  const onChangeRig = React.useCallback(
+    (newRig: RigEssentialsFragment) =>
+      dispatch(
+        actions.forms.manifestGroup.setField([
+          'users',
+          state.fields.users.value?.map((user) =>
+            user.id === slotUser.id ? { ...slotUser, rigId: Number(newRig.id), rig: newRig } : user
+          ),
+        ])
+      ),
+    [dispatch, slotUser, state.fields.users.value]
+  );
+
+  const onChangePassengerName = React.useCallback(
+    (passengerName: string) =>
+      dispatch(
+        actions.forms.manifestGroup.setField([
+          'users',
+          state.fields.users.value?.map((user) =>
+            user.id === slotUser.id ? { ...slotUser, passengerName } : user
+          ),
+        ])
+      ),
+    [dispatch, slotUser, state.fields.users.value]
+  );
+  const onChangePassengerWeight = React.useCallback(
+    (passengerExitWeight: number) =>
+      dispatch(
+        actions.forms.manifestGroup.setField([
+          'users',
+          state.fields.users.value?.map((user) =>
+            user.id === slotUser.id ? { ...slotUser, passengerExitWeight } : user
+          ),
+        ])
+      ),
+    [dispatch, slotUser, state.fields.users.value]
+  );
+  return (
+    <UserRigCard
+      key={`user-rig-card-${slotUser.id}`}
+      dropzoneId={globalState.currentDropzoneId as number}
+      dropzoneUserId={Number(slotUser.id)}
+      selectedRig={slotUser.rig || undefined}
+      exitWeight={slotUser.exitWeight}
+      {...{
+        onChangeExitWeight,
+        onRemove,
+        onChangeRig,
+        onChangePassengerName,
+        onChangePassengerWeight,
+      }}
+      {...{ isTandem }}
+      passengerName={slotUser.passengerName}
+      passengerWeight={slotUser.passengerExitWeight}
+    />
+  );
+}
+export default function ManifestGroupForm() {
   const state = useAppSelector((root) => root.forms.manifestGroup);
   const globalState = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
@@ -28,20 +123,34 @@ export default function SlotForm() {
     onError: console.error,
   });
 
-  const isTandem = !!state.fields.ticketType.value?.isTandem;
+  const jumpTypes = React.useMemo(
+    () =>
+      uniqBy(
+        [...(data?.dropzone?.allowedJumpTypes || []), ...(data?.jumpTypes || [])],
+        ({ id }) => id
+      ) || [],
+    [data]
+  );
 
+  const createToggleTicketAddonHandler = React.useCallback(
+    (extra: TicketTypeExtraEssentialsFragment) => () =>
+      dispatch(
+        actions.forms.manifestGroup.setField([
+          'extras',
+          state?.fields?.extras.value?.some(({ id }) => id === extra.id)
+            ? state?.fields?.extras.value?.filter(({ id }) => id !== extra.id)
+            : [...(state?.fields?.extras?.value || []), extra],
+        ])
+      ),
+    [dispatch, state?.fields?.extras.value]
+  );
   return (
     <>
-      <View style={{ paddingHorizontal: 8 }}>
+      <View style={{ paddingHorizontal: 8 }} key="manifest-group-config">
         <List.Subheader>Jump type</List.Subheader>
         <ChipSelect
           autoSelectFirst
-          items={
-            uniqBy(
-              [...(data?.dropzone?.allowedJumpTypes || []), ...(data?.jumpTypes || [])],
-              ({ id }) => id
-            ) || []
-          }
+          items={jumpTypes}
           selected={state.fields.jumpType.value ? [state.fields.jumpType.value] : []}
           renderItemLabel={(jumpType: JumpType) => jumpType.name}
           isDisabled={(jumpType: JumpType) =>
@@ -69,104 +178,34 @@ export default function SlotForm() {
         <HelperText type={state.fields.ticketType.error ? 'error' : 'info'}>
           {state.fields.ticketType.error || ''}
         </HelperText>
+        {!state?.fields?.ticketType?.value?.extras?.length ? null : (
+          <List.Subheader>Ticket addons</List.Subheader>
+        )}
+        <ScrollView horizontal style={styles.ticketAddons}>
+          {state?.fields?.ticketType?.value?.extras?.map((extra) => (
+            <Chip
+              key={`addon-${extra?.id}`}
+              selected={state?.fields?.extras.value?.some(({ id }) => id === extra.id)}
+              onPress={createToggleTicketAddonHandler(extra as TicketTypeExtraEssentialsFragment)}
+            >
+              {`${extra.name} ($${extra.cost})`}
+            </Chip>
+          ))}
+        </ScrollView>
+        <HelperText type={state.fields.extras.error ? 'error' : 'info'}>
+          {state.fields.extras.error || ''}
+        </HelperText>
       </View>
 
-      {!state?.fields?.ticketType?.value?.extras?.length ? null : (
-        <List.Subheader>Ticket addons</List.Subheader>
-      )}
-      <ScrollView horizontal style={styles.ticketAddons}>
-        {state?.fields?.ticketType?.value?.extras?.map((extra) => (
-          <Chip
-            selected={state?.fields?.extras.value?.some(({ id }) => id === extra.id)}
-            onPress={
-              state?.fields?.extras.value?.some(({ id }) => id === extra.id)
-                ? () =>
-                    dispatch(
-                      actions.forms.manifestGroup.setField([
-                        'extras',
-                        state?.fields?.extras.value?.filter(({ id }) => id !== extra.id),
-                      ])
-                    )
-                : () =>
-                    dispatch(
-                      actions.forms.manifestGroup.setField([
-                        'extras',
-                        [...(state?.fields?.extras?.value || []), extra],
-                      ])
-                    )
-            }
-          >
-            {`${extra.name} ($${extra.cost})`}
-          </Chip>
-        ))}
-      </ScrollView>
-      <HelperText type={state.fields.extras.error ? 'error' : 'info'}>
-        {state.fields.extras.error || ''}
-      </HelperText>
       <Divider />
 
-      <View style={{ paddingHorizontal: 16, paddingTop: 16, flexGrow: 1 }}>
+      <View
+        style={{ paddingHorizontal: 0, paddingTop: 16, flexGrow: 1 }}
+        key="manifest-group-users"
+      >
         <List.Subheader>Group</List.Subheader>
         {state.fields?.users?.value?.map((slotUser) => (
-          <UserRigCard
-            dropzoneId={globalState.currentDropzoneId as number}
-            dropzoneUserId={Number(slotUser.id)}
-            selectedRig={slotUser.rig || undefined}
-            exitWeight={slotUser.exitWeight}
-            onChangeExitWeight={(exitWeight) =>
-              dispatch(
-                actions.forms.manifestGroup.setField([
-                  'users',
-                  state.fields.users.value?.map((user) =>
-                    user.id === slotUser.id ? { ...slotUser, exitWeight } : user
-                  ),
-                ])
-              )
-            }
-            onRemove={() =>
-              dispatch(
-                actions.forms.manifestGroup.setField([
-                  'users',
-                  state.fields.users.value?.filter((user) => user.id !== slotUser.id),
-                ])
-              )
-            }
-            onChangeRig={(newRig) =>
-              dispatch(
-                actions.forms.manifestGroup.setField([
-                  'users',
-                  state.fields.users.value?.map((user) =>
-                    user.id === slotUser.id
-                      ? { ...slotUser, rigId: Number(newRig.id), rig: newRig }
-                      : user
-                  ),
-                ])
-              )
-            }
-            {...{ isTandem }}
-            passengerName={slotUser.passengerName}
-            passengerWeight={slotUser.passengerExitWeight}
-            onChangePassengerName={(passengerName) =>
-              dispatch(
-                actions.forms.manifestGroup.setField([
-                  'users',
-                  state.fields.users.value?.map((user) =>
-                    user.id === slotUser.id ? { ...slotUser, passengerName } : user
-                  ),
-                ])
-              )
-            }
-            onChangePassengerWeight={(passengerExitWeight) =>
-              dispatch(
-                actions.forms.manifestGroup.setField([
-                  'users',
-                  state.fields.users.value?.map((user) =>
-                    user.id === slotUser.id ? { ...slotUser, passengerExitWeight } : user
-                  ),
-                ])
-              )
-            }
-          />
+          <UserCard {...{ slotUser }} key={`manifest-${slotUser.id}`} />
         ))}
       </View>
     </>

@@ -76,11 +76,15 @@ export default function SlotsTable(props: ISlotsTableProps) {
             ))}
         </DataTable.Header>
         {load &&
-          items?.map((slot) =>
+          items?.map((slot, idx) =>
             slot.id === '__AVAILABLE__' ? (
-              <AvailableRow {...{ onPress: onAvailableSlotPress }} />
+              // eslint-disable-next-line react/no-array-index-key
+              <AvailableRow {...{ onPress: onAvailableSlotPress }} key={`slot-available-${idx}`} />
             ) : (
-              <UserRow {...{ fields, slot, load, onDeletePress, onSlotGroupPress, onSlotPress }} />
+              <UserRow
+                {...{ fields, slot, load, onDeletePress, onSlotGroupPress, onSlotPress }}
+                key={`slot-${slot.id}`}
+              />
             )
           )}
       </DataTable>

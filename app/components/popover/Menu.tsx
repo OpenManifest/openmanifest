@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Menu as PaperMenu, Text } from 'react-native-paper';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import UserAvatar from '../UserAvatar';
@@ -23,32 +23,41 @@ export function MenuItem(props: IMenuItemProps) {
   const { title, icon, bold, onPress, avatar, testID } = props;
   return (
     <PaperMenu.Item
-      titleStyle={{ fontWeight: bold ? 'bold' : undefined }}
+      titleStyle={StyleSheet.flatten([
+        {
+          fontWeight: bold ? 'bold' : undefined,
+        },
+      ])}
       {...{ title, onPress, testID, icon }}
       {...(!avatar
         ? {}
         : {
             title: (
-              <>
+              <View style={styles.menuItemTitleContainer}>
                 <UserAvatar {...avatar} />
-                <Text style={styles.menuItemTitle}>{title}</Text>
-              </>
+                <Text style={styles.menuItemTitleText}>{title}</Text>
+              </View>
             ),
           })}
     />
   );
 }
 export default function Menu(props: IPopoverMenuProps) {
-  const { open, setOpen, anchor, children } = props;
+  const { open: visible, setOpen, anchor, children } = props;
 
-  return <PaperMenu onDismiss={() => setOpen(false)} visible={open} {...{ anchor, children }} />;
+  const onDismiss = React.useCallback(() => setOpen(false), [setOpen]);
+  return <PaperMenu {...{ anchor, children, onDismiss, visible }} />;
 }
 
 const styles = StyleSheet.create({
-  menuItemTitle: {
+  menuItemTitleContainer: {
     display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 0,
-    marginRight: 0,
+    justifyContent: 'flex-start',
+  },
+  menuItemTitleText: {
+    marginLeft: 16,
+    fontSize: 16,
   },
 });

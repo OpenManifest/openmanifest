@@ -35,6 +35,18 @@ export default function NumberField(props: INumberFieldProps) {
     [onChangeValue]
   );
 
+  const onIncrement = React.useCallback(() => {
+    onChangeValue?.((value || 0) + 1);
+  }, [onChangeValue, value]);
+
+  const onDecrement = React.useCallback(() => {
+    onChangeValue?.((value || 0) - 1);
+  }, [onChangeValue, value]);
+
+  const themeStyle = React.useMemo(
+    () => ({ borderColor: theme.colors.text, backgroundColor: theme.colors.surface }),
+    [theme.colors.surface, theme.colors.text]
+  );
   return (
     <TextInput
       {...rest}
@@ -48,23 +60,17 @@ export default function NumberField(props: INumberFieldProps) {
             height: '100%',
           }}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
+          // @ts-ignore Elements are allowed here, but types specify string
           text={
             <View style={styles.chevrons}>
-              <TouchableOpacity
-                style={[
-                  styles.affixTopChevron,
-                  { borderColor: theme.colors.text, backgroundColor: theme.colors.surface },
-                ]}
-                onPress={() => onChangeValue?.((value || 0) + 1)}
-              >
-                <MaterialCommunityIcons name="chevron-up" size={24} />
+              <TouchableOpacity style={[styles.affixTopChevron, themeStyle]} onPress={onIncrement}>
+                <MaterialCommunityIcons name="chevron-up" size={12} />
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.affixBottomChevron, { backgroundColor: theme.colors.surface }]}
-                onPress={() => onChangeValue?.((value || 0) - 1)}
+                onPress={onDecrement}
               >
-                <MaterialCommunityIcons name="chevron-down" size={24} />
+                <MaterialCommunityIcons name="chevron-down" size={12} />
               </TouchableOpacity>
             </View>
           }
@@ -77,20 +83,20 @@ export default function NumberField(props: INumberFieldProps) {
 
 const styles = StyleSheet.create({
   affixBottomChevron: {
-    width: 48,
+    width: 24,
     height: 54 / 2,
     alignItems: 'center',
     borderLeftWidth: StyleSheet.hairlineWidth,
   },
   affixTopChevron: {
-    width: 48,
+    width: 24,
     height: 54 / 2,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderLeftWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
   },
   chevrons: {
-    width: 48,
+    width: 24,
     height: 59,
     paddingTop: 4,
     marginRight: -10,

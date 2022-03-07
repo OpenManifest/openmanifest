@@ -19,7 +19,6 @@ export default function SignupWizard() {
           redirectUrl: '',
         },
       });
-      console.log(result?.data?.userSendPasswordReset?.message);
     } catch (e) {
       if (e instanceof Error) {
         dispatch(actions.screens.signup.setFieldError(['email', e.message]));

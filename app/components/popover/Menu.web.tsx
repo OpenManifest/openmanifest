@@ -6,7 +6,7 @@ import { Avatar, ListItemAvatar, ListItemIcon, ListItemText } from '@mui/materia
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import first from 'lodash/first';
-import UserAvatar from '../UserAvatar';
+import UserAvatar from '../UserAvatar.web.old';
 
 interface IPopoverMenuProps {
   open: boolean;

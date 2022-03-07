@@ -102,7 +102,6 @@ function Content() {
 
   const listener = React.useRef<ReturnType<typeof Appearance.addChangeListener>>(
     Appearance.addChangeListener(({ colorScheme }) => {
-      console.log({ colorScheme });
       if (colorScheme) {
         dispatch(actions.global.setAppearance(colorScheme));
       }
@@ -142,7 +141,7 @@ function Content() {
     // interacts with a notification (works when app is foregrounded,
     // backgrounded, or killed)
     responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-      console.log({ notification: response });
+      // console.log({ notification: response });
     });
 
     Linking.addEventListener('url', onOutsideLink);
@@ -163,7 +162,6 @@ function Content() {
       if (s) {
         const [path] = getPathFromState(s).split(/\?/);
         const [screenName] = path.split(/\//).reverse();
-        console.log('--- Nav State--', screenName);
         if (state.currentRouteName !== screenName) {
           dispatch(actions.global.setCurrentRouteName(screenName));
         }

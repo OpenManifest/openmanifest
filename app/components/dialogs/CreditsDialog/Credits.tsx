@@ -177,6 +177,7 @@ export default function CreditSheet(props: ICreditsSheet) {
 
   return (
     <BottomSheetModal
+      name="credits-modal"
       ref={sheetRef}
       snapPoints={snapPoints}
       onDismiss={onDismiss}

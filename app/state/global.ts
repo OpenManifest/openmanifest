@@ -179,10 +179,8 @@ export default createSlice({
 
       console.log('Setting appearance to', action.payload);
       if (current === action.payload) {
-        console.log('-- NO CHANGE - Already set to ', current);
         return state;
       }
-      console.log('Changing theme..');
       state.theme = merge(
         {},
         action.payload === 'dark' ? CombinedDarkTheme : CombinedDefaultTheme,

@@ -31,8 +31,6 @@ export function useLoginWithFacebook(
           `https://graph.facebook.com/me?access_token=${token}&fields=email,name,picture`
         );
         const json = await response.json();
-        console.log(json);
-        console.log({ ...rest, token });
 
         const { data } = await onLoginWithFacebook({
           variables: {
@@ -40,7 +38,6 @@ export function useLoginWithFacebook(
             token,
           },
         });
-        console.log(data);
         if (data?.loginWithFacebook?.authenticatable && data?.loginWithFacebook?.credentials) {
           dispatch(actions.global.setCredentials(data.loginWithFacebook.credentials));
           dispatch(actions.global.setUser(data.loginWithFacebook.authenticatable));

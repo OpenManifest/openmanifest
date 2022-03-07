@@ -56,6 +56,7 @@ export default function TransactionsScreen() {
         data={dropzoneUser?.orders?.edges || []}
         refreshing={false}
         onRefresh={refetch}
+        keyExtractor={(item) => `transaction-${item?.node?.id}`}
         renderItem={({ item }) =>
           !item?.node ? null : (
             <OrderCard

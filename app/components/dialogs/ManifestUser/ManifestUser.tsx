@@ -73,6 +73,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
 
   return (
     <DialogOrSheet
+      name="manifest-user"
       snapPoints={snapPoints}
       onClose={onDialogClose}
       buttonAction={onManifest}

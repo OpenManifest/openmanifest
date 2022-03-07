@@ -40,6 +40,7 @@ export default function Select<T>(props: ISelectProps<T>) {
   const { label, options, onChange, value, renderAnchor } = props;
   const [open, setOpen] = React.useState<boolean>(false);
 
+  console.log('Select menu', open);
   const onDismiss = React.useCallback(() => {
     setOpen(false);
   }, []);
@@ -77,7 +78,7 @@ export default function Select<T>(props: ISelectProps<T>) {
   const showAvatars = React.useMemo(() => options?.some((option) => option.avatar), [options]);
 
   return (
-    <Provider>
+    <>
       {label ? <List.Subheader>{label}</List.Subheader> : null}
       <Menu {...{ open, setOpen, anchor }}>
         {options?.map((option) => (
@@ -94,6 +95,6 @@ export default function Select<T>(props: ISelectProps<T>) {
           />
         ))}
       </Menu>
-    </Provider>
+    </>
   );
 }

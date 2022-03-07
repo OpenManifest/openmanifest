@@ -14,7 +14,7 @@ import { useAppSelector } from 'app/state';
 import first from 'lodash/first';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Caption, useTheme } from 'react-native-paper';
-import UserAvatar from '../UserAvatar';
+import UserAvatar from '../UserAvatar.web.old';
 
 interface IDropzoneUserAutocompleteProps {
   value?: DropzoneUserEssentialsFragment | null;

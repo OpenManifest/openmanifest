@@ -1,50 +1,78 @@
 import { sortBy, uniq } from 'lodash';
 import * as React from 'react';
-import { View, StyleSheet, Keyboard } from 'react-native';
+import { View, StyleSheet, Keyboard, ViewProps } from 'react-native';
 import { Button, Title, useTheme } from 'react-native-paper';
-import {
-  BottomSheetModal,
+import BottomSheet, {
   BottomSheetScrollView,
   BottomSheetBackdrop,
+  BottomSheetBackdropProps,
   useBottomSheetDynamicSnapPoints,
+  useBottomSheet,
+  BottomSheetView,
 } from '@gorhom/bottom-sheet';
 
 interface IBottomSheetProps {
+  name?: string;
   open?: boolean;
   buttonLabel?: string;
   children: React.ReactNode;
   loading?: boolean;
   title?: string;
-  disablePadding?: boolean;
   scrollable?: boolean;
-  handle?: React.ReactNode;
-
+  disablePadding?: boolean;
   snapPoints?: (string | number)[];
+  handleStyles?: ViewProps['style'];
   buttonAction?(): void;
   onClose(): void;
 }
 
+function BottomSheetWrapper({
+  open,
+  children,
+  initialIndex,
+}: {
+  initialIndex: number;
+  open?: boolean | null;
+  children: React.ReactNode;
+}) {
+  const { snapToIndex, forceClose, expand, snapToPosition } = useBottomSheet();
+  React.useEffect(() => {
+    if (open) {
+      console.log('Opening', open);
+      expand();
+      snapToPosition(400);
+      snapToIndex(initialIndex);
+    } else {
+      console.log('Closing', open);
+      forceClose();
+    }
+  }, [expand, forceClose, initialIndex, open, snapToIndex, snapToPosition]);
+
+  console.log('Wrapper open', open);
+
+  return children as JSX.Element;
+}
 export default function DialogOrSheet(props: IBottomSheetProps) {
   const {
+    name,
     open,
-    disablePadding,
     snapPoints,
     onClose,
+    scrollable,
     title,
     buttonLabel,
     buttonAction,
-    scrollable,
-    handle,
     loading,
+    handleStyles,
+    disablePadding,
     children,
   } = props;
-  const sheetRef = React.useRef<BottomSheetModal>(null);
-  const snappingPoints = React.useMemo(
+  const sheetRef = React.useRef<BottomSheet>(null);
+  const points = React.useMemo(
     () => sortBy(uniq([0, ...(snapPoints || [600])])).filter((s) => s !== 0),
     [snapPoints]
   );
-
-  const dynamicSnapPoints = useBottomSheetDynamicSnapPoints(snappingPoints);
+  const snappingPoints = useBottomSheetDynamicSnapPoints(points);
 
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
 
@@ -69,44 +97,17 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     });
   }, [memoizedClose]);
 
-  const show = () => {
-    'worklet';
-
-    sheetRef.current?.present();
-  };
-
-  const hide = () => {
-    'worklet';
-
-    sheetRef.current?.dismiss({ duration: 300 });
-    setTimeout(onDismiss, 350);
-  };
-
-  React.useEffect(() => {
-    if (open) {
-      show();
-      // sheetRef.current?.snapTo(snappingPoints?.length - 1, 300);
-    } else {
-      hide();
-    }
-    // We dont want to refresh everytime anything else changes,
-    // this is intentional
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onDismiss, open]);
   const theme = useTheme();
   const HandleComponent = React.useCallback(() => {
     return !title ? (
       <View
-        style={[
+        style={StyleSheet.flatten([
           styles.sheetHeader,
-          {
-            overflow: 'hidden',
-            shadowColor: theme.colors.onSurface,
-            backgroundColor: theme.colors.surface,
-          },
-        ]}
+          { shadowColor: theme.colors.onSurface, backgroundColor: theme.colors.surface },
+          handleStyles,
+        ])}
       >
-        {handle || <View style={styles.handle} />}
+        <View style={styles.handle} />
       </View>
     ) : (
       <View
@@ -122,40 +123,70 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
         <Title>{title}</Title>
       </View>
     );
-  }, [handle, theme.colors.onSurface, theme.colors.surface, title]);
+  }, [handleStyles, theme.colors.onSurface, theme.colors.surface, title]);
+
+  const Backdrop = React.useCallback(
+    (p: BottomSheetBackdropProps) => <BottomSheetBackdrop {...p} pressBehavior="close" />,
+    []
+  );
+
+  console.log('Sheet open', open, points, snappingPoints.animatedSnapPoints);
 
   return (
-    <BottomSheetModal
+    <BottomSheet
+      {...{ name }}
       enableContentPanningGesture
-      enableDismissOnClose
       enableOverDrag
       enablePanDownToClose
       enableHandlePanningGesture
-      name="abc"
-      onDismiss={onDismiss}
       ref={sheetRef}
-      snapPoints={snappingPoints}
-      handleHeight={dynamicSnapPoints.animatedHandleHeight}
-      backdropComponent={(a) => <BottomSheetBackdrop {...a} pressBehavior="close" />}
-      index={(snappingPoints?.length || 1) - 1}
+      snapPoints={points}
+      handleHeight={snappingPoints.animatedHandleHeight}
+      contentHeight={snappingPoints.animatedContentHeight}
+      backdropComponent={Backdrop}
+      index={(snappingPoints?.animatedSnapPoints.value.length || 1) - 1}
       handleComponent={HandleComponent}
+      onChange={console.log}
     >
-      <BottomSheetScrollView
-        contentContainerStyle={StyleSheet.flatten([
-          styles.sheet,
-          disablePadding ? styles.noPadding : {},
-          {
-            paddingBottom: keyboardVisible ? 400 : 80,
-            backgroundColor: theme.colors.surface,
-          },
-        ])}
-      >
-        {children}
-        <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>
-          {buttonLabel}
-        </Button>
-      </BottomSheetScrollView>
-    </BottomSheetModal>
+      <BottomSheetWrapper {...{ open }} initialIndex={(points?.length || 0) - 1}>
+        {scrollable !== false ? (
+          <BottomSheetScrollView
+            onLayout={snappingPoints.handleContentLayout}
+            contentContainerStyle={StyleSheet.flatten([
+              styles.sheet,
+              disablePadding ? styles.noPadding : {},
+              { paddingBottom: keyboardVisible ? 400 : 80, backgroundColor: theme.colors.surface },
+            ])}
+          >
+            {children}
+            <View style={styles.buttonContainer}>
+              <Button
+                onPress={buttonAction}
+                mode="contained"
+                style={styles.button}
+                loading={loading}
+              >
+                {buttonLabel}
+              </Button>
+            </View>
+          </BottomSheetScrollView>
+        ) : (
+          <BottomSheetView onLayout={snappingPoints.handleContentLayout}>
+            {children}
+            <View style={styles.buttonContainer}>
+              <Button
+                onPress={buttonAction}
+                mode="contained"
+                style={styles.button}
+                loading={loading}
+              >
+                {buttonLabel}
+              </Button>
+            </View>
+          </BottomSheetView>
+        )}
+      </BottomSheetWrapper>
+    </BottomSheet>
   );
 }
 
@@ -169,7 +200,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20,
-    marginBottom: 20,
+  },
+  buttonContainer: {
+    paddingHorizontal: 8,
+    marginBottom: 32,
   },
   noPadding: { paddingLeft: 0, paddingRight: 0, paddingTop: 0 },
   contentContainer: {
@@ -184,9 +218,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   sheet: {
-    paddingBottom: 56,
+    paddingBottom: 30,
     paddingHorizontal: 16,
-    overflow: 'hidden',
     elevation: 3,
     display: 'flex',
     flexDirection: 'column',
@@ -197,7 +230,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    minHeight: 40,
+    height: 40,
     paddingTop: 4,
     shadowColor: '#000',
     shadowOffset: {

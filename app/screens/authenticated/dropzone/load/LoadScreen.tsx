@@ -230,6 +230,7 @@ export default function LoadScreen() {
             showsHorizontalScrollIndicator={false}
             style={{ marginVertical: 8 }}
             data={['plane', 'pilot', 'gca', 'loadMaster']}
+            keyExtractor={(item) => item.toString()}
             renderItem={({ item }) => {
               switch (item) {
                 case 'plane':

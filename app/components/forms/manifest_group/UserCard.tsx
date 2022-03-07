@@ -7,9 +7,8 @@ import { useAppSelector } from 'app/state';
 import calculateWingLoading from 'app/utils/calculateWingLoading';
 import Chip from 'app/components/chips/Chip';
 import UserAvatar from 'app/components/UserAvatar';
-import { NumberFieldType } from 'app/components/input/number_input/NumberField.web';
 import RigSelect from '../../input/dropdown_select/RigSelect';
-import NumberField from '../../input/number_input/NumberField';
+import NumberField, { NumberFieldType } from '../../input/number_input/NumberField';
 
 interface IUserRigCard {
   dropzoneUserId: number;

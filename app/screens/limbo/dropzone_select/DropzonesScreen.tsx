@@ -22,6 +22,7 @@ export default function DropzonesScreen() {
         numColumns={Platform.OS === 'web' ? undefined : 2}
         horizontal={Platform.OS === 'web'}
         refreshing={loading}
+        keyExtractor={(item) => `dropzone-${item?.node?.id}`}
         onRefresh={() => refetch()}
         style={styles.flatlist}
         contentContainerStyle={styles.content}
