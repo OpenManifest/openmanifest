@@ -2,10 +2,9 @@ import * as React from 'react';
 import MuiMenu from '@mui/material/Menu';
 import MuiMenuItem from '@mui/material/MenuItem';
 import { View, TouchableOpacity } from 'react-native';
-import { Avatar, ListItemAvatar, ListItemIcon, ListItemText } from '@mui/material';
+import { ListItemAvatar, ListItemIcon, ListItemText } from '@mui/material';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
-import first from 'lodash/first';
 import UserAvatar from '../UserAvatar.web.old';
 
 interface IPopoverMenuProps {

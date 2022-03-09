@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { DropzoneUserEssentialsFragment, DropzoneUserProfileFragment } from 'app/api/operations';
 
 interface IDropzoneUserAutocompleteProps {

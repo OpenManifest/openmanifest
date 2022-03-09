@@ -2,13 +2,14 @@ import { sortBy, uniq } from 'lodash';
 import * as React from 'react';
 import { View, StyleSheet, Keyboard, ViewProps } from 'react-native';
 import { Button, Title, useTheme } from 'react-native-paper';
-import BottomSheet, {
+import {
   BottomSheetScrollView,
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
   useBottomSheetDynamicSnapPoints,
   useBottomSheet,
   BottomSheetView,
+  BottomSheetModal,
 } from '@gorhom/bottom-sheet';
 
 interface IBottomSheetProps {
@@ -67,7 +68,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     disablePadding,
     children,
   } = props;
-  const sheetRef = React.useRef<BottomSheet>(null);
+  const sheetRef = React.useRef<BottomSheetModal>(null);
   const points = React.useMemo(
     () => sortBy(uniq([0, ...(snapPoints || [600])])).filter((s) => s !== 0),
     [snapPoints]
@@ -133,8 +134,8 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
   console.log('Sheet open', open, points, snappingPoints.animatedSnapPoints);
 
   return (
-    <BottomSheet
-      {...{ name }}
+    <BottomSheetModal
+      {...{ name, onDismiss }}
       enableContentPanningGesture
       enableOverDrag
       enablePanDownToClose
@@ -186,7 +187,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
           </BottomSheetView>
         )}
       </BottomSheetWrapper>
-    </BottomSheet>
+    </BottomSheetModal>
   );
 }
 

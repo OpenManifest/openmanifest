@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import TextInput from 'app/components/input/text/TextField';
-import { HelperText, Provider } from 'react-native-paper';
+import { HelperText } from 'react-native-paper';
 
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 

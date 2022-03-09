@@ -53,7 +53,7 @@ const StyledTextField = styled(TextField, {
   },
 })) as React.ComponentType<Omit<TextFieldProps, 'color'> & { color?: string }>;
 export default function DropzoneUserAutocomplete(props: IDropzoneUserAutocompleteProps) {
-  const { label, value, onChange, placeholder, color } = props;
+  const { label, onChange, placeholder, color } = props;
   const [searchUsers, { data, loading }] = useDropzoneUsersLazyQuery();
   const [searchText, setSearchText] = React.useState('');
   const { currentDropzoneId } = useAppSelector((root) => root.global);

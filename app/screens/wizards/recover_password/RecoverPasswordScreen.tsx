@@ -13,7 +13,7 @@ export default function SignupWizard() {
 
   const onClickRecover = React.useCallback(async () => {
     try {
-      const result = await onRecover({
+      await onRecover({
         variables: {
           email: state.fields.email.value,
           redirectUrl: '',
