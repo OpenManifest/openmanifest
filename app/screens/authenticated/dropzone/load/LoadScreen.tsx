@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { ScrollView } from 'react-native-gesture-handler';
 import { FlatList, Platform } from 'react-native';
 
 import { RouteProp, useIsFocused, useRoute } from '@react-navigation/core';
@@ -243,6 +242,7 @@ export default function LoadScreen() {
 
                           dispatch(
                             actions.notifications.showSnackbar({
+                              // eslint-disable-next-line max-len
                               message: `You need to take ${diff} people off the load to fit on this plane`,
                               variant: 'info',
                             })

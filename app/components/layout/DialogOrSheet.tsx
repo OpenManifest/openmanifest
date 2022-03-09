@@ -16,6 +16,7 @@ interface IBottomSheetProps {
   loading?: boolean;
   title?: string;
   disablePadding?: boolean;
+  // eslint-disable-next-line react/no-unused-prop-types
   scrollable?: boolean;
   handle?: React.ReactNode;
 

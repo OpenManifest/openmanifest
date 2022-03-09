@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Keyboard } from 'react-native';
+import { View } from 'react-native';
 import { pick } from 'lodash';
 import { useTheme } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
@@ -24,25 +24,11 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
   const state = useAppSelector((root) => root.forms.manifestGroup);
   const [mutationCreateSlots, mutationData] = useManifestGroupMutation();
   const [tabIndex, setTabIndex] = React.useState(0);
-  const [keyboardVisible, setKeyboardVisible] = React.useState(false);
-
-  const onKeyboardVisible = () => setKeyboardVisible(true);
-  const onKeyboardHidden = () => setKeyboardVisible(false);
   React.useEffect(() => {
     if (!state?.fields?.users?.value?.length) {
       setTabIndex(0);
     }
   }, [state?.fields?.users?.value?.length]);
-
-  React.useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', onKeyboardVisible);
-    Keyboard.addListener('keyboardDidHide', onKeyboardHidden);
-
-    return () => {
-      Keyboard.removeListener('keyboardDidShow', onKeyboardVisible);
-      Keyboard.removeListener('keyboardDidHide', onKeyboardHidden);
-    };
-  }, []);
 
   const validate = React.useCallback(() => {
     let hasErrors = false;

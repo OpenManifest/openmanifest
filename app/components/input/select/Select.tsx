@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { List, Provider } from 'react-native-paper';
+import { List } from 'react-native-paper';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 
