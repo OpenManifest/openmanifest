@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import TextInput from 'app/components/input/text/TextField';
 import { HelperText, Divider, Chip, List } from 'react-native-paper';
-import NumberField from '../../input/number_input/NumberField';
+import NumberField, { NumberFieldType } from 'app/components/input/number_input/NumberField';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import { Permission } from '../../../api/schema.d';
@@ -100,6 +100,7 @@ export default function ManifestForm() {
       <Divider />
       {!state.fields.dropzoneUser ? null : (
         <RigSelect
+          label="Equipment"
           value={state.fields.rig.value}
           dropzoneUserId={Number(state.fields.dropzoneUser?.value?.id)}
           onSelect={(value) => dispatch(actions.forms.manifest.setField(['rig', value]))}
@@ -109,7 +110,8 @@ export default function ManifestForm() {
         {state.fields.rig.error || ''}
       </HelperText>
       <NumberField
-        label="Exit weight (kg)"
+        label="Exit weight"
+        variant={NumberFieldType.Weight}
         error={state.fields.exitWeight.error}
         value={state.fields.exitWeight?.value}
         onChange={(newValue) =>

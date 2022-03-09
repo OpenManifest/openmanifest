@@ -33,7 +33,6 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     title,
     buttonLabel,
     buttonAction,
-    scrollable,
     handle,
     loading,
     children,
@@ -100,7 +99,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
         style={[
           styles.sheetHeader,
           {
-            overflow: 'hidden',
+            overflow: handle ? 'hidden' : undefined,
             shadowColor: theme.colors.onSurface,
             backgroundColor: theme.colors.surface,
           },
@@ -136,7 +135,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
       ref={sheetRef}
       snapPoints={snappingPoints}
       handleHeight={dynamicSnapPoints.animatedHandleHeight}
-      backdropComponent={(a) => <BottomSheetBackdrop {...a} pressBehavior="close" />}
+      backdropComponent={BottomSheetBackdrop}
       index={(snappingPoints?.length || 1) - 1}
       handleComponent={HandleComponent}
     >

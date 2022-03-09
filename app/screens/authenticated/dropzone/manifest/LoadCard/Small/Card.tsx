@@ -105,7 +105,7 @@ export default function LoadCard(props: ILoadCardSmall) {
       testID="load-card"
       style={{
         margin: 16,
-        borderRadius: 2,
+        borderRadius: 8,
         minWidth: 300,
         opacity: ['cancelled', 'landed'].includes(load?.state || '') ? 0.5 : 1.0,
       }}

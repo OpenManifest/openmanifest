@@ -87,6 +87,7 @@ export default function UserRigCard(props: IUserRigCard) {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <RigSelect
             small
+            variant="chip"
             dropzoneUserId={dropzoneUserId}
             onSelect={onChangeRig}
             value={selectedRig}
@@ -122,7 +123,7 @@ export default function UserRigCard(props: IUserRigCard) {
                 <NumberField
                   value={!passengerWeight ? 0 : passengerWeight}
                   onChange={(num) => onChangePassengerWeight?.(num)}
-                  label="Exit weight (kg)"
+                  variant={NumberFieldType.Weight}
                 />
               </View>
             </View>

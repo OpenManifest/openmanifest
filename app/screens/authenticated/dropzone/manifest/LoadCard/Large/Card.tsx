@@ -237,7 +237,6 @@ export default function LoadCard(props: ILoadCardLarge) {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              backgroundColor: 'transparent',
             }}
           >
             <Text testID="title">{`Load ${load?.loadNumber || 0}`}</Text>

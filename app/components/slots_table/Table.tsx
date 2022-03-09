@@ -27,6 +27,7 @@ export default function SlotsTable(props: ISlotsTableProps) {
     onSlotPress,
   } = props;
 
+  console.log(fields);
   const items = React.useMemo(
     () =>
       Array.from({ length: load?.maxSlots || 3 }).map((_, index) =>

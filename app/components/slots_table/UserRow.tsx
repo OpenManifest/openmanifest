@@ -61,7 +61,11 @@ export default function UserRow(props: ISlotsTableProps) {
         testID="slot-row"
         style={
           isNumber(slot?.groupNumber)
-            ? { borderLeftWidth: 5, borderLeftColor: GROUP_COLORS[slot.groupNumber % 20] }
+            ? {
+                borderLeftWidth: 5,
+                borderLeftColor: GROUP_COLORS[slot.groupNumber % 20],
+                paddingLeft: 4,
+              }
             : undefined
         }
         disabled={!!load?.hasLanded}
@@ -99,17 +103,17 @@ export default function UserRow(props: ISlotsTableProps) {
             source={
               slot?.dropzoneUser?.user?.image ? { uri: slot?.dropzoneUser?.user?.image } : undefined
             }
-            // style={{ marginRight: 24 }}
+            style={{ marginLeft: -12 }}
           />
           <Paragraph style={styles.slotText}>
-            {slot?.dropzoneUser?.user?.nickname}
-
-            {slot?.dropzoneUser?.user?.nickname ? (
-              <Caption style={{ marginLeft: 8 }}>{`(${slot?.dropzoneUser?.user?.name})`}</Caption>
-            ) : (
-              slot?.dropzoneUser?.user?.name
-            )}
+            {slot?.dropzoneUser?.user?.nickname
+              ? slot?.dropzoneUser?.user?.nickname
+              : slot?.dropzoneUser?.user?.name}
           </Paragraph>
+
+          {slot?.dropzoneUser?.user?.nickname ? (
+            <Caption>{`(${slot?.dropzoneUser?.user?.name})`}</Caption>
+          ) : null}
         </DataTable.Cell>
         {fields?.includes(SlotFields.License) ? (
           <DataTable.Cell numeric>
@@ -170,5 +174,7 @@ const styles = StyleSheet.create({
   slotText: {
     fontSize: 12,
     alignSelf: 'center',
+    height: 24,
+    textAlignVertical: 'center',
   },
 });

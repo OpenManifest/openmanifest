@@ -14,12 +14,16 @@ interface IRigSelect {
   backgroundColor?: string;
   color?: string;
   autoSelectFirst?: boolean;
+  variant?: 'chip' | 'select';
+  label?: string;
   onSelect(rig: UserRigDetailedFragment): void;
 }
 
 export default function RigSelect(props: IRigSelect) {
   const {
     dropzoneUserId,
+    label,
+    variant,
     value,
     small,
     color: assignedColor,
@@ -80,7 +84,7 @@ export default function RigSelect(props: IRigSelect) {
 
   return (
     <Select<UserRigDetailedFragment>
-      {...{ options, renderAnchor }}
+      {...{ options, renderAnchor: variant === 'chip' ? renderAnchor : undefined, label }}
       value={selected}
       onChange={onSelect}
     />

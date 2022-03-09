@@ -16,7 +16,7 @@ export default function LoadScreen(props: ITableViewProps) {
   const { load, loading, onAvailableSlotPress, onDeletePress, onSlotGroupPress, onSlotPress } =
     props;
   const { width } = useWindowDimensions();
-  const numFields = Math.floor(width / 150);
+  const numFields = Math.floor(width / 200);
 
   const slots: SlotDetailsFragment[] = Array.from({
     length: (load?.slots?.length || 0) + (load?.availableSlots || 0),
@@ -26,14 +26,16 @@ export default function LoadScreen(props: ITableViewProps) {
       : { ...slotLoadingFragment, id: '__AVAILABLE__' }
   );
 
+  console.log({ width, numFields });
+
   return (
     <SlotsTable
       fields={
         [
           SlotFields.Altitude,
           SlotFields.JumpType,
-          numFields > 2 ? SlotFields.TicketType : null,
-          numFields > 3 ? SlotFields.License : null,
+          numFields > 2 ? SlotFields.License : null,
+          numFields > 3 ? SlotFields.TicketType : null,
           numFields > 4 ? SlotFields.WingLoading : null,
           numFields > 5 ? SlotFields.Rig : null,
         ].filter(Boolean) as SlotFields[]

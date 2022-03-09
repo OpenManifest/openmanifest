@@ -236,7 +236,6 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
     <DialogOrSheet
       loading={mutationData.loading}
       {...{ open, handleStyles }}
-      disablePadding
       buttonLabel={tabIndex === 1 ? 'Manifest' : 'Next'}
       onClose={onDismiss}
       buttonAction={onNext}
