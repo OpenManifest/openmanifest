@@ -11,7 +11,7 @@ jobs:
       - uses: actions/setup-node@v2
         name: Use NodeJS
         with:
-          node-version: "14"
+          node-version: 14
       - name: Setup Python for JUnit Parsing
         uses: actions/setup-python@v2
         with:
@@ -43,21 +43,9 @@ jobs:
       - name: jest
         run: yarn test:ci
         env:
-          JEST_JUNIT_OUTPUT_DIR: ~/reports
-  publish-test-results:
-    name: "Publish Unit Tests Results"
-    needs:
-      - rspec-test
-      - eslint-jest
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: artifacts
-
+          JEST_JUNIT_OUTPUT_DIR: ~/reports/
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: EnricoMi/publish-unit-test-result-action/composite@v1
+        if: always()
         with:
-          files: artifacts/**/*.xml
+          files: ~/reports/*.xml
