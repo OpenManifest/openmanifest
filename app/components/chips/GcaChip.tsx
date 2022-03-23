@@ -1,7 +1,9 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { Chip, Menu, useTheme } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
+import Select, { ISelectOption } from 'app/components/input/select/Select';
+import { DropzoneUserEssentialsFragment } from 'app/api/operations';
+import Chip from './Chip';
 
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
@@ -20,7 +22,6 @@ export default function GCAChip(props: IGCAChipSelect) {
   const { small, color: assignedColor, backgroundColor, onSelect, value } = props;
   const theme = useTheme();
   const color = assignedColor || theme.colors.onSurface;
-  const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 
   const { data } = useDropzoneUsersQuery({
@@ -31,69 +32,48 @@ export default function GCAChip(props: IGCAChipSelect) {
   });
   const allowed = useRestriction(Permission.UpdateLoad);
 
+  const options = React.useMemo(
+    () =>
+      data?.dropzone?.dropzoneUsers?.edges
+        ?.filter((edge) => !!edge?.node)
+        .map((edge) => ({
+          label: edge?.node?.user?.name || '',
+          value: edge?.node as DropzoneUserEssentialsFragment,
+          avatar: edge?.node?.user?.image,
+        })) || [],
+    [data?.dropzone?.dropzoneUsers?.edges]
+  );
+
+  const selected = React.useMemo(
+    () =>
+      data?.dropzone?.dropzoneUsers?.edges
+        ?.map((edge) => edge?.node)
+        .find((node) => node?.id === value?.id),
+    [data?.dropzone?.dropzoneUsers?.edges, value?.id]
+  );
+
+  const renderAnchor: React.FC<{
+    item?: ISelectOption<DropzoneUserEssentialsFragment>;
+    openMenu(): void;
+  }> = React.useCallback(
+    ({ item, openMenu }) => (
+      <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="radio-handheld">
+        {item?.label || 'No GCA'}
+      </Chip>
+    ),
+    [backgroundColor, color, small]
+  );
+
   return !allowed ? (
-    <Chip
-      mode="outlined"
-      selectedColor={color}
-      style={{
-        marginHorizontal: 4,
-        backgroundColor,
-        height: small ? 25 : undefined,
-        alignItems: 'center',
-        borderColor: color || undefined,
-      }}
-      icon={(iconProps) => (
-        <MaterialCommunityIcons
-          name="radio-handheld"
-          {...iconProps}
-          style={{ marginTop: 0, marginBottom: 3 }}
-        />
-      )}
-      textStyle={{ marginTop: 0, color, fontSize: small ? 12 : undefined }}
-    >
+    <Chip {...{ backgroundColor, small, color }} icon="radio-handheld">
       {value?.user?.name || 'No gca'}
     </Chip>
   ) : (
-    <Menu
-      onDismiss={() => setMenuOpen(false)}
-      visible={isMenuOpen}
-      anchor={
-        <Chip
-          mode="outlined"
-          icon={(iconProps) => (
-            <MaterialCommunityIcons
-              name="radio-handheld"
-              {...iconProps}
-              style={{ marginTop: 0, marginBottom: 3 }}
-            />
-          )}
-          selectedColor={color}
-          onPress={() => setMenuOpen(true)}
-          style={{
-            marginHorizontal: 4,
-            backgroundColor,
-            height: small ? 25 : undefined,
-            alignItems: 'center',
-            borderColor: color || undefined,
-          }}
-          textStyle={{ marginTop: 0, color, fontSize: small ? 12 : undefined }}
-        >
-          {value?.id ? value?.user?.name : 'No gca'}
-        </Chip>
-      }
-    >
-      {data?.dropzone?.dropzoneUsers?.edges?.map((edge) => (
-        <Menu.Item
-          key={`gca-chip-${edge?.node?.id}`}
-          onPress={() => {
-            setMenuOpen(false);
-            if (edge?.node) {
-              onSelect(edge?.node);
-            }
-          }}
-          title={edge?.node?.user?.name}
-        />
-      ))}
-    </Menu>
+    <Select<DropzoneUserEssentialsFragment>
+      value={selected}
+      options={options}
+      onChange={onSelect}
+      renderAnchor={renderAnchor}
+    />
   );
 }

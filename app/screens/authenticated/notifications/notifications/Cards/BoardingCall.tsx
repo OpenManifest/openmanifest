@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { useNavigation } from '@react-navigation/native';
+import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
 import { Load, Notification } from 'app/api/schema.d';
 import NotificationCard from './NotificationCard';
 
@@ -10,7 +10,7 @@ interface INotification {
 
 export default function BoardingCallNotification(props: INotification) {
   const { notification } = props;
-  const navigation = useNavigation();
+  const navigation = useAuthenticatedNavigation();
   return (
     <NotificationCard
       title={`Load #${(notification.resource as Load).loadNumber} boarding call`}
@@ -19,16 +19,10 @@ export default function BoardingCallNotification(props: INotification) {
       icon="airplane-takeoff"
       onPress={() =>
         notification?.resource?.id &&
-        navigation.navigate('Authenticated', {
-          screen: 'Drawer',
-          params: {
-            screen: 'Manifest',
-            params: {
-              screen: 'LoadScreen',
-              initial: false,
-              params: { loadId: notification.resource.id },
-            },
-          },
+        navigation.navigate('Manifest', {
+          screen: 'LoadScreen',
+          initial: false,
+          params: { loadId: notification.resource.id },
         })
       }
     />

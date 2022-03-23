@@ -6,12 +6,13 @@ import * as React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { Provider as MaterialProvider, ActivityIndicator, ProgressBar } from 'react-native-paper';
+import { ActivityIndicator, ProgressBar } from 'react-native-paper';
 import { Appearance, Linking, Platform, View } from 'react-native';
 import { NavigationContainer, NavigationState, getPathFromState } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
 import * as Sentry from 'sentry-expo';
 import URI from 'urijs';
+import { PortalProvider } from '@gorhom/portal';
 
 import Geocoder from 'react-native-geocoding';
 import { setGoogleApiKey } from 'expo-location';
@@ -29,6 +30,7 @@ import useCachedResources from './hooks/useCachedResources';
 import NotificationArea from './components/notifications/Notifications';
 import RootNavigator, { options as LinkingConfiguration } from './screens/routes';
 import { actions } from './state';
+import ThemeProvider from './ThemeProvider';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -109,7 +111,7 @@ function Content() {
   /// Listen to changes in Appearance and set dark mode theme in state
   React.useEffect(() => {
     const handler = listener?.current;
-    return () => handler.remove?.();
+    return () => handler?.remove?.();
   }, [dispatch, state.isDarkMode, state.theme.colors.background]);
 
   React.useEffect(() => {
@@ -139,7 +141,7 @@ function Content() {
     // interacts with a notification (works when app is foregrounded,
     // backgrounded, or killed)
     responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-      console.log({ notification: response });
+      // console.log({ notification: response });
     });
 
     Linking.addEventListener('url', onOutsideLink);
@@ -160,7 +162,6 @@ function Content() {
       if (s) {
         const [path] = getPathFromState(s).split(/\?/);
         const [screenName] = path.split(/\//).reverse();
-        console.log('--- Nav State--', screenName);
         if (state.currentRouteName !== screenName) {
           dispatch(actions.global.setCurrentRouteName(screenName));
         }
@@ -179,25 +180,27 @@ function Content() {
         }
       >
         <Apollo>
-          <MaterialProvider theme={state.theme as ReactNativePaper.Theme}>
+          <ThemeProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
-              <SafeAreaProvider>
-                <ImageViewer />
-                <NavigationContainer
-                  onStateChange={onRouteChange}
-                  linking={LinkingConfiguration}
-                  theme={state.theme as unknown as never}
-                >
-                  <Wrapper>
-                    <RootNavigator />
-                  </Wrapper>
-                </NavigationContainer>
+              <PortalProvider>
+                <SafeAreaProvider>
+                  <ImageViewer />
+                  <NavigationContainer
+                    onStateChange={onRouteChange}
+                    linking={LinkingConfiguration}
+                    theme={state.theme as unknown as never}
+                  >
+                    <Wrapper>
+                      <RootNavigator />
+                    </Wrapper>
+                  </NavigationContainer>
 
-                <StatusBar />
-                <NotificationArea />
-              </SafeAreaProvider>
+                  <StatusBar />
+                  <NotificationArea />
+                </SafeAreaProvider>
+              </PortalProvider>
             </GestureHandlerRootView>
-          </MaterialProvider>
+          </ThemeProvider>
         </Apollo>
       </React.Suspense>
     </AppUpdate>

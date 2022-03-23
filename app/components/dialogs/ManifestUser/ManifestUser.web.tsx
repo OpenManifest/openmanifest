@@ -1,7 +1,7 @@
 import { useManifestUserMutation } from 'app/api/reflection';
+import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import * as React from 'react';
-import { ScrollView } from 'react-native';
-import { Button, Dialog, Portal, ProgressBar } from 'react-native-paper';
+import { usePortal } from '@gorhom/portal';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import SlotForm from '../../forms/manifest/ManifestForm';
 
@@ -12,11 +12,17 @@ interface IManifestUserDialog {
 }
 
 export default function ManifestUserDialog(props: IManifestUserDialog) {
-  const { onSuccess, open, onClose } = props;
+  const { onSuccess, open, onClose: _onClose } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.manifest);
-  const globalState = useAppSelector((root) => root.global);
   const [mutationCreateSlot, mutationData] = useManifestUserMutation();
+  const portal = usePortal('drawer');
+
+  React.useEffect(() => {
+    if (!open) {
+      portal.removePortal('drawer');
+    }
+  }, [open, portal]);
 
   const validate = React.useCallback(() => {
     let hasErrors = false;
@@ -123,35 +129,23 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     validate,
   ]);
 
+  const onClose = React.useCallback(() => {
+    dispatch(actions.forms.manifest.reset());
+    dispatch(actions.forms.manifest.setOpen(false));
+    _onClose();
+  }, [dispatch, _onClose]);
+
+  console.log(state.fields);
   return (
-    <Portal>
-      <Dialog visible={!!open} style={{ maxWidth: 500, alignSelf: 'center' }}>
-        <ProgressBar
-          indeterminate
-          visible={mutationData.loading}
-          color={globalState.theme.colors.primary}
-        />
-        <Dialog.Title>
-          {/* eslint-disable-next-line max-len */}
-          {`Manifest ${state?.fields?.dropzoneUser?.value?.user?.name} on ${state.fields.load?.value?.name}`}
-        </Dialog.Title>
-        <Dialog.ScrollArea>
-          <ScrollView>
-            <SlotForm />
-          </ScrollView>
-        </Dialog.ScrollArea>
-        <Dialog.Actions style={{ justifyContent: 'flex-end' }}>
-          <Button
-            onPress={() => {
-              dispatch(actions.forms.manifest.reset());
-              onClose();
-            }}
-          >
-            Cancel
-          </Button>
-          <Button onPress={onManifest}>Manifest</Button>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
+    <DialogOrSheet
+      // eslint-disable-next-line max-len
+      title={`Manifest ${state?.fields?.dropzoneUser?.value?.user?.name} on ${state.fields.load?.value?.name}`}
+      loading={mutationData.loading}
+      {...{ open, onClose }}
+      buttonLabel="Manifest"
+      buttonAction={onManifest}
+    >
+      <SlotForm />
+    </DialogOrSheet>
   );
 }

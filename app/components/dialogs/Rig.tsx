@@ -102,7 +102,7 @@ export default function RigDialog(props: IRigDialog) {
       snapPoints={snapPoints}
       onClose={onDialogClose}
       buttonAction={onSave}
-      buttonLabel="Savezz"
+      buttonLabel="Save"
       loading={isLoading}
     >
       <RigForm showTypeSelect={!!dropzoneId} />

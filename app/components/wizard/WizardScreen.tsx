@@ -74,7 +74,6 @@ function WizardScreen(props: IWizardScreenProps) {
             disabled={loading}
             style={styles.button}
             onPress={async () => {
-              console.log('onNext with index', index);
               onNext(index, setIndex);
             }}
           >

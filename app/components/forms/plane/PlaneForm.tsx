@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { TextInput, HelperText } from 'react-native-paper';
+import TextInput from 'app/components/input/text/TextField';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 export default function DropzoneForm() {
@@ -13,58 +13,40 @@ export default function DropzoneForm() {
         style={styles.field}
         mode="outlined"
         label="Name"
-        error={!!state.fields.name.error}
+        error={state.fields.name.error}
         value={state.fields.name?.value || ''}
-        onChangeText={(newValue) => dispatch(actions.forms.plane.setField(['name', newValue]))}
+        onChange={(newValue) => dispatch(actions.forms.plane.setField(['name', newValue]))}
       />
-      <HelperText type={state.fields.name.error ? 'error' : 'info'}>
-        {state.fields.name.error || ''}
-      </HelperText>
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Registration"
-        error={!!state.fields.registration.error}
+        error={state.fields.registration.error}
         value={state.fields.registration?.value || ''}
-        onChangeText={(newValue) =>
-          dispatch(actions.forms.plane.setField(['registration', newValue]))
-        }
+        onChange={(newValue) => dispatch(actions.forms.plane.setField(['registration', newValue]))}
       />
-      <HelperText type={state.fields.registration.error ? 'error' : 'info'}>
-        {state.fields.registration.error || ''}
-      </HelperText>
-
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Min slots"
-        error={!!state.fields.minSlots.error}
+        error={state.fields.minSlots.error}
         value={state.fields.minSlots.value?.toString()}
         keyboardType="number-pad"
-        onChangeText={(newValue) =>
+        onChange={(newValue) =>
           dispatch(actions.forms.plane.setField(['minSlots', Number(newValue)]))
         }
       />
-      <HelperText type={state.fields.minSlots.error ? 'error' : 'info'}>
-        {state.fields.minSlots.error || 'Minimum tickets required to send it'}
-      </HelperText>
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Max slots"
-        error={!!state.fields.maxSlots.error}
+        error={state.fields.maxSlots.error}
         value={state.fields.maxSlots?.value?.toString() || ''}
         keyboardType="number-pad"
-        onChangeText={(newValue) =>
+        helperText="Maximum amount of jumpers who can be manifested on one load"
+        onChange={(newValue) =>
           dispatch(actions.forms.plane.setField(['maxSlots', Number(newValue)]))
         }
       />
-      <HelperText type={state.fields.maxSlots.error ? 'error' : 'info'}>
-        {state.fields.maxSlots.error ||
-          'Maximum amount of jumpers who can be manifested on one load'}
-      </HelperText>
     </>
   );
 }

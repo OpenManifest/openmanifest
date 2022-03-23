@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { TextInput, HelperText, Divider, Chip, List } from 'react-native-paper';
-import NumberField from '../../input/number_input/NumberField';
+import TextInput from 'app/components/input/text/TextField';
+import { HelperText, Divider, Chip, List } from 'react-native-paper';
+import NumberField, { NumberFieldType } from 'app/components/input/number_input/NumberField';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import { Permission } from '../../../api/schema.d';
@@ -99,6 +100,7 @@ export default function ManifestForm() {
       <Divider />
       {!state.fields.dropzoneUser ? null : (
         <RigSelect
+          label="Equipment"
           value={state.fields.rig.value}
           dropzoneUserId={Number(state.fields.dropzoneUser?.value?.id)}
           onSelect={(value) => dispatch(actions.forms.manifest.setField(['rig', value]))}
@@ -108,39 +110,34 @@ export default function ManifestForm() {
         {state.fields.rig.error || ''}
       </HelperText>
       <NumberField
-        label="Exit weight (kg)"
-        error={!!state.fields.exitWeight.error}
+        label="Exit weight"
+        variant={NumberFieldType.Weight}
+        error={state.fields.exitWeight.error}
         value={state.fields.exitWeight?.value}
-        onChangeText={(newValue) =>
+        onChange={(newValue) =>
           dispatch(actions.forms.manifest.setField(['exitWeight', Number(newValue)]))
         }
       />
-
-      <HelperText type={state.fields.exitWeight.error ? 'error' : 'info'}>
-        {state.fields.exitWeight.error || ''}
-      </HelperText>
 
       {!state.fields.ticketType.value?.isTandem ? null : (
         <>
           <List.Subheader>Passenger</List.Subheader>
           <TextInput
             style={styles.field}
-            mode="outlined"
             label="Passenger name"
-            error={!!state.fields.passengerName.error}
+            error={state.fields.passengerName.error}
             value={state.fields.passengerName?.value?.toString() || ''}
-            onChangeText={(newValue) =>
+            onChange={(newValue) =>
               dispatch(actions.forms.manifest.setField(['passengerName', newValue]))
             }
           />
 
           <TextInput
             style={styles.field}
-            mode="outlined"
             label="Passenger exit weight"
-            error={!!state.fields.passengerExitWeight.error}
+            error={state.fields.passengerExitWeight.error}
             value={state.fields.passengerExitWeight.value?.toString() || ''}
-            onChangeText={(newValue) =>
+            onChange={(newValue) =>
               dispatch(actions.forms.manifest.setField(['passengerExitWeight', Number(newValue)]))
             }
           />

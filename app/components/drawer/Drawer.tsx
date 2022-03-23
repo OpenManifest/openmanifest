@@ -26,8 +26,6 @@ export default function DrawerMenu() {
 
   const navigation = useNavigation();
 
-  console.log({ routeName });
-
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
   const canUpdatePlane = useRestriction(Permission.UpdatePlane);
   const canUpdateTicketTypes = useRestriction(Permission.UpdateTicketType);
@@ -81,7 +79,7 @@ export default function DrawerMenu() {
           style={styles.profileAvatar}
           onPress={() => {
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
                 screen: 'Manifest',
                 params: {
@@ -120,7 +118,7 @@ export default function DrawerMenu() {
             icon="home"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Drawer',
+                screen: 'LeftDrawer',
                 params: {
                   screen: 'Manifest',
                   params: {
@@ -152,7 +150,7 @@ export default function DrawerMenu() {
             icon="parachute"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Drawer',
+                screen: 'LeftDrawer',
                 params: {
                   screen: 'Manifest',
                   params: {
@@ -173,7 +171,7 @@ export default function DrawerMenu() {
             icon="bell"
             onPress={() =>
               navigation.navigate('Authenticated', {
-                screen: 'Drawer',
+                screen: 'LeftDrawer',
                 params: {
                   screen: 'Notifications',
                   params: {
@@ -189,7 +187,7 @@ export default function DrawerMenu() {
             icon="cash"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Drawer',
+                screen: 'LeftDrawer',
                 params: {
                   screen: 'Manifest',
                   params: {
@@ -220,7 +218,7 @@ export default function DrawerMenu() {
             icon="cash"
             onPress={() => {
               navigation.navigate('Authenticated', {
-                screen: 'Drawer',
+                screen: 'LeftDrawer',
                 params: {
                   screen: 'Manifest',
                   params: {
@@ -240,7 +238,7 @@ export default function DrawerMenu() {
               icon="cog"
               onPress={() =>
                 navigation.navigate('Authenticated', {
-                  screen: 'Drawer',
+                  screen: 'LeftDrawer',
                   params: {
                     screen: 'Manifest',
                     params: {
@@ -272,7 +270,7 @@ export default function DrawerMenu() {
                 if (edge?.node) {
                   dispatch(actions.global.setDropzone(edge.node as DropzoneExtensiveFragment));
                   navigation.navigate('Authenticated', {
-                    screen: 'Drawer',
+                    screen: 'LeftDrawer',
                     params: {
                       screen: 'Manifest',
                       params: {

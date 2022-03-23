@@ -57,7 +57,7 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
                 locations
               )}, ${path}, ${name}, ${nodes}`
             );
-            console.log(JSON.stringify(err));
+            // console.log(JSON.stringify(err));
             console.log(operation);
           });
         }

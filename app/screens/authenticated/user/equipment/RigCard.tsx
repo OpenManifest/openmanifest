@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import * as React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import { Avatar, Card, Chip, Divider, Menu, ProgressBar, useTheme } from 'react-native-paper';
+import { Avatar, Card, Chip, Divider, ProgressBar, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   RigInspectionEssentialsFragment,
@@ -11,6 +11,7 @@ import {
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import useRestriction from 'app/hooks/useRestriction';
 import useImagePicker from 'app/hooks/useImagePicker';
+import Menu, { MenuItem } from 'app/components/popover/Menu';
 
 import useMutationUpdateRig from 'app/api/hooks/useMutationUpdateRig';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
@@ -118,9 +119,8 @@ export default function RigCard(props: IRigCardProps) {
       </Card.Content>
       <Card.Actions style={{ justifyContent: 'flex-end' }} pointerEvents="box-none">
         <Menu
-          onDismiss={() => setPackingCardMenuOpen(false)}
-          visible={isPackingCardMenuOpen}
-          style={{ marginTop: 12 }}
+          setOpen={setPackingCardMenuOpen}
+          open={isPackingCardMenuOpen}
           anchor={
             <Chip
               mode="outlined"
@@ -139,10 +139,9 @@ export default function RigCard(props: IRigCardProps) {
             </Chip>
           }
         >
-          <Menu.Item
+          <MenuItem
             title="Upload new"
             icon="camera"
-            style={{ paddingVertical: 0 }}
             onPress={() => {
               onPickImage();
               setPackingCardMenuOpen(false);
@@ -152,10 +151,9 @@ export default function RigCard(props: IRigCardProps) {
           {!rig.packingCard ? null : (
             <>
               <Divider />
-              <Menu.Item
+              <MenuItem
                 title="View"
                 icon="eye"
-                style={{ paddingVertical: 0 }}
                 onPress={() => {
                   setPackingCardMenuOpen(false);
                   if (rig.packingCard) {

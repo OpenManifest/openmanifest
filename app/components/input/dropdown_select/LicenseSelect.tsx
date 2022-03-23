@@ -1,51 +1,39 @@
 import { LicenseEssentialsFragment } from 'app/api/operations';
 import { useLicensesQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { List, Menu } from 'react-native-paper';
+import Select from '../select/Select';
 
 interface ILicenseSelect {
   value?: LicenseEssentialsFragment | null;
-  required?: boolean;
   federationId?: number | null;
   onSelect(jt: LicenseEssentialsFragment): void;
 }
 
 export default function LicenseSelect(props: ILicenseSelect) {
-  const { onSelect, value, required, federationId } = props;
-  const [isMenuOpen, setMenuOpen] = React.useState(false);
+  const { onSelect, value, federationId } = props;
 
   const { data } = useLicensesQuery({
     variables: {
       federationId,
     },
   });
+
+  const options = React.useMemo(
+    () =>
+      data?.licenses.map((node) => ({
+        label: node?.name || '',
+        value: node as LicenseEssentialsFragment,
+      })) || [],
+    [data?.licenses]
+  );
+
+  const selected = React.useMemo(() => value, [value]);
   return (
-    <>
-      <List.Subheader>License</List.Subheader>
-      <Menu
-        onDismiss={() => setMenuOpen(false)}
-        visible={isMenuOpen}
-        anchor={
-          <List.Item
-            onPress={() => {
-              setMenuOpen(true);
-            }}
-            title={value?.name || 'Please select a license'}
-            description={!required ? 'Optional' : null}
-          />
-        }
-      >
-        {data?.licenses?.map((license) => (
-          <Menu.Item
-            key={`license-select-${license.id}`}
-            onPress={() => {
-              setMenuOpen(false);
-              onSelect(license);
-            }}
-            title={license.name || '-'}
-          />
-        ))}
-      </Menu>
-    </>
+    <Select<LicenseEssentialsFragment>
+      label="License"
+      value={selected}
+      options={options}
+      onChange={onSelect}
+    />
   );
 }

@@ -5,7 +5,6 @@ import {
   Card,
   DataTable,
   IconButton,
-  Menu,
   Paragraph,
   ProgressBar,
   Text,
@@ -13,7 +12,6 @@ import {
 import addMinutes from 'date-fns/addMinutes';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 
-import { useNavigation } from '@react-navigation/native';
 import { useLoadQuery } from 'app/api/reflection';
 import {
   DropzoneUserEssentialsFragment,
@@ -27,6 +25,7 @@ import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
 import PilotChip from 'app/components/chips/PilotChip';
 import PlaneChip from 'app/components/chips/PlaneChip';
+import Menu, { MenuItem } from 'app/components/popover/Menu';
 
 import { View } from 'app/components/Themed';
 import { Permission } from 'app/api/schema.d';
@@ -35,7 +34,8 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import SwipeActions from 'app/components/layout/SwipeActions';
 import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
 import useMutationDeleteSlot from 'app/api/hooks/useMutationDeleteSlot';
-import LoadingCard from '../Small/Loading';
+import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
+import LoadingCard from './Loading';
 
 interface ILoadCardLarge {
   load: LoadDetailsFragment;
@@ -191,7 +191,7 @@ export default function LoadCard(props: ILoadCardLarge) {
     });
   }, [load?.id, mutationUpdateLoad]);
 
-  const navigation = useNavigation();
+  const navigation = useAuthenticatedNavigation();
   const canUpdateLoad = useRestriction(Permission.UpdateLoad);
 
   const canEditSelf = useRestriction(Permission.UpdateSlot);
@@ -237,7 +237,6 @@ export default function LoadCard(props: ILoadCardLarge) {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              backgroundColor: 'transparent',
             }}
           >
             <Text testID="title">{`Load ${load?.loadNumber || 0}`}</Text>
@@ -395,15 +394,9 @@ export default function LoadCard(props: ILoadCardLarge) {
               testID="slot-row"
               onPress={() =>
                 load?.id &&
-                navigation.navigate('Authenticated', {
-                  screen: 'Drawer',
-                  params: {
-                    screen: 'Manifest',
-                    params: {
-                      screen: 'LoadScreen',
-                      params: { loadId: load?.id },
-                    },
-                  },
+                navigation.navigate('Manifest', {
+                  screen: 'LoadScreen',
+                  params: { loadId: load?.id },
                 })
               }
             >
@@ -445,8 +438,8 @@ export default function LoadCard(props: ILoadCardLarge) {
             </Button>
           ) : (
             <Menu
-              onDismiss={() => setDispatchOpen(false)}
-              visible={isDispatchOpen}
+              setOpen={setDispatchOpen}
+              open={isDispatchOpen}
               anchor={
                 <Button
                   mode="outlined"
@@ -457,7 +450,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                 </Button>
               }
             >
-              <Menu.Item
+              <MenuItem
                 testID="dispatch-call"
                 onPress={() => {
                   setDispatchOpen(false);
@@ -465,7 +458,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                 }}
                 title="20 minute call"
               />
-              <Menu.Item
+              <MenuItem
                 testID="dispatch-call"
                 onPress={() => {
                   setDispatchOpen(false);
@@ -473,7 +466,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                 }}
                 title="15 minute call"
               />
-              <Menu.Item
+              <MenuItem
                 testID="dispatch-call"
                 onPress={() => {
                   setDispatchOpen(false);
@@ -481,7 +474,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                 }}
                 title="10 minute call"
               />
-              <Menu.Item
+              <MenuItem
                 onPress={() => {
                   setDispatchOpen(false);
                   updateCall(5);

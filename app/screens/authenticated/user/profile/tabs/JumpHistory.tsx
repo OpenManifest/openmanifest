@@ -57,7 +57,7 @@ export default function JumpHistoryTab(props: IJumpHistoryTab) {
                 onPress={() => {
                   if (item?.node?.load?.id) {
                     navigation.navigate('Authenticated', {
-                      screen: 'Drawer',
+                      screen: 'LeftDrawer',
                       params: {
                         screen: 'Manifest',
                         params: {

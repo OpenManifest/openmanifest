@@ -7,24 +7,39 @@ type AvatarProps = typeof Avatar.Image extends React.ComponentType<infer P> ? P 
 
 interface IUserAvatarProps extends Omit<AvatarProps, 'source'> {
   source?: AvatarProps['source'];
-  image?: string;
-  name: string;
+  image?: string | null;
+  name?: string | null;
 }
 export default function UserAvatar(props: IUserAvatarProps) {
-  const { name, image, source: _, ...rest } = props;
+  const { name, image, source: _, size, ...rest } = props;
   const initals = name
     ?.split(/\s/g)
     .map((n) => first(n))
     .join('');
 
   return !image ? (
-    <Avatar.Text label={initals} {...rest} />
+    <Avatar.Text
+      label={initals || ''}
+      {...rest}
+      style={{
+        alignSelf: 'center',
+        height: size || 32,
+        width: size || 32,
+        borderRadius: (size || 32) / 2,
+      }}
+      size={size || 32}
+    />
   ) : (
     <Avatar.Image
       source={{ uri: image }}
-      style={{ alignSelf: 'center', marginHorizontal: 12 }}
-      size={32}
       {...rest}
+      style={{
+        alignSelf: 'center',
+        height: size || 32,
+        width: size || 32,
+        borderRadius: (size || 32) / 2,
+      }}
+      size={size || 32}
     />
   );
 }

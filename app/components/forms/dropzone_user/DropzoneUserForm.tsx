@@ -19,7 +19,6 @@ export default function DropzoneUserForm() {
         value={state.fields.role.value}
         onSelect={(newRole) => dispatch(actions.forms.dropzoneUser.setField(['role', newRole]))}
         disabled={!canUpdateRole}
-        required
       />
       <HelperText type={state.fields.role.error ? 'error' : 'info'}>
         {state.fields.role.error}

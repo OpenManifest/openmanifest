@@ -1,47 +1,40 @@
 import { UserRigDetailedFragment } from 'app/api/operations';
 import { useAvailableRigsLazyQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { Text, View } from 'react-native';
-import { List, Menu, TextInput, useTheme } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import { useAppSelector } from 'app/state';
+import Chip from 'app/components/chips/Chip';
+import Select, { ISelectOption } from '../select/Select';
 
 interface IRigSelect {
   dropzoneUserId?: number;
   value?: UserRigDetailedFragment | null;
   tandem?: boolean;
+  small?: boolean;
+  backgroundColor?: string;
+  color?: string;
   autoSelectFirst?: boolean;
+  variant?: 'chip' | 'select';
+  label?: string;
   onSelect(rig: UserRigDetailedFragment): void;
 }
 
-function RigTitle(props: { rig: UserRigDetailedFragment }): JSX.Element {
-  const theme = useTheme();
-  const { rig } = props;
-  const name = rig?.name || `${rig?.make} ${rig?.model}`;
-
-  return (
-    <>
-      <Text>{`${name} (${rig?.canopySize} sqft)`}</Text>
-      {!rig.user ? (
-        <View
-          style={{
-            padding: 2,
-            paddingHorizontal: 4,
-            backgroundColor: theme.colors.primary,
-            borderRadius: 16,
-          }}
-        >
-          <Text style={{ fontSize: 10, color: 'white' }}>Dropzone rig</Text>
-        </View>
-      ) : null}
-    </>
-  );
-}
-
 export default function RigSelect(props: IRigSelect) {
-  const { dropzoneUserId, value, autoSelectFirst, onSelect, tandem } = props;
-  const [isMenuOpen, setMenuOpen] = React.useState(false);
+  const {
+    dropzoneUserId,
+    label,
+    variant,
+    value,
+    small,
+    color: assignedColor,
+    backgroundColor,
+    autoSelectFirst,
+    onSelect,
+    tandem,
+  } = props;
   const { currentDropzoneId } = useAppSelector((root) => root.global);
-
+  const theme = useTheme();
+  const color = assignedColor || theme.colors.onSurface;
   const [fetchRigs, { data }] = useAvailableRigsLazyQuery({
     fetchPolicy: 'cache-and-network',
   });
@@ -63,36 +56,37 @@ export default function RigSelect(props: IRigSelect) {
     }
   }, [autoSelectFirst, data?.availableRigs, onSelect, value]);
 
+  const options = React.useMemo(
+    () =>
+      data?.availableRigs?.map((rig) => ({
+        label: rig?.name || [rig?.make, rig?.model].join(' '),
+        value: rig as UserRigDetailedFragment,
+      })) || [],
+    [data?.availableRigs]
+  );
+
+  const selected = React.useMemo(
+    () => data?.availableRigs?.find((node) => node?.id === value?.id),
+    [data?.availableRigs, value?.id]
+  );
+
+  const renderAnchor: React.FC<{
+    item?: ISelectOption<UserRigDetailedFragment>;
+    openMenu(): void;
+  }> = React.useCallback(
+    ({ item, openMenu }) => (
+      <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="parachute">
+        {item?.label || 'No Rig'}
+      </Chip>
+    ),
+    [backgroundColor, color, small]
+  );
+
   return (
-    <Menu
-      onDismiss={() => setMenuOpen(false)}
-      visible={isMenuOpen}
-      anchor={
-        <TextInput
-          onTouchEnd={() => setMenuOpen(true)}
-          label="Select rig"
-          value={
-            value
-              ? `${value?.name || `${value?.make} ${value?.model}`} (${value?.canopySize} sqft)`
-              : undefined
-          }
-          left={() => <List.Icon icon="parachute" />}
-          editable={false}
-          mode="outlined"
-        />
-      }
-    >
-      {data?.availableRigs?.map((rig) => (
-        <Menu.Item
-          key={`rig-select-${rig.id}`}
-          onPress={() => {
-            setMenuOpen(false);
-            onSelect(rig);
-          }}
-          style={{ width: '100%' }}
-          title={<RigTitle rig={rig} />}
-        />
-      ))}
-    </Menu>
+    <Select<UserRigDetailedFragment>
+      {...{ options, renderAnchor: variant === 'chip' ? renderAnchor : undefined, label }}
+      value={selected}
+      onChange={onSelect}
+    />
   );
 }

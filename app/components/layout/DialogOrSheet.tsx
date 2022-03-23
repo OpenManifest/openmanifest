@@ -2,7 +2,12 @@ import { sortBy, uniq } from 'lodash';
 import * as React from 'react';
 import { View, StyleSheet, Keyboard } from 'react-native';
 import { Button, Title, useTheme } from 'react-native-paper';
-import { BottomSheetModal, BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import {
+  BottomSheetModal,
+  BottomSheetScrollView,
+  BottomSheetBackdrop,
+  useBottomSheetDynamicSnapPoints,
+} from '@gorhom/bottom-sheet';
 
 interface IBottomSheetProps {
   open?: boolean;
@@ -10,6 +15,10 @@ interface IBottomSheetProps {
   children: React.ReactNode;
   loading?: boolean;
   title?: string;
+  disablePadding?: boolean;
+  // eslint-disable-next-line react/no-unused-prop-types
+  scrollable?: boolean;
+  handle?: React.ReactNode;
 
   snapPoints?: (string | number)[];
   buttonAction?(): void;
@@ -17,12 +26,25 @@ interface IBottomSheetProps {
 }
 
 export default function DialogOrSheet(props: IBottomSheetProps) {
-  const { open, snapPoints, onClose, title, buttonLabel, buttonAction, loading, children } = props;
+  const {
+    open,
+    disablePadding,
+    snapPoints,
+    onClose,
+    title,
+    buttonLabel,
+    buttonAction,
+    handle,
+    loading,
+    children,
+  } = props;
   const sheetRef = React.useRef<BottomSheetModal>(null);
   const snappingPoints = React.useMemo(
     () => sortBy(uniq([0, ...(snapPoints || [600])])).filter((s) => s !== 0),
     [snapPoints]
   );
+
+  const dynamicSnapPoints = useBottomSheetDynamicSnapPoints(snappingPoints);
 
   const [keyboardVisible, setKeyboardVisible] = React.useState(false);
 
@@ -77,10 +99,14 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
       <View
         style={[
           styles.sheetHeader,
-          { shadowColor: theme.colors.onSurface, backgroundColor: theme.colors.surface },
+          {
+            overflow: handle ? 'hidden' : undefined,
+            shadowColor: theme.colors.onSurface,
+            backgroundColor: theme.colors.surface,
+          },
         ]}
       >
-        <View style={styles.handle} />
+        {handle || <View style={styles.handle} />}
       </View>
     ) : (
       <View
@@ -96,7 +122,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
         <Title>{title}</Title>
       </View>
     );
-  }, [theme.colors.onSurface, theme.colors.surface, title]);
+  }, [handle, theme.colors.onSurface, theme.colors.surface, title]);
 
   return (
     <BottomSheetModal
@@ -109,15 +135,20 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
       onDismiss={onDismiss}
       ref={sheetRef}
       snapPoints={snappingPoints}
-      backdropComponent={(a) => <BottomSheetBackdrop {...a} pressBehavior="close" />}
+      handleHeight={dynamicSnapPoints.animatedHandleHeight}
+      backdropComponent={BottomSheetBackdrop}
       index={(snappingPoints?.length || 1) - 1}
       handleComponent={HandleComponent}
     >
       <BottomSheetScrollView
-        contentContainerStyle={[
+        contentContainerStyle={StyleSheet.flatten([
           styles.sheet,
-          { paddingBottom: keyboardVisible ? 400 : 80, backgroundColor: theme.colors.surface },
-        ]}
+          disablePadding ? styles.noPadding : {},
+          {
+            paddingBottom: keyboardVisible ? 400 : 80,
+            backgroundColor: theme.colors.surface,
+          },
+        ])}
       >
         {children}
         <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>
@@ -138,7 +169,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20,
+    marginBottom: 20,
   },
+  noPadding: { paddingLeft: 0, paddingRight: 0, paddingTop: 0 },
   contentContainer: {
     paddingHorizontal: 16,
     paddingBottom: 32,
@@ -151,8 +184,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   sheet: {
-    paddingBottom: 30,
+    paddingBottom: 56,
     paddingHorizontal: 16,
+    overflow: 'hidden',
     elevation: 3,
     display: 'flex',
     flexDirection: 'column',
@@ -163,7 +197,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    height: 40,
+    minHeight: 40,
     paddingTop: 4,
     shadowColor: '#000',
     shadowOffset: {

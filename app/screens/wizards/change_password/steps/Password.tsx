@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HelperText, TextInput } from 'react-native-paper';
+import TextInput from 'app/components/input/text/TextField';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard/Step';
 import PasswordComplexityIndicator from 'app/components/input/PasswordComplexityIndicator';
@@ -14,7 +14,7 @@ function PasswordStep(props: IWizardStepProps) {
         <TextInput
           mode="flat"
           label="Password"
-          error={Boolean(fields.password.error)}
+          error={fields.password.error}
           textContentType="password"
           secureTextEntry
           passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
@@ -25,7 +25,6 @@ function PasswordStep(props: IWizardStepProps) {
           style={{ width: '100%', backgroundColor: 'transparent', fontSize: 32, height: 70 }}
         />
         <PasswordComplexityIndicator strength={checkPasswordComplexity(fields.password.value)} />
-        <HelperText type="error">{fields.password.error}</HelperText>
       </Fields>
     </Step>
   );

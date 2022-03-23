@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { TextInput, HelperText, Divider, DataTable } from 'react-native-paper';
+import { Text, View } from 'react-native';
+import TextInput from 'app/components/input/text/TextField';
+import { HelperText, Divider, DataTable } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 import { TransactionType } from 'app/api/schema.d';
-import NumberField from '../../input/number_input/NumberField';
+import NumberField, { NumberFieldType } from '../../input/number_input/NumberField';
 
 export default function CreditsForm() {
   const state = useAppSelector((root) => root.forms.credits);
@@ -19,31 +20,22 @@ export default function CreditsForm() {
   return (
     <>
       <TextInput
-        style={styles.field}
-        mode="outlined"
         label="Message"
-        error={!!state.fields.message.error}
         value={state.fields.message.value?.toString() || ''}
-        onChangeText={(newValue: string) =>
+        style={{ marginHorizontal: 8 }}
+        onChange={(newValue: string) =>
           dispatch(actions.forms.credits.setField(['message', newValue]))
         }
       />
-      <HelperText type={state.fields.message.error ? 'error' : 'info'}>
-        {state.fields.message.error || ''}
-      </HelperText>
       {state.fields.transactionType.value === 'deposit' ? (
         <View>
           <NumberField
+            variant={NumberFieldType.Cash}
             label="Add amount"
-            error={!!state.fields.amount.error}
+            error={state.fields.amount.error}
             value={state.fields.amount.value}
-            onChangeText={(newValue) =>
-              dispatch(actions.forms.credits.setField(['amount', newValue]))
-            }
+            onChange={(newValue) => dispatch(actions.forms.credits.setField(['amount', newValue]))}
           />
-          <HelperText type={state.fields.amount.error ? 'error' : 'info'}>
-            {state.fields.amount.error || ''}
-          </HelperText>
           <Divider />
 
           <DataTable>
@@ -69,11 +61,10 @@ export default function CreditsForm() {
         <View>
           <NumberField
             label="Withdraw amount"
-            error={!!state.fields.amount.error}
+            variant={NumberFieldType.Cash}
+            error={state.fields.amount.error}
             value={state.fields.amount.value}
-            onChangeText={(newValue) =>
-              dispatch(actions.forms.credits.setField(['amount', newValue]))
-            }
+            onChange={(newValue) => dispatch(actions.forms.credits.setField(['amount', newValue]))}
           />
           <HelperText type={state.fields.amount.error ? 'error' : 'info'}>
             {state.fields.amount.error || ''}
@@ -104,12 +95,3 @@ export default function CreditsForm() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  fields: {
-    flex: 1,
-  },
-  field: {
-    marginBottom: 8,
-  },
-});

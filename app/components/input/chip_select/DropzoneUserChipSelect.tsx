@@ -5,13 +5,14 @@ import { Permission } from 'app/api/schema.d';
 import { useAppSelector } from 'app/state';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
+import { ChipProps } from 'app/components/chips/Chip';
 import ChipSelect from './ChipSelect';
 import ChipSelectSkeleton from './ChipSelectSkeleton';
 
 interface IDropzoneUserChipSelect {
   value?: DropzoneUserEssentialsFragment | null;
   label: string;
-  icon?: string;
+  icon?: ChipProps['icon'];
   requiredPermissions: Permission[];
   onLoadingStateChanged?(loading: boolean): void;
   onSelect(dzuser: DropzoneUserEssentialsFragment): void;

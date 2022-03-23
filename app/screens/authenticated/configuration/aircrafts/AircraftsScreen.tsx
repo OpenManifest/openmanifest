@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
-import { FAB, DataTable, ProgressBar } from 'react-native-paper';
+import { FAB, DataTable, ProgressBar, useTheme } from 'react-native-paper';
 import { useIsFocused } from '@react-navigation/core';
 import { useArchivePlaneMutation, usePlanesQuery } from 'app/api/reflection';
 import { Permission } from 'app/api/schema.d';
@@ -34,10 +34,11 @@ export default function PlanesScreen() {
 
   const canDeletePlane = useRestriction(Permission.DeletePlane);
   const canCreatePlane = useRestriction(Permission.CreatePlane);
-
+  const theme = useTheme();
   return (
     <>
       <ScrollableScreen
+        contentContainerStyle={{ backgroundColor: theme.colors.surface }}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
       >
         <ProgressBar visible={loading} color={global.theme.colors.primary} />

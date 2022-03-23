@@ -24,6 +24,7 @@ function CardSelect<T extends Record<string, unknown> | string>(props: ICardSele
     <FlatList
       data={items}
       contentContainerStyle={{ paddingBottom: 120 }}
+      keyExtractor={(item) => item.toString()}
       renderItem={({ item }) => {
         const itemSelected = isSelected
           ? isSelected(item)

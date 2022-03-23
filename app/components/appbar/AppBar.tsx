@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Appbar, IconButton, Chip } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
-import { DrawerActions, useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/core';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import SetupWarning from './SetupWarning';
 
@@ -17,6 +18,7 @@ function AppBar(props: IAppBarProps) {
   const { currentUser, loading, dropzone } = useCurrentDropzone();
 
   const navigation = useNavigation();
+  const { openDrawer } = useNavigation<DrawerNavigationProp<never>>();
   return (
     <>
       <Appbar.Header
@@ -25,11 +27,7 @@ function AppBar(props: IAppBarProps) {
         {back ? (
           <Appbar.BackAction onPress={navigation.goBack} />
         ) : (
-          <IconButton
-            icon="menu"
-            size={32}
-            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-          />
+          <IconButton icon="menu" size={32} onPress={openDrawer} />
         )}
         <Appbar.Content title={options.title} titleStyle={{ fontWeight: 'bold' }} />
 

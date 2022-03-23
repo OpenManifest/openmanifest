@@ -63,6 +63,7 @@ export default function EquipmentScreen() {
         numColumns={1}
         style={{ flex: 1 }}
         refreshing={loading}
+        keyExtractor={(item) => `rig-${item?.id}`}
         contentContainerStyle={{ padding: 16 }}
         renderItem={({ item }) => (
           <RigCard

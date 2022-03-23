@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Image, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
-import { TextInput, Button, HelperText } from 'react-native-paper';
+import TextInput from 'app/components/input/text/TextField';
+import { Button, HelperText } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
@@ -45,53 +46,45 @@ export default function SignupScreen() {
         <Image source={logo} style={{ width: '100%', height: 200 }} resizeMode="contain" />
         <TextInput
           style={styles.field}
-          mode="outlined"
           label="Name"
-          error={!!state.fields.name.error}
+          error={state.fields.name.error}
           value={state.fields.name.value}
-          onChangeText={(newValue) => dispatch(actions.screens.signup.setField(['name', newValue]))}
+          onChange={(newValue) => dispatch(actions.screens.signup.setField(['name', newValue]))}
         />
         <HelperText type="error">{state.fields.name.error || ''}</HelperText>
 
         <TextInput
           style={styles.field}
-          mode="outlined"
           label="Email"
-          error={!!state.fields.email.error}
+          error={state.fields.email.error}
           value={state.fields.email.value}
-          onChangeText={(newValue) =>
-            dispatch(actions.screens.signup.setField(['email', newValue]))
-          }
+          onChange={(newValue) => dispatch(actions.screens.signup.setField(['email', newValue]))}
         />
 
         <HelperText type="error">{state.fields.email.error || ''}</HelperText>
 
         <TextInput
           style={styles.field}
-          mode="outlined"
           label="Password"
-          error={Boolean(state.fields.password.error || state.fields.passwordConfirmation.error)}
+          error={state.fields.password.error || state.fields.passwordConfirmation.error}
           textContentType="password"
           secureTextEntry
           passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
           value={state.fields.password.value}
-          onChangeText={(newValue) =>
-            dispatch(actions.screens.signup.setField(['password', newValue]))
-          }
+          onChange={(newValue) => dispatch(actions.screens.signup.setField(['password', newValue]))}
         />
 
         <HelperText type="error">{state.fields.password.error || ''}</HelperText>
 
         <TextInput
           style={styles.field}
-          mode="outlined"
           label="Repeat password"
-          error={Boolean(state.fields.password.error || state.fields.passwordConfirmation.error)}
+          error={state.fields.password.error || state.fields.passwordConfirmation.error}
           textContentType="password"
           secureTextEntry
           passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
           value={state.fields.passwordConfirmation.value}
-          onChangeText={(newValue) =>
+          onChange={(newValue) =>
             dispatch(actions.screens.signup.setField(['passwordConfirmation', newValue]))
           }
         />

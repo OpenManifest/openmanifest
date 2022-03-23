@@ -48,6 +48,7 @@ function PermissionWizardScreen(props: IPermissionWizardScreen) {
           <FlatList
             data={data?.dropzone?.roles || []}
             contentContainerStyle={{ paddingBottom: 200 }}
+            keyExtractor={(item) => item.id.toString()}
             renderItem={({ item: role }) => (
               <PermissionListItem
                 permissionName={permission}

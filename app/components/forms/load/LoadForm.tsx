@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Permission } from 'app/api/schema.d';
 import { StyleSheet, View } from 'react-native';
-import { TextInput, HelperText, Checkbox, Divider } from 'react-native-paper';
+import TextInput from 'app/components/input/text/TextField';
+import { HelperText, Checkbox, Divider } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import DropzoneUserChipSelect from '../../input/chip_select/DropzoneUserChipSelect';
@@ -15,30 +16,22 @@ export default function LoadForm() {
     <>
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Name"
-        error={!!state.fields.name.error}
+        error={state.fields.name.error}
         placeholder="Optional"
         value={state.fields.name.value || ''}
-        onChangeText={(newValue) => dispatch(actions.forms.load.setField(['name', newValue]))}
+        onChange={(newValue) => dispatch(actions.forms.load.setField(['name', newValue]))}
       />
-      <HelperText type={state.fields.name.error ? 'error' : 'info'}>
-        {state.fields.name.error || 'e.g Starcrest load, Tandem load'}
-      </HelperText>
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Slots"
-        error={!!state.fields.maxSlots.error}
+        error={state.fields.maxSlots.error}
         value={state.fields.maxSlots?.value?.toString()}
-        onChangeText={(newValue) =>
+        onChange={(newValue) =>
           dispatch(actions.forms.load.setField(['maxSlots', Number(newValue)]))
         }
       />
-      <HelperText type={state.fields.maxSlots.error ? 'error' : 'info'}>
-        {state.fields.maxSlots.error || ''}
-      </HelperText>
       <View style={{ width: '100%' }}>
         <PlaneChipSelect
           value={state.fields.plane.value}
@@ -93,5 +86,6 @@ const styles = StyleSheet.create({
   field: {
     marginBottom: 8,
     width: '100%',
+    backgroundColor: 'white',
   },
 });

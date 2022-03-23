@@ -14,12 +14,9 @@ export default function InfoGrid(props: IInfoGrid) {
       <Divider style={styles.divider} />
       <View style={styles.container}>
         {items.map((item, i) => (
-          <>
-            <View
-              style={{ flex }}
-              // eslint-disable-next-line react/no-array-index-key
-              key={`info-grid-${i}`}
-            >
+          // eslint-disable-next-line react/no-array-index-key
+          <React.Fragment key={`info-grid-${i}`}>
+            <View style={{ flex }}>
               <List.Item
                 titleStyle={[
                   styles.title,
@@ -40,7 +37,7 @@ export default function InfoGrid(props: IInfoGrid) {
               // eslint-disable-next-line react/no-array-index-key
               <Divider key={`info-grid-divider-${i}`} style={styles.verticalDivider} />
             )}
-          </>
+          </React.Fragment>
         ))}
       </View>
     </>

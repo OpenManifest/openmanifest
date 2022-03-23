@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { Button, HelperText } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
@@ -8,13 +7,14 @@ import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateW
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 // eslint-disable-next-line max-len
 import WeatherConditionForm from 'app/components/forms/weather_conditions/WeatherConditionForm';
+import { useAuthenticatedNavigation } from '../../useAuthenticatedNavigation';
 
 export default function WindScreen() {
   const state = useAppSelector((root) => root.forms.weather);
   const { theme, palette } = useAppSelector((root) => root.global);
   const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
   const dispatch = useAppDispatch();
-  const navigation = useNavigation();
+  const navigation = useAuthenticatedNavigation();
 
   const mutationCreateWeatherConditions = useMutationCreateWeatherConditions({
     onSuccess: () => null,
@@ -48,14 +48,8 @@ export default function WindScreen() {
     <ScrollableScreen contentContainerStyle={{ backgroundColor: theme.colors.background }}>
       <WeatherConditionForm
         onPressJumpRun={() =>
-          navigation.navigate('Authenticated', {
-            screen: 'Drawer',
-            params: {
-              screen: 'Manifest',
-              params: {
-                screen: 'JumpRunScreen',
-              },
-            },
+          navigation.navigate('Manifest', {
+            screen: 'JumpRunScreen',
           })
         }
         variant={theme.dark ? 'light' : undefined}

@@ -65,6 +65,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
   const snapPoints = React.useMemo(() => [600], []);
   const onDialogClose = React.useCallback(() => {
     requestAnimationFrame(() => {
+      dispatch(actions.forms.manifest.setOpen(false));
       dispatch(actions.forms.manifest.reset());
       onClose();
     });

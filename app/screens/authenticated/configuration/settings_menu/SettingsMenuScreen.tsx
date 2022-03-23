@@ -25,7 +25,7 @@ export default function SettingsScreen() {
               !data?.dropzone
                 ? null
                 : navigation.navigate('Authenticated', {
-                    screen: 'Drawer',
+                    screen: 'LeftDrawer',
                     params: {
                       screen: 'Manifest',
                       params: {
@@ -51,7 +51,7 @@ export default function SettingsScreen() {
           left={() => <List.Icon color={theme.colors.text} icon="lock" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
                 screen: 'Manifest',
                 params: {
@@ -69,7 +69,7 @@ export default function SettingsScreen() {
           title="Aircrafts"
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
                 screen: 'Manifest',
                 params: {
@@ -89,7 +89,7 @@ export default function SettingsScreen() {
           description="Dropzone rigs, e.g tandems and student rigs"
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
                 screen: 'Manifest',
                 params: {
@@ -109,7 +109,7 @@ export default function SettingsScreen() {
           left={() => <List.Icon color={theme.colors.text} icon="check" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
                 screen: 'Manifest',
                 params: {
@@ -129,7 +129,7 @@ export default function SettingsScreen() {
           description="View historic data for daily operations"
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
                 screen: 'Manifest',
                 params: {
@@ -149,7 +149,7 @@ export default function SettingsScreen() {
           title="Ticket types"
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
                 screen: 'Manifest',
                 params: {
@@ -169,7 +169,7 @@ export default function SettingsScreen() {
           title="Ticket add-ons"
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
                 screen: 'Manifest',
                 params: {

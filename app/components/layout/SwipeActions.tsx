@@ -39,6 +39,7 @@ export default function SwipeActions(props: ISwipeActions) {
           rightAction?.onPress();
           ref?.current?.close();
         }}
+        style={{ height: '100%' }}
       >
         <Animated.View
           style={{
@@ -71,6 +72,7 @@ export default function SwipeActions(props: ISwipeActions) {
       ref={ref}
       enabled={!disabled}
       renderRightActions={rightActions}
+      childrenContainerStyle={{ height: '100%' }}
       useNativeAnimations
     >
       {children}

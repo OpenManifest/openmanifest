@@ -36,6 +36,9 @@ function Notifications() {
         text1: notification.message,
         type: notification.variant || 'success',
       });
+      if (notification.variant === 'error') {
+        console.error(notification.message);
+      }
     }
   }, [dispatch, notification]);
 

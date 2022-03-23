@@ -14,12 +14,12 @@ import {
 import { Card, Divider, useTheme } from 'react-native-paper';
 import format from 'date-fns/format';
 import { orderBy } from 'lodash';
-import { useNavigation } from '@react-navigation/native';
 import SkeletonContent from 'app/components/Skeleton';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { actions, useAppDispatch } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
+import { useNavigation } from '@react-navigation/core';
 import nightBackground from '../../../../../../assets/images/night.png';
 import weatherBackground from '../../../../../../assets/images/weather.png';
 import JumpRunMap from './JumpRun';
@@ -68,12 +68,10 @@ export default function WeatherBoard() {
     if (canUpdate && dropzone?.currentConditions) {
       dispatch(actions.forms.weather.setOpen(dropzone?.currentConditions));
       navigation.navigate('Authenticated', {
-        screen: 'Drawer',
+        screen: 'LeftDrawer',
         params: {
           screen: 'Manifest',
-          params: {
-            screen: 'WindScreen',
-          },
+          params: { screen: 'WindScreen' },
         },
       });
     }
@@ -83,12 +81,10 @@ export default function WeatherBoard() {
     if (dropzone?.currentConditions && canUpdate) {
       dispatch(actions.forms.weather.setOpen(dropzone.currentConditions));
       navigation.navigate('Authenticated', {
-        screen: 'Drawer',
+        screen: 'LeftDrawer',
         params: {
           screen: 'Manifest',
-          params: {
-            screen: 'JumpRunScreen',
-          },
+          params: { screen: 'JumpRunScreen' },
         },
       });
     }

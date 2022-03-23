@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { FAB, IconButton, Menu, ProgressBar, useTheme } from 'react-native-paper';
+import { FAB, IconButton, ProgressBar, useTheme } from 'react-native-paper';
 import checkDropzoneSetupComplete from 'app/utils/checkDropzoneSetupComplete';
 
 import NoResults from 'app/components/NoResults';
@@ -19,6 +19,8 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import LoadDialog from 'app/components/dialogs/Load';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { LoadDetailsFragment } from 'app/api/operations';
+import Menu, { MenuItem } from 'app/components/popover/Menu';
+
 import GetStarted from '../../../../components/GetStarted';
 import LoadCardSmall from './LoadCard/Small/Card';
 import LoadCardLarge from './LoadCard/Large/Card';
@@ -61,7 +63,6 @@ export default function ManifestScreen() {
   React.useEffect(() => {
     if (dropzone && isFocused && canUpdateDropzone) {
       const dropzoneWizardIndex = checkDropzoneSetupComplete(dropzone);
-      console.log({ dropzoneWizardIndex });
 
       if (dropzoneWizardIndex) {
         dispatch(actions.screens.dropzoneWizard.setIndex(dropzoneWizardIndex));
@@ -199,7 +200,6 @@ export default function ManifestScreen() {
     [dropzone?.loads?.edges]
   );
   const initialLoading = !loads?.length && loading;
-  console.log({ initialLoading });
 
   const theme = useTheme();
 
@@ -225,7 +225,6 @@ export default function ManifestScreen() {
     ({ item: load, index }: { item: LoadDetailsFragment; index: number }) => {
       // 1 means loading, because null and undefined
       // get filtered out
-      console.log('CARDID', load.id);
       if (load.id === '__LOADING__') {
         return manifestScreen.display === 'list' ? (
           <LoadingCardLarge key={`loading-card-${index}`} />
@@ -269,7 +268,7 @@ export default function ManifestScreen() {
           load={load}
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'Drawer',
+              screen: 'LeftDrawer',
               params: {
                 screen: 'Manifest',
                 params: {
@@ -349,25 +348,21 @@ export default function ManifestScreen() {
       </View>
       <View style={styles.header}>
         <Menu
+          open={isDisplayOptionsOpen}
+          setOpen={setDisplayOptionsOpen}
           anchor={<IconButton icon="cog-outline" onPress={() => setDisplayOptionsOpen(true)} />}
-          visible={isDisplayOptionsOpen}
-          onDismiss={() => setDisplayOptionsOpen(false)}
         >
-          <Menu.Item
+          <MenuItem
             title="Show expanded cards"
-            titleStyle={{
-              fontWeight: manifestScreen.display === 'cards' ? 'normal' : 'bold',
-            }}
+            bold={manifestScreen.display !== 'cards'}
             onPress={() => {
               dispatch(actions.screens.manifest.setDisplayStyle('list'));
               setDisplayOptionsOpen(false);
             }}
           />
-          <Menu.Item
+          <MenuItem
             title="Show compact cards"
-            titleStyle={{
-              fontWeight: manifestScreen.display === 'list' ? 'normal' : 'bold',
-            }}
+            bold={manifestScreen.display === 'cards'}
             onPress={() => {
               dispatch(actions.screens.manifest.setDisplayStyle('cards'));
               setDisplayOptionsOpen(false);

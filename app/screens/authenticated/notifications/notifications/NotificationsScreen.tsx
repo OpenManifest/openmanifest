@@ -69,6 +69,7 @@ export default function ProfileScreen() {
       <FlatList
         data={notifications?.edges}
         numColumns={1}
+        keyExtractor={(edge) => `notification-${edge?.node?.id}`}
         style={{
           flex: 1,
         }}

@@ -25,7 +25,6 @@ export function useLoginWithFacebook(
               token: response.accessToken,
             },
           });
-          console.log(data);
           if (data?.loginWithFacebook?.authenticatable && data?.loginWithFacebook?.credentials) {
             dispatch(actions.global.setCredentials(data.loginWithFacebook.credentials));
             dispatch(actions.global.setUser(data.loginWithFacebook.authenticatable));

@@ -2,11 +2,17 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   DropzoneUserProfileFragment,
   LoadEssentialsFragment,
+  RigEssentialsFragment,
   SlotDetailsFragment,
 } from 'app/api/operations';
-import { SlotUser, Rig } from '../../../api/schema.d';
+import { first, xorBy } from 'lodash';
+import { SlotUser } from '../../../api/schema.d';
 
-export type SlotUserWithRig = SlotUser & { rig?: Rig };
+export type SlotUserWithRig = SlotUser & {
+  rig?: RigEssentialsFragment;
+  avatar?: string;
+  name?: string;
+};
 
 interface IFields
   extends Pick<
@@ -80,6 +86,7 @@ export default createSlice({
       state: ISlotEditState,
       action: PayloadAction<{ load: LoadEssentialsFragment; slots: SlotDetailsFragment[] }>
     ) => {
+      console.log('Setting from ', action.payload.slots);
       state.fields.users.value = action.payload.slots.map((slot) => ({
         id: Number(slot.dropzoneUser?.id),
         rigId: Number(slot.rig?.id),
@@ -95,11 +102,22 @@ export default createSlice({
       state: ISlotEditState,
       action: PayloadAction<DropzoneUserProfileFragment[]>
     ) => {
-      state.fields.users.value = action.payload.map<SlotUser>((dzUser) => ({
-        id: Number(dzUser.id),
-        rigId: Number(dzUser?.availableRigs?.find(({ id }) => id)?.id),
-        exitWeight: Number(dzUser?.user?.exitWeight),
-      })) as SlotUser[];
+      state.fields.users.value = xorBy(
+        state.fields.users.value,
+        action.payload?.map<SlotUser>((dzUser) => {
+          const autoSelectedRig = dzUser?.user?.rigs?.length
+            ? first(dzUser.user.rigs)
+            : first(dzUser.availableRigs);
+          return {
+            id: Number(dzUser.id),
+            rigId: autoSelectedRig?.id ? Number(autoSelectedRig.id) : null,
+            name: dzUser.user.name,
+            avatar: dzUser.user.image,
+            exitWeight: Number(dzUser?.user?.exitWeight),
+          };
+        }) as SlotUser[],
+        'id'
+      );
     },
 
     setOpen: (state: ISlotEditState, action: PayloadAction<boolean | IFields>) => {

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TextInput, HelperText, Checkbox, List } from 'react-native-paper';
+import TextInput from 'app/components/input/text/TextField';
+import { Checkbox, List } from 'react-native-paper';
 import { useTicketTypesQuery } from 'app/api/reflection';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
@@ -19,29 +20,19 @@ export default function ExtraForm() {
     <>
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Name"
-        error={!!state.fields.name.error}
+        error={state.fields.name.error}
         value={state.fields.name.value || ''}
-        onChangeText={(newValue) => dispatch(actions.forms.extra.setField(['name', newValue]))}
+        onChange={(newValue) => dispatch(actions.forms.extra.setField(['name', newValue]))}
       />
-      <HelperText type={state.fields.name.error ? 'error' : 'info'}>
-        {state.fields.name.error || ''}
-      </HelperText>
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Price"
-        error={!!state.fields.cost.error}
+        error={state.fields.cost.error}
         value={state.fields.cost?.value?.toString()}
-        onChangeText={(newValue) =>
-          dispatch(actions.forms.extra.setField(['cost', Number(newValue)]))
-        }
+        onChange={(newValue) => dispatch(actions.forms.extra.setField(['cost', Number(newValue)]))}
       />
-      <HelperText type={state.fields.cost.error ? 'error' : 'info'}>
-        {state.fields.cost.error || ''}
-      </HelperText>
 
       <View style={{ width: '100%' }}>
         <List.Subheader>Compatible tickets</List.Subheader>

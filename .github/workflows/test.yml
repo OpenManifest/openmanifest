@@ -11,7 +11,7 @@ jobs:
       - uses: actions/setup-node@v2
         name: Use NodeJS
         with:
-          node-version: "14"
+          node-version: 14
       - name: Setup Python for JUnit Parsing
         uses: actions/setup-python@v2
         with:
@@ -43,7 +43,7 @@ jobs:
       - name: jest
         run: yarn test:ci
         env:
-          JEST_JUNIT_OUTPUT_DIR: ~/reports
+          JEST_JUNIT_OUTPUT_DIR: ~/reports/
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action/composite@v1
         if: always()

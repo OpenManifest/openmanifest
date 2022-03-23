@@ -1,23 +1,27 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Avatar, Button, Checkbox, Divider, List, Searchbar } from 'react-native-paper';
+import { StyleSheet, View, ViewProps } from 'react-native';
+import { Checkbox, Divider, List, Searchbar } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDropzoneUsersDetailedQuery } from 'app/api/reflection';
 
+import { DropzoneUserEssentialsFragment } from 'app/api/operations';
+import UserAvatar from 'app/components/UserAvatar';
 import NoResults from '../../NoResults';
-import { DropzoneUser, Permission } from '../../../api/schema.d';
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
+import { Permission } from '../../../api/schema.d';
+import { useAppSelector } from '../../../state';
 import useRestriction from '../../../hooks/useRestriction';
 import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
 interface IUserListSelect {
-  onNext(): void;
+  hideButton?: boolean;
+  containerProps?: ViewProps;
+  scrollable?: boolean;
+  value: { id: number }[];
+  onSelect(dropzoneUser: DropzoneUserEssentialsFragment): void;
 }
 
 export default function UserListSelect(props: IUserListSelect) {
-  const { onNext } = props;
-  const { screens } = useAppSelector((root) => root);
-  const dispatch = useAppDispatch();
+  const { value, onSelect, containerProps, scrollable } = props;
   const [searchText, setSearchText] = React.useState('');
   const { currentDropzoneId } = useAppSelector((root) => root.global);
   const { data } = useDropzoneUsersDetailedQuery({
@@ -31,11 +35,20 @@ export default function UserListSelect(props: IUserListSelect) {
   const canManifestGroup = useRestriction(Permission.CreateUserSlot);
   const canManifestGroupWithSelfOnly = useRestriction(Permission.CreateUserSlotWithSelf);
 
+  const Wrapper = React.useCallback(
+    ({ children }: { children: React.ReactNode }) =>
+      scrollable ? (
+        <ScrollView contentContainerStyle={{ paddingTop: 16 }}>{children}</ScrollView>
+      ) : (
+        <View style={styles.wrapper}>{children}</View>
+      ),
+    [scrollable]
+  );
   return (
     <>
       <Searchbar value={searchText} onChangeText={setSearchText} placeholder="Search skydivers" />
-      <View style={{ height: 380 }}>
-        <ScrollView contentContainerStyle={{ paddingTop: 16 }}>
+      <View {...containerProps}>
+        <Wrapper>
           {!data?.dropzone?.dropzoneUsers?.edges?.length && (
             <NoResults title="No users" subtitle="" />
           )}
@@ -47,23 +60,17 @@ export default function UserListSelect(props: IUserListSelect) {
                 key={`user-${edge?.node?.id}`}
                 title={edge?.node?.user.name}
                 description={edge?.node?.role?.name}
-                left={() =>
-                  !edge?.node?.user?.image ? (
-                    <List.Icon icon="account" />
-                  ) : (
-                    <Avatar.Image
-                      source={{ uri: edge?.node?.user.image }}
-                      style={{ alignSelf: 'center', marginHorizontal: 12 }}
-                      size={32}
-                    />
-                  )
-                }
+                left={() => (
+                  <UserAvatar
+                    name={edge?.node?.user?.name}
+                    image={edge?.node?.user?.image}
+                    size={36}
+                  />
+                )}
                 right={() => (
                   <Checkbox
                     status={
-                      screens.manifest.selectedUsers
-                        ?.map<string>(({ id }) => id)
-                        .includes(edge?.node?.id as string)
+                      value?.map(({ id }) => id).includes(Number(edge?.node?.id))
                         ? 'checked'
                         : 'unchecked'
                     }
@@ -77,43 +84,23 @@ export default function UserListSelect(props: IUserListSelect) {
                   !canManifestGroup
                 }
                 onPress={() => {
-                  dispatch(
-                    actions.screens.manifest.setSelected(
-                      screens.manifest.selectedUsers?.find(({ id }) => id === `${edge?.node?.id}`)
-                        ? screens.manifest.selectedUsers?.filter(
-                            ({ id }) => id !== `${edge?.node?.id}`
-                          )
-                        : ([...screens.manifest.selectedUsers, edge?.node] as DropzoneUser[])
-                    )
-                  );
+                  if (edge?.node) {
+                    onSelect(edge.node);
+                  }
                 }}
               />
-              <Divider style={{ width: '100%' }} key={`divider-${edge?.node?.id}`} />
+              <Divider style={styles.divider} key={`divider-${edge?.node?.id}`} />
             </React.Fragment>
           ))}
-        </ScrollView>
+        </Wrapper>
       </View>
-      <Button
-        onPress={() => {
-          dispatch(actions.forms.manifestGroup.setDropzoneUsers(screens.manifest.selectedUsers));
-          onNext();
-        }}
-        style={styles.button}
-        mode="contained"
-      >
-        Next
-      </Button>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    width: '100%',
-    borderRadius: 16,
-    padding: 5,
-  },
-  scrollView: {
-    height: 100,
+  divider: { width: '100%' },
+  wrapper: {
+    paddingHorizontal: 8,
   },
 });

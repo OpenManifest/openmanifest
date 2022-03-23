@@ -1,27 +1,37 @@
 import { useTicketTypeExtrasQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TextInput, HelperText, Checkbox, Menu, List, Divider } from 'react-native-paper';
+import TextInput from 'app/components/input/text/TextField';
+import { HelperText, Checkbox, List, Divider } from 'react-native-paper';
 import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 import { TicketTypeExtraEssentialsFragment } from 'app/api/operations';
+import Select from 'app/components/input/select/Select';
 
-const ALTITUDE_LABEL_MAP: { [key: string]: string } = {
-  '14000': 'Height',
-  '4000': 'Hop n Pop',
-};
+interface IAltitudeSelectProps {
+  value: number;
+  onChange(value: number): void;
+}
 
-const ALTITUDE_ICON_MAP: { [key: string]: string } = {
-  '14000': 'airplane-takeoff',
-  '4000': 'parachute',
-};
+function AltitudeSelect(props: IAltitudeSelectProps) {
+  const { value, onChange } = props;
 
+  return (
+    <Select
+      {...{ value, onChange }}
+      options={[
+        { label: 'Hop n Pop', value: 4000, icon: 'parachute' },
+        { label: 'Height', value: 14000, icon: 'airplane-takeoff' },
+        { label: 'Other', value: -1, icon: 'parachute' },
+      ]}
+    />
+  );
+}
 export default function TicketTypeForm() {
   const state = useAppSelector((root) => root.forms.ticketType);
   const dispatch = useAppDispatch();
   const currentDropzone = useCurrentDropzone();
 
-  const [altitudeMenuOpen, setAltitudeMenuOpen] = React.useState(false);
   const { data } = useTicketTypeExtrasQuery({
     variables: {
       dropzoneId: Number(currentDropzone?.dropzone?.id),
@@ -32,23 +42,19 @@ export default function TicketTypeForm() {
     <>
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Name"
-        error={!!state.fields.name.error}
+        error={state.fields.name.error}
         value={state.fields.name.value || ''}
-        onChangeText={(newValue) => dispatch(actions.forms.ticketType.setField(['name', newValue]))}
+        helperText="Name of the ticket users will see"
+        onChange={(newValue) => dispatch(actions.forms.ticketType.setField(['name', newValue]))}
       />
-      <HelperText type={state.fields.name.error ? 'error' : 'info'}>
-        {state.fields.name.error || 'Name of the ticket users will see'}
-      </HelperText>
 
       <TextInput
         style={styles.field}
-        mode="outlined"
         label="Price"
-        error={!!state.fields.cost.error}
+        error={state.fields.cost.error}
         value={state.fields.cost?.value?.toString()}
-        onChangeText={(newValue) =>
+        onChange={(newValue) =>
           dispatch(actions.forms.ticketType.setField(['cost', Number(newValue)]))
         }
       />
@@ -56,69 +62,20 @@ export default function TicketTypeForm() {
         {state.fields.cost.error || 'Base cost without extra ticket addons'}
       </HelperText>
       <View style={{ width: '100%' }}>
-        <Menu
-          onDismiss={() => setAltitudeMenuOpen(false)}
-          visible={altitudeMenuOpen}
-          style={{ position: 'absolute', right: '10%', left: '10%', flex: 1 }}
-          anchor={
-            <List.Item
-              onPress={() => {
-                setAltitudeMenuOpen(true);
-              }}
-              title={
-                state.fields.altitude.value &&
-                state.fields.altitude.value.toString() in ALTITUDE_LABEL_MAP
-                  ? ALTITUDE_LABEL_MAP[state.fields.altitude.value.toString()]
-                  : 'Custom'
-              }
-              style={{ width: '100%', flex: 1 }}
-              right={() => (
-                <List.Icon
-                  icon={
-                    state.fields.altitude.value &&
-                    state.fields.altitude.value.toString() in ALTITUDE_LABEL_MAP
-                      ? ALTITUDE_ICON_MAP[state.fields.altitude.value.toString()]
-                      : 'pencil-plus'
-                  }
-                />
-              )}
-            />
+        <AltitudeSelect
+          value={state.fields.altitude.value ?? 14000}
+          onChange={(newValue) =>
+            dispatch(actions.forms.ticketType.setField(['altitude', newValue]))
           }
-        >
-          <List.Item
-            onPress={() => {
-              dispatch(actions.forms.ticketType.setField(['altitude', 4000]));
-              setAltitudeMenuOpen(false);
-            }}
-            title="Hop n Pop"
-            right={() => <List.Icon icon="parachute" />}
-          />
-          <List.Item
-            onPress={() => {
-              dispatch(actions.forms.ticketType.setField(['altitude', 14000]));
-              setAltitudeMenuOpen(false);
-            }}
-            title="Height"
-            right={() => <List.Icon icon="airplane-takeoff" />}
-          />
-          <List.Item
-            onPress={() => {
-              dispatch(actions.forms.ticketType.setField(['altitude', 7000]));
-              setAltitudeMenuOpen(false);
-            }}
-            title="Other"
-            right={() => <List.Icon icon="parachute" />}
-          />
-        </Menu>
+        />
 
         {(!state.fields.altitude.value || ![4000, 14000].includes(state.fields.altitude.value)) && (
           <TextInput
             style={styles.field}
-            mode="outlined"
             label="Custom altitude"
-            error={!!state.fields.altitude.error}
+            error={state.fields.altitude.error}
             value={state.fields.altitude?.value?.toString()}
-            onChangeText={(newValue) =>
+            onChange={(newValue) =>
               dispatch(actions.forms.ticketType.setField(['altitude', Number(newValue)]))
             }
           />

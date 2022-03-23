@@ -1,6 +1,6 @@
 import { NavigationProp, useNavigation } from '@react-navigation/core';
-import { UserRoutes } from './user/routes';
+import type { AuthenticatedRoutes } from './routes';
 
 export function useAuthenticatedNavigation() {
-  return useNavigation<NavigationProp<UserRoutes>>();
+  return useNavigation<NavigationProp<AuthenticatedRoutes>>();
 }
