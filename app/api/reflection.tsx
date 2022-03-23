@@ -158,6 +158,20 @@ export const RigInspectionEssentialsFragmentDoc = gql`
 }
     ${DropzoneUserEssentialsFragmentDoc}
 ${RigEssentialsFragmentDoc}`;
+export const DropzoneEssentialsFragmentDoc = gql`
+    fragment dropzoneEssentials on Dropzone {
+  id
+  lat
+  lng
+  name
+  primaryColor
+  secondaryColor
+  isPublic
+  requestPublication
+  banner
+  isCreditSystemEnabled
+}
+    `;
 export const TransactionEssentialsFragmentDoc = gql`
     fragment transactionEssentials on Transaction {
   id
@@ -215,11 +229,7 @@ export const OrderEssentialsFragmentDoc = gql`
   createdAt
   buyer {
     ... on DropzoneUser {
-      id
-      user {
-        id
-        name
-      }
+      ...dropzoneUserDetails
     }
     ... on Dropzone {
       id
@@ -229,16 +239,10 @@ export const OrderEssentialsFragmentDoc = gql`
   }
   seller {
     ... on DropzoneUser {
-      id
-      user {
-        id
-        name
-      }
+      ...dropzoneUserDetails
     }
     ... on Dropzone {
-      id
-      name
-      banner
+      ...dropzoneEssentials
     }
   }
   item {
@@ -269,7 +273,9 @@ export const OrderEssentialsFragmentDoc = gql`
     ...receiptEssentials
   }
 }
-    ${ReceiptEssentialsFragmentDoc}`;
+    ${DropzoneUserDetailsFragmentDoc}
+${DropzoneEssentialsFragmentDoc}
+${ReceiptEssentialsFragmentDoc}`;
 export const TicketTypeEssentialsFragmentDoc = gql`
     fragment ticketTypeEssentials on TicketType {
   id
@@ -379,20 +385,6 @@ export const DropzoneUserProfileFragmentDoc = gql`
 ${RigInspectionEssentialsFragmentDoc}
 ${OrderEssentialsFragmentDoc}
 ${UserSlotDetailsFragmentDoc}`;
-export const DropzoneEssentialsFragmentDoc = gql`
-    fragment dropzoneEssentials on Dropzone {
-  id
-  lat
-  lng
-  name
-  primaryColor
-  secondaryColor
-  isPublic
-  requestPublication
-  banner
-  isCreditSystemEnabled
-}
-    `;
 export const PlaneEssentialsFragmentDoc = gql`
     fragment planeEssentials on Plane {
   id

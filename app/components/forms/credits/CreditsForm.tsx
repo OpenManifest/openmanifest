@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import TextInput from 'app/components/input/text/TextField';
 import { HelperText, Divider, DataTable } from 'react-native-paper';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 import { TransactionType } from 'app/api/schema.d';
-import NumberField from '../../input/number_input/NumberField';
+import NumberField, { NumberFieldType } from '../../input/number_input/NumberField';
 
 export default function CreditsForm() {
   const state = useAppSelector((root) => root.forms.credits);
@@ -20,9 +20,9 @@ export default function CreditsForm() {
   return (
     <>
       <TextInput
-        style={styles.field}
         label="Message"
         value={state.fields.message.value?.toString() || ''}
+        style={{ marginHorizontal: 8 }}
         onChange={(newValue: string) =>
           dispatch(actions.forms.credits.setField(['message', newValue]))
         }
@@ -30,6 +30,7 @@ export default function CreditsForm() {
       {state.fields.transactionType.value === 'deposit' ? (
         <View>
           <NumberField
+            variant={NumberFieldType.Cash}
             label="Add amount"
             error={state.fields.amount.error}
             value={state.fields.amount.value}
@@ -60,6 +61,7 @@ export default function CreditsForm() {
         <View>
           <NumberField
             label="Withdraw amount"
+            variant={NumberFieldType.Cash}
             error={state.fields.amount.error}
             value={state.fields.amount.value}
             onChange={(newValue) => dispatch(actions.forms.credits.setField(['amount', newValue]))}
@@ -93,12 +95,3 @@ export default function CreditsForm() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  fields: {
-    flex: 1,
-  },
-  field: {
-    marginBottom: 8,
-  },
-});

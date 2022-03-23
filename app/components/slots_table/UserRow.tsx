@@ -95,6 +95,7 @@ export default function UserRow(props: ISlotsTableProps) {
             marginLeft: 0,
             flexWrap: 'nowrap',
             alignItems: 'center',
+            flexDirection: 'row',
           }}
         >
           <UserAvatar

@@ -1,10 +1,10 @@
+import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import * as React from 'react';
 import { View } from 'react-native';
-import { Button, Dialog, Portal, ProgressBar } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
-import { useCreateOrderMutation } from '../../../api/reflection';
-import { DropzoneUser, TransactionType, WalletableTypes } from '../../../api/schema.d';
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
+import { useCreateOrderMutation } from 'app/api/reflection';
+import { DropzoneUser, TransactionType, WalletableTypes } from 'app/api/schema.d';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import CreditsForm from '../../forms/credits/CreditsForm';
 
 interface IDropzoneUserDialog {
@@ -18,7 +18,6 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   const { open, onClose, dropzoneUser, onSuccess } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.credits);
-  const globalState = useAppSelector((root) => root.global);
   const [mutationCreateOrder, createData] = useCreateOrderMutation();
   const global = useAppSelector((root) => root.global);
 
@@ -125,51 +124,41 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   ]);
 
   return (
-    <Portal>
-      <Dialog visible={!!open} style={{ maxWidth: 500, alignSelf: 'center' }}>
-        <View>
-          <Tabs
-            defaultIndex={0} // default = 0
-            onChangeIndex={(newIndex) => {
-              dispatch(
-                actions.forms.credits.setField([
-                  'transactionType',
-                  newIndex === 1 ? 'withdrawal' : 'deposit',
-                ])
-              );
-            }}
-            mode="fixed"
-          >
-            <TabScreen label="Deposit" icon="arrow-up">
-              <View />
-            </TabScreen>
-            <TabScreen label="Withdraw" icon="arrow-down">
-              <View />
-            </TabScreen>
-          </Tabs>
-        </View>
-        <ProgressBar
-          indeterminate
-          visible={createData.loading}
-          color={globalState.theme.colors.primary}
-        />
-        <Dialog.Content>
-          <CreditsForm />
-        </Dialog.Content>
-
-        <Dialog.Actions style={{ justifyContent: 'flex-end' }}>
-          <Button
-            onPress={() => {
-              dispatch(actions.forms.credits.reset());
-              onClose();
-            }}
-          >
-            Cancel
-          </Button>
-
-          <Button onPress={onSave}>Save</Button>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
+    <DialogOrSheet
+      // eslint-disable-next-line max-len
+      loading={createData.loading}
+      {...{ open }}
+      disablePadding
+      buttonLabel="Save"
+      onClose={() => {
+        dispatch(actions.forms.credits.reset());
+        onClose();
+      }}
+      buttonAction={onSave}
+      scrollable={false}
+    >
+      <View style={{ marginBottom: 24 }}>
+        <Tabs
+          defaultIndex={0} // default = 0
+          onChangeIndex={(newIndex) => {
+            dispatch(
+              actions.forms.credits.setField([
+                'transactionType',
+                newIndex === 1 ? 'withdrawal' : 'deposit',
+              ])
+            );
+          }}
+          mode="fixed"
+        >
+          <TabScreen label="Deposit" icon="arrow-up">
+            <View />
+          </TabScreen>
+          <TabScreen label="Withdraw" icon="arrow-down">
+            <View />
+          </TabScreen>
+        </Tabs>
+      </View>
+      <CreditsForm />
+    </DialogOrSheet>
   );
 }
