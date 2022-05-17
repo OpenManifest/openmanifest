@@ -99,7 +99,7 @@ function DropzoneSetupScreen() {
     }
   }, [dispatch, dropzone.fields.federation.value, dropzone.fields.name.value]);
 
-  const onThemingNext = React.useCallback(async () => {
+  const onLogoNext = React.useCallback(async () => {
     if (!dropzone.fields.primaryColor.value) {
       dispatch(
         actions.forms.dropzone.setFieldError(['primaryColor', 'Please pick a primary color'])
@@ -125,7 +125,7 @@ function DropzoneSetupScreen() {
           secondaryColor: dropzone.fields.secondaryColor.value,
           lat: dropzone.fields.lat.value,
           lng: dropzone.fields.lng.value,
-          banner: '',
+          banner: dropzone.fields.banner.value || '',
         });
 
     if (!result?.errors?.length && result?.dropzone?.id) {
@@ -302,6 +302,8 @@ function DropzoneSetupScreen() {
     dispatch,
   ]);
 
+  const noop = React.useCallback(() => Promise.resolve(), []);
+
   return (
     <Wizard
       dots
@@ -324,9 +326,9 @@ function DropzoneSetupScreen() {
           component: FederationStep,
         },
         { component: LocationStep },
-        { component: ThemingStep, onNext: onThemingNext },
+        { component: ThemingStep, onNext: noop },
         {
-          onNext: Promise.resolve,
+          onNext: onLogoNext,
           component: LogoStep,
         },
         { component: AircraftStep, onNext: onAircraftNext },

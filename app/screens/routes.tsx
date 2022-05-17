@@ -69,6 +69,11 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
           },
         },
       },
+      Limbo: {
+        screens: {
+          DropzoneSelectScreen: '/select-dropzone',
+        },
+      },
       Unauthenticated: {
         screens: {
           LoginScreen: '/login',
@@ -81,6 +86,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
           ConfirmUserScreen: '/confirm',
           RecoverPasswordScreen: '/recover-password',
           ChangePasswordScreen: '/change-password',
+          DropzoneWizardScreen: '/setup',
           User: {
             screens: {
               UserListScreen: '/modal/users',

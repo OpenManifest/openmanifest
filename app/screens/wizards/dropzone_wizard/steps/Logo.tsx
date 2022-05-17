@@ -17,6 +17,8 @@ function Logo(props: IWizardStepProps) {
       if (base64) {
         // Upload image
         dispatch(actions.forms.dropzone.setField(['banner', `data:image/jpeg;base64,${base64}`]));
+      } else {
+        console.log({ base64 });
       }
     } catch (e) {
       console.log(e);
