@@ -22,6 +22,8 @@ jobs:
       - run: yarn web:build:production
         env:
           GOOGLE_MAPS_WEB: ${{ secrets.GOOGLE_MAPS_WEB }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_API_KEY: ${{ secrets.SENTRY_API_KEY }}
           NODE_OPTIONS: --max_old_space_size=4096
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
@@ -53,3 +55,4 @@ jobs:
           NODE_OPTIONS: --max_old_space_size=4096
           EXPO_ENV: production
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_API_KEY: ${{ secrets.SENTRY_API_KEY }}
