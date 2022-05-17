@@ -21,6 +21,7 @@ jobs:
         name: Ensure server compatibility
       - run: yarn web:build:production
         env:
+          GOOGLE_MAPS_WEB: ${{ secrets.GOOGLE_MAPS_WEB }}
           NODE_OPTIONS: --max_old_space_size=4096
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
@@ -46,6 +47,9 @@ jobs:
         name: Ensure server compatibility
       - run: yarn expo:publish:prod
         env:
+          GOOGLE_MAPS_WEB: ${{ secrets.GOOGLE_MAPS_WEB }}
+          GOOGLE_MAPS_IOS: ${{ secrets.GOOGLE_MAPS_IOS }}
+          GOOGLE_MAPS_ANDROID: ${{ secrets.GOOGLE_MAPS_ANDROID }}
           NODE_OPTIONS: --max_old_space_size=4096
           EXPO_ENV: production
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
