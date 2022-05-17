@@ -27,7 +27,7 @@ function Logo(props: IWizardStepProps) {
   const theme = useTheme();
 
   return (
-    <Step {...props} title="Logo">
+    <Step {...props} title="Banner">
       <Fields>
         <View style={styles.avatarContainer}>
           <TouchableRipple onPress={onPickImage}>

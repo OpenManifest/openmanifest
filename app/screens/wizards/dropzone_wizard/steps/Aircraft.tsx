@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { HelperText, List, TextInput } from 'react-native-paper';
-import Slider from '@react-native-community/slider';
+import { StyleSheet } from 'react-native';
+import { Card, List } from 'react-native-paper';
+import TextInput from 'app/components/input/text/TextField';
 import { Step, Fields, IWizardStepProps } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import NumberField from 'app/components/input/number_input/NumberField';
 
 function AircraftWizardScreen(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.plane);
-  const [maxSlots, setMaxSlots] = React.useState(state?.fields?.maxSlots?.value || 0);
   const dispatch = useAppDispatch();
 
   return (
@@ -18,52 +18,32 @@ function AircraftWizardScreen(props: IWizardStepProps) {
           style={styles.field}
           mode="flat"
           label="Name"
-          error={!!state.fields.name.error}
+          error={state.fields.name.error}
           value={state.fields.name.value || ''}
           onChangeText={(newValue) => dispatch(actions.forms.plane.setField(['name', newValue]))}
         />
-        <HelperText type={state.fields.name.error ? 'error' : 'info'}>
-          {state.fields.name.error || ''}
-        </HelperText>
 
         <TextInput
           style={styles.field}
           mode="flat"
           label="Registration"
-          error={!!state.fields.registration.error}
+          error={state.fields.registration.error}
           value={state.fields.registration.value || ''}
           onChangeText={(newValue) =>
             dispatch(actions.forms.plane.setField(['registration', newValue]))
           }
         />
-        <HelperText type={state.fields.registration.error ? 'error' : 'info'}>
-          {state.fields.registration.error || ''}
-        </HelperText>
 
-        <View style={styles.cardTitle}>
-          <List.Subheader>Max slots</List.Subheader>
-          <Text style={styles.cardValue}>{maxSlots || 34}</Text>
-        </View>
-
-        <View style={styles.slider}>
-          <Slider
-            style={styles.sliderControl}
-            minimumValue={2}
-            maximumValue={34}
-            step={1}
-            minimumTrackTintColor="#FF1414"
-            maximumTrackTintColor="#000000"
-            value={maxSlots}
-            onValueChange={(value) => setMaxSlots(value)}
-            onSlidingComplete={() =>
-              dispatch(actions.forms.plane.setField(['maxSlots', Number(maxSlots)]))
-            }
+        <Card style={styles.card} elevation={3}>
+          <NumberField
+            mode="flat"
+            onChange={(slots) => dispatch(actions.forms.plane.setField(['maxSlots', slots]))}
+            label="Max slots"
+            helperText="Max available slots on this aircraft"
+            value={state.fields.maxSlots.value}
+            error={state.fields.maxSlots.error}
           />
-        </View>
-
-        <HelperText type={state.fields.maxSlots?.error ? 'error' : 'info'}>
-          {state.fields.maxSlots?.error || 'Max available slots on this aircraft'}
-        </HelperText>
+        </Card>
       </Fields>
     </Step>
   );

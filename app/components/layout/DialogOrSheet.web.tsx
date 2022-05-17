@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Dialog, IconButton, ProgressBar, useTheme } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
-import Drawer from '@mui/material/drawer';
+import { Drawer } from '@mui/material';
 
 interface IBottomSheetProps {
   open?: boolean;

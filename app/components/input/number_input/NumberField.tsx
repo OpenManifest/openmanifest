@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Text } from 'react-native';
 import InputSpinner from 'react-native-input-spinner';
-import { List } from 'react-native-paper';
+import { HelperText, List } from 'react-native-paper';
 
 export enum NumberFieldType {
   Cash = 'cash',
@@ -20,7 +20,7 @@ interface INumberFieldProps {
 }
 export default function NumberField(props: INumberFieldProps) {
   const { onChange, label, mode, disabled, variant, ...rest } = props;
-  const { value } = rest;
+  const { value, helperText, error } = rest;
 
   return (
     <>
@@ -43,6 +43,9 @@ export default function NumberField(props: INumberFieldProps) {
           shadowOpacity: 0,
         }}
       />
+      {helperText || error ? (
+        <HelperText type={error ? 'error' : 'info'}>{error || helperText}</HelperText>
+      ) : null}
     </>
   );
 }

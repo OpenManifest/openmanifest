@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Card, HelperText, List, Paragraph } from 'react-native-paper';
-import Slider from '@react-native-community/slider';
+import { StyleSheet } from 'react-native';
+import { Card, Paragraph } from 'react-native-paper';
 import { Step, Fields, IWizardStepProps } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import AltitudeSelect from 'app/components/input/dropdown_select/AltitudeSelect';
 import TextInput from 'app/components/input/text/TextField';
+import NumberField, { NumberFieldType } from 'app/components/input/number_input/NumberField';
 
 function TicketTypeWizardScreen(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.ticketType);
   const dispatch = useAppDispatch();
-  const [price, setPrice] = React.useState(0);
 
   return (
     <Step {...props} title="Tickets">
@@ -25,37 +24,19 @@ function TicketTypeWizardScreen(props: IWizardStepProps) {
             dispatch(actions.forms.ticketType.setField(['name', newValue]))
           }
         />
-        <HelperText type={state.fields.name.error ? 'error' : 'info'}>
-          {state.fields.name.error || ''}
-        </HelperText>
 
         <Card style={styles.card} elevation={3}>
-          <View style={styles.cardTitle}>
-            <List.Subheader>Price</List.Subheader>
-            <Text style={styles.cardValue}>${price || 0}</Text>
-          </View>
-
-          <View style={styles.slider}>
-            <Slider
-              style={styles.sliderControl}
-              minimumValue={0}
-              maximumValue={500}
-              step={1}
-              value={price}
-              minimumTrackTintColor="#FF1414"
-              maximumTrackTintColor="#000000"
-              onSlidingComplete={() => dispatch(actions.forms.ticketType.setField(['cost', price]))}
-              onValueChange={setPrice}
-            />
-          </View>
-
-          <HelperText type={state.fields.cost?.error ? 'error' : 'info'}>
-            {state.fields.cost?.error ||
-              'How many slots are required to be filled to dispatch a load with this aircraft'}
-          </HelperText>
+          <NumberField
+            mode="flat"
+            onChange={(cost) => dispatch(actions.forms.ticketType.setField(['cost', cost]))}
+            label="Price"
+            variant={NumberFieldType.Cash}
+            value={state.fields.cost.value}
+            error={state.fields.cost.error}
+          />
         </Card>
 
-        <Card style={styles.card} elevation={3}>
+        <Card style={styles.altitudeSelect} elevation={3}>
           <AltitudeSelect
             onChange={(value) => dispatch(actions.forms.ticketType.setField(['altitude', value]))}
             value={state.fields.altitude.value || 14000}
@@ -92,6 +73,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   card: { padding: 8, marginVertical: 16 },
+  altitudeSelect: { padding: 8, marginVertical: 16 },
   cardTitle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
