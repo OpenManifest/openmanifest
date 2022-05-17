@@ -35,6 +35,9 @@ interface IAnchorProps<T> {
   openMenu(): void;
 }
 
+type Extract<T> = T extends React.ComponentType<infer P> ? P : unknown;
+type AllowedIcons = Extract<typeof MaterialCommunityIcons>['name'];
+
 export default function Select<T>(props: ISelectProps<T>) {
   const { label, error, options, renderAnchor, onChange, value, helperText } = props;
   const [open, setOpen] = React.useState<boolean>(false);
@@ -83,7 +86,11 @@ export default function Select<T>(props: ISelectProps<T>) {
             <MuiMenuItem onClick={createSelectHandler(option)}>
               {!icon || avatar ? null : (
                 <ListItemIcon>
-                  {typeof icon === 'string' ? <MaterialCommunityIcons icon={icon} /> : icon}
+                  {typeof icon === 'string' ? (
+                    <MaterialCommunityIcons name={icon as AllowedIcons} />
+                  ) : (
+                    icon
+                  )}
                 </ListItemIcon>
               )}
               {!avatar || !showAvatars ? null : (
@@ -108,7 +115,12 @@ export default function Select<T>(props: ISelectProps<T>) {
         id="demo-simple-select-helper"
         value={selectedOption?.value}
         {...{ label }}
+        variant="standard"
         error={!!error}
+        style={{ paddingTop: 0 }}
+        SelectDisplayProps={{
+          style: { display: 'inline-flex', alignItems: 'center' },
+        }}
         onChange={({ target }) => onChange(target.value as T)}
       >
         {options?.map(({ value: val, icon, avatar, label: title }) => (
@@ -117,7 +129,11 @@ export default function Select<T>(props: ISelectProps<T>) {
           <MuiMenuItem value={val as T}>
             {!icon || avatar ? null : (
               <ListItemIcon>
-                {typeof icon === 'string' ? <MaterialCommunityIcons icon={icon} /> : icon}
+                {typeof icon === 'string' ? (
+                  <MaterialCommunityIcons name={icon as AllowedIcons} size={24} />
+                ) : (
+                  icon
+                )}
               </ListItemIcon>
             )}
             {!avatar || !showAvatars ? null : (
@@ -125,8 +141,7 @@ export default function Select<T>(props: ISelectProps<T>) {
                 <UserAvatar name={label} image={avatar} size={32} />
               </ListItemAvatar>
             )}
-
-            <ListItemText>{title}</ListItemText>
+            <ListItemText primary={title} />
           </MuiMenuItem>
         ))}
       </MuiSelect>

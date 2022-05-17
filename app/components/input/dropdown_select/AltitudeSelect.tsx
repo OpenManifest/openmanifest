@@ -10,6 +10,7 @@ export default function AltitudeSelect(props: IAltitudeSelectProps) {
 
   return (
     <Select
+      label="Altitude"
       {...{ value, onChange }}
       options={[
         { label: 'Hop n Pop', value: 4000, icon: 'parachute' },
