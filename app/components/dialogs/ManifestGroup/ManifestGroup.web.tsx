@@ -57,7 +57,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
           userGroup: state.fields.users.value?.map(
             ({ id, exitWeight, rigId, rig, passengerName, passengerExitWeight }) => ({
               id,
-              rig: rigId || rig?.id,
+              rig: Number(rigId || rig?.id) || undefined,
               exitWeight,
               passengerName,
               passengerExitWeight,

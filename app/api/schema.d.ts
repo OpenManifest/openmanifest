@@ -394,6 +394,7 @@ export type Dropzone = AnyResource & Wallet & {
   roles: Array<UserRole>;
   sales?: Maybe<OrderConnection>;
   secondaryColor?: Maybe<Scalars['String']>;
+  statistics: Statistics;
   ticketTypes: Array<TicketType>;
   updatedAt: Scalars['Int'];
   userRoles: Array<UserRole>;
@@ -1846,7 +1847,22 @@ export type SlotUser = {
   id: Scalars['Int'];
   passengerExitWeight?: InputMaybe<Scalars['Float']>;
   passengerName?: InputMaybe<Scalars['String']>;
-  rigId?: InputMaybe<Scalars['Int']>;
+  rig?: InputMaybe<Scalars['Int']>;
+};
+
+export type Statistics = {
+  __typename?: 'Statistics';
+  activeUserCount: Scalars['Int'];
+  cancelledLoadsCount: Scalars['Int'];
+  dzsoCount: Scalars['Int'];
+  finalizedLoadsCount: Scalars['Int'];
+  gcaCount: Scalars['Int'];
+  inactiveUserCount: Scalars['Int'];
+  loadsCount: Scalars['Int'];
+  pilotCount: Scalars['Int'];
+  revenueCentsCount: Scalars['Int'];
+  rigInspectorCount: Scalars['Int'];
+  totalUserCount: Scalars['Int'];
 };
 
 export type TicketType = AnyResource & SellableItem & {

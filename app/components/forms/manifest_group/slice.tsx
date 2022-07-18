@@ -8,7 +8,8 @@ import {
 import { first, xorBy } from 'lodash';
 import { SlotUser } from '../../../api/schema.d';
 
-export type SlotUserWithRig = SlotUser & {
+export type SlotUserWithRig = Omit<SlotUser, 'rig'> & {
+  rigId?: number;
   rig?: RigEssentialsFragment;
   avatar?: string;
   name?: string;
@@ -90,8 +91,9 @@ export default createSlice({
       state.fields.users.value = action.payload.slots.map((slot) => ({
         id: Number(slot.dropzoneUser?.id),
         rigId: Number(slot.rig?.id),
+        rig: slot.rig,
         exitWeight: Number(slot.exitWeight),
-      })) as SlotUser[];
+      })) as SlotUserWithRig[];
 
       state.fields.jumpType.value = action.payload.slots.find((i) => i)?.jumpType;
       state.fields.load.value = action.payload.load;
@@ -104,18 +106,19 @@ export default createSlice({
     ) => {
       state.fields.users.value = xorBy(
         state.fields.users.value,
-        action.payload?.map<SlotUser>((dzUser) => {
+        action.payload?.map((dzUser) => {
           const autoSelectedRig = dzUser?.user?.rigs?.length
             ? first(dzUser.user.rigs)
             : first(dzUser.availableRigs);
           return {
             id: Number(dzUser.id),
             rigId: autoSelectedRig?.id ? Number(autoSelectedRig.id) : null,
+            rig: autoSelectedRig,
             name: dzUser.user.name,
             avatar: dzUser.user.image,
             exitWeight: Number(dzUser?.user?.exitWeight),
           };
-        }) as SlotUser[],
+        }) as SlotUserWithRig[],
         'id'
       );
     },

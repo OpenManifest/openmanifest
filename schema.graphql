@@ -646,6 +646,7 @@ type Dropzone implements AnyResource & Wallet {
     last: Int
   ): OrderConnection
   secondaryColor: String
+  statistics: Statistics!
   ticketTypes(isPublic: Boolean): [TicketType!]!
   updatedAt: Int!
   userRoles: [UserRole!]!
@@ -2506,7 +2507,21 @@ input SlotUser {
   id: Int!
   passengerExitWeight: Float
   passengerName: String
-  rigId: Int
+  rig: Int
+}
+
+type Statistics {
+  activeUserCount: Int!
+  cancelledLoadsCount: Int!
+  dzsoCount: Int!
+  finalizedLoadsCount: Int!
+  gcaCount: Int!
+  inactiveUserCount: Int!
+  loadsCount: Int!
+  pilotCount: Int!
+  revenueCentsCount: Int!
+  rigInspectorCount: Int!
+  totalUserCount: Int!
 }
 
 type TicketType implements AnyResource & SellableItem {
