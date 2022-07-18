@@ -32,7 +32,7 @@
     "ios:start:dev": "EXPO_ENV=development expo start --ios",
     "ios:start:prod": "EXPO_ENV=production expo start --ios",
     "ios:build:simulator": "EXPO_ENV=staging expo build:ios -t simulator --skip-credentials-check",
-    "ios:build:staging": "EXPO_ENV=staging expo build:ios -t archive",
+    "ios:build:staging": "EXPO_ENV=staging expo build:ios -t archive  --skip-credentials-check",
     "ios:build:prod": "EXPO_ENV=production expo build:ios -t archive --skip-credentials-check --release-channel production",
     "android:start:dev": "EXPO_ENV=development expo start --android",
     "android:start:prod": "EXPO_ENV=production expo start --android",
