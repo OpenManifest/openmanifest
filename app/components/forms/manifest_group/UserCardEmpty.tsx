@@ -29,7 +29,7 @@ export default function UserCard(props: IUserRigCardEmptyProps) {
         onChange={(user) => {
           fetchProfile({ variables: { dropzoneId, dropzoneUserId: Number(user.id) } }).then(
             (result) => {
-              if (result.data?.dropzone.dropzoneUser) {
+              if (result.data?.dropzone?.dropzoneUser) {
                 onSelectUser(result.data?.dropzone.dropzoneUser);
               }
             }

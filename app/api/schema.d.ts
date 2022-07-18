@@ -606,6 +606,58 @@ export type DropzoneUserInput = {
   userRoleId?: InputMaybe<Scalars['Int']>;
 };
 
+export type Event = {
+  __typename?: 'Event';
+  action?: Maybe<EventAction>;
+  createdBy?: Maybe<DropzoneUser>;
+  id: Scalars['ID'];
+  level?: Maybe<EventLevel>;
+  message?: Maybe<Scalars['String']>;
+  resource?: Maybe<AnyResource>;
+};
+
+export enum EventAction {
+  /** assigned */
+  Assigned = 'assigned',
+  /** confirmed */
+  Confirmed = 'confirmed',
+  /** created */
+  Created = 'created',
+  /** deleted */
+  Deleted = 'deleted',
+  /** updated */
+  Updated = 'updated'
+}
+
+/** The connection type for Event. */
+export type EventConnection = {
+  __typename?: 'EventConnection';
+  /** A list of edges. */
+  edges?: Maybe<Array<Maybe<EventEdge>>>;
+  /** A list of nodes. */
+  nodes?: Maybe<Array<Maybe<Event>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+};
+
+/** An edge in a connection. */
+export type EventEdge = {
+  __typename?: 'EventEdge';
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge. */
+  node?: Maybe<Event>;
+};
+
+export enum EventLevel {
+  /** debug */
+  Debug = 'debug',
+  /** error */
+  Error = 'error',
+  /** info */
+  Info = 'info'
+}
+
 export type Extra = SellableItem & {
   __typename?: 'Extra';
   cost: Scalars['Float'];
@@ -639,6 +691,7 @@ export type Federation = {
   __typename?: 'Federation';
   createdAt: Scalars['Int'];
   id: Scalars['ID'];
+  licenses?: Maybe<Array<License>>;
   name?: Maybe<Scalars['String']>;
   slug?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Int'];
@@ -800,14 +853,14 @@ export type LoadEdge = {
 
 export type LoadInput = {
   dispatchAt?: InputMaybe<Scalars['Int']>;
-  gcaId?: InputMaybe<Scalars['Int']>;
+  gca?: InputMaybe<Scalars['Int']>;
   hasLanded?: InputMaybe<Scalars['Boolean']>;
   isOpen?: InputMaybe<Scalars['Boolean']>;
-  loadMasterId?: InputMaybe<Scalars['Int']>;
+  loadMaster?: InputMaybe<Scalars['Int']>;
   maxSlots?: InputMaybe<Scalars['Int']>;
   name?: InputMaybe<Scalars['String']>;
-  pilotId?: InputMaybe<Scalars['Int']>;
-  planeId?: InputMaybe<Scalars['Int']>;
+  pilot?: InputMaybe<Scalars['Int']>;
+  plane?: InputMaybe<Scalars['Int']>;
   state?: InputMaybe<LoadState>;
 };
 
@@ -1477,39 +1530,53 @@ export type PlaneInput = {
 
 export type Query = {
   __typename?: 'Query';
+  /** Get all Activity Events for a dropzone (or all dropzones) */
+  activity: EventConnection;
   /** Get user rigs that have been inspected and marked as OK + dropzone rigs */
   availableRigs?: Maybe<Array<Rig>>;
   /** Get dropzone details */
-  dropzone: Dropzone;
+  dropzone?: Maybe<Dropzone>;
   /** Get all available dropzones */
   dropzones: DropzoneConnection;
-  /** Get ticket addons for a dropzone */
+  /** Get all ticket type extras */
   extras: Array<Extra>;
-  /** Available federations */
+  /** Get all available federations */
   federations: Array<Federation>;
   /** Find location by searching */
   geocode?: Maybe<GeocodedLocation>;
-  /** Load base64 images as graphql */
+  /** Get Base64 images via GraphQL */
   image?: Maybe<Scalars['String']>;
   /** Get all jump types */
   jumpTypes: Array<JumpType>;
   /** Get all licenses for a federation */
   licenses: Array<License>;
   /** Get load by id */
-  load: Load;
-  /** Get loads */
+  load?: Maybe<Load>;
+  /** Get all loads */
   loads: LoadConnection;
-  /** Get planes from a dropzone */
-  planes: Array<Plane>;
+  /** Get Aircrafts for a dropzone */
+  planes?: Maybe<Array<Plane>>;
   /** Get ticket types for a dropzone */
-  ticketTypes: Array<TicketType>;
+  ticketTypes?: Maybe<Array<TicketType>>;
   userCheckPasswordToken: User;
   userConfirmAccount: User;
 };
 
 
+export type QueryActivityArgs = {
+  actions?: InputMaybe<Array<EventAction>>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  createdBy?: InputMaybe<Scalars['Int']>;
+  dropzone: Scalars['Int'];
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  levels?: InputMaybe<Array<EventLevel>>;
+};
+
+
 export type QueryAvailableRigsArgs = {
-  dropzoneUserId: Scalars['Int'];
+  dropzoneUser: Scalars['Int'];
   isTandem?: InputMaybe<Scalars['Boolean']>;
   loadId?: InputMaybe<Scalars['Int']>;
 };
@@ -1531,7 +1598,7 @@ export type QueryDropzonesArgs = {
 
 
 export type QueryExtrasArgs = {
-  dropzoneId: Scalars['Int'];
+  dropzone: Scalars['Int'];
 };
 
 
@@ -1546,7 +1613,7 @@ export type QueryImageArgs = {
 
 
 export type QueryJumpTypesArgs = {
-  dropzoneUserIds?: InputMaybe<Array<Scalars['Int']>>;
+  dropzoneUsers?: InputMaybe<Array<Scalars['Int']>>;
 };
 
 
@@ -1563,7 +1630,7 @@ export type QueryLoadArgs = {
 export type QueryLoadsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
-  dropzoneId: Scalars['Int'];
+  dropzone: Scalars['Int'];
   earliestTimestamp?: InputMaybe<Scalars['Int']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
@@ -1577,7 +1644,7 @@ export type QueryPlanesArgs = {
 
 export type QueryTicketTypesArgs = {
   allowManifestingSelf?: InputMaybe<Scalars['Boolean']>;
-  dropzoneId: Scalars['Int'];
+  dropzone: Scalars['Int'];
 };
 
 
@@ -1696,9 +1763,9 @@ export type RigInspection = AnyResource & {
 
 export type RigInspectionInput = {
   definition?: InputMaybe<Scalars['String']>;
-  dropzoneId?: InputMaybe<Scalars['Int']>;
+  dropzone?: InputMaybe<Scalars['Int']>;
   isOk?: InputMaybe<Scalars['Boolean']>;
-  rigId?: InputMaybe<Scalars['Int']>;
+  rig?: InputMaybe<Scalars['Int']>;
 };
 
 export type SellableItem = {
@@ -1762,15 +1829,15 @@ export type SlotEdge = {
 };
 
 export type SlotInput = {
-  dropzoneUserId?: InputMaybe<Scalars['Int']>;
+  dropzoneUser?: InputMaybe<Scalars['Int']>;
   exitWeight?: InputMaybe<Scalars['Float']>;
-  extraIds?: InputMaybe<Array<Scalars['Int']>>;
-  jumpTypeId?: InputMaybe<Scalars['Int']>;
-  loadId?: InputMaybe<Scalars['Int']>;
+  extras?: InputMaybe<Array<Scalars['Int']>>;
+  jumpType?: InputMaybe<Scalars['Int']>;
+  load?: InputMaybe<Scalars['Int']>;
   passengerExitWeight?: InputMaybe<Scalars['Float']>;
   passengerName?: InputMaybe<Scalars['String']>;
-  rigId?: InputMaybe<Scalars['Int']>;
-  ticketTypeId?: InputMaybe<Scalars['Int']>;
+  rig?: InputMaybe<Scalars['Int']>;
+  ticketType?: InputMaybe<Scalars['Int']>;
   userGroup?: InputMaybe<Array<SlotUser>>;
 };
 

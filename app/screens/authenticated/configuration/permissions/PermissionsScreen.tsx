@@ -213,6 +213,13 @@ export default function DropzonePermissionScreen() {
 
                   <PermissionListItem
                     role={role}
+                    permissionName="createDoubleSlot"
+                    description="Manifest on more than one load at a time"
+                    title="Double Manifest"
+                  />
+
+                  <PermissionListItem
+                    role={role}
                     permissionName="updateSlot"
                     description="Update own slot after manifesting themselves"
                     title="Update own slot"

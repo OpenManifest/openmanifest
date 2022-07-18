@@ -2,6 +2,7 @@ import { DocumentNode, useMutation, MutationOptions, MutationHookOptions } from 
 import { Maybe } from 'graphql/jsutils/Maybe';
 import * as React from 'react';
 import camelCase from 'lodash/camelCase';
+import startCase from 'lodash/startCase';
 import { FieldError, Mutation } from './schema';
 
 export interface IAppMutation<Payload, InputType> {
@@ -91,14 +92,15 @@ export function createMutation<
     const [mutate, { loading }] = useMutation(mutation, opts.mutation);
 
     const raiseFieldError = React.useCallback(
-      (field: string, message: string) => {
+      (field: string, message: string | string[]) => {
         const camelizedField = camelCase(field);
         const fieldName =
           fieldErrorMap && camelizedField in fieldErrorMap
             ? fieldErrorMap[field as keyof InputType]
             : field;
 
-        onFieldError?.(`${fieldName}`, message);
+        const [msg] = [message].flat();
+        onFieldError?.(`${fieldName}`, `${startCase(fieldName)} ${msg}`);
       },
       [onFieldError]
     );

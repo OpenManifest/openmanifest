@@ -35,13 +35,13 @@ export default function RigInspectionTemplateScreen() {
         )
       );
     }
-  }, [data?.dropzone.rigInspectionTemplate, dispatch]);
+  }, [data?.dropzone?.rigInspectionTemplate, dispatch]);
 
   const updateForm = React.useCallback(async () => {
     try {
       await mutationUpdateForm({
         variables: {
-          formId: Number(data?.dropzone.rigInspectionTemplate?.id),
+          formId: Number(data?.dropzone?.rigInspectionTemplate?.id),
           dropzoneId: Number(data?.dropzone?.id),
           definition: JSON.stringify(state.fields),
         },
@@ -64,7 +64,7 @@ export default function RigInspectionTemplateScreen() {
     }
   }, [
     mutationUpdateForm,
-    data?.dropzone.rigInspectionTemplate?.id,
+    data?.dropzone?.rigInspectionTemplate?.id,
     data?.dropzone?.id,
     state.fields,
     dispatch,

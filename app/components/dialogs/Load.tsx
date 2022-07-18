@@ -47,11 +47,11 @@ export default function LoadDialog(props: ILoadDialog) {
     const variables = {
       isOpen: !!state.fields.isOpen.value,
       name: state.fields.name.value,
-      dropzoneId: currentDropzoneId,
+      dropzone: currentDropzoneId,
       maxSlots: state.fields.maxSlots.value || null,
-      planeId: Number(state.fields.plane.value?.id) || null,
-      gcaId: Number(state.fields.gca.value?.id) || null,
-      pilotId: Number(state.fields.pilot.value?.id) || null,
+      plane: Number(state.fields.plane.value?.id) || null,
+      gca: Number(state.fields.gca.value?.id) || null,
+      pilot: Number(state.fields.pilot.value?.id) || null,
     };
     createLoad.mutate(variables);
   }, [

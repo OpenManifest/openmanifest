@@ -1,5 +1,5 @@
 query JumpTypes($allowedForDropzoneUserIds: [Int!]) {
-  jumpTypes(dropzoneUserIds: $allowedForDropzoneUserIds) {
+  jumpTypes(dropzoneUsers: $allowedForDropzoneUserIds) {
     ...jumpTypeEssentials
   }
 }

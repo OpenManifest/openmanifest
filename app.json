@@ -2,7 +2,7 @@
   "expo": {
     "name": "Open Manifest",
     "slug": "openmanifest",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "orientation": "portrait",
     "icon": "./assets/images/android-icon.png",
     "scheme": "openmanifest",
@@ -34,7 +34,7 @@
         "fbAppUrl": "https://openmanifest.org",
         "facebookScheme": "fb686479516065674"
       },
-      "buildNumber": "36",
+      "buildNumber": "38",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
       "icon": "./assets/images/logo-black-white-bg.png",
@@ -61,7 +61,7 @@
         "foregroundImage": "./assets/images/logo-black-white-bg.png",
         "backgroundColor": "#F4F4F4"
       },
-      "versionCode": 9,
+      "versionCode": 12,
       "intentFilters": [
         {
           "action": "VIEW",

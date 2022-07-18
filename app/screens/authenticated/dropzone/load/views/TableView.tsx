@@ -6,7 +6,7 @@ import { SlotFields } from 'app/components/slots_table/UserRow';
 import { useWindowDimensions } from 'react-native';
 
 interface ITableViewProps extends Omit<ISlotsTableProps, 'load'> {
-  load?: LoadDetailsFragment;
+  load?: LoadDetailsFragment | null;
   loading: boolean;
   refetch(): void;
   onSlotPress(slot: SlotDetailsFragment): void;
@@ -26,7 +26,7 @@ export default function LoadScreen(props: ITableViewProps) {
       : { ...slotLoadingFragment, id: '__AVAILABLE__' }
   );
 
-  console.log({ width, numFields });
+  console.log({ width, numFields, slots, load });
 
   return (
     <SlotsTable

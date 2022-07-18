@@ -74,7 +74,7 @@ export default function LoadScreen() {
     async (pilot: DropzoneUser) => {
       await mutationUpdateLoad.mutate({
         id: Number(loadId),
-        pilotId: Number(pilot.id),
+        pilot: Number(pilot.id),
       });
     },
     [mutationUpdateLoad, loadId]
@@ -84,7 +84,7 @@ export default function LoadScreen() {
     async (gca: DropzoneUser) => {
       await mutationUpdateLoad.mutate({
         id: Number(loadId),
-        gcaId: Number(gca.id),
+        gca: Number(gca.id),
       });
     },
     [mutationUpdateLoad, loadId]
@@ -94,7 +94,7 @@ export default function LoadScreen() {
     async (plane: PlaneEssentialsFragment) => {
       await mutationUpdateLoad.mutate({
         id: Number(loadId),
-        planeId: Number(plane.id),
+        plane: Number(plane.id),
       });
     },
     [mutationUpdateLoad, loadId]
@@ -104,7 +104,7 @@ export default function LoadScreen() {
     async (lm: DropzoneUser) => {
       await mutationUpdateLoad.mutate({
         id: Number(loadId),
-        loadMasterId: Number(lm.id),
+        loadMaster: Number(lm.id),
       });
     },
     [mutationUpdateLoad, loadId]
@@ -125,8 +125,8 @@ export default function LoadScreen() {
   const canManifestGroupWithSelfOnly = useRestriction(Permission.CreateUserSlotWithSelf);
   const canEditSelf = useRestriction(Permission.UpdateSlot);
   const canEditOthers = useRestriction(Permission.UpdateUserSlot);
-  const maxSlots = load?.maxSlots || load?.plane?.maxSlots || 0;
-  const occupiedSlots = maxSlots - (load?.availableSlots || 0);
+  const maxSlots = load?.maxSlots || 0;
+  const occupiedSlots = load?.occupiedSlots || 0;
 
   const mutationDeleteSlot = useMutationDeleteSlot({
     onSuccess: (payload) =>
@@ -222,7 +222,7 @@ export default function LoadScreen() {
   return (
     <View style={{ flexGrow: 1, backgroundColor: theme.colors.background }}>
       <Header
-        load={load}
+        load={load || undefined}
         renderBadges={() => (
           <FlatList
             horizontal
@@ -317,7 +317,7 @@ export default function LoadScreen() {
       <Divider />
       <TableView
         {...{
-          slots: load?.slots || [],
+          slots: load?.slots?.filter(Boolean) || [],
           load,
           loading,
           refetch,

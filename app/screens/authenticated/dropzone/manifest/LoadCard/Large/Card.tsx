@@ -121,7 +121,7 @@ export default function LoadCard(props: ILoadCardLarge) {
       }
       await mutationUpdateLoad.mutate({
         id: Number(load.id),
-        pilotId: Number(pilot.id),
+        pilot: Number(pilot.id),
       });
     },
     [mutationUpdateLoad, load?.id]
@@ -134,7 +134,7 @@ export default function LoadCard(props: ILoadCardLarge) {
       }
       await mutationUpdateLoad.mutate({
         id: Number(load.id),
-        gcaId: Number(gca.id),
+        gca: Number(gca.id),
       });
     },
     [mutationUpdateLoad, load?.id]
@@ -147,7 +147,7 @@ export default function LoadCard(props: ILoadCardLarge) {
       }
       await mutationUpdateLoad.mutate({
         id: Number(load.id),
-        planeId: Number(plane.id),
+        plane: Number(plane.id),
       });
     },
     [load?.id, mutationUpdateLoad]
@@ -160,7 +160,7 @@ export default function LoadCard(props: ILoadCardLarge) {
       }
       await mutationUpdateLoad.mutate({
         id: Number(load.id),
-        loadMasterId: Number(lm.id),
+        loadMaster: Number(lm.id),
       });
     },
     [load?.id, mutationUpdateLoad]

@@ -12,7 +12,7 @@ export default function ExtraForm() {
   const currentDropzone = useCurrentDropzone();
   const { data } = useTicketTypesQuery({
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzone: Number(currentDropzone?.dropzone?.id),
     },
   });
 
@@ -36,7 +36,7 @@ export default function ExtraForm() {
 
       <View style={{ width: '100%' }}>
         <List.Subheader>Compatible tickets</List.Subheader>
-        {data?.ticketTypes.map((ticket) => (
+        {data?.ticketTypes?.map((ticket) => (
           <Checkbox.Item
             label={ticket.name || ''}
             status={
