@@ -74,6 +74,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
     const selectedLicenseFederation = state.original?.userFederations?.find(
       ({ federation }) => federation.slug === state.fields.license.value?.federation?.slug
     );
+    console.debug({ selectedLicenseFederation });
     if (
       (state.fields.license.value?.id &&
         selectedLicenseFederation?.license?.id !== state.fields.license.value?.id) ||

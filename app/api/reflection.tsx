@@ -1001,9 +1001,9 @@ export type CreateRigMutationHookResult = ReturnType<typeof useCreateRigMutation
 export type CreateRigMutationResult = Apollo.MutationResult<Operation.CreateRigMutation>;
 export type CreateRigMutationOptions = Apollo.BaseMutationOptions<Operation.CreateRigMutation, Operation.CreateRigMutationVariables>;
 export const CreateRigInspectionDocument = gql`
-    mutation CreateRigInspection($dropzoneId: Int, $rigId: Int, $isOk: Boolean, $definition: String) {
+    mutation CreateRigInspection($dropzone: Int, $rig: Int, $isOk: Boolean, $definition: String) {
   createRigInspection(
-    input: {attributes: {dropzoneId: $dropzoneId, rigId: $rigId, isOk: $isOk, definition: $definition}}
+    input: {attributes: {dropzone: $dropzone, rig: $rig, isOk: $isOk, definition: $definition}}
   ) {
     rigInspection {
       ...rigInspectionMutationEssentials
@@ -1031,8 +1031,8 @@ export type CreateRigInspectionMutationFn = Apollo.MutationFunction<Operation.Cr
  * @example
  * const [createRigInspectionMutation, { data, loading, error }] = useCreateRigInspectionMutation({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
- *      rigId: // value for 'rigId'
+ *      dropzone: // value for 'dropzone'
+ *      rig: // value for 'rig'
  *      isOk: // value for 'isOk'
  *      definition: // value for 'definition'
  *   },
@@ -1408,9 +1408,9 @@ export type LoginWithFacebookMutationHookResult = ReturnType<typeof useLoginWith
 export type LoginWithFacebookMutationResult = Apollo.MutationResult<Operation.LoginWithFacebookMutation>;
 export type LoginWithFacebookMutationOptions = Apollo.BaseMutationOptions<Operation.LoginWithFacebookMutation, Operation.LoginWithFacebookMutationVariables>;
 export const ManifestGroupDocument = gql`
-    mutation ManifestGroup($jumpTypeId: Int, $extraIds: [Int!], $loadId: Int, $ticketTypeId: Int, $userGroup: [SlotUser!]!) {
+    mutation ManifestGroup($jumpType: Int, $extras: [Int!], $load: Int, $ticketType: Int, $userGroup: [SlotUser!]!) {
   createSlots(
-    input: {attributes: {jumpTypeId: $jumpTypeId, extraIds: $extraIds, loadId: $loadId, ticketTypeId: $ticketTypeId, userGroup: $userGroup}}
+    input: {attributes: {jumpType: $jumpType, extras: $extras, load: $load, ticketType: $ticketType, userGroup: $userGroup}}
   ) {
     errors
     fieldErrors {
@@ -1438,10 +1438,10 @@ export type ManifestGroupMutationFn = Apollo.MutationFunction<Operation.Manifest
  * @example
  * const [manifestGroupMutation, { data, loading, error }] = useManifestGroupMutation({
  *   variables: {
- *      jumpTypeId: // value for 'jumpTypeId'
- *      extraIds: // value for 'extraIds'
- *      loadId: // value for 'loadId'
- *      ticketTypeId: // value for 'ticketTypeId'
+ *      jumpType: // value for 'jumpType'
+ *      extras: // value for 'extras'
+ *      load: // value for 'load'
+ *      ticketType: // value for 'ticketType'
  *      userGroup: // value for 'userGroup'
  *   },
  * });
@@ -1454,9 +1454,9 @@ export type ManifestGroupMutationHookResult = ReturnType<typeof useManifestGroup
 export type ManifestGroupMutationResult = Apollo.MutationResult<Operation.ManifestGroupMutation>;
 export type ManifestGroupMutationOptions = Apollo.BaseMutationOptions<Operation.ManifestGroupMutation, Operation.ManifestGroupMutationVariables>;
 export const ManifestUserDocument = gql`
-    mutation ManifestUser($jumpTypeId: Int, $extraIds: [Int!], $loadId: Int, $rigId: Int, $ticketTypeId: Int, $dropzoneUserId: Int, $exitWeight: Float, $passengerName: String, $passengerExitWeight: Float) {
+    mutation ManifestUser($jumpType: Int, $extras: [Int!], $load: Int, $rig: Int, $ticketType: Int, $dropzoneUser: Int, $exitWeight: Float, $passengerName: String, $passengerExitWeight: Float) {
   createSlot(
-    input: {attributes: {jumpTypeId: $jumpTypeId, extraIds: $extraIds, loadId: $loadId, rigId: $rigId, ticketTypeId: $ticketTypeId, dropzoneUserId: $dropzoneUserId, exitWeight: $exitWeight, passengerExitWeight: $passengerExitWeight, passengerName: $passengerName}}
+    input: {attributes: {jumpType: $jumpType, extras: $extras, load: $load, rig: $rig, ticketType: $ticketType, dropzoneUser: $dropzoneUser, exitWeight: $exitWeight, passengerExitWeight: $passengerExitWeight, passengerName: $passengerName}}
   ) {
     errors
     fieldErrors {
@@ -1484,12 +1484,12 @@ export type ManifestUserMutationFn = Apollo.MutationFunction<Operation.ManifestU
  * @example
  * const [manifestUserMutation, { data, loading, error }] = useManifestUserMutation({
  *   variables: {
- *      jumpTypeId: // value for 'jumpTypeId'
- *      extraIds: // value for 'extraIds'
- *      loadId: // value for 'loadId'
- *      rigId: // value for 'rigId'
- *      ticketTypeId: // value for 'ticketTypeId'
- *      dropzoneUserId: // value for 'dropzoneUserId'
+ *      jumpType: // value for 'jumpType'
+ *      extras: // value for 'extras'
+ *      load: // value for 'load'
+ *      rig: // value for 'rig'
+ *      ticketType: // value for 'ticketType'
+ *      dropzoneUser: // value for 'dropzoneUser'
  *      exitWeight: // value for 'exitWeight'
  *      passengerName: // value for 'passengerName'
  *      passengerExitWeight: // value for 'passengerExitWeight'
@@ -2524,7 +2524,7 @@ export type QueryDropzonesLazyQueryHookResult = ReturnType<typeof useQueryDropzo
 export type QueryDropzonesQueryResult = Apollo.QueryResult<Operation.QueryDropzonesQuery, Operation.QueryDropzonesQueryVariables>;
 export const TicketTypeExtrasDocument = gql`
     query TicketTypeExtras($dropzoneId: Int!) {
-  extras(dropzoneId: $dropzoneId) {
+  extras(dropzone: $dropzoneId) {
     ...ticketTypeExtraDetailed
   }
 }
@@ -2631,7 +2631,7 @@ export type AddressToLocationLazyQueryHookResult = ReturnType<typeof useAddressT
 export type AddressToLocationQueryResult = Apollo.QueryResult<Operation.AddressToLocationQuery, Operation.AddressToLocationQueryVariables>;
 export const JumpTypesDocument = gql`
     query JumpTypes($allowedForDropzoneUserIds: [Int!]) {
-  jumpTypes(dropzoneUserIds: $allowedForDropzoneUserIds) {
+  jumpTypes(dropzoneUsers: $allowedForDropzoneUserIds) {
     ...jumpTypeEssentials
   }
 }
@@ -2904,7 +2904,7 @@ export type RigInspectionTemplateQueryResult = Apollo.QueryResult<Operation.RigI
 export const AvailableRigsDocument = gql`
     query AvailableRigs($dropzoneUserId: Int!, $isTandem: Boolean, $loadId: Int) {
   availableRigs(
-    dropzoneUserId: $dropzoneUserId
+    dropzoneUser: $dropzoneUserId
     isTandem: $isTandem
     loadId: $loadId
   ) {
@@ -2982,8 +2982,8 @@ export type RolesQueryHookResult = ReturnType<typeof useRolesQuery>;
 export type RolesLazyQueryHookResult = ReturnType<typeof useRolesLazyQuery>;
 export type RolesQueryResult = Apollo.QueryResult<Operation.RolesQuery, Operation.RolesQueryVariables>;
 export const AllowedTicketTypesDocument = gql`
-    query AllowedTicketTypes($dropzoneId: Int!, $onlyPublicTickets: Boolean) {
-  dropzone(id: $dropzoneId) {
+    query AllowedTicketTypes($dropzone: Int!, $onlyPublicTickets: Boolean) {
+  dropzone(id: $dropzone) {
     id
     ticketTypes(isPublic: $onlyPublicTickets) {
       ...ticketTypeEssentials
@@ -3009,7 +3009,7 @@ export const AllowedTicketTypesDocument = gql`
  * @example
  * const { data, loading, error } = useAllowedTicketTypesQuery({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
+ *      dropzone: // value for 'dropzone'
  *      onlyPublicTickets: // value for 'onlyPublicTickets'
  *   },
  * });
@@ -3026,11 +3026,8 @@ export type AllowedTicketTypesQueryHookResult = ReturnType<typeof useAllowedTick
 export type AllowedTicketTypesLazyQueryHookResult = ReturnType<typeof useAllowedTicketTypesLazyQuery>;
 export type AllowedTicketTypesQueryResult = Apollo.QueryResult<Operation.AllowedTicketTypesQuery, Operation.AllowedTicketTypesQueryVariables>;
 export const TicketTypesDocument = gql`
-    query TicketTypes($dropzoneId: Int!, $allowManifestingSelf: Boolean) {
-  ticketTypes(
-    dropzoneId: $dropzoneId
-    allowManifestingSelf: $allowManifestingSelf
-  ) {
+    query TicketTypes($dropzone: Int!, $allowManifestingSelf: Boolean) {
+  ticketTypes(dropzone: $dropzone, allowManifestingSelf: $allowManifestingSelf) {
     ...ticketTypeEssentials
   }
 }
@@ -3048,7 +3045,7 @@ export const TicketTypesDocument = gql`
  * @example
  * const { data, loading, error } = useTicketTypesQuery({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
+ *      dropzone: // value for 'dropzone'
  *      allowManifestingSelf: // value for 'allowManifestingSelf'
  *   },
  * });

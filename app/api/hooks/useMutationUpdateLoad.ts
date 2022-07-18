@@ -5,11 +5,11 @@ import { LoadInput, UpdateLoadPayload } from '../schema';
 const MUTATION_UPDATE_LOAD = gql`
   mutation UpdateLoad(
     $id: Int!
-    $pilotId: Int
-    $gcaId: Int
-    $planeId: Int
+    $pilot: Int
+    $gca: Int
+    $plane: Int
     $isOpen: Boolean
-    $loadMasterId: Int
+    $loadMaster: Int
     $dispatchAt: Int
     $hasLanded: Boolean
   ) {
@@ -17,11 +17,11 @@ const MUTATION_UPDATE_LOAD = gql`
       input: {
         id: $id
         attributes: {
-          pilotId: $pilotId
-          gcaId: $gcaId
-          planeId: $planeId
+          pilot: $pilot
+          gca: $gca
+          plane: $plane
           isOpen: $isOpen
-          loadMasterId: $loadMasterId
+          loadMaster: $loadMaster
           dispatchAt: $dispatchAt
           hasLanded: $hasLanded
         }
@@ -96,10 +96,4 @@ const MUTATION_UPDATE_LOAD = gql`
 
 export default createMutation<{ id: number } & LoadInput, UpdateLoadPayload>(MUTATION_UPDATE_LOAD, {
   getPayload: (result) => result.updateLoad,
-  fieldErrorMap: {
-    pilotId: 'pilot',
-    gcaId: 'gca',
-    planeId: 'plane',
-    loadMasterId: 'loadMaster',
-  },
 });

@@ -70,7 +70,7 @@ export default function LoadCard(props: ILoadCardSmall) {
       }
       await mutationUpdateLoad.mutate({
         id: Number(load.id),
-        pilotId: Number(pilot.id),
+        pilot: Number(pilot.id),
       });
     },
     [mutationUpdateLoad, load?.id]
@@ -83,7 +83,7 @@ export default function LoadCard(props: ILoadCardSmall) {
       }
       await mutationUpdateLoad.mutate({
         id: Number(load.id),
-        planeId: Number(plane.id),
+        plane: Number(plane.id),
       });
     },
     [load?.id, mutationUpdateLoad]

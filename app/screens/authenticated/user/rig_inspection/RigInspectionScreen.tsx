@@ -73,13 +73,13 @@ export default function RigInspectionScreen() {
     } else {
       dispatch(
         actions.forms.rigInspection.setFields(
-          data?.dropzone.rigInspectionTemplate?.definition || '[]'
+          data?.dropzone?.rigInspectionTemplate?.definition || '[]'
         )
       );
     }
   }, [
     data?.dropzone?.dropzoneUser?.rigInspections,
-    data?.dropzone.rigInspectionTemplate?.definition,
+    data?.dropzone?.rigInspectionTemplate?.definition,
     dispatch,
     rig?.id,
   ]);
@@ -88,8 +88,8 @@ export default function RigInspectionScreen() {
     try {
       await mutationCreateRigInspection({
         variables: {
-          dropzoneId: Number(currentDropzone?.dropzone?.id),
-          rigId: Number(rig?.id),
+          dropzone: Number(currentDropzone?.dropzone?.id),
+          rig: Number(rig?.id),
           definition: JSON.stringify(state.fields),
           isOk: !!state.ok,
         },

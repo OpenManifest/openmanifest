@@ -1,23 +1,15 @@
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Avatar, Card, HelperText, List, Paragraph } from 'react-native-paper';
-import Slider from '@react-native-community/slider';
+import { StyleSheet, View } from 'react-native';
+import { Avatar, Card, Paragraph } from 'react-native-paper';
 import { ceil } from 'lodash';
 import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import NumberField, { NumberFieldType } from 'app/components/input/number_input/NumberField';
 
 function WingloadingWizardScreen(props: IWizardStepProps) {
   const rigForm = useAppSelector((root) => root.forms.rig);
   const userForm = useAppSelector((root) => root.forms.user);
   const dispatch = useAppDispatch();
-  const [canopySize, setCanopySize] = React.useState(rigForm.fields.canopySize.value || 120);
-  const [weight, setWeight] = React.useState(Number(userForm.fields.exitWeight.value) || 120);
-
-  React.useEffect(() => {
-    if (rigForm.fields.canopySize.value) {
-      setCanopySize(rigForm.fields.canopySize.value);
-    }
-  }, [rigForm.fields.canopySize.value]);
 
   return (
     <Step {...props} title="Wing Loading">
@@ -47,51 +39,27 @@ function WingloadingWizardScreen(props: IWizardStepProps) {
             </Paragraph>
           </View>
         </View>
-        <View style={styles.cardTitle}>
-          <List.Subheader>Your exit weight</List.Subheader>
-          <Text style={styles.cardValue}>{weight || 50}kg</Text>
-        </View>
-        <Slider
-          style={styles.sliderControl}
-          minimumValue={50}
-          maximumValue={160}
-          step={0.5}
-          minimumTrackTintColor="#FF1414"
-          maximumTrackTintColor="#000000"
-          onSlidingComplete={() =>
-            dispatch(actions.forms.user.setField(['exitWeight', weight.toString()]))
-          }
-          value={weight}
-          onValueChange={(w) => setWeight(w)}
-        />
-        <HelperText type={userForm.fields.exitWeight?.error ? 'error' : 'info'}>
-          {userForm.fields.exitWeight?.error || "Your weight in kg's with all equipment on"}
-        </HelperText>
 
-        <View style={styles.cardTitle}>
-          <List.Subheader>Canopy size</List.Subheader>
-          <Text style={styles.cardValue}>{canopySize || 120}ft</Text>
-        </View>
-
-        <View style={styles.slider}>
-          <Slider
-            style={styles.sliderControl}
-            minimumValue={34}
-            maximumValue={350}
-            step={1}
-            value={canopySize || 120}
-            minimumTrackTintColor="#FF1414"
-            maximumTrackTintColor="#000000"
-            onValueChange={(size) => setCanopySize(size)}
-            onSlidingComplete={() =>
-              dispatch(actions.forms.rig.setField(['canopySize', canopySize]))
+        <Card style={styles.card} elevation={3}>
+          <NumberField
+            label="Your exit weight"
+            variant={NumberFieldType.Weight}
+            value={Number(userForm?.fields?.exitWeight?.value) || 50}
+            onChange={(value) =>
+              dispatch(actions.forms.user.setField(['exitWeight', value.toString()]))
             }
+            error={userForm.fields.exitWeight?.error}
+            helperText="Your weight in kg's with all equipment on"
           />
-        </View>
-
-        <HelperText type={userForm.fields.exitWeight?.error ? 'error' : 'info'}>
-          {userForm.fields.exitWeight?.error || 'Size of your main canopy in square feet'}
-        </HelperText>
+          <NumberField
+            label="Canopy Size"
+            variant={NumberFieldType.CanopySize}
+            value={Number(rigForm?.fields?.canopySize?.value) || 120}
+            onChange={(value) => dispatch(actions.forms.rig.setField(['canopySize', value]))}
+            helperText="Size of your main canopy in square feet"
+            error={userForm.fields.exitWeight?.error}
+          />
+        </Card>
       </Fields>
     </Step>
   );
@@ -107,7 +75,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     flexDirection: 'column',
   },
-  card: { padding: 8, marginVertical: 16 },
+  card: { padding: 8, paddingRight: 16, marginVertical: 16 },
   cardTitle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -126,7 +94,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   field: {
-    marginBottom: 8,
+    marginVertical: 8,
   },
   slider: {
     flexDirection: 'column',

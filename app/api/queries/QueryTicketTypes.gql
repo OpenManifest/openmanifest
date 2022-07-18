@@ -1,5 +1,5 @@
-query AllowedTicketTypes($dropzoneId: Int!, $onlyPublicTickets: Boolean) {
-  dropzone(id: $dropzoneId) {
+query AllowedTicketTypes($dropzone: Int!, $onlyPublicTickets: Boolean) {
+  dropzone(id: $dropzone) {
     id
 
     ticketTypes(isPublic: $onlyPublicTickets) {
@@ -14,8 +14,8 @@ query AllowedTicketTypes($dropzoneId: Int!, $onlyPublicTickets: Boolean) {
   }
 }
 
-query TicketTypes($dropzoneId: Int!, $allowManifestingSelf: Boolean) {
-  ticketTypes(dropzoneId: $dropzoneId, allowManifestingSelf: $allowManifestingSelf) {
+query TicketTypes($dropzone: Int!, $allowManifestingSelf: Boolean) {
+  ticketTypes(dropzone: $dropzone, allowManifestingSelf: $allowManifestingSelf) {
     ...ticketTypeEssentials
   }
 }

@@ -4473,6 +4473,261 @@
       },
       {
         "kind": "OBJECT",
+        "name": "Event",
+        "description": null,
+        "fields": [
+          {
+            "name": "action",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "ENUM",
+              "name": "EventAction",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createdBy",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "DropzoneUser",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "level",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "ENUM",
+              "name": "EventLevel",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "message",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "resource",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "INTERFACE",
+              "name": "AnyResource",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "EventAction",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "assigned",
+            "description": "assigned",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "confirmed",
+            "description": "confirmed",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "created",
+            "description": "created",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleted",
+            "description": "deleted",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updated",
+            "description": "updated",
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "EventConnection",
+        "description": "The connection type for Event.",
+        "fields": [
+          {
+            "name": "edges",
+            "description": "A list of edges.",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "EventEdge",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "nodes",
+            "description": "A list of nodes.",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Event",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pageInfo",
+            "description": "Information to aid in pagination.",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "PageInfo",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "EventEdge",
+        "description": "An edge in a connection.",
+        "fields": [
+          {
+            "name": "cursor",
+            "description": "A cursor for use in pagination.",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "node",
+            "description": "The item at the end of the edge.",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Event",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "EventLevel",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "debug",
+            "description": "debug",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "error",
+            "description": "error",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "info",
+            "description": "info",
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "Extra",
         "description": null,
         "fields": [
@@ -4790,6 +5045,26 @@
                 "kind": "SCALAR",
                 "name": "ID",
                 "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "licenses",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "License",
+                  "ofType": null
+                }
               }
             },
             "isDeprecated": false,
@@ -6202,7 +6477,7 @@
             "deprecationReason": null
           },
           {
-            "name": "gcaId",
+            "name": "gca",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -6238,7 +6513,7 @@
             "deprecationReason": null
           },
           {
-            "name": "loadMasterId",
+            "name": "loadMaster",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -6274,7 +6549,7 @@
             "deprecationReason": null
           },
           {
-            "name": "pilotId",
+            "name": "pilot",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -6286,7 +6561,7 @@
             "deprecationReason": null
           },
           {
-            "name": "planeId",
+            "name": "plane",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -9863,12 +10138,145 @@
         "description": null,
         "fields": [
           {
+            "name": "activity",
+            "description": "Get all Activity Events for a dropzone (or all dropzones)",
+            "args": [
+              {
+                "name": "actions",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "EventAction",
+                      "ofType": null
+                    }
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "after",
+                "description": "Returns the elements in the list that come after the specified cursor.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "before",
+                "description": "Returns the elements in the list that come before the specified cursor.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "createdBy",
+                "description": "Filter by who created the event",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "dropzone",
+                "description": "Filter by Dropzone",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "first",
+                "description": "Returns the first _n_ elements from the list.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "last",
+                "description": "Returns the last _n_ elements from the list.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "levels",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "EventLevel",
+                      "ofType": null
+                    }
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "EventConnection",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "availableRigs",
             "description": "Get user rigs that have been inspected and marked as OK + dropzone rigs",
             "args": [
               {
-                "name": "dropzoneUserId",
-                "description": null,
+                "name": "dropzoneUser",
+                "description": "Dropzone User to get rigs for",
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -9945,13 +10353,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Dropzone",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Dropzone",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -10047,10 +10451,10 @@
           },
           {
             "name": "extras",
-            "description": "Get ticket addons for a dropzone",
+            "description": "Get all ticket type extras",
             "args": [
               {
-                "name": "dropzoneId",
+                "name": "dropzone",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -10088,7 +10492,7 @@
           },
           {
             "name": "federations",
-            "description": "Available federations",
+            "description": "Get all available federations",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -10141,7 +10545,7 @@
           },
           {
             "name": "image",
-            "description": "Load base64 images as graphql",
+            "description": "Get Base64 images via GraphQL",
             "args": [
               {
                 "name": "id",
@@ -10173,7 +10577,7 @@
             "description": "Get all jump types",
             "args": [
               {
-                "name": "dropzoneUserIds",
+                "name": "dropzoneUsers",
                 "description": null,
                 "type": {
                   "kind": "LIST",
@@ -10272,20 +10676,16 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Load",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Load",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "loads",
-            "description": "Get loads",
+            "description": "Get all loads",
             "args": [
               {
                 "name": "after",
@@ -10312,7 +10712,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "dropzoneId",
+                "name": "dropzone",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -10378,7 +10778,7 @@
           },
           {
             "name": "planes",
-            "description": "Get planes from a dropzone",
+            "description": "Get Aircrafts for a dropzone",
             "args": [
               {
                 "name": "dropzoneId",
@@ -10398,19 +10798,15 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Plane",
-                    "ofType": null
-                  }
+                  "kind": "OBJECT",
+                  "name": "Plane",
+                  "ofType": null
                 }
               }
             },
@@ -10434,7 +10830,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "dropzoneId",
+                "name": "dropzone",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -10451,19 +10847,15 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "TicketType",
-                    "ofType": null
-                  }
+                  "kind": "OBJECT",
+                  "name": "TicketType",
+                  "ofType": null
                 }
               }
             },
@@ -11532,7 +11924,7 @@
             "deprecationReason": null
           },
           {
-            "name": "dropzoneId",
+            "name": "dropzone",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -11556,7 +11948,7 @@
             "deprecationReason": null
           },
           {
-            "name": "rigId",
+            "name": "rig",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -12064,7 +12456,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "dropzoneUserId",
+            "name": "dropzoneUser",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -12088,7 +12480,7 @@
             "deprecationReason": null
           },
           {
-            "name": "extraIds",
+            "name": "extras",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -12108,7 +12500,7 @@
             "deprecationReason": null
           },
           {
-            "name": "jumpTypeId",
+            "name": "jumpType",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -12120,7 +12512,7 @@
             "deprecationReason": null
           },
           {
-            "name": "loadId",
+            "name": "load",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -12156,7 +12548,7 @@
             "deprecationReason": null
           },
           {
-            "name": "rigId",
+            "name": "rig",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -12168,7 +12560,7 @@
             "deprecationReason": null
           },
           {
-            "name": "ticketTypeId",
+            "name": "ticketType",
             "description": null,
             "type": {
               "kind": "SCALAR",

@@ -879,6 +879,94 @@ input DropzoneUserInput {
   userRoleId: Int
 }
 
+type Event {
+  action: EventAction
+  createdBy: DropzoneUser
+  id: ID!
+  level: EventLevel
+  message: String
+  resource: AnyResource
+}
+
+enum EventAction {
+  """
+  assigned
+  """
+  assigned
+
+  """
+  confirmed
+  """
+  confirmed
+
+  """
+  created
+  """
+  created
+
+  """
+  deleted
+  """
+  deleted
+
+  """
+  updated
+  """
+  updated
+}
+
+"""
+The connection type for Event.
+"""
+type EventConnection {
+  """
+  A list of edges.
+  """
+  edges: [EventEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Event]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type EventEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Event
+}
+
+enum EventLevel {
+  """
+  debug
+  """
+  debug
+
+  """
+  error
+  """
+  error
+
+  """
+  info
+  """
+  info
+}
+
 type Extra implements SellableItem {
   cost: Float!
   createdAt: Int!
@@ -915,6 +1003,7 @@ type FacebookPayload {
 type Federation {
   createdAt: Int!
   id: ID!
+  licenses: [License!]
   name: String
   slug: String
   updatedAt: Int!
@@ -1107,14 +1196,14 @@ type LoadEdge {
 
 input LoadInput {
   dispatchAt: Int
-  gcaId: Int
+  gca: Int
   hasLanded: Boolean
   isOpen: Boolean
-  loadMasterId: Int
+  loadMaster: Int
   maxSlots: Int
   name: String
-  pilotId: Int
-  planeId: Int
+  pilot: Int
+  plane: Int
   state: LoadState
 }
 
@@ -2042,10 +2131,51 @@ input PlaneInput {
 
 type Query {
   """
+  Get all Activity Events for a dropzone (or all dropzones)
+  """
+  activity(
+    actions: [EventAction!]
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Filter by who created the event
+    """
+    createdBy: Int
+
+    """
+    Filter by Dropzone
+    """
+    dropzone: Int!
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    levels: [EventLevel!]
+  ): EventConnection!
+
+  """
   Get user rigs that have been inspected and marked as OK + dropzone rigs
   """
   availableRigs(
-    dropzoneUserId: Int!
+    """
+    Dropzone User to get rigs for
+    """
+    dropzoneUser: Int!
     isTandem: Boolean
 
     """
@@ -2057,7 +2187,7 @@ type Query {
   """
   Get dropzone details
   """
-  dropzone(id: Int!): Dropzone!
+  dropzone(id: Int!): Dropzone
 
   """
   Get all available dropzones
@@ -2087,12 +2217,12 @@ type Query {
   ): DropzoneConnection!
 
   """
-  Get ticket addons for a dropzone
+  Get all ticket type extras
   """
-  extras(dropzoneId: Int!): [Extra!]!
+  extras(dropzone: Int!): [Extra!]!
 
   """
-  Available federations
+  Get all available federations
   """
   federations: [Federation!]!
 
@@ -2102,14 +2232,14 @@ type Query {
   geocode(search: String!): GeocodedLocation
 
   """
-  Load base64 images as graphql
+  Get Base64 images via GraphQL
   """
   image(id: Int!): String
 
   """
   Get all jump types
   """
-  jumpTypes(dropzoneUserIds: [Int!]): [JumpType!]!
+  jumpTypes(dropzoneUsers: [Int!]): [JumpType!]!
 
   """
   Get all licenses for a federation
@@ -2119,10 +2249,10 @@ type Query {
   """
   Get load by id
   """
-  load(id: Int!): Load!
+  load(id: Int!): Load
 
   """
-  Get loads
+  Get all loads
   """
   loads(
     """
@@ -2134,7 +2264,7 @@ type Query {
     Returns the elements in the list that come before the specified cursor.
     """
     before: String
-    dropzoneId: Int!
+    dropzone: Int!
     earliestTimestamp: Int
 
     """
@@ -2149,14 +2279,14 @@ type Query {
   ): LoadConnection!
 
   """
-  Get planes from a dropzone
+  Get Aircrafts for a dropzone
   """
-  planes(dropzoneId: Int!): [Plane!]!
+  planes(dropzoneId: Int!): [Plane!]
 
   """
   Get ticket types for a dropzone
   """
-  ticketTypes(allowManifestingSelf: Boolean, dropzoneId: Int!): [TicketType!]!
+  ticketTypes(allowManifestingSelf: Boolean, dropzone: Int!): [TicketType!]
   userCheckPasswordToken(redirectUrl: String, resetPasswordToken: String!): User!
   userConfirmAccount(confirmationToken: String!, redirectUrl: String!): User!
 }
@@ -2274,9 +2404,9 @@ type RigInspection implements AnyResource {
 
 input RigInspectionInput {
   definition: String
-  dropzoneId: Int
+  dropzone: Int
   isOk: Boolean
-  rigId: Int
+  rig: Int
 }
 
 interface SellableItem {
@@ -2359,15 +2489,15 @@ type SlotEdge {
 }
 
 input SlotInput {
-  dropzoneUserId: Int
+  dropzoneUser: Int
   exitWeight: Float
-  extraIds: [Int!]
-  jumpTypeId: Int
-  loadId: Int
+  extras: [Int!]
+  jumpType: Int
+  load: Int
   passengerExitWeight: Float
   passengerName: String
-  rigId: Int
-  ticketTypeId: Int
+  rig: Int
+  ticketType: Int
   userGroup: [SlotUser!]
 }
 

@@ -111,13 +111,8 @@ const MUTATION_CREATE_SLOT = gql`
 
 export default createMutation<SlotInput, CreateSlotPayload>(MUTATION_CREATE_SLOT, {
   getPayload: (result) => result.createSlot,
-  fieldErrorMap: {
-    extraIds: 'extras',
-    jumpTypeId: 'jumpType',
-    ticketTypeId: 'ticketType',
-  },
   validates: {
-    jumpTypeId: [isRequired('You must specify the type of jump')],
-    ticketTypeId: [isRequired('You must select a ticket type')],
+    jumpType: [isRequired('You must specify the type of jump')],
+    ticketType: [isRequired('You must select a ticket type')],
   },
 });

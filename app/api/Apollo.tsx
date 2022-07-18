@@ -12,7 +12,6 @@ import { Platform } from 'react-native';
 import { actions, useAppDispatch, useAppSelector } from '../state';
 
 export default function Apollo({ children }: { children: React.ReactNode }) {
-  console.log('Environment', Constants?.manifest?.extra);
   const httpBatchLink = React.useMemo(() => {
     console.log('Release channel', Update.releaseChannel);
     const environment =

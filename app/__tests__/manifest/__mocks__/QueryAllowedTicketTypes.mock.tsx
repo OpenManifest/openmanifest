@@ -6,7 +6,7 @@ import createMock from './createMockedQuery.mock';
 export default createMock<AllowedTicketTypesQueryVariables, AllowedTicketTypesQuery>(
   AllowedTicketTypesDocument,
   {
-    dropzoneId: 1,
+    dropzone: 1,
     onlyPublicTickets: true,
   },
   {

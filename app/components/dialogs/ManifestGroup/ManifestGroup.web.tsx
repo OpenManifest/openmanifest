@@ -3,7 +3,6 @@ import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { useManifestGroupMutation, useQueryDropzoneUserProfileLazyQuery } from 'app/api/reflection';
 import DropzoneUserAutocomplete from 'app/components/autocomplete/DropzoneUserAutocomplete.web';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
-import { pick } from 'lodash';
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -51,18 +50,18 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     try {
       const result = await mutationCreateSlots({
         variables: {
-          jumpTypeId: Number(state.fields.jumpType.value?.id),
-          ticketTypeId: Number(state.fields.ticketType.value?.id),
-          extraIds: state.fields.extras?.value?.map(({ id }) => Number(id)),
-          loadId: Number(state.fields.load.value?.id),
-          userGroup: state.fields.users.value?.map((slotUserWithRig) =>
-            pick(slotUserWithRig, [
-              'id',
-              'rigId',
-              'exitWeight',
-              'passengerName',
-              'passengerExitWeight',
-            ])
+          jumpType: Number(state.fields.jumpType.value?.id),
+          ticketType: Number(state.fields.ticketType.value?.id),
+          extras: state.fields.extras?.value?.map(({ id }) => Number(id)),
+          load: Number(state.fields.load.value?.id),
+          userGroup: state.fields.users.value?.map(
+            ({ id, exitWeight, rigId, rig, passengerName, passengerExitWeight }) => ({
+              id,
+              rig: rigId || rig?.id,
+              exitWeight,
+              passengerName,
+              passengerExitWeight,
+            })
           ),
         },
       });
@@ -154,7 +153,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
                     dropzoneUserId: Number(user.id),
                   },
                 }).then((result) => {
-                  if (result.data?.dropzone.dropzoneUser) {
+                  if (result.data?.dropzone?.dropzoneUser) {
                     onSelectUser(result.data?.dropzone.dropzoneUser);
                   }
                 });

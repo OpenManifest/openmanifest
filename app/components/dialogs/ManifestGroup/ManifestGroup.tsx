@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { View } from 'react-native';
-import { pick } from 'lodash';
 import { useTheme } from 'react-native-paper';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -84,18 +83,18 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
     try {
       const result = await mutationCreateSlots({
         variables: {
-          jumpTypeId: Number(state.fields.jumpType.value?.id),
-          ticketTypeId: Number(state.fields.ticketType.value?.id),
-          extraIds: state.fields.extras?.value?.map(({ id }) => Number(id)),
-          loadId: Number(state.fields.load.value?.id),
-          userGroup: state.fields.users.value?.map((slotUserWithRig) =>
-            pick(slotUserWithRig, [
-              'id',
-              'rigId',
-              'exitWeight',
-              'passengerName',
-              'passengerExitWeight',
-            ])
+          jumpType: Number(state.fields.jumpType.value?.id),
+          ticketType: Number(state.fields.ticketType.value?.id),
+          extras: state.fields.extras?.value?.map(({ id }) => Number(id)),
+          load: Number(state.fields.load.value?.id),
+          userGroup: state.fields.users.value?.map(
+            ({ id, rigId, exitWeight, rig, passengerExitWeight, passengerName }) => ({
+              id,
+              rig: rigId || rig?.id,
+              passengerExitWeight,
+              passengerName,
+              exitWeight,
+            })
           ),
         },
       });

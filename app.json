@@ -61,7 +61,7 @@
         "foregroundImage": "./assets/images/logo-black-white-bg.png",
         "backgroundColor": "#F4F4F4"
       },
-      "versionCode": 9,
+      "versionCode": 10,
       "intentFilters": [
         {
           "action": "VIEW",

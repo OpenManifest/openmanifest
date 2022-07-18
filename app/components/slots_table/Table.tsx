@@ -7,7 +7,7 @@ import UserRow, { SlotFields } from './UserRow';
 import AvailableRow from './AvailableRow';
 
 export interface ISlotsTableProps {
-  load?: LoadDetailsFragment;
+  load?: LoadDetailsFragment | null;
   loading?: boolean;
   slots: SlotDetailsFragment[];
   fields?: SlotFields[];
@@ -30,7 +30,7 @@ export default function SlotsTable(props: ISlotsTableProps) {
   console.log(fields);
   const items = React.useMemo(
     () =>
-      Array.from({ length: load?.maxSlots || 3 }).map((_, index) =>
+      Array.from({ length: load?.maxSlots || 0 }).map((_, index) =>
         slots && slots.length > index ? slots[index] : slotAvailableFragment
       ),
     [load?.maxSlots, slots]
