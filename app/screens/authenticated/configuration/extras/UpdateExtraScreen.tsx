@@ -11,11 +11,11 @@ import { actions as snackbar } from 'app/components/notifications';
 import { Extra } from 'app/api/schema.d';
 import ExtraForm from 'app/components/forms/extra/ExtraForm';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { useUpdateExtraMutation } from 'app/api/reflection';
 
 export default function UpdateExtraScreen() {
-  const currentDropzone = useCurrentDropzone();
+  const currentDropzone = useDropzoneContext();
   const state = useAppSelector((root) => root.forms.extra);
   const dispatch = useAppDispatch();
 

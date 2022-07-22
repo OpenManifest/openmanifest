@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Dialog, IconButton, ProgressBar, useTheme } from 'react-native-paper';
-import { StyleSheet } from 'react-native';
-import { Drawer } from '@mui/material';
+import { StyleSheet, View } from 'react-native';
+import { Drawer, Typography } from '@mui/material';
 
 interface IBottomSheetProps {
   open?: boolean;
@@ -34,11 +33,7 @@ function DialogOrSheet(props: IBottomSheetProps) {
   const theme = useTheme();
 
   return (
-    <Drawer
-      {...{ open, onClose }}
-      anchor="right"
-      PaperProps={{ style: { width: 400, overflowY: 'hidden' } }}
-    >
+    <Drawer {...{ open, onClose }} anchor="right" PaperProps={{ style: { width: 400 } }}>
       <ProgressBar
         indeterminate
         color={theme?.colors?.primary}
@@ -46,32 +41,15 @@ function DialogOrSheet(props: IBottomSheetProps) {
         style={{ width: '100%' }}
       />
       {!title ? null : (
-        <Dialog.Title numberOfLines={1}>
+        <Typography variant="h4" style={{ marginBottom: 16 }}>
           {title}
           <IconButton icon="close" style={styles.close} size={24} onPress={onClose} />
-        </Dialog.Title>
+        </Typography>
       )}
-      <Dialog.Content
-        pointerEvents="box-none"
-        style={[
-          styles.noPadding,
-          scrollable !== false ? {} : { height: 'calc(100% - 80px)', paddingBottom: 0 },
-        ]}
+      <View style={{ padding: disablePadding ? 0 : 16, paddingBottom: 0 }}>{children}</View>
+      <Dialog.Actions
+        style={{ justifyContent: 'flex-end', backgroundColor: 'transparent', marginBottom: 16 }}
       >
-        {scrollable !== false ? (
-          <Dialog.ScrollArea
-            style={StyleSheet.flatten([
-              disablePadding ? styles.noPadding : styles.defaultPadding,
-              { paddingTop: title ? 24 : 0 },
-            ])}
-          >
-            <ScrollView>{children}</ScrollView>
-          </Dialog.ScrollArea>
-        ) : (
-          children
-        )}
-      </Dialog.Content>
-      <Dialog.Actions style={{ justifyContent: 'flex-end', backgroundColor: 'transparent' }}>
         <Button mode="contained" onPress={buttonAction} style={styles.button}>
           {buttonLabel}
         </Button>

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
 import SlotsTable, { ISlotsTableProps } from 'app/components/slots_table/Table';
-import { slotLoadingFragment } from 'app/__fixtures__/slots.fixtures';
 import { SlotFields } from 'app/components/slots_table/UserRow';
 import { useWindowDimensions } from 'react-native';
 
@@ -18,15 +17,7 @@ export default function LoadScreen(props: ITableViewProps) {
   const { width } = useWindowDimensions();
   const numFields = Math.floor(width / 200);
 
-  const slots: SlotDetailsFragment[] = Array.from({
-    length: (load?.slots?.length || 0) + (load?.availableSlots || 0),
-  }).map((_, index) =>
-    (load?.slots?.length || 0) > index
-      ? (load?.slots as SlotDetailsFragment[])[index]
-      : { ...slotLoadingFragment, id: '__AVAILABLE__' }
-  );
-
-  console.log({ width, numFields, slots, load });
+  console.log({ width, numFields, load });
 
   return (
     <SlotsTable
@@ -43,7 +34,6 @@ export default function LoadScreen(props: ITableViewProps) {
       {...{
         load,
         loading,
-        slots,
         onAvailableSlotPress,
         onDeletePress,
         onSlotGroupPress,

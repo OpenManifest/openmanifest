@@ -4,16 +4,16 @@ import { useAppSelector } from '../../state';
 import { useQueryDropzone } from '../reflection';
 import useMutationUpdateUser from './useMutationUpdateUser';
 
-export default function useCurrentDropzone() {
+export default function useDropzoneContext() {
   const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
   const pushToken = useAppSelector((root) => root.global.expoPushToken);
 
   const currentDropzone = useQueryDropzone({
     variables: {
       dropzoneId: Number(dropzoneId),
-      earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
+      earliestTimestamp: startOfDay(new Date()).toISOString(),
     },
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: 'cache-first',
   });
 
   const mutationUpdateUser = useMutationUpdateUser({

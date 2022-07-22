@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Dimensions, RefreshControl, useWindowDimensions } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
@@ -24,7 +24,7 @@ export default function LoadScreen(props: ICardViewProps) {
   const { load, loading, refetch, onSlotPress, onDeletePress } = props;
   const [isExpanded, setExpanded] = React.useState(false);
 
-  const currentDropzone = useCurrentDropzone();
+  const currentDropzone = useDropzoneContext();
   const { currentUser } = currentDropzone;
 
   const canRemoveSelf = useRestriction(Permission.DeleteSlot);

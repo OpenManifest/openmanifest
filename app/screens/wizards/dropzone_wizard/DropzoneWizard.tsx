@@ -119,7 +119,7 @@ function DropzoneSetupScreen() {
         })
       : await mutationUpdateDropzone.mutate({
           id: Number(dropzone.original.id),
-          federationId: Number(dropzone.fields.federation.value?.id),
+          federation: Number(dropzone.fields.federation.value?.id),
           name: dropzone.fields.name.value || '',
           primaryColor: dropzone.fields.primaryColor.value,
           secondaryColor: dropzone.fields.secondaryColor.value,

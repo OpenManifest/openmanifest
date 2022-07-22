@@ -45,7 +45,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
           query: QueryDropzoneDocument,
           variables: {
             dropzoneId: currentDropzoneId,
-            earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
+            earliestTimestamp: startOfDay(new Date()).toISOString(),
           },
         },
         {
@@ -83,9 +83,9 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
     ) {
       await joinFederation({
         variables: {
-          federationId: Number(state.fields.license.value?.federation?.id),
+          federation: Number(state.fields.license.value?.federation?.id),
           uid: state.fields?.apfNumber?.value,
-          licenseId: state.fields.license.value?.id ? Number(state.fields.license.value?.id) : null,
+          license: state.fields.license.value?.id ? Number(state.fields.license.value?.id) : null,
         },
       });
     }

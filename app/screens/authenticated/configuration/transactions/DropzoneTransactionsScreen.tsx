@@ -7,7 +7,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import CreditsSheet from 'app/components/dialogs/CreditsDialog/Credits';
 
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { useDropzoneTransactionsLazyQuery, useQueryDropzoneUserProfile } from 'app/api/reflection';
 import OrderCard from '../../../../components/orders/OrderCard';
 
@@ -15,7 +15,7 @@ export default function TransactionsScreen() {
   const state = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
-  const { currentUser } = useCurrentDropzone();
+  const { currentUser } = useDropzoneContext();
   const [fetchTransactions] = useDropzoneTransactionsLazyQuery();
   const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
   const { data, loading, refetch } = useQueryDropzoneUserProfile({

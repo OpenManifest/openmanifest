@@ -4,7 +4,7 @@ import useMutationCreateLoad from '../../api/hooks/useMutationCreateLoad';
 import { actions, useAppSelector, useAppDispatch } from '../../state';
 import { actions as snackbar } from '../notifications';
 
-import { Load } from '../../api/schema.d';
+import { CreateLoadInput, Load, LoadState } from '../../api/schema.d';
 import LoadForm from '../forms/load/LoadForm';
 import DialogOrSheet from '../layout/DialogOrSheet';
 import { LoadFields } from '../forms/load/slice';
@@ -17,7 +17,6 @@ interface ILoadDialog {
 export default function LoadDialog(props: ILoadDialog) {
   const { open, onClose, onSuccess } = props;
   const state = useAppSelector((root) => root.forms.load);
-  const { currentDropzoneId } = useAppSelector((root) => root.global);
 
   const dispatch = useAppDispatch();
   const createLoad = useMutationCreateLoad({
@@ -44,10 +43,9 @@ export default function LoadDialog(props: ILoadDialog) {
   const snapPoints = React.useMemo(() => ['30%', 650], []);
 
   const onSave = React.useCallback(() => {
-    const variables = {
-      isOpen: !!state.fields.isOpen.value,
+    const variables: CreateLoadInput['attributes'] = {
       name: state.fields.name.value,
-      dropzone: currentDropzoneId,
+      state: LoadState.Open,
       maxSlots: state.fields.maxSlots.value || null,
       plane: Number(state.fields.plane.value?.id) || null,
       gca: Number(state.fields.gca.value?.id) || null,
@@ -56,9 +54,7 @@ export default function LoadDialog(props: ILoadDialog) {
     createLoad.mutate(variables);
   }, [
     createLoad,
-    currentDropzoneId,
     state.fields.gca.value?.id,
-    state.fields.isOpen.value,
     state.fields.maxSlots.value,
     state.fields.name.value,
     state.fields.pilot.value?.id,

@@ -16,7 +16,7 @@ import {
 import SkeletonContent from 'app/components/Skeleton';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import LottieView from 'app/components/LottieView';
 import { warningColor } from 'app/constants/Colors';
 import { useFederationsQuery } from 'app/api/reflection';
@@ -37,7 +37,7 @@ export default function DropzoneForm(props: IDropzoneForm) {
   const state = useAppSelector((root) => root.forms.dropzone);
   const dispatch = useAppDispatch();
   const { data, loading } = useFederationsQuery();
-  const { currentUser } = useCurrentDropzone();
+  const { currentUser } = useDropzoneContext();
   const theme = useTheme();
   const pickImage = useImagePicker();
 

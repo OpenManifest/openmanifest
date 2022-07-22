@@ -20,7 +20,7 @@ import {
   SlotDetailsFragment,
   SlotEssentialsFragment,
 } from 'app/api/operations';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
 import PilotChip from 'app/components/chips/PilotChip';
@@ -28,7 +28,7 @@ import PlaneChip from 'app/components/chips/PlaneChip';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
 import { View } from 'app/components/Themed';
-import { Permission } from 'app/api/schema.d';
+import { LoadState, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import SwipeActions from 'app/components/layout/SwipeActions';
@@ -67,7 +67,7 @@ export default function LoadCard(props: ILoadCardLarge) {
     onError: console.error,
   });
   const load = React.useMemo(() => data?.load, [data?.load]);
-  const currentDropzone = useCurrentDropzone();
+  const currentDropzone = useDropzoneContext();
   const { currentUser } = currentDropzone;
 
   const mutationUpdateLoad = useMutationUpdateLoad({
@@ -171,11 +171,11 @@ export default function LoadCard(props: ILoadCardLarge) {
       if (!load?.id) {
         return;
       }
-      const dispatchTime = !minutes ? null : addMinutes(new Date(), minutes).getTime() / 1000;
+      const dispatchTime = !minutes ? null : addMinutes(new Date(), minutes).toISOString();
 
       await mutationUpdateLoad.mutate({
         id: Number(load.id),
-        dispatchAt: dispatchTime ? Math.ceil(dispatchTime) : null,
+        dispatchAt: dispatchTime,
       });
     },
     [load?.id, mutationUpdateLoad]
@@ -187,7 +187,7 @@ export default function LoadCard(props: ILoadCardLarge) {
     }
     await mutationUpdateLoad.mutate({
       id: Number(load.id),
-      hasLanded: true,
+      state: LoadState.Landed,
     });
   }, [load?.id, mutationUpdateLoad]);
 

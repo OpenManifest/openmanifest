@@ -8,7 +8,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import JumpRunSelector from 'app/components/input/jump_run_select/JumpRunSelect';
 // eslint-disable-next-line max-len
 import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateWeatherConditions';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 
 export default function JumpRunScreen() {
   const state = useAppSelector((root) => root.forms.weather);
@@ -52,7 +52,7 @@ export default function JumpRunScreen() {
     dispatch,
   ]);
 
-  const { dropzone } = useCurrentDropzone();
+  const { dropzone } = useDropzoneContext();
   const [location, setLocation] = React.useState<Location.LocationObject['coords']>();
   const setUsersLocation = React.useCallback(async () => {
     try {

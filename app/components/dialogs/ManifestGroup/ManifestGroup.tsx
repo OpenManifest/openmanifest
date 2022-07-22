@@ -83,6 +83,7 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
     try {
       const result = await mutationCreateSlots({
         variables: {
+          groupNumber: Number(state.fields?.groupNumber?.value) || null,
           jumpType: Number(state.fields.jumpType.value?.id),
           ticketType: Number(state.fields.ticketType.value?.id),
           extras: state.fields.extras?.value?.map(({ id }) => Number(id)),
@@ -143,6 +144,7 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
     mutationCreateSlots,
     onSuccess,
     state.fields.extras?.value,
+    state.fields?.groupNumber?.value,
     state.fields.jumpType.value?.id,
     state.fields.load.value?.id,
     state.fields.ticketType.value?.id,

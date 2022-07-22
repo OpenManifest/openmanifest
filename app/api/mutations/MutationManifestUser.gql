@@ -7,6 +7,7 @@ mutation ManifestUser(
   $dropzoneUser: Int
   $exitWeight: Float
   $passengerName: String
+  $groupNumber: Int
   $passengerExitWeight: Float
 ) {
   createSlot(
@@ -16,6 +17,7 @@ mutation ManifestUser(
         extras: $extras
         load: $load
         rig: $rig
+        groupNumber: $groupNumber
         ticketType: $ticketType
         dropzoneUser: $dropzoneUser
         exitWeight: $exitWeight

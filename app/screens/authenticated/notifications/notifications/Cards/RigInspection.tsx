@@ -27,13 +27,14 @@ export default function RigInspectionNotification(props: INotification) {
               screen: 'RigInspectionScreen',
               params: {
                 rigId: (notification.resource as RigEssentialsFragment).id,
-                dropzoneUserId: (notification.resource as RigEssentialsFragment).user?.id as string,
+                dropzoneUserId: (notification.resource as RigEssentialsFragment).owner
+                  ?.id as string,
               },
             })
           : navigation.navigate('User', {
               screen: 'ProfileScreen',
               params: {
-                userId: (notification.resource as RigEssentialsFragment).user?.id as string,
+                userId: (notification.resource as RigEssentialsFragment).owner?.id as string,
               },
             })
       }

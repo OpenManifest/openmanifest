@@ -9,7 +9,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { Permission } from 'app/api/schema.d';
 import RigDialog from 'app/components/dialogs/Rig';
 
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import useRestriction from 'app/hooks/useRestriction';
 import RigCard from './RigCard';
 
@@ -22,7 +22,7 @@ export default function EquipmentScreen() {
   const globalState = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
-  const { currentUser } = useCurrentDropzone();
+  const { currentUser } = useDropzoneContext();
   const navigation = useNavigation();
 
   const route = useRoute<RouteProp<EquipmentRoute, 'EquipmentScreen'>>();

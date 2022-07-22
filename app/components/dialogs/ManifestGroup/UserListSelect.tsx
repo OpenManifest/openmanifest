@@ -6,11 +6,11 @@ import { useDropzoneUsersDetailedQuery } from 'app/api/reflection';
 
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import UserAvatar from 'app/components/UserAvatar';
+import { Permission } from 'app/api/schema.d';
+import { useAppSelector } from 'app/state';
+import useRestriction from 'app/hooks/useRestriction';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import NoResults from '../../NoResults';
-import { Permission } from '../../../api/schema.d';
-import { useAppSelector } from '../../../state';
-import useRestriction from '../../../hooks/useRestriction';
-import useCurrentDropzone from '../../../api/hooks/useCurrentDropzone';
 
 interface IUserListSelect {
   hideButton?: boolean;
@@ -31,7 +31,7 @@ export default function UserListSelect(props: IUserListSelect) {
     },
   });
 
-  const { currentUser } = useCurrentDropzone();
+  const { currentUser } = useDropzoneContext();
   const canManifestGroup = useRestriction(Permission.CreateUserSlot);
   const canManifestGroupWithSelfOnly = useRestriction(Permission.CreateUserSlotWithSelf);
 

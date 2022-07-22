@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { List } from 'react-native-paper';
 import { Wallet } from 'app/api/schema.d';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import {
   DropzoneEssentialsFragment,
   DropzoneUserEssentialsFragment,
@@ -18,7 +18,7 @@ interface IReceiptCardProps {
 
 export default function ReceiptCard(props: IReceiptCardProps) {
   const { receipt, index } = props;
-  const { currentUser } = useCurrentDropzone();
+  const { currentUser } = useDropzoneContext();
 
   const isUser = React.useCallback(
     (entity: Wallet | DropzoneEssentialsFragment | DropzoneUserEssentialsFragment) => {

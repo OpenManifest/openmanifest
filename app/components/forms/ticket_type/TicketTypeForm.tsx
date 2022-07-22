@@ -3,7 +3,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import TextInput from 'app/components/input/text/TextField';
 import { HelperText, Checkbox, List, Divider } from 'react-native-paper';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 import { TicketTypeExtraEssentialsFragment } from 'app/api/operations';
 import Select from 'app/components/input/select/Select';
@@ -30,7 +30,7 @@ function AltitudeSelect(props: IAltitudeSelectProps) {
 export default function TicketTypeForm() {
   const state = useAppSelector((root) => root.forms.ticketType);
   const dispatch = useAppDispatch();
-  const currentDropzone = useCurrentDropzone();
+  const currentDropzone = useDropzoneContext();
 
   const { data } = useTicketTypeExtrasQuery({
     variables: {

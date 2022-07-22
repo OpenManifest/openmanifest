@@ -3,14 +3,14 @@ mutation UpdateDropzone(
   $name: String!
   $requestPublication: Boolean
   $banner: String
-  $federationId: Int!
+  $federation: Int!
   $lat: Float
   $lng: Float
   $primaryColor: String
   $secondaryColor: String
   $isCreditSystemEnabled: Boolean
   $isPublic: Boolean
-  $earliestTimestamp: Int
+  $earliestTimestamp: ISO8601DateTime
 ) {
   updateDropzone(
     input: {
@@ -21,7 +21,7 @@ mutation UpdateDropzone(
         lat: $lat
         lng: $lng
         requestPublication: $requestPublication
-        federationId: $federationId
+        federation: $federation
         primaryColor: $primaryColor
         secondaryColor: $secondaryColor
         isCreditSystemEnabled: $isCreditSystemEnabled

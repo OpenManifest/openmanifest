@@ -10,11 +10,9 @@ export default function AvailableRow(props: IAvailableRowProps) {
 
   return (
     <DataTable.Row testID="slot-row" {...{ onPress }}>
-      <DataTable.Cell>
+      <DataTable.Cell style={{ flexGrow: 10 }}>
         <Paragraph style={styles.slotText}>- Available -</Paragraph>
       </DataTable.Cell>
-      <DataTable.Cell numeric>-</DataTable.Cell>
-      <DataTable.Cell numeric>-</DataTable.Cell>
     </DataTable.Row>
   );
 }

@@ -21,7 +21,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
 
 import useRestriction from 'app/hooks/useRestriction';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import useMutationDeleteSlot from 'app/api/hooks/useMutationDeleteSlot';
 import { Divider } from 'react-native-paper';
 import ActionButton from './ActionButton';
@@ -118,7 +118,7 @@ export default function LoadScreen() {
     }
   }, [isExpanded, load?.maxSlots]);
 
-  const currentDropzone = useCurrentDropzone();
+  const currentDropzone = useDropzoneContext();
   const { currentUser } = currentDropzone;
 
   const canManifestGroup = useRestriction(Permission.CreateUserSlot);
@@ -196,9 +196,16 @@ export default function LoadScreen() {
 
   const onSlotGroupPress = React.useCallback(
     (slotGroup: SlotDetailsFragment[]) => {
+      console.debug({ slotGroup2: slotGroup });
       if (load) {
         dispatch(actions.forms.manifestGroup.reset());
-        dispatch(actions.forms.manifestGroup.setFromSlots({ slots: slotGroup, load }));
+        dispatch(actions.forms.manifestGroup.setOpen(true));
+        dispatch(
+          actions.forms.manifestGroup.setFromSlots({
+            slots: slotGroup,
+            load,
+          })
+        );
         dispatch(actions.forms.manifestGroup.setField(['load', load]));
       }
     },

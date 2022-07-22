@@ -8,11 +8,11 @@ import { Permission } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import NoResults from 'app/components/NoResults';
 import TicketTypeExtraDialog from 'app/components/dialogs/TicketTypeExtra';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import useRestriction from 'app/hooks/useRestriction';
 
 export default function ExtrasScreen() {
-  const currentDropzone = useCurrentDropzone();
+  const currentDropzone = useDropzoneContext();
   const globalState = useAppSelector((root) => root.global);
   const formState = useAppSelector((root) => root.forms.extra);
   const { data, loading } = useTicketTypeExtrasQuery({

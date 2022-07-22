@@ -8,7 +8,7 @@ import {
 // eslint-disable-next-line max-len
 import RigInspectionTemplateForm from 'app/components/forms/rig_inspection_template/RigInspectionTemplateForm';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { FormTemplate, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
@@ -16,7 +16,7 @@ import { useWindowDimensions, View } from 'react-native';
 
 export default function RigInspectionTemplateScreen() {
   const state = useAppSelector((root) => root.forms.rigInspectionTemplate);
-  const currentDropzone = useCurrentDropzone();
+  const currentDropzone = useDropzoneContext();
   const dispatch = useAppDispatch();
   const { data } = useRigInspectionTemplateQuery({
     variables: {

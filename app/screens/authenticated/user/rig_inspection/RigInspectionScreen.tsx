@@ -11,7 +11,7 @@ import {
   useCreateRigInspectionMutation,
   useQueryDropzoneUserProfile,
 } from 'app/api/reflection';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { Query, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
@@ -29,7 +29,7 @@ export type RigInspectionRoute = {
 };
 export default function RigInspectionScreen() {
   const state = useAppSelector((root) => root.forms.rigInspection);
-  const currentDropzone = useCurrentDropzone();
+  const currentDropzone = useDropzoneContext();
   const dispatch = useAppDispatch();
 
   const route = useRoute<RouteProp<RigInspectionRoute>>();
@@ -110,7 +110,7 @@ export default function RigInspectionScreen() {
             query: QueryDropzoneDocument,
             variables: {
               dropzoneId: Number(currentDropzone?.dropzone?.id),
-              earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
+              earliestTimestamp: startOfDay(new Date()).toISOString(),
             },
           });
 
@@ -119,7 +119,7 @@ export default function RigInspectionScreen() {
               query: QueryDropzoneDocument,
               variables: {
                 dropzoneId: Number(currentDropzone?.dropzone?.id),
-                earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
+                earliestTimestamp: startOfDay(new Date()).toISOString(),
               },
               data: {
                 ...currentDz,

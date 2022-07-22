@@ -4,12 +4,11 @@ import { useNavigation } from '@react-navigation/core';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
-import { DropzoneEssentialsFragment } from 'app/api/operations';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
-  const { data } = useCurrentDropzone();
+  const { dropzone } = useDropzoneContext();
   const theme = useTheme();
 
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
@@ -22,7 +21,7 @@ export default function SettingsScreen() {
           <List.Item
             title="Configuration"
             onPress={() =>
-              !data?.dropzone
+              !dropzone
                 ? null
                 : navigation.navigate('Authenticated', {
                     screen: 'LeftDrawer',
@@ -33,7 +32,7 @@ export default function SettingsScreen() {
                         params: {
                           screen: 'DropzoneSettingsScreen',
                           params: {
-                            dropzone: data?.dropzone as DropzoneEssentialsFragment,
+                            dropzone,
                           },
                         },
                       },

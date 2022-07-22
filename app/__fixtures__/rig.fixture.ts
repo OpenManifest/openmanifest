@@ -11,7 +11,7 @@ export const currentUserEssentials: RigEssentialsFragment = {
   serial: '34567',
   canopySize: 170,
   repackExpiresAt: startOfDay(new Date()).getTime() / 1000,
-  user: {
+  owner: {
     id: '1',
   },
 };

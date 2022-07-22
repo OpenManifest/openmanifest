@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Appbar, IconButton, Chip } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/core';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import SetupWarning from './SetupWarning';
@@ -15,7 +15,7 @@ function AppBar(props: IAppBarProps) {
   const { hideWarnings, back, options } = props;
   const { palette, theme } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
-  const { currentUser, loading, dropzone } = useCurrentDropzone();
+  const { currentUser, loading, dropzone } = useDropzoneContext();
 
   const navigation = useNavigation();
   const { openDrawer } = useNavigation<DrawerNavigationProp<never>>();
