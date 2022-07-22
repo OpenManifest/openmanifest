@@ -10,7 +10,7 @@ export default createMock<QueryDropzoneQueryVariables, DeepRequired<QueryDropzon
   QueryDropzoneDocument,
   {
     dropzoneId: 1,
-    earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
+    earliestTimestamp: startOfDay(new Date()).toISOString(),
   },
   {
     __typename: 'Query',

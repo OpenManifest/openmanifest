@@ -6,6 +6,8 @@ export const slotLoadingFragment: SlotDetailsFragment = {
   createdAt: 0,
   exitWeight: 0,
   groupNumber: 0,
+  dropzoneUser: null,
+  rig: null,
   extras: null,
   jumpType: null,
   passengerExitWeight: null,

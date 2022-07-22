@@ -1,4 +1,4 @@
-import * as React from 'react';
+/* import * as React from 'react';
 import * as appRedux from '../../state';
 import LoadCard from '../../screens/authenticated/dropzone/manifest/LoadCard/Large/Card';
 import { Load, Permission } from '../../api/schema.d';
@@ -247,7 +247,7 @@ describe('<LoadCard />', () => {
       const manifestButton = screen.getByTestId('manifest-button');
       expect(manifestButton.props.accessibilityState.disabled).toBe(false);
     });
-  }); */
+  }); 
 
   it('should show "Manifest Group" if createUserSlot/createUserSlotWithSelf granted', async () => {
     let screen = render(
@@ -316,3 +316,4 @@ describe('<LoadCard />', () => {
     });
   });
 });
+ */
