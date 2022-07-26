@@ -7,15 +7,15 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ActivityIndicator, ProgressBar } from 'react-native-paper';
-import { Appearance, Linking, Platform, View } from 'react-native';
+import { Appearance, Platform, View } from 'react-native';
 import { NavigationContainer, NavigationState, getPathFromState } from '@react-navigation/native';
 import { registerRootComponent } from 'expo';
 import * as Sentry from 'sentry-expo';
-import URI from 'urijs';
 import { PortalProvider } from '@gorhom/portal';
 
 import Geocoder from 'react-native-geocoding';
 import { setGoogleApiKey } from 'expo-location';
+import PushNotifications from './PushNotificationProvider';
 /* eslint-disable import/no-unresolved */
 import './PaperDatesPolyfill';
 import Wrapper from './EntrypointWrapper';
@@ -46,36 +46,6 @@ Sentry.init({
   debug: true,
 });
 
-async function registerForPushNotificationsAsync(): Promise<string | null> {
-  let token: string | null = null;
-  if (Constants.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      console.warn('Failed to get push token for push notification!');
-      return null;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-  } else {
-    console.warn('Must use physical device for Push Notifications');
-  }
-
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-  return token || null;
-}
-
 const googleMapsApiKey = Platform.select({
   ios: Constants.manifest?.extra?.googleMapsIos,
   android: Constants.manifest?.extra?.googleMapsAndroid,
@@ -88,17 +58,6 @@ setGoogleApiKey(googleMapsApiKey);
 function Content() {
   const state = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
-
-  const notificationListener =
-    React.useRef<ReturnType<typeof Notifications.addNotificationReceivedListener>>();
-  const responseListener =
-    React.useRef<ReturnType<typeof Notifications.addNotificationResponseReceivedListener>>();
-
-  const onOutsideLink = (link: { url: string }) => {
-    const uri = URI(link.url);
-    const intendedRoute = uri.path();
-    console.log(intendedRoute);
-  };
 
   const listener = React.useRef<ReturnType<typeof Appearance.addChangeListener>>(
     Appearance.addChangeListener(({ colorScheme }) => {
@@ -113,49 +72,6 @@ function Content() {
     const handler = listener?.current;
     return () => handler?.remove?.();
   }, [dispatch, state.isDarkMode, state.theme.colors.background]);
-
-  React.useEffect(() => {
-    if (Platform.OS === 'web') {
-      return undefined;
-    }
-
-    registerForPushNotificationsAsync().then((token: string | null) => {
-      if (token) {
-        dispatch(actions.global.setExpoPushToken(token));
-      }
-    });
-
-    // This listener is fired whenever a notification is received while the app is foregrounded
-    notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
-      if (notification.request.content.body) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: notification.request.content.body,
-            variant: 'info',
-          })
-        );
-      }
-    });
-
-    // This listener is fired whenever a user taps on or
-    // interacts with a notification (works when app is foregrounded,
-    // backgrounded, or killed)
-    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-      // console.log({ notification: response });
-    });
-
-    Linking.addEventListener('url', onOutsideLink);
-
-    return () => {
-      if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(notificationListener.current);
-      }
-      if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
-      }
-      Linking.removeEventListener('url', onOutsideLink);
-    };
-  }, [dispatch]);
 
   const onRouteChange = React.useCallback(
     (s?: NavigationState) => {
@@ -191,7 +107,9 @@ function Content() {
                     theme={state.theme as unknown as never}
                   >
                     <Wrapper>
-                      <RootNavigator />
+                      <PushNotifications>
+                        <RootNavigator />
+                      </PushNotifications>
                     </Wrapper>
                   </NavigationContainer>
 

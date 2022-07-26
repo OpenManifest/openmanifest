@@ -5,7 +5,7 @@ import { actions, useAppDispatch } from 'app/state';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { useNavigation } from '@react-navigation/core';
 import { Permission } from 'app/api/schema.d';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import useRestriction from 'app/hooks/useRestriction';
 import { Alert } from 'react-native';
 import { DropzoneUsersDocument, useArchiveUserMutation } from 'app/api/reflection';
@@ -20,7 +20,7 @@ interface IUserActionsButtonProps {
 }
 export default function UserActionsButton(props: IUserActionsButtonProps) {
   const { dropzoneUser, visible } = props;
-  const { currentUser } = useCurrentDropzone();
+  const { currentUser } = useDropzoneContext();
   const [fabOpen, setFabOpen] = React.useState(false);
 
   const dispatch = useAppDispatch();

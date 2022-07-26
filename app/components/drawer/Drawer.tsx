@@ -8,15 +8,15 @@ import SkeletonContent from 'app/components/Skeleton';
 import { useQueryDropzones } from 'app/api/reflection';
 import { DropzoneExtensiveFragment } from 'app/api/operations';
 import InfoGrid from 'app/screens/authenticated/dropzone/load/InfoGrid';
-import useRestriction from '../../hooks/useRestriction';
-import { Permission } from '../../api/schema.d';
-import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
+import useRestriction from 'app/hooks/useRestriction';
+import { Permission } from 'app/api/schema.d';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 
 export default function DrawerMenu() {
   const { theme, currentRouteName: routeName } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
-  const { currentUser, dropzone, loading } = useCurrentDropzone();
+  const { currentUser, dropzone, loading } = useDropzoneContext();
   const { data } = useQueryDropzones({
     variables: {
       isPublic: true,
@@ -111,7 +111,23 @@ export default function DrawerMenu() {
       />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Drawer.Section title="Account">
+        <Drawer.Section title="Dropzone">
+          <Drawer.Item
+            label="Overview"
+            active={/Dashboard/.test(routeName || '')}
+            icon="view-dashboard-outline"
+            onPress={() => {
+              navigation.navigate('Authenticated', {
+                screen: 'LeftDrawer',
+                params: {
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'DashboardScreen',
+                  },
+                },
+              });
+            }}
+          />
           <Drawer.Item
             label="Manifest"
             active={/Manifest/.test(routeName || '')}
@@ -128,6 +144,48 @@ export default function DrawerMenu() {
               });
             }}
           />
+          <Drawer.Item
+            label="Order Activity"
+            active={routeName === 'DropzoneTransactionsScreen'}
+            icon="cash"
+            onPress={() => {
+              navigation.navigate('Authenticated', {
+                screen: 'LeftDrawer',
+                params: {
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'Configuration',
+                    params: {
+                      screen: 'TransactionsScreen',
+                    },
+                  },
+                },
+              });
+            }}
+          />
+          {shouldShowSettings ? (
+            <Drawer.Item
+              active={routeName === 'Settings'}
+              label="Settings"
+              icon="cog"
+              onPress={() =>
+                navigation.navigate('Authenticated', {
+                  screen: 'LeftDrawer',
+                  params: {
+                    screen: 'Manifest',
+                    params: {
+                      screen: 'Configuration',
+                      params: {
+                        screen: 'SettingsMenuScreen',
+                      },
+                    },
+                  },
+                })
+              }
+            />
+          ) : null}
+        </Drawer.Section>
+        <Drawer.Section title="Account">
           <Drawer.Item
             label="Profile"
             active={routeName === 'ProfileScreen'}
@@ -211,48 +269,7 @@ export default function DrawerMenu() {
             }}
           />
         </Drawer.Section>
-        <Drawer.Section title="Dropzone">
-          <Drawer.Item
-            label="Order Activity"
-            active={routeName === 'DropzoneTransactionsScreen'}
-            icon="cash"
-            onPress={() => {
-              navigation.navigate('Authenticated', {
-                screen: 'LeftDrawer',
-                params: {
-                  screen: 'Manifest',
-                  params: {
-                    screen: 'Configuration',
-                    params: {
-                      screen: 'TransactionsScreen',
-                    },
-                  },
-                },
-              });
-            }}
-          />
-          {shouldShowSettings ? (
-            <Drawer.Item
-              active={routeName === 'Settings'}
-              label="Settings"
-              icon="cog"
-              onPress={() =>
-                navigation.navigate('Authenticated', {
-                  screen: 'LeftDrawer',
-                  params: {
-                    screen: 'Manifest',
-                    params: {
-                      screen: 'Configuration',
-                      params: {
-                        screen: 'SettingsMenuScreen',
-                      },
-                    },
-                  },
-                })
-              }
-            />
-          ) : null}
-        </Drawer.Section>
+
         <Drawer.Section title="Switch dropzone">
           {data?.dropzones?.edges?.map((edge) => (
             <Drawer.Item
@@ -268,6 +285,7 @@ export default function DrawerMenu() {
               active={dropzone?.id === edge?.node?.id}
               onPress={() => {
                 if (edge?.node) {
+                  console.debug('Dispatching setDropzone', edge?.node);
                   dispatch(actions.global.setDropzone(edge.node as DropzoneExtensiveFragment));
                   navigation.navigate('Authenticated', {
                     screen: 'LeftDrawer',

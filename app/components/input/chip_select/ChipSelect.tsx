@@ -7,6 +7,7 @@ interface IChipSelect<T extends Record<string, unknown> | string> {
   items: T[];
   selected: T[];
   autoSelectFirst?: boolean;
+  allowEmpty?: boolean;
   icon?: ChipProps['icon'];
   isSelected?(item: T): boolean;
   isDisabled?(item: T): boolean;
@@ -16,6 +17,7 @@ interface IChipSelect<T extends Record<string, unknown> | string> {
 function ChipSelect<T extends Record<string, unknown> | string>(props: IChipSelect<T>) {
   const {
     items,
+    allowEmpty,
     selected,
     isSelected,
     isDisabled,
@@ -48,7 +50,9 @@ function ChipSelect<T extends Record<string, unknown> | string>(props: IChipSele
             selected={isItemSelected}
             onPress={() =>
               onChangeSelected(
-                selected.length === 1 ? [item] : xorBy(selected, [item], JSON.stringify)
+                !allowEmpty && selected.length === 1
+                  ? [item]
+                  : xorBy(selected, [item], JSON.stringify)
               )
             }
           >

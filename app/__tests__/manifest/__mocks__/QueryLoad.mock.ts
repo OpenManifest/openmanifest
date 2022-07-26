@@ -217,7 +217,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
 
             name: 'Tandem',
           },
-          extras: [{ id: '1', name: 'Outside camera' }],
+          extras: [{ id: '1', name: 'Outside camera', __typename: 'Extra' }],
         },
       ],
     },

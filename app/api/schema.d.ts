@@ -11,6 +11,10 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** An ISO 8601-encoded date */
+  ISO8601Date: any;
+  /** An ISO 8601-encoded datetime */
+  ISO8601DateTime: any;
 };
 
 export type AnyResource = {
@@ -426,7 +430,7 @@ export type DropzoneDropzoneUsersArgs = {
 export type DropzoneLoadsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
-  earliestTimestamp?: InputMaybe<Scalars['Int']>;
+  earliestTimestamp?: InputMaybe<Scalars['ISO8601DateTime']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
@@ -493,7 +497,7 @@ export type DropzoneEdge = {
 
 export type DropzoneInput = {
   banner?: InputMaybe<Scalars['String']>;
-  federationId: Scalars['Int'];
+  federation: Scalars['Int'];
   isCreditSystemEnabled?: InputMaybe<Scalars['Boolean']>;
   isPublic?: InputMaybe<Scalars['Boolean']>;
   lat?: InputMaybe<Scalars['Float']>;
@@ -610,12 +614,23 @@ export type DropzoneUserInput = {
 export type Event = {
   __typename?: 'Event';
   action?: Maybe<EventAction>;
+  createdAt?: Maybe<Scalars['ISO8601DateTime']>;
   createdBy?: Maybe<DropzoneUser>;
+  details?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   level?: Maybe<EventLevel>;
   message?: Maybe<Scalars['String']>;
   resource?: Maybe<AnyResource>;
 };
+
+export enum EventAccessLevel {
+  /** admin */
+  Admin = 'admin',
+  /** system */
+  System = 'system',
+  /** user */
+  User = 'user'
+}
 
 export enum EventAction {
   /** assigned */
@@ -853,10 +868,8 @@ export type LoadEdge = {
 };
 
 export type LoadInput = {
-  dispatchAt?: InputMaybe<Scalars['Int']>;
+  dispatchAt?: InputMaybe<Scalars['ISO8601DateTime']>;
   gca?: InputMaybe<Scalars['Int']>;
-  hasLanded?: InputMaybe<Scalars['Boolean']>;
-  isOpen?: InputMaybe<Scalars['Boolean']>;
   loadMaster?: InputMaybe<Scalars['Int']>;
   maxSlots?: InputMaybe<Scalars['Int']>;
   name?: InputMaybe<Scalars['String']>;
@@ -1502,7 +1515,17 @@ export enum Permission {
   /** updateUserSlot */
   UpdateUserSlot = 'updateUserSlot',
   /** updateWeatherConditions */
-  UpdateWeatherConditions = 'updateWeatherConditions'
+  UpdateWeatherConditions = 'updateWeatherConditions',
+  /** viewAdminActivity */
+  ViewAdminActivity = 'viewAdminActivity',
+  /** viewRevenue */
+  ViewRevenue = 'viewRevenue',
+  /** viewStatistics */
+  ViewStatistics = 'viewStatistics',
+  /** viewSystemActivity */
+  ViewSystemActivity = 'viewSystemActivity',
+  /** viewUserActivity */
+  ViewUserActivity = 'viewUserActivity'
 }
 
 export type Plane = AnyResource & {
@@ -1511,7 +1534,7 @@ export type Plane = AnyResource & {
   dropzone: Dropzone;
   hours?: Maybe<Scalars['Int']>;
   id: Scalars['ID'];
-  maxSlots?: Maybe<Scalars['Int']>;
+  maxSlots: Scalars['Int'];
   minSlots?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   nextMaintenanceHours?: Maybe<Scalars['Int']>;
@@ -1565,14 +1588,16 @@ export type Query = {
 
 
 export type QueryActivityArgs = {
+  accessLevels?: InputMaybe<Array<EventAccessLevel>>;
   actions?: InputMaybe<Array<EventAction>>;
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
-  createdBy?: InputMaybe<Scalars['Int']>;
-  dropzone: Scalars['Int'];
+  createdBy?: InputMaybe<Array<Scalars['Int']>>;
+  dropzone?: InputMaybe<Array<Scalars['Int']>>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   levels?: InputMaybe<Array<EventLevel>>;
+  timeRange?: InputMaybe<TimeRangeInput>;
 };
 
 
@@ -1632,7 +1657,7 @@ export type QueryLoadsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
   dropzone: Scalars['Int'];
-  earliestTimestamp?: InputMaybe<Scalars['Int']>;
+  earliestTimestamp?: InputMaybe<Scalars['ISO8601DateTime']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
@@ -1717,6 +1742,7 @@ export type Rig = AnyResource & {
   make?: Maybe<Scalars['String']>;
   model?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
+  owner?: Maybe<User>;
   packValue?: Maybe<Scalars['Int']>;
   packingCard?: Maybe<Scalars['String']>;
   repackExpiresAt?: Maybe<Scalars['Int']>;
@@ -1724,7 +1750,6 @@ export type Rig = AnyResource & {
   rigType?: Maybe<Scalars['String']>;
   serial?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Int'];
-  user?: Maybe<User>;
 };
 
 
@@ -1805,7 +1830,6 @@ export type Slot = AnyResource & SellableItem & {
   rig?: Maybe<Rig>;
   ticketType?: Maybe<TicketType>;
   title?: Maybe<Scalars['String']>;
-  user?: Maybe<User>;
   wingLoading?: Maybe<Scalars['Float']>;
 };
 
@@ -1833,6 +1857,7 @@ export type SlotInput = {
   dropzoneUser?: InputMaybe<Scalars['Int']>;
   exitWeight?: InputMaybe<Scalars['Float']>;
   extras?: InputMaybe<Array<Scalars['Int']>>;
+  groupNumber?: InputMaybe<Scalars['Int']>;
   jumpType?: InputMaybe<Scalars['Int']>;
   load?: InputMaybe<Scalars['Int']>;
   passengerExitWeight?: InputMaybe<Scalars['Float']>;
@@ -1857,12 +1882,65 @@ export type Statistics = {
   dzsoCount: Scalars['Int'];
   finalizedLoadsCount: Scalars['Int'];
   gcaCount: Scalars['Int'];
+  id: Scalars['ID'];
   inactiveUserCount: Scalars['Int'];
+  /** Get the number of loads dispatched per day */
+  loadCountByDay?: Maybe<Array<StatisticsByDate>>;
   loadsCount: Scalars['Int'];
   pilotCount: Scalars['Int'];
   revenueCentsCount: Scalars['Int'];
   rigInspectorCount: Scalars['Int'];
+  /** Get the number of slots by jump type */
+  slotsByJumpType?: Maybe<Array<StatisticsByName>>;
+  slotsCount: Scalars['Int'];
   totalUserCount: Scalars['Int'];
+};
+
+
+export type StatisticsCancelledLoadsCountArgs = {
+  timeRange?: InputMaybe<TimeRangeInput>;
+};
+
+
+export type StatisticsFinalizedLoadsCountArgs = {
+  timeRange?: InputMaybe<TimeRangeInput>;
+};
+
+
+export type StatisticsLoadCountByDayArgs = {
+  timeRange?: InputMaybe<TimeRangeInput>;
+};
+
+
+export type StatisticsLoadsCountArgs = {
+  timeRange?: InputMaybe<TimeRangeInput>;
+};
+
+
+export type StatisticsRevenueCentsCountArgs = {
+  timeRange?: InputMaybe<TimeRangeInput>;
+};
+
+
+export type StatisticsSlotsByJumpTypeArgs = {
+  timeRange?: InputMaybe<TimeRangeInput>;
+};
+
+
+export type StatisticsSlotsCountArgs = {
+  timeRange?: InputMaybe<TimeRangeInput>;
+};
+
+export type StatisticsByDate = {
+  __typename?: 'StatisticsByDate';
+  count: Scalars['Int'];
+  date: Scalars['ISO8601Date'];
+};
+
+export type StatisticsByName = {
+  __typename?: 'StatisticsByName';
+  count: Scalars['Int'];
+  name: Scalars['String'];
 };
 
 export type TicketType = AnyResource & SellableItem & {
@@ -1890,6 +1968,11 @@ export type TicketTypeInput = {
   extraIds?: InputMaybe<Array<Scalars['Int']>>;
   isTandem?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
+};
+
+export type TimeRangeInput = {
+  endTime?: InputMaybe<Scalars['ISO8601DateTime']>;
+  startTime?: InputMaybe<Scalars['ISO8601DateTime']>;
 };
 
 export type Transaction = AnyResource & {
@@ -2196,8 +2279,8 @@ export type UserFederation = AnyResource & {
 };
 
 export type UserFederationInput = {
-  federationId: Scalars['Int'];
-  licenseId?: InputMaybe<Scalars['Int']>;
+  federation: Scalars['Int'];
+  license?: InputMaybe<Scalars['Int']>;
   /** User Federation ID, e.g APF number */
   uid?: InputMaybe<Scalars['String']>;
 };

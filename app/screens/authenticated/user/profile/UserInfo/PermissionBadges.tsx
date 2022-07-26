@@ -50,7 +50,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
         query: QueryDropzoneDocument,
         variables: {
           dropzoneId: state.currentDropzoneId,
-          earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
+          earliestTimestamp: startOfDay(new Date()).toISOString(),
         },
       },
       { query: DropzoneUsersDocument },
@@ -121,7 +121,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
         query: QueryDropzoneDocument,
         variables: {
           dropzoneId: state.currentDropzoneId,
-          earliestTimestamp: startOfDay(new Date()).getTime() / 1000,
+          earliestTimestamp: startOfDay(new Date()).toISOString(),
         },
       },
       {

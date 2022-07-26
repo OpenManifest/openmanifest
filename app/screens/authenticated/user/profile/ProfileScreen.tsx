@@ -12,7 +12,7 @@ import RigDialog from 'app/components/dialogs/Rig';
 import EditUserSheet from 'app/components/dialogs/User';
 
 import useImagePicker from 'app/hooks/useImagePicker';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 // eslint-disable-next-line max-len
 import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
 import useRestriction from 'app/hooks/useRestriction';
@@ -36,7 +36,7 @@ export default function ProfileScreen() {
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
-  const { currentUser } = useCurrentDropzone();
+  const { currentUser } = useDropzoneContext();
   const route = useRoute<RouteProp<ProfileRoute>>();
 
   const { dropzoneUser, loading, refetch } = useDropzoneUserProfile(

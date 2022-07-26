@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB, ProgressBar } from 'react-native-paper';
-import { useNavigation, useRoute } from '@react-navigation/core';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useNavigation } from '@react-navigation/core';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import useMutationUpdateDropzone from 'app/api/hooks/useMutationUpdateDropzone';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 
-import { Dropzone, Permission } from 'app/api/schema.d';
+import { Permission } from 'app/api/schema.d';
 import DropzoneForm from 'app/components/forms/dropzone/DropzoneForm';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
@@ -17,17 +17,15 @@ export default function UpdateDropzoneScreen() {
   const globalState = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
 
-  const route = useRoute<{ key: string; name: string; params: { dropzone: Dropzone } }>();
-  const { dropzone } = route.params;
   const navigation = useNavigation();
 
-  const { data, currentUser, loading } = useCurrentDropzone();
+  const { dropzone, currentUser, loading } = useDropzoneContext();
 
   React.useEffect(() => {
-    if (data?.dropzone?.id) {
-      dispatch(actions.forms.dropzone.setOpen(data.dropzone));
+    if (dropzone?.id) {
+      dispatch(actions.forms.dropzone.setOpen(dropzone));
     }
-  }, [data?.dropzone, data?.dropzone?.id, dispatch]);
+  }, [dropzone, dropzone?.id, dispatch]);
 
   const mutationUpdateDropzone = useMutationUpdateDropzone({
     onError: (message) =>
@@ -86,7 +84,7 @@ export default function UpdateDropzoneScreen() {
           banner: banner.value || null,
           primaryColor: primaryColor.value,
           secondaryColor: secondaryColor.value,
-          federationId: Number(federation?.value?.id),
+          federation: Number(federation?.value?.id),
           isCreditSystemEnabled: !!isCreditSystemEnabled,
           isPublic:
             isPublic?.value !== undefined &&

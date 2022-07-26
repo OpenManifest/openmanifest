@@ -1,7 +1,7 @@
 import { PlaneEssentialsFragment } from 'app/api/operations';
 import { usePlanesQuery } from 'app/api/reflection';
 import * as React from 'react';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import Select from '../select/Select';
 
 interface IPlaneSelect {
@@ -10,7 +10,7 @@ interface IPlaneSelect {
 }
 export default function PlaneSelect(props: IPlaneSelect) {
   const { onSelect, value } = props;
-  const currentDropzone = useCurrentDropzone();
+  const currentDropzone = useDropzoneContext();
 
   const { data } = usePlanesQuery({
     variables: {

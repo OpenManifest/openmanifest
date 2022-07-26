@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 
 import UsersScreen, { UserListRoute } from './user_list/UsersScreen';
 import SearchableAppBar from './user_list/AppBar';
@@ -23,7 +23,7 @@ const Users = createStackNavigator<UserRoutes>();
 export default function Routes() {
   const { isSearchVisible, searchText } = useAppSelector((root) => root.screens.users);
   const dispatch = useAppDispatch();
-  const { currentUser } = useCurrentDropzone();
+  const { currentUser } = useDropzoneContext();
 
   return (
     <Users.Navigator

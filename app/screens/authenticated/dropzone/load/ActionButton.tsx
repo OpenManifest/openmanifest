@@ -4,7 +4,7 @@ import addMinutes from 'date-fns/addMinutes';
 import { LoadDetailsFragment } from 'app/api/operations';
 
 import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 
 import { Permission, LoadState } from 'app/api/schema.d';
 import { useFinalizeLoadMutation } from 'app/api/reflection';
@@ -22,7 +22,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
 
   const { load } = props;
 
-  const currentDropzone = useCurrentDropzone();
+  const currentDropzone = useDropzoneContext();
   const { currentUser } = currentDropzone;
 
   const [mutationFinalizeLoad] = useFinalizeLoadMutation();
@@ -35,11 +35,11 @@ export default function ActionButton(props: ILoadActionButtonProps) {
 
   const updateCall = React.useCallback(
     async (minutes: number | null) => {
-      const dispatchTime = !minutes ? null : addMinutes(new Date(), minutes).getTime() / 1000;
+      const dispatchTime = !minutes ? null : addMinutes(new Date(), minutes).toISOString();
 
       await mutationUpdateLoad.mutate({
         id: Number(load.id),
-        dispatchAt: dispatchTime ? Math.ceil(dispatchTime) : null,
+        dispatchAt: dispatchTime,
         state: dispatchTime ? LoadState.BoardingCall : LoadState.Open,
       });
     },

@@ -70,7 +70,7 @@ function UserWizardScreen() {
     if (userForm.federation.value?.name?.toLowerCase() === 'apf') {
       const mutationResult = await joinFederation({
         variables: {
-          federationId: Number(userForm.federation?.value?.id),
+          federation: Number(userForm.federation?.value?.id),
         },
       });
       const license = mutationResult?.data?.joinFederation?.userFederation?.license;
@@ -95,7 +95,7 @@ function UserWizardScreen() {
       const mutationResult = await joinFederation({
         variables: {
           uid: userForm.fields.apfNumber.value,
-          federationId: Number(userForm.federation?.value?.id),
+          federation: Number(userForm.federation?.value?.id),
         },
       });
       const license = mutationResult?.data?.joinFederation?.userFederation?.license;
@@ -122,8 +122,8 @@ function UserWizardScreen() {
     try {
       const response = await joinFederation({
         variables: {
-          federationId: Number(userForm.federation?.value?.id),
-          licenseId: Number(userForm.fields.license?.value?.id),
+          federation: Number(userForm.federation?.value?.id),
+          license: Number(userForm.fields.license?.value?.id),
         },
       });
       if (response.data?.joinFederation?.errors) {

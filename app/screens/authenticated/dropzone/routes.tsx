@@ -11,6 +11,7 @@ import JumpRunScreen from './weather_conditions/JumpRunScreen';
 import WindScreen from './weather_conditions/WindScreen';
 
 import ManifestScreen from './manifest/ManifestScreen';
+import DashboardScreen from './dashboard/DashboardScreen';
 
 import User, { UserRoutes } from '../user/routes';
 import Configuration, { ConfigurationRoutes } from '../configuration/routes';
@@ -20,6 +21,7 @@ export type DropzoneRoutes = {
   WindScreen: undefined;
   ManifestScreen: undefined;
   JumpRunScreen: undefined;
+  DashboardScreen: undefined;
   User: NavigatorScreenParams<UserRoutes>;
   Configuration: NavigatorScreenParams<ConfigurationRoutes>;
 } & LoadScreenRoute;
@@ -45,6 +47,12 @@ export default function ManifestTab() {
         component={ManifestScreen}
         options={{ title: 'Manifest' }}
       />
+      <Manifest.Screen
+        name="DashboardScreen"
+        component={DashboardScreen}
+        options={{ title: 'Dashboard' }}
+      />
+
       <Manifest.Screen
         name="WeatherConditionsScreen"
         component={WeatherConditionsScreen}

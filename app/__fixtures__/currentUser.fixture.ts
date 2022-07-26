@@ -65,7 +65,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         packValue: null,
         rigType: 'sport',
         repackExpiresAt: addDays(new Date(), 20).getTime() / 1000,
-        user: {
+        owner: {
           id: '1',
           __typename: 'User',
           name: 'Court Jester',
@@ -87,7 +87,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         packValue: null,
         rigType: 'sport',
         repackExpiresAt: startOfDay(new Date()).getTime() / 1000,
-        user: {
+        owner: {
           id: '1',
           __typename: 'User',
           name: 'Court Jester',

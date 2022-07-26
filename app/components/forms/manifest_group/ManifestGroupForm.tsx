@@ -13,6 +13,7 @@ import ChipSelect from '../../input/chip_select/ChipSelect';
 
 import UserRigCard from './UserRigCard';
 import { SlotUserWithRig } from './slice';
+import GroupPicker from './GroupPicker';
 
 interface IUserCardProps {
   slotUser: SlotUserWithRig;
@@ -203,7 +204,18 @@ export default function ManifestGroupForm() {
         style={{ paddingHorizontal: 0, paddingTop: 16, flexGrow: 1 }}
         key="manifest-group-users"
       >
-        <List.Subheader>Group</List.Subheader>
+        <List.Subheader style={styles.label}>
+          Group
+          <GroupPicker
+            value={state?.fields?.groupNumber?.value || null}
+            availableGroups={
+              state?.fields?.load?.value?.slots?.map(({ groupNumber }) => groupNumber) || []
+            }
+            onChange={(groupNumber) =>
+              dispatch(actions.forms.manifestGroup.setField(['groupNumber', groupNumber]))
+            }
+          />
+        </List.Subheader>
         {state.fields?.users?.value?.map((slotUser) => (
           <UserCard {...{ slotUser }} key={`manifest-${slotUser.id}`} />
         ))}
@@ -219,6 +231,7 @@ const styles = StyleSheet.create({
   field: {
     marginBottom: 8,
   },
+  label: { justifyContent: 'space-between' },
   ticketAddons: {
     marginBottom: 8,
   },

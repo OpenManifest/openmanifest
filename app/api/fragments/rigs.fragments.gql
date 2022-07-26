@@ -12,7 +12,7 @@ fragment rigEssentials on Rig {
   packingCard
   isPublic
 
-  user {
+  owner {
     id
     name
   }
@@ -24,7 +24,7 @@ fragment rigEssentials on Rig {
 fragment userRigDetailed on Rig {
   ...rigEssentials
 
-  user {
+  owner {
     id
     rigs {
       ...rigEssentials

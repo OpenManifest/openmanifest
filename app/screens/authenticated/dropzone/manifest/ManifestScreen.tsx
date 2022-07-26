@@ -17,7 +17,7 @@ import { LoadState, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import LoadDialog from 'app/components/dialogs/Load';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { LoadDetailsFragment } from 'app/api/operations';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
@@ -40,6 +40,7 @@ const loadingFragment: LoadDetailsFragment = {
   occupiedSlots: 0,
   plane: {
     id: '__LOADING__',
+    maxSlots: 0,
   },
   state: LoadState.Open,
   weight: 0,
@@ -54,7 +55,7 @@ export default function ManifestScreen() {
   const dispatch = useAppDispatch();
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
   const [isSetupCheckComplete] = React.useState(false);
-  const { dropzone, currentUser, loading, refetch, fetchMore } = useCurrentDropzone();
+  const { dropzone, currentUser, loading, refetch, fetchMore } = useDropzoneContext();
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();

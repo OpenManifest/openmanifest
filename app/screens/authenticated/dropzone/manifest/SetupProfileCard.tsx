@@ -3,12 +3,12 @@ import { StyleSheet } from 'react-native';
 import LottieView from 'app/components/LottieView';
 import * as React from 'react';
 import { Card, List } from 'react-native-paper';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { actions, useAppDispatch } from 'app/state';
 
 export default function SetupProfileCard() {
   const navigation = useNavigation();
-  const { currentUser } = useCurrentDropzone();
+  const { currentUser } = useDropzoneContext();
   const dispatch = useAppDispatch();
 
   const onPress = React.useCallback(() => {

@@ -1,0 +1,30 @@
+mutation UpdateLoad(
+    $id: Int!
+    $pilot: Int
+    $gca: Int
+    $plane: Int
+    $loadMaster: Int
+    $dispatchAt: ISO8601DateTime
+  ) {
+    updateLoad(
+      input: {
+        id: $id
+        attributes: {
+          pilot: $pilot
+          gca: $gca
+          plane: $plane
+          loadMaster: $loadMaster
+          dispatchAt: $dispatchAt
+        }
+      }
+    ) {
+      fieldErrors {
+        field
+        message
+      }
+      errors
+      load {
+        ...loadDetails
+      }
+    }
+  }

@@ -14,6 +14,8 @@ import { Permission } from 'app/api/schema.d';
 import { Operation } from '@apollo/client';
 
 // Import your own reducer
+import { DropzoneProvider } from 'app/api/crud/useDropzone';
+import mockQueryDropzone from '../__tests__/manifest/__mocks__/QueryDropzone.mock';
 import { rootReducer, RootState } from '../state/store';
 import createMockPermissions from '../__tests__/manifest/__mocks__/QueryPermissions.mock';
 
@@ -92,6 +94,7 @@ function render(
           addTypename
           mocks={[
             ...(graphql || []),
+            mockQueryDropzone(),
             createMockPermissions(
               {},
               {
@@ -104,9 +107,11 @@ function render(
             ),
           ]}
         >
-          <Material>
-            <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
-          </Material>
+          <DropzoneProvider>
+            <Material>
+              <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+            </Material>
+          </DropzoneProvider>
         </Apollo>
       </Redux>
     );

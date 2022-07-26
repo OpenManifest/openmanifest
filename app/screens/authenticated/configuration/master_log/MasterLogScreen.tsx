@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/core';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import { Query } from 'app/api/schema.d';
 import DatePicker from 'app/components/input/date_picker/DatePicker';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 
 const QUERY_MASTER_LOG = gql`
   query MasterLog($dropzoneId: Int!, $timestamp: Int!) {
@@ -72,7 +72,7 @@ const QUERY_MASTER_LOG = gql`
   }
 `;
 export default function DropzoneMasterLogScreen() {
-  const currentDropzone = useCurrentDropzone();
+  const currentDropzone = useDropzoneContext();
   const [timestamp, setTimestamp] = React.useState(startOfDay(new Date()).getTime());
   const navigation = useNavigation();
 
@@ -121,7 +121,7 @@ export default function DropzoneMasterLogScreen() {
 
               {load.slots?.map((slot) => (
                 <DataTable.Row>
-                  <DataTable.Cell>{slot.user?.name}</DataTable.Cell>
+                  <DataTable.Cell>{slot.dropzoneUser?.user?.name}</DataTable.Cell>
                   <DataTable.Cell>{slot.jumpType?.name}</DataTable.Cell>
                   <DataTable.Cell numeric>{slot.ticketType?.altitude}</DataTable.Cell>
                 </DataTable.Row>

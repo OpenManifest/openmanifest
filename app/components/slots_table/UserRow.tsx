@@ -1,10 +1,10 @@
 import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import useRestriction from 'app/hooks/useRestriction';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import React from 'react';
-import { Caption, DataTable, Paragraph } from 'react-native-paper';
+import { Avatar, Caption, DataTable, Paragraph } from 'react-native-paper';
 import { generateColor } from 'app/utils/generateColor';
 import { isNumber } from 'lodash';
 import SwipeActions from '../layout/SwipeActions';
@@ -29,12 +29,12 @@ export interface ISlotsTableProps {
   onSlotGroupPress(slots: SlotDetailsFragment[]): void;
 }
 
-const GROUP_COLORS = Array.from({ length: 20 }).map(() => generateColor());
+export const GROUP_COLORS = Array.from({ length: 20 }).map(() => generateColor());
 
 export default function UserRow(props: ISlotsTableProps) {
   const { fields, load, slot, onDeletePress, onSlotGroupPress, onSlotPress } = props;
 
-  const currentDropzone = useCurrentDropzone();
+  const currentDropzone = useDropzoneContext();
   const { currentUser } = currentDropzone;
   const canEditSelf = useRestriction(Permission.UpdateSlot);
   const canEditOthers = useRestriction(Permission.UpdateUserSlot);
@@ -70,6 +70,7 @@ export default function UserRow(props: ISlotsTableProps) {
         }
         disabled={!!load?.hasLanded}
         onPress={() => {
+          console.debug({ slotGroup });
           if (slot.dropzoneUser?.id === currentUser?.id) {
             if (canEditSelf) {
               if (slotGroup?.length) {
@@ -88,16 +89,7 @@ export default function UserRow(props: ISlotsTableProps) {
         }}
         pointerEvents="none"
       >
-        <DataTable.Cell
-          style={{
-            paddingLeft: 0,
-            paddingRight: 0,
-            marginLeft: 0,
-            flexWrap: 'nowrap',
-            alignItems: 'center',
-            flexDirection: 'row',
-          }}
-        >
+        <DataTable.Cell style={styles.avatarCell}>
           <UserAvatar
             size={20}
             name={slot?.dropzoneUser?.user?.nickname || slot?.dropzoneUser?.user?.name || ''}
@@ -106,6 +98,8 @@ export default function UserRow(props: ISlotsTableProps) {
             }
             style={{ marginLeft: -12 }}
           />
+        </DataTable.Cell>
+        <DataTable.Cell style={styles.nameCell}>
           <Paragraph style={styles.slotText}>
             {slot?.dropzoneUser?.user?.nickname
               ? slot?.dropzoneUser?.user?.nickname
@@ -117,34 +111,34 @@ export default function UserRow(props: ISlotsTableProps) {
           ) : null}
         </DataTable.Cell>
         {fields?.includes(SlotFields.License) ? (
-          <DataTable.Cell numeric>
+          <DataTable.Cell numeric style={styles.licenseCell}>
             <Paragraph style={styles.slotText}>{slot?.dropzoneUser?.license?.name}</Paragraph>
           </DataTable.Cell>
         ) : null}
         {fields?.includes(SlotFields.Rig) ? (
-          <DataTable.Cell numeric>
+          <DataTable.Cell numeric style={styles.rigCell}>
             <Paragraph style={styles.slotText}>
               {slot?.rig ? `${slot.rig.make} ${slot.rig.model} w/ ${slot.rig.canopySize}` : null}
             </Paragraph>
           </DataTable.Cell>
         ) : null}
         {fields?.includes(SlotFields.WingLoading) ? (
-          <DataTable.Cell numeric>
+          <DataTable.Cell numeric style={styles.wingLoadingCell}>
             <Paragraph style={styles.slotText}>{slot?.wingLoading?.toFixed(2) || '-'}</Paragraph>
           </DataTable.Cell>
         ) : null}
         {!fields || fields.includes(SlotFields.JumpType) ? (
-          <DataTable.Cell numeric>
+          <DataTable.Cell numeric style={styles.jumpTypeCell}>
             <Paragraph style={styles.slotText}>{slot?.jumpType?.name}</Paragraph>
           </DataTable.Cell>
         ) : null}
         {fields?.includes(SlotFields.TicketType) ? (
-          <DataTable.Cell numeric>
+          <DataTable.Cell numeric style={styles.ticketCell}>
             <Paragraph style={styles.slotText}>{slot?.ticketType?.name}</Paragraph>
           </DataTable.Cell>
         ) : null}
         {!fields || fields.includes(SlotFields.Altitude) ? (
-          <DataTable.Cell numeric>
+          <DataTable.Cell numeric style={styles.altitudeCell}>
             <Paragraph style={styles.slotText}>
               {(slot?.ticketType?.altitude || 14000) / 1000}k
             </Paragraph>
@@ -153,14 +147,29 @@ export default function UserRow(props: ISlotsTableProps) {
       </DataTable.Row>
 
       {slot?.ticketType?.isTandem && (
-        <DataTable.Row testID="slot-row" disabled={!!load?.hasLanded} pointerEvents="none">
-          <DataTable.Cell>
-            <Paragraph style={styles.slotText}>{slot?.passengerName}</Paragraph>
+        <DataTable.Row
+          testID="slot-row"
+          disabled={!!load?.hasLanded}
+          pointerEvents="none"
+          style={
+            isNumber(slot?.groupNumber)
+              ? {
+                  borderLeftWidth: 5,
+                  borderLeftColor: GROUP_COLORS[slot.groupNumber % 20],
+                  paddingLeft: 4,
+                }
+              : undefined
+          }
+        >
+          <DataTable.Cell style={styles.avatarCell}>
+            <Avatar.Icon icon="parachute" size={20} />
           </DataTable.Cell>
-          <DataTable.Cell numeric>
-            <Paragraph style={styles.slotText}>Passenger</Paragraph>
+          <DataTable.Cell style={styles.tandemPassengerNameCell}>
+            <Paragraph style={styles.slotText}>
+              <Text style={{ fontWeight: 'bold' }}>Tandem Passenger:</Text> {slot?.passengerName}
+            </Paragraph>
           </DataTable.Cell>
-          <DataTable.Cell numeric>
+          <DataTable.Cell numeric style={styles.altitudeCell}>
             <Paragraph style={styles.slotText}>
               {(slot?.ticketType?.altitude || 14000) / 1000}k
             </Paragraph>
@@ -171,11 +180,41 @@ export default function UserRow(props: ISlotsTableProps) {
   );
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   slotText: {
     fontSize: 12,
     alignSelf: 'center',
     height: 24,
     textAlignVertical: 'center',
+  },
+  avatarCell: {
+    flex: 1,
+  },
+  licenseCell: {
+    flex: 3,
+  },
+  rigCell: {
+    flex: 3,
+  },
+  wingLoadingCell: {
+    flex: 3,
+  },
+  jumpTypeCell: {
+    flex: 3,
+  },
+  altitudeCell: {
+    flex: 3,
+  },
+  nameCell: {
+    flex: 6,
+  },
+  tandemPassengerNameCell: {
+    flexGrow: 20,
+  },
+  tandemInfoCell: {
+    flex: 1,
+  },
+  ticketCell: {
+    flex: 3,
   },
 });

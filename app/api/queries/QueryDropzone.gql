@@ -1,7 +1,13 @@
 #import "../fragments/dropzones.fragments.gql"
 
-query QueryDropzone($dropzoneId: Int!, $earliestTimestamp: Int) {
+query QueryDropzone($dropzoneId: Int!, $earliestTimestamp: ISO8601DateTime) {
   dropzone(id: $dropzoneId) {
     ...dropzoneExtensive
+  }
+}
+
+query DropzoneStatistics($dropzoneId: Int!, $timeRange: TimeRangeInput) {
+  dropzone(id: $dropzoneId) {
+    ...dropzoneStatistics
   }
 }

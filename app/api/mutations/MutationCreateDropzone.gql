@@ -1,19 +1,19 @@
 mutation CreateDropzone(
   $name: String!
   $banner: String
-  $federationId: Int!
+  $federation: Int!
   $lat: Float
   $lng: Float
   $primaryColor: String
   $secondaryColor: String
-  $earliestTimestamp: Int
+  $earliestTimestamp: ISO8601DateTime
 ) {
   createDropzone(
     input: {
       attributes: {
         name: $name
         banner: $banner
-        federationId: $federationId
+        federation: $federation
         primaryColor: $primaryColor
         secondaryColor: $secondaryColor
         lat: $lat

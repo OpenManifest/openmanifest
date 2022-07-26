@@ -3,12 +3,14 @@ mutation ManifestGroup(
   $extras: [Int!]
   $load: Int
   $ticketType: Int
+  $groupNumber: Int
   $userGroup: [SlotUser!]!
 ) {
   createSlots(
     input: {
       attributes: {
         jumpType: $jumpType
+        groupNumber: $groupNumber
         extras: $extras
         load: $load
         ticketType: $ticketType

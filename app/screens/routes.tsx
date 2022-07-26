@@ -29,6 +29,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
               Manifest: {
                 screens: {
                   ManifestScreen: '/dropzone/manifest',
+                  DashboardScreen: '/dropzone/overview',
                   Configuration: {
                     screens: {
                       AircraftScreen: '/dropzone/configuration/aircraft/:planeId',

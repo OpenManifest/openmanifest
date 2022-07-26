@@ -3,7 +3,7 @@ import { Paragraph, useTheme, IconButton } from 'react-native-paper';
 import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import Color from 'color';
 import { useNavigation } from '@react-navigation/core';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 
 interface ISetupWarning {
   credits: number;
@@ -56,7 +56,7 @@ export default function SetupWarning(props: ISetupWarning) {
     onSetupWizard,
   } = props;
   const navigation = useNavigation();
-  const { currentUser } = useCurrentDropzone();
+  const { currentUser } = useDropzoneContext();
 
   if (loading) {
     return null;

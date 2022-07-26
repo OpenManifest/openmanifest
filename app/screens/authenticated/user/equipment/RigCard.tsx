@@ -8,7 +8,7 @@ import {
   RigEssentialsFragment,
   DropzoneUserEssentialsFragment,
 } from 'app/api/operations';
-import useCurrentDropzone from 'app/api/hooks/useCurrentDropzone';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import useRestriction from 'app/hooks/useRestriction';
 import useImagePicker from 'app/hooks/useImagePicker';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
@@ -33,7 +33,7 @@ export default function RigCard(props: IRigCardProps) {
   const [isUploading, setUploading] = React.useState(false);
   const { accent } = useAppSelector((root) => root.global.theme.colors);
   const dispatch = useAppDispatch();
-  const { currentUser } = useCurrentDropzone();
+  const { currentUser } = useDropzoneContext();
   const pickImage = useImagePicker();
 
   const updateRig = useMutationUpdateRig({
@@ -73,7 +73,7 @@ export default function RigCard(props: IRigCardProps) {
   const canManageDropzoneRigs = useRestriction(Permission.UpdateDropzoneRig);
   const navigation = useUserNavigation();
   const canUpdateRig =
-    currentUser?.user?.id === rig.user?.id || (rig?.dropzone?.id && canManageDropzoneRigs);
+    currentUser?.user?.id === rig.owner?.id || (rig?.dropzone?.id && canManageDropzoneRigs);
 
   const theme = useTheme();
 

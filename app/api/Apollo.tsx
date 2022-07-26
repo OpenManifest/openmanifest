@@ -9,6 +9,7 @@ import * as React from 'react';
 import * as Update from 'expo-updates';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
+import { relayStylePagination } from '@apollo/client/utilities';
 import { actions, useAppDispatch, useAppSelector } from '../state';
 
 export default function Apollo({ children }: { children: React.ReactNode }) {
@@ -96,7 +97,11 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
     () =>
       new ApolloClient({
         link: errorLink.concat(authLink).concat(new RetryLink()).concat(httpBatchLink),
-        cache: new InMemoryCache(),
+        cache: new InMemoryCache({
+          typePolicies: {
+            Event: relayStylePagination(),
+          },
+        }),
       }),
     [authLink, errorLink, httpBatchLink]
   );

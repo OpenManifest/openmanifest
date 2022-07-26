@@ -151,6 +151,7 @@ export default createSlice({
     setDropzone: (state: IGlobalState, action: PayloadAction<DropzoneExtensiveFragment | null>) => {
       state.currentDropzone = action.payload;
       state.currentDropzoneId = action.payload?.id ? Number(action.payload?.id) : null;
+      console.debug('Setting id', action?.payload?.id);
 
       if (state.currentDropzone?.primaryColor) {
         state.theme.colors.primary = state.currentDropzone?.primaryColor;

@@ -52,6 +52,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         variables: {
           jumpType: Number(state.fields.jumpType.value?.id),
           ticketType: Number(state.fields.ticketType.value?.id),
+          groupNumber: Number(state.fields?.groupNumber?.value) || null,
           extras: state.fields.extras?.value?.map(({ id }) => Number(id)),
           load: Number(state.fields.load.value?.id),
           userGroup: state.fields.users.value?.map(
@@ -106,15 +107,16 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       }
     }
   }, [
-    dispatch,
-    mutationCreateSlots,
-    onClose,
-    state.fields.extras?.value,
-    state.fields.jumpType.value?.id,
-    state.fields.load.value?.id,
-    state.fields.ticketType.value?.id,
-    state.fields.users.value,
     validate,
+    state.fields.users.value,
+    state.fields.jumpType.value?.id,
+    state.fields.ticketType.value?.id,
+    state.fields?.groupNumber?.value,
+    state.fields.extras?.value,
+    state.fields.load.value?.id,
+    mutationCreateSlots,
+    dispatch,
+    onClose,
   ]);
 
   // dispatch(actions.forms.manifestGroup.setDropzoneUsers(screens.manifest.selectedUsers));

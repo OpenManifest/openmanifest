@@ -1,62 +1,8 @@
-import gql from 'graphql-tag';
 import { createMutation, isNumeric, isRequired } from '../createMutation';
 import { CreateLoadPayload, LoadInput } from '../schema';
+import { CreateLoadDocument } from '../reflection';
 
-const MUTATION_CREATE_LOAD = gql`
-  mutation CreateLoad(
-    $name: String
-    $pilot: Int
-    $gca: Int
-    $maxSlots: Int!
-    $plane: Int
-    $isOpen: Boolean
-  ) {
-    createLoad(
-      input: {
-        attributes: {
-          name: $name
-          pilot: $pilot
-          gca: $gca
-          maxSlots: $maxSlots
-          plane: $plane
-          isOpen: $isOpen
-        }
-      }
-    ) {
-      load {
-        id
-        name
-        loadNumber
-        occupiedSlots
-        availableSlots
-        maxSlots
-        pilot {
-          id
-          user {
-            id
-            name
-          }
-        }
-        gca {
-          id
-          user {
-            id
-            name
-          }
-        }
-        maxSlots
-        isOpen
-      }
-      fieldErrors {
-        field
-        message
-      }
-      errors
-    }
-  }
-`;
-
-export default createMutation<LoadInput, CreateLoadPayload>(MUTATION_CREATE_LOAD, {
+export default createMutation<LoadInput, CreateLoadPayload>(CreateLoadDocument, {
   getPayload: (result) => result.createLoad,
   validates: {
     maxSlots: [

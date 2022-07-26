@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import useMutationCreateExtra from '../../api/hooks/useMutationCreateExtra';
 import useMutationUpdateExtra from '../../api/hooks/useMutationUpdateExtra';
 import { actions, useAppSelector, useAppDispatch } from '../../state';
 import ExtraForm from '../forms/extra/ExtraForm';
 import DialogOrSheet from '../layout/DialogOrSheet';
-import useCurrentDropzone from '../../api/hooks/useCurrentDropzone';
 import { ExtraFields } from '../forms/extra/slice';
 
 interface ITicketTypeExtraDialog {
@@ -13,7 +13,7 @@ interface ITicketTypeExtraDialog {
 }
 export default function TicketTypeExtraDialog(props: ITicketTypeExtraDialog) {
   const { open, onClose } = props;
-  const currentDropzone = useCurrentDropzone();
+  const currentDropzone = useDropzoneContext();
   const state = useAppSelector((root) => root.forms.extra);
   const dispatch = useAppDispatch();
 
