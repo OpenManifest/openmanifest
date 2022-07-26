@@ -7,7 +7,7 @@ import { sortedUniq } from 'lodash';
 interface IGroupPickerProps {
   value?: number | null;
   availableGroups: number[];
-  onChange(group: number): void;
+  onChange(group: number | null): void;
 }
 export default function GroupPicker(props: IGroupPickerProps) {
   const { value, onChange, availableGroups } = props;
