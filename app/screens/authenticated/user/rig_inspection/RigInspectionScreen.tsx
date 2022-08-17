@@ -6,7 +6,7 @@ import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import RigInspectionForm from 'app/components/forms/rig_inspection/RigInspectionForm';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import {
-  QueryDropzoneDocument,
+  DropzoneDocument,
   QueryDropzoneUserProfileDocument,
   useCreateRigInspectionMutation,
   useQueryDropzoneUserProfile,
@@ -107,7 +107,7 @@ export default function RigInspectionScreen() {
           });
 
           const currentDz = client.readQuery<Query>({
-            query: QueryDropzoneDocument,
+            query: DropzoneDocument,
             variables: {
               dropzoneId: Number(currentDropzone?.dropzone?.id),
               earliestTimestamp: startOfDay(new Date()).toISOString(),
@@ -116,7 +116,7 @@ export default function RigInspectionScreen() {
 
           if (currentDz?.dropzone?.currentUser?.id === rigInspection?.dropzoneUser?.id) {
             client.writeQuery({
-              query: QueryDropzoneDocument,
+              query: DropzoneDocument,
               variables: {
                 dropzoneId: Number(currentDropzone?.dropzone?.id),
                 earliestTimestamp: startOfDay(new Date()).toISOString(),

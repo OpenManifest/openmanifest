@@ -503,7 +503,7 @@ type DeleteUserPayload {
 type Dropzone implements AnyResource & Wallet {
   allowedJumpTypes(userId: [Int!]!): [JumpType!]!
   banner: String
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   currentConditions: WeatherCondition!
   currentUser: DropzoneUser!
   dropzoneUser(id: Int, userId: Int): DropzoneUser
@@ -648,7 +648,7 @@ type Dropzone implements AnyResource & Wallet {
   secondaryColor: String
   statistics: Statistics!
   ticketTypes(isPublic: Boolean): [TicketType!]!
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
   userRoles: [UserRole!]!
 }
 

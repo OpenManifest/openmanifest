@@ -1,6 +1,6 @@
 #import "../fragments/dropzones.fragments.gql"
 
-query QueryDropzone($dropzoneId: Int!, $earliestTimestamp: ISO8601DateTime) {
+query Dropzone($dropzoneId: Int!, $earliestTimestamp: ISO8601DateTime) {
   dropzone(id: $dropzoneId) {
     ...dropzoneExtensive
   }
@@ -9,5 +9,21 @@ query QueryDropzone($dropzoneId: Int!, $earliestTimestamp: ISO8601DateTime) {
 query DropzoneStatistics($dropzoneId: Int!, $timeRange: TimeRangeInput) {
   dropzone(id: $dropzoneId) {
     ...dropzoneStatistics
+  }
+}
+
+query DropzonesStatistics($timeRange: TimeRangeInput, $after: String) {
+  dropzones(after: $after) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      endCursor
+    }
+    edges {
+      cursor
+      node {
+        ...dropzoneStatistics
+      }
+    }
   }
 }

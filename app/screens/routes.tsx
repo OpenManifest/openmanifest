@@ -26,6 +26,12 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
         screens: {
           LeftDrawer: {
             screens: {
+              Overview: {
+                screens: {
+                  DashboardScreen: '/dropzone/dashboard',
+                  OverviewScreen: '/overview',
+                },
+              },
               Manifest: {
                 screens: {
                   ManifestScreen: '/dropzone/manifest',

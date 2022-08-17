@@ -15,9 +15,11 @@ import { NavigatorScreenParams } from '@react-navigation/core';
 import ManifestTab, { DropzoneRoutes } from './dropzone/routes';
 import UsersTab, { UserRoutes } from './user/routes';
 import NotificationsTab, { NotificationRoutes } from './notifications/routes';
+import OverviewTab, { OverviewRoutes } from './overview/routes';
 
 export type AuthenticatedRoutes = {
   Manifest: NavigatorScreenParams<DropzoneRoutes>;
+  Overview: NavigatorScreenParams<OverviewRoutes>;
   Users: NavigatorScreenParams<UserRoutes>;
   Notifications: NavigatorScreenParams<NotificationRoutes>;
 };
@@ -30,6 +32,7 @@ export default function AuthenticatedTabBar() {
   const isDarkMode = Appearance.getColorScheme() === 'dark';
 
   const canViewUsers = useRestriction(Permission.ReadUser);
+  const canViewDashboard = useRestriction(Permission.ViewStatistics);
   const theme = useTheme();
 
   const tabConfig = React.useMemo(
@@ -168,6 +171,34 @@ export default function AuthenticatedTabBar() {
 
   return (
     <BottomTab.Navigator initialRouteName="Manifest" {...tabBarProps} {...{ screenOptions }}>
+      {canViewDashboard && (
+        <BottomTab.Screen
+          name="Overview"
+          component={OverviewTab}
+          options={{
+            tabBarLabel: ({ focused, color }) =>
+              !focused ? null : (
+                <Text
+                  style={[
+                    styles.label,
+                    { color: isDarkMode && focused ? theme.colors.primary : color },
+                  ]}
+                >
+                  Overview
+                </Text>
+              ),
+            tabBarIcon: ({ focused, color, size }) => (
+              <MaterialCommunityIcons
+                name="view-dashboard"
+                {...{ size }}
+                style={[styles.icon, focused ? styles.iconActive : undefined]}
+                color={isDarkMode && focused ? theme.colors.primary : color}
+              />
+            ),
+            unmountOnBlur: false,
+          }}
+        />
+      )}
       <BottomTab.Screen
         name="Manifest"
         component={ManifestTab}

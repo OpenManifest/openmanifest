@@ -2,7 +2,7 @@ import * as React from 'react';
 import { startOfDay } from 'date-fns';
 import {
   useJoinFederationMutation,
-  QueryDropzoneDocument,
+  DropzoneDocument,
   QueryDropzoneUserProfileDocument,
 } from 'app/api/reflection';
 import UserForm from '../forms/user/UserForm';
@@ -42,7 +42,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
     mutation: {
       refetchQueries: [
         {
-          query: QueryDropzoneDocument,
+          query: DropzoneDocument,
           variables: {
             dropzoneId: currentDropzoneId,
             earliestTimestamp: startOfDay(new Date()).toISOString(),
