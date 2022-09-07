@@ -180,15 +180,7 @@ export default function DashboardPage() {
           />
           <JumpTypePieChart
             style={styles.jumpTypesCard}
-            data={[
-              { name: 'freefly', count: 250 },
-              { name: 'ws', count: 43 },
-              { name: 'angle', count: 320 },
-              { name: 'hnp', count: 100 },
-              { name: 'hp', count: 100 },
-              { name: 'cam', count: 100 },
-              { name: 'fs', count: 100 },
-            ]}
+            data={data?.dropzone?.statistics?.slotsByJumpType || []}
           />
         </View>
       )}

@@ -1,3 +1,4 @@
+import { differenceInDays } from 'date-fns';
 import * as React from 'react';
 import { LayoutChangeEvent, ViewProps } from 'react-native';
 import { ContributionGraph } from 'react-native-chart-kit';
@@ -20,20 +21,9 @@ export default function LoadsByDay(props: ILoadsByDayProps) {
       <Card.Title title="Dispatched Loads" />
       <Card.Content>
         <ContributionGraph
-          // values={data}
-          values={[
-            { date: '2022-08-10', count: 1 },
-            { date: '2022-08-11', count: 6 },
-            { date: '2022-08-19', count: 12 },
-            { date: '2022-08-20', count: 2 },
-            { date: '2022-08-23', count: 4 },
-            { date: '2022-08-24', count: 6 },
-            { date: '2022-08-29', count: 10 },
-            { date: '2022-08-30', count: 10 },
-            { date: '2022-08-30', count: 8 },
-          ]}
+          values={data}
           endDate={new Date()}
-          numDays={90}
+          numDays={differenceInDays(new Date(), startTime || new Date())}
           height={(dimensions.height || 100) - 75}
           tooltipDataAttrs={(a) => ({})}
           showOutOfRangeDays
