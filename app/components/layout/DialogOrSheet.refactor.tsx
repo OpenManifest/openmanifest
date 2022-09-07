@@ -11,6 +11,7 @@ import {
   BottomSheetView,
   useBottomSheetModal,
 } from '@gorhom/bottom-sheet';
+import useKeyboardVisibility from 'app/hooks/useKeyboardVisibility';
 
 interface IBottomSheetProps {
   name?: string;
@@ -76,20 +77,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
   );
   const [index, onChange] = React.useState(-1);
   const snappingPoints = useBottomSheetDynamicSnapPoints(points);
-  const [keyboardVisible, setKeyboardVisible] = React.useState(false);
-
-  const onKeyboardVisible = () => setKeyboardVisible(true);
-  const onKeyboardHidden = () => setKeyboardVisible(false);
-
-  React.useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', onKeyboardVisible);
-    Keyboard.addListener('keyboardDidHide', onKeyboardHidden);
-
-    return () => {
-      Keyboard.removeListener('keyboardDidShow', onKeyboardVisible);
-      Keyboard.removeListener('keyboardDidHide', onKeyboardHidden);
-    };
-  }, []);
+  const keyboardVisible = useKeyboardVisibility();
 
   const onDismiss = React.useCallback(() => {
     console.log('Dismissed');

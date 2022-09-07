@@ -1,14 +1,11 @@
-import { BottomTabBarProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
-import { Appearance, Platform, StyleSheet, Text } from 'react-native';
-import type { TabsConfig, BubbleTabBarItemConfig } from '@gorhom/animated-tabbar';
-import Animated from 'react-native-reanimated';
+import { Appearance, Platform, StyleSheet } from 'react-native';
 
 import { useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
-import AnimatedTabBar from 'app/components/bottom_tabs/AnimatedTabBar';
+
 import { useTheme } from 'react-native-paper';
 
 import { NavigatorScreenParams } from '@react-navigation/core';
@@ -17,15 +14,14 @@ import UsersTab, { UserRoutes } from './user/routes';
 import NotificationsTab, { NotificationRoutes } from './notifications/routes';
 import OverviewTab, { OverviewRoutes } from './overview/routes';
 
+import BottomTab from './TabBar';
+
 export type AuthenticatedRoutes = {
   Manifest: NavigatorScreenParams<DropzoneRoutes>;
   Overview: NavigatorScreenParams<OverviewRoutes>;
   Users: NavigatorScreenParams<UserRoutes>;
   Notifications: NavigatorScreenParams<NotificationRoutes>;
 };
-
-const BottomTab = createBottomTabNavigator<AuthenticatedRoutes>();
-const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
 export default function AuthenticatedTabBar() {
   const { palette } = useAppSelector((root) => root.global);
@@ -35,116 +31,7 @@ export default function AuthenticatedTabBar() {
   const canViewDashboard = useRestriction(Permission.ViewStatistics);
   const theme = useTheme();
 
-  const tabConfig = React.useMemo(
-    () => ({
-      labelStyle: {
-        color: theme.dark ? theme.colors.onSurface : palette.surface,
-      },
-      icon: {
-        activeColor: palette.surface,
-        inactiveColor: palette.primary.dark,
-      },
-      background: {
-        // activeColor: palette.primary.main,
-        activeColor: palette.placeholder,
-        inactiveColor: theme.colors.surface,
-      },
-    }),
-    [
-      palette.placeholder,
-      palette.primary.dark,
-      palette.surface,
-      theme.colors.onSurface,
-      theme.colors.surface,
-      theme.dark,
-    ]
-  );
-  const tabs: TabsConfig<BubbleTabBarItemConfig> = React.useMemo(
-    () => ({
-      Manifest: {
-        ...tabConfig,
-        icon: {
-          ...tabConfig.icon,
-          component: ({ animatedFocus, size, color }) => (
-            <AnimatedIcon
-              name="airplane"
-              style={[styles.icon, animatedFocus ? styles.iconActive : undefined]}
-              {...{ size, color: color as unknown as string }}
-            />
-          ),
-        },
-      },
-      Notifications: {
-        ...tabConfig,
-        icon: {
-          ...tabConfig.icon,
-          component: ({ animatedFocus, size, color }) => (
-            <AnimatedIcon
-              name="bell-outline"
-              style={[styles.icon, animatedFocus ? styles.iconActive : undefined]}
-              {...{ size, color: color as unknown as string }}
-            />
-          ),
-        },
-      },
-      Users: {
-        ...tabConfig,
-        icon: {
-          ...tabConfig.icon,
-          component: ({ animatedFocus, size, color }) => (
-            <AnimatedIcon
-              name="account-group-outline"
-              style={[styles.icon, animatedFocus ? styles.iconActive : undefined]}
-              {...{ size, color: color as unknown as string }}
-            />
-          ),
-        },
-      },
-    }),
-    [tabConfig]
-  );
-
-  const tabBarProps = React.useMemo(
-    () =>
-      Platform.select({
-        web: {},
-        ios: {
-          tabBar: (props: BottomTabBarProps) => (
-            <AnimatedTabBar
-              preset="bubble"
-              tabs={tabs}
-              style={{
-                borderTopColor: 'gray',
-                borderTopWidth: StyleSheet.hairlineWidth,
-                backgroundColor: theme.dark ? theme.colors.background : theme.colors.surface,
-              }}
-              {...props}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              animation="iconWithLabelOnFocus"
-              inactiveOpacity={0.25}
-              inactiveScale={0.5}
-              {...props}
-            />
-          ),
-        },
-        android: {
-          tabBar: (props: BottomTabBarProps) => (
-            <AnimatedTabBar
-              preset="bubble"
-              tabs={tabs}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              animation="iconWithLabelOnFocus"
-              inactiveOpacity={0.25}
-              inactiveScale={0.5}
-              {...props}
-            />
-          ),
-        },
-      }),
-    [tabs, theme.colors.background, theme.colors.surface, theme.dark]
-  );
+  console.debug({ isDarkMode, dark: theme.dark });
 
   const screenOptions = React.useMemo(
     () => ({
@@ -170,29 +57,31 @@ export default function AuthenticatedTabBar() {
   );
 
   return (
-    <BottomTab.Navigator initialRouteName="Manifest" {...tabBarProps} {...{ screenOptions }}>
+    <BottomTab.Navigator
+      appearance={{
+        tabBarBackground: theme.colors.surface,
+        topPadding: 16,
+        shadow: true,
+        bottomPadding: 16,
+      }}
+      tabBarOptions={{
+        activeTintColor: '#FFFFFF',
+        inactiveTintColor: palette.primary.main,
+        activeBackgroundColor: palette.primary.main,
+      }}
+      initialRouteName="Manifest"
+      {...{ screenOptions }}
+    >
       {canViewDashboard && (
         <BottomTab.Screen
           name="Overview"
           component={OverviewTab}
           options={{
-            tabBarLabel: ({ focused, color }) =>
-              !focused ? null : (
-                <Text
-                  style={[
-                    styles.label,
-                    { color: isDarkMode && focused ? theme.colors.primary : color },
-                  ]}
-                >
-                  Overview
-                </Text>
-              ),
             tabBarIcon: ({ focused, color, size }) => (
               <MaterialCommunityIcons
-                name="view-dashboard"
-                {...{ size }}
+                name="view-dashboard-outline"
+                {...{ size, color }}
                 style={[styles.icon, focused ? styles.iconActive : undefined]}
-                color={isDarkMode && focused ? theme.colors.primary : color}
               />
             ),
             unmountOnBlur: false,
@@ -203,23 +92,11 @@ export default function AuthenticatedTabBar() {
         name="Manifest"
         component={ManifestTab}
         options={{
-          tabBarLabel: ({ focused, color }) =>
-            !focused ? null : (
-              <Text
-                style={[
-                  styles.label,
-                  { color: isDarkMode && focused ? theme.colors.primary : color },
-                ]}
-              >
-                Manifest
-              </Text>
-            ),
           tabBarIcon: ({ focused, color, size }) => (
             <MaterialCommunityIcons
               name="airplane"
-              {...{ size }}
+              {...{ size, color }}
               style={[styles.icon, focused ? styles.iconActive : undefined]}
-              color={isDarkMode && focused ? theme.colors.primary : color}
             />
           ),
           unmountOnBlur: false,
@@ -229,23 +106,11 @@ export default function AuthenticatedTabBar() {
         name="Notifications"
         component={NotificationsTab}
         options={{
-          tabBarLabel: ({ focused, color }) =>
-            !focused ? null : (
-              <Text
-                style={[
-                  styles.label,
-                  { color: isDarkMode && focused ? theme.colors.primary : color },
-                ]}
-              >
-                Notifications
-              </Text>
-            ),
           tabBarIcon: ({ focused, color, size }) => (
             <MaterialCommunityIcons
-              name="bell"
+              name="bell-outline"
               style={[styles.icon, focused ? styles.iconActive : undefined]}
-              {...{ size }}
-              color={isDarkMode && focused ? theme.colors.primary : color}
+              {...{ size, color }}
             />
           ),
           unmountOnBlur: true,
@@ -256,23 +121,11 @@ export default function AuthenticatedTabBar() {
           name="Users"
           component={UsersTab}
           options={{
-            tabBarLabel: ({ focused, color }) =>
-              !focused ? null : (
-                <Text
-                  style={[
-                    styles.label,
-                    { color: isDarkMode && focused ? theme.colors.primary : color },
-                  ]}
-                >
-                  Users
-                </Text>
-              ),
             tabBarIcon: ({ size, color, focused }) => (
               <MaterialCommunityIcons
                 {...{ size, color }}
-                name="account-group"
+                name="account-group-outline"
                 style={[styles.icon, focused ? styles.iconActive : undefined]}
-                color={isDarkMode && focused ? theme.colors.primary : color}
               />
             ),
             unmountOnBlur: true,

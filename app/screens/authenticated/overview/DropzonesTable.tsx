@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList, ScrollView } from 'react-native';
 import { Card, DataTable, HelperText } from 'react-native-paper';
 import UserAvatar from 'app/components/UserAvatar';
 import { format, parseISO } from 'date-fns';
@@ -31,7 +31,9 @@ function DropzoneTableRow(props: { dropzone?: DropzoneStatisticsFragment | null 
       </DataTable.Cell>
       <DataTable.Cell style={styles.nameCell}>{dropzone.name}</DataTable.Cell>
       <DataTable.Cell style={styles.createdCell}>
-        <HelperText type="info">{format(parseISO(dropzone.createdAt), 'dd MMM, HH:mm')}</HelperText>
+        <HelperText type="info">
+          {/* format(parseISO(dropzone.createdAt), 'dd MMM, HH:mm') */}
+        </HelperText>
       </DataTable.Cell>
       <DataTable.Cell style={styles.statusCell}>
         {dropzone?.requestPublication && !dropzone?.isPublic ? 'Review' : null}
@@ -51,9 +53,9 @@ export default function DropzonesTable(props: IDropzonesTableProps) {
   const { dropzones, onChangeSelected, selected } = props;
 
   return (
-    <Card style={{ flexGrow: 1 }}>
+    <Card style={{ flexGrow: 1, width: '100%' }}>
       <Card.Title title="Dropzones" />
-      <Card.Content>
+      <Card.Content style={{ width: '100%' }}>
         <ChipSelect
           allowEmpty
           items={dropzones}
@@ -61,22 +63,30 @@ export default function DropzonesTable(props: IDropzonesTableProps) {
           selected={selected}
           renderItemLabel={(value) => value.name}
         />
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title style={styles.avatarCell}>{null}</DataTable.Title>
-            <DataTable.Title style={styles.nameCell}>Name</DataTable.Title>
-            <DataTable.Title style={styles.createdCell}>Created</DataTable.Title>
-            <DataTable.Title style={styles.statusCell}>Status</DataTable.Title>
-            <DataTable.Title style={styles.loadsCell}>Loads</DataTable.Title>
-            <DataTable.Title style={styles.usersCell}>Active Users</DataTable.Title>
-          </DataTable.Header>
-          <FlatList
-            data={dropzones}
-            renderItem={({ item }) =>
-              !item ? null : <DropzoneTableRow key={`dropzone-row=${item?.id}`} dropzone={item} />
-            }
-          />
-        </DataTable>
+        <ScrollView
+          horizontal
+          alwaysBounceVertical={false}
+          showsVerticalScrollIndicator={false}
+          style={{ width: '100%', height: '100%', flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title style={styles.avatarCell}>{null}</DataTable.Title>
+              <DataTable.Title style={styles.nameCell}>Name</DataTable.Title>
+              <DataTable.Title style={styles.createdCell}>Created</DataTable.Title>
+              <DataTable.Title style={styles.statusCell}>Status</DataTable.Title>
+              <DataTable.Title style={styles.loadsCell}>Loads</DataTable.Title>
+              <DataTable.Title style={styles.usersCell}>Active Users</DataTable.Title>
+            </DataTable.Header>
+            <FlatList
+              data={dropzones}
+              renderItem={({ item }) =>
+                !item ? null : <DropzoneTableRow key={`dropzone-row=${item?.id}`} dropzone={item} />
+              }
+            />
+          </DataTable>
+        </ScrollView>
       </Card.Content>
     </Card>
   );

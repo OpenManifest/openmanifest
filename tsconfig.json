@@ -24,7 +24,10 @@
     "jest.setup.ts",
     "app/**/*",
     "png.d.ts",
-    ".eslintrc.js"
+    "global.d.ts",
+    ".eslintrc.js",
+    "index.ts",
+    "patches/deprecated-prop-types.ts"
   ],
   "extends": "expo/tsconfig.base",
 }

@@ -92,13 +92,7 @@ export default function WeatherBoard() {
 
   const defaultBackground = theme.dark ? nightBackground : weatherBackground;
 
-  return (loading && !dropzone?.currentConditions) || !called ? (
-    <SkeletonContent
-      containerStyle={styles.card}
-      isLoading
-      layout={[{ key: 'root', height: 200, width: '100%' }]}
-    />
-  ) : (
+  return (loading && !dropzone?.currentConditions) || !called ? null : (
     <Animated.View
       style={{
         height: height.current.interpolate({ inputRange: [0, 1], outputRange: [200, 300] }),
@@ -222,7 +216,7 @@ export default function WeatherBoard() {
                     ))}
                   </Animated.View>
                   <View style={styles.jumpRun} pointerEvents="box-none">
-                    <Text style={[styles.header, { textAlign: 'center' }]}>
+                    <Text style={[styles.header, { textAlign: 'left' }]}>
                       Jump run {jumpRun}&deg;
                     </Text>
                     <TouchableOpacity
@@ -249,8 +243,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     borderRadius: 10,
     marginBottom: 30,
-    marginHorizontal: 16,
-    // height: 200,
+    height: 200,
+    width: '100%',
     overflow: 'hidden',
     backgroundColor: 'transparent',
   },
@@ -303,6 +297,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   header: {
+    flexGrow: 3,
     fontWeight: 'bold',
     color: '#ffffff',
     textShadowOffset: {
@@ -355,7 +350,7 @@ const styles = StyleSheet.create({
   jumpRun: {
     width: 94,
     height: 94,
-    marginBottom: 8,
+    marginBottom: 24,
     flexDirection: 'column',
     alignItems: 'flex-end',
   },

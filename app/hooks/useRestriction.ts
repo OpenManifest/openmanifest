@@ -5,6 +5,5 @@ export default function useRestriction(permission: Permission): boolean {
   const { permissions } = useDropzoneContext();
 
   const check = permissions?.includes(permission as Permission) || false;
-  console.debug(`Checking permission ${permission}: ${check}`, permissions);
   return check;
 }

@@ -1,27 +1,17 @@
 import { useDropzonesStatisticsQuery } from 'app/api/reflection';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Card } from 'react-native-paper';
+import { View, StyleSheet, Platform } from 'react-native';
 import { successColor, warningColor } from 'app/constants/Colors';
 import { parseISO, subMonths } from 'date-fns';
 import Chip from 'app/components/chips/Chip';
-import { PieChart } from 'react-native-chart-kit';
-import { sortBy, sumBy } from 'lodash';
+import { sumBy } from 'lodash';
 import { DropzoneStatisticsFragment } from 'app/api/operations';
-import Stats, { IStatsProps } from './Stats';
-import LoadsByDay from './LoadsByDay';
+import { Card } from 'react-native-paper';
+import Stats, { IStatsProps } from './statistics/Stats';
+import LoadsByDay from './statistics/LoadsByDay';
 import DropzonesTable from './DropzonesTable';
-
-const JUMP_TYPE_COLORS = {
-  angle: '#AA0000',
-  cam: '#FFAA00',
-  ws: '#AAFF00',
-  hnp: '#ABABFF',
-  hp: '#BAFFBA',
-  fs: '#DD00FF',
-  freefly: '#00ABFF',
-};
+import JumpTypePieChart from './statistics/JumpTypePieChart';
 
 enum TimeRange {
   AllTime = 0,
@@ -55,7 +45,7 @@ export default function DashboardPage() {
 
   const [selectedDropzones, setSelectedDropzones] = React.useState<DropzoneStatisticsFragment[]>();
 
-  const { data, loading } = useDropzonesStatisticsQuery({
+  const { data } = useDropzonesStatisticsQuery({
     variables: {
       timeRange,
     },
@@ -114,33 +104,43 @@ export default function DashboardPage() {
     [selectedDropzones]
   );
   return (
-    <ScrollableScreen>
-      <View style={styles.row}>
-        <Chip selected={!selectedTimeRange} onPress={createTimeRangeHandler()}>
-          All time
-        </Chip>
-        <Chip
-          selected={selectedTimeRange === TimeRange.ThreeMonths}
-          onPress={createTimeRangeHandler(TimeRange.ThreeMonths)}
-        >
-          Last 3 months
-        </Chip>
-        <Chip
-          selected={selectedTimeRange === TimeRange.SixMonths}
-          onPress={createTimeRangeHandler(TimeRange.SixMonths)}
-        >
-          Last 6 months
-        </Chip>
-        <Chip
-          selected={selectedTimeRange === TimeRange.Year}
-          onPress={createTimeRangeHandler(TimeRange.Year)}
-        >
-          Last 12 months
-        </Chip>
-      </View>
-      <View style={styles.row}>
+    <ScrollableScreen stickyHeaderIndices={[0]}>
+      <Card style={styles.controls}>
+        <Card.Content style={{ flexDirection: 'row' }}>
+          <Chip
+            small={Platform.OS !== 'web'}
+            selected={!selectedTimeRange}
+            onPress={createTimeRangeHandler()}
+          >
+            All time
+          </Chip>
+          <Chip
+            small={Platform.OS !== 'web'}
+            selected={selectedTimeRange === TimeRange.ThreeMonths}
+            onPress={createTimeRangeHandler(TimeRange.ThreeMonths)}
+          >
+            3 months
+          </Chip>
+          <Chip
+            small={Platform.OS !== 'web'}
+            selected={selectedTimeRange === TimeRange.SixMonths}
+            onPress={createTimeRangeHandler(TimeRange.SixMonths)}
+          >
+            6 months
+          </Chip>
+          <Chip
+            small={Platform.OS !== 'web'}
+            selected={selectedTimeRange === TimeRange.Year}
+            onPress={createTimeRangeHandler(TimeRange.Year)}
+          >
+            12 months
+          </Chip>
+        </Card.Content>
+      </Card>
+      <View style={StyleSheet.flatten([styles.row, styles.turnaround])}>
         <Stats
           title="Turn-around"
+          columns={Platform.OS === 'web' ? undefined : 2}
           data={
             [
               {
@@ -149,11 +149,11 @@ export default function DashboardPage() {
                 value: `$${summedStatistics?.revenueCents || 0}`,
               },
               {
-                label: 'Dispatched Loads',
+                label: 'Dispatched',
                 value: summedStatistics?.loadsCount || 0,
               },
               {
-                label: 'Cancelled Loads',
+                label: 'Cancelled',
                 value: summedStatistics?.cancelledLoadsCount || 0,
               },
               {
@@ -166,6 +166,7 @@ export default function DashboardPage() {
 
         <Stats
           title="Accounts"
+          columns={Platform.OS === 'web' ? undefined : 3}
           data={[
             { label: 'Dropzones', value: data?.dropzones.edges?.length || 0 },
             { label: 'Users', value: summedStatistics?.totalUserCount || 0 },
@@ -191,61 +192,21 @@ export default function DashboardPage() {
           ]}
         />
       </View>
-      <View style={styles.row}>
-        <Card style={{ height: 220, flex: 1 }}>
-          <Card.Title title="Dispatched Loads" />
-          <Card.Content style={{ height: 200, flex: 1 }}>
-            <LoadsByDay
-              data={summedStatistics?.loadCountByDay || []}
-              startTime={timeRange?.startTime ? parseISO(timeRange?.startTime) : new Date()}
-            />
-          </Card.Content>
-        </Card>
-        <Card>
-          <Card.Title title="Jump types" />
-          <Card.Content>
-            <PieChart
-              data={sortBy(summedStatistics?.slotsByJumpType || [], 'count').map((stat) => ({
-                ...stat,
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                color: JUMP_TYPE_COLORS[stat?.name] || '#AAA',
-                legendFontColor: '#333',
-                legendFontSize: 15,
-              }))}
-              width={300}
-              height={150}
-              chartConfig={{
-                backgroundColor: '#e26a00',
-                backgroundGradientFrom: '#fb8c00',
-                backgroundGradientTo: '#ffa726',
-                decimalPlaces: 2, // optional, defaults to 2dp
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                style: {
-                  borderRadius: 16,
-                },
-                propsForDots: {
-                  r: '6',
-                  strokeWidth: '2',
-                  stroke: '#ffa726',
-                },
-                backgroundGradientFromOpacity: 0,
-                backgroundGradientToOpacity: 0.5,
-                strokeWidth: 2, // optional, default 3
-                barPercentage: 0.5,
-                useShadowColorFromDataset: false,
-              }}
-              accessor="count"
-              backgroundColor="transparent"
-              paddingLeft="15"
-              center={[0, 0]}
-              absolute
-            />
-          </Card.Content>
-        </Card>
+      <View style={StyleSheet.flatten([styles.row, styles.statistics])}>
+        <LoadsByDay
+          style={styles.dispatchedLoadsCard}
+          data={summedStatistics?.loadCountByDay || []}
+          startTime={
+            timeRange?.startTime ? parseISO(timeRange?.startTime) : subMonths(new Date(), 6)
+          }
+        />
+
+        <JumpTypePieChart
+          style={styles.jumpTypesCard}
+          data={summedStatistics?.slotsByJumpType || []}
+        />
       </View>
-      <View style={styles.row}>
+      <View style={StyleSheet.flatten([styles.row, styles.table])}>
         <DropzonesTable
           selected={selectedDropzones || []}
           onChangeSelected={setSelectedDropzones}
@@ -259,6 +220,40 @@ export default function DashboardPage() {
 }
 
 const styles = StyleSheet.create({
+  controls: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  turnaround: {
+    width: '100%',
+    flexDirection: Platform.OS === 'web' ? 'row' : 'column',
+    gap: 8,
+    justifyContent: 'space-between',
+    flexWrap: Platform.OS === 'web' ? 'wrap' : 'nowrap',
+  },
+  statistics: {
+    width: '100%',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  table: {
+    width: '100%',
+    flex: 8,
+  },
+
+  dispatchedLoadsCard: {
+    height: 300,
+    width: Platform.OS === 'web' ? undefined : '100%',
+    flex: Platform.OS === 'web' ? 3 / 4 : undefined,
+    marginVertical: 4,
+  },
+  jumpTypesCard: {
+    height: 300,
+    marginVertical: 4,
+    width: Platform.OS === 'web' ? undefined : '100%',
+    flex: Platform.OS === 'web' ? 1 / 4 : undefined,
+  },
+
   row: {
     flexDirection: 'row',
     justifyContent: 'flex-end',

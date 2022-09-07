@@ -3,9 +3,8 @@ import { HeaderStyleInterpolators, createStackNavigator } from '@react-navigatio
 import * as React from 'react';
 import { useAppSelector } from 'app/state';
 import AppBar from 'app/components/appbar/AppBar';
-import { NavigatorScreenParams } from '@react-navigation/core';
-import OverviewScreen from './OverviewScreen';
-import DashboardScreen from './DashboardScreen';
+import OverviewScreen from './AdminOverview';
+import DashboardScreen from './DropzoneOverview';
 
 export type OverviewRoutes = {
   OverviewScreen: undefined;

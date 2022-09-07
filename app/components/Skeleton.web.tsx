@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTheme } from 'react-native-paper';
-import SkeletonContent from '@03balogun/react-native-skeleton-content';
 import Color from 'color';
+import SkeletonContent from 'react-native-skeleton-content/src';
 
 type ExtractProps<T> = T extends React.ComponentType<infer P> ? P : object;
 

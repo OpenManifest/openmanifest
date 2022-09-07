@@ -4,7 +4,8 @@
     "app/**/*",
     "png.d.ts",
     ".eslintrc.js",
-    "babel.config.js"
+    "babel.config.js",
+    "patches/deprecated-prop-types.ts"
   ],
   "extends": "./tsconfig.json",
 }
