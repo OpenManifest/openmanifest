@@ -80,9 +80,8 @@ export default function FacebookButton(
         }}
         {...props}
         callback={onPress}
-      >
-        Login with Facebook
-      </Button>
+        textButton="Login with Facebook"
+      />
     </View>
   );
 }

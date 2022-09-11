@@ -32,7 +32,7 @@ import SetupProfileCard from './SetupProfileCard';
 const loadingFragment: LoadDetailsFragment = {
   id: '__LOADING__',
   availableSlots: 0,
-  createdAt: 0,
+  createdAt: '',
   isFull: false,
   isOpen: false,
   loadNumber: 0,

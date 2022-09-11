@@ -11,7 +11,7 @@ export default function ChipSelectSkeleton(props: IChipSelectSkeletonLoadingProp
       isLoading
       containerStyle={{
         height: 15 + 13 + 13 + (rows || 1) * 32,
-        width: '100%',
+        width: 300,
         justifyContent: 'center',
         marginBottom: 16,
       }}

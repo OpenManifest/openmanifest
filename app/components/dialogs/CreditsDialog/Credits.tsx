@@ -135,12 +135,12 @@ export default function CreditSheet(props: ICreditsSheet) {
   const onKeyboardHidden = () => setKeyboardVisible(false);
 
   React.useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', onKeyboardVisible);
-    Keyboard.addListener('keyboardDidHide', onKeyboardHidden);
+    const showListener = Keyboard.addListener('keyboardDidShow', onKeyboardVisible);
+    const hideListener = Keyboard.addListener('keyboardDidHide', onKeyboardHidden);
 
     return () => {
-      Keyboard.removeListener('keyboardDidShow', onKeyboardVisible);
-      Keyboard.removeListener('keyboardDidHide', onKeyboardHidden);
+      showListener?.remove();
+      hideListener?.remove();
     };
   }, []);
   const sheetRef = React.useRef<BottomSheetModal>(null);

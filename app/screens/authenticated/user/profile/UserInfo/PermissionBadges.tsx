@@ -12,7 +12,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { Permission } from 'app/api/schema.d';
 
 import {
-  QueryDropzoneDocument,
+  DropzoneDocument,
   CurrentUserPermissionsDocument,
   DropzoneUsersDocument,
   QueryDropzoneUserProfileDocument,
@@ -47,7 +47,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
     }),
     refetchQueries: [
       {
-        query: QueryDropzoneDocument,
+        query: DropzoneDocument,
         variables: {
           dropzoneId: state.currentDropzoneId,
           earliestTimestamp: startOfDay(new Date()).toISOString(),
@@ -118,7 +118,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
     }),
     refetchQueries: [
       {
-        query: QueryDropzoneDocument,
+        query: DropzoneDocument,
         variables: {
           dropzoneId: state.currentDropzoneId,
           earliestTimestamp: startOfDay(new Date()).toISOString(),

@@ -19,17 +19,8 @@ interface IBottomSheetProps {
 }
 
 function DialogOrSheet(props: IBottomSheetProps) {
-  const {
-    buttonLabel,
-    disablePadding,
-    scrollable,
-    buttonAction,
-    title,
-    loading,
-    open,
-    children,
-    onClose,
-  } = props;
+  const { buttonLabel, disablePadding, buttonAction, title, loading, open, children, onClose } =
+    props;
   const theme = useTheme();
 
   return (

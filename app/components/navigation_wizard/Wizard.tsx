@@ -63,7 +63,7 @@ export function Content(props: IWizardProps) {
                     {
                       translateX: current.progress.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [layouts.screen.width, 0],
+                        outputRange: [layouts.screen.width || 0, 0],
                       }),
                     },
                     {
@@ -91,11 +91,7 @@ export function Content(props: IWizardProps) {
               return null;
             }
             const { component: Step } = definition;
-            return (
-              <WizardRoot.Screen name={`${name}${index}`}>
-                {(screenProps) => <Step {...screenProps} {...{ index }} />}
-              </WizardRoot.Screen>
-            );
+            return <WizardRoot.Screen name={`${name}${index}`}>{() => <Step />}</WizardRoot.Screen>;
           })}
         </WizardRoot.Navigator>
         <View style={styles.actions}>

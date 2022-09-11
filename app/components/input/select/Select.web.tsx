@@ -87,10 +87,9 @@ export default function Select<T>(props: ISelectProps<T>) {
               {!icon || avatar ? null : (
                 <ListItemIcon>
                   {typeof icon === 'string' ? (
-                    <MaterialCommunityIcons name={icon as AllowedIcons} />
-                  ) : (
-                    icon
-                  )}
+                    <MaterialCommunityIcons icon={icon as AllowedIcons} size={24} />
+                  ) : null}
+                  {React.isValidElement(icon) && typeof icon !== 'string' ? icon : null}
                 </ListItemIcon>
               )}
               {!avatar || !showAvatars ? null : (
@@ -130,10 +129,9 @@ export default function Select<T>(props: ISelectProps<T>) {
             {!icon || avatar ? null : (
               <ListItemIcon>
                 {typeof icon === 'string' ? (
-                  <MaterialCommunityIcons name={icon as AllowedIcons} size={24} />
-                ) : (
-                  icon
-                )}
+                  <MaterialCommunityIcons icon={icon as AllowedIcons} size={24} />
+                ) : null}
+                {React.isValidElement(icon) && typeof icon !== 'string' ? icon : null}
               </ListItemIcon>
             )}
             {!avatar || !showAvatars ? null : (

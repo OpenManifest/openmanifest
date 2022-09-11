@@ -10,6 +10,7 @@ fragment dropzoneEssentials on Dropzone {
   requestPublication
   banner
   isCreditSystemEnabled
+  createdAt
 }
 
 fragment dropzoneStatisticsEssentials on Statistics {

@@ -4,7 +4,14 @@
     "app/**/*",
     "png.d.ts",
     ".eslintrc.js",
-    "babel.config.js"
+    "babel.config.js",
   ],
+  "compilerOptions": {
+    "skipLibCheck": true
+  },
   "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "patches"
+  ]
 }

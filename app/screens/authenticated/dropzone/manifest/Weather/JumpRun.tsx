@@ -193,7 +193,12 @@ function JumpRunMap(props: IJumpRunMapProps) {
             },
           ]}
         >
-          <MaterialCommunityIcons name="airplane" size={20} color="#ffffff" />
+          <MaterialCommunityIcons
+            name="airplane"
+            size={20}
+            color="#ffffff"
+            style={styles.planeIcon}
+          />
         </Animated.View>
       )}
       <Animated.Text
@@ -219,6 +224,7 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
     paddingRight: 0,
   },
+  planeIcon: { transform: [{ rotate: '-45deg' }] },
 
   degreeLabel: {
     width: 200,

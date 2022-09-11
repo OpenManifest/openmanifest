@@ -9,7 +9,7 @@ import { useQueryDropzones } from 'app/api/reflection';
 import { DropzoneExtensiveFragment } from 'app/api/operations';
 import InfoGrid from 'app/screens/authenticated/dropzone/load/InfoGrid';
 import useRestriction from 'app/hooks/useRestriction';
-import { Permission } from 'app/api/schema.d';
+import { ModerationRole, Permission } from 'app/api/schema.d';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 
@@ -112,6 +112,24 @@ export default function DrawerMenu() {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <Drawer.Section title="Dropzone">
+          {dropzone?.currentUser?.user?.moderationRole !== ModerationRole.User ? (
+            <Drawer.Item
+              label="Admin"
+              active={/Overview/.test(routeName || '')}
+              icon="view-dashboard"
+              onPress={() => {
+                navigation.navigate('Authenticated', {
+                  screen: 'LeftDrawer',
+                  params: {
+                    screen: 'Overview',
+                    params: {
+                      screen: 'OverviewScreen',
+                    },
+                  },
+                });
+              }}
+            />
+          ) : null}
           <Drawer.Item
             label="Overview"
             active={/Dashboard/.test(routeName || '')}
@@ -120,7 +138,7 @@ export default function DrawerMenu() {
               navigation.navigate('Authenticated', {
                 screen: 'LeftDrawer',
                 params: {
-                  screen: 'Manifest',
+                  screen: 'Overview',
                   params: {
                     screen: 'DashboardScreen',
                   },

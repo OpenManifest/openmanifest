@@ -23,7 +23,7 @@ export default function JumpHistoryTab(props: IJumpHistoryTab) {
     () =>
       map(
         groupBy(dropzoneUser?.slots?.edges, (e) =>
-          startOfDay((e?.node?.createdAt || 0) * 1000).toISOString()
+          startOfDay(parseISO(e?.node?.createdAt)).toISOString()
         ),
         (d, t) => {
           const date = parseISO(t);

@@ -503,7 +503,7 @@ type DeleteUserPayload {
 type Dropzone implements AnyResource & Wallet {
   allowedJumpTypes(userId: [Int!]!): [JumpType!]!
   banner: String
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   currentConditions: WeatherCondition!
   currentUser: DropzoneUser!
   dropzoneUser(id: Int, userId: Int): DropzoneUser
@@ -648,7 +648,7 @@ type Dropzone implements AnyResource & Wallet {
   secondaryColor: String
   statistics: Statistics!
   ticketTypes(isPublic: Boolean): [TicketType!]!
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
   userRoles: [UserRole!]!
 }
 
@@ -712,7 +712,7 @@ type DropzoneUser implements AnyResource & Wallet {
     """
     loadId: Int
   ): [Rig!]
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   credits: Int
   dropzone: Dropzone!
   expiresAt: Int
@@ -835,7 +835,7 @@ type DropzoneUser implements AnyResource & Wallet {
     last: Int
   ): SlotConnection
   unseenNotifications: Int!
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
   user: User!
 }
 
@@ -989,13 +989,13 @@ enum EventLevel {
 
 type Extra implements SellableItem {
   cost: Float!
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   dropzone: Dropzone!
   id: ID!
   name: String
   ticketTypes: [TicketType!]!
   title: String
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 input ExtraInput {
@@ -1021,12 +1021,12 @@ type FacebookPayload {
 }
 
 type Federation {
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   id: ID!
   licenses: [License!]
   name: String
   slug: String
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 type FieldError {
@@ -1060,11 +1060,11 @@ type FinalizeLoadPayload {
 }
 
 type FormTemplate {
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   definition: String
   id: ID!
   name: String
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 input FormTemplateInput {
@@ -1081,14 +1081,14 @@ type GeocodedLocation {
 }
 
 input GhostInput {
-  dropzoneId: Int!
+  dropzone: Int!
   email: String!
   exitWeight: Float!
   federationNumber: String
-  licenseId: Int
+  license: Int
   name: String!
   phone: String
-  roleId: Int!
+  role: Int!
 }
 
 """
@@ -1152,23 +1152,23 @@ type JoinFederationPayload {
 }
 
 type JumpType {
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   id: ID!
   name: String
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 type License implements AnyResource {
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   federation: Federation
   id: ID!
   name: String
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 type Load implements AnyResource {
   availableSlots: Int!
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   dispatchAt: Int
   gca: DropzoneUser
   hasLanded: Boolean
@@ -1185,7 +1185,7 @@ type Load implements AnyResource {
   plane: Plane!
   slots: [Slot!]
   state: LoadState!
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
   weight: Int!
 }
 
@@ -1263,13 +1263,13 @@ enum LoadState {
 }
 
 type MasterLog {
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   dropzone: Dropzone
   dzso: [DropzoneUser!]
   id: ID!
   loads: [Load!]
   notes: String
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 enum ModerationRole {
@@ -1548,7 +1548,7 @@ type Mutation {
 }
 
 type Notification {
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   id: ID!
   isSeen: Boolean!
   message: String
@@ -1556,7 +1556,7 @@ type Notification {
   receivedBy: DropzoneUser!
   resource: AnyResource
   sentBy: DropzoneUser
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 """
@@ -1673,7 +1673,7 @@ enum NotificationType {
 type Order implements AnyResource {
   amount: Float!
   buyer: Wallet!
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   dropzone: Dropzone!
   id: ID!
   item: SellableItem
@@ -1682,7 +1682,7 @@ type Order implements AnyResource {
   seller: Wallet!
   state: OrderState!
   title: String
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 """
@@ -2160,7 +2160,7 @@ enum Permission {
 }
 
 type Plane implements AnyResource {
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   dropzone: Dropzone!
   hours: Int
   id: ID!
@@ -2169,7 +2169,7 @@ type Plane implements AnyResource {
   name: String
   nextMaintenanceHours: Int
   registration: String
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 input PlaneInput {
@@ -2348,11 +2348,11 @@ type Query {
 
 type Receipt implements AnyResource {
   amountCents: Int
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   id: ID!
   order: Order!
   transactions: [Transaction!]!
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 """
@@ -2407,7 +2407,7 @@ type RevokePermissionPayload {
 
 type Rig implements AnyResource {
   canopySize: Int
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   dropzone: Dropzone
   id: ID!
   isPublic: Boolean!
@@ -2422,7 +2422,7 @@ type Rig implements AnyResource {
   rigInspections(dropzoneId: Int!): RigInspection
   rigType: String
   serial: String
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 input RigInput {
@@ -2446,7 +2446,7 @@ input RigInput {
 }
 
 type RigInspection implements AnyResource {
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   definition: String!
   dropzoneUser: DropzoneUser!
   formTemplate: FormTemplate!
@@ -2454,7 +2454,7 @@ type RigInspection implements AnyResource {
   inspectedBy: DropzoneUser!
   isOk: Boolean!
   rig: Rig
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 input RigInspectionInput {
@@ -2490,7 +2490,7 @@ enum SellableItemTypes {
 
 type Slot implements AnyResource & SellableItem {
   cost: Float!
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   dropzoneUser: DropzoneUser
   exitWeight: Int!
   extras: [Extra!]
@@ -2604,7 +2604,7 @@ type TicketType implements AnyResource & SellableItem {
   allowManifestingSelf: Boolean
   altitude: Int
   cost: Float!
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   currency: String
   dropzone: Dropzone
   extras: [Extra!]!
@@ -2612,7 +2612,7 @@ type TicketType implements AnyResource & SellableItem {
   isTandem: Boolean
   name: String
   title: String
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 input TicketTypeInput {
@@ -2633,7 +2633,7 @@ input TimeRangeInput {
 
 type Transaction implements AnyResource {
   amount: Float!
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   dropzoneUser: DropzoneUser!
   id: ID!
   message: String
@@ -2642,7 +2642,7 @@ type Transaction implements AnyResource {
   sender: Wallet!
   status: TransactionStatus!
   transactionType: TransactionType!
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 enum TransactionStatus {
@@ -2981,7 +2981,7 @@ input UpdateUserInput {
   A unique identifier for the client performing the mutation.
   """
   clientMutationId: String
-  id: Int
+  dropzoneUser: Int
 }
 
 """
@@ -2992,14 +2992,14 @@ type UpdateUserPayload {
   A unique identifier for the client performing the mutation.
   """
   clientMutationId: String
+  dropzoneUser: DropzoneUser
   errors: [String!]
   fieldErrors: [FieldError!]
-  user: User
 }
 
 type User implements AnyResource {
   apfNumber: String
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   dropzoneUsers: [DropzoneUser!]
   email: String
   exitWeight: String
@@ -3012,7 +3012,7 @@ type User implements AnyResource {
   phone: String
   pushToken: String
   rigs: [Rig!]
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
   userFederations: [UserFederation!]
 }
 
@@ -3052,11 +3052,11 @@ input UserFederationInput {
 }
 
 input UserInput {
-  apfNumber: String
   email: String
   exitWeight: Float
+  federationNumber: String
   image: String
-  licenseId: Int
+  license: Int
   name: String
   nickname: String
   phone: String
@@ -3113,13 +3113,13 @@ type UserResendConfirmationWithTokenPayload {
 }
 
 type UserRole {
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   dropzone: Dropzone!
   dropzoneId: Int!
   id: ID!
   name: String
   permissions: [String!]!
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
 }
 
 """
@@ -3255,14 +3255,14 @@ enum WalletableTypes {
 }
 
 type WeatherCondition {
-  createdAt: Int!
+  createdAt: ISO8601DateTime!
   exitSpotMiles: Int
   id: ID!
   jumpRun: Int
   offsetDirection: Int
   offsetMiles: Int
   temperature: Int
-  updatedAt: Int!
+  updatedAt: ISO8601DateTime!
   winds: [Wind!]
 }
 

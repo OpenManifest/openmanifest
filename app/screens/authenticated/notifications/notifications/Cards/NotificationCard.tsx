@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Avatar, Caption, Card, List } from 'react-native-paper';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, parseISO } from 'date-fns';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { useAppSelector } from 'app/state';
 
@@ -8,7 +8,7 @@ interface INotification {
   title: string;
   description?: string | null;
   icon: string;
-  timestamp: number;
+  timestamp: string;
   onPress?(): void;
 }
 
@@ -34,7 +34,7 @@ export default function NotificationCard(props: INotification) {
             )}
           />
           <Caption style={styles.timestamp}>
-            {formatDistanceToNow(timestamp * 1000, { addSuffix: true })}
+            {formatDistanceToNow(parseISO(timestamp), { addSuffix: true })}
           </Caption>
         </Card.Content>
       </Card>

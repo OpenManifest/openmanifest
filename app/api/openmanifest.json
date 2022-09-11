@@ -2564,7 +2564,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -3373,7 +3373,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -3717,7 +3717,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -4302,7 +4302,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -4825,7 +4825,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -4921,7 +4921,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -5096,7 +5096,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -5172,7 +5172,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -5382,7 +5382,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -5438,7 +5438,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -5572,7 +5572,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "dropzoneId",
+            "name": "dropzone",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -5632,7 +5632,7 @@
             "deprecationReason": null
           },
           {
-            "name": "licenseId",
+            "name": "license",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -5672,7 +5672,7 @@
             "deprecationReason": null
           },
           {
-            "name": "roleId",
+            "name": "role",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -5986,7 +5986,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -6030,7 +6030,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -6057,7 +6057,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -6113,7 +6113,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -6162,7 +6162,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -6414,7 +6414,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -6709,7 +6709,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -6805,7 +6805,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -8675,7 +8675,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -8787,7 +8787,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -9066,7 +9066,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -9206,7 +9206,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -9993,7 +9993,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -10117,7 +10117,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -11131,7 +11131,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -11203,7 +11203,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -11496,7 +11496,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -11705,7 +11705,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -11905,7 +11905,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -12029,7 +12029,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -12266,7 +12266,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -13318,7 +13318,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -13434,7 +13434,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -13638,7 +13638,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -13778,7 +13778,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -15450,7 +15450,7 @@
             "deprecationReason": null
           },
           {
-            "name": "id",
+            "name": "dropzoneUser",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -15478,6 +15478,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "dropzoneUser",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "DropzoneUser",
               "ofType": null
             },
             "isDeprecated": false,
@@ -15522,18 +15534,6 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
-          },
-          {
-            "name": "user",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "User",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -15567,7 +15567,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -15755,7 +15755,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -16000,18 +16000,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "apfNumber",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "email",
             "description": null,
             "type": {
@@ -16036,6 +16024,18 @@
             "deprecationReason": null
           },
           {
+            "name": "federationNumber",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "image",
             "description": null,
             "type": {
@@ -16048,7 +16048,7 @@
             "deprecationReason": null
           },
           {
-            "name": "licenseId",
+            "name": "license",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -16358,7 +16358,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -16458,7 +16458,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -16963,7 +16963,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -17055,7 +17055,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "ISO8601DateTime",
                 "ofType": null
               }
             },
@@ -18168,7 +18168,7 @@
         "args": [
           {
             "name": "reason",
-            "description": "Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted using the Markdown syntax, as specified by [CommonMark](https://commonmark.org/).",
+            "description": "Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted in [Markdown](https://daringfireball.net/projects/markdown/).",
             "type": {
               "kind": "SCALAR",
               "name": "String",
@@ -18227,32 +18227,6 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ]
-      },
-      {
-        "name": "specifiedBy",
-        "description": "Exposes a URL that specifies the behaviour of this scalar.",
-        "isRepeatable": false,
-        "locations": [
-          "SCALAR"
-        ],
-        "args": [
-          {
-            "name": "url",
-            "description": "The URL that specifies the behaviour of this scalar.",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
                 "ofType": null
               }
             },

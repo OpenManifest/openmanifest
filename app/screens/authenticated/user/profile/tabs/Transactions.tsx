@@ -26,7 +26,7 @@ export default function TransactionsTab(props: IJumpHistoryTab) {
     () =>
       map(
         groupBy(dropzoneUser?.orders?.edges, (e) =>
-          startOfDay((e?.node?.createdAt || 0) * 1000).toISOString()
+          startOfDay(parseISO(e?.node?.createdAt || new Date().toISOString())).toISOString()
         ),
         (d, t) => {
           const date = parseISO(t);

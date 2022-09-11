@@ -36,7 +36,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
   const [isDragging, setDragging] = React.useState(false);
   const [jumpRun, setJumpRun] = React.useState(value || 0);
 
-  const rotation = React.useRef(new Animated.Value(jumpRun));
+  const rotation = React.useRef(new Animated.Value(jumpRun || 0));
   const opacity = React.useRef(new Animated.Value(0));
 
   React.useEffect(() => {
@@ -46,7 +46,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
   }, [isDragging, value]);
 
   /** ANIMATIONS * */
-  const planePosition = React.useRef(new Animated.Value(hypothenuse));
+  const planePosition = React.useRef(new Animated.Value(hypothenuse || 0));
   const planeAnimation = React.useRef<Animated.CompositeAnimation>();
 
   React.useEffect(() => {

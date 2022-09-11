@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { isEqual } from 'lodash';
 import { startOfDay } from 'date-fns';
-import { useCurrentUserPermissionsLazyQuery, useQueryDropzoneLazyQuery } from '../reflection';
-import { QueryDropzoneQueryVariables } from '../operations';
+import { useCurrentUserPermissionsLazyQuery, useDropzoneLazyQuery } from '../reflection';
+import { DropzoneQueryVariables } from '../operations';
 import createCRUDContext, { uninitializedHandler } from './factory';
 
-export default function useDropzone(vars: Partial<QueryDropzoneQueryVariables>) {
-  const [getDropzone, query] = useQueryDropzoneLazyQuery();
+export default function useDropzone(vars: Partial<DropzoneQueryVariables>) {
+  const [getDropzone, query] = useDropzoneLazyQuery();
   const firstLoadTimestamp = startOfDay(new Date()).toISOString();
   const variables = React.useMemo(
     () => ({ ...vars, earliestTimestamp: firstLoadTimestamp }),
@@ -21,7 +21,7 @@ export default function useDropzone(vars: Partial<QueryDropzoneQueryVariables>) 
 
   React.useEffect(() => {
     if (variables?.dropzoneId && !query?.loading && !isEqual(query.variables, variables)) {
-      getDropzone({ variables: variables as QueryDropzoneQueryVariables });
+      getDropzone({ variables: variables as DropzoneQueryVariables });
       getPermissions();
       console.debug('Refetching because of diff in ', query.variables, variables);
     }

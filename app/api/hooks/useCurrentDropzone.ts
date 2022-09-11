@@ -1,14 +1,14 @@
 import { startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useAppSelector } from '../../state';
-import { useQueryDropzone } from '../reflection';
+import { useDropzoneQuery } from '../reflection';
 import useMutationUpdateUser from './useMutationUpdateUser';
 
 export default function useDropzoneContext() {
   const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
   const pushToken = useAppSelector((root) => root.global.expoPushToken);
 
-  const currentDropzone = useQueryDropzone({
+  const currentDropzone = useDropzoneQuery({
     variables: {
       dropzoneId: Number(dropzoneId),
       earliestTimestamp: startOfDay(new Date()).toISOString(),
@@ -25,14 +25,14 @@ export default function useDropzoneContext() {
   // token saved on the server. This is done so that the server
   // is able to send us push notifications
   React.useEffect(() => {
-    const userId = currentDropzone?.data?.dropzone?.currentUser?.user?.id;
+    const userId = currentDropzone?.data?.dropzone?.currentUser?.id;
     const remoteToken = currentDropzone?.data?.dropzone?.currentUser?.user?.pushToken;
     const localToken = pushToken;
 
     if (!currentDropzone.loading && currentDropzone.called) {
       if (localToken && localToken !== remoteToken && userId) {
         mutationUpdateUser.mutate({
-          id: Number(userId),
+          dropzoneUser: Number(userId),
           pushToken: localToken,
         });
       }
@@ -40,7 +40,7 @@ export default function useDropzoneContext() {
   }, [
     pushToken,
     currentDropzone?.data?.dropzone?.currentUser?.user?.pushToken,
-    currentDropzone?.data?.dropzone?.currentUser?.user?.id,
+    currentDropzone?.data?.dropzone?.currentUser?.id,
     currentDropzone.loading,
     currentDropzone.called,
     mutationUpdateUser,

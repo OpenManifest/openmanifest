@@ -20,6 +20,7 @@ import { actions, useAppDispatch } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
 import { useNavigation } from '@react-navigation/core';
+import parseISO from 'date-fns/parseISO';
 import nightBackground from '../../../../../../assets/images/night.png';
 import weatherBackground from '../../../../../../assets/images/weather.png';
 import JumpRunMap from './JumpRun';
@@ -36,7 +37,7 @@ export default function WeatherBoard() {
   const conditions = dropzone?.currentConditions;
 
   const date = dropzone?.currentConditions?.createdAt
-    ? new Date(dropzone.currentConditions.createdAt * 1000)
+    ? parseISO(dropzone.currentConditions.createdAt)
     : new Date();
   const jumpRun = dropzone?.currentConditions?.jumpRun || 0;
   const temperature = dropzone?.currentConditions?.temperature || 0;
@@ -101,6 +102,7 @@ export default function WeatherBoard() {
   ) : (
     <Animated.View
       style={{
+        marginBottom: 8,
         height: height.current.interpolate({ inputRange: [0, 1], outputRange: [200, 300] }),
       }}
     >
@@ -222,7 +224,7 @@ export default function WeatherBoard() {
                     ))}
                   </Animated.View>
                   <View style={styles.jumpRun} pointerEvents="box-none">
-                    <Text style={[styles.header, { textAlign: 'center' }]}>
+                    <Text style={[styles.header, { textAlign: 'left' }]}>
                       Jump run {jumpRun}&deg;
                     </Text>
                     <TouchableOpacity
@@ -249,8 +251,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     borderRadius: 10,
     marginBottom: 30,
-    marginHorizontal: 16,
-    // height: 200,
+    height: 200,
+    width: '100%',
     overflow: 'hidden',
     backgroundColor: 'transparent',
   },
@@ -303,6 +305,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   header: {
+    flexGrow: 3,
     fontWeight: 'bold',
     color: '#ffffff',
     textShadowOffset: {
@@ -355,7 +358,7 @@ const styles = StyleSheet.create({
   jumpRun: {
     width: 94,
     height: 94,
-    marginBottom: 8,
+    marginBottom: 24,
     flexDirection: 'column',
     alignItems: 'flex-end',
   },

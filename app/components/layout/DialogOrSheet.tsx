@@ -1,6 +1,6 @@
 import { sortBy, uniq } from 'lodash';
 import * as React from 'react';
-import { View, StyleSheet, Keyboard } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Button, Title, useTheme } from 'react-native-paper';
 import {
   BottomSheetModal,
@@ -8,6 +8,7 @@ import {
   BottomSheetBackdrop,
   useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
+import useKeyboardVisibility from 'app/hooks/useKeyboardVisibility';
 
 interface IBottomSheetProps {
   open?: boolean;
@@ -46,20 +47,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
 
   const dynamicSnapPoints = useBottomSheetDynamicSnapPoints(snappingPoints);
 
-  const [keyboardVisible, setKeyboardVisible] = React.useState(false);
-
-  const onKeyboardVisible = () => setKeyboardVisible(true);
-  const onKeyboardHidden = () => setKeyboardVisible(false);
-
-  React.useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', onKeyboardVisible);
-    Keyboard.addListener('keyboardDidHide', onKeyboardHidden);
-
-    return () => {
-      Keyboard.removeListener('keyboardDidShow', onKeyboardVisible);
-      Keyboard.removeListener('keyboardDidHide', onKeyboardHidden);
-    };
-  }, []);
+  const keyboardVisible = useKeyboardVisibility();
 
   const memoizedClose = React.useMemo(() => onClose, [onClose]);
 

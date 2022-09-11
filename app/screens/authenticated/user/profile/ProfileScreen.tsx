@@ -90,7 +90,7 @@ export default function ProfileScreen() {
         // Upload image
         await mutationUpdateUser({
           variables: {
-            id: Number(dropzoneUser?.user?.id),
+            dropzoneUser: Number(dropzoneUser?.id),
             image: `data:image/jpeg;base64,${base64}`,
           },
         });
@@ -98,7 +98,7 @@ export default function ProfileScreen() {
     } catch (e) {
       console.log(e);
     }
-  }, [dropzoneUser?.user?.id, mutationUpdateUser, pickImage]);
+  }, [dropzoneUser?.id, mutationUpdateUser, pickImage]);
 
   const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
   const onCloseRigForm = React.useCallback(
@@ -141,10 +141,10 @@ export default function ProfileScreen() {
                     key="profile-header"
                     containerStyle={{
                       height: 256,
-                      width: '100%',
+                      width: 300,
                     }}
                     isLoading
-                    layout={[{ key: 'header', width: '100%', height: '100%', borderRadius: 8 }]}
+                    layout={[{ key: 'header', width: 300, height: 100, borderRadius: 8 }]}
                   />
                 ) : (
                   <Header dropzoneUser={dropzoneUser} onPressAvatar={onPickImage}>

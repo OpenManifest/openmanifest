@@ -143,7 +143,7 @@ export default function ActivityFeed(props: IActivityFeedProps) {
   console.debug({ accessLevels, timeRange, levels });
 
   return (
-    <Card style={{ flexGrow: 1 }}>
+    <Card style={{ width: '100%' }}>
       <Card.Title title="Events" />
       <Card.Content>
         {(canViewAdminActivity || canViewSystemActivity) && (
@@ -217,6 +217,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     alignItems: 'center',
+    flexWrap: 'wrap',
     gap: 8,
   },
   avatarCell: {

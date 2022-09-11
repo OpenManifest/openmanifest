@@ -11,7 +11,7 @@ export const loadEssentials: DeepRequired<LoadEssentialsFragment> = {
   isOpen: false,
   maxSlots: 4,
   availableSlots: 10,
-  createdAt: new Date().getTime() - 35000,
+  createdAt: new Date().toISOString(),
   isFull: false,
   occupiedSlots: 3,
   weight: 123,

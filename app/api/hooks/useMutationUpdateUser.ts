@@ -18,7 +18,4 @@ export default createMutation<
       }),
     ],
   },
-  fieldErrorMap: {
-    licenseId: 'license',
-  },
 });

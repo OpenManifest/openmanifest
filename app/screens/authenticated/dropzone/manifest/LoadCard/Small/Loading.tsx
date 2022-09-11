@@ -11,7 +11,7 @@ export default function LoadingCard() {
         margin: 16,
       }}
       isLoading
-      layout={[{ key: 'header', width: '100%', height: '100%', borderRadius: 8 }]}
+      layout={[{ key: 'header', width: 335, height: 160, borderRadius: 8 }]}
     />
   );
 }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Portal, Dialog } from 'react-native-paper';
 import { TriangleColorPicker } from 'react-native-color-picker';
-import SliderComponent from '@react-native-community/slider';
+// import SliderComponent from '@react-native-community/slider';
 
 interface IColorPickerDialog {
   open: boolean;
@@ -22,7 +22,7 @@ export default function ColorPickerDialog(props: IColorPickerDialog) {
             style={{ flex: 1 }}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            sliderComponent={SliderComponent}
+            sliderComponent={() => null}
             defaultColor={value}
             hideSliders
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
