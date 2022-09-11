@@ -12,12 +12,16 @@
         "buildConfiguration": "Debug"
       }
     },
-    "preview": {
-      "distribution": "internal"
+    "staging": {
+      "distribution": "internal",
+      "channel": "staging"
     },
-    "production": {}
+    "production": {
+      "channel": "production"
+    }
   },
   "submit": {
+    "staging": {},
     "production": {}
   }
 }
