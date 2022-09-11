@@ -20,7 +20,7 @@ export type UserFields = Pick<
 >;
 
 interface IUserEditState {
-  original: UserDetailedFragment | null;
+  original: DropzoneUserDetailsFragment | null;
   open: boolean;
   federation: {
     value: FederationEssentialsFragment | null;
@@ -107,7 +107,7 @@ export default createSlice({
     },
 
     setOriginal: (state: IUserEditState, action: PayloadAction<DropzoneUserDetailsFragment>) => {
-      state.original = action.payload.user;
+      state.original = action.payload;
       state.federation.value =
         action.payload.license?.federation ||
         action.payload?.user?.userFederations?.find((i) => i)?.federation ||
@@ -148,7 +148,7 @@ export default createSlice({
         state.original = null;
         state.fields = initialState.fields;
       } else {
-        state.original = action.payload.user;
+        state.original = action.payload;
         state.open = true;
         state.federation.value = action.payload.license?.federation || null;
         state.fields.license.value = action.payload.license || null;

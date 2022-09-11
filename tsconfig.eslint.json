@@ -5,7 +5,13 @@
     "png.d.ts",
     ".eslintrc.js",
     "babel.config.js",
-    "patches/deprecated-prop-types.ts"
   ],
+  "compilerOptions": {
+    "skipLibCheck": true
+  },
   "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "patches"
+  ]
 }

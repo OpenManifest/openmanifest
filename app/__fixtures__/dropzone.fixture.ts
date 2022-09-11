@@ -17,6 +17,7 @@ export const dropzoneExtensive: DeepRequired<DropzoneExtensiveFragment> = {
   isPublic: false,
   requestPublication: false,
   isCreditSystemEnabled: true,
+  createdAt: new Date().toISOString(),
   federation: {
     __typename: 'Federation',
     id: '1',
@@ -75,7 +76,7 @@ export const dropzoneExtensive: DeepRequired<DropzoneExtensiveFragment> = {
     temperature: -1,
     offsetDirection: null,
     offsetMiles: null,
-    createdAt: new Date().getTime(),
+    createdAt: new Date().toISOString(),
     exitSpotMiles: null,
     winds: [],
   },

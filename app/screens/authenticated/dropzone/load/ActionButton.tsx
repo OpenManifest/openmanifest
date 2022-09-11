@@ -11,6 +11,7 @@ import { useFinalizeLoadMutation } from 'app/api/reflection';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch } from 'app/state';
 import isSameDay from 'date-fns/isSameDay';
+import { parseISO } from 'date-fns';
 
 interface ILoadActionButtonProps {
   load: LoadDetailsFragment;
@@ -155,7 +156,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     },
   ];
 
-  const isToday = isSameDay(new Date(), load.createdAt * 1000);
+  const isToday = isSameDay(new Date(), parseISO(load.createdAt));
 
   const manifestActions = [
     !showManifestButton || !isToday

@@ -104,13 +104,12 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
   // token saved on the server. This is done so that the server
   // is able to send us push notifications
   React.useEffect(() => {
-    const userId = currentUser?.user?.id;
     const remoteToken = currentUser?.user?.pushToken;
 
     if (!loading && called) {
-      if (pushToken && pushToken !== remoteToken && userId) {
+      if (pushToken && pushToken !== remoteToken && currentUser?.id) {
         mutationUpdateUser.mutate({
-          id: Number(userId),
+          dropzoneUser: Number(currentUser.id),
           pushToken,
         });
       }
@@ -118,7 +117,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
   }, [
     pushToken,
     mutationUpdateUser,
-    currentUser?.user?.id,
+    currentUser?.id,
     currentUser?.user?.pushToken,
     loading,
     called,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Caption, Card, List, useTheme } from 'react-native-paper';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { capitalize } from 'lodash';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -41,7 +41,7 @@ export default function TransactionCard(props: ITransaction) {
               color: theme.colors.onSurface,
             }}
           >
-            {transaction?.createdAt && format(transaction.createdAt * 1000, 'Mo MMM, h:mm aaa')}
+            {transaction?.createdAt && format(parseISO(transaction.createdAt), 'Mo MMM, h:mm aaa')}
           </Caption>
           <List.Item
             description={capitalize(transaction.message || '')}

@@ -8,7 +8,6 @@ export interface IWizardStepProps {
   title?: React.ReactText;
   children?: React.ReactNode;
   hideContentUntilNavigatedTo?: boolean;
-  index: number;
 }
 
 export function Fields({ children }: { children: React.ReactNode }) {

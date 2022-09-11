@@ -211,8 +211,6 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
       }}
       onStateChange={({ open }) => setFabOpen(open)}
       actions={fabActions}
-    >
-      Manage
-    </FAB.Group>
+    />
   );
 }

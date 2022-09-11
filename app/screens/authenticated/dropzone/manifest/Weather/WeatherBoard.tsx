@@ -20,6 +20,7 @@ import { actions, useAppDispatch } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
 import { useNavigation } from '@react-navigation/core';
+import parseISO from 'date-fns/parseISO';
 import nightBackground from '../../../../../../assets/images/night.png';
 import weatherBackground from '../../../../../../assets/images/weather.png';
 import JumpRunMap from './JumpRun';
@@ -36,7 +37,7 @@ export default function WeatherBoard() {
   const conditions = dropzone?.currentConditions;
 
   const date = dropzone?.currentConditions?.createdAt
-    ? new Date(dropzone.currentConditions.createdAt * 1000)
+    ? parseISO(dropzone.currentConditions.createdAt)
     : new Date();
   const jumpRun = dropzone?.currentConditions?.jumpRun || 0;
   const temperature = dropzone?.currentConditions?.temperature || 0;

@@ -29,5 +29,8 @@
     "index.ts",
     "patches/deprecated-prop-types.ts"
   ],
+  "exclude": [
+    "node_modules/react-native-skeleton-content",
+  ],
   "extends": "expo/tsconfig.base",
 }

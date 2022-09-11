@@ -15,11 +15,13 @@ export default function SlotForm() {
   React.useEffect(() => {
     if (state.original) {
       if (!state.fields.exitWeight.value) {
-        dispatch(actions.forms.user.setField(['exitWeight', state.original.exitWeight || '60']));
+        dispatch(
+          actions.forms.user.setField(['exitWeight', state.original.user?.exitWeight || '60'])
+        );
       }
 
       if (!state.fields.rigs.value && state.original?.id) {
-        dispatch(actions.forms.user.setField(['rigs', state.original.rigs]));
+        dispatch(actions.forms.user.setField(['rigs', state.original.user?.rigs]));
       }
     }
   }, [

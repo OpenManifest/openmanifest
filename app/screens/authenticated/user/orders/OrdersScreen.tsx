@@ -63,7 +63,7 @@ export default function OrdersScreen() {
       <SectionList
         sections={map(
           groupBy(dropzoneUser?.orders?.edges, (e) =>
-            startOfDay((e?.node?.createdAt || 0) * 1000).toISOString()
+            startOfDay(parseISO(e?.node?.createdAt)).toISOString()
           ),
           (d, t) => {
             const date = parseISO(t);

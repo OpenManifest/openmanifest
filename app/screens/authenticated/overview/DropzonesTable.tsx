@@ -31,9 +31,7 @@ function DropzoneTableRow(props: { dropzone?: DropzoneStatisticsFragment | null 
       </DataTable.Cell>
       <DataTable.Cell style={styles.nameCell}>{dropzone.name}</DataTable.Cell>
       <DataTable.Cell style={styles.createdCell}>
-        <HelperText type="info">
-          {/* format(parseISO(dropzone.createdAt), 'dd MMM, HH:mm') */}
-        </HelperText>
+        <HelperText type="info">{format(parseISO(dropzone.createdAt), 'dd MMM, HH:mm')}</HelperText>
       </DataTable.Cell>
       <DataTable.Cell style={styles.statusCell}>
         {dropzone?.requestPublication && !dropzone?.isPublic ? 'Review' : null}

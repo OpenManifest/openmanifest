@@ -7,7 +7,6 @@ import { Card } from 'react-native-paper';
 
 interface IJumpTypePieChart extends Pick<ViewProps, 'style'> {
   data: { name: string; count: number }[];
-  startTime?: Date;
 }
 
 const JUMP_TYPE_COLORS = {
@@ -21,7 +20,7 @@ const JUMP_TYPE_COLORS = {
 };
 
 export default function LoadsByDay(props: IJumpTypePieChart) {
-  const { data: values, startTime, style } = props;
+  const { data: values, style } = props;
   const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
   const onLayout = React.useCallback((event: LayoutChangeEvent) => {
     setDimensions(event.nativeEvent.layout);
@@ -30,26 +29,22 @@ export default function LoadsByDay(props: IJumpTypePieChart) {
 
   const data = React.useMemo(
     () =>
-      sortBy(
-        [
-          { name: 'freefly', count: 250 },
-          { name: 'ws', count: 43 },
-          { name: 'angle', count: 320 },
-          { name: 'hnp', count: 100 },
-          { name: 'hp', count: 100 },
-          { name: 'cam', count: 100 },
-          { name: 'fs', count: 100 },
-        ],
-        'count'
-      ).map((stat) => ({
+      sortBy(values, 'count').map<{
+        name: string;
+        count: number;
+        legendFontColor: string;
+        legendFontSize: number;
+        color: string;
+      }>((stat) => ({
         ...stat,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        color: JUMP_TYPE_COLORS[stat?.name] || '#AAA',
+        color:
+          stat?.name && stat?.name in JUMP_TYPE_COLORS
+            ? JUMP_TYPE_COLORS[stat.name as keyof typeof JUMP_TYPE_COLORS]
+            : '#AAA',
         legendFontColor: '#333',
         legendFontSize: 15,
       })),
-    []
+    [values]
   );
   return (
     <Card {...{ onLayout, style }}>

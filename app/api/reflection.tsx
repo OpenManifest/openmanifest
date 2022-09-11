@@ -1172,9 +1172,9 @@ export type CreateRigInspectionMutationHookResult = ReturnType<typeof useCreateR
 export type CreateRigInspectionMutationResult = Apollo.MutationResult<Operation.CreateRigInspectionMutation>;
 export type CreateRigInspectionMutationOptions = Apollo.BaseMutationOptions<Operation.CreateRigInspectionMutation, Operation.CreateRigInspectionMutationVariables>;
 export const CreateGhostDocument = gql`
-    mutation CreateGhost($name: String!, $phone: String, $email: String!, $federationNumber: String, $roleId: Int!, $licenseId: Int, $dropzoneId: Int!, $exitWeight: Float!) {
+    mutation CreateGhost($name: String!, $phone: String, $email: String!, $federationNumber: String, $role: Int!, $license: Int, $dropzone: Int!, $exitWeight: Float!) {
   createGhost(
-    input: {attributes: {roleId: $roleId, federationNumber: $federationNumber, name: $name, phone: $phone, email: $email, dropzoneId: $dropzoneId, licenseId: $licenseId, exitWeight: $exitWeight}}
+    input: {attributes: {role: $role, federationNumber: $federationNumber, name: $name, phone: $phone, email: $email, dropzone: $dropzone, license: $license, exitWeight: $exitWeight}}
   ) {
     errors
     fieldErrors {
@@ -1206,9 +1206,9 @@ export type CreateGhostMutationFn = Apollo.MutationFunction<Operation.CreateGhos
  *      phone: // value for 'phone'
  *      email: // value for 'email'
  *      federationNumber: // value for 'federationNumber'
- *      roleId: // value for 'roleId'
- *      licenseId: // value for 'licenseId'
- *      dropzoneId: // value for 'dropzoneId'
+ *      role: // value for 'role'
+ *      license: // value for 'license'
+ *      dropzone: // value for 'dropzone'
  *      exitWeight: // value for 'exitWeight'
  *   },
  * });
@@ -2268,21 +2268,21 @@ export type UpdateTicketTypeMutationHookResult = ReturnType<typeof useUpdateTick
 export type UpdateTicketTypeMutationResult = Apollo.MutationResult<Operation.UpdateTicketTypeMutation>;
 export type UpdateTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>;
 export const UpdateUserDocument = gql`
-    mutation UpdateUser($id: Int, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $licenseId: Int, $exitWeight: Float) {
+    mutation UpdateUser($dropzoneUser: Int, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $license: Int, $exitWeight: Float) {
   updateUser(
-    input: {id: $id, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, licenseId: $licenseId, exitWeight: $exitWeight}}
+    input: {dropzoneUser: $dropzoneUser, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, license: $license, exitWeight: $exitWeight}}
   ) {
     errors
     fieldErrors {
       field
       message
     }
-    user {
-      ...userDetailed
+    dropzoneUser {
+      ...dropzoneUserDetails
     }
   }
 }
-    ${UserDetailedFragmentDoc}`;
+    ${DropzoneUserDetailsFragmentDoc}`;
 export type UpdateUserMutationFn = Apollo.MutationFunction<Operation.UpdateUserMutation, Operation.UpdateUserMutationVariables>;
 
 /**
@@ -2298,14 +2298,14 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<Operation.UpdateUserM
  * @example
  * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      dropzoneUser: // value for 'dropzoneUser'
  *      name: // value for 'name'
  *      phone: // value for 'phone'
  *      email: // value for 'email'
  *      image: // value for 'image'
  *      pushToken: // value for 'pushToken'
  *      nickname: // value for 'nickname'
- *      licenseId: // value for 'licenseId'
+ *      license: // value for 'license'
  *      exitWeight: // value for 'exitWeight'
  *   },
  * });

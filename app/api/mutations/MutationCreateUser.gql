@@ -3,21 +3,21 @@ mutation CreateGhost(
   $phone: String
   $email: String!
   $federationNumber: String
-  $roleId: Int!
-  $licenseId: Int
-  $dropzoneId: Int!
+  $role: Int!
+  $license: Int
+  $dropzone: Int!
   $exitWeight: Float!
 ) {
   createGhost(
     input: {
       attributes: {
-        roleId: $roleId
+        role: $role
         federationNumber: $federationNumber
         name: $name
         phone: $phone
         email: $email
-        dropzoneId: $dropzoneId
-        licenseId: $licenseId
+        dropzone: $dropzone
+        license: $license
         exitWeight: $exitWeight
       }
     }

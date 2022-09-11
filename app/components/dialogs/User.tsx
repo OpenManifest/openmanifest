@@ -61,9 +61,9 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
 
   const onSave = React.useCallback(async () => {
     await mutationUpdateUser.mutate({
-      id: Number(state.original?.id),
+      dropzoneUser: Number(state.original?.id),
       name: state.fields.name.value,
-      licenseId: !state.fields.license.value?.id ? null : Number(state.fields.license.value?.id),
+      license: !state.fields.license.value?.id ? null : Number(state.fields.license.value?.id),
       phone: state.fields.phone.value,
       exitWeight: parseFloat(state.fields.exitWeight?.value || '50'),
       email: state.fields.email.value,
@@ -71,7 +71,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
 
     // TODO: Set APF number from userFederation belonging to currentDropzone.federation
     // and compare against that
-    const selectedLicenseFederation = state.original?.userFederations?.find(
+    const selectedLicenseFederation = state.original?.user?.userFederations?.find(
       ({ federation }) => federation.slug === state.fields.license.value?.federation?.slug
     );
     console.debug({ selectedLicenseFederation });
@@ -101,7 +101,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
     state.fields.name.value,
     state.fields.phone.value,
     state.original?.id,
-    state.original?.userFederations,
+    state.original?.user?.userFederations,
   ]);
 
   const snapPoints = React.useMemo(() => [740], []);

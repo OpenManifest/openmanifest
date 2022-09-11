@@ -38,13 +38,13 @@ export default function CreateGhostDialog(props: ICreateGhostDialog) {
 
   const onSave = React.useCallback(async () => {
     mutationCreateGhost.mutate({
-      dropzoneId: globalState.currentDropzoneId as number,
+      dropzone: globalState.currentDropzoneId as number,
       name: state.fields.name.value || '',
-      licenseId: !state.fields.license.value?.id ? null : Number(state.fields.license.value?.id),
+      license: !state.fields.license.value?.id ? null : Number(state.fields.license.value?.id),
       phone: state.fields.phone.value,
       exitWeight: Number(state.fields.exitWeight.value),
       email: state.fields.email.value || '',
-      roleId: Number(state.fields.role.value?.id),
+      role: Number(state.fields.role.value?.id),
     });
   }, [
     mutationCreateGhost,

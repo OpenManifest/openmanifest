@@ -24,6 +24,8 @@ interface IDropzoneUserAutocompleteProps {
   onChange(value: DropzoneUserEssentialsFragment): void;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore This is supposed to be ok
 const StyledTextField = styled(TextField, {
   shouldForwardProp: (prop: keyof TextFieldProps) => prop !== 'color',
 })((p: TextFieldProps) => ({

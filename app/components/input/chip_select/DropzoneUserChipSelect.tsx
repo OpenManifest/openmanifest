@@ -34,11 +34,17 @@ export default function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
   }, [loading, onLoadingStateChanged]);
 
   const onChangeSelected = React.useCallback(
-    ([first]) => (first ? onSelect(first) : null),
+    ([first]: DropzoneUserEssentialsFragment[]) => (first ? onSelect(first) : null),
     [onSelect]
   );
-  const getItemLabel = React.useCallback((dzUser) => dzUser?.user.name, []);
-  const isSelected = React.useCallback((item) => item.id === value?.id, [value?.id]);
+  const getItemLabel = React.useCallback(
+    (dzUser: DropzoneUserEssentialsFragment) => dzUser?.user.name,
+    []
+  );
+  const isSelected = React.useCallback(
+    (item: DropzoneUserEssentialsFragment) => item.id === value?.id,
+    [value?.id]
+  );
   const selected = React.useMemo(
     () => [value].filter(Boolean) as DropzoneUserEssentialsFragment[],
     [value]

@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { LoadEssentialsFragment } from 'app/api/operations';
 import { useAppSelector } from 'app/state';
 import { format } from 'date-fns/esm';
+import parseISO from 'date-fns/parseISO';
 import Countdown from '../manifest/LoadCard/Countdown';
 
 interface ILoadHeader {
@@ -46,7 +47,7 @@ export default function UserHeader(props: ILoadHeader) {
         <View style={styles.titleContainer}>
           <Title style={styles.title}>Load #{load?.loadNumber}</Title>
           <Paragraph style={styles.paragraph}>
-            {load?.createdAt && format(load.createdAt * 1000, 'dd LLLL, yyyy')}
+            {load?.createdAt && format(parseISO(load.createdAt), 'dd LLLL, yyyy')}
           </Paragraph>
           {RenderBadges && width > 600 ? (
             <RenderBadges />

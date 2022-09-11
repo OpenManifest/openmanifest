@@ -1,7 +1,7 @@
 import * as React from 'react';
 import MuiMenu from '@mui/material/Menu';
 import MuiMenuItem from '@mui/material/MenuItem';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, GestureResponderEvent } from 'react-native';
 import { ListItemAvatar, ListItemIcon, ListItemText } from '@mui/material';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
@@ -33,7 +33,8 @@ export function MenuItem(props: IMenuItemProps) {
     >
       {!icon || avatar ? null : (
         <ListItemIcon>
-          {typeof icon === 'string' ? <MaterialCommunityIcons icon={icon} /> : icon}
+          {typeof icon === 'string' ? <MaterialCommunityIcons icon={icon} /> : null}
+          {React.isValidElement(icon) && typeof icon !== 'string' ? icon : null}
         </ListItemIcon>
       )}
       {!avatar ? null : (
@@ -49,11 +50,12 @@ export function MenuItem(props: IMenuItemProps) {
 export default function Menu(props: IPopoverMenuProps) {
   const { open, setOpen, anchor, children } = props;
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
+  const ref = React.useRef<TouchableOpacity>(null);
   const onClick = React.useCallback(
-    (event) => {
+    (event: GestureResponderEvent) => {
       setOpen(true);
       console.log({ event });
-      setAnchorEl(event.currentTarget);
+      setAnchorEl(event.currentTarget as unknown as Element);
     },
     [setOpen]
   );
@@ -64,7 +66,7 @@ export default function Menu(props: IPopoverMenuProps) {
 
   return (
     <>
-      <TouchableOpacity onPress={onClick}>
+      <TouchableOpacity ref={ref} onPress={onClick}>
         <View pointerEvents="none">{anchor}</View>
       </TouchableOpacity>
       <MuiMenu

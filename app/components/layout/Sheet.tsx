@@ -1,6 +1,6 @@
 import { sortBy, uniq } from 'lodash';
 import * as React from 'react';
-import { View, StyleSheet, Keyboard, ViewProps } from 'react-native';
+import { View, StyleSheet, ViewProps } from 'react-native';
 import { Button, Title, useTheme } from 'react-native-paper';
 import {
   BottomSheetScrollView,

@@ -18,11 +18,9 @@ export default createMutation<
     ],
     name: [isRequired('Name is required')],
 
-    roleId: [isRequired('You must select a role')],
+    role: [isRequired('You must select a role')],
   },
   fieldErrorMap: {
-    licenseId: 'license',
     exitWeight: 'exit_weight',
-    roleId: 'role',
   },
 });

@@ -58,6 +58,8 @@ export default function AuthenticatedTabBar() {
 
   return (
     <BottomTab.Navigator
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       appearance={{
         tabBarBackground: theme.colors.surface,
         topPadding: 16,
