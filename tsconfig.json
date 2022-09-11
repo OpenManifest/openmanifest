@@ -2,6 +2,7 @@
   "compilerOptions": {
     "module": "esnext",
     "baseUrl": "./",
+    "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
     "lib": [
@@ -28,9 +29,6 @@
     ".eslintrc.js",
     "index.ts",
     "patches/deprecated-prop-types.ts"
-  ],
-  "exclude": [
-    "node_modules/react-native-skeleton-content",
   ],
   "extends": "expo/tsconfig.base",
 }
