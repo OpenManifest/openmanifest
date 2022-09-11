@@ -36,6 +36,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       googleMapsAndroid: process.env.GOOGLE_MAPS_ANDROID,
       googleMapsIos: process.env.GOOGLE_MAPS_IOS,
       googleMapsWeb: process.env.GOOGLE_MAPS_WEB,
+      "eas": {
+        "projectId": "1d8fa34d-2ff8-4095-ab49-29a426117a8c"
+      }
     },
     ios: {
       ...config.ios,

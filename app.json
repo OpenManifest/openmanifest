@@ -1,5 +1,6 @@
 {
   "expo": {
+    "runtimeVersion": "1.0.0",
     "name": "Open Manifest",
     "slug": "openmanifest",
     "version": "1.2.0",
@@ -13,7 +14,8 @@
       "backgroundColor": "#111111"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/1d8fa34d-2ff8-4095-ab49-29a426117a8c"
     },
     "assetBundlePatterns": [
       "**/*"
