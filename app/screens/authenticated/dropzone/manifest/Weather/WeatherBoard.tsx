@@ -92,9 +92,16 @@ export default function WeatherBoard() {
 
   const defaultBackground = theme.dark ? nightBackground : weatherBackground;
 
-  return (loading && !dropzone?.currentConditions) || !called ? null : (
+  return (loading && !dropzone?.currentConditions) || !called ? (
+    <SkeletonContent
+      containerStyle={styles.card}
+      isLoading
+      layout={[{ key: 'root', height: 200, width: '100%' }]}
+    />
+  ) : (
     <Animated.View
       style={{
+        marginBottom: 8,
         height: height.current.interpolate({ inputRange: [0, 1], outputRange: [200, 300] }),
       }}
     >
