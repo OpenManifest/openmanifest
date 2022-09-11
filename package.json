@@ -23,7 +23,7 @@
     "web:start:dev": "EXPO_ENV=development expo start --web",
     "web:start:staging": "EXPO_ENV=staging expo start --web",
     "web:start:prod": "EXPO_ENV=production expo start --web",
-    "web:build:staging": "EXPO_ENV=staging expo export:web -d && mkdir -p web-build-staging && echo 'staging.openmanifest.org' > web-build-staging/CNAME && cp -rf ./web-build/* web-build-staging/ && cp web-build-staging/index.html web-build-staging/404.html && cp apple-app-site-association.json web-build-staging/ && mkdir -p web-build-staging/.well-known && cp apple-app-site-association.json web-build-staging/.well-known/",
+    "web:build:staging": "EXPO_ENV=staging expo export:web && mkdir -p web-build-staging && echo 'staging.openmanifest.org' > web-build-staging/CNAME && cp -rf ./web-build/* web-build-staging/ && cp web-build-staging/index.html web-build-staging/404.html && cp apple-app-site-association.json web-build-staging/ && mkdir -p web-build-staging/.well-known && cp apple-app-site-association.json web-build-staging/.well-known/",
     "web:build:production": "EXPO_ENV=production expo export:web && mkdir -p web-build-prod && echo 'openmanifest.org' > web-build-prod/CNAME && cp -rf ./web-build/* web-build-prod/ && cp web-build-prod/index.html web-build-prod/404.html && cp apple-app-site-association.json web-build-prod/ && mkdir -p web-build-prod/.well-known && cp apple-app-site-association.json web-build-prod/.well-known/",
     "web:upload:production": "gh-pages -t -d web-build-prod --repo https://github.com/OpenManifest/openmanifest-web.git",
     "web:upload:staging": "gh-pages -t -d web-build-staging --repo https://github.com/OpenManifest/openmanifest-web-staging.git",
