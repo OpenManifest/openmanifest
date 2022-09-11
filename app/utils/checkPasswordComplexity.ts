@@ -13,8 +13,5 @@ export default function checkPasswordComplexity(password: string) {
     { value: PasswordStrength.Acceptable, id: 2, minDiversity: 3, minLength: 10 },
     { value: PasswordStrength.Strong, id: 3, minDiversity: 4, minLength: 16 },
   ]);
-
-  console.debug(password, score);
-
   return score.value;
 }
