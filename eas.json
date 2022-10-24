@@ -13,10 +13,17 @@
       }
     },
     "staging": {
-      "distribution": "internal",
+      "env": {
+        "EXPO_ENV": "staging"
+      },
+      "distribution": "store",
       "channel": "staging"
     },
     "production": {
+      "env": {
+        "EXPO_ENV": "production"
+      },
+      "distribution": "store",
       "channel": "production"
     }
   },

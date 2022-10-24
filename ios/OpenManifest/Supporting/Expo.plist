@@ -8,9 +8,9 @@
     <true/>
     <key>EXUpdatesLaunchWaitMs</key>
     <integer>0</integer>
-    <key>EXUpdatesSDKVersion</key>
-    <string>46.0.0</string>
+    <key>EXUpdatesRuntimeVersion</key>
+    <string>1.0.0</string>
     <key>EXUpdatesURL</key>
-    <string>https://exp.host/@amnesthesia/openmanifest</string>
+    <string>https://u.expo.dev/1d8fa34d-2ff8-4095-ab49-29a426117a8c</string>
   </dict>
 </plist>

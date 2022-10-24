@@ -1,20 +1,29 @@
 import { startOfDay } from 'date-fns';
+import { isEqual } from 'lodash';
 import * as React from 'react';
 import { useAppSelector } from '../../state';
-import { useDropzoneQuery } from '../reflection';
+import { DropzoneQueryVariables } from '../operations';
+import { useDropzoneLazyQuery } from '../reflection';
 import useMutationUpdateUser from './useMutationUpdateUser';
 
 export default function useDropzoneContext() {
   const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
   const pushToken = useAppSelector((root) => root.global.expoPushToken);
 
-  const currentDropzone = useDropzoneQuery({
-    variables: {
+  const [getDropzone, query] = useDropzoneLazyQuery();
+  const variables: DropzoneQueryVariables = React.useMemo(
+    () => ({
       dropzoneId: Number(dropzoneId),
       earliestTimestamp: startOfDay(new Date()).toISOString(),
-    },
-    fetchPolicy: 'cache-first',
-  });
+    }),
+    [dropzoneId]
+  );
+
+  React.useEffect(() => {
+    if (variables?.dropzoneId && !isEqual(variables, query?.variables)) {
+      getDropzone({ variables });
+    }
+  }, [getDropzone, query?.variables, variables]);
 
   const mutationUpdateUser = useMutationUpdateUser({
     onSuccess: () => null,
@@ -25,11 +34,11 @@ export default function useDropzoneContext() {
   // token saved on the server. This is done so that the server
   // is able to send us push notifications
   React.useEffect(() => {
-    const userId = currentDropzone?.data?.dropzone?.currentUser?.id;
-    const remoteToken = currentDropzone?.data?.dropzone?.currentUser?.user?.pushToken;
+    const userId = query?.data?.dropzone?.currentUser?.id;
+    const remoteToken = query?.data?.dropzone?.currentUser?.user?.pushToken;
     const localToken = pushToken;
 
-    if (!currentDropzone.loading && currentDropzone.called) {
+    if (!query.loading && query.called) {
       if (localToken && localToken !== remoteToken && userId) {
         mutationUpdateUser.mutate({
           dropzoneUser: Number(userId),
@@ -39,16 +48,16 @@ export default function useDropzoneContext() {
     }
   }, [
     pushToken,
-    currentDropzone?.data?.dropzone?.currentUser?.user?.pushToken,
-    currentDropzone?.data?.dropzone?.currentUser?.id,
-    currentDropzone.loading,
-    currentDropzone.called,
+    query?.data?.dropzone?.currentUser?.user?.pushToken,
+    query?.data?.dropzone?.currentUser?.id,
+    query.loading,
+    query.called,
     mutationUpdateUser,
   ]);
 
   return {
-    ...currentDropzone,
-    dropzone: currentDropzone?.data?.dropzone,
-    currentUser: currentDropzone?.data?.dropzone?.currentUser,
+    ...query,
+    dropzone: query?.data?.dropzone,
+    currentUser: query?.data?.dropzone?.currentUser,
   };
 }

@@ -4,11 +4,12 @@ import { Appearance, Platform, StyleSheet } from 'react-native';
 
 import { useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
-import { Permission } from 'app/api/schema.d';
+import { ModerationRole, Permission } from 'app/api/schema.d';
 
 import { useTheme } from 'react-native-paper';
 
 import { NavigatorScreenParams } from '@react-navigation/core';
+import useDropzoneContext from 'app/api/hooks/useCurrentDropzone';
 import ManifestTab, { DropzoneRoutes } from './dropzone/routes';
 import UsersTab, { UserRoutes } from './user/routes';
 import NotificationsTab, { NotificationRoutes } from './notifications/routes';
@@ -27,8 +28,11 @@ export default function AuthenticatedTabBar() {
   const { palette } = useAppSelector((root) => root.global);
   const isDarkMode = Appearance.getColorScheme() === 'dark';
 
+  const { currentUser } = useDropzoneContext();
+  const isAdmin = currentUser?.user?.moderationRole !== ModerationRole.User;
   const canViewUsers = useRestriction(Permission.ReadUser);
   const canViewDashboard = useRestriction(Permission.ViewStatistics);
+
   const theme = useTheme();
 
   console.debug({ isDarkMode, dark: theme.dark });
@@ -74,7 +78,7 @@ export default function AuthenticatedTabBar() {
       initialRouteName="Manifest"
       {...{ screenOptions }}
     >
-      {canViewDashboard && (
+      {(canViewDashboard || isAdmin) && (
         <BottomTab.Screen
           name="Overview"
           component={OverviewTab}
