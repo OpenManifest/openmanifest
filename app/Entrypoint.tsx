@@ -1,6 +1,6 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import Constants from 'expo-constants';
+import Constants from 'app/constants/expo';
 import * as Notifications from 'expo-notifications';
 import * as React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -31,6 +31,11 @@ import NotificationArea from './components/notifications/Notifications';
 import RootNavigator, { options as LinkingConfiguration } from './screens/routes';
 import { actions } from './state';
 import ThemeProvider from './ThemeProvider';
+import {
+  AppSignalBoundary,
+  AppSignalProvider,
+  AppSignalSessionTagger,
+} from './components/app_signal';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -47,9 +52,9 @@ Sentry.init({
 });
 
 const googleMapsApiKey = Platform.select({
-  ios: Constants.manifest?.extra?.googleMapsIos,
-  android: Constants.manifest?.extra?.googleMapsAndroid,
-  web: Constants.manifest?.extra?.googleMapsWeb,
+  ios: Constants?.extra?.googleMapsIos,
+  android: Constants?.extra?.googleMapsAndroid,
+  web: Constants?.extra?.googleMapsWeb,
 });
 
 Geocoder.init(googleMapsApiKey);
@@ -87,41 +92,47 @@ function Content() {
   );
 
   return (
-    <AppUpdate>
-      <React.Suspense
-        fallback={
-          <View style={{ flex: 1, flexGrow: 1 }}>
-            <ProgressBar indeterminate color={state?.theme?.colors?.primary} visible />
-          </View>
-        }
-      >
-        <Apollo>
-          <ThemeProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <PortalProvider>
-                <SafeAreaProvider>
-                  <ImageViewer />
-                  <NavigationContainer
-                    onStateChange={onRouteChange}
-                    linking={LinkingConfiguration}
-                    theme={state.theme as unknown as never}
-                  >
-                    <Wrapper>
-                      <PushNotifications>
-                        <RootNavigator />
-                      </PushNotifications>
-                    </Wrapper>
-                  </NavigationContainer>
+    <AppSignalProvider>
+      <AppSignalBoundary>
+        <AppUpdate>
+          <React.Suspense
+            fallback={
+              <View style={{ flex: 1, flexGrow: 1 }}>
+                <ProgressBar indeterminate color={state?.theme?.colors?.primary} visible />
+              </View>
+            }
+          >
+            <Apollo>
+              <AppSignalSessionTagger>
+                <ThemeProvider>
+                  <GestureHandlerRootView style={{ flex: 1 }}>
+                    <PortalProvider>
+                      <SafeAreaProvider>
+                        <ImageViewer />
+                        <NavigationContainer
+                          onStateChange={onRouteChange}
+                          linking={LinkingConfiguration}
+                          theme={state.theme as unknown as never}
+                        >
+                          <Wrapper>
+                            <PushNotifications>
+                              <RootNavigator />
+                            </PushNotifications>
+                          </Wrapper>
+                        </NavigationContainer>
 
-                  <StatusBar />
-                  <NotificationArea />
-                </SafeAreaProvider>
-              </PortalProvider>
-            </GestureHandlerRootView>
-          </ThemeProvider>
-        </Apollo>
-      </React.Suspense>
-    </AppUpdate>
+                        <StatusBar />
+                        <NotificationArea />
+                      </SafeAreaProvider>
+                    </PortalProvider>
+                  </GestureHandlerRootView>
+                </ThemeProvider>
+              </AppSignalSessionTagger>
+            </Apollo>
+          </React.Suspense>
+        </AppUpdate>
+      </AppSignalBoundary>
+    </AppSignalProvider>
   );
 }
 function App() {

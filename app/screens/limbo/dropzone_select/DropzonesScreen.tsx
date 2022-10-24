@@ -14,6 +14,7 @@ export default function DropzonesScreen() {
   const globalState = useAppSelector((root) => root.global);
   const { data, loading, refetch } = useQueryDropzones();
   const navigation = useNavigation();
+  console.debug(data?.dropzones);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -1,6 +1,8 @@
 {
   "expo": {
-    "runtimeVersion": "1.0.0",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
     "name": "Open Manifest",
     "slug": "openmanifest",
     "version": "1.2.0",

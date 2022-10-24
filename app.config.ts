@@ -8,8 +8,15 @@ const BACKEND_ENVIRONMENTS = {
   production: 'https://api.openmanifest.org/graphql',
 };
 
+
 export default ({ config }: ConfigContext): ExpoConfig => {
   const environment = process.env.EXPO_ENV;
+
+  const appSignalApiKey = {
+    development: process.env.APPSIGNAL_DEVELOPMENT_API_KEY,
+    staging: process.env.APPSIGNAL_STAGING_API_KEY,
+    production: process.env.APPSIGNAL_PRODUCTION_API_KEY,
+  };
 
   const conf = {
     ...config,
@@ -38,7 +45,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       googleMapsWeb: process.env.GOOGLE_MAPS_WEB,
       "eas": {
         "projectId": "1d8fa34d-2ff8-4095-ab49-29a426117a8c"
-      }
+      },
+      appSignalApiKey: appSignalApiKey[environment],
     },
     ios: {
       ...config.ios,

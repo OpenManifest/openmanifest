@@ -3,6 +3,7 @@ import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as React from 'react';
 import * as inter from '@expo-google-fonts/inter';
+import * as roboto from '@expo-google-fonts/roboto';
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -11,6 +12,9 @@ export default function useCachedResources() {
     Inter_400Regular: inter.Inter_400Regular,
     Inter_500Medium: inter.Inter_500Medium,
     Inter_700Bold: inter.Inter_700Bold,
+    Roboto_400Regular: roboto.Roboto_400Regular,
+    Roboto_500Medium: roboto.Roboto_500Medium,
+    Roboto_700Bold: roboto.Roboto_700Bold,
   });
 
   // Load any resources or data that we need prior to rendering the app
