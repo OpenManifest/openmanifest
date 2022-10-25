@@ -96,31 +96,31 @@ function Content() {
             }
           >
             <Apollo>
-              <AppSignalSessionTagger>
-                <ThemeProvider>
-                  <GestureHandlerRootView style={{ flex: 1 }}>
-                    <PortalProvider>
-                      <SafeAreaProvider>
-                        <ImageViewer />
-                        <NavigationContainer
-                          onStateChange={onRouteChange}
-                          linking={LinkingConfiguration}
-                          theme={state.theme as unknown as never}
-                        >
-                          <Wrapper>
+              <ThemeProvider>
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                  <PortalProvider>
+                    <SafeAreaProvider>
+                      <ImageViewer />
+                      <NavigationContainer
+                        onStateChange={onRouteChange}
+                        linking={LinkingConfiguration}
+                        theme={state.theme as unknown as never}
+                      >
+                        <Wrapper>
+                          <AppSignalSessionTagger>
                             <PushNotifications>
                               <RootNavigator />
                             </PushNotifications>
-                          </Wrapper>
-                        </NavigationContainer>
+                          </AppSignalSessionTagger>
+                        </Wrapper>
+                      </NavigationContainer>
 
-                        <StatusBar />
-                        <NotificationArea />
-                      </SafeAreaProvider>
-                    </PortalProvider>
-                  </GestureHandlerRootView>
-                </ThemeProvider>
-              </AppSignalSessionTagger>
+                      <StatusBar />
+                      <NotificationArea />
+                    </SafeAreaProvider>
+                  </PortalProvider>
+                </GestureHandlerRootView>
+              </ThemeProvider>
             </Apollo>
           </React.Suspense>
         </AppUpdate>
