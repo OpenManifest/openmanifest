@@ -1,13 +1,6 @@
-import {
-  ApolloError,
-  ApolloLink,
-  FetchResult,
-  NextLink,
-  Operation,
-  ServerError,
-} from '@apollo/client/core';
+import { ApolloLink, FetchResult, NextLink, Operation, ServerError } from '@apollo/client';
 import { ErrorResponse, onError as createErrorLink } from '@apollo/client/link/error';
-import Observable from 'zen-observable';
+import { Observable } from 'zen-observable-ts';
 import AppSignal from '@appsignal/javascript';
 import type { Breadcrumb } from '@appsignal/types';
 import { GraphQLError, OperationDefinitionNode, print } from 'graphql';

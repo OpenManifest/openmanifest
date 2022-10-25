@@ -83,6 +83,7 @@
     "@appsignal/plugin-path-decorator": "^1.0.15",
     "@appsignal/plugin-window-events": "^1.0.18",
     "@appsignal/react": "1.0.21",
+    "@babel/plugin-proposal-logical-assignment-operators": "7.18.9",
     "@emotion/react": "11.10.0",
     "@emotion/styled": "11.10.0",
     "@expo-google-fonts/inter": "^0.2.2",
@@ -189,7 +190,8 @@
     "sentry-expo": "~5.0.0",
     "styled-components": "5.3.5",
     "urijs": "1.19.11",
-    "zen-observable": "0.8.15"
+    "zen-observable": "0.8.15",
+    "zen-observable-ts": "1.1.0"
   },
   "resolutions": {
     "react-native-reanimated": "~2.9.1",
