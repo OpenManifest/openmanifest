@@ -22,18 +22,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ...config,
     name: 'OpenManifest',
     slug: 'openmanifest',
-    hooks: {
-      postPublish: [
-        {
-          file: 'sentry-expo/upload-sourcemaps',
-          config: {
-            organization: 'danger-technology',
-            project: 'openmanifest',
-            authToken: process.env.SENTRY_API_KEY,
-          },
-        },
-      ],
-    },
 
     // All values in extra will be passed to your app.
     extra: {

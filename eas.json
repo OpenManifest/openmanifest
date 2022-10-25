@@ -14,6 +14,7 @@
     },
     "staging": {
       "env": {
+        "ENTRY_FILE": "app/Entrypoint.tsx",
         "EXPO_ENV": "staging"
       },
       "distribution": "store",
@@ -21,6 +22,7 @@
     },
     "production": {
       "env": {
+        "ENTRY_FILE": "app/Entrypoint.tsx",
         "EXPO_ENV": "production"
       },
       "distribution": "store",

@@ -1,6 +1,7 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import Constants from 'app/constants/expo';
+import { registerRootComponent } from 'expo';
+import config from 'app/constants/expo';
 import * as Notifications from 'expo-notifications';
 import * as React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -9,8 +10,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { ActivityIndicator, ProgressBar } from 'react-native-paper';
 import { Appearance, Platform, View } from 'react-native';
 import { NavigationContainer, NavigationState, getPathFromState } from '@react-navigation/native';
-import { registerRootComponent } from 'expo';
-import * as Sentry from 'sentry-expo';
 import { PortalProvider } from '@gorhom/portal';
 
 import Geocoder from 'react-native-geocoding';
@@ -45,16 +44,10 @@ Notifications.setNotificationHandler({
   }),
 });
 
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  enableInExpoDevelopment: true,
-  debug: true,
-});
-
 const googleMapsApiKey = Platform.select({
-  ios: Constants?.extra?.googleMapsIos,
-  android: Constants?.extra?.googleMapsAndroid,
-  web: Constants?.extra?.googleMapsWeb,
+  ios: config?.googleMapsIos,
+  android: config?.googleMapsAndroid,
+  web: config?.googleMapsWeb,
 });
 
 Geocoder.init(googleMapsApiKey);
