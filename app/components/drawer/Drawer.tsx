@@ -303,7 +303,6 @@ export default function DrawerMenu() {
               active={dropzone?.id === edge?.node?.id}
               onPress={() => {
                 if (edge?.node) {
-                  console.debug('Dispatching setDropzone', edge?.node);
                   dispatch(actions.global.setDropzone(edge.node as DropzoneExtensiveFragment));
                   navigation.navigate('Authenticated', {
                     screen: 'LeftDrawer',

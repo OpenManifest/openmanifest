@@ -2,6 +2,7 @@ import * as React from 'react';
 import { List } from 'react-native-paper';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
+import { isEqual } from 'lodash';
 
 export interface ISelectOption<T> {
   label: string;
@@ -16,6 +17,9 @@ interface ISelectProps<T> {
   options: ISelectOption<T>[];
   value?: T | null;
   onChange(item: T): void;
+
+  // Custom comparison function for option and selected value
+  compare?(a: T | null | undefined, b: T | null | undefined): boolean;
   renderAnchor?: React.FC<IAnchorProps<T>>;
 }
 
@@ -37,7 +41,7 @@ function Anchor<T>(props: IAnchorProps<T>): JSX.Element {
 }
 
 export default function Select<T>(props: ISelectProps<T>) {
-  const { label, options, onChange, value, renderAnchor } = props;
+  const { label, options, compare = isEqual, onChange, value, renderAnchor } = props;
   const [open, setOpen] = React.useState<boolean>(false);
 
   console.log('Select menu', open);
@@ -61,8 +65,8 @@ export default function Select<T>(props: ISelectProps<T>) {
   );
 
   const selectedOption = React.useMemo(
-    () => options.find((option) => option.value === value),
-    [options, value]
+    () => options.find((option) => compare(option.value, value)),
+    [compare, options, value]
   );
 
   const anchor = React.useMemo(

@@ -16,14 +16,12 @@ export default function DropzonesScreen() {
     skip: !globalState?.credentials?.accessToken,
   });
   const navigation = useNavigation();
-  console.debug(data?.dropzones);
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
         data={data?.dropzones?.edges || []}
-        numColumns={Platform.OS === 'web' ? undefined : 2}
-        horizontal={Platform.OS === 'web'}
+        numColumns={Platform.OS === 'web' ? 3 : 2}
         refreshing={loading}
         keyExtractor={(item) => `dropzone-${item?.node?.id}`}
         onRefresh={() => refetch()}
@@ -34,7 +32,6 @@ export default function DropzonesScreen() {
         )}
         renderItem={({ item }) => (!item?.node ? null : <DropzoneCard dropzone={item?.node} />)}
       />
-
       <FAB
         style={[styles.fab, { backgroundColor: globalState.theme.colors.primary }]}
         small

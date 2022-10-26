@@ -10,6 +10,7 @@ import { useTheme } from 'react-native-paper';
 
 import { NavigatorScreenParams } from '@react-navigation/core';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { AppSignalBoundary } from 'app/components/app_signal';
 import ManifestTab, { DropzoneRoutes } from './dropzone/routes';
 import UsersTab, { UserRoutes } from './user/routes';
 import NotificationsTab, { NotificationRoutes } from './notifications/routes';
@@ -35,8 +36,6 @@ export default function AuthenticatedTabBar() {
 
   const theme = useTheme();
 
-  console.debug({ isDarkMode, dark: theme.dark });
-
   const screenOptions = React.useMemo(
     () => ({
       tabBarActiveTintColor: theme.colors.primary,
@@ -61,31 +60,47 @@ export default function AuthenticatedTabBar() {
   );
 
   return (
-    <BottomTab.Navigator
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      appearance={{
-        tabBarBackground: theme.colors.surface,
-        topPadding: 16,
-        shadow: true,
-        bottomPadding: 16,
-      }}
-      tabBarOptions={{
-        activeTintColor: '#FFFFFF',
-        inactiveTintColor: palette.primary.main,
-        activeBackgroundColor: palette.primary.main,
-      }}
-      initialRouteName="Manifest"
-      {...{ screenOptions }}
-    >
-      {(canViewDashboard || isAdmin) && (
+    <AppSignalBoundary>
+      <BottomTab.Navigator
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        appearance={{
+          tabBarBackground: theme.colors.surface,
+          topPadding: 16,
+          shadow: true,
+          bottomPadding: 16,
+        }}
+        tabBarOptions={{
+          activeTintColor: '#FFFFFF',
+          inactiveTintColor: palette.primary.main,
+          activeBackgroundColor: palette.primary.main,
+        }}
+        initialRouteName="Manifest"
+        {...{ screenOptions }}
+      >
+        {(canViewDashboard || isAdmin) && (
+          <BottomTab.Screen
+            name="Overview"
+            component={OverviewTab}
+            options={{
+              tabBarIcon: ({ focused, color, size }) => (
+                <MaterialCommunityIcons
+                  name="view-dashboard-outline"
+                  {...{ size, color }}
+                  style={[styles.icon, focused ? styles.iconActive : undefined]}
+                />
+              ),
+              unmountOnBlur: false,
+            }}
+          />
+        )}
         <BottomTab.Screen
-          name="Overview"
-          component={OverviewTab}
+          name="Manifest"
+          component={ManifestTab}
           options={{
             tabBarIcon: ({ focused, color, size }) => (
               <MaterialCommunityIcons
-                name="view-dashboard-outline"
+                name="airplane"
                 {...{ size, color }}
                 style={[styles.icon, focused ? styles.iconActive : undefined]}
               />
@@ -93,52 +108,38 @@ export default function AuthenticatedTabBar() {
             unmountOnBlur: false,
           }}
         />
-      )}
-      <BottomTab.Screen
-        name="Manifest"
-        component={ManifestTab}
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <MaterialCommunityIcons
-              name="airplane"
-              {...{ size, color }}
-              style={[styles.icon, focused ? styles.iconActive : undefined]}
-            />
-          ),
-          unmountOnBlur: false,
-        }}
-      />
-      <BottomTab.Screen
-        name="Notifications"
-        component={NotificationsTab}
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <MaterialCommunityIcons
-              name="bell-outline"
-              style={[styles.icon, focused ? styles.iconActive : undefined]}
-              {...{ size, color }}
-            />
-          ),
-          unmountOnBlur: true,
-        }}
-      />
-      {canViewUsers && (
         <BottomTab.Screen
-          name="Users"
-          component={UsersTab}
+          name="Notifications"
+          component={NotificationsTab}
           options={{
-            tabBarIcon: ({ size, color, focused }) => (
+            tabBarIcon: ({ focused, color, size }) => (
               <MaterialCommunityIcons
-                {...{ size, color }}
-                name="account-group-outline"
+                name="bell-outline"
                 style={[styles.icon, focused ? styles.iconActive : undefined]}
+                {...{ size, color }}
               />
             ),
             unmountOnBlur: true,
           }}
         />
-      )}
-    </BottomTab.Navigator>
+        {canViewUsers && (
+          <BottomTab.Screen
+            name="Users"
+            component={UsersTab}
+            options={{
+              tabBarIcon: ({ size, color, focused }) => (
+                <MaterialCommunityIcons
+                  {...{ size, color }}
+                  name="account-group-outline"
+                  style={[styles.icon, focused ? styles.iconActive : undefined]}
+                />
+              ),
+              unmountOnBlur: true,
+            }}
+          />
+        )}
+      </BottomTab.Navigator>
+    </AppSignalBoundary>
   );
 }
 
