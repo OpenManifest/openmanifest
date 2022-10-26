@@ -331,9 +331,7 @@ export default function ManifestScreen() {
               }}
               numColumns={numColumns}
               {...{ data, renderItem }}
-              refreshControl={
-                <RefreshControl refreshing={loading} onRefresh={() => fetchMore({})} />
-              }
+              refreshControl={<RefreshControl refreshing={loading} onRefresh={() => fetchMore()} />}
             />
           </View>
         )}

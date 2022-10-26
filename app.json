@@ -26,7 +26,6 @@
     "facebookDisplayName": "OpenManifest",
     "facebookAutoInitEnabled": true,
     "facebookScheme": "fb686479516065674",
-    "entryPoint": "app/Entrypoint.tsx",
     "ios": {
       "config": {
         "usesNonExemptEncryption": false

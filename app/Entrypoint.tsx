@@ -1,6 +1,5 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import { registerRootComponent } from 'expo';
 import config from 'app/constants/expo';
 import * as Notifications from 'expo-notifications';
 import * as React from 'react';
@@ -150,4 +149,4 @@ function App() {
   );
 }
 
-export default registerRootComponent(App);
+export default App;

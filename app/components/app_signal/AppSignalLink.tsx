@@ -4,6 +4,7 @@ import { Observable } from 'zen-observable-ts';
 import AppSignal from '@appsignal/javascript';
 import type { Breadcrumb } from '@appsignal/types';
 import { GraphQLError, OperationDefinitionNode, print } from 'graphql';
+import { omit } from 'lodash';
 
 export interface IAppSignalLinkOptions {
   breadcrumbs: {
@@ -143,7 +144,11 @@ export class AppSignalBreadcrumbLink extends ApolloLink {
 
           if (options?.breadcrumbs?.includeVariables) {
             // Always include query, variables and response on errors
-            breadcrumb.metadata.variables = JSON.stringify(operation.variables || {}, null, 2);
+            breadcrumb.metadata.variables = JSON.stringify(
+              omit(operation.variables || {}, ['password']),
+              null,
+              2
+            );
           }
 
           originalObserver.next(result);

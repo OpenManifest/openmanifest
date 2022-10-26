@@ -3,6 +3,8 @@ import * as Update from 'expo-updates';
 import { View, StyleSheet, Text, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Button } from 'react-native-paper';
+import * as Device from 'expo-device';
+
 // eslint-disable-next-line camelcase
 import * as fonts from '@expo-google-fonts/roboto';
 import LottieView from '../LottieView';
@@ -25,7 +27,7 @@ export default function AppUpdate(props: IAppUpdateProps) {
   const dispatch = useAppDispatch();
 
   const onUpdate = React.useCallback(async () => {
-    if (Platform.OS === 'web') {
+    if (Platform.OS === 'web' || !Device.isDevice) {
       return;
     }
     animation.current?.play();
@@ -38,7 +40,7 @@ export default function AppUpdate(props: IAppUpdateProps) {
     }
   }, [dispatch]);
   const isUpdateAvailable = React.useCallback(async () => {
-    if (Platform.OS === 'web') {
+    if (Platform.OS === 'web' || !Device.isDevice) {
       return;
     }
     const { isAvailable } = await Update.checkForUpdateAsync();

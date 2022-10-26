@@ -2,6 +2,7 @@ import Constants from 'expo-constants';
 import * as React from 'react';
 import * as Notifications from 'expo-notifications';
 import { Linking, Platform } from 'react-native';
+import * as Device from 'expo-device';
 import URI from 'urijs';
 import { actions, useAppDispatch, useAppSelector } from './state';
 import useMutationUpdateUser from './api/hooks/useMutationUpdateUser';
@@ -58,7 +59,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
     onError: () => null,
   });
   React.useEffect(() => {
-    if (Platform.OS === 'web') {
+    if (Platform.OS === 'web' || !Device.isDevice) {
       return undefined;
     }
 

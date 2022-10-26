@@ -1,41 +1,62 @@
 import * as React from 'react';
-import { isEqual } from 'lodash';
-import { startOfDay } from 'date-fns';
-import { useCurrentUserPermissionsLazyQuery, useDropzoneLazyQuery } from '../reflection';
-import { DropzoneQueryVariables } from '../operations';
+import { noop } from 'lodash';
+import { DateTime } from 'luxon';
+import { useCurrentUserPermissionsQuery, useDropzoneQuery } from '../reflection';
+import { CurrentUserPermissionsQueryVariables, DropzoneQueryVariables } from '../operations';
 import createCRUDContext, { uninitializedHandler } from './factory';
 
 export default function useDropzone(vars: Partial<DropzoneQueryVariables>) {
-  const [getDropzone, query] = useDropzoneLazyQuery();
-  const firstLoadTimestamp = startOfDay(new Date()).toISOString();
+  const firstLoadTimestamp = DateTime.now().startOf('day').toUTC().toISO();
   const variables = React.useMemo(
     () => ({ ...vars, earliestTimestamp: firstLoadTimestamp }),
     [firstLoadTimestamp, vars]
   );
 
-  const [getPermissions, permissions] = useCurrentUserPermissionsLazyQuery({
-    variables: {
-      dropzoneId: Number(variables?.dropzoneId),
-    },
+  const query = useDropzoneQuery({
+    initialFetchPolicy: 'cache-first',
+    variables: variables?.dropzoneId ? (variables as DropzoneQueryVariables) : undefined,
+    skip: !variables?.dropzoneId,
   });
 
-  React.useEffect(() => {
-    if (variables?.dropzoneId && !query?.loading && !isEqual(query.variables, variables)) {
-      getDropzone({ variables: variables as DropzoneQueryVariables });
-      getPermissions();
-      console.debug('Refetching because of diff in ', query.variables, variables);
-    }
-  }, [getDropzone, getPermissions, query?.loading, query.variables, variables]);
+  const permissionsVariables = React.useMemo(
+    () => ({ dropzoneId: variables?.dropzoneId }),
+    [variables?.dropzoneId]
+  );
+  console.debug(variables);
 
-  return {
-    loading: query?.loading,
-    called: query?.called,
-    permissions: permissions?.data?.dropzone?.currentUser?.permissions || [],
-    refetch: query?.refetch,
-    fetchMore: query?.fetchMore,
-    dropzone: query?.data?.dropzone,
-    currentUser: query?.data?.dropzone?.currentUser,
-  };
+  const permissions = useCurrentUserPermissionsQuery({
+    variables: permissionsVariables as CurrentUserPermissionsQueryVariables,
+    skip: !permissionsVariables?.dropzoneId,
+  });
+
+  const refetch = React.useCallback(() => {
+    if (variables?.dropzoneId) {
+      query?.refetch();
+    }
+  }, [query, variables]);
+
+  const { loading, fetchMore, data, called, variables: queryVariables } = query;
+  return React.useMemo(
+    () => ({
+      loading,
+      called,
+      permissions: permissions?.data?.dropzone?.currentUser?.permissions || [],
+      refetch: queryVariables?.dropzoneId ? refetch : noop,
+      fetchMore: queryVariables?.dropzoneId ? () => fetchMore({ variables }) : uninitializedHandler,
+      dropzone: data?.dropzone,
+      currentUser: data?.dropzone?.currentUser,
+    }),
+    [
+      variables,
+      loading,
+      called,
+      permissions?.data?.dropzone?.currentUser?.permissions,
+      refetch,
+      queryVariables?.dropzoneId,
+      fetchMore,
+      data?.dropzone,
+    ]
+  );
 }
 
 const { Provider: DropzoneProvider, useContext: useDropzoneContext } = createCRUDContext(
