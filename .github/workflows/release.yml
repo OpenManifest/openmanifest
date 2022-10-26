@@ -42,9 +42,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - uses: expo/expo-github-action@v6
+      - uses: expo/expo-github-action@v7
         with:
-          expo-version: 4.x
+          expo-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
       - run: yarn install
       - run: yarn ts:graphql:staging && yarn typecheck
@@ -58,3 +58,4 @@ jobs:
           EXPO_ENV: staging
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_API_KEY: ${{ secrets.SENTRY_API_KEY }}
+          APPSIGNAL_STAGING_API_KEY: ${{ secrets.APPSIGNAL_STAGING_API_KEY }}
