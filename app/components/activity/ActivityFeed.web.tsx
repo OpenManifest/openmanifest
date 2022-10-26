@@ -101,7 +101,6 @@ export default function ActivityFeed(props: IActivityFeedProps) {
       !query?.loading &&
       query?.data?.activity?.pageInfo?.endCursor !== query?.variables?.after
     ) {
-      console.debug('Fetching more');
       query
         ?.fetchMore({ variables: { after: query?.data?.activity?.pageInfo?.endCursor } })
         .then((result) => {
@@ -118,8 +117,6 @@ export default function ActivityFeed(props: IActivityFeedProps) {
             },
           }));
         });
-    } else {
-      console.debug('Not Fetching more', query?.loading, query?.data?.activity?.pageInfo);
     }
   }, [query]);
 

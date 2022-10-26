@@ -4,6 +4,7 @@ import * as React from 'react';
 import AppBar from 'app/components/appbar/AppBar';
 
 import { NavigatorScreenParams } from '@react-navigation/core';
+import { AppSignalBoundary } from 'app/components/app_signal';
 import NotificationsScreen from './notifications/NotificationsScreen';
 import Users, { UserRoutes } from '../user/routes';
 
@@ -17,23 +18,25 @@ const Notification = createStackNavigator<NotificationRoutes>();
 
 export default function Notifications() {
   return (
-    <Notification.Navigator
-      screenOptions={{
-        headerShown: true,
-        header: (props) => <AppBar {...props} hideWarnings />,
-        cardStyle: {
-          flex: 1,
-        },
-      }}
-      initialRouteName="NotificationsScreen"
-    >
-      <Notification.Screen
-        name="NotificationsScreen"
-        component={NotificationsScreen}
-        options={{ title: 'Notifications' }}
-      />
+    <AppSignalBoundary>
+      <Notification.Navigator
+        screenOptions={{
+          headerShown: true,
+          header: (props) => <AppBar {...props} hideWarnings />,
+          cardStyle: {
+            flex: 1,
+          },
+        }}
+        initialRouteName="NotificationsScreen"
+      >
+        <Notification.Screen
+          name="NotificationsScreen"
+          component={NotificationsScreen}
+          options={{ title: 'Notifications' }}
+        />
 
-      <Notification.Screen name="User" component={Users} />
-    </Notification.Navigator>
+        <Notification.Screen name="User" component={Users} />
+      </Notification.Navigator>
+    </AppSignalBoundary>
   );
 }

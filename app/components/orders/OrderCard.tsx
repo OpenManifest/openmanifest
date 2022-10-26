@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
-import { Card, List, useTheme } from 'react-native-paper';
+import { Caption, Card, List, useTheme } from 'react-native-paper';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
@@ -11,6 +11,7 @@ import {
 import { Dropzone, DropzoneUser } from 'app/api/schema.d';
 import { successColor } from 'app/constants/Colors';
 import UserAvatar from 'app/components/UserAvatar';
+import { DateTime } from 'luxon';
 
 interface IOrder {
   order: OrderEssentialsFragment;
@@ -90,6 +91,16 @@ export default function OrderCard(props: IOrder) {
   return (
     <TouchableOpacity onPress={onPress}>
       <Card style={styles.order}>
+        <Caption
+          style={{
+            textAlign: 'right',
+            paddingRight: 4,
+            paddingTop: 2,
+            marginBottom: 0,
+          }}
+        >
+          {DateTime.fromISO(order?.createdAt).toLocaleString(DateTime.DATETIME_SHORT)}
+        </Caption>
         <Card.Content style={styles.orderContent}>
           <List.Item
             title={(order?.seller as DropzoneUser)?.user?.name || (order?.seller as Dropzone)?.name}

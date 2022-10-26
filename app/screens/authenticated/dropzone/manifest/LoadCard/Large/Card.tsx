@@ -1,14 +1,6 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
-import {
-  Button,
-  Card,
-  DataTable,
-  IconButton,
-  Paragraph,
-  ProgressBar,
-  Text,
-} from 'react-native-paper';
+import { Platform, ScrollView } from 'react-native';
+import { Button, Card, IconButton, Paragraph, ProgressBar, Text } from 'react-native-paper';
 import addMinutes from 'date-fns/addMinutes';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 
@@ -31,10 +23,11 @@ import { View } from 'app/components/Themed';
 import { LoadState, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import SwipeActions from 'app/components/layout/SwipeActions';
 import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
 import useMutationDeleteSlot from 'app/api/hooks/useMutationDeleteSlot';
 import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
+import SlotsTable from 'app/components/slots_table/Table';
+import { SlotFields } from 'app/components/slots_table/UserRow';
 import LoadingCard from './Loading';
 
 interface ILoadCardLarge {
@@ -194,12 +187,6 @@ export default function LoadCard(props: ILoadCardLarge) {
   const navigation = useAuthenticatedNavigation();
   const canUpdateLoad = useRestriction(Permission.UpdateLoad);
 
-  const canEditSelf = useRestriction(Permission.UpdateSlot);
-  const canEditOthers = useRestriction(Permission.UpdateUserSlot);
-
-  const canRemoveSelf = useRestriction(Permission.DeleteSlot);
-  const canRemoveOthers = useRestriction(Permission.DeleteUserSlot);
-
   const canManifestSelf = useRestriction(Permission.CreateSlot);
   const canManifestGroup = useRestriction(Permission.CreateUserSlot);
   const canManifestGroupWithSelfOnly = useRestriction(Permission.CreateUserSlotWithSelf);
@@ -272,17 +259,22 @@ export default function LoadCard(props: ILoadCardLarge) {
       <Card.Content
         style={{
           marginVertical: 8,
+          paddingHorizontal: 0,
           height: isExpanded || !controlsVisible ? undefined : 300,
           overflow: 'hidden',
         }}
       >
-        <View style={{ flexDirection: 'row', backgroundColor: 'transparent' }}>
+        <View
+          style={{ flexDirection: 'row', paddingHorizontal: 8, backgroundColor: 'transparent' }}
+        >
           <ScrollView
+            style={{ height: 32 }}
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ backgroundColor: 'transparent' }}
           >
             <PlaneChip
+              small={Platform.OS !== 'web'}
               value={load?.plane}
               onSelect={async (plane) => {
                 if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
@@ -300,114 +292,29 @@ export default function LoadCard(props: ILoadCardLarge) {
                 }
               }}
             />
-            <GCAChip value={load?.gca} onSelect={updateGCA} />
-            <PilotChip value={load?.pilot} onSelect={updatePilot} />
+            <GCAChip small={Platform.OS !== 'web'} value={load?.gca} onSelect={updateGCA} />
+            <PilotChip small={Platform.OS !== 'web'} value={load?.pilot} onSelect={updatePilot} />
             <LoadMasterChip
+              small={Platform.OS !== 'web'}
               value={load?.loadMaster}
               slots={load?.slots || []}
               onSelect={updateLoadMaster}
             />
           </ScrollView>
         </View>
-        <DataTable>
-          <DataTable.Header style={{ width: '100%' }}>
-            <DataTable.Title>Name</DataTable.Title>
-            <DataTable.Title numeric>Jump type</DataTable.Title>
-            <DataTable.Title numeric>Altitude</DataTable.Title>
-          </DataTable.Header>
-          {load?.slots?.map((slot) => {
-            const slotGroup = load?.slots?.filter(
-              ({ groupNumber }) => groupNumber && groupNumber === slot.groupNumber
-            );
-            const isCurrentUser = slot?.dropzoneUser?.id === currentUser?.id;
-
-            return (
-              <SwipeActions
-                disabled={(isCurrentUser && !canRemoveSelf) || (!isCurrentUser && !canRemoveOthers)}
-                key={`slot-${slot.id}`}
-                rightAction={{
-                  label: 'Delete',
-                  backgroundColor: 'red',
-                  onPress: () => onDeleteSlot(slot),
-                }}
-              >
-                <DataTable.Row
-                  testID="slot-row"
-                  disabled={!!load?.hasLanded}
-                  onPress={() => {
-                    if (slot.dropzoneUser?.id === currentUser?.id) {
-                      if (canEditSelf) {
-                        if (slotGroup?.length) {
-                          onSlotGroupPress(slotGroup);
-                        } else {
-                          onSlotPress(slot);
-                        }
-                      }
-                    } else if (canEditOthers) {
-                      if (slotGroup?.length) {
-                        onSlotGroupPress(slotGroup);
-                      } else {
-                        onSlotPress(slot);
-                      }
-                    }
-                  }}
-                  pointerEvents="none"
-                >
-                  <DataTable.Cell>
-                    <Paragraph style={styles.slotText}>{slot?.dropzoneUser?.user?.name}</Paragraph>
-                  </DataTable.Cell>
-                  <DataTable.Cell numeric>
-                    <Paragraph style={styles.slotText}>{slot?.jumpType?.name}</Paragraph>
-                  </DataTable.Cell>
-                  <DataTable.Cell numeric>
-                    <Paragraph style={styles.slotText}>
-                      {(slot?.ticketType?.altitude || 14000) / 1000}k
-                    </Paragraph>
-                  </DataTable.Cell>
-                </DataTable.Row>
-
-                {slot?.ticketType?.isTandem && (
-                  <DataTable.Row
-                    testID="slot-row"
-                    disabled={!!load?.hasLanded}
-                    pointerEvents="none"
-                  >
-                    <DataTable.Cell>
-                      <Paragraph style={styles.slotText}>{slot?.passengerName}</Paragraph>
-                    </DataTable.Cell>
-                    <DataTable.Cell numeric>
-                      <Paragraph style={styles.slotText}>Passenger</Paragraph>
-                    </DataTable.Cell>
-                    <DataTable.Cell numeric>
-                      <Paragraph style={styles.slotText}>
-                        {(slot?.ticketType?.altitude || 14000) / 1000}k
-                      </Paragraph>
-                    </DataTable.Cell>
-                  </DataTable.Row>
-                )}
-              </SwipeActions>
-            );
-          })}
-          {Array.from({ length: load?.availableSlots || 0 }, (v, i) => i).map((i) => (
-            <DataTable.Row
-              key={`${load?.id}-empty-slot-${i}`}
-              testID="slot-row"
-              onPress={() =>
-                load?.id &&
-                navigation.navigate('Manifest', {
-                  screen: 'LoadScreen',
-                  params: { loadId: load?.id },
-                })
-              }
-            >
-              <DataTable.Cell>
-                <Paragraph style={styles.slotText}>- Available -</Paragraph>
-              </DataTable.Cell>
-              <DataTable.Cell numeric>-</DataTable.Cell>
-              <DataTable.Cell numeric>-</DataTable.Cell>
-            </DataTable.Row>
-          ))}
-        </DataTable>
+        <SlotsTable
+          {...{ load, loading, onSlotPress, onSlotGroupPress }}
+          onDeletePress={onDeleteSlot}
+          onAvailableSlotPress={() =>
+            load?.id &&
+            navigation.navigate('Manifest', {
+              screen: 'LoadScreen',
+              params: { loadId: load?.id },
+            })
+          }
+          onSlotPress={onSlotPress}
+          fields={[SlotFields.JumpType].filter(Boolean) as SlotFields[]}
+        />
       </Card.Content>
       {!!load?.dispatchAt && load?.dispatchAt > new Date().getTime() / 1000 && (
         <View style={{ flex: 1, backgroundColor: 'black', padding: 8 }}>
@@ -533,30 +440,3 @@ export default function LoadCard(props: ILoadCardLarge) {
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 8,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-  slotText: {
-    fontSize: 12,
-  },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-  },
-});

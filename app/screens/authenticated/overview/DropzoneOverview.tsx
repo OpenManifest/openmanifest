@@ -6,7 +6,7 @@ import { successColor, warningColor } from 'app/constants/Colors';
 import { subMonths } from 'date-fns';
 import { EventAccessLevel, EventLevel, Permission } from 'app/api/schema.d';
 import Chip from 'app/components/chips/Chip';
-import ActivityFeed from 'app/components/activity/ActivityFeed';
+import ActivityFeed from 'app/components/activity/Container';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { ActivityQueryVariables } from 'app/api/operations';
 import useRestriction from 'app/hooks/useRestriction';

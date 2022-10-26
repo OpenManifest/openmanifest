@@ -1,5 +1,6 @@
 import { RoleEssentialsFragment } from 'app/api/operations';
 import { useRolesQuery } from 'app/api/reflection';
+import startCase from 'lodash/startCase';
 import * as React from 'react';
 import { useAppSelector } from '../../../state';
 import Select from '../select/Select';
@@ -16,14 +17,13 @@ export default function RoleSelect(props: IRoleSelect) {
   const { data } = useRolesQuery({
     variables: {
       dropzoneId: Number(currentDropzoneId),
-      selectable: true,
     },
   });
 
   const options = React.useMemo(
     () =>
       data?.dropzone?.roles?.map((node) => ({
-        label: node?.name || '',
+        label: startCase(node?.name || ''),
         value: node as RoleEssentialsFragment,
       })) || [],
     [data?.dropzone?.roles]
@@ -32,6 +32,7 @@ export default function RoleSelect(props: IRoleSelect) {
   return (
     <Select<RoleEssentialsFragment>
       label="Access level"
+      compare={(a, b) => a?.id === b?.id}
       {...{ options, value }}
       onChange={onSelect}
     />

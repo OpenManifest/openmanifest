@@ -1,6 +1,6 @@
 import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import useRestriction from 'app/hooks/useRestriction';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import React from 'react';
@@ -17,7 +17,7 @@ export enum SlotFields {
   Altitude = 'altitude',
   Rig = 'rig',
   TicketType = 'ticketType',
-  JumpType = 'ticketType',
+  JumpType = 'jumpType',
 }
 
 export interface ISlotsTableProps {
@@ -48,109 +48,18 @@ export default function UserRow(props: ISlotsTableProps) {
   const isCurrentUser = slot?.dropzoneUser?.id === currentUser?.id;
 
   return (
-    <SwipeActions
-      disabled={(isCurrentUser && !canRemoveSelf) || (!isCurrentUser && !canRemoveOthers)}
-      key={`slot-${slot.id}`}
-      rightAction={{
-        label: 'Delete',
-        backgroundColor: 'red',
-        onPress: () => onDeletePress(slot),
-      }}
-    >
-      <DataTable.Row
-        testID="slot-row"
-        style={
-          isNumber(slot?.groupNumber)
-            ? {
-                borderLeftWidth: 5,
-                borderLeftColor: GROUP_COLORS[slot.groupNumber % 20],
-                paddingLeft: 4,
-              }
-            : undefined
-        }
-        disabled={!!load?.hasLanded}
-        onPress={() => {
-          console.debug({ slotGroup });
-          if (slot.dropzoneUser?.id === currentUser?.id) {
-            if (canEditSelf) {
-              if (slotGroup?.length) {
-                onSlotGroupPress(slotGroup);
-              } else {
-                onSlotPress(slot);
-              }
-            }
-          } else if (canEditOthers) {
-            if (slotGroup?.length) {
-              onSlotGroupPress(slotGroup);
-            } else {
-              onSlotPress(slot);
-            }
-          }
+    <View style={{ height: 46 }}>
+      <SwipeActions
+        disabled={(isCurrentUser && !canRemoveSelf) || (!isCurrentUser && !canRemoveOthers)}
+        key={`slot-${slot.id}`}
+        rightAction={{
+          label: 'Delete',
+          backgroundColor: 'red',
+          onPress: () => onDeletePress(slot),
         }}
-        pointerEvents="none"
       >
-        <DataTable.Cell style={styles.avatarCell}>
-          <UserAvatar
-            size={20}
-            name={slot?.dropzoneUser?.user?.nickname || slot?.dropzoneUser?.user?.name || ''}
-            source={
-              slot?.dropzoneUser?.user?.image ? { uri: slot?.dropzoneUser?.user?.image } : undefined
-            }
-            style={{ marginLeft: -12 }}
-          />
-        </DataTable.Cell>
-        <DataTable.Cell style={styles.nameCell}>
-          <Paragraph style={styles.slotText}>
-            {slot?.dropzoneUser?.user?.nickname
-              ? slot?.dropzoneUser?.user?.nickname
-              : slot?.dropzoneUser?.user?.name}
-          </Paragraph>
-
-          {slot?.dropzoneUser?.user?.nickname ? (
-            <Caption>{`(${slot?.dropzoneUser?.user?.name})`}</Caption>
-          ) : null}
-        </DataTable.Cell>
-        {fields?.includes(SlotFields.License) ? (
-          <DataTable.Cell numeric style={styles.licenseCell}>
-            <Paragraph style={styles.slotText}>{slot?.dropzoneUser?.license?.name}</Paragraph>
-          </DataTable.Cell>
-        ) : null}
-        {fields?.includes(SlotFields.Rig) ? (
-          <DataTable.Cell numeric style={styles.rigCell}>
-            <Paragraph style={styles.slotText}>
-              {slot?.rig ? `${slot.rig.make} ${slot.rig.model} w/ ${slot.rig.canopySize}` : null}
-            </Paragraph>
-          </DataTable.Cell>
-        ) : null}
-        {fields?.includes(SlotFields.WingLoading) ? (
-          <DataTable.Cell numeric style={styles.wingLoadingCell}>
-            <Paragraph style={styles.slotText}>{slot?.wingLoading?.toFixed(2) || '-'}</Paragraph>
-          </DataTable.Cell>
-        ) : null}
-        {!fields || fields.includes(SlotFields.JumpType) ? (
-          <DataTable.Cell numeric style={styles.jumpTypeCell}>
-            <Paragraph style={styles.slotText}>{slot?.jumpType?.name}</Paragraph>
-          </DataTable.Cell>
-        ) : null}
-        {fields?.includes(SlotFields.TicketType) ? (
-          <DataTable.Cell numeric style={styles.ticketCell}>
-            <Paragraph style={styles.slotText}>{slot?.ticketType?.name}</Paragraph>
-          </DataTable.Cell>
-        ) : null}
-        {!fields || fields.includes(SlotFields.Altitude) ? (
-          <DataTable.Cell numeric style={styles.altitudeCell}>
-            <Paragraph style={styles.slotText}>
-              {(slot?.ticketType?.altitude || 14000) / 1000}k
-            </Paragraph>
-          </DataTable.Cell>
-        ) : null}
-      </DataTable.Row>
-
-      {slot?.ticketType?.isTandem && (
         <DataTable.Row
           testID="slot-row"
-          disabled={!!load?.hasLanded}
-          pointerEvents="none"
           style={
             isNumber(slot?.groupNumber)
               ? {
@@ -160,23 +69,113 @@ export default function UserRow(props: ISlotsTableProps) {
                 }
               : undefined
           }
+          disabled={!!load?.hasLanded}
+          onPress={() => {
+            if (slot.dropzoneUser?.id === currentUser?.id) {
+              if (canEditSelf) {
+                if (slotGroup?.length) {
+                  onSlotGroupPress(slotGroup);
+                } else {
+                  onSlotPress(slot);
+                }
+              }
+            } else if (canEditOthers) {
+              if (slotGroup?.length) {
+                onSlotGroupPress(slotGroup);
+              } else {
+                onSlotPress(slot);
+              }
+            }
+          }}
+          pointerEvents="none"
         >
           <DataTable.Cell style={styles.avatarCell}>
-            <Avatar.Icon icon="parachute" size={20} />
+            <UserAvatar
+              size={20}
+              name={slot?.dropzoneUser?.user?.nickname || slot?.dropzoneUser?.user?.name || ''}
+              image={slot?.dropzoneUser?.user?.image}
+              style={{ marginLeft: -12 }}
+            />
           </DataTable.Cell>
-          <DataTable.Cell style={styles.tandemPassengerNameCell}>
+          <DataTable.Cell style={styles.nameCell}>
             <Paragraph style={styles.slotText}>
-              <Text style={{ fontWeight: 'bold' }}>Tandem Passenger:</Text> {slot?.passengerName}
+              {slot?.dropzoneUser?.user?.nickname
+                ? slot?.dropzoneUser?.user?.nickname
+                : slot?.dropzoneUser?.user?.name}
             </Paragraph>
+
+            {slot?.dropzoneUser?.user?.nickname ? (
+              <Caption>{`(${slot?.dropzoneUser?.user?.name})`}</Caption>
+            ) : null}
           </DataTable.Cell>
-          <DataTable.Cell numeric style={styles.altitudeCell}>
-            <Paragraph style={styles.slotText}>
-              {(slot?.ticketType?.altitude || 14000) / 1000}k
-            </Paragraph>
-          </DataTable.Cell>
+          {fields?.includes(SlotFields.License) ? (
+            <DataTable.Cell numeric style={styles.licenseCell}>
+              <Paragraph style={styles.slotText}>{slot?.dropzoneUser?.license?.name}</Paragraph>
+            </DataTable.Cell>
+          ) : null}
+          {fields?.includes(SlotFields.Rig) ? (
+            <DataTable.Cell numeric style={styles.rigCell}>
+              <Paragraph style={styles.slotText}>
+                {slot?.rig ? `${slot.rig.make} ${slot.rig.model} w/ ${slot.rig.canopySize}` : null}
+              </Paragraph>
+            </DataTable.Cell>
+          ) : null}
+          {fields?.includes(SlotFields.WingLoading) ? (
+            <DataTable.Cell numeric style={styles.wingLoadingCell}>
+              <Paragraph style={styles.slotText}>{slot?.wingLoading?.toFixed(2) || '-'}</Paragraph>
+            </DataTable.Cell>
+          ) : null}
+          {!fields || fields.includes(SlotFields.JumpType) ? (
+            <DataTable.Cell numeric style={styles.jumpTypeCell}>
+              <Paragraph style={styles.slotText}>{slot?.jumpType?.name}</Paragraph>
+            </DataTable.Cell>
+          ) : null}
+          {fields?.includes(SlotFields.TicketType) ? (
+            <DataTable.Cell numeric style={styles.ticketCell}>
+              <Paragraph style={styles.slotText}>{slot?.ticketType?.name}</Paragraph>
+            </DataTable.Cell>
+          ) : null}
+          {!fields || fields.includes(SlotFields.Altitude) ? (
+            <DataTable.Cell numeric style={styles.altitudeCell}>
+              <Paragraph style={styles.slotText}>
+                {(slot?.ticketType?.altitude || 14000) / 1000}k
+              </Paragraph>
+            </DataTable.Cell>
+          ) : null}
         </DataTable.Row>
-      )}
-    </SwipeActions>
+
+        {slot?.ticketType?.isTandem && (
+          <DataTable.Row
+            testID="slot-row"
+            disabled={!!load?.hasLanded}
+            pointerEvents="none"
+            style={
+              isNumber(slot?.groupNumber)
+                ? {
+                    borderLeftWidth: 5,
+                    borderLeftColor: GROUP_COLORS[slot.groupNumber % 20],
+                    paddingLeft: 4,
+                  }
+                : undefined
+            }
+          >
+            <DataTable.Cell style={styles.avatarCell}>
+              <Avatar.Icon icon="parachute" size={20} />
+            </DataTable.Cell>
+            <DataTable.Cell style={styles.tandemPassengerNameCell}>
+              <Paragraph style={styles.slotText}>
+                <Text style={{ fontWeight: 'bold' }}>Tandem Passenger:</Text> {slot?.passengerName}
+              </Paragraph>
+            </DataTable.Cell>
+            <DataTable.Cell numeric style={styles.altitudeCell}>
+              <Paragraph style={styles.slotText}>
+                {(slot?.ticketType?.altitude || 14000) / 1000}k
+              </Paragraph>
+            </DataTable.Cell>
+          </DataTable.Row>
+        )}
+      </SwipeActions>
+    </View>
   );
 }
 

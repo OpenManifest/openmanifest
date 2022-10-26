@@ -188,10 +188,15 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
     },
   });
 
-  const badges = permissions?.filter((name) => /^actAs/.test(name)) || [];
+  const badges = React.useMemo(
+    () => permissions?.filter((name) => /^actAs/.test(name)) || [],
+    [permissions]
+  );
 
-  const shouldShowBadge = (permission: Permission) =>
-    canGrantPermission || badges.includes(permission);
+  const shouldShowBadge = React.useCallback(
+    (permission: Permission) => canGrantPermission || badges.includes(permission),
+    [badges, canGrantPermission]
+  );
 
   return (
     <ScrollView

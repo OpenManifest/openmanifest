@@ -163,11 +163,15 @@ export default function WeatherBoard() {
                     style={[
                       styles.windboard,
                       {
+                        height: height.current.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [100, 210],
+                        }),
                         transform: [
                           {
                             translateY: height.current.interpolate({
                               inputRange: [0, 1],
-                              outputRange: [0, -80],
+                              outputRange: [0, 10],
                               easing: Easing.inOut(Easing.ease),
                             }),
                           },
@@ -353,7 +357,11 @@ const styles = StyleSheet.create({
   windboard: {
     width: 200,
     height: 105,
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: 'rgba(50, 50,50, 0.5)',
     flexDirection: 'column',
+    overflow: 'hidden',
   },
   jumpRun: {
     width: 94,

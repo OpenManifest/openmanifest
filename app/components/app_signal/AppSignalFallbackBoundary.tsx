@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 interface IDefaultErrorBoundaryProps {
-  fallback: React.ReactNode;
+  fallback: React.ComponentType<{ error?: Error | null }>;
   children: React.ReactNode;
 }
 
@@ -29,10 +29,10 @@ export default class ErrorBoundary extends React.Component<
   }
 
   public render() {
-    const { fallback, children } = this.props;
+    const { fallback: Fallback, children } = this.props;
     const { error } = this.state;
     if (error) {
-      return fallback;
+      return <Fallback {...{ error }} />;
     }
     return children;
   }
