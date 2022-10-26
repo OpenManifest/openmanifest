@@ -9,12 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - uses: expo/expo-github-action@v6
+      - uses: expo/expo-github-action@v7
         with:
-          expo-version: 4.x
+          expo-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
       - run: yarn install
       - run: yarn ts:graphql:staging && yarn typecheck
@@ -27,6 +27,7 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_API_KEY: ${{ secrets.SENTRY_API_KEY }}
           NODE_OPTIONS: --max_old_space_size=4096
+          APPSIGNAL_STAGING_API_KEY: ${{ secrets.APPSIGNAL_STAGING_API_KEY }}
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
