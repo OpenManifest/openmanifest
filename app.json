@@ -1,5 +1,8 @@
 {
   "expo": {
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
     "name": "Open Manifest",
     "slug": "openmanifest",
     "version": "1.2.0",
@@ -13,7 +16,8 @@
       "backgroundColor": "#111111"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/1d8fa34d-2ff8-4095-ab49-29a426117a8c"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -34,7 +38,7 @@
         "fbAppUrl": "https://openmanifest.org",
         "facebookScheme": "fb686479516065674"
       },
-      "buildNumber": "38",
+      "buildNumber": "40",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
       "icon": "./assets/images/logo-black-white-bg.png",

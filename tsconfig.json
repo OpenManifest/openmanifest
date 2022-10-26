@@ -28,6 +28,7 @@
     "global.d.ts",
     ".eslintrc.js",
     "index.ts",
+    "main.ts",
     "patches/deprecated-prop-types.ts"
   ],
   "extends": "expo/tsconfig.base",

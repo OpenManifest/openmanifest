@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloClient, ApolloLink, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 
 import { setContext } from '@apollo/client/link/context';
@@ -7,23 +7,23 @@ import { onError } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
 import * as React from 'react';
 import * as Update from 'expo-updates';
-import Constants from 'expo-constants';
+import config from 'app/constants/expo';
 import { Platform } from 'react-native';
+import { createAppSignalLink, useAppSignal } from 'app/components/app_signal';
 import { relayStylePagination } from '@apollo/client/utilities';
 import { actions, useAppDispatch, useAppSelector } from '../state';
+
+const ERROR_CODE_WHITELIST = ['INSUFFICIENT_PERMISSIONS'];
 
 export default function Apollo({ children }: { children: React.ReactNode }) {
   const httpBatchLink = React.useMemo(() => {
     console.log('Release channel', Update.releaseChannel);
-    const environment =
-      Platform.OS === 'web' ? Constants.manifest?.extra?.environment : Update.releaseChannel;
+    const environment = Platform.OS === 'web' ? config?.environment : Update.releaseChannel;
+    const uri = environment in (config?.urls || {}) ? config?.urls[environment] : config?.url;
     return new BatchHttpLink({
       batchDebounce: true,
       batchMax: 10,
-      uri:
-        environment in (Constants?.manifest?.extra?.urls || {})
-          ? Constants.manifest?.extra?.urls[environment]
-          : Constants.manifest?.extra?.url,
+      uri,
     });
   }, []);
   const credentials = useAppSelector((root) => root.global.credentials);
@@ -93,17 +93,38 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
     [credentials]
   );
 
+  const { appSignal } = useAppSignal();
+  const appSignalLink = React.useMemo(
+    () =>
+      createAppSignalLink(appSignal, {
+        breadcrumbs: {
+          includeQuery: true,
+          includeVariables: true,
+          includeResponse: false,
+        },
+        ignore: ({ graphQLErrors }) =>
+          graphQLErrors?.some((err) => err.extensions?.code === 'AUTHENTICATION_ERROR') || false,
+        excludeError: (err) => ERROR_CODE_WHITELIST.includes(err.extensions?.code as string),
+      }),
+    [appSignal]
+  );
+
+  const link = React.useMemo(
+    () => ApolloLink.from([errorLink, appSignalLink, authLink, httpBatchLink]),
+    [appSignalLink, authLink, errorLink, httpBatchLink]
+  );
+
   const client = React.useMemo(
     () =>
       new ApolloClient({
-        link: errorLink.concat(authLink).concat(new RetryLink()).concat(httpBatchLink),
+        link,
         cache: new InMemoryCache({
           typePolicies: {
             Event: relayStylePagination(),
           },
         }),
       }),
-    [authLink, errorLink, httpBatchLink]
+    [link]
   );
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;

@@ -8,25 +8,20 @@ const BACKEND_ENVIRONMENTS = {
   production: 'https://api.openmanifest.org/graphql',
 };
 
+
 export default ({ config }: ConfigContext): ExpoConfig => {
   const environment = process.env.EXPO_ENV;
+
+  const appSignalApiKey = {
+    development: process.env.APPSIGNAL_DEVELOPMENT_API_KEY,
+    staging: process.env.APPSIGNAL_STAGING_API_KEY,
+    production: process.env.APPSIGNAL_PRODUCTION_API_KEY,
+  };
 
   const conf = {
     ...config,
     name: 'OpenManifest',
     slug: 'openmanifest',
-    hooks: {
-      postPublish: [
-        {
-          file: 'sentry-expo/upload-sourcemaps',
-          config: {
-            organization: 'danger-technology',
-            project: 'openmanifest',
-            authToken: process.env.SENTRY_API_KEY,
-          },
-        },
-      ],
-    },
 
     // All values in extra will be passed to your app.
     extra: {
@@ -36,6 +31,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       googleMapsAndroid: process.env.GOOGLE_MAPS_ANDROID,
       googleMapsIos: process.env.GOOGLE_MAPS_IOS,
       googleMapsWeb: process.env.GOOGLE_MAPS_WEB,
+      "eas": {
+        "projectId": "1d8fa34d-2ff8-4095-ab49-29a426117a8c"
+      },
+      appSignalApiKey: appSignalApiKey[environment],
     },
     ios: {
       ...config.ios,

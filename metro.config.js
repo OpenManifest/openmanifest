@@ -1,13 +1,13 @@
-module.exports = {
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: false,
-      },
-    }),
+const { getDefaultConfig } = require('expo/metro-config');
+
+const config = getDefaultConfig(__dirname);
+
+config.resolver.sourceExts = ['jsx', 'js', 'ts', 'tsx', 'cjs']; // add here
+config.transformer.getTransformOptions = async () => ({
+  transform: {
+    experimentalImportSupport: false,
+    inlineRequires: false,
   },
-  resolver: {
-    sourceExts: ['jsx', 'js', 'ts', 'tsx', 'cjs'], // add here
-  },
-};
+});
+
+module.exports = config;

@@ -274,11 +274,9 @@ function UserWizardScreen() {
     userForm.original?.user?.image,
   ]);
 
-  return (
-    <Wizard
-      name="UserWizard"
-      dots
-      steps={[
+  const steps = React.useMemo(
+    () =>
+      [
         {
           component: RealNameStep,
           onNext: onNameNext,
@@ -309,9 +307,25 @@ function UserWizardScreen() {
             dispatch(actions.forms.rig.reset());
           },
         },
-      ].filter(Boolean)}
-    />
+      ].filter(Boolean),
+    [
+      dispatch,
+      onFederationNext,
+      onFederationNumberNext,
+      onImageNext,
+      onLicenseNext,
+      onNameNext,
+      onNicknameNext,
+      onReserveRepackNext,
+      onRigNext,
+      onWingloadingNext,
+      state?.skipRigSetup,
+      userForm.federation?.value?.id,
+      userForm.federation?.value?.name,
+    ]
   );
+
+  return <Wizard name="UserWizard" dots {...{ steps }} />;
 }
 
 export default UserWizardScreen;

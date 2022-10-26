@@ -65,6 +65,7 @@ export default function DashboardPage() {
       dropzoneId: Number(dropzone?.id),
       timeRange,
     },
+    skip: !dropzone?.id,
   });
 
   const createTimeRangeHandler = React.useCallback(

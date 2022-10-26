@@ -12,8 +12,11 @@ import DropzoneCard from './DropzoneCard';
 export default function DropzonesScreen() {
   const dispatch = useAppDispatch();
   const globalState = useAppSelector((root) => root.global);
-  const { data, loading, refetch } = useQueryDropzones();
+  const { data, loading, refetch } = useQueryDropzones({
+    skip: !globalState?.credentials?.accessToken,
+  });
   const navigation = useNavigation();
+  console.debug(data?.dropzones);
 
   return (
     <SafeAreaView style={styles.container}>

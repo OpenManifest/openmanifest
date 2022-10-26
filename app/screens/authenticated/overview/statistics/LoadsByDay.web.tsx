@@ -1,4 +1,4 @@
-import { differenceInDays } from 'date-fns';
+import { subDays } from 'date-fns';
 import * as React from 'react';
 import ContributionGraph from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
@@ -42,9 +42,8 @@ export default function LoadsByDay(props: ILoadsByDayProps) {
           titleForValue={(value) =>
             value?.date ? `${value?.date}: ${value?.count} loads` : 'No loads'
           }
-          startDate={startTime}
+          startDate={startTime || subDays(new Date(), 365)}
           endDate={new Date()}
-          numDays={differenceInDays(new Date(), startTime || new Date())}
         />
       </Card.Content>
     </Card>
