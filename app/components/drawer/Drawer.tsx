@@ -5,24 +5,19 @@ import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import capitalize from 'lodash/capitalize';
 import SkeletonContent from 'app/components/Skeleton';
-import { useQueryDropzones } from 'app/api/reflection';
 import { DropzoneExtensiveFragment } from 'app/api/operations';
 import InfoGrid from 'app/screens/authenticated/dropzone/load/InfoGrid';
 import useRestriction from 'app/hooks/useRestriction';
 import { ModerationRole, Permission } from 'app/api/schema.d';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzonesContext } from 'app/api/crud';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 
 export default function DrawerMenu() {
   const { theme, currentRouteName: routeName } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
   const { currentUser, dropzone, loading } = useDropzoneContext();
-  const { data } = useQueryDropzones({
-    variables: {
-      isPublic: true,
-    },
-    onError: (err) => console.error(err),
-  });
+  const { dropzones } = useDropzonesContext();
 
   const navigation = useNavigation();
 
@@ -289,21 +284,21 @@ export default function DrawerMenu() {
         </Drawer.Section>
 
         <Drawer.Section title="Switch dropzone">
-          {data?.dropzones?.edges?.map((edge) => (
+          {dropzones?.map((item) => (
             <Drawer.Item
-              key={`${edge?.node?.id}-dz`}
-              label={edge?.node?.name || ''}
+              key={`${item?.id}-dz`}
+              label={item?.name || ''}
               icon={
-                edge?.node?.banner
+                item?.banner
                   ? ({ size }) => (
-                      <Avatar.Image source={{ uri: edge?.node?.banner as string }} {...{ size }} />
+                      <Avatar.Image source={{ uri: item?.banner as string }} {...{ size }} />
                     )
                   : 'map-marker'
               }
-              active={dropzone?.id === edge?.node?.id}
+              active={dropzone?.id === item?.id}
               onPress={() => {
-                if (edge?.node) {
-                  dispatch(actions.global.setDropzone(edge.node as DropzoneExtensiveFragment));
+                if (item) {
+                  dispatch(actions.global.setDropzone(item as DropzoneExtensiveFragment));
                   navigation.navigate('Authenticated', {
                     screen: 'LeftDrawer',
                     params: {

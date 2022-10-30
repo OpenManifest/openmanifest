@@ -3,7 +3,7 @@ import { StyleSheet, FlatList, Platform } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useQueryDropzones } from 'app/api/reflection';
+import { useDropzonesContext } from 'app/api/crud';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 
 import NoResults from '../../../components/NoResults';
@@ -12,25 +12,23 @@ import DropzoneCard from './DropzoneCard';
 export default function DropzonesScreen() {
   const dispatch = useAppDispatch();
   const globalState = useAppSelector((root) => root.global);
-  const { data, loading, refetch } = useQueryDropzones({
-    skip: !globalState?.credentials?.accessToken,
-  });
+  const { dropzones, loading, refetch } = useDropzonesContext();
   const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={data?.dropzones?.edges || []}
+        data={dropzones}
         numColumns={Platform.OS === 'web' ? 3 : 2}
         refreshing={loading}
-        keyExtractor={(item) => `dropzone-${item?.node?.id}`}
+        keyExtractor={(item) => `dropzone-${item?.id}`}
         onRefresh={() => refetch()}
         style={styles.flatlist}
         contentContainerStyle={styles.content}
         ListEmptyComponent={() => (
           <NoResults title="No dropzones?" subtitle="You can set one up!" />
         )}
-        renderItem={({ item }) => (!item?.node ? null : <DropzoneCard dropzone={item?.node} />)}
+        renderItem={({ item: dropzone }) => (!dropzone ? null : <DropzoneCard {...{ dropzone }} />)}
       />
       <FAB
         style={[styles.fab, { backgroundColor: globalState.theme.colors.primary }]}

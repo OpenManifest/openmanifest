@@ -1,4 +1,4 @@
-query QueryDropzones($isPublic: Boolean, $requestedPublication: Boolean) {
+query Dropzones($isPublic: Boolean, $requestedPublication: Boolean) {
   dropzones(isPublic: $isPublic, requestedPublication: $requestedPublication) {
     edges {
       node {

@@ -2847,8 +2847,8 @@ export function useQueryDropzoneUserProfileLazyQuery(baseOptions?: Apollo.LazyQu
 export type QueryDropzoneUserProfileHookResult = ReturnType<typeof useQueryDropzoneUserProfile>;
 export type QueryDropzoneUserProfileLazyQueryHookResult = ReturnType<typeof useQueryDropzoneUserProfileLazyQuery>;
 export type QueryDropzoneUserProfileQueryResult = Apollo.QueryResult<Operation.QueryDropzoneUserProfileQuery, Operation.QueryDropzoneUserProfileQueryVariables>;
-export const QueryDropzonesDocument = gql`
-    query QueryDropzones($isPublic: Boolean, $requestedPublication: Boolean) {
+export const DropzonesDocument = gql`
+    query Dropzones($isPublic: Boolean, $requestedPublication: Boolean) {
   dropzones(isPublic: $isPublic, requestedPublication: $requestedPublication) {
     edges {
       node {
@@ -2860,33 +2860,33 @@ export const QueryDropzonesDocument = gql`
     ${DropzoneEssentialsFragmentDoc}`;
 
 /**
- * __useQueryDropzones__
+ * __useDropzonesQuery__
  *
- * To run a query within a React component, call `useQueryDropzones` and pass it any options that fit your needs.
- * When your component renders, `useQueryDropzones` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useDropzonesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDropzonesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useQueryDropzones({
+ * const { data, loading, error } = useDropzonesQuery({
  *   variables: {
  *      isPublic: // value for 'isPublic'
  *      requestedPublication: // value for 'requestedPublication'
  *   },
  * });
  */
-export function useQueryDropzones(baseOptions?: Apollo.QueryHookOptions<Operation.QueryDropzonesQuery, Operation.QueryDropzonesQueryVariables>) {
+export function useDropzonesQuery(baseOptions?: Apollo.QueryHookOptions<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.QueryDropzonesQuery, Operation.QueryDropzonesQueryVariables>(QueryDropzonesDocument, options);
+        return Apollo.useQuery<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>(DropzonesDocument, options);
       }
-export function useQueryDropzonesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.QueryDropzonesQuery, Operation.QueryDropzonesQueryVariables>) {
+export function useDropzonesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.QueryDropzonesQuery, Operation.QueryDropzonesQueryVariables>(QueryDropzonesDocument, options);
+          return Apollo.useLazyQuery<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>(DropzonesDocument, options);
         }
-export type QueryDropzonesHookResult = ReturnType<typeof useQueryDropzones>;
-export type QueryDropzonesLazyQueryHookResult = ReturnType<typeof useQueryDropzonesLazyQuery>;
-export type QueryDropzonesQueryResult = Apollo.QueryResult<Operation.QueryDropzonesQuery, Operation.QueryDropzonesQueryVariables>;
+export type DropzonesQueryHookResult = ReturnType<typeof useDropzonesQuery>;
+export type DropzonesLazyQueryHookResult = ReturnType<typeof useDropzonesLazyQuery>;
+export type DropzonesQueryResult = Apollo.QueryResult<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>;
 export const TicketTypeExtrasDocument = gql`
     query TicketTypeExtras($dropzoneId: Int!) {
   extras(dropzone: $dropzoneId) {

@@ -241,7 +241,7 @@ export default function ManifestScreen() {
         <LoadCardLarge
           controlsVisible={false}
           key={`load-${load?.id}`}
-          load={load}
+          id={load?.id ? Number(load?.id) : undefined}
           onSlotPress={(slot) => {
             if (load) {
               dispatch(actions.forms.manifest.setOpen(slot));
@@ -266,7 +266,7 @@ export default function ManifestScreen() {
       ) : (
         <LoadCardSmall
           key={`load-${load?.id}`}
-          load={load}
+          id={load?.id ? Number(load?.id) : undefined}
           onPress={() =>
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',

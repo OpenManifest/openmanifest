@@ -2,12 +2,8 @@ import * as React from 'react';
 import { FlatList, Platform } from 'react-native';
 
 import { RouteProp, useIsFocused, useRoute } from '@react-navigation/core';
-import {
-  PlaneEssentialsFragment,
-  SlotDetailsFragment,
-  SlotEssentialsFragment,
-} from 'app/api/operations';
-import { useLoadQuery } from 'app/api/reflection';
+import { SlotDetailsFragment, SlotEssentialsFragment } from 'app/api/operations';
+import { LoadProvider, useLoadContext } from 'app/api/crud';
 import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
 import PilotChip from 'app/components/chips/PilotChip';
@@ -16,9 +12,8 @@ import ManifestUserSheet from 'app/components/dialogs/ManifestUser/ManifestUser'
 import ManifestGroupSheet from 'app/components/dialogs/ManifestGroup/ManifestGroup';
 
 import { View } from 'app/components/Themed';
-import { DropzoneUser, LoadState, Permission } from 'app/api/schema.d';
+import { LoadState, Permission } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
 
 import useRestriction from 'app/hooks/useRestriction';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
@@ -36,80 +31,14 @@ export type LoadScreenRoute = {
   };
 };
 
-export default function LoadScreen() {
+function LoadScreen() {
   const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
   const forms = useAppSelector((root) => root.forms);
   const { palette, theme } = useAppSelector((root) => root.global);
-  const route = useRoute<RouteProp<LoadScreenRoute>>();
-  const loadId = route?.params?.loadId;
 
-  const { data, loading, refetch } = useLoadQuery({
-    variables: {
-      id: Number(route.params.loadId),
-    },
-    pollInterval: 30000,
-  });
-
-  const load = React.useMemo(() => data?.load, [data?.load]);
-
-  const mutationUpdateLoad = useMutationUpdateLoad({
-    onSuccess: () =>
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: `Load #${load?.loadNumber} updated`,
-          variant: 'success',
-        })
-      ),
-    onError: (message) =>
-      dispatch(
-        actions.notifications.showSnackbar({
-          message,
-          variant: 'error',
-        })
-      ),
-  });
-
-  const updatePilot = React.useCallback(
-    async (pilot: DropzoneUser) => {
-      await mutationUpdateLoad.mutate({
-        id: Number(loadId),
-        pilot: Number(pilot.id),
-      });
-    },
-    [mutationUpdateLoad, loadId]
-  );
-
-  const updateGCA = React.useCallback(
-    async (gca: DropzoneUser) => {
-      await mutationUpdateLoad.mutate({
-        id: Number(loadId),
-        gca: Number(gca.id),
-      });
-    },
-    [mutationUpdateLoad, loadId]
-  );
-
-  const updatePlane = React.useCallback(
-    async (plane: PlaneEssentialsFragment) => {
-      await mutationUpdateLoad.mutate({
-        id: Number(loadId),
-        plane: Number(plane.id),
-      });
-    },
-    [mutationUpdateLoad, loadId]
-  );
-
-  const updateLoadMaster = React.useCallback(
-    async (lm: DropzoneUser) => {
-      await mutationUpdateLoad.mutate({
-        id: Number(loadId),
-        loadMaster: Number(lm.id),
-      });
-    },
-    [mutationUpdateLoad, loadId]
-  );
-
+  const { load, loading, refetch, updateGCA, updateLoadMaster, updatePilot, updatePlane } =
+    useLoadContext();
   const isFocused = useIsFocused();
 
   React.useEffect(() => {
@@ -351,5 +280,16 @@ export default function LoadScreen() {
         onSuccess={() => dispatch(actions.forms.manifestGroup.setOpen(false))}
       />
     </View>
+  );
+}
+
+export default function LoadScreenWrapper() {
+  const route = useRoute<RouteProp<LoadScreenRoute>>();
+  const loadId = route?.params?.loadId;
+
+  return (
+    <LoadProvider id={loadId ? Number(loadId) : undefined}>
+      <LoadScreen />
+    </LoadProvider>
   );
 }

@@ -1,17 +1,15 @@
 import * as React from 'react';
 import { FAB, Portal, useTheme } from 'react-native-paper';
-import addMinutes from 'date-fns/addMinutes';
 import { LoadDetailsFragment } from 'app/api/operations';
 
-import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 
 import { Permission, LoadState } from 'app/api/schema.d';
-import { useFinalizeLoadMutation } from 'app/api/reflection';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch } from 'app/state';
 import isSameDay from 'date-fns/isSameDay';
 import { parseISO } from 'date-fns';
+import { useLoadContext } from 'app/api/crud';
 
 interface ILoadActionButtonProps {
   load: LoadDetailsFragment;
@@ -19,53 +17,14 @@ interface ILoadActionButtonProps {
 
 export default function ActionButton(props: ILoadActionButtonProps) {
   const dispatch = useAppDispatch();
+  const { timepicker, cancel, markAsLanded, updateLoadState, createAircraftDispatchAction } =
+    useLoadContext();
   const [isExpanded, setExpanded] = React.useState(false);
 
   const { load } = props;
 
   const currentDropzone = useDropzoneContext();
   const { currentUser } = currentDropzone;
-
-  const [mutationFinalizeLoad] = useFinalizeLoadMutation();
-
-  const mutationUpdateLoad = useMutationUpdateLoad({
-    onSuccess: () => null,
-    onError: (message) =>
-      dispatch(actions.notifications.showSnackbar({ message, variant: 'error' })),
-  });
-
-  const updateCall = React.useCallback(
-    async (minutes: number | null) => {
-      const dispatchTime = !minutes ? null : addMinutes(new Date(), minutes).toISOString();
-
-      await mutationUpdateLoad.mutate({
-        id: Number(load.id),
-        dispatchAt: dispatchTime,
-        state: dispatchTime ? LoadState.BoardingCall : LoadState.Open,
-      });
-    },
-    [mutationUpdateLoad, load]
-  );
-
-  const updateLoadState = React.useCallback(
-    async (state: LoadState) => {
-      await mutationUpdateLoad.mutate({
-        id: Number(load.id),
-        state,
-        dispatchAt: null,
-      });
-    },
-    [mutationUpdateLoad, load]
-  );
-
-  const onLanded = React.useCallback(async () => {
-    await mutationFinalizeLoad({
-      variables: {
-        id: Number(load.id),
-        state: LoadState.Landed,
-      },
-    });
-  }, [mutationFinalizeLoad, load]);
 
   const onManifest = React.useCallback(() => {
     if (!currentUser?.hasLicense) {
@@ -130,28 +89,25 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     load?.state !== LoadState.Landed &&
     (!load?.dispatchAt || load.dispatchAt > new Date().getTime() / 1000);
 
-  const createCallAction = React.useCallback(
-    (minutes: number | null) => () => {
-      setExpanded(false);
-      updateCall(minutes);
-    },
-    [updateCall]
-  );
-
   const callActions = [
     {
+      label: 'Custom call',
+      onPress: timepicker.open,
+      icon: 'airplane-takeoff',
+    },
+    {
       label: '20 minute call',
-      onPress: createCallAction(20),
+      onPress: createAircraftDispatchAction(20),
       icon: 'airplane-takeoff',
     },
     {
       label: '15 minute call',
-      onPress: createCallAction(15),
+      onPress: createAircraftDispatchAction(15),
       icon: 'airplane-takeoff',
     },
     {
       label: '10 minute call',
-      onPress: createCallAction(10),
+      onPress: createAircraftDispatchAction(10),
       icon: 'airplane-takeoff',
     },
   ];
@@ -193,17 +149,14 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       : {
           label: 'Cancel boarding call',
           icon: 'airplane-off',
-          onPress: createCallAction(null),
+          onPress: createAircraftDispatchAction(null),
         },
     ![LoadState.Open].includes(load.state)
       ? null
       : {
           label: 'Cancel load',
           icon: 'delete-sweep',
-          onPress: () =>
-            mutationFinalizeLoad({
-              variables: { id: Number(load.id), state: LoadState.Cancelled },
-            }),
+          onPress: cancel,
         },
     ![LoadState.Cancelled, LoadState.Landed].includes(load.state) || !isToday
       ? null
@@ -217,7 +170,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       : {
           label: 'Mark as Landed',
           icon: 'airplane-landing',
-          onPress: () => onLanded(),
+          onPress: markAsLanded,
         },
   ].filter(Boolean);
 
