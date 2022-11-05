@@ -1,0 +1,30 @@
+mutation CreateLoad(
+    $name: String
+    $pilot: Int
+    $gca: Int
+    $maxSlots: Int
+    $plane: Int
+    $state: LoadState
+  ) {
+    createLoad(
+      input: {
+        attributes: {
+          name: $name
+          pilot: $pilot
+          gca: $gca
+          maxSlots: $maxSlots
+          plane: $plane
+          state: $state
+        }
+      }
+    ) {
+      load {
+        ...loadDetails
+      }
+      fieldErrors {
+        field
+        message
+      }
+      errors
+    }
+  }

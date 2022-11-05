@@ -46,13 +46,6 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
       },
     }),
     refetchQueries: [
-      {
-        query: DropzoneDocument,
-        variables: {
-          dropzoneId: state.currentDropzoneId,
-          earliestTimestamp: startOfDay(new Date()).toISOString(),
-        },
-      },
       { query: DropzoneUsersDocument },
       { query: DropzoneUsersDetailedDocument },
       {
@@ -68,11 +61,11 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
         query: DropzoneUsersDocument,
         variables: {
           permissions: [variables?.permissionName].filter(Boolean) as Permission[],
-          dropzoneId: Number(state.currentDropzoneId),
+          dropzoneId: state.currentDropzoneId?.toString() as string,
         },
       });
 
-      const updatedList = (c?.dropzone?.dropzoneUsers?.edges || []).filter(
+      const updatedList = (c?.dropzoneUsers?.edges || []).filter(
         (edge) => edge?.node?.id !== dropzoneUser?.id
       );
 
@@ -80,16 +73,12 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
         query: DropzoneUsersDocument,
         variables: {
           permissions: [variables?.permissionName].filter(Boolean) as Permission[],
-          dropzoneId: Number(state.currentDropzoneId),
+          dropzoneId: state.currentDropzoneId?.toString() as string,
         },
         data: {
           ...c,
-          dropzone: {
-            ...c?.dropzone,
-            id: `${state.currentDropzoneId}`,
-            dropzoneUsers: {
-              edges: updatedList,
-            },
+          dropzoneUsers: {
+            edges: updatedList,
           },
         },
       });
@@ -97,11 +86,8 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
       return {
         data: {
           ...c,
-          dropzone: {
-            ...c?.dropzone,
-            dropzoneUsers: {
-              edges: updatedList,
-            },
+          dropzoneUsers: {
+            edges: updatedList,
           },
         },
       };
@@ -118,13 +104,6 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
     }),
     refetchQueries: [
       {
-        query: DropzoneDocument,
-        variables: {
-          dropzoneId: state.currentDropzoneId,
-          earliestTimestamp: startOfDay(new Date()).toISOString(),
-        },
-      },
-      {
         query: QueryDropzoneUserProfileDocument,
         variables: {
           dropzoneId: state.currentDropzoneId,
@@ -137,16 +116,16 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
         query: DropzoneUsersDocument,
         variables: {
           permissions: [variables?.permissionName].filter(Boolean) as Permission[],
-          dropzoneId: Number(state.currentDropzoneId),
+          dropzoneId: state.currentDropzoneId?.toString() as string,
         },
       });
 
-      const current = c?.dropzone?.dropzoneUsers?.edges || [];
+      const current = c?.dropzoneUsers?.edges || [];
       const shouldUpdate = !!current.find((edge) => edge?.node?.id === dropzoneUser?.id);
 
       const updatedGcaList = shouldUpdate
         ? [
-            ...(c?.dropzone?.dropzoneUsers?.edges || []).map((edge) =>
+            ...(c?.dropzoneUsers?.edges || []).map((edge) =>
               edge?.node?.id !== dropzoneUser?.id
                 ? edge
                 : {
@@ -159,18 +138,15 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
             ),
           ]
         : [
-            ...(c?.dropzone?.dropzoneUsers?.edges || []),
+            ...(c?.dropzoneUsers?.edges || []),
             {
               node: data?.grantPermission?.dropzoneUser,
             },
           ];
       const newData = {
         ...c,
-        dropzone: {
-          ...c?.dropzone,
-          dropzoneUsers: {
-            edges: updatedGcaList,
-          },
+        dropzoneUsers: {
+          edges: updatedGcaList,
         },
       };
       client.writeQuery({

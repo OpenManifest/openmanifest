@@ -28,7 +28,7 @@ export default function OrdersScreen() {
   const route = useRoute<RouteProp<OrdersRoute>>();
   const { data, loading, refetch } = useQueryDropzoneUserProfile({
     variables: {
-      dropzoneId: Number(state.currentDropzoneId),
+      dropzoneId: state.currentDropzoneId?.toString() as string,
       dropzoneUserId: Number(route?.params?.userId) || Number(currentUser?.id),
     },
   });

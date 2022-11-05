@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import { Button, Card, IconButton, Paragraph, ProgressBar, Text } from 'react-native-paper';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 
@@ -17,7 +17,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import useMutationDeleteSlot from 'app/api/hooks/useMutationDeleteSlot';
 import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
-import SlotsTable from 'app/components/slots_table/Table';
+import LoadSlotTable from 'app/components/slots_table/Table';
 import { SlotFields } from 'app/components/slots_table/UserRow';
 import { useLoadContext } from 'app/api/crud';
 import { withLoad } from 'app/api/crud/useLoad';
@@ -171,7 +171,7 @@ function LoadCard(props: ILoadCardLarge) {
             contentContainerStyle={{ backgroundColor: 'transparent' }}
           >
             <PlaneChip
-              small={Platform.OS !== 'web'}
+              small
               value={load?.plane}
               onSelect={async (plane) => {
                 if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
@@ -189,17 +189,17 @@ function LoadCard(props: ILoadCardLarge) {
                 }
               }}
             />
-            <GCAChip small={Platform.OS !== 'web'} value={load?.gca} onSelect={updateGCA} />
-            <PilotChip small={Platform.OS !== 'web'} value={load?.pilot} onSelect={updatePilot} />
+            <GCAChip small value={load?.gca} onSelect={updateGCA} />
+            <PilotChip small value={load?.pilot} onSelect={updatePilot} />
             <LoadMasterChip
-              small={Platform.OS !== 'web'}
+              small
               value={load?.loadMaster}
               slots={load?.slots || []}
               onSelect={updateLoadMaster}
             />
           </ScrollView>
         </View>
-        <SlotsTable
+        <LoadSlotTable
           {...{ load, loading, onSlotPress, onSlotGroupPress }}
           onDeletePress={onDeleteSlot}
           onAvailableSlotPress={() =>

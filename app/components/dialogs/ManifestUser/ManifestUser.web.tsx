@@ -52,12 +52,12 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     try {
       const result = await mutationCreateSlot({
         variables: {
-          jumpType: Number(state.fields.jumpType.value?.id),
-          extras: state.fields.extras?.value?.map(({ id }) => Number(id)),
-          load: Number(state.fields.load.value?.id),
-          rig: !state.fields.rig.value?.id ? null : Number(state.fields.rig.value?.id),
-          ticketType: Number(state.fields.ticketType?.value?.id),
-          dropzoneUser: Number(state.fields.dropzoneUser?.value?.id),
+          jumpType: state.fields.jumpType.value?.id,
+          extras: state.fields.extras?.value?.map(({ id }) => id),
+          load: state.fields.load.value?.id,
+          rig: !state.fields.rig.value?.id ? null : state.fields.rig.value?.id,
+          ticketType: state.fields.ticketType?.value?.id,
+          dropzoneUser: state.fields.dropzoneUser?.value?.id,
           exitWeight: state.fields.exitWeight.value,
           ...(!state.fields.ticketType.value?.isTandem
             ? {}
@@ -97,6 +97,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
             variant: 'error',
           })
         );
+        dispatch(actions.forms.manifest.setOpen(false));
         return;
       }
       if (!result.data?.createSlot?.fieldErrors?.length) {

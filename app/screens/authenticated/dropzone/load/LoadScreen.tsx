@@ -288,7 +288,7 @@ export default function LoadScreenWrapper() {
   const loadId = route?.params?.loadId;
 
   return (
-    <LoadProvider id={loadId ? Number(loadId) : undefined}>
+    <LoadProvider id={loadId}>
       <LoadScreen />
     </LoadProvider>
   );

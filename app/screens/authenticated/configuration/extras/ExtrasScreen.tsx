@@ -17,7 +17,7 @@ export default function ExtrasScreen() {
   const formState = useAppSelector((root) => root.forms.extra);
   const { data, loading } = useTicketTypeExtrasQuery({
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: currentDropzone?.dropzone?.id as string,
     },
   });
   const dispatch = useAppDispatch();

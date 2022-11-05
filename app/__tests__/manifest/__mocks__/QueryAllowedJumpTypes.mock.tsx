@@ -10,7 +10,7 @@ export const MOCK_QUERY_ALLOWED_JUMP_TYPES = createMockedQuery<
 >(
   AllowedJumpTypesDocument,
   {
-    dropzoneId: 1,
+    dropzoneId: '1',
 
     allowedForDropzoneUserIds: [],
   },

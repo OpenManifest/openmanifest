@@ -20,7 +20,7 @@ export default function RigInspectionTemplateScreen() {
   const dispatch = useAppDispatch();
   const { data } = useRigInspectionTemplateQuery({
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
     },
   });
 

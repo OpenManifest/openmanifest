@@ -90,7 +90,7 @@ export default function DropzonePermissionScreen() {
   const state = useAppSelector((root) => root.global);
   const { data, loading, refetch } = useRolesQuery({
     variables: {
-      dropzoneId: Number(state.currentDropzoneId),
+      dropzoneId: state.currentDropzoneId?.toString() as string,
     },
   });
   const isFocused = useIsFocused();

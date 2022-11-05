@@ -36,7 +36,7 @@ export default function RigInspectionScreen() {
   const { rigId, dropzoneUserId } = route.params;
   const { data, refetch } = useQueryDropzoneUserProfile({
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: currentDropzone?.dropzone?.id as string,
       dropzoneUserId: Number(dropzoneUserId),
     },
   });
@@ -88,8 +88,8 @@ export default function RigInspectionScreen() {
     try {
       await mutationCreateRigInspection({
         variables: {
-          dropzone: Number(currentDropzone?.dropzone?.id),
-          rig: Number(rig?.id),
+          dropzone: currentDropzone?.dropzone?.id,
+          rig: rig?.id,
           definition: JSON.stringify(state.fields),
           isOk: !!state.ok,
         },
@@ -101,7 +101,7 @@ export default function RigInspectionScreen() {
           >({
             query: QueryDropzoneUserProfileDocument,
             variables: {
-              dropzoneId: Number(currentDropzone?.dropzone?.id),
+              dropzoneId: currentDropzone?.dropzone?.id as string,
               dropzoneUserId: Number(rigInspection?.dropzoneUser?.id),
             },
           });
@@ -109,7 +109,7 @@ export default function RigInspectionScreen() {
           const currentDz = client.readQuery<Query>({
             query: DropzoneDocument,
             variables: {
-              dropzoneId: Number(currentDropzone?.dropzone?.id),
+              dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
               earliestTimestamp: startOfDay(new Date()).toISOString(),
             },
           });
@@ -118,7 +118,7 @@ export default function RigInspectionScreen() {
             client.writeQuery({
               query: DropzoneDocument,
               variables: {
-                dropzoneId: Number(currentDropzone?.dropzone?.id),
+                dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
                 earliestTimestamp: startOfDay(new Date()).toISOString(),
               },
               data: {
@@ -155,7 +155,7 @@ export default function RigInspectionScreen() {
           client.writeQuery({
             query: QueryDropzoneUserProfileDocument,
             variables: {
-              dropzoneId: Number(currentDropzone?.dropzone?.id),
+              dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
               dropzoneUserId: Number(rigInspection?.dropzoneUser?.id),
             },
             data: newData,

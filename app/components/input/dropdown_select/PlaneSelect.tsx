@@ -14,7 +14,7 @@ export default function PlaneSelect(props: IPlaneSelect) {
 
   const { data } = usePlanesQuery({
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
     },
   });
 

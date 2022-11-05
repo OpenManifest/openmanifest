@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { DropzoneDetailedFragment, DropzoneExtensiveFragment } from 'app/api/operations';
+import { DropzoneState } from 'app/api/schema.d';
 
 export type DropzoneFields = Pick<
   DropzoneDetailedFragment,
@@ -8,11 +9,10 @@ export type DropzoneFields = Pick<
   | 'secondaryColor'
   | 'primaryColor'
   | 'banner'
-  | 'isPublic'
+  | 'status'
   | 'lng'
   | 'lat'
   | 'isCreditSystemEnabled'
-  | 'requestPublication'
 >;
 
 interface IDropzoneEditState {
@@ -62,12 +62,8 @@ export const initialState: IDropzoneEditState = {
       value: false,
       error: null,
     },
-    isPublic: {
-      value: false,
-      error: null,
-    },
-    requestPublication: {
-      value: false,
+    status: {
+      value: DropzoneState.Public,
       error: null,
     },
   },

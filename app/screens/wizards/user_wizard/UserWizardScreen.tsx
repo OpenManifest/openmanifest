@@ -70,7 +70,7 @@ function UserWizardScreen() {
     if (userForm.federation.value?.name?.toLowerCase() === 'apf') {
       const mutationResult = await joinFederation({
         variables: {
-          federation: Number(userForm.federation?.value?.id),
+          federation: userForm.federation?.value?.id,
         },
       });
       const license = mutationResult?.data?.joinFederation?.userFederation?.license;
@@ -95,7 +95,7 @@ function UserWizardScreen() {
       const mutationResult = await joinFederation({
         variables: {
           uid: userForm.fields.apfNumber.value,
-          federation: Number(userForm.federation?.value?.id),
+          federation: userForm.federation?.value?.id,
         },
       });
       const license = mutationResult?.data?.joinFederation?.userFederation?.license;
@@ -119,11 +119,16 @@ function UserWizardScreen() {
       throw new Error();
     }
 
+    if (!userForm.federation?.value?.id) {
+      dispatch(actions.forms.user.setFieldError(['license', 'You must select a federation']));
+      throw new Error();
+    }
+
     try {
       const response = await joinFederation({
         variables: {
-          federation: Number(userForm.federation?.value?.id),
-          license: Number(userForm.fields.license?.value?.id),
+          federation: userForm.federation?.value?.id,
+          license: userForm.fields.license?.value?.id,
         },
       });
       if (response.data?.joinFederation?.errors) {

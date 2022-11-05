@@ -16,7 +16,7 @@ export default function RoleSelect(props: IRoleSelect) {
   const { currentDropzoneId } = useAppSelector((root) => root.global);
   const { data } = useRolesQuery({
     variables: {
-      dropzoneId: Number(currentDropzoneId),
+      dropzoneId: currentDropzoneId?.toString() as string,
     },
   });
 

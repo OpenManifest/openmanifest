@@ -26,7 +26,7 @@ export default function GCAChip(props: IGCAChipSelect) {
 
   const { data } = useDropzoneUsersQuery({
     variables: {
-      dropzoneId: Number(currentDropzoneId),
+      dropzoneId: currentDropzoneId?.toString() as string,
       permissions: [Permission.ActAsGca],
     },
   });
@@ -34,22 +34,20 @@ export default function GCAChip(props: IGCAChipSelect) {
 
   const options = React.useMemo(
     () =>
-      data?.dropzone?.dropzoneUsers?.edges
+      data?.dropzoneUsers?.edges
         ?.filter((edge) => !!edge?.node)
         .map((edge) => ({
           label: edge?.node?.user?.name || '',
           value: edge?.node as DropzoneUserEssentialsFragment,
           avatar: edge?.node?.user?.image,
         })) || [],
-    [data?.dropzone?.dropzoneUsers?.edges]
+    [data?.dropzoneUsers?.edges]
   );
 
   const selected = React.useMemo(
     () =>
-      data?.dropzone?.dropzoneUsers?.edges
-        ?.map((edge) => edge?.node)
-        .find((node) => node?.id === value?.id),
-    [data?.dropzone?.dropzoneUsers?.edges, value?.id]
+      data?.dropzoneUsers?.edges?.map((edge) => edge?.node).find((node) => node?.id === value?.id),
+    [data?.dropzoneUsers?.edges, value?.id]
   );
 
   const renderAnchor: React.FC<{

@@ -32,7 +32,10 @@ function DialogOrSheet(props: IBottomSheetProps) {
         style={{ width: '100%' }}
       />
       {!title ? null : (
-        <Typography variant="h4" style={{ marginBottom: 16 }}>
+        <Typography
+          variant="h5"
+          style={{ marginBottom: 16, paddingLeft: 16, paddingRight: 16, marginTop: 16 }}
+        >
           {title}
           <IconButton icon="close" style={styles.close} size={24} onPress={onClose} />
         </Typography>

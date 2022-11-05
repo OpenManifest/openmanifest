@@ -8,10 +8,9 @@ export default function useDropzones(vars: Partial<DropzonesQueryVariables>) {
   const state = useAppSelector((root) => root.global);
   const variables: DropzonesQueryVariables = React.useMemo(
     () => ({
-      isPublic: vars?.isPublic,
-      requestedPublication: vars?.requestedPublication,
+      state: vars?.state,
     }),
-    [vars?.isPublic, vars?.requestedPublication]
+    [vars?.state]
   );
 
   const query = useDropzonesQuery({

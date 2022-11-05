@@ -16,7 +16,7 @@ export default function TicketTypeSelect(props: ITicketTypeSelect) {
   const { currentDropzoneId } = useAppSelector((root) => root.global);
   const { data } = useTicketTypesQuery({
     variables: {
-      dropzone: Number(currentDropzoneId),
+      dropzone: currentDropzoneId?.toString() as string,
       allowManifestingSelf,
     },
   });

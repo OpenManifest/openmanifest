@@ -5,10 +5,19 @@ import { Button, Dialog } from 'react-native-paper';
 import TimePicker from 'app/components/input/time_picker/TimePicker';
 import { actions, useAppDispatch } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
-import { useFinalizeLoadMutation, useLoadQuery } from '../reflection';
+import * as yup from 'yup';
+import { ValidationError } from 'yup';
+import {
+  useFinalizeLoadMutation,
+  useLoadQuery,
+  useManifestUserMutation,
+  useManifestGroupMutation,
+  useDeleteSlotMutation,
+  useUpdateLoadMutation,
+} from '../reflection';
 import { LoadQueryVariables } from '../operations';
 import createCRUDContext, { uninitializedHandler } from './factory';
-import { LoadState, Permission } from '../schema.d';
+import { CreateSlotPayload, LoadState, Permission } from '../schema.d';
 import useMutationUpdateLoad from '../hooks/useMutationUpdateLoad';
 
 export default function useLoad(variables: Partial<LoadQueryVariables>) {
@@ -17,13 +26,6 @@ export default function useLoad(variables: Partial<LoadQueryVariables>) {
     initialFetchPolicy: 'cache-first',
     variables: variables as LoadQueryVariables,
     skip: !variables?.id,
-  });
-  console.debug({
-    error: query?.error,
-    loading: query?.loading,
-    data: query?.data,
-    called: query?.called,
-    variables,
   });
 
   const refetch = React.useCallback(() => {
@@ -39,6 +41,8 @@ export default function useLoad(variables: Partial<LoadQueryVariables>) {
   const closeTimePicker = React.useCallback(() => setTimePickerVisible(false), []);
   const openTimePicker = React.useCallback(() => setTimePickerVisible(true), []);
 
+  const [mutationManifestUser] = useManifestUserMutation();
+  const [mutationManifestGroup] = useManifestGroupMutation();
   const [mutationFinalizeLoad] = useFinalizeLoadMutation();
 
   const update = useMutationUpdateLoad({
@@ -57,6 +61,41 @@ export default function useLoad(variables: Partial<LoadQueryVariables>) {
         })
       ),
   });
+
+  const manifestUser = React.useCallback(
+    async (payload: Omit<CreateSlotPayload, 'loadId'>) => {
+      if (load?.id) {
+        return undefined;
+      }
+      const schema = yup.object().shape({
+        dropzoneUser: yup.string().required(),
+        exitWeight: yup.number().nullable(),
+        groupNumber: yup.number().nullable(),
+        passengerExitWeight: yup.number().nullable(),
+        passengerName: yup.string().nullable(),
+        rig: yup.string().nullable(),
+        ticketType: yup.string().required('You must select a ticket type'),
+        jumpType: yup.string().required('You must specify the type of jump'),
+      });
+      const validatedPayload = schema.validateSync(payload);
+      const response = await mutationManifestUser({
+        variables: {
+          load: load?.id,
+          ...validatedPayload,
+        },
+      });
+
+      if (response?.data?.createSlot?.fieldErrors?.length) {
+        throw new ValidationError(
+          response?.data?.createSlot?.fieldErrors?.map(
+            ({ field, message }) => new ValidationError([], message, field)
+          )
+        );
+      }
+      return response?.data?.createSlot?.slot;
+    },
+    [load?.id, mutationManifestUser]
+  );
 
   const dispatchInMinutes = React.useCallback(
     async (minutes: number | null) => {
@@ -109,13 +148,24 @@ export default function useLoad(variables: Partial<LoadQueryVariables>) {
   );
 
   const updatePlane = React.useCallback(
-    async (plane: { id: string | number }) => {
-      await update.mutate({
-        id: Number(load?.id),
-        plane: Number(plane.id),
-      });
+    async (plane: { id: string | number; maxSlots: number }) => {
+      if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
+        const diff = (load?.slots?.length || 0) - (plane.maxSlots || 0);
+
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: `You need to take ${diff} people off the load to fit on this plane`,
+            variant: 'info',
+          })
+        );
+      } else {
+        await update.mutate({
+          id: Number(load?.id),
+          plane: Number(plane.id),
+        });
+      }
     },
-    [update, load?.id]
+    [load?.slots?.length, load?.id, dispatch, update]
   );
 
   const updateLoadMaster = React.useCallback(
@@ -173,6 +223,7 @@ export default function useLoad(variables: Partial<LoadQueryVariables>) {
       updateGCA,
       updatePlane,
       updateLoadMaster,
+      manifestUser,
       cancel,
       refetch: queryVariables?.id ? refetch : noop,
       fetchMore: queryVariables?.id ? () => fetchMore({ variables }) : uninitializedHandler,
@@ -197,6 +248,7 @@ export default function useLoad(variables: Partial<LoadQueryVariables>) {
       updateGCA,
       updatePlane,
       updateLoadMaster,
+      manifestUser,
       cancel,
       queryVariables?.id,
       refetch,
@@ -225,6 +277,7 @@ const { Provider, useContext: useLoadContext } = createCRUDContext(useLoad, {
   updateLoadMaster: uninitializedHandler as never,
   updatePlane: uninitializedHandler as never,
   updatePilot: uninitializedHandler as never,
+  manifestUser: uninitializedHandler as never,
   refetch: uninitializedHandler as never,
   fetchMore: uninitializedHandler as never,
   canDispatchAircraft: false,

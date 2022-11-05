@@ -91,7 +91,7 @@ function UserCard(props: IUserCardProps) {
   return (
     <UserRigCard
       key={`user-rig-card-${slotUser.id}`}
-      dropzoneId={globalState.currentDropzoneId as number}
+      dropzoneId={globalState.currentDropzoneId?.toString() as string}
       dropzoneUserId={Number(slotUser.id)}
       selectedRig={slotUser.rig || undefined}
       exitWeight={slotUser.exitWeight}
@@ -119,7 +119,7 @@ export default function ManifestGroupForm() {
         (slotUser) => slotUser.id
       ) as number[],
       isPublic: canManifestOthers ? null : true,
-      dropzoneId: Number(globalState.currentDropzoneId),
+      dropzoneId: globalState.currentDropzoneId?.toString() as string,
     },
     onError: console.error,
   });

@@ -16,7 +16,7 @@ export default function JumpTypeSelect(props: IJumpTypeSelect) {
 
   const { data } = useAllowedJumpTypesQuery({
     variables: {
-      dropzoneId: Number(currentDropzoneId),
+      dropzoneId: currentDropzoneId?.toString() as string,
       allowedForDropzoneUserIds: allowedForDropzoneUserIds as number[],
     },
   });

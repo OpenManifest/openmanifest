@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
-import { Appearance, Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import { useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
@@ -27,7 +27,6 @@ export type AuthenticatedRoutes = {
 
 export default function AuthenticatedTabBar() {
   const { palette } = useAppSelector((root) => root.global);
-  const isDarkMode = Appearance.getColorScheme() === 'dark';
 
   const { currentUser } = useDropzoneContext();
   const isAdmin = currentUser?.user?.moderationRole !== ModerationRole.User;

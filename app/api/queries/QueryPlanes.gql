@@ -1,5 +1,0 @@
-query Planes($dropzoneId: Int!) {
-  planes(dropzoneId: $dropzoneId) {
-    ...planeEssentials
-  }
-}

@@ -3,6 +3,7 @@ import React from 'react';
 import { DataTable, Paragraph } from 'react-native-paper';
 
 export interface IAvailableRowProps {
+  index: number;
   onPress(): void;
 }
 export default function AvailableRow(props: IAvailableRowProps) {

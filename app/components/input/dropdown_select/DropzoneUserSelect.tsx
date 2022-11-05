@@ -19,28 +19,26 @@ export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
 
   const { data } = useDropzoneUsersQuery({
     variables: {
-      dropzoneId: globalState.currentDropzoneId as number,
+      dropzoneId: globalState.currentDropzoneId?.toString() as string,
       permissions: requiredPermissions,
     },
   });
   const options = React.useMemo(
     () =>
-      data?.dropzone?.dropzoneUsers?.edges
+      data?.dropzoneUsers?.edges
         ?.filter((edge) => !!edge?.node)
         .map((edge) => ({
           label: edge?.node?.user?.name || '',
           value: edge?.node as DropzoneUserEssentialsFragment,
           avatar: edge?.node?.user?.image,
         })) || [],
-    [data?.dropzone?.dropzoneUsers?.edges]
+    [data?.dropzoneUsers?.edges]
   );
 
   const selected = React.useMemo(
     () =>
-      data?.dropzone?.dropzoneUsers?.edges
-        ?.map((edge) => edge?.node)
-        .find((node) => node?.id === value?.id),
-    [data?.dropzone?.dropzoneUsers?.edges, value?.id]
+      data?.dropzoneUsers?.edges?.map((edge) => edge?.node).find((node) => node?.id === value?.id),
+    [data?.dropzoneUsers?.edges, value?.id]
   );
 
   return (

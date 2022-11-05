@@ -4,7 +4,6 @@ import { ApolloProvider } from '@apollo/client/react';
 import { setContext } from '@apollo/client/link/context';
 import { BatchHttpLink } from '@apollo/client/link/batch-http';
 import { onError } from '@apollo/client/link/error';
-import { RetryLink } from '@apollo/client/link/retry';
 import * as React from 'react';
 import * as Update from 'expo-updates';
 import config from 'app/constants/expo';
@@ -121,6 +120,8 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
         cache: new InMemoryCache({
           typePolicies: {
             Event: relayStylePagination(),
+            DropzoneUsers: relayStylePagination(),
+            Loads: relayStylePagination(),
           },
         }),
       }),

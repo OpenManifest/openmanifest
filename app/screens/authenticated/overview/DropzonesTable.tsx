@@ -3,6 +3,7 @@ import { StyleSheet, FlatList, ScrollView } from 'react-native';
 import { Card, DataTable, HelperText } from 'react-native-paper';
 import UserAvatar from 'app/components/UserAvatar';
 import { format, parseISO } from 'date-fns';
+import { DropzoneState } from 'app/api/schema.d';
 import { DropzoneStatisticsFragment } from 'app/api/operations';
 import ChipSelect from 'app/components/input/chip_select/ChipSelect';
 
@@ -34,9 +35,13 @@ function DropzoneTableRow(props: { dropzone?: DropzoneStatisticsFragment | null 
         <HelperText type="info">{format(parseISO(dropzone.createdAt), 'dd MMM, HH:mm')}</HelperText>
       </DataTable.Cell>
       <DataTable.Cell style={styles.statusCell}>
-        {dropzone?.requestPublication && !dropzone?.isPublic ? 'Review' : null}
-        {dropzone?.isPublic ? 'Active' : null}
-        {!dropzone?.requestPublication && !dropzone?.isPublic ? 'Inactive' : null}
+        {
+          {
+            [DropzoneState.Public]: 'Public',
+            [DropzoneState.Private]: 'Private',
+            [DropzoneState.InReview]: 'Review',
+          }[dropzone?.status]
+        }
       </DataTable.Cell>
       <DataTable.Cell style={styles.loadsCell}>
         {dropzone?.statistics?.loadsCount || 0}

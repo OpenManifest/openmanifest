@@ -75,7 +75,7 @@ const dropzoneUserDetails: DropzoneUserDetailsFragment = merge(dropzoneUserEssen
 });
 export default createMockedQuery<LoadQueryVariables, LoadQuery>(
   LoadDocument,
-  { id: 1 },
+  { id: '1' },
   {
     load: {
       ...loadEssentials,

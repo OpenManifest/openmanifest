@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { DropzoneFields } from 'app/components/forms/dropzone/slice';
 import { PlaneFields } from 'app/components/forms/plane/slice';
 import { TicketTypeFields } from 'app/components/forms/ticket_type/slice';
@@ -13,6 +12,7 @@ import useMutationCreateTicketType from 'app/api/hooks/useMutationCreateTicketTy
 import useMutationUpdateTicketType from 'app/api/hooks/useMutationUpdateTicketType';
 import camelize from 'lodash/camelCase';
 import { Permission } from 'app/api/schema.d';
+import { StackActions, useNavigation } from '@react-navigation/core';
 import NameStep from './steps/Name';
 import FederationStep from './steps/Federation';
 import LocationStep from './steps/Location';
@@ -76,6 +76,20 @@ function DropzoneSetupScreen() {
       dispatch(actions.forms.ticketType.setFieldError([field as keyof TicketTypeFields, value])),
   });
 
+  const onComplete = React.useCallback(() => {
+    navigation.dispatch(
+      StackActions.replace('Authenticated', {
+        screen: 'LeftDrawer',
+        params: {
+          screen: 'Manifest',
+          params: {
+            screen: 'ManifestScreen',
+          },
+        },
+      })
+    );
+  }, [navigation]);
+
   const onNameNext = React.useCallback(async (): Promise<void> => {
     if (!dropzone.fields.name.value) {
       dispatch(actions.forms.dropzone.setFieldError(['name', 'Your dropzone must have a name']));
@@ -109,7 +123,7 @@ function DropzoneSetupScreen() {
     // Create or update dropzone
     const result = !dropzone.original?.id
       ? await mutationCreateDropzone.mutate({
-          federationId: Number(dropzone.fields.federation.value?.id),
+          federation: Number(dropzone.fields.federation.value?.id),
           name: dropzone.fields.name.value || '',
           banner: dropzone.fields.banner.value || '',
           primaryColor: dropzone.fields.primaryColor.value,
@@ -138,30 +152,38 @@ function DropzoneSetupScreen() {
         dispatch(actions.global.setAccentColor(result?.dropzone?.secondaryColor));
       }
     } else if (result?.fieldErrors?.length) {
-      result?.fieldErrors?.forEach(({ field, message }) => {
+      result?.fieldErrors?.find(({ field, message }) => {
+        console.debug('Error', camelize(field));
         switch (camelize(field)) {
           case 'primaryColor':
             dispatch(actions.forms.dropzone.setFieldError(['primaryColor', message]));
-            break;
-          case 'federationId':
-            navigation.goBack();
-            navigation.goBack();
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            navigation.navigate(`DropzoneWizard3`);
+            return true;
+          case 'federation':
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            navigation.navigate(`DropzoneWizard1`);
             dispatch(actions.forms.dropzone.setFieldError(['primaryColor', message]));
-            break;
+            return true;
           case 'name':
-            navigation.goBack();
-            navigation.goBack();
-            navigation.goBack();
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            navigation.navigate(`DropzoneWizard0`);
             dispatch(actions.forms.dropzone.setFieldError(['name', message]));
-            break;
+            return true;
           case 'lat':
           case 'lng':
-            navigation.goBack();
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            navigation.navigate(`DropzoneWizard2`);
             dispatch(actions.forms.dropzone.setFieldError(['lat', message]));
-            break;
+            return true;
           default:
             break;
         }
+        return false;
       });
       throw new Error();
     }
@@ -335,13 +357,19 @@ function DropzoneSetupScreen() {
         { component: TicketTypeStep, onNext: onTicketTypeNext },
         {
           component: (stepProps) => (
-            <PermissionStep {...stepProps} permission={Permission.CreateSlot} title="Manifest" />
+            <PermissionStep
+              {...stepProps}
+              permission={Permission.CreateSlot}
+              title="Manifest"
+              description="Who can manifest themselves on loads?"
+            />
           ),
         },
         {
           component: (stepProps) => (
             <PermissionStep
               {...stepProps}
+              description="Who can manifest other people on loads?"
               permission={Permission.CreateUserSlot}
               title="Manifest others"
             />
@@ -368,9 +396,7 @@ function DropzoneSetupScreen() {
 
             // Set complete-flag to force navigation from dropzone screen
             dispatch(actions.screens.dropzoneWizard.complete());
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            navigation.replace('Authenticated', { screen: 'HomeScreen' });
+            onComplete();
           },
         },
       ]}

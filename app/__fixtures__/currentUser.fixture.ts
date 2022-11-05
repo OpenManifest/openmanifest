@@ -48,6 +48,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
     phone: '123456789',
     pushToken: null,
     image: null,
+    dropzoneUsers: [],
 
     rigs: [
       {

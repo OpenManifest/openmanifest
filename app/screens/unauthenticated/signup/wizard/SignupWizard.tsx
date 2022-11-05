@@ -55,8 +55,8 @@ export default function SignupWizard() {
         },
       });
 
-      if (result?.data?.userSignUp?.fieldErrors?.length) {
-        result?.data?.userSignUp?.fieldErrors?.forEach(({ field, message }) => {
+      if (result?.data?.userRegister?.fieldErrors?.length) {
+        result?.data?.userRegister?.fieldErrors?.forEach(({ field, message }) => {
           switch (field) {
             case 'email':
               dispatch(actions.screens.signup.setFieldError(['email', message]));

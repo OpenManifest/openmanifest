@@ -62,7 +62,7 @@ export default function DashboardPage() {
 
   const { data } = useDropzoneStatisticsQuery({
     variables: {
-      dropzoneId: Number(dropzone?.id),
+      dropzoneId: dropzone?.id?.toString() as string,
       timeRange,
     },
     skip: !dropzone?.id,
@@ -190,7 +190,7 @@ export default function DashboardPage() {
           {...activityVariables}
           {...{ timeRange }}
           onChange={onChangeActivityVariables}
-          dropzone={Number(dropzone?.id)}
+          dropzone={dropzone?.id}
         />
       </View>
     </ScrollableScreen>

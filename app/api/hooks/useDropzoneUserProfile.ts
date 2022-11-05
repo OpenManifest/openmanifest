@@ -7,7 +7,7 @@ export default function useDropzoneUser(id: number) {
 
   const dropzoneUser = useQueryDropzoneUserProfile({
     variables: {
-      dropzoneId: Number(dropzoneId),
+      dropzoneId: dropzoneId?.toString() as string,
       dropzoneUserId: id,
     },
     fetchPolicy: 'cache-and-network',

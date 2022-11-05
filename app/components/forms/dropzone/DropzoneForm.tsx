@@ -18,10 +18,10 @@ import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import LottieView from 'app/components/LottieView';
-import { warningColor } from 'app/constants/Colors';
 import { useFederationsQuery } from 'app/api/reflection';
 import useImagePicker from 'app/hooks/useImagePicker';
 import { useNavigation } from '@react-navigation/core';
+import { DropzoneState } from 'app/api/schema.d';
 import ColorPicker from '../../input/colorpicker';
 import { PhonePreview, WebPreview } from '../../theme_preview';
 import FederationSelect from '../../input/dropdown_select/FederationSelect';
@@ -251,47 +251,41 @@ export default function DropzoneForm(props: IDropzoneForm) {
         <Card style={styles.card}>
           <List.Item
             title={
-              state?.original?.requestPublication && !state.original?.isPublic
-                ? 'Awaiting review'
-                : 'Request Publication'
+              {
+                [DropzoneState.Public]: 'This dropzone is visible to all users',
+                [DropzoneState.Private]: 'Request publication',
+                [DropzoneState.InReview]: 'Awaiting review',
+              }[state.fields.status.value || DropzoneState.Private]
             }
             description={
-              state?.original?.requestPublication && !state.original?.isPublic
-                ? 'You will be contacted to verify the legitimacy of your dropzone before your dropzone is publicly available. This is to prevent illegitimate actors on the platform. Thank you for your patience and understanding.'
-                : 'Your dropzone will not be visible to other users until it is published. You can request a review to publish your dropzone, and may be contacted for verification on the email or phone number on your profile.'
+              {
+                [DropzoneState.Public]: 'This dropzone is visible to all users',
+                [DropzoneState.Private]:
+                  'Your dropzone will not be visible to other users until it is published. You can request a review to publish your dropzone, and may be contacted for verification on the email or phone number on your profile.',
+                [DropzoneState.InReview]:
+                  'You will be contacted to verify the legitimacy of your dropzone before your dropzone is publicly available. This is to prevent illegitimate actors on the platform. Thank you for your patience and understanding.',
+              }[state.fields.status.value || DropzoneState.Private]
             }
             descriptionNumberOfLines={10}
             onPress={() => {
               dispatch(
                 actions.forms.dropzone.setField([
-                  'requestPublication',
-                  !state.fields.requestPublication?.value,
+                  'status',
+                  state.fields.status?.value === DropzoneState.Private
+                    ? DropzoneState.InReview
+                    : DropzoneState.Private,
                 ])
               );
-              if (state.fields.isPublic) {
-                dispatch(
-                  actions.forms.dropzone.setField(['isPublic', !state.fields.isPublic?.value])
-                );
-              }
             }}
             left={(iconProps) => {
               const extraProps = {
-                icon: undefined as IconSource | undefined,
+                icon: {
+                  [DropzoneState.Public]: 'check',
+                  [DropzoneState.Private]: 'upload',
+                  [DropzoneState.InReview]: 'progress-upload',
+                } as IconSource | undefined,
                 color: undefined as string | undefined,
               };
-
-              if (state.fields.requestPublication?.value) {
-                extraProps.icon = 'upload';
-              }
-
-              if (state.original?.requestPublication && state.fields.requestPublication?.value) {
-                extraProps.color = warningColor;
-                extraProps.icon = 'progress-upload';
-              }
-
-              if (state.original?.isPublic && state.fields?.isPublic.value) {
-                extraProps.icon = 'check';
-              }
 
               if (extraProps.icon) {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -302,14 +296,20 @@ export default function DropzoneForm(props: IDropzoneForm) {
             }}
           />
           {currentUser?.user?.moderationRole === 'administrator' &&
-          state?.original?.requestPublication ? (
+          state?.original?.status === DropzoneState.InReview ? (
             <Card.Actions>
               <Button
-                onPress={() => dispatch(actions.forms.dropzone.setField(['isPublic', false]))}
+                onPress={() =>
+                  dispatch(actions.forms.dropzone.setField(['status', DropzoneState.Private]))
+                }
               >
                 Decline
               </Button>
-              <Button onPress={() => dispatch(actions.forms.dropzone.setField(['isPublic', true]))}>
+              <Button
+                onPress={() =>
+                  dispatch(actions.forms.dropzone.setField(['status', DropzoneState.Public]))
+                }
+              >
                 Accept
               </Button>
             </Card.Actions>

@@ -5,7 +5,7 @@ import DropzoneUserAutocomplete from 'app/components/autocomplete/DropzoneUserAu
 import { DropzoneUserProfileFragment } from 'app/api/operations';
 
 interface IUserRigCardEmptyProps {
-  dropzoneId: number;
+  dropzoneId: string;
   onSelectUser(user: DropzoneUserProfileFragment): void;
 }
 

@@ -79,7 +79,7 @@ export default function UsersScreen() {
 
   const { data, loading, refetch } = useDropzoneUsersQuery({
     variables: {
-      dropzoneId: Number(global.currentDropzoneId),
+      dropzoneId: global.currentDropzoneId?.toString() as string,
       search: state.searchText,
     },
     fetchPolicy: 'cache-and-network',
@@ -100,7 +100,7 @@ export default function UsersScreen() {
   const cardWidth = 370;
   const numColumns = Math.floor(width / cardWidth) || 1;
 
-  const users = data?.dropzone?.dropzoneUsers?.edges || [];
+  const users = React.useMemo(() => data?.dropzoneUsers?.edges || [], [data?.dropzoneUsers?.edges]);
   const initialLoading = !users?.length && loading;
   const theme = useTheme();
 
@@ -116,7 +116,7 @@ export default function UsersScreen() {
         data={initialLoading ? new Array(8).fill(loadingFragment) : users.map((edge) => edge?.node)}
         onRefresh={() =>
           refetch({
-            dropzoneId: Number(global.currentDropzoneId),
+            dropzoneId: global.currentDropzoneId?.toString(),
             search: state.searchText,
           })
         }

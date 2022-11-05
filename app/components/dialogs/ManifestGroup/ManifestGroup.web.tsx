@@ -50,15 +50,15 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     try {
       const result = await mutationCreateSlots({
         variables: {
-          jumpType: Number(state.fields.jumpType.value?.id),
-          ticketType: Number(state.fields.ticketType.value?.id),
-          groupNumber: Number(state.fields?.groupNumber?.value) || null,
-          extras: state.fields.extras?.value?.map(({ id }) => Number(id)),
-          load: Number(state.fields.load.value?.id),
+          jumpType: state.fields.jumpType.value?.id,
+          ticketType: state.fields.ticketType.value?.id,
+          groupNumber: state.fields?.groupNumber?.value || null,
+          extras: state.fields.extras?.value?.map(({ id }) => id),
+          load: state.fields.load.value?.id,
           userGroup: state.fields.users.value?.map(
             ({ id, exitWeight, rigId, rig, passengerName, passengerExitWeight }) => ({
               id,
-              rig: Number(rigId || rig?.id) || undefined,
+              rig: rigId?.toString() || rig?.id || undefined,
               exitWeight,
               passengerName,
               passengerExitWeight,
@@ -151,7 +151,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
               onChange={(user) => {
                 fetchProfile({
                   variables: {
-                    dropzoneId: Number(globalState.currentDropzoneId),
+                    dropzoneId: globalState.currentDropzoneId?.toString() as string,
                     dropzoneUserId: Number(user.id),
                   },
                 }).then((result) => {

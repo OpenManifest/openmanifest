@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View, ImageBackground } from 'react-native';
 import { Avatar, Text } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/core';
+import { StackActions, useNavigation } from '@react-navigation/core';
 import { DropzoneEssentialsFragment, DropzoneExtensiveFragment } from 'app/api/operations';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Color from 'color';
@@ -38,11 +38,17 @@ export default function DropzonesScreen(props: DropzoneCardProps) {
           dispatch(actions.global.setDropzone(dropzone as DropzoneExtensiveFragment));
 
           if (shouldPushRoute) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            navigation.replace('Authenticated', {
-              screen: 'HomeScreen',
-            });
+            navigation.dispatch(
+              StackActions.replace('Authenticated', {
+                screen: 'LeftDrawer',
+                params: {
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'ManifestScreen',
+                  },
+                },
+              })
+            );
           }
         }
       }}

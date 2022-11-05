@@ -6,7 +6,7 @@ export default createMutation<
   {
     name: string;
     banner?: string | null;
-    federationId: number;
+    federation: number;
     primaryColor: string | null;
     secondaryColor?: string | null;
     lat: number | null;
@@ -16,7 +16,7 @@ export default createMutation<
 >(CreateDropzoneDocument, {
   getPayload: (result) => result.createDropzone,
   fieldErrorMap: {
-    federationId: 'federation',
+    federation: 'federation',
   },
   validates: {
     name: [isRequired('Name is required')],

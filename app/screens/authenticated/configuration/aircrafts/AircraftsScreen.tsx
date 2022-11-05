@@ -17,7 +17,7 @@ export default function PlanesScreen() {
   const state = useAppSelector((root) => root.forms.plane);
   const { data, loading, refetch } = usePlanesQuery({
     variables: {
-      dropzoneId: Number(global.currentDropzoneId),
+      dropzoneId: global.currentDropzoneId?.toString() as string,
     },
   });
 
