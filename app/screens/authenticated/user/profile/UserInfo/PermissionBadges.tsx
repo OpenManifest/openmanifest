@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import startOfDay from 'date-fns/startOfDay';
 import { ScrollView } from 'react-native-gesture-handler';
 import {
   DropzoneUserEssentialsFragment,
@@ -12,7 +11,6 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { Permission } from 'app/api/schema.d';
 
 import {
-  DropzoneDocument,
   CurrentUserPermissionsDocument,
   DropzoneUsersDocument,
   QueryDropzoneUserProfileDocument,

@@ -1,4 +1,3 @@
-import { StyleSheet } from 'react-native';
 import React from 'react';
 import { DataTable } from 'react-native-paper';
 import { useLoadContext } from 'app/api/crud';
@@ -12,6 +11,7 @@ export interface IAvailableRowProps {
   onPress(): void;
 }
 export default function AvailableRow(props: IAvailableRowProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { onPress, index } = props;
   const dispatch = useAppDispatch();
   const { load } = useLoadContext();
@@ -40,9 +40,3 @@ export default function AvailableRow(props: IAvailableRowProps) {
     </DroppableSlot>
   );
 }
-
-const styles = StyleSheet.create({
-  slotText: {
-    fontSize: 12,
-  },
-});

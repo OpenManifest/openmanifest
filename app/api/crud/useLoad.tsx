@@ -7,14 +7,7 @@ import { actions, useAppDispatch } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import * as yup from 'yup';
 import { ValidationError } from 'yup';
-import {
-  useFinalizeLoadMutation,
-  useLoadQuery,
-  useManifestUserMutation,
-  useManifestGroupMutation,
-  useDeleteSlotMutation,
-  useUpdateLoadMutation,
-} from '../reflection';
+import { useFinalizeLoadMutation, useLoadQuery, useManifestUserMutation } from '../reflection';
 import { LoadQueryVariables } from '../operations';
 import createCRUDContext, { uninitializedHandler } from './factory';
 import { CreateSlotPayload, LoadState, Permission } from '../schema.d';
@@ -42,7 +35,6 @@ export default function useLoad(variables: Partial<LoadQueryVariables>) {
   const openTimePicker = React.useCallback(() => setTimePickerVisible(true), []);
 
   const [mutationManifestUser] = useManifestUserMutation();
-  const [mutationManifestGroup] = useManifestGroupMutation();
   const [mutationFinalizeLoad] = useFinalizeLoadMutation();
 
   const update = useMutationUpdateLoad({
