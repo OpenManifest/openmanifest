@@ -83,18 +83,18 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
     try {
       const result = await mutationCreateSlots({
         variables: {
-          groupNumber: Number(state.fields?.groupNumber?.value) || null,
-          jumpType: Number(state.fields.jumpType.value?.id),
-          ticketType: Number(state.fields.ticketType.value?.id),
-          extras: state.fields.extras?.value?.map(({ id }) => Number(id)),
-          load: Number(state.fields.load.value?.id),
+          jumpType: state.fields.jumpType.value?.id,
+          ticketType: state.fields.ticketType.value?.id,
+          groupNumber: state.fields?.groupNumber?.value || null,
+          extras: state.fields.extras?.value?.map(({ id }) => id),
+          load: state.fields.load.value?.id,
           userGroup: state.fields.users.value?.map(
-            ({ id, rigId, exitWeight, rig, passengerExitWeight, passengerName }) => ({
+            ({ id, exitWeight, rigId, rig, passengerName, passengerExitWeight }) => ({
               id,
-              rig: Number(rigId || rig?.id) || undefined,
-              passengerExitWeight,
-              passengerName,
+              rig: rigId?.toString() || rig?.id || undefined,
               exitWeight,
+              passengerName,
+              passengerExitWeight,
             })
           ),
         },

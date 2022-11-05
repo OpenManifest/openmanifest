@@ -63,7 +63,11 @@ export default function DropzoneUserAutocomplete(props: IDropzoneUserAutocomplet
   React.useEffect(() => {
     if (currentDropzoneId && searchText !== null) {
       searchUsers({
-        variables: { dropzoneId: currentDropzoneId, search: searchText, licensed: false },
+        variables: {
+          dropzoneId: currentDropzoneId?.toString() as string,
+          search: searchText,
+          licensed: false,
+        },
       });
     }
   }, [currentDropzoneId, searchText, searchUsers]);
@@ -85,7 +89,7 @@ export default function DropzoneUserAutocomplete(props: IDropzoneUserAutocomplet
   const options = React.useMemo(
     () =>
       (
-        (data?.dropzone?.dropzoneUsers?.edges?.map(
+        (data?.dropzoneUsers?.edges?.map(
           (edge) => edge?.node
         ) as DropzoneUserEssentialsFragment[]) || []
       ).sort(
@@ -94,7 +98,7 @@ export default function DropzoneUserAutocomplete(props: IDropzoneUserAutocomplet
             first(getOptionLabel(a).split('')) as string
           )
       ),
-    [data?.dropzone?.dropzoneUsers?.edges, getOptionLabel]
+    [data?.dropzoneUsers?.edges, getOptionLabel]
   );
 
   const onSelect = React.useCallback(

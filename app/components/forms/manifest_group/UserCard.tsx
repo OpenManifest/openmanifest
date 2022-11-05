@@ -12,7 +12,7 @@ import NumberField, { NumberFieldType } from '../../input/number_input/NumberFie
 
 interface IUserRigCard {
   dropzoneUserId: number;
-  dropzoneId: number;
+  dropzoneId: string;
   exitWeight?: number;
   isTandem?: boolean;
   selectedRig?: Rig;

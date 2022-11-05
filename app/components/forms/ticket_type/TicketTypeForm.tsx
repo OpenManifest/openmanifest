@@ -34,7 +34,7 @@ export default function TicketTypeForm() {
 
   const { data } = useTicketTypeExtrasQuery({
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
     },
   });
 

@@ -7,7 +7,7 @@ import createMockedQuery from './createMockedQuery.mock';
 
 export default createMockedQuery<CurrentUserPermissionsQueryVariables, CurrentUserPermissionsQuery>(
   CurrentUserPermissionsDocument,
-  { dropzoneId: 1 },
+  { dropzoneId: '1' },
   {
     dropzone: {
       id: '1',

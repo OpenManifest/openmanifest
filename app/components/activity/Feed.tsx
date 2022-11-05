@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FlatList, View } from 'react-native';
-import { List, Text, Caption } from 'react-native-paper';
+import { List, Caption } from 'react-native-paper';
 import UserAvatar from 'app/components/UserAvatar';
 import { format, parseISO } from 'date-fns';
 import { EventLevel } from 'app/api/schema.d';

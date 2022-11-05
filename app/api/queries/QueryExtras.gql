@@ -1,5 +1,0 @@
-query TicketTypeExtras($dropzoneId: Int!) {
-  extras(dropzone: $dropzoneId) {
-    ...ticketTypeExtraDetailed
-  }
-}

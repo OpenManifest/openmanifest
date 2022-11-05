@@ -1,17 +1,9 @@
 import * as React from 'react';
-import { Platform, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import { Button, Card, IconButton, Paragraph, ProgressBar, Text } from 'react-native-paper';
-import addMinutes from 'date-fns/addMinutes';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 
-import { useLoadQuery } from 'app/api/reflection';
-import {
-  DropzoneUserEssentialsFragment,
-  LoadDetailsFragment,
-  PlaneEssentialsFragment,
-  SlotDetailsFragment,
-  SlotEssentialsFragment,
-} from 'app/api/operations';
+import { SlotDetailsFragment, SlotEssentialsFragment } from 'app/api/operations';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
@@ -20,18 +12,18 @@ import PlaneChip from 'app/components/chips/PlaneChip';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
 import { View } from 'app/components/Themed';
-import { LoadState, Permission } from 'app/api/schema.d';
+import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
 import useMutationDeleteSlot from 'app/api/hooks/useMutationDeleteSlot';
 import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
-import SlotsTable from 'app/components/slots_table/Table';
+import LoadSlotTable from 'app/components/slots_table/Table';
 import { SlotFields } from 'app/components/slots_table/UserRow';
+import { useLoadContext } from 'app/api/crud';
+import { withLoad } from 'app/api/crud/useLoad';
 import LoadingCard from './Loading';
 
 interface ILoadCardLarge {
-  load: LoadDetailsFragment;
   controlsVisible: boolean;
   onManifestGroup(): void;
   onSlotGroupPress(slots: SlotEssentialsFragment[]): void;
@@ -39,46 +31,28 @@ interface ILoadCardLarge {
   onManifest(): void;
 }
 
-export default function LoadCard(props: ILoadCardLarge) {
-  const {
-    load: initialRecord,
-    onManifest,
-    onManifestGroup,
-    controlsVisible,
-    onSlotGroupPress,
-    onSlotPress,
-  } = props;
+function LoadCard(props: ILoadCardLarge) {
+  const { onManifest, onManifestGroup, controlsVisible, onSlotGroupPress, onSlotPress } = props;
   const state = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDispatchOpen, setDispatchOpen] = React.useState(false);
 
-  const { data, loading, refetch } = useLoadQuery({
-    variables: {
-      id: Number(initialRecord.id),
-    },
-    onError: console.error,
-  });
-  const load = React.useMemo(() => data?.load, [data?.load]);
+  const {
+    load,
+    loading,
+    refetch,
+    update,
+    updateGCA,
+    updatePlane,
+    updatePilot,
+    dispatchInMinutes,
+    updateLoadMaster,
+    markAsLanded,
+  } = useLoadContext();
   const currentDropzone = useDropzoneContext();
   const { currentUser } = currentDropzone;
 
-  const mutationUpdateLoad = useMutationUpdateLoad({
-    onSuccess: () =>
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: `Load #${load?.loadNumber} updated`,
-          variant: 'success',
-        })
-      ),
-    onError: (message) =>
-      dispatch(
-        actions.notifications.showSnackbar({
-          message,
-          variant: 'error',
-        })
-      ),
-  });
   const mutationDeleteSlot = useMutationDeleteSlot({
     onSuccess: (payload) =>
       dispatch(
@@ -106,83 +80,6 @@ export default function LoadCard(props: ILoadCardLarge) {
     },
     [mutationDeleteSlot]
   );
-
-  const updatePilot = React.useCallback(
-    async (pilot: DropzoneUserEssentialsFragment) => {
-      if (!load?.id) {
-        return;
-      }
-      await mutationUpdateLoad.mutate({
-        id: Number(load.id),
-        pilot: Number(pilot.id),
-      });
-    },
-    [mutationUpdateLoad, load?.id]
-  );
-
-  const updateGCA = React.useCallback(
-    async (gca: DropzoneUserEssentialsFragment) => {
-      if (!load?.id) {
-        return;
-      }
-      await mutationUpdateLoad.mutate({
-        id: Number(load.id),
-        gca: Number(gca.id),
-      });
-    },
-    [mutationUpdateLoad, load?.id]
-  );
-
-  const updatePlane = React.useCallback(
-    async (plane: PlaneEssentialsFragment) => {
-      if (!load?.id) {
-        return;
-      }
-      await mutationUpdateLoad.mutate({
-        id: Number(load.id),
-        plane: Number(plane.id),
-      });
-    },
-    [load?.id, mutationUpdateLoad]
-  );
-
-  const updateLoadMaster = React.useCallback(
-    async (lm: DropzoneUserEssentialsFragment) => {
-      if (!load?.id) {
-        return;
-      }
-      await mutationUpdateLoad.mutate({
-        id: Number(load.id),
-        loadMaster: Number(lm.id),
-      });
-    },
-    [load?.id, mutationUpdateLoad]
-  );
-
-  const updateCall = React.useCallback(
-    async (minutes: number | null) => {
-      if (!load?.id) {
-        return;
-      }
-      const dispatchTime = !minutes ? null : addMinutes(new Date(), minutes).toISOString();
-
-      await mutationUpdateLoad.mutate({
-        id: Number(load.id),
-        dispatchAt: dispatchTime,
-      });
-    },
-    [load?.id, mutationUpdateLoad]
-  );
-
-  const onLanded = React.useCallback(async () => {
-    if (!load?.id) {
-      return;
-    }
-    await mutationUpdateLoad.mutate({
-      id: Number(load.id),
-      state: LoadState.Landed,
-    });
-  }, [load?.id, mutationUpdateLoad]);
 
   const navigation = useAuthenticatedNavigation();
   const canUpdateLoad = useRestriction(Permission.UpdateLoad);
@@ -253,7 +150,7 @@ export default function LoadCard(props: ILoadCardLarge) {
         subtitle={load?.name}
       />
       <ProgressBar
-        visible={loading || mutationUpdateLoad.loading || mutationDeleteSlot.loading}
+        visible={loading || update.loading || mutationDeleteSlot.loading}
         color={state.theme.colors.primary}
       />
       <Card.Content
@@ -274,7 +171,7 @@ export default function LoadCard(props: ILoadCardLarge) {
             contentContainerStyle={{ backgroundColor: 'transparent' }}
           >
             <PlaneChip
-              small={Platform.OS !== 'web'}
+              small
               value={load?.plane}
               onSelect={async (plane) => {
                 if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
@@ -292,17 +189,17 @@ export default function LoadCard(props: ILoadCardLarge) {
                 }
               }}
             />
-            <GCAChip small={Platform.OS !== 'web'} value={load?.gca} onSelect={updateGCA} />
-            <PilotChip small={Platform.OS !== 'web'} value={load?.pilot} onSelect={updatePilot} />
+            <GCAChip small value={load?.gca} onSelect={updateGCA} />
+            <PilotChip small value={load?.pilot} onSelect={updatePilot} />
             <LoadMasterChip
-              small={Platform.OS !== 'web'}
+              small
               value={load?.loadMaster}
               slots={load?.slots || []}
               onSelect={updateLoadMaster}
             />
           </ScrollView>
         </View>
-        <SlotsTable
+        <LoadSlotTable
           {...{ load, loading, onSlotPress, onSlotGroupPress }}
           onDeletePress={onDeleteSlot}
           onAvailableSlotPress={() =>
@@ -340,7 +237,11 @@ export default function LoadCard(props: ILoadCardLarge) {
           <View style={{ flexGrow: 1 }} />
           {/* eslint-disable-next-line no-nested-ternary */}
           {!canUpdateLoad || !!load?.hasLanded ? null : load?.dispatchAt ? (
-            <Button mode="outlined" onPress={() => updateCall(null)} testID="dispatch-cancel">
+            <Button
+              mode="outlined"
+              onPress={() => dispatchInMinutes(null)}
+              testID="dispatch-cancel"
+            >
               Cancel
             </Button>
           ) : (
@@ -361,7 +262,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                 testID="dispatch-call"
                 onPress={() => {
                   setDispatchOpen(false);
-                  updateCall(20);
+                  dispatchInMinutes(20);
                 }}
                 title="20 minute call"
               />
@@ -369,7 +270,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                 testID="dispatch-call"
                 onPress={() => {
                   setDispatchOpen(false);
-                  updateCall(15);
+                  dispatchInMinutes(15);
                 }}
                 title="15 minute call"
               />
@@ -377,14 +278,14 @@ export default function LoadCard(props: ILoadCardLarge) {
                 testID="dispatch-call"
                 onPress={() => {
                   setDispatchOpen(false);
-                  updateCall(10);
+                  dispatchInMinutes(10);
                 }}
                 title="10 minute call"
               />
               <MenuItem
                 onPress={() => {
                   setDispatchOpen(false);
-                  updateCall(5);
+                  dispatchInMinutes(5);
                 }}
                 title="5 minute call"
               />
@@ -416,7 +317,7 @@ export default function LoadCard(props: ILoadCardLarge) {
                     })
                   );
                 }
-                return onLanded();
+                return markAsLanded();
               }}
             >
               Mark as landed
@@ -440,3 +341,5 @@ export default function LoadCard(props: ILoadCardLarge) {
     </Card>
   );
 }
+
+export default withLoad(LoadCard);

@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { createMutation, isEmail, isRequired, validates } from '../createMutation';
-import { MutationUserSignUpArgs, UserSignUpPayload } from '../schema';
+import { MutationUserRegisterArgs, SignUpPayload } from '../schema.d';
 
 export const MUTATION_USER_SIGNUP = gql`
   mutation UserSignUp(
@@ -42,8 +42,8 @@ export const MUTATION_USER_SIGNUP = gql`
   }
 `;
 
-export default createMutation<MutationUserSignUpArgs, UserSignUpPayload>(MUTATION_USER_SIGNUP, {
-  getPayload: (result) => result.userSignUp,
+export default createMutation<MutationUserRegisterArgs, SignUpPayload>(MUTATION_USER_SIGNUP, {
+  getPayload: (result) => result.userRegister,
   fieldErrorMap: {
     licenseId: 'license',
   },

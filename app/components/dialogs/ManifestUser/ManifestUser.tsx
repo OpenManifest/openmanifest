@@ -34,12 +34,12 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
 
   const onManifest = React.useCallback(async () => {
     createSlot.mutate({
-      jumpType: Number(state.fields.jumpType.value?.id),
-      extras: state.fields.extras?.value?.map(({ id }) => Number(id)),
-      load: Number(state.fields.load.value?.id),
-      rig: !state.fields.rig.value?.id ? null : Number(state.fields.rig.value?.id),
-      ticketType: Number(state.fields.ticketType?.value?.id),
-      dropzoneUser: Number(state.fields.dropzoneUser?.value?.id),
+      jumpType: state.fields.jumpType.value?.id,
+      extras: state.fields.extras?.value?.map(({ id }) => id),
+      load: state.fields.load.value?.id,
+      rig: !state.fields.rig.value?.id ? undefined : state.fields.rig.value?.id,
+      ticketType: state.fields.ticketType?.value?.id,
+      dropzoneUser: state.fields.dropzoneUser?.value?.id,
       exitWeight: state.fields.exitWeight.value,
       ...(!state.fields.ticketType.value?.isTandem
         ? {}

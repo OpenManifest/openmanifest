@@ -26,7 +26,7 @@ export default function UserListSelect(props: IUserListSelect) {
   const { currentDropzoneId } = useAppSelector((root) => root.global);
   const { data } = useDropzoneUsersDetailedQuery({
     variables: {
-      dropzoneId: Number(currentDropzoneId),
+      dropzoneId: currentDropzoneId?.toString() as string,
       search: searchText,
     },
   });
@@ -49,11 +49,9 @@ export default function UserListSelect(props: IUserListSelect) {
       <Searchbar value={searchText} onChangeText={setSearchText} placeholder="Search skydivers" />
       <View {...containerProps}>
         <Wrapper>
-          {!data?.dropzone?.dropzoneUsers?.edges?.length && (
-            <NoResults title="No users" subtitle="" />
-          )}
+          {!data?.dropzoneUsers?.edges?.length && <NoResults title="No users" subtitle="" />}
 
-          {data?.dropzone?.dropzoneUsers?.edges?.map((edge) => (
+          {data?.dropzoneUsers?.edges?.map((edge) => (
             <React.Fragment key={`user-${edge?.node?.id || 0}`}>
               <List.Item
                 style={{ width: '100%' }}

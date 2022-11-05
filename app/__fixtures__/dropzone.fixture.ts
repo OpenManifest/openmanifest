@@ -1,5 +1,5 @@
 import { DropzoneExtensiveFragment } from 'app/api/operations';
-import { LoadState } from 'app/api/schema.d';
+import { DropzoneState, LoadState } from 'app/api/schema.d';
 import { ticketTypeEssentials } from './ticketType.fixture';
 import { currentUserDetailed } from './currentUser.fixture';
 import { loadEssentials } from './load.fixture';
@@ -14,8 +14,7 @@ export const dropzoneExtensive: DeepRequired<DropzoneExtensiveFragment> = {
   name: 'Skydive Jest',
   primaryColor: '#000000',
   secondaryColor: '#FFFFFF',
-  isPublic: false,
-  requestPublication: false,
+  status: DropzoneState.Public,
   isCreditSystemEnabled: true,
   createdAt: new Date().toISOString(),
   federation: {
@@ -84,6 +83,9 @@ export const dropzoneExtensive: DeepRequired<DropzoneExtensiveFragment> = {
   currentUser: {
     ...currentUserDetailed,
   },
+};
+
+const loads = {
   loads: {
     __typename: 'LoadConnection',
     edges: [

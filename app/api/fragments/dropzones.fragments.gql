@@ -4,10 +4,9 @@ fragment dropzoneEssentials on Dropzone {
   lat
   lng
   name
+  status: state
   primaryColor
   secondaryColor
-  isPublic
-  requestPublication
   banner
   isCreditSystemEnabled
   createdAt
@@ -61,18 +60,6 @@ fragment dropzoneDetailed on Dropzone {
 
   currentConditions {
     ...weatherConditionEssentials
-  }
-  loads(earliestTimestamp: $earliestTimestamp) {
-    edges {
-      node {
-        id
-        name
-        loadNumber
-        isOpen
-        maxSlots
-        state
-      }
-    }
   }
 }
 

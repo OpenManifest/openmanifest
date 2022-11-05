@@ -12,7 +12,7 @@ export default function ExtraForm() {
   const currentDropzone = useDropzoneContext();
   const { data } = useTicketTypesQuery({
     variables: {
-      dropzone: Number(currentDropzone?.dropzone?.id),
+      dropzone: currentDropzone?.dropzone?.id?.toString() as string,
     },
   });
 

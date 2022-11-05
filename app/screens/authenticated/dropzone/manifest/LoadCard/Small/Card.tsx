@@ -10,25 +10,19 @@ import { View } from 'app/components/Themed';
 import { LoadState } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { errorColor, warningColor } from 'app/constants/Colors';
-import useMutationUpdateLoad from 'app/api/hooks/useMutationUpdateLoad';
-import {
-  DropzoneUserEssentialsFragment,
-  LoadDetailsFragment,
-  PlaneEssentialsFragment,
-} from 'app/api/operations';
-import { useLoadQuery } from 'app/api/reflection';
+import { useLoadContext, withLoad } from 'app/api/crud/useLoad';
 import Countdown from '../Countdown';
 import Loading from './Loading';
 
 interface ILoadCardSmall {
-  load: LoadDetailsFragment;
   onPress(): void;
 }
 
-export default function LoadCard(props: ILoadCardSmall) {
-  const { load: initialRecord, onPress } = props;
+function LoadCard(props: ILoadCardSmall) {
+  const { onPress } = props;
   const dispatch = useAppDispatch();
   const { theme, palette } = useAppSelector((root) => root.global);
+  const { load, loading, refetch, updatePlane, updatePilot } = useLoadContext();
   const LOAD_BADGE_COLOR: { [K in LoadState]?: string } = React.useMemo(
     () => ({
       open: palette.accent.main,
@@ -36,57 +30,6 @@ export default function LoadCard(props: ILoadCardSmall) {
       boarding_call: warningColor,
     }),
     [palette.accent.main]
-  );
-  const { data, loading, refetch } = useLoadQuery({
-    variables: {
-      id: Number(initialRecord.id),
-    },
-    pollInterval: 30000,
-  });
-
-  const load = React.useMemo(() => data?.load, [data?.load]);
-
-  const mutationUpdateLoad = useMutationUpdateLoad({
-    onSuccess: () =>
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: `Load #${load?.loadNumber} updated`,
-          variant: 'success',
-        })
-      ),
-    onError: (message) =>
-      dispatch(
-        actions.notifications.showSnackbar({
-          message,
-          variant: 'error',
-        })
-      ),
-  });
-
-  const updatePilot = React.useCallback(
-    async (pilot: DropzoneUserEssentialsFragment) => {
-      if (!load?.id) {
-        return;
-      }
-      await mutationUpdateLoad.mutate({
-        id: Number(load.id),
-        pilot: Number(pilot.id),
-      });
-    },
-    [mutationUpdateLoad, load?.id]
-  );
-
-  const updatePlane = React.useCallback(
-    async (plane: PlaneEssentialsFragment) => {
-      if (!load?.id) {
-        return;
-      }
-      await mutationUpdateLoad.mutate({
-        id: Number(load.id),
-        plane: Number(plane.id),
-      });
-    },
-    [load?.id, mutationUpdateLoad]
   );
 
   if (loading) {
@@ -125,7 +68,7 @@ export default function LoadCard(props: ILoadCardSmall) {
       </Badge>
       <Card.Title
         style={{ justifyContent: 'space-between' }}
-        title={`Load #${load?.loadNumber}`}
+        title={`Load #${load?.loadNumber || '?'}`}
         subtitle={load?.name}
         right={() =>
           !load?.dispatchAt || isBefore(new Date(), load?.dispatchAt) ? null : (
@@ -197,3 +140,5 @@ const styles = StyleSheet.create({
   },
   smallChipText: { fontSize: 12 },
 });
+
+export default withLoad(LoadCard);

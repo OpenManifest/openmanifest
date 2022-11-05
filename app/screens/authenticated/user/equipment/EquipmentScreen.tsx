@@ -29,7 +29,7 @@ export default function EquipmentScreen() {
 
   const { data, loading, refetch } = useQueryDropzoneUserProfile({
     variables: {
-      dropzoneId: Number(globalState.currentDropzoneId),
+      dropzoneId: globalState.currentDropzoneId?.toString() as string,
       dropzoneUserId: Number(route?.params?.userId) || Number(currentUser?.id),
     },
   });

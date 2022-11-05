@@ -1,20 +1,22 @@
 import * as React from 'react';
 import { noop } from 'lodash';
-import { DateTime } from 'luxon';
 import { useCurrentUserPermissionsQuery, useDropzoneQuery } from '../reflection';
 import { CurrentUserPermissionsQueryVariables, DropzoneQueryVariables } from '../operations';
 import createCRUDContext, { uninitializedHandler } from './factory';
 
 export default function useDropzone(vars: Partial<DropzoneQueryVariables>) {
-  const firstLoadTimestamp = DateTime.now().startOf('day').toUTC().toISO();
-  const variables = React.useMemo(
-    () => ({ ...vars, earliestTimestamp: firstLoadTimestamp }),
-    [firstLoadTimestamp, vars]
-  );
+  const variables: DropzoneQueryVariables | undefined = React.useMemo(() => {
+    if (vars?.dropzoneId) {
+      return {
+        dropzoneId: vars.dropzoneId,
+      };
+    }
+    return undefined;
+  }, [vars]);
 
   const query = useDropzoneQuery({
     initialFetchPolicy: 'cache-first',
-    variables: variables?.dropzoneId ? (variables as DropzoneQueryVariables) : undefined,
+    variables,
     skip: !variables?.dropzoneId,
   });
 
@@ -22,7 +24,6 @@ export default function useDropzone(vars: Partial<DropzoneQueryVariables>) {
     () => ({ dropzoneId: variables?.dropzoneId }),
     [variables?.dropzoneId]
   );
-  console.debug(variables);
 
   const permissions = useCurrentUserPermissionsQuery({
     variables: permissionsVariables as CurrentUserPermissionsQueryVariables,

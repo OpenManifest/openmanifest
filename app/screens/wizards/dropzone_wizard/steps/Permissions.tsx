@@ -1,41 +1,29 @@
 import * as React from 'react';
 import { capitalize } from 'lodash';
-import gql from 'graphql-tag';
-import { useLazyQuery } from '@apollo/client';
 import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard';
 import { useAppSelector } from 'app/state';
-import { Permission, Query } from 'app/api/schema.d';
+import { Permission } from 'app/api/schema.d';
 import PermissionListItem from 'app/components/permissions/PermissionListItem';
 import { FlatList } from 'react-native';
-
-const QUERY_DROPZONE_PERMISSIONS = gql`
-  query QueryDropzonePermissions($dropzoneId: Int!) {
-    dropzone(id: $dropzoneId) {
-      id
-      roles {
-        id
-        name
-        permissions
-      }
-    }
-  }
-`;
+import { useDropzonePermissionsLazyQuery } from 'app/api/reflection';
+import { Paragraph } from 'react-native-paper';
 
 interface IPermissionWizardScreen extends IWizardStepProps {
   permission: Permission;
   title: string;
+  description?: string;
 }
 
 function PermissionWizardScreen(props: IPermissionWizardScreen) {
-  const { permission, ...rest } = props;
+  const { permission, description, ...rest } = props;
   const dropzoneForm = useAppSelector((root) => root.forms.dropzone);
-  const [queryRoles, { data, loading, called }] = useLazyQuery<Query>(QUERY_DROPZONE_PERMISSIONS);
+  const [queryRoles, { data, loading, called }] = useDropzonePermissionsLazyQuery();
 
   React.useEffect(() => {
     if (dropzoneForm.original?.id) {
       queryRoles({
         variables: {
-          dropzoneId: Number(dropzoneForm.original.id),
+          id: dropzoneForm.original.id,
         },
       });
     }
@@ -43,6 +31,7 @@ function PermissionWizardScreen(props: IPermissionWizardScreen) {
 
   return (
     <Step {...rest}>
+      {description && <Paragraph>{description}</Paragraph>}
       <Fields>
         {!(called && !loading && data?.dropzone?.roles?.length) ? null : (
           <FlatList

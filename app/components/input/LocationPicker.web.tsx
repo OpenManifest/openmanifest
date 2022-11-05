@@ -37,10 +37,10 @@ export function LocationWizardStep(props: ILocationPickerProps) {
 
   // Start at user location
   React.useEffect(() => {
-    if (value.lng === null || value.lng == null) {
+    if (value?.lng === null || value?.lng == null) {
       setUsersLocation();
     }
-  }, [setUsersLocation, value.lng]);
+  }, [setUsersLocation, value?.lng]);
 
   const opacity = React.useRef(new Animated.Value(0));
 

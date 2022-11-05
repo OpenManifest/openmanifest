@@ -22,7 +22,7 @@ export default function DropzoneRigsScreen() {
   const rigForm = useAppSelector((root) => root.forms.rig);
   const { data, loading, refetch } = useDropzoneRigsQuery({
     variables: {
-      dropzoneId: Number(state.currentDropzoneId),
+      dropzoneId: state.currentDropzoneId?.toString() as string,
     },
   });
   const dispatch = useAppDispatch();

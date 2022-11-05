@@ -25,7 +25,7 @@ export default function PlaneChip(props: IPlaneChipSelect) {
 
   const { data } = usePlanesQuery({
     variables: {
-      dropzoneId: Number(currentDropzoneId),
+      dropzoneId: currentDropzoneId?.toString() as string,
     },
   });
   const allowed = useRestriction(Permission.UpdateLoad);

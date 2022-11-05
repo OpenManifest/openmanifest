@@ -13,7 +13,7 @@ import checkDropzoneSetupComplete from 'app/utils/checkDropzoneSetupComplete';
 
 import NoResults from 'app/components/NoResults';
 import { View } from 'app/components/Themed';
-import { LoadState, Permission } from 'app/api/schema.d';
+import { DropzoneState, LoadState, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import LoadDialog from 'app/components/dialogs/Load';
@@ -21,6 +21,10 @@ import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { LoadDetailsFragment } from 'app/api/operations';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
+import ManifestUserDialog from 'app/components/dialogs/ManifestUser/ManifestUser';
+import useManifestValidator from 'app/hooks/useManifestValidator';
+import { useManifestContext } from 'app/api/crud/useManifest';
+import DragDropWrapper from '../../../../components/slots_table/DragAndDrop/DragDropSlotProvider';
 import GetStarted from '../../../../components/GetStarted';
 import LoadCardSmall from './LoadCard/Small/Card';
 import LoadCardLarge from './LoadCard/Large/Card';
@@ -55,7 +59,9 @@ export default function ManifestScreen() {
   const dispatch = useAppDispatch();
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
   const [isSetupCheckComplete] = React.useState(false);
+  const { canManifest } = useManifestValidator();
   const { dropzone, currentUser, loading, refetch, fetchMore } = useDropzoneContext();
+  const manifest = useManifestContext();
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -64,6 +70,7 @@ export default function ManifestScreen() {
   React.useEffect(() => {
     if (dropzone && isFocused && canUpdateDropzone) {
       const dropzoneWizardIndex = checkDropzoneSetupComplete(dropzone);
+      console.debug({ dropzoneWizardIndex });
 
       if (dropzoneWizardIndex) {
         dispatch(actions.screens.dropzoneWizard.setIndex(dropzoneWizardIndex));
@@ -103,7 +110,7 @@ export default function ManifestScreen() {
 
   const hasPlanes = !!dropzone?.planes?.length;
   const hasTicketTypes = !!dropzone?.ticketTypes?.length;
-  const isPublic = !!dropzone?.isPublic;
+  const isPublic = dropzone?.status === DropzoneState.Public;
   const isSetupComplete = hasPlanes && hasTicketTypes;
 
   React.useEffect(() => {
@@ -123,70 +130,25 @@ export default function ManifestScreen() {
     state.theme?.colors?.primary,
   ]);
 
-  const canCreateLoad = useRestriction(Permission.CreateLoad);
-
   const onManifest = React.useCallback(
-    (load: LoadDetailsFragment) => {
-      if (!currentUser?.hasLicense) {
-        return dispatch(
-          actions.notifications.showSnackbar({
-            message: 'You need to select a license on your user profile',
-            variant: 'info',
-          })
-        );
+    async function Manifest(load: LoadDetailsFragment) {
+      try {
+        await canManifest();
+        dispatch(actions.forms.manifest.setOpen(true));
+        dispatch(actions.forms.manifest.setField(['dropzoneUser', currentUser]));
+        dispatch(actions.forms.manifest.setField(['load', load]));
+      } catch (e) {
+        if (e instanceof Error) {
+          dispatch(
+            actions.notifications.showSnackbar({
+              message: e.message,
+              variant: 'info',
+            })
+          );
+        }
       }
-
-      if (!currentUser?.hasMembership) {
-        return dispatch(
-          actions.notifications.showSnackbar({
-            message: 'Your membership is out of date',
-            variant: 'info',
-          })
-        );
-      }
-
-      if (!currentUser?.hasRigInspection) {
-        return dispatch(
-          actions.notifications.showSnackbar({
-            message: 'Your rig needs to be inspected before manifesting',
-            variant: 'info',
-          })
-        );
-      }
-
-      if (!currentUser?.hasReserveInDate) {
-        return dispatch(
-          actions.notifications.showSnackbar({
-            message: 'Your rig needs a reserve repack',
-            variant: 'info',
-          })
-        );
-      }
-
-      if (!currentUser?.hasExitWeight) {
-        return dispatch(
-          actions.notifications.showSnackbar({
-            message: 'Update your exit weight on your profile before manifesting',
-            variant: 'info',
-          })
-        );
-      }
-
-      if (!currentUser?.hasCredits) {
-        return dispatch(
-          actions.notifications.showSnackbar({
-            message: 'You have no credits on your account',
-            variant: 'info',
-          })
-        );
-      }
-
-      dispatch(actions.forms.manifest.setOpen(true));
-      dispatch(actions.forms.manifest.setField(['dropzoneUser', currentUser]));
-      dispatch(actions.forms.manifest.setField(['load', load]));
-      return null;
     },
-    [currentUser, dispatch]
+    [canManifest, currentUser, dispatch]
   );
 
   const { width } = useWindowDimensions();
@@ -196,11 +158,7 @@ export default function ManifestScreen() {
   const numColumns = Math.floor(width / cardWidth) || 1;
   const contentWidth = cardWidth * numColumns;
 
-  const loads: LoadDetailsFragment[] = React.useMemo(
-    () => (dropzone?.loads?.edges?.map((edge) => edge?.node) as LoadDetailsFragment[]) || [],
-    [dropzone?.loads?.edges]
-  );
-  const initialLoading = !loads?.length && loading;
+  const initialLoading = !dropzone || (!manifest?.loads?.length && manifest?.loading);
 
   const theme = useTheme();
 
@@ -211,14 +169,14 @@ export default function ManifestScreen() {
         (!currentUser?.hasExitWeight || !currentUser?.hasLicense || !currentUser.user?.name)
           ? setupProfileCardFragment
           : null,
-        ...(initialLoading ? new Array(5).fill(loadingFragment) : loads),
+        ...(initialLoading ? new Array(5).fill(loadingFragment) : manifest.loads),
       ].filter(Boolean),
     [
+      manifest?.loads,
       currentUser?.hasExitWeight,
       currentUser?.hasLicense,
       currentUser?.user?.name,
       initialLoading,
-      loads,
     ]
   );
 
@@ -241,7 +199,7 @@ export default function ManifestScreen() {
         <LoadCardLarge
           controlsVisible={false}
           key={`load-${load?.id}`}
-          load={load}
+          id={load?.id}
           onSlotPress={(slot) => {
             if (load) {
               dispatch(actions.forms.manifest.setOpen(slot));
@@ -266,7 +224,7 @@ export default function ManifestScreen() {
       ) : (
         <LoadCardSmall
           key={`load-${load?.id}`}
-          load={load}
+          id={load?.id}
           onPress={() =>
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',
@@ -286,7 +244,11 @@ export default function ManifestScreen() {
   );
   return (
     <View style={{ flex: 1 }}>
-      <ProgressBar visible={loading} indeterminate color={state.theme.colors.primary} />
+      <ProgressBar
+        visible={loading || manifest.loading}
+        indeterminate
+        color={state.theme.colors.primary}
+      />
 
       <View style={styles.container}>
         {!initialLoading && !isSetupComplete ? (
@@ -307,35 +269,39 @@ export default function ManifestScreen() {
                 resizeMode="cover"
               />
             )}
-            <FlatList<LoadDetailsFragment>
-              ListHeaderComponent={() => <WeatherConditions />}
-              ListEmptyComponent={() => (
-                <NoResults
-                  style={{ marginTop: 156 }}
-                  title="No loads so far today"
-                  subtitle="How's the weather?"
-                />
-              )}
-              style={{
-                paddingTop: 35,
-                flex: 1,
-                height: Dimensions.get('window').height,
-              }}
-              testID="loads"
-              keyExtractor={(item, idx) => `load-small-${item?.id || idx}-${idx}`}
-              key={`loads-columns-${numColumns}`}
-              contentContainerStyle={{
-                width: contentWidth,
-                alignSelf: 'center',
-                paddingBottom: 100,
-              }}
-              numColumns={numColumns}
-              {...{ data, renderItem }}
-              refreshControl={<RefreshControl refreshing={loading} onRefresh={() => fetchMore()} />}
-            />
+            <DragDropWrapper>
+              <FlatList<LoadDetailsFragment>
+                ListHeaderComponent={() => <WeatherConditions />}
+                ListEmptyComponent={() => (
+                  <NoResults
+                    style={{ marginTop: 156 }}
+                    title="No loads so far today"
+                    subtitle="How's the weather?"
+                  />
+                )}
+                style={{
+                  paddingTop: 35,
+                  flex: 1,
+                  height: Dimensions.get('window').height,
+                }}
+                testID="loads"
+                keyExtractor={(item, idx) => `load-small-${item?.id || idx}-${idx}`}
+                key={`loads-columns-${numColumns}`}
+                contentContainerStyle={{
+                  width: contentWidth,
+                  alignSelf: 'center',
+                  paddingBottom: 100,
+                }}
+                numColumns={numColumns}
+                {...{ data, renderItem }}
+                refreshControl={
+                  <RefreshControl refreshing={loading} onRefresh={() => fetchMore()} />
+                }
+              />
+            </DragDropWrapper>
           </View>
         )}
-        {canCreateLoad && isSetupComplete && (
+        {manifest.permissions.canCreateLoad && isSetupComplete && (
           <FAB
             style={[styles.fab, { backgroundColor: theme.colors.primary }]}
             small
@@ -377,6 +343,13 @@ export default function ManifestScreen() {
         }}
         open={forms.load.open}
         onClose={() => dispatch(actions.forms.load.setOpen(false))}
+      />
+      <ManifestUserDialog
+        open={forms.manifest.open}
+        onClose={() => dispatch(actions.forms.manifest.setOpen(false))}
+        onSuccess={() => {
+          dispatch(actions.forms.manifest.setOpen(false));
+        }}
       />
     </View>
   );

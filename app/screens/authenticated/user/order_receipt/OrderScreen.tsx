@@ -10,6 +10,7 @@ import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import UserAvatar from 'app/components/UserAvatar';
 import lottieTicketAnimation from 'app/../assets/images/ticket.json';
 import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
+import { DropzoneEssentialsFragment } from 'app/api/operations';
 import ReceiptCard from './ReceiptCard';
 
 export type OrderReceiptRoute = {
@@ -125,7 +126,7 @@ export default function OrderScreen() {
                 <UserAvatar
                   name={
                     (order?.seller as DropzoneUser)?.user?.name ||
-                    (order?.seller as Dropzone)?.name ||
+                    (order?.seller as DropzoneEssentialsFragment)?.name ||
                     ''
                   }
                   image={
@@ -140,7 +141,8 @@ export default function OrderScreen() {
               titleStyle={{ textAlign: 'right', fontSize: 14 }}
               descriptionStyle={{ textAlign: 'right', fontSize: 10 }}
               title={
-                (order?.seller as DropzoneUser)?.user?.name || (order?.seller as Dropzone)?.name
+                (order?.seller as DropzoneUser)?.user?.name ||
+                (order?.seller as DropzoneEssentialsFragment)?.name
               }
             />
           )}

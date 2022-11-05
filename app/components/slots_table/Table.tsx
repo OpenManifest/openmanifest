@@ -14,67 +14,68 @@ export interface ISlotsTableProps {
   onSlotGroupPress(slots: SlotDetailsFragment[]): void;
   onAvailableSlotPress(): void;
 }
-
-export function SlotsTable(props: ISlotsTableProps) {
+export default function SlotsTable(props: ISlotsTableProps) {
   const { load, fields, onDeletePress, onAvailableSlotPress, onSlotGroupPress, onSlotPress } =
     props;
 
-  return (
-    <DataTable>
-      <DataTable.Header style={{ width: '100%' }}>
-        <DataTable.Title style={rowStyles.avatarCell}>{null}</DataTable.Title>
-        <DataTable.Title style={rowStyles.nameCell}>
-          <Text style={styles.th}>Name</Text>
-        </DataTable.Title>
-        {fields?.includes(SlotFields.License) && (
-          <DataTable.Title numeric style={rowStyles.licenseCell}>
-            <Text style={styles.th}>License</Text>
-          </DataTable.Title>
-        )}
-        {fields?.includes(SlotFields.Rig) && (
-          <DataTable.Title numeric style={rowStyles.rigCell}>
-            <Text style={styles.th}>Equipment</Text>
-          </DataTable.Title>
-        )}
-        {fields?.includes(SlotFields.WingLoading) && (
-          <DataTable.Title numeric style={rowStyles.wingLoadingCell}>
-            <Text style={styles.th}>Wing Loading</Text>
-          </DataTable.Title>
-        )}
-        {(!fields || fields?.includes(SlotFields.JumpType)) && (
-          <DataTable.Title numeric style={rowStyles.jumpTypeCell}>
-            <Text style={styles.th}>Jump type</Text>
-          </DataTable.Title>
-        )}
-        {(!fields || fields?.includes(SlotFields.TicketType)) && (
-          <DataTable.Title numeric style={rowStyles.ticketCell}>
-            <Text style={styles.th}>Ticket</Text>
-          </DataTable.Title>
-        )}
-        {(!fields || fields?.includes(SlotFields.Altitude)) && (
-          <DataTable.Title numeric style={rowStyles.altitudeCell}>
-            <Text style={styles.th}>Altitude</Text>
-          </DataTable.Title>
-        )}
-      </DataTable.Header>
-      {load?.slots?.map((slot) => (
-        <UserRow
-          {...{ fields, slot, load, onDeletePress, onSlotGroupPress, onSlotPress }}
-          key={`slot-${slot.id}`}
-        />
-      ))}
-      {Array.from({ length: 10 })?.map((_, idx) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <AvailableRow {...{ onPress: onAvailableSlotPress }} key={`slot-available-${idx}`} />
-      ))}
-    </DataTable>
-  );
-}
+  console.log(fields);
 
-export default function PaddedSlotsTable(props: ISlotsTableProps) {
   return (
     <Surface style={{ flexGrow: 1 }}>
-      <SlotsTable {...props} />
+      <DataTable>
+        <DataTable.Header style={{ width: '100%' }}>
+          <DataTable.Title style={rowStyles.avatarCell}>{null}</DataTable.Title>
+          <DataTable.Title style={rowStyles.nameCell}>
+            <Text style={styles.th}>Name</Text>
+          </DataTable.Title>
+          {fields?.includes(SlotFields.License) && (
+            <DataTable.Title numeric style={rowStyles.licenseCell}>
+              <Text style={styles.th}>License</Text>
+            </DataTable.Title>
+          )}
+          {fields?.includes(SlotFields.Rig) && (
+            <DataTable.Title numeric style={rowStyles.rigCell}>
+              <Text style={styles.th}>Equipment</Text>
+            </DataTable.Title>
+          )}
+          {fields?.includes(SlotFields.WingLoading) && (
+            <DataTable.Title numeric style={rowStyles.wingLoadingCell}>
+              <Text style={styles.th}>Wing Loading</Text>
+            </DataTable.Title>
+          )}
+          {!fields ||
+            (fields?.includes(SlotFields.JumpType) && (
+              <DataTable.Title numeric style={rowStyles.jumpTypeCell}>
+                <Text style={styles.th}>Jump type</Text>
+              </DataTable.Title>
+            ))}
+          {fields?.includes(SlotFields.TicketType) && (
+            <DataTable.Title numeric style={rowStyles.ticketCell}>
+              <Text style={styles.th}>Ticket</Text>
+            </DataTable.Title>
+          )}
+          {!fields ||
+            (fields?.includes(SlotFields.Altitude) && (
+              <DataTable.Title numeric style={rowStyles.altitudeCell}>
+                <Text style={styles.th}>Altitude</Text>
+              </DataTable.Title>
+            ))}
+        </DataTable.Header>
+        {load?.slots?.map((slot, index) => (
+          <UserRow
+            {...{ fields, slot, load, onDeletePress, onSlotGroupPress, onSlotPress, index }}
+            key={`slot-${slot.id}`}
+          />
+        ))}
+        {Array.from({ length: load?.availableSlots || 0 })?.map((_, idx) => (
+          <AvailableRow
+            {...{ onPress: onAvailableSlotPress }}
+            // eslint-disable-next-line react/no-array-index-key
+            key={`slot-available-${idx}`}
+            index={idx}
+          />
+        ))}
+      </DataTable>
     </Surface>
   );
 }

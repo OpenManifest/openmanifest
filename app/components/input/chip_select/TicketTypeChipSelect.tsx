@@ -19,7 +19,7 @@ export default function TicketTypeChipSelect(props: ITicketTypeSelect) {
 
   const { data, loading } = useAllowedTicketTypesQuery({
     variables: {
-      dropzone: Number(currentDropzoneId),
+      dropzone: currentDropzoneId?.toString() as string,
       onlyPublicTickets: onlyPublicTickets || null,
     },
     onError: console.error,

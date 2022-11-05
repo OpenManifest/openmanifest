@@ -24,7 +24,7 @@ export default function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
 
   const { data, loading } = useDropzoneUsersQuery({
     variables: {
-      dropzoneId: Number(currentDropzoneId),
+      dropzoneId: currentDropzoneId?.toString() as string,
       permissions: requiredPermissions,
     },
   });
@@ -60,7 +60,7 @@ export default function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
         icon={icon || 'account'}
         items={
           uniqBy(
-            data?.dropzone?.dropzoneUsers?.edges?.map((edge) => edge?.node) || [],
+            data?.dropzoneUsers?.edges?.map((edge) => edge?.node) || [],
             'id'
           ) as DropzoneUserEssentialsFragment[]
         }

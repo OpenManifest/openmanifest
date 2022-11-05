@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
-import SlotsTable, { ISlotsTableProps } from 'app/components/slots_table/Table';
+import LoadSlotTable, { ISlotsTableProps } from 'app/components/slots_table/Table';
 import { SlotFields } from 'app/components/slots_table/UserRow';
 import { useWindowDimensions } from 'react-native';
 
@@ -20,7 +20,7 @@ export default function LoadScreen(props: ITableViewProps) {
   console.log({ width, numFields, load });
 
   return (
-    <SlotsTable
+    <LoadSlotTable
       fields={
         [
           SlotFields.Altitude,

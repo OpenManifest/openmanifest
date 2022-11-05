@@ -7,7 +7,6 @@ const MUTATION_DELETE_SLOT = gql`
     deleteSlot(input: { id: $id }) {
       slot {
         id
-
         dropzoneUser {
           id
           user {

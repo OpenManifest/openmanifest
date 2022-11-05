@@ -22,5 +22,8 @@ fragment userDetailed on User {
 
 fragment currentUser on User {
   ...userDetailed
+  dropzoneUsers {
+    ...dropzoneUserDetails
+  }
   pushToken
 }

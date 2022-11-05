@@ -20,7 +20,7 @@ export default function TransactionsScreen() {
   const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
   const { data, loading, refetch } = useQueryDropzoneUserProfile({
     variables: {
-      dropzoneId: Number(state.currentDropzoneId),
+      dropzoneId: state.currentDropzoneId?.toString() as string,
       dropzoneUserId: Number(route?.params?.userId) || Number(currentUser?.id),
     },
   });
@@ -41,7 +41,9 @@ export default function TransactionsScreen() {
 
   React.useEffect(() => {
     if (state.currentDropzoneId) {
-      fetchTransactions({ variables: { dropzoneId: state.currentDropzoneId } });
+      fetchTransactions({
+        variables: { dropzoneId: state.currentDropzoneId?.toString() as string },
+      });
     }
   }, [state?.currentDropzoneId, fetchTransactions]);
 

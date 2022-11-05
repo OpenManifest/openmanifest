@@ -26,7 +26,7 @@ export interface IWizardStepDefinition {
   // How many screens ahead to jump onNext, default: 1
   nextIndexFactor?: number;
   backIndexFactor?: number;
-  onNext?(): Promise<void>;
+  onNext?(navigation: ReturnType<typeof useNavigation>): Promise<void>;
   onBack?(): Promise<void> | void;
 }
 export function Content(props: IWizardProps) {
@@ -103,7 +103,7 @@ export function Content(props: IWizardProps) {
                 const nextIndex = steps[currentIndex]?.nextIndexFactor || 1;
                 if (steps[currentIndex]?.onNext) {
                   setLoading(true);
-                  await steps[currentIndex]?.onNext?.();
+                  await steps[currentIndex]?.onNext?.(navigation);
                 }
                 if (currentIndex === steps.length - 1) {
                   navigation.goBack();

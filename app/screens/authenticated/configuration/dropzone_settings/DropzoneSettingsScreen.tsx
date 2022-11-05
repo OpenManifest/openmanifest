@@ -19,7 +19,7 @@ export default function UpdateDropzoneScreen() {
 
   const navigation = useNavigation();
 
-  const { dropzone, currentUser, loading } = useDropzoneContext();
+  const { dropzone, loading } = useDropzoneContext();
 
   React.useEffect(() => {
     if (dropzone?.id) {
@@ -65,8 +65,6 @@ export default function UpdateDropzoneScreen() {
       primaryColor,
       secondaryColor,
       isCreditSystemEnabled,
-      requestPublication,
-      isPublic,
     } = state.fields;
 
     if (!name.value?.length || name.value?.length < 3) {
@@ -86,13 +84,6 @@ export default function UpdateDropzoneScreen() {
           secondaryColor: secondaryColor.value,
           federation: Number(federation?.value?.id),
           isCreditSystemEnabled: !!isCreditSystemEnabled,
-          isPublic:
-            isPublic?.value !== undefined &&
-            currentUser?.user.moderationRole &&
-            currentUser?.user.moderationRole !== 'user'
-              ? !!isPublic?.value
-              : null,
-          requestPublication: !!requestPublication?.value,
         });
 
         result?.fieldErrors?.map(({ field, message }) => {
@@ -131,13 +122,7 @@ export default function UpdateDropzoneScreen() {
       }
     }
     return null;
-  }, [
-    state.fields,
-    dispatch,
-    mutationUpdateDropzone,
-    dropzone?.id,
-    currentUser?.user.moderationRole,
-  ]);
+  }, [state.fields, dispatch, mutationUpdateDropzone, dropzone?.id]);
 
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
 

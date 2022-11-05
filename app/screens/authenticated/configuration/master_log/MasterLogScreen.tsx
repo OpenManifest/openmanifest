@@ -51,10 +51,10 @@ const QUERY_MASTER_LOG = gql`
                 id
                 name
               }
-            }
-            user {
-              id
-              name
+              user {
+                id
+                name
+              }
             }
             ticketType {
               id
@@ -90,7 +90,7 @@ export default function DropzoneMasterLogScreen() {
 
   const { data } = useQuery<Query>(QUERY_MASTER_LOG, {
     variables: {
-      dropzoneId: Number(currentDropzone?.dropzone?.id),
+      dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
       timestamp: Math.floor(timestamp / 1000),
     },
   });

@@ -8,7 +8,7 @@ import {
   DropzoneUserEssentialsFragment,
   OrderEssentialsFragment,
 } from 'app/api/operations';
-import { Dropzone, DropzoneUser } from 'app/api/schema.d';
+import { DropzoneUser } from 'app/api/schema.d';
 import { successColor } from 'app/constants/Colors';
 import UserAvatar from 'app/components/UserAvatar';
 
@@ -35,7 +35,10 @@ export default function OrderCard(props: IOrder) {
       <Card style={styles.order}>
         <Card.Content style={styles.orderContent}>
           <List.Item
-            title={(order?.seller as DropzoneUser)?.user?.name || (order?.seller as Dropzone)?.name}
+            title={
+              (order?.seller as DropzoneUser)?.user?.name ||
+              (order?.seller as DropzoneEssentialsFragment)?.name
+            }
             style={{ width: '100%' }}
             titleStyle={styles.orderTitle}
             description={order.title || null}

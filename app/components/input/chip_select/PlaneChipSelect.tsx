@@ -19,7 +19,7 @@ export default function PlaneChipSelect(props: IPlaneSelect) {
 
   const { data, loading } = usePlanesQuery({
     variables: {
-      dropzoneId: Number(currentDropzoneId),
+      dropzoneId: currentDropzoneId?.toString() as string,
     },
   });
 
