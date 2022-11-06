@@ -1,4 +1,4 @@
-schema: https://devapi.openmanifest.org/graphql
+schema: ./schema.graphql
 generates:
   ./app/api/openmanifest.graphql:
     plugins:

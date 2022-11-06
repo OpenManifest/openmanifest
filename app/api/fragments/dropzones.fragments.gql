@@ -1,6 +1,7 @@
 #import "./currentuser.fragments.gql";
 fragment dropzoneEssentials on Dropzone {
   id
+  walletId
   lat
   lng
   name

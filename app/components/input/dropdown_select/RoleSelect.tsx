@@ -24,7 +24,7 @@ export default function RoleSelect(props: IRoleSelect) {
     () =>
       data?.dropzone?.roles?.map((node) => ({
         label: startCase(node?.name || ''),
-        value: node as RoleEssentialsFragment,
+        value: node,
       })) || [],
     [data?.dropzone?.roles]
   );

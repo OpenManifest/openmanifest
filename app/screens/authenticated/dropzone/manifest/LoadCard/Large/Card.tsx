@@ -15,12 +15,12 @@ import { View } from 'app/components/Themed';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import useMutationDeleteSlot from 'app/api/hooks/useMutationDeleteSlot';
 import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
 import LoadSlotTable from 'app/components/slots_table/Table';
 import { SlotFields } from 'app/components/slots_table/UserRow';
 import { useLoadContext } from 'app/api/crud';
 import { withLoad } from 'app/api/crud/useLoad';
+import { useManifestContext } from 'app/api/crud/useManifest';
 import LoadingCard from './Loading';
 
 interface ILoadCardLarge {
@@ -37,6 +37,8 @@ function LoadCard(props: ILoadCardLarge) {
   const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDispatchOpen, setDispatchOpen] = React.useState(false);
+  const { deleteSlot } = useManifestContext();
+  const [deletingSlot, setDeletingSlot] = React.useState(false);
 
   const {
     load,
@@ -53,32 +55,39 @@ function LoadCard(props: ILoadCardLarge) {
   const currentDropzone = useDropzoneContext();
   const { currentUser } = currentDropzone;
 
-  const mutationDeleteSlot = useMutationDeleteSlot({
-    onSuccess: (payload) =>
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: `${payload.slot?.dropzoneUser?.user?.name || 'User'} has been taken off load #${
-            load?.loadNumber
-          }`,
-          variant: 'success',
-        })
-      ),
-    onError: (message) =>
-      dispatch(
-        actions.notifications.showSnackbar({
-          message,
-          variant: 'error',
-        })
-      ),
-  });
-
   const onDeleteSlot = React.useCallback(
     async (slot: SlotDetailsFragment) => {
-      await mutationDeleteSlot.mutate({
-        id: Number(slot.id),
-      });
+      try {
+        setDeletingSlot(true);
+
+        const response = await deleteSlot({
+          id: Number(slot.id),
+        });
+
+        if ('error' in response && response.error) {
+          dispatch(
+            actions.notifications.showSnackbar({
+              message:
+                response?.error ||
+                `${slot.dropzoneUser?.user?.name} could not be taken off load #${load?.loadNumber}`,
+              variant: 'error',
+            })
+          );
+        } else if ('slot' in response && slot?.id) {
+          dispatch(
+            actions.notifications.showSnackbar({
+              message: `${
+                response.slot?.dropzoneUser?.user?.name || 'User'
+              } has been taken off load #${load?.loadNumber}`,
+              variant: 'success',
+            })
+          );
+        }
+      } finally {
+        setDeletingSlot(false);
+      }
     },
-    [mutationDeleteSlot]
+    [deleteSlot, dispatch, load?.loadNumber]
   );
 
   const navigation = useAuthenticatedNavigation();
@@ -150,7 +159,7 @@ function LoadCard(props: ILoadCardLarge) {
         subtitle={load?.name}
       />
       <ProgressBar
-        visible={loading || update.loading || mutationDeleteSlot.loading}
+        visible={loading || update.loading || deletingSlot}
         color={state.theme.colors.primary}
       />
       <Card.Content

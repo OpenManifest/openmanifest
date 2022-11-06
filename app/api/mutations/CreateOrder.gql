@@ -1,15 +1,15 @@
 #import "../fragments/orders.fragments.gql"
 mutation CreateOrder(
-  $buyer: WalletInput!
-  $seller: WalletInput!
-  $dropzoneId: Int!
+  $buyer: ID!
+  $seller: ID!
+  $dropzone: ID!
   $title: String
-  $amount: Int!
+  $amount: Float!
 ) {
   createOrder(
     input: {
       attributes: {
-        dropzoneId: $dropzoneId
+        dropzone: $dropzone
         title: $title
         buyer: $buyer
         seller: $seller

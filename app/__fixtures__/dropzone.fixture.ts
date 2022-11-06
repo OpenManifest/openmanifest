@@ -8,6 +8,7 @@ type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]>
 export const dropzoneExtensive: DeepRequired<DropzoneExtensiveFragment> = {
   __typename: 'Dropzone',
   id: '1',
+  walletId: '1',
   lat: -10.24124,
   lng: 54.123123,
   banner: null,

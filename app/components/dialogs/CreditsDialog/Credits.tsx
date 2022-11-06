@@ -5,7 +5,8 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@g
 
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
-import { TransactionType, WalletableTypes } from '../../../api/schema.d';
+import { useDropzoneContext } from 'app/api/crud';
+import { TransactionType } from '../../../api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import CreditsForm from '../../forms/credits/CreditsForm';
 import { useCreateOrderMutation } from '../../../api/reflection';
@@ -25,6 +26,7 @@ function HandleComponent() {
 export default function CreditSheet(props: ICreditsSheet) {
   const { open, dropzoneUser, onClose, onSuccess } = props;
   const dispatch = useAppDispatch();
+  const { dropzone } = useDropzoneContext();
   const state = useAppSelector((root) => root.forms.credits);
   const global = useAppSelector((root) => root.global);
   const [mutationCreateOrder, createData] = useCreateOrderMutation();
@@ -44,7 +46,13 @@ export default function CreditSheet(props: ICreditsSheet) {
       return;
     }
 
-    if (!dropzoneUser?.id || state.fields.amount.value === null || !global.currentDropzoneId) {
+    if (
+      !dropzoneUser?.id ||
+      !dropzoneUser?.walletId ||
+      !dropzone?.walletId ||
+      state.fields.amount.value === null ||
+      !global.currentDropzoneId
+    ) {
       return;
     }
 
@@ -61,25 +69,13 @@ export default function CreditSheet(props: ICreditsSheet) {
             }`,
           seller:
             state.fields.transactionType.value !== TransactionType.Deposit
-              ? {
-                  type: WalletableTypes.Dropzone,
-                  id: `${global.currentDropzoneId}`,
-                }
-              : {
-                  type: WalletableTypes.DropzoneUser,
-                  id: dropzoneUser.id,
-                },
+              ? dropzone.walletId
+              : dropzoneUser.walletId,
           buyer:
             state.fields.transactionType.value === TransactionType.Deposit
-              ? {
-                  type: WalletableTypes.Dropzone,
-                  id: `${global.currentDropzoneId}`,
-                }
-              : {
-                  type: WalletableTypes.DropzoneUser,
-                  id: dropzoneUser.id,
-                },
-          dropzoneId: Number(global.currentDropzoneId),
+              ? dropzone.walletId
+              : dropzoneUser.walletId,
+          dropzone: dropzone.id,
         },
       });
       const { data: result } = response;
@@ -122,6 +118,9 @@ export default function CreditSheet(props: ICreditsSheet) {
   }, [
     validate,
     dropzoneUser?.id,
+    dropzoneUser?.walletId,
+    dropzone?.walletId,
+    dropzone?.id,
     state.fields.amount.value,
     state.fields.message.value,
     state.fields.transactionType.value,

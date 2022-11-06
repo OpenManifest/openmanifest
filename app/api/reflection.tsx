@@ -32,6 +32,7 @@ export const UserEssentialsFragmentDoc = gql`
 export const DropzoneUserEssentialsFragmentDoc = gql`
     fragment dropzoneUserEssentials on DropzoneUser {
   id
+  walletId
   expiresAt
   hasCredits
   hasMembership
@@ -66,6 +67,7 @@ export const ActivityEssentialsFragmentDoc = gql`
 export const DropzoneEssentialsFragmentDoc = gql`
     fragment dropzoneEssentials on Dropzone {
   id
+  walletId
   lat
   lng
   name
@@ -514,6 +516,7 @@ ${WeatherConditionEssentialsFragmentDoc}`;
 export const CurrentUserEssentialsFragmentDoc = gql`
     fragment currentUserEssentials on DropzoneUser {
   id
+  walletId
   credits
   hasCredits
   hasExitWeight
@@ -967,9 +970,9 @@ export type CreateLoadMutationHookResult = ReturnType<typeof useCreateLoadMutati
 export type CreateLoadMutationResult = Apollo.MutationResult<Operation.CreateLoadMutation>;
 export type CreateLoadMutationOptions = Apollo.BaseMutationOptions<Operation.CreateLoadMutation, Operation.CreateLoadMutationVariables>;
 export const CreateOrderDocument = gql`
-    mutation CreateOrder($buyer: WalletInput!, $seller: WalletInput!, $dropzoneId: Int!, $title: String, $amount: Int!) {
+    mutation CreateOrder($buyer: ID!, $seller: ID!, $dropzone: ID!, $title: String, $amount: Float!) {
   createOrder(
-    input: {attributes: {dropzoneId: $dropzoneId, title: $title, buyer: $buyer, seller: $seller, amount: $amount}}
+    input: {attributes: {dropzone: $dropzone, title: $title, buyer: $buyer, seller: $seller, amount: $amount}}
   ) {
     fieldErrors {
       field
@@ -999,7 +1002,7 @@ export type CreateOrderMutationFn = Apollo.MutationFunction<Operation.CreateOrde
  *   variables: {
  *      buyer: // value for 'buyer'
  *      seller: // value for 'seller'
- *      dropzoneId: // value for 'dropzoneId'
+ *      dropzone: // value for 'dropzone'
  *      title: // value for 'title'
  *      amount: // value for 'amount'
  *   },
@@ -3425,6 +3428,95 @@ export function useLoadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Oper
 export type LoadsQueryHookResult = ReturnType<typeof useLoadsQuery>;
 export type LoadsLazyQueryHookResult = ReturnType<typeof useLoadsLazyQuery>;
 export type LoadsQueryResult = Apollo.QueryResult<Operation.LoadsQuery, Operation.LoadsQueryVariables>;
+export const NotificationsDocument = gql`
+    query Notifications($dropzoneId: ID!) {
+  dropzone(id: $dropzoneId) {
+    id
+    currentUser {
+      id
+      notifications {
+        edges {
+          node {
+            id
+            message
+            notificationType
+            createdAt
+            sentBy {
+              id
+              user {
+                id
+                name
+              }
+            }
+            resource {
+              ... on Load {
+                ...loadEssentials
+              }
+              ... on Transaction {
+                id
+                amount
+                message
+                status
+              }
+              ... on Slot {
+                ...slotEssentials
+              }
+              ... on Rig {
+                ...rigEssentials
+                rigInspections(dropzoneId: $dropzoneId) {
+                  id
+                  createdAt
+                  inspectedBy {
+                    id
+                    user {
+                      id
+                      name
+                    }
+                  }
+                }
+              }
+              ... on RigInspection {
+                ...rigInspectionEssentials
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    ${LoadEssentialsFragmentDoc}
+${SlotEssentialsFragmentDoc}
+${RigEssentialsFragmentDoc}
+${RigInspectionEssentialsFragmentDoc}`;
+
+/**
+ * __useNotificationsQuery__
+ *
+ * To run a query within a React component, call `useNotificationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNotificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNotificationsQuery({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *   },
+ * });
+ */
+export function useNotificationsQuery(baseOptions: Apollo.QueryHookOptions<Operation.NotificationsQuery, Operation.NotificationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.NotificationsQuery, Operation.NotificationsQueryVariables>(NotificationsDocument, options);
+      }
+export function useNotificationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.NotificationsQuery, Operation.NotificationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.NotificationsQuery, Operation.NotificationsQueryVariables>(NotificationsDocument, options);
+        }
+export type NotificationsQueryHookResult = ReturnType<typeof useNotificationsQuery>;
+export type NotificationsLazyQueryHookResult = ReturnType<typeof useNotificationsLazyQuery>;
+export type NotificationsQueryResult = Apollo.QueryResult<Operation.NotificationsQuery, Operation.NotificationsQueryVariables>;
 export const PlanesDocument = gql`
     query Planes($dropzoneId: ID!) {
   planes(dropzone: $dropzoneId) {

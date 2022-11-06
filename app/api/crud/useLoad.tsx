@@ -94,7 +94,7 @@ export default function useLoad(variables: Partial<LoadQueryVariables>) {
       if (!load) {
         return;
       }
-      const dispatchTime = !minutes ? null : DateTime.now().plus({ minutes }).toISO();
+      const dispatchTime = !minutes ? null : DateTime.local().plus({ minutes }).toISO();
 
       await update.mutate({
         id: Number(load?.id),

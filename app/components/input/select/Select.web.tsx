@@ -13,6 +13,7 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import UserAvatar from 'app/components/UserAvatar';
 import Menu from 'app/components/popover/Menu';
+import { isEqual } from 'lodash';
 
 export interface ISelectOption<T> {
   label: string;
@@ -27,6 +28,7 @@ interface ISelectProps<T> {
   options: ISelectOption<T>[];
   value?: T | null;
   onChange(item: T): void;
+  compare?(a: T | null | undefined, b: T | null | undefined): boolean;
   renderAnchor?: React.FC<IAnchorProps<T>>;
 }
 
@@ -39,7 +41,16 @@ type Extract<T> = T extends React.ComponentType<infer P> ? P : unknown;
 type AllowedIcons = Extract<typeof MaterialCommunityIcons>['name'];
 
 export default function Select<T>(props: ISelectProps<T>) {
-  const { label, error, options, renderAnchor, onChange, value, helperText } = props;
+  const {
+    label,
+    error,
+    compare = isEqual,
+    options,
+    renderAnchor,
+    onChange,
+    value,
+    helperText,
+  } = props;
   const [open, setOpen] = React.useState<boolean>(false);
 
   const onOpen = React.useCallback(() => {
@@ -53,8 +64,8 @@ export default function Select<T>(props: ISelectProps<T>) {
   }, []);
 
   const selectedOption = React.useMemo(
-    () => options.find((option) => option.value === value),
-    [options, value]
+    () => options.find((option) => compare(option.value, value)),
+    [compare, options, value]
   );
 
   const createSelectHandler = React.useCallback(

@@ -3,13 +3,15 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 import { useCreateOrderMutation } from 'app/api/reflection';
-import { DropzoneUser, TransactionType, WalletableTypes } from 'app/api/schema.d';
+import { TransactionType } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { DropzoneUserEssentialsFragment } from 'app/api/operations';
+import { useDropzoneContext } from 'app/api/crud';
 import CreditsForm from '../../forms/credits/CreditsForm';
 
 interface IDropzoneUserDialog {
   open?: boolean;
-  dropzoneUser?: DropzoneUser;
+  dropzoneUser?: DropzoneUserEssentialsFragment;
   onClose(): void;
   onSuccess(): void;
 }
@@ -17,6 +19,7 @@ interface IDropzoneUserDialog {
 export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   const { open, onClose, dropzoneUser, onSuccess } = props;
   const dispatch = useAppDispatch();
+  const { dropzone } = useDropzoneContext();
   const state = useAppSelector((root) => root.forms.credits);
   const [mutationCreateOrder, createData] = useCreateOrderMutation();
   const global = useAppSelector((root) => root.global);
@@ -36,7 +39,13 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
       return;
     }
 
-    if (!dropzoneUser?.id || state.fields.amount.value === null || !global.currentDropzoneId) {
+    if (
+      !dropzoneUser?.id ||
+      !dropzoneUser?.walletId ||
+      !dropzone?.walletId ||
+      state.fields.amount.value === null ||
+      !global.currentDropzoneId
+    ) {
       return;
     }
 
@@ -53,27 +62,16 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
             }`,
           seller:
             state.fields.transactionType.value !== TransactionType.Deposit
-              ? {
-                  type: WalletableTypes.Dropzone,
-                  id: `${global.currentDropzoneId}`,
-                }
-              : {
-                  type: WalletableTypes.DropzoneUser,
-                  id: dropzoneUser.id,
-                },
+              ? dropzone.walletId
+              : dropzoneUser.walletId,
           buyer:
             state.fields.transactionType.value === TransactionType.Deposit
-              ? {
-                  type: WalletableTypes.Dropzone,
-                  id: `${global.currentDropzoneId}`,
-                }
-              : {
-                  type: WalletableTypes.DropzoneUser,
-                  id: dropzoneUser.id,
-                },
-          dropzoneId: Number(global.currentDropzoneId),
+              ? dropzone.walletId
+              : dropzoneUser.walletId,
+          dropzone: dropzone.id,
         },
       });
+      console.debug({ response });
       const { data: result } = response;
 
       result?.createOrder?.fieldErrors?.map(({ field, message }) => {
@@ -102,6 +100,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         onSuccess();
       }
     } catch (error) {
+      console.error(error);
       if (error instanceof Error) {
         dispatch(
           actions.notifications.showSnackbar({
@@ -114,6 +113,9 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   }, [
     validate,
     dropzoneUser?.id,
+    dropzoneUser?.walletId,
+    dropzone?.walletId,
+    dropzone?.id,
     state.fields.amount.value,
     state.fields.message.value,
     state.fields.transactionType.value,
