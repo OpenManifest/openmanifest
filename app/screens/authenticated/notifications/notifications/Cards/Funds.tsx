@@ -4,7 +4,7 @@ import { Notification, Transaction } from 'app/api/schema.d';
 import NotificationCard from './NotificationCard';
 
 interface INotification {
-  notification: Notification;
+  notification: Partial<Notification>;
 }
 
 function getIcon(status?: string | null) {

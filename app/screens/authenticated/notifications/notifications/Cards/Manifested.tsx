@@ -4,7 +4,7 @@ import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthent
 import NotificationCard from './NotificationCard';
 
 interface INotification {
-  notification: Notification;
+  notification: Partial<Notification>;
 }
 
 export default function ManifestedNotification(props: INotification) {

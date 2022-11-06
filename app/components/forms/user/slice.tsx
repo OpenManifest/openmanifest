@@ -21,7 +21,7 @@ export type UserFields = Pick<
 >;
 
 interface IUserEditState {
-  original: DropzoneUserDetailsFragment | null;
+  original: DropzoneUserDetailsFragment | CurrentUserDetailedFragment | null;
   open: boolean;
   federation: {
     value: FederationEssentialsFragment | null;
@@ -112,22 +112,15 @@ export default createSlice({
       action: PayloadAction<DropzoneUserDetailsFragment | CurrentUserDetailedFragment>
     ) => {
       state.original = action.payload;
-      console.debug('--FEDERATION', state.federation);
-      console.debug('--FEDERATION2', action.payload.user?.userFederations);
       Object.keys(action.payload.user).forEach((key) => {
         const payloadKey = key as keyof typeof action.payload;
         if (payloadKey in state.fields) {
           const typedKey = payloadKey as keyof typeof initialState['fields'];
-          if (typedKey === 'license') {
-            console.debug('--LICENSE', action.payload.license);
-            state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment)[
-              typedKey
-            ];
-          } else {
-            state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment).user[
-              typedKey
-            ];
-          }
+          state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment)[typedKey];
+        } else {
+          state.fields[payloadKey].value = (action.payload as DropzoneUserDetailsFragment).user[
+            payloadKey
+          ];
         }
       });
       state.federation.value =

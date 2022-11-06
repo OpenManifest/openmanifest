@@ -3,7 +3,7 @@ import { Notification } from 'app/api/schema.d';
 import NotificationCard from './NotificationCard';
 
 interface INotification {
-  notification: Notification;
+  notification: Partial<Notification>;
 }
 
 export default function PublicationRequestNotification(props: INotification) {

@@ -516,6 +516,7 @@ ${WeatherConditionEssentialsFragmentDoc}`;
 export const CurrentUserEssentialsFragmentDoc = gql`
     fragment currentUserEssentials on DropzoneUser {
   id
+  walletId
   credits
   hasCredits
   hasExitWeight

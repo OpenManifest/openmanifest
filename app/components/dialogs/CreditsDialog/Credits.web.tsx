@@ -3,7 +3,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { Tabs, TabScreen } from 'react-native-paper-tabs';
 import { useCreateOrderMutation } from 'app/api/reflection';
-import { DropzoneUser, TransactionType, WalletableTypes } from 'app/api/schema.d';
+import { TransactionType } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import { useDropzoneContext } from 'app/api/crud';

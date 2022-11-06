@@ -6,6 +6,7 @@ type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]>
 export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
   __typename: 'DropzoneUser',
   id: '123',
+  walletId: '123',
   license: {
     id: '1',
     name: 'Certifiate D',

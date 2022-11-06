@@ -24,7 +24,7 @@ export default function NotificationScreen() {
   const { dropzone } = useDropzoneContext();
   const [getNotifications, query] = useNotificationsLazyQuery();
   const { data, loading, refetch } = query;
-  const variables: NotificationsQueryVariables = React.useMemo(
+  const variables: NotificationsQueryVariables | undefined = React.useMemo(
     () => (!dropzone?.id ? undefined : { dropzoneId: dropzone?.id }),
     [dropzone?.id]
   );
@@ -73,20 +73,31 @@ export default function NotificationScreen() {
           console.debug('Rendering notification ', edge?.node?.notificationType);
           switch (edge?.node?.notificationType) {
             case NotificationType.BoardingCall:
-              return <BoardingCallNotification key={edge.node.id} notification={edge.node} />;
+              return (
+                <BoardingCallNotification key={edge.node.id} notification={edge.node as never} />
+              );
             case NotificationType.UserManifested:
               console.debug('Renderign manifest card');
-              return <ManifestedCard key={edge.node.id} notification={edge.node} />;
+              return <ManifestedCard key={edge.node.id} notification={edge.node as never} />;
             case NotificationType.CreditsUpdated:
-              return <FundsNotification key={edge.node.id} notification={edge.node} />;
+              return <FundsNotification key={edge.node.id} notification={edge.node as never} />;
             case NotificationType.RigInspectionRequested:
             case NotificationType.RigInspectionCompleted:
-              return <RigInspectionNotification key={edge.node.id} notification={edge.node} />;
+              return (
+                <RigInspectionNotification key={edge.node.id} notification={edge.node as never} />
+              );
             case NotificationType.PermissionGranted:
             case NotificationType.PermissionRevoked:
-              return <PermissionNotification key={edge.node.id} notification={edge.node} />;
+              return (
+                <PermissionNotification key={edge.node.id} notification={edge.node as never} />
+              );
             case NotificationType.PublicationRequested:
-              return <PublicationRequestNotification key={edge.node.id} notification={edge.node} />;
+              return (
+                <PublicationRequestNotification
+                  key={edge.node.id}
+                  notification={edge.node as never}
+                />
+              );
             default:
               return null;
           }

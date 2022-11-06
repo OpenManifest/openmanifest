@@ -59,6 +59,7 @@ function UserCardSkeleton() {
 const loadingFragment: DropzoneUserEssentialsFragment = {
   id: '__LOADING__',
   hasCredits: false,
+  walletId: '__LOADING__',
   hasExitWeight: false,
   hasLicense: false,
   hasMembership: false,

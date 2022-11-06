@@ -30,6 +30,7 @@ const loadEssentials: LoadEssentialsFragment = {
 const dropzoneUserEssentials: DropzoneUserEssentialsFragment = {
   __typename: 'DropzoneUser',
   id: '1',
+  walletId: '1',
   user: {
     id: '1',
     name: 'jest',
