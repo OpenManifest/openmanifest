@@ -22,7 +22,6 @@ interface IUserCardProps {
 function UserCard(props: IUserCardProps) {
   const { slotUser } = props;
   const state = useAppSelector((root) => root.forms.manifestGroup);
-  const globalState = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
 
   const isTandem = !!state.fields.ticketType.value?.isTandem;
@@ -91,8 +90,7 @@ function UserCard(props: IUserCardProps) {
   return (
     <UserRigCard
       key={`user-rig-card-${slotUser.id}`}
-      dropzoneId={globalState.currentDropzoneId?.toString() as string}
-      dropzoneUserId={Number(slotUser.id)}
+      dropzoneUserId={slotUser.id?.toString()}
       selectedRig={slotUser.rig || undefined}
       exitWeight={slotUser.exitWeight}
       {...{

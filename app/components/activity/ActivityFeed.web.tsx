@@ -137,8 +137,6 @@ export default function ActivityFeed(props: IActivityFeedProps) {
     [onChange]
   );
 
-  console.debug({ accessLevels, timeRange, levels });
-
   return (
     <Card style={{ width: '100%' }}>
       <Card.Title title="Events" />

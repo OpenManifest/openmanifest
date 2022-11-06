@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { HelperText } from 'react-native-paper';
 import LicenseCardSelect from 'app/components/input/card_select/LicenseCardSelect';
-import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard';
+import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 
 function FederationStep(props: IWizardStepProps) {

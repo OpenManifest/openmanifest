@@ -1,8 +1,7 @@
 /* eslint-disable max-len */
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import {
-  Button,
   TextInput,
   HelperText,
   Card,
@@ -14,14 +13,11 @@ import {
   Title,
 } from 'react-native-paper';
 import SkeletonContent from 'app/components/Skeleton';
-import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import LottieView from 'app/components/LottieView';
 import { useFederationsQuery } from 'app/api/reflection';
 import useImagePicker from 'app/hooks/useImagePicker';
 import { useNavigation } from '@react-navigation/core';
-import { DropzoneState } from 'app/api/schema.d';
 import ColorPicker from '../../input/colorpicker';
 import { PhonePreview, WebPreview } from '../../theme_preview';
 import FederationSelect from '../../input/dropdown_select/FederationSelect';
@@ -37,7 +33,6 @@ export default function DropzoneForm(props: IDropzoneForm) {
   const state = useAppSelector((root) => root.forms.dropzone);
   const dispatch = useAppDispatch();
   const { data, loading } = useFederationsQuery();
-  const { currentUser } = useDropzoneContext();
   const theme = useTheme();
   const pickImage = useImagePicker();
 
@@ -241,79 +236,6 @@ export default function DropzoneForm(props: IDropzoneForm) {
               />
             )}
           />
-        </Card>
-      </SkeletonContent>
-      <SkeletonContent
-        isLoading={loading || outsideLoading}
-        containerStyle={styles.skeletonCardCheckbox}
-        layout={[{ key: 'box', height: 150, width: '100%' }]}
-      >
-        <Card style={styles.card}>
-          <List.Item
-            title={
-              {
-                [DropzoneState.Public]: 'This dropzone is visible to all users',
-                [DropzoneState.Private]: 'Request publication',
-                [DropzoneState.InReview]: 'Awaiting review',
-              }[state.fields.status.value || DropzoneState.Private]
-            }
-            description={
-              {
-                [DropzoneState.Public]: 'This dropzone is visible to all users',
-                [DropzoneState.Private]:
-                  'Your dropzone will not be visible to other users until it is published. You can request a review to publish your dropzone, and may be contacted for verification on the email or phone number on your profile.',
-                [DropzoneState.InReview]:
-                  'You will be contacted to verify the legitimacy of your dropzone before your dropzone is publicly available. This is to prevent illegitimate actors on the platform. Thank you for your patience and understanding.',
-              }[state.fields.status.value || DropzoneState.Private]
-            }
-            descriptionNumberOfLines={10}
-            onPress={() => {
-              dispatch(
-                actions.forms.dropzone.setField([
-                  'status',
-                  state.fields.status?.value === DropzoneState.Private
-                    ? DropzoneState.InReview
-                    : DropzoneState.Private,
-                ])
-              );
-            }}
-            left={(iconProps) => {
-              const extraProps = {
-                icon: {
-                  [DropzoneState.Public]: 'check',
-                  [DropzoneState.Private]: 'upload',
-                  [DropzoneState.InReview]: 'progress-upload',
-                } as IconSource | undefined,
-                color: undefined as string | undefined,
-              };
-
-              if (extraProps.icon) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore This is ok
-                return <List.Icon {...iconProps} {...extraProps} />;
-              }
-              return <View style={{ width: 56, height: 56 }} />;
-            }}
-          />
-          {currentUser?.user?.moderationRole === 'administrator' &&
-          state?.original?.status === DropzoneState.InReview ? (
-            <Card.Actions>
-              <Button
-                onPress={() =>
-                  dispatch(actions.forms.dropzone.setField(['status', DropzoneState.Private]))
-                }
-              >
-                Decline
-              </Button>
-              <Button
-                onPress={() =>
-                  dispatch(actions.forms.dropzone.setField(['status', DropzoneState.Public]))
-                }
-              >
-                Accept
-              </Button>
-            </Card.Actions>
-          ) : null}
         </Card>
       </SkeletonContent>
     </>

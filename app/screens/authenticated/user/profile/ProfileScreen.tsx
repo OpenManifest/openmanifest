@@ -20,6 +20,7 @@ import { useUpdateUserMutation } from 'app/api/reflection';
 
 import { errorColor, successColor } from 'app/constants/Colors';
 import { format } from 'date-fns';
+import useProfileWizard from 'app/hooks/navigation/useProfileWizard';
 import Header from './UserInfo/Header';
 import InfoGrid from './UserInfo/InfoGrid';
 
@@ -40,7 +41,7 @@ export default function ProfileScreen() {
   const route = useRoute<RouteProp<ProfileRoute>>();
 
   const { dropzoneUser, loading, refetch } = useDropzoneUserProfile(
-    Number(route.params.userId) || Number(currentUser?.id)
+    route.params.userId || currentUser?.id
   );
   const pickImage = useImagePicker();
   const isFocused = useIsFocused();
@@ -110,6 +111,8 @@ export default function ProfileScreen() {
     dispatch(actions.forms.user.setOpen(false));
   }, [dispatch]);
 
+  const openWizard = useProfileWizard();
+
   const getContent = React.useCallback(
     ({ index }: { index: number }) => {
       if (index === 0) {
@@ -141,10 +144,10 @@ export default function ProfileScreen() {
                     key="profile-header"
                     containerStyle={{
                       height: 256,
-                      width: 300,
+                      width: '100%',
                     }}
                     isLoading
-                    layout={[{ key: 'header', width: 300, height: 100, borderRadius: 8 }]}
+                    layout={[{ key: 'header', width: '100%', height: 256, borderRadius: 8 }]}
                   />
                 ) : (
                   <Header dropzoneUser={dropzoneUser} onPressAvatar={onPickImage}>
@@ -163,9 +166,15 @@ export default function ProfileScreen() {
                         {
                           title: 'License',
                           value: `${dropzoneUser?.license?.name || '-'}`,
+                          onPress: () => {
+                            openWizard(5);
+                          },
                         },
                         {
                           title: 'Exit weight',
+                          onPress: () => {
+                            openWizard(9);
+                          },
                           value:
                             Math.round(Number(dropzoneUser?.user?.exitWeight)).toString() || '-',
                         },
@@ -208,7 +217,7 @@ export default function ProfileScreen() {
         />
 
         <EditUserSheet
-          dropzoneUserId={Number(dropzoneUser?.id)}
+          dropzoneUserId={dropzoneUser?.id}
           onClose={onUserSheetClose}
           onSuccess={() => {
             dispatch(actions.forms.user.setOpen(false));

@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 
 import { FlatList } from 'react-native-gesture-handler';
-import { useQueryDropzoneUserProfile } from 'app/api/reflection';
+import { useDropzoneUserProfileQuery } from 'app/api/reflection';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { Permission } from 'app/api/schema.d';
 import RigDialog from 'app/components/dialogs/Rig';
@@ -27,17 +27,14 @@ export default function EquipmentScreen() {
 
   const route = useRoute<RouteProp<EquipmentRoute, 'EquipmentScreen'>>();
 
-  const { data, loading, refetch } = useQueryDropzoneUserProfile({
+  const { data, loading, refetch } = useDropzoneUserProfileQuery({
     variables: {
-      dropzoneId: globalState.currentDropzoneId?.toString() as string,
-      dropzoneUserId: Number(route?.params?.userId) || Number(currentUser?.id),
+      id: (route?.params?.userId || currentUser?.id) as string,
     },
+    skip: !(route?.params?.userId || currentUser?.id),
   });
 
-  const dropzoneUser = React.useMemo(
-    () => data?.dropzone?.dropzoneUser,
-    [data?.dropzone?.dropzoneUser]
-  );
+  const dropzoneUser = React.useMemo(() => data?.dropzoneUser, [data?.dropzoneUser]);
 
   const isFocused = useIsFocused();
 

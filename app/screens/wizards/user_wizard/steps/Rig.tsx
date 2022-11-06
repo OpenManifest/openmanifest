@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { HelperText, Surface, TextInput } from 'react-native-paper';
-import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard';
+import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import Select from 'app/components/input/select/Select';
 

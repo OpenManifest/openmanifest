@@ -9,6 +9,12 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
   license: {
     id: '1',
     name: 'Certifiate D',
+    federation: {
+      __typename: 'Federation',
+      id: '1',
+      name: 'APF',
+      slug: 'apf',
+    },
     __typename: 'License',
   },
   credits: 100,

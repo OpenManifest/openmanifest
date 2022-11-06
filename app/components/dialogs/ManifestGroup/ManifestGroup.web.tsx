@@ -1,6 +1,6 @@
 import { AppBar, Fade, LinearProgress, Toolbar } from '@mui/material';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
-import { useManifestGroupMutation, useQueryDropzoneUserProfileLazyQuery } from 'app/api/reflection';
+import { useManifestGroupMutation, useDropzoneUserProfileLazyQuery } from 'app/api/reflection';
 import DropzoneUserAutocomplete from 'app/components/autocomplete/DropzoneUserAutocomplete.web';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import * as React from 'react';
@@ -17,7 +17,6 @@ interface IManifestUserDialog {
 export default function ManifestUserDialog(props: IManifestUserDialog) {
   const { open, onClose } = props;
   const dispatch = useAppDispatch();
-  const globalState = useAppSelector((root) => root.global);
   const state = useAppSelector((root) => root.forms.manifestGroup);
   const [mutationCreateSlots, mutationData] = useManifestGroupMutation();
 
@@ -121,7 +120,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
 
   // dispatch(actions.forms.manifestGroup.setDropzoneUsers(screens.manifest.selectedUsers));
 
-  const [fetchProfile, { loading }] = useQueryDropzoneUserProfileLazyQuery();
+  const [fetchProfile, { loading }] = useDropzoneUserProfileLazyQuery();
   const onSelectUser = React.useCallback(
     (profile: DropzoneUserProfileFragment) => {
       dispatch(actions.forms.manifestGroup.setDropzoneUsers([profile]));
@@ -151,12 +150,11 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
               onChange={(user) => {
                 fetchProfile({
                   variables: {
-                    dropzoneId: globalState.currentDropzoneId?.toString() as string,
-                    dropzoneUserId: Number(user.id),
+                    id: user.id,
                   },
                 }).then((result) => {
-                  if (result.data?.dropzone?.dropzoneUser) {
-                    onSelectUser(result.data?.dropzone.dropzoneUser);
+                  if (result.data?.dropzoneUser) {
+                    onSelectUser(result.data?.dropzoneUser);
                   }
                 });
               }}

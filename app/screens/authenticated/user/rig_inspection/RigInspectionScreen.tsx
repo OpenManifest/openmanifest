@@ -7,18 +7,16 @@ import RigInspectionForm from 'app/components/forms/rig_inspection/RigInspection
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import {
   DropzoneDocument,
-  QueryDropzoneUserProfileDocument,
+  DropzoneUserProfileDocument,
   useCreateRigInspectionMutation,
-  useQueryDropzoneUserProfile,
+  useDropzoneUserProfileQuery,
+  useRigInspectionTemplateQuery,
 } from 'app/api/reflection';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { Query, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import {
-  QueryDropzoneUserProfileQuery,
-  QueryDropzoneUserProfileQueryVariables,
-} from 'app/api/operations';
+import { DropzoneUserProfileQuery, DropzoneUserProfileQueryVariables } from 'app/api/operations';
 import RigCard from '../equipment/RigCard';
 
 export type RigInspectionRoute = {
@@ -34,16 +32,22 @@ export default function RigInspectionScreen() {
 
   const route = useRoute<RouteProp<RigInspectionRoute>>();
   const { rigId, dropzoneUserId } = route.params;
-  const { data, refetch } = useQueryDropzoneUserProfile({
+  const { data, refetch } = useDropzoneUserProfileQuery({
+    variables: {
+      id: dropzoneUserId,
+    },
+    skip: !dropzoneUserId,
+  });
+  const { data: rigInspectionQuery } = useRigInspectionTemplateQuery({
     variables: {
       dropzoneId: currentDropzone?.dropzone?.id as string,
-      dropzoneUserId: Number(dropzoneUserId),
     },
+    skip: !currentDropzone?.dropzone?.id,
   });
 
   const rig = React.useMemo(
-    () => data?.dropzone?.dropzoneUser?.user?.rigs?.find(({ id }) => id === rigId),
-    [data?.dropzone?.dropzoneUser?.user?.rigs, rigId]
+    () => data?.dropzoneUser?.user?.rigs?.find(({ id }) => id === rigId),
+    [data?.dropzoneUser?.user?.rigs, rigId]
   );
 
   const isFocused = useIsFocused();
@@ -56,13 +60,13 @@ export default function RigInspectionScreen() {
   const [mutationCreateRigInspection, mutation] = useCreateRigInspectionMutation();
   const navigation = useNavigation();
   React.useEffect(() => {
-    const hasExistingRigInspection = data?.dropzone?.dropzoneUser?.rigInspections?.some(
+    const hasExistingRigInspection = data?.dropzoneUser?.rigInspections?.some(
       (inspection) =>
         inspection.rig?.id?.toString() === rig?.id?.toString() && inspection.definition
     );
 
     if (hasExistingRigInspection) {
-      const inspection = data?.dropzone?.dropzoneUser?.rigInspections?.find(
+      const inspection = data?.dropzoneUser?.rigInspections?.find(
         (record) => record.rig?.id === rig?.id
       );
 
@@ -73,13 +77,13 @@ export default function RigInspectionScreen() {
     } else {
       dispatch(
         actions.forms.rigInspection.setFields(
-          data?.dropzone?.rigInspectionTemplate?.definition || '[]'
+          rigInspectionQuery?.dropzone?.rigInspectionTemplate?.definition || '[]'
         )
       );
     }
   }, [
-    data?.dropzone?.dropzoneUser?.rigInspections,
-    data?.dropzone?.rigInspectionTemplate?.definition,
+    data?.dropzoneUser?.rigInspections,
+    rigInspectionQuery?.dropzone?.rigInspectionTemplate?.definition,
     dispatch,
     rig?.id,
   ]);
@@ -96,13 +100,12 @@ export default function RigInspectionScreen() {
         update: async (client, mutationResult) => {
           const rigInspection = mutationResult.data?.createRigInspection?.rigInspection;
           const result = client.readQuery<
-            QueryDropzoneUserProfileQuery,
-            QueryDropzoneUserProfileQueryVariables
+            DropzoneUserProfileQuery,
+            DropzoneUserProfileQueryVariables
           >({
-            query: QueryDropzoneUserProfileDocument,
+            query: DropzoneUserProfileDocument,
             variables: {
-              dropzoneId: currentDropzone?.dropzone?.id as string,
-              dropzoneUserId: Number(rigInspection?.dropzoneUser?.id),
+              id: currentDropzone?.dropzone?.id as string,
             },
           });
 
@@ -140,11 +143,9 @@ export default function RigInspectionScreen() {
           }
 
           const newData = {
-            ...result?.dropzone,
             dropzoneUser: {
-              ...result?.dropzone?.dropzoneUser,
               rigInspections: [
-                ...(result?.dropzone?.dropzoneUser?.rigInspections || []).filter(
+                ...(result?.dropzoneUser?.rigInspections || []).filter(
                   (ins) => ins.id !== rigInspection?.id
                 ),
                 rigInspection,
@@ -153,7 +154,7 @@ export default function RigInspectionScreen() {
           };
 
           client.writeQuery({
-            query: QueryDropzoneUserProfileDocument,
+            query: DropzoneUserProfileDocument,
             variables: {
               dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
               dropzoneUserId: Number(rigInspection?.dropzoneUser?.id),
@@ -208,7 +209,7 @@ export default function RigInspectionScreen() {
         {rig && <RigCard {...{ rig }} />}
 
         <Card style={{ width: '100%' }}>
-          <Card.Title title={data?.dropzone?.rigInspectionTemplate?.name} />
+          <Card.Title title={rigInspectionQuery?.dropzone?.rigInspectionTemplate?.name} />
 
           <Card.Content>
             {canInspect ? null : (
@@ -233,7 +234,8 @@ export default function RigInspectionScreen() {
             <Button
               disabled={
                 !canInspect ||
-                JSON.stringify(state.fields) === data?.dropzone?.rigInspectionTemplate?.definition
+                JSON.stringify(state.fields) ===
+                  rigInspectionQuery?.dropzone?.rigInspectionTemplate?.definition
               }
               mode="contained"
               onPress={() => createRigInspection()}

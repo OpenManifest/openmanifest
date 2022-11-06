@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Avatar, Paragraph, TouchableRipple, useTheme } from 'react-native-paper';
-import { Step, Fields, IWizardStepProps } from 'app/components/navigation_wizard';
+import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import useImagePicker from 'app/hooks/useImagePicker';
 import { View, StyleSheet } from 'react-native';

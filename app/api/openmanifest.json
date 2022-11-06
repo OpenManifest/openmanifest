@@ -3492,6 +3492,41 @@
         "possibleTypes": null
       },
       {
+        "kind": "ENUM",
+        "name": "DropzoneStateEvent",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "archive",
+            "description": "archive",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "publish",
+            "description": "publish",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "request_publication",
+            "description": "request_publication",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "unpublish",
+            "description": "unpublish",
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "DropzoneUser",
         "description": null,
@@ -4154,6 +4189,18 @@
                 "name": "User",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "userFederation",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UserFederation",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -8066,6 +8113,35 @@
             "deprecationReason": null
           },
           {
+            "name": "updateVisibility",
+            "description": null,
+            "args": [
+              {
+                "name": "input",
+                "description": "Parameters for UpdateVisibility",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "UpdateVisibilityInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UpdateVisibilityPayload",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "userConfirmRegistrationWithToken",
             "description": null,
             "args": [
@@ -9326,445 +9402,445 @@
         "enumValues": [
           {
             "name": "actAsDZSO",
-            "description": "actAsDZSO",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "actAsGCA",
-            "description": "actAsGCA",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "actAsLoadMaster",
-            "description": "actAsLoadMaster",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "actAsPilot",
-            "description": "actAsPilot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "actAsRigInspector",
-            "description": "actAsRigInspector",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createDoubleSlot",
-            "description": "createDoubleSlot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createDropzoneRig",
-            "description": "createDropzoneRig",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createExtra",
-            "description": "createExtra",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createFormTemplate",
-            "description": "createFormTemplate",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createLoad",
-            "description": "createLoad",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createPackjob",
-            "description": "createPackjob",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createPlane",
-            "description": "createPlane",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createRig",
-            "description": "createRig",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createSlot",
-            "description": "createSlot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createStudentSlot",
-            "description": "createStudentSlot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createTicketType",
-            "description": "createTicketType",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createUser",
-            "description": "createUser",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createUserDoubleSlot",
-            "description": "createUserDoubleSlot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createUserSlot",
-            "description": "createUserSlot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createUserSlotWithSelf",
-            "description": "createUserSlotWithSelf",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "createUserTransaction",
-            "description": "createUserTransaction",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deleteDropzone",
-            "description": "deleteDropzone",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deleteDropzoneRig",
-            "description": "deleteDropzoneRig",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deleteExtra",
-            "description": "deleteExtra",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deleteFormTemplate",
-            "description": "deleteFormTemplate",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deleteLoad",
-            "description": "deleteLoad",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deletePackjob",
-            "description": "deletePackjob",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deletePlane",
-            "description": "deletePlane",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deleteRig",
-            "description": "deleteRig",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deleteSlot",
-            "description": "deleteSlot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deleteStudentSlot",
-            "description": "deleteStudentSlot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deleteTicketType",
-            "description": "deleteTicketType",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deleteUser",
-            "description": "deleteUser",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deleteUserSlot",
-            "description": "deleteUserSlot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "grantPermission",
-            "description": "grantPermission",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "readDropzoneRig",
-            "description": "readDropzoneRig",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "readExtra",
-            "description": "readExtra",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "readFormTemplate",
-            "description": "readFormTemplate",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "readLoad",
-            "description": "readLoad",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "readPackjob",
-            "description": "readPackjob",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "readPermissions",
-            "description": "readPermissions",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "readRig",
-            "description": "readRig",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "readUser",
-            "description": "readUser",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "readUserTransactions",
-            "description": "readUserTransactions",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "revokePermission",
-            "description": "revokePermission",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "undeleteDropzone",
-            "description": "undeleteDropzone",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "undeleteDropzoneRig",
-            "description": "undeleteDropzoneRig",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "undeleteExtra",
-            "description": "undeleteExtra",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "undeletePlane",
-            "description": "undeletePlane",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "undeleteRig",
-            "description": "undeleteRig",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "undeleteStudentSlot",
-            "description": "undeleteStudentSlot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "undeleteTicketType",
-            "description": "undeleteTicketType",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "undeleteUser",
-            "description": "undeleteUser",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "undeleteUserSlot",
-            "description": "undeleteUserSlot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updateDropzone",
-            "description": "updateDropzone",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updateDropzoneRig",
-            "description": "updateDropzoneRig",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updateExtra",
-            "description": "updateExtra",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updateFormTemplate",
-            "description": "updateFormTemplate",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updateLoad",
-            "description": "updateLoad",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updatePackjob",
-            "description": "updatePackjob",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updatePermissions",
-            "description": "updatePermissions",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updatePlane",
-            "description": "updatePlane",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updateRig",
-            "description": "updateRig",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updateSlot",
-            "description": "updateSlot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updateStudentSlot",
-            "description": "updateStudentSlot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updateTicketType",
-            "description": "updateTicketType",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updateUser",
-            "description": "updateUser",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updateUserSlot",
-            "description": "updateUserSlot",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "updateWeatherConditions",
-            "description": "updateWeatherConditions",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "viewAdminActivity",
-            "description": "viewAdminActivity",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "viewRevenue",
-            "description": "viewRevenue",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "viewStatistics",
-            "description": "viewStatistics",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "viewSystemActivity",
-            "description": "viewSystemActivity",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "viewUserActivity",
-            "description": "viewUserActivity",
+            "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -15445,6 +15521,136 @@
             "type": {
               "kind": "OBJECT",
               "name": "DropzoneUser",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "errors",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "fieldErrors",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "FieldError",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "UpdateVisibilityInput",
+        "description": "Autogenerated input type of UpdateVisibility",
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "dropzone",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "event",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "DropzoneStateEvent",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UpdateVisibilityPayload",
+        "description": "Autogenerated return type of UpdateVisibility.",
+        "fields": [
+          {
+            "name": "clientMutationId",
+            "description": "A unique identifier for the client performing the mutation.",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "dropzone",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Dropzone",
               "ofType": null
             },
             "isDeprecated": false,

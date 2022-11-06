@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View } from 'react-native';
-import { Step, Fields, IWizardStepProps } from 'app/components/navigation_wizard';
+import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { PhonePreview, WebPreview } from 'app/components/theme_preview';
 import ColorPicker from 'app/components/input/colorpicker';

@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { Wizard } from 'app/components/navigation_wizard';
+import { Wizard } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useRecoverPasswordMutation } from 'app/api/reflection';
+import { WizardRef } from 'app/components/carousel_wizard/Wizard';
 import EmailStep from './steps/Email';
 import DoneStep from './steps/Done';
 
 export default function SignupWizard() {
   const state = useAppSelector((root) => root.screens.signup);
   const dispatch = useAppDispatch();
-
+  const wizard = React.useRef<WizardRef>(null);
   const [onRecover] = useRecoverPasswordMutation();
 
   const onClickRecover = React.useCallback(async () => {
@@ -30,7 +31,7 @@ export default function SignupWizard() {
   return (
     <Wizard
       dots
-      name="RecoverPasswordWizard"
+      ref={wizard}
       steps={[{ onNext: onClickRecover, component: EmailStep }, { component: DoneStep }]}
     />
   );

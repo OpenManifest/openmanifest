@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Card, HelperText, List } from 'react-native-paper';
 import DatePicker from 'app/components/input/date_picker/DatePicker';
-import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard';
+import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 
 function ReserveRepackStep(props: IWizardStepProps) {

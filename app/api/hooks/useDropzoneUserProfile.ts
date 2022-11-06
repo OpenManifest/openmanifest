@@ -1,20 +1,21 @@
-import { useAppSelector } from '../../state';
-import { useQueryDropzoneUserProfile } from '../reflection';
+import * as React from 'react';
+import { useDropzoneUserProfileLazyQuery } from '../reflection';
 
 // Returns current user if no ID is provided
-export default function useDropzoneUser(id: number) {
-  const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
-
-  const dropzoneUser = useQueryDropzoneUserProfile({
-    variables: {
-      dropzoneId: dropzoneId?.toString() as string,
-      dropzoneUserId: id,
-    },
-    fetchPolicy: 'cache-and-network',
-  });
+export default function useDropzoneUser(id?: string) {
+  const [getProfile, dropzoneUser] = useDropzoneUserProfileLazyQuery();
+  React.useEffect(() => {
+    if (id && dropzoneUser?.variables?.id !== id) {
+      getProfile({
+        variables: {
+          id,
+        },
+      });
+    }
+  }, [id, dropzoneUser?.variables?.id, getProfile]);
 
   return {
     ...dropzoneUser,
-    dropzoneUser: dropzoneUser?.data?.dropzone?.dropzoneUser,
+    dropzoneUser: dropzoneUser?.data?.dropzoneUser,
   };
 }

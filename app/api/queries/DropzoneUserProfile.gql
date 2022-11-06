@@ -1,16 +1,6 @@
 #import "../fragments/dropzoneUsers.fragments.gql"
-query QueryDropzoneUserProfile($dropzoneId: ID!, $dropzoneUserId: Int) {
-  dropzone(id: $dropzoneId) {
-    id
-    name
-    rigInspectionTemplate {
-      id
-      name
-      definition
-    }
-
-    dropzoneUser(id: $dropzoneUserId) {
-      ...dropzoneUserProfile
-    }
+query DropzoneUserProfile($id: ID!) {
+  dropzoneUser(id: $id) {
+    ...dropzoneUserProfile
   }
 }

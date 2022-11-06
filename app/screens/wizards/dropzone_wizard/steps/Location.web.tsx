@@ -3,7 +3,7 @@ import { Animated, StyleSheet, TouchableOpacity, useWindowDimensions, View } fro
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
 import * as Location from 'expo-location';
-import { Step, IWizardStepProps } from 'app/components/navigation_wizard';
+import { Step, IWizardStepProps } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { calculateLatLngDelta } from 'app/utils/calculateLatLngDelta';
 import Map from 'app/components/map/Map';

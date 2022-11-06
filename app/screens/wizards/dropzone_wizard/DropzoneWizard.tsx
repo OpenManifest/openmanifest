@@ -2,7 +2,8 @@ import * as React from 'react';
 import { DropzoneFields } from 'app/components/forms/dropzone/slice';
 import { PlaneFields } from 'app/components/forms/plane/slice';
 import { TicketTypeFields } from 'app/components/forms/ticket_type/slice';
-import { Wizard } from 'app/components/navigation_wizard';
+import { Wizard } from 'app/components/carousel_wizard';
+import type { WizardRef } from 'app/components/carousel_wizard/Wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import useMutationCreateDropzone from 'app/api/hooks/useMutationCreateDropzone';
 import useMutationUpdateDropzone from 'app/api/hooks/useMutationUpdateDropzone';
@@ -12,7 +13,7 @@ import useMutationCreateTicketType from 'app/api/hooks/useMutationCreateTicketTy
 import useMutationUpdateTicketType from 'app/api/hooks/useMutationUpdateTicketType';
 import camelize from 'lodash/camelCase';
 import { Permission } from 'app/api/schema.d';
-import { StackActions, useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/core';
 import NameStep from './steps/Name';
 import FederationStep from './steps/Federation';
 import LocationStep from './steps/Location';
@@ -77,17 +78,7 @@ function DropzoneSetupScreen() {
   });
 
   const onComplete = React.useCallback(() => {
-    navigation.dispatch(
-      StackActions.replace('Authenticated', {
-        screen: 'LeftDrawer',
-        params: {
-          screen: 'Manifest',
-          params: {
-            screen: 'ManifestScreen',
-          },
-        },
-      })
-    );
+    navigation.goBack();
   }, [navigation]);
 
   const onNameNext = React.useCallback(async (): Promise<void> => {
@@ -153,31 +144,22 @@ function DropzoneSetupScreen() {
       }
     } else if (result?.fieldErrors?.length) {
       result?.fieldErrors?.find(({ field, message }) => {
-        console.debug('Error', camelize(field));
         switch (camelize(field)) {
           case 'primaryColor':
             dispatch(actions.forms.dropzone.setFieldError(['primaryColor', message]));
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            navigation.navigate(`DropzoneWizard3`);
+            wizard.current?.scrollTo({ index: 3 });
             return true;
           case 'federation':
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            navigation.navigate(`DropzoneWizard1`);
+            wizard.current?.scrollTo({ index: 1 });
             dispatch(actions.forms.dropzone.setFieldError(['primaryColor', message]));
             return true;
           case 'name':
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            navigation.navigate(`DropzoneWizard0`);
+            wizard.current?.scrollTo({ index: 0 });
             dispatch(actions.forms.dropzone.setFieldError(['name', message]));
             return true;
           case 'lat':
           case 'lng':
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            navigation.navigate(`DropzoneWizard2`);
+            wizard.current?.scrollTo({ index: 2 });
             dispatch(actions.forms.dropzone.setFieldError(['lat', message]));
             return true;
           default:
@@ -199,7 +181,6 @@ function DropzoneSetupScreen() {
     dropzone.original?.id,
     mutationCreateDropzone,
     mutationUpdateDropzone,
-    navigation,
   ]);
 
   const onAircraftNext = React.useCallback(async () => {
@@ -325,11 +306,11 @@ function DropzoneSetupScreen() {
   ]);
 
   const noop = React.useCallback(() => Promise.resolve(), []);
+  const wizard = React.useRef<WizardRef>();
 
   return (
     <Wizard
       dots
-      name="DropzoneWizard"
       steps={[
         {
           onBack: () => {

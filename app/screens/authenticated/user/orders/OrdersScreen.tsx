@@ -11,7 +11,7 @@ import { groupBy, map } from 'lodash';
 import { formatDistance, parseISO, startOfDay, differenceInDays, format } from 'date-fns';
 import enAU from 'date-fns/locale/en-AU';
 import { OrderEssentialsFragment } from 'app/api/operations';
-import { useQueryDropzoneUserProfile } from 'app/api/reflection';
+import { useDropzoneUserProfileQuery } from 'app/api/reflection';
 import OrderCard from '../../../../components/orders/OrderCard';
 import { useUserNavigation } from '../useUserNavigation';
 
@@ -26,16 +26,13 @@ export default function OrdersScreen() {
   const dispatch = useAppDispatch();
   const { currentUser } = useDropzoneContext();
   const route = useRoute<RouteProp<OrdersRoute>>();
-  const { data, loading, refetch } = useQueryDropzoneUserProfile({
+  const { data, loading, refetch } = useDropzoneUserProfileQuery({
     variables: {
-      dropzoneId: state.currentDropzoneId?.toString() as string,
-      dropzoneUserId: Number(route?.params?.userId) || Number(currentUser?.id),
+      id: (route?.params?.userId || currentUser?.id) as string,
     },
+    skip: !(route?.params?.userId || currentUser?.id),
   });
-  const dropzoneUser = React.useMemo(
-    () => data?.dropzone?.dropzoneUser,
-    [data?.dropzone?.dropzoneUser]
-  );
+  const dropzoneUser = React.useMemo(() => data?.dropzoneUser, [data?.dropzoneUser]);
 
   const isFocused = useIsFocused();
   const navigation = useUserNavigation();

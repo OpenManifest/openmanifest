@@ -1,18 +1,38 @@
 import * as React from 'react';
-import { Divider, List, useTheme } from 'react-native-paper';
+import { Divider, List, Switch, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
-import { Permission } from 'app/api/schema.d';
+import { DropzoneState, DropzoneStateEvent, Permission } from 'app/api/schema.d';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
+import { useDropzonesContext } from 'app/api/crud';
+import { actions, useAppDispatch } from 'app/state';
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
   const { dropzone } = useDropzoneContext();
+  const dispatch = useAppDispatch();
+
   const theme = useTheme();
 
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
   const canUpdateRigInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
+
+  const { updateVisibility } = useDropzonesContext();
+  const onChangeVisibility = React.useCallback(
+    async (event: DropzoneStateEvent) => {
+      if (!dropzone?.id) {
+        return;
+      }
+      const result = await updateVisibility(dropzone.id, event);
+
+      if ('error' in result && result.error) {
+        dispatch(actions.notifications.showSnackbar({ message: result.error }));
+      }
+    },
+    [dispatch, dropzone?.id, updateVisibility]
+  );
 
   return (
     <ScrollableScreen contentContainerStyle={{ backgroundColor: theme.colors.surface }}>
@@ -20,6 +40,7 @@ export default function SettingsScreen() {
         {!canUpdateDropzone ? null : (
           <List.Item
             title="Configuration"
+            right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
             onPress={() =>
               !dropzone
                 ? null
@@ -43,10 +64,12 @@ export default function SettingsScreen() {
             description="Set up name, branding and other settings"
           />
         )}
+
         <Divider />
         <List.Item
           title="Permissions"
           description="Grant or revoke access to define who can do what at this dropzone"
+          right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           left={() => <List.Icon color={theme.colors.text} icon="lock" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
@@ -66,6 +89,7 @@ export default function SettingsScreen() {
         <Divider />
         <List.Item
           title="Aircrafts"
+          right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',
@@ -85,6 +109,7 @@ export default function SettingsScreen() {
         <List.Item
           title="Rigs"
           left={() => <List.Icon color={theme.colors.text} icon="parachute" />}
+          right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           description="Dropzone rigs, e.g tandems and student rigs"
           onPress={() =>
             navigation.navigate('Authenticated', {
@@ -105,6 +130,7 @@ export default function SettingsScreen() {
         <List.Item
           disabled={!canUpdateRigInspectionTemplate}
           title="Rig Inspection Template"
+          right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           left={() => <List.Icon color={theme.colors.text} icon="check" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
@@ -125,6 +151,7 @@ export default function SettingsScreen() {
         <List.Item
           title="Master Log"
           left={() => <List.Icon color={theme.colors.text} icon="parachute" />}
+          right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           description="View historic data for daily operations"
           onPress={() =>
             navigation.navigate('Authenticated', {
@@ -141,10 +168,75 @@ export default function SettingsScreen() {
             })
           }
         />
+        <Divider />
+        {!canUpdateDropzone ? null : (
+          <List.Item
+            title={
+              {
+                [DropzoneState.Archived]: 'Re-open dropzone',
+                [DropzoneState.Public]: 'Go offline',
+                [DropzoneState.Private]: 'Go live',
+                [DropzoneState.InReview]: 'Awaiting review',
+              }[dropzone?.status || DropzoneState.Private]
+            }
+            left={() => (
+              <List.Icon
+                color={theme.colors.text}
+                icon={
+                  {
+                    [DropzoneState.Archived]: 'archive',
+                    [DropzoneState.Public]: 'check',
+                    [DropzoneState.Private]: 'upload',
+                    [DropzoneState.InReview]: 'progress-upload',
+                  }[dropzone?.status || DropzoneState.Private] as IconSource
+                }
+              />
+            )}
+            right={() => (
+              <Switch
+                value={[DropzoneState.Public, DropzoneState.InReview].includes(
+                  dropzone?.status || DropzoneState.Private
+                )}
+                disabled={dropzone?.status === DropzoneState.InReview}
+                onValueChange={(value) => {
+                  onChangeVisibility(
+                    value ? DropzoneStateEvent.RequestPublication : DropzoneStateEvent.Unpublish
+                  );
+                }}
+              />
+            )}
+            onPress={() => {
+              switch (dropzone?.status) {
+                case DropzoneState.Archived:
+                  return onChangeVisibility(DropzoneStateEvent.Publish);
+                case DropzoneState.Private:
+                  return onChangeVisibility(DropzoneStateEvent.RequestPublication);
+                case DropzoneState.Public:
+                case DropzoneState.InReview:
+                  return onChangeVisibility(DropzoneStateEvent.Unpublish);
+                default:
+                  return null;
+              }
+            }}
+            description={
+              {
+                [DropzoneState.Archived]:
+                  'Your dropzone has been archived and is not visible to users',
+                [DropzoneState.Public]: 'Your dropzone is available to the public',
+                [DropzoneState.Private]:
+                  'Request a review to make your dropzone available to all users',
+                [DropzoneState.InReview]:
+                  'You may be contacted to verify the legitimacy of your dropzone.',
+              }[dropzone?.status || DropzoneState.Private]
+            }
+            descriptionNumberOfLines={4}
+          />
+        )}
       </List.Section>
 
       <List.Section title="Tickets" style={{ width: '100%' }}>
         <List.Item
+          right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           title="Ticket types"
           onPress={() =>
             navigation.navigate('Authenticated', {
@@ -166,6 +258,7 @@ export default function SettingsScreen() {
         <Divider />
         <List.Item
           title="Ticket add-ons"
+          right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Card, Paragraph } from 'react-native-paper';
-import { Step, Fields, IWizardStepProps } from 'app/components/navigation_wizard';
+import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import AltitudeSelect from 'app/components/input/dropdown_select/AltitudeSelect';
 import TextInput from 'app/components/input/text/TextField';

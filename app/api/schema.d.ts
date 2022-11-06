@@ -490,6 +490,17 @@ export enum DropzoneState {
   Public = 'public'
 }
 
+export enum DropzoneStateEvent {
+  /** archive */
+  Archive = 'archive',
+  /** publish */
+  Publish = 'publish',
+  /** request_publication */
+  RequestPublication = 'request_publication',
+  /** unpublish */
+  Unpublish = 'unpublish'
+}
+
 export type DropzoneUser = AnyResource & Wallet & {
   __typename?: 'DropzoneUser';
   /** Get user rigs that have been inspected and marked as OK + dropzone rigs */
@@ -518,6 +529,7 @@ export type DropzoneUser = AnyResource & Wallet & {
   unseenNotifications: Scalars['Int'];
   updatedAt: Scalars['ISO8601DateTime'];
   user: User;
+  userFederation?: Maybe<UserFederation>;
 };
 
 
@@ -956,6 +968,7 @@ export type Mutation = {
   updateSlot?: Maybe<UpdateSlotPayload>;
   updateTicketType?: Maybe<UpdateTicketPayload>;
   updateUser?: Maybe<UpdateUserPayload>;
+  updateVisibility?: Maybe<UpdateVisibilityPayload>;
   userConfirmRegistrationWithToken?: Maybe<UserConfirmRegistrationWithTokenPayload>;
   userLogin?: Maybe<UserLoginPayload>;
   userLogout?: Maybe<UserLogoutPayload>;
@@ -1171,6 +1184,11 @@ export type MutationUpdateUserArgs = {
 };
 
 
+export type MutationUpdateVisibilityArgs = {
+  input: UpdateVisibilityInput;
+};
+
+
 export type MutationUserConfirmRegistrationWithTokenArgs = {
   confirmationToken: Scalars['String'];
 };
@@ -1354,153 +1372,79 @@ export type PageInfo = {
 };
 
 export enum Permission {
-  /** actAsDZSO */
   ActAsDzso = 'actAsDZSO',
-  /** actAsGCA */
   ActAsGca = 'actAsGCA',
-  /** actAsLoadMaster */
   ActAsLoadMaster = 'actAsLoadMaster',
-  /** actAsPilot */
   ActAsPilot = 'actAsPilot',
-  /** actAsRigInspector */
   ActAsRigInspector = 'actAsRigInspector',
-  /** createDoubleSlot */
   CreateDoubleSlot = 'createDoubleSlot',
-  /** createDropzoneRig */
   CreateDropzoneRig = 'createDropzoneRig',
-  /** createExtra */
   CreateExtra = 'createExtra',
-  /** createFormTemplate */
   CreateFormTemplate = 'createFormTemplate',
-  /** createLoad */
   CreateLoad = 'createLoad',
-  /** createPackjob */
   CreatePackjob = 'createPackjob',
-  /** createPlane */
   CreatePlane = 'createPlane',
-  /** createRig */
   CreateRig = 'createRig',
-  /** createSlot */
   CreateSlot = 'createSlot',
-  /** createStudentSlot */
   CreateStudentSlot = 'createStudentSlot',
-  /** createTicketType */
   CreateTicketType = 'createTicketType',
-  /** createUser */
   CreateUser = 'createUser',
-  /** createUserDoubleSlot */
   CreateUserDoubleSlot = 'createUserDoubleSlot',
-  /** createUserSlot */
   CreateUserSlot = 'createUserSlot',
-  /** createUserSlotWithSelf */
   CreateUserSlotWithSelf = 'createUserSlotWithSelf',
-  /** createUserTransaction */
   CreateUserTransaction = 'createUserTransaction',
-  /** deleteDropzone */
   DeleteDropzone = 'deleteDropzone',
-  /** deleteDropzoneRig */
   DeleteDropzoneRig = 'deleteDropzoneRig',
-  /** deleteExtra */
   DeleteExtra = 'deleteExtra',
-  /** deleteFormTemplate */
   DeleteFormTemplate = 'deleteFormTemplate',
-  /** deleteLoad */
   DeleteLoad = 'deleteLoad',
-  /** deletePackjob */
   DeletePackjob = 'deletePackjob',
-  /** deletePlane */
   DeletePlane = 'deletePlane',
-  /** deleteRig */
   DeleteRig = 'deleteRig',
-  /** deleteSlot */
   DeleteSlot = 'deleteSlot',
-  /** deleteStudentSlot */
   DeleteStudentSlot = 'deleteStudentSlot',
-  /** deleteTicketType */
   DeleteTicketType = 'deleteTicketType',
-  /** deleteUser */
   DeleteUser = 'deleteUser',
-  /** deleteUserSlot */
   DeleteUserSlot = 'deleteUserSlot',
-  /** grantPermission */
   GrantPermission = 'grantPermission',
-  /** readDropzoneRig */
   ReadDropzoneRig = 'readDropzoneRig',
-  /** readExtra */
   ReadExtra = 'readExtra',
-  /** readFormTemplate */
   ReadFormTemplate = 'readFormTemplate',
-  /** readLoad */
   ReadLoad = 'readLoad',
-  /** readPackjob */
   ReadPackjob = 'readPackjob',
-  /** readPermissions */
   ReadPermissions = 'readPermissions',
-  /** readRig */
   ReadRig = 'readRig',
-  /** readUser */
   ReadUser = 'readUser',
-  /** readUserTransactions */
   ReadUserTransactions = 'readUserTransactions',
-  /** revokePermission */
   RevokePermission = 'revokePermission',
-  /** undeleteDropzone */
   UndeleteDropzone = 'undeleteDropzone',
-  /** undeleteDropzoneRig */
   UndeleteDropzoneRig = 'undeleteDropzoneRig',
-  /** undeleteExtra */
   UndeleteExtra = 'undeleteExtra',
-  /** undeletePlane */
   UndeletePlane = 'undeletePlane',
-  /** undeleteRig */
   UndeleteRig = 'undeleteRig',
-  /** undeleteStudentSlot */
   UndeleteStudentSlot = 'undeleteStudentSlot',
-  /** undeleteTicketType */
   UndeleteTicketType = 'undeleteTicketType',
-  /** undeleteUser */
   UndeleteUser = 'undeleteUser',
-  /** undeleteUserSlot */
   UndeleteUserSlot = 'undeleteUserSlot',
-  /** updateDropzone */
   UpdateDropzone = 'updateDropzone',
-  /** updateDropzoneRig */
   UpdateDropzoneRig = 'updateDropzoneRig',
-  /** updateExtra */
   UpdateExtra = 'updateExtra',
-  /** updateFormTemplate */
   UpdateFormTemplate = 'updateFormTemplate',
-  /** updateLoad */
   UpdateLoad = 'updateLoad',
-  /** updatePackjob */
   UpdatePackjob = 'updatePackjob',
-  /** updatePermissions */
   UpdatePermissions = 'updatePermissions',
-  /** updatePlane */
   UpdatePlane = 'updatePlane',
-  /** updateRig */
   UpdateRig = 'updateRig',
-  /** updateSlot */
   UpdateSlot = 'updateSlot',
-  /** updateStudentSlot */
   UpdateStudentSlot = 'updateStudentSlot',
-  /** updateTicketType */
   UpdateTicketType = 'updateTicketType',
-  /** updateUser */
   UpdateUser = 'updateUser',
-  /** updateUserSlot */
   UpdateUserSlot = 'updateUserSlot',
-  /** updateWeatherConditions */
   UpdateWeatherConditions = 'updateWeatherConditions',
-  /** viewAdminActivity */
   ViewAdminActivity = 'viewAdminActivity',
-  /** viewRevenue */
   ViewRevenue = 'viewRevenue',
-  /** viewStatistics */
   ViewStatistics = 'viewStatistics',
-  /** viewSystemActivity */
   ViewSystemActivity = 'viewSystemActivity',
-  /** viewUserActivity */
   ViewUserActivity = 'viewUserActivity'
 }
 
@@ -2231,6 +2175,24 @@ export type UpdateUserPayload = {
   /** A unique identifier for the client performing the mutation. */
   clientMutationId?: Maybe<Scalars['String']>;
   dropzoneUser?: Maybe<DropzoneUser>;
+  errors?: Maybe<Array<Scalars['String']>>;
+  fieldErrors?: Maybe<Array<FieldError>>;
+};
+
+/** Autogenerated input type of UpdateVisibility */
+export type UpdateVisibilityInput = {
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: InputMaybe<Scalars['String']>;
+  dropzone: Scalars['ID'];
+  event: DropzoneStateEvent;
+};
+
+/** Autogenerated return type of UpdateVisibility. */
+export type UpdateVisibilityPayload = {
+  __typename?: 'UpdateVisibilityPayload';
+  /** A unique identifier for the client performing the mutation. */
+  clientMutationId?: Maybe<Scalars['String']>;
+  dropzone?: Maybe<Dropzone>;
   errors?: Maybe<Array<Scalars['String']>>;
   fieldErrors?: Maybe<Array<FieldError>>;
 };
