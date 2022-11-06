@@ -30,7 +30,7 @@ export default function AvailableRow(props: IAvailableRowProps) {
 
   return (
     <DroppableSlot loadId={load?.id?.toString() || '0'} rowIndex={index}>
-      <DataTable.Row testID="slot-row">
+      <DataTable.Row testID="slot-row" style={{ paddingTop: 8 }}>
         <DropzoneUserAutocomplete
           placeholder="- Available -"
           value={null}

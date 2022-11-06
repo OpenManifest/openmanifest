@@ -11,6 +11,7 @@ import differenceInDays from 'date-fns/differenceInDays';
 import format from 'date-fns/format';
 import { enAU } from 'date-fns/locale';
 import formatDistance from 'date-fns/formatDistance';
+import { DateTime, Duration } from 'luxon';
 import OrderCard from '../../../../../components/orders/OrderCard';
 import { useUserNavigation } from '../../useUserNavigation';
 
@@ -26,16 +27,16 @@ export default function TransactionsTab(props: IJumpHistoryTab) {
     () =>
       map(
         groupBy(dropzoneUser?.orders?.edges, (e) =>
-          startOfDay(parseISO(e?.node?.createdAt || new Date().toISOString())).toISOString()
+          DateTime.fromISO(e?.node?.createdAt).startOf('day').toISO()
         ),
         (d, t) => {
-          const date = parseISO(t);
+          const date = DateTime.fromISO(t);
           const title =
-            differenceInDays(new Date(), date) > 7
-              ? format(date, 'dd MMM, yyyy')
-              : formatDistance(date, new Date(), { addSuffix: true, locale: enAU });
+            date.diffNow('days') > Duration.fromDurationLike({ days: 7 })
+              ? date.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)
+              : date.toRelative({ locale: 'au', round: true, style: 'long' });
           return {
-            title,
+            title: date.startOf('day').hasSame(DateTime.local(), 'day') ? 'Today' : title,
             data: d,
           };
         }

@@ -6,6 +6,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { successColor } from 'app/constants/Colors';
 import { TransactionEssentialsFragment } from 'app/api/operations';
+import { DateTime } from 'luxon';
 
 interface ITransaction {
   transaction: TransactionEssentialsFragment;
@@ -41,7 +42,8 @@ export default function TransactionCard(props: ITransaction) {
               color: theme.colors.onSurface,
             }}
           >
-            {transaction?.createdAt && format(parseISO(transaction.createdAt), 'Mo MMM, h:mm aaa')}
+            {transaction?.createdAt &&
+              DateTime.fromISO(transaction.createdAt).toLocaleString(DateTime.DATETIME_SHORT)}
           </Caption>
           <List.Item
             description={capitalize(transaction.message || '')}

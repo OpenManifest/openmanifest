@@ -14,7 +14,7 @@
     "lint:ci": "eslint -c .eslintrc.js app/ --format junit",
     "gql:schema:staging": "curl https://devapi.openmanifest.org/graphql -o schema.graphql",
     "gql:schema:production": "curl https://api.openmanifest.org/graphql -o schema.graphql",
-    "gql:schema:local": "curl http://127.0.0.1:5000/graphql -o schema.graphql",
+    "gql:schema:local": "curl http://localhost:5000/graphql -o schema.graphql",
     "ts:graphql:staging": "yarn gql:schema:staging && yarn graphql-codegen",
     "ts:graphql:production": "yarn gql:schema:production && yarn graphql-codegen",
     "ts:graphql:local": "yarn gql:schema:local && yarn graphql-codegen",

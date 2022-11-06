@@ -11,11 +11,14 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** An ISO 8601-encoded date */
   ISO8601Date: any;
+  /** An ISO 8601-encoded datetime */
   ISO8601DateTime: any;
 };
 
 export type AnyResource = {
+  guid: Scalars['ID'];
   id: Scalars['ID'];
 };
 
@@ -23,7 +26,10 @@ export type AnyResource = {
 export type ApplePayload = {
   __typename?: 'ApplePayload';
   authenticatable?: Maybe<User>;
-  /** Authentication credentials. Null if after signUp resource is not active for authentication (e.g. Email confirmation required). */
+  /**
+   * Authentication credentials. Null if after signUp resource is not active for
+   * authentication (e.g. Email confirmation required).
+   */
   credentials?: Maybe<Credential>;
   errors?: Maybe<Array<Scalars['String']>>;
   fieldErrors?: Maybe<Array<FieldError>>;
@@ -375,6 +381,7 @@ export type Dropzone = AnyResource & Wallet & {
   dropzoneUser?: Maybe<DropzoneUser>;
   extras: Array<Extra>;
   federation: Federation;
+  guid: Scalars['ID'];
   id: Scalars['ID'];
   isCreditSystemEnabled: Scalars['Boolean'];
   lat?: Maybe<Scalars['Float']>;
@@ -397,6 +404,7 @@ export type Dropzone = AnyResource & Wallet & {
   ticketTypes: Array<TicketType>;
   updatedAt: Scalars['ISO8601DateTime'];
   userRoles: Array<UserRole>;
+  walletId: Scalars['ID'];
 };
 
 
@@ -509,6 +517,7 @@ export type DropzoneUser = AnyResource & Wallet & {
   credits?: Maybe<Scalars['Int']>;
   dropzone: Dropzone;
   expiresAt?: Maybe<Scalars['Int']>;
+  guid: Scalars['ID'];
   hasCredits: Scalars['Boolean'];
   hasExitWeight: Scalars['Boolean'];
   hasLicense: Scalars['Boolean'];
@@ -530,6 +539,7 @@ export type DropzoneUser = AnyResource & Wallet & {
   updatedAt: Scalars['ISO8601DateTime'];
   user: User;
   userFederation?: Maybe<UserFederation>;
+  walletId: Scalars['ID'];
 };
 
 
@@ -691,7 +701,10 @@ export type ExtraInput = {
 export type FacebookPayload = {
   __typename?: 'FacebookPayload';
   authenticatable?: Maybe<User>;
-  /** Authentication credentials. Null if after signUp resource is not active for authentication (e.g. Email confirmation required). */
+  /**
+   * Authentication credentials. Null if after signUp resource is not active for
+   * authentication (e.g. Email confirmation required).
+   */
   credentials?: Maybe<Credential>;
   errors?: Maybe<Array<Scalars['String']>>;
   fieldErrors?: Maybe<Array<FieldError>>;
@@ -812,6 +825,7 @@ export type License = AnyResource & {
   __typename?: 'License';
   createdAt: Scalars['ISO8601DateTime'];
   federation?: Maybe<Federation>;
+  guid: Scalars['ID'];
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   updatedAt: Scalars['ISO8601DateTime'];
@@ -823,6 +837,7 @@ export type Load = AnyResource & {
   createdAt: Scalars['ISO8601DateTime'];
   dispatchAt?: Maybe<Scalars['Int']>;
   gca?: Maybe<DropzoneUser>;
+  guid: Scalars['ID'];
   hasLanded?: Maybe<Scalars['Boolean']>;
   id: Scalars['ID'];
   isFull: Scalars['Boolean'];
@@ -1305,6 +1320,7 @@ export type Order = AnyResource & {
   buyer: Wallet;
   createdAt: Scalars['ISO8601DateTime'];
   dropzone: Dropzone;
+  guid: Scalars['ID'];
   id: Scalars['ID'];
   item?: Maybe<SellableItem>;
   orderNumber: Scalars['Int'];
@@ -1337,13 +1353,14 @@ export type OrderEdge = {
 
 export type OrderInput = {
   /** Total amount of the order */
-  amount: Scalars['Int'];
+  amount: Scalars['Float'];
   /** Any buyer peer, e.g DropzoneUser or Dropzone */
-  buyer: WalletInput;
-  dropzoneId: Scalars['Int'];
-  sellableItem?: InputMaybe<SellableItemInput>;
+  buyer: Scalars['ID'];
+  dropzone: Scalars['ID'];
+  /** Item to attach to order */
+  sellableItem?: InputMaybe<Scalars['ID']>;
   /** Any sales peer, e.g DropzoneUser or Dropzone */
-  seller: WalletInput;
+  seller: Scalars['ID'];
   title?: InputMaybe<Scalars['String']>;
 };
 
@@ -1452,6 +1469,7 @@ export type Plane = AnyResource & {
   __typename?: 'Plane';
   createdAt: Scalars['ISO8601DateTime'];
   dropzone: Dropzone;
+  guid: Scalars['ID'];
   hours?: Maybe<Scalars['Int']>;
   id: Scalars['ID'];
   maxSlots: Scalars['Int'];
@@ -1618,6 +1636,7 @@ export type Receipt = AnyResource & {
   __typename?: 'Receipt';
   amountCents?: Maybe<Scalars['Int']>;
   createdAt: Scalars['ISO8601DateTime'];
+  guid: Scalars['ID'];
   id: Scalars['ID'];
   order: Order;
   transactions: Array<Transaction>;
@@ -1665,6 +1684,7 @@ export type Rig = AnyResource & {
   canopySize?: Maybe<Scalars['Int']>;
   createdAt: Scalars['ISO8601DateTime'];
   dropzone?: Maybe<Dropzone>;
+  guid: Scalars['ID'];
   id: Scalars['ID'];
   isPublic: Scalars['Boolean'];
   maintainedAt?: Maybe<Scalars['Int']>;
@@ -1683,7 +1703,7 @@ export type Rig = AnyResource & {
 
 
 export type RigRigInspectionsArgs = {
-  dropzoneId: Scalars['Int'];
+  dropzoneId: Scalars['ID'];
 };
 
 export type RigInput = {
@@ -1709,6 +1729,7 @@ export type RigInspection = AnyResource & {
   definition: Scalars['String'];
   dropzoneUser: DropzoneUser;
   formTemplate: FormTemplate;
+  guid: Scalars['ID'];
   id: Scalars['ID'];
   inspectedBy: DropzoneUser;
   isOk: Scalars['Boolean'];
@@ -1728,25 +1749,14 @@ export type SellableItem = {
   title?: Maybe<Scalars['String']>;
 };
 
-export type SellableItemInput = {
-  /** ID of the record */
-  id: Scalars['ID'];
-  /** Any sales peer, e.g DropzoneUser or Dropzone */
-  type: SellableItemTypes;
-};
-
-export enum SellableItemTypes {
-  Extra = 'extra',
-  Pack = 'pack',
-  Slot = 'slot',
-  TicketType = 'ticketType'
-}
-
 /** Autogenerated return type of SignUp. */
 export type SignUpPayload = {
   __typename?: 'SignUpPayload';
   authenticatable?: Maybe<User>;
-  /** Authentication credentials. Null if after signUp resource is not active for authentication (e.g. Email confirmation required). */
+  /**
+   * Authentication credentials. Null if after signUp resource is not active for
+   * authentication (e.g. Email confirmation required).
+   */
   credentials?: Maybe<Credential>;
   errors?: Maybe<Array<Scalars['String']>>;
   fieldErrors?: Maybe<Array<FieldError>>;
@@ -1760,6 +1770,7 @@ export type Slot = AnyResource & SellableItem & {
   exitWeight: Scalars['Int'];
   extras?: Maybe<Array<Extra>>;
   groupNumber: Scalars['Int'];
+  guid: Scalars['ID'];
   id: Scalars['ID'];
   jumpType?: Maybe<JumpType>;
   load: Load;
@@ -1892,6 +1903,7 @@ export type TicketType = AnyResource & SellableItem & {
   currency?: Maybe<Scalars['String']>;
   dropzone?: Maybe<Dropzone>;
   extras: Array<Extra>;
+  guid: Scalars['ID'];
   id: Scalars['ID'];
   isTandem?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
@@ -1920,6 +1932,7 @@ export type Transaction = AnyResource & {
   amount: Scalars['Float'];
   createdAt: Scalars['ISO8601DateTime'];
   dropzoneUser: DropzoneUser;
+  guid: Scalars['ID'];
   id: Scalars['ID'];
   message?: Maybe<Scalars['String']>;
   receipt: Receipt;
@@ -2204,6 +2217,7 @@ export type User = AnyResource & {
   dropzoneUsers?: Maybe<Array<DropzoneUser>>;
   email?: Maybe<Scalars['String']>;
   exitWeight?: Maybe<Scalars['String']>;
+  guid: Scalars['ID'];
   id: Scalars['ID'];
   image?: Maybe<Scalars['String']>;
   licenses?: Maybe<Array<License>>;
@@ -2228,6 +2242,7 @@ export type UserConfirmRegistrationWithTokenPayload = {
 export type UserFederation = AnyResource & {
   __typename?: 'UserFederation';
   federation: Federation;
+  guid: Scalars['ID'];
   id: Scalars['ID'];
   license?: Maybe<License>;
   qualifications?: Maybe<Array<UserQualification>>;
@@ -2271,6 +2286,7 @@ export type UserLogoutPayload = {
 export type UserQualification = AnyResource & {
   __typename?: 'UserQualification';
   expiresAt?: Maybe<Scalars['Int']>;
+  guid: Scalars['ID'];
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   uid?: Maybe<Scalars['String']>;
@@ -2311,6 +2327,7 @@ export type Wallet = {
   orders?: Maybe<OrderConnection>;
   purchases?: Maybe<OrderConnection>;
   sales?: Maybe<OrderConnection>;
+  walletId: Scalars['ID'];
 };
 
 
@@ -2337,18 +2354,6 @@ export type WalletSalesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
-
-export type WalletInput = {
-  /** ID of the record */
-  id: Scalars['ID'];
-  /** Any model with an account, e.g DropzoneUser or Dropzone */
-  type: WalletableTypes;
-};
-
-export enum WalletableTypes {
-  Dropzone = 'dropzone',
-  DropzoneUser = 'dropzoneUser'
-}
 
 export type WeatherCondition = {
   __typename?: 'WeatherCondition';

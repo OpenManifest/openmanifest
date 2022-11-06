@@ -1,5 +1,6 @@
 fragment dropzoneUserEssentials on DropzoneUser {
   id
+  walletId
   expiresAt
   hasCredits
   hasMembership

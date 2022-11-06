@@ -4,8 +4,8 @@ import * as Notifications from 'expo-notifications';
 import { Linking, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import URI from 'urijs';
+import { useUpdateUserMutation } from 'app/api/reflection';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
-import useMutationUpdateUser from '../../api/hooks/useMutationUpdateUser';
 import { useDropzoneContext } from '../../api/crud/useDropzone';
 
 async function registerForPushNotificationsAsync(): Promise<string | null> {
@@ -54,10 +54,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
     console.log(intendedRoute);
   }, []);
 
-  const mutationUpdateUser = useMutationUpdateUser({
-    onSuccess: () => null,
-    onError: () => null,
-  });
+  const [updateUser] = useUpdateUserMutation();
   React.useEffect(() => {
     if (Platform.OS === 'web' || !Device.isDevice) {
       return undefined;
@@ -107,21 +104,16 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
   React.useEffect(() => {
     const remoteToken = currentUser?.user?.pushToken;
 
-    if (!loading && called) {
-      if (pushToken && pushToken !== remoteToken && currentUser?.id) {
-        mutationUpdateUser.mutate({
-          dropzoneUser: Number(currentUser.id),
-          pushToken,
+    if (!loading && currentUser?.id) {
+      if (pushToken && pushToken !== remoteToken) {
+        updateUser({
+          variables: {
+            dropzoneUser: Number(currentUser.id),
+            pushToken,
+          },
         });
       }
     }
-  }, [
-    pushToken,
-    mutationUpdateUser,
-    currentUser?.id,
-    currentUser?.user?.pushToken,
-    loading,
-    called,
-  ]);
+  }, [pushToken, currentUser?.id, currentUser?.user?.pushToken, loading, called, updateUser]);
   return children as JSX.Element;
 }

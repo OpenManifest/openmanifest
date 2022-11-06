@@ -41,14 +41,14 @@ export default function TimePicker(props: ITimePickerProps) {
 
       <Modal visible={open}>
         <TimePickerModal
-          hours={DateTime.fromSeconds(timestamp || DateTime.now().toSeconds()).hour}
-          minutes={DateTime.fromSeconds(timestamp || DateTime.now().toSeconds()).minute}
+          hours={DateTime.fromSeconds(timestamp || DateTime.local().toSeconds()).hour}
+          minutes={DateTime.fromSeconds(timestamp || DateTime.local().toSeconds()).minute}
           locale="en"
           visible={open}
           onDismiss={onDismissSingle}
           onConfirm={(time) =>
             onConfirm({
-              date: DateTime.now()
+              date: DateTime.local()
                 .set({
                   hour: time.hours,
                   minute: time.minutes,

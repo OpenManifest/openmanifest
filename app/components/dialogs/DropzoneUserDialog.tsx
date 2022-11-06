@@ -113,43 +113,41 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   ]);
 
   return (
-    <Portal>
-      <Dialog visible={!!open}>
-        <ProgressBar
-          indeterminate
-          visible={createData.loading}
-          color={globalState.theme.colors.primary}
-        />
-        <Dialog.Title>{`${state?.original?.id ? 'Edit' : 'New'} dropzone user`}</Dialog.Title>
-        <Dialog.Content>
-          <DropzoneUserForm />
-          {state.original && getCachedUser() ? (
-            <>
-              <List.Subheader style={{ paddingLeft: 0 }}>Acting permissions</List.Subheader>
-              <PermissionBadges
-                dropzoneUser={getCachedUser() as DropzoneUser}
-                permissions={
-                  (getCachedUser() as DropzoneUser).permissions?.filter((name) =>
-                    /^actAs/.test(name)
-                  ) as Permission[]
-                }
-              />
-            </>
-          ) : null}
-        </Dialog.Content>
-        <Dialog.Actions style={{ justifyContent: 'flex-end' }}>
-          <Button
-            onPress={() => {
-              dispatch(actions.forms.dropzoneUser.reset());
-              onClose();
-            }}
-          >
-            Cancel
-          </Button>
+    <Dialog visible={!!open}>
+      <ProgressBar
+        indeterminate
+        visible={createData.loading}
+        color={globalState.theme.colors.primary}
+      />
+      <Dialog.Title>{`${state?.original?.id ? 'Edit' : 'New'} dropzone user`}</Dialog.Title>
+      <Dialog.Content>
+        <DropzoneUserForm />
+        {state.original && getCachedUser() ? (
+          <>
+            <List.Subheader style={{ paddingLeft: 0 }}>Acting permissions</List.Subheader>
+            <PermissionBadges
+              dropzoneUser={getCachedUser() as DropzoneUser}
+              permissions={
+                (getCachedUser() as DropzoneUser).permissions?.filter((name) =>
+                  /^actAs/.test(name)
+                ) as Permission[]
+              }
+            />
+          </>
+        ) : null}
+      </Dialog.Content>
+      <Dialog.Actions style={{ justifyContent: 'flex-end' }}>
+        <Button
+          onPress={() => {
+            dispatch(actions.forms.dropzoneUser.reset());
+            onClose();
+          }}
+        >
+          Cancel
+        </Button>
 
-          <Button onPress={onSave}>Save</Button>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
+        <Button onPress={onSave}>Save</Button>
+      </Dialog.Actions>
+    </Dialog>
   );
 }

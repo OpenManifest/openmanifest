@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FlatList, Platform } from 'react-native';
 
 import { RouteProp, useIsFocused, useRoute } from '@react-navigation/core';
-import { SlotDetailsFragment, SlotEssentialsFragment } from 'app/api/operations';
+import { SlotDetailsFragment } from 'app/api/operations';
 import { LoadProvider, useLoadContext } from 'app/api/crud';
 import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
@@ -17,8 +17,8 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 
 import useRestriction from 'app/hooks/useRestriction';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
-import useMutationDeleteSlot from 'app/api/hooks/useMutationDeleteSlot';
 import { Divider } from 'react-native-paper';
+import { useManifestContext } from 'app/api/crud/useManifest';
 import ActionButton from './ActionButton';
 import Header from './Header';
 import InfoGrid from './InfoGrid';
@@ -37,6 +37,7 @@ function LoadScreen() {
   const forms = useAppSelector((root) => root.forms);
   const { palette, theme } = useAppSelector((root) => root.global);
 
+  const { deleteSlot } = useManifestContext();
   const { load, loading, refetch, updateGCA, updateLoadMaster, updatePilot, updatePlane } =
     useLoadContext();
   const isFocused = useIsFocused();
@@ -57,32 +58,33 @@ function LoadScreen() {
   const maxSlots = load?.maxSlots || 0;
   const occupiedSlots = load?.occupiedSlots || 0;
 
-  const mutationDeleteSlot = useMutationDeleteSlot({
-    onSuccess: (payload) =>
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: `${payload.slot?.dropzoneUser?.user?.name || 'User'} has been taken off load #${
-            load?.loadNumber
-          }`,
-          variant: 'success',
-        })
-      ),
-    onError: (message) =>
-      dispatch(
-        actions.notifications.showSnackbar({
-          message,
-          variant: 'error',
-        })
-      ),
-  });
-
   const onDeleteSlot = React.useCallback(
-    async (slot: SlotEssentialsFragment) => {
-      await mutationDeleteSlot.mutate({
+    async (slot: SlotDetailsFragment) => {
+      const response = await deleteSlot({
         id: Number(slot.id),
       });
+
+      if ('error' in response && response.error) {
+        dispatch(
+          actions.notifications.showSnackbar({
+            message:
+              response?.error ||
+              `${slot.dropzoneUser?.user?.name} could not be taken off load #${load?.loadNumber}`,
+            variant: 'error',
+          })
+        );
+      } else if ('slot' in response && slot?.id) {
+        dispatch(
+          actions.notifications.showSnackbar({
+            message: `${
+              response.slot?.dropzoneUser?.user?.name || 'User'
+            } has been taken off load #${load?.loadNumber}`,
+            variant: 'success',
+          })
+        );
+      }
     },
-    [mutationDeleteSlot]
+    [deleteSlot, dispatch, load?.loadNumber]
   );
 
   const onSlotPress = React.useCallback(
