@@ -11,7 +11,9 @@ import User, { UserRoutes } from '../authenticated/user/routes';
 
 export type WizardRoutes = {
   DropzoneWizardScreen: undefined;
-  UserWizardScreen: undefined;
+  UserWizardScreen: {
+    index?: number;
+  };
   ConfirmUserScreen: undefined;
   RecoverPasswordScreen: undefined;
   ChangePasswordScreen: undefined;

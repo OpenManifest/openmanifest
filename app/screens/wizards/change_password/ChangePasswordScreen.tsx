@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Wizard } from 'app/components/navigation_wizard';
+import { Wizard } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useUpdateLostPasswordMutation } from 'app/api/reflection';
 import checkPasswordComplexity, { PasswordStrength } from 'app/utils/checkPasswordComplexity';
 import { User } from 'app/api/schema.d';
 import { useNavigation, useRoute } from '@react-navigation/core';
+import { WizardRef } from 'app/components/carousel_wizard/Wizard';
 import DoneStep from './steps/Done';
 import PasswordStep from './steps/Password';
 import PasswordConfirmationStep from './steps/PasswordConfirmation';
@@ -20,6 +21,7 @@ export default function SignupWizard() {
   }>();
 
   const [updatePassword] = useUpdateLostPasswordMutation();
+  const wizard = React.useRef<WizardRef>(null);
 
   const onChangePassword = React.useCallback(async () => {
     try {
@@ -80,7 +82,7 @@ export default function SignupWizard() {
   return (
     <Wizard
       dots
-      name="ChangePasswordWizard"
+      ref={wizard}
       steps={[
         { onBack: navigation.goBack, onNext: validatePassword, component: PasswordStep },
         { onNext: onChangePassword, component: PasswordConfirmationStep },

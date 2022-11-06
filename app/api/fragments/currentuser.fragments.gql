@@ -37,8 +37,7 @@ fragment currentUserDetailed on DropzoneUser {
     ...rigEssentials
   }
   license {
-    id
-    name
+    ...licenseDetails
   }
 
   user {

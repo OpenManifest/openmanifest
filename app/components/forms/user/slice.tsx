@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
+  CurrentUserDetailedFragment,
   DropzoneUserDetailsFragment,
   FederationEssentialsFragment,
   LicenseDetailsFragment,
@@ -106,27 +107,19 @@ export default createSlice({
       state.fields[field].error = error;
     },
 
-    setOriginal: (state: IUserEditState, action: PayloadAction<DropzoneUserDetailsFragment>) => {
+    setOriginal: (
+      state: IUserEditState,
+      action: PayloadAction<DropzoneUserDetailsFragment | CurrentUserDetailedFragment>
+    ) => {
       state.original = action.payload;
-      state.federation.value =
-        action.payload.license?.federation ||
-        action.payload?.user?.userFederations?.find((i) => i)?.federation ||
-        null;
-      if (
-        state.federation.value &&
-        action.payload.user?.userFederations?.find(
-          ({ federation }) => federation.id === state.federation.value?.id
-        )?.uid
-      ) {
-        state.fields.apfNumber.value = action.payload.user?.userFederations?.find(
-          ({ federation }) => federation.id === state.federation.value?.id
-        )?.uid;
-      }
+      console.debug('--FEDERATION', state.federation);
+      console.debug('--FEDERATION2', action.payload.user?.userFederations);
       Object.keys(action.payload.user).forEach((key) => {
         const payloadKey = key as keyof typeof action.payload;
         if (payloadKey in state.fields) {
           const typedKey = payloadKey as keyof typeof initialState['fields'];
           if (typedKey === 'license') {
+            console.debug('--LICENSE', action.payload.license);
             state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment)[
               typedKey
             ];
@@ -137,6 +130,24 @@ export default createSlice({
           }
         }
       });
+      state.federation.value =
+        action.payload.license?.federation ||
+        action.payload?.user?.userFederations?.find((i) => i)?.federation ||
+        null;
+      if (
+        state.federation.value &&
+        action.payload.user?.userFederations?.find(
+          ({ federation }) => federation.id === state.federation.value?.id
+        )?.uid
+      ) {
+        const userFederation = action.payload.user?.userFederations?.find(
+          ({ federation }) => federation.id === state.federation.value?.id
+        );
+        state.fields.apfNumber.value = userFederation?.uid;
+        state.fields.license.value =
+          state.fields.license.value || userFederation?.license || state?.original?.license;
+        console.debug('SET APF NUMBER TO ', state.fields.apfNumber.value);
+      }
     },
 
     setOpen: (

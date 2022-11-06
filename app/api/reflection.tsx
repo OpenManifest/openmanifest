@@ -555,8 +555,7 @@ export const CurrentUserDetailedFragmentDoc = gql`
     ...rigEssentials
   }
   license {
-    id
-    name
+    ...licenseDetails
   }
   user {
     ...currentUser
@@ -566,6 +565,7 @@ export const CurrentUserDetailedFragmentDoc = gql`
 ${RigInspectionEssentialsFragmentDoc}
 ${OrderEssentialsFragmentDoc}
 ${RigEssentialsFragmentDoc}
+${LicenseDetailsFragmentDoc}
 ${CurrentUserFragmentDoc}`;
 export const DropzoneExtensiveFragmentDoc = gql`
     fragment dropzoneExtensive on Dropzone {
@@ -2390,6 +2390,47 @@ export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<O
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<Operation.UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateUserMutation, Operation.UpdateUserMutationVariables>;
+export const UpdateVisibilityDocument = gql`
+    mutation UpdateVisibility($dropzone: ID!, $event: DropzoneStateEvent!) {
+  updateVisibility(input: {dropzone: $dropzone, event: $event}) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    dropzone {
+      ...dropzoneDetailed
+    }
+  }
+}
+    ${DropzoneDetailedFragmentDoc}`;
+export type UpdateVisibilityMutationFn = Apollo.MutationFunction<Operation.UpdateVisibilityMutation, Operation.UpdateVisibilityMutationVariables>;
+
+/**
+ * __useUpdateVisibilityMutation__
+ *
+ * To run a mutation, you first call `useUpdateVisibilityMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateVisibilityMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateVisibilityMutation, { data, loading, error }] = useUpdateVisibilityMutation({
+ *   variables: {
+ *      dropzone: // value for 'dropzone'
+ *      event: // value for 'event'
+ *   },
+ * });
+ */
+export function useUpdateVisibilityMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateVisibilityMutation, Operation.UpdateVisibilityMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateVisibilityMutation, Operation.UpdateVisibilityMutationVariables>(UpdateVisibilityDocument, options);
+      }
+export type UpdateVisibilityMutationHookResult = ReturnType<typeof useUpdateVisibilityMutation>;
+export type UpdateVisibilityMutationResult = Apollo.MutationResult<Operation.UpdateVisibilityMutation>;
+export type UpdateVisibilityMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateVisibilityMutation, Operation.UpdateVisibilityMutationVariables>;
 export const UserSignUpDocument = gql`
     mutation UserSignUp($email: String!, $password: String!, $passwordConfirmation: String!, $name: String!, $phone: String!, $pushToken: String, $exitWeight: Float!, $licenseId: Int) {
   userRegister(
@@ -3011,51 +3052,41 @@ export function useDropzoneUserDetailedLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type DropzoneUserDetailedQueryHookResult = ReturnType<typeof useDropzoneUserDetailedQuery>;
 export type DropzoneUserDetailedLazyQueryHookResult = ReturnType<typeof useDropzoneUserDetailedLazyQuery>;
 export type DropzoneUserDetailedQueryResult = Apollo.QueryResult<Operation.DropzoneUserDetailedQuery, Operation.DropzoneUserDetailedQueryVariables>;
-export const QueryDropzoneUserProfileDocument = gql`
-    query QueryDropzoneUserProfile($dropzoneId: ID!, $dropzoneUserId: Int) {
-  dropzone(id: $dropzoneId) {
-    id
-    name
-    rigInspectionTemplate {
-      id
-      name
-      definition
-    }
-    dropzoneUser(id: $dropzoneUserId) {
-      ...dropzoneUserProfile
-    }
+export const DropzoneUserProfileDocument = gql`
+    query DropzoneUserProfile($id: ID!) {
+  dropzoneUser(id: $id) {
+    ...dropzoneUserProfile
   }
 }
     ${DropzoneUserProfileFragmentDoc}`;
 
 /**
- * __useQueryDropzoneUserProfile__
+ * __useDropzoneUserProfileQuery__
  *
- * To run a query within a React component, call `useQueryDropzoneUserProfile` and pass it any options that fit your needs.
- * When your component renders, `useQueryDropzoneUserProfile` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useDropzoneUserProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDropzoneUserProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useQueryDropzoneUserProfile({
+ * const { data, loading, error } = useDropzoneUserProfileQuery({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
- *      dropzoneUserId: // value for 'dropzoneUserId'
+ *      id: // value for 'id'
  *   },
  * });
  */
-export function useQueryDropzoneUserProfile(baseOptions: Apollo.QueryHookOptions<Operation.QueryDropzoneUserProfileQuery, Operation.QueryDropzoneUserProfileQueryVariables>) {
+export function useDropzoneUserProfileQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.QueryDropzoneUserProfileQuery, Operation.QueryDropzoneUserProfileQueryVariables>(QueryDropzoneUserProfileDocument, options);
+        return Apollo.useQuery<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>(DropzoneUserProfileDocument, options);
       }
-export function useQueryDropzoneUserProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.QueryDropzoneUserProfileQuery, Operation.QueryDropzoneUserProfileQueryVariables>) {
+export function useDropzoneUserProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.QueryDropzoneUserProfileQuery, Operation.QueryDropzoneUserProfileQueryVariables>(QueryDropzoneUserProfileDocument, options);
+          return Apollo.useLazyQuery<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>(DropzoneUserProfileDocument, options);
         }
-export type QueryDropzoneUserProfileHookResult = ReturnType<typeof useQueryDropzoneUserProfile>;
-export type QueryDropzoneUserProfileLazyQueryHookResult = ReturnType<typeof useQueryDropzoneUserProfileLazyQuery>;
-export type QueryDropzoneUserProfileQueryResult = Apollo.QueryResult<Operation.QueryDropzoneUserProfileQuery, Operation.QueryDropzoneUserProfileQueryVariables>;
+export type DropzoneUserProfileQueryHookResult = ReturnType<typeof useDropzoneUserProfileQuery>;
+export type DropzoneUserProfileLazyQueryHookResult = ReturnType<typeof useDropzoneUserProfileLazyQuery>;
+export type DropzoneUserProfileQueryResult = Apollo.QueryResult<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>;
 export const DropzonesDocument = gql`
     query Dropzones($state: [DropzoneState!]) {
   dropzones(state: $state) {

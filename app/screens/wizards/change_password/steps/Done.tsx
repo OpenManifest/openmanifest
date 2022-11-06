@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Paragraph } from 'react-native-paper';
-import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard/Step';
+import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard/Step';
 import LottieView from 'app/components/LottieView';
 import lottieDoneAnimation from '../../../../../assets/images/finished-2.json';
 

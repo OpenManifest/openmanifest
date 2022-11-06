@@ -44,7 +44,6 @@ export default function Select<T>(props: ISelectProps<T>) {
   const { label, options, compare = isEqual, onChange, value, renderAnchor } = props;
   const [open, setOpen] = React.useState<boolean>(false);
 
-  console.log('Select menu', open);
   const onDismiss = React.useCallback(() => {
     setOpen(false);
   }, []);

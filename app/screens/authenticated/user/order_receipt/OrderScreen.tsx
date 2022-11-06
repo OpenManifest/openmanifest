@@ -23,7 +23,7 @@ export default function OrderScreen() {
   const route = useRoute<RouteProp<OrderReceiptRoute, 'OrderReceiptScreen'>>();
   const theme = useTheme();
   const { orderId, userId } = route.params;
-  const { dropzoneUser } = useDropzoneUserProfile(Number(userId));
+  const { dropzoneUser } = useDropzoneUserProfile(userId);
   const order = React.useMemo(
     () =>
       dropzoneUser?.orders?.edges?.map((edge) => edge?.node).find((node) => node?.id === orderId),

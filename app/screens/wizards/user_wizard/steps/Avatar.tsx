@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Avatar, Paragraph, TouchableRipple, useTheme } from 'react-native-paper';
-import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard';
+import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import useImagePicker from 'app/hooks/useImagePicker';
 

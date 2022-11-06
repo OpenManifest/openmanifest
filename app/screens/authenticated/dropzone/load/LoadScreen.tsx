@@ -125,7 +125,6 @@ function LoadScreen() {
 
   const onSlotGroupPress = React.useCallback(
     (slotGroup: SlotDetailsFragment[]) => {
-      console.debug({ slotGroup2: slotGroup });
       if (load) {
         dispatch(actions.forms.manifestGroup.reset());
         dispatch(actions.forms.manifestGroup.setOpen(true));

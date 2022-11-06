@@ -1,4 +1,4 @@
-import { useQueryDropzoneUserProfile } from 'app/api/reflection';
+import { useDropzoneUserProfileQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
 import { Card, ProgressBar, Divider, List, Button } from 'react-native-paper';
@@ -12,8 +12,7 @@ import RigSelect from '../../input/dropdown_select/RigSelect';
 import NumberField, { NumberFieldType } from '../../input/number_input/NumberField';
 
 interface IUserRigCard {
-  dropzoneUserId: number;
-  dropzoneId: string;
+  dropzoneUserId: string;
   exitWeight?: number;
   isTandem?: boolean;
   selectedRig?: RigEssentialsFragment;
@@ -29,7 +28,6 @@ interface IUserRigCard {
 
 export default function UserRigCard(props: IUserRigCard) {
   const {
-    dropzoneId,
     dropzoneUserId,
     onChangeRig,
     exitWeight,
@@ -44,28 +42,27 @@ export default function UserRigCard(props: IUserRigCard) {
   } = props;
   const { global: globalState } = useAppSelector((root) => root);
 
-  const { data, loading } = useQueryDropzoneUserProfile({
+  const { data, loading } = useDropzoneUserProfileQuery({
     variables: {
-      dropzoneUserId,
-      dropzoneId,
+      id: dropzoneUserId,
     },
     onError: console.error,
   });
 
   React.useEffect(() => {
-    if (!exitWeight && data?.dropzone?.dropzoneUser?.user?.exitWeight) {
-      onChangeExitWeight(Number(data.dropzone.dropzoneUser.user.exitWeight));
+    if (!exitWeight && data?.dropzoneUser?.user?.exitWeight) {
+      onChangeExitWeight(Number(data.dropzoneUser.user.exitWeight));
     }
-  }, [data?.dropzone?.dropzoneUser?.user.exitWeight, exitWeight, onChangeExitWeight]);
+  }, [data?.dropzoneUser?.user.exitWeight, exitWeight, onChangeExitWeight]);
   return (
     <Card style={{ marginHorizontal: 16, marginBottom: 16 }} elevation={1}>
       <ProgressBar indeterminate color={globalState.theme.colors.primary} visible={loading} />
       <Card.Title
-        title={data?.dropzone?.dropzoneUser?.user.name}
+        title={data?.dropzoneUser?.user.name}
         left={() => (
           <UserAvatar
-            name={data?.dropzone?.dropzoneUser?.user?.name}
-            image={data?.dropzone?.dropzoneUser?.user?.image}
+            name={data?.dropzoneUser?.user?.name}
+            image={data?.dropzoneUser?.user?.image}
             size={36}
           />
         )}
@@ -88,7 +85,7 @@ export default function UserRigCard(props: IUserRigCard) {
           <RigSelect
             small
             variant="chip"
-            dropzoneUserId={dropzoneUserId}
+            dropzoneUserId={dropzoneUserId ? Number(dropzoneUserId) : undefined}
             onSelect={onChangeRig}
             value={selectedRig}
             tandem={isTandem}
@@ -100,10 +97,10 @@ export default function UserRigCard(props: IUserRigCard) {
             </Chip>
           )}
           <Chip small icon="lock" mode="outlined" disabled>
-            {data?.dropzone?.dropzoneUser?.role?.name}
+            {data?.dropzoneUser?.role?.name}
           </Chip>
           <Chip small icon="ticket-account" mode="outlined" disabled>
-            {data?.dropzone?.dropzoneUser?.license?.name}
+            {data?.dropzoneUser?.license?.name}
           </Chip>
         </ScrollView>
         {!isTandem ? null : (

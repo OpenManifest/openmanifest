@@ -2,7 +2,7 @@ import * as React from 'react';
 import TextInput from 'app/components/input/text/TextField';
 import { HelperText } from 'react-native-paper';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard/Step';
+import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard/Step';
 
 function ValidateTokenStep(props: IWizardStepProps) {
   const { fields } = useAppSelector((state) => state.screens.signup);

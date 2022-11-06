@@ -12,7 +12,6 @@ export default function Stats(props: IStatsProps) {
   const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
   const onLayout = React.useCallback((event: LayoutChangeEvent) => {
     setDimensions(event.nativeEvent.layout);
-    console.debug(event.nativeEvent.layout);
   }, []);
 
   const columns = React.useMemo(() => cols || data?.length || 1, [cols, data?.length]);

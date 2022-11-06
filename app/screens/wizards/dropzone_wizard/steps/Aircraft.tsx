@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Card, List } from 'react-native-paper';
 import TextInput from 'app/components/input/text/TextField';
-import { Step, Fields, IWizardStepProps } from 'app/components/navigation_wizard';
+import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import NumberField from 'app/components/input/number_input/NumberField';
 

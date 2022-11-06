@@ -1,10 +1,5 @@
 import * as React from 'react';
-import { startOfDay } from 'date-fns';
-import {
-  useJoinFederationMutation,
-  DropzoneDocument,
-  QueryDropzoneUserProfileDocument,
-} from 'app/api/reflection';
+import { useJoinFederationMutation, DropzoneUserProfileDocument } from 'app/api/reflection';
 import UserForm from '../forms/user/UserForm';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import DialogOrSheet from '../layout/DialogOrSheet';
@@ -13,13 +8,12 @@ import { UserFields } from '../forms/user/slice';
 
 interface IUpdateUserDialog {
   open?: boolean;
-  dropzoneUserId: number;
+  dropzoneUserId?: string;
   onClose(): void;
   onSuccess(): void;
 }
 export default function UpdateUserDialog(props: IUpdateUserDialog) {
   const { open, onSuccess, onClose, dropzoneUserId } = props;
-  const currentDropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
   const state = useAppSelector((root) => root.forms.user);
   const dispatch = useAppDispatch();
   const [joinFederation] = useJoinFederationMutation();
@@ -42,9 +36,8 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
     mutation: {
       refetchQueries: [
         {
-          query: QueryDropzoneUserProfileDocument,
+          query: DropzoneUserProfileDocument,
           variables: {
-            dropzoneId: currentDropzoneId,
             dropzoneUserId,
           },
         },

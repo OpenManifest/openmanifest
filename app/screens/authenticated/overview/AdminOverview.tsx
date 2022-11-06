@@ -8,6 +8,8 @@ import Chip from 'app/components/chips/Chip';
 import { sumBy } from 'lodash';
 import { DropzoneStatisticsFragment } from 'app/api/operations';
 import { Card } from 'react-native-paper';
+import { DropzonesProvider } from 'app/api/crud';
+import { DropzoneState } from 'app/api/schema.d';
 import Stats, { IStatsProps } from './statistics/Stats';
 import LoadsByDay from './statistics/LoadsByDay';
 import DropzonesTable from './DropzonesTable';
@@ -20,7 +22,7 @@ enum TimeRange {
   Year = 12,
 }
 
-export default function DashboardPage() {
+function AdminOverviewPage() {
   const [selectedTimeRange, setTimeRange] = React.useState<TimeRange>();
 
   const timeRange = React.useMemo(() => {
@@ -216,6 +218,21 @@ export default function DashboardPage() {
         />
       </View>
     </ScrollableScreen>
+  );
+}
+
+export default function AdminOverviewPageWrapper() {
+  return (
+    <DropzonesProvider
+      state={[
+        DropzoneState.Archived,
+        DropzoneState.InReview,
+        DropzoneState.Private,
+        DropzoneState.Public,
+      ]}
+    >
+      <AdminOverviewPage />
+    </DropzonesProvider>
   );
 }
 

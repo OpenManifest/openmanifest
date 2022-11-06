@@ -1,27 +1,12 @@
-import { useNavigation } from '@react-navigation/core';
 import { StyleSheet } from 'react-native';
 import LottieView from 'app/components/LottieView';
 import * as React from 'react';
 import { Card, List } from 'react-native-paper';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
-import { actions, useAppDispatch } from 'app/state';
+import useProfileWizard from 'app/hooks/navigation/useProfileWizard';
 
 export default function SetupProfileCard() {
-  const navigation = useNavigation();
-  const { currentUser } = useDropzoneContext();
-  const dispatch = useAppDispatch();
-
-  const onPress = React.useCallback(() => {
-    if (currentUser) {
-      dispatch(actions.forms.user.setOriginal(currentUser));
-      if (currentUser?.user?.rigs?.length) {
-        dispatch(actions.forms.rig.setOriginal(currentUser.user.rigs[0]));
-      }
-      navigation.navigate('Wizards', {
-        screen: 'UserWizardScreen',
-      });
-    }
-  }, [currentUser, dispatch, navigation]);
+  const openWizard = useProfileWizard();
+  const onPress = React.useCallback(() => openWizard(), [openWizard]);
 
   return (
     <Card style={styles.card} {...{ onPress }}>

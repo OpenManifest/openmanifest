@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Wizard } from 'app/components/navigation_wizard';
+import { Wizard } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import {
   useJoinFederationMutation,
@@ -9,6 +9,8 @@ import {
 import useMutationUpdateUser from 'app/api/hooks/useMutationUpdateUser';
 import { UserFields } from 'app/components/forms/user/slice';
 import { License, Rig } from 'app/api/schema.d';
+import { WizardRef } from 'app/components/carousel_wizard/Wizard';
+import { useRoute } from '@react-navigation/core';
 import FederationStep from './steps/Federation';
 import FederationNumberStep from './steps/FederationNumber';
 import RealNameStep from './steps/RealName';
@@ -26,6 +28,16 @@ function UserWizardScreen() {
   const rigForm = useAppSelector((root) => root.forms.rig);
   const state = useAppSelector((root) => root.screens.userWizard);
   const dispatch = useAppDispatch();
+  const wizard = React.useRef<WizardRef>(null);
+  const { params } = useRoute<{ key: string; name: string; params: { index: number } }>();
+  console.debug('PARAMS', params);
+
+  React.useEffect(() => {
+    if (params?.index !== undefined && wizard.current) {
+      console.debug('SETTING INDEX', params.index);
+      wizard.current?.scrollTo({ index: params.index });
+    }
+  }, [params?.index]);
 
   const [joinFederation] = useJoinFederationMutation();
   const mutationUpdateUser = useMutationUpdateUser({
@@ -99,6 +111,7 @@ function UserWizardScreen() {
         },
       });
       const license = mutationResult?.data?.joinFederation?.userFederation?.license;
+      console.debug('FOUND LICENSE', mutationResult?.data?.joinFederation);
 
       if (license) {
         dispatch(actions.forms.user.setField(['license', license as License]));
@@ -162,25 +175,29 @@ function UserWizardScreen() {
     // Create user rig
     try {
       if (!rigForm.original?.id) {
+        console.debug('CREATING RIG');
         const response = await mutationCreateRig({
           variables: {
             make: rigForm.fields.make.value,
             model: rigForm.fields.model.value,
             serial: rigForm.fields.serial.value,
-            userId: Number(userForm.original?.id),
+            userId: Number(userForm.original?.user?.id),
           },
         });
         if (response?.data?.createRig?.rig) {
           dispatch(actions.forms.rig.setOriginal(response?.data?.createRig?.rig as Rig));
+        } else {
+          console.debug('ERROR CREATING RIG', response?.data?.createRig);
         }
       } else {
+        console.debug('RIG ID IS', rigForm.original?.id);
         const response = await mutationUpdateRig({
           variables: {
             id: Number(rigForm.original?.id),
             make: rigForm.fields.make.value,
             model: rigForm.fields.model.value,
             serial: rigForm.fields.serial.value,
-            userId: Number(userForm.original?.id),
+            userId: Number(userForm.original?.user?.id),
           },
         });
         if (response?.data?.updateRig?.rig) {
@@ -197,31 +214,36 @@ function UserWizardScreen() {
     rigForm.original?.id,
     dispatch,
     mutationCreateRig,
-    userForm.original?.id,
+    userForm.original?.user?.id,
     mutationUpdateRig,
   ]);
 
   const onReserveRepackNext = React.useCallback(async () => {
-    // Validate
-    if (!rigForm.fields.repackExpiresAt?.value) {
-      dispatch(
-        actions.forms.rig.setFieldError([
-          'repackExpiresAt',
-          "Select repack date, even if it's in the past",
-        ])
-      );
-      throw new Error();
-    }
+    try {
+      // Validate
+      if (!rigForm.fields.repackExpiresAt?.value) {
+        dispatch(
+          actions.forms.rig.setFieldError([
+            'repackExpiresAt',
+            "Select repack date, even if it's in the past",
+          ])
+        );
+        throw new Error();
+      }
 
-    // Update repack expiry date
-    const { data } = await mutationUpdateRig({
-      variables: {
-        id: Number(rigForm.original?.id),
-        repackExpiresAt: rigForm.fields.repackExpiresAt.value,
-      },
-    });
-    if (data?.updateRig?.rig) {
-      dispatch(actions.forms.rig.setOriginal(data?.updateRig?.rig as Rig));
+      // Update repack expiry date
+      const { data } = await mutationUpdateRig({
+        variables: {
+          id: Number(rigForm.original?.id),
+          repackExpiresAt: rigForm.fields.repackExpiresAt.value,
+        },
+      });
+      console.debug('Updated rig', data);
+      if (data?.updateRig?.rig) {
+        dispatch(actions.forms.rig.setOriginal(data?.updateRig?.rig as Rig));
+      }
+    } catch (e) {
+      console.error(e);
     }
   }, [dispatch, mutationUpdateRig, rigForm.fields.repackExpiresAt.value, rigForm.original?.id]);
 
@@ -330,7 +352,7 @@ function UserWizardScreen() {
     ]
   );
 
-  return <Wizard name="UserWizard" dots {...{ steps }} />;
+  return <Wizard ref={wizard} dots {...{ steps }} />;
 }
 
 export default UserWizardScreen;

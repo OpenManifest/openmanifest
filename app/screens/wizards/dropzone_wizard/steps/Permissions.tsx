@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { capitalize } from 'lodash';
-import { Step, IWizardStepProps, Fields } from 'app/components/navigation_wizard';
+import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
 import { useAppSelector } from 'app/state';
 import { Permission } from 'app/api/schema.d';
 import PermissionListItem from 'app/components/permissions/PermissionListItem';

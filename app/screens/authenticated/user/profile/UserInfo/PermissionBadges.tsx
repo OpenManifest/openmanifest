@@ -13,7 +13,7 @@ import { Permission } from 'app/api/schema.d';
 import {
   CurrentUserPermissionsDocument,
   DropzoneUsersDocument,
-  QueryDropzoneUserProfileDocument,
+  DropzoneUserProfileDocument,
   useGrantPermissionMutation,
   useRevokePermissionMutation,
   DropzoneUsersDetailedDocument,
@@ -47,10 +47,9 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
       { query: DropzoneUsersDocument },
       { query: DropzoneUsersDetailedDocument },
       {
-        query: QueryDropzoneUserProfileDocument,
+        query: DropzoneUserProfileDocument,
         variables: {
-          dropzoneId: state.currentDropzoneId,
-          dropzoneUserId: Number(dropzoneUser.id),
+          dropzoneUserId: dropzoneUser.id,
         },
       },
     ],
@@ -102,10 +101,9 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
     }),
     refetchQueries: [
       {
-        query: QueryDropzoneUserProfileDocument,
+        query: DropzoneUserProfileDocument,
         variables: {
-          dropzoneId: state.currentDropzoneId,
-          dropzoneUserId: Number(dropzoneUser.id),
+          dropzoneUserId: dropzoneUser.id,
         },
       },
     ],

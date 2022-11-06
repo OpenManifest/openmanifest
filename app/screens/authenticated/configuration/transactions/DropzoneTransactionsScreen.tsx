@@ -8,7 +8,8 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import CreditsSheet from 'app/components/dialogs/CreditsDialog/Credits';
 
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
-import { useDropzoneTransactionsLazyQuery, useQueryDropzoneUserProfile } from 'app/api/reflection';
+import { useDropzoneTransactionsLazyQuery } from 'app/api/reflection';
+import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
 import OrderCard from '../../../../components/orders/OrderCard';
 
 export default function TransactionsScreen() {
@@ -18,16 +19,8 @@ export default function TransactionsScreen() {
   const { currentUser } = useDropzoneContext();
   const [fetchTransactions] = useDropzoneTransactionsLazyQuery();
   const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
-  const { data, loading, refetch } = useQueryDropzoneUserProfile({
-    variables: {
-      dropzoneId: state.currentDropzoneId?.toString() as string,
-      dropzoneUserId: Number(route?.params?.userId) || Number(currentUser?.id),
-    },
-  });
-
-  const dropzoneUser = React.useMemo(
-    () => data?.dropzone?.dropzoneUser,
-    [data?.dropzone?.dropzoneUser]
+  const { dropzoneUser, loading, refetch } = useDropzoneUserProfile(
+    route?.params?.userId || currentUser?.id
   );
 
   const isFocused = useIsFocused();

@@ -34,7 +34,10 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
       if (dropzoneUser?.user?.rigs?.length) {
         dispatch(actions.forms.rig.setOriginal(dropzoneUser.user.rigs[0]));
       }
-      rootNavigator.navigate('Wizards', { screen: 'UserWizardScreen' });
+      rootNavigator.navigate('Wizards', {
+        screen: 'UserWizardScreen',
+        params: { index: undefined },
+      });
     }
   }, [dispatch, dropzoneUser, rootNavigator]);
 

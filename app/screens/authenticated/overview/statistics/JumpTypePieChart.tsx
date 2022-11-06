@@ -24,7 +24,6 @@ export default function LoadsByDay(props: IJumpTypePieChart) {
   const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
   const onLayout = React.useCallback((event: LayoutChangeEvent) => {
     setDimensions(event.nativeEvent.layout);
-    console.debug(event.nativeEvent.layout);
   }, []);
 
   const data = React.useMemo(
