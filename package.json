@@ -1,6 +1,7 @@
 {
   "main": "index.js",
   "homepage": "https://openmanifest.org",
+  "license": "CC-BY-NC",
   "scripts": {
     "postinstall": "yarn patch-package",
     "eject": "expo eject",
