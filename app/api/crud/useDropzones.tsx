@@ -4,6 +4,7 @@ import { useDropzonesQuery, useUpdateVisibilityMutation } from '../reflection';
 import { DropzoneDetailedFragment, DropzonesQueryVariables } from '../operations';
 import createCRUDContext, { uninitializedHandler, TMutationResponse } from './factory';
 import { DropzoneStateEvent } from '../schema.d';
+import { useAppSignal } from 'app/components/app_signal';
 
 export default function useDropzones(vars: Partial<DropzonesQueryVariables>) {
   const state = useAppSelector((root) => root.global);
@@ -21,6 +22,7 @@ export default function useDropzones(vars: Partial<DropzonesQueryVariables>) {
   });
 
   const [updateVisibilityMutation] = useUpdateVisibilityMutation();
+  const { appSignal } = useAppSignal();
 
   const updateVisibility = React.useCallback(
     async function UpdateVisibility(id: string, event: DropzoneStateEvent): Promise<TMutationResponse<{ dropzone: DropzoneDetailedFragment }>> {
@@ -33,14 +35,15 @@ export default function useDropzones(vars: Partial<DropzonesQueryVariables>) {
         });
 
         if (response?.data?.updateVisibility?.dropzone?.id) {
-          return { dropzone: response.data.dropzone };
+          return { dropzone: response.data.updateVisibility?.dropzone };
         }
         return {
           error: response?.data?.updateVisibility?.errors?.[0],
-          fieldErrors: response?.data?.updateVisibility?.fieldErrors,
+          fieldErrors: response?.data?.updateVisibility?.fieldErrors || undefined,
         }
       } catch (e) {
-        console.error(e);
+        appSignal.sendError(e as Error);
+        return { error: 'You cant modify dropzone visibility' };
       }
     },
     []
