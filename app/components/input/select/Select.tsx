@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { List } from 'react-native-paper';
+import { HelperText, List } from 'react-native-paper';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import { isEqual } from 'lodash';
@@ -41,7 +41,7 @@ function Anchor<T>(props: IAnchorProps<T>): JSX.Element {
 }
 
 export default function Select<T>(props: ISelectProps<T>) {
-  const { label, options, compare = isEqual, onChange, value, renderAnchor } = props;
+  const { label, options, error, compare = isEqual, onChange, value, renderAnchor } = props;
   const [open, setOpen] = React.useState<boolean>(false);
 
   const onDismiss = React.useCallback(() => {
@@ -98,6 +98,7 @@ export default function Select<T>(props: ISelectProps<T>) {
           />
         ))}
       </Menu>
+      <HelperText type="error">{error || ' '}</HelperText>
     </>
   );
 }

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import ManifestUserDialog from 'app/forms/manifest_user';
+import ManifestUserDialog from 'app/forms/manifest_user/Dialog';
 import { LoadsQueryVariables } from '../../operations';
-import { ManifestProvider, useManifestContext } from './useManifest';
+import { ManifestProvider, useManifestContext } from './Context';
 
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
 

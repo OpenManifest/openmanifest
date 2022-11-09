@@ -60,15 +60,15 @@ function Content() {
                         linking={LinkingConfiguration}
                         theme={state.theme as unknown as never}
                       >
-                        <DropzonesProvider>
-                          <Wrapper>
+                        <Wrapper>
+                          <DropzonesProvider>
                             <AppSignalSessionTagger>
                               <PushNotificationsProvider>
                                 <RootNavigator />
                               </PushNotificationsProvider>
                             </AppSignalSessionTagger>
-                          </Wrapper>
-                        </DropzonesProvider>
+                          </DropzonesProvider>
+                        </Wrapper>
                       </NavigationContainer>
 
                       <StatusBar />

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { useManifestContext } from 'app/api/crud/useManifest/useManifest';
+import { useManifestContext } from 'app/api/crud/useManifest';
 import { LoadDetailsFragment } from 'app/api/operations';
 import { actions, useAppSelector, useAppDispatch } from '../../state';
 import { actions as snackbar } from '../notifications';

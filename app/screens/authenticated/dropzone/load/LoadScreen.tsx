@@ -17,7 +17,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { Divider } from 'react-native-paper';
-import { useManifestContext } from 'app/api/crud/useManifest/useManifest';
+import { useManifestContext } from 'app/api/crud/useManifest';
 import ActionButton from './ActionButton';
 import Header from './Header';
 import InfoGrid from './InfoGrid';

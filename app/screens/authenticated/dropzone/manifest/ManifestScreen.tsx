@@ -21,7 +21,7 @@ import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { LoadDetailsFragment } from 'app/api/operations';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
-import { useManifestContext } from 'app/api/crud/useManifest/useManifest';
+import { useManifestContext } from 'app/api/crud/useManifest';
 import DragDropWrapper from '../../../../components/slots_table/DragAndDrop/DragDropSlotProvider';
 import GetStarted from '../../../../components/GetStarted';
 import LoadCardSmall from './LoadCard/Small/Card';
