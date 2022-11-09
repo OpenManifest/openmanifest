@@ -98,8 +98,8 @@ export default function ActivityFeedContainer(props: IActivityFeedContainerProps
                     canViewSystemActivity && EventAccessLevel.System,
                   ].filter(Boolean) as EventAccessLevel[]
                 }
-                onChangeSelected={onChangeAccessLevel}
-                selected={(accessLevels || []) as EventAccessLevel[]}
+                onChange={onChangeAccessLevel}
+                value={(accessLevels || []) as EventAccessLevel[]}
                 renderItemLabel={(value) =>
                   Object.keys(EventAccessLevel).find(
                     (key) => EventAccessLevel[key as keyof typeof EventAccessLevel] === value
@@ -119,8 +119,8 @@ export default function ActivityFeedContainer(props: IActivityFeedContainerProps
                     canViewAdminActivity && EventLevel.Error,
                   ].filter(Boolean) as EventLevel[]
                 }
-                onChangeSelected={onChangeEventLevel}
-                selected={(levels || []) as EventLevel[]}
+                onChange={onChangeEventLevel}
+                value={(levels || []) as EventLevel[]}
                 renderItemLabel={(value) =>
                   Object.keys(EventLevel).find(
                     (key) => EventLevel[key as keyof typeof EventLevel] === value

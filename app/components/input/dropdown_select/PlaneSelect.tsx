@@ -3,13 +3,14 @@ import { usePlanesQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import Select from '../select/Select';
+import { withHookForm } from '../withHookForm';
 
 interface IPlaneSelect {
   value?: PlaneEssentialsFragment | null;
-  onSelect(plane: PlaneEssentialsFragment): void;
+  onCHange(plane: PlaneEssentialsFragment): void;
 }
-export default function PlaneSelect(props: IPlaneSelect) {
-  const { onSelect, value } = props;
+function PlaneSelect(props: IPlaneSelect) {
+  const { onCHange, value } = props;
   const currentDropzone = useDropzoneContext();
 
   const { data } = usePlanesQuery({
@@ -31,5 +32,9 @@ export default function PlaneSelect(props: IPlaneSelect) {
     [data?.planes]
   );
 
-  return <Select<PlaneEssentialsFragment> value={selected} options={options} onChange={onSelect} />;
+  return <Select<PlaneEssentialsFragment> value={selected} options={options} onChange={onCHange} />;
 }
+
+export const PlaneSelectField = withHookForm(PlaneSelect);
+
+export default PlaneSelect;

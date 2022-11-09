@@ -3,16 +3,17 @@ import { TicketTypeEssentialsFragment } from 'app/api/operations';
 import { useTicketTypesQuery } from 'app/api/reflection';
 import { useAppSelector } from 'app/state';
 import Select from '../select/Select';
+import { withHookForm } from '../withHookForm';
 
 interface ITicketTypeSelect {
   value?: TicketTypeEssentialsFragment | null;
   required?: boolean;
   allowManifestingSelf?: boolean | null;
-  onSelect(jt: TicketTypeEssentialsFragment): void;
+  onChange(jt: TicketTypeEssentialsFragment): void;
 }
 
-export default function TicketTypeSelect(props: ITicketTypeSelect) {
-  const { allowManifestingSelf, value, onSelect } = props;
+function TicketTypeSelect(props: ITicketTypeSelect) {
+  const { allowManifestingSelf, value, onChange } = props;
   const { currentDropzoneId } = useAppSelector((root) => root.global);
   const { data } = useTicketTypesQuery({
     variables: {
@@ -29,5 +30,9 @@ export default function TicketTypeSelect(props: ITicketTypeSelect) {
       })) || [],
     [data?.ticketTypes]
   );
-  return <Select<TicketTypeEssentialsFragment> {...{ value, options }} onChange={onSelect} />;
+  return <Select<TicketTypeEssentialsFragment> {...{ value, options, onChange }} />;
 }
+
+export const TicketTypeSelectField = withHookForm(TicketTypeSelect);
+
+export default TicketTypeSelect;

@@ -20,7 +20,7 @@ import LoadSlotTable from 'app/components/slots_table/Table';
 import { SlotFields } from 'app/components/slots_table/UserRow';
 import { useLoadContext } from 'app/api/crud';
 import { withLoad } from 'app/api/crud/useLoad';
-import { useManifestContext } from 'app/api/crud/useManifest';
+import { useManifestContext } from 'app/api/crud/useManifest/useManifest';
 import LoadingCard from './Loading';
 
 interface ILoadCardLarge {

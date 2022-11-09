@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { View } from 'react-native';
-import { useManifestContext } from 'app/api/crud/useManifest';
+import { useManifestContext } from 'app/api/crud/useManifest/useManifest';
 import type { ISlotUserRowProps } from '../UserRow';
 
 interface IDraggableSlot {

@@ -8,18 +8,20 @@ import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import { ChipProps } from 'app/components/chips/Chip';
 import ChipSelect from './ChipSelect';
 import ChipSelectSkeleton from './ChipSelectSkeleton';
+import { withHookForm } from '../withHookForm';
 
 interface IDropzoneUserChipSelect {
   value?: DropzoneUserEssentialsFragment | null;
   label: string;
   icon?: ChipProps['icon'];
   requiredPermissions: Permission[];
+  error?: string | null;
   onLoadingStateChanged?(loading: boolean): void;
-  onSelect(dzuser: DropzoneUserEssentialsFragment): void;
+  onChange(dzuser: DropzoneUserEssentialsFragment): void;
 }
 
-export default function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
-  const { label, requiredPermissions, icon, value, onLoadingStateChanged, onSelect } = props;
+function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
+  const { label, requiredPermissions, icon, value, error, onLoadingStateChanged, onChange } = props;
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 
   const { data, loading } = useDropzoneUsersQuery({
@@ -34,8 +36,8 @@ export default function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
   }, [loading, onLoadingStateChanged]);
 
   const onChangeSelected = React.useCallback(
-    ([first]: DropzoneUserEssentialsFragment[]) => (first ? onSelect(first) : null),
-    [onSelect]
+    ([first]: DropzoneUserEssentialsFragment[]) => (first ? onChange(first) : null),
+    [onChange]
   );
   const getItemLabel = React.useCallback(
     (dzUser: DropzoneUserEssentialsFragment) => dzUser?.user.name,
@@ -56,6 +58,7 @@ export default function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
     <>
       <List.Subheader>{label}</List.Subheader>
       <ChipSelect<DropzoneUserEssentialsFragment>
+        {...{ error }}
         autoSelectFirst
         icon={icon || 'account'}
         items={
@@ -64,11 +67,15 @@ export default function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
             'id'
           ) as DropzoneUserEssentialsFragment[]
         }
-        selected={selected}
+        value={selected}
         isSelected={isSelected}
         renderItemLabel={getItemLabel}
-        onChangeSelected={onChangeSelected}
+        onChange={onChangeSelected}
       />
     </>
   );
 }
+
+export const DropzoneUserChipSelectField = withHookForm(DropzoneUserChipSelect);
+
+export default DropzoneUserChipSelect;

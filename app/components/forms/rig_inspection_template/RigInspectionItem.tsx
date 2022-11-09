@@ -63,7 +63,7 @@ export default function RigInspectionItem(props: IFormItemItem) {
       <View style={{ flex: 1 }}>
         <DatePicker
           disabled={!canInspect}
-          timestamp={Number(value)}
+          value={Number(value)}
           onChange={(time) =>
             onChange({
               ...config,

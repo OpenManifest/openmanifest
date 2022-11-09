@@ -5,13 +5,13 @@ import { DatePickerModal } from 'react-native-paper-dates';
 
 interface IDatepicker {
   label?: string;
-  timestamp: number;
+  value: number;
   disabled?: boolean;
   color?: string;
   onChange(timestamp: number): void;
 }
 export default function DatePicker(props: IDatepicker) {
-  const { disabled, label, timestamp, onChange, color } = props;
+  const { disabled, label, value, onChange, color } = props;
   const [open, setOpen] = React.useState(false);
 
   const onDismissSingle = React.useCallback(() => {
@@ -26,7 +26,7 @@ export default function DatePicker(props: IDatepicker) {
     [setOpen, onChange]
   );
 
-  const timestampLabel = timestamp ? format(timestamp * 1000, 'yyyy/MM/dd') : 'No date selected';
+  const timestampLabel = value ? format(value * 1000, 'yyyy/MM/dd') : 'No date selected';
 
   return (
     <>
@@ -44,7 +44,7 @@ export default function DatePicker(props: IDatepicker) {
           visible={open}
           mode="single"
           onDismiss={onDismissSingle}
-          date={timestamp ? new Date(timestamp * 1000) : new Date()}
+          date={value ? new Date(value * 1000) : new Date()}
           onConfirm={(date) => onConfirmSingle(date as { date: Date })}
           label={label}
         />

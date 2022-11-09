@@ -45,7 +45,7 @@ export default function GhostForm() {
       <View style={{ width: '100%' }}>
         <FederationSelect
           value={state?.fields?.license?.value?.federation || state.federation.value}
-          onSelect={(value) => dispatch(actions.forms.ghost.setFederation(value))}
+          onChange={(value) => dispatch(actions.forms.ghost.setFederation(value))}
         />
 
         <HelperText type={state.federation.error ? 'error' : 'info'}>
@@ -59,7 +59,7 @@ export default function GhostForm() {
               federationId={Number(
                 state?.fields?.license?.value?.federation?.id || state.federation?.value?.id
               )}
-              onSelect={(value) => dispatch(actions.forms.ghost.setField(['license', value]))}
+              onChange={(value) => dispatch(actions.forms.ghost.setField(['license', value]))}
             />
             <HelperText type={state.fields.license.error ? 'error' : 'info'}>
               {state.fields.license.error || ''}
@@ -69,7 +69,7 @@ export default function GhostForm() {
       </View>
       <RoleSelect
         value={state.fields.role?.value || null}
-        onSelect={(newValue) => dispatch(actions.forms.ghost.setField(['role', newValue]))}
+        onChange={(newValue) => dispatch(actions.forms.ghost.setField(['role', newValue]))}
       />
 
       <HelperText type={state.fields.phone.error ? 'error' : 'info'}>

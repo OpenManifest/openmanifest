@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { HelperText, TextInput, useTheme } from 'react-native-paper';
+import { withHookForm } from '../withHookForm';
 
 type Extract<T> = T extends React.ComponentType<infer U> ? U : never;
 interface ITextFieldProps
@@ -10,7 +11,8 @@ interface ITextFieldProps
   onChangeText?(newValue: string): void;
   onChange?(newValue: string): void;
 }
-export default function TextField(props: ITextFieldProps) {
+
+function TextField(props: ITextFieldProps) {
   const { error, helperText, onChangeText: setText, onChange, style, ...rest } = props;
   const onChangeText = onChange || setText;
   const theme = useTheme();
@@ -27,6 +29,10 @@ export default function TextField(props: ITextFieldProps) {
     </>
   );
 }
+
+export const FormTextField = withHookForm(TextField);
+
+export default TextField;
 
 const styles = StyleSheet.create({
   fields: {

@@ -5,16 +5,17 @@ import { Title } from 'react-native-paper';
 import { DropzoneUser, Permission } from '../../../api/schema.d';
 import { useAppSelector } from '../../../state';
 import Select from '../select/Select';
+import { withHookForm } from '../withHookForm';
 
 interface IDropzoneUserSelect {
   requiredPermissions: Permission[];
   value: DropzoneUser | null;
   label: string;
-  onSelect(dzUser: DropzoneUser): void;
+  onChange(dzUser: DropzoneUser): void;
 }
 
-export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
-  const { requiredPermissions, value, onSelect, label } = props;
+function DropzoneUserSelect(props: IDropzoneUserSelect) {
+  const { requiredPermissions, value, onChange, label } = props;
   const globalState = useAppSelector((root) => root.global);
 
   const { data } = useDropzoneUsersQuery({
@@ -47,8 +48,12 @@ export default function DropzoneUserSelect(props: IDropzoneUserSelect) {
       <Select<DropzoneUserEssentialsFragment>
         value={selected}
         options={options}
-        onChange={onSelect}
+        onChange={onChange}
       />
     </>
   );
 }
+
+export const DropzoneUserSelectField = withHookForm(DropzoneUserSelect);
+
+export default DropzoneUserSelect;

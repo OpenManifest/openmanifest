@@ -4,15 +4,16 @@ import startCase from 'lodash/startCase';
 import * as React from 'react';
 import { useAppSelector } from '../../../state';
 import Select from '../select/Select';
+import { withHookForm } from '../withHookForm';
 
 interface IRoleSelect {
   value?: RoleEssentialsFragment | null;
   disabled?: boolean;
-  onSelect(jt: RoleEssentialsFragment): void;
+  onChange(jt: RoleEssentialsFragment): void;
 }
 
-export default function RoleSelect(props: IRoleSelect) {
-  const { onSelect, value } = props;
+function RoleSelect(props: IRoleSelect) {
+  const { onChange, value } = props;
   const { currentDropzoneId } = useAppSelector((root) => root.global);
   const { data } = useRolesQuery({
     variables: {
@@ -33,8 +34,12 @@ export default function RoleSelect(props: IRoleSelect) {
     <Select<RoleEssentialsFragment>
       label="Access level"
       compare={(a, b) => a?.id === b?.id}
-      {...{ options, value }}
-      onChange={onSelect}
+      {...{ options, value, onChange }}
+      onChange={onChange}
     />
   );
 }
+
+export const RoleSelectField = withHookForm(RoleSelect);
+
+export default RoleSelect;

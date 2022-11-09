@@ -1,11 +1,12 @@
 import * as React from 'react';
 import Select from '../select/Select';
+import { withHookForm } from '../withHookForm';
 
 interface IAltitudeSelectProps {
   value: number;
   onChange(value: number): void;
 }
-export default function AltitudeSelect(props: IAltitudeSelectProps) {
+function AltitudeSelect(props: IAltitudeSelectProps) {
   const { value, onChange } = props;
 
   return (
@@ -20,3 +21,7 @@ export default function AltitudeSelect(props: IAltitudeSelectProps) {
     />
   );
 }
+
+export const AltitudeSelectField = withHookForm(AltitudeSelect);
+
+export default AltitudeSelect;

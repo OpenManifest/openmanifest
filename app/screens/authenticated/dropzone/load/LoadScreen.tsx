@@ -8,7 +8,6 @@ import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
 import PilotChip from 'app/components/chips/PilotChip';
 import PlaneChip from 'app/components/chips/PlaneChip';
-import ManifestUserSheet from 'app/components/dialogs/ManifestUser/ManifestUser';
 import ManifestGroupSheet from 'app/components/dialogs/ManifestGroup/ManifestGroup';
 
 import { View } from 'app/components/Themed';
@@ -18,7 +17,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { Divider } from 'react-native-paper';
-import { useManifestContext } from 'app/api/crud/useManifest';
+import { useManifestContext } from 'app/api/crud/useManifest/useManifest';
 import ActionButton from './ActionButton';
 import Header from './Header';
 import InfoGrid from './InfoGrid';
@@ -265,13 +264,6 @@ function LoadScreen() {
         }}
       />
       {load && isFocused ? <ActionButton load={load} /> : null}
-      <ManifestUserSheet
-        open={forms.manifest.open}
-        onClose={() => dispatch(actions.forms.manifest.setOpen(false))}
-        onSuccess={() => {
-          dispatch(actions.forms.manifest.setOpen(false));
-        }}
-      />
       <ManifestGroupSheet
         open={forms.manifestGroup.open}
         onClose={() => {

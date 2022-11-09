@@ -21,9 +21,7 @@ import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { LoadDetailsFragment } from 'app/api/operations';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
-import ManifestUserDialog from 'app/components/dialogs/ManifestUser/ManifestUser';
-import useManifestValidator from 'app/hooks/useManifestValidator';
-import { useManifestContext } from 'app/api/crud/useManifest';
+import { useManifestContext } from 'app/api/crud/useManifest/useManifest';
 import DragDropWrapper from '../../../../components/slots_table/DragAndDrop/DragDropSlotProvider';
 import GetStarted from '../../../../components/GetStarted';
 import LoadCardSmall from './LoadCard/Small/Card';
@@ -59,7 +57,6 @@ export default function ManifestScreen() {
   const dispatch = useAppDispatch();
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
   const [isSetupCheckComplete] = React.useState(false);
-  const { canManifest } = useManifestValidator();
   const { dropzone, currentUser, loading, refetch, fetchMore } = useDropzoneContext();
   const manifest = useManifestContext();
 
@@ -130,27 +127,6 @@ export default function ManifestScreen() {
     state.theme?.colors?.primary,
   ]);
 
-  const onManifest = React.useCallback(
-    async function Manifest(load: LoadDetailsFragment) {
-      try {
-        await canManifest();
-        dispatch(actions.forms.manifest.setOpen(true));
-        dispatch(actions.forms.manifest.setField(['dropzoneUser', currentUser]));
-        dispatch(actions.forms.manifest.setField(['load', load]));
-      } catch (e) {
-        if (e instanceof Error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: e.message,
-              variant: 'info',
-            })
-          );
-        }
-      }
-    },
-    [canManifest, currentUser, dispatch]
-  );
-
   const { width } = useWindowDimensions();
 
   let cardWidth = (manifestScreen.display === 'cards' ? 338 : 550) + 32;
@@ -202,8 +178,7 @@ export default function ManifestScreen() {
           id={load?.id}
           onSlotPress={(slot) => {
             if (load) {
-              dispatch(actions.forms.manifest.setOpen(slot));
-              dispatch(actions.forms.manifest.setField(['load', load]));
+              manifest.dialogs.user.open(load, slot);
             }
           }}
           onSlotGroupPress={(slots) => {
@@ -213,7 +188,7 @@ export default function ManifestScreen() {
             // FIXME: Open manifest group drawer
           }}
           onManifest={() => {
-            onManifest(load);
+            manifest.dialogs.user.open(load);
           }}
           onManifestGroup={() => {
             dispatch(actions.forms.manifestGroup.reset());
@@ -240,7 +215,7 @@ export default function ManifestScreen() {
         />
       );
     },
-    [dispatch, manifestScreen.display, navigation, onManifest]
+    [dispatch, manifest.dialogs.user, manifestScreen.display, navigation]
   );
   return (
     <View style={{ flex: 1 }}>
@@ -343,13 +318,6 @@ export default function ManifestScreen() {
         }}
         open={forms.load.open}
         onClose={() => dispatch(actions.forms.load.setOpen(false))}
-      />
-      <ManifestUserDialog
-        open={forms.manifest.open}
-        onClose={() => dispatch(actions.forms.manifest.setOpen(false))}
-        onSuccess={() => {
-          dispatch(actions.forms.manifest.setOpen(false));
-        }}
       />
     </View>
   );

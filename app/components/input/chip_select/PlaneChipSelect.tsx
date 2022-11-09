@@ -4,17 +4,19 @@ import { uniqBy } from 'lodash';
 import * as React from 'react';
 import { List } from 'react-native-paper';
 import { useAppSelector } from '../../../state';
+import { withHookForm } from '../withHookForm';
 import ChipSelect from './ChipSelect';
 import ChipSelectSkeleton from './ChipSelectSkeleton';
 
 interface IPlaneSelect {
   value?: PlaneEssentialsFragment | null;
+  error?: string | null;
   onLoadingStateChanged?(loading: boolean): void;
-  onSelect(jt: PlaneEssentialsFragment): void;
+  onChange(jt: PlaneEssentialsFragment): void;
 }
 
-export default function PlaneChipSelect(props: IPlaneSelect) {
-  const { value, onSelect, onLoadingStateChanged } = props;
+function PlaneChipSelect(props: IPlaneSelect) {
+  const { value, onChange, onLoadingStateChanged, error } = props;
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 
   const { data, loading } = usePlanesQuery({
@@ -34,12 +36,17 @@ export default function PlaneChipSelect(props: IPlaneSelect) {
       <List.Subheader>Aircraft</List.Subheader>
       <ChipSelect<PlaneEssentialsFragment>
         autoSelectFirst
+        {...{ error }}
         items={uniqBy([...(data?.planes || [])], ({ id }) => id) || []}
-        selected={[value].filter(Boolean) as PlaneEssentialsFragment[]}
+        value={[value].filter(Boolean) as PlaneEssentialsFragment[]}
         renderItemLabel={(plane: PlaneEssentialsFragment) => plane?.name || ''}
         isDisabled={(plane) => false}
-        onChangeSelected={([first]) => (first ? onSelect(first as PlaneEssentialsFragment) : null)}
+        onChange={([first]) => (first ? onChange(first as PlaneEssentialsFragment) : null)}
       />
     </>
   );
 }
+
+export const PlaneChipSelectField = withHookForm(PlaneChipSelect);
+
+export default PlaneChipSelect;

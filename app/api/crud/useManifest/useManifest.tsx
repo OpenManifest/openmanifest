@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useAppSelector } from 'app/state';
 import { DateTime } from 'luxon';
 import useRestriction from 'app/hooks/useRestriction';
+import ManifestUserDialog, { useManifestUserDialog } from 'app/forms/manifest_user';
+import { noop } from 'lodash';
 import {
   useLoadsQuery,
   useManifestGroupMutation,
@@ -10,7 +12,7 @@ import {
   useDeleteSlotMutation,
   useCreateLoadMutation,
   LoadDocument,
-} from '../reflection';
+} from '../../reflection';
 import {
   CreateLoadMutationVariables,
   DeleteSlotMutationVariables,
@@ -20,12 +22,22 @@ import {
   ManifestUserMutationVariables,
   MoveSlotMutationVariables,
   SlotExhaustiveFragment,
-} from '../operations';
-import createCRUDContext, { uninitializedHandler, TMutationResponse } from './factory';
-import { Permission } from '../schema.d';
+} from '../../operations';
+import createCRUDContext, { uninitializedHandler, TMutationResponse } from '../factory';
+import { Permission } from '../../schema.d';
 
-export default function useManifest({ dropzone, date }: Partial<LoadsQueryVariables>) {
+export type UseManifestOptions = Partial<LoadsQueryVariables>;
+
+export default function useManifest({ dropzone, date }: UseManifestOptions) {
   const state = useAppSelector((root) => root.global);
+  const manifestUserDialog = useManifestUserDialog();
+
+  const dialogs = React.useMemo(
+    () => ({
+      user: manifestUserDialog,
+    }),
+    [manifestUserDialog]
+  );
   const variables: LoadsQueryVariables | undefined = React.useMemo(() => {
     if (!dropzone) {
       return undefined;
@@ -241,6 +253,7 @@ export default function useManifest({ dropzone, date }: Partial<LoadsQueryVariab
       manifestGroup,
       deleteSlot,
       createLoad,
+      dialogs,
       permissions,
       loads: data?.loads?.edges?.map((edge) => edge?.node) || [],
     }),
@@ -254,35 +267,72 @@ export default function useManifest({ dropzone, date }: Partial<LoadsQueryVariab
       permissions,
       manifestGroup,
       manifestUser,
+      dialogs,
       moveSlot,
       refetch,
     ]
   );
 }
 
-const { Provider: ManifestProvider, useContext: useManifestContext } = createCRUDContext(
-  useManifest,
-  {
-    called: false,
-    loading: false,
-    loads: [],
-    refetch: uninitializedHandler as never,
-    fetchMore: uninitializedHandler as never,
-    deleteSlot: uninitializedHandler as never,
-    manifestUser: uninitializedHandler as never,
-    manifestGroup: uninitializedHandler as never,
-    moveSlot: uninitializedHandler as never,
-    createLoad: uninitializedHandler as never,
-    permissions: {
-      canCreateLoad: false,
-      canDeleteOwnSlot: false,
-      canDeleteSlot: false,
-      canManifestOthers: false,
-      canManifestSelf: false,
-      canUpdateOwnSlot: false,
-      canUpdateSlot: false,
+const {
+  Provider,
+  useContext: useManifestContext,
+  INITIAL_STATE,
+} = createCRUDContext(useManifest, {
+  called: false,
+  loading: false,
+  loads: [],
+  refetch: uninitializedHandler as never,
+  fetchMore: uninitializedHandler as never,
+  deleteSlot: uninitializedHandler as never,
+  manifestUser: uninitializedHandler as never,
+  manifestGroup: uninitializedHandler as never,
+  moveSlot: uninitializedHandler as never,
+  createLoad: uninitializedHandler as never,
+  permissions: {
+    canCreateLoad: false,
+    canDeleteOwnSlot: false,
+    canDeleteSlot: false,
+    canManifestOthers: false,
+    canManifestSelf: false,
+    canUpdateOwnSlot: false,
+    canUpdateSlot: false,
+  },
+  dialogs: {
+    user: {
+      open: noop,
+      close: noop,
+      visible: false,
+      state: {
+        slot: undefined,
+        load: undefined,
+      },
     },
-  }
-);
+  },
+});
 
-export { ManifestProvider, useManifestContext, useManifest };
+function ManifestUserDialogWrapper() {
+  const { dialogs } = useManifestContext();
+  const { user } = dialogs;
+  return (
+    <ManifestUserDialog
+      onClose={user.close}
+      onSuccess={user.close}
+      open={user.visible}
+      {...user.state}
+    />
+  );
+}
+
+function ManifestProvider(props: React.PropsWithChildren<UseManifestOptions>) {
+  const { children, ...rest } = props;
+
+  return (
+    <Provider {...rest}>
+      {children}
+      <ManifestUserDialogWrapper />
+    </Provider>
+  );
+}
+
+export { ManifestProvider, useManifestContext, useManifest, INITIAL_STATE };

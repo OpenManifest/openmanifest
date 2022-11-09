@@ -5,18 +5,20 @@ import * as React from 'react';
 import { List } from 'react-native-paper';
 import { JumpType } from '../../../api/schema.d';
 import { useAppSelector } from '../../../state';
+import { withHookForm } from '../withHookForm';
 import ChipSelect from './ChipSelect';
 import ChipSelectSkeleton from './ChipSelectSkeleton';
 
 interface IJumpTypeSelect {
   value?: JumpTypeEssentialsFragment | null;
   userId?: number | null;
+  error?: string | null;
   onLoadingStateChanged?(loading: boolean): void;
-  onSelect(jt: JumpTypeEssentialsFragment): void;
+  onChange(jt: JumpTypeEssentialsFragment): void;
 }
 
-export default function JumpTypeChipSelect(props: IJumpTypeSelect) {
-  const { onLoadingStateChanged, userId, value, onSelect } = props;
+function JumpTypeChipSelect(props: IJumpTypeSelect) {
+  const { onLoadingStateChanged, userId, value, onChange, error } = props;
   const { currentDropzoneId } = useAppSelector((root) => root.global);
   const { data, loading } = useAllowedJumpTypesQuery({
     variables: {
@@ -35,7 +37,8 @@ export default function JumpTypeChipSelect(props: IJumpTypeSelect) {
   ) : (
     <>
       <List.Subheader>Jump type</List.Subheader>
-      <ChipSelect
+      <ChipSelect<JumpTypeEssentialsFragment>
+        {...{ error }}
         autoSelectFirst
         items={
           uniqBy(
@@ -43,13 +46,17 @@ export default function JumpTypeChipSelect(props: IJumpTypeSelect) {
             ({ id }) => id
           ) || []
         }
-        selected={[value].filter(Boolean) as JumpType[]}
+        value={[value].filter(Boolean) as JumpType[]}
         renderItemLabel={(jumpType) => jumpType?.name || 'Unknown'}
         isDisabled={(jumpType) =>
           !data?.dropzone?.allowedJumpTypes?.map(({ id }) => id).includes(jumpType?.id)
         }
-        onChangeSelected={([first]) => (first ? onSelect(first) : null)}
+        onChange={([first]) => (first ? onChange(first) : null)}
       />
     </>
   );
 }
+
+export const JumpTypeChipSelectField = withHookForm(JumpTypeChipSelect);
+
+export default JumpTypeChipSelect;

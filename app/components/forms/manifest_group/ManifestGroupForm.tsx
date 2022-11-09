@@ -150,12 +150,12 @@ export default function ManifestGroupForm() {
         <ChipSelect
           autoSelectFirst
           items={jumpTypes}
-          selected={state.fields.jumpType.value ? [state.fields.jumpType.value] : []}
+          value={state.fields.jumpType.value ? [state.fields.jumpType.value] : []}
           renderItemLabel={(jumpType: JumpType) => jumpType.name}
           isDisabled={(jumpType: JumpType) =>
             !data?.dropzone?.allowedJumpTypes?.map(({ id }) => id).includes(jumpType.id)
           }
-          onChangeSelected={([firstUser]) =>
+          onChange={([firstUser]) =>
             dispatch(actions.forms.manifestGroup.setField(['jumpType', firstUser as JumpType]))
           }
         />
@@ -168,9 +168,9 @@ export default function ManifestGroupForm() {
         <ChipSelect
           autoSelectFirst
           items={data?.dropzone?.ticketTypes || []}
-          selected={state.fields.ticketType.value ? [state.fields.ticketType.value] : []}
+          value={state.fields.ticketType.value ? [state.fields.ticketType.value] : []}
           renderItemLabel={(ticketType: TicketType) => ticketType.name}
-          onChangeSelected={([firstUser]) =>
+          onChange={([firstUser]) =>
             dispatch(actions.forms.manifestGroup.setField(['ticketType', firstUser as TicketType]))
           }
         />

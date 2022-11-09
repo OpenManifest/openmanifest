@@ -86,7 +86,7 @@ export default function UserRigCard(props: IUserRigCard) {
             small
             variant="chip"
             dropzoneUserId={dropzoneUserId ? Number(dropzoneUserId) : undefined}
-            onSelect={onChangeRig}
+            onChange={onChangeRig}
             value={selectedRig}
             tandem={isTandem}
             autoSelectFirst

@@ -11,7 +11,7 @@ import DatePicker from 'app/components/input/date_picker/DatePicker';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 
 const QUERY_MASTER_LOG = gql`
-  query MasterLog($dropzoneId: Int!, $timestamp: Int!) {
+  query MasterLog($dropzoneId: ID!, $timestamp: Int!) {
     dropzone(id: $dropzoneId) {
       id
       masterLog(date: $timestamp) {
@@ -81,7 +81,7 @@ export default function DropzoneMasterLogScreen() {
       headerRight: () => (
         <DatePicker
           onChange={(time) => setTimestamp(time * 1000)}
-          timestamp={timestamp / 1000}
+          value={timestamp / 1000}
           color="#FFFFFF"
         />
       ),

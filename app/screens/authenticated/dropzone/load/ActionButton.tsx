@@ -10,6 +10,7 @@ import { actions, useAppDispatch } from 'app/state';
 import isSameDay from 'date-fns/isSameDay';
 import { parseISO } from 'date-fns';
 import { useLoadContext } from 'app/api/crud';
+import { useManifestContext } from 'app/api/crud/useManifest';
 
 interface ILoadActionButtonProps {
   load: LoadDetailsFragment;
@@ -17,6 +18,7 @@ interface ILoadActionButtonProps {
 
 export default function ActionButton(props: ILoadActionButtonProps) {
   const dispatch = useAppDispatch();
+  const { dialogs } = useManifestContext();
   const { timepicker, cancel, markAsLanded, updateLoadState, createAircraftDispatchAction } =
     useLoadContext();
   const [isExpanded, setExpanded] = React.useState(false);
@@ -25,49 +27,6 @@ export default function ActionButton(props: ILoadActionButtonProps) {
 
   const currentDropzone = useDropzoneContext();
   const { currentUser } = currentDropzone;
-
-  const onManifest = React.useCallback(() => {
-    if (!currentUser?.hasLicense) {
-      return dispatch(
-        actions.notifications.showSnackbar({
-          message: 'You need to select a license on your user profile',
-          variant: 'info',
-        })
-      );
-    }
-
-    if (!currentUser?.hasMembership) {
-      return dispatch(
-        actions.notifications.showSnackbar({
-          message: 'Your membership is out of date',
-          variant: 'info',
-        })
-      );
-    }
-
-    if (!currentUser?.hasExitWeight) {
-      return dispatch(
-        actions.notifications.showSnackbar({
-          message: 'Update your exit weight on your profile before manifesting',
-          variant: 'info',
-        })
-      );
-    }
-
-    if (!currentUser?.hasCredits) {
-      return dispatch(
-        actions.notifications.showSnackbar({
-          message: 'You have no credits on your account',
-          variant: 'info',
-        })
-      );
-    }
-
-    dispatch(actions.forms.manifest.setOpen(true));
-    dispatch(actions.forms.manifest.setField(['dropzoneUser', currentUser]));
-    dispatch(actions.forms.manifest.setField(['load', load]));
-    return null;
-  }, [currentUser, dispatch, load]);
 
   const theme = useTheme();
   const canUpdateLoad = useRestriction(Permission.UpdateLoad);
@@ -120,7 +79,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       : {
           label: 'Manifest me',
           icon: 'account',
-          onPress: () => onManifest(),
+          onPress: () => dialogs.user.open(load),
         },
     !showGroupIcon || !isToday
       ? null

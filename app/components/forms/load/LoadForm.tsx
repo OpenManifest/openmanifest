@@ -35,7 +35,7 @@ export default function LoadForm() {
       <View style={{ width: '100%' }}>
         <PlaneChipSelect
           value={state.fields.plane.value}
-          onSelect={(value) => {
+          onChange={(value) => {
             dispatch(actions.forms.load.setField(['plane', value]));
             dispatch(actions.forms.load.setField(['maxSlots', value.maxSlots]));
           }}
@@ -46,7 +46,7 @@ export default function LoadForm() {
 
         <DropzoneUserChipSelect
           label="GCA"
-          onSelect={(dzUser) => dispatch(actions.forms.load.setField(['gca', dzUser]))}
+          onChange={(dzUser) => dispatch(actions.forms.load.setField(['gca', dzUser]))}
           value={state.fields.gca.value || null}
           requiredPermissions={[Permission.ActAsGca]}
         />
@@ -56,7 +56,7 @@ export default function LoadForm() {
 
         <DropzoneUserChipSelect
           label="Pilot"
-          onSelect={(dzUser) => dispatch(actions.forms.load.setField(['pilot', dzUser]))}
+          onChange={(dzUser) => dispatch(actions.forms.load.setField(['pilot', dzUser]))}
           value={state.fields.pilot.value || null}
           requiredPermissions={[Permission.ActAsPilot]}
         />

@@ -91,8 +91,8 @@ export default function DropzonesTable(props: IDropzonesTableProps) {
         <ChipSelect
           allowEmpty
           items={dropzones}
-          onChangeSelected={onChangeSelected}
-          selected={selected}
+          onChange={onChangeSelected}
+          value={selected}
           renderItemLabel={(value) => value.name}
         />
         <ScrollView
