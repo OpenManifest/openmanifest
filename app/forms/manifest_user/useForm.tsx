@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { SlotExhaustiveFragment } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import merge from 'lodash/merge';
 import { useManifestContext } from 'app/api/crud/useManifest/useManifest';
 import { useAsyncFn } from 'react-use';
 import useManifestValidator from 'app/hooks/useManifestValidator';
