@@ -82,8 +82,8 @@ function AppBar(props: IAppBarProps) {
               navigation.navigate('Wizards', {
                 screen: 'UserWizardScreen',
                 params: {
-                  index: undefined
-                }
+                  index: undefined,
+                },
               });
             }
           }}

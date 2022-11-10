@@ -5,12 +5,6 @@ import { List } from 'react-native-paper';
 import { DropzoneUserProfileFragment, OrderEssentialsFragment } from 'app/api/operations';
 
 import { groupBy, map } from 'lodash';
-import startOfDay from 'date-fns/startOfDay';
-import parseISO from 'date-fns/parseISO';
-import differenceInDays from 'date-fns/differenceInDays';
-import format from 'date-fns/format';
-import { enAU } from 'date-fns/locale';
-import formatDistance from 'date-fns/formatDistance';
 import { DateTime, Duration } from 'luxon';
 import OrderCard from '../../../../../components/orders/OrderCard';
 import { useUserNavigation } from '../../useUserNavigation';

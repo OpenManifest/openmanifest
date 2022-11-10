@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ManifestUserDialog from 'app/forms/manifest_user/Dialog';
+import LoadDialog from 'app/forms/load/Dialog';
 import { LoadsQueryVariables } from '../../operations';
 import { ManifestProvider, useManifestContext } from './Context';
 
@@ -18,12 +19,21 @@ function ManifestUserDialogWrapper() {
   );
 }
 
+function LoadDialogWrapper() {
+  const { dialogs } = useManifestContext();
+  const { load } = dialogs;
+  return (
+    <LoadDialog onClose={load.close} onSuccess={load.close} open={load.visible} {...load.state} />
+  );
+}
+
 export default function Provider(props: React.PropsWithChildren<UseManifestOptions>) {
   const { children, ...rest } = props;
 
   return (
     <ManifestProvider {...rest}>
       {children}
+      <LoadDialogWrapper />
       <ManifestUserDialogWrapper />
     </ManifestProvider>
   );

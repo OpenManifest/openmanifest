@@ -3,25 +3,29 @@ import * as React from 'react';
 import { Platform, View } from 'react-native';
 import Chip, { ChipProps } from 'app/components/chips/Chip';
 import { HelperText } from 'react-native-paper';
+import { ScrollView } from 'react-native-gesture-handler';
 import { withHookForm } from '../withHookForm';
 
-interface IChipSelect<T> {
+export interface IChipSelect<T> {
   items: T[];
   value: T[];
   autoSelectFirst?: boolean;
   allowEmpty?: boolean;
   icon?: ChipProps['icon'];
   error?: string | null;
+  variant?: 'scroll' | 'flat';
   isSelected?(item: T): boolean;
   isDisabled?(item: T): boolean;
   renderItemLabel(item: T): React.ReactNode;
   onChange(newItems: T[]): void;
 }
+
 function ChipSelect<T>(props: IChipSelect<T>) {
   const {
     items,
     allowEmpty,
     value,
+    variant = 'flat',
     isSelected,
     isDisabled,
     icon,
@@ -37,8 +41,18 @@ function ChipSelect<T>(props: IChipSelect<T>) {
     }
   }, [value, autoSelectFirst, onChange, items]);
 
+  const Wrapper = React.useCallback(
+    ({ children }: React.PropsWithChildren<object>) =>
+      variant === 'scroll' ? (
+        <ScrollView horizontal>{children} </ScrollView>
+      ) : (
+        (children as JSX.Element)
+      ),
+    [variant]
+  );
+
   return (
-    <>
+    <Wrapper>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {items?.map((item) => {
           const isItemSelected = isSelected
@@ -65,14 +79,14 @@ function ChipSelect<T>(props: IChipSelect<T>) {
         })}
       </View>
       <HelperText type="error">{error || ''}</HelperText>
-    </>
+    </Wrapper>
   );
 }
 
 const ChipSelectComponent = React.memo(ChipSelect, (previous, next) => {
   return isEqual(
-    pick(previous, ['isDisabled', 'isSelected', 'items', 'selected']),
-    pick(next, ['isDisabled', 'isSelected', 'items', 'selected'])
+    pick(previous, ['isDisabled', 'isSelected', 'items', 'selected', 'error']),
+    pick(next, ['isDisabled', 'isSelected', 'items', 'selected', 'error'])
   );
 }) as typeof ChipSelect;
 

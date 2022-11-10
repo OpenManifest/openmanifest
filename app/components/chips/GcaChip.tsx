@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useTheme } from 'react-native-paper';
 import Select, { ISelectOption } from 'app/components/input/select/Select';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
+import { truncate } from 'lodash';
 import Chip from './Chip';
 
 import { Permission } from '../../api/schema.d';
@@ -56,7 +57,7 @@ export default function GCAChip(props: IGCAChipSelect) {
   }> = React.useCallback(
     ({ item, openMenu }) => (
       <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="radio-handheld">
-        {item?.label || 'No GCA'}
+        {truncate(item?.label || 'No GCA', { length: 12 })}
       </Chip>
     ),
     [backgroundColor, color, small]

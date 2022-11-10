@@ -16,7 +16,6 @@ import { View } from 'app/components/Themed';
 import { DropzoneState, LoadState, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import LoadDialog from 'app/components/dialogs/Load';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { LoadDetailsFragment } from 'app/api/operations';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
@@ -51,7 +50,6 @@ const loadingFragment: LoadDetailsFragment = {
 const setupProfileCardFragment = { ...loadingFragment, id: '__SETUP_PROFILE_CARD__' };
 export default function ManifestScreen() {
   const state = useAppSelector((root) => root.global);
-  const forms = useAppSelector((root) => root.forms);
   const manifestScreen = useAppSelector((root) => root.screens.manifest);
   const setup = useAppSelector((root) => root.screens.dropzoneWizard);
   const dispatch = useAppDispatch();
@@ -178,7 +176,10 @@ export default function ManifestScreen() {
           id={load?.id}
           onSlotPress={(slot) => {
             if (load) {
-              manifest.dialogs.user.open(load, slot);
+              manifest.dialogs.user.open({
+                load,
+                slot: { ...(slot || {}), dropzoneUser: slot ? slot?.dropzoneUser : currentUser },
+              });
             }
           }}
           onSlotGroupPress={(slots) => {
@@ -188,7 +189,7 @@ export default function ManifestScreen() {
             // FIXME: Open manifest group drawer
           }}
           onManifest={() => {
-            manifest.dialogs.user.open(load);
+            manifest.dialogs.user.open({ load, slot: { dropzoneUser: currentUser } });
           }}
           onManifestGroup={() => {
             dispatch(actions.forms.manifestGroup.reset());
@@ -215,7 +216,7 @@ export default function ManifestScreen() {
         />
       );
     },
-    [dispatch, manifest.dialogs.user, manifestScreen.display, navigation]
+    [currentUser, dispatch, manifest.dialogs.user, manifestScreen.display, navigation]
   );
   return (
     <View style={{ flex: 1 }}>
@@ -281,7 +282,7 @@ export default function ManifestScreen() {
             style={[styles.fab, { backgroundColor: theme.colors.primary }]}
             small
             icon="plus"
-            onPress={() => dispatch(actions.forms.load.setOpen(true))}
+            onPress={() => manifest.dialogs.load.open({})}
             label="New load"
           />
         )}
@@ -310,15 +311,6 @@ export default function ManifestScreen() {
           />
         </Menu>
       </View>
-
-      <LoadDialog
-        onSuccess={() => {
-          dispatch(actions.forms.load.setOpen(false));
-          refetch();
-        }}
-        open={forms.load.open}
-        onClose={() => dispatch(actions.forms.load.setOpen(false))}
-      />
     </View>
   );
 }

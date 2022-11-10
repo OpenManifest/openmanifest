@@ -23,7 +23,7 @@ export default function NotificationScreen() {
   const state = useAppSelector((root) => root.global);
   const { dropzone } = useDropzoneContext();
   const [getNotifications, query] = useNotificationsLazyQuery();
-  const { data, loading, refetch } = query;
+  const { data, loading } = query;
   const variables: NotificationsQueryVariables | undefined = React.useMemo(
     () => (!dropzone?.id ? undefined : { dropzoneId: dropzone?.id }),
     [dropzone?.id]

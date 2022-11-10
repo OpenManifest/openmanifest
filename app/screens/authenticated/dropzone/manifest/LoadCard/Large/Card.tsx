@@ -3,7 +3,7 @@ import { ScrollView } from 'react-native';
 import { Button, Card, IconButton, Paragraph, ProgressBar, Text } from 'react-native-paper';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 
-import { SlotDetailsFragment, SlotEssentialsFragment } from 'app/api/operations';
+import { SlotDetailsFragment } from 'app/api/operations';
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
@@ -26,8 +26,8 @@ import LoadingCard from './Loading';
 interface ILoadCardLarge {
   controlsVisible: boolean;
   onManifestGroup(): void;
-  onSlotGroupPress(slots: SlotEssentialsFragment[]): void;
-  onSlotPress(slot: SlotEssentialsFragment): void;
+  onSlotGroupPress(slots: SlotDetailsFragment[]): void;
+  onSlotPress(slot: SlotDetailsFragment): void;
   onManifest(): void;
 }
 

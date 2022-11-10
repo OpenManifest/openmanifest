@@ -79,7 +79,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       : {
           label: 'Manifest me',
           icon: 'account',
-          onPress: () => dialogs.user.open(load),
+          onPress: () => dialogs.user.open({ load, slot: { dropzoneUser: currentUser } }),
         },
     !showGroupIcon || !isToday
       ? null

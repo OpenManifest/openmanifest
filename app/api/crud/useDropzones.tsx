@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useAppSelector } from 'app/state';
+import { useAppSignal } from 'app/components/app_signal';
 import { useDropzonesQuery, useUpdateVisibilityMutation } from '../reflection';
 import { DropzoneDetailedFragment, DropzonesQueryVariables } from '../operations';
 import createCRUDContext, { uninitializedHandler, TMutationResponse } from './factory';
 import { DropzoneStateEvent } from '../schema.d';
-import { useAppSignal } from 'app/components/app_signal';
 
 export default function useDropzones(vars: Partial<DropzonesQueryVariables>) {
   const state = useAppSelector((root) => root.global);
@@ -25,12 +25,15 @@ export default function useDropzones(vars: Partial<DropzonesQueryVariables>) {
   const { appSignal } = useAppSignal();
 
   const updateVisibility = React.useCallback(
-    async function UpdateVisibility(id: string, event: DropzoneStateEvent): Promise<TMutationResponse<{ dropzone: DropzoneDetailedFragment }>> {
+    async function UpdateVisibility(
+      id: string,
+      event: DropzoneStateEvent
+    ): Promise<TMutationResponse<{ dropzone: DropzoneDetailedFragment }>> {
       try {
         const response = await updateVisibilityMutation({
           variables: {
             dropzone: id,
-            event
+            event,
           },
         });
 
@@ -40,13 +43,13 @@ export default function useDropzones(vars: Partial<DropzonesQueryVariables>) {
         return {
           error: response?.data?.updateVisibility?.errors?.[0],
           fieldErrors: response?.data?.updateVisibility?.fieldErrors || undefined,
-        }
+        };
       } catch (e) {
         appSignal.sendError(e as Error);
         return { error: 'You cant modify dropzone visibility' };
       }
     },
-    []
+    [appSignal, updateVisibilityMutation]
   );
 
   const { loading, fetchMore, refetch, data, called } = query;
@@ -59,7 +62,7 @@ export default function useDropzones(vars: Partial<DropzonesQueryVariables>) {
       updateVisibility,
       dropzones: data?.dropzones?.edges?.map((edge) => edge?.node),
     }),
-    [called, data?.dropzones?.edges, fetchMore, loading, refetch]
+    [called, data?.dropzones?.edges, fetchMore, loading, refetch, updateVisibility]
   );
 }
 

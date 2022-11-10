@@ -2,7 +2,9 @@ import * as React from 'react';
 import { useAppSelector } from 'app/state';
 import { DateTime } from 'luxon';
 import useRestriction from 'app/hooks/useRestriction';
-import useManifestUserDialog from './useDialog';
+import type { IManifestUserDialog } from 'app/forms/manifest_user/Dialog';
+import type { ILoadDialog } from 'app/forms/load/Dialog';
+import createUseDialog from './useDialog';
 import {
   useLoadsQuery,
   useManifestGroupMutation,
@@ -27,15 +29,20 @@ import { Permission } from '../../schema.d';
 
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
 
+const useManifestUserDialog = createUseDialog<Pick<IManifestUserDialog, 'load' | 'slot'>>();
+const useLoadDialog = createUseDialog<Pick<ILoadDialog, 'load'>>();
+
 export default function useManifest({ dropzone, date }: UseManifestOptions) {
   const state = useAppSelector((root) => root.global);
   const manifestUserDialog = useManifestUserDialog();
+  const loadDialog = useLoadDialog();
 
   const dialogs = React.useMemo(
     () => ({
       user: manifestUserDialog,
+      load: loadDialog,
     }),
-    [manifestUserDialog]
+    [manifestUserDialog, loadDialog]
   );
   const variables: LoadsQueryVariables | undefined = React.useMemo(() => {
     if (!dropzone) {

@@ -7,21 +7,30 @@ import { useDropzoneUsersQuery } from 'app/api/reflection';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import { ChipProps } from 'app/components/chips/Chip';
 import ChipSelect from './ChipSelect';
+import type { IChipSelect } from './ChipSelect';
 import ChipSelectSkeleton from './ChipSelectSkeleton';
 import { withHookForm } from '../withHookForm';
 
-interface IDropzoneUserChipSelect {
+interface IDropzoneUserChipSelect extends Pick<IChipSelect<unknown>, 'variant' | 'error'> {
   value?: DropzoneUserEssentialsFragment | null;
   label: string;
   icon?: ChipProps['icon'];
   requiredPermissions: Permission[];
-  error?: string | null;
   onLoadingStateChanged?(loading: boolean): void;
   onChange(dzuser: DropzoneUserEssentialsFragment): void;
 }
 
 function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
-  const { label, requiredPermissions, icon, value, error, onLoadingStateChanged, onChange } = props;
+  const {
+    label,
+    requiredPermissions,
+    icon,
+    value,
+    variant,
+    error,
+    onLoadingStateChanged,
+    onChange,
+  } = props;
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 
   const { data, loading } = useDropzoneUsersQuery({
@@ -58,7 +67,7 @@ function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
     <>
       <List.Subheader>{label}</List.Subheader>
       <ChipSelect<DropzoneUserEssentialsFragment>
-        {...{ error }}
+        {...{ error, variant }}
         autoSelectFirst
         icon={icon || 'account'}
         items={

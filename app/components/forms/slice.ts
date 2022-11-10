@@ -2,7 +2,6 @@ import * as credits from './credits/slice';
 import * as dropzone from './dropzone/slice';
 import * as dropzoneUser from './dropzone_user/slice';
 import * as extra from './extra/slice';
-import * as load from './load/slice';
 import * as ghost from './ghost/slice';
 import * as plane from './plane/slice';
 import * as rig from './rig/slice';
@@ -20,7 +19,6 @@ export const initialState = {
   dropzoneUser: dropzoneUser.initialState,
   extra: extra.initialState,
   ghost: ghost.initialState,
-  load: load.initialState,
   plane: plane.initialState,
   rig: rig.initialState,
   rigInspection: rigInspection.initialState,
@@ -37,7 +35,6 @@ export const reducers = {
   dropzoneUser: dropzoneUser.default,
   extra: extra.default,
   ghost: ghost.default,
-  load: load.default,
   plane: plane.default,
   rig: rig.default,
   rigInspection: rigInspection.default,
