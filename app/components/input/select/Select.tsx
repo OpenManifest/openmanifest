@@ -3,6 +3,7 @@ import { HelperText, List } from 'react-native-paper';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import { isEqual } from 'lodash';
+import { View } from 'react-native';
 
 export interface ISelectOption<T> {
   label: string;
@@ -81,7 +82,7 @@ export default function Select<T>(props: ISelectProps<T>) {
   const showAvatars = React.useMemo(() => options?.some((option) => option.avatar), [options]);
 
   return (
-    <>
+    <View>
       {label ? <List.Subheader>{label}</List.Subheader> : null}
       <Menu {...{ open, setOpen, anchor }}>
         {options?.map((option) => (
@@ -99,6 +100,6 @@ export default function Select<T>(props: ISelectProps<T>) {
         ))}
       </Menu>
       <HelperText type="error">{error || ' '}</HelperText>
-    </>
+    </View>
   );
 }

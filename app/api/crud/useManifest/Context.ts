@@ -44,6 +44,14 @@ const {
         load: undefined,
       },
     },
+    credits: {
+      open: noop,
+      close: noop,
+      visible: false,
+      state: {
+        dropzoneUser: undefined,
+      },
+    },
   },
 });
 

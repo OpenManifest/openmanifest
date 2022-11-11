@@ -25,7 +25,7 @@ function TextField(props: ITextFieldProps) {
         {...{ onChangeText }}
         error={!!error}
       />
-      <HelperText type={error ? 'error' : 'info'}>{error || helperText || ''}</HelperText>
+      <HelperText type={error ? 'error' : 'info'}>{error || helperText || ' '}</HelperText>
     </>
   );
 }

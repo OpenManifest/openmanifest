@@ -3,8 +3,7 @@ import * as React from 'react';
 import { SectionList, StyleSheet, View } from 'react-native';
 import { List, ProgressBar } from 'react-native-paper';
 
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import CreditsSheet from 'app/components/dialogs/CreditsDialog/Credits';
+import { useAppSelector } from 'app/state';
 
 import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { groupBy, map } from 'lodash';
@@ -22,8 +21,6 @@ export type OrdersRoute = {
 };
 export default function OrdersScreen() {
   const state = useAppSelector((root) => root.global);
-  const forms = useAppSelector((root) => root.forms);
-  const dispatch = useAppDispatch();
   const { currentUser } = useDropzoneContext();
   const route = useRoute<RouteProp<OrdersRoute>>();
   const { data, loading, refetch } = useDropzoneUserProfileQuery({
@@ -94,13 +91,6 @@ export default function OrdersScreen() {
             {...{ dropzoneUser }}
           />
         )}
-      />
-
-      <CreditsSheet
-        onClose={() => dispatch(actions.forms.credits.setOpen(false))}
-        onSuccess={() => dispatch(actions.forms.credits.setOpen(false))}
-        open={forms.credits.open}
-        dropzoneUser={dropzoneUser || undefined}
       />
     </View>
   );

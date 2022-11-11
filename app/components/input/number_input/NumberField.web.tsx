@@ -44,14 +44,14 @@ export default function NumberField(props: INumberFieldProps) {
 
   const onChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChangeValue(Number(e.target.value));
+      onChangeValue(parseInt(e.target.value, 10));
     },
     [onChangeValue]
   );
 
   return (
     <FormControl
-      sx={{ m: 1 }}
+      style={{ paddingRight: 8 }}
       variant={
         mode && mode in muiVariants ? (muiVariants[mode] as 'outlined' | 'standard') : 'outlined'
       }
@@ -79,7 +79,7 @@ export default function NumberField(props: INumberFieldProps) {
               }),
         }}
       />
-      <FormHelperText error={!!error}>{error || helperText}</FormHelperText>
+      <FormHelperText error={!!error}>{error || helperText || ' '}</FormHelperText>
     </FormControl>
   );
 }

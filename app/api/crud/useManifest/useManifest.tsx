@@ -4,6 +4,8 @@ import { DateTime } from 'luxon';
 import useRestriction from 'app/hooks/useRestriction';
 import type { IManifestUserDialog } from 'app/forms/manifest_user/Dialog';
 import type { ILoadDialog } from 'app/forms/load/Dialog';
+import type { ICreditsSheet } from 'app/forms/credits/Credits';
+import noop from 'lodash/noop';
 import createUseDialog from './useDialog';
 import {
   useLoadsQuery,
@@ -31,40 +33,13 @@ export type UseManifestOptions = Partial<LoadsQueryVariables>;
 
 const useManifestUserDialog = createUseDialog<Pick<IManifestUserDialog, 'load' | 'slot'>>();
 const useLoadDialog = createUseDialog<Pick<ILoadDialog, 'load'>>();
+const useCreditsDialog = createUseDialog<Pick<ICreditsSheet, 'dropzoneUser'>>();
 
 export default function useManifest({ dropzone, date }: UseManifestOptions) {
   const state = useAppSelector((root) => root.global);
   const manifestUserDialog = useManifestUserDialog();
   const loadDialog = useLoadDialog();
-
-  const dialogs = React.useMemo(
-    () => ({
-      user: manifestUserDialog,
-      load: loadDialog,
-    }),
-    [manifestUserDialog, loadDialog]
-  );
-  const variables: LoadsQueryVariables | undefined = React.useMemo(() => {
-    if (!dropzone) {
-      return undefined;
-    }
-    return {
-      dropzone,
-      date: date || DateTime.utc().toISODate(),
-    };
-  }, [date, dropzone]);
-
-  const query = useLoadsQuery({
-    initialFetchPolicy: 'cache-first',
-    variables,
-    skip: !state?.credentials?.accessToken || !dropzone,
-  });
-
-  const [moveSlotMutation] = useMoveSlotMutation();
-  const [deleteSlotMutation] = useDeleteSlotMutation();
-  const [manifestGroupMutation] = useManifestGroupMutation();
-  const [manifestUserMutation] = useManifestUserMutation();
-  const [createLoadMutation] = useCreateLoadMutation();
+  const creditsDialog = useCreditsDialog();
 
   const canCreateLoad = useRestriction(Permission.CreateLoad);
   const canDeleteOwnSlot = useRestriction(Permission.DeleteSlot);
@@ -93,6 +68,37 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
       canUpdateSlot,
     ]
   );
+  const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
+
+  const dialogs = React.useMemo(
+    () => ({
+      user: manifestUserDialog,
+      load: canCreateLoad ? loadDialog : { ...loadDialog, open: noop },
+      credits: canAddTransaction ? creditsDialog : { ...creditsDialog, open: noop },
+    }),
+    [manifestUserDialog, canCreateLoad, loadDialog, canAddTransaction, creditsDialog]
+  );
+  const variables: LoadsQueryVariables | undefined = React.useMemo(() => {
+    if (!dropzone) {
+      return undefined;
+    }
+    return {
+      dropzone,
+      date: date || DateTime.utc().toISODate(),
+    };
+  }, [date, dropzone]);
+
+  const query = useLoadsQuery({
+    initialFetchPolicy: 'cache-first',
+    variables,
+    skip: !state?.credentials?.accessToken || !dropzone,
+  });
+
+  const [moveSlotMutation] = useMoveSlotMutation();
+  const [deleteSlotMutation] = useDeleteSlotMutation();
+  const [manifestGroupMutation] = useManifestGroupMutation();
+  const [manifestUserMutation] = useManifestUserMutation();
+  const [createLoadMutation] = useCreateLoadMutation();
 
   const { loading, fetchMore, refetch, data, called, updateQuery } = query;
 

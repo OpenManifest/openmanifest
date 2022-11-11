@@ -80,7 +80,14 @@ function LoadCard(props: ILoadCardSmall) {
       />
 
       <Card.Content style={styles.cardContent}>
-        <View style={{ flexDirection: 'row', flexWrap: 'nowrap', backgroundColor: 'transparent' }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'nowrap',
+            backgroundColor: 'transparent',
+            width: '100%',
+          }}
+        >
           <PlaneChip
             value={load?.plane}
             small

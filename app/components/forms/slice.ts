@@ -1,4 +1,3 @@
-import * as credits from './credits/slice';
 import * as dropzone from './dropzone/slice';
 import * as dropzoneUser from './dropzone_user/slice';
 import * as extra from './extra/slice';
@@ -14,7 +13,6 @@ import * as user from './user/slice';
 import * as weather from './weather_conditions/slice';
 
 export const initialState = {
-  credits: credits.initialState,
   dropzone: dropzone.initialState,
   dropzoneUser: dropzoneUser.initialState,
   extra: extra.initialState,
@@ -30,7 +28,6 @@ export const initialState = {
   weather: weather.initialState,
 };
 export const reducers = {
-  credits: credits.default,
   dropzone: dropzone.default,
   dropzoneUser: dropzoneUser.default,
   extra: extra.default,

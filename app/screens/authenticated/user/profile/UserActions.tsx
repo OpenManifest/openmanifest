@@ -10,6 +10,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import { Alert } from 'react-native';
 import { DropzoneUsersDocument, useArchiveUserMutation } from 'app/api/reflection';
 import { errorColor, infoColor, successColor, warningColor } from 'app/constants/Colors';
+import { useManifestContext } from 'app/api/crud/useManifest';
 import { useUserNavigation } from '../useUserNavigation';
 
 type PropsOf<T> = T extends React.ComponentType<infer P> ? P : never;
@@ -22,6 +23,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
   const { dropzoneUser, visible } = props;
   const { currentUser } = useDropzoneContext();
   const [fabOpen, setFabOpen] = React.useState(false);
+  const { dialogs } = useManifestContext();
 
   const dispatch = useAppDispatch();
   const navigation = useUserNavigation();
@@ -64,9 +66,9 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
 
   const onClickAddFunds = React.useCallback(() => {
     if (dropzoneUser) {
-      dispatch(actions.forms.credits.setOpen(dropzoneUser));
+      dialogs.credits.open({ dropzoneUser });
     }
-  }, [dispatch, dropzoneUser]);
+  }, [dialogs.credits, dropzoneUser]);
 
   const onClickEdit = React.useCallback(() => {
     if (dropzoneUser?.user) {
