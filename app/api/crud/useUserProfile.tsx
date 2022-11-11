@@ -1,4 +1,5 @@
 import { useAppSignal } from 'app/components/app_signal';
+import useRestriction from 'app/hooks/useRestriction';
 import * as React from 'react';
 import {
   CreateOrderMutationVariables,
@@ -9,11 +10,17 @@ import {
   UpdateDropzoneUserMutationVariables,
 } from '../operations';
 import {
+  DropzoneUserProfileDocument,
   DropzoneUserProfileFragmentDoc,
+  DropzoneUsersDetailedDocument,
+  DropzoneUsersDocument,
   useCreateOrderMutation,
   useDropzoneUserProfileLazyQuery,
+  useGrantPermissionMutation,
+  useRevokePermissionMutation,
   useUpdateDropzoneUserMutation,
 } from '../reflection';
+import { Permission } from '../schema.d';
 import createCRUDContext, { TMutationResponse, uninitializedHandler } from './factory';
 import { useDropzoneContext } from './useDropzone';
 
@@ -24,6 +31,8 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
   const [mutationCreateOrder] = useCreateOrderMutation();
   const { dropzone } = useDropzoneContext();
   const { appSignal } = useAppSignal();
+  const canGrantPermission = useRestriction(Permission.GrantPermission);
+  const canRevokePermission = useRestriction(Permission.RevokePermission);
 
   React.useEffect(() => {
     if (id && id === query?.variables?.id) {
@@ -140,15 +149,108 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
     [createOrder, dropzone]
   );
 
+  const [revoke] = useRevokePermissionMutation();
+  const [grant] = useGrantPermissionMutation();
+
+  const grantPermission = React.useCallback(
+    async function GrantPermission(
+      dropzoneUserId: string,
+      permissionName: Permission
+    ): Promise<TMutationResponse<{ dropzoneUser: DropzoneUserProfileFragment }>> {
+      if (!canGrantPermission) {
+        return { error: 'You cannot grant permissions' };
+      }
+      const { data } = await grant({
+        variables: {
+          dropzoneUserId: Number(dropzoneUserId),
+          permissionName,
+        },
+        refetchQueries: [
+          {
+            query: DropzoneUsersDocument,
+            variables: { dropzoneId: dropzone?.id, permissions: [permissionName] },
+          },
+          {
+            query: DropzoneUserProfileDocument,
+            variables: {
+              dropzoneUserId,
+            },
+          },
+        ],
+      });
+
+      if (data?.grantPermission?.dropzoneUser?.id) {
+        return {
+          dropzoneUser: data?.grantPermission?.dropzoneUser,
+        };
+      }
+      return {
+        error: data?.grantPermission?.errors?.[0],
+        fieldErrors: data?.grantPermission?.fieldErrors || undefined,
+      };
+    },
+    [canGrantPermission, dropzone?.id, grant]
+  );
+
+  const revokePermission = React.useCallback(
+    async function revokePermission(
+      dropzoneUserId: string,
+      permissionName: Permission
+    ): Promise<TMutationResponse<{ dropzoneUser: DropzoneUserProfileFragment }>> {
+      if (!canRevokePermission) {
+        return { error: 'You cannot revoke permissions' };
+      }
+      const { data } = await revoke({
+        variables: {
+          dropzoneUserId: Number(dropzoneUserId),
+          permissionName,
+        },
+        refetchQueries: [
+          {
+            query: DropzoneUsersDocument,
+            variables: { dropzoneId: dropzone?.id, permissions: [permissionName] },
+          },
+          {
+            query: DropzoneUserProfileDocument,
+            variables: {
+              dropzoneUserId,
+            },
+          },
+        ],
+      });
+
+      if (data?.revokePermission?.dropzoneUser?.id) {
+        return {
+          dropzoneUser: data?.revokePermission?.dropzoneUser,
+        };
+      }
+      return {
+        error: data?.revokePermission?.errors?.[0],
+        fieldErrors: data?.revokePermission?.fieldErrors || undefined,
+      };
+    },
+    [canRevokePermission, dropzone?.id, revoke]
+  );
+
   return React.useMemo(
     () => ({
       loading: query?.loading,
       dropzoneUser: query?.data?.dropzoneUser,
       update,
       addCredits,
+      grantPermission,
+      revokePermission,
       withdrawCredits,
     }),
-    [addCredits, query?.data?.dropzoneUser, query?.loading, update, withdrawCredits]
+    [
+      addCredits,
+      grantPermission,
+      query?.data?.dropzoneUser,
+      query?.loading,
+      revokePermission,
+      update,
+      withdrawCredits,
+    ]
   );
 }
 
@@ -160,6 +262,8 @@ const { Provider: UserProfileProvider, useContext: useUserProfileContext } = cre
     update: uninitializedHandler as never,
     addCredits: uninitializedHandler as never,
     withdrawCredits: uninitializedHandler as never,
+    grantPermission: uninitializedHandler as never,
+    revokePermission: uninitializedHandler as never,
   }
 );
 

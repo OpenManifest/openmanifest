@@ -1,27 +1,14 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import {
-  DropzoneUserEssentialsFragment,
-  DropzoneUsersQuery,
-  DropzoneUsersQueryVariables,
-} from 'app/api/operations';
+import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { actions, useAppDispatch } from 'app/state';
 import { Permission } from 'app/api/schema.d';
-
-import {
-  CurrentUserPermissionsDocument,
-  DropzoneUsersDocument,
-  DropzoneUserProfileDocument,
-  useGrantPermissionMutation,
-  useRevokePermissionMutation,
-  DropzoneUsersDetailedDocument,
-} from 'app/api/reflection';
 // eslint-disable-next-line max-len
 import Badge, { IBadgeProps } from 'app/components/Badge';
 import useRestriction from 'app/hooks/useRestriction';
-import mutationHandlers from 'app/api/utils/createErrorHandler';
+import { useUserProfile } from 'app/api/crud';
 
 interface IPermissionBadgesProps {
   permissions: Permission[];
@@ -29,136 +16,10 @@ interface IPermissionBadgesProps {
 }
 export default function PermissionBadges(props: IPermissionBadgesProps) {
   const { permissions, dropzoneUser } = props;
-  const state = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
+  const { revokePermission, grantPermission } = useUserProfile();
 
   const canGrantPermission = useRestriction(Permission.GrantPermission);
-
-  const [revoke] = useRevokePermissionMutation({
-    ...mutationHandlers({
-      onSuccess: (payload) => {
-        dispatch(actions.notifications.showSnackbar({ message: 'Permission revoked' }));
-      },
-      onError: (error) => {
-        dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' }));
-      },
-    }),
-    refetchQueries: [
-      { query: DropzoneUsersDocument },
-      { query: DropzoneUsersDetailedDocument },
-      {
-        query: DropzoneUserProfileDocument,
-        variables: {
-          dropzoneUserId: dropzoneUser.id,
-        },
-      },
-    ],
-    update: async (client, { data }, { variables }) => {
-      const c = client.readQuery<DropzoneUsersQuery, DropzoneUsersQueryVariables>({
-        query: DropzoneUsersDocument,
-        variables: {
-          permissions: [variables?.permissionName].filter(Boolean) as Permission[],
-          dropzoneId: state.currentDropzoneId?.toString() as string,
-        },
-      });
-
-      const updatedList = (c?.dropzoneUsers?.edges || []).filter(
-        (edge) => edge?.node?.id !== dropzoneUser?.id
-      );
-
-      client.writeQuery<DropzoneUsersQuery, DropzoneUsersQueryVariables>({
-        query: DropzoneUsersDocument,
-        variables: {
-          permissions: [variables?.permissionName].filter(Boolean) as Permission[],
-          dropzoneId: state.currentDropzoneId?.toString() as string,
-        },
-        data: {
-          ...c,
-          dropzoneUsers: {
-            edges: updatedList,
-          },
-        },
-      });
-
-      return {
-        data: {
-          ...c,
-          dropzoneUsers: {
-            edges: updatedList,
-          },
-        },
-      };
-    },
-  });
-  const [grant] = useGrantPermissionMutation({
-    ...mutationHandlers({
-      onSuccess: (payload) => {
-        dispatch(actions.notifications.showSnackbar({ message: 'Permission granted' }));
-      },
-      onError: (error) => {
-        dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' }));
-      },
-    }),
-    refetchQueries: [
-      {
-        query: DropzoneUserProfileDocument,
-        variables: {
-          dropzoneUserId: dropzoneUser.id,
-        },
-      },
-    ],
-    update: async (client, { data }, { variables }) => {
-      const c = client.readQuery<DropzoneUsersQuery, DropzoneUsersQueryVariables>({
-        query: DropzoneUsersDocument,
-        variables: {
-          permissions: [variables?.permissionName].filter(Boolean) as Permission[],
-          dropzoneId: state.currentDropzoneId?.toString() as string,
-        },
-      });
-
-      const current = c?.dropzoneUsers?.edges || [];
-      const shouldUpdate = !!current.find((edge) => edge?.node?.id === dropzoneUser?.id);
-
-      const updatedGcaList = shouldUpdate
-        ? [
-            ...(c?.dropzoneUsers?.edges || []).map((edge) =>
-              edge?.node?.id !== dropzoneUser?.id
-                ? edge
-                : {
-                    ...edge,
-                    node: {
-                      ...edge?.node,
-                      ...data?.grantPermission?.dropzoneUser,
-                    },
-                  }
-            ),
-          ]
-        : [
-            ...(c?.dropzoneUsers?.edges || []),
-            {
-              node: data?.grantPermission?.dropzoneUser,
-            },
-          ];
-      const newData = {
-        ...c,
-        dropzoneUsers: {
-          edges: updatedGcaList,
-        },
-      };
-      client.writeQuery({
-        query: CurrentUserPermissionsDocument,
-        variables: {
-          dropzoneId: Number(state.currentDropzoneId),
-          permissions: [variables?.permissionName],
-        },
-        data: newData,
-      });
-
-      return {
-        data: newData,
-      };
-    },
-  });
 
   const badges = React.useMemo(
     () => permissions?.filter((name) => /^actAs/.test(name)) || [],
@@ -170,6 +31,25 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
     [badges, canGrantPermission]
   );
 
+  const grant = React.useCallback(
+    async function GrantPermission(permissionName: Permission) {
+      const response = await grantPermission(dropzoneUser.id, permissionName);
+      if ('error' in response && response.error) {
+        dispatch(actions.notifications.showSnackbar({ message: response.error, variant: 'error' }));
+      }
+    },
+    [dispatch, dropzoneUser?.id, grantPermission]
+  );
+
+  const revoke = React.useCallback(
+    async function GrantPermission(permissionName: Permission) {
+      const response = await revokePermission(dropzoneUser.id, permissionName);
+      if ('error' in response && response.error) {
+        dispatch(actions.notifications.showSnackbar({ message: response.error, variant: 'error' }));
+      }
+    },
+    [dispatch, dropzoneUser?.id, revokePermission]
+  );
   return (
     <ScrollView
       horizontal
@@ -193,18 +73,8 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
               !canGrantPermission
                 ? null
                 : badges.includes(permission)
-                ? revoke({
-                    variables: {
-                      permissionName: permission,
-                      dropzoneUserId: Number(dropzoneUser?.id),
-                    },
-                  })
-                : grant({
-                    variables: {
-                      permissionName: permission,
-                      dropzoneUserId: Number(dropzoneUser?.id),
-                    },
-                  })
+                ? revoke(permission)
+                : grant(permission)
             }
           />
         )
