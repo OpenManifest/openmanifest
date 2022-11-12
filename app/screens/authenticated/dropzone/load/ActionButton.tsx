@@ -2,15 +2,13 @@ import * as React from 'react';
 import { FAB, Portal, useTheme } from 'react-native-paper';
 import { LoadDetailsFragment } from 'app/api/operations';
 
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext, useLoadContext, useManifestContext } from 'app/providers';
 
 import { Permission, LoadState } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch } from 'app/state';
 import isSameDay from 'date-fns/isSameDay';
 import { parseISO } from 'date-fns';
-import { useLoadContext } from 'app/api/crud';
-import { useManifestContext } from 'app/api/crud/useManifest';
 
 interface ILoadActionButtonProps {
   load: LoadDetailsFragment;
@@ -19,13 +17,15 @@ interface ILoadActionButtonProps {
 export default function ActionButton(props: ILoadActionButtonProps) {
   const dispatch = useAppDispatch();
   const { dialogs } = useManifestContext();
-  const { timepicker, cancel, markAsLanded, updateLoadState, createAircraftDispatchAction } =
-    useLoadContext();
+  const {
+    dialogs: { timepicker },
+    load: { cancel, markAsLanded, updateLoadState, createAircraftDispatchAction },
+  } = useLoadContext();
   const [isExpanded, setExpanded] = React.useState(false);
 
   const { load } = props;
 
-  const currentDropzone = useDropzoneContext();
+  const { dropzone: currentDropzone } = useDropzoneContext();
   const { currentUser } = currentDropzone;
 
   const theme = useTheme();
@@ -79,7 +79,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       : {
           label: 'Manifest me',
           icon: 'account',
-          onPress: () => dialogs.user.open({ load, slot: { dropzoneUser: currentUser } }),
+          onPress: () => dialogs.manifestUser.open({ load, slot: { dropzoneUser: currentUser } }),
         },
     !showGroupIcon || !isToday
       ? null

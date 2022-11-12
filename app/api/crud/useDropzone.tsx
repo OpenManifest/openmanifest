@@ -2,9 +2,9 @@ import * as React from 'react';
 import { noop } from 'lodash';
 import { useCurrentUserPermissionsQuery, useDropzoneQuery } from '../reflection';
 import { CurrentUserPermissionsQueryVariables, DropzoneQueryVariables } from '../operations';
-import createCRUDContext, { uninitializedHandler } from './factory';
+import { uninitializedHandler } from './factory';
 
-export default function useDropzone(vars: Partial<DropzoneQueryVariables>) {
+export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
   const variables: DropzoneQueryVariables | undefined = React.useMemo(() => {
     if (vars?.dropzoneId) {
       return {
@@ -59,18 +59,3 @@ export default function useDropzone(vars: Partial<DropzoneQueryVariables>) {
     ]
   );
 }
-
-const { Provider: DropzoneProvider, useContext: useDropzoneContext } = createCRUDContext(
-  useDropzone,
-  {
-    permissions: [],
-    called: false,
-    loading: false,
-    dropzone: null,
-    currentUser: undefined,
-    refetch: uninitializedHandler as never,
-    fetchMore: uninitializedHandler as never,
-  }
-);
-
-export { DropzoneProvider, useDropzoneContext, useDropzone };

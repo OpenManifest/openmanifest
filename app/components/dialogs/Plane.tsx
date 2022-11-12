@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCreatePlaneMutation, useUpdatePlaneMutation } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import { actions, useAppSelector, useAppDispatch } from '../../state';
 
 import PlaneForm from '../forms/plane/PlaneForm';
@@ -13,7 +13,7 @@ interface IPlaneDialogProps {
 
 export default function CreatePlaneScreen(props: IPlaneDialogProps) {
   const { open, onClose } = props;
-  const currentDropzone = useDropzoneContext();
+  const { dropzone: currentDropzone } = useDropzoneContext();
   const state = useAppSelector((root) => root.forms.plane);
   const dispatch = useAppDispatch();
 

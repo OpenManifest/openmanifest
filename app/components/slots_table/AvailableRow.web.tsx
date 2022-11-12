@@ -1,8 +1,7 @@
 import React from 'react';
 import { DataTable } from 'react-native-paper';
-import { useLoadContext } from 'app/api/crud';
+import { useLoadContext, useManifestContext } from 'app/providers';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
-import { useManifestContext } from 'app/api/crud/useManifest';
 import DropzoneUserAutocomplete from '../autocomplete/DropzoneUserAutocomplete.web';
 import DroppableSlot from './DragAndDrop/DroppableSlot';
 
@@ -13,16 +12,18 @@ export interface IAvailableRowProps {
 export default function AvailableRow(props: IAvailableRowProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { onPress, index } = props;
-  const { load } = useLoadContext();
+  const {
+    load: { load },
+  } = useLoadContext();
   const { dialogs } = useManifestContext();
 
   const onSelectUser = React.useCallback(
     (user: DropzoneUserEssentialsFragment) => {
       if (load) {
-        dialogs.user.open({ load, slot: { dropzoneUser: user } });
+        dialogs.manifestUser.open({ load, slot: { dropzoneUser: user } });
       }
     },
-    [dialogs.user, load]
+    [dialogs.manifestUser, load]
   );
 
   return (

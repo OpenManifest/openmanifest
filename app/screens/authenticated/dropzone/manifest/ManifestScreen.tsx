@@ -16,11 +16,10 @@ import { View } from 'app/components/Themed';
 import { DropzoneState, LoadState, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext, useManifestContext } from 'app/providers';
 import { LoadDetailsFragment } from 'app/api/operations';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
-import { useManifestContext } from 'app/api/crud/useManifest';
 import DragDropWrapper from '../../../../components/slots_table/DragAndDrop/DragDropSlotProvider';
 import GetStarted from '../../../../components/GetStarted';
 import LoadCardSmall from './LoadCard/Small/Card';
@@ -55,8 +54,10 @@ export default function ManifestScreen() {
   const dispatch = useAppDispatch();
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
   const [isSetupCheckComplete] = React.useState(false);
-  const { dropzone, currentUser, loading, refetch, fetchMore } = useDropzoneContext();
-  const manifest = useManifestContext();
+  const {
+    dropzone: { dropzone, currentUser, loading, refetch, fetchMore },
+  } = useDropzoneContext();
+  const { manifest, dialogs } = useManifestContext();
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -176,7 +177,7 @@ export default function ManifestScreen() {
           id={load?.id}
           onSlotPress={(slot) => {
             if (load) {
-              manifest.dialogs.user.open({
+              dialogs.manifestUser.open({
                 load,
                 slot: { ...(slot || {}), dropzoneUser: slot ? slot?.dropzoneUser : currentUser },
               });
@@ -189,7 +190,7 @@ export default function ManifestScreen() {
             // FIXME: Open manifest group drawer
           }}
           onManifest={() => {
-            manifest.dialogs.user.open({ load, slot: { dropzoneUser: currentUser } });
+            dialogs.manifestUser.open({ load, slot: { dropzoneUser: currentUser } });
           }}
           onManifestGroup={() => {
             dispatch(actions.forms.manifestGroup.reset());
@@ -216,7 +217,7 @@ export default function ManifestScreen() {
         />
       );
     },
-    [currentUser, dispatch, manifest.dialogs.user, manifestScreen.display, navigation]
+    [currentUser, dispatch, dialogs.manifestUser, manifestScreen.display, navigation]
   );
   return (
     <View style={{ flex: 1 }}>
@@ -282,7 +283,7 @@ export default function ManifestScreen() {
             style={[styles.fab, { backgroundColor: theme.colors.primary }]}
             small
             icon="plus"
-            onPress={() => manifest.dialogs.load.open({})}
+            onPress={() => dialogs.load.open({})}
             label="New load"
           />
         )}

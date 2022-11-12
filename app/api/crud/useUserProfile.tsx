@@ -1,6 +1,7 @@
 import { useAppSignal } from 'app/components/app_signal';
 import useRestriction from 'app/hooks/useRestriction';
 import * as React from 'react';
+import { useDropzoneContext } from 'app/providers/dropzone';
 import {
   CreateOrderMutationVariables,
   DropzoneUserEssentialsFragment,
@@ -12,7 +13,6 @@ import {
 import {
   DropzoneUserProfileDocument,
   DropzoneUserProfileFragmentDoc,
-  DropzoneUsersDetailedDocument,
   DropzoneUsersDocument,
   useCreateOrderMutation,
   useDropzoneUserProfileLazyQuery,
@@ -22,14 +22,15 @@ import {
 } from '../reflection';
 import { Permission } from '../schema.d';
 import createCRUDContext, { TMutationResponse, uninitializedHandler } from './factory';
-import { useDropzoneContext } from './useDropzone';
 
 function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
   const { id } = variables || {};
   const [updateMutation] = useUpdateDropzoneUserMutation();
   const [getProfile, query] = useDropzoneUserProfileLazyQuery();
   const [mutationCreateOrder] = useCreateOrderMutation();
-  const { dropzone } = useDropzoneContext();
+  const {
+    dropzone: { dropzone },
+  } = useDropzoneContext();
   const { appSignal } = useAppSignal();
   const canGrantPermission = useRestriction(Permission.GrantPermission);
   const canRevokePermission = useRestriction(Permission.RevokePermission);

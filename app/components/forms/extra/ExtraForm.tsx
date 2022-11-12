@@ -3,13 +3,13 @@ import { StyleSheet, View } from 'react-native';
 import TextInput from 'app/components/input/text/TextField';
 import { Checkbox, List } from 'react-native-paper';
 import { useTicketTypesQuery } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 export default function ExtraForm() {
   const state = useAppSelector((root) => root.forms.extra);
   const dispatch = useAppDispatch();
-  const currentDropzone = useDropzoneContext();
+  const { dropzone: currentDropzone } = useDropzoneContext();
   const { data } = useTicketTypesQuery({
     variables: {
       dropzone: currentDropzone?.dropzone?.id?.toString() as string,

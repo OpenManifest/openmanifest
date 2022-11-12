@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB, ProgressBar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import useMutationUpdateDropzone from 'app/api/hooks/useMutationUpdateDropzone';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 
@@ -19,7 +19,9 @@ export default function UpdateDropzoneScreen() {
 
   const navigation = useNavigation();
 
-  const { dropzone, loading } = useDropzoneContext();
+  const {
+    dropzone: { dropzone, loading },
+  } = useDropzoneContext();
 
   React.useEffect(() => {
     if (dropzone?.id) {

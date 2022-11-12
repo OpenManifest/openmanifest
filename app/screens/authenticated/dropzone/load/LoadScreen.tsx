@@ -3,7 +3,12 @@ import { FlatList, Platform } from 'react-native';
 
 import { RouteProp, useIsFocused, useRoute } from '@react-navigation/core';
 import { SlotDetailsFragment } from 'app/api/operations';
-import { LoadProvider, useLoadContext } from 'app/api/crud';
+import {
+  LoadContextProvider,
+  useLoadContext,
+  useManifestContext,
+  useDropzoneContext,
+} from 'app/providers';
 import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
 import PilotChip from 'app/components/chips/PilotChip';
@@ -15,9 +20,7 @@ import { LoadState, Permission } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 
 import useRestriction from 'app/hooks/useRestriction';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { Divider } from 'react-native-paper';
-import { useManifestContext } from 'app/api/crud/useManifest';
 import ActionButton from './ActionButton';
 import Header from './Header';
 import InfoGrid from './InfoGrid';
@@ -36,9 +39,12 @@ function LoadScreen() {
   const forms = useAppSelector((root) => root.forms);
   const { palette, theme } = useAppSelector((root) => root.global);
 
-  const { deleteSlot } = useManifestContext();
-  const { load, loading, refetch, updateGCA, updateLoadMaster, updatePilot, updatePlane } =
-    useLoadContext();
+  const {
+    manifest: { deleteSlot },
+  } = useManifestContext();
+  const {
+    load: { load, loading, refetch, updateGCA, updateLoadMaster, updatePilot, updatePlane },
+  } = useLoadContext();
   const isFocused = useIsFocused();
 
   React.useEffect(() => {
@@ -47,7 +53,7 @@ function LoadScreen() {
     }
   }, [isExpanded, load?.maxSlots]);
 
-  const currentDropzone = useDropzoneContext();
+  const { dropzone: currentDropzone } = useDropzoneContext();
   const { currentUser } = currentDropzone;
 
   const canManifestGroup = useRestriction(Permission.CreateUserSlot);
@@ -281,8 +287,8 @@ export default function LoadScreenWrapper() {
   const loadId = route?.params?.loadId;
 
   return (
-    <LoadProvider id={loadId}>
+    <LoadContextProvider id={loadId}>
       <LoadScreen />
-    </LoadProvider>
+    </LoadContextProvider>
   );
 }

@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { DropzoneUserDetailsFragment, OrderEssentialsFragment } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useManifestContext } from 'app/api/crud/useManifest/Context';
+import { useManifestContext } from 'app/providers';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { actions, useAppDispatch } from 'app/state';
 import { isEqual } from 'lodash';
@@ -64,7 +64,9 @@ export default function useCreditsForm(opts: IUseManifestFormOpts) {
   }, [defaultValues, reset]);
 
   const { handleSubmit, setError } = methods;
-  const { createLoad } = useManifestContext();
+  const {
+    manifest: { createLoad },
+  } = useManifestContext();
   const dispatch = useAppDispatch();
 
   const [{ loading }, onCreateOrder] = useAsyncFn(

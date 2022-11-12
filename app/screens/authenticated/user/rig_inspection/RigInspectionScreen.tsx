@@ -12,7 +12,7 @@ import {
   useDropzoneUserProfileQuery,
   useRigInspectionTemplateQuery,
 } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import { Query, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
@@ -27,7 +27,7 @@ export type RigInspectionRoute = {
 };
 export default function RigInspectionScreen() {
   const state = useAppSelector((root) => root.forms.rigInspection);
-  const currentDropzone = useDropzoneContext();
+  const { dropzone: currentDropzone } = useDropzoneContext();
   const dispatch = useAppDispatch();
 
   const route = useRoute<RouteProp<RigInspectionRoute>>();

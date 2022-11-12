@@ -1,4 +1,4 @@
-import { useDropzoneContext } from 'app/api/crud';
+import { useDropzoneContext } from 'app/providers';
 import * as React from 'react';
 import * as yup from 'yup';
 import { ValidationError } from 'yup';
@@ -12,7 +12,9 @@ const schema = yup.object().shape({
 });
 
 export default function useManifestValidator() {
-  const { currentUser } = useDropzoneContext();
+  const {
+    dropzone: { currentUser },
+  } = useDropzoneContext();
 
   const canManifest = React.useCallback(
     async function CheckManifestRequirements() {

@@ -2,7 +2,7 @@ import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
 import { StyleSheet, Text, View } from 'react-native';
 import useRestriction from 'app/hooks/useRestriction';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import React from 'react';
 import { Avatar, Caption, DataTable, Paragraph } from 'react-native-paper';
 import { generateColor } from 'app/utils/generateColor';
@@ -37,7 +37,7 @@ export const GROUP_COLORS = Array.from({ length: 20 }).map(() => generateColor()
 export default function UserRow(props: ISlotUserRowProps) {
   const { fields, load, slot, index, onDeletePress, onSlotGroupPress, onSlotPress } = props;
 
-  const currentDropzone = useDropzoneContext();
+  const { dropzone: currentDropzone } = useDropzoneContext();
   const { currentUser } = currentDropzone;
   const canEditSelf = useRestriction(Permission.UpdateSlot);
   const canEditOthers = useRestriction(Permission.UpdateUserSlot);

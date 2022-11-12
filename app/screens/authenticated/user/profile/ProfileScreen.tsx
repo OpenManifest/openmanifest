@@ -5,22 +5,19 @@ import { Chip, Divider, ProgressBar } from 'react-native-paper';
 import Skeleton from 'app/components/Skeleton';
 
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import { Permission } from 'app/api/schema.d';
 import DropzoneUserDialog from 'app/components/dialogs/DropzoneUserDialog';
 import RigDialog from 'app/components/dialogs/Rig';
 import EditUserSheet from 'app/components/dialogs/User';
 
 import useImagePicker from 'app/hooks/useImagePicker';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext, useManifestContext } from 'app/providers';
 // eslint-disable-next-line max-len
 import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
-import useRestriction from 'app/hooks/useRestriction';
 import { useUpdateUserMutation } from 'app/api/reflection';
 
 import { errorColor, successColor } from 'app/constants/Colors';
 import { format } from 'date-fns';
 import useProfileWizard from 'app/hooks/navigation/useProfileWizard';
-import { useManifestContext } from 'app/api/crud/useManifest';
 import Header from './UserInfo/Header';
 import InfoGrid from './UserInfo/InfoGrid';
 
@@ -37,7 +34,9 @@ export default function ProfileScreen() {
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
-  const { currentUser } = useDropzoneContext();
+  const {
+    dropzone: { currentUser },
+  } = useDropzoneContext();
   const route = useRoute<RouteProp<ProfileRoute>>();
 
   const { dropzoneUser, loading, refetch } = useDropzoneUserProfile(

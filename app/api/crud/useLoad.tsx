@@ -1,19 +1,17 @@
 import * as React from 'react';
 import { noop } from 'lodash';
 import { DateTime } from 'luxon';
-import { Button, Dialog } from 'react-native-paper';
-import TimePicker from 'app/components/input/time_picker/TimePicker';
 import { actions, useAppDispatch } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import * as yup from 'yup';
 import { ValidationError } from 'yup';
 import { useFinalizeLoadMutation, useLoadQuery, useManifestUserMutation } from '../reflection';
 import { LoadQueryVariables } from '../operations';
-import createCRUDContext, { uninitializedHandler } from './factory';
+import { uninitializedHandler } from './factory';
 import { CreateSlotPayload, LoadState, Permission } from '../schema.d';
 import useMutationUpdateLoad from '../hooks/useMutationUpdateLoad';
 
-export default function useLoad(variables: Partial<LoadQueryVariables>) {
+export function useLoad(variables: Partial<LoadQueryVariables>) {
   const dispatch = useAppDispatch();
   const query = useLoadQuery({
     initialFetchPolicy: 'cache-first',
@@ -29,10 +27,6 @@ export default function useLoad(variables: Partial<LoadQueryVariables>) {
 
   const { loading, fetchMore, data, called, variables: queryVariables } = query;
   const load = React.useMemo(() => data?.load, [data?.load]);
-
-  const [isTimePickerVisible, setTimePickerVisible] = React.useState(false);
-  const closeTimePicker = React.useCallback(() => setTimePickerVisible(false), []);
-  const openTimePicker = React.useCallback(() => setTimePickerVisible(true), []);
 
   const [mutationManifestUser] = useManifestUserMutation();
   const [mutationFinalizeLoad] = useFinalizeLoadMutation();
@@ -220,11 +214,6 @@ export default function useLoad(variables: Partial<LoadQueryVariables>) {
       refetch: queryVariables?.id ? refetch : noop,
       fetchMore: queryVariables?.id ? () => fetchMore({ variables }) : uninitializedHandler,
       load: data?.load,
-      timepicker: {
-        visible: isTimePickerVisible,
-        close: closeTimePicker,
-        open: openTimePicker,
-      },
       dispatchAtTime,
       dispatchInMinutes,
       updateLoadState,
@@ -245,9 +234,6 @@ export default function useLoad(variables: Partial<LoadQueryVariables>) {
       queryVariables?.id,
       refetch,
       data?.load,
-      isTimePickerVisible,
-      closeTimePicker,
-      openTimePicker,
       dispatchAtTime,
       dispatchInMinutes,
       updateLoadState,
@@ -259,85 +245,3 @@ export default function useLoad(variables: Partial<LoadQueryVariables>) {
     ]
   );
 }
-
-const { Provider, useContext: useLoadContext } = createCRUDContext(useLoad, {
-  called: false,
-  loading: false,
-  load: null,
-  update: { loading: false, mutate: uninitializedHandler as never },
-  updateGCA: uninitializedHandler as never,
-  updateLoadMaster: uninitializedHandler as never,
-  updatePlane: uninitializedHandler as never,
-  updatePilot: uninitializedHandler as never,
-  manifestUser: uninitializedHandler as never,
-  refetch: uninitializedHandler as never,
-  fetchMore: uninitializedHandler as never,
-  canDispatchAircraft: false,
-  createAircraftDispatchAction: noop as never,
-  dispatchAtTime: uninitializedHandler as never,
-  dispatchInMinutes: uninitializedHandler as never,
-  markAsLanded: uninitializedHandler as never,
-  cancel: uninitializedHandler as never,
-  timepicker: {
-    visible: false,
-    close: noop,
-    open: noop,
-  },
-  updateLoadState: uninitializedHandler as never,
-});
-
-function CustomCallTimePicker() {
-  const { timepicker, dispatchAtTime } = useLoadContext();
-  const [time, setTime] = React.useState<number>();
-  const [loading, setLoading] = React.useState(false);
-
-  const onSubmit = React.useCallback(() => {
-    try {
-      setLoading(true);
-      if (time) {
-        dispatchAtTime(time).then(timepicker.close);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatchAtTime, time, timepicker.close]);
-  return (
-    <Dialog visible={timepicker.visible} dismissable onDismiss={timepicker.close}>
-      <Dialog.Title>Dispatch Aircraft</Dialog.Title>
-      <Dialog.Content>
-        <TimePicker onChange={setTime} timestamp={time} label="Take-off" />
-      </Dialog.Content>
-      <Dialog.Actions>
-        <Button disabled={loading} onPress={timepicker.close}>
-          Cancel
-        </Button>
-        <Button disabled={loading} onPress={onSubmit}>
-          Dispatch
-        </Button>
-      </Dialog.Actions>
-    </Dialog>
-  );
-}
-
-export function LoadProvider(props: React.PropsWithChildren<Partial<LoadQueryVariables>>) {
-  const { children } = props;
-  return (
-    <Provider {...props}>
-      {children}
-      <CustomCallTimePicker />
-    </Provider>
-  );
-}
-
-export function withLoad<T extends object>(Component: React.ComponentType<T>) {
-  return function WrappedWithLoad(props: T & Partial<LoadQueryVariables>) {
-    const { id, ...rest } = props;
-    return (
-      <LoadProvider {...{ id }}>
-        <Component {...(rest as T)} />
-      </LoadProvider>
-    );
-  };
-}
-
-export { useLoadContext, useLoad };

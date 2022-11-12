@@ -10,7 +10,7 @@ import { View } from 'app/components/Themed';
 import { LoadState } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { errorColor, warningColor } from 'app/constants/Colors';
-import { useLoadContext, withLoad } from 'app/api/crud/useLoad';
+import { useLoadContext, withLoadContext } from 'app/providers';
 import Countdown from '../Countdown';
 import Loading from './Loading';
 
@@ -22,7 +22,9 @@ function LoadCard(props: ILoadCardSmall) {
   const { onPress } = props;
   const dispatch = useAppDispatch();
   const { theme, palette } = useAppSelector((root) => root.global);
-  const { load, loading, refetch, updatePlane, updatePilot } = useLoadContext();
+  const {
+    load: { load, loading, refetch, updatePlane, updatePilot },
+  } = useLoadContext();
   const LOAD_BADGE_COLOR: { [K in LoadState]?: string } = React.useMemo(
     () => ({
       open: palette.accent.main,
@@ -148,4 +150,4 @@ const styles = StyleSheet.create({
   smallChipText: { fontSize: 12 },
 });
 
-export default withLoad(LoadCard);
+export default withLoadContext(LoadCard);

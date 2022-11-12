@@ -8,7 +8,7 @@ import {
   RigEssentialsFragment,
   DropzoneUserEssentialsFragment,
 } from 'app/api/operations';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import useRestriction from 'app/hooks/useRestriction';
 import useImagePicker from 'app/hooks/useImagePicker';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
@@ -33,7 +33,9 @@ export default function RigCard(props: IRigCardProps) {
   const [isUploading, setUploading] = React.useState(false);
   const { accent } = useAppSelector((root) => root.global.theme.colors);
   const dispatch = useAppDispatch();
-  const { currentUser } = useDropzoneContext();
+  const {
+    dropzone: { currentUser },
+  } = useDropzoneContext();
   const pickImage = useImagePicker();
 
   const updateRig = useMutationUpdateRig({

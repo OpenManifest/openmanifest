@@ -5,12 +5,11 @@ import { actions, useAppDispatch } from 'app/state';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { useNavigation } from '@react-navigation/core';
 import { Permission } from 'app/api/schema.d';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext, useManifestContext } from 'app/providers';
 import useRestriction from 'app/hooks/useRestriction';
 import { Alert } from 'react-native';
 import { DropzoneUsersDocument, useArchiveUserMutation } from 'app/api/reflection';
 import { errorColor, infoColor, successColor, warningColor } from 'app/constants/Colors';
-import { useManifestContext } from 'app/api/crud/useManifest';
 import { useUserNavigation } from '../useUserNavigation';
 
 type PropsOf<T> = T extends React.ComponentType<infer P> ? P : never;
@@ -21,7 +20,9 @@ interface IUserActionsButtonProps {
 }
 export default function UserActionsButton(props: IUserActionsButtonProps) {
   const { dropzoneUser, visible } = props;
-  const { currentUser } = useDropzoneContext();
+  const {
+    dropzone: { currentUser },
+  } = useDropzoneContext();
   const [fabOpen, setFabOpen] = React.useState(false);
   const { dialogs } = useManifestContext();
 

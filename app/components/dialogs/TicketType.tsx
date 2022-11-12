@@ -3,7 +3,7 @@ import { useIsFocused } from '@react-navigation/core';
 import useMutationCreateTicketType from 'app/api/hooks/useMutationCreateTicketType';
 import useMutationUpdateTicketType from 'app/api/hooks/useMutationUpdateTicketType';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import TicketTypeForm from '../forms/ticket_type/TicketTypeForm';
 import DialogOrSheet from '../layout/DialogOrSheet';
 import { TicketTypeFields } from '../forms/ticket_type/slice';
@@ -17,7 +17,7 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
   const { open, onClose } = props;
   const state = useAppSelector((root) => root.forms.ticketType);
   const dispatch = useAppDispatch();
-  const currentDropzone = useDropzoneContext();
+  const { dropzone: currentDropzone } = useDropzoneContext();
 
   const createTicketType = useMutationCreateTicketType({
     onSuccess: (payload) => {

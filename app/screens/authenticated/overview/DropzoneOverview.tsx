@@ -7,7 +7,7 @@ import { subMonths } from 'date-fns';
 import { EventAccessLevel, EventLevel, Permission } from 'app/api/schema.d';
 import Chip from 'app/components/chips/Chip';
 import ActivityFeed from 'app/components/activity/Container';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import { ActivityQueryVariables } from 'app/api/operations';
 import useRestriction from 'app/hooks/useRestriction';
 import { Card } from 'react-native-paper';
@@ -23,7 +23,7 @@ enum TimeRange {
 }
 
 export default function DashboardPage() {
-  const { dropzone } = useDropzoneContext();
+  const { dropzone: { dropzone } } = useDropzoneContext();
 
   const [selectedTimeRange, setTimeRange] = React.useState<TimeRange>();
   const canViewAdminActivity = useRestriction(Permission.ViewAdminActivity);

@@ -3,7 +3,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { LoadDetailsFragment } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useManifestContext } from 'app/api/crud/useManifest/Context';
+import { useManifestContext } from 'app/providers';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import useManifestValidator from 'app/hooks/useManifestValidator';
 import { actions, useAppDispatch } from 'app/state';
@@ -62,7 +62,9 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
   }, [defaultValues, reset]);
 
   const { handleSubmit, setError } = methods;
-  const { createLoad } = useManifestContext();
+  const {
+    manifest: { createLoad },
+  } = useManifestContext();
   const { canManifest } = useManifestValidator();
   const dispatch = useAppDispatch();
 

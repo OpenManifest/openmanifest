@@ -6,14 +6,16 @@ import { ProgressBar } from 'react-native-paper';
 import { FlatList } from 'react-native-gesture-handler';
 import { useAppSelector } from 'app/state';
 
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import { useDropzoneTransactionsLazyQuery } from 'app/api/reflection';
 import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
 import OrderCard from '../../../../components/orders/OrderCard';
 
 export default function TransactionsScreen() {
   const state = useAppSelector((root) => root.global);
-  const { currentUser } = useDropzoneContext();
+  const {
+    dropzone: { currentUser },
+  } = useDropzoneContext();
   const [fetchTransactions] = useDropzoneTransactionsLazyQuery();
   const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
   const { dropzoneUser, loading, refetch } = useDropzoneUserProfile(

@@ -5,7 +5,7 @@ import { List, ProgressBar } from 'react-native-paper';
 
 import { useAppSelector } from 'app/state';
 
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import { groupBy, map } from 'lodash';
 import { formatDistance, parseISO, startOfDay, differenceInDays, format } from 'date-fns';
 import enAU from 'date-fns/locale/en-AU';
@@ -21,7 +21,9 @@ export type OrdersRoute = {
 };
 export default function OrdersScreen() {
   const state = useAppSelector((root) => root.global);
-  const { currentUser } = useDropzoneContext();
+  const {
+    dropzone: { currentUser },
+  } = useDropzoneContext();
   const route = useRoute<RouteProp<OrdersRoute>>();
   const { data, loading, refetch } = useDropzoneUserProfileQuery({
     variables: {

@@ -2,11 +2,6 @@ import * as React from 'react';
 import { useAppSelector } from 'app/state';
 import { DateTime } from 'luxon';
 import useRestriction from 'app/hooks/useRestriction';
-import type { IManifestUserDialog } from 'app/forms/manifest_user/Dialog';
-import type { ILoadDialog } from 'app/forms/load/Dialog';
-import type { ICreditsSheet } from 'app/forms/credits/Credits';
-import noop from 'lodash/noop';
-import createUseDialog from './useDialog';
 import {
   useLoadsQuery,
   useManifestGroupMutation,
@@ -15,7 +10,7 @@ import {
   useDeleteSlotMutation,
   useCreateLoadMutation,
   LoadDocument,
-} from '../../reflection';
+} from '../reflection';
 import {
   CreateLoadMutationVariables,
   DeleteSlotMutationVariables,
@@ -25,21 +20,14 @@ import {
   ManifestUserMutationVariables,
   MoveSlotMutationVariables,
   SlotExhaustiveFragment,
-} from '../../operations';
-import { TMutationResponse } from '../factory';
-import { Permission } from '../../schema.d';
+} from '../operations';
+import { TMutationResponse } from './factory';
+import { Permission } from '../schema';
 
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
 
-const useManifestUserDialog = createUseDialog<Pick<IManifestUserDialog, 'load' | 'slot'>>();
-const useLoadDialog = createUseDialog<Pick<ILoadDialog, 'load'>>();
-const useCreditsDialog = createUseDialog<Pick<ICreditsSheet, 'dropzoneUser'>>();
-
 export default function useManifest({ dropzone, date }: UseManifestOptions) {
   const state = useAppSelector((root) => root.global);
-  const manifestUserDialog = useManifestUserDialog();
-  const loadDialog = useLoadDialog();
-  const creditsDialog = useCreditsDialog();
 
   const canCreateLoad = useRestriction(Permission.CreateLoad);
   const canDeleteOwnSlot = useRestriction(Permission.DeleteSlot);
@@ -48,8 +36,10 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
   const canManifestOthers = useRestriction(Permission.CreateUserSlot);
   const canUpdateSlot = useRestriction(Permission.UpdateSlot);
   const canUpdateOwnSlot = useRestriction(Permission.UpdateUserSlot);
+  const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
   const permissions = React.useMemo(
     () => ({
+      canAddTransaction,
       canCreateLoad,
       canDeleteOwnSlot,
       canDeleteSlot,
@@ -59,6 +49,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
       canUpdateOwnSlot,
     }),
     [
+      canAddTransaction,
       canCreateLoad,
       canDeleteOwnSlot,
       canDeleteSlot,
@@ -68,16 +59,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
       canUpdateSlot,
     ]
   );
-  const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
 
-  const dialogs = React.useMemo(
-    () => ({
-      user: manifestUserDialog,
-      load: canCreateLoad ? loadDialog : { ...loadDialog, open: noop },
-      credits: canAddTransaction ? creditsDialog : { ...creditsDialog, open: noop },
-    }),
-    [manifestUserDialog, canCreateLoad, loadDialog, canAddTransaction, creditsDialog]
-  );
   const variables: LoadsQueryVariables | undefined = React.useMemo(() => {
     if (!dropzone) {
       return undefined;
@@ -265,7 +247,6 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
       manifestGroup,
       deleteSlot,
       createLoad,
-      dialogs,
       permissions,
       loads: data?.loads?.edges?.map((edge) => edge?.node) || [],
     }),
@@ -279,7 +260,6 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
       permissions,
       manifestGroup,
       manifestUser,
-      dialogs,
       moveSlot,
       refetch,
     ]

@@ -4,7 +4,12 @@ import { Button, Card, IconButton, Paragraph, ProgressBar, Text } from 'react-na
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 
 import { SlotDetailsFragment } from 'app/api/operations';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import {
+  useDropzoneContext,
+  useLoadContext,
+  useManifestContext,
+  withLoadContext,
+} from 'app/providers';
 import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
 import PilotChip from 'app/components/chips/PilotChip';
@@ -18,9 +23,6 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
 import LoadSlotTable from 'app/components/slots_table/Table';
 import { SlotFields } from 'app/components/slots_table/UserRow';
-import { useLoadContext } from 'app/api/crud';
-import { withLoad } from 'app/api/crud/useLoad';
-import { useManifestContext } from 'app/api/crud/useManifest';
 import LoadingCard from './Loading';
 
 interface ILoadCardLarge {
@@ -37,22 +39,26 @@ function LoadCard(props: ILoadCardLarge) {
   const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDispatchOpen, setDispatchOpen] = React.useState(false);
-  const { deleteSlot } = useManifestContext();
+  const {
+    manifest: { deleteSlot },
+  } = useManifestContext();
   const [deletingSlot, setDeletingSlot] = React.useState(false);
 
   const {
-    load,
-    loading,
-    refetch,
-    update,
-    updateGCA,
-    updatePlane,
-    updatePilot,
-    dispatchInMinutes,
-    updateLoadMaster,
-    markAsLanded,
+    load: {
+      load,
+      loading,
+      refetch,
+      update,
+      updateGCA,
+      updatePlane,
+      updatePilot,
+      dispatchInMinutes,
+      updateLoadMaster,
+      markAsLanded,
+    },
   } = useLoadContext();
-  const currentDropzone = useDropzoneContext();
+  const { dropzone: currentDropzone } = useDropzoneContext();
   const { currentUser } = currentDropzone;
 
   const onDeleteSlot = React.useCallback(
@@ -351,4 +357,4 @@ function LoadCard(props: ILoadCardLarge) {
   );
 }
 
-export default withLoad(LoadCard);
+export default withLoadContext(LoadCard);

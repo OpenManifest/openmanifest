@@ -9,14 +9,16 @@ import { DropzoneExtensiveFragment } from 'app/api/operations';
 import InfoGrid from 'app/screens/authenticated/dropzone/load/InfoGrid';
 import useRestriction from 'app/hooks/useRestriction';
 import { ModerationRole, Permission } from 'app/api/schema.d';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import { useDropzonesContext } from 'app/api/crud';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 
 export default function DrawerMenu() {
   const { theme, currentRouteName: routeName } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
-  const { currentUser, dropzone, loading } = useDropzoneContext();
+  const {
+    dropzone: { currentUser, dropzone, loading },
+  } = useDropzoneContext();
   const { dropzones } = useDropzonesContext();
 
   const navigation = useNavigation();

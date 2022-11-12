@@ -1,16 +1,16 @@
-import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 
 import { FlatList } from 'react-native-gesture-handler';
-import { useDropzoneUserProfileQuery } from 'app/api/reflection';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { Permission } from 'app/api/schema.d';
 import RigDialog from 'app/components/dialogs/Rig';
 
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import useRestriction from 'app/hooks/useRestriction';
+import { useUserProfile } from 'app/api/crud';
 import RigCard from './RigCard';
 
 export type EquipmentRoute = {
@@ -22,27 +22,16 @@ export default function EquipmentScreen() {
   const globalState = useAppSelector((root) => root.global);
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
-  const { currentUser } = useDropzoneContext();
+  const {
+    dropzone: { currentUser },
+  } = useDropzoneContext();
   const navigation = useNavigation();
 
   const route = useRoute<RouteProp<EquipmentRoute, 'EquipmentScreen'>>();
 
-  const { data, loading, refetch } = useDropzoneUserProfileQuery({
-    variables: {
-      id: (route?.params?.userId || currentUser?.id) as string,
-    },
-    skip: !(route?.params?.userId || currentUser?.id),
+  const { dropzoneUser, loading } = useUserProfile({
+    id: (route?.params?.userId || currentUser?.id) as string,
   });
-
-  const dropzoneUser = React.useMemo(() => data?.dropzoneUser, [data?.dropzoneUser]);
-
-  const isFocused = useIsFocused();
-
-  React.useEffect(() => {
-    if (isFocused) {
-      refetch();
-    }
-  }, [isFocused, refetch]);
 
   React.useEffect(() => {
     if (dropzoneUser?.user?.name && dropzoneUser?.id !== currentUser?.id) {
@@ -65,7 +54,7 @@ export default function EquipmentScreen() {
         renderItem={({ item }) => (
           <RigCard
             {...{ dropzoneUser }}
-            onSuccessfulImageUpload={refetch}
+            // onSuccessfulImageUpload={refetch}
             rig={item}
             rigInspection={dropzoneUser?.rigInspections?.find(
               (insp) => insp.rig?.id === item.id && insp.isOk

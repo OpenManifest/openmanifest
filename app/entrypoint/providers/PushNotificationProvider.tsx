@@ -5,8 +5,8 @@ import { Linking, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import URI from 'urijs';
 import { useUpdateUserMutation } from 'app/api/reflection';
-import { actions, useAppDispatch, useAppSelector } from '../../state';
-import { useDropzoneContext } from '../../api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
 
 async function registerForPushNotificationsAsync(): Promise<string | null> {
   let token: string | null = null;
@@ -42,7 +42,9 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
   const { children } = props;
   const pushToken = useAppSelector((root) => root.global.expoPushToken);
   const dispatch = useAppDispatch();
-  const { currentUser, loading, called } = useDropzoneContext();
+  const {
+    dropzone: { currentUser, loading, called },
+  } = useDropzoneContext();
   const notificationListener =
     React.useRef<ReturnType<typeof Notifications.addNotificationReceivedListener>>();
   const responseListener =
