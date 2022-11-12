@@ -1,44 +1,35 @@
 import * as dropzone from './dropzone/slice';
 import * as dropzoneUser from './dropzone_user/slice';
-import * as extra from './extra/slice';
 import * as ghost from './ghost/slice';
-import * as plane from './plane/slice';
 import * as rig from './rig/slice';
 import * as rigInspection from './rig_inspection/slice';
 import * as rigInspectionTemplate from './rig_inspection_template/slice';
 import * as manifest from './manifest/slice';
 import * as manifestGroup from './manifest_group/slice';
-import * as ticketType from './ticket_type/slice';
 import * as user from './user/slice';
 import * as weather from './weather_conditions/slice';
 
 export const initialState = {
   dropzone: dropzone.initialState,
   dropzoneUser: dropzoneUser.initialState,
-  extra: extra.initialState,
   ghost: ghost.initialState,
-  plane: plane.initialState,
   rig: rig.initialState,
   rigInspection: rigInspection.initialState,
   rigInspectionTemplate: rigInspectionTemplate.initialState,
   manifest: manifest.initialState,
   manifestGroup: manifestGroup.initialState,
-  ticketType: ticketType.initialState,
   user: user.initialState,
   weather: weather.initialState,
 };
 export const reducers = {
   dropzone: dropzone.default,
   dropzoneUser: dropzoneUser.default,
-  extra: extra.default,
   ghost: ghost.default,
-  plane: plane.default,
   rig: rig.default,
   rigInspection: rigInspection.default,
   rigInspectionTemplate: rigInspectionTemplate.default,
   manifest: manifest.default,
   manifestGroup: manifestGroup.default,
-  ticketType: ticketType.default,
   user: user.default,
   weather: weather.default,
 };

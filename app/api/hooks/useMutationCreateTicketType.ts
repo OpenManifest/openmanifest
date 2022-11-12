@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { createMutation, isNumeric, isRequired } from '../createMutation';
-import { MutationCreateTicketTypeArgs, CreateTicketPayload } from '../schema';
+import { MutationCreateTicketTypeArgs, CreateTicketPayload } from '../schema.d';
 
 const MUTATION_CREATE_TICKET_TYPE = gql`
   mutation CreateTicketType(

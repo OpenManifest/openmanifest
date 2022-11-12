@@ -22,7 +22,7 @@ import {
   SlotExhaustiveFragment,
 } from '../operations';
 import { TMutationResponse } from './factory';
-import { Permission } from '../schema';
+import { Permission } from '../schema.d';
 
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
 

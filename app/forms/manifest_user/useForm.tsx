@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { SlotExhaustiveFragment } from 'app/api/operations';
+import { SlotExhaustiveFragment, TicketTypeDetailsFragment } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useManifestContext } from 'app/providers';
@@ -13,7 +13,6 @@ export type ManifestUserFields = Pick<
   SlotExhaustiveFragment,
   | 'jumpType'
   // | 'load'
-  | 'ticketType'
   | 'rig'
   | 'dropzoneUser'
   | 'exitWeight'
@@ -21,7 +20,7 @@ export type ManifestUserFields = Pick<
   | 'groupNumber'
   | 'passengerExitWeight'
   | 'passengerName'
-> & { id?: string; load?: { id: string } };
+> & { id?: string; load?: { id: string }; ticketType: TicketTypeDetailsFragment | null };
 
 export const manifestUserValidation = yup.object().shape({
   load: yup.object().required(),

@@ -63,13 +63,21 @@ function ChipSelect<T>(props: IChipSelect<T>) {
               key={JSON.stringify(item)}
               small
               mode={!isItemSelected ? 'flat' : 'outlined'}
-              icon={!value.some((selected) => isEqual(item, selected)) && icon ? icon : undefined}
+              icon={
+                !value?.some((selected) =>
+                  isSelected ? isSelected(item, selected) : isEqual(item, selected)
+                ) && icon
+                  ? icon
+                  : undefined
+              }
               style={{ margin: Platform.OS === 'web' ? 4 : 1 }}
               disabled={isDisabled?.(item) || false}
               selected={isItemSelected}
               onPress={() =>
                 onChange(
-                  !allowEmpty && value.length === 1 ? [item] : xorBy(value, [item], JSON.stringify)
+                  !allowEmpty && value.length === 1
+                    ? [item]
+                    : xorBy(value, [item], isSelected || JSON.stringify)
                 )
               }
             >

@@ -3,11 +3,16 @@ import noop from 'lodash/noop';
 import { uninitializedHandler } from 'app/api/crud/factory';
 import { useDropzone } from 'app/api/crud';
 import { IDialogContextSubstate } from '../hooks/useDialog';
+import { IPlaneDialogProps } from 'app/forms/aircraft/Dialog';
+import { ITicketTypeDialog } from 'app/forms/ticket_type/Dialog';
+import { ITicketTypeAddonDialog } from 'app/forms/ticket_type_addon/Dialog';
 
 interface IDropzoneContext {
   dropzone: ReturnType<typeof useDropzone>;
   dialogs: {
-    // timepicker: IDialogContextSubstate<object>;
+    aircraft: IDialogContextSubstate<Pick<IPlaneDialogProps, 'initial' | 'original'>>;
+    ticketType: IDialogContextSubstate<Pick<ITicketTypeDialog, 'initial' | 'original'>>;
+    ticketTypeAddon: IDialogContextSubstate<Pick<ITicketTypeAddonDialog, 'initial' | 'original'>>;
   };
 }
 
@@ -22,6 +27,21 @@ export const INITIAL_CONTEXT: IDropzoneContext = {
     fetchMore: uninitializedHandler as never,
   },
   dialogs: {
+    aircraft: {
+      visible: false,
+      close: noop,
+      open: noop,
+    },
+    ticketType: {
+      visible: false,
+      close: noop,
+      open: noop,
+    },
+    ticketTypeAddon: {
+      visible: false,
+      close: noop,
+      open: noop,
+    },
   },
 };
 

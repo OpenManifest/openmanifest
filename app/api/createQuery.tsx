@@ -1,7 +1,7 @@
 import { DocumentNode, useQuery } from '@apollo/client';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import * as React from 'react';
-import { Query } from './schema';
+import { Query } from './schema.d';
 import { actions, useAppDispatch } from '../state';
 
 export interface IAppQuery<Payload, InputType> {

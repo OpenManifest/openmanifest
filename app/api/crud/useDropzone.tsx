@@ -20,6 +20,8 @@ export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
     skip: !variables?.dropzoneId,
   });
 
+  const { loading, fetchMore, data, called, variables: queryVariables } = query;
+
   const permissionsVariables = React.useMemo(
     () => ({ dropzoneId: variables?.dropzoneId }),
     [variables?.dropzoneId]
@@ -36,7 +38,6 @@ export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
     }
   }, [query, variables]);
 
-  const { loading, fetchMore, data, called, variables: queryVariables } = query;
   return React.useMemo(
     () => ({
       loading,

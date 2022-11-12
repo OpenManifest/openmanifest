@@ -1,10 +1,8 @@
-mutation UpdateTicketType(
-  $id: Int!
-  $attributes: TicketTypeInput!
+mutation CreateTicketType(
+    $attributes: TicketTypeInput!
 ) {
-  updateTicketType(
+  createTicketType(
     input: {
-      id: $id
       attributes: $attributes
     }
   ) {
@@ -14,7 +12,6 @@ mutation UpdateTicketType(
       message
     }
     ticketType {
-      ...ticketTypeEssentials
       id
       name
       altitude
@@ -27,10 +24,19 @@ mutation UpdateTicketType(
       }
 
       dropzone {
-        ...dropzoneEssentials
+        id
 
         ticketTypes {
-          ...ticketTypeEssentials
+          id
+          name
+          altitude
+          cost
+          allowManifestingSelf
+          extras {
+            id
+            name
+            cost
+          }
         }
       }
     }

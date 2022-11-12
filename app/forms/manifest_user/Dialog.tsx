@@ -27,7 +27,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       passengerExitWeight: slot?.passengerExitWeight,
       passengerName: slot?.passengerName,
       rig: slot?.rig,
-      ticketType: slot?.ticketType,
+      ticketType: slot?.ticketType || undefined,
     },
     onSuccess,
   });

@@ -3,7 +3,7 @@ import { Maybe } from 'graphql/jsutils/Maybe';
 import * as React from 'react';
 import camelCase from 'lodash/camelCase';
 import startCase from 'lodash/startCase';
-import { FieldError, Mutation } from './schema';
+import { FieldError, Mutation } from './schema.d';
 
 export interface IAppMutation<Payload, InputType> {
   loading: boolean;

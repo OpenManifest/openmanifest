@@ -5,10 +5,24 @@ fragment ticketTypeEssentials on TicketType {
   cost
   isTandem
   allowManifestingSelf
+}
 
+fragment ticketTypeDetails on TicketType {
+  ...ticketTypeEssentials
   extras {
-    id
-    name
-    cost
+    ...ticketTypeAddonEssentials
+  }
+}
+
+fragment ticketTypeAddonEssentials on Extra {
+  id
+  name
+  cost
+}
+
+fragment ticketTypeAddonDetails on Extra {
+  ...ticketTypeAddonEssentials
+  ticketTypes {
+    ...ticketTypeEssentials
   }
 }

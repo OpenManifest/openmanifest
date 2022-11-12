@@ -1,5 +1,5 @@
 import { createMutation } from '../createMutation';
-import { MutationUpdateDropzoneArgs } from '../schema';
+import { MutationUpdateDropzoneArgs } from '../schema.d';
 import { UpdateDropzoneDocument } from '../reflection';
 import { UpdateDropzoneMutation } from '../operations';
 

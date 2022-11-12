@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { createMutation, isRequired } from '../createMutation';
-import { CreatePlanePayload } from '../schema';
+import { CreatePlanePayload } from '../schema.d';
 
 const MUTATION_CREATE_PLANE = gql`
   mutation CreatePlane(

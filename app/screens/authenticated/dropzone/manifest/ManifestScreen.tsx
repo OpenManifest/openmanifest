@@ -71,12 +71,6 @@ export default function ManifestScreen() {
       if (dropzoneWizardIndex) {
         dispatch(actions.screens.dropzoneWizard.setIndex(dropzoneWizardIndex));
         dispatch(actions.forms.dropzone.setOriginal(dropzone));
-        if (dropzone?.planes?.length) {
-          dispatch(actions.forms.plane.setOriginal(dropzone.planes[0]));
-        }
-        if (dropzone?.ticketTypes?.length) {
-          dispatch(actions.forms.ticketType.setOriginal(dropzone.ticketTypes[0]));
-        }
         navigation.navigate('Wizards', { screen: 'DropzoneWizardScreen' });
       }
     }
@@ -104,10 +98,7 @@ export default function ManifestScreen() {
     }
   }, [isFocused, refetch]);
 
-  const hasPlanes = !!dropzone?.planes?.length;
-  const hasTicketTypes = !!dropzone?.ticketTypes?.length;
   const isPublic = dropzone?.status === DropzoneState.Public;
-  const isSetupComplete = hasPlanes && hasTicketTypes;
 
   React.useEffect(() => {
     if (dropzone?.primaryColor && dropzone?.primaryColor !== state.theme?.colors?.primary) {
@@ -228,9 +219,7 @@ export default function ManifestScreen() {
       />
 
       <View style={styles.container}>
-        {!initialLoading && !isSetupComplete ? (
-          <GetStarted {...{ hasPlanes, hasTicketTypes, isPublic }} />
-        ) : (
+        
           <View
             style={{
               width: '100%',
@@ -277,8 +266,7 @@ export default function ManifestScreen() {
               />
             </DragDropWrapper>
           </View>
-        )}
-        {manifest.permissions.canCreateLoad && isSetupComplete && (
+        {manifest.permissions.canCreateLoad && (
           <FAB
             style={[styles.fab, { backgroundColor: theme.colors.primary }]}
             small

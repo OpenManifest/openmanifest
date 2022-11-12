@@ -35,8 +35,6 @@ export default function DropzonesScreen() {
         small
         icon="plus"
         onPress={() => {
-          dispatch(actions.forms.plane.reset());
-          dispatch(actions.forms.ticketType.reset());
           dispatch(actions.forms.dropzone.reset());
           navigation.navigate('Wizards', { screen: 'DropzoneWizardScreen' });
         }}
