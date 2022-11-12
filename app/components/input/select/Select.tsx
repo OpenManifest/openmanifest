@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { StyleSheet, View } from 'react-native';
 import { HelperText, List } from 'react-native-paper';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import { isEqual } from 'lodash';
-import { View } from 'react-native';
 
 export interface ISelectOption<T> {
   label: string;
@@ -99,7 +99,15 @@ export default function Select<T>(props: ISelectProps<T>) {
           />
         ))}
       </Menu>
-      <HelperText type="error">{error || ' '}</HelperText>
+      <HelperText style={styles.helperText} type="error">
+        {error || ' '}
+      </HelperText>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  helperText: {
+    marginBottom: 16,
+  },
+});

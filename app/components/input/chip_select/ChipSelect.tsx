@@ -1,6 +1,6 @@
 import { isEqual, pick, xorBy } from 'lodash';
 import * as React from 'react';
-import { Platform, View } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import Chip, { ChipProps } from 'app/components/chips/Chip';
 import { HelperText } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -65,7 +65,7 @@ function ChipSelect<T>(props: IChipSelect<T>) {
               mode={!isItemSelected ? 'flat' : 'outlined'}
               icon={
                 !value?.some((selected) =>
-                  isSelected ? isSelected(item, selected) : isEqual(item, selected)
+                  isSelected ? isSelected(selected) : isEqual(item, selected)
                 ) && icon
                   ? icon
                   : undefined
@@ -86,10 +86,18 @@ function ChipSelect<T>(props: IChipSelect<T>) {
           );
         })}
       </View>
-      <HelperText type="error">{error || ''}</HelperText>
+      <HelperText style={styles.helperText} type="error">
+        {error || ''}
+      </HelperText>
     </Wrapper>
   );
 }
+
+const styles = StyleSheet.create({
+  helperText: {
+    marginBottom: 16,
+  },
+});
 
 const ChipSelectComponent = React.memo(ChipSelect, (previous, next) => {
   return isEqual(

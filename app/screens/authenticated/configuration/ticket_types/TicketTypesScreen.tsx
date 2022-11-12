@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, RefreshControl } from 'react-native';
+import { StyleSheet, RefreshControl, View } from 'react-native';
 import { FAB, DataTable, ProgressBar, Switch } from 'react-native-paper';
 import { Permission } from 'app/api/schema.d';
 
@@ -13,57 +13,70 @@ import { TicketTypeEssentialsFragment } from 'app/api/operations';
 
 export default function TicketTypesScreen() {
   const state = useAppSelector((root) => root.global);
-  const { dropzone: { dropzone }, dialogs } = useDropzoneContext();
+  const {
+    dropzone: { dropzone },
+    dialogs,
+  } = useDropzoneContext();
   const dispatch = useAppDispatch();
   const { ticketTypes, loading, refetch, archiveTicketType, updateTicketType } = useTickets({
-      dropzone: dropzone?.id,
+    dropzone: dropzone?.id,
   });
 
   const canCreateTicketTypes = useRestriction(Permission.CreateTicketType);
 
-  const createArchiveTicketHandler = React.useCallback((ticket: TicketTypeEssentialsFragment) => {
-    return async function ArchiveTicketType() {
-      const response = await archiveTicketType(ticket);
+  const createArchiveTicketHandler = React.useCallback(
+    (ticket: TicketTypeEssentialsFragment) => {
+      return async function ArchiveTicketType() {
+        const response = await archiveTicketType(ticket);
 
-      if ('error' in response && response.error) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: response.error,
-            variant: 'error',
-          })
-        );
-      } else {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: `Archived ${ticket.name}`,
-            variant: 'success',
-          })
-        );
-      }
-    }
-  }, []);
+        if ('error' in response && response.error) {
+          dispatch(
+            actions.notifications.showSnackbar({
+              message: response.error,
+              variant: 'error',
+            })
+          );
+        } else {
+          dispatch(
+            actions.notifications.showSnackbar({
+              message: `Archived ${ticket.name}`,
+              variant: 'success',
+            })
+          );
+        }
+      };
+    },
+    [archiveTicketType, dispatch]
+  );
 
-  const createToggleManifestSelfHandler = React.useCallback((ticket: TicketTypeEssentialsFragment) => {
-    return async function ToggleManifestSelf() {
-      const response = await updateTicketType(Number(ticket.id), { allowManifestingSelf: !ticket.allowManifestingSelf});
+  const createToggleManifestSelfHandler = React.useCallback(
+    (ticket: TicketTypeEssentialsFragment) => {
+      return async function ToggleManifestSelf() {
+        const response = await updateTicketType(Number(ticket.id), {
+          allowManifestingSelf: !ticket.allowManifestingSelf,
+        });
 
-      if ('error' in response && response.error) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: response.error,
-            variant: 'error',
-          })
-        );
-      } else {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: `Archived ${ticket.name}`,
-            variant: 'success',
-          })
-        );
-      }
-    }
-  }, []);
+        if ('error' in response && response.error) {
+          dispatch(
+            actions.notifications.showSnackbar({
+              message: response.error,
+              variant: 'error',
+            })
+          );
+        } else {
+          dispatch(
+            actions.notifications.showSnackbar({
+              message: `${ticket.name} can ${
+                ticket.allowManifestingSelf ? 'no longer' : 'now'
+              } be used by users to manifest themselves`,
+              variant: 'success',
+            })
+          );
+        }
+      };
+    },
+    [dispatch, updateTicketType]
+  );
   return (
     <ScrollableScreen
       style={styles.container}
@@ -97,10 +110,12 @@ export default function TicketTypesScreen() {
               <DataTable.Cell numeric>${ticketType.cost}</DataTable.Cell>
               <DataTable.Cell numeric>{ticketType.altitude}</DataTable.Cell>
               <DataTable.Cell numeric>
-                <Switch
-                  onValueChange={createToggleManifestSelfHandler(ticketType)}
-                  value={!!ticketType.allowManifestingSelf}
-                />
+                <View pointerEvents="box-none">
+                  <Switch
+                    onValueChange={createToggleManifestSelfHandler(ticketType)}
+                    value={!!ticketType.allowManifestingSelf}
+                  />
+                </View>
               </DataTable.Cell>
             </DataTable.Row>
           </SwipeActions>

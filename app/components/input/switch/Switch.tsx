@@ -27,11 +27,17 @@ function Switch(props: ISwitchProps) {
               style,
             ])}
             {...rest}
-            onValueChange={onChange}
+            onChange={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onChange?.(e.value);
+            }}
           />
         )}
       />
-      <HelperText type={error ? 'error' : 'info'}>{error || helperText || ' '}</HelperText>
+      <HelperText style={styles.helperText} type={error ? 'error' : 'info'}>
+        {error || helperText || ' '}
+      </HelperText>
     </>
   );
 }
@@ -46,5 +52,8 @@ const styles = StyleSheet.create({
   },
   field: {
     marginBottom: 8,
+  },
+  helperText: {
+    marginBottom: 16,
   },
 });

@@ -25,7 +25,9 @@ function TextField(props: ITextFieldProps) {
         {...{ onChangeText }}
         error={!!error}
       />
-      <HelperText type={error ? 'error' : 'info'}>{error || helperText || ' '}</HelperText>
+      <HelperText style={styles.helperText} type={error ? 'error' : 'info'}>
+        {error || helperText || ' '}
+      </HelperText>
     </>
   );
 }
@@ -40,5 +42,8 @@ const styles = StyleSheet.create({
   },
   field: {
     marginBottom: 8,
+  },
+  helperText: {
+    marginBottom: 16,
   },
 });
