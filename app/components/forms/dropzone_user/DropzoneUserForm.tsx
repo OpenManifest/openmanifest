@@ -17,7 +17,7 @@ export default function DropzoneUserForm() {
     <>
       <RoleSelect
         value={state.fields.role.value}
-        onSelect={(newRole) => dispatch(actions.forms.dropzoneUser.setField(['role', newRole]))}
+        onChange={(newRole) => dispatch(actions.forms.dropzoneUser.setField(['role', newRole]))}
         disabled={!canUpdateRole}
       />
       <HelperText type={state.fields.role.error ? 'error' : 'info'}>
@@ -26,7 +26,7 @@ export default function DropzoneUserForm() {
 
       <List.Subheader style={{ paddingLeft: 0 }}>Financial</List.Subheader>
       <DatePicker
-        timestamp={state.fields.expiresAt.value || new Date().getTime() / 1000}
+        value={state.fields.expiresAt.value || new Date().getTime() / 1000}
         onChange={(time) => dispatch(actions.forms.dropzoneUser.setField(['expiresAt', time]))}
         label="Membership expires"
       />

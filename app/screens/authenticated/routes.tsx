@@ -9,7 +9,7 @@ import { ModerationRole, Permission } from 'app/api/schema.d';
 import { useTheme } from 'react-native-paper';
 
 import { NavigatorScreenParams } from '@react-navigation/core';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import { AppSignalBoundary } from 'app/components/app_signal';
 import ManifestTab, { DropzoneRoutes } from './dropzone/routes';
 import UsersTab, { UserRoutes } from './user/routes';
@@ -28,7 +28,9 @@ export type AuthenticatedRoutes = {
 export default function AuthenticatedTabBar() {
   const { palette } = useAppSelector((root) => root.global);
 
-  const { currentUser } = useDropzoneContext();
+  const {
+    dropzone: { currentUser },
+  } = useDropzoneContext();
   const isAdmin = currentUser?.user?.moderationRole !== ModerationRole.User;
   const canViewUsers = useRestriction(Permission.ReadUser);
   const canViewDashboard = useRestriction(Permission.ViewStatistics);

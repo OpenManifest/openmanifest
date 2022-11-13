@@ -8,6 +8,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import { SlotUserWithRig } from 'app/components/forms/manifest_group/slice';
+import { useNotifications } from 'app/providers/notifications';
 import ManifestGroupForm from '../../forms/manifest_group/ManifestGroupForm';
 import UserListSelect from './UserListSelect';
 
@@ -20,6 +21,7 @@ interface IManifestUserDialog {
 export default function ManifestGroupDialog(props: IManifestUserDialog) {
   const { open, onClose, onSuccess } = props;
   const dispatch = useAppDispatch();
+  const notify = useNotifications();
   const state = useAppSelector((root) => root.forms.manifestGroup);
   const [mutationCreateSlots, mutationData] = useManifestGroupMutation();
   const [tabIndex, setTabIndex] = React.useState(0);
@@ -118,12 +120,7 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
         }
       });
       if (result?.data?.createSlots?.errors?.length) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: result?.data?.createSlots?.errors[0],
-            variant: 'error',
-          })
-        );
+        notify.error(result?.data?.createSlots?.errors[0]);
         return;
       }
       if (!result.data?.createSlots?.fieldErrors?.length) {
@@ -131,17 +128,13 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
       }
     } catch (error) {
       if (error instanceof Error) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: error.message,
-            variant: 'error',
-          })
-        );
+        notify.error(error.message);
       }
     }
   }, [
     dispatch,
     mutationCreateSlots,
+    notify,
     onSuccess,
     state.fields.extras?.value,
     state.fields?.groupNumber?.value,

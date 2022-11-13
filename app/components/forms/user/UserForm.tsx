@@ -86,7 +86,7 @@ export default function SlotForm() {
       <View style={{ width: '100%' }}>
         <FederationSelect
           value={state?.fields?.license?.value?.federation || state.federation.value}
-          onSelect={(value) => dispatch(actions.forms.user.setFederation(value))}
+          onChange={(value) => dispatch(actions.forms.user.setFederation(value))}
         />
 
         <HelperText type={state.federation.error ? 'error' : 'info'}>
@@ -100,7 +100,7 @@ export default function SlotForm() {
               federationId={Number(
                 state?.fields?.license?.value?.federation?.id || state.federation?.value?.id
               )}
-              onSelect={(value) => dispatch(actions.forms.user.setField(['license', value]))}
+              onChange={(value) => dispatch(actions.forms.user.setField(['license', value]))}
             />
             <HelperText type={state.fields.license.error ? 'error' : 'info'}>
               {state.fields.license.error || ''}

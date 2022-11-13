@@ -464,6 +464,7 @@ input DropzoneInput {
 
 enum DropzoneState {
   archived
+  demo
   in_review
   private
   public
@@ -472,6 +473,9 @@ enum DropzoneState {
 enum DropzoneStateEvent {
   """archive"""
   archive
+
+  """demo"""
+  demo
 
   """publish"""
   publish
@@ -789,7 +793,7 @@ input GhostInput {
 input GrantPermissionInput {
   """A unique identifier for the client performing the mutation."""
   clientMutationId: String
-  id: Int
+  dropzoneUser: ID
   permission: Permission!
 }
 
@@ -1568,7 +1572,7 @@ type ReloadWeatherConditionPayload {
 input RevokePermissionInput {
   """A unique identifier for the client performing the mutation."""
   clientMutationId: String
-  id: Int
+  dropzoneUser: ID
   permission: Permission!
 }
 

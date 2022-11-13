@@ -126,7 +126,7 @@ export default function DropzoneForm(props: IDropzoneForm) {
           <HelperText type="error">{state.fields.name.error || ''}</HelperText>
           <FederationSelect
             value={state.fields.federation.value}
-            onSelect={(value) => dispatch(actions.forms.dropzone.setField(['federation', value]))}
+            onChange={(value) => dispatch(actions.forms.dropzone.setField(['federation', value]))}
           />
           <HelperText type={state.fields.federation.error ? 'error' : 'info'}>
             {state.fields.federation.error || ''}

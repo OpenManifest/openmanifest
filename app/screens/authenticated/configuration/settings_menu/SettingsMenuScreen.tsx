@@ -4,15 +4,17 @@ import { useNavigation } from '@react-navigation/core';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
 import { DropzoneState, DropzoneStateEvent, Permission } from 'app/api/schema.d';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import { useDropzonesContext } from 'app/api/crud';
-import { actions, useAppDispatch } from 'app/state';
+import { useNotifications } from 'app/providers/notifications';
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
-  const { dropzone } = useDropzoneContext();
-  const dispatch = useAppDispatch();
+  const notify = useNotifications();
+  const {
+    dropzone: { dropzone },
+  } = useDropzoneContext();
 
   const theme = useTheme();
 
@@ -28,10 +30,10 @@ export default function SettingsScreen() {
       const result = await updateVisibility(dropzone.id, event);
 
       if ('error' in result && result.error) {
-        dispatch(actions.notifications.showSnackbar({ message: result.error }));
+        notify.error(result.error);
       }
     },
-    [dispatch, dropzone?.id, updateVisibility]
+    [dropzone?.id, notify, updateVisibility]
   );
 
   return (

@@ -11,6 +11,7 @@ import { UserFields } from 'app/components/forms/user/slice';
 import { License, Rig } from 'app/api/schema.d';
 import { WizardRef } from 'app/components/carousel_wizard/Wizard';
 import { useRoute } from '@react-navigation/core';
+import { useNotifications } from 'app/providers/notifications';
 import FederationStep from './steps/Federation';
 import FederationNumberStep from './steps/FederationNumber';
 import RealNameStep from './steps/RealName';
@@ -27,6 +28,7 @@ function UserWizardScreen() {
   const userForm = useAppSelector((root) => root.forms.user);
   const rigForm = useAppSelector((root) => root.forms.rig);
   const state = useAppSelector((root) => root.screens.userWizard);
+  const notify = useNotifications();
   const dispatch = useAppDispatch();
   const wizard = React.useRef<WizardRef>(null);
   const { params } = useRoute<{ key: string; name: string; params: { index: number } }>();
@@ -42,8 +44,7 @@ function UserWizardScreen() {
   const [joinFederation] = useJoinFederationMutation();
   const mutationUpdateUser = useMutationUpdateUser({
     onSuccess: () => null,
-    onError: (message) =>
-      dispatch(actions.notifications.showSnackbar({ message, variant: 'error' })),
+    onError: notify.error,
     onFieldError: (field, value) =>
       dispatch(actions.forms.user.setFieldError([field as keyof UserFields, value])),
   });

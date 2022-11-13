@@ -7,6 +7,7 @@ import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateW
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 // eslint-disable-next-line max-len
 import WeatherConditionForm from 'app/components/forms/weather_conditions/WeatherConditionForm';
+import { useNotifications } from 'app/providers/notifications';
 import { useAuthenticatedNavigation } from '../../useAuthenticatedNavigation';
 
 export default function WindScreen() {
@@ -15,14 +16,13 @@ export default function WindScreen() {
   const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
   const dispatch = useAppDispatch();
   const navigation = useAuthenticatedNavigation();
+  const notify = useNotifications();
 
   const mutationCreateWeatherConditions = useMutationCreateWeatherConditions({
     onSuccess: () => null,
     onFieldError: (field: keyof typeof state.fields, message: string) =>
       dispatch(actions.forms.weather.setFieldError([field, message])),
-    onError: (message) => {
-      dispatch(actions.notifications.showSnackbar({ message, variant: 'error' }));
-    },
+    onError: notify.error,
   });
 
   const onSaveConditions = React.useCallback(async () => {
@@ -34,15 +34,20 @@ export default function WindScreen() {
       temperature: state.fields.temperature.value,
     });
     navigation.goBack();
-    dispatch(
-      actions.notifications.showSnackbar({
-        message: 'Weather board updated',
-        variant: 'success',
-      })
-    );
+    notify.success('Weather board updated');
     dispatch(actions.forms.weather.reset());
     dispatch(actions.forms.weather.setOpen(false));
-  }, [mutationCreateWeatherConditions, state, dropzoneId, navigation, dispatch]);
+  }, [
+    mutationCreateWeatherConditions,
+    state.original?.id,
+    state.fields.winds.value,
+    state.fields.jumpRun.value,
+    state.fields.temperature.value,
+    dropzoneId,
+    navigation,
+    notify,
+    dispatch,
+  ]);
 
   return (
     <ScrollableScreen contentContainerStyle={{ backgroundColor: theme.colors.background }}>

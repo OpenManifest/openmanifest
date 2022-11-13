@@ -1,5 +1,6 @@
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
+import { truncate } from 'lodash';
 import * as React from 'react';
 import { useTheme } from 'react-native-paper';
 import { Permission } from '../../api/schema.d';
@@ -53,15 +54,15 @@ export default function PilotChip(props: IPilotChipSelect) {
     openMenu(): void;
   }> = React.useCallback(
     ({ item, openMenu }) => (
-      <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="shield-airplane">
-        {item?.label || 'No Pilot'}
+      <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="account-tie-hat">
+        {truncate(item?.label || 'No Pilot', { length: 12 })}
       </Chip>
     ),
     [backgroundColor, color, small]
   );
 
   return !allowed ? (
-    <Chip {...{ backgroundColor, small, color }} icon="shield-airplane">
+    <Chip {...{ backgroundColor, small, color }} icon="account-tie-hat">
       {value?.user?.name || 'No Pilot'}
     </Chip>
   ) : (

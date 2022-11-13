@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { createMutation } from '../createMutation';
-import { CreateWeatherConditionPayload, WeatherConditionInput } from '../schema';
+import { CreateWeatherConditionPayload, WeatherConditionInput } from '../schema.d';
 
 export const MUTATION_CREATE_WEATHER_CONDITION = gql`
   mutation CreateWeatherConditions(

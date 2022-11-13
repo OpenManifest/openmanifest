@@ -5,22 +5,25 @@ import { useTicketTypeExtrasQuery } from 'app/api/reflection';
 import { View } from 'app/components/Themed';
 import { Permission } from 'app/api/schema.d';
 
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useAppSelector } from 'app/state';
 import NoResults from 'app/components/NoResults';
-import TicketTypeExtraDialog from 'app/components/dialogs/TicketTypeExtra';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import useRestriction from 'app/hooks/useRestriction';
+import { TicketTypeAddonDetailsFragment } from 'app/api/operations';
 
 export default function ExtrasScreen() {
-  const currentDropzone = useDropzoneContext();
+  const { dropzone: currentDropzone, dialogs } = useDropzoneContext();
   const globalState = useAppSelector((root) => root.global);
-  const formState = useAppSelector((root) => root.forms.extra);
   const { data, loading } = useTicketTypeExtrasQuery({
     variables: {
       dropzoneId: currentDropzone?.dropzone?.id as string,
     },
   });
-  const dispatch = useAppDispatch();
+  const createEditHandler = React.useCallback(
+    (ticketTypeAddon: TicketTypeAddonDetailsFragment) => () =>
+      dialogs.ticketTypeAddon.open({ original: ticketTypeAddon }),
+    [dialogs.ticketTypeAddon]
+  );
   const canCreateExtras = useRestriction(Permission.CreateExtra);
 
   return (
@@ -34,12 +37,7 @@ export default function ExtrasScreen() {
           </DataTable.Header>
 
           {data?.extras?.map((extra) => (
-            <DataTable.Row
-              onPress={() => {
-                dispatch(actions.forms.extra.setOpen(extra));
-              }}
-              pointerEvents="none"
-            >
+            <DataTable.Row onPress={createEditHandler(extra)} pointerEvents="none">
               <DataTable.Cell>{extra.name}</DataTable.Cell>
               <DataTable.Cell numeric>${extra.cost}</DataTable.Cell>
             </DataTable.Row>
@@ -58,14 +56,10 @@ export default function ExtrasScreen() {
           visible={canCreateExtras}
           small
           icon="plus"
-          onPress={() => dispatch(actions.forms.extra.setOpen(true))}
+          onPress={dialogs.ticketTypeAddon.open}
           label="New ticket addon"
         />
       </View>
-      <TicketTypeExtraDialog
-        open={formState.open}
-        onClose={() => dispatch(actions.forms.extra.setOpen(false))}
-      />
     </>
   );
 }

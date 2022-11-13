@@ -1,4 +1,5 @@
 import { DropzoneUserEssentialsFragment, SlotDetailsFragment } from 'app/api/operations';
+import { truncate } from 'lodash';
 import * as React from 'react';
 import { useTheme } from 'react-native-paper';
 import { Permission } from '../../api/schema.d';
@@ -43,7 +44,7 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
   }> = React.useCallback(
     ({ item, openMenu }) => (
       <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="shield-account">
-        {item?.label || 'No LM'}
+        {truncate(item?.label || 'No LM', { length: 12 })}
       </Chip>
     ),
     [backgroundColor, color, small]

@@ -9,8 +9,8 @@ import { Dropzone, DropzoneUser } from 'app/api/schema.d';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import UserAvatar from 'app/components/UserAvatar';
 import lottieTicketAnimation from 'app/../assets/images/ticket.json';
-import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
 import { DropzoneEssentialsFragment } from 'app/api/operations';
+import { useUserProfile } from 'app/api/crud';
 import ReceiptCard from './ReceiptCard';
 
 export type OrderReceiptRoute = {
@@ -23,7 +23,7 @@ export default function OrderScreen() {
   const route = useRoute<RouteProp<OrderReceiptRoute, 'OrderReceiptScreen'>>();
   const theme = useTheme();
   const { orderId, userId } = route.params;
-  const { dropzoneUser } = useDropzoneUserProfile(userId);
+  const { dropzoneUser } = useUserProfile({ id: userId });
   const order = React.useMemo(
     () =>
       dropzoneUser?.orders?.edges?.map((edge) => edge?.node).find((node) => node?.id === orderId),

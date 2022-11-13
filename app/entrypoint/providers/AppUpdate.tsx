@@ -8,7 +8,7 @@ import * as Device from 'expo-device';
 // eslint-disable-next-line camelcase
 import * as fonts from '@expo-google-fonts/roboto';
 import LottieView from 'app/components/LottieView';
-import { actions, useAppDispatch } from 'app/state';
+import { useNotifications } from 'app/providers/notifications';
 
 interface IAppUpdateProps {
   children: React.ReactNode;
@@ -24,7 +24,7 @@ export default function AppUpdate(props: IAppUpdateProps) {
   const [overlay, setOverlay] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const animation = React.useRef<LottieView>(null);
-  const dispatch = useAppDispatch();
+  const notify = useNotifications();
 
   const onUpdate = React.useCallback(async () => {
     if (Platform.OS === 'web' || !Device.isDevice) {
@@ -36,9 +36,9 @@ export default function AppUpdate(props: IAppUpdateProps) {
       await Update.reloadAsync();
       setLoading(false);
       setOverlay(false);
-      dispatch(actions.notifications.showSnackbar({ message: 'New version installed' }));
+      notify.success('New version installed');
     }
-  }, [dispatch]);
+  }, [notify]);
   const isUpdateAvailable = React.useCallback(async () => {
     if (Platform.OS === 'web' || !Device.isDevice) {
       return;

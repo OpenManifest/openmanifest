@@ -2,27 +2,26 @@ import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
 import { FAB, DataTable, ProgressBar, useTheme } from 'react-native-paper';
 import { useIsFocused } from '@react-navigation/core';
-import { useArchivePlaneMutation, usePlanesQuery } from 'app/api/reflection';
 import { Permission } from 'app/api/schema.d';
 
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useAppSelector } from 'app/state';
 import NoResults from 'app/components/NoResults';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
-import PlaneDialog from 'app/components/dialogs/Plane';
 import useRestriction from 'app/hooks/useRestriction';
 import SwipeActions from 'app/components/layout/SwipeActions';
+import { useAircrafts } from 'app/api/crud';
+import { useDropzoneContext } from 'app/providers';
+import { PlaneEssentialsFragment } from 'app/api/operations';
+import { useNotifications } from 'app/providers/notifications';
 
 export default function PlanesScreen() {
   const global = useAppSelector((root) => root.global);
-  const state = useAppSelector((root) => root.forms.plane);
-  const { data, loading, refetch } = usePlanesQuery({
-    variables: {
-      dropzoneId: global.currentDropzoneId?.toString() as string,
-    },
+  const { dialogs } = useDropzoneContext();
+  const { aircrafts, archive, loading, refetch } = useAircrafts({
+    dropzoneId: global.currentDropzoneId?.toString() as string,
   });
 
-  const [deletePlane] = useArchivePlaneMutation();
-  const dispatch = useAppDispatch();
+  const notify = useNotifications();
 
   const isFocused = useIsFocused();
 
@@ -35,77 +34,80 @@ export default function PlanesScreen() {
   const canDeletePlane = useRestriction(Permission.DeletePlane);
   const canCreatePlane = useRestriction(Permission.CreatePlane);
   const theme = useTheme();
+
+  const createArchiveAircraftHandler = React.useCallback(
+    (aircraft: PlaneEssentialsFragment) => {
+      return async function ArchiveAircraftHandler() {
+        const response = await archive(aircraft);
+
+        if ('error' in response && response.error) {
+          notify.error(response.error);
+        } else {
+          notify.success(`Archived aircraft ${aircraft.name}`);
+        }
+      };
+    },
+    [archive, notify]
+  );
+
+  const createEditAircraftHandler = React.useCallback(
+    (aircraft: PlaneEssentialsFragment) => {
+      return function ArchiveAircraftHandler() {
+        dialogs.aircraft.open({ original: aircraft });
+      };
+    },
+    [dialogs.aircraft]
+  );
   return (
-    <>
-      <ScrollableScreen
-        contentContainerStyle={{ backgroundColor: theme.colors.surface }}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
-      >
-        <ProgressBar visible={loading} color={global.theme.colors.primary} />
+    <ScrollableScreen
+      contentContainerStyle={{ backgroundColor: theme.colors.surface }}
+      refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
+    >
+      <ProgressBar visible={loading} color={global.theme.colors.primary} />
 
-        {data?.planes?.length ? null : (
-          <NoResults
-            title="No planes?"
-            subtitle="You need to have at least one plane to manifest loads"
-          />
-        )}
-
-        {!data?.planes?.length ? null : (
-          <DataTable>
-            <DataTable.Header>
-              <DataTable.Title>Name</DataTable.Title>
-              <DataTable.Title numeric>Registration</DataTable.Title>
-              <DataTable.Title numeric>Slots</DataTable.Title>
-            </DataTable.Header>
-            {data?.planes?.map((plane) => (
-              <SwipeActions
-                key={`plane-${plane.id}`}
-                disabled={!canDeletePlane}
-                rightAction={{
-                  label: 'Delete',
-                  backgroundColor: 'red',
-                  onPress: async () => {
-                    const { data: result } = await deletePlane({
-                      variables: { id: Number(plane.id) },
-                    });
-
-                    if (result?.deletePlane?.errors?.length) {
-                      dispatch(
-                        actions.notifications.showSnackbar({
-                          message: result.deletePlane.errors[0],
-                          variant: 'error',
-                        })
-                      );
-                    }
-                  },
-                }}
-              >
-                <DataTable.Row
-                  pointerEvents="none"
-                  onPress={() => {
-                    dispatch(actions.forms.plane.setOpen(plane));
-                  }}
-                >
-                  <DataTable.Cell>{plane.name}</DataTable.Cell>
-                  <DataTable.Cell numeric>{plane.registration}</DataTable.Cell>
-                  <DataTable.Cell numeric>{plane.maxSlots}</DataTable.Cell>
-                </DataTable.Row>
-              </SwipeActions>
-            ))}
-          </DataTable>
-        )}
-
-        <FAB
-          style={[styles.fab, { backgroundColor: global.theme.colors.primary }]}
-          visible={canCreatePlane}
-          small
-          icon="plus"
-          onPress={() => dispatch(actions.forms.plane.setOpen(true))}
-          label="New plane"
+      {aircrafts?.length ? null : (
+        <NoResults
+          title="No planes?"
+          subtitle="You need to have at least one plane to manifest loads"
         />
-      </ScrollableScreen>
-      <PlaneDialog open={state.open} onClose={() => dispatch(actions.forms.plane.setOpen(false))} />
-    </>
+      )}
+
+      {!aircrafts?.length ? null : (
+        <DataTable>
+          <DataTable.Header>
+            <DataTable.Title>Name</DataTable.Title>
+            <DataTable.Title numeric>Registration</DataTable.Title>
+            <DataTable.Title numeric>Slots</DataTable.Title>
+          </DataTable.Header>
+          {aircrafts?.map((plane) => (
+            <SwipeActions
+              key={`plane-${plane.id}`}
+              disabled={!canDeletePlane}
+              rightAction={{
+                label: 'Delete',
+                backgroundColor: 'red',
+                onPress: createArchiveAircraftHandler(plane),
+              }}
+            >
+              <DataTable.Row pointerEvents="none" onPress={createEditAircraftHandler(plane)}>
+                <DataTable.Cell>{plane.name}</DataTable.Cell>
+                <DataTable.Cell numeric>{plane.registration}</DataTable.Cell>
+                <DataTable.Cell numeric>{plane.maxSlots}</DataTable.Cell>
+              </DataTable.Row>
+            </SwipeActions>
+          ))}
+        </DataTable>
+      )}
+
+      <FAB
+        style={[styles.fab, { backgroundColor: global.theme.colors.primary }]}
+        visible={canCreatePlane}
+        small
+        icon="plus"
+        onPress={dialogs.aircraft.open}
+        label="New plane"
+      />
+    </ScrollableScreen>
   );
 }
 

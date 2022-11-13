@@ -76,14 +76,12 @@ export default function RigForm(props: IRigForm) {
           items={['student', 'sport', 'tandem']}
           renderItemLabel={(item) => item}
           isDisabled={(item) => (!canCreateRigs ? item !== 'sport' : false)}
-          selected={[state.fields.rigType?.value || 'sport']}
-          onChangeSelected={([rigType]) =>
-            dispatch(actions.forms.rig.setField(['rigType', rigType]))
-          }
+          value={[state.fields.rigType?.value || 'sport']}
+          onChange={([rigType]) => dispatch(actions.forms.rig.setField(['rigType', rigType]))}
         />
       )}
       <DatePicker
-        timestamp={state.fields.repackExpiresAt.value || new Date().getTime() / 1000}
+        value={state.fields.repackExpiresAt.value || new Date().getTime() / 1000}
         onChange={(time) => dispatch(actions.forms.rig.setField(['repackExpiresAt', time]))}
         label="Reserve repack expiry date"
       />

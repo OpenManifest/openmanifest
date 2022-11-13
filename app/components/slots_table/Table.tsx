@@ -1,6 +1,7 @@
 import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import { DataTable, Surface, Text } from 'react-native-paper';
 import UserRow, { SlotFields, styles as rowStyles } from './UserRow';
 import AvailableRow from './AvailableRow';
@@ -21,8 +22,8 @@ export default function SlotsTable(props: ISlotsTableProps) {
   console.log(fields);
 
   return (
-    <Surface style={{ flexGrow: 1 }}>
-      <DataTable>
+    <Surface style={{ height: '100%' }}>
+      <DataTable style={{ height: '100%', paddingBottom: 80 }}>
         <DataTable.Header style={{ width: '100%' }}>
           <DataTable.Title style={rowStyles.avatarCell}>{null}</DataTable.Title>
           <DataTable.Title style={rowStyles.nameCell}>
@@ -61,20 +62,27 @@ export default function SlotsTable(props: ISlotsTableProps) {
               </DataTable.Title>
             ))}
         </DataTable.Header>
-        {load?.slots?.map((slot, index) => (
-          <UserRow
-            {...{ fields, slot, load, onDeletePress, onSlotGroupPress, onSlotPress, index }}
-            key={`slot-${slot.id}`}
-          />
-        ))}
-        {Array.from({ length: load?.availableSlots || 0 })?.map((_, idx) => (
-          <AvailableRow
-            {...{ onPress: onAvailableSlotPress }}
-            // eslint-disable-next-line react/no-array-index-key
-            key={`slot-available-${idx}`}
-            index={idx}
-          />
-        ))}
+        <FlatList
+          data={Array.from({ length: load?.maxSlots || 0 })?.map(
+            (_, index) => load?.slots?.[index] || null
+          )}
+          keyExtractor={(item, index) => item?.id || `available-${index}`}
+          renderItem={({ item: slot, index }) =>
+            !slot || !load ? (
+              <AvailableRow
+                {...{ onPress: onAvailableSlotPress }}
+                // eslint-disable-next-line react/no-array-index-key
+                key={`slot-available-${index}`}
+                index={index}
+              />
+            ) : (
+              <UserRow
+                {...{ fields, slot, load, onDeletePress, onSlotGroupPress, onSlotPress, index }}
+                key={`slot-${slot.id}`}
+              />
+            )
+          }
+        />
       </DataTable>
     </Surface>
   );

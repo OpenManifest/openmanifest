@@ -5,9 +5,11 @@ import { useTheme } from 'react-native-paper';
 import { useAppSelector } from 'app/state';
 import Chip from 'app/components/chips/Chip';
 import Select, { ISelectOption } from '../select/Select';
+import { withHookForm } from '../withHookForm';
 
 interface IRigSelect {
   dropzoneUserId?: number;
+  loadId?: number;
   value?: UserRigDetailedFragment | null;
   tandem?: boolean;
   small?: boolean;
@@ -16,21 +18,24 @@ interface IRigSelect {
   autoSelectFirst?: boolean;
   variant?: 'chip' | 'select';
   label?: string;
-  onSelect(rig: UserRigDetailedFragment): void;
+  error?: string | null;
+  onChange(rig: UserRigDetailedFragment): void;
 }
 
-export default function RigSelect(props: IRigSelect) {
+function RigSelect(props: IRigSelect) {
   const {
     dropzoneUserId,
     label,
     variant,
     value,
     small,
+    loadId,
     color: assignedColor,
     backgroundColor,
     autoSelectFirst,
-    onSelect,
+    onChange,
     tandem,
+    error,
   } = props;
   const { currentDropzoneId } = useAppSelector((root) => root.global);
   const theme = useTheme();
@@ -44,17 +49,18 @@ export default function RigSelect(props: IRigSelect) {
       fetchRigs({
         variables: {
           dropzoneUserId,
+          loadId,
           isTandem: tandem || undefined,
         },
       });
     }
-  }, [fetchRigs, currentDropzoneId, tandem, dropzoneUserId]);
+  }, [fetchRigs, currentDropzoneId, tandem, dropzoneUserId, loadId]);
 
   React.useEffect(() => {
     if (!value && autoSelectFirst && data?.availableRigs?.length) {
-      onSelect(data.availableRigs[0]);
+      onChange(data.availableRigs[0]);
     }
-  }, [autoSelectFirst, data?.availableRigs, onSelect, value]);
+  }, [autoSelectFirst, data?.availableRigs, onChange, value]);
 
   const options = React.useMemo(
     () =>
@@ -84,9 +90,13 @@ export default function RigSelect(props: IRigSelect) {
 
   return (
     <Select<UserRigDetailedFragment>
-      {...{ options, renderAnchor: variant === 'chip' ? renderAnchor : undefined, label }}
+      {...{ options, error, renderAnchor: variant === 'chip' ? renderAnchor : undefined, label }}
       value={selected}
-      onChange={onSelect}
+      onChange={onChange}
     />
   );
 }
+
+export const RigSelectField = withHookForm(RigSelect);
+
+export default RigSelect;

@@ -493,6 +493,7 @@ export type DropzoneInput = {
 
 export enum DropzoneState {
   Archived = 'archived',
+  Demo = 'demo',
   InReview = 'in_review',
   Private = 'private',
   Public = 'public'
@@ -501,6 +502,8 @@ export enum DropzoneState {
 export enum DropzoneStateEvent {
   /** archive */
   Archive = 'archive',
+  /** demo */
+  Demo = 'demo',
   /** publish */
   Publish = 'publish',
   /** request_publication */
@@ -782,7 +785,7 @@ export type GhostInput = {
 export type GrantPermissionInput = {
   /** A unique identifier for the client performing the mutation. */
   clientMutationId?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['Int']>;
+  dropzoneUser?: InputMaybe<Scalars['ID']>;
   permission: Permission;
 };
 
@@ -1665,7 +1668,7 @@ export type ReloadWeatherConditionPayload = {
 export type RevokePermissionInput = {
   /** A unique identifier for the client performing the mutation. */
   clientMutationId?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['Int']>;
+  dropzoneUser?: InputMaybe<Scalars['ID']>;
   permission: Permission;
 };
 

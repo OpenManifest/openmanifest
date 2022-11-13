@@ -5,6 +5,7 @@ import { MutationFunctionOptions, MutationResult } from '@apollo/client';
 import { LoginWithFacebookMutation, LoginWithFacebookMutationVariables } from 'app/api/operations';
 import Button, { ReactFacebookFailureResponse, ReactFacebookLoginInfo } from 'react-facebook-login';
 import { View } from 'react-native';
+import { useNotifications } from 'app/providers/notifications';
 
 type Extract<T> = T extends React.ComponentType<infer P> ? P : never;
 
@@ -14,6 +15,7 @@ export function useLoginWithFacebook(
   const { expoPushToken } = useAppSelector((root) => root.global);
   const [onLoginWithFacebook, mutation] = useLoginWithFacebookMutation(opts);
   const dispatch = useAppDispatch();
+  const notify = useNotifications();
 
   const onLogin = React.useCallback(
     async (response: ReactFacebookLoginInfo | ReactFacebookFailureResponse) => {
@@ -32,16 +34,11 @@ export function useLoginWithFacebook(
         }
       } catch (e) {
         if (e instanceof Error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: e.message,
-              variant: 'error',
-            })
-          );
+          notify.error(e.message);
         }
       }
     },
-    [dispatch, expoPushToken, onLoginWithFacebook]
+    [dispatch, expoPushToken, notify, onLoginWithFacebook]
   );
   return [onLogin, mutation] as [() => Promise<void>, MutationResult<LoginWithFacebookMutation>];
 }
@@ -51,7 +48,7 @@ export default function FacebookButton(
       onPress: Extract<typeof Button>['callback'];
     }
 ) {
-  const dispatch = useAppDispatch();
+  const notify = useNotifications();
   const { onPress } = props;
   return (
     <View style={{ height: 100 }}>
@@ -71,12 +68,7 @@ export default function FacebookButton(
           marginTop: 16,
         }}
         onFailure={() => {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: 'Facebook authentication failed',
-              variant: 'error',
-            })
-          );
+          notify.error('Facebook authentication failed');
         }}
         {...props}
         callback={onPress}

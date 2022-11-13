@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useNotifications } from 'app/providers/notifications';
 import GhostForm from '../forms/ghost/GhostForm';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import DialogOrSheet from '../layout/DialogOrSheet';
@@ -15,25 +16,20 @@ export default function CreateGhostDialog(props: ICreateGhostDialog) {
   const state = useAppSelector((root) => root.forms.ghost);
   const globalState = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
+  const notify = useNotifications();
 
   const mutationCreateGhost = useMutationCreateGhost({
     onSuccess: (payload) => {
       requestAnimationFrame(() => {
         onSuccess();
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: `${payload?.user?.name} has been added to your dropzone`,
-            variant: 'success',
-          })
-        );
+        notify.success(`${payload?.user?.name} has been added to your dropzone`);
       });
     },
     onFieldError: (field, value) => {
       dispatch(actions.forms.ghost.setFieldError([field as keyof GhostFields, value]));
     },
 
-    onError: (error) =>
-      dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' })),
+    onError: (error) => notify.error(error),
   });
 
   const onSave = React.useCallback(async () => {

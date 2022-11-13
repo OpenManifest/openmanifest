@@ -2,15 +2,16 @@ import { LicenseEssentialsFragment } from 'app/api/operations';
 import { useLicensesQuery } from 'app/api/reflection';
 import * as React from 'react';
 import Select from '../select/Select';
+import { withHookForm } from '../withHookForm';
 
 interface ILicenseSelect {
   value?: LicenseEssentialsFragment | null;
   federationId?: number | null;
-  onSelect(jt: LicenseEssentialsFragment): void;
+  onChange(jt: LicenseEssentialsFragment): void;
 }
 
-export default function LicenseSelect(props: ILicenseSelect) {
-  const { onSelect, value, federationId } = props;
+function LicenseSelect(props: ILicenseSelect) {
+  const { onChange, value, federationId } = props;
 
   const { data } = useLicensesQuery({
     variables: {
@@ -33,7 +34,11 @@ export default function LicenseSelect(props: ILicenseSelect) {
       label="License"
       value={selected}
       options={options}
-      onChange={onSelect}
+      onChange={onChange}
     />
   );
 }
+
+export const LicenseSelectField = withHookForm(LicenseSelect);
+
+export default LicenseSelect;

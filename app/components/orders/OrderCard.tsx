@@ -57,13 +57,13 @@ export default function OrderCard(props: IOrder) {
             style={{ alignSelf: 'center', marginHorizontal: 12 }}
             size={60}
             name={
-              (order?.seller as DropzoneUserEssentialsFragment)?.user?.name ||
-              (order?.seller as DropzoneEssentialsFragment).name ||
+              (order?.buyer as DropzoneUserEssentialsFragment)?.user?.name ||
+              (order?.buyer as DropzoneEssentialsFragment).name ||
               ''
             }
             image={
-              (order?.seller as DropzoneUserEssentialsFragment).user?.image ||
-              (order?.seller as DropzoneEssentialsFragment).banner ||
+              (order?.buyer as DropzoneUserEssentialsFragment).user?.image ||
+              (order?.buyer as DropzoneEssentialsFragment).banner ||
               undefined
             }
           />
@@ -86,7 +86,7 @@ export default function OrderCard(props: IOrder) {
         )}
       </View>
     ),
-    [dropzoneUser?.id, icon, order.buyer, order?.seller, showAvatar]
+    [dropzoneUser?.id, icon, order.buyer, showAvatar]
   );
   return (
     <TouchableOpacity onPress={onPress}>
@@ -104,8 +104,8 @@ export default function OrderCard(props: IOrder) {
         <Card.Content style={styles.orderContent}>
           <List.Item
             title={
-              (order?.seller as DropzoneUser)?.user?.name ||
-              (order?.seller as DropzoneEssentialsFragment)?.name
+              (order?.buyer as DropzoneUser)?.user?.name ||
+              (order?.buyer as DropzoneEssentialsFragment)?.name
             }
             style={{ width: '100%' }}
             titleStyle={styles.orderTitle}

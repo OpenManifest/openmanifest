@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Caption, Card, List, useTheme } from 'react-native-paper';
-import { format, parseISO } from 'date-fns';
 import { capitalize } from 'lodash';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';

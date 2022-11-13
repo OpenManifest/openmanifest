@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { createMutation, isNumeric, isRequired } from '../createMutation';
-import { ExtraInput, CreateExtraPayload } from '../schema';
+import { ExtraInput, CreateExtraPayload } from '../schema.d';
 
 const MUTATION_CREATE_EXTRA = gql`
   mutation CreateExtra($name: String, $ticketTypeIds: [Int!], $cost: Float, $dropzoneId: Int) {

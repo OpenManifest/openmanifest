@@ -8,10 +8,10 @@ import { useNavigation } from '@react-navigation/core';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import { Query } from 'app/api/schema.d';
 import DatePicker from 'app/components/input/date_picker/DatePicker';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 
 const QUERY_MASTER_LOG = gql`
-  query MasterLog($dropzoneId: Int!, $timestamp: Int!) {
+  query MasterLog($dropzoneId: ID!, $timestamp: Int!) {
     dropzone(id: $dropzoneId) {
       id
       masterLog(date: $timestamp) {
@@ -72,7 +72,7 @@ const QUERY_MASTER_LOG = gql`
   }
 `;
 export default function DropzoneMasterLogScreen() {
-  const currentDropzone = useDropzoneContext();
+  const { dropzone: currentDropzone } = useDropzoneContext();
   const [timestamp, setTimestamp] = React.useState(startOfDay(new Date()).getTime());
   const navigation = useNavigation();
 
@@ -81,7 +81,7 @@ export default function DropzoneMasterLogScreen() {
       headerRight: () => (
         <DatePicker
           onChange={(time) => setTimestamp(time * 1000)}
-          timestamp={timestamp / 1000}
+          value={timestamp / 1000}
           color="#FFFFFF"
         />
       ),

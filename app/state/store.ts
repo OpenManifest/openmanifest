@@ -10,15 +10,11 @@ import imageViewerSlice, {
 } from '../components/dialogs/ImageViewer/slice';
 
 import globalSlice, { initialState as initialStateGlobal } from './global';
-import notificationSlice, {
-  initialState as initialStateNotification,
-} from '../components/notifications/slice';
 
 export const initialState = {
   forms: initialStateForms,
   screens: initialStateScreens,
   global: initialStateGlobal,
-  notifications: initialStateNotification,
   imageViewer: imageViewerState,
 } as RootState;
 
@@ -30,6 +26,22 @@ const persistConfig = {
   whitelist: ['global'],
 };
 
+type ScreenReducers = {
+  [K in keyof typeof screens]: typeof screens[K]['reducer'];
+};
+
+type FormReducers = {
+  [K in keyof typeof forms]: typeof forms[K]['reducer'];
+};
+
+type ScreenActions = {
+  [K in keyof typeof screens]: typeof screens[K]['actions'];
+};
+
+type FormActions = {
+  [K in keyof typeof forms]: typeof forms[K]['actions'];
+};
+
 // eslint-disable
 const screenReducers = Object.keys(screens).reduce(
   // eslint-disable-next-line max-len
@@ -38,45 +50,34 @@ const screenReducers = Object.keys(screens).reduce(
       ? obj
       : { ...obj, [key]: screens[key as keyof typeof screens].reducer },
   {}
-) as {
-  [K in keyof typeof screens]: typeof screens[K]['reducer'];
-};
+) as ScreenReducers;
 
 const formReducers = Object.keys(forms).reduce(
   (obj, key) =>
     !forms || !(key in forms) ? obj : { ...obj, [key]: forms[key as keyof typeof forms].reducer },
   {}
-) as {
-  [K in keyof typeof forms]: typeof forms[K]['reducer'];
-};
-
+) as FormReducers;
 export const screenActions = Object.keys(screens).reduce(
   (obj, key) =>
     !(key in screens) ? obj : { ...obj, [key]: screens[key as keyof typeof screens].actions },
   {}
-) as {
-  [K in keyof typeof screens]: typeof screens[K]['actions'];
-};
+) as ScreenActions;
 export const formActions = Object.keys(forms).reduce(
   (obj, key) =>
     !(key in forms) ? obj : { ...obj, [key]: forms[key as keyof typeof forms].actions },
   {}
-) as {
-  [K in keyof typeof forms]: typeof forms[K]['actions'];
-};
+) as FormActions;
 // eslint-enable
 
 export const actions = {
   forms: formActions,
   screens: screenActions,
   global: globalSlice.actions,
-  notifications: notificationSlice.actions,
   imageViewer: imageViewerSlice.actions,
 };
 
 export const rootReducer = combineReducers({
   global: globalSlice.reducer,
-  notifications: notificationSlice.reducer,
   imageViewer: imageViewerSlice.reducer,
   screens: combineReducers(screenReducers),
   forms: combineReducers(formReducers),

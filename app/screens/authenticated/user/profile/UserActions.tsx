@@ -5,11 +5,12 @@ import { actions, useAppDispatch } from 'app/state';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { useNavigation } from '@react-navigation/core';
 import { Permission } from 'app/api/schema.d';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext, useManifestContext } from 'app/providers';
 import useRestriction from 'app/hooks/useRestriction';
 import { Alert } from 'react-native';
 import { DropzoneUsersDocument, useArchiveUserMutation } from 'app/api/reflection';
 import { errorColor, infoColor, successColor, warningColor } from 'app/constants/Colors';
+import { useNotifications } from 'app/providers/notifications';
 import { useUserNavigation } from '../useUserNavigation';
 
 type PropsOf<T> = T extends React.ComponentType<infer P> ? P : never;
@@ -20,8 +21,12 @@ interface IUserActionsButtonProps {
 }
 export default function UserActionsButton(props: IUserActionsButtonProps) {
   const { dropzoneUser, visible } = props;
-  const { currentUser } = useDropzoneContext();
+  const {
+    dropzone: { currentUser },
+  } = useDropzoneContext();
   const [fabOpen, setFabOpen] = React.useState(false);
+  const { dialogs } = useManifestContext();
+  const notify = useNotifications();
 
   const dispatch = useAppDispatch();
   const navigation = useUserNavigation();
@@ -64,9 +69,9 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
 
   const onClickAddFunds = React.useCallback(() => {
     if (dropzoneUser) {
-      dispatch(actions.forms.credits.setOpen(dropzoneUser));
+      dialogs.credits.open({ dropzoneUser });
     }
-  }, [dispatch, dropzoneUser]);
+  }, [dialogs.credits, dropzoneUser]);
 
   const onClickEdit = React.useCallback(() => {
     if (dropzoneUser?.user) {
@@ -106,20 +111,10 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
               });
 
               data?.deleteUser?.errors?.forEach((message) => {
-                dispatch(
-                  actions.notifications.showSnackbar({
-                    message,
-                    variant: 'success',
-                  })
-                );
+                notify.success(message);
               });
               if (data?.deleteUser?.dropzoneUser?.id) {
-                dispatch(
-                  actions.notifications.showSnackbar({
-                    message: `${dropzoneUser?.user?.name} has been removed`,
-                    variant: 'success',
-                  })
-                );
+                notify.success(`${dropzoneUser?.user?.name} has been removed`);
               }
 
               navigation.goBack();
@@ -130,7 +125,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
         },
       ]
     );
-  }, [deleteUser, dispatch, dropzoneUser?.id, dropzoneUser?.user?.name, isSelf, navigation]);
+  }, [deleteUser, dropzoneUser?.id, dropzoneUser?.user?.name, isSelf, navigation, notify]);
 
   const fabActions = React.useMemo(
     () =>

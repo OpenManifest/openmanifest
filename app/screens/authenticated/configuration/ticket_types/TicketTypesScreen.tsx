@@ -1,47 +1,61 @@
-import { useIsFocused, useRoute } from '@react-navigation/core';
 import * as React from 'react';
-import { StyleSheet, RefreshControl } from 'react-native';
+import { StyleSheet, RefreshControl, View } from 'react-native';
 import { FAB, DataTable, ProgressBar, Switch } from 'react-native-paper';
-import {
-  useArchiveTicketTypeMutation,
-  useTicketTypesQuery,
-  useUpdateTicketTypeMutation,
-} from 'app/api/reflection';
 import { Permission } from 'app/api/schema.d';
 
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useAppSelector } from 'app/state';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
-import TicketTypesDialog from 'app/components/dialogs/TicketType';
 import SwipeActions from 'app/components/layout/SwipeActions';
 import useRestriction from 'app/hooks/useRestriction';
+import { useTickets } from 'app/api/crud';
+import { useDropzoneContext } from 'app/providers';
+import { TicketTypeEssentialsFragment } from 'app/api/operations';
+import { useNotifications } from 'app/providers/notifications';
 
 export default function TicketTypesScreen() {
   const state = useAppSelector((root) => root.global);
-  const form = useAppSelector((root) => root.forms.ticketType);
-  const dispatch = useAppDispatch();
-  const { data, loading, refetch } = useTicketTypesQuery({
-    variables: {
-      dropzone: state.currentDropzoneId?.toString() as string,
-    },
+  const notify = useNotifications();
+  const {
+    dropzone: { dropzone },
+    dialogs,
+  } = useDropzoneContext();
+  const { ticketTypes, loading, refetch, archiveTicketType, updateTicketType } = useTickets({
+    dropzone: dropzone?.id,
   });
-  const route = useRoute();
-  const isFocused = useIsFocused();
-
-  React.useEffect(() => {
-    if (isFocused) {
-      refetch();
-    }
-  }, [isFocused, refetch]);
-  const [mutationUpdateTicketType] = useUpdateTicketTypeMutation();
-  const [mutationDeleteTicketType] = useArchiveTicketTypeMutation();
-
-  React.useEffect(() => {
-    if (route.name === 'TicketTypesScreen') {
-      refetch();
-    }
-  }, [refetch, route.name]);
 
   const canCreateTicketTypes = useRestriction(Permission.CreateTicketType);
+
+  const createArchiveTicketHandler = React.useCallback(
+    (ticket: TicketTypeEssentialsFragment) => {
+      return async function ArchiveTicketType() {
+        const response = await archiveTicketType(ticket);
+
+        if ('error' in response && response.error) {
+          notify.error(response.error);
+        } else {
+          notify.success(`Archived ${ticket.name}`);
+        }
+      };
+    },
+    [archiveTicketType, notify]
+  );
+
+  const createToggleManifestSelfHandler = React.useCallback(
+    (ticket: TicketTypeEssentialsFragment) => {
+      return async function ToggleManifestSelf() {
+        const response = await updateTicketType(Number(ticket.id), {
+          allowManifestingSelf: !ticket.allowManifestingSelf,
+        });
+
+        if ('error' in response && response.error) {
+          notify.error(response.error);
+        } else {
+          notify.success(`${ticket.name} can ${ticket.allowManifestingSelf ? 'no longer' : 'now'}`);
+        }
+      };
+    },
+    [notify, updateTicketType]
+  );
   return (
     <ScrollableScreen
       style={styles.container}
@@ -57,30 +71,17 @@ export default function TicketTypesScreen() {
           <DataTable.Title numeric>Public</DataTable.Title>
         </DataTable.Header>
 
-        {data?.ticketTypes?.map((ticketType) => (
+        {ticketTypes?.map((ticketType) => (
           <SwipeActions
             rightAction={{
               label: 'Delete',
               backgroundColor: 'red',
-              onPress: async () => {
-                const { data: result } = await mutationDeleteTicketType({
-                  variables: { id: Number(ticketType.id) },
-                });
-
-                if (result?.archiveTicketType?.errors?.length) {
-                  dispatch(
-                    actions.notifications.showSnackbar({
-                      message: result?.archiveTicketType?.errors[0],
-                      variant: 'error',
-                    })
-                  );
-                }
-              },
+              onPress: createArchiveTicketHandler(ticketType),
             }}
           >
             <DataTable.Row
               onPress={() => {
-                dispatch(actions.forms.ticketType.setOpen(ticketType));
+                dialogs.ticketType.open({ original: ticketType });
               }}
               pointerEvents="none"
             >
@@ -88,17 +89,12 @@ export default function TicketTypesScreen() {
               <DataTable.Cell numeric>${ticketType.cost}</DataTable.Cell>
               <DataTable.Cell numeric>{ticketType.altitude}</DataTable.Cell>
               <DataTable.Cell numeric>
-                <Switch
-                  onValueChange={() => {
-                    mutationUpdateTicketType({
-                      variables: {
-                        id: Number(ticketType.id),
-                        allowManifestingSelf: !ticketType.allowManifestingSelf,
-                      },
-                    });
-                  }}
-                  value={!!ticketType.allowManifestingSelf}
-                />
+                <View pointerEvents="box-none">
+                  <Switch
+                    onValueChange={createToggleManifestSelfHandler(ticketType)}
+                    value={!!ticketType.allowManifestingSelf}
+                  />
+                </View>
               </DataTable.Cell>
             </DataTable.Row>
           </SwipeActions>
@@ -110,12 +106,8 @@ export default function TicketTypesScreen() {
         style={[styles.fab, { backgroundColor: state.theme.colors.primary }]}
         visible={canCreateTicketTypes}
         icon="plus"
-        onPress={() => dispatch(actions.forms.ticketType.setOpen(true))}
+        onPress={() => dialogs.ticketType.open()}
         label="New ticket type"
-      />
-      <TicketTypesDialog
-        open={form.open}
-        onClose={() => dispatch(actions.forms.ticketType.setOpen(false))}
       />
     </ScrollableScreen>
   );

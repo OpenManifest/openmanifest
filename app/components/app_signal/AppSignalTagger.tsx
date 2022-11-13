@@ -1,7 +1,7 @@
 import * as React from 'react';
 import pick from 'lodash/pick';
 import isEqual from 'lodash/isEqual';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import { useAppSelector } from 'app/state';
 import { Platform } from 'react-native';
 import { useAppSignalContext, INITIAL_TAGS } from './AppSignalContext';
@@ -12,7 +12,9 @@ function AppSignalSessionTagProvider(props: React.PropsWithChildren<object>) {
   // This can be undefined here because this bondary
   // is rendered at the top of the app to catch errors
   // outside of GraphQL as wele
-  const { dropzone, currentUser: currentDropzoneUser } = useDropzoneContext();
+  const {
+    dropzone: { dropzone, currentUser: currentDropzoneUser },
+  } = useDropzoneContext();
   const { currentRouteName, currentUser, currentDropzoneId } = useAppSelector(
     (state) => state.global
   );

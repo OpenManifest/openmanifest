@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useJoinFederationMutation, DropzoneUserProfileDocument } from 'app/api/reflection';
+import { useNotifications } from 'app/providers/notifications';
 import UserForm from '../forms/user/UserForm';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import DialogOrSheet from '../layout/DialogOrSheet';
@@ -16,23 +17,18 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
   const { open, onSuccess, onClose, dropzoneUserId } = props;
   const state = useAppSelector((root) => root.forms.user);
   const dispatch = useAppDispatch();
+  const notify = useNotifications();
   const [joinFederation] = useJoinFederationMutation();
 
   const mutationUpdateUser = useMutationUpdateUser({
     onSuccess: (payload) => {
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: `Profile has been updated`,
-          variant: 'success',
-        })
-      );
+      notify.success(`Profile has been updated`);
       dispatch(actions.forms.user.setOpen(false));
       onSuccess();
     },
     onFieldError: (field, value) =>
       dispatch(actions.forms.user.setFieldError([field as keyof UserFields, value])),
-    onError: (error) =>
-      dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' })),
+    onError: (error) => notify.error(error),
     mutation: {
       refetchQueries: [
         {

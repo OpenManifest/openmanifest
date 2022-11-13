@@ -1,11 +1,12 @@
 import { useApolloClient } from '@apollo/client';
 import PermissionBadges from 'app/screens/authenticated/user/profile/UserInfo/PermissionBadges';
 import * as React from 'react';
-import { Button, Dialog, List, Portal, ProgressBar } from 'react-native-paper';
+import { Button, Dialog, List, ProgressBar } from 'react-native-paper';
 import { DropzoneUser, Permission } from 'app/api/schema.d';
 import { DropzoneUserEssentialsFragment, DropzoneUserProfileFragment } from 'app/api/operations';
 import { DropzoneUserProfileFragmentDoc, useUpdateDropzoneUserMutation } from 'app/api/reflection';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useNotifications } from 'app/providers/notifications';
 import DropzoneUserForm from '../forms/dropzone_user/DropzoneUserForm';
 
 interface IDropzoneUserDialog {
@@ -16,6 +17,7 @@ interface IDropzoneUserDialog {
 
 export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   const { open, onClose, onSuccess } = props;
+  const notify = useNotifications();
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.dropzoneUser);
   const globalState = useAppSelector((root) => root.global);
@@ -79,12 +81,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         }
       });
       if (result?.errors?.length) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: result?.errors[0],
-            variant: 'error',
-          })
-        );
+        notify.error(result?.errors[0]);
         return;
       }
       if (!result?.fieldErrors?.length && result?.dropzoneUser) {
@@ -94,17 +91,13 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
       }
     } catch (error) {
       if (error instanceof Error) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: error.message,
-            variant: 'error',
-          })
-        );
+        notify.error(error.message);
       }
     }
   }, [
     dispatch,
     mutationUpdateDropzoneUser,
+    notify,
     onSuccess,
     state.fields.expiresAt.value,
     state.fields.role.value?.id,

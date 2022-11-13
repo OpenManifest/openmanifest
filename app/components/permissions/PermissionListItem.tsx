@@ -1,10 +1,10 @@
 import { useUpdateRoleMutation } from 'app/api/reflection';
 import * as React from 'react';
 import { List, Switch } from 'react-native-paper';
-import { actions, useAppDispatch } from 'app/state';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { RoleDetailedFragment } from 'app/api/operations';
+import { useNotifications } from 'app/providers/notifications';
 
 interface IPermissionListItem {
   title: string;
@@ -17,7 +17,7 @@ export default function PermissionListItem(props: IPermissionListItem) {
   const { title, description, role, permissionName } = props;
   const canChangePermissions = useRestriction(Permission.GrantPermission);
   const [mutationUpdatePermission] = useUpdateRoleMutation();
-  const dispatch = useAppDispatch();
+  const notify = useNotifications();
 
   return (
     <List.Item
@@ -48,14 +48,7 @@ export default function PermissionListItem(props: IPermissionListItem) {
             });
 
             if (result?.data?.updateRole?.errors?.length) {
-              result?.data?.updateRole?.errors?.map((message) =>
-                dispatch(
-                  actions.notifications.showSnackbar({
-                    message,
-                    variant: 'error',
-                  })
-                )
-              );
+              result?.data?.updateRole?.errors?.map((message) => notify.error(message));
             }
           }}
         />

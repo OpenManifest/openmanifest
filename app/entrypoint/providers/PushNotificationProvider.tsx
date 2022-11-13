@@ -5,8 +5,9 @@ import { Linking, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import URI from 'urijs';
 import { useUpdateUserMutation } from 'app/api/reflection';
-import { actions, useAppDispatch, useAppSelector } from '../../state';
-import { useDropzoneContext } from '../../api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
+import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useNotifications } from 'app/providers/notifications';
 
 async function registerForPushNotificationsAsync(): Promise<string | null> {
   let token: string | null = null;
@@ -41,8 +42,11 @@ async function registerForPushNotificationsAsync(): Promise<string | null> {
 export default function PushNotifications(props: React.PropsWithChildren<object>) {
   const { children } = props;
   const pushToken = useAppSelector((root) => root.global.expoPushToken);
+  const notify = useNotifications();
   const dispatch = useAppDispatch();
-  const { currentUser, loading, called } = useDropzoneContext();
+  const {
+    dropzone: { currentUser, loading, called },
+  } = useDropzoneContext();
   const notificationListener =
     React.useRef<ReturnType<typeof Notifications.addNotificationReceivedListener>>();
   const responseListener =
@@ -69,12 +73,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
     // This listener is fired whenever a notification is received while the app is foregrounded
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
       if (notification.request.content.body) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: notification.request.content.body,
-            variant: 'info',
-          })
-        );
+        notify.info(notification.request.content.body);
       }
     });
 
@@ -96,7 +95,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       }
       Linking.removeEventListener('url', onOutsideLink);
     };
-  }, [dispatch, onOutsideLink]);
+  }, [dispatch, notify, onOutsideLink]);
 
   // Update remote push token if we have a local token, but no
   // token saved on the server. This is done so that the server

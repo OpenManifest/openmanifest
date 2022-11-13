@@ -11,7 +11,7 @@ interface ITableViewProps extends Omit<ISlotsTableProps, 'load'> {
   onSlotPress(slot: SlotDetailsFragment): void;
 }
 
-export default function LoadScreen(props: ITableViewProps) {
+export default function LoadTableView(props: ITableViewProps) {
   const { load, loading, onAvailableSlotPress, onDeletePress, onSlotGroupPress, onSlotPress } =
     props;
   const { width } = useWindowDimensions();

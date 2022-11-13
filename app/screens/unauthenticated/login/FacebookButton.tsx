@@ -6,6 +6,7 @@ import { useLoginWithFacebookMutation } from 'app/api/reflection';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { MutationFunctionOptions, MutationResult } from '@apollo/client';
 import { LoginWithFacebookMutation, LoginWithFacebookMutationVariables } from 'app/api/operations';
+import { useNotifications } from 'app/providers/notifications';
 
 type Extract<T> = T extends React.ComponentType<infer P> ? P : never;
 
@@ -15,6 +16,7 @@ export function useLoginWithFacebook(
   const { expoPushToken } = useAppSelector((root) => root.global);
   const [onLoginWithFacebook, mutation] = useLoginWithFacebookMutation(opts);
   const dispatch = useAppDispatch();
+  const notify = useNotifications();
 
   const onLogin = React.useCallback(async () => {
     try {
@@ -46,15 +48,10 @@ export function useLoginWithFacebook(
     } catch (e) {
       console.error(e);
       if (e instanceof Error) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: e.message,
-            variant: 'error',
-          })
-        );
+        notify.error(e.message);
       }
     }
-  }, [dispatch, expoPushToken, onLoginWithFacebook]);
+  }, [dispatch, expoPushToken, notify, onLoginWithFacebook]);
   return [onLogin, mutation] as [() => Promise<void>, MutationResult<LoginWithFacebookMutation>];
 }
 export default function FacebookButton(

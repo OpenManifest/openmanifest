@@ -8,16 +8,18 @@ import {
 // eslint-disable-next-line max-len
 import RigInspectionTemplateForm from 'app/components/forms/rig_inspection_template/RigInspectionTemplateForm';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import { FormTemplate, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useWindowDimensions, View } from 'react-native';
+import { useNotifications } from 'app/providers/notifications';
 
 export default function RigInspectionTemplateScreen() {
   const state = useAppSelector((root) => root.forms.rigInspectionTemplate);
-  const currentDropzone = useDropzoneContext();
+  const { dropzone: currentDropzone } = useDropzoneContext();
   const dispatch = useAppDispatch();
+  const notify = useNotifications();
   const { data } = useRigInspectionTemplateQuery({
     variables: {
       dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
@@ -46,20 +48,10 @@ export default function RigInspectionTemplateScreen() {
           definition: JSON.stringify(state.fields),
         },
       });
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: 'Template saved',
-          variant: 'success',
-        })
-      );
+      notify.success('Template saved');
     } catch (error) {
       if (error instanceof Error) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: error.message,
-            variant: 'error',
-          })
-        );
+        notify.error(error.message);
       }
     }
   }, [
@@ -67,7 +59,7 @@ export default function RigInspectionTemplateScreen() {
     data?.dropzone?.rigInspectionTemplate?.id,
     data?.dropzone?.id,
     state.fields,
-    dispatch,
+    notify,
   ]);
 
   const { width } = useWindowDimensions();

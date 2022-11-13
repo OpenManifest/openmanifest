@@ -1,36 +1,28 @@
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 
 import { FlatList } from 'react-native-gesture-handler';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import CreditsSheet from 'app/components/dialogs/CreditsDialog/Credits';
+import { useAppSelector } from 'app/state';
 
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import { useDropzoneTransactionsLazyQuery } from 'app/api/reflection';
-import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
+import { useUserProfile } from 'app/api/crud';
 import OrderCard from '../../../../components/orders/OrderCard';
 
 export default function TransactionsScreen() {
   const state = useAppSelector((root) => root.global);
-  const forms = useAppSelector((root) => root.forms);
-  const dispatch = useAppDispatch();
-  const { currentUser } = useDropzoneContext();
+  const {
+    dropzone: { currentUser },
+  } = useDropzoneContext();
   const [fetchTransactions] = useDropzoneTransactionsLazyQuery();
   const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
-  const { dropzoneUser, loading, refetch } = useDropzoneUserProfile(
-    route?.params?.userId || currentUser?.id
-  );
+  const { dropzoneUser, loading, refetch } = useUserProfile({
+    id: route?.params?.userId || currentUser?.id,
+  });
 
-  const isFocused = useIsFocused();
   const navigation = useNavigation();
-
-  React.useEffect(() => {
-    if (isFocused) {
-      refetch();
-    }
-  }, [isFocused, refetch]);
 
   React.useEffect(() => {
     if (state.currentDropzoneId) {
@@ -78,13 +70,6 @@ export default function TransactionsScreen() {
             />
           )
         }
-      />
-
-      <CreditsSheet
-        onClose={() => dispatch(actions.forms.credits.setOpen(false))}
-        onSuccess={() => dispatch(actions.forms.credits.setOpen(false))}
-        open={forms.credits.open}
-        dropzoneUser={dropzoneUser || undefined}
       />
     </>
   );

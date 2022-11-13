@@ -3,15 +3,16 @@ import { useAllowedJumpTypesQuery } from 'app/api/reflection';
 import { useAppSelector } from 'app/state';
 import * as React from 'react';
 import Select from '../select/Select';
+import { withHookForm } from '../withHookForm';
 
 interface IJumpTypeSelect {
   value?: JumpTypeEssentialsFragment | null;
   allowedForDropzoneUserIds?: number[] | null;
-  onSelect(jt: JumpTypeEssentialsFragment): void;
+  onChange(jt: JumpTypeEssentialsFragment): void;
 }
 
-export default function JumpTypeSelect(props: IJumpTypeSelect) {
-  const { allowedForDropzoneUserIds, onSelect, value } = props;
+function JumpTypeSelect(props: IJumpTypeSelect) {
+  const { allowedForDropzoneUserIds, onChange, value } = props;
   const { currentDropzoneId } = useAppSelector((state) => state.global);
 
   const { data } = useAllowedJumpTypesQuery({
@@ -39,7 +40,11 @@ export default function JumpTypeSelect(props: IJumpTypeSelect) {
       label="Jump type"
       value={selected}
       options={options}
-      onChange={onSelect}
+      onChange={onChange}
     />
   );
 }
+
+export const JumpTypeSelectField = withHookForm(JumpTypeSelect);
+
+export default JumpTypeSelect;

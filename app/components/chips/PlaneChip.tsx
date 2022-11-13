@@ -1,4 +1,5 @@
 import { PlaneEssentialsFragment } from 'app/api/operations';
+import { truncate } from 'lodash';
 import * as React from 'react';
 import { useTheme } from 'react-native-paper';
 import { usePlanesQuery } from '../../api/reflection';
@@ -50,7 +51,7 @@ export default function PlaneChip(props: IPlaneChipSelect) {
   }> = React.useCallback(
     ({ item, openMenu }) => (
       <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="airplane">
-        {item?.label || 'No Plane'}
+        {truncate(item?.label || 'No Plane', { length: 12 })}
       </Chip>
     ),
     [backgroundColor, color, small]

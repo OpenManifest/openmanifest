@@ -5,7 +5,6 @@ export const ticketTypeEssentials: Required<TicketTypeEssentialsFragment> = {
   id: '1',
   name: 'Height',
   cost: 123,
-  extras: [],
   allowManifestingSelf: true,
   altitude: 14000,
   isTandem: false,

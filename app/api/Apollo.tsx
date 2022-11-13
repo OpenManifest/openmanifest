@@ -10,11 +10,13 @@ import config from 'app/constants/expo';
 import { Platform } from 'react-native';
 import { createAppSignalLink, useAppSignal } from 'app/components/app_signal';
 import { relayStylePagination } from '@apollo/client/utilities';
+import { useNotifications } from 'app/providers/notifications';
 import { actions, useAppDispatch, useAppSelector } from '../state';
 
 const ERROR_CODE_WHITELIST = ['INSUFFICIENT_PERMISSIONS'];
 
 export default function Apollo({ children }: { children: React.ReactNode }) {
+  const notify = useNotifications();
   const httpBatchLink = React.useMemo(() => {
     console.log('Release channel', Update.releaseChannel);
     const environment = Platform.OS === 'web' ? config?.environment : Update.releaseChannel;
@@ -32,12 +34,7 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
     () =>
       onError(({ graphQLErrors, networkError, operation, response }) => {
         if (graphQLErrors?.some((err) => err.extensions?.code === 'AUTHENTICATION_ERROR')) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: `Session expired`,
-              variant: 'error',
-            })
-          );
+          notify.info(`Session expired`);
           dispatch(actions.global.logout());
           return;
         }
@@ -45,12 +42,7 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
         if (graphQLErrors && process.env.EXPO_ENV === 'development') {
           graphQLErrors.forEach((err) => {
             const { message, locations, path, name, nodes } = err;
-            dispatch(
-              actions.notifications.showSnackbar({
-                message: `[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}`,
-                variant: 'error',
-              })
-            );
+            notify.error(`[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}`);
             console.error(
               `[GraphQL error]: ${message}, ${JSON.stringify(
                 locations
@@ -61,15 +53,10 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
           });
         }
         if (networkError && process.env.EXPO_ENV === 'development') {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: `[Network error]: ${networkError}`,
-              variant: 'error',
-            })
-          );
+          notify.error(`[Network error]: ${networkError}`);
         }
       }),
-    [dispatch]
+    [dispatch, notify]
   );
 
   const authLink = React.useMemo(

@@ -12,17 +12,6 @@ export default function checkDropzoneSetupComplete(dropzone: DropzoneDetailedFra
   };
 
   let currentIndex;
-  if (dropzone?.ticketTypes?.length) {
-    completed[DropzoneWizardStep.Tickets] = true;
-  } else {
-    currentIndex = DropzoneWizardStep.Tickets;
-  }
-
-  if (dropzone.planes?.length) {
-    completed[DropzoneWizardStep.Aircraft] = true;
-  } else {
-    currentIndex = DropzoneWizardStep.Aircraft;
-  }
 
   if (dropzone?.primaryColor) {
     completed[DropzoneWizardStep.Branding] = true;

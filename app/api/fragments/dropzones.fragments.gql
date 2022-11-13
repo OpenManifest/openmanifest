@@ -52,13 +52,6 @@ fragment dropzoneDetailed on Dropzone {
     slug
   }
 
-  planes {
-    ...planeEssentials
-  }
-  ticketTypes {
-    ...ticketTypeEssentials
-  }
-
   currentConditions {
     ...weatherConditionEssentials
   }

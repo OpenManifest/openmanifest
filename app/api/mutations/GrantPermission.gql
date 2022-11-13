@@ -1,5 +1,5 @@
-mutation GrantPermission($dropzoneUserId: Int!, $permissionName: Permission!) {
-    grantPermission(input: { id: $dropzoneUserId, permission: $permissionName }) {
+mutation GrantPermission($dropzoneUserId: ID!, $permissionName: Permission!) {
+    grantPermission(input: { dropzoneUser: $dropzoneUserId, permission: $permissionName }) {
       fieldErrors {
         message
         field

@@ -1,5 +1,5 @@
-mutation RevokePermission($dropzoneUserId: Int!, $permissionName: Permission!) {
-  revokePermission(input: { id: $dropzoneUserId, permission: $permissionName }) {
+mutation RevokePermission($dropzoneUserId: ID!, $permissionName: Permission!) {
+  revokePermission(input: { dropzoneUser: $dropzoneUserId, permission: $permissionName }) {
     fieldErrors {
         message
         field

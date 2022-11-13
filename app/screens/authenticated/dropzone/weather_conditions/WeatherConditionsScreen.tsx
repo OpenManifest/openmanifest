@@ -5,6 +5,7 @@ import WizardCompleteStep from 'app/components/wizard/WizardCompleteStep';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 // eslint-disable-next-line max-len
 import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateWeatherConditions';
+import { useNotifications } from 'app/providers/notifications';
 import WindsStep from './steps/Winds';
 import JumpRunStep from './steps/JumpRun';
 
@@ -13,14 +14,13 @@ function WeatherConditionsScreen() {
   const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
+  const notify = useNotifications();
 
   const mutationCreateWeatherConditions = useMutationCreateWeatherConditions({
     onSuccess: () => null,
     onFieldError: (field: keyof typeof state.fields, message: string) =>
       dispatch(actions.forms.weather.setFieldError([field, message])),
-    onError: (message) => {
-      dispatch(actions.notifications.showSnackbar({ message, variant: 'error' }));
-    },
+    onError: notify.error,
   });
 
   const onSaveConditions = React.useCallback(

@@ -1,5 +1,5 @@
 import { createMutation, isNumeric, isRequired } from '../createMutation';
-import { CreateLoadPayload, LoadInput } from '../schema';
+import { CreateLoadPayload, LoadInput } from '../schema.d';
 import { CreateLoadDocument } from '../reflection';
 
 export default createMutation<LoadInput, CreateLoadPayload>(CreateLoadDocument, {

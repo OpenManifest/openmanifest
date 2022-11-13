@@ -21,11 +21,45 @@ import {
   MoveSlotMutationVariables,
   SlotExhaustiveFragment,
 } from '../operations';
-import createCRUDContext, { uninitializedHandler, TMutationResponse } from './factory';
+import { TMutationResponse } from './factory';
 import { Permission } from '../schema.d';
 
-export default function useManifest({ dropzone, date }: Partial<LoadsQueryVariables>) {
+export type UseManifestOptions = Partial<LoadsQueryVariables>;
+
+export default function useManifest({ dropzone, date }: UseManifestOptions) {
   const state = useAppSelector((root) => root.global);
+
+  const canCreateLoad = useRestriction(Permission.CreateLoad);
+  const canDeleteOwnSlot = useRestriction(Permission.DeleteSlot);
+  const canDeleteSlot = useRestriction(Permission.DeleteUserSlot);
+  const canManifestSelf = useRestriction(Permission.CreateSlot);
+  const canManifestOthers = useRestriction(Permission.CreateUserSlot);
+  const canUpdateSlot = useRestriction(Permission.UpdateSlot);
+  const canUpdateOwnSlot = useRestriction(Permission.UpdateUserSlot);
+  const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
+  const permissions = React.useMemo(
+    () => ({
+      canAddTransaction,
+      canCreateLoad,
+      canDeleteOwnSlot,
+      canDeleteSlot,
+      canManifestSelf,
+      canManifestOthers,
+      canUpdateSlot,
+      canUpdateOwnSlot,
+    }),
+    [
+      canAddTransaction,
+      canCreateLoad,
+      canDeleteOwnSlot,
+      canDeleteSlot,
+      canManifestOthers,
+      canManifestSelf,
+      canUpdateOwnSlot,
+      canUpdateSlot,
+    ]
+  );
+
   const variables: LoadsQueryVariables | undefined = React.useMemo(() => {
     if (!dropzone) {
       return undefined;
@@ -47,34 +81,6 @@ export default function useManifest({ dropzone, date }: Partial<LoadsQueryVariab
   const [manifestGroupMutation] = useManifestGroupMutation();
   const [manifestUserMutation] = useManifestUserMutation();
   const [createLoadMutation] = useCreateLoadMutation();
-
-  const canCreateLoad = useRestriction(Permission.CreateLoad);
-  const canDeleteOwnSlot = useRestriction(Permission.DeleteSlot);
-  const canDeleteSlot = useRestriction(Permission.DeleteUserSlot);
-  const canManifestSelf = useRestriction(Permission.CreateSlot);
-  const canManifestOthers = useRestriction(Permission.CreateUserSlot);
-  const canUpdateSlot = useRestriction(Permission.UpdateSlot);
-  const canUpdateOwnSlot = useRestriction(Permission.UpdateUserSlot);
-  const permissions = React.useMemo(
-    () => ({
-      canCreateLoad,
-      canDeleteOwnSlot,
-      canDeleteSlot,
-      canManifestSelf,
-      canManifestOthers,
-      canUpdateSlot,
-      canUpdateOwnSlot,
-    }),
-    [
-      canCreateLoad,
-      canDeleteOwnSlot,
-      canDeleteSlot,
-      canManifestOthers,
-      canManifestSelf,
-      canUpdateOwnSlot,
-      canUpdateSlot,
-    ]
-  );
 
   const { loading, fetchMore, refetch, data, called, updateQuery } = query;
 
@@ -260,29 +266,4 @@ export default function useManifest({ dropzone, date }: Partial<LoadsQueryVariab
   );
 }
 
-const { Provider: ManifestProvider, useContext: useManifestContext } = createCRUDContext(
-  useManifest,
-  {
-    called: false,
-    loading: false,
-    loads: [],
-    refetch: uninitializedHandler as never,
-    fetchMore: uninitializedHandler as never,
-    deleteSlot: uninitializedHandler as never,
-    manifestUser: uninitializedHandler as never,
-    manifestGroup: uninitializedHandler as never,
-    moveSlot: uninitializedHandler as never,
-    createLoad: uninitializedHandler as never,
-    permissions: {
-      canCreateLoad: false,
-      canDeleteOwnSlot: false,
-      canDeleteSlot: false,
-      canManifestOthers: false,
-      canManifestSelf: false,
-      canUpdateOwnSlot: false,
-      canUpdateSlot: false,
-    },
-  }
-);
-
-export { ManifestProvider, useManifestContext, useManifest };
+export { useManifest };

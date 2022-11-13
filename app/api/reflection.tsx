@@ -104,13 +104,24 @@ export const TicketTypeEssentialsFragmentDoc = gql`
   cost
   isTandem
   allowManifestingSelf
-  extras {
-    id
-    name
-    cost
-  }
 }
     `;
+export const TicketTypeAddonEssentialsFragmentDoc = gql`
+    fragment ticketTypeAddonEssentials on Extra {
+  id
+  name
+  cost
+}
+    `;
+export const TicketTypeDetailsFragmentDoc = gql`
+    fragment ticketTypeDetails on TicketType {
+  ...ticketTypeEssentials
+  extras {
+    ...ticketTypeAddonEssentials
+  }
+}
+    ${TicketTypeEssentialsFragmentDoc}
+${TicketTypeAddonEssentialsFragmentDoc}`;
 export const JumpTypeEssentialsFragmentDoc = gql`
     fragment jumpTypeEssentials on JumpType {
   id
@@ -128,7 +139,7 @@ export const SlotEssentialsFragmentDoc = gql`
   groupNumber
   cost
   ticketType {
-    ...ticketTypeEssentials
+    ...ticketTypeDetails
   }
   jumpType {
     ...jumpTypeEssentials
@@ -138,7 +149,7 @@ export const SlotEssentialsFragmentDoc = gql`
     name
   }
 }
-    ${TicketTypeEssentialsFragmentDoc}
+    ${TicketTypeDetailsFragmentDoc}
 ${JumpTypeEssentialsFragmentDoc}`;
 export const RigEssentialsFragmentDoc = gql`
     fragment rigEssentials on Rig {
@@ -499,19 +510,11 @@ export const DropzoneDetailedFragmentDoc = gql`
     name
     slug
   }
-  planes {
-    ...planeEssentials
-  }
-  ticketTypes {
-    ...ticketTypeEssentials
-  }
   currentConditions {
     ...weatherConditionEssentials
   }
 }
     ${DropzoneEssentialsFragmentDoc}
-${PlaneEssentialsFragmentDoc}
-${TicketTypeEssentialsFragmentDoc}
 ${WeatherConditionEssentialsFragmentDoc}`;
 export const CurrentUserEssentialsFragmentDoc = gql`
     fragment currentUserEssentials on DropzoneUser {
@@ -668,6 +671,15 @@ export const SlotExhaustiveFragmentDoc = gql`
 ${DropzoneUserDetailsFragmentDoc}
 ${LoadDetailsFragmentDoc}
 ${RigEssentialsFragmentDoc}`;
+export const TicketTypeAddonDetailsFragmentDoc = gql`
+    fragment ticketTypeAddonDetails on Extra {
+  ...ticketTypeAddonEssentials
+  ticketTypes {
+    ...ticketTypeEssentials
+  }
+}
+    ${TicketTypeAddonEssentialsFragmentDoc}
+${TicketTypeEssentialsFragmentDoc}`;
 export const ArchivePlaneDocument = gql`
     mutation ArchivePlane($id: Int!) {
   deletePlane(input: {id: $id}) {
@@ -874,6 +886,52 @@ export function useConfirmUserMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ConfirmUserMutationHookResult = ReturnType<typeof useConfirmUserMutation>;
 export type ConfirmUserMutationResult = Apollo.MutationResult<Operation.ConfirmUserMutation>;
 export type ConfirmUserMutationOptions = Apollo.BaseMutationOptions<Operation.ConfirmUserMutation, Operation.ConfirmUserMutationVariables>;
+export const CreateAircraftDocument = gql`
+    mutation CreateAircraft($attributes: PlaneInput!) {
+  createPlane(input: {attributes: $attributes}) {
+    plane {
+      ...planeEssentials
+      dropzone {
+        id
+        planes {
+          ...planeEssentials
+        }
+      }
+    }
+    fieldErrors {
+      field
+      message
+    }
+    errors
+  }
+}
+    ${PlaneEssentialsFragmentDoc}`;
+export type CreateAircraftMutationFn = Apollo.MutationFunction<Operation.CreateAircraftMutation, Operation.CreateAircraftMutationVariables>;
+
+/**
+ * __useCreateAircraftMutation__
+ *
+ * To run a mutation, you first call `useCreateAircraftMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateAircraftMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createAircraftMutation, { data, loading, error }] = useCreateAircraftMutation({
+ *   variables: {
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useCreateAircraftMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateAircraftMutation, Operation.CreateAircraftMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.CreateAircraftMutation, Operation.CreateAircraftMutationVariables>(CreateAircraftDocument, options);
+      }
+export type CreateAircraftMutationHookResult = ReturnType<typeof useCreateAircraftMutation>;
+export type CreateAircraftMutationResult = Apollo.MutationResult<Operation.CreateAircraftMutation>;
+export type CreateAircraftMutationOptions = Apollo.BaseMutationOptions<Operation.CreateAircraftMutation, Operation.CreateAircraftMutationVariables>;
 export const CreateDropzoneDocument = gql`
     mutation CreateDropzone($name: String!, $banner: String, $federation: Int!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String) {
   createDropzone(
@@ -1015,60 +1073,6 @@ export function useCreateOrderMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMutation>;
 export type CreateOrderMutationResult = Apollo.MutationResult<Operation.CreateOrderMutation>;
 export type CreateOrderMutationOptions = Apollo.BaseMutationOptions<Operation.CreateOrderMutation, Operation.CreateOrderMutationVariables>;
-export const CreatePlaneDocument = gql`
-    mutation CreatePlane($name: String!, $registration: String!, $dropzoneId: Int!, $minSlots: Int!, $maxSlots: Int!, $hours: Int, $nextMaintenanceHours: Int) {
-  createPlane(
-    input: {attributes: {name: $name, registration: $registration, dropzoneId: $dropzoneId, minSlots: $minSlots, maxSlots: $maxSlots, hours: $hours, nextMaintenanceHours: $nextMaintenanceHours}}
-  ) {
-    plane {
-      ...planeEssentials
-      dropzone {
-        id
-        planes {
-          ...planeEssentials
-        }
-      }
-    }
-    fieldErrors {
-      field
-      message
-    }
-    errors
-  }
-}
-    ${PlaneEssentialsFragmentDoc}`;
-export type CreatePlaneMutationFn = Apollo.MutationFunction<Operation.CreatePlaneMutation, Operation.CreatePlaneMutationVariables>;
-
-/**
- * __useCreatePlaneMutation__
- *
- * To run a mutation, you first call `useCreatePlaneMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreatePlaneMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createPlaneMutation, { data, loading, error }] = useCreatePlaneMutation({
- *   variables: {
- *      name: // value for 'name'
- *      registration: // value for 'registration'
- *      dropzoneId: // value for 'dropzoneId'
- *      minSlots: // value for 'minSlots'
- *      maxSlots: // value for 'maxSlots'
- *      hours: // value for 'hours'
- *      nextMaintenanceHours: // value for 'nextMaintenanceHours'
- *   },
- * });
- */
-export function useCreatePlaneMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreatePlaneMutation, Operation.CreatePlaneMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.CreatePlaneMutation, Operation.CreatePlaneMutationVariables>(CreatePlaneDocument, options);
-      }
-export type CreatePlaneMutationHookResult = ReturnType<typeof useCreatePlaneMutation>;
-export type CreatePlaneMutationResult = Apollo.MutationResult<Operation.CreatePlaneMutation>;
-export type CreatePlaneMutationOptions = Apollo.BaseMutationOptions<Operation.CreatePlaneMutation, Operation.CreatePlaneMutationVariables>;
 export const CreateRigDocument = gql`
     mutation CreateRig($make: String, $name: String, $model: String, $serial: String, $rigType: String, $canopySize: Int, $repackExpiresAt: Int, $userId: Int, $dropzoneId: Int) {
   createRig(
@@ -1164,6 +1168,116 @@ export function useCreateRigInspectionMutation(baseOptions?: Apollo.MutationHook
 export type CreateRigInspectionMutationHookResult = ReturnType<typeof useCreateRigInspectionMutation>;
 export type CreateRigInspectionMutationResult = Apollo.MutationResult<Operation.CreateRigInspectionMutation>;
 export type CreateRigInspectionMutationOptions = Apollo.BaseMutationOptions<Operation.CreateRigInspectionMutation, Operation.CreateRigInspectionMutationVariables>;
+export const CreateTicketAddonDocument = gql`
+    mutation CreateTicketAddon($attributes: ExtraInput!) {
+  createExtra(input: {attributes: $attributes}) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    extra {
+      ...ticketTypeAddonDetails
+      dropzone {
+        id
+        extras {
+          ...ticketTypeAddonDetails
+        }
+      }
+    }
+  }
+}
+    ${TicketTypeAddonDetailsFragmentDoc}`;
+export type CreateTicketAddonMutationFn = Apollo.MutationFunction<Operation.CreateTicketAddonMutation, Operation.CreateTicketAddonMutationVariables>;
+
+/**
+ * __useCreateTicketAddonMutation__
+ *
+ * To run a mutation, you first call `useCreateTicketAddonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTicketAddonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTicketAddonMutation, { data, loading, error }] = useCreateTicketAddonMutation({
+ *   variables: {
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useCreateTicketAddonMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateTicketAddonMutation, Operation.CreateTicketAddonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.CreateTicketAddonMutation, Operation.CreateTicketAddonMutationVariables>(CreateTicketAddonDocument, options);
+      }
+export type CreateTicketAddonMutationHookResult = ReturnType<typeof useCreateTicketAddonMutation>;
+export type CreateTicketAddonMutationResult = Apollo.MutationResult<Operation.CreateTicketAddonMutation>;
+export type CreateTicketAddonMutationOptions = Apollo.BaseMutationOptions<Operation.CreateTicketAddonMutation, Operation.CreateTicketAddonMutationVariables>;
+export const CreateTicketTypeDocument = gql`
+    mutation CreateTicketType($attributes: TicketTypeInput!) {
+  createTicketType(input: {attributes: $attributes}) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    ticketType {
+      id
+      name
+      altitude
+      cost
+      allowManifestingSelf
+      extras {
+        id
+        name
+        cost
+      }
+      dropzone {
+        id
+        ticketTypes {
+          id
+          name
+          altitude
+          cost
+          allowManifestingSelf
+          extras {
+            id
+            name
+            cost
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export type CreateTicketTypeMutationFn = Apollo.MutationFunction<Operation.CreateTicketTypeMutation, Operation.CreateTicketTypeMutationVariables>;
+
+/**
+ * __useCreateTicketTypeMutation__
+ *
+ * To run a mutation, you first call `useCreateTicketTypeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTicketTypeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTicketTypeMutation, { data, loading, error }] = useCreateTicketTypeMutation({
+ *   variables: {
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useCreateTicketTypeMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateTicketTypeMutation, Operation.CreateTicketTypeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.CreateTicketTypeMutation, Operation.CreateTicketTypeMutationVariables>(CreateTicketTypeDocument, options);
+      }
+export type CreateTicketTypeMutationHookResult = ReturnType<typeof useCreateTicketTypeMutation>;
+export type CreateTicketTypeMutationResult = Apollo.MutationResult<Operation.CreateTicketTypeMutation>;
+export type CreateTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.CreateTicketTypeMutation, Operation.CreateTicketTypeMutationVariables>;
 export const CreateGhostDocument = gql`
     mutation CreateGhost($name: String!, $phone: String, $email: String!, $federationNumber: String, $role: Int!, $license: Int, $dropzone: Int!, $exitWeight: Float!) {
   createGhost(
@@ -1295,8 +1409,10 @@ export type FinalizeLoadMutationHookResult = ReturnType<typeof useFinalizeLoadMu
 export type FinalizeLoadMutationResult = Apollo.MutationResult<Operation.FinalizeLoadMutation>;
 export type FinalizeLoadMutationOptions = Apollo.BaseMutationOptions<Operation.FinalizeLoadMutation, Operation.FinalizeLoadMutationVariables>;
 export const GrantPermissionDocument = gql`
-    mutation GrantPermission($dropzoneUserId: Int!, $permissionName: Permission!) {
-  grantPermission(input: {id: $dropzoneUserId, permission: $permissionName}) {
+    mutation GrantPermission($dropzoneUserId: ID!, $permissionName: Permission!) {
+  grantPermission(
+    input: {dropzoneUser: $dropzoneUserId, permission: $permissionName}
+  ) {
     fieldErrors {
       message
       field
@@ -1796,8 +1912,10 @@ export type ReloadWeatherMutationHookResult = ReturnType<typeof useReloadWeather
 export type ReloadWeatherMutationResult = Apollo.MutationResult<Operation.ReloadWeatherMutation>;
 export type ReloadWeatherMutationOptions = Apollo.BaseMutationOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
 export const RevokePermissionDocument = gql`
-    mutation RevokePermission($dropzoneUserId: Int!, $permissionName: Permission!) {
-  revokePermission(input: {id: $dropzoneUserId, permission: $permissionName}) {
+    mutation RevokePermission($dropzoneUserId: ID!, $permissionName: Permission!) {
+  revokePermission(
+    input: {dropzoneUser: $dropzoneUserId, permission: $permissionName}
+  ) {
     fieldErrors {
       message
       field
@@ -1842,6 +1960,60 @@ export function useRevokePermissionMutation(baseOptions?: Apollo.MutationHookOpt
 export type RevokePermissionMutationHookResult = ReturnType<typeof useRevokePermissionMutation>;
 export type RevokePermissionMutationResult = Apollo.MutationResult<Operation.RevokePermissionMutation>;
 export type RevokePermissionMutationOptions = Apollo.BaseMutationOptions<Operation.RevokePermissionMutation, Operation.RevokePermissionMutationVariables>;
+export const UpdateAircraftDocument = gql`
+    mutation UpdateAircraft($id: Int!, $attributes: PlaneInput!) {
+  updatePlane(input: {id: $id, attributes: $attributes}) {
+    plane {
+      ...planeEssentials
+      dropzone {
+        id
+        name
+        planes {
+          id
+          name
+          registration
+          minSlots
+          maxSlots
+          hours
+          nextMaintenanceHours
+        }
+      }
+    }
+    fieldErrors {
+      field
+      message
+    }
+    errors
+  }
+}
+    ${PlaneEssentialsFragmentDoc}`;
+export type UpdateAircraftMutationFn = Apollo.MutationFunction<Operation.UpdateAircraftMutation, Operation.UpdateAircraftMutationVariables>;
+
+/**
+ * __useUpdateAircraftMutation__
+ *
+ * To run a mutation, you first call `useUpdateAircraftMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAircraftMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAircraftMutation, { data, loading, error }] = useUpdateAircraftMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useUpdateAircraftMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateAircraftMutation, Operation.UpdateAircraftMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateAircraftMutation, Operation.UpdateAircraftMutationVariables>(UpdateAircraftDocument, options);
+      }
+export type UpdateAircraftMutationHookResult = ReturnType<typeof useUpdateAircraftMutation>;
+export type UpdateAircraftMutationResult = Apollo.MutationResult<Operation.UpdateAircraftMutation>;
+export type UpdateAircraftMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateAircraftMutation, Operation.UpdateAircraftMutationVariables>;
 export const UpdateDropzoneDocument = gql`
     mutation UpdateDropzone($id: Int!, $name: String!, $requestPublication: Boolean, $banner: String, $federation: Int!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String, $isCreditSystemEnabled: Boolean, $isPublic: Boolean) {
   updateDropzone(
@@ -1938,47 +2110,6 @@ export function useUpdateDropzoneUserMutation(baseOptions?: Apollo.MutationHookO
 export type UpdateDropzoneUserMutationHookResult = ReturnType<typeof useUpdateDropzoneUserMutation>;
 export type UpdateDropzoneUserMutationResult = Apollo.MutationResult<Operation.UpdateDropzoneUserMutation>;
 export type UpdateDropzoneUserMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateDropzoneUserMutation, Operation.UpdateDropzoneUserMutationVariables>;
-export const UpdateExtraDocument = gql`
-    mutation UpdateExtra($id: Int!, $name: String, $ticketTypeIds: [Int!], $cost: Float, $dropzoneId: Int) {
-  updateExtra(
-    input: {id: $id, attributes: {name: $name, ticketTypeIds: $ticketTypeIds, cost: $cost, dropzoneId: $dropzoneId}}
-  ) {
-    extra {
-      ...ticketTypeExtraDetailed
-    }
-  }
-}
-    ${TicketTypeExtraDetailedFragmentDoc}`;
-export type UpdateExtraMutationFn = Apollo.MutationFunction<Operation.UpdateExtraMutation, Operation.UpdateExtraMutationVariables>;
-
-/**
- * __useUpdateExtraMutation__
- *
- * To run a mutation, you first call `useUpdateExtraMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateExtraMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateExtraMutation, { data, loading, error }] = useUpdateExtraMutation({
- *   variables: {
- *      id: // value for 'id'
- *      name: // value for 'name'
- *      ticketTypeIds: // value for 'ticketTypeIds'
- *      cost: // value for 'cost'
- *      dropzoneId: // value for 'dropzoneId'
- *   },
- * });
- */
-export function useUpdateExtraMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateExtraMutation, Operation.UpdateExtraMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.UpdateExtraMutation, Operation.UpdateExtraMutationVariables>(UpdateExtraDocument, options);
-      }
-export type UpdateExtraMutationHookResult = ReturnType<typeof useUpdateExtraMutation>;
-export type UpdateExtraMutationResult = Apollo.MutationResult<Operation.UpdateExtraMutation>;
-export type UpdateExtraMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateExtraMutation, Operation.UpdateExtraMutationVariables>;
 export const UpdateLoadDocument = gql`
     mutation UpdateLoad($id: Int!, $pilot: Int, $gca: Int, $plane: Int, $loadMaster: Int, $dispatchAt: ISO8601DateTime) {
   updateLoad(
@@ -2074,67 +2205,6 @@ export function useUpdateLostPasswordMutation(baseOptions?: Apollo.MutationHookO
 export type UpdateLostPasswordMutationHookResult = ReturnType<typeof useUpdateLostPasswordMutation>;
 export type UpdateLostPasswordMutationResult = Apollo.MutationResult<Operation.UpdateLostPasswordMutation>;
 export type UpdateLostPasswordMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateLostPasswordMutation, Operation.UpdateLostPasswordMutationVariables>;
-export const UpdatePlaneDocument = gql`
-    mutation UpdatePlane($id: Int!, $name: String!, $registration: String!, $minSlots: Int!, $maxSlots: Int!, $hours: Int, $nextMaintenanceHours: Int) {
-  updatePlane(
-    input: {id: $id, attributes: {name: $name, registration: $registration, minSlots: $minSlots, maxSlots: $maxSlots, hours: $hours, nextMaintenanceHours: $nextMaintenanceHours}}
-  ) {
-    plane {
-      ...planeEssentials
-      dropzone {
-        id
-        name
-        planes {
-          id
-          name
-          registration
-          minSlots
-          maxSlots
-          hours
-          nextMaintenanceHours
-        }
-      }
-    }
-    fieldErrors {
-      field
-      message
-    }
-    errors
-  }
-}
-    ${PlaneEssentialsFragmentDoc}`;
-export type UpdatePlaneMutationFn = Apollo.MutationFunction<Operation.UpdatePlaneMutation, Operation.UpdatePlaneMutationVariables>;
-
-/**
- * __useUpdatePlaneMutation__
- *
- * To run a mutation, you first call `useUpdatePlaneMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdatePlaneMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updatePlaneMutation, { data, loading, error }] = useUpdatePlaneMutation({
- *   variables: {
- *      id: // value for 'id'
- *      name: // value for 'name'
- *      registration: // value for 'registration'
- *      minSlots: // value for 'minSlots'
- *      maxSlots: // value for 'maxSlots'
- *      hours: // value for 'hours'
- *      nextMaintenanceHours: // value for 'nextMaintenanceHours'
- *   },
- * });
- */
-export function useUpdatePlaneMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdatePlaneMutation, Operation.UpdatePlaneMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.UpdatePlaneMutation, Operation.UpdatePlaneMutationVariables>(UpdatePlaneDocument, options);
-      }
-export type UpdatePlaneMutationHookResult = ReturnType<typeof useUpdatePlaneMutation>;
-export type UpdatePlaneMutationResult = Apollo.MutationResult<Operation.UpdatePlaneMutation>;
-export type UpdatePlaneMutationOptions = Apollo.BaseMutationOptions<Operation.UpdatePlaneMutation, Operation.UpdatePlaneMutationVariables>;
 export const UpdateRigDocument = gql`
     mutation UpdateRig($id: Int!, $name: String, $make: String, $model: String, $serial: String, $isPublic: Boolean, $rigType: String, $canopySize: Int, $packingCard: String, $repackExpiresAt: Int, $userId: Int, $dropzoneId: Int) {
   updateRig(
@@ -2278,11 +2348,50 @@ export function useUpdateRoleMutation(baseOptions?: Apollo.MutationHookOptions<O
 export type UpdateRoleMutationHookResult = ReturnType<typeof useUpdateRoleMutation>;
 export type UpdateRoleMutationResult = Apollo.MutationResult<Operation.UpdateRoleMutation>;
 export type UpdateRoleMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateRoleMutation, Operation.UpdateRoleMutationVariables>;
+export const UpdateTicketAddonDocument = gql`
+    mutation UpdateTicketAddon($id: Int!, $attributes: ExtraInput!) {
+  updateExtra(input: {id: $id, attributes: $attributes}) {
+    errors
+    fieldErrors {
+      message
+      field
+    }
+    extra {
+      ...ticketTypeExtraDetailed
+    }
+  }
+}
+    ${TicketTypeExtraDetailedFragmentDoc}`;
+export type UpdateTicketAddonMutationFn = Apollo.MutationFunction<Operation.UpdateTicketAddonMutation, Operation.UpdateTicketAddonMutationVariables>;
+
+/**
+ * __useUpdateTicketAddonMutation__
+ *
+ * To run a mutation, you first call `useUpdateTicketAddonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTicketAddonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTicketAddonMutation, { data, loading, error }] = useUpdateTicketAddonMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useUpdateTicketAddonMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateTicketAddonMutation, Operation.UpdateTicketAddonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateTicketAddonMutation, Operation.UpdateTicketAddonMutationVariables>(UpdateTicketAddonDocument, options);
+      }
+export type UpdateTicketAddonMutationHookResult = ReturnType<typeof useUpdateTicketAddonMutation>;
+export type UpdateTicketAddonMutationResult = Apollo.MutationResult<Operation.UpdateTicketAddonMutation>;
+export type UpdateTicketAddonMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateTicketAddonMutation, Operation.UpdateTicketAddonMutationVariables>;
 export const UpdateTicketTypeDocument = gql`
-    mutation UpdateTicketType($id: Int!, $name: String, $cost: Float, $altitude: Int, $allowManifestingSelf: Boolean, $isTandem: Boolean, $extraIds: [Int!]) {
-  updateTicketType(
-    input: {id: $id, attributes: {name: $name, cost: $cost, altitude: $altitude, allowManifestingSelf: $allowManifestingSelf, isTandem: $isTandem, extraIds: $extraIds}}
-  ) {
+    mutation UpdateTicketType($id: Int!, $attributes: TicketTypeInput!) {
+  updateTicketType(input: {id: $id, attributes: $attributes}) {
     errors
     fieldErrors {
       field
@@ -2327,12 +2436,7 @@ export type UpdateTicketTypeMutationFn = Apollo.MutationFunction<Operation.Updat
  * const [updateTicketTypeMutation, { data, loading, error }] = useUpdateTicketTypeMutation({
  *   variables: {
  *      id: // value for 'id'
- *      name: // value for 'name'
- *      cost: // value for 'cost'
- *      altitude: // value for 'altitude'
- *      allowManifestingSelf: // value for 'allowManifestingSelf'
- *      isTandem: // value for 'isTandem'
- *      extraIds: // value for 'extraIds'
+ *      attributes: // value for 'attributes'
  *   },
  * });
  */
@@ -3722,16 +3826,11 @@ export const AllowedTicketTypesDocument = gql`
   dropzone(id: $dropzone) {
     id
     ticketTypes(isPublic: $onlyPublicTickets) {
-      ...ticketTypeEssentials
-      extras {
-        id
-        cost
-        name
-      }
+      ...ticketTypeDetails
     }
   }
 }
-    ${TicketTypeEssentialsFragmentDoc}`;
+    ${TicketTypeDetailsFragmentDoc}`;
 
 /**
  * __useAllowedTicketTypesQuery__
@@ -3764,10 +3863,10 @@ export type AllowedTicketTypesQueryResult = Apollo.QueryResult<Operation.Allowed
 export const TicketTypesDocument = gql`
     query TicketTypes($dropzone: ID!, $allowManifestingSelf: Boolean) {
   ticketTypes(dropzone: $dropzone, allowManifestingSelf: $allowManifestingSelf) {
-    ...ticketTypeEssentials
+    ...ticketTypeDetails
   }
 }
-    ${TicketTypeEssentialsFragmentDoc}`;
+    ${TicketTypeDetailsFragmentDoc}`;
 
 /**
  * __useTicketTypesQuery__

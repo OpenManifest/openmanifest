@@ -8,7 +8,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { NotificationType } from 'app/api/schema.d';
 import { useNotificationsLazyQuery } from 'app/api/reflection';
 import { NotificationsQueryVariables } from 'app/api/operations';
-import { useDropzoneContext } from 'app/api/crud';
+import { useDropzoneContext } from 'app/providers';
 import { useAppSelector } from '../../../../state';
 import NoResults from '../../../../components/NoResults';
 
@@ -21,9 +21,11 @@ import PublicationRequestNotification from './Cards/PublicationRequest';
 
 export default function NotificationScreen() {
   const state = useAppSelector((root) => root.global);
-  const { dropzone } = useDropzoneContext();
+  const {
+    dropzone: { dropzone },
+  } = useDropzoneContext();
   const [getNotifications, query] = useNotificationsLazyQuery();
-  const { data, loading, refetch } = query;
+  const { data, loading } = query;
   const variables: NotificationsQueryVariables | undefined = React.useMemo(
     () => (!dropzone?.id ? undefined : { dropzoneId: dropzone?.id }),
     [dropzone?.id]

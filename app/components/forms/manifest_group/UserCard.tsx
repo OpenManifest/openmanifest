@@ -1,4 +1,3 @@
-import { useDropzoneUserProfileQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
 import { Card, TextInput, ProgressBar, Divider, List, Button } from 'react-native-paper';
@@ -7,6 +6,7 @@ import { useAppSelector } from 'app/state';
 import calculateWingLoading from 'app/utils/calculateWingLoading';
 import Chip from 'app/components/chips/Chip';
 import UserAvatar from 'app/components/UserAvatar';
+import { useUserProfile } from 'app/api/crud';
 import RigSelect from '../../input/dropdown_select/RigSelect';
 import NumberField, { NumberFieldType } from '../../input/number_input/NumberField';
 
@@ -41,30 +41,22 @@ export default function UserCard(props: IUserRigCard) {
   } = props;
   const { global: globalState } = useAppSelector((root) => root);
 
-  const { data, loading } = useDropzoneUserProfileQuery({
-    variables: {
-      id: dropzoneUserId,
-    },
-    skip: !dropzoneUserId,
-    onError: console.error,
+  const { dropzoneUser, loading } = useUserProfile({
+    id: dropzoneUserId,
   });
 
   React.useEffect(() => {
-    if (!exitWeight && data?.dropzoneUser?.user?.exitWeight) {
-      onChangeExitWeight(Number(data.dropzoneUser.user.exitWeight));
+    if (!exitWeight && dropzoneUser?.user?.exitWeight) {
+      onChangeExitWeight(Number(dropzoneUser.user.exitWeight));
     }
-  }, [data?.dropzoneUser?.user.exitWeight, exitWeight, onChangeExitWeight]);
+  }, [dropzoneUser?.user.exitWeight, exitWeight, onChangeExitWeight]);
   return (
     <Card style={{ marginHorizontal: 16, marginBottom: 16 }} elevation={1}>
       <ProgressBar indeterminate color={globalState.theme.colors.primary} visible={loading} />
       <Card.Title
-        title={data?.dropzoneUser?.user.name}
+        title={dropzoneUser?.user.name}
         left={() => (
-          <UserAvatar
-            name={data?.dropzoneUser?.user?.name}
-            image={data?.dropzoneUser?.user?.image}
-            size={36}
-          />
+          <UserAvatar name={dropzoneUser?.user?.name} image={dropzoneUser?.user?.image} size={36} />
         )}
       />
 
@@ -77,10 +69,10 @@ export default function UserCard(props: IUserRigCard) {
             </Chip>
           )}
           <Chip small icon="lock" mode="outlined" disabled>
-            {data?.dropzoneUser?.role?.name}
+            {dropzoneUser?.role?.name}
           </Chip>
           <Chip small icon="ticket-account" mode="outlined" disabled>
-            {data?.dropzoneUser?.license?.name}
+            {dropzoneUser?.license?.name}
           </Chip>
         </ScrollView>
         <View style={styles.row}>
@@ -88,7 +80,7 @@ export default function UserCard(props: IUserRigCard) {
             <RigSelect
               small
               dropzoneUserId={dropzoneUserId ? Number(dropzoneUserId) : undefined}
-              onSelect={onChangeRig}
+              onChange={onChangeRig}
               value={selectedRig}
               tandem={isTandem}
               autoSelectFirst

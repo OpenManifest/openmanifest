@@ -9,29 +9,25 @@ import {
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { FAB, IconButton, ProgressBar, useTheme } from 'react-native-paper';
-import checkDropzoneSetupComplete from 'app/utils/checkDropzoneSetupComplete';
 
 import NoResults from 'app/components/NoResults';
 import { View } from 'app/components/Themed';
-import { DropzoneState, LoadState, Permission } from 'app/api/schema.d';
-import useRestriction from 'app/hooks/useRestriction';
+import { LoadState, Permission } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import LoadDialog from 'app/components/dialogs/Load';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext, useManifestContext } from 'app/providers';
 import { LoadDetailsFragment } from 'app/api/operations';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
-import ManifestUserDialog from 'app/components/dialogs/ManifestUser/ManifestUser';
-import useManifestValidator from 'app/hooks/useManifestValidator';
-import { useManifestContext } from 'app/api/crud/useManifest';
+import { useAircrafts, useTickets } from 'app/api/crud';
+import useRestriction from 'app/hooks/useRestriction';
 import DragDropWrapper from '../../../../components/slots_table/DragAndDrop/DragDropSlotProvider';
-import GetStarted from '../../../../components/GetStarted';
 import LoadCardSmall from './LoadCard/Small/Card';
 import LoadCardLarge from './LoadCard/Large/Card';
 import WeatherConditions from './Weather/WeatherBoard';
 import LoadingCardLarge from './LoadCard/Large/Loading';
 import LoadingCardSmall from './LoadCard/Small/Loading';
 import SetupProfileCard from './SetupProfileCard';
+import { SetupStepCard } from './FinishSetupSteps';
 
 const loadingFragment: LoadDetailsFragment = {
   id: '__LOADING__',
@@ -51,48 +47,24 @@ const loadingFragment: LoadDetailsFragment = {
 };
 
 const setupProfileCardFragment = { ...loadingFragment, id: '__SETUP_PROFILE_CARD__' };
+const setupAircraftsCardFragment = { ...loadingFragment, id: '__SETUP_AIRCRAFT_CARD__' };
+const setupTicketsCardFragment = { ...loadingFragment, id: '__SETUP_TICKETS_CARD__' };
+
 export default function ManifestScreen() {
   const state = useAppSelector((root) => root.global);
-  const forms = useAppSelector((root) => root.forms);
   const manifestScreen = useAppSelector((root) => root.screens.manifest);
-  const setup = useAppSelector((root) => root.screens.dropzoneWizard);
   const dispatch = useAppDispatch();
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
-  const [isSetupCheckComplete] = React.useState(false);
-  const { canManifest } = useManifestValidator();
-  const { dropzone, currentUser, loading, refetch, fetchMore } = useDropzoneContext();
-  const manifest = useManifestContext();
+  const {
+    dropzone: { dropzone, currentUser, loading, refetch, fetchMore },
+    dialogs: sheets,
+  } = useDropzoneContext();
+  const { manifest, dialogs } = useManifestContext();
+  const { aircrafts, loading: loadingAircrafts } = useAircrafts({ dropzoneId: dropzone?.id });
+  const { ticketTypes, loading: loadingTickets } = useTickets({ dropzone: dropzone?.id });
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
-
-  React.useEffect(() => {
-    if (dropzone && isFocused && canUpdateDropzone) {
-      const dropzoneWizardIndex = checkDropzoneSetupComplete(dropzone);
-      console.debug({ dropzoneWizardIndex });
-
-      if (dropzoneWizardIndex) {
-        dispatch(actions.screens.dropzoneWizard.setIndex(dropzoneWizardIndex));
-        dispatch(actions.forms.dropzone.setOriginal(dropzone));
-        if (dropzone?.planes?.length) {
-          dispatch(actions.forms.plane.setOriginal(dropzone.planes[0]));
-        }
-        if (dropzone?.ticketTypes?.length) {
-          dispatch(actions.forms.ticketType.setOriginal(dropzone.ticketTypes[0]));
-        }
-        navigation.navigate('Wizards', { screen: 'DropzoneWizardScreen' });
-      }
-    }
-  }, [
-    dispatch,
-    dropzone,
-    isFocused,
-    navigation,
-    setup.completed,
-    isSetupCheckComplete,
-    canUpdateDropzone,
-  ]);
 
   React.useEffect(() => {
     if (isFocused && dropzone?.name) {
@@ -107,11 +79,6 @@ export default function ManifestScreen() {
       refetch();
     }
   }, [isFocused, refetch]);
-
-  const hasPlanes = !!dropzone?.planes?.length;
-  const hasTicketTypes = !!dropzone?.ticketTypes?.length;
-  const isPublic = dropzone?.status === DropzoneState.Public;
-  const isSetupComplete = hasPlanes && hasTicketTypes;
 
   React.useEffect(() => {
     if (dropzone?.primaryColor && dropzone?.primaryColor !== state.theme?.colors?.primary) {
@@ -130,33 +97,14 @@ export default function ManifestScreen() {
     state.theme?.colors?.primary,
   ]);
 
-  const onManifest = React.useCallback(
-    async function Manifest(load: LoadDetailsFragment) {
-      try {
-        await canManifest();
-        dispatch(actions.forms.manifest.setOpen(true));
-        dispatch(actions.forms.manifest.setField(['dropzoneUser', currentUser]));
-        dispatch(actions.forms.manifest.setField(['load', load]));
-      } catch (e) {
-        if (e instanceof Error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: e.message,
-              variant: 'info',
-            })
-          );
-        }
-      }
-    },
-    [canManifest, currentUser, dispatch]
-  );
-
   const { width } = useWindowDimensions();
 
   let cardWidth = (manifestScreen.display === 'cards' ? 338 : 550) + 32;
   cardWidth = cardWidth > width ? width - 32 : cardWidth;
   const numColumns = Math.floor(width / cardWidth) || 1;
   const contentWidth = cardWidth * numColumns;
+
+  const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
 
   const initialLoading = !dropzone || (!manifest?.loads?.length && manifest?.loading);
 
@@ -165,6 +113,14 @@ export default function ManifestScreen() {
   const data = React.useMemo(
     () =>
       [
+        !loadingAircrafts &&
+          (!ticketTypes?.length || !aircrafts?.length) &&
+          canUpdateDropzone &&
+          setupAircraftsCardFragment,
+        !loadingTickets &&
+          (!ticketTypes?.length || !aircrafts?.length) &&
+          canUpdateDropzone &&
+          setupTicketsCardFragment,
         !initialLoading &&
         (!currentUser?.hasExitWeight || !currentUser?.hasLicense || !currentUser.user?.name)
           ? setupProfileCardFragment
@@ -172,11 +128,16 @@ export default function ManifestScreen() {
         ...(initialLoading ? new Array(5).fill(loadingFragment) : manifest.loads),
       ].filter(Boolean),
     [
-      manifest?.loads,
+      loadingAircrafts,
+      ticketTypes?.length,
+      aircrafts?.length,
+      canUpdateDropzone,
+      loadingTickets,
+      initialLoading,
       currentUser?.hasExitWeight,
       currentUser?.hasLicense,
       currentUser?.user?.name,
-      initialLoading,
+      manifest.loads,
     ]
   );
 
@@ -195,6 +156,28 @@ export default function ManifestScreen() {
       if (load.id === '__SETUP_PROFILE_CARD__') {
         return <SetupProfileCard />;
       }
+
+      if (load.id === '__SETUP_AIRCRAFT_CARD__') {
+        return (
+          <SetupStepCard
+            title="Add an aircraft"
+            completed={!!aircrafts?.length}
+            onPress={sheets.aircraft.open}
+            index={1}
+          />
+        );
+      }
+
+      if (load.id === '__SETUP_TICKETS_CARD__') {
+        return (
+          <SetupStepCard
+            title="Create a ticket"
+            completed={!!ticketTypes?.length}
+            onPress={sheets.ticketType.open}
+            index={2}
+          />
+        );
+      }
       return manifestScreen.display === 'list' ? (
         <LoadCardLarge
           controlsVisible={false}
@@ -202,8 +185,10 @@ export default function ManifestScreen() {
           id={load?.id}
           onSlotPress={(slot) => {
             if (load) {
-              dispatch(actions.forms.manifest.setOpen(slot));
-              dispatch(actions.forms.manifest.setField(['load', load]));
+              dialogs.manifestUser.open({
+                load,
+                slot: { ...(slot || {}), dropzoneUser: slot ? slot?.dropzoneUser : currentUser },
+              });
             }
           }}
           onSlotGroupPress={(slots) => {
@@ -213,7 +198,7 @@ export default function ManifestScreen() {
             // FIXME: Open manifest group drawer
           }}
           onManifest={() => {
-            onManifest(load);
+            dialogs.manifestUser.open({ load, slot: { dropzoneUser: currentUser } });
           }}
           onManifestGroup={() => {
             dispatch(actions.forms.manifestGroup.reset());
@@ -240,7 +225,17 @@ export default function ManifestScreen() {
         />
       );
     },
-    [dispatch, manifestScreen.display, navigation, onManifest]
+    [
+      manifestScreen.display,
+      aircrafts?.length,
+      sheets.aircraft.open,
+      sheets.ticketType.open,
+      ticketTypes?.length,
+      dialogs.manifestUser,
+      currentUser,
+      dispatch,
+      navigation,
+    ]
   );
   return (
     <View style={{ flex: 1 }}>
@@ -251,62 +246,56 @@ export default function ManifestScreen() {
       />
 
       <View style={styles.container}>
-        {!initialLoading && !isSetupComplete ? (
-          <GetStarted {...{ hasPlanes, hasTicketTypes, isPublic }} />
-        ) : (
-          <View
-            style={{
-              width: '100%',
-              flex: 1,
-              height: Dimensions.get('window').height,
-              backgroundColor: theme.colors.background,
-            }}
-          >
-            {dropzone?.banner && (
-              <ImageBackground
-                source={{ uri: dropzone.banner }}
-                style={{ position: 'absolute', top: -8, left: 0, width: '100%', height: 340 }}
-                resizeMode="cover"
-              />
-            )}
-            <DragDropWrapper>
-              <FlatList<LoadDetailsFragment>
-                ListHeaderComponent={() => <WeatherConditions />}
-                ListEmptyComponent={() => (
-                  <NoResults
-                    style={{ marginTop: 156 }}
-                    title="No loads so far today"
-                    subtitle="How's the weather?"
-                  />
-                )}
-                style={{
-                  paddingTop: 35,
-                  flex: 1,
-                  height: Dimensions.get('window').height,
-                }}
-                testID="loads"
-                keyExtractor={(item, idx) => `load-small-${item?.id || idx}-${idx}`}
-                key={`loads-columns-${numColumns}`}
-                contentContainerStyle={{
-                  width: contentWidth,
-                  alignSelf: 'center',
-                  paddingBottom: 100,
-                }}
-                numColumns={numColumns}
-                {...{ data, renderItem }}
-                refreshControl={
-                  <RefreshControl refreshing={loading} onRefresh={() => fetchMore()} />
-                }
-              />
-            </DragDropWrapper>
-          </View>
-        )}
-        {manifest.permissions.canCreateLoad && isSetupComplete && (
+        <View
+          style={{
+            width: '100%',
+            flex: 1,
+            height: Dimensions.get('window').height,
+            backgroundColor: theme.colors.background,
+          }}
+        >
+          {dropzone?.banner && (
+            <ImageBackground
+              source={{ uri: dropzone.banner }}
+              style={{ position: 'absolute', top: -8, left: 0, width: '100%', height: 340 }}
+              resizeMode="cover"
+            />
+          )}
+          <DragDropWrapper>
+            <FlatList<LoadDetailsFragment>
+              ListHeaderComponent={() => <WeatherConditions />}
+              ListEmptyComponent={() => (
+                <NoResults
+                  style={{ marginTop: 156 }}
+                  title="No loads so far today"
+                  subtitle="How's the weather?"
+                />
+              )}
+              style={{
+                paddingTop: 35,
+                flex: 1,
+                height: Dimensions.get('window').height,
+              }}
+              testID="loads"
+              keyExtractor={(item, idx) => `load-small-${item?.id || idx}-${idx}`}
+              key={`loads-columns-${numColumns}`}
+              contentContainerStyle={{
+                width: contentWidth,
+                alignSelf: 'center',
+                paddingBottom: 100,
+              }}
+              numColumns={numColumns}
+              {...{ data, renderItem }}
+              refreshControl={<RefreshControl refreshing={loading} onRefresh={() => fetchMore()} />}
+            />
+          </DragDropWrapper>
+        </View>
+        {manifest.permissions.canCreateLoad && (
           <FAB
             style={[styles.fab, { backgroundColor: theme.colors.primary }]}
             small
             icon="plus"
-            onPress={() => dispatch(actions.forms.load.setOpen(true))}
+            onPress={() => dialogs.load.open({})}
             label="New load"
           />
         )}
@@ -335,22 +324,6 @@ export default function ManifestScreen() {
           />
         </Menu>
       </View>
-
-      <LoadDialog
-        onSuccess={() => {
-          dispatch(actions.forms.load.setOpen(false));
-          refetch();
-        }}
-        open={forms.load.open}
-        onClose={() => dispatch(actions.forms.load.setOpen(false))}
-      />
-      <ManifestUserDialog
-        open={forms.manifest.open}
-        onClose={() => dispatch(actions.forms.manifest.setOpen(false))}
-        onSuccess={() => {
-          dispatch(actions.forms.manifest.setOpen(false));
-        }}
-      />
     </View>
   );
 }

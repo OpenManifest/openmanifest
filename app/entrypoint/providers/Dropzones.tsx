@@ -1,7 +1,6 @@
-import { DropzoneProvider } from 'app/api/crud/useDropzone';
 import React from 'react';
 import { DropzonesProvider } from 'app/api/crud';
-import { ManifestProvider } from 'app/api/crud/useManifest';
+import { ManifestContextProvider, DropzoneContextProvider } from 'app/providers';
 import { useAppSelector } from 'app/state';
 
 export default function Provider(props: React.PropsWithChildren<object>) {
@@ -9,11 +8,11 @@ export default function Provider(props: React.PropsWithChildren<object>) {
   const { currentDropzoneId } = useAppSelector((root) => root?.global);
   return (
     <DropzonesProvider>
-      <DropzoneProvider dropzoneId={currentDropzoneId?.toString() || undefined}>
-        <ManifestProvider dropzone={currentDropzoneId?.toString() || undefined}>
+      <DropzoneContextProvider dropzoneId={currentDropzoneId?.toString() || undefined}>
+        <ManifestContextProvider dropzone={currentDropzoneId?.toString() || undefined}>
           {children}
-        </ManifestProvider>
-      </DropzoneProvider>
+        </ManifestContextProvider>
+      </DropzoneContextProvider>
     </DropzonesProvider>
   );
 }

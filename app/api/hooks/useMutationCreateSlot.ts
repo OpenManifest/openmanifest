@@ -1,5 +1,5 @@
 import { createMutation, isRequired } from '../createMutation';
-import { SlotInput, CreateSlotPayload } from '../schema';
+import { SlotInput, CreateSlotPayload } from '../schema.d';
 import { ManifestUserDocument } from '../reflection';
 
 export default createMutation<SlotInput, CreateSlotPayload>(ManifestUserDocument, {

@@ -1,8 +1,8 @@
 import { DocumentNode, useQuery } from '@apollo/client';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import * as React from 'react';
-import { Query } from './schema';
-import { actions, useAppDispatch } from '../state';
+import { useNotifications } from 'app/providers/notifications';
+import { Query } from './schema.d';
 
 export interface IAppQuery<Payload, InputType> {
   data: Maybe<Payload>;
@@ -30,7 +30,7 @@ export function createQuery<
 
   return function useAppQuery(opts: IAppQueryProps<InputType>): IAppQuery<Payload, InputType> {
     const { variables, pollInterval, onError } = opts;
-    const dispatch = useAppDispatch();
+    const notify = useNotifications();
 
     const { data, loading, refetch, error } = useQuery(query, {
       variables,
@@ -42,17 +42,12 @@ export function createQuery<
     React.useEffect(() => {
       if (error?.message) {
         if (opts.showSnackbarErrors !== false) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: error.message,
-              variant: 'error',
-            })
-          );
+          notify.error(error.message);
         }
 
         onError?.(error.message);
       }
-    }, [opts.onError, error?.message, opts.showSnackbarErrors, onError, dispatch]);
+    }, [opts.onError, error?.message, opts.showSnackbarErrors, onError, notify]);
 
     return {
       loading,

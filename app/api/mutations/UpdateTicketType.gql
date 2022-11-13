@@ -1,50 +1,38 @@
 mutation UpdateTicketType(
-    $id: Int!
-    $name: String
-    $cost: Float
-    $altitude: Int
-    $allowManifestingSelf: Boolean
-    $isTandem: Boolean
-    $extraIds: [Int!]
+  $id: Int!
+  $attributes: TicketTypeInput!
+) {
+  updateTicketType(
+    input: {
+      id: $id
+      attributes: $attributes
+    }
   ) {
-    updateTicketType(
-      input: {
-        id: $id
-        attributes: {
-          name: $name
-          cost: $cost
-          altitude: $altitude
-          allowManifestingSelf: $allowManifestingSelf
-          isTandem: $isTandem
-          extraIds: $extraIds
-        }
-      }
-    ) {
-      errors
-      fieldErrors {
-        field
-        message
-      }
-      ticketType {
-        ...ticketTypeEssentials
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    ticketType {
+      ...ticketTypeEssentials
+      id
+      name
+      altitude
+      cost
+      allowManifestingSelf
+      extras {
         id
         name
-        altitude
         cost
-        allowManifestingSelf
-        extras {
-          id
-          name
-          cost
-        }
+      }
 
-        dropzone {
-          ...dropzoneEssentials
+      dropzone {
+        ...dropzoneEssentials
 
-          ticketTypes {
-            ...ticketTypeEssentials
-          }
+        ticketTypes {
+          ...ticketTypeEssentials
         }
       }
     }
   }
+}

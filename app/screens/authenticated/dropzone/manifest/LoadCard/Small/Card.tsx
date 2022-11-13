@@ -8,9 +8,9 @@ import PlaneChip from 'app/components/chips/PlaneChip';
 
 import { View } from 'app/components/Themed';
 import { LoadState } from 'app/api/schema.d';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useAppSelector } from 'app/state';
 import { errorColor, warningColor } from 'app/constants/Colors';
-import { useLoadContext, withLoad } from 'app/api/crud/useLoad';
+import { useLoadContext, withLoadContext } from 'app/providers';
 import Countdown from '../Countdown';
 import Loading from './Loading';
 
@@ -20,9 +20,10 @@ interface ILoadCardSmall {
 
 function LoadCard(props: ILoadCardSmall) {
   const { onPress } = props;
-  const dispatch = useAppDispatch();
   const { theme, palette } = useAppSelector((root) => root.global);
-  const { load, loading, refetch, updatePlane, updatePilot } = useLoadContext();
+  const {
+    load: { load, loading, updatePlane, updatePilot },
+  } = useLoadContext();
   const LOAD_BADGE_COLOR: { [K in LoadState]?: string } = React.useMemo(
     () => ({
       open: palette.accent.main,
@@ -80,25 +81,20 @@ function LoadCard(props: ILoadCardSmall) {
       />
 
       <Card.Content style={styles.cardContent}>
-        <View style={{ flexDirection: 'row', flexWrap: 'nowrap', backgroundColor: 'transparent' }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'nowrap',
+            backgroundColor: 'transparent',
+            width: '100%',
+          }}
+        >
           <PlaneChip
             value={load?.plane}
             small
             color={theme.colors.onSurface}
             onSelect={async (plane) => {
-              if ((load?.occupiedSlots || 0) > (plane.maxSlots || 0)) {
-                const diff = (load?.occupiedSlots || 0) - (plane.maxSlots || 0);
-
-                dispatch(
-                  actions.notifications.showSnackbar({
-                    message: `You need to take ${diff} people off the load to fit on this plane`,
-                    variant: 'info',
-                  })
-                );
-              } else {
-                await updatePlane(plane);
-                refetch();
-              }
+              await updatePlane(plane);
             }}
           />
           <PilotChip
@@ -141,4 +137,4 @@ const styles = StyleSheet.create({
   smallChipText: { fontSize: 12 },
 });
 
-export default withLoad(LoadCard);
+export default withLoadContext(LoadCard);

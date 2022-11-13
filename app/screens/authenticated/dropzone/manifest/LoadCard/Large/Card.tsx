@@ -3,8 +3,13 @@ import { ScrollView } from 'react-native';
 import { Button, Card, IconButton, Paragraph, ProgressBar, Text } from 'react-native-paper';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 
-import { SlotDetailsFragment, SlotEssentialsFragment } from 'app/api/operations';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { SlotDetailsFragment } from 'app/api/operations';
+import {
+  useDropzoneContext,
+  useLoadContext,
+  useManifestContext,
+  withLoadContext,
+} from 'app/providers';
 import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
 import PilotChip from 'app/components/chips/PilotChip';
@@ -18,16 +23,14 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
 import LoadSlotTable from 'app/components/slots_table/Table';
 import { SlotFields } from 'app/components/slots_table/UserRow';
-import { useLoadContext } from 'app/api/crud';
-import { withLoad } from 'app/api/crud/useLoad';
-import { useManifestContext } from 'app/api/crud/useManifest';
+import { useNotifications } from 'app/providers/notifications';
 import LoadingCard from './Loading';
 
 interface ILoadCardLarge {
   controlsVisible: boolean;
   onManifestGroup(): void;
-  onSlotGroupPress(slots: SlotEssentialsFragment[]): void;
-  onSlotPress(slot: SlotEssentialsFragment): void;
+  onSlotGroupPress(slots: SlotDetailsFragment[]): void;
+  onSlotPress(slot: SlotDetailsFragment): void;
   onManifest(): void;
 }
 
@@ -37,22 +40,27 @@ function LoadCard(props: ILoadCardLarge) {
   const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDispatchOpen, setDispatchOpen] = React.useState(false);
-  const { deleteSlot } = useManifestContext();
+  const {
+    manifest: { deleteSlot },
+  } = useManifestContext();
   const [deletingSlot, setDeletingSlot] = React.useState(false);
+  const notify = useNotifications();
 
   const {
-    load,
-    loading,
-    refetch,
-    update,
-    updateGCA,
-    updatePlane,
-    updatePilot,
-    dispatchInMinutes,
-    updateLoadMaster,
-    markAsLanded,
+    load: {
+      load,
+      loading,
+      refetch,
+      update,
+      updateGCA,
+      updatePlane,
+      updatePilot,
+      dispatchInMinutes,
+      updateLoadMaster,
+      markAsLanded,
+    },
   } = useLoadContext();
-  const currentDropzone = useDropzoneContext();
+  const { dropzone: currentDropzone } = useDropzoneContext();
   const { currentUser } = currentDropzone;
 
   const onDeleteSlot = React.useCallback(
@@ -65,29 +73,22 @@ function LoadCard(props: ILoadCardLarge) {
         });
 
         if ('error' in response && response.error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message:
-                response?.error ||
-                `${slot.dropzoneUser?.user?.name} could not be taken off load #${load?.loadNumber}`,
-              variant: 'error',
-            })
+          notify.error(
+            response?.error ||
+              `${slot.dropzoneUser?.user?.name} could not be taken off load #${load?.loadNumber}`
           );
         } else if ('slot' in response && slot?.id) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: `${
-                response.slot?.dropzoneUser?.user?.name || 'User'
-              } has been taken off load #${load?.loadNumber}`,
-              variant: 'success',
-            })
+          notify.error(
+            `${response.slot?.dropzoneUser?.user?.name || 'User'} has been taken off load #${
+              load?.loadNumber
+            }`
           );
         }
       } finally {
         setDeletingSlot(false);
       }
     },
-    [deleteSlot, dispatch, load?.loadNumber]
+    [deleteSlot, load?.loadNumber, notify]
   );
 
   const navigation = useAuthenticatedNavigation();
@@ -186,12 +187,7 @@ function LoadCard(props: ILoadCardLarge) {
                 if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
                   const diff = (load?.slots?.length || 0) - (plane.maxSlots || 0);
 
-                  dispatch(
-                    actions.notifications.showSnackbar({
-                      message: `You need to take ${diff} people off the load to fit on this plane`,
-                      variant: 'info',
-                    })
-                  );
+                  notify.info(`You need to take ${diff} people off the load to fit on this plane`);
                 } else {
                   await updatePlane(plane);
                   refetch();
@@ -310,21 +306,13 @@ function LoadCard(props: ILoadCardLarge) {
               mode="contained"
               onPress={() => {
                 if (!load?.loadMaster?.id) {
-                  return dispatch(
-                    actions.notifications.showSnackbar({
-                      message: 'You must select a load master before this load can be finalized',
-                      variant: 'info',
-                    })
+                  return notify.info(
+                    'You must select a load master before this load can be finalized'
                   );
                 }
 
                 if (!load?.pilot?.id) {
-                  return dispatch(
-                    actions.notifications.showSnackbar({
-                      message: 'You must select a pilot before this load can be finalized',
-                      variant: 'info',
-                    })
-                  );
+                  return notify.info('You must select a pilot before this load can be finalized');
                 }
                 return markAsLanded();
               }}
@@ -351,4 +339,4 @@ function LoadCard(props: ILoadCardLarge) {
   );
 }
 
-export default withLoad(LoadCard);
+export default withLoadContext(LoadCard);

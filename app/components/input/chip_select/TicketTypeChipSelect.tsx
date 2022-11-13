@@ -3,18 +3,20 @@ import { useAllowedTicketTypesQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { List } from 'react-native-paper';
 import { useAppSelector } from '../../../state';
+import { withHookForm } from '../withHookForm';
 import ChipSelect from './ChipSelect';
 import ChipSelectSkeleton from './ChipSelectSkeleton';
 
 interface ITicketTypeSelect {
   value?: TicketTypeEssentialsFragment | null;
   onlyPublicTickets?: boolean;
+  error?: string;
   onLoadingStateChanged?(loading: boolean): void;
-  onSelect(jt: TicketTypeEssentialsFragment): void;
+  onChange(jt: TicketTypeEssentialsFragment): void;
 }
 
-export default function TicketTypeChipSelect(props: ITicketTypeSelect) {
-  const { value, onLoadingStateChanged, onSelect, onlyPublicTickets } = props;
+function TicketTypeChipSelect(props: ITicketTypeSelect) {
+  const { value, onLoadingStateChanged, onChange, onlyPublicTickets, error } = props;
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 
   const { data, loading } = useAllowedTicketTypesQuery({
@@ -35,13 +37,18 @@ export default function TicketTypeChipSelect(props: ITicketTypeSelect) {
     <>
       <List.Subheader>Ticket</List.Subheader>
       <ChipSelect<TicketTypeEssentialsFragment>
+        {...{ error }}
         autoSelectFirst
         items={data?.dropzone?.ticketTypes || []}
-        selected={[value].filter(Boolean) as TicketTypeEssentialsFragment[]}
-        renderItemLabel={(ticketType) => ticketType?.name}
+        value={[value].filter(Boolean) as TicketTypeEssentialsFragment[]}
+        renderItemLabel={(ticketType) => `${ticketType?.name} ($${ticketType?.cost})`}
         isDisabled={() => false}
-        onChangeSelected={([first]) => (first ? onSelect(first) : null)}
+        onChange={([first]) => (first ? onChange(first) : null)}
       />
     </>
   );
 }
+
+export const TicketTypeChipSelectField = withHookForm(TicketTypeChipSelect);
+
+export default TicketTypeChipSelect;

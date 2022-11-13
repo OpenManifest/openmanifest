@@ -44,7 +44,13 @@ function DialogOrSheet(props: IBottomSheetProps) {
       <Dialog.Actions
         style={{ justifyContent: 'flex-end', backgroundColor: 'transparent', marginBottom: 16 }}
       >
-        <Button mode="contained" onPress={buttonAction} style={styles.button}>
+        <Button
+          mode="contained"
+          disabled={loading}
+          {...{ loading }}
+          onPress={buttonAction}
+          style={styles.button}
+        >
           {buttonLabel}
         </Button>
       </Dialog.Actions>

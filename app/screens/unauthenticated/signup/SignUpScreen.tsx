@@ -3,6 +3,7 @@ import { Image, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native'
 import TextInput from 'app/components/input/text/TextField';
 import { Button, HelperText } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
+import { useNotifications } from 'app/providers/notifications';
 import { actions, useAppSelector, useAppDispatch } from '../../../state';
 
 import useMutationSignUp from '../../../api/hooks/useMutationSignUp';
@@ -18,16 +19,12 @@ export default function SignupScreen() {
   const globalState = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
+  const notify = useNotifications();
 
   const { loading, mutate: onSignUp } = useMutationSignUp({
     onSuccess: (payload) => {
       // Reset the form and redirect to login screen with a snackbar
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: 'A confirmation link has been sent to your email',
-          variant: 'success',
-        })
-      );
+      notify.success('A confirmation link has been sent to your email');
 
       navigation.navigate('Unauthenticated', { screen: 'LoginScreen' });
       // Credentials are received on login only now. Return

@@ -3,12 +3,16 @@ import { FlatList, Platform } from 'react-native';
 
 import { RouteProp, useIsFocused, useRoute } from '@react-navigation/core';
 import { SlotDetailsFragment } from 'app/api/operations';
-import { LoadProvider, useLoadContext } from 'app/api/crud';
+import {
+  LoadContextProvider,
+  useLoadContext,
+  useManifestContext,
+  useDropzoneContext,
+} from 'app/providers';
 import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
 import PilotChip from 'app/components/chips/PilotChip';
 import PlaneChip from 'app/components/chips/PlaneChip';
-import ManifestUserSheet from 'app/components/dialogs/ManifestUser/ManifestUser';
 import ManifestGroupSheet from 'app/components/dialogs/ManifestGroup/ManifestGroup';
 
 import { View } from 'app/components/Themed';
@@ -16,9 +20,8 @@ import { LoadState, Permission } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 
 import useRestriction from 'app/hooks/useRestriction';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
 import { Divider } from 'react-native-paper';
-import { useManifestContext } from 'app/api/crud/useManifest';
+import { useNotifications } from 'app/providers/notifications';
 import ActionButton from './ActionButton';
 import Header from './Header';
 import InfoGrid from './InfoGrid';
@@ -37,9 +40,12 @@ function LoadScreen() {
   const forms = useAppSelector((root) => root.forms);
   const { palette, theme } = useAppSelector((root) => root.global);
 
-  const { deleteSlot } = useManifestContext();
-  const { load, loading, refetch, updateGCA, updateLoadMaster, updatePilot, updatePlane } =
-    useLoadContext();
+  const {
+    manifest: { deleteSlot },
+  } = useManifestContext();
+  const {
+    load: { load, loading, refetch, updateGCA, updateLoadMaster, updatePilot, updatePlane },
+  } = useLoadContext();
   const isFocused = useIsFocused();
 
   React.useEffect(() => {
@@ -48,7 +54,7 @@ function LoadScreen() {
     }
   }, [isExpanded, load?.maxSlots]);
 
-  const currentDropzone = useDropzoneContext();
+  const { dropzone: currentDropzone } = useDropzoneContext();
   const { currentUser } = currentDropzone;
 
   const canManifestGroup = useRestriction(Permission.CreateUserSlot);
@@ -57,6 +63,7 @@ function LoadScreen() {
   const canEditOthers = useRestriction(Permission.UpdateUserSlot);
   const maxSlots = load?.maxSlots || 0;
   const occupiedSlots = load?.occupiedSlots || 0;
+  const notify = useNotifications();
 
   const onDeleteSlot = React.useCallback(
     async (slot: SlotDetailsFragment) => {
@@ -65,26 +72,19 @@ function LoadScreen() {
       });
 
       if ('error' in response && response.error) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message:
-              response?.error ||
-              `${slot.dropzoneUser?.user?.name} could not be taken off load #${load?.loadNumber}`,
-            variant: 'error',
-          })
+        notify.error(
+          response?.error ||
+            `${slot.dropzoneUser?.user?.name} could not be taken off load #${load?.loadNumber}`
         );
       } else if ('slot' in response && slot?.id) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: `${
-              response.slot?.dropzoneUser?.user?.name || 'User'
-            } has been taken off load #${load?.loadNumber}`,
-            variant: 'success',
-          })
+        notify.error(
+          `${response.slot?.dropzoneUser?.user?.name || 'User'} has been taken off load #${
+            load?.loadNumber
+          }`
         );
       }
     },
-    [deleteSlot, dispatch, load?.loadNumber]
+    [deleteSlot, load?.loadNumber, notify]
   );
 
   const onSlotPress = React.useCallback(
@@ -157,7 +157,7 @@ function LoadScreen() {
   }, [canManifestGroup, canManifestGroupWithSelfOnly, currentUser, dispatch, load]);
 
   return (
-    <View style={{ flexGrow: 1, backgroundColor: theme.colors.background }}>
+    <View style={{ height: '100%', backgroundColor: theme.colors.background }}>
       <Header
         load={load || undefined}
         renderBadges={() => (
@@ -177,12 +177,8 @@ function LoadScreen() {
                         if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
                           const diff = (load?.slots?.length || 0) - (plane.maxSlots || 0);
 
-                          dispatch(
-                            actions.notifications.showSnackbar({
-                              // eslint-disable-next-line max-len
-                              message: `You need to take ${diff} people off the load to fit on this plane`,
-                              variant: 'info',
-                            })
+                          notify.info(
+                            `You need to take ${diff} people off the load to fit on this plane`
                           );
                         } else {
                           await updatePlane(plane);
@@ -265,13 +261,6 @@ function LoadScreen() {
         }}
       />
       {load && isFocused ? <ActionButton load={load} /> : null}
-      <ManifestUserSheet
-        open={forms.manifest.open}
-        onClose={() => dispatch(actions.forms.manifest.setOpen(false))}
-        onSuccess={() => {
-          dispatch(actions.forms.manifest.setOpen(false));
-        }}
-      />
       <ManifestGroupSheet
         open={forms.manifestGroup.open}
         onClose={() => {
@@ -289,8 +278,8 @@ export default function LoadScreenWrapper() {
   const loadId = route?.params?.loadId;
 
   return (
-    <LoadProvider id={loadId}>
+    <LoadContextProvider id={loadId}>
       <LoadScreen />
-    </LoadProvider>
+    </LoadContextProvider>
   );
 }

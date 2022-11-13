@@ -1,6 +1,5 @@
 import { DropzoneExtensiveFragment } from 'app/api/operations';
 import { DropzoneState, LoadState } from 'app/api/schema.d';
-import { ticketTypeEssentials } from './ticketType.fixture';
 import { currentUserDetailed } from './currentUser.fixture';
 import { loadEssentials } from './load.fixture';
 
@@ -24,51 +23,6 @@ export const dropzoneExtensive: DeepRequired<DropzoneExtensiveFragment> = {
     name: 'apf',
     slug: 'apf',
   },
-  planes: [
-    {
-      id: '1',
-      name: 'C182',
-      registration: 'ABC-123',
-      maxSlots: 4,
-      minSlots: 0,
-      __typename: 'Plane',
-    },
-    {
-      id: '2',
-      name: 'Caravan',
-      registration: 'CDE-456',
-      maxSlots: 16,
-      minSlots: 0,
-      __typename: 'Plane',
-    },
-  ],
-  ticketTypes: [
-    {
-      ...ticketTypeEssentials,
-      __typename: 'TicketType',
-      id: '1',
-      name: 'Height',
-      cost: 123,
-      extras: [],
-      altitude: 14000,
-    },
-    {
-      ...ticketTypeEssentials,
-      __typename: 'TicketType',
-      id: '2',
-      name: 'Tandem',
-      cost: 199,
-      isTandem: true,
-      extras: [],
-    },
-    {
-      ...ticketTypeEssentials,
-      id: '3',
-      cost: 10,
-      altitude: 4000,
-      extras: [],
-    },
-  ],
   currentConditions: {
     __typename: 'WeatherCondition',
     id: '1',

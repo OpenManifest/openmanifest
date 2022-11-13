@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { View } from 'react-native';
-import { useManifestContext } from 'app/api/crud/useManifest';
+import { useManifestContext } from 'app/providers';
 import type { ISlotUserRowProps } from '../UserRow';
 
 interface IDraggableSlot {
@@ -10,7 +10,9 @@ interface IDraggableSlot {
 }
 export default function DraggableRow(props: IDraggableSlot) {
   const { children, rowProps } = props;
-  const { permissions } = useManifestContext();
+  const {
+    manifest: { permissions },
+  } = useManifestContext();
   const { setNodeRef, listeners, attributes, isDragging } = useDraggable({
     id: rowProps.slot?.id,
     disabled: !permissions.canUpdateSlot,

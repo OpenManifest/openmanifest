@@ -3,22 +3,23 @@ import { useFederationsQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { List } from 'react-native-paper';
 import Select from '../select/Select';
+import { withHookForm } from '../withHookForm';
 
 interface IFederationSelect {
   value?: FederationEssentialsFragment | null;
-  onSelect(jt: FederationEssentialsFragment): void;
+  onChange(jt: FederationEssentialsFragment): void;
 }
 
-export default function FederationSelect(props: IFederationSelect) {
-  const { value, onSelect } = props;
+function FederationSelect(props: IFederationSelect) {
+  const { value, onChange } = props;
 
   const { data } = useFederationsQuery();
 
   React.useEffect(() => {
     if (data?.federations?.length === 1 && !value) {
-      onSelect(data.federations[0]);
+      onChange(data.federations[0]);
     }
-  }, [data?.federations, onSelect, value]);
+  }, [data?.federations, onChange, value]);
 
   const options = React.useMemo(
     () =>
@@ -40,8 +41,12 @@ export default function FederationSelect(props: IFederationSelect) {
       <Select<FederationEssentialsFragment>
         value={selected}
         options={options}
-        onChange={onSelect}
+        onChange={onChange}
       />
     </>
   );
 }
+
+export const FederationSelectField = withHookForm(FederationSelect);
+
+export default FederationSelect;

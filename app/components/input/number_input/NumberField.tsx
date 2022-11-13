@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 import InputSpinner from 'react-native-input-spinner';
 import { HelperText, List } from 'react-native-paper';
 
@@ -44,8 +44,16 @@ export default function NumberField(props: INumberFieldProps) {
         }}
       />
       {helperText || error ? (
-        <HelperText type={error ? 'error' : 'info'}>{error || helperText}</HelperText>
+        <HelperText style={styles.helperText} type={error ? 'error' : 'info'}>
+          {error || helperText}
+        </HelperText>
       ) : null}
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  helperText: {
+    marginBottom: 16,
+  },
+});

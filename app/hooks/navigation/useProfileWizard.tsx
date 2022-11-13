@@ -1,11 +1,13 @@
 import { useNavigation } from '@react-navigation/core';
 import * as React from 'react';
-import { useDropzoneContext } from 'app/api/crud/useDropzone';
+import { useDropzoneContext } from 'app/providers';
 import { actions, useAppDispatch } from 'app/state';
 
 export default function useProfileWizard() {
   const navigation = useNavigation();
-  const { currentUser } = useDropzoneContext();
+  const {
+    dropzone: { currentUser },
+  } = useDropzoneContext();
   const dispatch = useAppDispatch();
 
   return React.useCallback(

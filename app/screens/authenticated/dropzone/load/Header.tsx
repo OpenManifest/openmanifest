@@ -38,7 +38,7 @@ export default function UserHeader(props: ILoadHeader) {
           ) : (
             <Avatar.Icon
               size={80}
-              icon="shield-airplane"
+              icon="account-tie-hat"
               color={theme.dark ? theme.colors.text : palette.primary.dark}
               style={{ backgroundColor: theme.dark ? palette.primary.dark : palette.primary.light }}
             />

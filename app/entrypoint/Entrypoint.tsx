@@ -11,6 +11,7 @@ import { PortalProvider } from '@gorhom/portal';
 
 import './bootstrap';
 import Apollo from 'app/api/Apollo';
+import { NotificationsProvider } from 'app/providers/notifications';
 import Wrapper from './EntrypointWrapper';
 
 import {
@@ -25,7 +26,6 @@ import { useRouteChange, useAppearanceListener, useCachedResources } from './hoo
 import { store, persistor, useAppSelector } from '../state/store';
 import ImageViewer from '../components/dialogs/ImageViewer/ImageViewer';
 
-import NotificationArea from '../components/notifications/Notifications';
 import RootNavigator, { options as LinkingConfiguration } from '../screens/routes';
 import {
   AppSignalBoundary,
@@ -55,24 +55,25 @@ function Content() {
                   <PortalProvider>
                     <SafeAreaProvider>
                       <ImageViewer />
-                      <NavigationContainer
-                        onStateChange={onRouteChange}
-                        linking={LinkingConfiguration}
-                        theme={state.theme as unknown as never}
-                      >
-                        <DropzonesProvider>
+                      <NotificationsProvider>
+                        <NavigationContainer
+                          onStateChange={onRouteChange}
+                          linking={LinkingConfiguration}
+                          theme={state.theme as unknown as never}
+                        >
                           <Wrapper>
-                            <AppSignalSessionTagger>
-                              <PushNotificationsProvider>
-                                <RootNavigator />
-                              </PushNotificationsProvider>
-                            </AppSignalSessionTagger>
+                            <DropzonesProvider>
+                              <AppSignalSessionTagger>
+                                <PushNotificationsProvider>
+                                  <RootNavigator />
+                                </PushNotificationsProvider>
+                              </AppSignalSessionTagger>
+                            </DropzonesProvider>
                           </Wrapper>
-                        </DropzonesProvider>
-                      </NavigationContainer>
+                        </NavigationContainer>
 
-                      <StatusBar />
-                      <NotificationArea />
+                        <StatusBar />
+                      </NotificationsProvider>
                     </SafeAreaProvider>
                   </PortalProvider>
                 </GestureHandlerRootView>

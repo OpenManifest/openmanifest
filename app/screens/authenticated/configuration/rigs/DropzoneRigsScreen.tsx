@@ -16,10 +16,12 @@ import { actions, useAppSelector, useAppDispatch } from 'app/state';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import RigDialog from 'app/components/dialogs/Rig';
 import useRestriction from 'app/hooks/useRestriction';
+import { useNotifications } from 'app/providers/notifications';
 
 export default function DropzoneRigsScreen() {
   const state = useAppSelector((root) => root.global);
   const rigForm = useAppSelector((root) => root.forms.rig);
+  const notify = useNotifications();
   const { data, loading, refetch } = useDropzoneRigsQuery({
     variables: {
       dropzoneId: state.currentDropzoneId?.toString() as string,
@@ -80,12 +82,7 @@ export default function DropzoneRigsScreen() {
                   });
 
                   if (result?.updateRig?.errors?.length) {
-                    dispatch(
-                      actions.notifications.showSnackbar({
-                        message: result?.updateRig.errors[0],
-                        variant: 'error',
-                      })
-                    );
+                    notify.error(result?.updateRig.errors[0]);
                   }
                 }}
                 value={!!rig.isPublic}
