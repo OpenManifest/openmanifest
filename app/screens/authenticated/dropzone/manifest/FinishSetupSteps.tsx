@@ -1,9 +1,6 @@
 import { StyleSheet } from 'react-native';
 import * as React from 'react';
 import { Avatar, Card, List } from 'react-native-paper';
-import { useDropzoneContext } from 'app/providers';
-import { FlatList } from 'react-native-gesture-handler';
-import { useAircrafts, useTickets } from 'app/api/crud';
 
 interface ISetupStepCard {
   completed?: boolean;
@@ -11,11 +8,6 @@ interface ISetupStepCard {
   title: string;
   description?: string;
   onPress(): void;
-}
-
-enum SetupStep {
-  Aircraft,
-  Tickets,
 }
 
 export function SetupStepCard(props: ISetupStepCard) {

@@ -19,6 +19,7 @@ import { LoadDetailsFragment } from 'app/api/operations';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
 import { useAircrafts, useTickets } from 'app/api/crud';
+import useRestriction from 'app/hooks/useRestriction';
 import DragDropWrapper from '../../../../components/slots_table/DragAndDrop/DragDropSlotProvider';
 import LoadCardSmall from './LoadCard/Small/Card';
 import LoadCardLarge from './LoadCard/Large/Card';
@@ -27,7 +28,6 @@ import LoadingCardLarge from './LoadCard/Large/Loading';
 import LoadingCardSmall from './LoadCard/Small/Loading';
 import SetupProfileCard from './SetupProfileCard';
 import { SetupStepCard } from './FinishSetupSteps';
-import useRestriction from 'app/hooks/useRestriction';
 
 const loadingFragment: LoadDetailsFragment = {
   id: '__LOADING__',
@@ -56,7 +56,7 @@ export default function ManifestScreen() {
   const dispatch = useAppDispatch();
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
   const {
-    dropzone: { dropzone, currentUser, loading, refetch, fetchMore, permissions },
+    dropzone: { dropzone, currentUser, loading, refetch, fetchMore },
     dialogs: sheets,
   } = useDropzoneContext();
   const { manifest, dialogs } = useManifestContext();

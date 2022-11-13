@@ -2,10 +2,10 @@ import * as React from 'react';
 import noop from 'lodash/noop';
 import { uninitializedHandler } from 'app/api/crud/factory';
 import { useDropzone } from 'app/api/crud';
-import { IDialogContextSubstate } from '../hooks/useDialog';
 import { IPlaneDialogProps } from 'app/forms/aircraft/Dialog';
 import { ITicketTypeDialog } from 'app/forms/ticket_type/Dialog';
 import { ITicketTypeAddonDialog } from 'app/forms/ticket_type_addon/Dialog';
+import { IDialogContextSubstate } from '../hooks/useDialog';
 
 interface IDropzoneContext {
   dropzone: ReturnType<typeof useDropzone>;

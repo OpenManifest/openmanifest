@@ -23,7 +23,9 @@ enum TimeRange {
 }
 
 export default function DashboardPage() {
-  const { dropzone: { dropzone } } = useDropzoneContext();
+  const {
+    dropzone: { dropzone },
+  } = useDropzoneContext();
 
   const [selectedTimeRange, setTimeRange] = React.useState<TimeRange>();
   const canViewAdminActivity = useRestriction(Permission.ViewAdminActivity);

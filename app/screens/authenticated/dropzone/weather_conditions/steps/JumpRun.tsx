@@ -11,7 +11,9 @@ import { useDropzoneContext } from 'app/providers';
 function WindsWizardScreen(props: IWizardScreenProps) {
   const state = useAppSelector((root) => root.forms.weather);
   const dispatch = useAppDispatch();
-  const { dropzone: { dropzone } } = useDropzoneContext();
+  const {
+    dropzone: { dropzone },
+  } = useDropzoneContext();
   const [location, setLocation] = React.useState<Location.LocationObject['coords']>();
   const setUsersLocation = React.useCallback(async () => {
     try {

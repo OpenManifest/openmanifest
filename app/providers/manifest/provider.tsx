@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useAppSelector } from 'app/state';
 import type { IManifestUserDialog } from 'app/forms/manifest_user/Dialog';
 import type { ILoadDialog } from 'app/forms/load/Dialog';
 import type { ICreditsSheet } from 'app/forms/credits/Credits';
@@ -13,8 +12,6 @@ import createUseDialog from '../hooks/useDialog';
 import { ManifestContext, useManifestContext } from './context';
 
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
-
-
 
 function ManifestUserDialogWrapper() {
   const { dialogs } = useManifestContext();
@@ -54,9 +51,7 @@ const useManifestUserDialog = createUseDialog<Pick<IManifestUserDialog, 'load' |
 const useLoadDialog = createUseDialog<Pick<ILoadDialog, 'load'>>();
 const useCreditsDialog = createUseDialog<Pick<ICreditsSheet, 'dropzoneUser'>>();
 
-export function ManifestContextProvider(
-  props: React.PropsWithChildren<UseManifestOptions>
-) {
+export function ManifestContextProvider(props: React.PropsWithChildren<UseManifestOptions>) {
   const { dropzone, date, children } = props;
   const manifestUserDialog = useManifestUserDialog();
   const loadDialog = useLoadDialog();
@@ -72,7 +67,13 @@ export function ManifestContextProvider(
       load: permissions.canCreateLoad ? loadDialog : { ...loadDialog, open: noop },
       credits: permissions.canAddTransaction ? creditsDialog : { ...creditsDialog, open: noop },
     }),
-    [manifestUserDialog, permissions.canCreateLoad, loadDialog, permissions.canAddTransaction, creditsDialog]
+    [
+      manifestUserDialog,
+      permissions.canCreateLoad,
+      loadDialog,
+      permissions.canAddTransaction,
+      creditsDialog,
+    ]
   );
 
   const context = React.useMemo(() => ({ manifest, dialogs }), [manifest, dialogs]);
