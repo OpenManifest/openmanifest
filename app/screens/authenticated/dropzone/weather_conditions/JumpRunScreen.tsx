@@ -9,6 +9,7 @@ import JumpRunSelector from 'app/components/input/jump_run_select/JumpRunSelect'
 // eslint-disable-next-line max-len
 import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateWeatherConditions';
 import { useDropzoneContext } from 'app/providers';
+import { useNotifications } from 'app/providers/notifications';
 
 export default function JumpRunScreen() {
   const state = useAppSelector((root) => root.forms.weather);
@@ -16,14 +17,13 @@ export default function JumpRunScreen() {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const theme = useTheme();
+  const notify = useNotifications();
 
   const mutationCreateWeatherConditions = useMutationCreateWeatherConditions({
     onSuccess: () => null,
     onFieldError: (field: keyof typeof state.fields, message: string) =>
       dispatch(actions.forms.weather.setFieldError([field, message])),
-    onError: (message) => {
-      dispatch(actions.notifications.showSnackbar({ message, variant: 'error' }));
-    },
+    onError: notify.error,
   });
 
   const onSaveConditions = React.useCallback(async () => {
@@ -35,12 +35,7 @@ export default function JumpRunScreen() {
       temperature: state.fields.temperature.value,
     });
     navigation.goBack();
-    dispatch(
-      actions.notifications.showSnackbar({
-        message: 'Weather board updated',
-        variant: 'success',
-      })
-    );
+    notify.success('Weather board updated');
   }, [
     mutationCreateWeatherConditions,
     state.original?.id,
@@ -49,10 +44,12 @@ export default function JumpRunScreen() {
     state.fields.temperature.value,
     dropzoneId,
     navigation,
-    dispatch,
+    notify,
   ]);
 
-  const { dropzone: { dropzone } } = useDropzoneContext();
+  const {
+    dropzone: { dropzone },
+  } = useDropzoneContext();
   const [location, setLocation] = React.useState<Location.LocationObject['coords']>();
   const setUsersLocation = React.useCallback(async () => {
     try {

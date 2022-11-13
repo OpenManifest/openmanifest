@@ -3,21 +3,22 @@ import { StyleSheet, RefreshControl, View } from 'react-native';
 import { FAB, DataTable, ProgressBar, Switch } from 'react-native-paper';
 import { Permission } from 'app/api/schema.d';
 
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useAppSelector } from 'app/state';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import SwipeActions from 'app/components/layout/SwipeActions';
 import useRestriction from 'app/hooks/useRestriction';
 import { useTickets } from 'app/api/crud';
 import { useDropzoneContext } from 'app/providers';
 import { TicketTypeEssentialsFragment } from 'app/api/operations';
+import { useNotifications } from 'app/providers/notifications';
 
 export default function TicketTypesScreen() {
   const state = useAppSelector((root) => root.global);
+  const notify = useNotifications();
   const {
     dropzone: { dropzone },
     dialogs,
   } = useDropzoneContext();
-  const dispatch = useAppDispatch();
   const { ticketTypes, loading, refetch, archiveTicketType, updateTicketType } = useTickets({
     dropzone: dropzone?.id,
   });
@@ -30,23 +31,13 @@ export default function TicketTypesScreen() {
         const response = await archiveTicketType(ticket);
 
         if ('error' in response && response.error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: response.error,
-              variant: 'error',
-            })
-          );
+          notify.error(response.error);
         } else {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: `Archived ${ticket.name}`,
-              variant: 'success',
-            })
-          );
+          notify.success(`Archived ${ticket.name}`);
         }
       };
     },
-    [archiveTicketType, dispatch]
+    [archiveTicketType, notify]
   );
 
   const createToggleManifestSelfHandler = React.useCallback(
@@ -57,25 +48,13 @@ export default function TicketTypesScreen() {
         });
 
         if ('error' in response && response.error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: response.error,
-              variant: 'error',
-            })
-          );
+          notify.error(response.error);
         } else {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: `${ticket.name} can ${
-                ticket.allowManifestingSelf ? 'no longer' : 'now'
-              } be used by users to manifest themselves`,
-              variant: 'success',
-            })
-          );
+          notify.success(`${ticket.name} can ${ticket.allowManifestingSelf ? 'no longer' : 'now'}`);
         }
       };
     },
-    [dispatch, updateTicketType]
+    [notify, updateTicketType]
   );
   return (
     <ScrollableScreen

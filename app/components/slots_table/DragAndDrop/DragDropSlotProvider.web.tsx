@@ -3,7 +3,7 @@ import { DndContext, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import UserRowDragOverlay from 'app/components/slots_table/DragAndDrop/DraggingRow';
 import type { ISlotUserRowProps } from 'app/components/slots_table/UserRow';
 import { useManifestContext } from 'app/providers';
-import { actions, useAppDispatch } from 'app/state';
+import { useNotifications } from 'app/providers/notifications';
 
 export default function DragDropWrapper(props: React.PropsWithChildren<object>) {
   const { children } = props;
@@ -11,7 +11,7 @@ export default function DragDropWrapper(props: React.PropsWithChildren<object>) 
   const {
     manifest: { moveSlot },
   } = useManifestContext();
-  const dispatch = useAppDispatch();
+  const notify = useNotifications();
 
   const onDragEnd = React.useCallback(
     async (event: DragEndEvent) => {
@@ -34,11 +34,11 @@ export default function DragDropWrapper(props: React.PropsWithChildren<object>) 
         });
 
         if ('error' in response && response.error) {
-          dispatch(actions.notifications.showSnackbar({ message: response.error }));
+          notify.error(response.error);
         }
       }
     },
-    [dispatch, moveSlot]
+    [moveSlot, notify]
   );
   return (
     <DndContext

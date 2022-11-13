@@ -19,6 +19,7 @@ import { primaryColor } from 'app/constants/Colors';
 import Divider from 'app/components/Divider';
 
 import LottieView from 'app/components/LottieView';
+import { useNotifications } from 'app/providers/notifications';
 import FacebookButton, { useLoginWithFacebook } from './FacebookButton';
 import AppleButton, { useLoginWithApple } from './AppleButton';
 import logoDark from '../../../../assets/images/logo-black.png';
@@ -34,6 +35,7 @@ export default function LoginScreen() {
   const [loginWithFacebook, loginWithFacebookMutation] = useLoginWithFacebook();
   const [loginWithApple, loginWithAppleMutation] = useLoginWithApple();
   const theme = useTheme();
+  const notify = useNotifications();
 
   const onLogin = React.useCallback(async () => {
     // eslint-disable-next-line
@@ -71,16 +73,11 @@ export default function LoginScreen() {
         }
       } catch (e) {
         if (e instanceof Error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: e.message,
-              variant: 'error',
-            })
-          );
+          notify.error(e.message);
         }
       }
     }
-  }, [dispatch, mutationLogin, state.fields.email.value, state.fields.password.value]);
+  }, [dispatch, mutationLogin, notify, state.fields.email.value, state.fields.password.value]);
 
   const loading =
     loginWithFacebookMutation?.loading || data?.loading || loginWithAppleMutation?.loading;

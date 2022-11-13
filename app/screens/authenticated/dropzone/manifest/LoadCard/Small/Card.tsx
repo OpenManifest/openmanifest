@@ -8,7 +8,7 @@ import PlaneChip from 'app/components/chips/PlaneChip';
 
 import { View } from 'app/components/Themed';
 import { LoadState } from 'app/api/schema.d';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useAppSelector } from 'app/state';
 import { errorColor, warningColor } from 'app/constants/Colors';
 import { useLoadContext, withLoadContext } from 'app/providers';
 import Countdown from '../Countdown';
@@ -20,10 +20,9 @@ interface ILoadCardSmall {
 
 function LoadCard(props: ILoadCardSmall) {
   const { onPress } = props;
-  const dispatch = useAppDispatch();
   const { theme, palette } = useAppSelector((root) => root.global);
   const {
-    load: { load, loading, refetch, updatePlane, updatePilot },
+    load: { load, loading, updatePlane, updatePilot },
   } = useLoadContext();
   const LOAD_BADGE_COLOR: { [K in LoadState]?: string } = React.useMemo(
     () => ({
@@ -95,19 +94,7 @@ function LoadCard(props: ILoadCardSmall) {
             small
             color={theme.colors.onSurface}
             onSelect={async (plane) => {
-              if ((load?.occupiedSlots || 0) > (plane.maxSlots || 0)) {
-                const diff = (load?.occupiedSlots || 0) - (plane.maxSlots || 0);
-
-                dispatch(
-                  actions.notifications.showSnackbar({
-                    message: `You need to take ${diff} people off the load to fit on this plane`,
-                    variant: 'info',
-                  })
-                );
-              } else {
-                await updatePlane(plane);
-                refetch();
-              }
+              await updatePlane(plane);
             }}
           />
           <PilotChip

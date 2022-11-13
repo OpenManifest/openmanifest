@@ -1,3 +1,4 @@
+import { useNotifications } from 'app/providers/notifications';
 import * as React from 'react';
 import useMutationCreateRig from '../../api/hooks/useMutationCreateRig';
 import useMutationUpdateRig from '../../api/hooks/useMutationUpdateRig';
@@ -18,6 +19,7 @@ export default function RigDialog(props: IRigDialog) {
   const { open, dropzoneId, onClose, onSuccess, userId } = props;
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.rig);
+  const notify = useNotifications();
 
   const updateRig = useMutationUpdateRig({
     onSuccess: (payload) =>
@@ -28,15 +30,13 @@ export default function RigDialog(props: IRigDialog) {
 
     onFieldError: (field, message) =>
       dispatch(actions.forms.rig.setFieldError([field as keyof RigFields, message])),
-    onError: (message) =>
-      dispatch(actions.notifications.showSnackbar({ message, variant: 'error' })),
+    onError: (message) => notify.error(message),
   });
   const createRig = useMutationCreateRig({
     onSuccess: (payload) => requestAnimationFrame(() => onSuccess()),
     onFieldError: (field, message) =>
       dispatch(actions.forms.rig.setFieldError([field as keyof RigFields, message])),
-    onError: (message) =>
-      dispatch(actions.notifications.showSnackbar({ message, variant: 'error' })),
+    onError: (message) => notify.error(message),
   });
 
   const isLoading = updateRig.loading || createRig.loading;

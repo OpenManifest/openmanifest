@@ -116,11 +116,15 @@ export default createSlice({
         const payloadKey = key as keyof typeof action.payload;
         if (payloadKey in state.fields) {
           const typedKey = payloadKey as keyof typeof initialState['fields'];
-          state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment)[typedKey];
-        } else {
-          state.fields[payloadKey].value = (action.payload as DropzoneUserDetailsFragment).user[
-            payloadKey
-          ];
+          if (typedKey in action.payload) {
+            state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment)[
+              typedKey
+            ];
+          } else if (typedKey in action.payload.user) {
+            state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment).user[
+              typedKey
+            ];
+          }
         }
       });
       state.federation.value =

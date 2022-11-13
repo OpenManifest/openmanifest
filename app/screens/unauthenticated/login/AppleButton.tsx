@@ -5,6 +5,7 @@ import {
   LoginWithFacebookMutation,
 } from 'app/api/operations';
 import { useLoginWithAppleMutation } from 'app/api/reflection';
+import { useNotifications } from 'app/providers/notifications';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import {
   AppleAuthenticationButton,
@@ -23,6 +24,7 @@ export function useLoginWithApple(
   const { expoPushToken } = useAppSelector((root) => root.global);
   const [onLoginWithApple, mutation] = useLoginWithAppleMutation(opts);
   const dispatch = useAppDispatch();
+  const notify = useNotifications();
 
   const onLogin = React.useCallback(async () => {
     try {
@@ -47,15 +49,10 @@ export function useLoginWithApple(
     } catch (e) {
       if (e instanceof Error) {
         console.log(e);
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: e.message,
-            variant: 'error',
-          })
-        );
+        notify.error(e.message);
       }
     }
-  }, [dispatch, expoPushToken, onLoginWithApple]);
+  }, [dispatch, expoPushToken, notify, onLoginWithApple]);
   return [onLogin, mutation] as [() => Promise<void>, MutationResult<LoginWithFacebookMutation>];
 }
 

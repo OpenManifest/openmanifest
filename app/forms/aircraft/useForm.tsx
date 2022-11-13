@@ -5,9 +5,10 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDropzoneContext } from 'app/providers';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
-import { actions, useAppDispatch } from 'app/state';
+
 import { isEqual } from 'lodash';
 import { useAircrafts } from 'app/api/crud';
+import { useNotifications } from 'app/providers/notifications';
 
 export type AircraftFields = {
   id?: string;
@@ -57,6 +58,7 @@ export interface IUseAircraftFormOpts {
 
 export default function useAircraftForm(opts: IUseAircraftFormOpts) {
   const { initial, onSuccess } = opts;
+  const notify = useNotifications();
   const initialValues = React.useMemo(() => ({ ...EMPTY_FORM_VALUES, ...initial }), [initial]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
 
@@ -85,7 +87,6 @@ export default function useAircraftForm(opts: IUseAircraftFormOpts) {
     dropzone: { dropzone },
   } = useDropzoneContext();
   const { create, update } = useAircrafts();
-  const dispatch = useAppDispatch();
 
   const [{ loading }, onCreateOrder] = useAsyncFn(
     async (fields: AircraftFields) => {
@@ -126,21 +127,17 @@ export default function useAircraftForm(opts: IUseAircraftFormOpts) {
             });
           }
           if ('aircraft' in response && response.aircraft) {
+            notify.success('Aircraft saved');
             onSuccess?.(response.aircraft);
           }
         }
       } catch (error) {
         if (error instanceof Error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: error.message,
-              variant: 'error',
-            })
-          );
+          notify.error(error.message);
         }
       }
     },
-    [dropzone?.id, setError, dispatch, onSuccess, create, update]
+    [dropzone?.id, setError, notify, onSuccess, create, update]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onCreateOrder), [handleSubmit, onCreateOrder]);

@@ -9,9 +9,9 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDropzoneContext } from 'app/providers';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
-import { actions, useAppDispatch } from 'app/state';
 import { isEqual } from 'lodash';
 import { useTickets } from 'app/api/crud';
+import { useNotifications } from 'app/providers/notifications';
 
 export type TicketTypeAddonFields = {
   id?: string;
@@ -73,7 +73,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
     dropzone: { dropzone },
   } = useDropzoneContext();
   const { createTicketTypeAddon, updateTicketTypeAddon } = useTickets();
-  const dispatch = useAppDispatch();
+  const notify = useNotifications();
 
   const [{ loading }, onSave] = useAsyncFn(
     async (fields: TicketTypeAddonFields) => {
@@ -107,24 +107,20 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
             });
           }
           if ('ticketTypeAddon' in response && response.ticketTypeAddon) {
+            notify.success('Ticket addon saved');
             onSuccess?.(response.ticketTypeAddon);
           }
         }
       } catch (error) {
         if (error instanceof Error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: error.message,
-              variant: 'error',
-            })
-          );
+          notify.error(error.message);
         }
       }
     },
     [
       dropzone?.id,
       setError,
-      dispatch,
+      notify,
       onSuccess,
       createTicketTypeAddon,
       updateTicketTypeAddon,

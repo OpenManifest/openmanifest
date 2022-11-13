@@ -8,13 +8,15 @@ import { actions, useAppSelector, useAppDispatch } from 'app/state';
 
 import { Permission } from 'app/api/schema.d';
 import DropzoneForm from 'app/components/forms/dropzone/DropzoneForm';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
 import { DropzoneEssentialsFragment } from 'app/api/operations';
+import { Screen } from 'app/components/layout';
+import { useNotifications } from 'app/providers/notifications';
 
 export default function UpdateDropzoneScreen() {
   const state = useAppSelector((root) => root.forms.dropzone);
   const globalState = useAppSelector((root) => root.global);
+  const notify = useNotifications();
   const dispatch = useAppDispatch();
 
   const navigation = useNavigation();
@@ -30,13 +32,7 @@ export default function UpdateDropzoneScreen() {
   }, [dropzone, dropzone?.id, dispatch]);
 
   const mutationUpdateDropzone = useMutationUpdateDropzone({
-    onError: (message) =>
-      dispatch(
-        actions.notifications.showSnackbar({
-          message,
-          variant: 'error',
-        })
-      ),
+    onError: (message) => notify.error(message),
     onSuccess: (payload) => {
       if (payload?.dropzone?.id) {
         dispatch(
@@ -45,12 +41,7 @@ export default function UpdateDropzoneScreen() {
             ...payload?.dropzone,
           })
         );
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: `Your settings have been saved`,
-            variant: 'success',
-          })
-        );
+        notify.success(`Your settings have been saved`);
         navigation.goBack();
       }
     },
@@ -114,17 +105,12 @@ export default function UpdateDropzoneScreen() {
         return null;
       } catch (error) {
         if (error instanceof Error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: error.message,
-              variant: 'error',
-            })
-          );
+          notify.error(error.message);
         }
       }
     }
     return null;
-  }, [state.fields, dispatch, mutationUpdateDropzone, dropzone?.id]);
+  }, [state.fields, dispatch, mutationUpdateDropzone, dropzone?.id, notify]);
 
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
 
@@ -140,17 +126,9 @@ export default function UpdateDropzoneScreen() {
   return (
     <>
       <ProgressBar indeterminate color={globalState.theme.colors.primary} visible={loading} />
-      <ScrollableScreen
-        style={{
-          width: '100%',
-          paddingTop: 0,
-          marginTop: 0,
-          backgroundColor: globalState.theme.colors.background,
-        }}
-        contentContainerStyle={styles.content}
-      >
+      <Screen fullWidth={false}>
         <DropzoneForm loading={loading} />
-      </ScrollableScreen>
+      </Screen>
       <FAB
         style={[styles.fab, { backgroundColor: globalState.theme.colors.primary }]}
         visible={Boolean(canUpdateDropzone && isDirty)}

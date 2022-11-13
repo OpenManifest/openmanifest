@@ -8,6 +8,7 @@ import useMutationUpdateDropzone from 'app/api/hooks/useMutationUpdateDropzone';
 import camelize from 'lodash/camelCase';
 import { Permission } from 'app/api/schema.d';
 import { useNavigation } from '@react-navigation/core';
+import { useNotifications } from 'app/providers/notifications';
 import NameStep from './steps/Name';
 import FederationStep from './steps/Federation';
 import LocationStep from './steps/Location';
@@ -20,10 +21,11 @@ function DropzoneSetupScreen() {
   const dropzone = useAppSelector((root) => root.forms.dropzone);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
+  const notify = useNotifications();
 
   const mutationCreateDropzone = useMutationCreateDropzone({
     onError: (error) => {
-      dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' }));
+      notify.error(error);
     },
     onSuccess: (payload) => console.log(payload),
     onFieldError: (field, value) => {
@@ -32,8 +34,7 @@ function DropzoneSetupScreen() {
     },
   });
   const mutationUpdateDropzone = useMutationUpdateDropzone({
-    onError: (error) =>
-      dispatch(actions.notifications.showSnackbar({ message: error, variant: 'error' })),
+    onError: (error) => notify.error(error),
     onSuccess: (payload) => null,
     onFieldError: (field, value) =>
       dispatch(actions.forms.dropzone.setFieldError([field as keyof DropzoneFields, value])),

@@ -3,12 +3,12 @@ import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 
-import { actions, useAppDispatch } from 'app/state';
 import { Permission } from 'app/api/schema.d';
 // eslint-disable-next-line max-len
 import Badge, { IBadgeProps } from 'app/components/Badge';
 import useRestriction from 'app/hooks/useRestriction';
 import { useUserProfile } from 'app/api/crud';
+import { useNotifications } from 'app/providers/notifications';
 
 interface IPermissionBadgesProps {
   permissions: Permission[];
@@ -16,8 +16,8 @@ interface IPermissionBadgesProps {
 }
 export default function PermissionBadges(props: IPermissionBadgesProps) {
   const { permissions, dropzoneUser } = props;
-  const dispatch = useAppDispatch();
   const { revokePermission, grantPermission } = useUserProfile();
+  const notify = useNotifications();
 
   const canGrantPermission = useRestriction(Permission.GrantPermission);
 
@@ -35,20 +35,20 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
     async function GrantPermission(permissionName: Permission) {
       const response = await grantPermission(dropzoneUser.id, permissionName);
       if ('error' in response && response.error) {
-        dispatch(actions.notifications.showSnackbar({ message: response.error, variant: 'error' }));
+        notify.error(response.error);
       }
     },
-    [dispatch, dropzoneUser?.id, grantPermission]
+    [dropzoneUser?.id, grantPermission, notify]
   );
 
   const revoke = React.useCallback(
     async function GrantPermission(permissionName: Permission) {
       const response = await revokePermission(dropzoneUser.id, permissionName);
       if ('error' in response && response.error) {
-        dispatch(actions.notifications.showSnackbar({ message: response.error, variant: 'error' }));
+        notify.error(response.error);
       }
     },
-    [dispatch, dropzoneUser?.id, revokePermission]
+    [notify, dropzoneUser?.id, revokePermission]
   );
   return (
     <ScrollView

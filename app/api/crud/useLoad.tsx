@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { noop } from 'lodash';
 import { DateTime } from 'luxon';
-import { actions, useAppDispatch } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import * as yup from 'yup';
 import { ValidationError } from 'yup';
+import { useNotifications } from 'app/providers/notifications';
 import { useFinalizeLoadMutation, useLoadQuery, useManifestUserMutation } from '../reflection';
 import { LoadQueryVariables } from '../operations';
 import { uninitializedHandler } from './factory';
@@ -12,7 +12,7 @@ import { CreateSlotPayload, LoadState, Permission } from '../schema.d';
 import useMutationUpdateLoad from '../hooks/useMutationUpdateLoad';
 
 export function useLoad(variables: Partial<LoadQueryVariables>) {
-  const dispatch = useAppDispatch();
+  const notify = useNotifications();
   const query = useLoadQuery({
     initialFetchPolicy: 'cache-first',
     variables: variables as LoadQueryVariables,
@@ -32,20 +32,8 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
   const [mutationFinalizeLoad] = useFinalizeLoadMutation();
 
   const update = useMutationUpdateLoad({
-    onSuccess: () =>
-      dispatch(
-        actions.notifications.showSnackbar({
-          message: `Load #${load?.loadNumber} updated`,
-          variant: 'success',
-        })
-      ),
-    onError: (message) =>
-      dispatch(
-        actions.notifications.showSnackbar({
-          message,
-          variant: 'error',
-        })
-      ),
+    onSuccess: () => notify.success(`Load #${load?.loadNumber} updated`),
+    onError: (message) => notify.error(message),
   });
 
   const manifestUser = React.useCallback(
@@ -135,23 +123,12 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
 
   const updatePlane = React.useCallback(
     async (plane: { id: string | number; maxSlots: number }) => {
-      if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
-        const diff = (load?.slots?.length || 0) - (plane.maxSlots || 0);
-
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: `You need to take ${diff} people off the load to fit on this plane`,
-            variant: 'info',
-          })
-        );
-      } else {
-        await update.mutate({
-          id: Number(load?.id),
-          plane: Number(plane.id),
-        });
-      }
+      await update.mutate({
+        id: Number(load?.id),
+        plane: Number(plane.id),
+      });
     },
-    [load?.slots?.length, load?.id, dispatch, update]
+    [load?.id, update]
   );
 
   const updateLoadMaster = React.useCallback(

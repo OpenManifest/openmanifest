@@ -11,13 +11,12 @@ import EditUserSheet from 'app/components/dialogs/User';
 
 import useImagePicker from 'app/hooks/useImagePicker';
 import { useDropzoneContext, useManifestContext } from 'app/providers';
-// eslint-disable-next-line max-len
-import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
 import { useUpdateUserMutation } from 'app/api/reflection';
 
 import { errorColor, successColor } from 'app/constants/Colors';
 import { format } from 'date-fns';
 import useProfileWizard from 'app/hooks/navigation/useProfileWizard';
+import { useUserProfile } from 'app/api/crud';
 import Header from './UserInfo/Header';
 import InfoGrid from './UserInfo/InfoGrid';
 
@@ -39,9 +38,9 @@ export default function ProfileScreen() {
   } = useDropzoneContext();
   const route = useRoute<RouteProp<ProfileRoute>>();
 
-  const { dropzoneUser, loading, refetch } = useDropzoneUserProfile(
-    route.params.userId || currentUser?.id
-  );
+  const { dropzoneUser, loading } = useUserProfile({
+    id: route.params.userId || currentUser?.id,
+  });
   const pickImage = useImagePicker();
   const isFocused = useIsFocused();
   const [defaultIndex, onChangeIndex] = React.useState(1);
@@ -76,9 +75,8 @@ export default function ProfileScreen() {
       navigation.setOptions({
         headerRight,
       });
-      refetch();
     }
-  }, [headerRight, isFocused, navigation, refetch]);
+  }, [headerRight, isFocused, navigation]);
 
   const [mutationUpdateUser] = useUpdateUserMutation();
 
@@ -134,7 +132,7 @@ export default function ProfileScreen() {
         <FlatList
           style={{ backgroundColor: state.theme.colors.background }}
           contentContainerStyle={[styles.content, { backgroundColor: 'transparent' }]}
-          refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}
+          refreshControl={<RefreshControl refreshing={loading} />}
           keyExtractor={(_, idx) => `profile-${idx}`}
           ListHeaderComponent={() => (
             <View style={styles.wrappingHeader}>
@@ -201,7 +199,6 @@ export default function ProfileScreen() {
             dispatch(actions.forms.dropzoneUser.setOpen(false));
             if (currentUser?.id === dropzoneUser?.id) {
               dispatch(actions.global.setUser(user.user));
-              refetch();
             }
           }}
           open={forms.dropzoneUser.open}

@@ -6,8 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useManifestContext } from 'app/providers';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import useManifestValidator from 'app/hooks/useManifestValidator';
-import { actions, useAppDispatch } from 'app/state';
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
+import { useNotifications } from 'app/providers/notifications';
 
 export type ManifestUserFields = Pick<
   SlotExhaustiveFragment,
@@ -55,6 +55,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
   const initialValues = React.useMemo(() => ({ ...EMPTY_FORM_VALUES, ...initial }), [initial]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
 
+  const notify = useNotifications();
   const methods = useForm<ManifestUserFields>({
     defaultValues,
     mode: 'all',
@@ -75,7 +76,6 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
     manifest: { manifestUser },
   } = useManifestContext();
   const { canManifest } = useManifestValidator();
-  const dispatch = useAppDispatch();
 
   const [{ loading }, onManifest] = useAsyncFn(
     async (fields: ManifestUserFields) => {
@@ -104,20 +104,16 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           });
         }
         if ('slot' in response) {
+          notify.success(`${fields.dropzoneUser?.user?.name} has been added to the load`);
           onSuccess?.();
         }
       } catch (error) {
         if (error instanceof Error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: error.message,
-              variant: 'error',
-            })
-          );
+          notify.error(error.message);
         }
       }
     },
-    [manifestUser]
+    [manifestUser, notify]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onManifest), [handleSubmit, onManifest]);

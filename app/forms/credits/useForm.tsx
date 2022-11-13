@@ -5,10 +5,10 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useManifestContext } from 'app/providers';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
-import { actions, useAppDispatch } from 'app/state';
 import { isEqual } from 'lodash';
 import { TransactionType } from 'app/api/schema.d';
 import { useUserProfile } from 'app/api/crud';
+import { useNotifications } from 'app/providers/notifications';
 
 export type CreditFields = {
   amount: number;
@@ -67,7 +67,7 @@ export default function useCreditsForm(opts: IUseManifestFormOpts) {
   const {
     manifest: { createLoad },
   } = useManifestContext();
-  const dispatch = useAppDispatch();
+  const notify = useNotifications();
 
   const [{ loading }, onCreateOrder] = useAsyncFn(
     async (fields: CreditFields) => {
@@ -107,16 +107,11 @@ export default function useCreditsForm(opts: IUseManifestFormOpts) {
         }
       } catch (error) {
         if (error instanceof Error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: error.message,
-              variant: 'error',
-            })
-          );
+          notify.error(error.message);
         }
       }
     },
-    [createLoad, dropzoneUser, setError, dispatch, onSuccess, addCredits, withdrawCredits]
+    [createLoad, dropzoneUser, setError, notify, onSuccess, addCredits, withdrawCredits]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onCreateOrder), [handleSubmit, onCreateOrder]);

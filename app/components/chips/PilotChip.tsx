@@ -54,7 +54,7 @@ export default function PilotChip(props: IPilotChipSelect) {
     openMenu(): void;
   }> = React.useCallback(
     ({ item, openMenu }) => (
-      <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="shield-airplane">
+      <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="account-tie-hat">
         {truncate(item?.label || 'No Pilot', { length: 12 })}
       </Chip>
     ),
@@ -62,7 +62,7 @@ export default function PilotChip(props: IPilotChipSelect) {
   );
 
   return !allowed ? (
-    <Chip {...{ backgroundColor, small, color }} icon="shield-airplane">
+    <Chip {...{ backgroundColor, small, color }} icon="account-tie-hat">
       {value?.user?.name || 'No Pilot'}
     </Chip>
   ) : (

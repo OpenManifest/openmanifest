@@ -23,6 +23,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
 import LoadSlotTable from 'app/components/slots_table/Table';
 import { SlotFields } from 'app/components/slots_table/UserRow';
+import { useNotifications } from 'app/providers/notifications';
 import LoadingCard from './Loading';
 
 interface ILoadCardLarge {
@@ -43,6 +44,7 @@ function LoadCard(props: ILoadCardLarge) {
     manifest: { deleteSlot },
   } = useManifestContext();
   const [deletingSlot, setDeletingSlot] = React.useState(false);
+  const notify = useNotifications();
 
   const {
     load: {
@@ -71,29 +73,22 @@ function LoadCard(props: ILoadCardLarge) {
         });
 
         if ('error' in response && response.error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message:
-                response?.error ||
-                `${slot.dropzoneUser?.user?.name} could not be taken off load #${load?.loadNumber}`,
-              variant: 'error',
-            })
+          notify.error(
+            response?.error ||
+              `${slot.dropzoneUser?.user?.name} could not be taken off load #${load?.loadNumber}`
           );
         } else if ('slot' in response && slot?.id) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: `${
-                response.slot?.dropzoneUser?.user?.name || 'User'
-              } has been taken off load #${load?.loadNumber}`,
-              variant: 'success',
-            })
+          notify.error(
+            `${response.slot?.dropzoneUser?.user?.name || 'User'} has been taken off load #${
+              load?.loadNumber
+            }`
           );
         }
       } finally {
         setDeletingSlot(false);
       }
     },
-    [deleteSlot, dispatch, load?.loadNumber]
+    [deleteSlot, load?.loadNumber, notify]
   );
 
   const navigation = useAuthenticatedNavigation();
@@ -192,12 +187,7 @@ function LoadCard(props: ILoadCardLarge) {
                 if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
                   const diff = (load?.slots?.length || 0) - (plane.maxSlots || 0);
 
-                  dispatch(
-                    actions.notifications.showSnackbar({
-                      message: `You need to take ${diff} people off the load to fit on this plane`,
-                      variant: 'info',
-                    })
-                  );
+                  notify.info(`You need to take ${diff} people off the load to fit on this plane`);
                 } else {
                   await updatePlane(plane);
                   refetch();
@@ -316,21 +306,13 @@ function LoadCard(props: ILoadCardLarge) {
               mode="contained"
               onPress={() => {
                 if (!load?.loadMaster?.id) {
-                  return dispatch(
-                    actions.notifications.showSnackbar({
-                      message: 'You must select a load master before this load can be finalized',
-                      variant: 'info',
-                    })
+                  return notify.info(
+                    'You must select a load master before this load can be finalized'
                   );
                 }
 
                 if (!load?.pilot?.id) {
-                  return dispatch(
-                    actions.notifications.showSnackbar({
-                      message: 'You must select a pilot before this load can be finalized',
-                      variant: 'info',
-                    })
-                  );
+                  return notify.info('You must select a pilot before this load can be finalized');
                 }
                 return markAsLanded();
               }}

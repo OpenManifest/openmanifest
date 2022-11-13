@@ -58,6 +58,7 @@ export function useAircrafts(vars?: Partial<PlanesQueryVariables>) {
       }
       const response = await createAircraft({
         variables: { attributes },
+        refetchQueries: [{ query: PlanesDocument, variables: { dropzoneId: dropzone.id } }],
         update: (cache, { data: mutationData }) => {
           cache.updateQuery<PlanesQuery, PlanesQueryVariables>(
             {

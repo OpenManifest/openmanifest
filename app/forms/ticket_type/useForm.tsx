@@ -8,9 +8,9 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDropzoneContext } from 'app/providers';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
-import { actions, useAppDispatch } from 'app/state';
 import { isEqual } from 'lodash';
 import { useTickets } from 'app/api/crud';
+import { useNotifications } from 'app/providers/notifications';
 
 export type TicketTypeFields = {
   id?: string;
@@ -77,7 +77,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
     dropzone: { dropzone },
   } = useDropzoneContext();
   const { createTicketType, updateTicketType } = useTickets();
-  const dispatch = useAppDispatch();
+  const notify = useNotifications();
 
   const [{ loading }, onCreateOrder] = useAsyncFn(
     async (fields: TicketTypeFields) => {
@@ -117,21 +117,17 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
             });
           }
           if ('ticketType' in response && response.ticketType) {
+            notify.success('Ticket saved');
             onSuccess?.(response.ticketType);
           }
         }
       } catch (error) {
         if (error instanceof Error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: error.message,
-              variant: 'error',
-            })
-          );
+          notify.error(error.message);
         }
       }
     },
-    [dropzone?.id, setError, dispatch, onSuccess, createTicketType, updateTicketType, defaultValues]
+    [dropzone?.id, setError, notify, onSuccess, createTicketType, updateTicketType, defaultValues]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onCreateOrder), [handleSubmit, onCreateOrder]);

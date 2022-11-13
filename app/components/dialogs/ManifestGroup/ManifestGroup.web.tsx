@@ -3,6 +3,7 @@ import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { useManifestGroupMutation, useDropzoneUserProfileLazyQuery } from 'app/api/reflection';
 import DropzoneUserAutocomplete from 'app/components/autocomplete/DropzoneUserAutocomplete.web';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
+import { useNotifications } from 'app/providers/notifications';
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -16,6 +17,7 @@ interface IManifestUserDialog {
 
 export default function ManifestUserDialog(props: IManifestUserDialog) {
   const { open, onClose } = props;
+  const notify = useNotifications();
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.manifestGroup);
   const [mutationCreateSlots, mutationData] = useManifestGroupMutation();
@@ -84,12 +86,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
         }
       });
       if (result?.data?.createSlots?.errors?.length) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: result?.data?.createSlots?.errors[0],
-            variant: 'error',
-          })
-        );
+        notify.error(result?.data?.createSlots?.errors[0]);
         return;
       }
       if (!result.data?.createSlots?.fieldErrors?.length) {
@@ -97,12 +94,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       }
     } catch (error) {
       if (error instanceof Error) {
-        dispatch(
-          actions.notifications.showSnackbar({
-            message: error.message,
-            variant: 'error',
-          })
-        );
+        notify.error(error.message);
       }
     }
   }, [
@@ -115,6 +107,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     state.fields.load.value?.id,
     mutationCreateSlots,
     dispatch,
+    notify,
     onClose,
   ]);
 

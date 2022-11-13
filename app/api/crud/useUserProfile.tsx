@@ -36,8 +36,8 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
   const canRevokePermission = useRestriction(Permission.RevokePermission);
 
   React.useEffect(() => {
-    if (id && id === query?.variables?.id) {
-      getProfile({ variables: { id: id.toString() } });
+    if (id && id !== query?.variables?.id) {
+      getProfile({ variables: { id } });
     }
   }, [getProfile, id, query?.variables?.id]);
 
@@ -163,7 +163,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
       }
       const { data } = await grant({
         variables: {
-          dropzoneUserId: Number(dropzoneUserId),
+          dropzoneUserId,
           permissionName,
         },
         refetchQueries: [
@@ -194,7 +194,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
   );
 
   const revokePermission = React.useCallback(
-    async function revokePermission(
+    async function RevokePermission(
       dropzoneUserId: string,
       permissionName: Permission
     ): Promise<TMutationResponse<{ dropzoneUser: DropzoneUserProfileFragment }>> {
@@ -203,7 +203,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
       }
       const { data } = await revoke({
         variables: {
-          dropzoneUserId: Number(dropzoneUserId),
+          dropzoneUserId,
           permissionName,
         },
         refetchQueries: [
@@ -237,6 +237,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
     () => ({
       loading: query?.loading,
       dropzoneUser: query?.data?.dropzoneUser,
+      refetch: query?.refetch,
       update,
       addCredits,
       grantPermission,
@@ -246,6 +247,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
     [
       addCredits,
       grantPermission,
+      query?.refetch,
       query?.data?.dropzoneUser,
       query?.loading,
       revokePermission,
@@ -260,6 +262,7 @@ const { Provider: UserProfileProvider, useContext: useUserProfileContext } = cre
   {
     loading: false,
     dropzoneUser: null,
+    refetch: uninitializedHandler as never,
     update: uninitializedHandler as never,
     addCredits: uninitializedHandler as never,
     withdrawCredits: uninitializedHandler as never,

@@ -1,4 +1,4 @@
-import { useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { useNavigation, useRoute } from '@react-navigation/core';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
@@ -8,7 +8,7 @@ import { useAppSelector } from 'app/state';
 
 import { useDropzoneContext } from 'app/providers';
 import { useDropzoneTransactionsLazyQuery } from 'app/api/reflection';
-import useDropzoneUserProfile from 'app/api/hooks/useDropzoneUserProfile';
+import { useUserProfile } from 'app/api/crud';
 import OrderCard from '../../../../components/orders/OrderCard';
 
 export default function TransactionsScreen() {
@@ -18,18 +18,11 @@ export default function TransactionsScreen() {
   } = useDropzoneContext();
   const [fetchTransactions] = useDropzoneTransactionsLazyQuery();
   const route = useRoute<{ key: string; name: string; params: { userId: string } }>();
-  const { dropzoneUser, loading, refetch } = useDropzoneUserProfile(
-    route?.params?.userId || currentUser?.id
-  );
+  const { dropzoneUser, loading, refetch } = useUserProfile({
+    id: route?.params?.userId || currentUser?.id,
+  });
 
-  const isFocused = useIsFocused();
   const navigation = useNavigation();
-
-  React.useEffect(() => {
-    if (isFocused) {
-      refetch();
-    }
-  }, [isFocused, refetch]);
 
   React.useEffect(() => {
     if (state.currentDropzoneId) {

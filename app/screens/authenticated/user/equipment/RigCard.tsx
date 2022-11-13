@@ -19,6 +19,7 @@ import { errorColor, successColor } from 'app/constants/Colors';
 
 import { Permission } from 'app/api/schema.d';
 import { AvailableRigsDocument, DropzoneUsersDetailedDocument } from 'app/api/reflection';
+import { useNotifications } from 'app/providers/notifications';
 import { useUserNavigation } from '../useUserNavigation';
 
 export interface IRigCardProps {
@@ -33,6 +34,7 @@ export default function RigCard(props: IRigCardProps) {
   const [isUploading, setUploading] = React.useState(false);
   const { accent } = useAppSelector((root) => root.global.theme.colors);
   const dispatch = useAppDispatch();
+  const notify = useNotifications();
   const {
     dropzone: { currentUser },
   } = useDropzoneContext();
@@ -45,14 +47,12 @@ export default function RigCard(props: IRigCardProps) {
     onSuccess: () => {
       setUploading(false);
       onSuccessfulImageUpload?.();
-      dispatch(
-        actions.notifications.showSnackbar({ message: 'Image uploaded', variant: 'success' })
-      );
+      notify.success('Image uploaded');
     },
     onError: (err) => {
       console.log(err);
       setUploading(false);
-      dispatch(actions.notifications.showSnackbar({ message: 'Upload failed', variant: 'error' }));
+      notify.error('Upload failed');
     },
   });
   const [isPackingCardMenuOpen, setPackingCardMenuOpen] = React.useState<boolean>(false);
@@ -80,7 +80,7 @@ export default function RigCard(props: IRigCardProps) {
   const theme = useTheme();
 
   return (
-    <Card onPress={onPress} style={{ marginVertical: 16 }}>
+    <Card onPress={onPress} style={{ marginVertical: 16, maxWidth: 500 }}>
       <ProgressBar visible={isUploading} indeterminate color={accent} />
       <Card.Title title={rig.name || `${rig.make} ${rig.model}`} />
       <Card.Content>

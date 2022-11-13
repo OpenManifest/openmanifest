@@ -25,6 +25,7 @@ export default function ManifestForm(props: IManifestFormProps) {
   const allowedToManifestOthers = useRestriction(
     id ? Permission.UpdateUserSlot : Permission.CreateUserSlot
   );
+  const { extras: selectedAddons } = useWatch({ control });
 
   return (
     <>
@@ -44,8 +45,16 @@ export default function ManifestForm(props: IManifestFormProps) {
       <ChipSelectField<ManifestUserFields, 'extras'>
         {...{ control }}
         allowEmpty
+        defaultValue={[]}
+        isSelected={(item) =>
+          selectedAddons
+            ?.map((addon) => addon?.id)
+            .includes((item as TicketTypeExtraEssentialsFragment)?.id) || false
+        }
         items={ticketType?.extras as TicketTypeExtraEssentialsFragment[]}
-        renderItemLabel={(item: TicketTypeExtraEssentialsFragment) => `${item.name} (${item.cost})`}
+        renderItemLabel={(item: TicketTypeExtraEssentialsFragment) =>
+          `${item.name} ($${item.cost})`
+        }
         name="extras"
       />
       <Divider />

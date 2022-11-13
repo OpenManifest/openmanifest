@@ -6,9 +6,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useManifestContext } from 'app/providers';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import useManifestValidator from 'app/hooks/useManifestValidator';
-import { actions, useAppDispatch } from 'app/state';
 import { isEqual } from 'lodash';
 import { LoadState } from 'app/api/schema.d';
+import { useNotifications } from 'app/providers/notifications';
 
 export type LoadFields = Required<
   Pick<LoadDetailsFragment, 'gca' | 'pilot' | 'maxSlots' | 'plane' | 'isOpen'>
@@ -42,6 +42,7 @@ export interface IUseManifestFormOpts {
 
 export default function useManifestForm(opts: IUseManifestFormOpts) {
   const { initial, onSuccess } = opts;
+  const notify = useNotifications();
   const initialValues = React.useMemo(() => ({ ...EMPTY_FORM_VALUES, ...initial }), [initial]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
 
@@ -66,7 +67,6 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
     manifest: { createLoad },
   } = useManifestContext();
   const { canManifest } = useManifestValidator();
-  const dispatch = useAppDispatch();
 
   const { plane } = useWatch<LoadFields>({ control });
 
@@ -97,16 +97,12 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           });
         }
         if ('load' in response) {
+          notify.success(`Load #${response.load?.loadNumber} added to the board`);
           onSuccess?.(response.load);
         }
       } catch (error) {
         if (error instanceof Error) {
-          dispatch(
-            actions.notifications.showSnackbar({
-              message: error.message,
-              variant: 'error',
-            })
-          );
+          notify.error(error.message);
         }
       }
     },

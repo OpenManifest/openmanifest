@@ -10,6 +10,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import { Alert } from 'react-native';
 import { DropzoneUsersDocument, useArchiveUserMutation } from 'app/api/reflection';
 import { errorColor, infoColor, successColor, warningColor } from 'app/constants/Colors';
+import { useNotifications } from 'app/providers/notifications';
 import { useUserNavigation } from '../useUserNavigation';
 
 type PropsOf<T> = T extends React.ComponentType<infer P> ? P : never;
@@ -25,6 +26,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
   } = useDropzoneContext();
   const [fabOpen, setFabOpen] = React.useState(false);
   const { dialogs } = useManifestContext();
+  const notify = useNotifications();
 
   const dispatch = useAppDispatch();
   const navigation = useUserNavigation();
@@ -109,20 +111,10 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
               });
 
               data?.deleteUser?.errors?.forEach((message) => {
-                dispatch(
-                  actions.notifications.showSnackbar({
-                    message,
-                    variant: 'success',
-                  })
-                );
+                notify.success(message);
               });
               if (data?.deleteUser?.dropzoneUser?.id) {
-                dispatch(
-                  actions.notifications.showSnackbar({
-                    message: `${dropzoneUser?.user?.name} has been removed`,
-                    variant: 'success',
-                  })
-                );
+                notify.success(`${dropzoneUser?.user?.name} has been removed`);
               }
 
               navigation.goBack();
@@ -133,7 +125,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
         },
       ]
     );
-  }, [deleteUser, dispatch, dropzoneUser?.id, dropzoneUser?.user?.name, isSelf, navigation]);
+  }, [deleteUser, dropzoneUser?.id, dropzoneUser?.user?.name, isSelf, navigation, notify]);
 
   const fabActions = React.useMemo(
     () =>

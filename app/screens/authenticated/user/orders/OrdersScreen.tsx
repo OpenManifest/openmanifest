@@ -1,4 +1,4 @@
-import { RouteProp, useIsFocused, useRoute } from '@react-navigation/core';
+import { RouteProp, useRoute } from '@react-navigation/core';
 import * as React from 'react';
 import { SectionList, StyleSheet, View } from 'react-native';
 import { List, ProgressBar } from 'react-native-paper';
@@ -10,7 +10,7 @@ import { groupBy, map } from 'lodash';
 import { formatDistance, parseISO, startOfDay, differenceInDays, format } from 'date-fns';
 import enAU from 'date-fns/locale/en-AU';
 import { OrderEssentialsFragment } from 'app/api/operations';
-import { useDropzoneUserProfileQuery } from 'app/api/reflection';
+import { useUserProfile } from 'app/api/crud';
 import OrderCard from '../../../../components/orders/OrderCard';
 import { useUserNavigation } from '../useUserNavigation';
 
@@ -25,15 +25,10 @@ export default function OrdersScreen() {
     dropzone: { currentUser },
   } = useDropzoneContext();
   const route = useRoute<RouteProp<OrdersRoute>>();
-  const { data, loading, refetch } = useDropzoneUserProfileQuery({
-    variables: {
-      id: (route?.params?.userId || currentUser?.id) as string,
-    },
-    skip: !(route?.params?.userId || currentUser?.id),
+  const { dropzoneUser, loading, refetch } = useUserProfile({
+    id: (route?.params?.userId || currentUser?.id) as string,
   });
-  const dropzoneUser = React.useMemo(() => data?.dropzoneUser, [data?.dropzoneUser]);
 
-  const isFocused = useIsFocused();
   const navigation = useUserNavigation();
   React.useEffect(() => {
     if (dropzoneUser?.user?.name && dropzoneUser?.id !== currentUser?.id) {
@@ -43,12 +38,6 @@ export default function OrdersScreen() {
       navigation.setOptions({ title: 'Your Transactions' });
     }
   }, [currentUser?.id, dropzoneUser?.id, dropzoneUser?.user?.name, navigation]);
-
-  React.useEffect(() => {
-    if (isFocused) {
-      refetch();
-    }
-  }, [isFocused, refetch]);
 
   return (
     <View style={{ flexGrow: 1, backgroundColor: state.theme.colors.surface }}>

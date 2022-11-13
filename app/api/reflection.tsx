@@ -1409,8 +1409,10 @@ export type FinalizeLoadMutationHookResult = ReturnType<typeof useFinalizeLoadMu
 export type FinalizeLoadMutationResult = Apollo.MutationResult<Operation.FinalizeLoadMutation>;
 export type FinalizeLoadMutationOptions = Apollo.BaseMutationOptions<Operation.FinalizeLoadMutation, Operation.FinalizeLoadMutationVariables>;
 export const GrantPermissionDocument = gql`
-    mutation GrantPermission($dropzoneUserId: Int!, $permissionName: Permission!) {
-  grantPermission(input: {id: $dropzoneUserId, permission: $permissionName}) {
+    mutation GrantPermission($dropzoneUserId: ID!, $permissionName: Permission!) {
+  grantPermission(
+    input: {dropzoneUser: $dropzoneUserId, permission: $permissionName}
+  ) {
     fieldErrors {
       message
       field
@@ -1910,8 +1912,10 @@ export type ReloadWeatherMutationHookResult = ReturnType<typeof useReloadWeather
 export type ReloadWeatherMutationResult = Apollo.MutationResult<Operation.ReloadWeatherMutation>;
 export type ReloadWeatherMutationOptions = Apollo.BaseMutationOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
 export const RevokePermissionDocument = gql`
-    mutation RevokePermission($dropzoneUserId: Int!, $permissionName: Permission!) {
-  revokePermission(input: {id: $dropzoneUserId, permission: $permissionName}) {
+    mutation RevokePermission($dropzoneUserId: ID!, $permissionName: Permission!) {
+  revokePermission(
+    input: {dropzoneUser: $dropzoneUserId, permission: $permissionName}
+  ) {
     fieldErrors {
       message
       field

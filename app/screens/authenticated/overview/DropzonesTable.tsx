@@ -8,7 +8,7 @@ import { DropzoneStatisticsFragment } from 'app/api/operations';
 import ChipSelect from 'app/components/input/chip_select/ChipSelect';
 import Select from 'app/components/input/select/Select';
 import { useDropzonesContext } from 'app/api/crud/useDropzones';
-import { actions, useAppDispatch } from 'app/state';
+import { useNotifications } from 'app/providers/notifications';
 
 interface IDropzonesTableProps {
   dropzones: DropzoneStatisticsFragment[];
@@ -27,7 +27,7 @@ function DropzoneTableRow(props: { dropzone?: DropzoneStatisticsFragment | null 
   const { dropzone } = props;
 
   const { updateVisibility } = useDropzonesContext();
-  const dispatch = useAppDispatch();
+  const notify = useNotifications();
 
   const onChangeVisibility = React.useCallback(
     async (state: DropzoneState) => {
@@ -37,10 +37,10 @@ function DropzoneTableRow(props: { dropzone?: DropzoneStatisticsFragment | null 
       const result = await updateVisibility(dropzone.id, stateEvent[state]);
 
       if ('error' in result && result.error) {
-        dispatch(actions.notifications.showSnackbar({ message: result.error }));
+        notify.error(result.error);
       }
     },
-    [dispatch, dropzone?.id, updateVisibility]
+    [notify, dropzone?.id, updateVisibility]
   );
 
   if (!dropzone) {

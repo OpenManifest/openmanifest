@@ -8,6 +8,7 @@ import {
   useUpdateTicketTypeMutation,
   useTicketTypesQuery,
   useArchiveTicketTypeMutation,
+  TicketTypesDocument,
 } from '../reflection';
 import {
   CreateTicketAddonMutationVariables,
@@ -59,6 +60,7 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
         variables: {
           attributes: { ...attributes, dropzoneId: Number(variables?.dropzone || dropzone?.id) },
         },
+        refetchQueries: [{ query: TicketTypesDocument, variables: { dropzone: dropzone?.id } }],
       });
 
       if (response?.data?.createTicketType?.ticketType?.id) {

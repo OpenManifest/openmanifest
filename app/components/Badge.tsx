@@ -24,7 +24,7 @@ function Badge(props: IBadgeProps) {
     [Permission.ActAsDzso]: 'shield-cross',
     [Permission.ActAsGca]: 'radio-handheld',
     [Permission.ActAsLoadMaster]: 'shield-account',
-    [Permission.ActAsPilot]: 'shield-airplane',
+    [Permission.ActAsPilot]: 'account-tie-hat',
     [Permission.ActAsRigInspector]: 'shield-search',
   }[type];
 
