@@ -10,7 +10,7 @@ import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
 import SwipeActions from 'app/components/layout/SwipeActions';
 import { useAircrafts } from 'app/api/crud';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { PlaneEssentialsFragment } from 'app/api/operations';
 import { useNotifications } from 'app/providers/notifications';
 

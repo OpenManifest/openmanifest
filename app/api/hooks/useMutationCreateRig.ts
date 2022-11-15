@@ -46,7 +46,7 @@ const MUTATION_CREATE_RIG = gql`
         maintainedAt
         rigType
 
-        user {
+        owner {
           id
           rigs {
             id
@@ -69,9 +69,9 @@ export default createMutation<RigInput, CreateRigPayload>(MUTATION_CREATE_RIG, {
   getPayload: (result) => result.createRig,
   fieldErrorMap: {},
   validates: {
-    make: [isRequired('Manufacturer is required')],
-    model: [isRequired('Model is required')],
-    serial: [isRequired('Serial number is required')],
+    make: [isRequired('is required')],
+    model: [isRequired('is required')],
+    serial: [isRequired('number is required')],
     canopySize: [
       isRequired('Canopy size is required'),
       isNumeric('Canopy size must be a valid number'),

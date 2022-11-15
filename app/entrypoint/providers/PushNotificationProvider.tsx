@@ -5,7 +5,7 @@ import { Linking, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import URI from 'urijs';
 import { useUpdateUserMutation } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useNotifications } from 'app/providers/notifications';
 

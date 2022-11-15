@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/core';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
 import { DropzoneState, DropzoneStateEvent, Permission } from 'app/api/schema.d';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import { useDropzonesContext } from 'app/api/crud';
 import { useNotifications } from 'app/providers/notifications';

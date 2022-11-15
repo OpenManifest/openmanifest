@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Dimensions, RefreshControl, useWindowDimensions } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';

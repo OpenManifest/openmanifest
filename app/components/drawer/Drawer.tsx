@@ -9,7 +9,7 @@ import { DropzoneExtensiveFragment } from 'app/api/operations';
 import InfoGrid from 'app/screens/authenticated/dropzone/load/InfoGrid';
 import useRestriction from 'app/hooks/useRestriction';
 import { ModerationRole, Permission } from 'app/api/schema.d';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useDropzonesContext } from 'app/api/crud';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 

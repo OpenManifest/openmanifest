@@ -6,7 +6,7 @@ import { ProgressBar } from 'react-native-paper';
 import { FlatList } from 'react-native-gesture-handler';
 import { useAppSelector } from 'app/state';
 
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useDropzoneTransactionsLazyQuery } from 'app/api/reflection';
 import { useUserProfile } from 'app/api/crud';
 import OrderCard from '../../../../components/orders/OrderCard';

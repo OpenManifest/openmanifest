@@ -7,7 +7,7 @@ import { Permission } from 'app/api/schema.d';
 
 import { useAppSelector } from 'app/state';
 import NoResults from 'app/components/NoResults';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { TicketTypeAddonDetailsFragment } from 'app/api/operations';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { noop } from 'lodash';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import {
   useCreateTicketTypeMutation,
   useCreateTicketAddonMutation,
@@ -9,6 +9,7 @@ import {
   useTicketTypesQuery,
   useArchiveTicketTypeMutation,
   TicketTypesDocument,
+  TicketTypeExtrasDocument,
 } from '../reflection';
 import {
   CreateTicketAddonMutationVariables,
@@ -102,6 +103,9 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
         variables: {
           attributes: { ...attributes, dropzoneId: Number(variables?.dropzone || dropzone?.id) },
         },
+        refetchQueries: [
+          { query: TicketTypeExtrasDocument, variables: { dropzoneId: dropzone?.id } },
+        ],
       });
 
       if (response?.data?.createExtra?.extra?.id) {

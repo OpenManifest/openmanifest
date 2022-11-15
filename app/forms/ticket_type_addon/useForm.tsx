@@ -7,7 +7,7 @@ import {
 } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { isEqual } from 'lodash';
 import { useTickets } from 'app/api/crud';

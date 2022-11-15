@@ -10,7 +10,7 @@ import { View } from 'app/components/Themed';
 import { LoadState } from 'app/api/schema.d';
 import { useAppSelector } from 'app/state';
 import { errorColor, warningColor } from 'app/constants/Colors';
-import { useLoadContext, withLoadContext } from 'app/providers';
+import { useLoadContext, withLoadContext } from 'app/providers/load';
 import Countdown from '../Countdown';
 import Loading from './Loading';
 

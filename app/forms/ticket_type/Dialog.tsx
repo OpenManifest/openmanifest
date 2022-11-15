@@ -13,18 +13,24 @@ export interface ITicketTypeDialog {
 
 export default function TicketTypeDialog(props: ITicketTypeDialog) {
   const { open, initial, original, onClose } = props;
-  const { control, loading, onSubmit } = useForm({
+  const { control, loading, onSubmit, reset } = useForm({
     initial: {
       name: original?.name || initial?.name,
       cost: original?.cost || initial?.cost,
       allowManifestingSelf: original?.allowManifestingSelf || initial?.allowManifestingSelf,
-      altitude: original?.altitude || initial?.altitude,
+      altitude: original?.altitude || initial?.altitude || 14000,
       extras: original?.extras || initial?.extras,
       id: original?.id || initial?.id || undefined,
       isTandem: original?.isTandem || initial?.isTandem,
     },
     onSuccess: onClose,
   });
+
+  React.useEffect(() => {
+    if (!open) {
+      reset();
+    }
+  }, [open, reset]);
 
   const snapPoints = React.useMemo(() => [550, 650], []);
   return (

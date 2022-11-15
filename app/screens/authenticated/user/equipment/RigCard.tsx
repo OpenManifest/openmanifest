@@ -8,7 +8,7 @@ import {
   RigEssentialsFragment,
   DropzoneUserEssentialsFragment,
 } from 'app/api/operations';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useRestriction from 'app/hooks/useRestriction';
 import useImagePicker from 'app/hooks/useImagePicker';
 import Menu, { MenuItem } from 'app/components/popover/Menu';

@@ -1,4 +1,4 @@
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { Permission } from '../api/schema.d';
 
 export default function useRestriction(permission: Permission): boolean {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DndContext, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import UserRowDragOverlay from 'app/components/slots_table/DragAndDrop/DraggingRow';
 import type { ISlotUserRowProps } from 'app/components/slots_table/UserRow';
-import { useManifestContext } from 'app/providers';
+import { useManifestContext } from 'app/providers/manifest';
 import { useNotifications } from 'app/providers/notifications';
 
 export default function DragDropWrapper(props: React.PropsWithChildren<object>) {

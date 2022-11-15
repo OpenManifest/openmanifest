@@ -8,7 +8,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import JumpRunSelector from 'app/components/input/jump_run_select/JumpRunSelect';
 // eslint-disable-next-line max-len
 import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateWeatherConditions';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useNotifications } from 'app/providers/notifications';
 
 export default function JumpRunScreen() {

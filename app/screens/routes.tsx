@@ -36,6 +36,18 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                 screens: {
                   ManifestScreen: '/dropzone/manifest',
                   DashboardScreen: '/dropzone/overview',
+                  User: {
+                    screens: {
+                      EquipmentScreen: '/dropzone/manifest/users/:userId/equipment/',
+                      OrderReceiptScreen:
+                        '/dropzone/manifest/users/:userId/orders/:orderId/receipts',
+                      ProfileScreen: '/dropzone/manifest/users/:userId',
+                      OrdersScreen: '/dropzone/manifest/users/:userId/orders',
+                      RigInspectionScreen:
+                        '/dropzone/manifest/users/:dropzoneUserId/rig/:rigId/inspection',
+                      UserListScreen: '/dropzone/manifest/users',
+                    },
+                  },
                   Configuration: {
                     screens: {
                       AircraftScreen: '/dropzone/configuration/aircraft/:planeId',

@@ -8,7 +8,7 @@ import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import SwipeActions from 'app/components/layout/SwipeActions';
 import useRestriction from 'app/hooks/useRestriction';
 import { useTickets } from 'app/api/crud';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { TicketTypeEssentialsFragment } from 'app/api/operations';
 import { useNotifications } from 'app/providers/notifications';
 

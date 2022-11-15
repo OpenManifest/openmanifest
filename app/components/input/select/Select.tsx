@@ -81,8 +81,9 @@ export default function Select<T>(props: ISelectProps<T>) {
 
   const showAvatars = React.useMemo(() => options?.some((option) => option.avatar), [options]);
 
+  console.debug({ selectedOption, value });
   return (
-    <View>
+    <View style={{ width: '100%' }}>
       {label ? <List.Subheader>{label}</List.Subheader> : null}
       <Menu {...{ open, setOpen, anchor }}>
         {options?.map((option) => (

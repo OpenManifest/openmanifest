@@ -8,7 +8,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { Permission } from 'app/api/schema.d';
 import RigDialog from 'app/components/dialogs/Rig';
 
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { useUserProfile } from 'app/api/crud';
 import RigCard from './RigCard';

@@ -6,7 +6,7 @@ import {
 } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { isEqual } from 'lodash';
 import { useTickets } from 'app/api/crud';
@@ -27,7 +27,7 @@ export const ticketTypeValidation = yup.object({
   name: yup.string().required('Name is required'),
   cost: yup.number().required('Cost is required').min(0, 'Cost must be greater than 0'),
   allowManifestingSelf: yup.boolean().default(false),
-  altitude: yup.number().required().default(14000),
+  altitude: yup.number().default(14000).required().default(14000),
   extras: yup.array().of(yup.object()),
   isTandem: yup.boolean().default(false),
 });
@@ -56,7 +56,6 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
     defaultValues,
     mode: 'all',
     resolver: yupResolver(ticketTypeValidation),
-    shouldUnregister: false,
   });
   React.useEffect(() => {
     if (!isEqual(defaultValues, initialValues)) {
@@ -66,6 +65,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
   const { reset, register } = methods;
   React.useEffect(() => {
     register('id');
+    register('altitude');
   }, [register]);
 
   React.useEffect(() => {
