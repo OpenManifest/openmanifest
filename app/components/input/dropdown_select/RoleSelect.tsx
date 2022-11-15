@@ -23,7 +23,7 @@ function RoleSelect(props: IRoleSelect) {
 
   const options = React.useMemo(
     () =>
-      data?.dropzone?.roles?.map((node) => ({
+      data?.dropzone?.roles?.map(({ permissions, ...node }) => ({
         label: startCase(node?.name || ''),
         value: node,
       })) || [],

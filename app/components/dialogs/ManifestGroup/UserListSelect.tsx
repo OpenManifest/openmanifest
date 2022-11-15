@@ -9,7 +9,7 @@ import UserAvatar from 'app/components/UserAvatar';
 import { Permission } from 'app/api/schema.d';
 import { useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import NoResults from '../../NoResults';
 
 interface IUserListSelect {

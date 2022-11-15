@@ -27,11 +27,7 @@ function Switch(props: ISwitchProps) {
               style,
             ])}
             {...rest}
-            onChange={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onChange?.(e.value);
-            }}
+            onValueChange={onChange}
           />
         )}
       />

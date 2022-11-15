@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 
 import { AppSignalBoundary } from 'app/components/app_signal';
 import UsersScreen, { UserListRoute } from './user_list/UsersScreen';

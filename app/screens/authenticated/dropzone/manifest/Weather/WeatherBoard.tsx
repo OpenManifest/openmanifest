@@ -15,7 +15,7 @@ import { Card, Divider, useTheme } from 'react-native-paper';
 import format from 'date-fns/format';
 import { orderBy } from 'lodash';
 import SkeletonContent from 'app/components/Skeleton';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { actions, useAppDispatch } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';

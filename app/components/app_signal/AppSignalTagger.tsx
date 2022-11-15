@@ -1,7 +1,7 @@
 import * as React from 'react';
 import pick from 'lodash/pick';
 import isEqual from 'lodash/isEqual';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useAppSelector } from 'app/state';
 import { Platform } from 'react-native';
 import { useAppSignalContext, INITIAL_TAGS } from './AppSignalContext';

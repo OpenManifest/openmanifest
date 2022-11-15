@@ -1,7 +1,7 @@
 import { PlaneEssentialsFragment } from 'app/api/operations';
 import { usePlanesQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import Select from '../select/Select';
 import { withHookForm } from '../withHookForm';
 

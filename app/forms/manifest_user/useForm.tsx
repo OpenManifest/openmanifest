@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { SlotExhaustiveFragment, TicketTypeDetailsFragment } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useManifestContext } from 'app/providers';
+import { useManifestContext } from 'app/providers/manifest/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import useManifestValidator from 'app/hooks/useManifestValidator';
 import isEqual from 'lodash/isEqual';

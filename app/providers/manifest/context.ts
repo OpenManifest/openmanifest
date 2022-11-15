@@ -2,9 +2,9 @@ import * as React from 'react';
 import { noop } from 'lodash';
 import { useManifest } from 'app/api/crud/useManifest';
 import { uninitializedHandler } from 'app/api/crud/factory';
-import { IManifestUserDialog } from 'app/forms/manifest_user/Dialog';
-import { ICreditsSheet } from 'app/forms/credits/Credits';
-import { ILoadDialog } from 'app/forms/load/Dialog';
+import type { IManifestUserDialog } from 'app/forms/manifest_user/Dialog';
+import type { ICreditsSheet } from 'app/forms/credits/Credits';
+import type { ILoadDialog } from 'app/forms/load/Dialog';
 import type { IDialogContextSubstate } from '../hooks/useDialog';
 
 interface IManifestContext {

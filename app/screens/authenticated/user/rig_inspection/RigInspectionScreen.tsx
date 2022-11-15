@@ -10,7 +10,7 @@ import {
   useCreateRigInspectionMutation,
   useRigInspectionTemplateQuery,
 } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { Query, Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';

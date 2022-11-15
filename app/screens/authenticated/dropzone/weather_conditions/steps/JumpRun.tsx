@@ -6,7 +6,7 @@ import WizardScreen, { IWizardScreenProps } from 'app/components/wizard/WizardSc
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import JumpRunSelector from 'app/components/input/jump_run_select/JumpRunSelect';
 
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 
 function WindsWizardScreen(props: IWizardScreenProps) {
   const state = useAppSelector((root) => root.forms.weather);

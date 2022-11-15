@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB, ProgressBar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useMutationUpdateDropzone from 'app/api/hooks/useMutationUpdateDropzone';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { noop } from 'lodash';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import {
   useCreateAircraftMutation,
   useUpdateAircraftMutation,

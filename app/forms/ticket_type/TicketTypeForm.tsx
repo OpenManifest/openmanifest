@@ -3,7 +3,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { FormTextField } from 'app/components/input/text/TextField';
 import { List, Divider } from 'react-native-paper';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { TicketTypeExtraEssentialsFragment } from 'app/api/operations';
 import { Control, useWatch } from 'react-hook-form';
 import { AltitudeSelectField } from 'app/components/input/dropdown_select';
@@ -32,6 +32,7 @@ export default function TicketTypeForm(props: ITicketTypeFormProps) {
   }, [dropzone?.id, getTicketAddons]);
 
   const { extras: selectedAddons } = useWatch({ control });
+  console.debug({ altitude });
   return (
     <>
       <FormTextField

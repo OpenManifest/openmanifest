@@ -2,7 +2,7 @@ import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
 import { StyleSheet, Text, View } from 'react-native';
 import useRestriction from 'app/hooks/useRestriction';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import React from 'react';
 import { Avatar, Caption, DataTable, Paragraph } from 'react-native-paper';
 import { generateColor } from 'app/utils/generateColor';

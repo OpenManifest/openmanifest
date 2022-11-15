@@ -1,7 +1,7 @@
 import { useAppSignal } from 'app/components/app_signal';
 import useRestriction from 'app/hooks/useRestriction';
 import * as React from 'react';
-import { useDropzoneContext } from 'app/providers/dropzone';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import {
   CreateOrderMutationVariables,
   DropzoneUserEssentialsFragment,

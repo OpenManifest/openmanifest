@@ -7,7 +7,7 @@ import useMutationCreateDropzone from 'app/api/hooks/useMutationCreateDropzone';
 import useMutationUpdateDropzone from 'app/api/hooks/useMutationUpdateDropzone';
 import camelize from 'lodash/camelCase';
 import { Permission } from 'app/api/schema.d';
-import { useNavigation } from '@react-navigation/core';
+import { StackActions, useNavigation } from '@react-navigation/core';
 import { useNotifications } from 'app/providers/notifications';
 import NameStep from './steps/Name';
 import FederationStep from './steps/Federation';
@@ -40,7 +40,17 @@ function DropzoneSetupScreen() {
       dispatch(actions.forms.dropzone.setFieldError([field as keyof DropzoneFields, value])),
   });
   const onComplete = React.useCallback(() => {
-    navigation.goBack();
+    navigation.dispatch(
+      StackActions.replace('Authenticated', {
+        screen: 'LeftDrawer',
+        params: {
+          screen: 'Manifest',
+          params: {
+            screen: 'ManifestScreen',
+          },
+        },
+      })
+    );
   }, [navigation]);
 
   const onNameNext = React.useCallback(async (): Promise<void> => {

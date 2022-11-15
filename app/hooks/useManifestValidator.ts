@@ -1,4 +1,4 @@
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import * as React from 'react';
 import * as yup from 'yup';
 import { ValidationError } from 'yup';

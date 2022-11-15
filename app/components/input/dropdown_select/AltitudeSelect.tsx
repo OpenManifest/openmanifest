@@ -10,6 +10,7 @@ interface IAltitudeSelectProps {
 function AltitudeSelect(props: IAltitudeSelectProps) {
   const { value, onChange, error } = props;
 
+  console.debug('alt', { value, props });
   return (
     <Select
       label="Altitude"

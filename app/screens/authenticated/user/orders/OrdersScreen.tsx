@@ -5,7 +5,7 @@ import { List, ProgressBar } from 'react-native-paper';
 
 import { useAppSelector } from 'app/state';
 
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { groupBy, map } from 'lodash';
 import { formatDistance, parseISO, startOfDay, differenceInDays, format } from 'date-fns';
 import enAU from 'date-fns/locale/en-AU';

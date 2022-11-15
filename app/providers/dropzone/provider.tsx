@@ -1,9 +1,9 @@
 import * as React from 'react';
 import type { DropzoneQueryVariables } from 'app/api/operations';
-import { useDropzone } from 'app/api/crud';
-import AircraftSheet from 'app/forms/aircraft';
-import TicketTypeSheet from 'app/forms/ticket_type';
-import TicketTypeAddonSheet from 'app/forms/ticket_type_addon';
+import { useDropzone } from 'app/api/crud/useDropzone';
+import AircraftSheet from 'app/forms/aircraft/Dialog';
+import TicketTypeSheet from 'app/forms/ticket_type/Dialog';
+import TicketTypeAddonSheet from 'app/forms/ticket_type_addon/Dialog';
 import type { IPlaneDialogProps } from 'app/forms/aircraft/Dialog';
 import type { ITicketTypeDialog } from 'app/forms/ticket_type/Dialog';
 import type { ITicketTypeAddonDialog } from 'app/forms/ticket_type_addon/Dialog';

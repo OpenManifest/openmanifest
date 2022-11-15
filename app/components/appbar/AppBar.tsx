@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Appbar, IconButton, Chip } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/core';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 import SetupWarning from './SetupWarning';

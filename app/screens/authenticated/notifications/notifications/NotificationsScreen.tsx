@@ -8,7 +8,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { NotificationType } from 'app/api/schema.d';
 import { useNotificationsLazyQuery } from 'app/api/reflection';
 import { NotificationsQueryVariables } from 'app/api/operations';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useAppSelector } from '../../../../state';
 import NoResults from '../../../../components/NoResults';
 
@@ -33,7 +33,7 @@ export default function NotificationScreen() {
 
   const fetchNotifications = React.useCallback(() => {
     if (variables?.dropzoneId) {
-      getNotifications({ variables });
+      getNotifications({ variables, fetchPolicy: 'cache-and-network' });
     }
   }, [getNotifications, variables]);
 
@@ -55,22 +55,23 @@ export default function NotificationScreen() {
   console.debug('Notifications', data?.dropzone?.currentUser?.notifications?.edges);
 
   return (
-    <>
+    <View style={StyleSheet.absoluteFill}>
       {loading && (
         <ProgressBar color={state.theme.colors.primary} indeterminate visible={loading} />
       )}
-      {data?.dropzone?.currentUser?.notifications?.edges?.length ? null : (
-        <View style={styles.empty}>
-          <NoResults title="No notifications" subtitle="Notifications will show up here" />
-        </View>
-      )}
       <FlatList
+        ListEmptyComponent={() => (
+          <View style={styles.empty}>
+            <NoResults title="No notifications" subtitle="Notifications will show up here" />
+          </View>
+        )}
+        contentContainerStyle={styles.content}
+        onRefresh={fetchNotifications}
         data={data?.dropzone?.currentUser?.notifications?.edges}
+        refreshing={loading}
         numColumns={1}
         keyExtractor={(edge) => `notification-${edge?.node?.id}`}
-        style={{
-          flex: 1,
-        }}
+        style={StyleSheet.absoluteFill}
         renderItem={({ item: edge }) => {
           console.debug('Rendering notification ', edge?.node?.notificationType);
           switch (edge?.node?.notificationType) {
@@ -105,7 +106,7 @@ export default function NotificationScreen() {
           }
         }}
       />
-    </>
+    </View>
   );
 }
 
@@ -113,7 +114,6 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     paddingBottom: 56,
-    alignItems: 'center',
     paddingHorizontal: 4,
   },
   divider: {
@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
   },
   empty: {
     ...StyleSheet.absoluteFillObject,
+    height: '100%',
     flexGrow: 1,
     flex: 1,
     alignSelf: 'center',

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import noop from 'lodash/noop';
 import { uninitializedHandler } from 'app/api/crud/factory';
-import { useLoad } from 'app/api/crud';
-import { IDialogContextSubstate } from '../hooks/useDialog';
+import { useLoad } from 'app/api/crud/useLoad';
+import type { IDialogContextSubstate } from '../hooks/useDialog';
 
 interface ILoadContext {
   load: ReturnType<typeof useLoad>;

@@ -3,11 +3,11 @@ import { useForm } from 'react-hook-form';
 import { PlaneEssentialsFragment } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 
 import { isEqual } from 'lodash';
-import { useAircrafts } from 'app/api/crud';
+import { useAircrafts } from 'app/api/crud/useAircrafts';
 import { useNotifications } from 'app/providers/notifications';
 
 export type AircraftFields = {

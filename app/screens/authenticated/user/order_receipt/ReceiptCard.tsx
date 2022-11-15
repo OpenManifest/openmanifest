@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { List } from 'react-native-paper';
 import { Wallet } from 'app/api/schema.d';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import {
   DropzoneEssentialsFragment,
   DropzoneUserEssentialsFragment,

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { FormTextField } from 'app/components/input/text/TextField';
 import { List } from 'react-native-paper';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 import {
   TicketTypeEssentialsFragment,
   TicketTypeExtraEssentialsFragment,
