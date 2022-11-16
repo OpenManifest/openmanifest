@@ -1,6 +1,7 @@
 import { DropzoneUserEssentialsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { truncate } from 'lodash';
 import * as React from 'react';
+import { View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
@@ -50,16 +51,20 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
     [backgroundColor, color, small]
   );
 
-  return !allowed ? (
-    <Chip {...{ backgroundColor, small, color }} icon="shield-account">
-      {value?.user?.name || 'No LM'}
-    </Chip>
-  ) : (
-    <Select<DropzoneUserEssentialsFragment>
-      value={selected}
-      options={options}
-      renderAnchor={renderAnchor}
-      onChange={onSelect}
-    />
+  return (
+    <View style={{ maxWidth: 100 }}>
+      {!allowed ? (
+        <Chip {...{ backgroundColor, small, color }} icon="shield-account">
+          {value?.user?.name || 'No LM'}
+        </Chip>
+      ) : (
+        <Select<DropzoneUserEssentialsFragment>
+          value={selected}
+          options={options}
+          renderAnchor={renderAnchor}
+          onChange={onSelect}
+        />
+      )}
+    </View>
   );
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Avatar, Caption, Divider, Paragraph, Title, TouchableRipple } from 'react-native-paper';
+import { Caption, Divider, Paragraph, Title, TouchableRipple } from 'react-native-paper';
 import format from 'date-fns/format';
 import color from 'color';
 import { openURL } from 'expo-linking';
@@ -10,6 +10,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import startCase from 'lodash/startCase';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
+import UserAvatar from 'app/components/UserAvatar';
 
 interface IUserHeader {
   dropzoneUser?: DropzoneUserProfileFragment;
@@ -38,20 +39,18 @@ export default function UserHeader(props: IUserHeader) {
   const actingPermissions = (
     dropzoneUser?.permissions?.filter((name) => /^actAs/.test(name)) || []
   ).map((str) => badgesInitials[str as keyof typeof badgesInitials]);
+
+  console.log('image', dropzoneUser?.user?.image);
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <View style={styles.avatarContainer}>
         <View style={{ flex: 1 / 3, alignItems: 'center', justifyContent: 'center' }}>
           <TouchableRipple onPress={onPressAvatar}>
-            {!dropzoneUser?.user?.image ? (
-              <Avatar.Icon size={80} icon="account" />
-            ) : (
-              <Avatar.Image
-                size={80}
-                source={{ uri: dropzoneUser?.user.image }}
-                style={{ backgroundColor: palette.primary.light }}
-              />
-            )}
+            <UserAvatar
+              image={dropzoneUser?.user?.image}
+              name={dropzoneUser?.user?.name}
+              size={80}
+            />
           </TouchableRipple>
         </View>
         <View style={styles.titleContainer}>

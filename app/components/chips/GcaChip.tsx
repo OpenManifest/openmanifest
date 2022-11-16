@@ -4,6 +4,7 @@ import { useTheme } from 'react-native-paper';
 import Select, { ISelectOption } from 'app/components/input/select/Select';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import { truncate } from 'lodash';
+import { View } from 'react-native';
 import Chip from './Chip';
 
 import { Permission } from '../../api/schema.d';
@@ -63,16 +64,20 @@ export default function GCAChip(props: IGCAChipSelect) {
     [backgroundColor, color, small]
   );
 
-  return !allowed ? (
-    <Chip {...{ backgroundColor, small, color }} icon="radio-handheld">
-      {value?.user?.name || 'No gca'}
-    </Chip>
-  ) : (
-    <Select<DropzoneUserEssentialsFragment>
-      value={selected}
-      options={options}
-      onChange={onSelect}
-      renderAnchor={renderAnchor}
-    />
+  return (
+    <View style={{ maxWidth: 100 }}>
+      {!allowed ? (
+        <Chip {...{ backgroundColor, small, color }} icon="radio-handheld">
+          {value?.user?.name || 'No gca'}
+        </Chip>
+      ) : (
+        <Select<DropzoneUserEssentialsFragment>
+          value={selected}
+          options={options}
+          onChange={onSelect}
+          renderAnchor={renderAnchor}
+        />
+      )}
+    </View>
   );
 }

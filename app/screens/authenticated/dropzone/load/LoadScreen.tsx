@@ -22,6 +22,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { Divider } from 'react-native-paper';
 import { useNotifications } from 'app/providers/notifications';
+import { Screen } from 'app/components/layout';
 import ActionButton from './ActionButton';
 import Header from './Header';
 import InfoGrid from './InfoGrid';
@@ -33,7 +34,11 @@ export type LoadScreenRoute = {
     loadId: string;
   };
 };
-
+/**
+ *
+ *
+ * @returns
+ */
 function LoadScreen() {
   const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
@@ -157,7 +162,7 @@ function LoadScreen() {
   }, [canManifestGroup, canManifestGroupWithSelfOnly, currentUser, dispatch, load]);
 
   return (
-    <View style={{ height: '100%', backgroundColor: theme.colors.background }}>
+    <Screen fullWidth scrollable={Platform.OS !== 'web'}>
       <Header
         load={load || undefined}
         renderBadges={() => (
@@ -249,6 +254,7 @@ function LoadScreen() {
       {/* <CardView {...{ load, loading, refetch, onSlotPress, onDeletePress: onDeleteSlot }} /> */}
       <Divider />
       <TableView
+        scrollable={Platform.OS === 'web'}
         {...{
           slots: load?.slots?.filter(Boolean) || [],
           load,
@@ -269,7 +275,7 @@ function LoadScreen() {
         }}
         onSuccess={() => dispatch(actions.forms.manifestGroup.setOpen(false))}
       />
-    </View>
+    </Screen>
   );
 }
 

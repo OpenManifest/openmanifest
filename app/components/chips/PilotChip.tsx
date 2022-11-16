@@ -2,6 +2,7 @@ import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import { truncate } from 'lodash';
 import * as React from 'react';
+import { View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
@@ -54,7 +55,11 @@ export default function PilotChip(props: IPilotChipSelect) {
     openMenu(): void;
   }> = React.useCallback(
     ({ item, openMenu }) => (
-      <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="account-tie-hat">
+      <Chip
+        {...{ backgroundColor, small, color, onPress: openMenu }}
+        style={{ maxWidth: 100 }}
+        icon="account-tie-hat"
+      >
         {truncate(item?.label || 'No Pilot', { length: 12 })}
       </Chip>
     ),
@@ -62,15 +67,17 @@ export default function PilotChip(props: IPilotChipSelect) {
   );
 
   return !allowed ? (
-    <Chip {...{ backgroundColor, small, color }} icon="account-tie-hat">
+    <Chip {...{ backgroundColor, small, color }} style={{ maxWidth: 146 }} icon="account-tie-hat">
       {value?.user?.name || 'No Pilot'}
     </Chip>
   ) : (
-    <Select<DropzoneUserEssentialsFragment>
-      value={selected}
-      options={options}
-      renderAnchor={renderAnchor}
-      onChange={onSelect}
-    />
+    <View style={{ maxWidth: 146 }}>
+      <Select<DropzoneUserEssentialsFragment>
+        value={selected}
+        options={options}
+        renderAnchor={renderAnchor}
+        onChange={onSelect}
+      />
+    </View>
   );
 }
