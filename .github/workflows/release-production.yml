@@ -1,6 +1,6 @@
-name: Publish production
+name: Publish Production
 on:
-  workflow_dispatch:
+  push:
     branches:
       - main
 jobs:
@@ -9,12 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - uses: expo/expo-github-action@v6
+      - uses: expo/expo-github-action@v7
         with:
-          expo-version: 4.x
+          expo-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
       - run: yarn install
       - run: yarn ts:graphql:production && yarn typecheck
@@ -22,30 +22,34 @@ jobs:
       - run: yarn web:build:production
         env:
           GOOGLE_MAPS_WEB: ${{ secrets.GOOGLE_MAPS_WEB }}
+          GOOGLE_MAPS_IOS: ${{ secrets.GOOGLE_MAPS_IOS }}
+          GOOGLE_MAPS_ANDROID: ${{ secrets.GOOGLE_MAPS_ANDROID }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_API_KEY: ${{ secrets.SENTRY_API_KEY }}
           NODE_OPTIONS: --max_old_space_size=4096
+          APPSIGNAL_PRODUCTION_API_KEY: ${{ secrets.APPSIGNAL_PRODUCTION_API_KEY }}
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           publish_dir: ./web-build-prod
           deploy_key: ${{ secrets.WEB_DEPLOY_KEY_PRODUCTION }}
           external_repository: OpenManifest/openmanifest-web
-          cname: openmanifest.org
+          cname: www.openmanifest.org
   publish-expo-production:
     name: Publish Expo
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - uses: expo/expo-github-action@v6
+      - uses: expo/expo-github-action@v7
         with:
-          expo-version: 4.x
+          expo-version: latest
+          eas-version: 2.6.0
           token: ${{ secrets.EXPO_TOKEN }}
       - run: yarn install
-      - run: yarn ts:graphql:production && yarn typecheck
+      - run: yarn ts:graphql:prod && yarn typecheck
         name: Ensure server compatibility
       - run: yarn expo:publish:prod
         env:
@@ -56,3 +60,4 @@ jobs:
           EXPO_ENV: production
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_API_KEY: ${{ secrets.SENTRY_API_KEY }}
+          APPSIGNAL_PRODUCTION_API_KEY: ${{ secrets.APPSIGNAL_PRODUCTION_API_KEY }}

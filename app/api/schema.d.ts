@@ -681,11 +681,12 @@ export enum EventLevel {
   Info = 'info'
 }
 
-export type Extra = SellableItem & {
+export type Extra = AnyResource & SellableItem & {
   __typename?: 'Extra';
   cost: Scalars['Float'];
   createdAt: Scalars['ISO8601DateTime'];
   dropzone: Dropzone;
+  guid: Scalars['ID'];
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   ticketTypes: Array<TicketType>;
