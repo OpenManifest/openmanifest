@@ -1,6 +1,7 @@
 import { PlaneEssentialsFragment } from 'app/api/operations';
 import { truncate } from 'lodash';
 import * as React from 'react';
+import { View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { usePlanesQuery } from '../../api/reflection';
 import { Permission } from '../../api/schema.d';
@@ -50,7 +51,11 @@ export default function PlaneChip(props: IPlaneChipSelect) {
     openMenu(): void;
   }> = React.useCallback(
     ({ item, openMenu }) => (
-      <Chip {...{ backgroundColor, small, color, onPress: openMenu }} icon="airplane">
+      <Chip
+        {...{ backgroundColor, small, color, onPress: openMenu }}
+        style={{ maxWidth: 100 }}
+        icon="airplane"
+      >
         {truncate(item?.label || 'No Plane', { length: 12 })}
       </Chip>
     ),
@@ -58,15 +63,17 @@ export default function PlaneChip(props: IPlaneChipSelect) {
   );
 
   return !allowed ? (
-    <Chip {...{ backgroundColor, small, color }} icon="airplane">
+    <Chip {...{ backgroundColor, small, color }} style={{ maxWidth: 100 }} icon="airplane">
       {value?.name || 'No Plane'}
     </Chip>
   ) : (
-    <Select<PlaneEssentialsFragment>
-      value={selected}
-      options={options}
-      renderAnchor={renderAnchor}
-      onChange={onSelect}
-    />
+    <View style={{ maxWidth: 100 }}>
+      <Select<PlaneEssentialsFragment>
+        value={selected}
+        options={options}
+        renderAnchor={renderAnchor}
+        onChange={onSelect}
+      />
+    </View>
   );
 }

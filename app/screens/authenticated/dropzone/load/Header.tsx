@@ -8,6 +8,7 @@ import { LoadEssentialsFragment } from 'app/api/operations';
 import { useAppSelector } from 'app/state';
 import { format } from 'date-fns/esm';
 import parseISO from 'date-fns/parseISO';
+import { DateTime } from 'luxon';
 import Countdown from '../manifest/LoadCard/Countdown';
 
 interface ILoadHeader {
@@ -29,7 +30,7 @@ export default function UserHeader(props: ILoadHeader) {
     >
       <View style={styles.avatarContainer}>
         <View style={{ flex: 1 / 3, alignItems: 'center', justifyContent: 'center' }}>
-          {load?.dispatchAt && isAfter(load.dispatchAt * 1000, new Date()) ? (
+          {load?.dispatchAt && DateTime.fromSeconds(load.dispatchAt) > DateTime.local() ? (
             <Countdown
               end={new Date(load.dispatchAt * 1000)}
               variant={theme.dark ? 'light' : 'dark'}

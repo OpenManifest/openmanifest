@@ -51,6 +51,7 @@ function LoadCard(props: ILoadCardSmall) {
         margin: 16,
         borderRadius: 8,
         minWidth: 300,
+        maxWidth: 450,
         opacity: ['cancelled', 'landed'].includes(load?.state || '') ? 0.5 : 1.0,
       }}
       elevation={1}
@@ -127,6 +128,7 @@ const styles = StyleSheet.create({
   cardContent: {
     marginVertical: 8,
     overflow: 'hidden',
+    maxWidth: 450,
     flexDirection: 'row',
   },
   smallChip: {

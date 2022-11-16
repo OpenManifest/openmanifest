@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, RefreshControl } from 'react-native';
+import { StyleSheet, RefreshControl, View } from 'react-native';
 import { FAB, DataTable, ProgressBar, useTheme } from 'react-native-paper';
 import { useIsFocused } from '@react-navigation/core';
 import { Permission } from 'app/api/schema.d';
@@ -80,21 +80,23 @@ export default function PlanesScreen() {
             <DataTable.Title numeric>Slots</DataTable.Title>
           </DataTable.Header>
           {aircrafts?.map((plane) => (
-            <SwipeActions
-              key={`plane-${plane.id}`}
-              disabled={!canDeletePlane}
-              rightAction={{
-                label: 'Delete',
-                backgroundColor: 'red',
-                onPress: createArchiveAircraftHandler(plane),
-              }}
-            >
-              <DataTable.Row pointerEvents="none" onPress={createEditAircraftHandler(plane)}>
-                <DataTable.Cell>{plane.name}</DataTable.Cell>
-                <DataTable.Cell numeric>{plane.registration}</DataTable.Cell>
-                <DataTable.Cell numeric>{plane.maxSlots}</DataTable.Cell>
-              </DataTable.Row>
-            </SwipeActions>
+            <View style={{ height: 46 }}>
+              <SwipeActions
+                key={`plane-${plane.id}`}
+                disabled={!canDeletePlane}
+                rightAction={{
+                  label: 'Delete',
+                  backgroundColor: 'red',
+                  onPress: createArchiveAircraftHandler(plane),
+                }}
+              >
+                <DataTable.Row pointerEvents="none" onPress={createEditAircraftHandler(plane)}>
+                  <DataTable.Cell>{plane.name}</DataTable.Cell>
+                  <DataTable.Cell numeric>{plane.registration}</DataTable.Cell>
+                  <DataTable.Cell numeric>{plane.maxSlots}</DataTable.Cell>
+                </DataTable.Row>
+              </SwipeActions>
+            </View>
           ))}
         </DataTable>
       )}

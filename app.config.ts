@@ -2,7 +2,7 @@ import { ExpoConfig, ConfigContext } from '@expo/config';
 import 'dotenv/config';
 
 const BACKEND_ENVIRONMENTS = {
-  development: 'http://127.0.0.1:5000/graphql',
+  development: 'http://192.168.0.106:5000/graphql',
   staging: 'https://devapi.openmanifest.org/graphql',
   default: 'https://devapi.openmanifest.org/graphql',
   production: 'https://api.openmanifest.org/graphql',

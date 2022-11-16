@@ -10,20 +10,28 @@ export interface ISlotsTableProps {
   load?: LoadDetailsFragment | null;
   loading?: boolean;
   fields?: SlotFields[];
+  scrollable?: boolean;
   onDeletePress(slot: SlotDetailsFragment): void;
   onSlotPress(slot: SlotDetailsFragment): void;
   onSlotGroupPress(slots: SlotDetailsFragment[]): void;
   onAvailableSlotPress(): void;
 }
 export default function SlotsTable(props: ISlotsTableProps) {
-  const { load, fields, onDeletePress, onAvailableSlotPress, onSlotGroupPress, onSlotPress } =
-    props;
+  const {
+    load,
+    fields,
+    onDeletePress,
+    scrollable = false,
+    onAvailableSlotPress,
+    onSlotGroupPress,
+    onSlotPress,
+  } = props;
 
   console.log(fields);
 
   return (
-    <Surface style={{ height: '100%' }}>
-      <DataTable style={{ height: '100%', paddingBottom: 80 }}>
+    <Surface style={scrollable ? { height: '100%' } : undefined}>
+      <DataTable style={scrollable ? { height: '100%', paddingBottom: 80 } : undefined}>
         <DataTable.Header style={{ width: '100%' }}>
           <DataTable.Title style={rowStyles.avatarCell}>{null}</DataTable.Title>
           <DataTable.Title style={rowStyles.nameCell}>

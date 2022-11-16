@@ -72,32 +72,34 @@ export default function TicketTypesScreen() {
         </DataTable.Header>
 
         {ticketTypes?.map((ticketType) => (
-          <SwipeActions
-            rightAction={{
-              label: 'Delete',
-              backgroundColor: 'red',
-              onPress: createArchiveTicketHandler(ticketType),
-            }}
-          >
-            <DataTable.Row
-              onPress={() => {
-                dialogs.ticketType.open({ original: ticketType });
+          <View style={{ height: 46 }}>
+            <SwipeActions
+              rightAction={{
+                label: 'Delete',
+                backgroundColor: 'red',
+                onPress: createArchiveTicketHandler(ticketType),
               }}
-              pointerEvents="none"
             >
-              <DataTable.Cell>{ticketType.name}</DataTable.Cell>
-              <DataTable.Cell numeric>${ticketType.cost}</DataTable.Cell>
-              <DataTable.Cell numeric>{ticketType.altitude}</DataTable.Cell>
-              <DataTable.Cell numeric>
-                <View pointerEvents="box-none">
-                  <Switch
-                    onValueChange={createToggleManifestSelfHandler(ticketType)}
-                    value={!!ticketType.allowManifestingSelf}
-                  />
-                </View>
-              </DataTable.Cell>
-            </DataTable.Row>
-          </SwipeActions>
+              <DataTable.Row
+                onPress={() => {
+                  dialogs.ticketType.open({ original: ticketType });
+                }}
+                pointerEvents="none"
+              >
+                <DataTable.Cell>{ticketType.name}</DataTable.Cell>
+                <DataTable.Cell numeric>${ticketType.cost}</DataTable.Cell>
+                <DataTable.Cell numeric>{ticketType.altitude}</DataTable.Cell>
+                <DataTable.Cell numeric>
+                  <View pointerEvents="box-none">
+                    <Switch
+                      onValueChange={createToggleManifestSelfHandler(ticketType)}
+                      value={!!ticketType.allowManifestingSelf}
+                    />
+                  </View>
+                </DataTable.Cell>
+              </DataTable.Row>
+            </SwipeActions>
+          </View>
         ))}
       </DataTable>
 

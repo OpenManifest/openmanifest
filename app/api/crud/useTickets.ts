@@ -41,6 +41,7 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
   } = useDropzoneContext();
   const { loading, fetchMore, data, called, variables: queryVariables } = query;
   const ticketTypes = React.useMemo(() => data?.ticketTypes, [data?.ticketTypes]);
+  console.debug({ loadingTickets: loading, ticketTypes });
   const [createTicket] = useCreateTicketTypeMutation();
   const [updateTicket] = useUpdateTicketTypeMutation();
   const [archiveTicket] = useArchiveTicketTypeMutation();
@@ -104,7 +105,11 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
           attributes: { ...attributes, dropzoneId: Number(variables?.dropzone || dropzone?.id) },
         },
         refetchQueries: [
-          { query: TicketTypeExtrasDocument, variables: { dropzoneId: dropzone?.id } },
+          {
+            query: TicketTypeExtrasDocument,
+            variables: { dropzoneId: dropzone?.id },
+            fetchPolicy: 'network-only',
+          },
         ],
       });
 

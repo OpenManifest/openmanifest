@@ -75,15 +75,17 @@ export default function UserRigCard(props: IUserRigCard) {
       <Card.Content>
         <Divider style={{ marginBottom: 8 }} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <RigSelect
-            small
-            variant="chip"
-            dropzoneUserId={dropzoneUserId ? Number(dropzoneUserId) : undefined}
-            onChange={onChangeRig}
-            value={selectedRig}
-            tandem={isTandem}
-            autoSelectFirst
-          />
+          <View style={{ maxWidth: 128 }}>
+            <RigSelect
+              small
+              variant="chip"
+              dropzoneUserId={dropzoneUserId ? Number(dropzoneUserId) : undefined}
+              onChange={onChangeRig}
+              value={selectedRig}
+              tandem={isTandem}
+              autoSelectFirst
+            />
+          </View>
           {!selectedRig || !exitWeight || !selectedRig.canopySize ? null : (
             <Chip small icon="escalator-down" mode="outlined" disabled>
               {calculateWingLoading(exitWeight, selectedRig.canopySize)}

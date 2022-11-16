@@ -19,8 +19,10 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
   const notify = useNotifications();
   const httpBatchLink = React.useMemo(() => {
     console.log('Release channel', Update.releaseChannel);
-    const environment = Platform.OS === 'web' ? config?.environment : Update.releaseChannel;
+    const environment =
+      Platform.OS === 'web' ? config?.environment : config?.environment || Update.releaseChannel;
     const uri = environment in (config?.urls || {}) ? config?.urls[environment] : config?.url;
+    console.warn({ uri, environment });
     return new BatchHttpLink({
       batchDebounce: true,
       batchMax: 10,
