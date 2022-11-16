@@ -981,10 +981,11 @@ enum EventLevel {
   info
 }
 
-type Extra implements SellableItem {
+type Extra implements AnyResource & SellableItem {
   cost: Float!
   createdAt: ISO8601DateTime!
   dropzone: Dropzone!
+  guid: ID!
   id: ID!
   name: String
   ticketTypes: [TicketType!]!
