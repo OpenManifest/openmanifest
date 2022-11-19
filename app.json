@@ -35,10 +35,10 @@
         "photosPermission": "OpenManifest needs access to photos to let you upload avatars",
         "fbAppId": "686479516065674",
         "fbAppName": "OpenManifest",
-        "fbAppUrl": "https://openmanifest.org",
+        "fbAppUrl": "https://www.openmanifest.org",
         "facebookScheme": "fb686479516065674"
       },
-      "buildNumber": "40",
+      "buildNumber": "42",
       "bundleIdentifier": "com.dangertechnologies.openmanifest",
       "supportsTablet": true,
       "icon": "./assets/images/logo-black-white-bg.png",

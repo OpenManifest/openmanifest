@@ -35,7 +35,7 @@ export function SetupStepCard(props: ISetupStepCard) {
 }
 
 const styles = StyleSheet.create({
-  card: { marginHorizontal: 16, borderRadius: 8 },
+  card: { marginHorizontal: 16, borderRadius: 8, marginVertical: 16 },
   content: { paddingHorizontal: 4, paddingVertical: 4 },
   icon: { alignSelf: 'center' },
 });

@@ -1,9 +1,8 @@
 import { useIsFocused } from '@react-navigation/core';
 import * as React from 'react';
-import { RefreshControl, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { RefreshControl, FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Avatar, Card, FAB, List, ProgressBar, useTheme } from 'react-native-paper';
 
-import { FlatList } from 'react-native-gesture-handler';
 import SkeletonContent from 'app/components/Skeleton';
 import NoResults from 'app/components/NoResults';
 import { Permission } from 'app/api/schema.d';
@@ -11,7 +10,10 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import CreateGhostDialog from 'app/components/dialogs/Ghost';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
-import { DropzoneUserEssentialsFragment } from 'app/api/operations';
+import { DropzoneUserEssentialsFragment, DropzoneUsersQueryVariables } from 'app/api/operations';
+import { useDropzoneContext } from 'app/providers';
+import omitBy from 'lodash/omitBy';
+import isEmpty from 'lodash/isEmpty';
 import { useUserNavigation } from '../useUserNavigation';
 
 function UserCardSkeleton() {
@@ -77,12 +79,20 @@ export default function UsersScreen() {
   const state = useAppSelector((root) => root.screens.users);
   const ghostForm = useAppSelector((root) => root.forms.ghost);
   const dispatch = useAppDispatch();
+  const {
+    dropzone: { dropzone },
+    dialogs,
+  } = useDropzoneContext();
 
   const { data, loading, refetch } = useDropzoneUsersQuery({
-    variables: {
-      dropzoneId: global.currentDropzoneId?.toString() as string,
-      search: state.searchText,
-    },
+    variables: omitBy<DropzoneUsersQueryVariables>(
+      {
+        dropzoneId: dropzone?.id as string,
+        search: state.searchText,
+      },
+      isEmpty
+    ) as DropzoneUsersQueryVariables,
+    skip: !dropzone?.id,
     fetchPolicy: 'cache-and-network',
   });
 
@@ -102,6 +112,7 @@ export default function UsersScreen() {
   const numColumns = Math.floor(width / cardWidth) || 1;
 
   const users = React.useMemo(() => data?.dropzoneUsers?.edges || [], [data?.dropzoneUsers?.edges]);
+  console.debug({ users, numColumns });
   const initialLoading = !users?.length && loading;
   const theme = useTheme();
 
@@ -129,14 +140,19 @@ export default function UsersScreen() {
         refreshing={loading}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
         numColumns={numColumns}
-        contentContainerStyle={{ width: '100%', alignSelf: 'center' }}
+        contentContainerStyle={{ width: '100%' }}
         renderItem={({ item }) =>
           item.id === '__LOADING__' ? (
             <UserCardSkeleton />
           ) : (
             <Card
               key={`user-${item?.id}`}
-              style={{ margin: 0, marginVertical: 0, borderRadius: 2, width: '100%' }}
+              style={{
+                margin: 0,
+                marginVertical: 0,
+                borderRadius: 2,
+                width: `${100 / numColumns}%`,
+              }}
             >
               <Card.Content
                 style={{ paddingLeft: 0, paddingTop: 4, paddingRight: 0, paddingBottom: 4 }}
@@ -187,7 +203,7 @@ export default function UsersScreen() {
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           small
           icon="plus"
-          onPress={() => dispatch(actions.forms.ghost.setOpen(true))}
+          onPress={dialogs.createUser.open}
           label="Add user"
         />
       )}

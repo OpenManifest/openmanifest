@@ -28,6 +28,9 @@ jobs:
           SENTRY_API_KEY: ${{ secrets.SENTRY_API_KEY }}
           NODE_OPTIONS: --max_old_space_size=4096
           APPSIGNAL_STAGING_API_KEY: ${{ secrets.APPSIGNAL_STAGING_API_KEY }}
+          APPSIGNAL_PRODUCTION_API_KEY: ${{ secrets.APPSIGNAL_PRODUCTION_API_KEY }}
+          FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
+          FACEBOOK_CLIENT_TOKEN: ${{ secrets.FACEBOOK_CLIENT_TOKEN }}
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -61,3 +64,6 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_API_KEY: ${{ secrets.SENTRY_API_KEY }}
           APPSIGNAL_STAGING_API_KEY: ${{ secrets.APPSIGNAL_STAGING_API_KEY }}
+          APPSIGNAL_PRODUCTION_API_KEY: ${{ secrets.APPSIGNAL_PRODUCTION_API_KEY }}
+          FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
+          FACEBOOK_CLIENT_TOKEN: ${{ secrets.FACEBOOK_CLIENT_TOKEN }}

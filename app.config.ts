@@ -2,7 +2,7 @@ import { ExpoConfig, ConfigContext } from '@expo/config';
 import 'dotenv/config';
 
 const BACKEND_ENVIRONMENTS = {
-  development: 'http://192.168.0.106:5000/graphql',
+  development: 'http://127.0.0.1:5000/graphql',
   staging: 'https://devapi.openmanifest.org/graphql',
   default: 'https://devapi.openmanifest.org/graphql',
   production: 'https://api.openmanifest.org/graphql',
@@ -22,12 +22,21 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ...config,
     name: 'OpenManifest',
     slug: 'openmanifest',
+    plugins: [
+      [
+        "expo-facebook", {
+          userTrackingPermission: false
+        }
+      ]
+    ],
 
     // All values in extra will be passed to your app.
     extra: {
       url: BACKEND_ENVIRONMENTS[process.env.EXPO_ENV],
       urls: BACKEND_ENVIRONMENTS,
       environment: process.env.EXPO_ENV,
+      facebookAppId: process.env.FACEBOOK_APP_ID,
+      facebookClientToken: process.env.FACEBOOK_CLIENT_TOKEN,
       googleMapsAndroid: process.env.GOOGLE_MAPS_ANDROID,
       googleMapsIos: process.env.GOOGLE_MAPS_IOS,
       googleMapsWeb: process.env.GOOGLE_MAPS_WEB,
