@@ -9,18 +9,20 @@ import {
   DropzoneUserQueryVariables,
   OrderEssentialsFragment,
   UpdateDropzoneUserMutationVariables,
+  UserEssentialsFragment,
 } from '../operations';
 import {
   DropzoneUserProfileDocument,
   DropzoneUserProfileFragmentDoc,
   DropzoneUsersDocument,
+  useCreateGhostMutation,
   useCreateOrderMutation,
   useDropzoneUserProfileLazyQuery,
   useGrantPermissionMutation,
   useRevokePermissionMutation,
   useUpdateDropzoneUserMutation,
 } from '../reflection';
-import { Permission } from '../schema.d';
+import { GhostInput, Permission } from '../schema.d';
 import createCRUDContext, { TMutationResponse, uninitializedHandler } from './factory';
 
 function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
@@ -28,6 +30,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
   const [updateMutation] = useUpdateDropzoneUserMutation();
   const [getProfile, query] = useDropzoneUserProfileLazyQuery();
   const [mutationCreateOrder] = useCreateOrderMutation();
+  const [mutationCreateGhost] = useCreateGhostMutation();
   const {
     dropzone: { dropzone },
   } = useDropzoneContext();
@@ -41,6 +44,36 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
     }
   }, [getProfile, id, query?.variables?.id]);
 
+  const create = React.useCallback(
+    async function CreateGhost(
+      attributes: GhostInput
+    ): Promise<TMutationResponse<{ user: UserEssentialsFragment }>> {
+      try {
+        const response = await mutationCreateGhost({
+          variables: attributes,
+          refetchQueries: [
+            DropzoneUsersDocument,
+            { query: DropzoneUsersDocument, variables: { dropzoneId: dropzone?.id } },
+          ],
+        });
+
+        if (response?.data?.createGhost?.user?.id) {
+          return { user: response?.data?.createGhost?.user };
+        }
+        return {
+          error: response?.data?.createGhost?.errors?.[0],
+          fieldErrors: response?.data?.createGhost?.fieldErrors || undefined,
+        };
+      } catch (error) {
+        console.debug('CreateGhost failed', error);
+        if (error instanceof Error) {
+          appSignal?.sendError(error);
+        }
+        return { error: 'Oh no, something went wrong' };
+      }
+    },
+    [appSignal, dropzone?.id, mutationCreateGhost]
+  );
   const update = React.useCallback(
     async function UpdateDropzoneUser(
       attributes: UpdateDropzoneUserMutationVariables
@@ -238,6 +271,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
       loading: query?.loading,
       dropzoneUser: query?.data?.dropzoneUser,
       refetch: query?.refetch,
+      create,
       update,
       addCredits,
       grantPermission,
@@ -248,6 +282,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
       addCredits,
       grantPermission,
       query?.refetch,
+      create,
       query?.data?.dropzoneUser,
       query?.loading,
       revokePermission,
@@ -264,6 +299,7 @@ const { Provider: UserProfileProvider, useContext: useUserProfileContext } = cre
     dropzoneUser: null,
     refetch: uninitializedHandler as never,
     update: uninitializedHandler as never,
+    create: uninitializedHandler as never,
     addCredits: uninitializedHandler as never,
     withdrawCredits: uninitializedHandler as never,
     grantPermission: uninitializedHandler as never,

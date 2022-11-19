@@ -5,6 +5,7 @@ import { useDropzone } from 'app/api/crud/useDropzone';
 import type { IPlaneDialogProps } from 'app/forms/aircraft/Dialog';
 import type { ITicketTypeDialog } from 'app/forms/ticket_type/Dialog';
 import type { ITicketTypeAddonDialog } from 'app/forms/ticket_type_addon/Dialog';
+import type { ICreateGhostDialog } from 'app/forms/create_user/Dialog';
 import type { IDialogContextSubstate } from '../hooks/useDialog';
 
 interface IDropzoneContext {
@@ -13,6 +14,7 @@ interface IDropzoneContext {
     aircraft: IDialogContextSubstate<Pick<IPlaneDialogProps, 'initial' | 'original'>>;
     ticketType: IDialogContextSubstate<Pick<ITicketTypeDialog, 'initial' | 'original'>>;
     ticketTypeAddon: IDialogContextSubstate<Pick<ITicketTypeAddonDialog, 'initial' | 'original'>>;
+    createUser: IDialogContextSubstate<Pick<ICreateGhostDialog, 'initial' | 'original'>>;
   };
 }
 
@@ -28,6 +30,11 @@ export const INITIAL_CONTEXT: IDropzoneContext = {
   },
   dialogs: {
     aircraft: {
+      visible: false,
+      close: noop,
+      open: noop,
+    },
+    createUser: {
       visible: false,
       close: noop,
       open: noop,

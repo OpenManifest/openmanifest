@@ -67,6 +67,8 @@ export default function Apollo({ children }: { children: React.ReactNode }) {
         return {
           headers: {
             ...headers,
+            'Fly-Prefer-Region': 'syd',
+            'Fly-Region': 'syd',
             ...(credentials?.accessToken
               ? {
                   Authorization: `Bearer ${credentials.accessToken}`,
