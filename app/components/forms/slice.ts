@@ -1,6 +1,5 @@
 import * as dropzone from './dropzone/slice';
 import * as dropzoneUser from './dropzone_user/slice';
-import * as ghost from './ghost/slice';
 import * as rig from './rig/slice';
 import * as rigInspection from './rig_inspection/slice';
 import * as rigInspectionTemplate from './rig_inspection_template/slice';
@@ -12,7 +11,6 @@ import * as weather from './weather_conditions/slice';
 export const initialState = {
   dropzone: dropzone.initialState,
   dropzoneUser: dropzoneUser.initialState,
-  ghost: ghost.initialState,
   rig: rig.initialState,
   rigInspection: rigInspection.initialState,
   rigInspectionTemplate: rigInspectionTemplate.initialState,
@@ -24,7 +22,6 @@ export const initialState = {
 export const reducers = {
   dropzone: dropzone.default,
   dropzoneUser: dropzoneUser.default,
-  ghost: ghost.default,
   rig: rig.default,
   rigInspection: rigInspection.default,
   rigInspectionTemplate: rigInspectionTemplate.default,

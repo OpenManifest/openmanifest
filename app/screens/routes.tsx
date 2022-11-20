@@ -15,7 +15,7 @@ import LeftDrawer, { LeftDrawerRoutes } from './drawers/UserDrawer';
 export const options: LinkingOptions<ReactNavigation.RootParamList> = {
   prefixes: [
     Linking.makeUrl('/'),
-    'https://openmanifest.org',
+    'https://www.openmanifest.org',
     'https://staging.openmanifest.org',
     'openmanifest://',
     'http://localhost:19006',

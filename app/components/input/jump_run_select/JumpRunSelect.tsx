@@ -1,15 +1,11 @@
 import * as React from 'react';
-import { Animated, LayoutRectangle, StyleSheet, View } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {
-  GestureEvent,
-  PanGestureHandler,
-  PanGestureHandlerEventPayload,
-} from 'react-native-gesture-handler';
+import { RotationGestureHandler } from 'react-native-gesture-handler';
 import MapView from 'react-native-maps';
-import { calculateAngle } from '../../../utils/calculateAngle';
 import { mapDegreesToDirections } from '../../../utils/mapDegreesToDirection';
 import { calculateLatLngDelta } from '../../../utils/calculateLatLngDelta';
+import useJumpRunRotation from './useJumpRunRotation';
 
 interface IJumpRunSelectorProps {
   title?: string;
@@ -20,110 +16,30 @@ interface IJumpRunSelectorProps {
 }
 
 export default function JumpRunSelector(props: IJumpRunSelectorProps) {
-  const [rootLayout, setRootLayout] = React.useState<LayoutRectangle>({
-    x: 0,
-    y: 0,
-    height: 0,
-    width: 0,
-  });
-  const { height: MAP_HEIGHT, width: MAP_WIDTH } = rootLayout;
-  const CENTER_Y = rootLayout.height / 2;
-  const CENTER_X = rootLayout.width / 2;
-
+  const { latitude, longitude, value, onChange, title } = props;
+  const { guide, isDragging, jumpRun, layout, plane, rotation } = useJumpRunRotation(value);
+  const { height: MAP_HEIGHT, width: MAP_WIDTH } = layout.dimensions;
+  const CENTER_Y = layout.dimensions.height / 2;
+  const CENTER_X = layout.dimensions.width / 2;
   const hypothenuse = Math.hypot(MAP_WIDTH, MAP_HEIGHT);
 
-  const { latitude, longitude, value, onChange, title } = props;
-  const [isDragging, setDragging] = React.useState(false);
-  const [jumpRun, setJumpRun] = React.useState(value || 0);
-
-  const rotation = React.useRef(new Animated.Value(jumpRun || 0));
-  const opacity = React.useRef(new Animated.Value(0));
-
   React.useEffect(() => {
-    if (!isDragging) {
-      setJumpRun(value);
+    if (!isDragging && jumpRun !== value) {
+      console.debug('Updating jumprun to', jumpRun);
+      onChange?.(jumpRun);
     }
-  }, [isDragging, value]);
-
-  /** ANIMATIONS * */
-  const planePosition = React.useRef(new Animated.Value(hypothenuse || 0));
-  const planeAnimation = React.useRef<Animated.CompositeAnimation>();
-
-  React.useEffect(() => {
-    planeAnimation.current = Animated.loop(
-      Animated.timing(planePosition.current, {
-        duration: 6000,
-        toValue: -hypothenuse / 2,
-        useNativeDriver: true,
-      }),
-      {
-        resetBeforeIteration: true,
-      }
-    );
-  }, [hypothenuse]);
-
-  const onGestureEvent = React.useCallback(
-    (e: GestureEvent<PanGestureHandlerEventPayload>) => {
-      // Stop plane animation
-      planeAnimation.current?.stop();
-      // Reset coordinates
-      planeAnimation.current?.reset();
-      const { nativeEvent } = e;
-      const { x, y } = nativeEvent;
-
-      // Current position on circle
-      const currentCoordinates = {
-        x,
-        y,
-      };
-
-      const angle = calculateAngle(
-        { x: rootLayout.x / 2, y: rootLayout.y / 2 },
-        currentCoordinates
-      );
-      // Find the angle between these coordinates:
-      rotation.current.setValue(angle);
-
-      requestAnimationFrame(() => setJumpRun(angle));
-    },
-    [setJumpRun, rootLayout]
-  );
+  }, [jumpRun, isDragging, onChange, value]);
 
   return (
-    <PanGestureHandler
-      onBegan={() => {
-        setDragging(true);
-        planePosition.current.setValue(hypothenuse / 2);
-        Animated.timing(opacity.current, {
-          duration: 350,
-          toValue: 1,
-          useNativeDriver: true,
-        }).start();
-      }}
-      onEnded={() => {
-        setDragging(false);
-        Animated.timing(opacity.current, {
-          duration: 350,
-          toValue: 0,
-          useNativeDriver: true,
-        }).start();
-        planePosition.current.setValue(hypothenuse / 2);
-        planeAnimation.current?.start();
-        onChange?.(jumpRun);
-      }}
-      {...{ onGestureEvent }}
-    >
-      <View
-        style={StyleSheet.absoluteFill}
-        onLayout={(layout) => setRootLayout(layout.nativeEvent.layout)}
-      >
+    <RotationGestureHandler {...rotation}>
+      <View style={StyleSheet.absoluteFill} {...layout}>
         {title && (
           <Animated.Text
             style={[
               styles.title,
               {
                 marginBottom: 4,
-                opacity: opacity.current.interpolate({
+                opacity: plane.opacity.interpolate({
                   inputRange: [0, 1],
                   outputRange: [1, 0],
                 }),
@@ -157,21 +73,21 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
                 height: hypothenuse,
                 width: isDragging ? 2 : 10,
                 backgroundColor: '#FF1414',
-                opacity: opacity.current.interpolate({
-                  inputRange: [0, 1],
+                opacity: plane.opacity.interpolate({
+                  inputRange: [-100, 100],
                   outputRange: [0.6, 1],
                 }),
                 transform: [
                   {
-                    rotate: rotation.current.interpolate({
-                      inputRange: [0, 360],
-                      outputRange: ['0deg', '360deg'],
+                    rotate: guide.rotation.interpolate({
+                      inputRange: [-100, 100],
+                      outputRange: ['-100rad', '100rad'],
                     }),
                   },
                 ],
               }}
             />
-            {!rootLayout?.width ? null : (
+            {!layout.dimensions?.width ? null : (
               <Animated.View
                 style={[
                   {
@@ -181,32 +97,37 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    opacity: planePosition.current.interpolate({
+                    opacity: plane.position.interpolate({
                       inputRange: [-hypothenuse / 2, 0, hypothenuse / 2],
                       outputRange: [0.0, 1.0, 0.0],
                     }),
                     transform: [
                       {
-                        rotate: rotation.current.interpolate({
-                          inputRange: [0, 360],
-                          outputRange: ['0deg', '360deg'],
+                        rotate: guide.rotation.interpolate({
+                          inputRange: [-100, 100],
+                          outputRange: ['-100rad', '100rad'],
                         }),
                       },
                       {
-                        translateY: planePosition.current,
+                        translateY: plane.position,
                       },
                     ],
                   },
                 ]}
               >
-                <MaterialCommunityIcons name="airplane" size={40} color="#ffffff" />
+                <MaterialCommunityIcons
+                  style={{ transform: [{ rotate: '-45deg' }] }}
+                  name="airplane"
+                  size={40}
+                  color="#ffffff"
+                />
               </Animated.View>
             )}
             <Animated.Text
               style={[
                 styles.degreeLabel,
                 {
-                  opacity: opacity.current,
+                  opacity: plane.opacity,
                   top: CENTER_Y - 75,
                   left: CENTER_X - 100,
                 },
@@ -220,7 +141,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
             style={[
               styles.bottomDegreeLabel,
               {
-                opacity: opacity.current.interpolate({
+                opacity: plane.opacity.interpolate({
                   inputRange: [0, 1],
                   outputRange: [1, 0],
                 }),
@@ -231,7 +152,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
           </Animated.Text>
         </MapView>
       </View>
-    </PanGestureHandler>
+    </RotationGestureHandler>
   );
 }
 

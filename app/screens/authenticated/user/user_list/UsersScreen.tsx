@@ -8,7 +8,6 @@ import NoResults from 'app/components/NoResults';
 import { Permission } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
-import CreateGhostDialog from 'app/components/dialogs/Ghost';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import { DropzoneUserEssentialsFragment, DropzoneUsersQueryVariables } from 'app/api/operations';
 import { useDropzoneContext } from 'app/providers';
@@ -77,7 +76,6 @@ export type UserListRoute = {
 export default function UsersScreen() {
   const global = useAppSelector((root) => root.global);
   const state = useAppSelector((root) => root.screens.users);
-  const ghostForm = useAppSelector((root) => root.forms.ghost);
   const dispatch = useAppDispatch();
   const {
     dropzone: { dropzone },
@@ -207,16 +205,6 @@ export default function UsersScreen() {
           label="Add user"
         />
       )}
-      <CreateGhostDialog
-        open={ghostForm.open}
-        onClose={() => requestAnimationFrame(() => dispatch(actions.forms.ghost.setOpen(false)))}
-        onSuccess={() => {
-          requestAnimationFrame(() => {
-            dispatch(actions.forms.ghost.setOpen(false));
-            refetch();
-          });
-        }}
-      />
     </View>
   );
 }

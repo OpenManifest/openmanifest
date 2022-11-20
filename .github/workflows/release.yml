@@ -2,7 +2,7 @@ name: Publish staging
 on:
   push:
     branches:
-      - main
+      - staging
 jobs:
   publish-web-staging:
     name: Publish Web
