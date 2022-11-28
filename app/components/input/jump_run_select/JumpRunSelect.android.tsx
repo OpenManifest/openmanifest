@@ -16,7 +16,7 @@ interface IJumpRunSelectorProps {
 }
 
 export default function JumpRunSelector(props: IJumpRunSelectorProps) {
-  const { latitude, longitude, value, onChange, title } = props;
+  const { latitude, longitude, value, onChange } = props;
   const { guide, isDragging, jumpRun, layout, plane, rotation } = useJumpRunRotation(value);
   const { height: MAP_HEIGHT, width: MAP_WIDTH } = layout.dimensions;
   const CENTER_Y = layout.dimensions.height / 2;
