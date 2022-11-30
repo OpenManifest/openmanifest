@@ -1,6 +1,6 @@
-mutation UpdateDropzoneUser($userRoleId: Int, $expiresAt: Int, $dropzoneUserId: Int) {
+mutation UpdateDropzoneUser($dropzoneUserId: ID!, $attributes: DropzoneUserInput!) {
   updateDropzoneUser(
-    input: { id: $dropzoneUserId, attributes: { userRoleId: $userRoleId, expiresAt: $expiresAt } }
+    input: { dropzoneUser: $dropzoneUserId, attributes: $attributes }
   ) {
     errors
     fieldErrors {

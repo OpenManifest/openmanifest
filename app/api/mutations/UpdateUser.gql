@@ -1,5 +1,5 @@
 mutation UpdateUser(
-  $dropzoneUser: Int
+  $dropzoneUser: ID
   $name: String
   $phone: String
   $email: String

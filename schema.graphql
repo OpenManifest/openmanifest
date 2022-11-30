@@ -870,7 +870,16 @@ type DropzoneUserEdge {
 
 input DropzoneUserInput {
   credits: Float
+  email: String
+  exitWeight: Float
   expiresAt: Int
+  federationNumber: String
+  image: String
+  license: Int
+  name: String
+  nickname: String
+  phone: String
+  pushToken: String
   userRoleId: Int
 }
 
@@ -2048,7 +2057,7 @@ type Query {
     Returns the last _n_ elements from the list.
     """
     last: Int
-    state: [DropzoneState!] = [public]
+    state: [DropzoneState!] = null
   ): DropzoneConnection!
 
   """
@@ -2480,7 +2489,7 @@ input UpdateDropzoneUserInput {
   A unique identifier for the client performing the mutation.
   """
   clientMutationId: String
-  id: Int
+  dropzoneUser: ID
 }
 
 """
@@ -2766,7 +2775,7 @@ input UpdateUserInput {
   A unique identifier for the client performing the mutation.
   """
   clientMutationId: String
-  dropzoneUser: Int
+  dropzoneUser: ID
 }
 
 """
