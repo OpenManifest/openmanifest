@@ -17,6 +17,7 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
     initialFetchPolicy: 'cache-first',
     variables: variables as LoadQueryVariables,
     skip: !variables?.id,
+    pollInterval: 30000,
   });
 
   const refetch = React.useCallback(() => {
