@@ -107,7 +107,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       if (pushToken && pushToken !== remoteToken) {
         updateUser({
           variables: {
-            dropzoneUser: Number(currentUser.id),
+            dropzoneUser: currentUser.id,
             pushToken,
           },
         });

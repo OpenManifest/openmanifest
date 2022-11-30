@@ -88,7 +88,7 @@ export default function ProfileScreen() {
         // Upload image
         await mutationUpdateUser({
           variables: {
-            dropzoneUser: Number(dropzoneUser?.id),
+            dropzoneUser: dropzoneUser?.id,
             image: `data:image/jpeg;base64,${base64}`,
           },
         });
