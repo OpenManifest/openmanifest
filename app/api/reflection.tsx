@@ -2067,9 +2067,9 @@ export type UpdateDropzoneMutationHookResult = ReturnType<typeof useUpdateDropzo
 export type UpdateDropzoneMutationResult = Apollo.MutationResult<Operation.UpdateDropzoneMutation>;
 export type UpdateDropzoneMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateDropzoneMutation, Operation.UpdateDropzoneMutationVariables>;
 export const UpdateDropzoneUserDocument = gql`
-    mutation UpdateDropzoneUser($userRoleId: Int, $expiresAt: Int, $dropzoneUserId: Int) {
+    mutation UpdateDropzoneUser($dropzoneUserId: ID!, $attributes: DropzoneUserInput!) {
   updateDropzoneUser(
-    input: {id: $dropzoneUserId, attributes: {userRoleId: $userRoleId, expiresAt: $expiresAt}}
+    input: {dropzoneUser: $dropzoneUserId, attributes: $attributes}
   ) {
     errors
     fieldErrors {
@@ -2097,9 +2097,8 @@ export type UpdateDropzoneUserMutationFn = Apollo.MutationFunction<Operation.Upd
  * @example
  * const [updateDropzoneUserMutation, { data, loading, error }] = useUpdateDropzoneUserMutation({
  *   variables: {
- *      userRoleId: // value for 'userRoleId'
- *      expiresAt: // value for 'expiresAt'
  *      dropzoneUserId: // value for 'dropzoneUserId'
+ *      attributes: // value for 'attributes'
  *   },
  * });
  */
@@ -2448,7 +2447,7 @@ export type UpdateTicketTypeMutationHookResult = ReturnType<typeof useUpdateTick
 export type UpdateTicketTypeMutationResult = Apollo.MutationResult<Operation.UpdateTicketTypeMutation>;
 export type UpdateTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>;
 export const UpdateUserDocument = gql`
-    mutation UpdateUser($dropzoneUser: Int, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $license: Int, $exitWeight: Float) {
+    mutation UpdateUser($dropzoneUser: ID, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $license: Int, $exitWeight: Float) {
   updateUser(
     input: {dropzoneUser: $dropzoneUser, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, license: $license, exitWeight: $exitWeight}}
   ) {

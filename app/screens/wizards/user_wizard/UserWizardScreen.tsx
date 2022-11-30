@@ -64,7 +64,7 @@ function UserWizardScreen() {
   const onNicknameNext = React.useCallback(async () => {
     // Update user license
     const result = await mutationUpdateUser.mutate({
-      dropzoneUser: Number(userForm.original?.id),
+      dropzoneUser: userForm.original?.id?.toString(),
       nickname: userForm.fields.nickname.value,
       name: userForm.fields.name.value,
     });
@@ -267,7 +267,7 @@ function UserWizardScreen() {
       },
     });
     await mutationUpdateUser.mutate({
-      dropzoneUser: Number(userForm.original?.id),
+      dropzoneUser: userForm.original?.id,
       exitWeight: Number(userForm.fields.exitWeight?.value),
     });
   }, [
@@ -288,7 +288,7 @@ function UserWizardScreen() {
       ) {
         // Upload image
         await mutationUpdateUser.mutate({
-          dropzoneUser: Number(userForm?.original?.id),
+          dropzoneUser: userForm?.original?.id,
           image: userForm.fields.image.value,
         });
       }
