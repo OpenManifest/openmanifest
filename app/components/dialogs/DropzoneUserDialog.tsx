@@ -62,10 +62,11 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
     try {
       const response = await mutationUpdateDropzoneUser({
         variables: {
-          ...(state.original?.id ? { id: state.original?.id } : {}),
-          userRoleId: Number(state.fields.role.value?.id),
-          expiresAt: state.fields.expiresAt.value,
-          dropzoneUserId: Number(state.original?.id),
+          dropzoneUserId: state.original?.id as string,
+          attributes: {
+            userRoleId: Number(state.fields.role.value?.id),
+            expiresAt: state.fields.expiresAt.value,
+          },
         },
       });
       const result = response.data?.updateDropzoneUser;

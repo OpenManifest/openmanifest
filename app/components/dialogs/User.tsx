@@ -43,7 +43,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
 
   const onSave = React.useCallback(async () => {
     await mutationUpdateUser.mutate({
-      dropzoneUser: Number(state.original?.id),
+      dropzoneUser: state.original?.id,
       name: state.fields.name.value,
       license: !state.fields.license.value?.id ? null : Number(state.fields.license.value?.id),
       phone: state.fields.phone.value,
