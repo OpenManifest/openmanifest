@@ -3,17 +3,18 @@ import * as React from 'react';
 
 import {
   KeyboardAvoidingView,
+  LayoutChangeEvent,
+  LayoutRectangle,
   Platform,
   StyleSheet,
   useWindowDimensions,
   View,
 } from 'react-native';
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
-import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
-import { useAppSelector } from 'app/state';
 import { IWizardStepProps } from './Step';
 import Dots from './Dots';
+import Buttons from './Buttons';
 
 export interface IWizardProps {
   dots?: boolean;
@@ -31,11 +32,15 @@ export type WizardRef = ICarouselInstance;
 function Wizard(props: IWizardProps, ref: React.Ref<ICarouselInstance>) {
   const { steps, dots } = props;
   const [currentIndex, setIndex] = React.useState(0);
-  const [loading, setLoading] = React.useState(false);
   const navigation = useNavigation();
-  const { palette } = useAppSelector((root) => root.global);
-  const { width } = useWindowDimensions();
+  const [dimensions, setDimensions] = React.useState<LayoutRectangle>({
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+  });
   const carouselRef = React.useRef<ICarouselInstance>(null);
+  const screen = useWindowDimensions();
 
   React.useImperativeHandle(ref, () => ({
     next: () => carouselRef.current?.next(),
@@ -44,89 +49,90 @@ function Wizard(props: IWizardProps, ref: React.Ref<ICarouselInstance>) {
     scrollTo: (opts) => carouselRef.current?.scrollTo(opts),
   }));
 
+  const onNext = React.useCallback(
+    async function WizardNextStep() {
+      if (steps[currentIndex]?.onNext) {
+        await steps[currentIndex]?.onNext?.(navigation);
+      }
+      if (currentIndex === steps.length - 1) {
+        navigation.goBack();
+      } else {
+        carouselRef?.current?.next();
+        setIndex(currentIndex + 1);
+      }
+
+      return undefined;
+    },
+    [currentIndex, navigation, steps]
+  );
+
+  const onBack = React.useCallback(
+    async function WizardBackStep() {
+      steps[currentIndex]?.onBack?.();
+      if (currentIndex === 0) {
+        navigation.goBack();
+      } else {
+        carouselRef?.current?.prev();
+        setIndex(currentIndex - 1 || 0);
+      }
+      return undefined;
+    },
+    [currentIndex, navigation, steps]
+  );
+
+  const onLayout = React.useCallback((event: LayoutChangeEvent) => {
+    setDimensions(event.nativeEvent.layout);
+  }, []);
+
+  const { width, height } = dimensions;
+
   return (
-    <View style={{ ...StyleSheet.absoluteFillObject }}>
+    <KeyboardAvoidingView
+      style={StyleSheet.absoluteFill}
+      behavior={Platform.OS === 'android' ? undefined : 'padding'}
+      {...{ onLayout }}
+    >
       {!dots ? null : (
         <View style={styles.dots}>
           <Dots count={steps.length} index={currentIndex} />
         </View>
       )}
-      <KeyboardAvoidingView
-        style={styles.content}
-        behavior={Platform.OS === 'android' ? undefined : 'padding'}
-      >
-        <Carousel
-          autoPlay={false}
-          loop={false}
-          modeConfig={{ parallaxScrollingScale: 1, parallaxScrollingOffset: 32 }}
-          pagingEnabled={false}
-          enabled={false}
-          panGestureHandlerProps={{
-            // Disable swiping
-            activeOffsetX: [-width, width],
-          }}
-          style={{ height: '80%' }}
-          mode="parallax"
-          data={steps}
-          width={width}
-          onSnapToItem={setIndex}
-          ref={carouselRef}
-          renderItem={({ item }) => {
-            if (!item) {
-              return <View />;
-            }
-            const { component: Step } = item;
-            return <Step />;
-          }}
-        />
-        <View style={styles.actions}>
-          <Button
-            disabled={loading}
-            loading={loading}
-            onPress={async () => {
-              try {
-                if (steps[currentIndex]?.onNext) {
-                  setLoading(true);
-                  await steps[currentIndex]?.onNext?.(navigation);
-                }
-                if (currentIndex === steps.length - 1) {
-                  navigation.goBack();
-                } else {
-                  carouselRef?.current?.next();
-                  setIndex(currentIndex + 1);
-                }
-              } catch {
-                return undefined;
-              } finally {
-                setLoading(false);
+      <Carousel
+        autoPlay={false}
+        loop={false}
+        modeConfig={{ parallaxScrollingScale: 1, parallaxScrollingOffset: 32 }}
+        pagingEnabled={false}
+        enabled={false}
+        panGestureHandlerProps={{
+          // Disable swiping
+          activeOffsetX: [-width, width],
+        }}
+        mode="parallax"
+        style={StyleSheet.absoluteFill}
+        data={steps}
+        width={width || screen.width}
+        onSnapToItem={setIndex}
+        ref={carouselRef}
+        renderItem={({ item }) => {
+          if (!item) {
+            return <View />;
+          }
+          const { component: Step } = item;
+          return (
+            <Step
+              actions={
+                <Buttons
+                  nextLabel={currentIndex === steps.length - 1 ? 'Done' : 'Next'}
+                  backLabel="Back"
+                  onNext={onNext}
+                  onBack={onBack}
+                />
               }
-
-              return undefined;
-            }}
-            style={[styles.next, { backgroundColor: palette.placeholder }]}
-            mode="contained"
-          >
-            {currentIndex === steps.length - 1 ? 'Done' : 'Next'}
-          </Button>
-          <Button
-            disabled={loading}
-            mode="text"
-            onPress={async () => {
-              steps[currentIndex]?.onBack?.();
-              if (currentIndex === 0) {
-                navigation.goBack();
-              } else {
-                carouselRef?.current?.prev();
-                setIndex(currentIndex - 1 || 0);
-              }
-              return undefined;
-            }}
-          >
-            Back
-          </Button>
-        </View>
-      </KeyboardAvoidingView>
-    </View>
+            />
+          );
+        }}
+      />
+    </KeyboardAvoidingView>
   );
 }
 
@@ -138,7 +144,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 48,
+    marginTop: 48,
+    zIndex: 1100,
   },
   actions: {
     alignSelf: 'center',

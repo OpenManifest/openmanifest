@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { Badge, Card, Chip } from 'react-native-paper';
 import { isBefore } from 'date-fns';
 
@@ -82,13 +82,14 @@ function LoadCard(props: ILoadCardSmall) {
       />
 
       <Card.Content style={styles.cardContent}>
-        <View
+        <ScrollView
           style={{
             flexDirection: 'row',
             flexWrap: 'nowrap',
             backgroundColor: 'transparent',
             width: '100%',
           }}
+          horizontal
         >
           <PlaneChip
             value={load?.plane}
@@ -118,7 +119,7 @@ function LoadCard(props: ILoadCardSmall) {
           >
             {load?.occupiedSlots || 0} / {load?.plane?.maxSlots}
           </Chip>
-        </View>
+        </ScrollView>
       </Card.Content>
     </Card>
   );

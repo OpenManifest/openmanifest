@@ -8,6 +8,7 @@ import GradientText from '../GradientText';
 export interface IWizardStepProps {
   title?: React.ReactText;
   children?: React.ReactNode;
+  actions: React.ReactNode;
   hideContentUntilNavigatedTo?: boolean;
 }
 
@@ -22,7 +23,7 @@ export function Fields({ children }: { children: React.ReactNode }) {
   );
 }
 export function Step(props: IWizardStepProps) {
-  const { children, title, hideContentUntilNavigatedTo } = props;
+  const { children, title, actions, hideContentUntilNavigatedTo } = props;
   const theme = useAppSelector((state) => state.global.theme);
 
   const isFocused = useIsFocused();
@@ -30,7 +31,10 @@ export function Step(props: IWizardStepProps) {
     return null;
   }
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      contentContainerStyle={styles.content}
+    >
       {title && (
         <View style={styles.title}>
           <View>
@@ -47,36 +51,36 @@ export function Step(props: IWizardStepProps) {
           </View>
         </View>
       )}
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content}>
+      <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
         {children}
-      </ScrollView>
-    </View>
+      </View>
+
+      {actions}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     flexDirection: 'column',
   },
   content: {
     flexGrow: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dots: {
-    minWidth: 400,
-    maxWidth: 500,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 48,
+    justifyContent: 'space-evenly',
   },
   title: {
     minWidth: 400,
     maxWidth: 500,
     alignSelf: 'center',
     paddingLeft: 32,
+    marginBottom: 56,
   },
   fields: {
     minWidth: 400,
