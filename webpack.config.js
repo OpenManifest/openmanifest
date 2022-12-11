@@ -9,7 +9,7 @@ module.exports = async function (env, argv) {
         // Fixes:
         // ./node_modules/color/index.js 272:26
         // Module parse failed: Identifier directly after number (272:26)
-        dangerouslyAddModulePathsToTranspile: ['color'],
+        dangerouslyAddModulePathsToTranspile: ['color']
       },
     },
     argv

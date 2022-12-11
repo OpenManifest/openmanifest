@@ -15,6 +15,7 @@ module.exports = function (api) {
       ],
       '@babel/plugin-proposal-numeric-separator',
       '@babel/plugin-proposal-logical-assignment-operators',
+      '@babel/plugin-proposal-export-namespace-from',
       'react-native-reanimated/plugin',
     ],
   };
