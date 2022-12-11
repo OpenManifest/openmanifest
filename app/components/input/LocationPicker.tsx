@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Animated, StyleSheet, TouchableOpacity } from 'react-native';
-import MapView, { Marker, Region } from 'react-native-maps';
+import MapView, { MapMarker, Marker, Region } from 'react-native-maps';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
 import * as Location from 'expo-location';
@@ -70,7 +70,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
       useNativeDriver: true,
     })
   );
-  const markerRef = React.useRef<Marker>(null);
+  const markerRef = React.useRef<MapMarker>(null);
 
   const map = React.useRef<MapView>();
   const setCoordinateFade = React.useCallback((visible: boolean) => {

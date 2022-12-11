@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
-import MapView, { Region, Marker } from 'react-native-maps';
+import MapView, { Region, Marker, MapMarker } from 'react-native-maps';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 // eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
 import * as Location from 'expo-location';
@@ -79,7 +79,7 @@ function LocationWizardStep(props: IWizardStepProps) {
     (visible ? fadeIn : fadeOut).current.start(() => setAnimating(false));
   }, []);
 
-  const markerRef = React.useRef<Marker>(null);
+  const markerRef = React.useRef<MapMarker>(null);
   const [isDragging, setDragging] = React.useState<boolean>(false);
   const [internalRegion, setInternalRegion] = React.useState<Region | undefined>(region);
 

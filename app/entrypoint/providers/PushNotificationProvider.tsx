@@ -84,7 +84,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       // console.log({ notification: response });
     });
 
-    Linking.addEventListener('url', onOutsideLink);
+    const subscription = Linking.addEventListener('url', onOutsideLink);
 
     return () => {
       if (notificationListener.current) {
@@ -93,7 +93,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       if (responseListener.current) {
         Notifications.removeNotificationSubscription(responseListener.current);
       }
-      Linking.removeEventListener('url', onOutsideLink);
+      Linking.removeSubscription(subscription)
     };
   }, [dispatch, notify, onOutsideLink]);
 

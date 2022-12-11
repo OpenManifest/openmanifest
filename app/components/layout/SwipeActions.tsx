@@ -20,8 +20,8 @@ export default function SwipeActions(props: ISwipeActions) {
 
   const ref = React.useRef<Swipeable | null>();
   const rightActions = (
-    progress: Animated.AnimatedInterpolation,
-    dragX: Animated.AnimatedInterpolation
+    progress: Animated.AnimatedInterpolation<string | number>,
+    dragX: Animated.AnimatedInterpolation<string | number>
   ) => {
     const scale = dragX.interpolate({
       inputRange: [-100, 0],
