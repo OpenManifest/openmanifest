@@ -152,7 +152,6 @@ export default function SettingsScreen() {
         <Divider />
         <List.Item
           title="Master Log"
-          disabled
           left={() => <List.Icon color={theme.colors.text} icon="parachute" />}
           right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           description="View historic data for daily operations. Temporarily disabled"
