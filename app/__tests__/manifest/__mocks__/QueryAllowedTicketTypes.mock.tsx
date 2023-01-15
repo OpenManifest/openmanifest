@@ -10,29 +10,26 @@ export default createMock<AllowedTicketTypesQueryVariables, AllowedTicketTypesQu
     onlyPublicTickets: true,
   },
   {
-    dropzone: {
-      id: '1',
-
-      ticketTypes: [
-        {
-          allowManifestingSelf: true,
-          altitude: 14000,
-          id: '1',
-          name: 'Height',
-          cost: 45,
-          isTandem: false,
-          extras: [],
-        },
-        {
-          id: '3',
-          name: 'Hop n Pop',
-          cost: 30,
-          allowManifestingSelf: true,
-          altitude: 4000,
-          isTandem: false,
-          extras: [],
-        },
-      ],
-    },
+    __typename: 'Query',
+    ticketTypes: [
+      {
+        allowManifestingSelf: true,
+        altitude: 14000,
+        id: '1',
+        name: 'Height',
+        cost: 45,
+        isTandem: false,
+        extras: [],
+      },
+      {
+        id: '3',
+        name: 'Hop n Pop',
+        cost: 30,
+        allowManifestingSelf: true,
+        altitude: 4000,
+        isTandem: false,
+        extras: [],
+      },
+    ],
   }
 );
