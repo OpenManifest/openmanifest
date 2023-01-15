@@ -1,9 +1,11 @@
 {
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "module": "esnext",
     "baseUrl": "./",
     "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,
+    "target": "es6",
     "jsx": "react-native",
     "lib": [
       "dom",
@@ -30,6 +32,5 @@
     "index.ts",
     "main.ts",
     "patches/deprecated-prop-types.ts"
-  ],
-  "extends": "expo/tsconfig.base",
+  ]
 }
