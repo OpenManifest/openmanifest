@@ -1,7 +1,7 @@
 import { ApolloLink } from '@apollo/client';
 import { BatchHttpLink } from '@apollo/client/link/batch-http';
 import { getServerUrl } from '../utils/getServerUrl';
-import { websocketLink, hasSubscriptionOperation } from './websockets';
+import { createWebsocketsLink, hasSubscriptionOperation } from './websockets';
 
 export const abortController = new AbortController();
 export const httpLink = new BatchHttpLink({
@@ -15,4 +15,6 @@ export const httpLink = new BatchHttpLink({
   },
 });
 
-export const httpWithWsLink = ApolloLink.split(hasSubscriptionOperation, websocketLink, httpLink);
+export function createHttpLink() {
+  return ApolloLink.split(hasSubscriptionOperation, createWebsocketsLink(), httpLink);
+}

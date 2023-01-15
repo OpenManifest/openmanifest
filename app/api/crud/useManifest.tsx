@@ -66,7 +66,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
     }
     return {
       dropzone,
-      date: date || DateTime.utc().toISODate(),
+      date: date || DateTime.local().toISODate(),
     };
   }, [date, dropzone]);
 

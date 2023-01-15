@@ -1,9 +1,13 @@
 import { format } from 'date-fns';
 import * as React from 'react';
 import { List, Modal } from 'react-native-paper';
-import { DatePickerModal } from 'react-native-paper-dates';
+import { DatePickerModal, DatePickerModalSingleProps } from 'react-native-paper-dates';
 
-interface IDatepicker {
+interface IDatepicker
+  extends Omit<
+    DatePickerModalSingleProps,
+    'onChange' | 'locale' | 'visible' | 'mode' | 'onDismiss' | 'onConfirm'
+  > {
   label?: string;
   value: number;
   disabled?: boolean;
@@ -11,7 +15,7 @@ interface IDatepicker {
   onChange(timestamp: number): void;
 }
 export default function DatePicker(props: IDatepicker) {
-  const { disabled, label, value, onChange, color } = props;
+  const { disabled, label, value, onChange, color, ...datePickerProps } = props;
   const [open, setOpen] = React.useState(false);
 
   const onDismissSingle = React.useCallback(() => {
@@ -47,6 +51,7 @@ export default function DatePicker(props: IDatepicker) {
           date={value ? new Date(value * 1000) : new Date()}
           onConfirm={(date) => onConfirmSingle(date as { date: Date })}
           label={label}
+          {...datePickerProps}
         />
       </Modal>
     </>

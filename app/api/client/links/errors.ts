@@ -9,7 +9,7 @@ export const defaultErrorLink = onError(({ graphQLErrors, networkError, operatio
     return;
   }
 
-  if (graphQLErrors && process.env.EXPO_ENV === 'development') {
+  if (graphQLErrors && process.env.EXPO_ENV !== 'production') {
     graphQLErrors.forEach((err) => {
       const { message, locations, path, name, nodes } = err;
       console.error(
@@ -20,7 +20,7 @@ export const defaultErrorLink = onError(({ graphQLErrors, networkError, operatio
       console.log(operation);
     });
   }
-  if (networkError && process.env.EXPO_ENV === 'development') {
+  if (networkError && process.env.EXPO_ENV !== 'production') {
     console.error(`[Apollo::Links::Errors::Default::Network] ${networkError}`);
   }
 });
@@ -32,34 +32,38 @@ export function useErrorLink() {
   // Log any GraphQL errors or network error that occurred
   return React.useMemo(
     () =>
-      onError(({ graphQLErrors, networkError, operation }) => {
-        if (graphQLErrors?.some((err) => err.extensions?.code === 'AUTHENTICATION_ERROR')) {
-          notify.info(`Session expired`);
-          if (authenticated) {
-            console.debug(
-              '[Apollo::Links::Errors]: Received authentication error, logging out',
-              graphQLErrors
-            );
-            dispatch(actions.global.logout());
+      onError(({ graphQLErrors, networkError, operation, forward }) => {
+        try {
+          if (graphQLErrors?.some((err) => err.extensions?.code === 'AUTHENTICATION_ERROR')) {
+            notify.info(`Session expired`);
+            if (authenticated) {
+              console.debug(
+                '[Apollo::Links::Errors]: Received authentication error, logging out',
+                graphQLErrors
+              );
+              dispatch(actions.global.logout());
+            }
+            return;
           }
-          return;
-        }
 
-        if (graphQLErrors && process.env.EXPO_ENV === 'development') {
-          graphQLErrors.forEach((err) => {
-            const { message, locations, path, name, nodes } = err;
-            notify.error(`[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}`);
-            console.error(
-              `[GraphQL error]: ${message}, ${JSON.stringify(
-                locations
-              )}, ${path}, ${name}, ${nodes}`
-            );
-            // console.log(JSON.stringify(err));
-            console.log(operation);
-          });
-        }
-        if (networkError && process.env.EXPO_ENV === 'development') {
-          notify.error(`[Network error]: ${networkError}`);
+          if (graphQLErrors && process.env.EXPO_ENV !== 'production') {
+            graphQLErrors.forEach((err) => {
+              const { message, locations, path, name, nodes } = err;
+              notify.error(`[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}`);
+              console.error(
+                `[GraphQL error]: ${message}, ${JSON.stringify(
+                  locations
+                )}, ${path}, ${name}, ${nodes}`
+              );
+              // console.log(JSON.stringify(err));
+              console.log(operation);
+            });
+          }
+          if (networkError && process.env.EXPO_ENV !== 'production') {
+            notify.error(`[Network error]: ${networkError}`);
+          }
+        } finally {
+          forward?.(operation);
         }
       }),
     [dispatch, notify, authenticated]

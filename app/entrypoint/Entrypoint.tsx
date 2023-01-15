@@ -57,6 +57,9 @@ function Content() {
                       <ImageViewer />
                       <NotificationsProvider>
                         <NavigationContainer
+                          documentTitle={{
+                            formatter: () => 'OpenManifest',
+                          }}
                           onStateChange={onRouteChange}
                           linking={LinkingConfiguration}
                           theme={state.theme as unknown as never}

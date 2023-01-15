@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Card, DataTable, List, Paragraph } from 'react-native-paper';
+import { Button, Card, DataTable, IconButton, List, Paragraph } from 'react-native-paper';
 import { Linking, View } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { Screen } from 'app/components/layout';
@@ -11,6 +11,8 @@ import { DateTime } from 'luxon';
 import { FormTextField } from 'app/components/input/text/TextField';
 import { DropzoneUserSelectField } from 'app/components/input/dropdown_select';
 import { Permission } from 'app/api/schema.d';
+import usePalette from 'app/hooks/usePalette';
+import NoResults from 'app/components/NoResults';
 import useMasterLogForm from './useForm';
 
 export default function DropzoneMasterLogScreen() {
@@ -19,18 +21,20 @@ export default function DropzoneMasterLogScreen() {
   const navigation = useNavigation();
   const [isEditing, setIsEditing] = React.useState(false);
   const toggleEditing = React.useCallback(() => setIsEditing(!isEditing), [isEditing]);
+  const theme = usePalette();
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <DatePicker
+          validRange={{ endDate: new Date() }}
           onChange={(time) => setDate(DateTime.fromSeconds(time).toISODate())}
           value={DateTime.fromISO(date).toSeconds()}
-          color="#FFFFFF"
+          color={theme.text}
         />
       ),
     });
-  }, [date, navigation]);
+  }, [date, navigation, theme.text]);
 
   const variables: MasterLogQueryVariables = React.useMemo(
     () => ({
@@ -64,13 +68,9 @@ export default function DropzoneMasterLogScreen() {
         <Card>
           <Card.Title
             right={() => (
-              <Button onPress={onDownload} mode="outlined" style={{ marginRight: 8 }}>
-                Download JSON
-              </Button>
+              <IconButton icon="download" onPress={onDownload} style={{ marginRight: 8 }} />
             )}
-            title={`Master Log ${DateTime.fromISO(date).toLocaleString(
-              DateTime.DATE_MED_WITH_WEEKDAY
-            )}`}
+            title={`${DateTime.fromISO(date).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}`}
           />
           <Card.Content>
             {isEditing ? (
@@ -110,6 +110,13 @@ export default function DropzoneMasterLogScreen() {
             {!isEditing && <Button onPress={toggleEditing}>Edit</Button>}
           </Card.Actions>
         </Card>
+        {!data?.masterLog?.loads?.length ? (
+          <Card style={{ width: '100%', marginVertical: 16 }}>
+            <Card.Content>
+              <NoResults title="No loads for this day" subtitle="" />
+            </Card.Content>
+          </Card>
+        ) : null}
         {data?.masterLog?.loads?.map((load) => (
           <Card style={{ width: '100%', marginVertical: 16 }}>
             <Card.Title title={`Load ${load.loadNumber}`} />
