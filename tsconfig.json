@@ -5,7 +5,6 @@
     "baseUrl": "./",
     "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,
-    "target": "es6",
     "jsx": "react-native",
     "lib": [
       "dom",

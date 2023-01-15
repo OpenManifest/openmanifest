@@ -16,5 +16,5 @@ export const httpLink = new BatchHttpLink({
 });
 
 export function createHttpLink() {
-  ApolloLink.split(hasSubscriptionOperation, createWebsocketsLink(), httpLink);
+  return ApolloLink.split(hasSubscriptionOperation, createWebsocketsLink(), httpLink);
 }

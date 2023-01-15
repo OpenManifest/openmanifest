@@ -10,10 +10,11 @@ export function useLink() {
   const authLink = useAuthenticationLink();
   const errorLink = useErrorLink();
   const appSignalLink = useAppSignalLink();
+  const httpWebsocketsLink = React.useMemo(() => createHttpLink(), []);
 
   const links = React.useMemo(
-    () => [appSignalLink, errorLink, authLink, createHttpLink()].filter(Boolean) as ApolloLink[],
-    [appSignalLink, authLink, errorLink]
+    () => [authLink, errorLink, appSignalLink, httpWebsocketsLink].filter(Boolean) as ApolloLink[],
+    [appSignalLink, authLink, errorLink, httpWebsocketsLink]
   );
   return React.useMemo(() => ApolloLink.from(links), [links]);
 }

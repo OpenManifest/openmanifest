@@ -117,7 +117,7 @@ export class AppSignalBreadcrumbLink extends ApolloLink {
 
     // If this operation should be excluded, continue
     if (options.excludeOperation?.(operation) ?? false) {
-      return forward(operation);
+      return forward?.(operation);
     }
 
     const breadcrumb = createBreadCrumb(operation);
@@ -128,7 +128,7 @@ export class AppSignalBreadcrumbLink extends ApolloLink {
     // get to run our instrumentation before others observers potentially
     // throw and thus flush the results to Sentry.
     return new Observable<FetchResult>((originalObserver) => {
-      const subscription = forward(operation).subscribe({
+      const subscription = forward?.(operation).subscribe({
         next: (result) => {
           breadcrumb.metadata ??= {};
           if (options?.breadcrumbs?.includeResponse) {
