@@ -3822,11 +3822,8 @@ export type RolesLazyQueryHookResult = ReturnType<typeof useRolesLazyQuery>;
 export type RolesQueryResult = Apollo.QueryResult<Operation.RolesQuery, Operation.RolesQueryVariables>;
 export const AllowedTicketTypesDocument = gql`
     query AllowedTicketTypes($dropzone: ID!, $onlyPublicTickets: Boolean) {
-  dropzone(id: $dropzone) {
-    id
-    ticketTypes(isPublic: $onlyPublicTickets) {
-      ...ticketTypeDetails
-    }
+  ticketTypes(dropzone: $dropzone, allowManifestingSelf: $onlyPublicTickets) {
+    ...ticketTypeDetails
   }
 }
     ${TicketTypeDetailsFragmentDoc}`;
@@ -3895,3 +3892,67 @@ export function useTicketTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type TicketTypesQueryHookResult = ReturnType<typeof useTicketTypesQuery>;
 export type TicketTypesLazyQueryHookResult = ReturnType<typeof useTicketTypesLazyQuery>;
 export type TicketTypesQueryResult = Apollo.QueryResult<Operation.TicketTypesQuery, Operation.TicketTypesQueryVariables>;
+export const LoadUpdatedDocument = gql`
+    subscription LoadUpdated($id: ID!) {
+  loadUpdated(loadId: $id) {
+    load {
+      ...loadDetails
+    }
+  }
+}
+    ${LoadDetailsFragmentDoc}`;
+
+/**
+ * __useLoadUpdatedSubscription__
+ *
+ * To run a query within a React component, call `useLoadUpdatedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useLoadUpdatedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLoadUpdatedSubscription({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLoadUpdatedSubscription(baseOptions: Apollo.SubscriptionHookOptions<Operation.LoadUpdatedSubscription, Operation.LoadUpdatedSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<Operation.LoadUpdatedSubscription, Operation.LoadUpdatedSubscriptionVariables>(LoadUpdatedDocument, options);
+      }
+export type LoadUpdatedSubscriptionHookResult = ReturnType<typeof useLoadUpdatedSubscription>;
+export type LoadUpdatedSubscriptionResult = Apollo.SubscriptionResult<Operation.LoadUpdatedSubscription>;
+export const UserUpdatedDocument = gql`
+    subscription UserUpdated($id: ID!) {
+  userUpdated(dropzoneUserId: $id) {
+    dropzoneUser {
+      ...dropzoneUserDetails
+    }
+  }
+}
+    ${DropzoneUserDetailsFragmentDoc}`;
+
+/**
+ * __useUserUpdatedSubscription__
+ *
+ * To run a query within a React component, call `useUserUpdatedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useUserUpdatedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserUpdatedSubscription({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUserUpdatedSubscription(baseOptions: Apollo.SubscriptionHookOptions<Operation.UserUpdatedSubscription, Operation.UserUpdatedSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<Operation.UserUpdatedSubscription, Operation.UserUpdatedSubscriptionVariables>(UserUpdatedDocument, options);
+      }
+export type UserUpdatedSubscriptionHookResult = ReturnType<typeof useUserUpdatedSubscription>;
+export type UserUpdatedSubscriptionResult = Apollo.SubscriptionResult<Operation.UserUpdatedSubscription>;

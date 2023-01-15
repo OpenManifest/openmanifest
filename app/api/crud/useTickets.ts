@@ -1,15 +1,16 @@
 import * as React from 'react';
-import { noop } from 'lodash';
+import { isEqual, noop } from 'lodash';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useAppSelector } from 'app/state';
 import {
   useCreateTicketTypeMutation,
   useCreateTicketAddonMutation,
   useUpdateTicketAddonMutation,
   useUpdateTicketTypeMutation,
-  useTicketTypesQuery,
   useArchiveTicketTypeMutation,
   TicketTypesDocument,
   TicketTypeExtrasDocument,
+  useTicketTypesLazyQuery,
 } from '../reflection';
 import {
   CreateTicketAddonMutationVariables,
@@ -23,6 +24,7 @@ import {
 import { TMutationResponse, uninitializedHandler } from './factory';
 
 export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
+  const { authenticated } = useAppSelector((root) => root.global);
   const variables: TicketTypesQueryVariables | undefined = React.useMemo(() => {
     if (vars?.dropzone) {
       return vars as TicketTypesQueryVariables;
@@ -30,18 +32,19 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
     return undefined;
   }, [vars]);
 
-  const query = useTicketTypesQuery({
-    initialFetchPolicy: 'cache-first',
-    variables,
-    skip: !variables?.dropzone,
-  });
+  const [getTickets, query] = useTicketTypesLazyQuery();
+  React.useEffect(() => {
+    if (authenticated && variables?.dropzone && !isEqual(variables, query.variables)) {
+      console.debug('[Context::Tickets] Fetching tickets', variables);
+      getTickets({ variables });
+    }
+  }, [authenticated, getTickets, query.variables, variables]);
 
   const {
     dropzone: { dropzone },
   } = useDropzoneContext();
   const { loading, fetchMore, data, called, variables: queryVariables } = query;
   const ticketTypes = React.useMemo(() => data?.ticketTypes, [data?.ticketTypes]);
-  console.debug({ loadingTickets: loading, ticketTypes });
   const [createTicket] = useCreateTicketTypeMutation();
   const [updateTicket] = useUpdateTicketTypeMutation();
   const [archiveTicket] = useArchiveTicketTypeMutation();

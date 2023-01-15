@@ -11,6 +11,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import { ModerationRole, Permission } from 'app/api/schema.d';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useDropzonesContext } from 'app/api/crud';
+import { useLogout } from 'app/api/hooks/useLogout';
 import { actions, useAppDispatch, useAppSelector } from '../../state';
 
 export default function DrawerMenu() {
@@ -30,6 +31,11 @@ export default function DrawerMenu() {
   const canUpdatePermissions = useRestriction(Permission.GrantPermission);
   const canUpdateDzRigs = useRestriction(Permission.UpdateDropzoneRig);
   const canUpdateRigInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
+  const logout = useLogout();
+  const onLogout = React.useCallback(() => {
+    navigation.dispatch(DrawerActions.closeDrawer());
+    logout();
+  }, [logout, navigation]);
 
   const shouldShowSettings =
     canUpdateDropzone ||
@@ -275,14 +281,7 @@ export default function DrawerMenu() {
             }}
           />
 
-          <Drawer.Item
-            label="Log out"
-            icon="logout"
-            onPress={() => {
-              dispatch(actions.global.logout());
-              navigation.dispatch(DrawerActions.closeDrawer());
-            }}
-          />
+          <Drawer.Item label="Log out" icon="logout" onPress={onLogout} />
         </Drawer.Section>
 
         <Drawer.Section title="Switch dropzone">

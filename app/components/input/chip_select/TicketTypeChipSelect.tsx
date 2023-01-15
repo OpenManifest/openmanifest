@@ -39,7 +39,7 @@ function TicketTypeChipSelect(props: ITicketTypeSelect) {
       <ChipSelect<TicketTypeEssentialsFragment>
         {...{ error }}
         autoSelectFirst
-        items={data?.dropzone?.ticketTypes || []}
+        items={data?.ticketTypes || []}
         value={[value].filter(Boolean) as TicketTypeEssentialsFragment[]}
         renderItemLabel={(ticketType) => `${ticketType?.name} ($${ticketType?.cost})`}
         isDisabled={() => false}

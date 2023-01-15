@@ -1,10 +1,6 @@
 query AllowedTicketTypes($dropzone: ID!, $onlyPublicTickets: Boolean) {
-  dropzone(id: $dropzone) {
-    id
-
-    ticketTypes(isPublic: $onlyPublicTickets) {
-      ...ticketTypeDetails
-    }
+  ticketTypes(dropzone: $dropzone, allowManifestingSelf: $onlyPublicTickets) {
+    ...ticketTypeDetails
   }
 }
 

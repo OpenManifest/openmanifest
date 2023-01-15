@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { noop } from 'lodash';
+import { isEqual, noop } from 'lodash';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useAppSelector } from 'app/state';
 import {
   useCreateAircraftMutation,
   useUpdateAircraftMutation,
-  usePlanesQuery,
   PlanesDocument,
   useArchivePlaneMutation,
+  usePlanesLazyQuery,
 } from '../reflection';
 import {
   CreateAircraftMutationVariables,
@@ -19,6 +20,7 @@ import {
 import { TMutationResponse, uninitializedHandler } from './factory';
 
 export function useAircrafts(vars?: Partial<PlanesQueryVariables>) {
+  const { authenticated } = useAppSelector((root) => root.global);
   const variables: DropzoneQueryVariables | undefined = React.useMemo(() => {
     if (vars?.dropzoneId) {
       return {
@@ -28,11 +30,16 @@ export function useAircrafts(vars?: Partial<PlanesQueryVariables>) {
     return undefined;
   }, [vars]);
 
-  const query = usePlanesQuery({
-    initialFetchPolicy: 'cache-first',
+  const [getAircrafts, query] = usePlanesLazyQuery({
     variables,
-    skip: !variables?.dropzoneId,
   });
+
+  React.useEffect(() => {
+    if (authenticated && variables?.dropzoneId && !isEqual(variables, query.variables)) {
+      console.debug('[Context::Aircrafts] Fetching aircrafts', variables);
+      getAircrafts({ variables });
+    }
+  }, [authenticated, getAircrafts, query?.variables, variables]);
 
   const { loading, fetchMore, data, called, variables: queryVariables } = query;
 
