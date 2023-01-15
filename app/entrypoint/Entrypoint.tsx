@@ -89,6 +89,7 @@ function App() {
   const isLoadingComplete = useCachedResources();
 
   if (!isLoadingComplete) {
+    console.debug('[App] Loading resources and rendering nothing');
     return null;
   }
   return (

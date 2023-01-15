@@ -599,6 +599,81 @@ export const TicketTypeExtraDetailedFragmentDoc = gql`
 }
     ${TicketTypeExtraEssentialsFragmentDoc}
 ${TicketTypeEssentialsFragmentDoc}`;
+export const MasterLogUserFragmentDoc = gql`
+    fragment masterLogUser on MasterLogUser {
+  id
+  email
+  name
+  nickname
+  phone
+}
+    `;
+export const MasterLogAircraftFragmentDoc = gql`
+    fragment masterLogAircraft on MasterLogAircraft {
+  id
+  name
+  registration
+}
+    `;
+export const MasterLogSlotFragmentDoc = gql`
+    fragment masterLogSlot on MasterLogSlot {
+  id
+  altitude
+  jumpType
+  name
+}
+    `;
+export const MasterLogLoadFragmentDoc = gql`
+    fragment masterLogLoad on MasterLogLoad {
+  id
+  loadNumber
+  dispatchAt
+  aircraft {
+    ...masterLogAircraft
+  }
+  gca {
+    ...masterLogUser
+  }
+  pilot {
+    ...masterLogUser
+  }
+  loadMaster {
+    ...masterLogUser
+  }
+  slots {
+    ...masterLogSlot
+  }
+}
+    ${MasterLogAircraftFragmentDoc}
+${MasterLogUserFragmentDoc}
+${MasterLogSlotFragmentDoc}`;
+export const LocationFragmentDoc = gql`
+    fragment location on GeocodedLocation {
+  id
+  lat
+  lng
+  formattedString
+}
+    `;
+export const MasterLogEntryFragmentDoc = gql`
+    fragment masterLogEntry on MasterLogEntry {
+  id
+  date
+  notes
+  downloadUrl
+  dzso {
+    ...masterLogUser
+  }
+  loads {
+    ...masterLogLoad
+  }
+  location {
+    ...location
+  }
+}
+    ${MasterLogUserFragmentDoc}
+${MasterLogLoadFragmentDoc}
+${LocationFragmentDoc}`;
 export const RigInspectionDetailedFragmentDoc = gql`
     fragment rigInspectionDetailed on RigInspection {
   ...rigInspectionEssentials
@@ -2204,6 +2279,50 @@ export function useUpdateLostPasswordMutation(baseOptions?: Apollo.MutationHookO
 export type UpdateLostPasswordMutationHookResult = ReturnType<typeof useUpdateLostPasswordMutation>;
 export type UpdateLostPasswordMutationResult = Apollo.MutationResult<Operation.UpdateLostPasswordMutation>;
 export type UpdateLostPasswordMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateLostPasswordMutation, Operation.UpdateLostPasswordMutationVariables>;
+export const UpdateMasterLogDocument = gql`
+    mutation UpdateMasterLog($date: ISO8601Date!, $dropzone: ID!, $attributes: MasterLogInput!) {
+  updateMasterLog(
+    input: {dropzone: $dropzone, date: $date, attributes: $attributes}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    masterLog {
+      ...masterLogEntry
+    }
+  }
+}
+    ${MasterLogEntryFragmentDoc}`;
+export type UpdateMasterLogMutationFn = Apollo.MutationFunction<Operation.UpdateMasterLogMutation, Operation.UpdateMasterLogMutationVariables>;
+
+/**
+ * __useUpdateMasterLogMutation__
+ *
+ * To run a mutation, you first call `useUpdateMasterLogMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateMasterLogMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateMasterLogMutation, { data, loading, error }] = useUpdateMasterLogMutation({
+ *   variables: {
+ *      date: // value for 'date'
+ *      dropzone: // value for 'dropzone'
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useUpdateMasterLogMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateMasterLogMutation, Operation.UpdateMasterLogMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateMasterLogMutation, Operation.UpdateMasterLogMutationVariables>(UpdateMasterLogDocument, options);
+      }
+export type UpdateMasterLogMutationHookResult = ReturnType<typeof useUpdateMasterLogMutation>;
+export type UpdateMasterLogMutationResult = Apollo.MutationResult<Operation.UpdateMasterLogMutation>;
+export type UpdateMasterLogMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateMasterLogMutation, Operation.UpdateMasterLogMutationVariables>;
 export const UpdateRigDocument = gql`
     mutation UpdateRig($id: Int!, $name: String, $make: String, $model: String, $serial: String, $isPublic: Boolean, $rigType: String, $canopySize: Int, $packingCard: String, $repackExpiresAt: Int, $userId: Int, $dropzoneId: Int) {
   updateRig(
@@ -3531,6 +3650,42 @@ export function useLoadsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Oper
 export type LoadsQueryHookResult = ReturnType<typeof useLoadsQuery>;
 export type LoadsLazyQueryHookResult = ReturnType<typeof useLoadsLazyQuery>;
 export type LoadsQueryResult = Apollo.QueryResult<Operation.LoadsQuery, Operation.LoadsQueryVariables>;
+export const MasterLogDocument = gql`
+    query MasterLog($dropzoneId: ID!, $date: ISO8601Date!) {
+  masterLog(dropzone: $dropzoneId, date: $date) {
+    ...masterLogEntry
+  }
+}
+    ${MasterLogEntryFragmentDoc}`;
+
+/**
+ * __useMasterLogQuery__
+ *
+ * To run a query within a React component, call `useMasterLogQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMasterLogQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMasterLogQuery({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *      date: // value for 'date'
+ *   },
+ * });
+ */
+export function useMasterLogQuery(baseOptions: Apollo.QueryHookOptions<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>(MasterLogDocument, options);
+      }
+export function useMasterLogLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>(MasterLogDocument, options);
+        }
+export type MasterLogQueryHookResult = ReturnType<typeof useMasterLogQuery>;
+export type MasterLogLazyQueryHookResult = ReturnType<typeof useMasterLogLazyQuery>;
+export type MasterLogQueryResult = Apollo.QueryResult<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>;
 export const NotificationsDocument = gql`
     query Notifications($dropzoneId: ID!) {
   dropzone(id: $dropzoneId) {
@@ -3822,11 +3977,8 @@ export type RolesLazyQueryHookResult = ReturnType<typeof useRolesLazyQuery>;
 export type RolesQueryResult = Apollo.QueryResult<Operation.RolesQuery, Operation.RolesQueryVariables>;
 export const AllowedTicketTypesDocument = gql`
     query AllowedTicketTypes($dropzone: ID!, $onlyPublicTickets: Boolean) {
-  dropzone(id: $dropzone) {
-    id
-    ticketTypes(isPublic: $onlyPublicTickets) {
-      ...ticketTypeDetails
-    }
+  ticketTypes(dropzone: $dropzone, allowManifestingSelf: $onlyPublicTickets) {
+    ...ticketTypeDetails
   }
 }
     ${TicketTypeDetailsFragmentDoc}`;
@@ -3895,3 +4047,67 @@ export function useTicketTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type TicketTypesQueryHookResult = ReturnType<typeof useTicketTypesQuery>;
 export type TicketTypesLazyQueryHookResult = ReturnType<typeof useTicketTypesLazyQuery>;
 export type TicketTypesQueryResult = Apollo.QueryResult<Operation.TicketTypesQuery, Operation.TicketTypesQueryVariables>;
+export const LoadUpdatedDocument = gql`
+    subscription LoadUpdated($id: ID!) {
+  loadUpdated(loadId: $id) {
+    load {
+      ...loadDetails
+    }
+  }
+}
+    ${LoadDetailsFragmentDoc}`;
+
+/**
+ * __useLoadUpdatedSubscription__
+ *
+ * To run a query within a React component, call `useLoadUpdatedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useLoadUpdatedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLoadUpdatedSubscription({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLoadUpdatedSubscription(baseOptions: Apollo.SubscriptionHookOptions<Operation.LoadUpdatedSubscription, Operation.LoadUpdatedSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<Operation.LoadUpdatedSubscription, Operation.LoadUpdatedSubscriptionVariables>(LoadUpdatedDocument, options);
+      }
+export type LoadUpdatedSubscriptionHookResult = ReturnType<typeof useLoadUpdatedSubscription>;
+export type LoadUpdatedSubscriptionResult = Apollo.SubscriptionResult<Operation.LoadUpdatedSubscription>;
+export const UserUpdatedDocument = gql`
+    subscription UserUpdated($id: ID!) {
+  userUpdated(dropzoneUserId: $id) {
+    dropzoneUser {
+      ...dropzoneUserDetails
+    }
+  }
+}
+    ${DropzoneUserDetailsFragmentDoc}`;
+
+/**
+ * __useUserUpdatedSubscription__
+ *
+ * To run a query within a React component, call `useUserUpdatedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useUserUpdatedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserUpdatedSubscription({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUserUpdatedSubscription(baseOptions: Apollo.SubscriptionHookOptions<Operation.UserUpdatedSubscription, Operation.UserUpdatedSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<Operation.UserUpdatedSubscription, Operation.UserUpdatedSubscriptionVariables>(UserUpdatedDocument, options);
+      }
+export type UserUpdatedSubscriptionHookResult = ReturnType<typeof useUserUpdatedSubscription>;
+export type UserUpdatedSubscriptionResult = Apollo.SubscriptionResult<Operation.UserUpdatedSubscription>;

@@ -149,28 +149,31 @@ export default function SettingsScreen() {
             })
           }
         />
-        <Divider />
-        <List.Item
-          title="Master Log"
-          disabled
-          left={() => <List.Icon color={theme.colors.text} icon="parachute" />}
-          right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
-          description="View historic data for daily operations. Temporarily disabled"
-          onPress={() =>
-            navigation.navigate('Authenticated', {
-              screen: 'LeftDrawer',
-              params: {
-                screen: 'Manifest',
-                params: {
-                  screen: 'Configuration',
+        {!canUpdateDropzone ? null : (
+          <>
+            <Divider />
+            <List.Item
+              title="Master Log"
+              left={() => <List.Icon color={theme.colors.text} icon="parachute" />}
+              right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
+              description="View historic data for daily operations. Temporarily disabled"
+              onPress={() =>
+                navigation.navigate('Authenticated', {
+                  screen: 'LeftDrawer',
                   params: {
-                    screen: 'MasterLogScreen',
+                    screen: 'Manifest',
+                    params: {
+                      screen: 'Configuration',
+                      params: {
+                        screen: 'MasterLogScreen',
+                      },
+                    },
                   },
-                },
-              },
-            })
-          }
-        />
+                })
+              }
+            />
+          </>
+        )}
         <Divider />
         {!canUpdateDropzone ? null : (
           <List.Item

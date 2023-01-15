@@ -1,4 +1,3 @@
-import Constants from 'expo-constants';
 import * as React from 'react';
 import * as Notifications from 'expo-notifications';
 import { Linking, Platform } from 'react-native';
@@ -11,7 +10,7 @@ import { useNotifications } from 'app/providers/notifications';
 
 async function registerForPushNotificationsAsync(): Promise<string | null> {
   let token: string | null = null;
-  if (Constants.isDevice) {
+  if (Device.isDevice) {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
@@ -93,7 +92,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       if (responseListener.current) {
         Notifications.removeNotificationSubscription(responseListener.current);
       }
-      Linking.removeSubscription(subscription)
+      subscription.remove();
     };
   }, [dispatch, notify, onOutsideLink]);
 

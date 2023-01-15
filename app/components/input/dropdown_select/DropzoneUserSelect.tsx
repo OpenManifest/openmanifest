@@ -8,7 +8,7 @@ import Select from '../select/Select';
 import { withHookForm } from '../withHookForm';
 
 interface IDropzoneUserSelect {
-  requiredPermissions: Permission[];
+  requiredPermissions?: Permission[];
   value: DropzoneUser | null;
   label: string;
   onChange(dzUser: DropzoneUser): void;
@@ -47,6 +47,7 @@ function DropzoneUserSelect(props: IDropzoneUserSelect) {
       <Title>{label}</Title>
       <Select<DropzoneUserEssentialsFragment>
         value={selected}
+        compare={(a, b) => a?.id === b?.id}
         options={options}
         onChange={onChange}
       />

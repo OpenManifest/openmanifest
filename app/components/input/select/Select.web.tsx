@@ -123,36 +123,47 @@ export default function Select<T>(props: ISelectProps<T>) {
       <MuiSelect
         labelId="demo-simple-select-helper-label"
         id="demo-simple-select-helper"
-        value={selectedOption?.value}
+        value={selectedOption?.value ? JSON.stringify(selectedOption?.value) : null}
+        defaultValue={selectedOption?.value ? JSON.stringify(selectedOption?.value) : null}
         {...{ label }}
         variant="standard"
         error={!!error}
         style={{ paddingTop: 0 }}
+        native={false}
         SelectDisplayProps={{
           style: { display: 'inline-flex', alignItems: 'center' },
         }}
-        onChange={({ target }) => onChange(target.value as T)}
+        onChange={({ target }) => {
+          const option = options.find((opt) => JSON.stringify(opt.value) === target.value);
+          if (option) {
+            onChange(option.value);
+          }
+        }}
       >
-        {options?.map(({ value: val, icon, avatar, label: title }) => (
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          <MuiMenuItem value={val as T}>
-            {!icon || avatar ? null : (
-              <ListItemIcon>
-                {typeof icon === 'string' ? (
-                  <MaterialCommunityIcons icon={icon as AllowedIcons} size={24} />
-                ) : null}
-                {React.isValidElement(icon) && typeof icon !== 'string' ? icon : null}
-              </ListItemIcon>
-            )}
-            {!avatar || !showAvatars ? null : (
-              <ListItemAvatar>
-                <UserAvatar name={label} image={avatar} size={32} />
-              </ListItemAvatar>
-            )}
-            <ListItemText primary={title} />
-          </MuiMenuItem>
-        ))}
+        {options?.map(({ value: val, icon, avatar, label: title }) => {
+          const isSelected = compare?.(selectedOption?.value, val as T);
+          console.debug({ title, isSelected, a: selectedOption?.value, b: val });
+          return (
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            <MuiMenuItem value={JSON.stringify(val as T)} selected={isSelected}>
+              {!icon || avatar ? null : (
+                <ListItemIcon>
+                  {typeof icon === 'string' ? (
+                    <MaterialCommunityIcons icon={icon as AllowedIcons} size={24} />
+                  ) : null}
+                  {React.isValidElement(icon) && typeof icon !== 'string' ? icon : null}
+                </ListItemIcon>
+              )}
+              {!avatar || !showAvatars ? null : (
+                <ListItemAvatar>
+                  <UserAvatar name={label} image={avatar} size={32} />
+                </ListItemAvatar>
+              )}
+              <ListItemText primary={title} />
+            </MuiMenuItem>
+          );
+        })}
       </MuiSelect>
       <FormHelperText error={!!error}>{error || helperText}</FormHelperText>
     </FormControl>

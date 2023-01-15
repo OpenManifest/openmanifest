@@ -46,6 +46,7 @@ const CombinedDarkTheme: Theme = {
 };
 
 interface IGlobalState {
+  authenticated: boolean;
   currentDropzoneId: number | null;
   // @deprecated
   currentUser: UserDetailedFragment | null;
@@ -79,6 +80,7 @@ export const initialState: IGlobalState = {
   currentDropzoneId: null,
   permissions: [],
   credentials: null,
+  authenticated: false,
   expoPushToken: null,
   currentRouteName: '',
   theme: CombinedDefaultTheme,
@@ -102,7 +104,11 @@ export default createSlice({
   initialState,
   reducers: {
     setCredentials: (state: IGlobalState, action: PayloadAction<Credential>) => {
+      console.debug('[Redux::Global]: Setting credentials', action.payload);
       state.credentials = action.payload;
+    },
+    setAuthenticated: (state: IGlobalState, action: PayloadAction<boolean>) => {
+      state.authenticated = action.payload;
     },
     setUser: (state: IGlobalState, action: PayloadAction<UserDetailedFragment>) => {
       state.currentUser = action.payload;
@@ -209,6 +215,7 @@ export default createSlice({
       return state;
     },
     logout: (state: IGlobalState) => {
+      console.debug('Logout called?');
       Object.keys(initialState).forEach((key) => {
         const payloadKey = key as keyof Required<IGlobalState>;
         if (payloadKey in state) {

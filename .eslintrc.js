@@ -8,7 +8,6 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     // Uses eslint-config-prettier to disable ESLint rules from
     // @typescript-eslint/eslint-plugin that would conflict with prettier
-    'prettier/@typescript-eslint',
     'plugin:prettier/recommended',
   ],
   settings: {

@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { noop } from 'lodash';
-import { useCurrentUserPermissionsQuery, useDropzoneQuery } from '../reflection';
+import { isEqual, noop } from 'lodash';
+import { useAppSelector } from 'app/state';
+import { useCurrentUserPermissionsLazyQuery, useDropzoneLazyQuery } from '../reflection';
 import { CurrentUserPermissionsQueryVariables, DropzoneQueryVariables } from '../operations';
 import { uninitializedHandler } from './factory';
 
 export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
+  const { authenticated } = useAppSelector((root) => root.global);
   const variables: DropzoneQueryVariables | undefined = React.useMemo(() => {
     if (vars?.dropzoneId) {
       return {
@@ -14,23 +16,41 @@ export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
     return undefined;
   }, [vars]);
 
-  const query = useDropzoneQuery({
-    initialFetchPolicy: 'cache-first',
-    variables,
-    skip: !variables?.dropzoneId,
-  });
-
-  const { loading, fetchMore, data, called, variables: queryVariables } = query;
-
+  const [getDropzone, query] = useDropzoneLazyQuery();
   const permissionsVariables = React.useMemo(
     () => ({ dropzoneId: variables?.dropzoneId }),
     [variables?.dropzoneId]
   );
 
-  const permissions = useCurrentUserPermissionsQuery({
-    variables: permissionsVariables as CurrentUserPermissionsQueryVariables,
-    skip: !permissionsVariables?.dropzoneId,
-  });
+  const [getPermissions, permissions] = useCurrentUserPermissionsLazyQuery();
+
+  React.useEffect(() => {
+    if (authenticated && variables?.dropzoneId && !isEqual(variables, query.variables)) {
+      console.debug('[Context::Dropzone] Fetching dropzone', variables);
+      getDropzone({ variables });
+    }
+  }, [authenticated, getDropzone, query.variables, variables]);
+
+  React.useEffect(() => {
+    if (
+      authenticated &&
+      permissionsVariables?.dropzoneId &&
+      !isEqual(permissionsVariables, permissions.variables)
+    ) {
+      console.debug('[Context::Dropzone] Fetching user permissions', permissionsVariables);
+      getPermissions({ variables: permissionsVariables as CurrentUserPermissionsQueryVariables });
+    }
+  }, [
+    authenticated,
+    getDropzone,
+    getPermissions,
+    permissions.variables,
+    permissionsVariables,
+    query.variables,
+    variables,
+  ]);
+
+  const { loading, fetchMore, data, called, variables: queryVariables } = query;
 
   const refetch = React.useCallback(() => {
     if (variables?.dropzoneId) {

@@ -1,24 +1,33 @@
 import * as React from 'react';
-import { noop } from 'lodash';
+import { isEqual, noop } from 'lodash';
 import { DateTime } from 'luxon';
 import useRestriction from 'app/hooks/useRestriction';
 import * as yup from 'yup';
 import { ValidationError } from 'yup';
 import { useNotifications } from 'app/providers/notifications';
-import { useFinalizeLoadMutation, useLoadQuery, useManifestUserMutation } from '../reflection';
+import { useAppSelector } from 'app/state';
+import {
+  LoadUpdatedDocument,
+  useFinalizeLoadMutation,
+  useLoadLazyQuery,
+  useManifestUserMutation,
+} from '../reflection';
 import { LoadQueryVariables } from '../operations';
 import { uninitializedHandler } from './factory';
 import { CreateSlotPayload, LoadState, Permission } from '../schema.d';
 import useMutationUpdateLoad from '../hooks/useMutationUpdateLoad';
 
 export function useLoad(variables: Partial<LoadQueryVariables>) {
+  const { authenticated } = useAppSelector((root) => root.global);
   const notify = useNotifications();
-  const query = useLoadQuery({
-    initialFetchPolicy: 'cache-first',
-    variables: variables as LoadQueryVariables,
-    skip: !variables?.id,
-    pollInterval: 45000,
-  });
+  const [getLoad, query] = useLoadLazyQuery();
+
+  React.useEffect(() => {
+    if (authenticated && variables?.id && !isEqual(variables, query.variables)) {
+      console.debug('[Context::Load] Fetching load', variables);
+      getLoad({ variables: variables as LoadQueryVariables });
+    }
+  }, [authenticated, getLoad, query.variables, variables]);
 
   const refetch = React.useCallback(() => {
     if (variables?.id) {
@@ -26,11 +35,42 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
     }
   }, [query, variables]);
 
-  const { loading, fetchMore, data, called, variables: queryVariables } = query;
+  const { loading, fetchMore, data, called, variables: queryVariables, subscribeToMore } = query;
   const load = React.useMemo(() => data?.load, [data?.load]);
 
   const [mutationManifestUser] = useManifestUserMutation();
   const [mutationFinalizeLoad] = useFinalizeLoadMutation();
+
+  // Subscribe to updates over websockets
+  React.useEffect(() => {
+    if (!authenticated || !data?.load?.id) {
+      return undefined;
+    }
+    console.debug('[Apollo::Subscriptions::Load] Subscribed to updates for load', data?.load?.id);
+    const unsubscribe = subscribeToMore({
+      document: LoadUpdatedDocument,
+      variables: { id: data?.load?.id },
+      onError: console.error,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData?.data?.load?.id) {
+          return prev;
+        }
+        console.debug('[Apollo::Subscriptions::Load] Received update', subscriptionData.data.load);
+        return {
+          ...prev,
+          load: {
+            ...(prev?.load || {}),
+            ...subscriptionData.data.load,
+          },
+        };
+      },
+    });
+
+    return () => {
+      console.debug('[Apollo::Subscriptions::Load] Unsubscribing');
+      unsubscribe();
+    };
+  }, [data?.load?.id, subscribeToMore, authenticated]);
 
   const update = useMutationUpdateLoad({
     onSuccess: () => notify.success(`Load #${load?.loadNumber} updated`),

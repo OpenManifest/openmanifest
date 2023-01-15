@@ -1,13 +1,19 @@
 import * as React from 'react';
 import { useAppSelector } from 'app/state';
 import { useAppSignal } from 'app/components/app_signal';
-import { useDropzonesQuery, useUpdateVisibilityMutation } from '../reflection';
+import { isEqual } from 'lodash';
+import {
+  useDropzonesLazyQuery,
+  useDropzonesQuery,
+  useUpdateVisibilityMutation,
+} from '../reflection';
 import { DropzoneDetailedFragment, DropzonesQueryVariables } from '../operations';
 import createCRUDContext, { uninitializedHandler, TMutationResponse } from './factory';
 import { DropzoneStateEvent } from '../schema.d';
 
 export default function useDropzones(vars: Partial<DropzonesQueryVariables>) {
   const state = useAppSelector((root) => root.global);
+  const { authenticated } = state;
   const variables: DropzonesQueryVariables = React.useMemo(
     () => ({
       state: vars?.state,
@@ -15,11 +21,14 @@ export default function useDropzones(vars: Partial<DropzonesQueryVariables>) {
     [vars?.state]
   );
 
-  const query = useDropzonesQuery({
-    initialFetchPolicy: 'cache-first',
-    variables,
-    skip: !state?.credentials?.accessToken,
-  });
+  const [getDropzones, query] = useDropzonesLazyQuery();
+
+  React.useEffect(() => {
+    if (authenticated && (!isEqual(variables, query.variables) || !query.called)) {
+      console.debug('[Context::Dropzones] Fetching dropzones', variables);
+      getDropzones({ variables });
+    }
+  }, [authenticated, getDropzones, query.called, query.variables, variables]);
 
   const [updateVisibilityMutation] = useUpdateVisibilityMutation();
   const { appSignal } = useAppSignal();
