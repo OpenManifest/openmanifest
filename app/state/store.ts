@@ -27,19 +27,19 @@ const persistConfig = {
 };
 
 type ScreenReducers = {
-  [K in keyof typeof screens]: typeof screens[K]['reducer'];
+  [K in keyof typeof screens]: (typeof screens)[K]['reducer'];
 };
 
 type FormReducers = {
-  [K in keyof typeof forms]: typeof forms[K]['reducer'];
+  [K in keyof typeof forms]: (typeof forms)[K]['reducer'];
 };
 
 type ScreenActions = {
-  [K in keyof typeof screens]: typeof screens[K]['actions'];
+  [K in keyof typeof screens]: (typeof screens)[K]['actions'];
 };
 
 type FormActions = {
-  [K in keyof typeof forms]: typeof forms[K]['actions'];
+  [K in keyof typeof forms]: (typeof forms)[K]['actions'];
 };
 
 // eslint-disable

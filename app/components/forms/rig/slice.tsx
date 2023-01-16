@@ -97,7 +97,7 @@ export default createSlice({
       Object.keys(action.payload).forEach((key) => {
         const payloadKey = key as keyof typeof action.payload;
         if (payloadKey in state.fields) {
-          const typedKey = payloadKey as keyof typeof initialState['fields'];
+          const typedKey = payloadKey as keyof (typeof initialState)['fields'];
           state.fields[typedKey].value = action.payload[typedKey];
         }
       });

@@ -115,7 +115,7 @@ export default createSlice({
       Object.keys(action.payload.user).forEach((key) => {
         const payloadKey = key as keyof typeof action.payload;
         if (payloadKey in state.fields) {
-          const typedKey = payloadKey as keyof typeof initialState['fields'];
+          const typedKey = payloadKey as keyof (typeof initialState)['fields'];
           if (typedKey in action.payload) {
             state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment)[
               typedKey
@@ -165,7 +165,7 @@ export default createSlice({
           Object.keys(action.payload.user).forEach((key) => {
             const payloadKey = key as keyof typeof action.payload;
             if (payloadKey in state.fields) {
-              const typedKey = payloadKey as keyof typeof initialState['fields'];
+              const typedKey = payloadKey as keyof (typeof initialState)['fields'];
 
               if (typedKey === 'license') {
                 state.fields[typedKey].value = (action.payload as DropzoneUserDetailsFragment)[
