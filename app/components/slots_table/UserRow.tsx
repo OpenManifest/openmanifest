@@ -45,9 +45,9 @@ export default function UserRow(props: ISlotUserRowProps) {
   const canRemoveSelf = useRestriction(Permission.DeleteSlot);
   const canRemoveOthers = useRestriction(Permission.DeleteUserSlot);
 
-  const slotGroup: Required<typeof load['slots']> = load?.slots?.filter(
+  const slotGroup: Required<(typeof load)['slots']> = load?.slots?.filter(
     ({ groupNumber }) => groupNumber && groupNumber === slot.groupNumber
-  ) as Required<typeof load['slots']>;
+  ) as Required<(typeof load)['slots']>;
   const isCurrentUser = slot?.dropzoneUser?.id === currentUser?.id;
 
   return (

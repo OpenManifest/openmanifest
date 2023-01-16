@@ -11,7 +11,7 @@ jobs:
       - uses: actions/setup-node@v2
         name: Use NodeJS
         with:
-          node-version: 14
+          node-version: 16
       - name: Setup Python for JUnit Parsing
         uses: actions/setup-python@v2
         with:
