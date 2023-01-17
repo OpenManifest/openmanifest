@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useAppSelector } from 'app/state';
-import { DateTime } from 'luxon';
 import useRestriction from 'app/hooks/useRestriction';
+import uniqBy from 'lodash/uniqBy';
 import {
   useLoadsQuery,
   useManifestGroupMutation,
@@ -23,6 +23,7 @@ import {
 } from '../operations';
 import { TMutationResponse } from './factory';
 import { Permission } from '../schema.d';
+import { useLoadCreated } from './subscriptions/useLoadCreatedSubscription';
 
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
 
@@ -66,7 +67,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
     }
     return {
       dropzone,
-      date: date || DateTime.local().toISODate(),
+      date,
     };
   }, [date, dropzone]);
 
@@ -81,6 +82,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
   const [manifestGroupMutation] = useManifestGroupMutation();
   const [manifestUserMutation] = useManifestUserMutation();
   const [createLoadMutation] = useCreateLoadMutation();
+  useLoadCreated(variables as LoadsQueryVariables);
 
   const { loading, fetchMore, refetch, data, called, updateQuery } = query;
 
@@ -217,11 +219,16 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
       }
       if (result?.data?.createLoad?.load?.id) {
         const { load } = result.data.createLoad;
-        updateQuery((prev) => ({
-          ...prev,
+        updateQuery((previous) => ({
+          ...previous,
           loads: {
-            ...prev?.loads,
-            edges: [{ node: load, __typename: 'LoadEdge' }, ...(prev?.loads?.edges || [])],
+            ...previous?.loads,
+            edges: uniqBy(
+              previous?.loads?.edges?.some((existing) => existing?.node?.id === load?.id)
+                ? previous?.loads?.edges
+                : [{ node: load, __typename: 'LoadEdge' }, ...(previous?.loads?.edges || [])],
+              'node.id'
+            ),
           },
         }));
         return {
@@ -248,10 +255,12 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
       deleteSlot,
       createLoad,
       permissions,
+      variables,
       loads: data?.loads?.edges?.map((edge) => edge?.node) || [],
     }),
     [
       called,
+      variables,
       createLoad,
       data?.loads?.edges,
       deleteSlot,

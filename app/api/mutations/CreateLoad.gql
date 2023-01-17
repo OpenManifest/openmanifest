@@ -1,9 +1,9 @@
 mutation CreateLoad(
     $name: String
-    $pilot: Int
-    $gca: Int
+    $pilot: ID
+    $gca: ID
     $maxSlots: Int
-    $plane: Int
+    $plane: ID
     $state: LoadState
   ) {
     createLoad(

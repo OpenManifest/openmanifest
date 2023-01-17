@@ -1,5 +1,6 @@
 import React from 'react';
 import { DataTable } from 'react-native-paper';
+import { LoadState } from 'app/api/schema.d';
 import { useLoadContext, useManifestContext } from 'app/providers';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import DropzoneUserAutocomplete from '../autocomplete/DropzoneUserAutocomplete.web';
@@ -30,6 +31,9 @@ export default function AvailableRow(props: IAvailableRowProps) {
     <DroppableSlot loadId={load?.id?.toString() || '0'} rowIndex={index}>
       <DataTable.Row testID="slot-row" style={{ paddingTop: 8 }}>
         <DropzoneUserAutocomplete
+          disabled={[LoadState.Cancelled, LoadState.InFlight, LoadState.Landed].includes(
+            load?.state as LoadState
+          )}
           placeholder="- Available -"
           value={null}
           onChange={onSelectUser}

@@ -1056,7 +1056,7 @@ export type CreateDropzoneMutationHookResult = ReturnType<typeof useCreateDropzo
 export type CreateDropzoneMutationResult = Apollo.MutationResult<Operation.CreateDropzoneMutation>;
 export type CreateDropzoneMutationOptions = Apollo.BaseMutationOptions<Operation.CreateDropzoneMutation, Operation.CreateDropzoneMutationVariables>;
 export const CreateLoadDocument = gql`
-    mutation CreateLoad($name: String, $pilot: Int, $gca: Int, $maxSlots: Int, $plane: Int, $state: LoadState) {
+    mutation CreateLoad($name: String, $pilot: ID, $gca: ID, $maxSlots: Int, $plane: ID, $state: LoadState) {
   createLoad(
     input: {attributes: {name: $name, pilot: $pilot, gca: $gca, maxSlots: $maxSlots, plane: $plane, state: $state}}
   ) {
@@ -2185,10 +2185,8 @@ export type UpdateDropzoneUserMutationHookResult = ReturnType<typeof useUpdateDr
 export type UpdateDropzoneUserMutationResult = Apollo.MutationResult<Operation.UpdateDropzoneUserMutation>;
 export type UpdateDropzoneUserMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateDropzoneUserMutation, Operation.UpdateDropzoneUserMutationVariables>;
 export const UpdateLoadDocument = gql`
-    mutation UpdateLoad($id: Int!, $pilot: Int, $gca: Int, $plane: Int, $loadMaster: Int, $dispatchAt: ISO8601DateTime) {
-  updateLoad(
-    input: {id: $id, attributes: {pilot: $pilot, gca: $gca, plane: $plane, loadMaster: $loadMaster, dispatchAt: $dispatchAt}}
-  ) {
+    mutation UpdateLoad($id: ID!, $attributes: LoadInput!) {
+  updateLoad(input: {id: $id, attributes: $attributes}) {
     fieldErrors {
       field
       message
@@ -2216,11 +2214,7 @@ export type UpdateLoadMutationFn = Apollo.MutationFunction<Operation.UpdateLoadM
  * const [updateLoadMutation, { data, loading, error }] = useUpdateLoadMutation({
  *   variables: {
  *      id: // value for 'id'
- *      pilot: // value for 'pilot'
- *      gca: // value for 'gca'
- *      plane: // value for 'plane'
- *      loadMaster: // value for 'loadMaster'
- *      dispatchAt: // value for 'dispatchAt'
+ *      attributes: // value for 'attributes'
  *   },
  * });
  */
@@ -4047,6 +4041,38 @@ export function useTicketTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type TicketTypesQueryHookResult = ReturnType<typeof useTicketTypesQuery>;
 export type TicketTypesLazyQueryHookResult = ReturnType<typeof useTicketTypesLazyQuery>;
 export type TicketTypesQueryResult = Apollo.QueryResult<Operation.TicketTypesQuery, Operation.TicketTypesQueryVariables>;
+export const LoadCreatedDocument = gql`
+    subscription LoadCreated($dropzoneId: ID!) {
+  loadCreated(dropzoneId: $dropzoneId) {
+    load {
+      ...loadDetails
+    }
+  }
+}
+    ${LoadDetailsFragmentDoc}`;
+
+/**
+ * __useLoadCreatedSubscription__
+ *
+ * To run a query within a React component, call `useLoadCreatedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useLoadCreatedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLoadCreatedSubscription({
+ *   variables: {
+ *      dropzoneId: // value for 'dropzoneId'
+ *   },
+ * });
+ */
+export function useLoadCreatedSubscription(baseOptions: Apollo.SubscriptionHookOptions<Operation.LoadCreatedSubscription, Operation.LoadCreatedSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<Operation.LoadCreatedSubscription, Operation.LoadCreatedSubscriptionVariables>(LoadCreatedDocument, options);
+      }
+export type LoadCreatedSubscriptionHookResult = ReturnType<typeof useLoadCreatedSubscription>;
+export type LoadCreatedSubscriptionResult = Apollo.SubscriptionResult<Operation.LoadCreatedSubscription>;
 export const LoadUpdatedDocument = gql`
     subscription LoadUpdated($id: ID!) {
   loadUpdated(loadId: $id) {

@@ -22,6 +22,7 @@ export const INITIAL_CONTEXT: IManifestContext = {
     called: false,
     loading: false,
     loads: [],
+    variables: {} as never,
     refetch: uninitializedHandler as never,
     fetchMore: uninitializedHandler as never,
     deleteSlot: uninitializedHandler as never,

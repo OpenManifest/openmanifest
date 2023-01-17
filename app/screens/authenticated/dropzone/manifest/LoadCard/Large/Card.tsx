@@ -51,7 +51,6 @@ function LoadCard(props: ILoadCardLarge) {
       load,
       loading,
       refetch,
-      update,
       updateGCA,
       updatePlane,
       updatePilot,
@@ -159,10 +158,7 @@ function LoadCard(props: ILoadCardLarge) {
         }
         subtitle={load?.name}
       />
-      <ProgressBar
-        visible={loading || update.loading || deletingSlot}
-        color={state.theme.colors.primary}
-      />
+      <ProgressBar visible={loading || deletingSlot} color={state.theme.colors.primary} />
       <Card.Content
         style={{
           marginVertical: 8,
