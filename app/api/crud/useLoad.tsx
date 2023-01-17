@@ -51,41 +51,49 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
     async function UpdateLoad(
       attributes: Partial<UpdateLoadMutationVariables['attributes']>
     ): Promise<TMutationResponse<{ load: LoadDetailsFragment }>> {
-      if (load?.id) {
-        return { error: 'Load cannot be updated' };
-      }
+      try {
+        console.debug('[Context::Load] Updating load', load?.id, attributes);
+        if (!load?.id) {
+          return { error: 'Load cannot be updated' };
+        }
 
-      const { data: response } = await updateLoadMutation({
-        variables: {
-          id: load?.id as string,
-          attributes,
-        },
-        optimisticResponse: {
-          updateLoad: {
-            __typename: 'UpdateLoadPayload',
-            errors: null,
-            fieldErrors: null,
-            load: {
-              ...load,
-              state: (attributes?.state || load?.state) as LoadState,
-              dispatchAt: attributes?.dispatchAt || load?.dispatchAt,
-            } as LoadDetailsFragment,
+        const { data: response } = await updateLoadMutation({
+          variables: {
+            id: load?.id as string,
+            attributes,
           },
-        },
-      });
+          optimisticResponse: {
+            updateLoad: {
+              __typename: 'UpdateLoadPayload',
+              errors: null,
+              fieldErrors: null,
+              load: {
+                ...load,
+                state: (attributes?.state || load?.state) as LoadState,
+                dispatchAt: attributes?.dispatchAt || load?.dispatchAt,
+              } as LoadDetailsFragment,
+            },
+          },
+        });
 
-      if (response?.updateLoad?.load?.id) {
-        notify.success(`Load #${load?.loadNumber} updated`);
-        return { load: response?.updateLoad?.load };
-      }
+        console.debug({ response });
 
-      if (response?.updateLoad?.errors?.[0]) {
-        notify.error(response?.updateLoad?.errors?.[0]);
+        if (response?.updateLoad?.load?.id) {
+          notify.success(`Load #${load?.loadNumber} updated`);
+          return { load: response?.updateLoad?.load };
+        }
+
+        if (response?.updateLoad?.errors?.[0]) {
+          notify.error(response?.updateLoad?.errors?.[0]);
+        }
+        return {
+          error: response?.updateLoad?.errors?.[0],
+          fieldErrors: response?.updateLoad?.fieldErrors || undefined,
+        };
+      } catch (e) {
+        console.error(e);
+        return { error: 'Something went wrong' };
       }
-      return {
-        error: response?.updateLoad?.errors?.[0],
-        fieldErrors: response?.updateLoad?.fieldErrors || undefined,
-      };
     },
     [load, notify, updateLoadMutation]
   );
@@ -142,15 +150,12 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
 
   const updateLoadState = React.useCallback(
     async (state: LoadState) => {
-      if (!load) {
-        return;
-      }
-      await update({
+      return update({
         state,
         dispatchAt: null,
       });
     },
-    [update, load]
+    [update]
   );
 
   const updatePilot = React.useCallback(
@@ -213,11 +218,11 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
 
   const dispatchAtTime = React.useCallback(
     async (time: number | null) => {
-      if (!load || !time) {
+      if (!load) {
         return;
       }
       await update({
-        dispatchAt: DateTime.fromSeconds(time).toISO(),
+        dispatchAt: !time ? null : DateTime.fromSeconds(time).toISO(),
         state: time ? LoadState.BoardingCall : LoadState.Open,
       });
     },

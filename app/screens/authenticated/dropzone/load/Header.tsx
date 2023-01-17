@@ -30,7 +30,9 @@ export default function UserHeader(props: ILoadHeader) {
     >
       <View style={styles.avatarContainer}>
         <View style={{ flex: 1 / 3, alignItems: 'center', justifyContent: 'center' }}>
-          {load?.dispatchAt && DateTime.fromSeconds(load.dispatchAt) > DateTime.local() ? (
+          {load?.dispatchAt &&
+          typeof load.dispatchAt === 'number' &&
+          DateTime.fromSeconds(load.dispatchAt) > DateTime.local() ? (
             <Countdown
               end={new Date(load.dispatchAt * 1000)}
               variant={theme.dark ? 'light' : 'dark'}

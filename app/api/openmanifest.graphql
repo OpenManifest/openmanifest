@@ -1294,7 +1294,7 @@ enum NotificationType {
 
 type Order implements AnyResource {
   amount: Float!
-  buyer: Wallet!
+  buyer: Wallet
   createdAt: ISO8601DateTime!
   dropzone: Dropzone!
   guid: ID!
@@ -1302,7 +1302,7 @@ type Order implements AnyResource {
   item: SellableItem
   orderNumber: Int!
   receipts: [Receipt!]
-  seller: Wallet!
+  seller: Wallet
   state: OrderState!
   title: String
   updatedAt: ISO8601DateTime!
@@ -1879,8 +1879,8 @@ type Transaction implements AnyResource {
   id: ID!
   message: String
   receipt: Receipt!
-  receiver: Wallet!
-  sender: Wallet!
+  receiver: Wallet
+  sender: Wallet
   status: TransactionStatus!
   transactionType: TransactionType!
   updatedAt: ISO8601DateTime!

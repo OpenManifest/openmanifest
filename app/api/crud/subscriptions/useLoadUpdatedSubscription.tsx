@@ -1,6 +1,10 @@
 import { OnDataOptions } from '@apollo/client';
-import { LoadDetailsFragment, LoadUpdatedSubscription } from 'app/api/operations';
-import { LoadDetailsFragmentDoc, useLoadUpdatedSubscription } from 'app/api/reflection';
+import { LoadDetailsFragment, LoadQuery, LoadUpdatedSubscription } from 'app/api/operations';
+import {
+  LoadDetailsFragmentDoc,
+  LoadDocument,
+  useLoadUpdatedSubscription,
+} from 'app/api/reflection';
 import * as React from 'react';
 
 export function useLoadUpdated(loadId?: string) {
@@ -15,9 +19,21 @@ export function useLoadUpdated(loadId?: string) {
             broadcast: true,
             id: client.cache.identify(load),
           },
+          () => load
+        );
+
+        client.cache.updateQuery<LoadQuery>(
+          {
+            query: LoadDocument,
+            broadcast: true,
+            variables: { id: load.id },
+          },
           (previous) => ({
             ...previous,
-            ...load,
+            load: {
+              __typename: 'Load',
+              ...load,
+            },
           })
         );
 

@@ -1401,7 +1401,7 @@ export enum NotificationType {
 export type Order = AnyResource & {
   __typename?: 'Order';
   amount: Scalars['Float'];
-  buyer: Wallet;
+  buyer?: Maybe<Wallet>;
   createdAt: Scalars['ISO8601DateTime'];
   dropzone: Dropzone;
   guid: Scalars['ID'];
@@ -1409,7 +1409,7 @@ export type Order = AnyResource & {
   item?: Maybe<SellableItem>;
   orderNumber: Scalars['Int'];
   receipts?: Maybe<Array<Receipt>>;
-  seller: Wallet;
+  seller?: Maybe<Wallet>;
   state: OrderState;
   title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['ISO8601DateTime'];
@@ -2050,8 +2050,8 @@ export type Transaction = AnyResource & {
   id: Scalars['ID'];
   message?: Maybe<Scalars['String']>;
   receipt: Receipt;
-  receiver: Wallet;
-  sender: Wallet;
+  receiver?: Maybe<Wallet>;
+  sender?: Maybe<Wallet>;
   status: TransactionStatus;
   transactionType: TransactionType;
   updatedAt: Scalars['ISO8601DateTime'];
