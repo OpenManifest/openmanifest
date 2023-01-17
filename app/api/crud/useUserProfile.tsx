@@ -115,7 +115,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
             if (mutationResult?.createOrder?.order?.id) {
               const { order } = mutationResult.createOrder;
 
-              if (order.buyer.__typename === 'DropzoneUser') {
+              if (order?.buyer?.__typename === 'DropzoneUser') {
                 // Deduct credits
                 cache.writeFragment({
                   fragment: DropzoneUserProfileFragmentDoc,
@@ -123,7 +123,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
                   id: cache.identify(order.buyer),
                   data: order.buyer,
                 });
-              } else if (order.seller.__typename === 'DropzoneUser') {
+              } else if (order?.seller?.__typename === 'DropzoneUser') {
                 // Add credits
                 cache.writeFragment({
                   fragment: DropzoneUserProfileFragmentDoc,
