@@ -78,6 +78,7 @@ export default function OrderCard(props: IOrder) {
                   <MaterialCommunityIcons
                     color={
                       // eslint-disable-next-line no-underscore-dangle
+                      order.buyer &&
                       '__typename' in order.buyer &&
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       // @ts-ignore

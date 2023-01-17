@@ -48,17 +48,20 @@ export default function TransactionsScreen() {
           !item?.node ? null : (
             <OrderCard
               onPress={() =>
-                !item?.node
+                !item?.node?.id
                   ? null
                   : navigation.navigate('Authenticated', {
                       screen: 'LeftDrawer',
                       params: {
-                        screen: 'Users',
+                        screen: 'Manifest',
                         params: {
-                          screen: 'OrderReceiptScreen',
+                          screen: 'User',
                           params: {
-                            orderId: item?.node?.id,
-                            userId: item?.node?.buyer?.id,
+                            screen: 'OrderReceiptScreen',
+                            params: {
+                              orderId: item?.node?.id as string,
+                              userId: item?.node?.buyer?.id as string,
+                            },
                           },
                         },
                       },
