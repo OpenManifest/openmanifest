@@ -80,7 +80,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
   const [{ loading }, onManifest] = useAsyncFn(
     async (fields: ManifestUserFields) => {
       try {
-        await canManifest();
+        // await canManifest();
 
         const response = await manifestUser({
           jumpType: fields.jumpType?.id,

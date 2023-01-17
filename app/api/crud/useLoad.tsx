@@ -7,15 +7,19 @@ import { ValidationError } from 'yup';
 import { useNotifications } from 'app/providers/notifications';
 import { useAppSelector } from 'app/state';
 import {
-  LoadUpdatedDocument,
   useFinalizeLoadMutation,
   useLoadLazyQuery,
   useManifestUserMutation,
+  useUpdateLoadMutation,
 } from '../reflection';
-import { LoadQueryVariables } from '../operations';
-import { uninitializedHandler } from './factory';
+import {
+  LoadDetailsFragment,
+  LoadQueryVariables,
+  UpdateLoadMutationVariables,
+} from '../operations';
+import { TMutationResponse, uninitializedHandler } from './factory';
 import { CreateSlotPayload, LoadState, Permission } from '../schema.d';
-import useMutationUpdateLoad from '../hooks/useMutationUpdateLoad';
+import { useLoadUpdated } from './subscriptions/useLoadUpdatedSubscription';
 
 export function useLoad(variables: Partial<LoadQueryVariables>) {
   const { authenticated } = useAppSelector((root) => root.global);
@@ -35,47 +39,64 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
     }
   }, [query, variables]);
 
-  const { loading, fetchMore, data, called, variables: queryVariables, subscribeToMore } = query;
+  const { loading, fetchMore, data, called, variables: queryVariables } = query;
   const load = React.useMemo(() => data?.load, [data?.load]);
 
   const [mutationManifestUser] = useManifestUserMutation();
   const [mutationFinalizeLoad] = useFinalizeLoadMutation();
+  const [updateLoadMutation] = useUpdateLoadMutation();
+  useLoadUpdated(variables?.id);
 
-  // Subscribe to updates over websockets
-  React.useEffect(() => {
-    if (!authenticated || !data?.load?.id) {
-      return undefined;
-    }
-    console.debug('[Apollo::Subscriptions::Load] Subscribed to updates for load', data?.load?.id);
-    const unsubscribe = subscribeToMore({
-      document: LoadUpdatedDocument,
-      variables: { id: data?.load?.id },
-      onError: console.error,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData?.data?.load?.id) {
-          return prev;
+  const update = React.useCallback(
+    async function UpdateLoad(
+      attributes: Partial<UpdateLoadMutationVariables['attributes']>
+    ): Promise<TMutationResponse<{ load: LoadDetailsFragment }>> {
+      try {
+        console.debug('[Context::Load] Updating load', load?.id, attributes);
+        if (!load?.id) {
+          return { error: 'Load cannot be updated' };
         }
-        console.debug('[Apollo::Subscriptions::Load] Received update', subscriptionData.data.load);
-        return {
-          ...prev,
-          load: {
-            ...(prev?.load || {}),
-            ...subscriptionData.data.load,
+
+        const { data: response } = await updateLoadMutation({
+          variables: {
+            id: load?.id as string,
+            attributes,
           },
+          optimisticResponse: {
+            updateLoad: {
+              __typename: 'UpdateLoadPayload',
+              errors: null,
+              fieldErrors: null,
+              load: {
+                ...load,
+                state: (attributes?.state || load?.state) as LoadState,
+                dispatchAt: attributes?.dispatchAt || load?.dispatchAt,
+              } as LoadDetailsFragment,
+            },
+          },
+        });
+
+        console.debug({ response });
+
+        if (response?.updateLoad?.load?.id) {
+          notify.success(`Load #${load?.loadNumber} updated`);
+          return { load: response?.updateLoad?.load };
+        }
+
+        if (response?.updateLoad?.errors?.[0]) {
+          notify.error(response?.updateLoad?.errors?.[0]);
+        }
+        return {
+          error: response?.updateLoad?.errors?.[0],
+          fieldErrors: response?.updateLoad?.fieldErrors || undefined,
         };
-      },
-    });
-
-    return () => {
-      console.debug('[Apollo::Subscriptions::Load] Unsubscribing');
-      unsubscribe();
-    };
-  }, [data?.load?.id, subscribeToMore, authenticated]);
-
-  const update = useMutationUpdateLoad({
-    onSuccess: () => notify.success(`Load #${load?.loadNumber} updated`),
-    onError: (message) => notify.error(message),
-  });
+      } catch (e) {
+        console.error(e);
+        return { error: 'Something went wrong' };
+      }
+    },
+    [load, notify, updateLoadMutation]
+  );
 
   const manifestUser = React.useCallback(
     async (payload: Omit<CreateSlotPayload, 'loadId'>) => {
@@ -119,8 +140,7 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
       }
       const dispatchTime = !minutes ? null : DateTime.local().plus({ minutes }).toISO();
 
-      await update.mutate({
-        id: Number(load?.id),
+      await update({
         dispatchAt: dispatchTime,
         state: dispatchTime ? LoadState.BoardingCall : LoadState.Open,
       });
@@ -130,56 +150,48 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
 
   const updateLoadState = React.useCallback(
     async (state: LoadState) => {
-      if (!load) {
-        return;
-      }
-      await update.mutate({
-        id: Number(load?.id),
+      return update({
         state,
         dispatchAt: null,
       });
     },
-    [update, load]
+    [update]
   );
 
   const updatePilot = React.useCallback(
-    async (pilot: { id: string | number }) => {
-      await update.mutate({
-        id: Number(load?.id),
-        pilot: Number(pilot.id),
+    async (pilot: { id: string }) => {
+      await update({
+        pilot: pilot.id,
       });
     },
-    [update, load?.id]
+    [update]
   );
 
   const updateGCA = React.useCallback(
-    async (gca: { id: number | string }) => {
-      await update.mutate({
-        id: Number(load?.id),
-        gca: Number(gca.id),
+    async (gca: { id: string }) => {
+      await update({
+        gca: gca.id,
       });
     },
-    [update, load?.id]
+    [update]
   );
 
   const updatePlane = React.useCallback(
-    async (plane: { id: string | number; maxSlots: number }) => {
-      await update.mutate({
-        id: Number(load?.id),
-        plane: Number(plane.id),
+    async (plane: { id: string; maxSlots: number }) => {
+      await update({
+        plane: plane.id,
       });
     },
-    [load?.id, update]
+    [update]
   );
 
   const updateLoadMaster = React.useCallback(
-    async (lm: { id: number | string }) => {
-      await update.mutate({
-        id: Number(load?.id),
-        loadMaster: Number(lm.id),
+    async (lm: { id: string }) => {
+      await update({
+        loadMaster: lm.id,
       });
     },
-    [update, load?.id]
+    [update]
   );
 
   const markAsLanded = React.useCallback(async () => {
@@ -206,12 +218,11 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
 
   const dispatchAtTime = React.useCallback(
     async (time: number | null) => {
-      if (!load || !time) {
+      if (!load) {
         return;
       }
-      await update.mutate({
-        id: Number(load?.id),
-        dispatchAt: DateTime.fromSeconds(time).toISO(),
+      await update({
+        dispatchAt: !time ? null : DateTime.fromSeconds(time).toISO(),
         state: time ? LoadState.BoardingCall : LoadState.Open,
       });
     },

@@ -8,6 +8,7 @@ import { useManifest } from 'app/api/crud/useManifest';
 import ManifestUserDialog from 'app/forms/manifest_user/Dialog';
 import LoadDialog from 'app/forms/load/Dialog';
 import CreditSheet from 'app/forms/credits/Credits';
+import { DateTime } from 'luxon';
 import createUseDialog from '../hooks/useDialog';
 import { ManifestContext, useManifestContext } from './context';
 
@@ -52,7 +53,7 @@ const useLoadDialog = createUseDialog<Pick<ILoadDialog, 'load'>>();
 const useCreditsDialog = createUseDialog<Pick<ICreditsSheet, 'dropzoneUser'>>();
 
 export function ManifestContextProvider(props: React.PropsWithChildren<UseManifestOptions>) {
-  const { dropzone, date, children } = props;
+  const { dropzone, date = DateTime.local().toISODate(), children } = props;
   const manifestUserDialog = useManifestUserDialog();
   const loadDialog = useLoadDialog();
   const creditsDialog = useCreditsDialog();

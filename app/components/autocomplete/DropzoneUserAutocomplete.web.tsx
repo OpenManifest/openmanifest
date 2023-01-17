@@ -19,6 +19,7 @@ import UserAvatar from '../UserAvatar.web.old';
 interface IDropzoneUserAutocompleteProps {
   value?: DropzoneUserEssentialsFragment | null;
   label?: string;
+  disabled?: boolean;
   placeholder?: string;
   color?: string;
   onChange(value: DropzoneUserEssentialsFragment): void;
@@ -55,7 +56,7 @@ const StyledTextField = styled(TextField, {
   },
 })) as React.ComponentType<Omit<TextFieldProps, 'color'> & { color?: string }>;
 export default function DropzoneUserAutocomplete(props: IDropzoneUserAutocompleteProps) {
-  const { label, onChange, placeholder, color } = props;
+  const { label, onChange, disabled, placeholder, color } = props;
   const [searchUsers, { data, loading }] = useDropzoneUsersLazyQuery();
   const [searchText, setSearchText] = React.useState('');
   const { currentDropzoneId } = useAppSelector((root) => root.global);
@@ -112,7 +113,7 @@ export default function DropzoneUserAutocomplete(props: IDropzoneUserAutocomplet
   );
   return (
     <Autocomplete<DropzoneUserEssentialsFragment>
-      {...{ loading, options, groupBy, getOptionLabel, value: null }}
+      {...{ disabled, loading, options, groupBy, getOptionLabel, value: null }}
       sx={{ width: '100%' }}
       renderInput={(params) => (
         <StyledTextField

@@ -16,7 +16,7 @@ export const INITIAL_CONTEXT: ILoadContext = {
     called: false,
     loading: false,
     load: null,
-    update: { loading: false, mutate: uninitializedHandler as never },
+    update: uninitializedHandler as never,
     updateGCA: uninitializedHandler as never,
     updateLoadMaster: uninitializedHandler as never,
     updatePlane: uninitializedHandler as never,

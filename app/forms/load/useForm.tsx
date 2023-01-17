@@ -83,10 +83,10 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
         const validatedFields = loadValidation.validateSync(fields);
 
         const response = await createLoad({
-          gca: Number(validatedFields.gca?.id),
+          gca: validatedFields.gca?.id,
           state: LoadState.Open,
-          pilot: Number(validatedFields.pilot?.id),
-          plane: Number(validatedFields.plane?.id),
+          pilot: validatedFields.pilot?.id,
+          plane: validatedFields.plane?.id,
           maxSlots: Number(validatedFields.maxSlots),
           name: validatedFields.name,
         });

@@ -21,11 +21,11 @@ import {
   useDropzoneUserProfileLazyQuery,
   useGrantPermissionMutation,
   useRevokePermissionMutation,
-  UserUpdatedDocument,
   useUpdateDropzoneUserMutation,
 } from '../reflection';
 import { GhostInput, Permission } from '../schema.d';
 import createCRUDContext, { TMutationResponse, uninitializedHandler } from './factory';
+import { useUserUpdated } from './subscriptions/useUserUpdated';
 
 function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
   const { authenticated } = useAppSelector((root) => root.global);
@@ -41,42 +41,14 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
   const canGrantPermission = useRestriction(Permission.GrantPermission);
   const canRevokePermission = useRestriction(Permission.RevokePermission);
 
-  const { subscribeToMore } = query;
   const profile = React.useMemo(() => query?.data?.dropzoneUser, [query?.data?.dropzoneUser]);
+  useUserUpdated(profile?.id);
 
   React.useEffect(() => {
     if (authenticated && id && id !== query?.variables?.id) {
       getProfile({ variables: { id } });
     }
   }, [authenticated, getProfile, id, query?.variables?.id]);
-
-  // Subscribe to updates over websockets
-  React.useEffect(() => {
-    if (!profile?.id) {
-      return undefined;
-    }
-    const unsubscribe = subscribeToMore({
-      document: UserUpdatedDocument,
-      variables: { id: profile?.id },
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData?.data?.dropzoneUser?.id) {
-          return prev;
-        }
-        console.debug('[Apollo::Subscription::UpdateUser]: Received update', subscriptionData);
-        return {
-          ...prev,
-          dropzoneUser: {
-            ...(prev?.dropzoneUser || {}),
-            ...subscriptionData.data.dropzoneUser,
-          },
-        };
-      },
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, [profile?.id, subscribeToMore]);
 
   const create = React.useCallback(
     async function CreateGhost(

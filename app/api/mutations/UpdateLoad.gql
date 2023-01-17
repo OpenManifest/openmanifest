@@ -1,21 +1,11 @@
 mutation UpdateLoad(
-    $id: Int!
-    $pilot: Int
-    $gca: Int
-    $plane: Int
-    $loadMaster: Int
-    $dispatchAt: ISO8601DateTime
+    $id: ID!
+    $attributes: LoadInput!
   ) {
     updateLoad(
       input: {
         id: $id
-        attributes: {
-          pilot: $pilot
-          gca: $gca
-          plane: $plane
-          loadMaster: $loadMaster
-          dispatchAt: $dispatchAt
-        }
+        attributes: $attributes
       }
     ) {
       fieldErrors {
