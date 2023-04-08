@@ -49,7 +49,7 @@ jobs:
             echo "EXPO_ENV=staging" >> $GITHUB_OUTPUT
           fi
       - run: yarn check:types:ci
-      - run: yarn check:linting:ci --output-file ~/reports/eslint.xml
+      - run: yarn check:linting:ci
       - run: yarn check:testing:ci
         env:
           EXPO_ENV: ${{ steps.environment.outputs.EXPO_ENV }}
