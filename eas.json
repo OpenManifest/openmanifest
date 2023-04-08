@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": ">= 0.60.0"
+    "version": ">= 3.6.1"
   },
   "build": {
     "development": {
@@ -16,12 +16,18 @@
       "env": {
         "EXPO_ENV": "staging"
       },
+      "ios": {
+        "resourceClass": "m-medium"
+      },
       "distribution": "store",
       "channel": "staging"
     },
     "production": {
       "env": {
         "EXPO_ENV": "production"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
       },
       "distribution": "store",
       "channel": "production"
@@ -38,5 +44,5 @@
         "ascAppId": "1572161945"
       }
     }
-  },
+  }
 }

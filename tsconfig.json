@@ -1,26 +1,18 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "module": "esnext",
     "baseUrl": "./",
     "noImplicitAny": false,
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-native",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "noEmit": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
     "strict": true,
-    "paths": {
-      "app/*": [
-        "app/*"
-      ]
-    }
+    "allowSyntheticDefaultImports": true,
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "isolatedModules": false,
+    "downlevelIteration": true,
+    "allowJs": true,
+    "resolveJsonModule": true
   },
   "include": [
     "jest.setup.ts",
@@ -30,6 +22,7 @@
     ".eslintrc.js",
     "index.ts",
     "main.ts",
+    "build/**/*.ts",
     "patches/deprecated-prop-types.ts"
   ]
 }

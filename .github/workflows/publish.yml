@@ -1,0 +1,173 @@
+name: Publish to Expo
+on:
+  workflow_dispatch:
+    inputs:
+      binary:
+        description: "Build new binary"
+        type: boolean
+        default: false
+        required: false
+      minor:
+        description: "Increment minor version"
+        type: boolean
+        default: false
+        required: false
+      environment:
+        description: "Target Environment"
+        required: false
+        type: choice
+        options:
+          - staging
+          - production
+  push:
+    branches:
+      - main
+      - staging
+env:
+  CURRENT_BRANCH_NAME: ${{ inputs.branch || github.head_ref || github.ref_name }}
+  TARGET_BRANCH_NAME: ${{ inputs.branch || github.base_ref || github.ref_name }}
+jobs:
+  publish-web:
+    name: Publish Web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - uses: expo/expo-github-action@v7
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: yarn install
+      - name: Determine version cache key
+        id: version-environment-cache
+        run: |
+          # Create a cache key based on the current AppStore version
+          echo "VERSION_CACHE_KEY=$(yarn --silent version:show --cache-key | tail -n1)" >> $GITHUB_OUTPUT
+      - name: Check previous environment
+        uses: UnlyEd/github-action-store-variable@v3 # See https://github.com/UnlyEd/github-action-store-variable
+        with:
+          variables: ${{ steps.version-environment-cache.outputs.VERSION_CACHE_KEY }}
+      - name: set EXPO_ENV environment
+        id: environment
+        env:
+          VERSION_CACHE_KEY: "${{ steps.version-environment-cache.outputs.VERSION_CACHE_KEY }}"
+        run: |
+          # If a custom environment was selected using inputs, use that.
+          if [[ -n "${{ inputs.environment}}" ]]; then
+            echo "EXPO_ENV=${{ inputs.environment}}" >> $GITHUB_OUTPUT
+          # If no input setting the environment was found, but we have a cached
+          # environment for this AppStore version, use that instead
+          elif [[ -n "${!VERSION_CACHE_KEY}" ]]; then
+            echo "EXPO_ENV=${!VERSION_CACHE_KEY}" >> $GITHUB_OUTPUT
+          # Otherwise, assume that the staging branch points to development
+          else
+            echo "EXPO_ENV=staging" >> $GITHUB_OUTPUT
+          fi
+      - run: yarn check:types
+        name: Typecheck
+      - run: yarn eas:build:web
+        env:
+          EXPO_ENV: ${{ steps.environment.outputs.EXPO_ENV }}
+          GOOGLE_MAPS_WEB: ${{ secrets.GOOGLE_MAPS_WEB }}
+          GOOGLE_MAPS_IOS: ${{ secrets.GOOGLE_MAPS_IOS }}
+          GOOGLE_MAPS_ANDROID: ${{ secrets.GOOGLE_MAPS_ANDROID }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_API_KEY: ${{ secrets.SENTRY_API_KEY }}
+          NODE_OPTIONS: --max_old_space_size=4096
+          APPSIGNAL_STAGING_API_KEY: ${{ secrets.APPSIGNAL_STAGING_API_KEY }}
+          APPSIGNAL_PRODUCTION_API_KEY: ${{ secrets.APPSIGNAL_PRODUCTION_API_KEY }}
+          FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
+          FACEBOOK_CLIENT_TOKEN: ${{ secrets.FACEBOOK_CLIENT_TOKEN }}
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          publish_dir: ./web-build-staging
+          deploy_key: ${{ secrets.WEB_DEPLOY_KEY_STAGING }}
+          external_repository: OpenManifest/openmanifest-web-staging
+          cname: staging.openmanifest.org
+  publish-native:
+    name: Publish Expo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - run: yarn install --frozen-lockfile
+      - name: Determine version cache key
+        id: version-environment-cache
+        run: |
+          # Create a cache key based on the current AppStore version
+          echo "VERSION_CACHE_KEY=$(yarn --silent version:show --cache-key | tail -n1)" >> $GITHUB_OUTPUT
+      - name: Check previous environment
+        uses: UnlyEd/github-action-store-variable@v3 # See https://github.com/UnlyEd/github-action-store-variable
+        with:
+          variables: ${{ steps.version-environment-cache.outputs.VERSION_CACHE_KEY }}
+      - name: set EXPO_ENV environment
+        id: environment
+        env:
+          VERSION_CACHE_KEY: "${{ steps.version-environment-cache.outputs.VERSION_CACHE_KEY }}"
+        run: |
+          # If a custom environment was selected using inputs, use that.
+          if [[ -n "${{ inputs.environment}}" ]]; then
+            echo "EXPO_ENV=${{ inputs.environment}}" >> $GITHUB_OUTPUT
+          # If no input setting the environment was found, but we have a cached
+          # environment for this AppStore version, use that instead
+          elif [[ -n "${!VERSION_CACHE_KEY}" ]]; then
+            echo "EXPO_ENV=${!VERSION_CACHE_KEY}" >> $GITHUB_OUTPUT
+          else
+            echo "EXPO_ENV=staging" >> $GITHUB_OUTPUT
+          fi
+      - uses: expo/expo-github-action@v7
+        with:
+          expo-version: latest
+          eas-version: 3.8.1
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Bump version
+        env:
+          EXPO_ENV: ${{ steps.environment.outputs.EXPO_ENV }}
+        run: |
+          git config --global user.email "ci@openmanifest.org"
+          git config --global user.name "Github Actions"
+
+          # Bump minor version if this workflow is run manually
+          # with minor bump checkbox checked.
+          # Bumping the minor version will require a new binary build,
+          # and will be pushed to a new version in AppStore Connect.
+
+          # You can build a new binary and push to the current AppStore Connect
+          # version, but you cannot bump the minor version and push to the current
+          # AppStore Connect version.
+          if [[ "${{ inputs.minor }}" == "true" ]]; then
+            yarn version:bump:minor
+          else
+            yarn version:bump:patch
+          fi
+          VERSION=$(yarn --silent version:show | tail -n1)
+          git commit -am "[ci skip]: Published ${VERSION}"
+      - name: Build/Publish
+        run: |
+          if [[ "${{ inputs.binary }}" == "true" ]]; then
+            yarn eas:build:ios
+          else
+            yarn eas:update
+          fi
+        env:
+          EXPO_ENV: ${{ steps.environment.outputs.EXPO_ENV }}
+          APPSIGNAL_STAGING_API_KEY: ${{ secrets.APPSIGNAL_PUSH_API_KEY }}
+          APPSIGNAL_PRODUCTION_API_KEY: ${{ secrets.APPSIGNAL_PUSH_API_KEY }}
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.DEPLOY_TOKEN }}
+          branch: ${{ github.ref }}
+          force: true
+      - name: Remember Environment for Version
+        uses: UnlyEd/github-action-store-variable@v3 # See https://github.com/UnlyEd/github-action-store-variable
+        with:
+          variables: |
+            ${{ steps.version-environment-cache.outputs.VERSION_CACHE_KEY }}=${{ steps.environment.outputs.EXPO_ENV }}
