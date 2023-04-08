@@ -8,6 +8,9 @@ env:
   CURRENT_BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   TARGET_BRANCH_NAME: ${{ github.base_ref || github.ref_name }}
   CI: "true"
+defaults:
+  run:
+    shell: bash
 jobs:
   eslint:
     runs-on: ubuntu-latest
