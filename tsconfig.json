@@ -2,7 +2,6 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "baseUrl": "./",
-    "module": "es2022",
     "noImplicitAny": false,
     "strict": true,
     "allowSyntheticDefaultImports": true,
