@@ -45,8 +45,6 @@ jobs:
             echo "EXPO_ENV=${!VERSION_CACHE_KEY}" >> $GITHUB_OUTPUT
           elif [[ "${{ env.TARGET_BRANCH_NAME }}" == "staging" ]]; then
             echo "EXPO_ENV=staging" >> $GITHUB_OUTPUT
-          elif [[ -n "${{ vars.EXPO_ENV }}" ]]; then
-            echo "EXPO_ENV=${{ vars.EXPO_ENV }}" >> $GITHUB_OUTPUT
           else
             echo "EXPO_ENV=staging" >> $GITHUB_OUTPUT
           fi
