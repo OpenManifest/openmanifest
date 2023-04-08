@@ -1,0 +1,42 @@
+{
+  "$schema": "./node_modules/rome/configuration_schema.json",
+  "files": {
+    "ignore": [
+      "node_modules/**",
+      "build/**",
+      "dist/**",
+      "app/graphql/hooks.tsx",
+      "app/graphql/operations.ts",
+      "app/graphql/schema/index.ts",
+      "app/graphql/schema/schema.json"
+    ]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "complexity": {
+        "useSimplifiedLogicExpression": "warn",
+        "useFlatMap": "warn"
+      },
+      "style": {
+        "noUnusedTemplateLiteral": "warn"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "lineWidth": 120,
+    "indentSize": 2,
+    "indentStyle": "space"
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingComma": "none"
+    }
+  }
+}

@@ -1,13 +1,6 @@
 import { ExpoConfig, ConfigContext } from '@expo/config';
 import 'dotenv/config';
-
-const BACKEND_ENVIRONMENTS = {
-  development: 'http://local.openmanifest.org:5000/graphql',
-  staging: 'https://devapi.openmanifest.org/graphql',
-  default: 'https://devapi.openmanifest.org/graphql',
-  production: 'https://api.openmanifest.org/graphql',
-};
-
+import { APP_NAME, APP_VERSION, BUILD_NUMBER, BUILD_VERSION, ENDPOINTS, getEndpoint } from './build/constants';
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   const environment = process.env.EXPO_ENV;
@@ -18,9 +11,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     production: process.env.APPSIGNAL_PRODUCTION_API_KEY,
   };
 
-  const conf = {
+  const conf: ExpoConfig = {
     ...config,
-    name: 'OpenManifest',
+    name: APP_NAME,
+    version: APP_VERSION,
     slug: 'openmanifest',
     plugins: [
       [
@@ -32,8 +26,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
     // All values in extra will be passed to your app.
     extra: {
-      url: BACKEND_ENVIRONMENTS[process.env.EXPO_ENV],
-      urls: BACKEND_ENVIRONMENTS,
+      url: getEndpoint(),
+      urls: ENDPOINTS,
       environment: process.env.EXPO_ENV,
       facebookAppId: process.env.FACEBOOK_APP_ID,
       facebookClientToken: process.env.FACEBOOK_CLIENT_TOKEN,
@@ -51,6 +45,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         ...config.ios.config,
         googleMapsApiKey: process.env.GOOGLE_MAPS_IOS,
       },
+      buildNumber: BUILD_VERSION
     },
     android: {
       ...config.android,
@@ -60,6 +55,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           apiKey: process.env.GOOGLE_MAPS_ANDROID,
         },
       },
+      versionCode: BUILD_NUMBER
     },
   };
   // console.log(conf);
