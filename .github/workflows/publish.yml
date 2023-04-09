@@ -83,7 +83,7 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
-          publish_dir: ./web-build-staging
+          publish_dir: ./web-build
           deploy_key: ${{ secrets.WEB_DEPLOY_KEY_STAGING }}
           external_repository: OpenManifest/openmanifest-web-staging
           cname: staging.openmanifest.org
