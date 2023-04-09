@@ -40,9 +40,7 @@
     "ts:graphql:staging": "yarn gql:schema:staging && yarn graphql-codegen",
     "ts:graphql:production": "yarn gql:schema:production && yarn graphql-codegen",
     "ts:graphql:local": "yarn gql:schema:local && yarn graphql-codegen",
-    "web:prepare": "yarn ts:script ./build/scripts/prepare-web.ts",
-    "m1": "arch -x86_64 yarn",
-    "web:build:production": "NODE_ENV=production EXPO_ENV=production expo export:web -c && rm -rf web-build-prod && mkdir -p web-build-prod && echo 'www.openmanifest.org' > web-build-prod/CNAME && cp -rf ./web-build/* web-build-prod/ && cp web-build-prod/index.html web-build-prod/404.html && cp apple-app-site-association.json web-build-prod/ && mkdir -p web-build-prod/.well-known && cp apple-app-site-association.json web-build-prod/.well-known/"
+    "web:upload": "yarn ts:script ./build/scripts/prepare-web.ts"
   },
   "jest": {
     "preset": "jest-expo",

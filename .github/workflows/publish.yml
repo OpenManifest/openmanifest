@@ -67,7 +67,7 @@ jobs:
           fi
       - run: yarn check:types
         name: Typecheck
-      - run: yarn eas:build:web
+      - run: yarn eas:build:web && yarn web:upload
         env:
           EXPO_ENV: ${{ steps.environment.outputs.EXPO_ENV }}
           GOOGLE_MAPS_WEB: ${{ secrets.GOOGLE_MAPS_WEB }}
