@@ -31,7 +31,7 @@ interface IMapProps {
   // onDragStart?(): void;
   onDragEnd?(coords: { lat: number; lng: number }): void;
 }
-export default function Map(props: IMapProps) {
+export default function MapWebView(props: IMapProps) {
   const { width, height, position, children, center, coords: _coords, shape, interactive, onDragEnd } = props;
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: Constants?.googleMapsWeb,
