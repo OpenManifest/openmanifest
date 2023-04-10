@@ -132,7 +132,8 @@ export type Routes = {
 const Stack = createStackNavigator<Routes>();
 declare global {
   namespace ReactNavigation {
-    type RootParamList = Routes
+    // rome-ignore lint/suspicious/noEmptyInterface: Required
+    interface RootParamList extends Routes {}
   }
 }
 

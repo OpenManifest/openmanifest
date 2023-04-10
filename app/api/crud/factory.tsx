@@ -1,4 +1,3 @@
-/*
 import * as React from 'react';
 import isEqual from 'lodash/isEqual';
 import difference from 'lodash/difference';

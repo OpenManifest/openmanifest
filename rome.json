@@ -5,10 +5,11 @@
       "node_modules/**",
       "build/**",
       "dist/**",
-      "app/graphql/hooks.tsx",
-      "app/graphql/operations.ts",
-      "app/graphql/schema/index.ts",
-      "app/graphql/schema/schema.json"
+      "app/api/hooks.tsx",
+      "app/api/operations.ts",
+      "app/api/schema/index.ts",
+      "app/api/schema/schema.json",
+      "app/api/schema.d.ts",
     ]
   },
   "linter": {
