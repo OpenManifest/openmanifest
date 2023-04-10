@@ -25,12 +25,12 @@ export default function SwipeActions(props: ISwipeActions) {
   ) => {
     const scale = dragX.interpolate({
       inputRange: [-100, 0],
-      outputRange: [1.0, 0],
+      outputRange: [1.0, 0]
     });
 
     const translateX = dragX.interpolate({
       inputRange: [-150, 0],
-      outputRange: [0, 10],
+      outputRange: [0, 10]
     });
 
     return (
@@ -48,7 +48,7 @@ export default function SwipeActions(props: ISwipeActions) {
             justifyContent: 'center',
             height: '100%',
             width: 75,
-            transform: [{ translateX }],
+            transform: [{ translateX }]
           }}
         >
           <Animated.Text
@@ -56,7 +56,7 @@ export default function SwipeActions(props: ISwipeActions) {
               color: 'white',
               paddingHorizontal: 10,
               fontWeight: '600',
-              transform: [{ scale }],
+              transform: [{ scale }]
             }}
           >
             {rightAction?.label}
@@ -67,7 +67,6 @@ export default function SwipeActions(props: ISwipeActions) {
   };
   return (
     <Swipeable
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       ref={ref}
       enabled={!disabled}

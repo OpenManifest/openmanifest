@@ -12,7 +12,7 @@ function ConfirmUserScreen() {
   const route = useRoute<{
     key: string;
     name: string;
-    // eslint-disable-next-line camelcase
+
     params?: { token?: string };
   }>();
   const dispatch = useAppDispatch();
@@ -25,17 +25,13 @@ function ConfirmUserScreen() {
     if (route?.params?.token) {
       confirmUser({
         variables: {
-          token: route.params.token,
-        },
+          token: route.params.token
+        }
       })
         .then(({ data, errors }) => {
           if (data?.userConfirmRegistrationWithToken?.credentials?.accessToken) {
-            dispatch(
-              actions.global.setCredentials(data.userConfirmRegistrationWithToken.credentials)
-            );
-            dispatch(
-              actions.global.setUser(data.userConfirmRegistrationWithToken.authenticatable as User)
-            );
+            dispatch(actions.global.setCredentials(data.userConfirmRegistrationWithToken.credentials));
+            dispatch(actions.global.setUser(data.userConfirmRegistrationWithToken.authenticatable as User));
             navigation.navigate('Limbo', { screen: 'DropzoneSelectScreen' });
           } else {
             setError(true);
@@ -59,9 +55,8 @@ function ConfirmUserScreen() {
             width: 120,
             height: 120,
             marginTop: 24,
-            marginBottom: 32,
+            marginBottom: 32
           }}
-          // eslint-disable-next-line global-require
           source={require('../../../../assets/images/loading.json')}
         />
         <Text style={styles.subtitle}>Confirming...</Text>
@@ -89,24 +84,24 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#EFEFEF',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   icon: {
     backgroundColor: successColor,
-    marginBottom: 16,
+    marginBottom: 16
   },
   errorIcon: {
     backgroundColor: warningColor,
-    marginBottom: 16,
+    marginBottom: 16
   },
   title: {
     fontSize: 38,
-    marginBottom: 16,
+    marginBottom: 16
   },
   subtitle: {
     fontSize: 26,
-    textAlign: 'center',
-  },
+    textAlign: 'center'
+  }
 });
 
 export default ConfirmUserScreen;

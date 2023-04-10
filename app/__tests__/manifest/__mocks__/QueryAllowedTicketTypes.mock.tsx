@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-len
 import { AllowedTicketTypesDocument } from 'app/api/reflection';
 import { AllowedTicketTypesQueryVariables, AllowedTicketTypesQuery } from 'app/api/operations';
 import createMock from './createMockedQuery.mock';
@@ -7,7 +6,7 @@ export default createMock<AllowedTicketTypesQueryVariables, AllowedTicketTypesQu
   AllowedTicketTypesDocument,
   {
     dropzone: '1',
-    onlyPublicTickets: true,
+    onlyPublicTickets: true
   },
   {
     __typename: 'Query',
@@ -19,7 +18,7 @@ export default createMock<AllowedTicketTypesQueryVariables, AllowedTicketTypesQu
         name: 'Height',
         cost: 45,
         isTandem: false,
-        extras: [],
+        extras: []
       },
       {
         id: '3',
@@ -28,8 +27,8 @@ export default createMock<AllowedTicketTypesQueryVariables, AllowedTicketTypesQu
         allowManifestingSelf: true,
         altitude: 4000,
         isTandem: false,
-        extras: [],
-      },
-    ],
+        extras: []
+      }
+    ]
   }
 );

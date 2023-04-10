@@ -13,7 +13,6 @@ interface IBottomSheetProps {
   loading?: boolean;
   disablePadding?: boolean;
 
-  // eslint-disable-next-line react/no-unused-prop-types
   snapPoints?: (string | number)[];
   buttonAction?(): void;
   onClose(): void;
@@ -29,8 +28,7 @@ function CloseOnUnmount({ onUnmount }: { onUnmount: () => void }) {
 }
 
 function DialogOrSheet(props: IBottomSheetProps) {
-  const { buttonLabel, disablePadding, buttonAction, title, loading, open, children, onClose } =
-    props;
+  const { buttonLabel, disablePadding, buttonAction, title, loading, open, children, onClose } = props;
   const navigation = useNavigation();
   const theme = useTheme();
 
@@ -61,7 +59,7 @@ function DialogOrSheet(props: IBottomSheetProps) {
         <Dialog.ScrollArea
           style={StyleSheet.flatten([
             disablePadding ? styles.noPadding : styles.defaultPadding,
-            { paddingTop: title ? 24 : 0 },
+            { paddingTop: title ? 24 : 0 }
           ])}
         >
           <ScrollView>{children}</ScrollView>
@@ -88,9 +86,9 @@ const styles = StyleSheet.create({
     height: 42,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: 20
   },
-  close: { position: 'absolute', top: 4, right: 4 },
+  close: { position: 'absolute', top: 4, right: 4 }
 });
 
 export default React.memo(DialogOrSheet, (prev, next) => prev.open === next.open);

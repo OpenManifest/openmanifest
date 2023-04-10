@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import * as React from 'react';
 import { Caption, Card, List, useTheme } from 'react-native-paper';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -6,7 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   DropzoneEssentialsFragment,
   DropzoneUserEssentialsFragment,
-  OrderEssentialsFragment,
+  OrderEssentialsFragment
 } from 'app/api/operations';
 import { DropzoneUser } from 'app/api/schema.d';
 import { successColor } from 'app/constants/Colors';
@@ -24,10 +23,8 @@ export default function OrderCard(props: IOrder) {
   const { order, dropzoneUser, showAvatar, onPress } = props;
   const theme = useTheme();
   const isSelfBuyer =
-    order.buyer?.__typename === 'DropzoneUser' &&
-    (order.buyer as DropzoneUser)?.id === dropzoneUser?.id;
+    order.buyer?.__typename === 'DropzoneUser' && (order.buyer as DropzoneUser)?.id === dropzoneUser?.id;
   const icon =
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     isSelfBuyer === dropzoneUser?.id ? 'cash-minus' : 'cash-plus';
 
@@ -40,7 +37,7 @@ export default function OrderCard(props: IOrder) {
           fontWeight: '400',
           textAlign: 'center',
           alignSelf: 'center',
-          color: theme.colors.onSurface,
+          color: theme.colors.onSurface
         }}
       >
         {`${isSelfBuyer ? '-$' : '$'}${order.amount.toFixed(2)}`}
@@ -70,10 +67,8 @@ export default function OrderCard(props: IOrder) {
         ) : (
           <MaterialCommunityIcons
             color={
-              // eslint-disable-next-line no-underscore-dangle
               order.buyer &&
               '__typename' in order.buyer &&
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               order.buyer.__typename === 'DropzoneUser' &&
               (order.buyer as DropzoneUserEssentialsFragment)?.id === dropzoneUser?.id
@@ -97,17 +92,14 @@ export default function OrderCard(props: IOrder) {
             textAlign: 'right',
             paddingRight: 4,
             paddingTop: 2,
-            marginBottom: 0,
+            marginBottom: 0
           }}
         >
           {DateTime.fromISO(order?.createdAt).toLocaleString(DateTime.DATETIME_SHORT)}
         </Caption>
         <Card.Content style={styles.orderContent}>
           <List.Item
-            title={
-              (order?.buyer as DropzoneUser)?.user?.name ||
-              (order?.buyer as DropzoneEssentialsFragment)?.name
-            }
+            title={(order?.buyer as DropzoneUser)?.user?.name || (order?.buyer as DropzoneEssentialsFragment)?.name}
             style={{ width: '100%' }}
             titleStyle={styles.orderTitle}
             description={order.title || null}
@@ -126,15 +118,15 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
     fontSize: 16,
     fontWeight: '500',
-    marginBottom: 6,
+    marginBottom: 6
   },
   orderDescription: {
-    paddingLeft: 0,
+    paddingLeft: 0
   },
   orderContent: { paddingLeft: 0, paddingRight: 4, paddingTop: 8, paddingBottom: 8 },
   order: {
     marginHorizontal: 0,
     marginVertical: StyleSheet.hairlineWidth,
-    width: '100%',
-  },
+    width: '100%'
+  }
 });

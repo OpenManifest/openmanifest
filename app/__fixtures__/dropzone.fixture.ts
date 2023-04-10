@@ -16,6 +16,18 @@ export const dropzoneExtensive: DeepRequired<DropzoneExtensiveFragment> = {
   secondaryColor: '#FFFFFF',
   status: DropzoneState.Public,
   isCreditSystemEnabled: true,
+  settings: {
+    __typename: 'Settings',
+    allowManifestBypass: false,
+    allowNegativeCredits: false,
+    requireCredits: false,
+    requireEquipment: false,
+    requireLicense: false,
+    requireMembership: false,
+    requireReserveInDate: false,
+    requireRigInspection: false,
+    allowDoubleManifesting: false,
+  },
   createdAt: new Date().toISOString(),
   federation: {
     __typename: 'Federation',

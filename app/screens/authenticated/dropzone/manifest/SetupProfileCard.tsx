@@ -20,7 +20,6 @@ export default function SetupProfileCard() {
               style={{ height: 80, width: 80 }}
               autoPlay
               loop={false}
-              // eslint-disable-next-line global-require
               source={require('../../../../../assets/images/profile2.json')}
             />
           )}
@@ -34,5 +33,5 @@ export default function SetupProfileCard() {
 const styles = StyleSheet.create({
   card: { marginHorizontal: 16, borderRadius: 8 },
   content: { paddingHorizontal: 4, paddingVertical: 4 },
-  icon: { alignSelf: 'center' },
+  icon: { alignSelf: 'center' }
 });

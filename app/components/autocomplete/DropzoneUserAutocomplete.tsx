@@ -3,11 +3,10 @@ import { DropzoneUserEssentialsFragment, DropzoneUserProfileFragment } from 'app
 // This is necessary for DropzoneUserAutocomplete to work,
 // must have same props between web and native
 interface IDropzoneUserAutocompleteProps {
-  // eslint-disable-next-line react/no-unused-prop-types
   value?: DropzoneUserEssentialsFragment | null;
-  // eslint-disable-next-line react/no-unused-prop-types
+
   disabled?: boolean;
-  // eslint-disable-next-line react/no-unused-prop-types
+
   onChange(value: DropzoneUserProfileFragment): void;
 }
 

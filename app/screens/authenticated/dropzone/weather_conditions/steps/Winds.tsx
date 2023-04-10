@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import WizardScreen, { IWizardScreenProps } from 'app/components/wizard/WizardScreen';
-// eslint-disable-next-line max-len
+
 import WeatherConditionForm from 'app/components/forms/weather_conditions/WeatherConditionForm';
 
 function WindsWizardScreen(props: IWizardScreenProps) {
@@ -17,8 +17,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     alignItems: 'center',
     paddingLeft: 0,
-    paddingRight: 0,
-  },
+    paddingRight: 0
+  }
 });
 
 export default WindsWizardScreen;

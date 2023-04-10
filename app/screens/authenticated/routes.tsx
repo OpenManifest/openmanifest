@@ -29,7 +29,7 @@ export default function AuthenticatedTabBar() {
   const { palette } = useAppSelector((root) => root.global);
 
   const {
-    dropzone: { currentUser },
+    dropzone: { currentUser }
   } = useDropzoneContext();
   const isAdmin = currentUser?.user?.moderationRole !== ModerationRole.User;
   const canViewUsers = useRestriction(Permission.ReadUser);
@@ -48,33 +48,26 @@ export default function AuthenticatedTabBar() {
       tabBarStyle: {
         backgroundColor: theme.dark ? theme.colors.background : '#FFFFFF',
         borderTopWidth: StyleSheet.hairlineWidth,
-        borderTopColor: '#CCCCCC',
-      },
+        borderTopColor: '#CCCCCC'
+      }
     }),
-    [
-      theme.colors.backdrop,
-      theme.colors.background,
-      theme.colors.primary,
-      theme.colors.surface,
-      theme.dark,
-    ]
+    [theme.colors.backdrop, theme.colors.background, theme.colors.primary, theme.colors.surface, theme.dark]
   );
 
   return (
     <AppSignalBoundary>
       <BottomTab.Navigator
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         appearance={{
           tabBarBackground: theme.colors.surface,
           topPadding: 16,
           shadow: true,
-          bottomPadding: 16,
+          bottomPadding: 16
         }}
         tabBarOptions={{
           activeTintColor: '#FFFFFF',
           inactiveTintColor: palette.primary.main,
-          activeBackgroundColor: palette.primary.main,
+          activeBackgroundColor: palette.primary.main
         }}
         initialRouteName="Manifest"
         {...{ screenOptions }}
@@ -91,7 +84,7 @@ export default function AuthenticatedTabBar() {
                   style={[styles.icon, focused ? styles.iconActive : undefined]}
                 />
               ),
-              unmountOnBlur: false,
+              unmountOnBlur: false
             }}
           />
         )}
@@ -106,7 +99,7 @@ export default function AuthenticatedTabBar() {
                 style={[styles.icon, focused ? styles.iconActive : undefined]}
               />
             ),
-            unmountOnBlur: false,
+            unmountOnBlur: false
           }}
         />
         <BottomTab.Screen
@@ -120,7 +113,7 @@ export default function AuthenticatedTabBar() {
                 {...{ size, color }}
               />
             ),
-            unmountOnBlur: true,
+            unmountOnBlur: true
           }}
         />
         {canViewUsers && (
@@ -135,7 +128,7 @@ export default function AuthenticatedTabBar() {
                   style={[styles.icon, focused ? styles.iconActive : undefined]}
                 />
               ),
-              unmountOnBlur: true,
+              unmountOnBlur: true
             }}
           />
         )}
@@ -146,13 +139,13 @@ export default function AuthenticatedTabBar() {
 
 const styles = StyleSheet.create({
   icon: {
-    opacity: 0.75,
+    opacity: 0.75
   },
   iconActive: {
-    opacity: 1.0,
+    opacity: 1.0
   },
   label: {
     color: '#FFFFFF',
-    fontSize: 12,
-  },
+    fontSize: 12
+  }
 });

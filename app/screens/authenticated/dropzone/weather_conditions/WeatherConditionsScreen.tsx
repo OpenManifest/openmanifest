@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import Wizard from 'app/components/wizard/Wizard';
 import WizardCompleteStep from 'app/components/wizard/WizardCompleteStep';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-// eslint-disable-next-line max-len
+
 import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateWeatherConditions';
 import { useNotifications } from 'app/providers/notifications';
 import WindsStep from './steps/Winds';
@@ -20,7 +20,7 @@ function WeatherConditionsScreen() {
     onSuccess: () => null,
     onFieldError: (field: keyof typeof state.fields, message: string) =>
       dispatch(actions.forms.weather.setFieldError([field, message])),
-    onError: notify.error,
+    onError: notify.error
   });
 
   const onSaveConditions = React.useCallback(
@@ -30,7 +30,7 @@ function WeatherConditionsScreen() {
         dropzoneId: dropzoneId as number,
         winds: JSON.stringify(state.fields.winds.value),
         jumpRun: state.fields.jumpRun.value,
-        temperature: state.fields.temperature.value,
+        temperature: state.fields.temperature.value
       });
       setIndex(currentIndex + 1);
     },

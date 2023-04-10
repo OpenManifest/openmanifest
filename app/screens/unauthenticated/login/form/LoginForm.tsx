@@ -27,19 +27,12 @@ export default function LoginForm() {
             autoPlay
             loop
             style={styles.loadingAnimation}
-            // eslint-disable-next-line global-require
             source={require('../../../../../assets/images/loading.json')}
           />
         </View>
       ) : (
         <>
-          <FormTextField
-            {...{ control }}
-            name="email"
-            label="Email"
-            mode="outlined"
-            disabled={loading}
-          />
+          <FormTextField {...{ control }} name="email" label="Email" mode="outlined" disabled={loading} />
 
           <FormTextField
             {...{ control }}
@@ -53,22 +46,15 @@ export default function LoginForm() {
         </>
       )}
       {loading ? null : (
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Wizards', { screen: 'RecoverPasswordScreen' })}
-        >
-          <Text style={theme.dark ? styles.forgotPasswordDark : styles.forgotPassword}>
-            Forgot your password?
-          </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Wizards', { screen: 'RecoverPasswordScreen' })}>
+          <Text style={theme.dark ? styles.forgotPasswordDark : styles.forgotPassword}>Forgot your password?</Text>
         </TouchableOpacity>
       )}
       <Button
         mode="contained"
         disabled={loading}
         labelStyle={{ color: theme.colors.onSurface }}
-        style={[
-          styles.button,
-          { backgroundColor: theme.colors.surface, borderColor: theme.colors.surface },
-        ]}
+        style={[styles.button, { backgroundColor: theme.colors.surface, borderColor: theme.colors.surface }]}
         onPress={onSubmit}
       >
         {loading ? 'Authenticating...' : 'Log in'}
@@ -96,7 +82,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     // backgroundColor: primaryColor,
-    paddingTop: 10,
+    paddingTop: 10
   },
   logo: { height: 300, width: '100%' },
   card: { padding: 16, borderRadius: 8 },
@@ -106,27 +92,27 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 200,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   loadingAnimation: {
     alignSelf: 'center',
     marginTop: 24,
     marginBottom: 32,
     height: 156,
-    width: '100%',
+    width: '100%'
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
 
   forgotPassword: {
     marginBottom: 16,
-    color: 'rgb(50, 50, 50)',
+    color: 'rgb(50, 50, 50)'
   },
   forgotPasswordDark: {
     marginTop: 8,
-    color: 'rgb(180, 180, 180)',
+    color: 'rgb(180, 180, 180)'
   },
 
   fields: {
@@ -135,7 +121,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     width: '100%',
     paddingHorizontal: 56,
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent'
   },
   fieldsLandscape: {
     position: 'absolute',
@@ -144,23 +130,23 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 400,
+    width: 400
   },
   button: {
     marginVertical: 4,
     backgroundColor: 'white',
     borderColor: primaryColor,
     borderWidth: 1,
-    width: '100%',
+    width: '100%'
   },
   textButton: {
     marginTop: 10,
     height: 56,
     backgroundColor: 'transparent',
     color: 'white',
-    width: '100%',
+    width: '100%'
   },
   textButtonLabel: {
     // color: '#FFFFFF',
-  },
+  }
 });

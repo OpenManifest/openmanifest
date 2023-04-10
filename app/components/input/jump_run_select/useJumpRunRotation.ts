@@ -71,7 +71,7 @@ export default function useJumpRunRotation(value: number) {
 
   const onHandlerStateChange = React.useCallback(
     (e: GestureEvent<RotationGestureHandlerEventPayload>) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      
       // @ts-ignore
       if (e.nativeEvent.oldState === State.ACTIVE) {
         console.debug({ lastRotation: lastRotation.current, rotation: e.nativeEvent.rotation });

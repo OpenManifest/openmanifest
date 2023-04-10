@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/*
 import * as React from 'react';
 import isEqual from 'lodash/isEqual';
 import difference from 'lodash/difference';
@@ -63,7 +63,7 @@ export default function createCRUDContext<
         if (JSON.stringify(value) !== JSON.stringify(old.current)) {
           console.debug(useHook.name, '[CRUD Hook] Re-rendering because of state change: ', {
             old: old.current,
-            new: value,
+            new: value
           });
           console.debug(useHook.name, '[CRUD Hook] Previous: ', old.current);
           console.debug(useHook.name, '[CRUD Hook] Current: ', value);

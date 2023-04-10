@@ -30,7 +30,7 @@ function WizardScreen(props: IWizardScreenProps) {
     contentStyle,
     containerStyle,
     style,
-    disableScroll,
+    disableScroll
   } = props;
   const { width, height } = Dimensions.get('window');
 
@@ -54,11 +54,10 @@ function WizardScreen(props: IWizardScreenProps) {
         contentContainerStyle={StyleSheet.flatten([
           styles.content,
           { minHeight: height, backgroundColor: 'transparent' },
-          contentStyle,
+          contentStyle
         ])}
         scrollEnabled={!disableScroll}
         pointerEvents="box-none"
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         ref={scrollRef}
       >
@@ -102,12 +101,12 @@ function WizardScreen(props: IWizardScreenProps) {
 
 const styles = StyleSheet.create({
   wizardScreen: {
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   container: {
     backgroundColor: '#FF1414',
     paddingHorizontal: 32,
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   content: { paddingTop: 200, flexGrow: 1, paddingBottom: 0 },
   title: {
@@ -118,16 +117,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   button: {
     alignSelf: 'center',
-    width: '100%',
+    width: '100%'
   },
   buttonBack: {
     alignSelf: 'center',
     width: '100%',
-    marginHorizontal: 48,
+    marginHorizontal: 48
   },
   buttons: {
     alignSelf: 'center',
@@ -136,8 +135,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     width: '100%',
     maxWidth: 404,
-    marginBottom: 100,
-  },
+    marginBottom: 100
+  }
 });
 
 export default WizardScreen;

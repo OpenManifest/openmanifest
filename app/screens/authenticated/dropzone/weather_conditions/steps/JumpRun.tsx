@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-// eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
+
 import * as Location from 'expo-location';
 import WizardScreen, { IWizardScreenProps } from 'app/components/wizard/WizardScreen';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
@@ -12,7 +12,7 @@ function WindsWizardScreen(props: IWizardScreenProps) {
   const state = useAppSelector((root) => root.forms.weather);
   const dispatch = useAppDispatch();
   const {
-    dropzone: { dropzone },
+    dropzone: { dropzone }
   } = useDropzoneContext();
   const [location, setLocation] = React.useState<Location.LocationObject['coords']>();
   const setUsersLocation = React.useCallback(async () => {
@@ -42,9 +42,7 @@ function WindsWizardScreen(props: IWizardScreenProps) {
           value={state.fields.jumpRun.value || 0}
           latitude={dropzone?.lat || location?.latitude || 0}
           longitude={dropzone?.lng || location?.longitude || 0}
-          onChange={(value) =>
-            dispatch(actions.forms.weather.setField(['jumpRun', Math.round(value)]))
-          }
+          onChange={(value) => dispatch(actions.forms.weather.setField(['jumpRun', Math.round(value)]))}
         />
       </View>
     </WizardScreen>
@@ -57,11 +55,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingLeft: 0,
     backgroundColor: 'blue',
-    paddingRight: 0,
+    paddingRight: 0
   },
   slider: {
     width: '100%',
-    marginTop: 32,
+    marginTop: 32
   },
   textInput: {
     height: 80,
@@ -71,11 +69,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 60,
     textAlign: 'center',
-    marginBottom: 60,
+    marginBottom: 60
   },
   content: {
     width: '100%',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   iconContainer: {
     width: 250,
@@ -85,7 +83,7 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     alignSelf: 'center',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   icon: { position: 'absolute', top: -75 },
 
@@ -95,61 +93,61 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 0,
-    marginVertical: 16,
+    marginVertical: 16
   },
   headerAltitude: {
     flex: 3.5 / 10,
 
     color: 'white',
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   headerSpeed: {
     flex: 3 / 10,
 
     color: 'white',
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   headerDirection: {
     flex: 3 / 10,
 
     color: 'white',
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   card: { padding: 8, marginVertical: 16 },
   cardTitle: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   cardValue: {
     fontWeight: 'bold',
     marginRight: 8,
     fontSize: 16,
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   title: {
     color: 'white',
     marginBottom: 50,
     fontWeight: 'bold',
     fontSize: 25,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   field: {
-    marginBottom: 8,
+    marginBottom: 8
   },
   sliderControl: { width: '100%', height: 40 },
   wingLoading: {
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   wingLoadingCardLeft: {
-    width: '30%',
+    width: '30%'
   },
   wingLoadingCardRight: {
     paddingLeft: 16,
-    width: '70%',
-  },
+    width: '70%'
+  }
 });
 
 export default WindsWizardScreen;

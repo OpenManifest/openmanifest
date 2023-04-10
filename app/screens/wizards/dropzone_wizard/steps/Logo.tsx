@@ -36,7 +36,6 @@ function Logo(props: IWizardStepProps) {
                 style={{ height: 175, width: 175 }}
                 autoPlay
                 loop={false}
-                // eslint-disable-next-line global-require
                 source={require('../../../../../assets/images/image-pick.json')}
               />
             ) : (
@@ -45,7 +44,7 @@ function Logo(props: IWizardStepProps) {
                 source={{ uri: state?.fields?.banner?.value }}
                 style={{
                   borderWidth: StyleSheet.hairlineWidth,
-                  backgroundColor: theme.colors.primary,
+                  backgroundColor: theme.colors.primary
                 }}
               />
             )}
@@ -61,6 +60,6 @@ function Logo(props: IWizardStepProps) {
 
 const styles = StyleSheet.create({
   avatarContainer: { marginBottom: 100, alignItems: 'center', justifyContent: 'center' },
-  paragraph: { marginTop: 16 },
+  paragraph: { marginTop: 16 }
 });
 export default Logo;

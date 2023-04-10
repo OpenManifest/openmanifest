@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import MapView, { Region } from 'react-native-maps';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-// eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
+
 import * as Location from 'expo-location';
 import { calculateLatLngDelta } from '../../utils/calculateLatLngDelta';
 
@@ -29,7 +29,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
         latitudeDelta: calculateLatLngDelta(location.coords.latitude),
-        longitudeDelta: calculateLatLngDelta(location.coords.latitude),
+        longitudeDelta: calculateLatLngDelta(location.coords.latitude)
       });
 
       map.current?.animateCamera({ center: location.coords });
@@ -53,7 +53,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
           latitude: value.lat,
           longitude: value.lng,
           latitudeDelta: calculateLatLngDelta(value.lat),
-          longitudeDelta: calculateLatLngDelta(value.lat),
+          longitudeDelta: calculateLatLngDelta(value.lat)
         }
       : undefined;
 
@@ -62,14 +62,14 @@ export function LocationWizardStep(props: ILocationPickerProps) {
     Animated.timing(opacity.current, {
       duration: 100,
       toValue: 0.0,
-      useNativeDriver: true,
+      useNativeDriver: true
     })
   );
   const fadeIn = React.useRef(
     Animated.timing(opacity.current, {
       duration: 100,
       toValue: 1.0,
-      useNativeDriver: true,
+      useNativeDriver: true
     })
   );
 
@@ -84,12 +84,11 @@ export function LocationWizardStep(props: ILocationPickerProps) {
 
   return (
     <MapView
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       ref={map}
       style={{
         ...StyleSheet.absoluteFillObject,
-        marginTop: -50,
+        marginTop: -50
       }}
       initialRegion={region}
       region={internalRegion}
@@ -125,10 +124,10 @@ export function LocationWizardStep(props: ILocationPickerProps) {
               textShadowColor: 'rgba(14,14,14,0.8)',
               textShadowOffset: {
                 width: 5,
-                height: 5,
+                height: 5
               },
               textShadowRadius: 10,
-              zIndex: 10,
+              zIndex: 10
             }}
             name={isDragging ? 'map-marker' : 'map-marker-check-outline'}
           />
@@ -144,9 +143,9 @@ export function LocationWizardStep(props: ILocationPickerProps) {
               textShadowColor: 'rgba(14,14,14,0.8)',
               textShadowOffset: {
                 width: 3,
-                height: 3,
+                height: 3
               },
-              textShadowRadius: 10,
+              textShadowRadius: 10
             }}
           >
             {region.latitude.toFixed(5)},{region.longitude.toFixed(5)}
@@ -170,7 +169,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 48,
     alignItems: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent'
   },
   title: {
     position: 'absolute',
@@ -187,25 +186,25 @@ const styles = StyleSheet.create({
     textShadowRadius: 10,
     textShadowOffset: {
       width: 2,
-      height: 2,
-    },
+      height: 2
+    }
   },
   markerFixed: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   content: {
     width: '100%',
     justifyContent: 'space-around',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   card: {
     padding: 0,
     paddingVertical: 16,
     marginVertical: 16,
-    width: '100%',
+    width: '100%'
   },
   myLocation: {
     position: 'absolute',
@@ -213,8 +212,8 @@ const styles = StyleSheet.create({
     right: 30,
     backgroundColor: 'white',
     borderRadius: 50,
-    padding: 8,
-  },
+    padding: 8
+  }
 });
 
 export default LocationWizardStep;

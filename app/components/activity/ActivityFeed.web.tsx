@@ -112,7 +112,7 @@ export default function ActivityFeed(props: IActivityFeedProps) {
               pageInfo: result?.data?.activity?.pageInfo,
               edges: uniqBy(
                 [...(prev.activity.edges || []), ...(result?.data?.activity?.edges || [])],
-                'node.id'
+                (edge) => edge?.node?.id
               ),
             },
           }));

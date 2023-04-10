@@ -97,11 +97,9 @@ function AdminOverviewPage() {
         (dropzone) => dropzone?.statistics?.inactiveUserCount || 0
       ),
       loadCountByDay: (selectedDropzones || [])
-        .map((dropzone) => dropzone?.statistics?.loadCountByDay || [])
-        .flat(),
+        .flatMap((dropzone) => dropzone?.statistics?.loadCountByDay || []),
       slotsByJumpType: (selectedDropzones || [])
-        .map((dropzone) => dropzone?.statistics?.slotsByJumpType || [])
-        .flat(),
+        .flatMap((dropzone) => dropzone?.statistics?.slotsByJumpType || []),
     }),
     [selectedDropzones]
   );

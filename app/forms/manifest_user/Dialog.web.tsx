@@ -28,9 +28,9 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       passengerExitWeight: slot?.passengerExitWeight,
       passengerName: slot?.passengerName,
       rig: slot?.rig,
-      ticketType: slot?.ticketType || undefined,
+      ticketType: slot?.ticketType || undefined
     },
-    onSuccess,
+    onSuccess
   });
 
   const portal = usePortal('drawer');
@@ -43,7 +43,6 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
 
   return (
     <DialogOrSheet
-      // eslint-disable-next-line max-len
       title={`Manifest ${slot?.dropzoneUser?.user?.name} on ${load?.name}`}
       {...{ open, onClose, loading }}
       buttonLabel="Manifest"

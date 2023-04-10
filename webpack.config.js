@@ -14,6 +14,12 @@ module.exports = async function (env, argv) {
     },
     argv
   );
+  config.module.rules.push({
+    test: /\.m?js/,
+    resolve: {
+      fullySpecified: false,
+    },
+  });
   // Customize the config before returning it.
   return config;
 };

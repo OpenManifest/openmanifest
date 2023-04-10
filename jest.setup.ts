@@ -1,6 +1,6 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import { cleanup } from '@testing-library/react-native';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import '@testing-library/jest-dom';
 import 'react-native-gesture-handler/jestSetup';
 import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/async-storage-mock';

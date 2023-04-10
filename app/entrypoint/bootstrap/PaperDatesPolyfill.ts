@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable global-require */
 import { Platform } from 'react-native';
 
 const isAndroid = Platform.OS === 'android';
@@ -34,7 +32,7 @@ if (isHermesEnabled || isAndroid) {
 
   if ('__setDefaultTimeZone' in Intl.DateTimeFormat) {
     //  Are you using Expo, use this instead of previous 2 lines
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    
     // @ts-ignore
     Intl.DateTimeFormat.__setDefaultTimeZone(require('expo-localization').timezone);
   }

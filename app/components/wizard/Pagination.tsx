@@ -25,7 +25,6 @@ export default function WizardPagination(props: IWizardPagination) {
         defaultIcon = isCurrent ? 'pencil' : defaultIcon;
 
         return (
-          // eslint-disable-next-line react/no-array-index-key
           <React.Fragment key={index}>
             <Avatar.Icon
               icon={hasCustomIcon && icons ? icons[index] : defaultIcon}
@@ -37,7 +36,7 @@ export default function WizardPagination(props: IWizardPagination) {
                 style={[
                   styles.bridge,
                   { width: bridgeLength },
-                  (paginationIndex || 0) > index ? styles.bridgeDone : undefined,
+                  (paginationIndex || 0) > index ? styles.bridgeDone : undefined
                 ]}
               />
             ) : null}
@@ -53,24 +52,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     position: 'absolute',
     top: 100,
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   bridge: {
     height: 10,
     marginTop: 10,
     marginLeft: -2,
     width: 50,
-    backgroundColor: 'white',
+    backgroundColor: 'white'
   },
   bridgeDone: {
-    backgroundColor: successColor,
+    backgroundColor: successColor
   },
   icon: {
     backgroundColor: 'white',
-    marginLeft: -1,
+    marginLeft: -1
   },
   iconDone: {
     backgroundColor: successColor,
-    marginLeft: -1,
-  },
+    marginLeft: -1
+  }
 });

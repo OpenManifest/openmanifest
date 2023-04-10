@@ -21,7 +21,7 @@ export const initialState = {
 const persistConfig = {
   key: 'open-manifest.0.9.1',
   storage:
-    // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
+
     Platform.OS === 'web' || false ? require('redux-persist/lib/storage').default : AsyncStorage,
   whitelist: ['global'],
 };
@@ -42,9 +42,9 @@ type FormActions = {
   [K in keyof typeof forms]: (typeof forms)[K]['actions'];
 };
 
-// eslint-disable
+
 const screenReducers = Object.keys(screens).reduce(
-  // eslint-disable-next-line max-len
+
   (obj, key) =>
     !screens || !(key in screens)
       ? obj

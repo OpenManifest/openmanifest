@@ -600,6 +600,7 @@ type Dropzone implements AnyResource & Wallet {
     last: Int
   ): OrderConnection
   secondaryColor: String
+  settings: Settings
   state: DropzoneState!
   statistics: Statistics!
   ticketTypes(isPublic: Boolean): [TicketType!]!
@@ -645,7 +646,7 @@ type DropzoneEdge {
 
 input DropzoneInput {
   banner: String
-  federation: Int!
+  federation: Int
   isCreditSystemEnabled: Boolean
   isPublic: Boolean
   lat: Float
@@ -654,6 +655,11 @@ input DropzoneInput {
   primaryColor: String
   requestPublication: Boolean
   secondaryColor: String
+
+  """
+  Settings for the dropzone
+  """
+  settings: SettingsInput
 }
 
 enum DropzoneState {
@@ -2334,6 +2340,100 @@ input RigInspectionInput {
 interface SellableItem {
   cost: Float
   title: String
+}
+
+type Settings {
+  """
+  Allow users to double-manifest
+  """
+  allowDoubleManifesting: Boolean
+
+  """
+  Allow manifest to bypass all rules?
+  """
+  allowManifestBypass: Boolean
+
+  """
+  When this is enabled, users can manifest even if they go into negatives
+  """
+  allowNegativeCredits: Boolean
+
+  """
+  When this is enabled, users cannot manifest if they have no credits
+  """
+  requireCredits: Boolean
+
+  """
+  When this is enabled, users cannot manifest if they have no equipment
+  """
+  requireEquipment: Boolean
+
+  """
+  Should a valid license be required to manifest a jump?
+  """
+  requireLicense: Boolean
+
+  """
+  When this is enabled, users cannot manifest if their membership is out of date
+  """
+  requireMembership: Boolean
+
+  """
+  When this is enabled, users cannot manifest if their reserve is out of date
+  """
+  requireReserveInDate: Boolean
+
+  """
+  Whether or not rig inspections are required before manifesting a jump
+  """
+  requireRigInspection: Boolean
+}
+
+input SettingsInput {
+  """
+  Allow users to double-manifest
+  """
+  allowDoubleManifesting: Boolean
+
+  """
+  Allow manifest to bypass all rules?
+  """
+  allowManifestBypass: Boolean
+
+  """
+  When this is enabled, users can manifest even if they go into negatives
+  """
+  allowNegativeCredits: Boolean
+
+  """
+  When this is enabled, users cannot manifest if they have no credits
+  """
+  requireCredits: Boolean
+
+  """
+  When this is enabled, users cannot manifest if they have no equipment
+  """
+  requireEquipment: Boolean
+
+  """
+  Should a valid license be required to manifest a jump?
+  """
+  requireLicense: Boolean
+
+  """
+  When this is enabled, users cannot manifest if their membership is out of date
+  """
+  requireMembership: Boolean
+
+  """
+  When this is enabled, users cannot manifest if their reserve is out of date
+  """
+  requireReserveInDate: Boolean
+
+  """
+  Whether or not rig inspections are required before manifesting a jump
+  """
+  requireRigInspection: Boolean
 }
 
 """

@@ -26,19 +26,8 @@ interface IMapProps {
   onDragEnd?(coords: { lat: number; lng: number }): void;
 }
 function Map(props: IMapProps) {
-  const {
-    width,
-    height,
-    position,
-    coords,
-    center,
-    shape,
-    interactive,
-    onChange,
-    onDragStart,
-    onDragEnd,
-    children,
-  } = props;
+  const { width, height, position, coords, center, shape, interactive, onChange, onDragStart, onDragEnd, children } =
+    props;
   const { containerStyle, mapStyle } = props;
   const map = React.useRef<MapView>();
   const region = coords
@@ -46,7 +35,7 @@ function Map(props: IMapProps) {
         latitude: coords.lat,
         longitude: coords.lng,
         latitudeDelta: calculateLatLngDelta(coords.lat),
-        longitudeDelta: calculateLatLngDelta(coords.lat),
+        longitudeDelta: calculateLatLngDelta(coords.lat)
       }
     : undefined;
 
@@ -55,7 +44,7 @@ function Map(props: IMapProps) {
   React.useEffect(() => {
     if (center?.lat && center?.lng && map.current) {
       map.current?.animateCamera({
-        center: { latitude: center.lat, longitude: center.lng },
+        center: { latitude: center.lat, longitude: center.lng }
       });
     }
   }, [center?.lat, center?.lng]);
@@ -64,7 +53,7 @@ function Map(props: IMapProps) {
       style={{
         width,
         height,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
         // @ts-ignore Width is always a number here but must have string/number type for crossenv
         borderRadius: shape === 'round' ? width / 2 : undefined,
         overflow: 'hidden',
@@ -72,21 +61,20 @@ function Map(props: IMapProps) {
           ? {
               position: 'absolute',
               top: position.y,
-              left: position.x,
+              left: position.x
             }
           : {}),
-        ...(containerStyle || {}),
+        ...(containerStyle || {})
       }}
     >
       <MapView
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         ref={map}
         provider={PROVIDER_GOOGLE}
         style={{
           width: '100%',
           height: '100%',
-          ...(mapStyle || {}),
+          ...(mapStyle || {})
         }}
         initialRegion={region}
         region={region}

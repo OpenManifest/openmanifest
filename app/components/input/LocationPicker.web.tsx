@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Region } from 'react-native-maps';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-// eslint-disable-next-line import/no-extraneous-dependencies,import/no-unresolved
+
 import * as Location from 'expo-location';
 import Map from '../map/Map';
 
@@ -28,7 +28,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
       console.log('user location', location.coords);
       setCenter({
         lat: location.coords.latitude,
-        lng: location.coords.longitude,
+        lng: location.coords.longitude
       });
     } catch (error) {
       console.log(error);
@@ -48,7 +48,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
     value.lng && value.lng
       ? {
           lat: value.lat,
-          lng: value.lng,
+          lng: value.lng
         }
       : undefined;
 
@@ -57,14 +57,14 @@ export function LocationWizardStep(props: ILocationPickerProps) {
     Animated.timing(opacity.current, {
       duration: 100,
       toValue: 0.0,
-      useNativeDriver: true,
+      useNativeDriver: true
     })
   );
   const fadeIn = React.useRef(
     Animated.timing(opacity.current, {
       duration: 100,
       toValue: 1.0,
-      useNativeDriver: true,
+      useNativeDriver: true
     })
   );
 
@@ -79,13 +79,13 @@ export function LocationWizardStep(props: ILocationPickerProps) {
     <Map
       position={{
         x: 0,
-        y: 0,
+        y: 0
       }}
       width="100%"
       height="100%"
       mapStyle={{
         ...StyleSheet.absoluteFillObject,
-        marginTop: -50,
+        marginTop: -50
       }}
       coords={region}
       center={center || region}
@@ -104,7 +104,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
         setDragging(false);
         onChange({
           longitude: r.lng,
-          latitude: r.lat,
+          latitude: r.lat
         });
       }}
       interactive
@@ -119,10 +119,10 @@ export function LocationWizardStep(props: ILocationPickerProps) {
               textShadowColor: 'rgba(14,14,14,0.8)',
               textShadowOffset: {
                 width: 5,
-                height: 5,
+                height: 5
               },
               textShadowRadius: 10,
-              zIndex: 10,
+              zIndex: 10
             }}
             name={isDragging ? 'map-marker' : 'map-marker-check-outline'}
           />
@@ -138,9 +138,9 @@ export function LocationWizardStep(props: ILocationPickerProps) {
               textShadowColor: 'rgba(14,14,14,0.8)',
               textShadowOffset: {
                 width: 3,
-                height: 3,
+                height: 3
               },
-              textShadowRadius: 10,
+              textShadowRadius: 10
             }}
           >
             {region.lat.toFixed(5)},{region.lng.toFixed(5)}
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 48,
     alignItems: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent'
   },
   title: {
     position: 'absolute',
@@ -181,25 +181,25 @@ const styles = StyleSheet.create({
     textShadowRadius: 10,
     textShadowOffset: {
       width: 2,
-      height: 2,
-    },
+      height: 2
+    }
   },
   markerFixed: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   content: {
     width: '100%',
     justifyContent: 'space-around',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   card: {
     padding: 0,
     paddingVertical: 16,
     marginVertical: 16,
-    width: '100%',
+    width: '100%'
   },
   myLocation: {
     position: 'absolute',
@@ -207,8 +207,8 @@ const styles = StyleSheet.create({
     right: 30,
     backgroundColor: 'white',
     borderRadius: 50,
-    padding: 8,
-  },
+    padding: 8
+  }
 });
 
 export default LocationWizardStep;

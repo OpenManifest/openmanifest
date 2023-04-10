@@ -11,6 +11,18 @@ fragment dropzoneEssentials on Dropzone {
   banner
   isCreditSystemEnabled
   createdAt
+
+  settings {
+    allowManifestBypass
+    allowNegativeCredits
+    allowDoubleManifesting
+    requireCredits
+    requireLicense
+    requireMembership
+    requireRigInspection
+    requireEquipment
+    requireReserveInDate
+  }
 }
 
 fragment dropzoneStatisticsEssentials on Statistics {

@@ -18,12 +18,11 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   const { open, onClose, dropzoneUser, onSuccess } = props;
   const { onSubmit, control, setValue, loading } = useCreditsForm({
     onSuccess,
-    dropzoneUser,
+    dropzoneUser
   });
 
   return (
     <DialogOrSheet
-      // eslint-disable-next-line max-len
       {...{ open, loading, onClose }}
       disablePadding
       buttonLabel="Save"
@@ -55,6 +54,6 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
 
 const styles = StyleSheet.create({
   form: {
-    paddingHorizontal: 16,
-  },
+    paddingHorizontal: 16
+  }
 });

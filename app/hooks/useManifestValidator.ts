@@ -13,13 +13,18 @@ const schema = yup.object().shape({
 
 export default function useManifestValidator() {
   const {
-    dropzone: { currentUser },
+    dropzone: { currentUser, dropzone },
   } = useDropzoneContext();
 
   const canManifest = React.useCallback(
     async function CheckManifestRequirements() {
       try {
-        await schema.validate(currentUser, { abortEarly: true });
+        await schema.validate({
+          hasLicense: currentUser?.hasLicense || !dropzone?.settings?.requireLicense,
+          hasMembership: currentUser?.hasMembership || !dropzone?.settings?.requireMembership,
+          hasRigInspection: currentUser?.hasRigInspection || !dropzone?.settings?.requireRigInspection,
+          hasReserveInDate: currentUser?.hasReserveInDate || !dropzone?.settings?.requireReserveInDate
+        }, { abortEarly: true });
         return true;
       } catch (err) {
         if (err instanceof ValidationError) {
@@ -28,7 +33,7 @@ export default function useManifestValidator() {
         return false;
       }
     },
-    [currentUser]
+    [currentUser?.hasMembership, currentUser?.hasRigInspection, currentUser?.hasLicense, dropzone?.settings?.requireLicense, dropzone?.settings?.requireMembership, dropzone?.settings?.requireRigInspection, currentUser?.hasReserveInDate, dropzone?.settings?.requireReserveInDate]
   );
 
   return { canManifest };

@@ -3,12 +3,7 @@ import { Provider as Material } from 'react-native-paper';
 import { render as rtlRender, RenderOptions } from '@testing-library/react-native';
 import { createStore } from 'redux';
 import { Provider as Redux } from 'react-redux';
-import {
-  MockedProvider,
-  MockedProviderProps,
-  MockedResponse,
-  MockLink,
-} from '@apollo/client/testing';
+import { MockedProvider, MockedProviderProps, MockedResponse, MockLink } from '@apollo/client/testing';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { Permission } from 'app/api/schema.d';
 import { Operation } from '@apollo/client';
@@ -25,15 +20,11 @@ interface IRenderer extends RenderOptions {
   graphql: MockedResponse<Record<string, unknown>>[];
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore Ok
 class MyMockLink extends MockLink {
   private mockedResponsesByKey: { [key: string]: MockedResponse<Record<string, unknown>> };
 
-  constructor(
-    readonly mockedResponses: MockedResponse<Record<string, unknown>>[],
-    addTypename?: boolean
-  ) {
+  constructor(readonly mockedResponses: MockedResponse<Record<string, unknown>>[], addTypename?: boolean) {
     super(mockedResponses, addTypename);
 
     if (addTypename === undefined) {
@@ -57,9 +48,7 @@ class MyMockLink extends MockLink {
     );
     if (!mockExists) {
       console.warn(
-        `== NO MOCK EXISTS FOR QUERY ${operation.operationName} (variables: ${JSON.stringify(
-          operation.variables
-        )})==`
+        `== NO MOCK EXISTS FOR QUERY ${operation.operationName} (variables: ${JSON.stringify(operation.variables)})==`
       );
       console.warn(
         `-- Existing mocks: ${this.mockedResponses
@@ -75,17 +64,13 @@ class MyMockLink extends MockLink {
 function Apollo(props: MockedProviderProps) {
   const { mocks, ...otherProps } = props;
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const mockLink = new MyMockLink(mocks || []);
 
   return <MockedProvider {...otherProps} link={mockLink} />;
 }
 
-function render(
-  ui: React.ReactElement<unknown>,
-  { initialState, graphql, permissions, ...renderOptions }: IRenderer
-) {
+function render(ui: React.ReactElement<unknown>, { initialState, graphql, permissions, ...renderOptions }: IRenderer) {
   const store = createStore(rootReducer, initialState);
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
@@ -100,11 +85,11 @@ function render(
               {
                 dropzone: {
                   currentUser: {
-                    permissions: permissions || [],
-                  },
-                },
+                    permissions: permissions || []
+                  }
+                }
               }
-            ),
+            )
           ]}
         >
           <DropzoneContextProvider>
