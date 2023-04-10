@@ -1,10 +1,10 @@
 import { passwordStrength } from 'check-password-strength';
 
 export enum PasswordStrength {
-  TooWeak,
-  Weak,
-  Acceptable,
-  Strong,
+  TooWeak = 0,
+  Weak = 1,
+  Acceptable = 2,
+  Strong = 3,
 }
 export default function checkPasswordComplexity(password: string) {
   const score = passwordStrength<PasswordStrength>(password, [

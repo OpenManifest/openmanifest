@@ -5,7 +5,7 @@ import * as Location from 'expo-location';
 import { Step, IWizardStepProps } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { calculateLatLngDelta } from 'app/utils/calculateLatLngDelta';
-import Map from 'app/components/map/Map';
+import MapView from 'app/components/map/Map';
 import AddressSearchBar from 'app/components/input/search/AddressSearchBar';
 import { useIsFocused } from '@react-navigation/core';
 
@@ -82,7 +82,7 @@ function LocationWizardStep(props: IWizardStepProps) {
 
   return (
     <Step {...props} title="Location" hideContentUntilNavigatedTo>
-      <Map
+      <MapView
         mapStyle={{
           ...StyleSheet.absoluteFillObject
         }}
@@ -126,7 +126,7 @@ function LocationWizardStep(props: IWizardStepProps) {
             />
           </View>
         )}
-      </Map>
+      </MapView>
       <TouchableOpacity
         style={styles.myLocation}
         onPress={() => {

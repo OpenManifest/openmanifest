@@ -117,7 +117,7 @@ export default function MapWebView(props: IMapProps) {
 
           // Intentional because the types for this damn map is fucked
 
-          ...(mapStyle as any)
+          ...(mapStyle as object)
         }}
         options={{
           zoom: 15,

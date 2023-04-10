@@ -88,7 +88,7 @@ export default function useMasterLogForm(opts: IUseMasterLogFormOpts) {
           });
         }
         if (response?.updateMasterLog?.masterLog?.date) {
-          notify.success(`Master Log entry updated`);
+          notify.success('Master Log entry updated');
           onSuccess?.(response?.updateMasterLog?.masterLog);
         }
       } catch (error) {

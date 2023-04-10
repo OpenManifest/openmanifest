@@ -22,19 +22,19 @@ export const signUpValidation = yup.object().shape({
     .test({
       test: (value) => checkPasswordComplexity(value || '') >= PasswordStrength.Acceptable,
       message: 'Password is too weak',
-      name: 'password-complexity',
+      name: 'password-complexity'
     }),
   passwordConfirmation: yup
     .string()
     .oneOf([yup.ref('password')], 'Passwords must match')
-    .required('Please type the password again'),
+    .required('Please type the password again')
 });
 
 export const EMPTY_FORM_VALUES: SignUpFields = {
   name: '',
   email: '',
   password: '',
-  passwordConfirmation: '',
+  passwordConfirmation: ''
 };
 
 export interface ISignUpFormOpts {
@@ -43,9 +43,9 @@ export interface ISignUpFormOpts {
 }
 
 enum SignUpSteps {
-  Email,
-  Password,
-  PasswordConfirmation,
+  Email = 0,
+  Password = 1,
+  PasswordConfirmation = 2
 }
 
 export default function useSignupForm(opts: ISignUpFormOpts) {
@@ -58,7 +58,7 @@ export default function useSignupForm(opts: ISignUpFormOpts) {
   const notify = useNotifications();
   const methods = useForm<SignUpFields>({
     defaultValues: EMPTY_FORM_VALUES,
-    mode: 'all',
+    mode: 'all'
   });
 
   React.useEffect(() => {
@@ -79,8 +79,8 @@ export default function useSignupForm(opts: ISignUpFormOpts) {
             password: fields.password,
             exitWeight: 60,
             phone: '',
-            passwordConfirmation: fields.passwordConfirmation,
-          },
+            passwordConfirmation: fields.passwordConfirmation
+          }
         });
 
         if (data?.userRegister?.fieldErrors) {
@@ -106,7 +106,7 @@ export default function useSignupForm(opts: ISignUpFormOpts) {
       try {
         setLoading(true);
         const validated = await signUpValidation.validate(methods.getValues(), {
-          abortEarly: false,
+          abortEarly: false
         });
         console.debug({ validated });
 

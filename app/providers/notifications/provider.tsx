@@ -16,9 +16,9 @@ interface INotification {
 }
 
 enum AnimationState {
-  opening,
-  waiting,
-  closed,
+  opening = 0,
+  waiting = 1,
+  closed = 2
 }
 
 export function NotificationsProvider(props: React.PropsWithChildren<object>) {
@@ -83,7 +83,7 @@ export function NotificationsProvider(props: React.PropsWithChildren<object>) {
       Toast.show({
         onHide,
         text1: notification.message,
-        type: notification.variant || 'success',
+        type: notification.variant || 'success'
       });
       if (notification.variant === 'error') {
         console.error(notification.message);
@@ -91,10 +91,7 @@ export function NotificationsProvider(props: React.PropsWithChildren<object>) {
     }
   }, [notification, onHide]);
 
-  const context = React.useMemo(
-    () => ({ notify, success, error, info }),
-    [error, info, notify, success]
-  );
+  const context = React.useMemo(() => ({ notify, success, error, info }), [error, info, notify, success]);
 
   return (
     <NotificationContext.Provider value={context}>
@@ -104,7 +101,7 @@ export function NotificationsProvider(props: React.PropsWithChildren<object>) {
           style={{
             ...StyleSheet.absoluteFillObject,
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'center'
           }}
           pointerEvents="none"
         >
@@ -127,6 +124,6 @@ export function NotificationsProvider(props: React.PropsWithChildren<object>) {
 const styles = StyleSheet.create({
   animation: {
     height: 300,
-    width: 300,
-  },
+    width: 300
+  }
 });

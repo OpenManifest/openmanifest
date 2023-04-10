@@ -4,7 +4,7 @@ import { Region } from 'react-native-maps';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import * as Location from 'expo-location';
-import Map from '../map/Map';
+import MapView from '../map/Map';
 
 interface ILocationPickerProps {
   markerSize?: number;
@@ -76,7 +76,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
   const [isDragging, setDragging] = React.useState<boolean>(false);
 
   return (
-    <Map
+    <MapView
       position={{
         x: 0,
         y: 0
@@ -156,7 +156,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
       >
         <MaterialIcons name="my-location" size={20} />
       </TouchableOpacity>
-    </Map>
+    </MapView>
   );
 }
 

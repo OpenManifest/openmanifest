@@ -25,7 +25,7 @@ interface IMapProps {
   onDragStart?(): void;
   onDragEnd?(coords: { lat: number; lng: number }): void;
 }
-function Map(props: IMapProps) {
+function MapNative(props: IMapProps) {
   const { width, height, position, coords, center, shape, interactive, onChange, onDragStart, onDragEnd, children } =
     props;
   const { containerStyle, mapStyle } = props;
@@ -98,4 +98,4 @@ function Map(props: IMapProps) {
   );
 }
 
-export default Map;
+export default MapNative;

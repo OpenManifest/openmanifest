@@ -22,23 +22,22 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
 
   const mutationUpdateUser = useMutationUpdateUser({
     onSuccess: (payload) => {
-      notify.success(`Profile has been updated`);
+      notify.success('Profile has been updated');
       dispatch(actions.forms.user.setOpen(false));
       onSuccess();
     },
-    onFieldError: (field, value) =>
-      dispatch(actions.forms.user.setFieldError([field as keyof UserFields, value])),
+    onFieldError: (field, value) => dispatch(actions.forms.user.setFieldError([field as keyof UserFields, value])),
     onError: (error) => notify.error(error),
     mutation: {
       refetchQueries: [
         {
           query: DropzoneUserProfileDocument,
           variables: {
-            dropzoneUserId,
-          },
-        },
-      ],
-    },
+            dropzoneUserId
+          }
+        }
+      ]
+    }
   });
 
   const onSave = React.useCallback(async () => {
@@ -48,7 +47,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
       license: !state.fields.license.value?.id ? null : Number(state.fields.license.value?.id),
       phone: state.fields.phone.value,
       exitWeight: parseFloat(state.fields.exitWeight?.value || '50'),
-      email: state.fields.email.value,
+      email: state.fields.email.value
     });
 
     // TODO: Set APF number from userFederation belonging to currentDropzone.federation
@@ -57,17 +56,15 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
       ({ federation }) => federation.slug === state.fields.license.value?.federation?.slug
     );
     if (
-      (state.fields.license.value?.id &&
-        selectedLicenseFederation?.license?.id !== state.fields.license.value?.id) ||
-      (state.fields.apfNumber?.value &&
-        state.fields.apfNumber?.value !== selectedLicenseFederation?.uid)
+      (state.fields.license.value?.id && selectedLicenseFederation?.license?.id !== state.fields.license.value?.id) ||
+      (state.fields.apfNumber?.value && state.fields.apfNumber?.value !== selectedLicenseFederation?.uid)
     ) {
       await joinFederation({
         variables: {
           federation: state.fields.license.value?.federation?.id?.toString() as string,
           uid: state.fields?.apfNumber?.value,
-          license: state.fields.license.value?.id,
-        },
+          license: state.fields.license.value?.id
+        }
       });
     }
   }, [
@@ -82,7 +79,7 @@ export default function UpdateUserDialog(props: IUpdateUserDialog) {
     state.fields.name.value,
     state.fields.phone.value,
     state.original?.id,
-    state.original?.user?.userFederations,
+    state.original?.user?.userFederations
   ]);
 
   const snapPoints = React.useMemo(() => [740], []);

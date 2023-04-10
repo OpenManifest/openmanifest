@@ -25,7 +25,7 @@ export default function WizardPagination(props: IWizardPagination) {
         defaultIcon = isCurrent ? 'pencil' : defaultIcon;
 
         return (
-          <React.Fragment key={index}>
+          <React.Fragment key={`dot-${index}`}>
             <Avatar.Icon
               icon={hasCustomIcon && icons ? icons[index] : defaultIcon}
               size={30}
