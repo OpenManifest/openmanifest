@@ -16,12 +16,13 @@ import { useWizardForm } from 'app/hooks/forms';
 import { useMemo } from 'app/hooks/react';
 import { isEqual } from 'lodash';
 export interface IUserWizardFormOpts {
+  startIndex: number;
   onSuccess?(): void;
   onClose?(): void;
 }
 
 export function useUserWizardForm(opts: IUserWizardFormOpts) {
-  const { onClose, onSuccess } = opts;
+  const { onClose, onSuccess, startIndex } = opts;
   const [loading, setLoading] = React.useState(false);
 
   const step1 = useRealNameStep();
@@ -44,6 +45,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
   const equipment = useEquipment();
 
   const methods = useWizardForm({
+    startIndex,
     steps
   });
 

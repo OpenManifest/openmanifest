@@ -8,16 +8,10 @@ export default function useProfileWizard() {
   const {
     dropzone: { currentUser }
   } = useDropzoneContext();
-  const dispatch = useAppDispatch();
 
   return React.useCallback(
     (index?: number) => {
       if (currentUser) {
-        dispatch(actions.forms.user.setOriginal(currentUser));
-        if (currentUser?.user?.rigs?.length) {
-          dispatch(actions.forms.rig.setOriginal(currentUser.user.rigs[0]));
-        }
-
         navigation.navigate('Wizards', {
           screen: 'UserWizardScreen',
           params: {
@@ -27,6 +21,6 @@ export default function useProfileWizard() {
         });
       }
     },
-    [currentUser, dispatch, navigation]
+    [currentUser, navigation]
   );
 }

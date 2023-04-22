@@ -31,6 +31,7 @@ export interface IUseWizardFormOpts<
   WizardFields extends FieldValues = FormValues<MergedFields>,
 // CombinedFields extends UnionToIntersection<WizardFields> = UnionToIntersection<WizardFields>
 > {
+  startIndex?: number;
   steps: Steps;
 }
 
@@ -50,6 +51,7 @@ export interface IUseWizardReturnValue<
   WizardFields extends FieldValues = FormValues<MergedFields>
 > extends ReturnType<typeof useHookForm<WizardFields>> {
   loading: boolean;
+  startIndex?: number;
   restore(): void;
   getStepIndexByFieldName(key: string): number | undefined;
   setIndex(index: number): void;
@@ -110,7 +112,7 @@ export function useWizardForm<
   MergedFields,
   WizardFields
 > {
-  const { steps } = opts;
+  const { steps, startIndex } = opts;
 
   const [loading, setLoading] = useState(false);
 
@@ -120,10 +122,10 @@ export function useWizardForm<
 
   const defaultValues = useMemo(() => ({
     ...INITIAL_WIZARD_VALUES,
-    stepIndex: 0,
-    lastStepIndex: (steps?.length || 1) - 1,
+    stepIndex: startIndex || 0,
+    lastStepIndex: ((steps?.length || 1) - 1),
     ...initialValues,
-  }), [initialValues, steps?.length]);
+  }), [initialValues, steps?.length, startIndex]);
 
   console.debug({ defaultValues });
 
@@ -165,7 +167,7 @@ export function useWizardForm<
     back(): Promise<void>;
   } => ({
     back: async () => {
-      if (stepIndex === 0) {
+      if (stepIndex === (startIndex || 0)) {
         return onClose?.();
       }
       setValue('stepIndex', (stepIndex || 0) - 1);
@@ -190,10 +192,11 @@ export function useWizardForm<
     ...form as ReturnType<typeof useHookForm<WizardFields>>,
     getStepIndexByFieldName,
     setIndex,
+    startIndex: startIndex || 0,
     restore,
     setMaxIndex,
     createHandlers,
     loading,
-  }), [setIndex, restore, setMaxIndex, createHandlers, form, getStepIndexByFieldName, loading]);
+  }), [setIndex, startIndex, restore, setMaxIndex, createHandlers, form, getStepIndexByFieldName, loading]);
 }
 
