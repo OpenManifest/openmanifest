@@ -19,7 +19,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
   const { dialogs } = useManifestContext();
   const {
     dialogs: { timepicker },
-    load: { cancel, markAsLanded, updateLoadState, createAircraftDispatchAction },
+    load: { cancel, markAsLanded, updateLoadState, createAircraftDispatchAction }
   } = useLoadContext();
   const [isExpanded, setExpanded] = React.useState(false);
 
@@ -38,10 +38,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
   const isOpen = [LoadState.Open, LoadState.BoardingCall].includes(load.state);
   const isFull = (load?.slots?.length || 0) >= (load?.maxSlots || load?.plane?.maxSlots || 0);
   const showManifestButton =
-    isOpen &&
-    !isFull &&
-    canManifestSelf &&
-    !load?.slots?.some((slot) => slot.dropzoneUser?.id === currentUser?.id);
+    isOpen && !isFull && canManifestSelf && !load?.slots?.some((slot) => slot.dropzoneUser?.id === currentUser?.id);
 
   const showGroupIcon =
     (canManifestGroup || canManifestGroupWithSelfOnly) &&
@@ -52,23 +49,23 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     {
       label: 'Custom call',
       onPress: timepicker.open,
-      icon: 'airplane-takeoff',
+      icon: 'airplane-takeoff'
     },
     {
       label: '20 minute call',
       onPress: createAircraftDispatchAction(20),
-      icon: 'airplane-takeoff',
+      icon: 'airplane-takeoff'
     },
     {
       label: '15 minute call',
       onPress: createAircraftDispatchAction(15),
-      icon: 'airplane-takeoff',
+      icon: 'airplane-takeoff'
     },
     {
       label: '10 minute call',
       onPress: createAircraftDispatchAction(10),
-      icon: 'airplane-takeoff',
-    },
+      icon: 'airplane-takeoff'
+    }
   ];
 
   const isToday = isSameDay(new Date(), parseISO(load.createdAt));
@@ -79,7 +76,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       : {
           label: 'Manifest me',
           icon: 'account',
-          onPress: () => dialogs.manifestUser.open({ load, slot: { dropzoneUser: currentUser } }),
+          onPress: () => dialogs.manifestUser.open({ load, slot: { dropzoneUser: currentUser } })
         },
     !showGroupIcon || !isToday
       ? null
@@ -98,8 +95,8 @@ export default function ActionButton(props: ILoadActionButtonProps) {
 
             dispatch(actions.forms.manifestGroup.setOpen(true));
             dispatch(actions.forms.manifestGroup.setField(['load', load]));
-          },
-        },
+          }
+        }
   ].filter(Boolean);
 
   const workflowActions = [
@@ -108,35 +105,35 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       : {
           label: 'Cancel boarding call',
           icon: 'airplane-off',
-          onPress: createAircraftDispatchAction(null),
+          onPress: createAircraftDispatchAction(null)
         },
     ![LoadState.Open].includes(load.state)
       ? null
       : {
           label: 'Cancel load',
           icon: 'delete-sweep',
-          onPress: cancel,
+          onPress: cancel
         },
     ![LoadState.Cancelled, LoadState.Landed].includes(load.state) || !isToday
       ? null
       : {
           label: 'Re-open load',
           icon: 'undo',
-          onPress: () => updateLoadState(LoadState.Open),
+          onPress: () => updateLoadState(LoadState.Open)
         },
     ![LoadState.BoardingCall, LoadState.InFlight].includes(load.state)
       ? null
       : {
           label: 'Mark as Landed',
           icon: 'airplane-landing',
-          onPress: markAsLanded,
-        },
+          onPress: markAsLanded
+        }
   ].filter(Boolean);
 
   const buttonActions = [
     ...(isOpen ? manifestActions : []),
     ...(canUpdateLoad && [LoadState.Open].includes(load?.state) && isToday ? callActions : []),
-    ...(canUpdateLoad ? workflowActions : []),
+    ...(canUpdateLoad ? workflowActions : [])
   ];
 
   return (
@@ -148,9 +145,8 @@ export default function ActionButton(props: ILoadActionButtonProps) {
         fabStyle={{
           marginLeft: 16,
           marginBottom: 100,
-          backgroundColor: theme.colors.primary,
+          backgroundColor: theme.colors.primary
         }}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         actions={buttonActions}
         onStateChange={({ open }) => setExpanded(open)}

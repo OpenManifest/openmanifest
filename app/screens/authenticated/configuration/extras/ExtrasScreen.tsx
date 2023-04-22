@@ -16,8 +16,8 @@ export default function ExtrasScreen() {
   const globalState = useAppSelector((root) => root.global);
   const { data, loading } = useTicketTypeExtrasQuery({
     variables: {
-      dropzoneId: currentDropzone?.dropzone?.id as string,
-    },
+      dropzoneId: currentDropzone?.dropzone?.id as string
+    }
   });
   const createEditHandler = React.useCallback(
     (ticketTypeAddon: TicketTypeAddonDetailsFragment) => () =>
@@ -46,7 +46,6 @@ export default function ExtrasScreen() {
         {!loading && !data?.extras?.length && (
           <NoResults
             title="No ticket addons"
-            // eslint-disable-next-line max-len
             subtitle="You can add multiple addons to assign to tickets, e.g outside camera, or coach"
           />
         )}
@@ -68,19 +67,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 8,
-    display: 'flex',
+    display: 'flex'
   },
   fab: {
     position: 'absolute',
     margin: 16,
     right: 0,
-    bottom: 0,
+    bottom: 0
   },
   empty: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    height: '100%',
-  },
+    height: '100%'
+  }
 });

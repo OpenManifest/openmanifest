@@ -237,7 +237,6 @@ function LoadCard(props: ILoadCardLarge) {
             </Button>
           )}
           <View style={{ flexGrow: 1 }} />
-          {/* eslint-disable-next-line no-nested-ternary */}
           {!canUpdateLoad || !!load?.hasLanded ? null : load?.dispatchAt ? (
             <Button
               mode="outlined"
@@ -294,7 +293,6 @@ function LoadCard(props: ILoadCardLarge) {
             </Menu>
           )}
 
-          {/* eslint-disable-next-line no-nested-ternary */}
           {load?.hasLanded ? null : load?.dispatchAt &&
             load.dispatchAt < new Date().getTime() / 1000 &&
             canUpdateLoad ? (

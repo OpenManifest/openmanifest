@@ -31,14 +31,7 @@ interface IAnchorProps<T> {
 
 function Anchor<T>(props: IAnchorProps<T>): JSX.Element {
   const { item, openMenu } = props;
-  return (
-    <MenuItem
-      key={`select-option-${item?.label}`}
-      onPress={openMenu}
-      title={item?.label}
-      icon="chevron-down"
-    />
-  );
+  return <MenuItem key={`select-option-${item?.label}`} onPress={openMenu} title={item?.label} icon="chevron-down" />;
 }
 
 export default function Select<T>(props: ISelectProps<T>) {
@@ -81,7 +74,6 @@ export default function Select<T>(props: ISelectProps<T>) {
 
   const showAvatars = React.useMemo(() => options?.some((option) => option.avatar), [options]);
 
-  console.debug({ selectedOption, value });
   return (
     <View style={{ width: '100%' }}>
       {label ? <List.Subheader>{label}</List.Subheader> : null}
@@ -95,7 +87,7 @@ export default function Select<T>(props: ISelectProps<T>) {
             {...(!showAvatars
               ? {}
               : {
-                  avatar: { name: option.label || '', image: option.avatar || undefined },
+                  avatar: { name: option.label || '', image: option.avatar || undefined }
                 })}
           />
         ))}
@@ -109,6 +101,6 @@ export default function Select<T>(props: ISelectProps<T>) {
 
 const styles = StyleSheet.create({
   helperText: {
-    marginBottom: 16,
-  },
+    marginBottom: 16
+  }
 });

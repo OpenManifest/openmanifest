@@ -7,10 +7,7 @@ import { FieldError, Mutation } from './schema.d';
 
 export interface IAppMutation<Payload, InputType> {
   loading: boolean;
-  mutate(
-    variables: InputType,
-    opts?: Omit<Partial<MutationOptions>, 'variables'> | undefined
-  ): Promise<Maybe<Payload>>;
+  mutate(variables: InputType, opts?: Omit<Partial<MutationOptions>, 'variables'> | undefined): Promise<Maybe<Payload>>;
 }
 
 export interface IAppMutationProps<Payload> {
@@ -29,7 +26,7 @@ export interface IFieldValidator<InputType> {
 export function isRequired(message: string) {
   return {
     message,
-    pattern: /.{1,}/,
+    pattern: /.{1,}/
   };
 }
 
@@ -37,25 +34,21 @@ export function isEmail(message: string) {
   return {
     message,
     pattern:
-      // eslint-disable-next-line max-len,no-useless-escape
-      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   };
 }
 
 export function isNumeric(message: string) {
   return {
     message,
-    pattern: /^\d+/,
+    pattern: /^\d+/
   };
 }
 
-export function validates<T extends object>(
-  message: string,
-  callback: (inputVariables: T) => boolean
-) {
+export function validates<T extends object>(message: string, callback: (inputVariables: T) => boolean) {
   return {
     message,
-    callback,
+    callback
   };
 }
 
@@ -84,9 +77,7 @@ export function createMutation<
 ) {
   const { getPayload, fieldErrorMap, validates: validators } = options;
 
-  return function useAppMutation(
-    opts: IAppMutationProps<Payload>
-  ): IAppMutation<Payload, InputType> {
+  return function useAppMutation(opts: IAppMutationProps<Payload>): IAppMutation<Payload, InputType> {
     const { onFieldError, onSuccess, onError } = opts;
 
     const [mutate, { loading }] = useMutation(mutation, opts.mutation);
@@ -95,9 +86,7 @@ export function createMutation<
       (field: string, message: string | string[]) => {
         const camelizedField = camelCase(field);
         const fieldName =
-          fieldErrorMap && camelizedField in fieldErrorMap
-            ? fieldErrorMap[field as keyof InputType]
-            : field;
+          fieldErrorMap && camelizedField in fieldErrorMap ? fieldErrorMap[field as keyof InputType] : field;
 
         const [msg] = [message].flat();
         onFieldError?.(`${fieldName}`, `${startCase(fieldName)} ${msg}`);
@@ -106,10 +95,7 @@ export function createMutation<
     );
 
     const onMutate = React.useCallback(
-      async (
-        variables: InputType,
-        mopts?: Omit<MutationOptions, 'variables'> | undefined
-      ): Promise<Maybe<Payload>> => {
+      async (variables: InputType, mopts?: Omit<MutationOptions, 'variables'> | undefined): Promise<Maybe<Payload>> => {
         function validate() {
           let hasErrors = false;
 
@@ -145,7 +131,7 @@ export function createMutation<
         try {
           const result = await mutate({
             variables,
-            ...mopts,
+            ...mopts
           });
 
           const payload = getPayload(result.data);
@@ -174,7 +160,7 @@ export function createMutation<
 
     return {
       loading,
-      mutate: onMutate,
+      mutate: onMutate
     };
   };
 }

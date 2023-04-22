@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { Button, Card } from 'react-native-paper';
-// eslint-disable-next-line max-len
-import {
-  useRigInspectionTemplateQuery,
-  useUpdateRigInspectionTemplateMutation,
-} from 'app/api/reflection';
-// eslint-disable-next-line max-len
+
+import { useRigInspectionTemplateQuery, useUpdateRigInspectionTemplateMutation } from 'app/api/reflection';
+
 import RigInspectionTemplateForm from 'app/components/forms/rig_inspection_template/RigInspectionTemplateForm';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
@@ -22,8 +19,8 @@ export default function RigInspectionTemplateScreen() {
   const notify = useNotifications();
   const { data } = useRigInspectionTemplateQuery({
     variables: {
-      dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
-    },
+      dropzoneId: currentDropzone?.dropzone?.id?.toString() as string
+    }
   });
 
   const canEdit = useRestriction(Permission.UpdateFormTemplate);
@@ -31,11 +28,7 @@ export default function RigInspectionTemplateScreen() {
 
   React.useEffect(() => {
     if (data?.dropzone?.rigInspectionTemplate) {
-      dispatch(
-        actions.forms.rigInspectionTemplate.setOpen(
-          data.dropzone.rigInspectionTemplate as FormTemplate
-        )
-      );
+      dispatch(actions.forms.rigInspectionTemplate.setOpen(data.dropzone.rigInspectionTemplate as FormTemplate));
     }
   }, [data?.dropzone?.rigInspectionTemplate, dispatch]);
 
@@ -45,8 +38,8 @@ export default function RigInspectionTemplateScreen() {
         variables: {
           formId: Number(data?.dropzone?.rigInspectionTemplate?.id),
           dropzoneId: Number(data?.dropzone?.id),
-          definition: JSON.stringify(state.fields),
-        },
+          definition: JSON.stringify(state.fields)
+        }
       });
       notify.success('Template saved');
     } catch (error) {
@@ -54,13 +47,7 @@ export default function RigInspectionTemplateScreen() {
         notify.error(error.message);
       }
     }
-  }, [
-    mutationUpdateForm,
-    data?.dropzone?.rigInspectionTemplate?.id,
-    data?.dropzone?.id,
-    state.fields,
-    notify,
-  ]);
+  }, [mutationUpdateForm, data?.dropzone?.rigInspectionTemplate?.id, data?.dropzone?.id, state.fields, notify]);
 
   const { width } = useWindowDimensions();
   return (

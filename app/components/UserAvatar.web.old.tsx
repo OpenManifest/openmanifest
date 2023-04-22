@@ -13,7 +13,6 @@ function stringToColor(string: string) {
   let hash = 0;
   let i;
 
-  /* eslint-disable no-bitwise */
   for (i = 0; i < string.length; i += 1) {
     hash = string.charCodeAt(i) + ((hash << 5) - hash);
   }
@@ -39,7 +38,7 @@ export default function UserAvatar(props: IUserAvatarProps) {
   return (
     <Avatar
       sx={{
-        bgcolor: stringToColor(name || 'Dropzone User'),
+        bgcolor: stringToColor(name || 'Dropzone User')
       }}
       style={{ height: size, width: size, alignSelf: 'center', marginRight: 12 }}
       src={image || undefined}

@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import {
@@ -10,7 +9,7 @@ import {
   useTheme,
   TouchableRipple,
   Avatar,
-  Title,
+  Title
 } from 'react-native-paper';
 import SkeletonContent from 'app/components/Skeleton';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
@@ -76,8 +75,8 @@ export default function DropzoneForm(props: IDropzoneForm) {
               marginLeft: 0,
               width: '100%',
               alignItems: 'center',
-              justifyContent: 'center',
-            },
+              justifyContent: 'center'
+            }
           ]}
         >
           <Card.Content style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -87,7 +86,6 @@ export default function DropzoneForm(props: IDropzoneForm) {
                   style={{ height: 175, width: 175 }}
                   autoPlay
                   loop={false}
-                  // eslint-disable-next-line global-require
                   source={theme.dark ? imagePickLight : imagePickDark}
                 />
               ) : (
@@ -96,7 +94,7 @@ export default function DropzoneForm(props: IDropzoneForm) {
                   source={{ uri: state?.fields?.banner?.value }}
                   style={{
                     borderWidth: StyleSheet.hairlineWidth,
-                    backgroundColor: theme.colors.primary,
+                    backgroundColor: theme.colors.primary
                   }}
                 />
               )}
@@ -119,9 +117,7 @@ export default function DropzoneForm(props: IDropzoneForm) {
             mode="outlined"
             error={!!state.fields.name.error}
             value={state.fields.name.value || ''}
-            onChangeText={(newValue) =>
-              dispatch(actions.forms.dropzone.setField(['name', newValue]))
-            }
+            onChangeText={(newValue) => dispatch(actions.forms.dropzone.setField(['name', newValue]))}
           />
           <HelperText type="error">{state.fields.name.error || ''}</HelperText>
           <FederationSelect
@@ -147,7 +143,7 @@ export default function DropzoneForm(props: IDropzoneForm) {
               paddingBottom: 50,
               paddingLeft: 0,
               paddingRight: 0,
-              flexGrow: 1,
+              flexGrow: 1
             }}
           >
             <LocationPicker
@@ -177,7 +173,7 @@ export default function DropzoneForm(props: IDropzoneForm) {
               flexDirection: 'row',
               justifyContent: 'space-evenly',
               alignItems: 'flex-end',
-              width: '100%',
+              width: '100%'
             }}
           >
             <PhonePreview primaryColor={state.fields.primaryColor.value || '#000000'} />
@@ -212,14 +208,10 @@ export default function DropzoneForm(props: IDropzoneForm) {
           <List.Item
             descriptionNumberOfLines={10}
             title="Use credit system"
-            // eslint-disable-next-line max-len
             description="Users will be charged credits when a load is marked as landed and can't manifest with insufficient funds."
             onPress={() =>
               dispatch(
-                actions.forms.dropzone.setField([
-                  'isCreditSystemEnabled',
-                  !state.fields.isCreditSystemEnabled.value,
-                ])
+                actions.forms.dropzone.setField(['isCreditSystemEnabled', !state.fields.isCreditSystemEnabled.value])
               )
             }
             left={() => (
@@ -228,7 +220,7 @@ export default function DropzoneForm(props: IDropzoneForm) {
                   dispatch(
                     actions.forms.dropzone.setField([
                       'isCreditSystemEnabled',
-                      !state.fields.isCreditSystemEnabled.value,
+                      !state.fields.isCreditSystemEnabled.value
                     ])
                   )
                 }
@@ -246,34 +238,34 @@ const styles = StyleSheet.create({
   skeletonCard: {
     marginVertical: 16,
     paddingHorizontal: 24,
-    width: '100%',
+    width: '100%'
   },
   skeletonCardColorPicker: {
     marginVertical: 16,
     minHeight: 200,
     width: '100%',
-    paddingHorizontal: 24,
+    paddingHorizontal: 24
   },
   skeletonCardCheckbox: {
     minHeight: 116,
     marginVertical: 16,
     paddingHorizontal: 24,
-    width: '100%',
+    width: '100%'
   },
   card: {
     padding: 16,
-    width: '100%',
+    width: '100%'
   },
   fields: {
     flexGrow: 1,
     display: 'flex',
-    width: '100%',
+    width: '100%'
   },
   field: {
     marginBottom: 8,
-    width: '100%',
+    width: '100%'
   },
   subheader: {
-    paddingLeft: 0,
-  },
+    paddingLeft: 0
+  }
 });

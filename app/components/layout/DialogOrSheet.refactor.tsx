@@ -9,7 +9,7 @@ import {
   useBottomSheetDynamicSnapPoints,
   useBottomSheet,
   BottomSheetView,
-  useBottomSheetModal,
+  useBottomSheetModal
 } from '@gorhom/bottom-sheet';
 import useKeyboardVisibility from 'app/hooks/useKeyboardVisibility';
 
@@ -32,7 +32,7 @@ enableLogging();
 
 export function BottomSheetWrapper({
   open,
-  children,
+  children
 }: {
   open?: boolean | null;
   children: React.ReactNode;
@@ -68,13 +68,10 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     loading,
     handleStyles,
     disablePadding,
-    children,
+    children
   } = props;
   const sheetRef = React.useRef<BottomSheetModal>(null);
-  const points = React.useMemo(
-    () => sortBy(uniq([0, ...(snapPoints || [600])])).filter((s) => s !== 0),
-    [snapPoints]
-  );
+  const points = React.useMemo(() => sortBy(uniq([0, ...(snapPoints || [600])])).filter((s) => s !== 0), [snapPoints]);
   const [index, onChange] = React.useState(-1);
   const snappingPoints = useBottomSheetDynamicSnapPoints(points);
   const keyboardVisible = useKeyboardVisibility();
@@ -86,7 +83,6 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
 
   React.useEffect(() => {
     if (open) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       console.log('-- Effect opening snapping sheet', name, sheetRef?.current, points.length - 1);
       sheetRef?.current?.snapToIndex(points.length - 1);
@@ -100,7 +96,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
         style={StyleSheet.flatten([
           styles.sheetHeader,
           { shadowColor: theme.colors.onSurface, backgroundColor: theme.colors.surface },
-          handleStyles,
+          handleStyles
         ])}
       >
         <View style={styles.handle} />
@@ -111,8 +107,8 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
           styles.sheetHeaderWithTitle,
           {
             shadowColor: theme.colors.onSurface,
-            backgroundColor: theme.colors.surface,
-          },
+            backgroundColor: theme.colors.surface
+          }
         ]}
       >
         <View style={styles.handle} />
@@ -146,8 +142,8 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
             disablePadding ? styles.noPadding : {},
             {
               paddingBottom: keyboardVisible ? 400 : 80,
-              backgroundColor: theme.colors.surface,
-            },
+              backgroundColor: theme.colors.surface
+            }
           ])}
         >
           {children}
@@ -180,23 +176,23 @@ const styles = StyleSheet.create({
     height: 42,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: 20
   },
   buttonContainer: {
     paddingHorizontal: 8,
-    marginBottom: 32,
+    marginBottom: 32
   },
   noPadding: { paddingLeft: 0, paddingRight: 0, paddingTop: 0 },
   contentContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 32,
+    paddingBottom: 32
   },
   handle: {
     width: 32,
     height: 4,
     borderRadius: 2,
     backgroundColor: '#AAAAAA',
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   sheet: {
     paddingBottom: 30,
@@ -204,7 +200,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   sheetHeader: {
     zIndex: 10000,
@@ -216,10 +212,10 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: -4,
+      height: -4
     },
     shadowOpacity: 0.22,
-    shadowRadius: 2.22,
+    shadowRadius: 2.22
   },
   sheetHeaderWithTitle: {
     zIndex: 10000,
@@ -230,11 +226,11 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: -4,
+      height: -4
     },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
     paddingLeft: 16,
-    paddingTop: 16,
-  },
+    paddingTop: 16
+  }
 });

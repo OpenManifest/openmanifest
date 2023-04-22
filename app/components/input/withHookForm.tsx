@@ -7,9 +7,7 @@ interface IMinimalHookFormProps<V> {
   onChange?(value: V): void;
 }
 
-export function withHookForm<BaseProps extends object, Value = unknown>(
-  Component: React.ComponentType<BaseProps>
-) {
+export function withHookForm<BaseProps extends object, Value = unknown>(Component: React.ComponentType<BaseProps>) {
   return function WithHookForm<Fields extends FieldValues, TName extends Path<Fields>>(
     props: Omit<BaseProps, 'value' | 'onChange' | 'error'> &
       Pick<ControllerProps<Fields, TName>, 'control' | 'name' | 'rules' | 'defaultValue'>
@@ -19,11 +17,15 @@ export function withHookForm<BaseProps extends object, Value = unknown>(
     return (
       <Controller
         {...{ control, name, rules }}
-        render={({ field: { onChange, onBlur, value }, formState: { errors } }) => (
+        render={({ field: { onChange, onBlur, value }, fieldState }) => (
           <Component
             {...(rest as BaseProps)}
-            {...{ value, onChange, onBlur }}
-            error={errors?.[name]?.message}
+            {...{ value, onBlur }}
+            onChange={(val) => {
+              console.debug('CHANGE: ', val);
+              onChange(val);
+            }}
+            error={fieldState?.error?.message}
           />
         )}
       />

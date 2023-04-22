@@ -8,6 +8,7 @@ import useAsyncFn from 'react-use/lib/useAsyncFn';
 import useManifestValidator from 'app/hooks/useManifestValidator';
 import isEqual from 'lodash/isEqual';
 import { useNotifications } from 'app/providers/notifications';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 
 export type ManifestUserFields = Pick<
   SlotExhaustiveFragment,
@@ -22,16 +23,6 @@ export type ManifestUserFields = Pick<
   | 'passengerName'
 > & { id?: string; load?: { id: string }; ticketType: TicketTypeDetailsFragment | null };
 
-export const manifestUserValidation = yup.object().shape({
-  load: yup.object().required(),
-  exitWeight: yup.number().required('Please specify exit weight').min(0).max(300),
-  rig: yup.object().required('You cant manifest without a rig').nullable(),
-  jumpType: yup.object().required('Jump type is required').nullable(),
-  ticketType: yup.object().required('Ticket is required to manifest').nullable(),
-  original: yup.object().nullable(),
-  extras: yup.array().of(yup.object()).nullable(),
-});
-
 export const EMPTY_FORM_VALUES: ManifestUserFields = {
   id: undefined,
   load: undefined,
@@ -42,7 +33,7 @@ export const EMPTY_FORM_VALUES: ManifestUserFields = {
   passengerExitWeight: null,
   passengerName: null,
   extras: null,
-  groupNumber: 0,
+  groupNumber: 0
 };
 
 export interface IUseManifestFormOpts {
@@ -56,10 +47,28 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
 
   const notify = useNotifications();
+  const {
+    dropzone: { dropzone }
+  } = useDropzoneContext();
+  const manifestUserValidation = yup.object().shape({
+    load: yup.object().required(),
+    exitWeight: yup.number().required('Please specify exit weight').min(0).max(300),
+    rig: yup
+      .object()
+      .nullable()
+      .when({
+        is: () => dropzone?.settings?.requireEquipment,
+        then: yup.object().required('You cant manifest without a rig').nullable()
+      }),
+    jumpType: yup.object().required('Jump type is required').nullable(),
+    ticketType: yup.object().required('Ticket is required to manifest').nullable(),
+    original: yup.object().nullable(),
+    extras: yup.array().of(yup.object()).nullable()
+  });
   const methods = useForm<ManifestUserFields>({
     defaultValues,
     mode: 'all',
-    resolver: yupResolver(manifestUserValidation),
+    resolver: yupResolver(manifestUserValidation)
   });
   React.useEffect(() => {
     if (!isEqual(defaultValues, initialValues)) {
@@ -73,7 +82,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    manifest: { manifestUser },
+    manifest: { manifestUser }
   } = useManifestContext();
   const { canManifest } = useManifestValidator();
 
@@ -94,8 +103,8 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
             ? {}
             : {
                 passengerName: fields.passengerName,
-                passengerExitWeight: fields.passengerExitWeight,
-              }),
+                passengerExitWeight: fields.passengerExitWeight
+              })
         });
 
         if ('fieldErrors' in response) {

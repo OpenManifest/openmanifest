@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Button, HelperText } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
-// eslint-disable-next-line max-len
+
 import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateWeatherConditions';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
-// eslint-disable-next-line max-len
+
 import WeatherConditionForm from 'app/components/forms/weather_conditions/WeatherConditionForm';
 import { useNotifications } from 'app/providers/notifications';
 import { useAuthenticatedNavigation } from '../../useAuthenticatedNavigation';
@@ -22,7 +22,7 @@ export default function WindScreen() {
     onSuccess: () => null,
     onFieldError: (field: keyof typeof state.fields, message: string) =>
       dispatch(actions.forms.weather.setFieldError([field, message])),
-    onError: notify.error,
+    onError: notify.error
   });
 
   const onSaveConditions = React.useCallback(async () => {
@@ -31,7 +31,7 @@ export default function WindScreen() {
       dropzoneId: dropzoneId as number,
       winds: JSON.stringify(state.fields.winds.value),
       jumpRun: state.fields.jumpRun.value,
-      temperature: state.fields.temperature.value,
+      temperature: state.fields.temperature.value
     });
     navigation.goBack();
     notify.success('Weather board updated');
@@ -46,7 +46,7 @@ export default function WindScreen() {
     dropzoneId,
     navigation,
     notify,
-    dispatch,
+    dispatch
   ]);
 
   return (
@@ -54,7 +54,7 @@ export default function WindScreen() {
       <WeatherConditionForm
         onPressJumpRun={() =>
           navigation.navigate('Manifest', {
-            screen: 'JumpRunScreen',
+            screen: 'JumpRunScreen'
           })
         }
         variant={theme.dark ? 'light' : undefined}
@@ -72,11 +72,11 @@ export default function WindScreen() {
               height: 42,
               alignItems: 'center',
               justifyContent: 'center',
-              marginTop: 20,
-            },
+              marginTop: 20
+            }
           ]}
           labelStyle={{
-            color: 'white',
+            color: 'white'
           }}
           onPress={async () => {
             onSaveConditions();
@@ -96,8 +96,8 @@ export default function WindScreen() {
               height: 42,
               alignItems: 'center',
               justifyContent: 'center',
-              marginTop: 20,
-            },
+              marginTop: 20
+            }
           ]}
           onPress={async () => {
             onSaveConditions();
@@ -106,8 +106,7 @@ export default function WindScreen() {
           Reload Conditions
         </Button>
         <HelperText type="info">
-          Winds aloft and temperature are retrieved from MarkSchulze.net's amazing Winds Aloft
-          service.
+          Winds aloft and temperature are retrieved from MarkSchulze.net's amazing Winds Aloft service.
         </HelperText>
       </View>
     </ScrollableScreen>
@@ -117,12 +116,12 @@ export default function WindScreen() {
 const styles = StyleSheet.create({
   button: {
     alignSelf: 'center',
-    width: '100%',
+    width: '100%'
   },
   buttonBack: {
     alignSelf: 'center',
     width: '100%',
-    marginHorizontal: 48,
+    marginHorizontal: 48
   },
   buttons: {
     alignSelf: 'center',
@@ -131,6 +130,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     width: '100%',
     maxWidth: 404,
-    marginBottom: 0,
-  },
+    marginBottom: 0
+  }
 });

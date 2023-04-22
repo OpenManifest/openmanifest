@@ -17,7 +17,6 @@ export default function InfoGrid(props: IInfoGrid) {
       <View style={StyleSheet.flatten([styles.container, style])}>
         {items.map((item, i) => (
           <>
-            {/* eslint-disable-next-line react/no-array-index-key */}
             <View style={{ flex }} key={`info-grid-${i}`}>
               <List.Item
                 titleStyle={[
@@ -26,11 +25,11 @@ export default function InfoGrid(props: IInfoGrid) {
                     alignSelf: 'center',
                     justifyContent: 'center',
                     color: theme.colors.text,
-                    fontWeight: item.bold !== false ? 'bold' : undefined,
-                  },
+                    fontWeight: item.bold !== false ? 'bold' : undefined
+                  }
                 ]}
                 style={{
-                  paddingTop: 15,
+                  paddingTop: 15
                 }}
                 title={item.value}
                 descriptionStyle={[styles.description, { color: theme.colors.text }]}
@@ -39,7 +38,6 @@ export default function InfoGrid(props: IInfoGrid) {
               />
             </View>
             {i === items.length - 1 ? null : (
-              /* eslint-disable-next-line react/no-array-index-key */
               <Divider key={`info-grid-divider-${i}`} style={[styles.verticalDivider]} />
             )}
           </>
@@ -53,18 +51,18 @@ const styles = StyleSheet.create({
   container: { width: '100%', flexDirection: 'row' },
   divider: {
     height: StyleSheet.hairlineWidth,
-    width: '100%',
+    width: '100%'
   },
   verticalDivider: {
     width: StyleSheet.hairlineWidth,
-    height: '100%',
+    height: '100%'
   },
   title: {
     textAlign: 'center',
-    color: 'white',
+    color: 'white'
   },
   description: {
     textAlign: 'center',
-    color: 'white',
-  },
+    color: 'white'
+  }
 });

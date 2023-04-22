@@ -35,7 +35,7 @@ export function useErrorLink() {
       onError(({ graphQLErrors, networkError, operation, forward }) => {
         try {
           if (graphQLErrors?.some((err) => err.extensions?.code === 'AUTHENTICATION_ERROR')) {
-            notify.info(`Session expired`);
+            notify.info('Session expired');
             if (authenticated) {
               console.debug(
                 '[Apollo::Links::Errors]: Received authentication error, logging out',

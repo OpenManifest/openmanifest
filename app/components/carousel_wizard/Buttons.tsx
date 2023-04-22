@@ -7,15 +7,15 @@ import { useAppSelector } from 'app/state';
 export interface IWizardButtonsProps {
   nextLabel: string;
   backLabel: string;
+  loading?: boolean;
   onNext?(): Promise<void>;
   onBack?(): Promise<void> | void;
 }
 
 export default function Buttons(props: IWizardButtonsProps) {
-  const { backLabel = 'Back', nextLabel = 'Next', onNext, onBack } = props;
+  const { backLabel = 'Back', loading: controlledLoading, nextLabel = 'Next', onNext, onBack } = props;
   const [loading, setLoading] = React.useState(false);
   const { palette } = useAppSelector((root) => root.global);
-
   const onNextPress = React.useCallback(async () => {
     try {
       await onNext?.();
@@ -32,8 +32,8 @@ export default function Buttons(props: IWizardButtonsProps) {
     <View style={styles.actions}>
       {onNextPress && (
         <Button
-          disabled={loading}
-          loading={loading}
+          disabled={loading || controlledLoading}
+          loading={loading || controlledLoading}
           onPress={onNextPress}
           style={[styles.next, { backgroundColor: palette.placeholder }]}
           mode="contained"
@@ -42,7 +42,7 @@ export default function Buttons(props: IWizardButtonsProps) {
         </Button>
       )}
       {onBack && (
-        <Button style={styles.back} disabled={loading} mode="text" onPress={onBack}>
+        <Button style={styles.back} disabled={loading || controlledLoading} mode="text" onPress={onBack}>
           {backLabel}
         </Button>
       )}
@@ -59,15 +59,15 @@ const styles = StyleSheet.create({
     paddingBottom: 48,
     width: '100%',
     maxWidth: 500,
-    height: 80,
+    height: 80
   },
   next: {
     width: '100%',
     borderRadius: 20,
     minWidth: 300,
-    minHeight: 36,
+    minHeight: 36
   },
   back: {
-    minHeight: 36,
-  },
+    minHeight: 36
+  }
 });

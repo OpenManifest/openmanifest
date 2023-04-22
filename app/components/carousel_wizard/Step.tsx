@@ -14,10 +14,7 @@ export interface IWizardStepProps {
 
 export function Fields({ children }: { children: React.ReactNode }) {
   return (
-    <KeyboardAvoidingView
-      style={styles.fields}
-      behavior={Platform.OS === 'android' ? undefined : 'padding'}
-    >
+    <KeyboardAvoidingView style={styles.fields} behavior={Platform.OS === 'android' ? undefined : 'padding'}>
       <View style={styles.fieldContent}>{children}</View>
     </KeyboardAvoidingView>
   );
@@ -43,7 +40,7 @@ export function Step(props: IWizardStepProps) {
                 marginTop: 16,
                 textAlign: 'left',
                 fontWeight: 'bold',
-                fontSize: 72,
+                fontSize: 72
               }}
             >
               {title}
@@ -51,9 +48,7 @@ export function Step(props: IWizardStepProps) {
           </View>
         </View>
       )}
-      <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-        {children}
-      </View>
+      <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>{children}</View>
 
       {actions}
     </ScrollView>
@@ -68,19 +63,19 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   content: {
     flexGrow: 1,
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-evenly'
   },
   title: {
     minWidth: 400,
     maxWidth: 500,
     alignSelf: 'center',
     paddingLeft: 32,
-    marginBottom: 56,
+    marginBottom: 56
   },
   fields: {
     minWidth: 400,
@@ -88,10 +83,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 32,
+    padding: 32
   },
   fieldContent: {
     flexDirection: 'column',
-    flexGrow: 1,
-  },
+    flexGrow: 1
+  }
 });

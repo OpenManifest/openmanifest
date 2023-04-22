@@ -18,7 +18,7 @@ interface IWizardContext {
 export const WizardContext = React.createContext<IWizardContext>({
   index: 0,
   count: 0,
-  setIndex: () => null,
+  setIndex: () => null
 } as IWizardContext);
 
 function Wizard(props: IWizardProps) {
@@ -32,10 +32,9 @@ function Wizard(props: IWizardProps) {
       index,
       count,
       setIndex: (idx: number) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         ref.current?.scrollToIndex({ index: idx, animated: true });
-      },
+      }
     }),
     [count, index]
   );
@@ -68,8 +67,8 @@ const styles = StyleSheet.create({
   container: {
     width,
     flex: 1,
-    paddingBottom: 0,
-  },
+    paddingBottom: 0
+  }
 });
 
 export default Wizard;

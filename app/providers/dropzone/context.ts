@@ -21,6 +21,7 @@ interface IDropzoneContext {
 export const INITIAL_CONTEXT: IDropzoneContext = {
   dropzone: {
     permissions: [],
+    update: uninitializedHandler as never,
     called: false,
     loading: false,
     dropzone: null,

@@ -220,7 +220,7 @@ export default createSlice({
         const payloadKey = key as keyof Required<IGlobalState>;
         if (payloadKey in state) {
           const typedKey = payloadKey as keyof typeof initialState;
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
           // @ts-ignore We know this is right
           state[payloadKey] = initialState[typedKey];
         }

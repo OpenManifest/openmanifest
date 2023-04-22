@@ -11,8 +11,7 @@ export default function RigInspectionForm() {
       {state.fields.map((item, index) => {
         return (
           <RigInspectionItem
-            // eslint-disable-next-line react/no-array-index-key
-            key={index}
+            key={`field-${index}`}
             config={item}
             value={item?.value || ''}
             onChange={(value) => dispatch(actions.forms.rigInspection.setField([index, value]))}

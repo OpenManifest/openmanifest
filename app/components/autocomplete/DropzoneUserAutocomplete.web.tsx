@@ -1,13 +1,6 @@
 import * as React from 'react';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
-import {
-  Autocomplete,
-  InputAdornment,
-  ListItemAvatar,
-  ListItemText,
-  MenuItem,
-  styled,
-} from '@mui/material';
+import { Autocomplete, InputAdornment, ListItemAvatar, ListItemText, MenuItem, styled } from '@mui/material';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import { useDropzoneUsersLazyQuery } from 'app/api/reflection';
 import { useAppSelector } from 'app/state';
@@ -25,35 +18,34 @@ interface IDropzoneUserAutocompleteProps {
   onChange(value: DropzoneUserEssentialsFragment): void;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore This is supposed to be ok
 const StyledTextField = styled(TextField, {
-  shouldForwardProp: (prop: keyof TextFieldProps) => prop !== 'color',
+  shouldForwardProp: (prop: keyof TextFieldProps) => prop !== 'color'
 })((p: TextFieldProps) => ({
   // input label when focused
   '& .MuiInput-input': {
-    color: p.color,
+    color: p.color
   },
   '& label.Mui-focused': {
-    color: p.color,
+    color: p.color
   },
   // focused color for input with variant='standard'
   '& .MuiInput-root:before': {
-    borderBottomColor: p.color,
+    borderBottomColor: p.color
   },
   '& .MuiInput-root:hover': {
-    borderBottomColor: p.color,
+    borderBottomColor: p.color
   },
   // focused color for input with variant='filled'
   '& .MuiFilledInput-underline': {
-    borderBottomColor: p.color,
+    borderBottomColor: p.color
   },
   // focused color for input with variant='outlined'
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused fieldset': {
-      borderColor: p.color,
-    },
-  },
+      borderColor: p.color
+    }
+  }
 })) as React.ComponentType<Omit<TextFieldProps, 'color'> & { color?: string }>;
 export default function DropzoneUserAutocomplete(props: IDropzoneUserAutocompleteProps) {
   const { label, onChange, disabled, placeholder, color } = props;
@@ -67,8 +59,8 @@ export default function DropzoneUserAutocomplete(props: IDropzoneUserAutocomplet
         variables: {
           dropzoneId: currentDropzoneId?.toString() as string,
           search: searchText,
-          licensed: false,
-        },
+          licensed: false
+        }
       });
     }
   }, [currentDropzoneId, searchText, searchUsers]);
@@ -76,9 +68,7 @@ export default function DropzoneUserAutocomplete(props: IDropzoneUserAutocomplet
   const theme = useTheme();
   const getOptionLabel = React.useCallback(
     (option: DropzoneUserEssentialsFragment) =>
-      option.user.nickname
-        ? `${option.user.nickname} (${option.user.name})`
-        : (option.user.name as string),
+      option.user.nickname ? `${option.user.nickname} (${option.user.name})` : (option.user.name as string),
     []
   );
 
@@ -89,15 +79,9 @@ export default function DropzoneUserAutocomplete(props: IDropzoneUserAutocomplet
 
   const options = React.useMemo(
     () =>
-      (
-        (data?.dropzoneUsers?.edges?.map(
-          (edge) => edge?.node
-        ) as DropzoneUserEssentialsFragment[]) || []
-      ).sort(
+      ((data?.dropzoneUsers?.edges?.map((edge) => edge?.node) as DropzoneUserEssentialsFragment[]) || []).sort(
         (a, b) =>
-          -(first(getOptionLabel(b).split('')) as string).localeCompare(
-            first(getOptionLabel(a).split('')) as string
-          )
+          -(first(getOptionLabel(b).split('')) as string).localeCompare(first(getOptionLabel(a).split('')) as string)
       ),
     [data?.dropzoneUsers?.edges, getOptionLabel]
   );
@@ -128,13 +112,9 @@ export default function DropzoneUserAutocomplete(props: IDropzoneUserAutocomplet
             disableUnderline: true,
             startAdornment: (
               <InputAdornment position="start">
-                <MaterialCommunityIcons
-                  name="account-search-outline"
-                  size={20}
-                  color={color || theme.colors.text}
-                />
+                <MaterialCommunityIcons name="account-search-outline" size={20} color={color || theme.colors.text} />
               </InputAdornment>
-            ),
+            )
           }}
         />
       )}

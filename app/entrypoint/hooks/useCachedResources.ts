@@ -33,7 +33,7 @@ export default function useCachedResources() {
           ...Ionicons.font,
           ...MaterialCommunityIcons.font,
           ...MaterialIcons.font,
-          // eslint-disable-next-line global-require
+
           'space-mono': require('../../../assets/fonts/SpaceMono-Regular.ttf'),
         });
         setLoadingComplete(true);

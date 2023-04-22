@@ -2,6 +2,7 @@ import { ApolloLink, Observable, FetchResult, Operation, NextLink } from '@apoll
 import type { Consumer } from '@rails/actioncable';
 import { print } from 'graphql';
 
+// rome-ignore lint/suspicious/noExplicitAny: Required here
 type RequestResult = FetchResult<{ [key: string]: any }, Record<string, any>, Record<string, any>>;
 type ConnectionParams = object | ((operation: Operation) => object);
 

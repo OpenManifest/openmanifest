@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from 'react';
 import { LayoutRectangle, View, ViewStyle } from 'react-native';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import Constants from 'app/constants/expo';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import * as Location from 'expo-location';
 import { useIsFocused } from '@react-navigation/core';
 
@@ -32,21 +31,11 @@ interface IMapProps {
   // onDragStart?(): void;
   onDragEnd?(coords: { lat: number; lng: number }): void;
 }
-export default function Map(props: IMapProps) {
-  const {
-    width,
-    height,
-    position,
-    children,
-    center,
-    coords: _coords,
-    shape,
-    interactive,
-    onDragEnd,
-  } = props;
+export default function MapWebView(props: IMapProps) {
+  const { width, height, position, children, center, coords: _coords, shape, interactive, onDragEnd } = props;
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: Constants?.googleMapsWeb,
-    id: 'google-maps-script',
+    id: 'google-maps-script'
   });
 
   const { containerStyle, mapStyle } = props;
@@ -55,7 +44,6 @@ export default function Map(props: IMapProps) {
 
   const onLoad = React.useCallback(
     async (component: GoogleMap) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       map.current = component;
       try {
@@ -69,10 +57,9 @@ export default function Map(props: IMapProps) {
       } catch (error) {
         console.log({ error });
       } finally {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const bounds = new window.google.maps.LatLngBounds(coords);
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
         // @ts-ignore
         map.current?.fitBounds(bounds);
         map.current?.panTo?.(coords);
@@ -82,7 +69,6 @@ export default function Map(props: IMapProps) {
   );
 
   const onUnmount = React.useCallback(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     map.current = null;
   }, []);
@@ -101,15 +87,13 @@ export default function Map(props: IMapProps) {
         position: 'absolute',
         top: position.y,
         left: position.x,
-        ...containerStyle,
+        ...containerStyle
       }}
       pointerEvents={interactive ? undefined : 'none'}
     >
       <GoogleMap
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         onLoad={(component: GoogleMap) => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           map.current = component;
           onLoad(component);
@@ -118,12 +102,11 @@ export default function Map(props: IMapProps) {
         center={coords}
         onDragEnd={() => {
           onDragEnd?.({
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             lat: map.current.center.lat(),
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
             // @ts-ignore
-            lng: map.current.center.lng(),
+            lng: map.current.center.lng()
           });
         }}
         onUnmount={onUnmount}
@@ -133,8 +116,8 @@ export default function Map(props: IMapProps) {
           height: '100%',
 
           // Intentional because the types for this damn map is fucked
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ...(mapStyle as any),
+
+          ...(mapStyle as object)
         }}
         options={{
           zoom: 15,
@@ -143,7 +126,7 @@ export default function Map(props: IMapProps) {
           center: coords,
           mapTypeControl: false,
           mapTypeId: google.maps.MapTypeId.HYBRID,
-          zoomControl: false,
+          zoomControl: false
         }}
       >
         {children}

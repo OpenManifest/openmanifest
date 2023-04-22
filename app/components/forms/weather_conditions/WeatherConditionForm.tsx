@@ -21,49 +21,33 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
   const [temperature, setTemperature] = React.useState<number | null | undefined>(
     state.fields?.temperature?.value || 0
   );
-  const [jumpRun, setJumpRun] = React.useState<number | null | undefined>(
-    state.fields?.jumpRun?.value || 0
-  );
+  const [jumpRun, setJumpRun] = React.useState<number | null | undefined>(state.fields?.jumpRun?.value || 0);
 
   React.useEffect(() => {
     if (state.fields.jumpRun.value !== jumpRun) {
       setJumpRun(state.fields.jumpRun.value);
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setJumpRun, state.fields.jumpRun.value]);
+  }, [setJumpRun, state.fields.jumpRun.value, jumpRun]);
 
   React.useEffect(() => {
     if (state.fields.temperature.value !== temperature) {
       setTemperature(state.fields.temperature.value);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.fields.jumpRun.value, state.fields.temperature.value, setTemperature]);
+  }, [state.fields.jumpRun.value, state.fields.temperature.value, setTemperature, temperature]);
   return (
     <KeyboardAvoidingView behavior="height" style={styles.content}>
       <View style={styles.row}>
-        <Text
-          style={[styles.headerTemperature, { color: variant === 'light' ? 'white' : 'black' }]}
-        >
-          Temperature
-        </Text>
-        <Text style={[styles.headerJumprun, { color: variant === 'light' ? 'white' : 'black' }]}>
-          Jump run
-        </Text>
+        <Text style={[styles.headerTemperature, { color: variant === 'light' ? 'white' : 'black' }]}>Temperature</Text>
+        <Text style={[styles.headerJumprun, { color: variant === 'light' ? 'white' : 'black' }]}>Jump run</Text>
       </View>
 
       <View style={styles.altitudeTempRow}>
-        <Card
-          style={[styles.temperatureCard, { backgroundColor: theme.colors.surface }]}
-          elevation={3}
-        >
+        <Card style={[styles.temperatureCard, { backgroundColor: theme.colors.surface }]} elevation={3}>
           <Card.Content style={styles.cardContent}>
             <List.Icon icon="thermometer" style={{ width: 20 }} />
             <TextInput
               value={temperature?.toString()}
-              onBlur={() =>
-                dispatch(actions.forms.weather.setField(['temperature', Number(temperature)]))
-              }
+              onBlur={() => dispatch(actions.forms.weather.setField(['temperature', Number(temperature)]))}
               onChangeText={(newTemp) => {
                 if (/\d/.test(newTemp)) {
                   const [numbers] = newTemp.match(/^\-?\d+/) || [temperature];
@@ -98,15 +82,9 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
         </Card>
       </View>
       <View style={styles.row}>
-        <Text style={[styles.headerAltitude, { color: variant === 'light' ? 'white' : 'black' }]}>
-          Altitude
-        </Text>
-        <Text style={[styles.headerSpeed, { color: variant === 'light' ? 'white' : 'black' }]}>
-          Speed
-        </Text>
-        <Text style={[styles.headerDirection, { color: variant === 'light' ? 'white' : 'black' }]}>
-          Direction
-        </Text>
+        <Text style={[styles.headerAltitude, { color: variant === 'light' ? 'white' : 'black' }]}>Altitude</Text>
+        <Text style={[styles.headerSpeed, { color: variant === 'light' ? 'white' : 'black' }]}>Speed</Text>
+        <Text style={[styles.headerDirection, { color: variant === 'light' ? 'white' : 'black' }]}>Direction</Text>
       </View>
       <Divider />
       <FlatList
@@ -121,7 +99,7 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
               onChange={(field, value) => {
                 const newWinds = set([...(winds as Wind[])], index, {
                   ...wind,
-                  [field]: value,
+                  [field]: value
                 });
                 dispatch(actions.forms.weather.setField(['winds', newWinds]));
               }}
@@ -135,7 +113,7 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
             dispatch(
               actions.forms.weather.setField([
                 'winds',
-                [...(winds || []), { altitude: '0', direction: '0', speed: '0' }],
+                [...(winds || []), { altitude: '0', direction: '0', speed: '0' }]
               ])
             )
           }
@@ -154,12 +132,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     alignItems: 'center',
     paddingLeft: 0,
-    paddingRight: 0,
+    paddingRight: 0
   },
   content: {
     width: '100%',
     flexDirection: 'column',
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent'
   },
   altitudeTempRow: {
     paddingHorizontal: 32,
@@ -175,17 +153,17 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     marginTop: 0,
     marginBottom: 0,
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   textField: {
     ...Platform.select({
       web: { width: '100%' },
-      ios: { flexGrow: 1 },
+      ios: { flexGrow: 1 }
     }),
     paddingBottom: 4,
     height: 60,
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 20
   },
   cardContent: {
     borderRadius: 5,
@@ -200,7 +178,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     marginVertical: 16,
     marginTop: 0,
-    marginBottom: 0,
+    marginBottom: 0
   },
   row: {
     width: 400,
@@ -209,96 +187,96 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 0,
-    marginVertical: 16,
+    marginVertical: 16
   },
   headerTemperature: {
     width: 120,
 
     color: 'white',
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   headerJumprun: {
     width: 120,
 
     color: 'white',
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   jumpRunCard: {
     width: 120,
     height: 60,
     flexDirection: 'row',
     backgroundColor: 'white',
-    borderRadius: 8,
+    borderRadius: 8
   },
   temperatureCard: {
     height: 60,
     width: 120,
     flexDirection: 'row',
     backgroundColor: 'white',
-    borderRadius: 8,
+    borderRadius: 8
   },
   headerAltitude: {
     width: 120,
 
     color: 'white',
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   headerSpeed: {
     width: 120,
 
     color: 'white',
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   headerDirection: {
     width: 120,
 
     color: 'white',
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   card: {
     marginVertical: 8,
     width: 360,
     alignSelf: 'center',
     backgroundColor: 'transparent',
-    shadowColor: 'transparent',
+    shadowColor: 'transparent'
   },
   cardTitle: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   cardValue: {
     fontWeight: 'bold',
     marginRight: 8,
     fontSize: 16,
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   title: {
     color: 'white',
     marginBottom: 50,
     fontWeight: 'bold',
     fontSize: 25,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   field: {
-    marginBottom: 8,
+    marginBottom: 8
   },
   slider: {
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   sliderControl: { width: '100%', height: 40 },
   wingLoading: {
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   wingLoadingCardLeft: {
-    width: '30%',
+    width: '30%'
   },
   wingLoadingCardRight: {
     paddingLeft: 16,
-    width: '70%',
-  },
+    width: '70%'
+  }
 });

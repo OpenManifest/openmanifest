@@ -20,12 +20,10 @@ export default function ColorPickerDialog(props: IColorPickerDialog) {
         <Dialog.Content style={{ padding: 20, height: 400 }}>
           <TriangleColorPicker
             style={{ flex: 1 }}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             sliderComponent={() => null}
             defaultColor={value}
             hideSliders
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             ref={ref}
           />

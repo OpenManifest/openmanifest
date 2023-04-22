@@ -27,7 +27,7 @@ export default function CreditSheet(props: ICreditsSheet) {
   const { open, dropzoneUser, onClose, onSuccess } = props;
   const { onSubmit, control, setValue, loading } = useCreditsForm({
     onSuccess,
-    dropzoneUser,
+    dropzoneUser
   });
   const keyboardVisible = useKeyboardVisibility();
   const sheetRef = React.useRef<BottomSheetModal>(null);
@@ -77,10 +77,7 @@ export default function CreditSheet(props: ICreditsSheet) {
           <Tabs
             defaultIndex={0} // default = 0
             onChangeIndex={(newIndex) => {
-              setValue(
-                'type',
-                newIndex === 1 ? TransactionType.Withdrawal : TransactionType.Deposit
-              );
+              setValue('type', newIndex === 1 ? TransactionType.Withdrawal : TransactionType.Deposit);
             }}
             mode="fixed"
           >
@@ -113,14 +110,14 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     borderRadius: 16,
-    padding: 5,
+    padding: 5
   },
   buttonContainer: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 16
   },
   contentContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 32,
+    paddingBottom: 32
   },
   sheet: {
     paddingBottom: 30,
@@ -128,7 +125,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    flexGrow: 1,
+    flexGrow: 1
   },
   sheetHeader: {
     elevation: 2,
@@ -138,10 +135,10 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: -4,
+      height: -4
     },
     backgroundColor: 'white',
     shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-  },
+    shadowRadius: 2.22
+  }
 });

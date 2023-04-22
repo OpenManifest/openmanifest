@@ -1,31 +1,11 @@
 mutation UpdateDropzone(
   $id: Int!
-  $name: String!
-  $requestPublication: Boolean
-  $banner: String
-  $federation: Int!
-  $lat: Float
-  $lng: Float
-  $primaryColor: String
-  $secondaryColor: String
-  $isCreditSystemEnabled: Boolean
-  $isPublic: Boolean
+  $attributes: DropzoneInput!
 ) {
   updateDropzone(
     input: {
       id: $id
-      attributes: {
-        name: $name
-        banner: $banner
-        lat: $lat
-        lng: $lng
-        requestPublication: $requestPublication
-        federation: $federation
-        primaryColor: $primaryColor
-        secondaryColor: $secondaryColor
-        isCreditSystemEnabled: $isCreditSystemEnabled
-        isPublic: $isPublic
-      }
+      attributes: $attributes
     }
   ) {
     fieldErrors {

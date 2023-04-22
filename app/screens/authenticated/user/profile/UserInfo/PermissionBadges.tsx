@@ -4,7 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 
 import { Permission } from 'app/api/schema.d';
-// eslint-disable-next-line max-len
+
 import Badge, { IBadgeProps } from 'app/components/Badge';
 import useRestriction from 'app/hooks/useRestriction';
 import { useUserProfile } from 'app/api/crud';
@@ -21,10 +21,7 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
 
   const canGrantPermission = useRestriction(Permission.GrantPermission);
 
-  const badges = React.useMemo(
-    () => permissions?.filter((name) => /^actAs/.test(name)) || [],
-    [permissions]
-  );
+  const badges = React.useMemo(() => permissions?.filter((name) => /^actAs/.test(name)) || [], [permissions]);
 
   const shouldShowBadge = React.useCallback(
     (permission: Permission) => canGrantPermission || badges.includes(permission),
@@ -62,19 +59,14 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
         Permission.ActAsDzso,
         Permission.ActAsGca,
         Permission.ActAsRigInspector,
-        Permission.ActAsLoadMaster,
+        Permission.ActAsLoadMaster
       ].map((permission) =>
         !shouldShowBadge(permission) ? null : (
           <Badge
             type={permission as IBadgeProps['type']}
             selected={badges.includes(permission)}
             onPress={() =>
-              // eslint-disable-next-line no-nested-ternary
-              !canGrantPermission
-                ? null
-                : badges.includes(permission)
-                ? revoke(permission)
-                : grant(permission)
+              !canGrantPermission ? null : badges.includes(permission) ? revoke(permission) : grant(permission)
             }
           />
         )
@@ -87,6 +79,6 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     paddingVertical: 12,
-    justifyContent: 'space-evenly',
-  },
+    justifyContent: 'space-evenly'
+  }
 });

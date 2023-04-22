@@ -6,34 +6,7 @@ mutation JoinFederation($federation: ID!, $uid: String, $license: ID) {
       message
     }
     userFederation {
-      id
-      uid
-      qualifications {
-        id
-        name
-        uid
-        expiresAt
-      }
-      license {
-        id
-        name
-      }
-      user {
-        id
-        name
-        nickname
-        userFederations {
-          federation {
-            id
-            name
-            slug
-          }
-          license {
-            id
-            name
-          }
-        }
-      }
+      ...userFederationEssentials
     }
   }
 }

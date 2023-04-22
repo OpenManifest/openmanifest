@@ -77,6 +77,17 @@ export const DropzoneEssentialsFragmentDoc = gql`
   banner
   isCreditSystemEnabled
   createdAt
+  settings {
+    allowManifestBypass
+    allowNegativeCredits
+    allowDoubleManifesting
+    requireCredits
+    requireLicense
+    requireMembership
+    requireRigInspection
+    requireEquipment
+    requireReserveInDate
+  }
 }
     `;
 export const LoadEssentialsFragmentDoc = gql`
@@ -1543,38 +1554,11 @@ export const JoinFederationDocument = gql`
       message
     }
     userFederation {
-      id
-      uid
-      qualifications {
-        id
-        name
-        uid
-        expiresAt
-      }
-      license {
-        id
-        name
-      }
-      user {
-        id
-        name
-        nickname
-        userFederations {
-          federation {
-            id
-            name
-            slug
-          }
-          license {
-            id
-            name
-          }
-        }
-      }
+      ...userFederationEssentials
     }
   }
 }
-    `;
+    ${UserFederationEssentialsFragmentDoc}`;
 export type JoinFederationMutationFn = Apollo.MutationFunction<Operation.JoinFederationMutation, Operation.JoinFederationMutationVariables>;
 
 /**
@@ -2090,10 +2074,8 @@ export type UpdateAircraftMutationHookResult = ReturnType<typeof useUpdateAircra
 export type UpdateAircraftMutationResult = Apollo.MutationResult<Operation.UpdateAircraftMutation>;
 export type UpdateAircraftMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateAircraftMutation, Operation.UpdateAircraftMutationVariables>;
 export const UpdateDropzoneDocument = gql`
-    mutation UpdateDropzone($id: Int!, $name: String!, $requestPublication: Boolean, $banner: String, $federation: Int!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String, $isCreditSystemEnabled: Boolean, $isPublic: Boolean) {
-  updateDropzone(
-    input: {id: $id, attributes: {name: $name, banner: $banner, lat: $lat, lng: $lng, requestPublication: $requestPublication, federation: $federation, primaryColor: $primaryColor, secondaryColor: $secondaryColor, isCreditSystemEnabled: $isCreditSystemEnabled, isPublic: $isPublic}}
-  ) {
+    mutation UpdateDropzone($id: Int!, $attributes: DropzoneInput!) {
+  updateDropzone(input: {id: $id, attributes: $attributes}) {
     fieldErrors {
       field
       message
@@ -2121,16 +2103,7 @@ export type UpdateDropzoneMutationFn = Apollo.MutationFunction<Operation.UpdateD
  * const [updateDropzoneMutation, { data, loading, error }] = useUpdateDropzoneMutation({
  *   variables: {
  *      id: // value for 'id'
- *      name: // value for 'name'
- *      requestPublication: // value for 'requestPublication'
- *      banner: // value for 'banner'
- *      federation: // value for 'federation'
- *      lat: // value for 'lat'
- *      lng: // value for 'lng'
- *      primaryColor: // value for 'primaryColor'
- *      secondaryColor: // value for 'secondaryColor'
- *      isCreditSystemEnabled: // value for 'isCreditSystemEnabled'
- *      isPublic: // value for 'isPublic'
+ *      attributes: // value for 'attributes'
  *   },
  * });
  */

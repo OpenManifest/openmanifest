@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as React from 'react';
 
 import {
@@ -8,7 +7,7 @@ import {
   Platform,
   StyleSheet,
   useWindowDimensions,
-  View,
+  View
 } from 'react-native';
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
 import { useNavigation } from '@react-navigation/core';
@@ -18,11 +17,13 @@ import Buttons from './Buttons';
 
 export interface IWizardProps {
   dots?: boolean;
+  currentIndex?: number;
   steps: (IWizardStepDefinition | null)[];
 }
 
 export interface IWizardStepDefinition {
   component: React.ComponentType<IWizardStepProps>;
+
   onNext?(navigation: ReturnType<typeof useNavigation>): Promise<void>;
   onBack?(): Promise<void> | void;
 }
@@ -30,14 +31,18 @@ export interface IWizardStepDefinition {
 export type WizardRef = ICarouselInstance;
 
 function Wizard(props: IWizardProps, ref: React.Ref<ICarouselInstance>) {
-  const { steps, dots } = props;
-  const [currentIndex, setIndex] = React.useState(0);
+  const { steps, dots, currentIndex: outerIndex } = props;
+  const [index, setIndex] = React.useState(0);
+  const currentIndex = React.useMemo(() => {
+    if (outerIndex !== undefined) return outerIndex;
+    return index;
+  }, [index, outerIndex]);
   const navigation = useNavigation();
   const [dimensions, setDimensions] = React.useState<LayoutRectangle>({
     width: 0,
     height: 0,
     x: 0,
-    y: 0,
+    y: 0
   });
   const carouselRef = React.useRef<ICarouselInstance>(null);
   const screen = useWindowDimensions();
@@ -46,7 +51,7 @@ function Wizard(props: IWizardProps, ref: React.Ref<ICarouselInstance>) {
     next: () => carouselRef.current?.next(),
     prev: () => carouselRef.current?.prev(),
     getCurrentIndex: () => carouselRef.current?.getCurrentIndex() || 0,
-    scrollTo: (opts) => carouselRef.current?.scrollTo(opts),
+    scrollTo: (opts) => carouselRef.current?.scrollTo(opts)
   }));
 
   const onNext = React.useCallback(
@@ -105,7 +110,7 @@ function Wizard(props: IWizardProps, ref: React.Ref<ICarouselInstance>) {
         enabled={false}
         panGestureHandlerProps={{
           // Disable swiping
-          activeOffsetX: [-width, width],
+          activeOffsetX: [-width, width]
         }}
         mode="parallax"
         style={StyleSheet.absoluteFill}
@@ -145,23 +150,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 48,
-    zIndex: 1100,
+    zIndex: 1100
   },
   actions: {
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    paddingBottom: 48,
+    paddingBottom: 48
   },
   next: {
     width: '100%',
     borderRadius: 20,
-    minWidth: 300,
+    minWidth: 300
   },
   content: {
-    flexGrow: 1,
-  },
+    flexGrow: 1
+  }
 });
 
 export default React.forwardRef(Wizard);

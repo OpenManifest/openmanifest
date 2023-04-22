@@ -2,14 +2,7 @@ import * as React from 'react';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import MuiSelect from '@mui/material/Select';
 import MuiMenuItem from '@mui/material/MenuItem';
-import {
-  FormControl,
-  InputLabel,
-  FormHelperText,
-  ListItemIcon,
-  ListItemAvatar,
-  ListItemText,
-} from '@mui/material';
+import { FormControl, InputLabel, FormHelperText, ListItemIcon, ListItemAvatar, ListItemText } from '@mui/material';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import UserAvatar from 'app/components/UserAvatar';
 import Menu from 'app/components/popover/Menu';
@@ -41,16 +34,7 @@ type Extract<T> = T extends React.ComponentType<infer P> ? P : unknown;
 type AllowedIcons = Extract<typeof MaterialCommunityIcons>['name'];
 
 export default function Select<T>(props: ISelectProps<T>) {
-  const {
-    label,
-    error,
-    compare = isEqual,
-    options,
-    renderAnchor,
-    onChange,
-    value,
-    helperText,
-  } = props;
+  const { label, error, compare = isEqual, options, renderAnchor, onChange, value, helperText } = props;
   const [open, setOpen] = React.useState<boolean>(false);
 
   const onOpen = React.useCallback(() => {
@@ -92,14 +76,11 @@ export default function Select<T>(props: ISelectProps<T>) {
           const { icon, avatar, label: title } = option;
 
           return (
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             <MuiMenuItem onClick={createSelectHandler(option)}>
               {!icon || avatar ? null : (
                 <ListItemIcon>
-                  {typeof icon === 'string' ? (
-                    <MaterialCommunityIcons icon={icon as AllowedIcons} size={24} />
-                  ) : null}
+                  {typeof icon === 'string' ? <MaterialCommunityIcons icon={icon as AllowedIcons} size={24} /> : null}
                   {React.isValidElement(icon) && typeof icon !== 'string' ? icon : null}
                 </ListItemIcon>
               )}
@@ -131,7 +112,7 @@ export default function Select<T>(props: ISelectProps<T>) {
         style={{ paddingTop: 0 }}
         native={false}
         SelectDisplayProps={{
-          style: { display: 'inline-flex', alignItems: 'center' },
+          style: { display: 'inline-flex', alignItems: 'center' }
         }}
         onChange={({ target }) => {
           const option = options.find((opt) => JSON.stringify(opt.value) === target.value);
@@ -144,14 +125,11 @@ export default function Select<T>(props: ISelectProps<T>) {
           const isSelected = compare?.(selectedOption?.value, val as T);
           console.debug({ title, isSelected, a: selectedOption?.value, b: val });
           return (
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             <MuiMenuItem value={JSON.stringify(val as T)} selected={isSelected}>
               {!icon || avatar ? null : (
                 <ListItemIcon>
-                  {typeof icon === 'string' ? (
-                    <MaterialCommunityIcons icon={icon as AllowedIcons} size={24} />
-                  ) : null}
+                  {typeof icon === 'string' ? <MaterialCommunityIcons icon={icon as AllowedIcons} size={24} /> : null}
                   {React.isValidElement(icon) && typeof icon !== 'string' ? icon : null}
                 </ListItemIcon>
               )}

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
 import LottieView from 'app/components/LottieView';
-import lottieDoneAnimation from '../../../../../assets/images/finished-2.json';
+import lottieDoneAnimation from '../../../../assets/images/finished-2.json';
 
 function Done(props: IWizardStepProps) {
   return (
