@@ -22,7 +22,7 @@ interface IUserActionsButtonProps {
 export default function UserActionsButton(props: IUserActionsButtonProps) {
   const { dropzoneUser, visible } = props;
   const {
-    dropzone: { currentUser },
+    dropzone: { currentUser }
   } = useDropzoneContext();
   const [fabOpen, setFabOpen] = React.useState(false);
   const { dialogs } = useManifestContext();
@@ -35,16 +35,12 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
 
   const onClickSetupWizard = React.useCallback(() => {
     if (dropzoneUser) {
-      dispatch(actions.forms.user.setOriginal(dropzoneUser));
-      if (dropzoneUser?.user?.rigs?.length) {
-        dispatch(actions.forms.rig.setOriginal(dropzoneUser.user.rigs[0]));
-      }
       rootNavigator.navigate('Wizards', {
         screen: 'UserWizardScreen',
-        params: { index: undefined },
+        params: { index: undefined, dropzoneUserId: dropzoneUser.id }
       });
     }
-  }, [dispatch, dropzoneUser, rootNavigator]);
+  }, [dropzoneUser, rootNavigator]);
 
   const onClickAccessAndMembership = React.useCallback(() => {
     if (!dropzoneUser) {
@@ -79,10 +75,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
     }
   }, [dispatch, dropzoneUser]);
 
-  const isSelf = React.useMemo(
-    () => currentUser?.id === dropzoneUser?.id,
-    [currentUser?.id, dropzoneUser?.id]
-  );
+  const isSelf = React.useMemo(() => currentUser?.id === dropzoneUser?.id, [currentUser?.id, dropzoneUser?.id]);
   const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
   const canViewOthersTransactions = useRestriction(Permission.ReadUserTransactions);
   const canUpdateUsers = useRestriction(Permission.UpdateUser);
@@ -105,9 +98,9 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
             try {
               const { data } = await deleteUser({
                 variables: {
-                  id: Number(dropzoneUser?.id),
+                  id: Number(dropzoneUser?.id)
                 },
-                refetchQueries: [DropzoneUsersDocument],
+                refetchQueries: [DropzoneUsersDocument]
               });
 
               data?.deleteUser?.errors?.forEach((message) => {
@@ -121,8 +114,8 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
             } catch (e) {
               console.log(e);
             }
-          },
-        },
+          }
+        }
       ]
     );
   }, [deleteUser, dropzoneUser?.id, dropzoneUser?.user?.name, isSelf, navigation, notify]);
@@ -134,21 +127,21 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
           ? {
               icon: 'pencil',
               label: 'Edit',
-              onPress: onClickEdit,
+              onPress: onClickEdit
             }
           : null,
         {
           icon: 'account-convert',
           label: 'Setup Wizard',
           color: infoColor,
-          onPress: onClickSetupWizard,
+          onPress: onClickSetupWizard
         },
         canUpdateUsers
           ? {
               icon: 'lock',
               label: 'Access & Membership',
               color: warningColor,
-              onPress: onClickAccessAndMembership,
+              onPress: onClickAccessAndMembership
             }
           : null,
         canAddTransaction
@@ -156,29 +149,29 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
               icon: 'cash-plus',
               label: 'Add Funds',
               color: successColor,
-              onPress: onClickAddFunds,
+              onPress: onClickAddFunds
             }
           : null,
         isSelf || canViewOthersTransactions
           ? {
               icon: 'account-cash',
               label: 'Manage Transactions',
-              onPress: onClickTransactions,
+              onPress: onClickTransactions
             }
           : null,
         {
           icon: 'parachute',
           label: 'Manage Equipment',
-          onPress: onClickEquipment,
+          onPress: onClickEquipment
         },
         canDeleteUsers
           ? {
               icon: 'account-off',
               label: 'Delete user',
               onPress: onDeleteUser,
-              color: errorColor,
+              color: errorColor
             }
-          : null,
+          : null
       ].filter(Boolean) as FABActions,
     [
       canAddTransaction,
@@ -192,7 +185,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
       onClickEquipment,
       onClickSetupWizard,
       onClickTransactions,
-      onDeleteUser,
+      onDeleteUser
     ]
   );
 
@@ -205,7 +198,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
       fabStyle={{
         marginLeft: 16,
         marginBottom: 16,
-        backgroundColor: theme.colors.primary,
+        backgroundColor: theme.colors.primary
       }}
       onStateChange={({ open }) => setFabOpen(open)}
       actions={fabActions}

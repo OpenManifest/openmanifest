@@ -10,7 +10,9 @@ import {
   DropzoneUserQueryVariables,
   OrderEssentialsFragment,
   UpdateDropzoneUserMutationVariables,
-  UserEssentialsFragment
+  UpdateUserMutationVariables,
+  UserEssentialsFragment,
+  UserFederationEssentialsFragment
 } from '../operations';
 import {
   DropzoneUserProfileDocument,
@@ -20,20 +22,22 @@ import {
   useCreateOrderMutation,
   useDropzoneUserProfileLazyQuery,
   useGrantPermissionMutation,
+  useJoinFederationMutation,
   useRevokePermissionMutation,
-  useUpdateDropzoneUserMutation
+  useUpdateUserMutation
 } from '../reflection';
-import { GhostInput, Permission } from '../schema.d';
+import { GhostInput, JoinFederationInput, Permission } from '../schema.d';
 import createCRUDContext, { TMutationResponse, uninitializedHandler } from './factory';
 import { useUserUpdated } from './subscriptions/useUserUpdated';
 
 function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
   const { authenticated } = useAppSelector((root) => root.global);
   const { id } = variables || {};
-  const [updateMutation] = useUpdateDropzoneUserMutation();
+  const [updateMutation] = useUpdateUserMutation();
   const [getProfile, query] = useDropzoneUserProfileLazyQuery();
   const [mutationCreateOrder] = useCreateOrderMutation();
   const [mutationCreateGhost] = useCreateGhostMutation();
+  const [updateFederation] = useJoinFederationMutation();
   const {
     dropzone: { dropzone }
   } = useDropzoneContext();
@@ -79,25 +83,46 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
     [appSignal, dropzone?.id, mutationCreateGhost]
   );
   const update = React.useCallback(
-    async function UpdateDropzoneUser(
-      attributes: UpdateDropzoneUserMutationVariables
+    async function UpdateUser(
+      attributes: UpdateUserMutationVariables
     ): Promise<TMutationResponse<{ dropzoneUser: DropzoneUserProfileFragment }>> {
       const { data } = await updateMutation({
         variables: {
+          dropzoneUser: query?.data?.dropzoneUser?.id,
           ...attributes
         }
       });
 
-      if (data?.updateDropzoneUser?.dropzoneUser?.id) {
-        return { dropzoneUser: data?.updateDropzoneUser?.dropzoneUser };
+      if (data?.updateUser?.dropzoneUser?.id) {
+        return { dropzoneUser: data?.updateUser?.dropzoneUser };
       }
 
       return {
-        error: data?.updateDropzoneUser?.errors?.[0],
-        fieldErrors: data?.updateDropzoneUser?.fieldErrors || undefined
+        error: data?.updateUser?.errors?.[0],
+        fieldErrors: data?.updateUser?.fieldErrors || undefined
       };
     },
-    [updateMutation]
+    [query?.data?.dropzoneUser?.id, updateMutation]
+  );
+
+  const joinFederation = React.useCallback(
+    async function JoinFederation(
+      attributes: JoinFederationInput['attributes']
+    ): Promise<TMutationResponse<{ userFederation: UserFederationEssentialsFragment }>> {
+      const { data } = await updateFederation({
+        variables: attributes
+      });
+
+      if (data?.joinFederation?.userFederation?.id) {
+        return { userFederation: data?.joinFederation?.userFederation };
+      }
+
+      return {
+        error: data?.joinFederation?.errors?.[0],
+        fieldErrors: data?.joinFederation?.fieldErrors || undefined
+      };
+    },
+    [updateFederation]
   );
 
   const createOrder = React.useCallback(
@@ -279,12 +304,14 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
       update,
       addCredits,
       grantPermission,
+      joinFederation,
       revokePermission,
       withdrawCredits
     }),
     [
       addCredits,
       grantPermission,
+      joinFederation,
       query?.refetch,
       create,
       query?.data?.dropzoneUser,
@@ -299,6 +326,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
 const { Provider: UserProfileProvider, useContext: useUserProfileContext } = createCRUDContext(useUserProfile, {
   loading: false,
   dropzoneUser: null,
+  joinFederation: uninitializedHandler as never,
   refetch: uninitializedHandler as never,
   update: uninitializedHandler as never,
   create: uninitializedHandler as never,

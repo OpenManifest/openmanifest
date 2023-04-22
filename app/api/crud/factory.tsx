@@ -4,7 +4,7 @@ import difference from 'lodash/difference';
 import { FieldError } from '../schema.d';
 
 export type InferArguments<Func> = Func extends (arg: infer Argument) => unknown ? Argument : never;
-type CRUDHook<Args extends object, Value extends object> = (args: Args) => Value;
+type CRUDHook<Args extends object, Value extends object> = ((args?: Args) => Value) | ((args: Args) => Value);
 type InferHookArguments<Hook> = Hook extends CRUDHook<infer Arguments, object> ? Arguments : never;
 
 export const uninitializedHandler = async (args?: unknown) => undefined as unknown;

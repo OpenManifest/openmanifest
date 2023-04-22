@@ -8,7 +8,7 @@ import useAsyncFn from 'react-use/lib/useAsyncFn';
 import useManifestValidator from 'app/hooks/useManifestValidator';
 import isEqual from 'lodash/isEqual';
 import { useNotifications } from 'app/providers/notifications';
-import { useDropzoneContext } from 'app/providers';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
 
 export type ManifestUserFields = Pick<
   SlotExhaustiveFragment,

@@ -5,8 +5,10 @@ import checkPasswordComplexity, { PasswordStrength } from 'app/utils/checkPasswo
 import { useNotifications } from 'app/providers/notifications';
 import { useUserSignUpMutation } from 'app/api/reflection';
 import { useAppSelector } from 'app/state';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 export interface SignUpFields {
+  step: number;
   email: string;
   name: string;
   password: string;
@@ -14,23 +16,40 @@ export interface SignUpFields {
 }
 
 export const signUpValidation = yup.object().shape({
+  step: yup.number().default(0),
   name: yup.string().default(''),
-  email: yup.string().required('Email is required').email('This is not a valid email'),
+  email: yup.string().when('step', {
+    is: (step: number) => step >= 0,
+    then: yup.string().required('Email is required').min(3).email('Please enter a valid email')
+  }),
   password: yup
     .string()
-    .required('Password is required')
-    .test({
-      test: (value) => checkPasswordComplexity(value || '') >= PasswordStrength.Acceptable,
-      message: 'Password is too weak',
-      name: 'password-complexity'
+    .default('')
+    .when('step', {
+      is: (step: number) => step >= 1,
+      then: yup
+        .string()
+        .required('Password is required')
+        .test({
+          test: (value) => checkPasswordComplexity(value || '') >= PasswordStrength.Acceptable,
+          message: 'Password is too weak',
+          name: 'password-complexity'
+        })
     }),
   passwordConfirmation: yup
     .string()
-    .oneOf([yup.ref('password')], 'Passwords must match')
-    .required('Please type the password again')
+    .default('')
+    .when('step', {
+      is: (step: number) => step >= 2,
+      then: yup
+        .string()
+        .required('Password confirmation is required')
+        .oneOf([yup.ref('password'), null], 'Passwords must match')
+    })
 });
 
 export const EMPTY_FORM_VALUES: SignUpFields = {
+  step: 0,
   name: '',
   email: '',
   password: '',
@@ -53,24 +72,25 @@ export default function useSignupForm(opts: ISignUpFormOpts) {
   const [loading, setLoading] = React.useState(false);
   const globalState = useAppSelector((root) => root.global);
 
-  const [step, setStep] = React.useState(SignUpSteps.Email);
-
   const notify = useNotifications();
   const methods = useForm<SignUpFields>({
     defaultValues: EMPTY_FORM_VALUES,
-    mode: 'all'
+    mode: 'all',
+    resolver: yupResolver(signUpValidation)
   });
 
   React.useEffect(() => {
     methods.reset(EMPTY_FORM_VALUES);
   }, [methods]);
-  const { setError } = methods;
+  const { setError, setValue } = methods;
 
   const [onSignUp] = useUserSignUpMutation();
 
   const onSubmit = React.useCallback(
     async (fields: SignUpFields) => {
       try {
+        if (fields.step !== SignUpSteps.PasswordConfirmation) return setValue('step', fields.step + 1);
+        setLoading(true);
         const { data } = await onSignUp({
           variables: {
             pushToken: globalState.expoPushToken,
@@ -98,58 +118,11 @@ export default function useSignupForm(opts: ISignUpFormOpts) {
         }
       }
     },
-    [onSignUp, globalState.expoPushToken, setError, onSuccess, notify]
+    [setValue, onSignUp, globalState.expoPushToken, setError, onSuccess, notify]
   );
 
-  const onNext = React.useCallback(
-    async function FormNext() {
-      try {
-        setLoading(true);
-        const validated = await signUpValidation.validate(methods.getValues(), {
-          abortEarly: false
-        });
-        console.debug({ validated });
-
-        if (step === SignUpSteps.PasswordConfirmation) {
-          await onSubmit(validated);
-        }
-      } catch (error) {
-        if (error instanceof yup.ValidationError) {
-          console.debug({ inner: error.inner });
-          error.inner.forEach((validationError) => {
-            switch (step) {
-              case SignUpSteps.Email:
-                if (validationError.path === 'email') {
-                  setError('email', { message: validationError.message });
-                  throw error;
-                }
-                break;
-              case SignUpSteps.Password:
-                if (validationError.path === 'password') {
-                  setError('password', { message: validationError.message });
-                  throw error;
-                }
-                break;
-              case SignUpSteps.PasswordConfirmation:
-                if (validationError.path === 'passwordConfirmation') {
-                  setError('passwordConfirmation', { message: validationError.message });
-                  throw error;
-                }
-                break;
-              default:
-                break;
-            }
-          });
-          setStep(step + 1);
-        } else {
-          throw error;
-        }
-      } finally {
-        setLoading(false);
-      }
-    },
-    [methods, onSubmit, setError, step]
+  return React.useMemo(
+    () => ({ ...methods, onNext: methods.handleSubmit(onSubmit, () => Promise.reject()), loading }),
+    [methods, onSubmit, loading]
   );
-
-  return React.useMemo(() => ({ ...methods, onNext, loading }), [methods, onNext, loading]);
 }

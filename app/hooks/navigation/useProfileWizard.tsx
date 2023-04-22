@@ -6,7 +6,7 @@ import { actions, useAppDispatch } from 'app/state';
 export default function useProfileWizard() {
   const navigation = useNavigation();
   const {
-    dropzone: { currentUser },
+    dropzone: { currentUser }
   } = useDropzoneContext();
   const dispatch = useAppDispatch();
 
@@ -21,8 +21,9 @@ export default function useProfileWizard() {
         navigation.navigate('Wizards', {
           screen: 'UserWizardScreen',
           params: {
-            index,
-          },
+            dropzoneUserId: currentUser.id,
+            index
+          }
         });
       }
     },

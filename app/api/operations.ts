@@ -1,3 +1,4 @@
+/* eslint-disable */
 import type * as Types from './schema.d';
 
 export type ActivityEssentialsFragment = { __typename?: 'Event', action?: Types.EventAction | null, id: string, level?: Types.EventLevel | null, message?: string | null, details?: string | null, createdAt: any, createdBy?: { __typename?: 'DropzoneUser', id: string, walletId: string, expiresAt?: number | null, hasCredits: boolean, hasMembership: boolean, hasLicense: boolean, hasExitWeight: boolean, role?: { __typename?: 'UserRole', id: string, name?: string | null, dropzoneId: number } | null, license?: { __typename?: 'License', id: string, name?: string | null } | null, user: { __typename?: 'User', id: string, name?: string | null, nickname?: string | null, phone?: string | null, email?: string | null, exitWeight?: string | null, moderationRole?: Types.ModerationRole | null, image?: string | null, apfNumber?: string | null } } | null };
@@ -261,7 +262,7 @@ export type JoinFederationMutationVariables = Types.Exact<{
 }>;
 
 
-export type JoinFederationMutation = { __typename?: 'Mutation', joinFederation?: { __typename?: 'JoinFederationPayload', errors?: Array<string> | null, fieldErrors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, userFederation?: { __typename?: 'UserFederation', id: string, uid?: string | null, qualifications?: Array<{ __typename?: 'UserQualification', id: string, name?: string | null, uid?: string | null, expiresAt?: number | null }> | null, license?: { __typename?: 'License', id: string, name?: string | null } | null, user: { __typename?: 'User', id: string, name?: string | null, nickname?: string | null, userFederations?: Array<{ __typename?: 'UserFederation', federation: { __typename?: 'Federation', id: string, name?: string | null, slug?: string | null }, license?: { __typename?: 'License', id: string, name?: string | null } | null }> | null } } | null } | null };
+export type JoinFederationMutation = { __typename?: 'Mutation', joinFederation?: { __typename?: 'JoinFederationPayload', errors?: Array<string> | null, fieldErrors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, userFederation?: { __typename?: 'UserFederation', id: string, uid?: string | null, federation: { __typename?: 'Federation', id: string, name?: string | null, slug?: string | null }, license?: { __typename?: 'License', id: string, name?: string | null } | null } | null } | null };
 
 export type LoginMutationVariables = Types.Exact<{
   email: Types.Scalars['String'];
