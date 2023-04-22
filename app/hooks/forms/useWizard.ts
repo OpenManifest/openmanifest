@@ -22,6 +22,7 @@ type FormValues<T> = UnionToIntersection<T> & DefaultWizardStepFields;
 type WizardStepValues<T extends WizardFormStep> = T['defaultValues'];
 type WizardStepFields<Y extends WizardFormStep[]> = WizardStepValues<Y[number]>;
 
+// rome-ignore lint/suspicious/noExplicitAny: Only way to get this working
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
 
 export interface IUseWizardFormOpts<
@@ -71,9 +72,12 @@ export type ConditionalSchema<T> = T extends string
   ? yup.NumberSchema
   : T extends boolean
   ? yup.BooleanSchema
+  // rome-ignore lint/suspicious/noExplicitAny: Not used, and its hard to type yup
   : T extends Record<any, any>
   ? yup.AnyObjectSchema
+  // rome-ignore lint/suspicious/noExplicitAny: Not used, and its hard to type yup
   : T extends Array<any>
+  // rome-ignore lint/suspicious/noExplicitAny: Not used, and its hard to type yup
   ? yup.ArraySchema<any, any>
   : yup.AnySchema;
 
