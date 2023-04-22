@@ -185,7 +185,7 @@ export function useWizardForm<
         setLoading(false);
       }
     })
-  }), [defaultValues, handleSubmit, setValue, stepIndex]);
+  }), [defaultValues, handleSubmit, setValue, startIndex, stepIndex]);
 
 
   return useMemo(() => ({
