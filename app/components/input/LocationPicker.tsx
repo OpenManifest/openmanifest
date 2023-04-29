@@ -13,8 +13,9 @@ interface ILocationPickerProps {
   };
   onChange(region: Region): void;
 }
+
 export function LocationWizardStep(props: ILocationPickerProps) {
-  const { value, onChange } = props;
+  const { value = { lat: -27.550908, lng: 153.111635 }, onChange } = props;
   const setUsersLocation = React.useCallback(async () => {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
