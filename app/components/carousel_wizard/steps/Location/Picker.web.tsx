@@ -1,16 +1,51 @@
 import * as React from 'react';
-import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
-import MapView, { Region, Marker, MapMarker } from 'react-native-maps';
+import { Animated, StyleSheet, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-
 import * as Location from 'expo-location';
 import { Step, IWizardStepProps } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { calculateLatLngDelta } from 'app/utils/calculateLatLngDelta';
+import MapView from 'app/components/map/Map';
+import AddressSearchBar from 'app/components/input/search/AddressSearchBar';
+import { useIsFocused } from '@react-navigation/core';
+import * as yup from 'yup';
+import { WizardFormStep } from 'app/hooks/forms/useWizard';
+import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useMemo } from 'app/hooks/react';
 
-function LocationWizardStep(props: IWizardStepProps) {
-  const state = useAppSelector((root) => root.forms.dropzone);
-  const dispatch = useAppDispatch();
+export const validation = yup.object({
+  lat: yup.number().required(),
+  lng: yup.number().required()
+});
+
+type StepFields = { [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K] };
+
+export function useStep(): WizardFormStep<StepFields> {
+  const {
+    dropzone: { dropzone }
+  } = useDropzoneContext();
+
+  return useMemo(
+    () => ({
+      defaultValues: {
+        lat: dropzone?.lat || 0,
+        lng: dropzone?.lng || 0
+      },
+      validation
+    }),
+    [dropzone?.lat, dropzone?.lng]
+  );
+}
+
+interface ILocationWizardPickerProps {
+  label?: string;
+  coords: { lat: number; lng: number };
+  onChange(newCoords: { lat: number; lng: number }): void;
+}
+function LocationWizardPicker(props: ILocationWizardPickerProps) {
+  const { onChange, coords, label } = props;
+  const [searchText, setSearchText] = React.useState('');
+  const [center, setCenter] = React.useState<{ lat: number; lng: number }>();
 
   const setUsersLocation = React.useCallback(async () => {
     try {
@@ -20,46 +55,36 @@ function LocationWizardStep(props: IWizardStepProps) {
       }
       const location = await Location.getCurrentPositionAsync({});
 
-      dispatch(actions.forms.dropzone.setField(['lat', location.coords.latitude]));
-      dispatch(actions.forms.dropzone.setField(['lng', location.coords.longitude]));
+      onChange({ lat: location.coords.latitude, lng: location.coords.longitude });
 
-      setInternalRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: calculateLatLngDelta(location.coords.latitude),
-        longitudeDelta: calculateLatLngDelta(location.coords.latitude)
+      setCenter({
+        lat: location.coords.latitude,
+        lng: location.coords.longitude
       });
-      map.current?.animateCamera({ center: location.coords });
     } catch (error) {
       console.log(error);
     }
-  }, [dispatch]);
-
-  const region = React.useMemo(
-    () =>
-      state.fields.lat.value && state.fields.lng.value
-        ? {
-            latitude: state.fields.lat.value,
-            longitude: state.fields.lng.value,
-            latitudeDelta: calculateLatLngDelta(state.fields.lat.value),
-            longitudeDelta: calculateLatLngDelta(state.fields.lat.value)
-          }
-        : undefined,
-    [state.fields.lat.value, state.fields.lng.value]
-  );
+  }, [onChange]);
 
   // Start at user location
   React.useEffect(() => {
-    if (!region?.latitude || !region?.longitude) {
+    if (coords.lat === null || coords.lng == null) {
       setUsersLocation();
     }
-  }, [region, setUsersLocation]);
+  }, [setUsersLocation, coords.lat, coords.lng]);
 
   const opacity = React.useRef(new Animated.Value(0));
 
-  const map = React.useRef<MapView>();
+  const region =
+    coords.lat && coords.lng
+      ? {
+          latitude: coords.lat,
+          longitude: coords.lng,
+          latitudeDelta: calculateLatLngDelta(coords.lat),
+          longitudeDelta: calculateLatLngDelta(coords.lat)
+        }
+      : undefined;
 
-  const [isAnimating, setAnimating] = React.useState<boolean>(false);
   const fadeOut = React.useRef(
     Animated.timing(opacity.current, {
       duration: 100,
@@ -75,48 +100,45 @@ function LocationWizardStep(props: IWizardStepProps) {
     })
   );
   const setCoordinateFade = React.useCallback((visible: boolean) => {
-    setAnimating(true);
-    (visible ? fadeIn : fadeOut).current.start(() => setAnimating(false));
+    (visible ? fadeIn : fadeOut).current.start();
   }, []);
 
-  const markerRef = React.useRef<MapMarker>(null);
-  const [isDragging, setDragging] = React.useState<boolean>(false);
-  const [internalRegion, setInternalRegion] = React.useState<Region | undefined>(region);
+  const { height, width } = useWindowDimensions();
+  const [isDragging, setDragging] = React.useState(false);
+  const isFocused = useIsFocused();
+
+  if (!isFocused) {
+    return null;
+  }
 
   return (
-    <Step {...props} title="Location">
+    <>
       <MapView
-        // @ts-ignore
-        ref={map}
-        style={StyleSheet.absoluteFill}
-        initialRegion={region}
-        onTouchStart={() => {
-          markerRef.current?.hideCallout();
+        mapStyle={{
+          ...StyleSheet.absoluteFillObject
         }}
-        onRegionChange={(_region) => {
-          if (!isAnimating) {
-            setCoordinateFade(false);
-            setDragging(true);
-          }
-          setInternalRegion(_region);
+        position={{
+          x: 0,
+          y: 0
         }}
-        onRegionChangeComplete={(r) => {
+        {...{ height, width }}
+        coords={region?.latitude && region?.longitude ? { lat: region?.latitude, lng: region?.longitude } : undefined}
+        onDragStart={() => {
+          setDragging(true);
+          setCoordinateFade(false);
+        }}
+        center={center || undefined}
+        onDragEnd={(r) => {
           fadeOut.current?.stop();
           fadeIn.current?.stop();
+          setCoordinateFade(true);
           setDragging(false);
-          setAnimating(false);
-          setCoordinateFade(true);
-          setCoordinateFade(true);
-          dispatch(actions.forms.dropzone.setField(['lat', r.latitude]));
-          dispatch(actions.forms.dropzone.setField(['lng', r.longitude]));
+          onChange({ lat: r.lat, lng: r.lng });
         }}
-        mapType="hybrid"
-        zoomEnabled
-        scrollEnabled
-        focusable
+        interactive
       >
-        {!internalRegion ? null : (
-          <Marker title={state.fields.name.value || undefined} ref={markerRef} flat coordinate={internalRegion}>
+        {!region ? null : (
+          <View style={styles.markerFixed} pointerEvents="none">
             <MaterialCommunityIcons
               pointerEvents="none"
               size={60}
@@ -132,7 +154,7 @@ function LocationWizardStep(props: IWizardStepProps) {
               }}
               name={isDragging ? 'map-marker' : 'map-marker-check-outline'}
             />
-          </Marker>
+          </View>
         )}
       </MapView>
       <TouchableOpacity
@@ -145,16 +167,18 @@ function LocationWizardStep(props: IWizardStepProps) {
       </TouchableOpacity>
 
       <View style={styles.titleContainer}>
-        {/* <AddressSearchBar
-          value={searchText}
-          onChange={setSearchText}
-          autocomplete
-          onSelect={(item) => {
-            dispatch(actions.forms.dropzone.setField(['lat', item.latitude]));
-            dispatch(actions.forms.dropzone.setField(['lng', item.longitude]));
-            map.current?.animateCamera({ center: item });
-          }}
-        /> */}
+        <View style={{ width: 300, display: 'none', alignSelf: 'flex-start', marginLeft: 32 }}>
+          <AddressSearchBar
+            value={searchText}
+            onChange={setSearchText}
+            autocomplete
+            onSelect={(item) => {
+              if (item?.lat && item?.lng) {
+                onChange({ lat: item.lat, lng: item.lng });
+              }
+            }}
+          />
+        </View>
         <Animated.Text
           style={{
             fontSize: 24,
@@ -177,7 +201,7 @@ function LocationWizardStep(props: IWizardStepProps) {
           )}
         </Animated.Text>
       </View>
-    </Step>
+    </>
   );
 }
 
@@ -192,7 +216,6 @@ const styles = StyleSheet.create({
     top: 32,
     left: 0,
     width: '100%',
-    paddingHorizontal: 16,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'flex-start'
@@ -212,6 +235,7 @@ const styles = StyleSheet.create({
   markerFixed: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
+    zIndex: 100,
     alignItems: 'center',
     flexDirection: 'column'
   },
@@ -236,4 +260,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default LocationWizardStep;
+export default LocationWizardPicker;

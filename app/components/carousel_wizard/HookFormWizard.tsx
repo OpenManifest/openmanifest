@@ -10,7 +10,6 @@ import {
   View
 } from 'react-native';
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
-import { useNavigation } from '@react-navigation/core';
 import { Step } from './Step';
 import Dots from './Dots';
 import Buttons from './Buttons';
@@ -23,7 +22,7 @@ export interface IHookFormWizardProps<HookFormWizardSteps extends WizardFormStep
   extends IUseWizardReturnValue<HookFormWizardSteps>,
     ReturnType<IUseWizardReturnValue<HookFormWizardSteps>['createHandlers']> {
   dots?: boolean;
-  steps: typeof Step[];
+  steps: { title?: string; component: typeof Step }[];
 }
 
 export type WizardRef = ICarouselInstance;
@@ -99,12 +98,14 @@ function Wizard<WizardSteps extends WizardFormStep[]>(
           width={width || screen.width}
           onSnapToItem={setIndex}
           ref={carouselRef}
-          renderItem={({ item: WizardStep }) => {
-            if (!WizardStep) {
+          renderItem={({ item: definition }) => {
+            if (!definition?.component) {
               return <View />;
             }
+            const { component: WizardStep } = definition;
             return (
               <WizardStep
+                title={definition.title || undefined}
                 actions={
                   <Buttons
                     {...{ loading }}

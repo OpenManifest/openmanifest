@@ -1,15 +1,15 @@
 import * as React from 'react';
 
-import { useStep as useAskForRigStep } from './steps/AskForRig';
-import { useStep as useAvatarStep } from './steps/Avatar';
-import { useStep as useFederationStep } from './steps/Federation';
-import { useStep as useFederationNumberStep } from './steps/FederationNumber';
-import { useStep as useLicenseStep } from './steps/License';
-import { useStep as useNicknameStep } from './steps/Nickname';
-import { useStep as useRealNameStep } from './steps/RealName';
-import { useStep as useReserveRepackStep } from './steps/ReserveRepack';
-import { useStep as useRigStep } from './steps/Rig';
-import { useStep as useWingloadingStep } from './steps/Wingloading';
+import { useStep as useAskForRigStep } from '../../components/carousel_wizard/steps/AskForRig';
+import { useStep as useAvatarStep } from 'app/components/carousel_wizard/steps/Avatar';
+import { useStep as useFederationStep } from 'app/components/carousel_wizard/steps/Federation';
+import { useStep as useFederationNumberStep } from 'app/components/carousel_wizard/steps/FederationNumber';
+import { useStep as useLicenseStep } from 'app/components/carousel_wizard/steps/License';
+import { useStep as useNicknameStep } from 'app/components/carousel_wizard/steps/Nickname';
+import { useStep as useRealNameStep } from 'app/components/carousel_wizard/steps/RealName';
+import { useStep as useReserveRepackStep } from 'app/components/carousel_wizard/steps/ReserveRepack';
+import { useStep as useRigStep } from 'app/components/carousel_wizard/steps/Rig';
+import { useStep as useWingloadingStep } from 'app/components/carousel_wizard/steps/Wingloading';
 import { useUserProfileContext } from 'app/api/crud';
 import { useEquipment } from 'app/api/crud/useEquipment';
 import { useWizardForm } from 'app/hooks/forms';

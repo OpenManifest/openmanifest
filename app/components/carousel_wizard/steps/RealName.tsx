@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormTextField } from 'app/components/input/text/TextField';
 import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
-import { Control, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 import { useUserProfileContext } from 'app/api/crud';
 import { WizardFormStep } from 'app/hooks/forms/useWizard';
@@ -36,9 +36,6 @@ export function useStep(): WizardFormStep<StepFields> {
     }),
     [dropzoneUser?.user?.name]
   );
-}
-export interface IRealNameStepProps extends IWizardStepProps {
-  control: Control<StepFields>;
 }
 
 function RealName(props: IWizardStepProps) {

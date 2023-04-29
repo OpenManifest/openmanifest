@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Avatar, Paragraph, TouchableRipple, useTheme } from 'react-native-paper';
+import { Paragraph, useTheme } from 'react-native-paper';
 import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
 import useImagePicker from 'app/hooks/useImagePicker';
-import { Controller, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { useUserProfileContext } from 'app/api/crud';
 import { WizardFormStep } from 'app/hooks/forms/useWizard';
 import { useMemo } from 'app/hooks/react';
 import * as yup from 'yup';
+import { AvatarPickerField } from 'app/components/input/AvatarPicker';
 
 export const validation = yup.object({
   avatar: yup.string().nullable().default(null)
@@ -38,38 +39,7 @@ function AvatarStep(props: IWizardStepProps) {
     <Step {...props} title="Avatar">
       <Fields>
         <View style={styles.avatarContainer}>
-          <Controller
-            {...{ control }}
-            name="avatar"
-            render={({ field: { value, onChange } }) => (
-              <TouchableRipple
-                onPress={async () => {
-                  try {
-                    const base64 = await pickImage();
-
-                    if (base64) {
-                      // Upload image
-                      onChange(`data:image/jpeg;base64,${base64}`);
-                    }
-                  } catch (e) {
-                    console.log(e);
-                  }
-                }}
-              >
-                {!value ? (
-                  <Avatar.Icon size={175} icon="camera" />
-                ) : (
-                  <Avatar.Image
-                    size={175}
-                    source={{ uri: value }}
-                    style={{
-                      backgroundColor: theme.colors.primary
-                    }}
-                  />
-                )}
-              </TouchableRipple>
-            )}
-          />
+          <AvatarPickerField {...{ control }} name="avatar" />
           <Paragraph style={styles.paragraph}>Press to upload a photo</Paragraph>
         </View>
       </Fields>
