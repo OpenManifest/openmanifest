@@ -61,6 +61,8 @@ jobs:
           # environment for this AppStore version, use that instead
           elif [[ -n "${!VERSION_CACHE_KEY}" ]]; then
             echo "EXPO_ENV=${!VERSION_CACHE_KEY}" >> $GITHUB_OUTPUT
+          elif [[ "$TARGET_BRANCH_NAME" == "main" ]]; then
+            echo "EXPO_ENV=production" >> $GITHUB_OUTPUT
           # Otherwise, assume that the staging branch points to development
           else
             echo "EXPO_ENV=staging" >> $GITHUB_OUTPUT
