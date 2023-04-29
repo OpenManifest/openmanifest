@@ -53,8 +53,6 @@ jobs:
         id: environment
         env:
           VERSION_CACHE_KEY: "${{ steps.version-environment-cache.outputs.VERSION_CACHE_KEY }}"
-          DEPLOY_KEY_STAGING: ${{ secrets.WEB_DEPLOY_KEY_STAGING }}
-          DEPLOY_KEY_PRODUCTION: ${{ secrets.WEB_DEPLOY_KEY_PRODUCTION }}
         run: |
           # If a custom environment was selected using inputs, use that.
           EXPO_ENV=staging
@@ -73,11 +71,9 @@ jobs:
           if [[ $EXPO_ENV == "production" ]]; then
             echo "REPOSITORY=OpenManifest/openmanifest-web" >> $GITHUB_OUTPUT
             echo "CNAME=www.openmanifest.org" >> $GITHUB_OUTPUT
-            echo "DEPLOY_KEY=$DEPLOY_KEY_PRODUCTION" >> $GITHUB_OUTPUT
           else
             echo "REPOSITORY=OpenManifest/openmanifest-web-staging" >> $GITHUB_OUTPUT
             echo "CNAME=staging.openmanifest.org" >> $GITHUB_OUTPUT
-            echo "DEPLOY_KEY=$DEPLOY_KEY_STAGING" >> $GITHUB_OUTPUT
           fi
       - run: yarn check:types
         name: Typecheck
@@ -94,11 +90,20 @@ jobs:
           APPSIGNAL_PRODUCTION_API_KEY: ${{ secrets.APPSIGNAL_PRODUCTION_API_KEY }}
           FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
           FACEBOOK_CLIENT_TOKEN: ${{ secrets.FACEBOOK_CLIENT_TOKEN }}
-      - name: Deploy
+      - name: Deploy Staging
         uses: peaceiris/actions-gh-pages@v3
+        if: ${{ steps.environment.outputs.EXPO_ENV == "staging" }}
         with:
           publish_dir: ./web-build
-          deploy_key: ${{ steps.environment.outputs.DEPLOY_KEY }}
+          deploy_key: ${{ secrets.WEB_DEPLOY_KEY_STAGING }}
+          external_repository: ${{ steps.environment.outputs.REPOSITORY }}
+          cname: ${{ steps.environment.outputs.CNAME }}
+      - name: Deploy Production
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ steps.environment.outputs.EXPO_ENV == "production" }}
+        with:
+          publish_dir: ./web-build
+          deploy_key: ${{ secrets.WEB_DEPLOY_KEY_PRODUCTION }}
           external_repository: ${{ steps.environment.outputs.REPOSITORY }}
           cname: ${{ steps.environment.outputs.CNAME }}
   publish-native:
