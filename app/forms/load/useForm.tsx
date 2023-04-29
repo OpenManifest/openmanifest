@@ -6,13 +6,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useManifestContext } from 'app/providers/manifest/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import useManifestValidator from 'app/hooks/useManifestValidator';
-import { isEqual } from 'lodash';
+import { camelCase, isEqual } from 'lodash';
 import { LoadState } from 'app/api/schema.d';
 import { useNotifications } from 'app/providers/notifications';
 
-export type LoadFields = Required<
-  Pick<LoadDetailsFragment, 'gca' | 'pilot' | 'maxSlots' | 'plane' | 'isOpen'>
-> &
+export type LoadFields = Required<Pick<LoadDetailsFragment, 'gca' | 'pilot' | 'maxSlots' | 'plane' | 'isOpen'>> &
   Pick<LoadDetailsFragment, 'name'> & { id?: string | null };
 
 export const loadValidation = yup.object({
@@ -23,7 +21,7 @@ export const loadValidation = yup.object({
   original: yup.object().nullable(),
   maxSlots: yup.number().required('You must specify max slots').default(0),
   id: yup.string().nullable(),
-  isOpen: yup.boolean().default(true),
+  isOpen: yup.boolean().default(true)
 });
 
 export const EMPTY_FORM_VALUES: Partial<LoadFields> = {
@@ -32,7 +30,7 @@ export const EMPTY_FORM_VALUES: Partial<LoadFields> = {
   pilot: null,
   plane: undefined,
   maxSlots: 0,
-  name: null,
+  name: null
 };
 
 export interface IUseManifestFormOpts {
@@ -49,7 +47,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
   const methods = useForm<LoadFields>({
     defaultValues,
     mode: 'all',
-    resolver: yupResolver(loadValidation),
+    resolver: yupResolver(loadValidation)
   });
   React.useEffect(() => {
     if (!isEqual(defaultValues, initialValues)) {
@@ -64,7 +62,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    manifest: { createLoad },
+    manifest: { createLoad }
   } = useManifestContext();
   const { canManifest } = useManifestValidator();
 
@@ -88,12 +86,13 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           pilot: validatedFields.pilot?.id,
           plane: validatedFields.plane?.id,
           maxSlots: Number(validatedFields.maxSlots),
-          name: validatedFields.name,
+          name: validatedFields.name
         });
 
         if ('fieldErrors' in response) {
           response.fieldErrors?.forEach(({ field, message }) => {
-            setError(field as keyof LoadFields, { type: 'custom', message });
+            const camelizedField = camelCase(field);
+            setError(camelizedField as keyof LoadFields, { type: 'custom', message });
           });
         }
         if ('load' in response) {

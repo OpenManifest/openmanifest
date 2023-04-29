@@ -10,7 +10,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
-import { isEqual } from 'lodash';
+import { camelCase, isEqual } from 'lodash';
 import { useUserProfile } from 'app/api/crud';
 import { useNotifications } from 'app/providers/notifications';
 
@@ -116,8 +116,9 @@ export default function useUserForm(opts: IUseUserFormOpts) {
         if (response) {
           if ('fieldErrors' in response) {
             response.fieldErrors?.forEach(({ field, message }) => {
-              if (Object.keys(defaultValues).includes(field)) {
-                setError(field as keyof typeof defaultValues, { message });
+              const camelizedField = camelCase(field);
+              if (Object.keys(defaultValues).includes(camelizedField)) {
+                setError(camelizedField as keyof typeof defaultValues, { message });
               }
             });
           }

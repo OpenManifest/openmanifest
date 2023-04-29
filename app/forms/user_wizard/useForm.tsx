@@ -14,7 +14,7 @@ import { useUserProfileContext } from 'app/api/crud';
 import { useEquipment } from 'app/api/crud/useEquipment';
 import { useWizardForm } from 'app/hooks/forms';
 import { useMemo } from 'app/hooks/react';
-import { isEqual } from 'lodash';
+import { camelCase, isEqual } from 'lodash';
 export interface IUserWizardFormOpts {
   startIndex: number;
   onSuccess?(): void;
@@ -153,10 +153,12 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               }
               if ('fieldErrors' in rigResponse) {
                 rigResponse.fieldErrors?.forEach(({ field, message }) => {
-                  if (field === 'make') return setError('make', { message, type: 'required' });
-                  if (field === 'model') return setError('model', { message, type: 'required' });
-                  if (field === 'serial') return setError('serial', { message, type: 'required' });
-                  if (field === 'canopySize') return setError('canopySize', { message, type: 'required' });
+                  const camelizedField = camelCase(field);
+                  if (camelizedField === 'make') return setError('make', { message, type: 'required' });
+                  if (camelizedField === 'model') return setError('model', { message, type: 'required' });
+                  if (camelizedField === 'serial') return setError('serial', { message, type: 'required' });
+                  if (camelizedField === 'canopySize') return setError('canopySize', { message, type: 'required' });
+                  if (camelizedField in fields) return setError(camelizedField as keyof typeof fields, { message });
                 });
                 return false;
               }
@@ -181,10 +183,12 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
 
               if ('fieldErrors' in result) {
                 result.fieldErrors?.forEach(({ field, message }) => {
-                  if (field === 'name') return setError('name', { message, type: 'required' });
-                  if (field === 'nickname') return setError('nickname', { message, type: 'required' });
-                  if (field === 'license') return setError('license', { message, type: 'required' });
-                  if (field === 'exitWeight') return setError('exitWeight', { message, type: 'required' });
+                  const camelizedField = camelCase(field);
+                  if (camelizedField === 'name') return setError('name', { message, type: 'required' });
+                  if (camelizedField === 'nickname') return setError('nickname', { message, type: 'required' });
+                  if (camelizedField === 'license') return setError('license', { message, type: 'required' });
+                  if (camelizedField === 'exitWeight') return setError('exitWeight', { message, type: 'required' });
+                  if (camelizedField in fields) return setError(camelizedField as keyof typeof fields, { message });
                 });
 
                 const firstError = Math.min(

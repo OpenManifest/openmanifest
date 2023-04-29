@@ -6,6 +6,7 @@ import { useNotifications } from 'app/providers/notifications';
 import { useUserSignUpMutation } from 'app/api/reflection';
 import { useAppSelector } from 'app/state';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { camelCase } from 'lodash';
 
 export interface SignUpFields {
   step: number;
@@ -105,7 +106,7 @@ export default function useSignupForm(opts: ISignUpFormOpts) {
 
         if (data?.userRegister?.fieldErrors) {
           data?.userRegister?.fieldErrors?.forEach(({ field, message }) => {
-            setError(field as keyof SignUpFields, { type: 'custom', message });
+            setError(camelCase(field) as keyof SignUpFields, { type: 'custom', message });
           });
         }
         if (data?.userRegister?.authenticatable?.id) {

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
+import camelCase from 'lodash/camelCase';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
@@ -16,8 +17,8 @@ export type DropzoneFields = Required<Omit<DropzoneInput, 'settings' | 'federati
 export const dropzoneValidation = yup.object({
   name: yup.string().nullable().default(null),
   federation: yup.object().required('Your dropzone must be part of a federation'),
-  lat: yup.number().required('You must specify a latitude'),
-  lng: yup.number().required('You must specify a longitude'),
+  lat: yup.number().nullable(),
+  lng: yup.number().nullable(),
   primaryColor: yup.string(),
   requireRigInspection: yup.boolean(),
   requireLicense: yup.boolean(),
@@ -61,16 +62,17 @@ export default function useDropzoneForm(opts: IUseManifestFormOpts) {
     name: dropzone?.name || undefined,
     primaryColor: dropzone?.primaryColor || undefined,
     secondaryColor: dropzone?.secondaryColor || undefined,
-    allowManifestBypass: dropzone?.settings?.allowManifestBypass || undefined,
-    allowNegativeCredits: dropzone?.settings?.allowNegativeCredits || undefined,
-    allowDoubleManifesting: dropzone?.settings?.allowDoubleManifesting || undefined,
-    requireCredits: dropzone?.settings?.requireCredits || undefined,
-    requireLicense: dropzone?.settings?.requireLicense || undefined,
-    requireMembership: dropzone?.settings?.requireMembership || undefined,
-    requireRigInspection: dropzone?.settings?.requireRigInspection || undefined,
-    isCreditSystemEnabled: dropzone?.isCreditSystemEnabled || undefined,
+    allowManifestBypass: dropzone?.settings?.allowManifestBypass,
+    allowNegativeCredits: dropzone?.settings?.allowNegativeCredits,
+    allowDoubleManifesting: dropzone?.settings?.allowDoubleManifesting,
+    requireCredits: dropzone?.settings?.requireCredits,
+    requireLicense: dropzone?.settings?.requireLicense,
+    requireMembership: dropzone?.settings?.requireMembership,
+    requireRigInspection: dropzone?.settings?.requireRigInspection,
+    isCreditSystemEnabled: dropzone?.isCreditSystemEnabled,
+    requireEquipment: dropzone?.settings?.requireEquipment,
     ...initial
-  }), [initial, dropzone?.name, data?.federations, dropzone?.primaryColor, dropzone?.secondaryColor, dropzone?.settings?.allowManifestBypass, dropzone?.settings?.allowNegativeCredits, dropzone?.settings?.allowDoubleManifesting, dropzone?.settings?.requireCredits, dropzone?.settings?.requireLicense, dropzone?.settings?.requireMembership, dropzone?.settings?.requireRigInspection, dropzone?.isCreditSystemEnabled, dropzone?.id, dropzone?.lat, dropzone?.lng, dropzone?.federation]);
+  }), [initial, dropzone?.name, data?.federations, dropzone?.primaryColor, dropzone?.secondaryColor, dropzone?.settings?.allowManifestBypass, dropzone?.settings?.allowNegativeCredits, dropzone?.settings?.allowDoubleManifesting, dropzone?.settings?.requireCredits, dropzone?.settings?.requireLicense, dropzone?.settings?.requireMembership, dropzone?.settings?.requireRigInspection, dropzone?.isCreditSystemEnabled, dropzone?.id, dropzone?.lat, dropzone?.lng, dropzone?.federation, dropzone?.settings?.requireEquipment]);
 
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
 
@@ -121,7 +123,7 @@ export default function useDropzoneForm(opts: IUseManifestFormOpts) {
 
         if ('fieldErrors' in response) {
           response.fieldErrors?.forEach(({ field, message }) => {
-            setError(field as keyof DropzoneFields, { type: 'custom', message });
+            setError(camelCase(field) as keyof DropzoneFields, { type: 'custom', message });
           });
         }
         if ('dropzone' in response) {
@@ -138,7 +140,7 @@ export default function useDropzoneForm(opts: IUseManifestFormOpts) {
     [update, setError, canUpdateDropzone, notify, onSuccess]
   );
 
-  const onSubmit = React.useMemo(() => handleSubmit(onUpdate), [handleSubmit, onUpdate]);
+  const onSubmit = React.useMemo(() => handleSubmit(onUpdate, console.error), [handleSubmit, onUpdate]);
 
   return React.useMemo(() => ({ ...methods, onSubmit, loading }), [methods, onSubmit, loading]);
 }

@@ -8,7 +8,7 @@ import { useNotifications } from 'app/providers/notifications';
 import { useUpdateMasterLogMutation } from 'app/api/reflection';
 import { useDropzoneContext } from 'app/providers';
 import { MasterLogEntryFragment, MasterLogUserFragment } from 'app/api/operations';
-import { isEqual } from 'lodash';
+import { camelCase, isEqual } from 'lodash';
 
 export type MasterLogFields = Omit<MasterLogInput, 'dzso'> & {
   date: string | null;
@@ -84,7 +84,7 @@ export default function useMasterLogForm(opts: IUseMasterLogFormOpts) {
 
         if (response?.updateMasterLog?.fieldErrors) {
           response?.updateMasterLog?.fieldErrors?.forEach(({ field, message }) => {
-            setError(field as keyof MasterLogFields, { type: 'custom', message });
+            setError(camelCase(field) as keyof MasterLogFields, { type: 'custom', message });
           });
         }
         if (response?.updateMasterLog?.masterLog?.date) {
