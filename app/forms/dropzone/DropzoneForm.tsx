@@ -228,9 +228,21 @@ export default function DropzoneForm(props: IDropzoneForm) {
           />
           <SwitchField
             {...{ control }}
+            label="Require Equipment"
+            name="requireEquipment"
+            helperText="Users cannot manifest without selecting a rig"
+          />
+          <SwitchField
+            {...{ control }}
             label="Require Rig Inspection"
             name="requireRigInspection"
             helperText="Users cannot manifest before their rig is inspected"
+          />
+          <SwitchField
+            {...{ control }}
+            label="Allow double manifesting"
+            name="allowDoubleManifesting"
+            helperText="Users are allowed to manifest on multiple loads"
           />
         </Card>
       </SkeletonContent>

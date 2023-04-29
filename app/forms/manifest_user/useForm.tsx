@@ -9,6 +9,7 @@ import useManifestValidator from 'app/hooks/useManifestValidator';
 import isEqual from 'lodash/isEqual';
 import { useNotifications } from 'app/providers/notifications';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
+import camelCase from 'lodash/camelCase';
 
 export type ManifestUserFields = Pick<
   SlotExhaustiveFragment,
@@ -57,8 +58,9 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
       .object()
       .nullable()
       .when({
-        is: () => dropzone?.settings?.requireEquipment,
-        then: yup.object().required('You cant manifest without a rig').nullable()
+        is: () => !!dropzone?.settings?.requireEquipment,
+        then: yup.object().required('You cant manifest without a rig').nullable(),
+        otherwise: yup.object().nullable()
       }),
     jumpType: yup.object().required('Jump type is required').nullable(),
     ticketType: yup.object().required('Ticket is required to manifest').nullable(),
@@ -109,8 +111,12 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
 
         if ('fieldErrors' in response) {
           response.fieldErrors?.forEach(({ field, message }) => {
-            setError(field as keyof ManifestUserFields, { type: 'custom', message });
+            console.debug('Error in field', field, message);
+            setError(camelCase(field) as keyof ManifestUserFields, { type: 'custom', message });
           });
+        }
+        if ('error' in response && response.error) {
+          notify.error(response.error);
         }
         if ('slot' in response) {
           notify.success(`${fields.dropzoneUser?.user?.name} has been added to the load`);

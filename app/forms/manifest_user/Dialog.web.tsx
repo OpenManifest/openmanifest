@@ -43,7 +43,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
 
   return (
     <DialogOrSheet
-      title={`Manifest ${slot?.dropzoneUser?.user?.name} on ${load?.name}`}
+      title={`Manifest ${slot?.dropzoneUser?.user?.name} on ${load?.name || `Load #${load?.loadNumber || 1}`}`}
       {...{ open, onClose, loading }}
       buttonLabel="Manifest"
       buttonAction={onSubmit}

@@ -16,7 +16,7 @@ interface ILocationPickerProps {
   onChange(region: Pick<Region, 'latitude' | 'longitude'>): void;
 }
 export function LocationWizardStep(props: ILocationPickerProps) {
-  const { markerSize, labelSize, value, onChange } = props;
+  const { markerSize, labelSize, value = {}, onChange } = props;
   const [center, setCenter] = React.useState<{ lat: number; lng: number }>();
   const setUsersLocation = React.useCallback(async () => {
     try {

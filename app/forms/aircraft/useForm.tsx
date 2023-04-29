@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 
-import { isEqual } from 'lodash';
+import { camelCase, isEqual } from 'lodash';
 import { useAircrafts } from 'app/api/crud/useAircrafts';
 import { useNotifications } from 'app/providers/notifications';
 
@@ -28,17 +28,10 @@ export const aircraftValidation = yup.object({
   name: yup.string().nullable().default(null),
   registration: yup.string().required('Registration is required'),
   minSlots: yup.number().integer().default(1).min(1, 'Minimum slots must be greater than 0'),
-  maxSlots: yup
-    .number()
-    .integer()
-    .required('Maximum slots is required')
-    .min(1, 'Maximum slots must be greater than 0'),
+  maxSlots: yup.number().integer().required('Maximum slots is required').min(1, 'Maximum slots must be greater than 0'),
   basicEmptyWeight: yup.number().default(0).min(0, 'Basic empty weight must be greater than 0'),
-  maxTakeOffWeight: yup
-    .number()
-    .default(0)
-    .min(0, 'Maximum take off weight must be greater than 0'),
-  fuelType: yup.string().nullable().default(null),
+  maxTakeOffWeight: yup.number().default(0).min(0, 'Maximum take off weight must be greater than 0'),
+  fuelType: yup.string().nullable().default(null)
 });
 
 export const EMPTY_FORM_VALUES: Partial<AircraftFields> = {
@@ -48,7 +41,7 @@ export const EMPTY_FORM_VALUES: Partial<AircraftFields> = {
   maxSlots: 4,
   basicEmptyWeight: 0,
   maxTakeOffWeight: 0,
-  fuelType: undefined,
+  fuelType: undefined
 };
 
 export interface IUseAircraftFormOpts {
@@ -66,7 +59,7 @@ export default function useAircraftForm(opts: IUseAircraftFormOpts) {
     defaultValues,
     mode: 'all',
     resolver: yupResolver(aircraftValidation),
-    shouldUnregister: false,
+    shouldUnregister: false
   });
   React.useEffect(() => {
     if (!isEqual(defaultValues, initialValues)) {
@@ -84,7 +77,7 @@ export default function useAircraftForm(opts: IUseAircraftFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    dropzone: { dropzone },
+    dropzone: { dropzone }
   } = useDropzoneContext();
   const { create, update } = useAircrafts();
 
@@ -101,25 +94,26 @@ export default function useAircraftForm(opts: IUseAircraftFormOpts) {
               dropzoneId: Number(dropzone?.id),
               maxSlots: validated.maxSlots,
               minSlots: validated.minSlots,
-              registration: validated.registration,
+              registration: validated.registration
             })
           : await create({
               name: validated.name,
               dropzoneId: Number(dropzone?.id),
               maxSlots: validated.maxSlots,
               minSlots: validated.minSlots,
-              registration: validated.registration,
+              registration: validated.registration
             });
 
         if (response) {
           if ('fieldErrors' in response) {
             response.fieldErrors?.forEach(({ field, message }) => {
-              switch (field) {
+              const camelizedField = camelCase(field);
+              switch (camelizedField) {
                 case 'name':
                 case 'maxSlots':
                 case 'minSlots':
                 case 'registration':
-                  setError(field, { message });
+                  setError(camelizedField, { message });
                   break;
                 default:
                   break;
