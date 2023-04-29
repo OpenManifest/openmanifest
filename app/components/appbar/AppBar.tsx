@@ -54,10 +54,14 @@ function AppBar(props: IAppBarProps) {
         <SetupWarning
           credits={currentUser?.credits || 0}
           loading={loading}
-          isCreditSystemEnabled={!!dropzone?.isCreditSystemEnabled}
+          isCreditSystemEnabled={!!dropzone?.settings?.requireCredits}
           isExitWeightDefined={!!currentUser?.user?.exitWeight}
-          isMembershipInDate={!!currentUser?.expiresAt && currentUser?.expiresAt > new Date().getTime() / 1000}
+          isMembershipInDate={
+            !dropzone?.settings?.requireMembership ||
+            (!!currentUser?.expiresAt && currentUser?.expiresAt > new Date().getTime() / 1000)
+          }
           isReserveInDate={
+            !dropzone?.settings?.requireEquipment ||
             !!currentUser?.user?.rigs?.some((rig) => {
               const isRigInspected = dropzone?.currentUser?.rigInspections?.map(
                 (inspection) => inspection?.rig?.id === rig.id
@@ -66,8 +70,12 @@ function AppBar(props: IAppBarProps) {
               return isRigInspected && isRepackInDate;
             })
           }
-          isRigInspectionComplete={!!currentUser?.rigInspections?.length}
-          isRigSetUp={!!currentUser?.user?.rigs?.length}
+          isRigInspectionComplete={
+            !dropzone?.settings?.requireEquipment ||
+            !dropzone?.settings?.requireRigInspection ||
+            !!currentUser?.rigInspections?.length
+          }
+          isRigSetUp={!dropzone?.settings?.requireEquipment || !!currentUser?.user?.rigs?.length}
           onSetupWizard={() => {
             console.log('opening setup wizard');
             if (currentUser) {
