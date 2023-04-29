@@ -132,15 +132,18 @@ jobs:
           VERSION_CACHE_KEY: "${{ steps.version-environment-cache.outputs.VERSION_CACHE_KEY }}"
         run: |
           # If a custom environment was selected using inputs, use that.
+          EXPO_ENV=staging
           if [[ -n "${{ inputs.environment}}" ]]; then
-            echo "EXPO_ENV=${{ inputs.environment}}" >> $GITHUB_OUTPUT
+            EXPO_ENV=${{ inputs.environment}}
           # If no input setting the environment was found, but we have a cached
           # environment for this AppStore version, use that instead
           elif [[ -n "${!VERSION_CACHE_KEY}" ]]; then
-            echo "EXPO_ENV=${!VERSION_CACHE_KEY}" >> $GITHUB_OUTPUT
-          else
-            echo "EXPO_ENV=staging" >> $GITHUB_OUTPUT
+            EXPO_ENV=${!VERSION_CACHE_KEY}
+          elif [[ "$TARGET_BRANCH_NAME" == "main" ]]; then
+            EXPO_ENV=production
           fi
+
+          echo "EXPO_ENV=$EXPO_ENV" >> $GITHUB_OUTPUT
       - uses: expo/expo-github-action@v7
         with:
           expo-version: latest
