@@ -67,6 +67,14 @@ jobs:
           else
             echo "EXPO_ENV=staging" >> $GITHUB_OUTPUT
           fi
+
+          if [[ $EXPO_ENV == "production" ]]; then
+            echo "REPOSITORY=OpenManifest/openmanifest-web-staging" >> $GITHUB_OUTPUT
+            echo "CNAME=staging.openmanifest.org" >> $GITHUB_OUTPUT
+          else
+            echo "REPOSITORY=OpenManifest/openmanifest-web" >> $GITHUB_OUTPUT
+            echo "CNAME=www.openmanifest.org" >> $GITHUB_OUTPUT
+          fi
       - run: yarn check:types
         name: Typecheck
       - run: yarn eas:build:web && yarn web:upload
@@ -87,8 +95,8 @@ jobs:
         with:
           publish_dir: ./web-build
           deploy_key: ${{ secrets.WEB_DEPLOY_KEY_STAGING }}
-          external_repository: OpenManifest/openmanifest-web-staging
-          cname: staging.openmanifest.org
+          external_repository: ${{ steps.environment.outputs.REPOSITORY }}
+          cname: ${{ steps.environment.outputs.CNAME }}
   publish-native:
     name: Publish Expo
     runs-on: ubuntu-latest
