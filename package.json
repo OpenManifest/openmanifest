@@ -34,8 +34,8 @@
     "expo:start:production": "EXPO_ENV=production yarn expo:start",
     "ts:script": "ts-node --require ./build/ts-node.config.ts",
     "ts:graphql": "yarn graphql-codegen",
-    "gql:schema:staging": "curl https://devapi.openmanifest.org/graphql -o schema.graphql",
-    "gql:schema:production": "curl https://api.openmanifest.org/graphql -o schema.graphql",
+    "gql:schema:staging": "curl https://stg.openmanifest.org/graphql -o schema.graphql",
+    "gql:schema:production": "curl https://prod.openmanifest.org/graphql -o schema.graphql",
     "gql:schema:local": "curl http://localhost:5000/graphql -o schema.graphql",
     "ts:graphql:staging": "yarn gql:schema:staging && yarn graphql-codegen",
     "ts:graphql:production": "yarn gql:schema:production && yarn graphql-codegen",
@@ -48,29 +48,14 @@
       "node_modules/(?!(jest-)?(@react-native|expo-modules-core|react-native)|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry|react-native-iphone-x-helper|react-native-reanimated|expo-linear-gradient/.*)"
     ],
     "testPathIgnorePatterns": [
-      "/__mocks__/.*.mock.ts",
-      "/__fixtures__/.*.fixture.ts",
-      "app/__tests__/manifest/ManifestScreen.test.tsx"
+      "/__mocks__/.*.mock.ts", "/__fixtures__/.*.fixture.ts", "app/__tests__/manifest/ManifestScreen.test.tsx"
     ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx"
-    ],
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx"],
     "setupFiles": [
-      "./node_modules/react-native-gesture-handler/jestSetup.js",
-      "./node_modules/react-native/jest/setup.js"
+      "./node_modules/react-native-gesture-handler/jestSetup.js", "./node_modules/react-native/jest/setup.js"
     ],
-    "setupFilesAfterEnv": [
-      "@testing-library/jest-native/extend-expect",
-      "<rootDir>/jest.setup.ts"
-    ],
-    "collectCoverageFrom": [
-      "**/*.{ts,tsx}",
-      "!**/node_modules/**",
-      "!**/__mocks__/**"
-    ]
+    "setupFilesAfterEnv": ["@testing-library/jest-native/extend-expect", "<rootDir>/jest.setup.ts"],
+    "collectCoverageFrom": ["**/*.{ts,tsx}", "!**/node_modules/**", "!**/__mocks__/**"]
   },
   "dependencies": {
     "@apollo/client": "3.7.11",

@@ -26,14 +26,14 @@ export const APP_NAME = packageJson.name;
 // Server URLs for each environment
 export const ENDPOINTS = {
   local: 'http://local.openmanifest.org:5000/graphql',
-  staging: 'https://devapi.openmanifest.org/graphql',
-  default: 'https://devapi.openmanifest.org/graphql',
-  production: 'https://api.openmanifest.org/graphql',
+  staging: 'https://stg.openmanifest.org/graphql',
+  default: 'https://stg.openmanifest.org/graphql',
+  production: 'https://prod.openmanifest.org/graphql',
 };
 
 export const FRONTENDS = {
   local: 'http://local.openmanifest.org:19000',
-  staging: 'https://devapi.openmanifest.org',
+  staging: 'https://staging.openmanifest.org',
   production: 'https://www.openmanifest.org',
 };
 
