@@ -54,7 +54,7 @@ export function Step(props: IWizardStepProps) {
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     flexDirection: 'column',
   },
   content: {

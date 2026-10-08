@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   empty: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     height: '100%',
     flexGrow: 1,
     flex: 1,

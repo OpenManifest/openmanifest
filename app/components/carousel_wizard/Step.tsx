@@ -57,7 +57,7 @@ export function Step(props: IWizardStepProps) {
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     position: 'absolute',
     top: 0,
     left: 0,
