@@ -58,3 +58,15 @@ jest.mock('expo-asset/build/PlatformUtils', () => ({
   ...jest.requireActual('expo-asset/build/PlatformUtils'),
   downloadAsync: jest.fn(async (uri: string) => uri),
 }));
+
+// jest-expo's auto-mock of the ExpoFontLoader native module returns undefined from getLoadedFonts(), but expo-font 13
+// iterates over the result when an icon component is constructed.
+jest.mock('expo-font/build/ExpoFontLoader', () => ({
+  __esModule: true,
+  default: {
+    getLoadedFonts: () => [],
+    loadAsync: jest.fn(async () => undefined),
+    unloadAllAsync: jest.fn(async () => undefined),
+    unloadAsync: jest.fn(async () => undefined),
+  },
+}));
