@@ -11,7 +11,7 @@ import { abortController } from '../../api/client/links';
 
 // The real links module needs a browser global (`self`), a server URL and an AbortController at import time.
 jest.mock('../../api/client/links', () => ({
-  // eslint-disable-next-line global-require
+   
   abortController: new (require('abort-controller'))(),
 }));
 

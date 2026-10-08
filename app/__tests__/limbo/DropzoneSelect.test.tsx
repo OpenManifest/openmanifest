@@ -15,7 +15,7 @@ const authenticatedState = {
   },
 };
 
-const dropzonesMock = (nodes: Array<typeof dropzoneExtensive>) => ({
+const dropzonesMock = (nodes: typeof dropzoneExtensive[]) => ({
   request: { query: DropzonesDocument, operationName: 'Dropzones', variables: {} },
   result: {
     data: {
@@ -25,7 +25,7 @@ const dropzonesMock = (nodes: Array<typeof dropzoneExtensive>) => ({
   },
 });
 
-function renderScreen(nodes: Array<typeof dropzoneExtensive>) {
+function renderScreen(nodes: typeof dropzoneExtensive[]) {
   return render(
     <DropzonesProvider>
       <DropzonesScreen />

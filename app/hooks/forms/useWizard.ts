@@ -78,7 +78,7 @@ export type ConditionalSchema<T> = T extends string
   : T extends Record<any, any>
   ? yup.AnyObjectSchema
   // rome-ignore lint/suspicious/noExplicitAny: Not used, and its hard to type yup
-  : T extends Array<any>
+  : T extends any[]
   // rome-ignore lint/suspicious/noExplicitAny: Not used, and its hard to type yup
   ? yup.ArraySchema<any, any>
   : yup.AnySchema;
