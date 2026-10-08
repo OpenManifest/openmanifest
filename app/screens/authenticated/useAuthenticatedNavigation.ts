@@ -1,4 +1,4 @@
-import { NavigationProp, useNavigation } from '@react-navigation/core';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import type { AuthenticatedRoutes } from './routes';
 
 export function useAuthenticatedNavigation() {

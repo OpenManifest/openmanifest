@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { actions, useAppDispatch } from 'app/state';

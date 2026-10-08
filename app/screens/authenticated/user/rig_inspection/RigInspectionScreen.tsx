@@ -1,4 +1,4 @@
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/core';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { startOfDay } from 'date-fns';
 import * as React from 'react';
 import { Button, Card, Checkbox, Divider, Paragraph } from 'react-native-paper';

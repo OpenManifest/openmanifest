@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, RefreshControl, View } from 'react-native';
 import { FAB, DataTable, ProgressBar, useTheme } from 'react-native-paper';
-import { useIsFocused } from '@react-navigation/core';
+import { useIsFocused } from '@react-navigation/native';
 import { Permission } from 'app/api/schema.d';
 
 import { useAppSelector } from 'app/state';

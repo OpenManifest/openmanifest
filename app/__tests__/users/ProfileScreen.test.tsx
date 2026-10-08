@@ -7,8 +7,8 @@ import ProfileScreen from '../../screens/authenticated/user/profile/ProfileScree
 
 jest.setTimeout(30000);
 
-jest.mock('@react-navigation/core', () => ({
-  ...jest.requireActual('@react-navigation/core'),
+jest.mock('@react-navigation/native', () => ({
+  ...jest.requireActual('@react-navigation/native'),
   useNavigation: () => ({ navigate: jest.fn(), setOptions: jest.fn(), dispatch: jest.fn() }),
   useRoute: () => ({ params: { userId: '123' } }),
   useIsFocused: () => true,

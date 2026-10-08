@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, FlatList, Platform } from 'react-native';
 import { FAB } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDropzonesContext } from 'app/api/crud';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';

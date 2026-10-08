@@ -1,4 +1,4 @@
-import { useIsFocused, useNavigation } from '@react-navigation/core';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Card, List, useTheme } from 'react-native-paper';

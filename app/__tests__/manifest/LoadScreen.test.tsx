@@ -7,8 +7,8 @@ import { render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
 import LoadScreen from '../../screens/authenticated/dropzone/load/LoadScreen';
 
-jest.mock('@react-navigation/core', () => ({
-  ...jest.requireActual('@react-navigation/core'),
+jest.mock('@react-navigation/native', () => ({
+  ...jest.requireActual('@react-navigation/native'),
   useNavigation: () => jest.fn(),
   useRoute: () => ({ params: { loadId: '1' } }),
   useIsFocused: () => false,

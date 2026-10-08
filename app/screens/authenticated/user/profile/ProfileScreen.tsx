@@ -1,4 +1,4 @@
-import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/core';
+import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { Chip, Divider, ProgressBar } from 'react-native-paper';
