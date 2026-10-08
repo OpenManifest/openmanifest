@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Provider as Material } from 'react-native-paper';
-import { render as rtlRender, RenderOptions } from '@testing-library/react-native';
+import { render as rtlRender } from '@testing-library/react-native';
 import { createStore } from 'redux';
 import { Provider as Redux } from 'react-redux';
 import { MockedProvider, MockedProviderProps, MockedResponse, MockLink } from '@apollo/client/testing';
@@ -13,6 +13,8 @@ import { DropzoneContextProvider, ManifestContextProvider } from 'app/providers'
 import mockQueryDropzone from '../__tests__/manifest/__mocks__/QueryDropzone.mock';
 import { rootReducer, RootState } from '../state/store';
 import createMockPermissions from '../__tests__/manifest/__mocks__/QueryPermissions.mock';
+
+type RenderOptions = NonNullable<Parameters<typeof rtlRender>[1]>;
 
 interface IRenderer extends RenderOptions {
   initialState?: RootState;
