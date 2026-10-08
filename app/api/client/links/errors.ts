@@ -2,6 +2,7 @@ import { onError } from '@apollo/client/link/error';
 import * as React from 'react';
 import { useNotifications } from 'app/providers/notifications';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import environment from 'app/constants/environment';
 
 export const defaultErrorLink = onError(({ graphQLErrors, networkError, operation }) => {
   if (graphQLErrors?.some((err) => err.extensions?.code === 'AUTHENTICATION_ERROR')) {
@@ -9,7 +10,7 @@ export const defaultErrorLink = onError(({ graphQLErrors, networkError, operatio
     return;
   }
 
-  if (graphQLErrors && process.env.EXPO_ENV !== 'production') {
+  if (graphQLErrors && environment !== 'production') {
     graphQLErrors.forEach((err) => {
       const { message, locations, path, name, nodes } = err;
       console.error(
@@ -20,7 +21,7 @@ export const defaultErrorLink = onError(({ graphQLErrors, networkError, operatio
       console.log(operation);
     });
   }
-  if (networkError && process.env.EXPO_ENV !== 'production') {
+  if (networkError && environment !== 'production') {
     console.error(`[Apollo::Links::Errors::Default::Network] ${networkError}`);
   }
 });
@@ -46,7 +47,7 @@ export function useErrorLink() {
             return;
           }
 
-          if (graphQLErrors && process.env.EXPO_ENV !== 'production') {
+          if (graphQLErrors && environment !== 'production') {
             graphQLErrors.forEach((err) => {
               const { message, locations, path, name, nodes } = err;
               notify.error(`[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}`);
@@ -59,7 +60,7 @@ export function useErrorLink() {
               console.log(operation);
             });
           }
-          if (networkError && process.env.EXPO_ENV !== 'production') {
+          if (networkError && environment !== 'production') {
             notify.error(`[Network error]: ${networkError}`);
           }
         } finally {
