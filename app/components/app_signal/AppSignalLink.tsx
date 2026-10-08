@@ -116,7 +116,7 @@ export class AppSignalBreadcrumbLink extends ApolloLink {
     // wrapping the observer in our own observer ensures we get the results
     // before they are passed along to other observers. This guarantees we
     // get to run our instrumentation before others observers potentially
-    // throw and thus flush the results to Sentry.
+    // throw and thus flush the results to AppSignal.
     return new Observable<FetchResult>((originalObserver) => {
       const subscription = forward?.(operation).subscribe({
         next: (result) => {
