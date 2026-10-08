@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FlatList, Platform } from 'react-native';
 
-import { RouteProp, useIsFocused, useRoute } from '@react-navigation/core';
+import { RouteProp, useIsFocused, useRoute } from '@react-navigation/native';
 import { SlotDetailsFragment } from 'app/api/operations';
 import {
   LoadContextProvider,

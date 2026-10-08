@@ -4,7 +4,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useUpdateLostPasswordMutation } from 'app/api/reflection';
 import checkPasswordComplexity, { PasswordStrength } from 'app/utils/checkPasswordComplexity';
 import { User } from 'app/api/schema.d';
-import { useNavigation, useRoute } from '@react-navigation/core';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { WizardRef } from 'app/components/carousel_wizard/Wizard';
 import DoneStep from './steps/Done';
 import PasswordStep from './steps/Password';

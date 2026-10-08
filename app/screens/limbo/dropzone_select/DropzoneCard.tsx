@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View, ImageBackground } from 'react-native';
 import { Avatar, Text } from 'react-native-paper';
-import { StackActions, useNavigation } from '@react-navigation/core';
+import { StackActions, useNavigation } from '@react-navigation/native';
 import { DropzoneEssentialsFragment, DropzoneExtensiveFragment } from 'app/api/operations';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Color from 'color';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteProp, useRoute } from '@react-navigation/core';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { Button, Card, Divider, List, useTheme } from 'react-native-paper';
 import { Text, View } from 'react-native';
 import color from 'color';

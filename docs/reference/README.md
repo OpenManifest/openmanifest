@@ -266,13 +266,12 @@ Full table:
 | `@react-native-async-storage/async-storage` | dep | `~1.17.3` | 1.17.12 | 3.1.1 | `2.2.0` |  |
 | `@react-native-community/datetimepicker` | dep | `6.5.2` | 6.5.2 | 9.2.1 | `9.1.0` |  |
 | `@react-native-masked-view/masked-view` | dep | `0.2.8` | 0.2.8 | 0.3.2 | `0.3.2` |  |
-| `@react-navigation/bottom-tabs` | dep | `6.5.7` | 6.5.7 | 7.20.0 |  |  |
-| `@react-navigation/core` | dep | `6.4.8` | 6.4.8 | 7.23.0 |  |  |
-| `@react-navigation/drawer` | dep | `6.6.2` | 6.6.2 | 7.14.3 |  |  |
+| `@react-navigation/bottom-tabs` | dep | `7.20.0` (P3.9) | 7.20.0 | 7.20.0 |  |  |
+| `@react-navigation/drawer` | dep | `7.14.3` (P3.9) | 7.14.3 | 7.14.3 |  |  |
 | `@react-navigation/material-bottom-tabs` | dep | `6.2.15` | 6.2.15 | 6.2.29 |  | **deprecated on npm** |
 | `@react-navigation/material-top-tabs` | dep | `6.6.2` | 6.6.2 | 7.8.0 |  |  |
-| `@react-navigation/native` | dep | `6.1.6` | 6.1.6 | 7.5.0 |  |  |
-| `@react-navigation/stack` | dep | `6.3.16` | 6.3.16 | 7.12.0 |  |  |
+| `@react-navigation/native` | dep | `7.5.0` (P3.9) | 7.5.0 | 7.5.0 |  |  |
+| `@react-navigation/stack` | dep | `7.12.0` (P3.9) | 7.12.0 | 7.12.0 |  |  |
 | `@reduxjs/toolkit` | dep | `1.9.3` | 1.9.3 | 2.13.0 |  |  |
 | `@vitu.soares/react-native-skeleton-content` | dep | `1.0.26` | 1.0.26 | 1.0.26 |  | last publish 2022-04-07 |
 | `check-password-strength` | dep | `2.0.7` | 2.0.7 | 3.0.0 |  |  |
@@ -419,5 +418,5 @@ Full table:
 | `redux-mock-store` | dev | `^1.5.4` | 1.5.4 | 1.5.5 |  |  |
 | `rome` | dev | `11.0.0-nightly.aec33ef` | 11.0.0-nightly.aec33ef | 12.1.3 |  | last publish 2024-04-16 |
 | `semver` | dev | `7.3.8` | 7.3.8 | 7.8.5 |  |  |
-| `ts-node` | dev | `10.9.1` | 10.9.1 | 10.9.2 |  |  |
-| `typescript` | dev | `^4.6.3` | 4.9.4 | 7.0.2 |  |  |
+| `ts-node` | dev | `^10.9.2` (P3.9) | 10.9.2 | 10.9.2 |  |  |
+| `typescript` | dev | `5.9.3` (P3.9) | 5.9.3 | 7.0.2 |  |  |

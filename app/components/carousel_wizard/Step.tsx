@@ -1,4 +1,4 @@
-import { useIsFocused } from '@react-navigation/core';
+import { useIsFocused } from '@react-navigation/native';
 import { useAppSelector } from 'app/state';
 import * as React from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { FAB, useTheme } from 'react-native-paper';
 import { actions, useAppDispatch } from 'app/state';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import { Permission } from 'app/api/schema.d';
 import { useDropzoneContext, useManifestContext } from 'app/providers';
 import useRestriction from 'app/hooks/useRestriction';

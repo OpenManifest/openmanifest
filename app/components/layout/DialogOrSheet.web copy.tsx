@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Dialog, IconButton, ProgressBar, useTheme } from 'react-native-paper';
 import { Portal } from '@gorhom/portal';
-import { DrawerActions, useNavigation } from '@react-navigation/core';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { StyleSheet, View } from 'react-native';
 
 interface IBottomSheetProps {

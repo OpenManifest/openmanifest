@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import AppBar from 'app/components/appbar/AppBar';
 
-import { NavigatorScreenParams } from '@react-navigation/core';
+import { NavigatorScreenParams } from '@react-navigation/native';
 import { AppSignalBoundary } from 'app/components/app_signal';
 import NotificationsScreen from './notifications/NotificationsScreen';
 import Users, { UserRoutes } from '../user/routes';

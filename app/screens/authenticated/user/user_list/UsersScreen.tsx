@@ -1,4 +1,4 @@
-import { useIsFocused } from '@react-navigation/core';
+import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { RefreshControl, FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Avatar, Card, FAB, List, ProgressBar, useTheme } from 'react-native-paper';

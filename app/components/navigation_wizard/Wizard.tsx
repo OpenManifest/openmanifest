@@ -6,7 +6,7 @@ import {
 } from '@react-navigation/stack';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import { useAppSelector } from 'app/state';
 import { IWizardStepProps } from './Step';
 import Dots from './Dots';
@@ -134,7 +134,7 @@ export function Content(props: IWizardProps) {
                 navigation.goBack();
               } else {
                 // @ts-ignore These are dynamically created screens
-                navigation.navigate(`${name}${currentIndex - backIndexFactor}`);
+                navigation.navigate(`${name}${currentIndex - backIndexFactor}`, undefined, { pop: true });
                 setIndex(currentIndex - backIndexFactor || 0);
               }
               return undefined;

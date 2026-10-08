@@ -34,7 +34,6 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
               Manifest: {
                 screens: {
                   ManifestScreen: '/dropzone/manifest',
-                  DashboardScreen: '/dropzone/overview',
                   User: {
                     screens: {
                       EquipmentScreen: '/dropzone/manifest/users/:userId/equipment/',
@@ -47,7 +46,6 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                   },
                   Configuration: {
                     screens: {
-                      AircraftScreen: '/dropzone/configuration/aircraft/:planeId',
                       TicketTypesScreen: '/dropzone/configuration/ticket-types',
                       DropzoneRigsScreen: '/dropzone/configuration/rigs',
                       ExtrasScreen: '/dropzone/ticket-types/extra',
@@ -93,8 +91,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
       Unauthenticated: {
         screens: {
           LoginScreen: '/login',
-          SignUpScreen: '/signup',
-          SignUpWizard: '/user-setup'
+          SignUpScreen: '/signup'
         }
       },
       Wizards: {

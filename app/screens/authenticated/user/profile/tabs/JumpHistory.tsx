@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import { View } from 'react-native-animatable';
 import { List } from 'react-native-paper';

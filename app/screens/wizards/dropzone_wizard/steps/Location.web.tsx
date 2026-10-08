@@ -7,7 +7,7 @@ import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { calculateLatLngDelta } from 'app/utils/calculateLatLngDelta';
 import MapView from 'app/components/map/Map';
 import AddressSearchBar from 'app/components/input/search/AddressSearchBar';
-import { useIsFocused } from '@react-navigation/core';
+import { useIsFocused } from '@react-navigation/native';
 
 function LocationWizardStep(props: IWizardStepProps) {
   const state = useAppSelector((root) => root.forms.dropzone);

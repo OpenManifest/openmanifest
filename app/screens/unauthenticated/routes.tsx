@@ -1,5 +1,5 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationProp, useNavigation } from '@react-navigation/core';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 
 import LoginScreen from './login/LoginScreen';
