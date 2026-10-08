@@ -33,3 +33,5 @@ jest.mock('redux-persist', () => {
     persistReducer: jest.fn().mockImplementation((config, reducers) => reducers),
   };
 });
+
+jest.mock('@gorhom/bottom-sheet', () => require('@gorhom/bottom-sheet/mock'));

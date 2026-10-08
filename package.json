@@ -50,8 +50,7 @@
     ],
     "testPathIgnorePatterns": [
       "/__mocks__/.*.mock.ts",
-      "/__fixtures__/.*.fixture.ts",
-      "app/__tests__/manifest/ManifestScreen.test.tsx"
+      "/__fixtures__/.*.fixture.ts"
     ],
     "moduleFileExtensions": [
       "ts",
@@ -266,7 +265,7 @@
     "json": "^11.0.0",
     "patch-package": "6.5.1",
     "prettier": "2.8.7",
-    "react-test-renderer": "17.0.1",
+    "react-test-renderer": "18.1.0",
     "redux-mock-store": "^1.5.4",
     "rome": "11.0.0-nightly.aec33ef",
     "semver": "7.3.8",

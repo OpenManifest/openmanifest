@@ -9,7 +9,7 @@ import { Permission } from 'app/api/schema.d';
 import { Operation } from '@apollo/client';
 
 // Import your own reducer
-import { DropzoneContextProvider } from 'app/providers';
+import { DropzoneContextProvider, ManifestContextProvider } from 'app/providers';
 import mockQueryDropzone from '../__tests__/manifest/__mocks__/QueryDropzone.mock';
 import { rootReducer, RootState } from '../state/store';
 import createMockPermissions from '../__tests__/manifest/__mocks__/QueryPermissions.mock';
@@ -74,31 +74,35 @@ function render(ui: React.ReactElement<unknown>, { initialState, graphql, permis
   const store = createStore(rootReducer, initialState);
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
-      <Redux store={store}>
-        <Apollo
-          addTypename
-          mocks={[
-            ...(graphql || []),
-            mockQueryDropzone(),
-            createMockPermissions(
-              {},
-              {
-                dropzone: {
-                  currentUser: {
-                    permissions: permissions || []
+      <BottomSheetModalProvider>
+        <Redux store={store}>
+          <Apollo
+            addTypename
+            mocks={[
+              ...(graphql || []),
+              mockQueryDropzone(),
+              createMockPermissions(
+                {},
+                {
+                  dropzone: {
+                    currentUser: {
+                      permissions: permissions || []
+                    }
                   }
                 }
-              }
-            )
-          ]}
-        >
-          <DropzoneContextProvider>
-            <Material>
-              <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
-            </Material>
-          </DropzoneContextProvider>
-        </Apollo>
-      </Redux>
+              )
+            ]}
+          >
+            <DropzoneContextProvider dropzoneId={initialState?.global?.currentDropzoneId?.toString()}>
+              <ManifestContextProvider dropzone={initialState?.global?.currentDropzoneId?.toString()}>
+                <Material>
+                  {children}
+                </Material>
+              </ManifestContextProvider>
+            </DropzoneContextProvider>
+          </Apollo>
+        </Redux>
+      </BottomSheetModalProvider>
     );
   }
   return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });
