@@ -1,3 +1,4 @@
+# Disabled for automatic runs during modernisation (P0.1). Re-enabled in P8.6.
 name: Publish to Expo
 on:
   workflow_dispatch:
@@ -19,10 +20,6 @@ on:
         options:
           - staging
           - production
-  push:
-    branches:
-      - main
-      - staging
 env:
   CURRENT_BRANCH_NAME: ${{ inputs.branch || github.head_ref || github.ref_name }}
   TARGET_BRANCH_NAME: ${{ inputs.branch || github.base_ref || github.ref_name }}
