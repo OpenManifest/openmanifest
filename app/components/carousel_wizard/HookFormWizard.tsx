@@ -9,7 +9,7 @@ import {
   useWindowDimensions,
   View
 } from 'react-native';
-import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
+import { Carousel, CarouselRef } from 'react-native-reanimated-carousel';
 import { useNavigation } from '@react-navigation/native';
 import { Step } from './Step';
 import Dots from './Dots';
@@ -26,11 +26,11 @@ export interface IHookFormWizardProps<HookFormWizardSteps extends WizardFormStep
   steps: typeof Step[];
 }
 
-export type WizardRef = ICarouselInstance;
+export type WizardRef = CarouselRef;
 
 function Wizard<WizardSteps extends WizardFormStep[]>(
   props: IHookFormWizardProps<WizardSteps>,
-  ref: React.Ref<ICarouselInstance>
+  ref: React.Ref<CarouselRef>
 ) {
   const { dots, steps, ...form } = props;
   const { control, loading, setMaxIndex, setIndex, next, back } = form;
@@ -43,7 +43,7 @@ function Wizard<WizardSteps extends WizardFormStep[]>(
     x: 0,
     y: 0
   });
-  const carouselRef = React.useRef<ICarouselInstance>(null);
+  const carouselRef = React.useRef<CarouselRef>(null);
   const screen = useWindowDimensions();
 
   React.useImperativeHandle(ref, () => ({
@@ -84,19 +84,14 @@ function Wizard<WizardSteps extends WizardFormStep[]>(
           </View>
         )}
         <Carousel
-          autoPlay={false}
+          autoplay={false}
           loop={false}
-          modeConfig={{ parallaxScrollingScale: 1, parallaxScrollingOffset: 32 }}
-          pagingEnabled={false}
-          enabled={false}
-          panGestureHandlerProps={{
-            // Disable swiping
-            activeOffsetX: [-width, width]
-          }}
-          mode="parallax"
+          layout={{ type: 'parallax', scale: 1, offset: 32 }}
+          // The steps are changed with the buttons, not by swiping
+          scrollEnabled={false}
           style={StyleSheet.absoluteFill}
           data={steps}
-          width={width || screen.width}
+          itemSize={width || screen.width}
           onSnapToItem={setIndex}
           ref={carouselRef}
           renderItem={({ item: WizardStep }) => {
