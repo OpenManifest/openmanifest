@@ -21,6 +21,7 @@ jobs:
       - run: yarn check:types
       - run: yarn check:linting
       - run: yarn check:testing
+      - run: yarn check:graphql
   web-export:
     runs-on: ubuntu-24.04
     steps:
