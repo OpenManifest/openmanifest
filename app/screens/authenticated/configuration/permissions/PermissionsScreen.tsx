@@ -284,7 +284,10 @@ export default function DropzonePermissionScreen() {
               </Card>
               <Card style={styles.card}>
                 <List.Section title="Administration" style={{ width: '100%' }}>
-                  <List.Accordion title="Dropzone" style={{ backgroundColor: theme.colors.surface }}>
+                  <List.Accordion
+                    title="Dropzone"
+                    style={{ backgroundColor: theme.colors.surface }}
+                  >
                     <PermissionListItem
                       role={role}
                       permissionName="updateDropzone"

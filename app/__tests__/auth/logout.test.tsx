@@ -11,7 +11,6 @@ import { abortController } from '../../api/client/links';
 
 // The real links module needs a browser global (`self`), a server URL and an AbortController at import time.
 jest.mock('../../api/client/links', () => ({
-   
   abortController: new (require('abort-controller'))(),
 }));
 
@@ -20,7 +19,13 @@ const authenticatedState = {
   global: {
     ...appRedux.initialState.global,
     authenticated: true,
-    credentials: { accessToken: 'jest', client: 'jest', uid: 'jest@example.com', tokenType: 'Bearer', expiry: 9999999999 },
+    credentials: {
+      accessToken: 'jest',
+      client: 'jest',
+      uid: 'jest@example.com',
+      tokenType: 'Bearer',
+      expiry: 9999999999,
+    },
   },
 };
 

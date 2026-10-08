@@ -19,7 +19,7 @@ export interface IAppQueryProps<InputType> {
 
 export function createQuery<
   Payload extends Maybe<Record<string, unknown>>,
-  InputType extends object
+  InputType extends object,
 >(
   query: DocumentNode,
   options: {

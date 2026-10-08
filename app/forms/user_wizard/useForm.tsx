@@ -46,7 +46,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
 
   const methods = useWizardForm({
     startIndex,
-    steps
+    steps,
   });
 
   const { restore, createHandlers, setValue, setError, getStepIndexByFieldName } = methods;
@@ -76,7 +76,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               nickname,
               repackExpiresAt,
               rigId,
-              serial
+              serial,
             } = fields;
             console.debug(`== SUBMITTING STEP ${stepIndex} ==`);
             console.debug(fields);
@@ -84,7 +84,10 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
             if ([3, 4, 5].includes(stepIndex)) {
               if (stepIndex === 4 && !apfNumber) return true;
               if (!federation?.id) {
-                setError('federation', { message: 'You must select a federation', type: 'required' });
+                setError('federation', {
+                  message: 'You must select a federation',
+                  type: 'required',
+                });
                 return false;
               }
 
@@ -103,15 +106,21 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               const federationResponse = await joinFederation({
                 federation: federation.id,
                 license: license?.id,
-                uid: apfNumber
+                uid: apfNumber,
               });
 
               if ('error' in federationResponse) {
                 console.log('Federation error??');
-                return setError('federation', { message: federationResponse.error, type: 'required' });
+                return setError('federation', {
+                  message: federationResponse.error,
+                  type: 'required',
+                });
               }
 
-              if ('userFederation' in federationResponse && federationResponse.userFederation.license) {
+              if (
+                'userFederation' in federationResponse &&
+                federationResponse.userFederation.license
+              ) {
                 console.debug('Setting license', federationResponse.userFederation.license);
                 setValue('license', federationResponse.userFederation.license);
               }
@@ -132,7 +141,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                     make: initial?.make,
                     model: initial?.model,
                     serial: initial?.serial,
-                    canopySize: initial?.canopySize
+                    canopySize: initial?.canopySize,
                   }
                 )
               ) {
@@ -145,7 +154,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                 model,
                 serial,
                 canopySize,
-                id: rigId || undefined
+                id: rigId || undefined,
               });
               if ('error' in rigResponse) {
                 setError('serial', { message: rigResponse.error, type: 'required' });
@@ -154,11 +163,16 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               if ('fieldErrors' in rigResponse) {
                 rigResponse.fieldErrors?.forEach(({ field, message }) => {
                   const camelizedField = camelCase(field);
-                  if (camelizedField === 'make') return setError('make', { message, type: 'required' });
-                  if (camelizedField === 'model') return setError('model', { message, type: 'required' });
-                  if (camelizedField === 'serial') return setError('serial', { message, type: 'required' });
-                  if (camelizedField === 'canopySize') return setError('canopySize', { message, type: 'required' });
-                  if (camelizedField in fields) return setError(camelizedField as keyof typeof fields, { message });
+                  if (camelizedField === 'make')
+                    return setError('make', { message, type: 'required' });
+                  if (camelizedField === 'model')
+                    return setError('model', { message, type: 'required' });
+                  if (camelizedField === 'serial')
+                    return setError('serial', { message, type: 'required' });
+                  if (camelizedField === 'canopySize')
+                    return setError('canopySize', { message, type: 'required' });
+                  if (camelizedField in fields)
+                    return setError(camelizedField as keyof typeof fields, { message });
                 });
                 return false;
               }
@@ -178,17 +192,22 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                 image: avatar || undefined,
                 license: license?.id ? Number(license.id) : null,
                 nickname,
-                name
+                name,
               });
 
               if ('fieldErrors' in result) {
                 result.fieldErrors?.forEach(({ field, message }) => {
                   const camelizedField = camelCase(field);
-                  if (camelizedField === 'name') return setError('name', { message, type: 'required' });
-                  if (camelizedField === 'nickname') return setError('nickname', { message, type: 'required' });
-                  if (camelizedField === 'license') return setError('license', { message, type: 'required' });
-                  if (camelizedField === 'exitWeight') return setError('exitWeight', { message, type: 'required' });
-                  if (camelizedField in fields) return setError(camelizedField as keyof typeof fields, { message });
+                  if (camelizedField === 'name')
+                    return setError('name', { message, type: 'required' });
+                  if (camelizedField === 'nickname')
+                    return setError('nickname', { message, type: 'required' });
+                  if (camelizedField === 'license')
+                    return setError('license', { message, type: 'required' });
+                  if (camelizedField === 'exitWeight')
+                    return setError('exitWeight', { message, type: 'required' });
+                  if (camelizedField in fields)
+                    return setError(camelizedField as keyof typeof fields, { message });
                 });
 
                 const firstError = Math.min(
@@ -210,7 +229,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
           } finally {
             setLoading(false);
           }
-        }
+        },
       }),
     [
       onSuccess,
@@ -224,7 +243,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       setError,
       setValue,
       onClose,
-      update
+      update,
     ]
   );
 

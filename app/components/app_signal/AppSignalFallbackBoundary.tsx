@@ -8,7 +8,10 @@ interface IDefaultErrorBoundaryProps {
 interface IDefaultErrorBoundaryState {
   error?: Error;
 }
-export default class ErrorBoundary extends React.Component<IDefaultErrorBoundaryProps, IDefaultErrorBoundaryState> {
+export default class ErrorBoundary extends React.Component<
+  IDefaultErrorBoundaryProps,
+  IDefaultErrorBoundaryState
+> {
   constructor(props) {
     super(props);
     this.state = { error: undefined };

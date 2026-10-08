@@ -2,11 +2,7 @@ import { sortBy, uniq } from 'lodash';
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Title, useTheme } from 'react-native-paper';
-import {
-  BottomSheetModal,
-  BottomSheetScrollView,
-  BottomSheetBackdrop,
-} from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import useKeyboardVisibility from 'app/hooks/useKeyboardVisibility';
 
 interface IBottomSheetProps {
@@ -26,8 +22,18 @@ interface IBottomSheetProps {
 }
 
 export default function DialogOrSheet(props: IBottomSheetProps) {
-  const { open, disablePadding, snapPoints, onClose, title, buttonLabel, buttonAction, handle, loading, children } =
-    props;
+  const {
+    open,
+    disablePadding,
+    snapPoints,
+    onClose,
+    title,
+    buttonLabel,
+    buttonAction,
+    handle,
+    loading,
+    children,
+  } = props;
   const sheetRef = React.useRef<BottomSheetModal>(null);
   const snappingPoints = React.useMemo(
     () => sortBy(uniq([0, ...(snapPoints || [600])])).filter((s) => s !== 0),
@@ -77,8 +83,8 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
           {
             overflow: handle ? 'hidden' : undefined,
             shadowColor: theme.colors.onSurface,
-            backgroundColor: theme.colors.surface
-          }
+            backgroundColor: theme.colors.surface,
+          },
         ]}
       >
         {handle || <View style={styles.handle} />}
@@ -89,8 +95,8 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
           styles.sheetHeaderWithTitle,
           {
             shadowColor: theme.colors.onSurface,
-            backgroundColor: theme.colors.surface
-          }
+            backgroundColor: theme.colors.surface,
+          },
         ]}
       >
         <View style={styles.handle} />
@@ -121,8 +127,8 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
           disablePadding ? styles.noPadding : {},
           {
             paddingBottom: keyboardVisible ? 400 : 80,
-            backgroundColor: theme.colors.surface
-          }
+            backgroundColor: theme.colors.surface,
+          },
         ])}
       >
         {children}
@@ -144,19 +150,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20,
-    marginBottom: 20
+    marginBottom: 20,
   },
   noPadding: { paddingLeft: 0, paddingRight: 0, paddingTop: 0 },
   contentContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 32
+    paddingBottom: 32,
   },
   handle: {
     width: 32,
     height: 4,
     borderRadius: 2,
     backgroundColor: '#AAAAAA',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   sheet: {
     paddingBottom: 56,
@@ -165,7 +171,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   sheetHeader: {
     zIndex: 10000,
@@ -177,10 +183,10 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: -4
+      height: -4,
     },
     shadowOpacity: 0.22,
-    shadowRadius: 2.22
+    shadowRadius: 2.22,
   },
   sheetHeaderWithTitle: {
     zIndex: 10000,
@@ -191,11 +197,11 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: -4
+      height: -4,
     },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
     paddingLeft: 16,
-    paddingTop: 16
-  }
+    paddingTop: 16,
+  },
 });

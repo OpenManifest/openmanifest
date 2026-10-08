@@ -8,10 +8,12 @@ import { useMemo } from 'app/hooks/react';
 import * as yup from 'yup';
 
 export const validation = yup.object({
-  nickname: yup.string().nullable().default(null)
+  nickname: yup.string().nullable().default(null),
 });
 
-type StepFields = { [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K] };
+type StepFields = {
+  [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K];
+};
 
 export function useStep(): WizardFormStep<StepFields> {
   const { dropzoneUser } = useUserProfileContext();
@@ -19,9 +21,9 @@ export function useStep(): WizardFormStep<StepFields> {
   return useMemo(
     () => ({
       defaultValues: {
-        nickname: dropzoneUser?.user?.nickname
+        nickname: dropzoneUser?.user?.nickname,
       },
-      validation
+      validation,
     }),
     [dropzoneUser?.user?.nickname]
   );

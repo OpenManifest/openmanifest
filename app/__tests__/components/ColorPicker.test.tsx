@@ -7,7 +7,12 @@ import { COLOR_PRESETS } from '../../components/input/colorpicker/ColorPicker';
 function renderPicker(value: string, onChange = jest.fn()) {
   const screen = render(
     <PaperProvider>
-      <ColorPicker title="Primary color" helperText="Used for buttons" value={value} onChange={onChange} />
+      <ColorPicker
+        title="Primary color"
+        helperText="Used for buttons"
+        value={value}
+        onChange={onChange}
+      />
     </PaperProvider>
   );
   return { screen, onChange };

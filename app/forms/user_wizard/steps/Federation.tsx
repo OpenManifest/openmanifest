@@ -13,23 +13,25 @@ import { useDropzoneContext } from 'app/providers/dropzone/context';
 const federation = yup.object() as yup.SchemaOf<FederationEssentialsFragment>;
 
 export const validation = yup.object({
-  federation: federation.nullable().default(null)
+  federation: federation.nullable().default(null),
 });
 
-type StepFields = { [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K] };
+type StepFields = {
+  [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K];
+};
 
 export function useStep(): WizardFormStep<StepFields> {
   const { dropzoneUser } = useUserProfileContext();
   const {
-    dropzone: { dropzone }
+    dropzone: { dropzone },
   } = useDropzoneContext();
 
   return useMemo(
     () => ({
       defaultValues: {
-        federation: dropzoneUser?.license?.federation || dropzone?.federation
+        federation: dropzoneUser?.license?.federation || dropzone?.federation,
       },
-      validation
+      validation,
     }),
     [dropzone?.federation, dropzoneUser?.license?.federation]
   );
@@ -51,7 +53,9 @@ function FederationWizardSceen(props: IWizardStepProps) {
           render={({ field: { value, onChange: onSelect }, fieldState }) => (
             <>
               <FederationCardSelect {...{ value, onSelect }} />
-              <HelperText type={fieldState?.error ? 'error' : 'info'}>{fieldState?.error?.message || ''}</HelperText>
+              <HelperText type={fieldState?.error ? 'error' : 'info'}>
+                {fieldState?.error?.message || ''}
+              </HelperText>
             </>
           )}
         />

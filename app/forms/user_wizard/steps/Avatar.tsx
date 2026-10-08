@@ -10,10 +10,12 @@ import { useMemo } from 'app/hooks/react';
 import * as yup from 'yup';
 
 export const validation = yup.object({
-  avatar: yup.string().nullable().default(null)
+  avatar: yup.string().nullable().default(null),
 });
 
-type StepFields = { [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K] };
+type StepFields = {
+  [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K];
+};
 
 export function useStep(): WizardFormStep<StepFields> {
   const { dropzoneUser } = useUserProfileContext();
@@ -21,9 +23,9 @@ export function useStep(): WizardFormStep<StepFields> {
   return useMemo(
     () => ({
       defaultValues: {
-        avatar: dropzoneUser?.user?.image
+        avatar: dropzoneUser?.user?.image,
       },
-      validation
+      validation,
     }),
     [dropzoneUser?.user?.image]
   );
@@ -63,7 +65,7 @@ function AvatarStep(props: IWizardStepProps) {
                     size={175}
                     source={{ uri: value }}
                     style={{
-                      backgroundColor: theme.colors.primary
+                      backgroundColor: theme.colors.primary,
                     }}
                   />
                 )}
@@ -79,7 +81,7 @@ function AvatarStep(props: IWizardStepProps) {
 
 const styles = StyleSheet.create({
   avatarContainer: { marginBottom: 100, alignItems: 'center', justifyContent: 'center' },
-  paragraph: { marginTop: 16 }
+  paragraph: { marginTop: 16 },
 });
 
 export default AvatarStep;

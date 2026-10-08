@@ -3,11 +3,10 @@ import * as React from 'react';
 import { List, Modal } from 'react-native-paper';
 import { DatePickerModal, DatePickerModalSingleProps } from 'react-native-paper-dates';
 
-interface IDatepicker
-  extends Omit<
-    DatePickerModalSingleProps,
-    'onChange' | 'locale' | 'visible' | 'mode' | 'onDismiss' | 'onConfirm'
-  > {
+interface IDatepicker extends Omit<
+  DatePickerModalSingleProps,
+  'onChange' | 'locale' | 'visible' | 'mode' | 'onDismiss' | 'onConfirm'
+> {
   label?: string;
   value: number;
   disabled?: boolean;

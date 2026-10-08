@@ -32,10 +32,20 @@ interface IMapProps {
   onDragEnd?(coords: { lat: number; lng: number }): void;
 }
 export default function MapWebView(props: IMapProps) {
-  const { width, height, position, children, center, coords: _coords, shape, interactive, onDragEnd } = props;
+  const {
+    width,
+    height,
+    position,
+    children,
+    center,
+    coords: _coords,
+    shape,
+    interactive,
+    onDragEnd,
+  } = props;
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: Constants?.googleMapsWeb,
-    id: 'google-maps-script'
+    id: 'google-maps-script',
   });
 
   const { containerStyle, mapStyle } = props;
@@ -87,7 +97,7 @@ export default function MapWebView(props: IMapProps) {
         position: 'absolute',
         top: position.y,
         left: position.x,
-        ...containerStyle
+        ...containerStyle,
       }}
       pointerEvents={interactive ? undefined : 'none'}
     >
@@ -106,7 +116,7 @@ export default function MapWebView(props: IMapProps) {
             lat: map.current.center.lat(),
 
             // @ts-ignore
-            lng: map.current.center.lng()
+            lng: map.current.center.lng(),
           });
         }}
         onUnmount={onUnmount}
@@ -117,7 +127,7 @@ export default function MapWebView(props: IMapProps) {
 
           // Intentional because the types for this damn map is fucked
 
-          ...(mapStyle as object)
+          ...(mapStyle as object),
         }}
         options={{
           zoom: 15,
@@ -126,7 +136,7 @@ export default function MapWebView(props: IMapProps) {
           center: coords,
           mapTypeControl: false,
           mapTypeId: google.maps.MapTypeId.HYBRID,
-          zoomControl: false
+          zoomControl: false,
         }}
       >
         {children}

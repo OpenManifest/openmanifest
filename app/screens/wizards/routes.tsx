@@ -33,7 +33,7 @@ export default function Routes() {
       screenOptions={{
         headerShown: false,
         presentation: 'modal',
-        cardStyle: { flex: 1 }
+        cardStyle: { flex: 1 },
       }}
     >
       <Wizards.Screen name="DropzoneWizardScreen" component={DropzoneWizardScreen} />

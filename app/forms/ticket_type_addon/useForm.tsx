@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import {
   TicketTypeAddonDetailsFragment,
   TicketTypeAddonEssentialsFragment,
-  TicketTypeEssentialsFragment
+  TicketTypeEssentialsFragment,
 } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -27,14 +27,14 @@ export const ticketAddonValidation = yup.object({
   allowManifestingSelf: yup.boolean().default(false),
   altitude: yup.number().required().default(14000),
   ticketTypes: yup.array().of(yup.object()),
-  isTandem: yup.boolean().default(false)
+  isTandem: yup.boolean().default(false),
 });
 
 export const EMPTY_FORM_VALUES: Partial<TicketTypeAddonFields> = {
   name: '',
   cost: 30,
   ticketTypes: [],
-  id: undefined
+  id: undefined,
 };
 
 export interface IUseTicketTypeFormOpts {
@@ -51,7 +51,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
     defaultValues,
     mode: 'all',
     resolver: yupResolver(ticketAddonValidation),
-    shouldUnregister: false
+    shouldUnregister: false,
   });
   React.useEffect(() => {
     if (!isEqual(defaultValues, initialValues)) {
@@ -70,7 +70,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    dropzone: { dropzone }
+    dropzone: { dropzone },
   } = useDropzoneContext();
   const { createTicketTypeAddon, updateTicketTypeAddon } = useTickets();
   const notify = useNotifications();
@@ -86,16 +86,16 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
           ? await updateTicketTypeAddon(Number(fields.id), {
               name: validated.name,
               cost: validated.cost,
-              ticketTypeIds: (validated.ticketTypes as unknown as TicketTypeAddonEssentialsFragment[])?.map((e) =>
-                Number(e.id)
-              )
+              ticketTypeIds: (
+                validated.ticketTypes as unknown as TicketTypeAddonEssentialsFragment[]
+              )?.map((e) => Number(e.id)),
             })
           : await createTicketTypeAddon({
               name: validated.name,
               cost: validated.cost,
-              ticketTypeIds: (validated.ticketTypes as unknown as TicketTypeAddonEssentialsFragment[])?.map((e) =>
-                Number(e.id)
-              )
+              ticketTypeIds: (
+                validated.ticketTypes as unknown as TicketTypeAddonEssentialsFragment[]
+              )?.map((e) => Number(e.id)),
             });
 
         if (response) {
@@ -118,7 +118,15 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
         }
       }
     },
-    [dropzone?.id, setError, notify, onSuccess, createTicketTypeAddon, updateTicketTypeAddon, defaultValues]
+    [
+      dropzone?.id,
+      setError,
+      notify,
+      onSuccess,
+      createTicketTypeAddon,
+      updateTicketTypeAddon,
+      defaultValues,
+    ]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onSave), [handleSubmit, onSave]);

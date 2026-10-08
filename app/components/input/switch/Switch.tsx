@@ -4,8 +4,10 @@ import { HelperText, useTheme, Switch as SwitchComponent, List } from 'react-nat
 import { withHookForm } from '../withHookForm';
 
 type Extract<T> = T extends React.ComponentType<infer U> ? U : never;
-interface ISwitchProps
-  extends Omit<Extract<typeof SwitchComponent>, 'onChange' | 'onChangeText' | 'error'> {
+interface ISwitchProps extends Omit<
+  Extract<typeof SwitchComponent>,
+  'onChange' | 'onChangeText' | 'error'
+> {
   label?: string;
   error?: string | null;
   helperText?: string | null;

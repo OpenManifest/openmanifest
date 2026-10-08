@@ -21,14 +21,23 @@ interface IDropzoneUserChipSelect extends Pick<IChipSelect<unknown>, 'variant' |
 }
 
 function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
-  const { label, requiredPermissions, icon, value, variant, error, onLoadingStateChanged, onChange } = props;
+  const {
+    label,
+    requiredPermissions,
+    icon,
+    value,
+    variant,
+    error,
+    onLoadingStateChanged,
+    onChange,
+  } = props;
   const { currentDropzoneId } = useAppSelector((root) => root.global);
 
   const { data, loading } = useDropzoneUsersQuery({
     variables: {
       dropzoneId: currentDropzoneId?.toString() as string,
-      permissions: requiredPermissions
-    }
+      permissions: requiredPermissions,
+    },
   });
 
   React.useEffect(() => {
@@ -39,9 +48,18 @@ function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
     ([first]: DropzoneUserEssentialsFragment[]) => (first ? onChange(first) : null),
     [onChange]
   );
-  const getItemLabel = React.useCallback((dzUser: DropzoneUserEssentialsFragment) => dzUser?.user.name, []);
-  const isSelected = React.useCallback((item: DropzoneUserEssentialsFragment) => item.id === value?.id, [value?.id]);
-  const selected = React.useMemo(() => [value].filter(Boolean) as DropzoneUserEssentialsFragment[], [value]);
+  const getItemLabel = React.useCallback(
+    (dzUser: DropzoneUserEssentialsFragment) => dzUser?.user.name,
+    []
+  );
+  const isSelected = React.useCallback(
+    (item: DropzoneUserEssentialsFragment) => item.id === value?.id,
+    [value?.id]
+  );
+  const selected = React.useMemo(
+    () => [value].filter(Boolean) as DropzoneUserEssentialsFragment[],
+    [value]
+  );
 
   return loading ? (
     <ChipSelectSkeleton />

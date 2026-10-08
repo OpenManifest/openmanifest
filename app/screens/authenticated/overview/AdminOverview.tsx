@@ -96,10 +96,12 @@ function AdminOverviewPage() {
         selectedDropzones || [],
         (dropzone) => dropzone?.statistics?.inactiveUserCount || 0
       ),
-      loadCountByDay: (selectedDropzones || [])
-        .flatMap((dropzone) => dropzone?.statistics?.loadCountByDay || []),
-      slotsByJumpType: (selectedDropzones || [])
-        .flatMap((dropzone) => dropzone?.statistics?.slotsByJumpType || []),
+      loadCountByDay: (selectedDropzones || []).flatMap(
+        (dropzone) => dropzone?.statistics?.loadCountByDay || []
+      ),
+      slotsByJumpType: (selectedDropzones || []).flatMap(
+        (dropzone) => dropzone?.statistics?.slotsByJumpType || []
+      ),
     }),
     [selectedDropzones]
   );

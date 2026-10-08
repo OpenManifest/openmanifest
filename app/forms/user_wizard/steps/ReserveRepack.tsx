@@ -16,10 +16,12 @@ export const validation = yup.object({
     .transform((value) => {
       console.debug('Transforming repackExpiresAt', value, Number(value));
       return value ? Number(value) : undefined;
-    })
+    }),
 });
 
-type StepFields = { [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K] };
+type StepFields = {
+  [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K];
+};
 
 export function useStep(): WizardFormStep<StepFields> {
   const { dropzoneUser } = useUserProfileContext();
@@ -27,9 +29,9 @@ export function useStep(): WizardFormStep<StepFields> {
   return useMemo(
     () => ({
       defaultValues: {
-        repackExpiresAt: dropzoneUser?.user?.rigs?.[0]?.repackExpiresAt || undefined
+        repackExpiresAt: dropzoneUser?.user?.rigs?.[0]?.repackExpiresAt || undefined,
       },
-      validation
+      validation,
     }),
     [dropzoneUser?.user?.rigs]
   );
@@ -43,7 +45,11 @@ function ReserveRepackStep(props: IWizardStepProps) {
       <Fields>
         <Card style={styles.card}>
           <List.Subheader>Due date</List.Subheader>
-          <DatePickerField {...{ control }} name="repackExpiresAt" label="Reserve repack due date" />
+          <DatePickerField
+            {...{ control }}
+            name="repackExpiresAt"
+            label="Reserve repack due date"
+          />
         </Card>
       </Fields>
     </Step>
@@ -53,15 +59,15 @@ function ReserveRepackStep(props: IWizardStepProps) {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 48,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   field: {
-    marginBottom: 8
+    marginBottom: 8,
   },
   content: {
     width: '100%',
     justifyContent: 'space-around',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   card: { padding: 8, marginVertical: 16 },
   title: {
@@ -69,8 +75,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 80,
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
 
 export default ReserveRepackStep;

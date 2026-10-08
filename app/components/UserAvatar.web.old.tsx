@@ -23,7 +23,6 @@ function stringToColor(string: string) {
     const value = (hash >> (i * 8)) & 0xff;
     color += `00${value.toString(16)}`.substr(-2);
   }
-   
 
   return color;
 }
@@ -38,7 +37,7 @@ export default function UserAvatar(props: IUserAvatarProps) {
   return (
     <Avatar
       sx={{
-        bgcolor: stringToColor(name || 'Dropzone User')
+        bgcolor: stringToColor(name || 'Dropzone User'),
       }}
       style={{ height: size, width: size, alignSelf: 'center', marginRight: 12 }}
       src={image || undefined}

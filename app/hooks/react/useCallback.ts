@@ -4,7 +4,7 @@ import { useCustomEqualityCheck } from './useCustomEqualityCheck';
 function useCallback<
   // rome-ignore lint/suspicious/noExplicitAny: This has to be any for typechecking to infer it
   MemoizedFn extends (...args: any[]) => any,
-  Dependencies extends React.DependencyList
+  Dependencies extends React.DependencyList,
 >(
   value: MemoizedFn,
   dependencies: Dependencies,

@@ -25,7 +25,7 @@ function Badge(props: IBadgeProps) {
     [Permission.ActAsGca]: 'radio-handheld',
     [Permission.ActAsLoadMaster]: 'shield-account',
     [Permission.ActAsPilot]: 'account-tie-hat',
-    [Permission.ActAsRigInspector]: 'shield-search'
+    [Permission.ActAsRigInspector]: 'shield-search',
   }[type];
 
   const label = {
@@ -33,15 +33,17 @@ function Badge(props: IBadgeProps) {
     [Permission.ActAsGca]: 'GCA',
     [Permission.ActAsLoadMaster]: 'Load Master',
     [Permission.ActAsPilot]: 'Pilot',
-    [Permission.ActAsRigInspector]: 'Rig Inspector'
+    [Permission.ActAsRigInspector]: 'Rig Inspector',
   }[type];
 
   return (
     <Chip
       mode={selected ? 'outlined' : 'flat'}
-      style={[styles.chip, { borderColor: palette.primary.dark }, selected ? undefined : { opacity: 0.5 }].filter(
-        Boolean
-      )}
+      style={[
+        styles.chip,
+        { borderColor: palette.primary.dark },
+        selected ? undefined : { opacity: 0.5 },
+      ].filter(Boolean)}
       disabled={disabled}
       onPress={() => onPress?.()}
     >
@@ -68,12 +70,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'transparent',
     borderColor: 'white',
-    width: 'auto'
+    width: 'auto',
   },
   innerChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 30
-  }
+    height: 30,
+  },
 });
 export default Badge;
