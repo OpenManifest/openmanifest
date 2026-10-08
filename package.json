@@ -46,7 +46,7 @@
   "jest": {
     "preset": "jest-expo",
     "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?(@react-native|expo-modules-core|react-native)|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry|react-native-iphone-x-helper|react-native-reanimated|expo-linear-gradient/.*)"
+      "node_modules/(?!(jest-)?(@react-native|expo-modules-core|react-native)|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|native-base|react-native-iphone-x-helper|react-native-reanimated|expo-linear-gradient/.*)"
     ],
     "moduleNameMapper": {
       "^date-fns/esm$": "date-fns"
@@ -180,7 +180,6 @@
     "react-use": "^17.4.0",
     "redux": "4.2.1",
     "redux-persist": "^6.0.0",
-    "sentry-expo": "~6.0.0",
     "styled-components": "5.3.9",
     "urijs": "1.19.11",
     "yup": "0.32.11",
