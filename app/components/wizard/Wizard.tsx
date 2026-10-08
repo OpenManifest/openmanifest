@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import { SwiperFlatList } from 'react-native-swiper-flatlist';
+import { FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
 import WizardPagination from './Pagination';
 
 interface IWizardProps {
@@ -23,17 +22,22 @@ export const WizardContext = React.createContext<IWizardContext>({
 
 function Wizard(props: IWizardProps) {
   const { children, icons } = props;
+  const { width } = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
-  const ref = React.useRef<SwiperFlatList>(null);
-  const count = React.Children.count(children);
+  const ref = React.useRef<FlatList>(null);
+  const pages = React.useMemo(() => React.Children.toArray(children), [children]);
+  const count = pages.length;
 
   const value = React.useMemo(
     () => ({
       index,
       count,
       setIndex: (idx: number) => {
-        // @ts-ignore
+        if (idx < 0 || idx >= count) {
+          return;
+        }
         ref.current?.scrollToIndex({ index: idx, animated: true });
+        setIndex(idx);
       }
     }),
     [count, index]
@@ -41,31 +45,26 @@ function Wizard(props: IWizardProps) {
 
   return (
     <WizardContext.Provider value={value}>
-      <View style={[styles.container]}>
-        <SwiperFlatList
-          showPagination
-          index={index}
-          PaginationComponent={(wizardProps) => <WizardPagination {...wizardProps} icons={icons} />}
-          numColumns={1}
-          scrollEnabled={false}
-          autoplay={false}
+      <View style={[styles.container, { width }]}>
+        <FlatList
           ref={ref}
-          onChangeIndex={({ index: idx, prevIndex }) => {
-            setIndex(idx || 0);
-          }}
-        >
-          {children}
-        </SwiperFlatList>
+          horizontal
+          pagingEnabled
+          scrollEnabled={false}
+          showsHorizontalScrollIndicator={false}
+          data={pages}
+          keyExtractor={(page, idx) => (React.isValidElement(page) && page.key ? String(page.key) : String(idx))}
+          getItemLayout={(_, idx) => ({ length: width, offset: width * idx, index: idx })}
+          renderItem={({ item }) => <View style={{ width }}>{item}</View>}
+        />
+        <WizardPagination size={count} paginationIndex={index} icons={icons} />
       </View>
     </WizardContext.Provider>
   );
 }
 
-const { width } = Dimensions.get('window');
-
 const styles = StyleSheet.create({
   container: {
-    width,
     flex: 1,
     paddingBottom: 0
   }
