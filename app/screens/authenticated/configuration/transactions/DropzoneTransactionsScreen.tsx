@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { ProgressBar } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 
 import { FlatList } from 'react-native-gesture-handler';
 import { useAppSelector } from 'app/state';

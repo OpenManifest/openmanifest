@@ -1,7 +1,8 @@
 import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { RefreshControl, FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { Avatar, Card, FAB, List, ProgressBar, useTheme } from 'react-native-paper';
+import { Avatar, Card, FAB, List, useTheme } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 
 import SkeletonContent from 'app/components/Skeleton';
 import NoResults from 'app/components/NoResults';
@@ -201,7 +202,7 @@ export default function UsersScreen() {
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           small
           icon="plus"
-          onPress={dialogs.createUser.open}
+          onPress={() => dialogs.createUser.open()}
           label="Add user"
         />
       )}
