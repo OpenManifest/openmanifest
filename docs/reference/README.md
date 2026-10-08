@@ -226,7 +226,7 @@ Headline:
 |---|---|---|---|
 | expo | 53.0.27 (P3.14) | 57.0.27 | 57.0.27 (P3.18) |
 | react-native | 0.79.6 (P3.14) | 0.87.1 (npm `latest`) | 0.86.x pinned by SDK 57 |
-| react | 18.1.0 | 19.3.0 (npm `latest`) | 19.2.x pinned by SDK 57 |
+| react | 19.0.0 (P3.14) | 19.3.0 (npm `latest`) | 19.2.x pinned by SDK 57 |
 | @apollo/client | 3.7.11 | 4.3.2 | 3.14.1 (P3.19); 4.x is backlog |
 | typescript | 4.9.4 | 7.0.2 | 5.9.3 (P3.20) |
 | Node (tooling) | 16/18 in CI | 24.21.0 LTS | 20 until P3.15, then 24 |
