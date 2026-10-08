@@ -2,44 +2,49 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
+  Theme as NavigationTheme,
 } from '@react-navigation/native';
-import { DarkTheme as PaperDarkTheme, DefaultTheme as PaperDefaultTheme } from 'react-native-paper';
-import { Theme } from 'react-native-paper/lib/typescript/types';
+import { MD2DarkTheme, MD2LightTheme, MD2Theme } from 'react-native-paper';
 import color from 'color';
 import { primaryColor } from 'app/constants/Colors';
 import merge from 'lodash/merge';
 import { DropzoneExtensiveFragment, UserDetailedFragment } from '../api/operations';
 import { Credential } from '../api/schema.d';
 
-const CombinedDefaultTheme: Theme = {
-  ...PaperDefaultTheme,
+/**
+ * One theme object serves react-native-paper (Material Design 2, so visuals stay close to Paper 4) and
+ * React Navigation, which read different `colors` and `fonts` keys from it.
+ */
+export type AppTheme = Omit<MD2Theme, 'colors' | 'fonts'> & {
+  colors: MD2Theme['colors'] & NavigationTheme['colors'];
+  fonts: MD2Theme['fonts'] & NavigationTheme['fonts'];
+};
+
+const fonts: AppTheme['fonts'] = {
+  light: { fontFamily: 'Roboto_300Light', fontWeight: '300' },
+  thin: { fontFamily: 'Roboto_100Thin', fontWeight: '100' },
+  medium: { fontFamily: 'Roboto_500Medium', fontWeight: '500' },
+  regular: { fontFamily: 'Roboto_400Regular', fontWeight: '400' },
+  bold: { fontFamily: 'Roboto_700Bold', fontWeight: '700' },
+  heavy: { fontFamily: 'Roboto_700Bold', fontWeight: '700' },
+};
+
+const CombinedDefaultTheme: AppTheme = {
+  ...MD2LightTheme,
   ...NavigationDefaultTheme,
-
-  fonts: {
-    light: { fontFamily: 'Roboto_300Light', fontWeight: '300' },
-    thin: { fontFamily: 'Roboto_100Thin', fontWeight: '100' },
-    medium: { fontFamily: 'Roboto_500Medium', fontWeight: '500' },
-    regular: { fontFamily: 'Roboto_400Regular', fontWeight: '400' },
-  },
+  fonts,
   colors: {
-    ...PaperDefaultTheme.colors,
+    ...MD2LightTheme.colors,
     ...NavigationDefaultTheme.colors,
-
     primary: primaryColor,
   },
 };
-const CombinedDarkTheme: Theme = {
-  ...PaperDarkTheme,
+const CombinedDarkTheme: AppTheme = {
+  ...MD2DarkTheme,
   ...NavigationDarkTheme,
-
-  fonts: {
-    light: { fontFamily: 'Roboto_300Light', fontWeight: '300' as const },
-    thin: { fontFamily: 'Roboto_100Thin', fontWeight: '100' as const },
-    medium: { fontFamily: 'Roboto_500Medium', fontWeight: '500' as const },
-    regular: { fontFamily: 'Roboto_400Regular', fontWeight: '400' as const },
-  },
+  fonts,
   colors: {
-    ...PaperDarkTheme.colors,
+    ...MD2DarkTheme.colors,
     ...NavigationDarkTheme.colors,
     primary: primaryColor,
   },

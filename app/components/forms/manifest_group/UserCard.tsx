@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
-import { Card, TextInput, ProgressBar, Divider, List, Button } from 'react-native-paper';
+import { Card, TextInput, Divider, List, Button } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 import { Rig } from 'app/api/schema.d';
 import { useAppSelector } from 'app/state';
 import calculateWingLoading from 'app/utils/calculateWingLoading';

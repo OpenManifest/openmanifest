@@ -1305,7 +1305,7 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@callstack/react-theme-provider@^3.0.7":
+"@callstack/react-theme-provider@^3.0.9":
   version "3.0.9"
   resolved "https://registry.yarnpkg.com/@callstack/react-theme-provider/-/react-theme-provider-3.0.9.tgz#01035fa1231f1fffc1a806be1b55eb82716e80c1"
   integrity sha512-tTQ0uDSCL0ypeMa8T/E9wAZRGKWj8kXP7+6RYgPTfOPs9N07C9xM8P02GJ3feETap4Ux5S69D9nteq9mEj86NA==
@@ -5234,7 +5234,7 @@ collect-v8-coverage@^1.0.0:
   resolved "https://registry.yarnpkg.com/collect-v8-coverage/-/collect-v8-coverage-1.0.3.tgz#cc1f01eb8d02298cbc9a437c74c70ab4e5210b80"
   integrity sha512-1L5aqIkwPfiodaMgQunkF1zRhNqifHBmtbbbxcr6yVxxBnliw4TDOW6NxpO8DJLgJ16OT+Y4ztZqP6p/FtXnAw==
 
-color-convert@*:
+color-convert@*, color-convert@^3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-3.1.3.tgz#db6627b97181cb8facdfce755ae26f97ab0711f1"
   integrity sha512-fasDH2ont2GqF5HpyO4w0+BcewlhHEZOFn9c1ckZdHpJ56Qb7MHhH/IcJZbBGgvdtwdwNbLvxiBEdg336iA9Sg==
@@ -5278,6 +5278,13 @@ color-string@^1.6.0, color-string@^1.9.0:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
 
+color-string@^2.1.3:
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/color-string/-/color-string-2.1.4.tgz#9dcf566ff976e23368c8bd673f5c35103ab41058"
+  integrity sha512-Bb6Cq8oq0IjDOe8wJmi4JeNn763Xs9cfrBcaylK1tPypWzyoy2G3l90v9k64kjphl/ZJjPIShFztenRomi8WTg==
+  dependencies:
+    color-name "^2.0.0"
+
 color@4.2.3, color@^4.2.3:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/color/-/color-4.2.3.tgz#d781ecb5e57224ee43ea9627560107c0e0c6463a"
@@ -5286,13 +5293,21 @@ color@4.2.3, color@^4.2.3:
     color-convert "^2.0.1"
     color-string "^1.9.0"
 
-color@^3.1.2, color@^3.2.1:
+color@^3.1.2:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/color/-/color-3.2.1.tgz#3544dc198caf4490c3ecc9a790b54fe9ff45e164"
   integrity sha512-aBl7dZI9ENN6fUGC7mWpMTPNHmWUSNan9tuWN6ahh5ZLNk9baLJOnSMlrQkHcrfFgz2/RigjUVAjdx36VcemKA==
   dependencies:
     color-convert "^1.9.3"
     color-string "^1.6.0"
+
+color@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/color/-/color-5.0.3.tgz#f79390b1b778e222ffbb54304d3dbeaef633f97f"
+  integrity sha512-ezmVcLR3xAVp8kYOm4GS45ZLLgIE6SPAFoduLr6hTDajwb3KZ2F46gulK3XpcwRFb5KKGCSezCBAY4Dw4HsyXA==
+  dependencies:
+    color-convert "^3.1.3"
+    color-string "^2.1.3"
 
 colorette@^2.0.16:
   version "2.0.20"
@@ -10846,11 +10861,6 @@ react-native-input-spinner@1.8.0:
   dependencies:
     prop-types "^15.7.2"
 
-react-native-iphone-x-helper@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
-  integrity sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg==
-
 react-native-maps@1.18.0:
   version "1.18.0"
   resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-1.18.0.tgz#48d253041a9baa5606b4f3647043d660a93b3b01"
@@ -10863,26 +10873,28 @@ react-native-pager-view@6.5.1:
   resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-6.5.1.tgz#e639e8c975f4c749aae1c3120dc4208265fce4cc"
   integrity sha512-YdX7bP+rPYvATMU7HzlMq9JaG3ui/+cVRbFZFGW+QshDULANFg9ECR1BA7H7JTIcO/ZgWCwF+1aVmYG5yBA9Og==
 
-react-native-paper-dates@0.8.7:
-  version "0.8.7"
-  resolved "https://registry.yarnpkg.com/react-native-paper-dates/-/react-native-paper-dates-0.8.7.tgz#56ef721aab6e918f576090f20e07bba8333c2fc1"
-  integrity sha512-sHEBIaQvamZetc7QhJWVepD/m9hZxOZwI99PduzCSKvzXcf6m13qAmO+Z/5kj1VdAsiWi9WOM6YMJVm47A9Z4A==
+react-native-paper-dates@0.24.0:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/react-native-paper-dates/-/react-native-paper-dates-0.24.0.tgz#f8df0c00d35d966863b9555a8867a0945328305f"
+  integrity sha512-IBQK9OPMHWLu+7NLxnh/HUWJSbQLkvp7fwdP/8RnCXBNkOk9MI+PnHWbdE7P6V5v3XTjAPGN95iMm8TfGQv97Q==
   dependencies:
-    color "^3.2.1"
+    color "^5.0.3"
 
-react-native-paper-tabs@0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/react-native-paper-tabs/-/react-native-paper-tabs-0.7.0.tgz#97ae5838f8a2d3ac2826cf1dee065364d7c3bad8"
-  integrity sha512-TXz1G1hLJNvykJ57VhjKFVRgRDC2bxzb/bwPJ59POK9nGO0yD+Rx7+W5D0i5/ZQF1uKSV92IMv+eowd/BRM46Q==
-
-react-native-paper@4.12.4:
-  version "4.12.4"
-  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-4.12.4.tgz#c04ce40d225dc267b7ee32be705dd553f44e0c0c"
-  integrity sha512-NMfLSIN0Ql/KCTSimhgzbEOgz371dqDAgChnp2VE4H7n1B0Pwy0bzPKmY/T8trVvEdmJRXrbXAusaFq8elDXNg==
+react-native-paper-tabs@^0.11.4:
+  version "0.11.4"
+  resolved "https://registry.yarnpkg.com/react-native-paper-tabs/-/react-native-paper-tabs-0.11.4.tgz#dedd909ba6b83d0a9f25a0ebf156cab1a7218cab"
+  integrity sha512-E58QfLWfW4X41glTpRTMNJJPFvdgLXaA9wAZX14CHNNiIbDRYlTlfudRX2v6En/FPzjIPyYVVEF4HWziiDZ7hQ==
   dependencies:
-    "@callstack/react-theme-provider" "^3.0.7"
+    color "^4.2.3"
+
+react-native-paper@5.15.3:
+  version "5.15.3"
+  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-5.15.3.tgz#7eda85b920b60c2157b42d9dd4d7d291229fb277"
+  integrity sha512-GEyNTmWElIZgnYw09AjjCNupRYzCmP79uAAyGSyCEUZz7KBz1wtJcC0wVUkozR1Rn3PK/td/9LlR6+F1hzmYvA==
+  dependencies:
+    "@callstack/react-theme-provider" "^3.0.9"
     color "^3.1.2"
-    react-native-iphone-x-helper "^1.3.1"
+    use-latest-callback "^0.2.3"
 
 react-native-reanimated-carousel@^3.5.1:
   version "3.5.1"
@@ -12741,7 +12753,7 @@ urlpattern-polyfill@^8.0.0:
   resolved "https://registry.yarnpkg.com/urlpattern-polyfill/-/urlpattern-polyfill-8.0.2.tgz#99f096e35eff8bf4b5a2aa7d58a1523d6ebc7ce5"
   integrity sha512-Qp95D4TPJl1kC9SKigDcqgyM2VDVO4RiJc2d4qe5GrYm+zbIQCWWKAFaJNQ4BhdFeDGwBmAxqJBwWSJDb9T3BQ==
 
-use-latest-callback@^0.2.4:
+use-latest-callback@^0.2.3, use-latest-callback@^0.2.4:
   version "0.2.6"
   resolved "https://registry.yarnpkg.com/use-latest-callback/-/use-latest-callback-0.2.6.tgz#e5ea752808c86219acc179ace0ae3c1203255e77"
   integrity sha512-FvRG9i1HSo0wagmX63Vrm8SnlUU3LMM3WyZkQ76RnslpBrX694AdG4A0zQBx2B3ZifFA0yv/BaEHGBnEax5rZg==
