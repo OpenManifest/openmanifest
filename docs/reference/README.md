@@ -14,7 +14,7 @@ Client diagrams: [diagrams.md](diagrams.md).
 
 | Concern | Library (installed version) | Where |
 |---|---|---|
-| Runtime | Expo SDK 50.0.21 (P3.7; was 49.0.23), React Native 0.73.6, React 18.2.0, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before) | `package.json`, `app.json` |
+| Runtime | Expo SDK 51.0.39 (P3.8; was 50.0.21), React Native 0.74.5, React 18.2.0, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before) | `package.json`, `app.json` |
 | Language | TypeScript 4.9.4 (`strict`), path alias `app/*` via `babel-plugin-module-resolver` | `tsconfig.json`, `babel.config.js` |
 | Server data | Apollo Client 3.7.11 (`BatchHttpLink`, ActionCable link for subscriptions) | `app/api/` |
 | Client state | Redux Toolkit 1.9.3 + redux-persist 6 (`global` slice persisted) | `app/state/` |
@@ -222,8 +222,8 @@ Headline:
 
 | Package | Installed | Latest | Target in plan |
 |---|---|---|---|
-| expo | 50.0.21 (P3.7) | 57.0.27 | 57.0.27 (P3.18) |
-| react-native | 0.73.6 (P3.7) | 0.87.1 (npm `latest`) | 0.86.x pinned by SDK 57 |
+| expo | 51.0.39 (P3.8) | 57.0.27 | 57.0.27 (P3.18) |
+| react-native | 0.74.5 (P3.8) | 0.87.1 (npm `latest`) | 0.86.x pinned by SDK 57 |
 | react | 18.1.0 | 19.3.0 (npm `latest`) | 19.2.x pinned by SDK 57 |
 | @apollo/client | 3.7.11 | 4.3.2 | 3.14.1 (P3.19); 4.x is backlog |
 | typescript | 4.9.4 | 7.0.2 | 5.9.3 (P3.20) |
@@ -293,10 +293,10 @@ Full table:
 | `expo-font` | dep | `~11.0.1` | 11.0.1 | 57.0.4 | `~57.0.4` |  |
 | `expo-image-picker` | dep | `~14.0.2` | 14.0.2 | 57.0.20 | `~57.0.20` |  |
 | `expo-linear-gradient` | dep | `~12.0.1` | 12.0.1 | 57.0.2 | `~57.0.2` |  |
-| `expo-linking` | dep | `~6.2.2` (P3.7) | 6.2.2 | 57.0.12 | `~57.0.12` |  |
+| `expo-linking` | dep | `~6.3.1` (P3.8) | 6.3.1 | 57.0.12 | `~57.0.12` |  |
 | `expo-localization` | dep | `~14.0.0` | 14.0.0 | 57.0.2 | `~57.0.2` |  |
 | `expo-location` | dep | `~15.0.1` | 15.0.1 | 57.0.20 | `~57.0.20` |  |
-| `expo-notifications` | dep | `~0.17.0` | 0.17.0 | 57.0.22 | `~57.0.22` |  |
+| `expo-notifications` | dep | `~0.28.19` (P3.8) | 0.28.19 | 57.0.22 | `~57.0.22` |  |
 | `expo-splash-screen` | dep | `~0.17.5` | 0.17.5 | 57.0.9 | `~57.0.9` |  |
 | `expo-status-bar` | dep | `~1.4.2` | 1.4.2 | 57.0.1 | `~57.0.1` |  |
 | `expo-updates` | dep | `~0.15.6` | 0.15.6 | 57.0.25 | `~57.0.25` |  |
@@ -336,7 +336,7 @@ Full table:
 | `react-native-paper` | dep | `4.12.4` | 4.12.4 | 5.15.3 |  |  |
 | `react-native-paper-dates` | dep | `0.8.7` | 0.8.7 | 0.24.0 |  |  |
 | `react-native-paper-tabs` | dep | `0.7.0` | 0.7.0 | 0.11.4 |  |  |
-| `react-native-reanimated` | dep | `~3.6.2` (P3.7) | 3.6.3 | 4.7.1 | `4.5.1` |  |
+| `react-native-reanimated` | dep | `~3.10.1` (P3.8) | 3.10.1 | 4.7.1 | `4.5.1` |  |
 | `react-native-reanimated-carousel` | dep | `^3.5.1` (P3.6) | 3.5.1 | 5.1.1 |  |  |
 | `react-native-safe-area-context` | dep | `4.4.1` | 4.4.1 | 5.10.1 | `~5.7.0` |  |
 | `react-native-screens` | dep | `~3.18.0` | 3.18.2 | 4.28.0 | `~4.26.0` |  |
@@ -410,7 +410,7 @@ Full table:
 | `glob` | dev | `9.3.2` | 9.3.2 | 13.0.6 |  |  |
 | `isomorphic-fetch` | dev | `3.0.0` | 3.0.0 | 3.0.0 |  | last publish 2023-10-23 |
 | `jest` | dev | `^26.6.3` | 26.6.3 | 30.5.2 |  |  |
-| `jest-expo` | dev | `~50.0.4` (P3.7) | 50.0.4 | 57.0.5 | `~57.0.5` | needs jest 29 |
+| `jest-expo` | dev | `~51.0.4` (P3.8) | 51.0.4 | 57.0.5 | `~57.0.5` | needs jest 29 |
 | `jest-junit` | dev | `13.0.0` | 13.0.0 | 17.0.0 |  |  |
 | `json` | dev | `^11.0.0` | 11.0.0 | 11.0.0 |  | last publish 2023-03-04 |
 | `patch-package` | dev | `6.5.1` | 6.5.1 | 8.0.1 |  |  |
