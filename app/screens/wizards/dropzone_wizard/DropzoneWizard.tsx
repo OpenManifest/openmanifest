@@ -156,7 +156,7 @@ function DropzoneSetupScreen() {
   ]);
 
   const noop = React.useCallback(() => Promise.resolve(), []);
-  const wizard = React.useRef<WizardRef>();
+  const wizard = React.useRef<WizardRef>(undefined);
 
   return (
     <Wizard

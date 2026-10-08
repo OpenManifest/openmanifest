@@ -36,7 +36,7 @@ function WizardScreen(props: IWizardScreenProps) {
 
   const { index, setIndex } = React.useContext(WizardContext);
 
-  const scrollRef = React.useRef<ScrollView>();
+  const scrollRef = React.useRef<ScrollView>(undefined);
 
   React.useEffect(() => {
     if (scrollRef.current) {

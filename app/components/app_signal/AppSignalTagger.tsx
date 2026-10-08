@@ -51,7 +51,7 @@ function AppSignalSessionTagProvider(props: React.PropsWithChildren<object>) {
     }
   }, [sessionTags, setTags, tags]);
 
-  return children as JSX.Element;
+  return children as React.JSX.Element;
 }
 
 export default AppSignalSessionTagProvider;

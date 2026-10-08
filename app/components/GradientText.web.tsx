@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, TextProps } from 'react-native';
 import { useAppSelector } from 'app/state';
 
-function GradientText(props: TextProps & { children: React.ReactText }) {
+function GradientText(props: TextProps & { children: string | number }) {
   const { style } = props;
   const palette = useAppSelector((state) => state.global.palette);
   return (

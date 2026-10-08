@@ -57,7 +57,7 @@ function LocationWizardStep(props: IWizardStepProps) {
 
   const opacity = React.useRef(new Animated.Value(0));
 
-  const map = React.useRef<MapView>();
+  const map = React.useRef<MapView>(undefined);
 
   const [isAnimating, setAnimating] = React.useState<boolean>(false);
   const fadeOut = React.useRef(

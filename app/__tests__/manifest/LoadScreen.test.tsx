@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '@testing-library/jest-native';
 import { Permission } from 'app/api/schema.d';
 import { LoadUpdatedDocument } from 'app/api/reflection';
 import * as appRedux from '../../state';

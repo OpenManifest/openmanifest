@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Text, TextInput, View } from 'react-native';
-import '@testing-library/jest-native';
 import { CreateOrderDocument } from 'app/api/reflection';
 import { useDropzoneContext } from 'app/providers';
 import { useUserProfile } from 'app/api/crud';

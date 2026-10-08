@@ -73,7 +73,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
     })
   );
 
-  const map = React.useRef<MapView>();
+  const map = React.useRef<MapView>(undefined);
   const setCoordinateFade = React.useCallback((visible: boolean) => {
     setAnimating(true);
     (visible ? fadeIn : fadeOut).current.start(() => setAnimating(false));

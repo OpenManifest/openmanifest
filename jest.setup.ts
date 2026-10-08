@@ -54,19 +54,8 @@ require('react-native').Easing.ease(0.5);
 
 // expo-asset downloads assets through expo-file-system, whose jest mock returns undefined (asset names, fonts and
 // images are requested while the screens render).
-jest.mock('expo-asset/build/PlatformUtils', () => ({
-  ...jest.requireActual('expo-asset/build/PlatformUtils'),
+// (Relative paths: expo-asset's package `exports` hide its build files from bare specifiers.)
+jest.mock('./node_modules/expo-asset/build/ExpoAsset.js', () => ({
+  ...jest.requireActual('./node_modules/expo-asset/build/ExpoAsset.js'),
   downloadAsync: jest.fn(async (uri: string) => uri),
-}));
-
-// jest-expo's auto-mock of the ExpoFontLoader native module returns undefined from getLoadedFonts(), but expo-font 13
-// iterates over the result when an icon component is constructed.
-jest.mock('expo-font/build/ExpoFontLoader', () => ({
-  __esModule: true,
-  default: {
-    getLoadedFonts: () => [],
-    loadAsync: jest.fn(async () => undefined),
-    unloadAllAsync: jest.fn(async () => undefined),
-    unloadAsync: jest.fn(async () => undefined),
-  },
 }));

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '@testing-library/jest-native';
 import * as appRedux from '../../state';
 import { render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_PROFILE from './__mocks__/QueryDropzoneUserProfile.mock';

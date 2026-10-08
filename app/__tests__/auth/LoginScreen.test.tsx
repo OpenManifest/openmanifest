@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '@testing-library/jest-native';
 import { TextInput } from 'react-native';
 import { GraphQLError } from 'graphql';
 import { LoginDocument } from 'app/api/reflection';

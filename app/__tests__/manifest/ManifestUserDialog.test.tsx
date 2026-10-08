@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '@testing-library/jest-native';
 import { ManifestUserDocument } from 'app/api/reflection';
 import * as appRedux from '../../state';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
