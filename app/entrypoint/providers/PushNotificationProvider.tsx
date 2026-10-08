@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as Notifications from 'expo-notifications';
 import { Linking, Platform } from 'react-native';
 import * as Device from 'expo-device';
+import Constants from 'expo-constants';
 import URI from 'urijs';
 import { useUpdateUserMutation } from 'app/api/reflection';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
@@ -21,7 +22,9 @@ async function registerForPushNotificationsAsync(): Promise<string | null> {
       console.warn('Failed to get push token for push notification!');
       return null;
     }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
+    token = (
+      await Notifications.getExpoPushTokenAsync({ projectId: Constants.expoConfig?.extra?.eas?.projectId })
+    ).data;
   } else {
     console.warn('Must use physical device for Push Notifications');
   }
