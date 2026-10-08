@@ -14,7 +14,7 @@ Client diagrams: [diagrams.md](diagrams.md).
 
 | Concern | Library (installed version) | Where |
 |---|---|---|
-| Runtime | Expo SDK 49.0.23 (P3.6; was 48.0.21), React Native 0.72.10, React 18.2.0, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before) | `package.json`, `app.json` |
+| Runtime | Expo SDK 50.0.21 (P3.7; was 49.0.23), React Native 0.73.6, React 18.2.0, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before) | `package.json`, `app.json` |
 | Language | TypeScript 4.9.4 (`strict`), path alias `app/*` via `babel-plugin-module-resolver` | `tsconfig.json`, `babel.config.js` |
 | Server data | Apollo Client 3.7.11 (`BatchHttpLink`, ActionCable link for subscriptions) | `app/api/` |
 | Client state | Redux Toolkit 1.9.3 + redux-persist 6 (`global` slice persisted) | `app/state/` |
@@ -22,7 +22,7 @@ Client diagrams: [diagrams.md](diagrams.md).
 | UI kit | react-native-paper 4.12.4, @gorhom/bottom-sheet 4.6.4, react-native-reanimated 3.3.0 | |
 | Forms | react-hook-form 7 + yup (newer forms in `app/forms/`); Redux form slices (older forms in `app/components/forms/`) | |
 | Code generation | graphql-codegen (`codegen.yml`) → `app/api/schema.d.ts`, `operations.ts`, `reflection.tsx` | |
-| Web | `expo export:web` (webpack 4 via `@expo/webpack-config`) | `webpack.config.js` |
+| Web | `expo export --platform web` (Metro, `web.bundler: metro`, `output: single`; was webpack 4 before P3.7). Custom HTML, `404.html` and `.well-known/` live in `public/`, which Metro copies to `dist/` | `app.json`, `metro.config.js`, `public/` |
 | Builds | EAS Build / EAS Update (`eas.json`, project id `1d8fa34d-2ff8-4095-ab49-29a426117a8c`) | |
 | Monitoring | AppSignal JS (`@appsignal/javascript`, Apollo link), `sentry-expo` (installed, unused) | `app/api/client/links/appSignal.ts` |
 | Lint/format | ESLint (react-hooks rules only), Rome 11 nightly (lint + format), Prettier config | `.eslintrc.js`, `rome.json` |
@@ -197,7 +197,7 @@ Nothing below was committed; the plan's Phase 0 makes it reproducible.
 | Lint | ESLint and Rome | pass |
 | Tests | `check:testing` is `exit 0`. Running `npx jest` finds 1 suite / 8 tests (utility tests); `ManifestScreen` test is excluded and fails (react-test-renderer 17 vs React 18.1; after aligning, `BottomSheetModalInternalContext` null) — BUG-081, fix in plan P1.10 | |
 | Expo API | `api.expo.dev` blocked; `npx expo install --check` and `expo-doctor` cannot fetch version data | `EXPO_OFFLINE=1` |
-| Web export | `EXPO_ENV=local npx expo export:web` → `web-build/` (~3 min, warnings only). `--output-dir` is not supported in SDK 47 | move the old `web-build/` aside for a second build |
+| Web export | `EXPO_ENV=local npx expo export --platform web` → `dist/` (~1 min; Metro, P3.7). `--output-dir` works too | |
 | Serving | the global `serve` package is broken in the VM | small Python SPA server (fallback to `index.html`); plan P0.8 adds `scripts/serve-web-build.py` |
 | Browser test | Playwright with pre-installed Chromium; `fill()` on Paper inputs timed out | click + `keyboard.type`; launch with `--proxy-bypass-list=local.openmanifest.org` so the websocket is not sent through the agent proxy |
 | Result | login → dropzone → manifest board → load screen works at 360×640 and 1280×800 against the local API. At 360×640 the login "Sign up" button is below the fold and the screen does not scroll (BUG-076) | |
@@ -222,8 +222,8 @@ Headline:
 
 | Package | Installed | Latest | Target in plan |
 |---|---|---|---|
-| expo | 49.0.23 (P3.6) | 57.0.27 | 57.0.27 (P3.18) |
-| react-native | 0.72.10 (P3.6) | 0.87.1 (npm `latest`) | 0.86.x pinned by SDK 57 |
+| expo | 50.0.21 (P3.7) | 57.0.27 | 57.0.27 (P3.18) |
+| react-native | 0.73.6 (P3.7) | 0.87.1 (npm `latest`) | 0.86.x pinned by SDK 57 |
 | react | 18.1.0 | 19.3.0 (npm `latest`) | 19.2.x pinned by SDK 57 |
 | @apollo/client | 3.7.11 | 4.3.2 | 3.14.1 (P3.19); 4.x is backlog |
 | typescript | 4.9.4 | 7.0.2 | 5.9.3 (P3.20) |
@@ -293,7 +293,7 @@ Full table:
 | `expo-font` | dep | `~11.0.1` | 11.0.1 | 57.0.4 | `~57.0.4` |  |
 | `expo-image-picker` | dep | `~14.0.2` | 14.0.2 | 57.0.20 | `~57.0.20` |  |
 | `expo-linear-gradient` | dep | `~12.0.1` | 12.0.1 | 57.0.2 | `~57.0.2` |  |
-| `expo-linking` | dep | `~3.3.1` | 3.3.1 | 57.0.12 | `~57.0.12` |  |
+| `expo-linking` | dep | `~6.2.2` (P3.7) | 6.2.2 | 57.0.12 | `~57.0.12` |  |
 | `expo-localization` | dep | `~14.0.0` | 14.0.0 | 57.0.2 | `~57.0.2` |  |
 | `expo-location` | dep | `~15.0.1` | 15.0.1 | 57.0.20 | `~57.0.20` |  |
 | `expo-notifications` | dep | `~0.17.0` | 0.17.0 | 57.0.22 | `~57.0.22` |  |
@@ -336,7 +336,7 @@ Full table:
 | `react-native-paper` | dep | `4.12.4` | 4.12.4 | 5.15.3 |  |  |
 | `react-native-paper-dates` | dep | `0.8.7` | 0.8.7 | 0.24.0 |  |  |
 | `react-native-paper-tabs` | dep | `0.7.0` | 0.7.0 | 0.11.4 |  |  |
-| `react-native-reanimated` | dep | `~3.3.0` (P3.6) | 3.3.0 | 4.7.1 | `4.5.1` |  |
+| `react-native-reanimated` | dep | `~3.6.2` (P3.7) | 3.6.3 | 4.7.1 | `4.5.1` |  |
 | `react-native-reanimated-carousel` | dep | `^3.5.1` (P3.6) | 3.5.1 | 5.1.1 |  |  |
 | `react-native-safe-area-context` | dep | `4.4.1` | 4.4.1 | 5.10.1 | `~5.7.0` |  |
 | `react-native-screens` | dep | `~3.18.0` | 3.18.2 | 4.28.0 | `~4.26.0` |  |
@@ -365,7 +365,6 @@ Full table:
 | `@babel/preset-env` | dev | `7.21.4` | 7.21.4 | 8.0.7 |  |  |
 | `@babel/runtime` | dev | `7.21.0` | 7.21.0 | 8.0.7 |  |  |
 | `@expo/metro-config` | dev | `0.7.1` | 0.7.1 | 57.0.13 |  |  |
-| `@expo/webpack-config` | dev | `18.0.3` | 18.0.3 | 19.0.1 |  |  |
 | `@graphql-codegen/add` | dev | `3.2.3` | 3.2.3 | 7.1.1 |  |  |
 | `@graphql-codegen/cli` | dev | `2.16.4` | 2.16.4 | 7.4.5 |  |  |
 | `@graphql-codegen/import-types-preset` | dev | `2.2.6` | 2.2.6 | 4.0.1 |  |  |
@@ -411,7 +410,7 @@ Full table:
 | `glob` | dev | `9.3.2` | 9.3.2 | 13.0.6 |  |  |
 | `isomorphic-fetch` | dev | `3.0.0` | 3.0.0 | 3.0.0 |  | last publish 2023-10-23 |
 | `jest` | dev | `^26.6.3` | 26.6.3 | 30.5.2 |  |  |
-| `jest-expo` | dev | `~49.0.0` (P3.6) | 49.0.0 | 57.0.5 | `~57.0.5` | needs jest 29 |
+| `jest-expo` | dev | `~50.0.4` (P3.7) | 50.0.4 | 57.0.5 | `~57.0.5` | needs jest 29 |
 | `jest-junit` | dev | `13.0.0` | 13.0.0 | 17.0.0 |  |  |
 | `json` | dev | `^11.0.0` | 11.0.0 | 11.0.0 |  | last publish 2023-03-04 |
 | `patch-package` | dev | `6.5.1` | 6.5.1 | 8.0.1 |  |  |
