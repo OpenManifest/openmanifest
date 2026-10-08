@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { isEqual, noop } from 'lodash';
+import { noop } from 'lodash';
+import sameVariables from 'app/utils/sameVariables';
 import { useAppSelector } from 'app/state';
 import { useCurrentUserPermissionsLazyQuery, useDropzoneLazyQuery, useUpdateDropzoneMutation } from '../reflection';
 import {
@@ -55,14 +56,14 @@ export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
     [currentDropzoneId, query?.data?.dropzone?.id, updateDropzone]
   );
   React.useEffect(() => {
-    if (authenticated && variables?.dropzoneId && !isEqual(variables, query.variables)) {
+    if (authenticated && variables?.dropzoneId && !sameVariables(variables, query.variables)) {
       console.debug('[Context::Dropzone] Fetching dropzone', variables);
       getDropzone({ variables });
     }
   }, [authenticated, getDropzone, query.variables, variables]);
 
   React.useEffect(() => {
-    if (authenticated && permissionsVariables?.dropzoneId && !isEqual(permissionsVariables, permissions.variables)) {
+    if (authenticated && permissionsVariables?.dropzoneId && !sameVariables(permissionsVariables, permissions.variables)) {
       console.debug('[Context::Dropzone] Fetching user permissions', permissionsVariables);
       getPermissions({ variables: permissionsVariables as CurrentUserPermissionsQueryVariables });
     }

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { isEqual, noop } from 'lodash';
+import { noop } from 'lodash';
+import sameVariables from 'app/utils/sameVariables';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useAppSelector } from 'app/state';
 import {
@@ -35,7 +36,7 @@ export function useAircrafts(vars?: Partial<PlanesQueryVariables>) {
   });
 
   React.useEffect(() => {
-    if (authenticated && variables?.dropzoneId && !isEqual(variables, query.variables)) {
+    if (authenticated && variables?.dropzoneId && !sameVariables(variables, query.variables)) {
       console.debug('[Context::Aircrafts] Fetching aircrafts', variables);
       getAircrafts({ variables });
     }
