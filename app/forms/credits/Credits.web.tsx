@@ -1,7 +1,7 @@
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Tabs, TabScreen } from 'react-native-paper-tabs';
+import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
 import { TransactionType } from 'app/api/schema.d';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import CreditsForm from './CreditsForm';
@@ -30,20 +30,21 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
       scrollable={false}
     >
       <View style={{ marginBottom: 24 }}>
-        <Tabs
+        <TabsProvider
           defaultIndex={0} // default = 0
           onChangeIndex={(newIndex) => {
             setValue('type', newIndex === 1 ? TransactionType.Withdrawal : TransactionType.Deposit);
           }}
-          mode="fixed"
         >
-          <TabScreen label="Deposit" icon="arrow-up">
-            <View />
-          </TabScreen>
-          <TabScreen label="Withdraw" icon="arrow-down">
-            <View />
-          </TabScreen>
-        </Tabs>
+          <Tabs mode="fixed">
+            <TabScreen label="Deposit" icon="arrow-up">
+              <View />
+            </TabScreen>
+            <TabScreen label="Withdraw" icon="arrow-down">
+              <View />
+            </TabScreen>
+          </Tabs>
+        </TabsProvider>
       </View>
       <View style={styles.form}>
         <CreditsForm {...{ control, dropzoneUser }} />

@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@mui/material';
 import { Theme, createTheme } from '@mui/material/styles';
 import * as React from 'react';
-import { Provider as MaterialProvider } from 'react-native-paper';
+import { PaperProvider } from 'react-native-paper';
 
 import { actions, useAppDispatch, useAppSelector } from 'app/state/store';
 
@@ -40,9 +40,9 @@ function Content(props: { children: React.ReactNode }) {
     dispatch(actions.global.setAppearance(e.matches ? 'dark' : 'light'));
   });
   return (
-    <MaterialProvider theme={state.theme as ReactNativePaper.Theme}>
+    <PaperProvider theme={state.theme}>
       <ThemeProvider theme={muiTheme}>{children}</ThemeProvider>
-    </MaterialProvider>
+    </PaperProvider>
   );
 }
 export default Content;

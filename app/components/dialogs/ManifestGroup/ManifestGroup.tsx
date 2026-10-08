@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { Tabs, TabScreen } from 'react-native-paper-tabs';
+import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useManifestGroupMutation } from 'app/api/reflection';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
@@ -198,14 +198,16 @@ export default function ManifestGroupDialog(props: IManifestUserDialog) {
   const StickyHeader = React.useCallback(
     () => (
       <View pointerEvents={(state.fields.users?.value?.length || 0) > 0 ? undefined : 'none'}>
-        <Tabs defaultIndex={tabIndex} mode="fixed" onChangeIndex={setTabIndex}>
-          <TabScreen label="Create group">
-            <View />
-          </TabScreen>
-          <TabScreen label="Configure jump">
-            <View />
-          </TabScreen>
-        </Tabs>
+        <TabsProvider defaultIndex={tabIndex} onChangeIndex={setTabIndex}>
+          <Tabs mode="fixed">
+            <TabScreen label="Create group">
+              <View />
+            </TabScreen>
+            <TabScreen label="Configure jump">
+              <View />
+            </TabScreen>
+          </Tabs>
+        </TabsProvider>
       </View>
     ),
     [state.fields.users?.value?.length, tabIndex]

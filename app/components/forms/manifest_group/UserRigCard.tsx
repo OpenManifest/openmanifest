@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
-import { Card, ProgressBar, Divider, List, Button } from 'react-native-paper';
+import { Card, Divider, List, Button } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 import { useAppSelector } from 'app/state';
 import calculateWingLoading from 'app/utils/calculateWingLoading';
 import Chip from 'app/components/chips/Chip';

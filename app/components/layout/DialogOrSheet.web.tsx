@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Dialog, IconButton, ProgressBar, useTheme } from 'react-native-paper';
+import { Button, Dialog, IconButton, useTheme } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 import { StyleSheet, View } from 'react-native';
 import { Drawer, Typography } from '@mui/material';
 

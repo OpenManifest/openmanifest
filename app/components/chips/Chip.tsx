@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, TextStyle } from 'react-native';
 import { Chip as MaterialChip, useTheme } from 'react-native-paper';
 
 type ExtractProps<T> = T extends React.ComponentType<infer P> ? P : object;
@@ -27,7 +27,7 @@ export default function Chip(props: ChipProps) {
     }),
     [backgroundColor, color, mode, small]
   );
-  const iconStyles: ChipProps['style'] = React.useMemo(
+  const iconStyles: TextStyle = React.useMemo(
     () => (Platform.OS === 'web' ? {} : { marginTop: 0, marginBottom: 3 }),
     []
   );

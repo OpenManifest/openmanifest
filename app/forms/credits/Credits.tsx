@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
-import { Tabs, TabScreen } from 'react-native-paper-tabs';
+import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
 import { DropzoneUserDetailsFragment, OrderEssentialsFragment } from 'app/api/operations';
 import useKeyboardVisibility from 'app/hooks/useKeyboardVisibility';
 import { useAppSelector } from 'app/state';
@@ -74,20 +74,21 @@ export default function CreditSheet(props: ICreditsSheet) {
     >
       <View style={{ backgroundColor: 'white', flexGrow: 1 }} testID="credits-sheet">
         <View>
-          <Tabs
+          <TabsProvider
             defaultIndex={0} // default = 0
             onChangeIndex={(newIndex) => {
               setValue('type', newIndex === 1 ? TransactionType.Withdrawal : TransactionType.Deposit);
             }}
-            mode="fixed"
           >
-            <TabScreen label="Deposit" icon="arrow-up">
-              <View />
-            </TabScreen>
-            <TabScreen label="Withdraw" icon="arrow-down">
-              <View />
-            </TabScreen>
-          </Tabs>
+            <Tabs mode="fixed">
+              <TabScreen label="Deposit" icon="arrow-up">
+                <View />
+              </TabScreen>
+              <TabScreen label="Withdraw" icon="arrow-down">
+                <View />
+              </TabScreen>
+            </Tabs>
+          </TabsProvider>
         </View>
 
         <BottomSheetScrollView

@@ -36,7 +36,7 @@ function Warning(props: { title: string; action?: () => void }) {
       </Paragraph>
       {!action ? null : (
         <View style={{ width: 40 }}>
-          <IconButton icon="launch" color={textColor} onPress={action} style={{ width: 24 }} />
+          <IconButton icon="launch" iconColor={textColor} onPress={action} style={{ width: 24 }} />
         </View>
       )}
     </View>
