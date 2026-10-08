@@ -1,7 +1,7 @@
 
 
 # OpenManifest
-[![CircleCI](https://circleci.com/gh/OpenManifest/openmanifest/tree/main.svg?style=shield)](https://circleci.com/gh/OpenManifest/openmanifest/tree/main)
+[![CI](https://github.com/OpenManifest/openmanifest/actions/workflows/ci.yml/badge.svg)](https://github.com/OpenManifest/openmanifest/actions/workflows/ci.yml)
 
 OpenManifest is an open source dropzone management app, intended to provide a solution for anything that a manifest would normally do. 
 
