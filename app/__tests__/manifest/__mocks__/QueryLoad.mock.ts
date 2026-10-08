@@ -48,9 +48,9 @@ const dropzoneUserEssentials: DropzoneUserEssentialsFragment = {
   expiresAt: null,
 };
 
-const dropzoneUserDetails: DropzoneUserDetailsFragment = merge(dropzoneUserEssentials, {
+const dropzoneUserDetails: DropzoneUserDetailsFragment = merge({}, dropzoneUserEssentials, {
   __typename: 'DropzoneUser',
-  id: '1',
+  id: '21',
   role: {
     id: '1',
     dropzoneId: 1,
@@ -64,13 +64,13 @@ const dropzoneUserDetails: DropzoneUserDetailsFragment = merge(dropzoneUserEssen
     moderationRole: null,
     nickname: null,
     phone: null,
-    id: '1',
+    id: '21',
     name: 'Amy Hops',
     exitWeight: '100',
   },
   license: {
     __typename: 'License',
-    id: '1',
+    id: '21',
     name: 'Certificate A',
   },
 });
@@ -88,17 +88,18 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
         maxSlots: 10,
         name: 'Beaver',
       },
-      gca: merge(dropzoneUserEssentials, {
-        id: '1',
+      // Distinct ids: the Apollo cache normalises DropzoneUser by id, so sharing one with a slot would overwrite it.
+      gca: merge({}, dropzoneUserEssentials, {
+        id: '11',
         user: {
-          id: '1',
+          id: '11',
           name: 'jest',
         },
       }),
-      pilot: merge(dropzoneUserEssentials, {
-        id: '2',
+      pilot: merge({}, dropzoneUserEssentials, {
+        id: '12',
         user: {
-          id: '2',
+          id: '12',
           name: 'Jess I. Canflie',
         },
       }),
@@ -146,7 +147,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           passengerExitWeight: null,
           wingLoading: 1.3,
           groupNumber: 0,
-          dropzoneUser: merge(dropzoneUserDetails, {
+          dropzoneUser: merge({}, dropzoneUserDetails, {
             id: '2',
             user: {
               id: '2',
@@ -154,7 +155,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
               exitWeight: '100',
             },
             license: {
-              id: '1',
+              id: '21',
               name: 'Certificate A',
             },
           }),
@@ -189,7 +190,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           passengerExitWeight: null,
 
           wingLoading: 1.3,
-          dropzoneUser: merge(dropzoneUserDetails, {
+          dropzoneUser: merge({}, dropzoneUserDetails, {
             id: '3',
             user: {
               __typename: 'User',

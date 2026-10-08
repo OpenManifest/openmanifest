@@ -12,6 +12,7 @@ export default createMock<AllowedTicketTypesQueryVariables, AllowedTicketTypesQu
     __typename: 'Query',
     ticketTypes: [
       {
+        __typename: 'TicketType',
         allowManifestingSelf: true,
         altitude: 14000,
         id: '1',
@@ -21,6 +22,7 @@ export default createMock<AllowedTicketTypesQueryVariables, AllowedTicketTypesQu
         extras: []
       },
       {
+        __typename: 'TicketType',
         id: '3',
         name: 'Hop n Pop',
         cost: 30,
