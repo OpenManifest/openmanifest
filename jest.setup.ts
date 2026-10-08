@@ -7,6 +7,30 @@ import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/asy
 
 jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
 
+// react-native-maps 1.27 is TurboModule-only and throws on import without the native module; render the map as a View.
+jest.mock('react-native-maps', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const React = require('react');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { View } = require('react-native');
+  const MapView = React.forwardRef((props: Record<string, unknown>, ref: unknown) =>
+    React.createElement(View, { ...props, ref })
+  );
+  const Marker = (props: Record<string, unknown>) => React.createElement(View, props);
+  return {
+    __esModule: true,
+    default: MapView,
+    MapView,
+    Marker,
+    Callout: Marker,
+    Circle: Marker,
+    Polyline: Marker,
+    Polygon: Marker,
+    PROVIDER_GOOGLE: 'google',
+    PROVIDER_DEFAULT: null,
+  };
+});
+
 // The `BaseButton` mock in react-native-gesture-handler 2.28 renders `<View />` instead of its children, which empties
 // every gesture-handler TouchableOpacity (its content sits inside a BaseButton). Use the React Native touchables.
 jest.mock('react-native-gesture-handler', () => {
