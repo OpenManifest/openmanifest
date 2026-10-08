@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { View, ViewStyle } from 'react-native';
+import { DimensionValue, View, ViewStyle } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import { calculateLatLngDelta } from '../../utils/calculateLatLngDelta';
 
 interface IMapProps {
-  width: number | string;
-  height: number | string;
+  width: DimensionValue;
+  height: DimensionValue;
   position?: {
     x: number;
     y: number;

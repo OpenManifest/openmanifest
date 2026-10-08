@@ -14,12 +14,12 @@ Client diagrams: [diagrams.md](diagrams.md).
 
 | Concern | Library (installed version) | Where |
 |---|---|---|
-| Runtime | Expo SDK 48.0.21 (P3.5; was 47.0.13), React Native 0.71.14, React 18.2.0, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before) | `package.json`, `app.json` |
+| Runtime | Expo SDK 49.0.23 (P3.6; was 48.0.21), React Native 0.72.10, React 18.2.0, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before) | `package.json`, `app.json` |
 | Language | TypeScript 4.9.4 (`strict`), path alias `app/*` via `babel-plugin-module-resolver` | `tsconfig.json`, `babel.config.js` |
 | Server data | Apollo Client 3.7.11 (`BatchHttpLink`, ActionCable link for subscriptions) | `app/api/` |
 | Client state | Redux Toolkit 1.9.3 + redux-persist 6 (`global` slice persisted) | `app/state/` |
 | Navigation | React Navigation 6 (stack, drawer, material bottom tabs) | `app/screens/**/routes.tsx` |
-| UI kit | react-native-paper 4.12.4, @gorhom/bottom-sheet 4.4.5, react-native-reanimated 2.12.0 | |
+| UI kit | react-native-paper 4.12.4, @gorhom/bottom-sheet 4.6.4, react-native-reanimated 3.3.0 | |
 | Forms | react-hook-form 7 + yup (newer forms in `app/forms/`); Redux form slices (older forms in `app/components/forms/`) | |
 | Code generation | graphql-codegen (`codegen.yml`) → `app/api/schema.d.ts`, `operations.ts`, `reflection.tsx` | |
 | Web | `expo export:web` (webpack 4 via `@expo/webpack-config`) | `webpack.config.js` |
@@ -222,8 +222,8 @@ Headline:
 
 | Package | Installed | Latest | Target in plan |
 |---|---|---|---|
-| expo | 48.0.21 (P3.5) | 57.0.27 | 57.0.27 (P3.18) |
-| react-native | 0.70.8 | 0.87.1 (npm `latest`) | 0.86.x pinned by SDK 57 |
+| expo | 49.0.23 (P3.6) | 57.0.27 | 57.0.27 (P3.18) |
+| react-native | 0.72.10 (P3.6) | 0.87.1 (npm `latest`) | 0.86.x pinned by SDK 57 |
 | react | 18.1.0 | 19.3.0 (npm `latest`) | 19.2.x pinned by SDK 57 |
 | @apollo/client | 3.7.11 | 4.3.2 | 3.14.1 (P3.19); 4.x is backlog |
 | typescript | 4.9.4 | 7.0.2 | 5.9.3 (P3.20) |
@@ -257,7 +257,7 @@ Full table:
 | `@formatjs/intl-relativetimeformat` | dep | `9.5.1` | 9.5.1 | 12.3.15 |  |  |
 | `@fseehawer/react-circular-slider` | dep | `2.5.16` | 2.5.16 | 3.3.7 |  | **deprecated on npm** |
 | `@gorhom/animated-tabbar` | dep | `2.1.2` | 2.1.2 | 2.1.2 |  | last publish 2022-04-05 |
-| `@gorhom/bottom-sheet` | dep | `4.4.5` | 4.4.5 | 5.2.14 |  |  |
+| `@gorhom/bottom-sheet` | dep | `^4.6.4` (P3.6) | 4.6.4 | 5.2.14 |  |  |
 | `@gorhom/portal` | dep | `1.0.14` | 1.0.14 | 1.0.14 |  | last publish 2022-06-23 |
 | `@hookform/resolvers` | dep | `2.9.10` | 2.9.10 | 5.9.1 |  |  |
 | `@mui/material` | dep | `5.11.4` | 5.11.4 | 9.4.0 |  |  |
@@ -336,8 +336,8 @@ Full table:
 | `react-native-paper` | dep | `4.12.4` | 4.12.4 | 5.15.3 |  |  |
 | `react-native-paper-dates` | dep | `0.8.7` | 0.8.7 | 0.24.0 |  |  |
 | `react-native-paper-tabs` | dep | `0.7.0` | 0.7.0 | 0.11.4 |  |  |
-| `react-native-reanimated` | dep | `2.12.0` | 2.12.0 | 4.7.1 | `4.5.1` |  |
-| `react-native-reanimated-carousel` | dep | `3.1.5` | 3.1.5 | 5.1.1 |  |  |
+| `react-native-reanimated` | dep | `~3.3.0` (P3.6) | 3.3.0 | 4.7.1 | `4.5.1` |  |
+| `react-native-reanimated-carousel` | dep | `^3.5.1` (P3.6) | 3.5.1 | 5.1.1 |  |  |
 | `react-native-safe-area-context` | dep | `4.4.1` | 4.4.1 | 5.10.1 | `~5.7.0` |  |
 | `react-native-screens` | dep | `~3.18.0` | 3.18.2 | 4.28.0 | `~4.26.0` |  |
 | `react-native-skeleton-content` | dep | `1.0.28` | 1.0.28 | 1.0.28 |  | last publish 2022-10-04 |
@@ -345,7 +345,7 @@ Full table:
 | `react-native-swiper-flatlist` | dep | `3.0.18` | 3.0.18 | 3.2.5 |  | last publish 2024-09-10 |
 | `react-native-tab-view` | dep | `3.3.4` | 3.3.4 | 4.3.3 |  |  |
 | `react-native-toast-message` | dep | `2.1.6` | 2.1.6 | 2.5.2 |  |  |
-| `react-native-web` | dep | `~0.18.7` | 0.18.10 | 0.21.3 | `~0.21.0` |  |
+| `react-native-web` | dep | `~0.19.6` (P3.6) | 0.19.13 | 0.21.3 | `~0.21.0` |  |
 | `react-native-web-lottie` | dep | `^1.4.4` | 1.4.4 | 1.4.4 |  | last publish 2022-06-26 |
 | `react-redux` | dep | `7.2.6` | 7.2.6 | 9.3.0 |  |  |
 | `react-use` | dep | `^17.4.0` | 17.4.0 | 17.6.1 |  |  |
@@ -411,7 +411,7 @@ Full table:
 | `glob` | dev | `9.3.2` | 9.3.2 | 13.0.6 |  |  |
 | `isomorphic-fetch` | dev | `3.0.0` | 3.0.0 | 3.0.0 |  | last publish 2023-10-23 |
 | `jest` | dev | `^26.6.3` | 26.6.3 | 30.5.2 |  |  |
-| `jest-expo` | dev | `^48` (P3.5) | 48.0.2 | 57.0.5 | `~57.0.5` | needs jest 29 |
+| `jest-expo` | dev | `~49.0.0` (P3.6) | 49.0.0 | 57.0.5 | `~57.0.5` | needs jest 29 |
 | `jest-junit` | dev | `13.0.0` | 13.0.0 | 17.0.0 |  |  |
 | `json` | dev | `^11.0.0` | 11.0.0 | 11.0.0 |  | last publish 2023-03-04 |
 | `patch-package` | dev | `6.5.1` | 6.5.1 | 8.0.1 |  |  |
