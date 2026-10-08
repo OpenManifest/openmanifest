@@ -72,4 +72,4 @@ for (const [name, viewport] of Object.entries(viewports)) {
   ok = (await run(browser, name, viewport)) && ok;
 }
 await browser.close();
-process.exit(ok ? 0 : 1);
+process.exitCode = ok ? 0 : 1;
