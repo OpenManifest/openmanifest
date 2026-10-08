@@ -1,7 +1,8 @@
 import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
-import { FAB, DataTable, ProgressBar, useTheme } from 'react-native-paper';
+import { FAB, DataTable, useTheme } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 import { format } from 'date-fns';
 import { Switch } from 'react-native-gesture-handler';
 import {

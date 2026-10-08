@@ -22,7 +22,7 @@ export default function TableCard(props: ITableCard) {
           <IconButton
             icon={buttonIcon}
             onPress={() => (!onPressButton ? null : onPressButton())}
-            color={state.theme.colors.primary}
+            iconColor={state.theme.colors.primary}
           />
         )}
       </View>

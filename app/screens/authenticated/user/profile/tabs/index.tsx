@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { useAppSelector } from 'app/state';
 import { View } from 'react-native';
-import { Tabs, TabScreen } from 'react-native-paper-tabs';
+import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
 import JumpHistoryTab from './JumpHistory';
 import FundTab from './Transactions';
 import EquipmentTab from './Equipment';
@@ -40,22 +40,18 @@ export default function TabBar(props: IProfileTabsProps) {
   const { colors, dark } = useAppSelector((state) => state.global.theme);
 
   return (
-    <Tabs
-      defaultIndex={ProfileTabs.Jumps}
-      disableSwipe
-      style={{ backgroundColor: colors.surface }}
-      mode="fixed"
-      dark={dark}
-    >
-      <TabScreen label="Funds" icon="cash" key="funds" onPress={() => onChange(0)}>
-        <View />
-      </TabScreen>
-      <TabScreen label="Jumps" icon="airplane-takeoff" key="jumps" onPress={() => onChange(1)}>
-        <View />
-      </TabScreen>
-      <TabScreen label="Equipment" icon="parachute" key="equipment" onPress={() => onChange(2)}>
-        <View />
-      </TabScreen>
-    </Tabs>
+    <TabsProvider defaultIndex={ProfileTabs.Jumps}>
+      <Tabs disableSwipe style={{ backgroundColor: colors.surface }} mode="fixed" dark={dark}>
+        <TabScreen label="Funds" icon="cash" key="funds" onPress={() => onChange(0)}>
+          <View />
+        </TabScreen>
+        <TabScreen label="Jumps" icon="airplane-takeoff" key="jumps" onPress={() => onChange(1)}>
+          <View />
+        </TabScreen>
+        <TabScreen label="Equipment" icon="parachute" key="equipment" onPress={() => onChange(2)}>
+          <View />
+        </TabScreen>
+      </Tabs>
+    </TabsProvider>
   );
 }

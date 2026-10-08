@@ -1,7 +1,8 @@
 import { format } from 'date-fns';
 import * as React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import { Avatar, Card, Chip, Divider, ProgressBar, useTheme } from 'react-native-paper';
+import { Avatar, Card, Chip, Divider, useTheme } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   RigInspectionEssentialsFragment,

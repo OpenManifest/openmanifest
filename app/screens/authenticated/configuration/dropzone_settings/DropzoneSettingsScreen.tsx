@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { FAB, ProgressBar } from 'react-native-paper';
+import { FAB } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 import { useAppSelector } from 'app/state';
 
 import { Permission } from 'app/api/schema.d';
