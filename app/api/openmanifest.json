@@ -3256,6 +3256,22 @@
             "deprecationReason": null
           },
           {
+            "name": "timeZone",
+            "description": "The dropzone's time zone (IANA name): its days, and the times of its loads, are in it",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "updatedAt",
             "description": null,
             "args": [],

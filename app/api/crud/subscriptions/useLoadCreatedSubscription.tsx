@@ -1,11 +1,11 @@
 import { OnDataOptions } from '@apollo/client';
 import { LoadCreatedSubscription, LoadsQuery, LoadsQueryVariables } from 'app/api/operations';
 import { useLoadCreatedSubscription, LoadsDocument } from 'app/api/reflection';
-import { DateTime } from 'luxon';
+import { dateInZone } from 'app/utils/dropzoneTime';
 import uniqBy from 'lodash/uniqBy';
 import * as React from 'react';
 
-export function useLoadCreated(variables: Partial<LoadsQueryVariables>) {
+export function useLoadCreated(variables: Partial<LoadsQueryVariables>, timeZone?: string) {
   const onData = React.useCallback(
     ({ client, data: { data: result } }: OnDataOptions<LoadCreatedSubscription>) => {
       if (result?.loadCreated?.load?.id) {
@@ -21,7 +21,8 @@ export function useLoadCreated(variables: Partial<LoadsQueryVariables>) {
             broadcast: true,
             variables: {
               ...variables,
-              date: DateTime.fromISO(load.createdAt).toISODate(),
+              // The board of the day the load was created on at the dropzone
+              date: dateInZone(load.createdAt, timeZone),
             },
           },
           (previous) => ({
@@ -46,7 +47,7 @@ export function useLoadCreated(variables: Partial<LoadsQueryVariables>) {
         );
       }
     },
-    [variables]
+    [variables, timeZone]
   );
 
   return useLoadCreatedSubscription({

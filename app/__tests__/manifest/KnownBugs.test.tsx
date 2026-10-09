@@ -153,12 +153,4 @@ describe('known manifest bugs', () => {
 
     await waitFor(() => expect(createLoadResult).toHaveBeenCalled(), { timeout: 10000 });
   });
-
-  // Verified while writing this suite: the board date is re-evaluated on every render of
-  // ManifestContextProvider (`date = DateTime.local().toISODate()`), so an app left open past midnight does pick up
-  // the new day on its next re-render. What remains is that "today" and the call times use the *device* clock and
-  // zone, while the server filters by the dropzone's zone. A test needs the dropzone's time zone from the API.
-  it.todo(
-    'BUG-068: the board day and call times follow the dropzone time zone, not the device (needs API support)'
-  );
 });

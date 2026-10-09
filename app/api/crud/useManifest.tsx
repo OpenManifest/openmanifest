@@ -23,6 +23,7 @@ import {
 } from '../operations';
 import { TMutationResponse } from './factory';
 import { Permission } from '../schema.d';
+import { useDropzoneTimeZone } from 'app/hooks/useDropzoneToday';
 import { useLoadCreated } from './subscriptions/useLoadCreatedSubscription';
 
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
@@ -82,7 +83,8 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
   const [manifestGroupMutation] = useManifestGroupMutation();
   const [manifestUserMutation] = useManifestUserMutation();
   const [createLoadMutation] = useCreateLoadMutation();
-  useLoadCreated(variables as LoadsQueryVariables);
+  const timeZone = useDropzoneTimeZone();
+  useLoadCreated(variables as LoadsQueryVariables, timeZone);
 
   const { loading, fetchMore, refetch, data, called, updateQuery } = query;
 
