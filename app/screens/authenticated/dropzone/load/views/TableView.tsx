@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
-import LoadSlotTable, { ISlotsTableProps } from 'app/components/slots_table/Table';
+import { SlotsList, ISlotsListProps } from 'app/components/slots_table/Table';
 import { SlotFields } from 'app/components/slots_table/UserRow';
 import { useWindowDimensions } from 'react-native';
 
-interface ITableViewProps extends Omit<ISlotsTableProps, 'load'> {
+interface ITableViewProps extends Omit<ISlotsListProps, 'load'> {
   load?: LoadDetailsFragment | null;
   loading: boolean;
   refetch(): void;
@@ -12,15 +12,20 @@ interface ITableViewProps extends Omit<ISlotsTableProps, 'load'> {
 }
 
 export default function LoadTableView(props: ITableViewProps) {
-  const { load, loading, onAvailableSlotPress, onDeletePress, onSlotGroupPress, onSlotPress } =
-    props;
+  const {
+    load,
+    loading,
+    ListHeaderComponent,
+    onAvailableSlotPress,
+    onDeletePress,
+    onSlotGroupPress,
+    onSlotPress,
+  } = props;
   const { width } = useWindowDimensions();
   const numFields = Math.floor(width / 200);
 
-  console.log({ width, numFields, load });
-
   return (
-    <LoadSlotTable
+    <SlotsList
       fields={
         [
           SlotFields.Altitude,
@@ -34,6 +39,7 @@ export default function LoadTableView(props: ITableViewProps) {
       {...{
         load,
         loading,
+        ListHeaderComponent,
         onAvailableSlotPress,
         onDeletePress,
         onSlotGroupPress,
