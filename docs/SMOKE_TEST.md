@@ -28,7 +28,11 @@ iOS: Larger Accessibility Sizes). Until EAS builds exist (Phase 3, decision D2),
 - [ ] Edit dropzone settings, the weather board (winds, temperature, jump run) and your own profile: values are shown, saved, and shown again after reopening.
 - [ ] Add a rig, inspect a rig (a required template field blocks "OK to jump" until it is filled), edit a member's access level and membership expiry.
 ## Layout
-- [ ] No text, button or input is cut off horizontally on the 360 dp device in: sign-up, user setup wizard, dropzone setup wizard, weather screens.
-- [ ] Floating buttons do not cover the tab bar, gesture bar or the last list item.
-- [ ] Bottom sheets: every field stays visible above the keyboard; the submit button is reachable.
-- [ ] At maximum font size, slot rows, tables and dialogs remain readable (no clipped text).
+Run on a small Android phone (360 dp wide), a large Android phone, an iPhone and an iPad, each at the default and the maximum font size, and in dark mode on one of them.
+- [ ] Login: with the keyboard open the form scrolls; "Log in", the Apple button and "Sign up" are reachable; nothing sits under the status bar or notch.
+- [ ] Sign-up, user setup, dropzone setup and password wizards: focus each field with the keyboard open; the field, the title and the Next / Back buttons stay visible; no text, button or input is cut off horizontally.
+- [ ] Bottom sheets (manifest user, group, credits, aircraft, ticket type, rig): focus the last input; the input and the save button stay visible above the keyboard; the sheet content clears the gesture bar.
+- [ ] Manifest board and load screen: scroll to the last load / the last jumper; floating buttons sit above the tab bar and gesture bar and do not cover the last item; the load screen scrolls as one list (no scrolling inside scrolling).
+- [ ] Configuration screens (aircraft, ticket types, ticket addons, rigs, dropzone settings, permissions, rig inspection template): the floating button floats, the last row is reachable, and the background follows dark mode.
+- [ ] Weather (the wizard, winds, jump run): edit temperature, winds and jump run with the keyboard open; the inputs are wide enough to type in.
+- [ ] At maximum font size, slot rows, tables, profile, login and dialogs remain readable (no clipped text); tab bar and floating button labels stop growing at 1.6x.
