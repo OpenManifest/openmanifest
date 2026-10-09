@@ -61,6 +61,7 @@ export default function LoginForm() {
         </TouchableOpacity>
       )}
       <Button
+        testID="login-primary-action"
         mode="contained"
         disabled={loading}
         labelStyle={{ color: theme.colors.onSurface }}
