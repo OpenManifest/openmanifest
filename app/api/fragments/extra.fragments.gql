@@ -6,7 +6,7 @@ fragment ticketTypeExtraEssentials on Extra {
 }
 
 fragment ticketTypeExtraDetailed on Extra {
-  ...ticketTypeExtraEssentials
+  ...ticketTypeExtraEssentials,
   ticketTypes {
     ...ticketTypeEssentials
   }

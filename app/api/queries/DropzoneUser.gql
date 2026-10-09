@@ -1,20 +1,13 @@
 #import "../fragments/dropzoneUsers.fragments.gql"
 query DropzoneUsers(
-  $dropzoneId: ID!
-  $search: String
-  $permissions: [Permission!]
-  $first: Int
-  $after: String
+  $dropzoneId: ID!,
+  $search: String,
+  $permissions: [Permission!],
+  $first: Int,
+  $after: String,
   $licensed: Boolean
 ) {
-  dropzoneUsers(
-    dropzone: $dropzoneId
-    licensed: $licensed
-    search: $search
-    permissions: $permissions
-    first: $first
-    after: $after
-  ) {
+  dropzoneUsers(dropzone: $dropzoneId, licensed: $licensed, search: $search, permissions: $permissions, first: $first, after: $after) {
     edges {
       cursor
       node {
@@ -23,23 +16,17 @@ query DropzoneUsers(
     }
   }
 }
+
 
 query DropzoneUsersDetailed(
-  $dropzoneId: ID!
-  $search: String
-  $permissions: [Permission!]
-  $first: Int
-  $after: String
+  $dropzoneId: ID!,
+  $search: String,
+  $permissions: [Permission!],
+  $first: Int,
+  $after: String,
   $licensed: Boolean
 ) {
-  dropzoneUsers(
-    dropzone: $dropzoneId
-    licensed: $licensed
-    search: $search
-    permissions: $permissions
-    first: $first
-    after: $after
-  ) {
+  dropzoneUsers(dropzone: $dropzoneId, licensed: $licensed, search: $search, permissions: $permissions, first: $first, after: $after) {
     edges {
       cursor
       node {
@@ -49,13 +36,17 @@ query DropzoneUsersDetailed(
   }
 }
 
-query DropzoneUser($id: ID!) {
+query DropzoneUser(
+  $id: ID!,
+) {
   dropzoneUser(id: $id) {
     ...dropzoneUserEssentials
   }
 }
 
-query DropzoneUserDetailed($id: ID!) {
+query DropzoneUserDetailed(
+  $id: ID!,
+) {
   dropzoneUser(id: $id) {
     ...dropzoneUserDetails
   }

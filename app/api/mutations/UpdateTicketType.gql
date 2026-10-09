@@ -1,5 +1,13 @@
-mutation UpdateTicketType($id: Int!, $attributes: TicketTypeInput!) {
-  updateTicketType(input: { id: $id, attributes: $attributes }) {
+mutation UpdateTicketType(
+  $id: Int!
+  $attributes: TicketTypeInput!
+) {
+  updateTicketType(
+    input: {
+      id: $id
+      attributes: $attributes
+    }
+  ) {
     errors
     fieldErrors {
       field

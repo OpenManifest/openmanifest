@@ -1,6 +1,9 @@
-mutation LoginWithFacebook($token: String!, $pushToken: String) {
+mutation LoginWithFacebook(
+  $token: String!,
+  $pushToken: String
+) {
   loginWithFacebook(
-    token: $token
+    token: $token,
     pushToken: $pushToken
     confirmUrl: "https://openmanifest.org/confirm/"
   ) {

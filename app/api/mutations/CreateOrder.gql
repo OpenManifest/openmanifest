@@ -1,5 +1,11 @@
 #import "../fragments/orders.fragments.gql"
-mutation CreateOrder($buyer: ID!, $seller: ID!, $dropzone: ID!, $title: String, $amount: Float!) {
+mutation CreateOrder(
+  $buyer: ID!
+  $seller: ID!
+  $dropzone: ID!
+  $title: String
+  $amount: Float!
+) {
   createOrder(
     input: {
       attributes: {

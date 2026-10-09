@@ -1,5 +1,11 @@
-mutation CreateTicketType($attributes: TicketTypeInput!) {
-  createTicketType(input: { attributes: $attributes }) {
+mutation CreateTicketType(
+    $attributes: TicketTypeInput!
+) {
+  createTicketType(
+    input: {
+      attributes: $attributes
+    }
+  ) {
     errors
     fieldErrors {
       field

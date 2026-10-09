@@ -2,7 +2,7 @@
 #import "../fragments/orders.fragments.gql"
 query DropzoneTransactions($dropzoneId: ID!, $after: String) {
   dropzone(id: $dropzoneId) {
-    ...dropzoneEssentials
+    ...dropzoneEssentials,
     orders(after: $after) {
       edges {
         node {

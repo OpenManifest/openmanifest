@@ -56,7 +56,7 @@ fragment dropzoneStatistics on Dropzone {
   }
 }
 fragment dropzoneDetailed on Dropzone {
-  ...dropzoneEssentials
+  ...dropzoneEssentials,
 
   federation {
     id
