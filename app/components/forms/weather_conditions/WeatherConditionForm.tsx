@@ -4,8 +4,8 @@ import { set } from 'lodash';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { Card, Divider, List, useTheme } from 'react-native-paper';
 import WindRow from './WindRow';
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
-import { Wind } from '../../../api/schema.d';
+import { useWatch } from 'react-hook-form';
+import { MAX_WINDS, useWeatherForm, WindFields } from '../../../forms/weather/useForm';
 
 interface IWeatherConditionFormProps {
   variant?: 'dark' | 'light';
@@ -13,29 +13,19 @@ interface IWeatherConditionFormProps {
 }
 export default function WeatherConditionForm(props: IWeatherConditionFormProps) {
   const { variant, onPressJumpRun } = props;
-  const state = useAppSelector((root) => root.forms.weather);
-  const dispatch = useAppDispatch();
-  const { value: winds } = state.fields.winds;
+  const { control, setValue } = useWeatherForm();
+  const [winds, formJumpRun, formTemperature] = useWatch({
+    control,
+    name: ['winds', 'jumpRun', 'temperature'],
+  });
   const theme = useTheme();
 
-  const [temperature, setTemperature] = React.useState<number | null | undefined>(
-    state.fields?.temperature?.value || 0
-  );
-  const [jumpRun, setJumpRun] = React.useState<number | null | undefined>(
-    state.fields?.jumpRun?.value || 0
-  );
+  // While a text field is being edited it shows what was typed; the form gets the number on blur
+  const [typedTemperature, setTypedTemperature] = React.useState<number | null>(null);
+  const [typedJumpRun, setTypedJumpRun] = React.useState<number | null>(null);
+  const temperature = typedTemperature ?? formTemperature ?? 0;
+  const jumpRun = typedJumpRun ?? formJumpRun ?? 0;
 
-  React.useEffect(() => {
-    if (state.fields.jumpRun.value !== jumpRun) {
-      setJumpRun(state.fields.jumpRun.value);
-    }
-  }, [setJumpRun, state.fields.jumpRun.value, jumpRun]);
-
-  React.useEffect(() => {
-    if (state.fields.temperature.value !== temperature) {
-      setTemperature(state.fields.temperature.value);
-    }
-  }, [state.fields.jumpRun.value, state.fields.temperature.value, setTemperature, temperature]);
   return (
     <KeyboardAvoidingView behavior="height" style={styles.content}>
       <View style={styles.row}>
@@ -58,13 +48,11 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
             <List.Icon icon="thermometer" style={{ width: 20 }} />
             <TextInput
               value={temperature?.toString()}
-              onBlur={() =>
-                dispatch(actions.forms.weather.setField(['temperature', Number(temperature)]))
-              }
+              onBlur={() => setValue('temperature', Number(temperature), { shouldDirty: true })}
               onChangeText={(newTemp) => {
                 if (/\d/.test(newTemp)) {
                   const [numbers] = newTemp.match(/^\-?\d+/) || [temperature];
-                  setTemperature(Number(numbers));
+                  setTypedTemperature(Number(numbers));
                 }
               }}
               style={[styles.textField, { color: theme.colors.onSurface }]}
@@ -78,11 +66,16 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
             <List.Icon icon="compass" style={{ width: 20 }} />
             <TextInput
               value={jumpRun?.toString()}
-              onBlur={() => dispatch(actions.forms.weather.setField(['jumpRun', Number(jumpRun)]))}
+              onBlur={() => {
+                if (typedJumpRun !== null) {
+                  setValue('jumpRun', typedJumpRun, { shouldDirty: true });
+                  setTypedJumpRun(null);
+                }
+              }}
               onChangeText={(newJumpRun) => {
                 if (/\d/.test(newJumpRun)) {
                   const [numbers] = newJumpRun.match(/\d+/) || [jumpRun];
-                  setJumpRun(Number(numbers));
+                  setTypedJumpRun(Number(numbers));
                 }
               }}
               keyboardType="numeric"
@@ -107,7 +100,7 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
       </View>
       <Divider />
       <FlatList
-        data={winds as Required<typeof winds>}
+        data={winds}
         keyExtractor={(item, index) => `wind.${item.altitude}.${index}`}
         scrollEnabled={false}
         renderItem={({ item: wind, index }) => {
@@ -116,25 +109,22 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
               {...wind}
               key={`wind-input-${index}`}
               onChange={(field, value) => {
-                const newWinds = set([...(winds as Wind[])], index, {
+                const newWinds = set([...winds], index, {
                   ...wind,
                   [field]: value,
                 });
-                dispatch(actions.forms.weather.setField(['winds', newWinds]));
+                setValue('winds', newWinds, { shouldDirty: true });
               }}
             />
           );
         }}
       />
-      {(winds as Wind[])?.length < 5 ? (
+      {winds.length < MAX_WINDS ? (
         <TouchableOpacity
           onPress={() =>
-            dispatch(
-              actions.forms.weather.setField([
-                'winds',
-                [...(winds || []), { altitude: '0', direction: '0', speed: '0' }],
-              ])
-            )
+            setValue('winds', [...winds, { altitude: '0', direction: '0', speed: '0' }], {
+              shouldDirty: true,
+            })
           }
         >
           <View style={{ width: '100%', opacity: 0.5 }} pointerEvents="box-only">

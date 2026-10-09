@@ -16,11 +16,13 @@ import { useUserNavigation } from '../useUserNavigation';
 type PropsOf<T> = T extends React.ComponentType<infer P> ? P : never;
 type FABActions = PropsOf<typeof FAB.Group>['actions'];
 interface IUserActionsButtonProps {
+  /** Opens the profile editor */
+  onEdit?(): void;
   dropzoneUser?: DropzoneUserProfileFragment | null;
   visible?: boolean;
 }
 export default function UserActionsButton(props: IUserActionsButtonProps) {
-  const { dropzoneUser, visible } = props;
+  const { dropzoneUser, visible, onEdit } = props;
   const {
     dropzone: { currentUser },
   } = useDropzoneContext();
@@ -71,9 +73,9 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
 
   const onClickEdit = React.useCallback(() => {
     if (dropzoneUser?.user) {
-      dispatch(actions.forms.user.setOpen(dropzoneUser));
+      onEdit?.();
     }
-  }, [dispatch, dropzoneUser]);
+  }, [dropzoneUser?.user, onEdit]);
 
   const isSelf = React.useMemo(
     () => currentUser?.id === dropzoneUser?.id,

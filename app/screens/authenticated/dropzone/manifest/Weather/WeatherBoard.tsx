@@ -16,7 +16,7 @@ import format from 'date-fns/format';
 import { orderBy } from 'lodash';
 import SkeletonContent from 'app/components/Skeleton';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
-import { actions, useAppDispatch } from 'app/state';
+import { useWeatherForm } from 'app/forms/weather';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
 import { useNavigation } from '@react-navigation/native';
@@ -29,7 +29,7 @@ export default function WeatherBoard() {
   const {
     dropzone: { dropzone, loading, called },
   } = useDropzoneContext();
-  const dispatch = useAppDispatch();
+  const { open: openWeatherForm } = useWeatherForm();
   const navigation = useNavigation();
   const [isExpanded, setExpanded] = React.useState(false);
   const height = React.useRef(new Animated.Value(0));
@@ -69,7 +69,7 @@ export default function WeatherBoard() {
 
   const onEditWindboard = React.useCallback(() => {
     if (canUpdate && dropzone?.currentConditions) {
-      dispatch(actions.forms.weather.setOpen(dropzone?.currentConditions));
+      openWeatherForm(dropzone?.currentConditions);
       navigation.navigate('Authenticated', {
         screen: 'LeftDrawer',
         params: {
@@ -78,11 +78,11 @@ export default function WeatherBoard() {
         },
       });
     }
-  }, [canUpdate, dispatch, dropzone?.currentConditions, navigation]);
+  }, [canUpdate, openWeatherForm, dropzone?.currentConditions, navigation]);
 
   const onEditJumprun = React.useCallback(() => {
     if (dropzone?.currentConditions && canUpdate) {
-      dispatch(actions.forms.weather.setOpen(dropzone.currentConditions));
+      openWeatherForm(dropzone.currentConditions);
       navigation.navigate('Authenticated', {
         screen: 'LeftDrawer',
         params: {
@@ -91,7 +91,7 @@ export default function WeatherBoard() {
         },
       });
     }
-  }, [canUpdate, dispatch, dropzone?.currentConditions, navigation]);
+  }, [canUpdate, openWeatherForm, dropzone?.currentConditions, navigation]);
 
   const defaultBackground = theme.dark ? nightBackground : weatherBackground;
 

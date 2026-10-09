@@ -15,6 +15,7 @@ import { Operation } from '@apollo/client';
 
 // Import your own reducer
 import { AppThemeProvider } from 'app/theme';
+import { WeatherFormProvider } from 'app/forms/weather';
 import { DropzoneContextProvider, ManifestContextProvider } from 'app/providers';
 import mockQueryDropzone from '../__tests__/manifest/__mocks__/QueryDropzone.mock';
 import { rootReducer, RootState } from '../state/store';
@@ -119,7 +120,9 @@ function render(
             >
               <DropzoneContextProvider dropzoneId={session?.currentDropzoneId?.toString()}>
                 <ManifestContextProvider dropzone={session?.currentDropzoneId?.toString()}>
-                  <AppThemeProvider>{children}</AppThemeProvider>
+                  <AppThemeProvider>
+                    <WeatherFormProvider>{children}</WeatherFormProvider>
+                  </AppThemeProvider>
                 </ManifestContextProvider>
               </DropzoneContextProvider>
             </Apollo>

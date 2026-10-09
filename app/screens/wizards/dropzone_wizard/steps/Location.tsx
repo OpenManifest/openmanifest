@@ -1,16 +1,17 @@
 import * as React from 'react';
+import { useWatch } from 'react-hook-form';
 import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import MapView, { Region, Marker, MapMarker } from 'react-native-maps';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
 import * as Location from 'expo-location';
 import { Step, IWizardStepProps } from 'app/components/carousel_wizard';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useDropzoneWizardFields } from '../useDropzoneWizardForm';
 import { calculateLatLngDelta } from 'app/utils/calculateLatLngDelta';
 
 function LocationWizardStep(props: IWizardStepProps) {
-  const state = useAppSelector((root) => root.forms.dropzone);
-  const dispatch = useAppDispatch();
+  const { control, setField } = useDropzoneWizardFields();
+  const [name, lat, lng] = useWatch({ control, name: ['name', 'lat', 'lng'] });
 
   const setUsersLocation = React.useCallback(async () => {
     try {
@@ -20,8 +21,8 @@ function LocationWizardStep(props: IWizardStepProps) {
       }
       const location = await Location.getCurrentPositionAsync({});
 
-      dispatch(actions.forms.dropzone.setField(['lat', location.coords.latitude]));
-      dispatch(actions.forms.dropzone.setField(['lng', location.coords.longitude]));
+      setField('lat', location.coords.latitude);
+      setField('lng', location.coords.longitude);
 
       setInternalRegion({
         latitude: location.coords.latitude,
@@ -33,19 +34,19 @@ function LocationWizardStep(props: IWizardStepProps) {
     } catch (error) {
       console.log(error);
     }
-  }, [dispatch]);
+  }, [setField]);
 
   const region = React.useMemo(
     () =>
-      state.fields.lat.value && state.fields.lng.value
+      lat && lng
         ? {
-            latitude: state.fields.lat.value,
-            longitude: state.fields.lng.value,
-            latitudeDelta: calculateLatLngDelta(state.fields.lat.value),
-            longitudeDelta: calculateLatLngDelta(state.fields.lat.value),
+            latitude: lat,
+            longitude: lng,
+            latitudeDelta: calculateLatLngDelta(lat),
+            longitudeDelta: calculateLatLngDelta(lat),
           }
         : undefined,
-    [state.fields.lat.value, state.fields.lng.value]
+    [lat, lng]
   );
 
   // Start at user location
@@ -107,8 +108,8 @@ function LocationWizardStep(props: IWizardStepProps) {
           setAnimating(false);
           setCoordinateFade(true);
           setCoordinateFade(true);
-          dispatch(actions.forms.dropzone.setField(['lat', r.latitude]));
-          dispatch(actions.forms.dropzone.setField(['lng', r.longitude]));
+          setField('lat', r.latitude);
+          setField('lng', r.longitude);
         }}
         mapType="hybrid"
         zoomEnabled
@@ -116,12 +117,7 @@ function LocationWizardStep(props: IWizardStepProps) {
         focusable
       >
         {!internalRegion ? null : (
-          <Marker
-            title={state.fields.name.value || undefined}
-            ref={markerRef}
-            flat
-            coordinate={internalRegion}
-          >
+          <Marker title={name || undefined} ref={markerRef} flat coordinate={internalRegion}>
             <MaterialCommunityIcons
               pointerEvents="none"
               size={60}
@@ -155,8 +151,8 @@ function LocationWizardStep(props: IWizardStepProps) {
           onChange={setSearchText}
           autocomplete
           onSelect={(item) => {
-            dispatch(actions.forms.dropzone.setField(['lat', item.latitude]));
-            dispatch(actions.forms.dropzone.setField(['lng', item.longitude]));
+            setField('lat', item.latitude);
+            setField('lng', item.longitude);
             map.current?.animateCamera({ center: item });
           }}
         /> */}

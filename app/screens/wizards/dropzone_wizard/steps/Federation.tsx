@@ -1,22 +1,23 @@
 import * as React from 'react';
+import { useController } from 'react-hook-form';
 import { HelperText } from 'react-native-paper';
 import FederationCardSelect from 'app/components/input/card_select/FederationCardSelect';
 import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useDropzoneWizardFields } from '../useDropzoneWizardForm';
 
 function Federation(props: IWizardStepProps) {
-  const state = useAppSelector((root) => root.forms.dropzone);
-  const dispatch = useAppDispatch();
+  const { control, setField } = useDropzoneWizardFields();
+  const { field, fieldState } = useController({ name: 'federation', control });
 
   return (
     <Step {...props} title="Affiliation">
       <Fields>
         <FederationCardSelect
-          value={state.fields.federation.value}
-          onSelect={(value) => dispatch(actions.forms.dropzone.setField(['federation', value]))}
+          value={field.value}
+          onSelect={(value) => setField('federation', value)}
         />
-        <HelperText type={state.fields.federation.error ? 'error' : 'info'}>
-          {state.fields.federation.error || ''}
+        <HelperText type={fieldState.error?.message ? 'error' : 'info'}>
+          {fieldState.error?.message || ''}
         </HelperText>
       </Fields>
     </Step>

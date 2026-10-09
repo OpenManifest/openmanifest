@@ -1,5 +1,4 @@
 import * as React from 'react';
-import type { DropzoneExtensiveFragment } from 'app/api/operations';
 import { useSession } from 'app/state';
 import { useThemeOverrides } from 'app/theme';
 
@@ -11,7 +10,7 @@ export default function useSelectDropzone() {
   const setDropzone = useSession((session) => session.setDropzone);
 
   return React.useCallback(
-    (dropzone: Pick<DropzoneExtensiveFragment, 'id'> | null | undefined) => {
+    (dropzone: { id?: string | null } | null | undefined) => {
       useThemeOverrides.getState().setPrimary(null);
       setDropzone(dropzone?.id ?? null);
     },

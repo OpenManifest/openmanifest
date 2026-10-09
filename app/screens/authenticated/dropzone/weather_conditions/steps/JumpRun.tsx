@@ -3,14 +3,15 @@ import { StyleSheet, View } from 'react-native';
 
 import * as Location from 'expo-location';
 import WizardScreen, { IWizardScreenProps } from 'app/components/wizard/WizardScreen';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useController } from 'react-hook-form';
+import { useWeatherForm } from 'app/forms/weather';
 import JumpRunSelector from 'app/components/input/jump_run_select/JumpRunSelect';
 
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 
 function WindsWizardScreen(props: IWizardScreenProps) {
-  const state = useAppSelector((root) => root.forms.weather);
-  const dispatch = useAppDispatch();
+  const { control } = useWeatherForm();
+  const { field: jumpRun } = useController({ name: 'jumpRun', control });
   const {
     dropzone: { dropzone },
   } = useDropzoneContext();
@@ -39,12 +40,10 @@ function WindsWizardScreen(props: IWizardScreenProps) {
     <WizardScreen style={styles.container} {...props} contentStyle={{ paddingTop: 130 }}>
       <View style={{ width: '100%', height: '80%' }}>
         <JumpRunSelector
-          value={state.fields.jumpRun.value || 0}
+          value={jumpRun.value || 0}
           latitude={dropzone?.lat || location?.latitude || 0}
           longitude={dropzone?.lng || location?.longitude || 0}
-          onChange={(value) =>
-            dispatch(actions.forms.weather.setField(['jumpRun', Math.round(value)]))
-          }
+          onChange={(value) => jumpRun.onChange(Math.round(value))}
         />
       </View>
     </WizardScreen>

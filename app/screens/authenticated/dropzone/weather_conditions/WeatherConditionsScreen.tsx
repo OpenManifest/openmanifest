@@ -2,59 +2,42 @@ import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import Wizard from 'app/components/wizard/Wizard';
 import WizardCompleteStep from 'app/components/wizard/WizardCompleteStep';
-import { actions, useAppDispatch, useAppSelector, useSession } from 'app/state';
-
-import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateWeatherConditions';
-import { useNotifications } from 'app/providers/notifications';
+import { useWeatherForm } from 'app/forms/weather';
 import WindsStep from './steps/Winds';
 import JumpRunStep from './steps/JumpRun';
 
 function WeatherConditionsScreen() {
-  const state = useAppSelector((root) => root.forms.weather);
-  const dropzoneId = useSession((session) => session.currentDropzoneId);
-  const dispatch = useAppDispatch();
+  const { open, save, saving } = useWeatherForm();
   const navigation = useNavigation();
-  const notify = useNotifications();
-
-  const mutationCreateWeatherConditions = useMutationCreateWeatherConditions({
-    onSuccess: () => null,
-    onFieldError: (field: keyof typeof state.fields, message: string) =>
-      dispatch(actions.forms.weather.setFieldError([field, message])),
-    onError: notify.error,
-  });
 
   const onSaveConditions = React.useCallback(
     async (currentIndex: number, setIndex: (idx: number) => void) => {
-      await mutationCreateWeatherConditions.mutate({
-        id: Number(state.original?.id),
-        dropzoneId: Number(dropzoneId),
-        winds: JSON.stringify(state.fields.winds.value),
-        jumpRun: state.fields.jumpRun.value,
-        temperature: state.fields.temperature.value,
-      });
-      setIndex(currentIndex + 1);
+      if (await save()) {
+        setIndex(currentIndex + 1);
+      }
     },
-    [mutationCreateWeatherConditions, state, dropzoneId]
+    [save]
   );
+
+  const onClose = React.useCallback(() => {
+    open(null);
+    navigation.goBack();
+  }, [navigation, open]);
 
   return (
     <Wizard>
       <WindsStep
         backButtonLabel="Cancel"
         nextButtonLabel="Next"
-        onBack={() => {
-          dispatch(actions.forms.weather.reset());
-          dispatch(actions.forms.weather.setOpen(false));
-          navigation.goBack();
-        }}
-        loading={mutationCreateWeatherConditions.loading}
+        onBack={onClose}
+        loading={saving}
         onNext={(index, setIndex) => setIndex(index + 1)}
       />
 
       <JumpRunStep
         backButtonLabel="Back"
         nextButtonLabel="Next"
-        loading={mutationCreateWeatherConditions.loading}
+        loading={saving}
         onNext={(index, setIndex) => {
           onSaveConditions(index, setIndex);
         }}
@@ -69,11 +52,7 @@ function WeatherConditionsScreen() {
         onBack={(index, setIndex) => {
           setIndex(index - 1);
         }}
-        onNext={() => {
-          dispatch(actions.forms.weather.reset());
-          dispatch(actions.forms.weather.setOpen(false));
-          navigation.goBack();
-        }}
+        onNext={onClose}
       />
     </Wizard>
   );
