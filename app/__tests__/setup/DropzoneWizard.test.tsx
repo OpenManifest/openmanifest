@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { TextInput } from 'react-native';
 import DropzoneWizard from '../../screens/wizards/dropzone_wizard/DropzoneWizard';
-import * as appRedux from '../../state';
 import { CreateDropzoneDocument } from 'app/api/reflection';
 import { COLOR_PRESETS } from '../../components/input/colorpicker/ColorPicker';
 import { act, fireEvent, render, waitFor } from '../../__mocks__/render';
@@ -53,17 +52,11 @@ jest.mock('@react-navigation/native', () => ({
   }),
 }));
 
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: { ...appRedux.initialState.global, authenticated: true },
-};
-
 // The affiliation step selects the only federation by itself, so give it none to choose from
 const NO_FEDERATIONS = { ...MOCK_QUERY_FEDERATIONS(), result: { data: { federations: [] } } };
 
 function renderWizard(graphql: Parameters<typeof render>[1]['graphql'] = [NO_FEDERATIONS]) {
   return render(<DropzoneWizard />, {
-    initialState: authenticatedState,
     session: authenticatedSession,
     graphql,
   });

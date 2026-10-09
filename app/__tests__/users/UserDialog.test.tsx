@@ -2,18 +2,12 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { UpdateUserDocument } from 'app/api/reflection';
 import type { DropzoneUserDetailsFragment } from 'app/api/operations';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import UserDialog from '../../forms/user/Dialog';
 import MOCK_QUERY_FEDERATIONS from '../manifest/__mocks__/QueryFederations.mock';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: { ...appRedux.initialState.global, authenticated: true },
-};
 
 const federation = { __typename: 'Federation', id: '1', name: 'APF', slug: 'apf' };
 const dropzoneUser = {
@@ -38,7 +32,6 @@ function renderDialog(graphql: Parameters<typeof render>[1]['graphql'] = []) {
       <UserDialog open dropzoneUser={dropzoneUser} onClose={jest.fn()} />
     </View>,
     {
-      initialState: authenticatedState,
       session: authenticatedSession,
       graphql: [MOCK_QUERY_FEDERATIONS(), ...graphql],
     }

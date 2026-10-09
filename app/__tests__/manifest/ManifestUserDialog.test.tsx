@@ -1,19 +1,10 @@
 import * as React from 'react';
 import { ManifestUserDocument } from 'app/api/reflection';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_ALLOWED_TICKET_TYPES from './__mocks__/QueryAllowedTicketTypes.mock';
 import { MOCK_QUERY_ALLOWED_JUMP_TYPES } from './__mocks__/QueryAllowedJumpTypes.mock';
 import ManifestUserDialog from '../../forms/manifest_user/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-  },
-};
 
 jest.setTimeout(30000);
 
@@ -42,7 +33,6 @@ describe('<ManifestUserDialog />', () => {
         onSuccess={jest.fn()}
       />,
       {
-        initialState: authenticatedState,
         session: authenticatedSession,
         graphql: [
           MOCK_QUERY_ALLOWED_JUMP_TYPES({ allowedForDropzoneUserIds: [55] }),

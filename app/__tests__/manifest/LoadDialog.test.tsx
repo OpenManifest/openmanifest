@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Permission } from 'app/api/schema.d';
 import { CreateLoadDocument } from 'app/api/reflection';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_PLANES from './__mocks__/QueryPlane.mock';
 import MOCK_QUERY_DROPZONE_USERS from './__mocks__/QueryDropzoneUsers.mock';
@@ -9,14 +8,6 @@ import LoadDialog from '../../forms/load/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-  },
-};
 
 const dropzoneUser = (id: string, name: string) => ({
   __typename: 'DropzoneUser',
@@ -74,7 +65,6 @@ describe('<LoadDialog />', () => {
     }));
 
     const screen = render(<LoadDialog open onClose={jest.fn()} onSuccess={jest.fn()} />, {
-      initialState: authenticatedState,
       session: authenticatedSession,
       graphql: [
         MOCK_QUERY_PLANES(),

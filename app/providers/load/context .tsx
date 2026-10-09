@@ -21,7 +21,6 @@ export const INITIAL_CONTEXT: ILoadContext = {
     updateLoadMaster: uninitializedHandler as never,
     updatePlane: uninitializedHandler as never,
     updatePilot: uninitializedHandler as never,
-    manifestUser: uninitializedHandler as never,
     refetch: uninitializedHandler as never,
     fetchMore: uninitializedHandler as never,
     canDispatchAircraft: false,

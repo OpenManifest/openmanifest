@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { migrateFromReduxPersist } from './migrateFromReduxPersist';
+import { migrateFromReduxPersist, removeLegacyReduxPersist } from './migrateFromReduxPersist';
 import { createSessionStorage, SESSION_STORAGE_KEY } from './storage';
 
 export type SessionCredentials = {
@@ -69,7 +69,9 @@ export const useSession = create<SessionState>()(
     {
       name: SESSION_STORAGE_KEY,
       version: 1,
-      storage: createJSONStorage(() => createSessionStorage(migrateFromReduxPersist)),
+      storage: createJSONStorage(() =>
+        createSessionStorage(migrateFromReduxPersist, removeLegacyReduxPersist)
+      ),
       // The route is not worth restoring and the flag is runtime-only
       partialize: ({ credentials, currentDropzoneId, expoPushToken }) => ({
         credentials,
@@ -87,3 +89,6 @@ export const useSession = create<SessionState>()(
     }
   )
 );
+
+/** Whether the user is logged in: the session holds an access token */
+export const useAuthenticated = () => useSession((session) => !!session.credentials?.accessToken);

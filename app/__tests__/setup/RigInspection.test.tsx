@@ -4,17 +4,11 @@ import { useController } from 'react-hook-form';
 import { CreateRigInspectionDocument } from 'app/api/reflection';
 import { RigInspectionForm, useRigInspectionForm } from 'app/forms/rig_inspection';
 import type { FieldItem } from 'app/forms/rig_inspection_template';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 import { Permission } from 'app/api/schema.d';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: { ...appRedux.initialState.global, authenticated: true },
-};
 
 const template: FieldItem[] = [
   { label: 'Reserve serial', valueType: 'string', isRequired: true },
@@ -44,7 +38,6 @@ function Harness(props: { onSuccess?(): void }) {
 
 function renderForm(graphql: Parameters<typeof render>[1]['graphql'] = [], onSuccess?: () => void) {
   const screen = render(<Harness {...{ onSuccess }} />, {
-    initialState: authenticatedState,
     session: authenticatedSession,
     permissions: [Permission.ActAsRigInspector],
     graphql,

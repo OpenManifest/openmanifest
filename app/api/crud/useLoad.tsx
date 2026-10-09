@@ -3,27 +3,20 @@ import { noop } from 'lodash';
 import sameVariables from 'app/utils/sameVariables';
 import { DateTime } from 'luxon';
 import useRestriction from 'app/hooks/useRestriction';
-import * as yup from 'yup';
-import { ValidationError } from 'yup';
 import { useNotifications } from 'app/providers/notifications';
-import { useAppSelector } from 'app/state';
-import {
-  useFinalizeLoadMutation,
-  useLoadLazyQuery,
-  useManifestUserMutation,
-  useUpdateLoadMutation,
-} from '../reflection';
+import { useAuthenticated } from 'app/state';
+import { useFinalizeLoadMutation, useLoadLazyQuery, useUpdateLoadMutation } from '../reflection';
 import {
   LoadDetailsFragment,
   LoadQueryVariables,
   UpdateLoadMutationVariables,
 } from '../operations';
 import { TMutationResponse, uninitializedHandler } from './factory';
-import { CreateSlotPayload, LoadState, Permission } from '../schema.d';
+import { LoadState, Permission } from '../schema.d';
 import { useLoadUpdated } from './subscriptions/useLoadUpdatedSubscription';
 
 export function useLoad(variables: Partial<LoadQueryVariables>) {
-  const { authenticated } = useAppSelector((root) => root.global);
+  const authenticated = useAuthenticated();
   const notify = useNotifications();
   const [getLoad, query] = useLoadLazyQuery();
 
@@ -43,7 +36,6 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
   const { loading, fetchMore, data, called, variables: queryVariables } = query;
   const load = React.useMemo(() => data?.load, [data?.load]);
 
-  const [mutationManifestUser] = useManifestUserMutation();
   const [mutationFinalizeLoad] = useFinalizeLoadMutation();
   const [updateLoadMutation] = useUpdateLoadMutation();
   useLoadUpdated(variables?.id);
@@ -97,41 +89,6 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
       }
     },
     [load, notify, updateLoadMutation]
-  );
-
-  const manifestUser = React.useCallback(
-    async (payload: Omit<CreateSlotPayload, 'loadId'>) => {
-      if (load?.id) {
-        return undefined;
-      }
-      const schema = yup.object().shape({
-        dropzoneUser: yup.string().required(),
-        exitWeight: yup.number().nullable(),
-        groupNumber: yup.number().nullable(),
-        passengerExitWeight: yup.number().nullable(),
-        passengerName: yup.string().nullable(),
-        rig: yup.string().nullable(),
-        ticketType: yup.string().required('You must select a ticket type'),
-        jumpType: yup.string().required('You must specify the type of jump'),
-      });
-      const validatedPayload = schema.validateSync(payload);
-      const response = await mutationManifestUser({
-        variables: {
-          load: load?.id,
-          ...validatedPayload,
-        },
-      });
-
-      if (response?.data?.createSlot?.fieldErrors?.length) {
-        throw new ValidationError(
-          response?.data?.createSlot?.fieldErrors?.map(
-            ({ field, message }) => new ValidationError([], message, field)
-          )
-        );
-      }
-      return response?.data?.createSlot?.slot;
-    },
-    [load?.id, mutationManifestUser]
   );
 
   const dispatchInMinutes = React.useCallback(
@@ -239,7 +196,6 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
       updateGCA,
       updatePlane,
       updateLoadMaster,
-      manifestUser,
       cancel,
       refetch: queryVariables?.id ? refetch : noop,
       fetchMore: queryVariables?.id ? () => fetchMore({ variables }) : uninitializedHandler,
@@ -259,7 +215,6 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
       updateGCA,
       updatePlane,
       updateLoadMaster,
-      manifestUser,
       cancel,
       queryVariables?.id,
       refetch,

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as appRedux from '../../state';
 import { render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_PROFILE from './__mocks__/QueryDropzoneUserProfile.mock';
 import ProfileScreen from '../../screens/authenticated/user/profile/ProfileScreen';
@@ -14,18 +13,9 @@ jest.mock('@react-navigation/native', () => ({
   useIsFocused: () => true,
 }));
 
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-  },
-};
-
 describe('<ProfileScreen />', () => {
   it('shows the name, role, funds and licence of the jumper', async () => {
     const screen = render(<ProfileScreen />, {
-      initialState: authenticatedState,
       session: authenticatedSession,
       graphql: [MOCK_QUERY_PROFILE()],
     });
@@ -41,7 +31,6 @@ describe('<ProfileScreen />', () => {
 
   it('offers the funds, jumps and equipment tabs and lists the jump history by default', async () => {
     const screen = render(<ProfileScreen />, {
-      initialState: authenticatedState,
       session: authenticatedSession,
       graphql: [MOCK_QUERY_PROFILE()],
     });

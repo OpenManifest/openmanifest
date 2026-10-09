@@ -1,15 +1,6 @@
-import { useApolloClient } from '@apollo/client';
-import { logout, useAppDispatch } from 'app/state';
 import React from 'react';
-import { abortController } from '../client/links';
+import { resetSession } from 'app/state/resetSession';
 
 export function useLogout() {
-  const dispatch = useAppDispatch();
-  const client = useApolloClient();
-  return React.useCallback(() => {
-    console.debug('[Hooks::useLogout]: Logging out...');
-    abortController.abort();
-    client.clearStore();
-    logout(dispatch);
-  }, [client, dispatch]);
+  return React.useCallback(() => resetSession({ reason: 'logout' }), []);
 }

@@ -106,7 +106,6 @@
     "@react-navigation/drawer": "7.14.3",
     "@react-navigation/native": "7.5.0",
     "@react-navigation/stack": "7.12.0",
-    "@reduxjs/toolkit": "1.9.3",
     "check-password-strength": "2.0.7",
     "color": "4.2.3",
     "date-fns": "2.29.3",
@@ -168,10 +167,7 @@
     "react-native-toast-message": "2.1.6",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.10.1",
-    "react-redux": "7.2.6",
     "react-use": "^17.4.0",
-    "redux": "4.2.1",
-    "redux-persist": "^6.0.0",
     "urijs": "1.19.11",
     "yup": "0.32.11",
     "zustand": "5.0.15"

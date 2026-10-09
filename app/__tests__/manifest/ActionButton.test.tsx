@@ -4,7 +4,6 @@ import { FAB } from 'react-native-paper';
 import { LoadState, Permission } from 'app/api/schema.d';
 import { LoadUpdatedDocument, UpdateLoadDocument } from 'app/api/reflection';
 import { LoadContextProvider, useLoadContext } from 'app/providers';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
 import ActionButton from '../../screens/authenticated/dropzone/load/ActionButton';
@@ -13,14 +12,6 @@ import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 jest.setTimeout(30000);
 
 const NOW = new Date('2026-10-08T10:00:00Z').valueOf();
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-  },
-};
 
 function LoadActions() {
   const {
@@ -56,7 +47,6 @@ describe('<ActionButton />', () => {
         <LoadActions />
       </LoadContextProvider>,
       {
-        initialState: authenticatedState,
         session: authenticatedSession,
         permissions: [Permission.UpdateLoad],
         graphql: [
