@@ -2,6 +2,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import ProgressBar from 'app/components/ProgressBar';
 import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -72,23 +73,25 @@ function Content() {
                 <GestureHandlerRootView style={{ flex: 1 }}>
                   <PortalProvider>
                     <SafeAreaProvider>
-                      <ImageViewerProvider>
-                        <NotificationsProvider>
-                          <ThemedNavigationContainer onStateChange={onRouteChange}>
-                            <Wrapper>
-                              <DropzonesProvider>
-                                <AppSignalSessionTagger>
-                                  <PushNotificationsProvider>
-                                    <RootNavigator />
-                                  </PushNotificationsProvider>
-                                </AppSignalSessionTagger>
-                              </DropzonesProvider>
-                            </Wrapper>
-                          </ThemedNavigationContainer>
+                      <KeyboardProvider>
+                        <ImageViewerProvider>
+                          <NotificationsProvider>
+                            <ThemedNavigationContainer onStateChange={onRouteChange}>
+                              <Wrapper>
+                                <DropzonesProvider>
+                                  <AppSignalSessionTagger>
+                                    <PushNotificationsProvider>
+                                      <RootNavigator />
+                                    </PushNotificationsProvider>
+                                  </AppSignalSessionTagger>
+                                </DropzonesProvider>
+                              </Wrapper>
+                            </ThemedNavigationContainer>
 
-                          <StatusBar />
-                        </NotificationsProvider>
-                      </ImageViewerProvider>
+                            <StatusBar />
+                          </NotificationsProvider>
+                        </ImageViewerProvider>
+                      </KeyboardProvider>
                     </SafeAreaProvider>
                   </PortalProvider>
                 </GestureHandlerRootView>

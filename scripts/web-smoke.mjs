@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Web smoke test: login -> dropzone -> manifest board -> load, then the two deep links, at desktop and 360x640.
+// Web smoke test: layout check of /login, then login -> dropzone -> manifest board -> load and the two deep links, at
+// desktop and 360x640.
 // Needs the backend dev server with the dev_baseline seed and a served EXPO_ENV=local web export.
 // Usage: node scripts/web-smoke.mjs [--base http://localhost:19006] [--out ./smoke-output]
 import { createRequire } from 'node:module';
@@ -30,6 +31,45 @@ async function pressAt(page, locator, at) {
   await page.mouse.up();
 }
 
+/**
+ * Layout check for the current route: nothing overflows the viewport horizontally, and every primary action
+ * (`data-testid$="-primary-action"`) can be scrolled into view and is the element that receives a click there.
+ */
+async function checkLayout(page, route, viewport, failures) {
+  const scrollWidth = await page.evaluate(() => document.scrollingElement?.scrollWidth ?? 0);
+  if (scrollWidth > viewport.width) {
+    failures.push(`layout ${route}: scrollWidth ${scrollWidth} > ${viewport.width}`);
+  }
+  const actions = page.locator('[data-testid$="-primary-action"]');
+  const count = await actions.count();
+  for (let i = 0; i < count; i += 1) {
+    const action = actions.nth(i);
+    const testId = await action.getAttribute('data-testid');
+    try {
+      await action.scrollIntoViewIfNeeded({ timeout: 5000 });
+      const box = await action.boundingBox();
+      const reachable =
+        !!box &&
+        box.x >= 0 &&
+        box.x + box.width <= viewport.width &&
+        box.y >= 0 &&
+        box.y + box.height <= viewport.height &&
+        (await action.evaluate((el) => {
+          const r = el.getBoundingClientRect();
+          const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+          return !!hit && el.contains(hit);
+        }));
+      if (!reachable) {
+        failures.push(
+          `layout ${route}: ${testId} is not reachable at ${viewport.width}x${viewport.height}`
+        );
+      }
+    } catch (e) {
+      failures.push(`layout ${route}: ${testId}: ${String(e.message).slice(0, 120)}`);
+    }
+  }
+}
+
 async function run(browser, name, viewport) {
   const failures = [];
   const context = await browser.newContext({ viewport });
@@ -38,6 +78,10 @@ async function run(browser, name, viewport) {
   try {
     await page.goto(`${base}/login`, { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForTimeout(3000);
+    await checkLayout(page, '/login', viewport, failures);
+    // TODO P5.2: /signup and /wizards/dropzone. P5.3: dropzone selection. P5.5: the board and a load (last slot row
+    // reachable with 10 jumpers). P5.6: the configuration routes. P5.7: weather, wind and jump run. P5.8: board and
+    // load again at `html { font-size: 200% }`.
     await page.locator('input').nth(0).click({ force: true });
     await page.keyboard.type('owner@example.com');
     await page.locator('input').nth(1).click({ force: true });

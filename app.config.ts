@@ -73,6 +73,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
     android: {
       package: 'com.dangertechnologies.openmanifest',
+      softwareKeyboardLayoutMode: 'resize',
       // The image picker uses the system photo picker, and POST_NOTIFICATIONS is added by expo-notifications.
       permissions: ['CAMERA', 'NOTIFICATIONS', 'ACCESS_COARSE_LOCATION'],
       adaptiveIcon: {
