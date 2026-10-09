@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { FlatList, LayoutChangeEvent, StyleSheet, View } from 'react-native';
+import { useAppTheme } from 'app/theme';
+import ScreenContainer from '../layout/ScreenContainer';
 import WizardPagination from './Pagination';
 
 interface IWizardProps {
@@ -20,13 +22,21 @@ export const WizardContext = React.createContext<IWizardContext>({
   setIndex: () => null,
 } as IWizardContext);
 
+/** The position of the page being rendered; undefined outside of a wizard */
+export const WizardPageContext = React.createContext<number | undefined>(undefined);
+
 function Wizard(props: IWizardProps) {
   const { children, icons } = props;
-  const { width } = useWindowDimensions();
+  const { theme } = useAppTheme();
+  const [width, setWidth] = React.useState(0);
   const [index, setIndex] = React.useState(0);
   const ref = React.useRef<FlatList>(null);
   const pages = React.useMemo(() => React.Children.toArray(children), [children]);
   const count = pages.length;
+
+  const onLayout = React.useCallback((event: LayoutChangeEvent) => {
+    setWidth(event.nativeEvent.layout.width);
+  }, []);
 
   const value = React.useMemo(
     () => ({
@@ -45,30 +55,37 @@ function Wizard(props: IWizardProps) {
 
   return (
     <WizardContext.Provider value={value}>
-      <View style={[styles.container, { width }]}>
-        <FlatList
-          ref={ref}
-          horizontal
-          pagingEnabled
-          scrollEnabled={false}
-          showsHorizontalScrollIndicator={false}
-          data={pages}
-          keyExtractor={(page, idx) =>
-            React.isValidElement(page) && page.key ? String(page.key) : String(idx)
-          }
-          getItemLayout={(_, idx) => ({ length: width, offset: width * idx, index: idx })}
-          renderItem={({ item }) => <View style={{ width }}>{item}</View>}
-        />
-        <WizardPagination size={count} paginationIndex={index} icons={icons} />
-      </View>
+      <ScreenContainer style={{ backgroundColor: theme.colors.primary }}>
+        <WizardPagination size={count} paginationIndex={index} icons={icons} width={width} />
+        <View style={styles.pages} onLayout={onLayout}>
+          {width ? (
+            <FlatList
+              ref={ref}
+              horizontal
+              pagingEnabled
+              scrollEnabled={false}
+              showsHorizontalScrollIndicator={false}
+              data={pages}
+              keyExtractor={(page, idx) =>
+                React.isValidElement(page) && page.key ? String(page.key) : String(idx)
+              }
+              getItemLayout={(_, idx) => ({ length: width, offset: width * idx, index: idx })}
+              renderItem={({ item, index: pageIndex }) => (
+                <WizardPageContext.Provider value={pageIndex}>
+                  <View style={{ width }}>{item}</View>
+                </WizardPageContext.Provider>
+              )}
+            />
+          ) : null}
+        </View>
+      </ScreenContainer>
     </WizardContext.Provider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  pages: {
     flex: 1,
-    paddingBottom: 0,
   },
 });
 

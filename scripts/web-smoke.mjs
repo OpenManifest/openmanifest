@@ -130,7 +130,7 @@ async function run(browser, name, viewport) {
     await page.screenshot({ path: join(out, `${name}-signup.png`) });
     await page.goto(`${base}/login`, { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForTimeout(3000);
-    // TODO P5.7: weather, wind and jump run. P5.8: board and
+    // TODO P5.8: board and
     // load again at `html { font-size: 200% }`.
     await page.locator('input').nth(0).click({ force: true });
     await page.keyboard.type('owner@example.com');
@@ -222,6 +222,10 @@ async function run(browser, name, viewport) {
       '/dropzone/configuration/basic',
       '/dropzone/transactions',
       '/dropzone/master-log',
+      // Weather: the wizard, then its winds and jump run screens
+      '/dropzone/weather',
+      '/dropzone/weather/winds',
+      '/dropzone/weather/jumprun',
     ];
     for (const route of configurationRoutes) {
       await page.goto(`${base}${route}`, { waitUntil: 'networkidle', timeout: 60000 });
@@ -231,6 +235,9 @@ async function run(browser, name, viewport) {
         continue;
       }
       await checkLayout(page, route, viewport, failures);
+      await page.screenshot({
+        path: join(out, `${name}${route.replace(/\//g, '-')}.png`),
+      });
     }
     // One dark mode screenshot, to see that the screen follows the theme
     await page.emulateMedia({ colorScheme: 'dark' });
