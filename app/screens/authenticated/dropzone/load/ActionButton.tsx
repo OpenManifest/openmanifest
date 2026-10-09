@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { FAB, Portal, useTheme } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { FAB, useTheme } from 'react-native-paper';
 import { LoadDetailsFragment } from 'app/api/operations';
 
 import { useDropzoneContext, useLoadContext, useManifestContext } from 'app/providers';
@@ -125,21 +126,22 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     ...(canUpdateLoad ? workflowActions : []),
   ];
 
+  // Not in a Portal: the group fills the screen area above the tab bar, which already covers the bottom inset
   return (
-    <Portal>
-      <FAB.Group
-        visible={!!buttonActions.length}
-        open={isExpanded}
-        icon={isExpanded ? 'close' : 'plus'}
-        fabStyle={{
-          marginLeft: 16,
-          marginBottom: 100,
-          backgroundColor: theme.colors.primary,
-        }}
-        // @ts-ignore
-        actions={buttonActions}
-        onStateChange={({ open }) => setExpanded(open)}
-      />
-    </Portal>
+    <FAB.Group
+      testID="load-actions-primary-action"
+      visible={!!buttonActions.length}
+      open={isExpanded}
+      icon={isExpanded ? 'close' : 'plus'}
+      style={styles.group}
+      fabStyle={{ backgroundColor: theme.colors.primary }}
+      // @ts-ignore
+      actions={buttonActions}
+      onStateChange={({ open }) => setExpanded(open)}
+    />
   );
 }
+
+const styles = StyleSheet.create({
+  group: { paddingBottom: 0 },
+});

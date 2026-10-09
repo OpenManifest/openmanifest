@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { render } from '@testing-library/react-native';
+import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 import FloatingActionArea from '../FloatingActionArea';
 
 jest.mock('react-native-safe-area-context', () => ({
@@ -31,6 +32,21 @@ describe('FloatingActionArea', () => {
       bottom: 0,
       right: 0,
       paddingBottom: 34 + 16,
+      paddingRight: 12 + 16,
+    });
+  });
+
+  it('skips the bottom inset inside a tab navigator, whose tab bar covers it', () => {
+    const screen = render(
+      <BottomTabBarHeightContext.Provider value={83}>
+        <FloatingActionArea testID="fabs">
+          <Text>Add</Text>
+        </FloatingActionArea>
+      </BottomTabBarHeightContext.Provider>
+    );
+
+    expect(StyleSheet.flatten(screen.getByTestId('fabs').props.style)).toMatchObject({
+      paddingBottom: 16,
       paddingRight: 12 + 16,
     });
   });

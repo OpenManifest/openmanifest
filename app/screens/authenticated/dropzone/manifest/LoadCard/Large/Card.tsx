@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import { Button, Card, IconButton, Paragraph, Text } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
@@ -185,7 +185,6 @@ function LoadCard(props: ILoadCardLarge) {
           </ScrollView>
         </View>
         <LoadSlotTable
-          scrollable={Platform.OS === 'web'}
           {...{ load, loading, onSlotPress, onSlotGroupPress }}
           onDeletePress={onDeleteSlot}
           onAvailableSlotPress={() =>
