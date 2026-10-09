@@ -2,7 +2,7 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { useController } from 'react-hook-form';
 import { Button, Card, Checkbox, Divider, Paragraph } from 'react-native-paper';
-import { KeyboardAvoidingView, Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { useRigInspectionTemplateQuery } from 'app/api/reflection';
 import { RigInspectionForm, useRigInspectionForm } from 'app/forms/rig_inspection';
 import { parseFields, FieldItem } from 'app/forms/rig_inspection_template';
@@ -10,7 +10,8 @@ import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { useUserProfile } from 'app/api/crud';
-import { Screen } from 'app/components/layout';
+import FormColumn from 'app/components/layout/FormColumn';
+import ScreenContainer from 'app/components/layout/ScreenContainer';
 import RigCard from '../equipment/RigCard';
 
 export type RigInspectionRoute = {
@@ -71,15 +72,8 @@ export default function RigInspectionScreen() {
   );
 
   return (
-    <Screen fullWidth={false}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'android' ? undefined : 'padding'}
-        style={{
-          width: '100%',
-          flexGrow: 1,
-          backgroundColor: 'transparent',
-        }}
-      >
+    <ScreenContainer edges={['bottom']}>
+      <FormColumn>
         {rig && <RigCard {...{ rig }} />}
 
         <Card style={{ width: '100%' }}>
@@ -116,7 +110,7 @@ export default function RigInspectionScreen() {
             </Button>
           </Card.Actions>
         </Card>
-      </KeyboardAvoidingView>
-    </Screen>
+      </FormColumn>
+    </ScreenContainer>
   );
 }
