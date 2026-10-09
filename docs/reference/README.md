@@ -143,7 +143,8 @@ Pass 1 validated all of them against the live server schema: 0 validation errors
 Links (`app/api/client/links/`): `authentication.ts` (adds `access-token`, `client`, `uid` headers from the session store), `errors.ts` (calls
 `resetSession` on authentication errors, shows snackbars), `appSignal.ts`
 (reports errors), `http.ts` (`BatchHttpLink`, batch max 10),
-`websockets.ts` (`@rails/actioncable` + `graphql-ruby-client` `ActionCableLink`, URL `<api host>/subscriptions`),
+`websockets.ts` (`@rails/actioncable` + `graphql-ruby-client` `ActionCableLink`, URL `<api host>/subscriptions?access-token=…&client=…&uid=…` built by `utils/cable.ts`, which also reconnects the
+cable when the credentials change),
 `link.ts`/`index.ts` (split subscriptions vs HTTP).
 
 Scripts: `yarn sync:schema` (download schema), `yarn ts:graphql` (codegen), `yarn check:graphql` (posts documents to
@@ -155,8 +156,8 @@ Scripts: `yarn sync:schema` (download schema), `yarn ts:graphql` (codegen), `yar
    `useSession().setCredentials`. Apple: `loginWithApple(token)`; Facebook: `loginWithFacebook(token)` via `expo-facebook`
    (cannot be built on current SDKs, BUG-084).
 2. Every request carries `access-token`, `client`, `uid` (authentication link, from `useSession`).
-3. Subscriptions: credentials are passed as ActionCable channel params; the server looks the user up by `email: uid`
-   (fails for Apple users, BUG-060).
+3. Subscriptions: the cable URL carries `access-token`, `client` and `uid` (browsers cannot set WebSocket headers); the
+   server rejects connections without a valid token (P6.9, BUG-011/060). The cable reconnects on login and logout.
 4. Dropzone selection (`useSelectDropzone`) writes `useSession().currentDropzoneId` and resets the Apollo store; the
    backend auto-creates a membership when the user's permissions are read (BUG-005).
 5. Push: `app/entrypoint/providers/PushNotificationProvider.tsx` registers an Expo push token and writes it to the user

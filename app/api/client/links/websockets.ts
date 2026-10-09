@@ -1,6 +1,7 @@
 import * as ActionCable from '@rails/actioncable';
-import URI from 'urijs';
+import { useSession } from 'app/state';
 import { getServerUrl } from '../utils/getServerUrl';
+import { buildCableUrl, reconnectOnCredentialChange } from '../utils/cable';
 import ActionCableLink from '../utils/ActionCableLink';
 
 export const hasSubscriptionOperation = ({ query: { definitions } }) => {
@@ -10,13 +11,11 @@ export const hasSubscriptionOperation = ({ query: { definitions } }) => {
 };
 
 export function createWebsocketsLink() {
-  const cable = ActionCable.createConsumer(
-    [
-      new URI(getServerUrl()).scheme() === 'https' ? 'wss://' : 'ws://',
-      new URI(getServerUrl()).host(),
-      '/subscriptions',
-    ].join('')
+  // The consumer calls the function whenever it opens a connection, so it always sees the current credentials
+  const cable = ActionCable.createConsumer(() =>
+    buildCableUrl(getServerUrl(), useSession.getState().credentials)
   );
+  reconnectOnCredentialChange(cable);
 
   return new ActionCableLink({
     cable,
