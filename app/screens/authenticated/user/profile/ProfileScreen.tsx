@@ -20,6 +20,7 @@ import UserActionsButton from './UserActions';
 import { ProfileDialogsProvider, useProfileDialogs } from './ProfileDialogs';
 import TabBar, { ProfileTab } from './tabs';
 import { useAppTheme } from 'app/theme';
+import { formatCents } from 'app/utils/money';
 
 export type ProfileRoute = {
   ProfileScreen: {
@@ -156,7 +157,7 @@ function ProfileScreenContent(props: {
                       items={[
                         {
                           title: 'Funds',
-                          value: `$${dropzoneUser?.credits || 0}`,
+                          value: formatCents(dropzoneUser?.creditsCents),
                           onPress: () => {
                             dialogs.credits.open({ dropzoneUser });
                           },

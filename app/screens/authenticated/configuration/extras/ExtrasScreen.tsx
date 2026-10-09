@@ -13,6 +13,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import { TicketTypeAddonDetailsFragment } from 'app/api/operations';
 import { useAppTheme } from 'app/theme';
 import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
+import { formatCents } from 'app/utils/money';
 
 export default function ExtrasScreen() {
   const { dropzone: currentDropzone, dialogs } = useDropzoneContext();
@@ -46,7 +47,7 @@ export default function ExtrasScreen() {
               pointerEvents="none"
             >
               <DataTable.Cell>{extra.name}</DataTable.Cell>
-              <DataTable.Cell numeric>${extra.cost}</DataTable.Cell>
+              <DataTable.Cell numeric>{formatCents(extra.costCents)}</DataTable.Cell>
             </DataTable.Row>
           ))}
         </DataTable>

@@ -17,6 +17,7 @@ import {
   TicketTypeExtraValue,
   TicketTypeValue,
 } from './useForm';
+import { formatCents } from 'app/utils/money';
 
 interface IUserCardProps {
   slotUser: SlotUserWithRig;
@@ -165,7 +166,7 @@ export default function ManifestGroupForm() {
               selected={extras.value?.some(({ id }) => id === extra.id)}
               onPress={createToggleTicketAddonHandler(extra)}
             >
-              {`${extra.name} ($${extra.cost})`}
+              {`${extra.name} (${formatCents(extra.costCents)})`}
             </Chip>
           ))}
         </ScrollView>

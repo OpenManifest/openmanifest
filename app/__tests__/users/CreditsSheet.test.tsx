@@ -15,7 +15,7 @@ const MEMBER = {
   __typename: 'DropzoneUser',
   id: '77',
   walletId: 'member-wallet',
-  credits: 20,
+  creditsCents: 2000,
   user: { __typename: 'User', id: '77', name: 'Member Jumper' },
 };
 
@@ -62,7 +62,7 @@ describe('<CreditSheet />', () => {
   it('a deposit of 50 sells credits from the dropzone wallet to the member wallet', async () => {
     const mutationResult = orderResult();
     const screen = renderSheet(mutationResult, {
-      amount: 50,
+      amountCents: 5000,
       title: 'Added funds',
       seller: MEMBER.walletId,
       buyer: dropzoneExtensive.walletId,
@@ -104,7 +104,7 @@ describe('<CreditSheet />', () => {
               query: CreateOrderDocument,
               operationName: 'CreateOrder',
               variables: {
-                amount: 15,
+                amountCents: 1500,
                 title: 'Withdrew funds',
                 buyer: MEMBER.walletId,
                 seller: dropzoneExtensive.walletId,

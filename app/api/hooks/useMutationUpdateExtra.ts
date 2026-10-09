@@ -7,7 +7,7 @@ const MUTATION_UPDATE_EXTRA = gql`
     $id: Int!
     $name: String
     $ticketTypeIds: [Int!]
-    $cost: Float
+    $costCents: Int
     $dropzoneId: Int
   ) {
     updateExtra(
@@ -16,7 +16,7 @@ const MUTATION_UPDATE_EXTRA = gql`
         attributes: {
           name: $name
           ticketTypeIds: $ticketTypeIds
-          cost: $cost
+          costCents: $costCents
           dropzoneId: $dropzoneId
         }
       }
@@ -37,12 +37,11 @@ const MUTATION_UPDATE_EXTRA = gql`
   fragment extra on Extra {
     id
     name
-    cost
-
+    costCents
     ticketTypes {
       id
       name
-      cost
+      costCents
       altitude
       allowManifestingSelf
     }

@@ -29,6 +29,7 @@ import {
 import { GhostInput, JoinFederationInput, Permission } from '../schema.d';
 import createCRUDContext, { TMutationResponse, uninitializedHandler } from './factory';
 import { useUserUpdated } from './subscriptions/useUserUpdated';
+import { toCents } from 'app/utils/money';
 
 function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
   const authenticated = useAuthenticated();
@@ -185,7 +186,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
         return { error: 'No dropzone selected' };
       }
       return createOrder({
-        amount,
+        amountCents: toCents(amount),
         title: message || 'Added funds',
         seller: dropzoneUser.walletId,
         buyer: dropzone.walletId,
@@ -204,7 +205,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
         return { error: 'No dropzone selected' };
       }
       return createOrder({
-        amount,
+        amountCents: toCents(amount),
         title: message || 'Withdrew funds',
         buyer: dropzoneUser.walletId,
         seller: dropzone.walletId,

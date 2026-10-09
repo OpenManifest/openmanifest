@@ -14,6 +14,7 @@ import { useLogout } from 'app/api/hooks/useLogout';
 import useSelectDropzone from 'app/hooks/useSelectDropzone';
 import { useSession } from '../../state';
 import { useAppTheme } from 'app/theme';
+import { formatCents } from 'app/utils/money';
 
 export default function DrawerMenu() {
   const { theme } = useAppTheme();
@@ -110,7 +111,7 @@ export default function DrawerMenu() {
           },
           {
             title: 'Funds',
-            value: `$${currentUser?.credits || 0}`,
+            value: formatCents(currentUser?.creditsCents),
           },
         ]}
       />

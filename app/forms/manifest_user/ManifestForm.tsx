@@ -13,6 +13,7 @@ import { TicketTypeChipSelectField } from 'app/components/input/chip_select/Tick
 import useRestriction from 'app/hooks/useRestriction';
 import { RigSelectField } from 'app/components/input/dropdown_select/RigSelect';
 import { ManifestUserFields } from './useForm';
+import { formatCents } from 'app/utils/money';
 
 interface IManifestFormProps {
   control: Control<ManifestUserFields>;
@@ -53,7 +54,7 @@ export default function ManifestForm(props: IManifestFormProps) {
         }
         items={ticketType?.extras as TicketTypeExtraEssentialsFragment[]}
         renderItemLabel={(item: TicketTypeExtraEssentialsFragment) =>
-          `${item.name} ($${item.cost})`
+          `${item.name} (${formatCents(item.costCents)})`
         }
         name="extras"
       />

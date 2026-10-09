@@ -11,6 +11,7 @@ import { DropzoneUser } from 'app/api/schema.d';
 import { successColor } from 'app/constants/Colors';
 import UserAvatar from 'app/components/UserAvatar';
 import { DateTime } from 'luxon';
+import { formatCents } from 'app/utils/money';
 
 interface IOrder {
   order: OrderEssentialsFragment;
@@ -41,10 +42,10 @@ export default function OrderCard(props: IOrder) {
           color: theme.colors.onSurface,
         }}
       >
-        {`${isSelfBuyer ? '-$' : '$'}${order.amount.toFixed(2)}`}
+        {`${isSelfBuyer ? '-' : ''}${formatCents(order.amountCents)}`}
       </Text>
     ),
-    [isSelfBuyer, order.amount, theme.colors.onSurface]
+    [isSelfBuyer, order.amountCents, theme.colors.onSurface]
   );
 
   const left = React.useCallback(
