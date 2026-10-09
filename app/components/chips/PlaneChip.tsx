@@ -1,12 +1,12 @@
 import { PlaneEssentialsFragment } from 'app/api/operations';
 import { truncate } from 'lodash';
 import * as React from 'react';
+import { useSession } from 'app/state';
 import { View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { usePlanesQuery } from '../../api/reflection';
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
-import { useAppSelector } from '../../state';
 import Select, { ISelectOption } from '../input/select/Select';
 import Chip from './Chip';
 
@@ -23,7 +23,7 @@ export default function PlaneChip(props: IPlaneChipSelect) {
   const { small, color: assignedColor, backgroundColor, value, onSelect } = props;
   const theme = useTheme();
   const color = assignedColor || theme.colors.onSurface;
-  const { currentDropzoneId } = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   const { data } = usePlanesQuery({
     variables: {

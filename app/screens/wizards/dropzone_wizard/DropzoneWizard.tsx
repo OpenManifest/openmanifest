@@ -7,6 +7,8 @@ import useMutationCreateDropzone from 'app/api/hooks/useMutationCreateDropzone';
 import useMutationUpdateDropzone from 'app/api/hooks/useMutationUpdateDropzone';
 import camelize from 'lodash/camelCase';
 import { Permission } from 'app/api/schema.d';
+import type { DropzoneExtensiveFragment } from 'app/api/operations';
+import useSelectDropzone from 'app/hooks/useSelectDropzone';
 import { StackActions, useNavigation } from '@react-navigation/native';
 import { useNotifications } from 'app/providers/notifications';
 import NameStep from './steps/Name';
@@ -20,6 +22,7 @@ import LogoStep from './steps/Logo';
 function DropzoneSetupScreen() {
   const dropzone = useAppSelector((root) => root.forms.dropzone);
   const dispatch = useAppDispatch();
+  const selectDropzone = useSelectDropzone();
   const navigation = useNavigation();
   const notify = useNotifications();
 
@@ -107,7 +110,7 @@ function DropzoneSetupScreen() {
 
     if (!result?.errors?.length && result?.dropzone?.id) {
       dispatch(actions.forms.dropzone.setOpen(result?.dropzone));
-      dispatch(actions.global.setDropzone(result?.dropzone));
+      selectDropzone(result?.dropzone as DropzoneExtensiveFragment);
       if (result.dropzone.primaryColor) {
         dispatch(actions.global.setPrimaryColor(result?.dropzone?.primaryColor));
       }
@@ -143,6 +146,7 @@ function DropzoneSetupScreen() {
     }
   }, [
     dispatch,
+    selectDropzone,
     dropzone.fields.banner.value,
     dropzone.fields.federation.value?.id,
     dropzone.fields.lat.value,
@@ -203,14 +207,14 @@ function DropzoneSetupScreen() {
         {
           component: DoneStep,
           onNext: async () => {
-            dispatch(actions.global.setDropzone(dropzone.original));
+            selectDropzone(dropzone.original);
             if (dropzone.fields.primaryColor.value) {
               dispatch(actions.global.setPrimaryColor(dropzone.fields.primaryColor.value));
             }
             if (dropzone.fields.secondaryColor.value) {
               dispatch(actions.global.setAccentColor(dropzone.fields.secondaryColor.value));
             }
-            dispatch(actions.global.setDropzone(dropzone.original));
+            selectDropzone(dropzone.original);
 
             dispatch(actions.forms.dropzone.setOpen(false));
             dispatch(actions.forms.dropzone.reset());

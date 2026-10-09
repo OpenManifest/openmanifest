@@ -2,11 +2,11 @@ import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import { truncate } from 'lodash';
 import * as React from 'react';
+import { useSession } from 'app/state';
 import { View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
-import { useAppSelector } from '../../state';
 import Select, { ISelectOption } from '../input/select/Select';
 import Chip from './Chip';
 
@@ -22,7 +22,7 @@ export default function PilotChip(props: IPilotChipSelect) {
   const { small, color: assignedColor, backgroundColor, onSelect, value } = props;
   const theme = useTheme();
   const color = assignedColor || theme.colors.onSurface;
-  const { currentDropzoneId } = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   const { data } = useDropzoneUsersQuery({
     variables: {

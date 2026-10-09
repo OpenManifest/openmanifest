@@ -12,11 +12,13 @@ import { ModerationRole, Permission } from 'app/api/schema.d';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useDropzonesContext } from 'app/api/crud';
 import { useLogout } from 'app/api/hooks/useLogout';
-import { actions, useAppDispatch, useAppSelector } from '../../state';
+import useSelectDropzone from 'app/hooks/useSelectDropzone';
+import { useAppSelector, useSession } from '../../state';
 
 export default function DrawerMenu() {
-  const { theme, currentRouteName: routeName } = useAppSelector((root) => root.global);
-  const dispatch = useAppDispatch();
+  const { theme } = useAppSelector((root) => root.global);
+  const routeName = useSession((session) => session.currentRouteName);
+  const selectDropzone = useSelectDropzone();
   const {
     dropzone: { currentUser, dropzone, loading },
   } = useDropzoneContext();
@@ -299,7 +301,7 @@ export default function DrawerMenu() {
               active={dropzone?.id === item?.id}
               onPress={() => {
                 if (item) {
-                  dispatch(actions.global.setDropzone(item as DropzoneExtensiveFragment));
+                  selectDropzone(item as DropzoneExtensiveFragment);
                   navigation.navigate('Authenticated', {
                     screen: 'LeftDrawer',
                     params: {

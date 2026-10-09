@@ -4,7 +4,7 @@ import { HelperText, Divider, Chip, List } from 'react-native-paper';
 import { uniqBy } from 'lodash';
 import { useAllowedJumpTypesQuery } from 'app/api/reflection';
 
-import { actions, useAppSelector, useAppDispatch } from 'app/state';
+import { actions, useAppSelector, useAppDispatch, useSession } from 'app/state';
 
 import useRestriction from 'app/hooks/useRestriction';
 import { JumpType, Permission, TicketType } from 'app/api/schema.d';
@@ -108,8 +108,8 @@ function UserCard(props: IUserCardProps) {
 }
 export default function ManifestGroupForm() {
   const state = useAppSelector((root) => root.forms.manifestGroup);
-  const globalState = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const canManifestOthers = useRestriction(Permission.CreateUserSlot);
   const { data } = useAllowedJumpTypesQuery({
     variables: {
@@ -117,7 +117,7 @@ export default function ManifestGroupForm() {
         (slotUser) => slotUser.id
       ) as number[],
       isPublic: canManifestOthers ? null : true,
-      dropzoneId: globalState.currentDropzoneId?.toString() as string,
+      dropzoneId: currentDropzoneId?.toString() as string,
     },
     onError: console.error,
   });

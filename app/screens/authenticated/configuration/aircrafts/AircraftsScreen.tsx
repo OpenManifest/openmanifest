@@ -5,7 +5,7 @@ import ProgressBar from 'app/components/ProgressBar';
 import { useIsFocused } from '@react-navigation/native';
 import { Permission } from 'app/api/schema.d';
 
-import { useAppSelector } from 'app/state';
+import { useAppSelector, useSession } from 'app/state';
 import NoResults from 'app/components/NoResults';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
@@ -17,9 +17,10 @@ import { useNotifications } from 'app/providers/notifications';
 
 export default function PlanesScreen() {
   const global = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const { dialogs } = useDropzoneContext();
   const { aircrafts, archive, loading, refetch } = useAircrafts({
-    dropzoneId: global.currentDropzoneId?.toString() as string,
+    dropzoneId: currentDropzoneId?.toString() as string,
   });
 
   const notify = useNotifications();

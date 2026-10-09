@@ -3,6 +3,7 @@ import * as appRedux from '../../state';
 import { render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_PROFILE from './__mocks__/QueryDropzoneUserProfile.mock';
 import ProfileScreen from '../../screens/authenticated/user/profile/ProfileScreen';
+import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
@@ -18,14 +19,6 @@ const authenticatedState = {
   global: {
     ...appRedux.initialState.global,
     authenticated: true,
-    credentials: {
-      accessToken: 'jest',
-      client: 'jest',
-      uid: 'jest@example.com',
-      tokenType: 'Bearer',
-      expiry: 9999999999,
-    },
-    currentDropzoneId: 1,
   },
 };
 
@@ -33,6 +26,7 @@ describe('<ProfileScreen />', () => {
   it('shows the name, role, funds and licence of the jumper', async () => {
     const screen = render(<ProfileScreen />, {
       initialState: authenticatedState,
+      session: authenticatedSession,
       graphql: [MOCK_QUERY_PROFILE()],
     });
 
@@ -47,6 +41,7 @@ describe('<ProfileScreen />', () => {
   it('offers the funds, jumps and equipment tabs and lists the jump history by default', async () => {
     const screen = render(<ProfileScreen />, {
       initialState: authenticatedState,
+      session: authenticatedSession,
       graphql: [MOCK_QUERY_PROFILE()],
     });
 

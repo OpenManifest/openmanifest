@@ -2,7 +2,7 @@ import { uniqBy } from 'lodash';
 import * as React from 'react';
 import { List } from 'react-native-paper';
 import { Permission } from 'app/api/schema.d';
-import { useAppSelector } from 'app/state';
+import { useSession } from 'app/state';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import { ChipProps } from 'app/components/chips/Chip';
@@ -31,7 +31,7 @@ function DropzoneUserChipSelect(props: IDropzoneUserChipSelect) {
     onLoadingStateChanged,
     onChange,
   } = props;
-  const { currentDropzoneId } = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   const { data, loading } = useDropzoneUsersQuery({
     variables: {

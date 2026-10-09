@@ -9,7 +9,6 @@ import color from 'color';
 import { primaryColor } from 'app/constants/Colors';
 import merge from 'lodash/merge';
 import { DropzoneExtensiveFragment, UserDetailedFragment } from '../api/operations';
-import { Credential } from '../api/schema.d';
 
 /**
  * One theme object serves react-native-paper (Material Design 2, so visuals stay close to Paper 4) and
@@ -52,16 +51,12 @@ const CombinedDarkTheme: AppTheme = {
 
 interface IGlobalState {
   authenticated: boolean;
-  currentDropzoneId: number | null;
   // @deprecated
   currentUser: UserDetailedFragment | null;
-  credentials: Credential | null;
   // @deprecated
   currentDropzone: DropzoneExtensiveFragment | null;
   permissions: string[];
 
-  expoPushToken: string | null;
-  currentRouteName: string;
   palette: Omit<typeof CombinedDefaultTheme.colors, 'primary' | 'accent'> & {
     primary: {
       light: string;
@@ -82,12 +77,8 @@ interface IGlobalState {
 export const initialState: IGlobalState = {
   currentUser: null,
   currentDropzone: null,
-  currentDropzoneId: null,
   permissions: [],
-  credentials: null,
   authenticated: false,
-  expoPushToken: null,
-  currentRouteName: '',
   theme: CombinedDefaultTheme,
   palette: {
     ...CombinedDefaultTheme.colors,
@@ -108,21 +99,11 @@ export default createSlice({
   name: 'global',
   initialState,
   reducers: {
-    setCredentials: (state: IGlobalState, action: PayloadAction<Credential>) => {
-      console.debug('[Redux::Global]: Setting credentials', action.payload);
-      state.credentials = action.payload;
-    },
     setAuthenticated: (state: IGlobalState, action: PayloadAction<boolean>) => {
       state.authenticated = action.payload;
     },
     setUser: (state: IGlobalState, action: PayloadAction<UserDetailedFragment>) => {
       state.currentUser = action.payload;
-    },
-    setExpoPushToken: (state: IGlobalState, action: PayloadAction<string>) => {
-      state.expoPushToken = action.payload;
-    },
-    setCurrentRouteName: (state: IGlobalState, action: PayloadAction<string>) => {
-      state.currentRouteName = action.payload;
     },
     setPermissions: (state: IGlobalState, action: PayloadAction<string[]>) => {
       state.permissions = action.payload;
@@ -161,7 +142,6 @@ export default createSlice({
     },
     setDropzone: (state: IGlobalState, action: PayloadAction<DropzoneExtensiveFragment | null>) => {
       state.currentDropzone = action.payload;
-      state.currentDropzoneId = action.payload?.id ? Number(action.payload?.id) : null;
       console.debug('Setting id', action?.payload?.id);
 
       if (state.currentDropzone?.primaryColor) {

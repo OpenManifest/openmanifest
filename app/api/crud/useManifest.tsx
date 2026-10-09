@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useAppSelector } from 'app/state';
+import { useSession } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import uniqBy from 'lodash/uniqBy';
 import {
@@ -28,7 +28,7 @@ import { useLoadCreated } from './subscriptions/useLoadCreatedSubscription';
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
 
 export default function useManifest({ dropzone, date }: UseManifestOptions) {
-  const state = useAppSelector((root) => root.global);
+  const accessToken = useSession((session) => session.credentials?.accessToken);
 
   const canCreateLoad = useRestriction(Permission.CreateLoad);
   const canDeleteOwnSlot = useRestriction(Permission.DeleteSlot);
@@ -74,7 +74,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
   const query = useLoadsQuery({
     initialFetchPolicy: 'cache-first',
     variables,
-    skip: !state?.credentials?.accessToken || !dropzone,
+    skip: !accessToken || !dropzone,
   });
 
   const [moveSlotMutation] = useMoveSlotMutation();

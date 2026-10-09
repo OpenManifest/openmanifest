@@ -5,6 +5,7 @@ import { useDropzoneContext } from 'app/providers';
 import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import AircraftDialog from '../../forms/aircraft/Dialog';
+import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
@@ -13,14 +14,6 @@ const authenticatedState = {
   global: {
     ...appRedux.initialState.global,
     authenticated: true,
-    credentials: {
-      accessToken: 'jest',
-      client: 'jest',
-      uid: 'jest@example.com',
-      tokenType: 'Bearer',
-      expiry: 9999999999,
-    },
-    currentDropzoneId: 1,
   },
 };
 
@@ -52,6 +45,7 @@ describe('<AircraftDialog />', () => {
       </View>,
       {
         initialState: authenticatedState,
+        session: authenticatedSession,
         graphql: [
           {
             request: {
@@ -94,7 +88,7 @@ describe('<AircraftDialog />', () => {
       <View testID="under-test">
         <AircraftDialog open onClose={jest.fn()} />
       </View>,
-      { initialState: authenticatedState, graphql: [] }
+      { initialState: authenticatedState, session: authenticatedSession, graphql: [] }
     );
 
     const dialog = within(screen.getByTestId('under-test'));
@@ -111,7 +105,7 @@ describe('<AircraftDialog />', () => {
       <View testID="under-test">
         <AircraftDialog open onClose={jest.fn()} />
       </View>,
-      { initialState: authenticatedState, graphql: [] }
+      { initialState: authenticatedState, session: authenticatedSession, graphql: [] }
     );
 
     const dialog = within(screen.getByTestId('under-test'));
