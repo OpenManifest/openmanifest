@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { HelperText, IconButton, List, TextInput } from 'react-native-paper';
+import useSheetInputRender from '../useSheetInputRender';
 
 export enum NumberFieldType {
   Cash = 'cash',
@@ -30,6 +31,7 @@ const round = (n: number) => Math.round(n * 1000) / 1000;
 export default function NumberField(props: INumberFieldProps) {
   const { onChange, label, mode, disabled, variant, step = 0.5, min, max, ...rest } = props;
   const { value, helperText, error } = rest;
+  const render = useSheetInputRender();
 
   const current = value || 0;
   const [text, setText] = React.useState(String(current));
@@ -63,6 +65,7 @@ export default function NumberField(props: INumberFieldProps) {
         />
         <TextInput
           dense
+          render={render}
           mode={mode || 'outlined'}
           style={styles.input}
           keyboardType="decimal-pad"

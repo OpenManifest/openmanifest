@@ -32,15 +32,8 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     onSuccess,
   });
 
-  const snapPoints = React.useMemo(() => [600], []);
-
   return (
-    <DialogOrSheet
-      {...{ loading, open, onClose }}
-      snapPoints={snapPoints}
-      buttonAction={onSubmit}
-      buttonLabel="Manifest"
-    >
+    <DialogOrSheet {...{ loading, open, onClose }} buttonAction={onSubmit} buttonLabel="Manifest">
       <ManifestForm {...{ control }} />
     </DialogOrSheet>
   );

@@ -31,11 +31,10 @@ export default function CreateGhostDialog(props: ICreateGhostDialog) {
     }
   }, [open, reset]);
 
-  const snapPoints = React.useMemo(() => [400, 740], []);
   return (
     <DialogOrSheet
       title="Pre-register user"
-      {...{ open, loading, onClose, snapPoints }}
+      {...{ open, loading, onClose }}
       buttonAction={onSubmit}
       buttonLabel="Create"
     >
