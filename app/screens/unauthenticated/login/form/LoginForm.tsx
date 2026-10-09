@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Button, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
@@ -20,7 +20,7 @@ export default function LoginForm() {
 
   const { control, onSubmit, loading, loginWithApple, loginWithFacebook } = useLoginForm();
   return (
-    <ScrollView>
+    <View>
       {loading ? (
         <View style={styles.animationContainer}>
           <LottieView
@@ -80,31 +80,21 @@ export default function LoginForm() {
       <AppleButton onPress={loginWithApple} style={{ width: '100%', flex: 1 }} />
 
       <Button
+        testID="signup-primary-action"
         labelStyle={styles.textButtonLabel}
         style={styles.textButton}
         onPress={() => navigation.navigate('Unauthenticated', { screen: 'SignUpScreen' })}
       >
         Sign up
       </Button>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    // backgroundColor: primaryColor,
-    paddingTop: 10,
-  },
-  logo: { height: 300, width: '100%' },
-  card: { padding: 16, borderRadius: 8 },
-  cardLandscape: { height: '100%', width: '100%', justifyContent: 'center' },
-
   animationContainer: {
     width: '100%',
-    height: 200,
+    minHeight: 200,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -115,11 +105,6 @@ const styles = StyleSheet.create({
     height: 156,
     width: '100%',
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-
   forgotPassword: {
     marginBottom: 16,
     color: 'rgb(50, 50, 50)',
@@ -127,24 +112,6 @@ const styles = StyleSheet.create({
   forgotPasswordDark: {
     marginTop: 8,
     color: 'rgb(180, 180, 180)',
-  },
-
-  fields: {
-    marginBottom: 10,
-    marginTop: -50,
-    maxWidth: 400,
-    width: '100%',
-    paddingHorizontal: 56,
-    backgroundColor: 'transparent',
-  },
-  fieldsLandscape: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 400,
   },
   button: {
     marginVertical: 4,
@@ -155,7 +122,7 @@ const styles = StyleSheet.create({
   },
   textButton: {
     marginTop: 10,
-    height: 56,
+    minHeight: 56,
     backgroundColor: 'transparent',
     color: 'white',
     width: '100%',

@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Image, ImageBackground, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import { Image, ImageBackground, StyleSheet, View } from 'react-native';
 import { Card, useTheme } from 'react-native-paper';
 
-import useDevice, { ScreenOrientation } from 'app/hooks/useDevice';
+import FormColumn from 'app/components/layout/FormColumn';
+import ScreenContainer from 'app/components/layout/ScreenContainer';
 import logoDark from '../../../../assets/images/logo-black.png';
 import logoLight from '../../../../assets/images/logo-white.png';
 import backgroundDark from '../../../../assets/images/webb-dark.png';
@@ -11,79 +12,43 @@ import LoginForm from './form/LoginForm';
 
 export default function LoginScreen() {
   const theme = useTheme();
-  const { orientation } = useDevice();
   return (
-    <ImageBackground
-      source={theme.dark ? backgroundDark : backgroundLight}
-      style={styles.container}
-      resizeMode="repeat"
-    >
-      {orientation === ScreenOrientation.Portrait ? (
-        <>
+    <View style={styles.container}>
+      <ImageBackground
+        source={theme.dark ? backgroundDark : backgroundLight}
+        style={StyleSheet.absoluteFill}
+        resizeMode="repeat"
+      />
+      <ScreenContainer style={styles.transparent}>
+        <FormColumn contentContainerStyle={styles.content}>
           <Image
             source={theme.dark ? logoLight : logoDark}
             style={styles.logo}
             resizeMode="contain"
           />
-          <KeyboardAvoidingView
-            style={styles.fields}
-            behavior={Platform.OS === 'android' ? undefined : 'padding'}
-          >
-            <Card style={styles.card} elevation={3}>
-              <Card.Content>
-                <LoginForm />
-              </Card.Content>
-            </Card>
-          </KeyboardAvoidingView>
-        </>
-      ) : (
-        <KeyboardAvoidingView
-          style={styles.fieldsLandscape}
-          behavior={Platform.OS === 'android' ? undefined : 'padding'}
-        >
-          <Card style={styles.cardLandscape} elevation={3}>
-            <Image
-              source={theme.dark ? logoLight : logoDark}
-              style={styles.logo}
-              resizeMode="contain"
-            />
+          <Card style={styles.card} elevation={3}>
             <Card.Content>
               <LoginForm />
             </Card.Content>
           </Card>
-        </KeyboardAvoidingView>
-      )}
-    </ImageBackground>
+        </FormColumn>
+      </ScreenContainer>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    // backgroundColor: primaryColor,
-    paddingTop: 10,
   },
-  logo: { height: 300, width: '100%' },
-  card: { padding: 16, borderRadius: 8 },
-  cardLandscape: { height: '100%', width: '100%', justifyContent: 'center' },
-
-  fields: {
-    marginBottom: 10,
-    marginTop: -50,
-    maxWidth: 400,
-    width: '100%',
-    paddingHorizontal: 56,
+  transparent: {
     backgroundColor: 'transparent',
   },
-  fieldsLandscape: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    height: '100%',
+  content: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 400,
+    paddingVertical: 16,
   },
+  logo: { width: '60%', maxWidth: 300, aspectRatio: 1 },
+  card: { width: '100%', maxWidth: 400, padding: 16, borderRadius: 8 },
 });

@@ -8,6 +8,9 @@ import Color from 'color';
 import { useSession } from '../../../state';
 import useSelectDropzone from '../../../hooks/useSelectDropzone';
 
+/** Width of a card including its margin */
+export const DROPZONE_CARD_SIZE = 160 + 2 * 16;
+
 interface DropzoneCardProps {
   dropzone: DropzoneEssentialsFragment;
 }
