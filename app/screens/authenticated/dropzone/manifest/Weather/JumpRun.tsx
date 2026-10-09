@@ -1,18 +1,9 @@
 import * as React from 'react';
-import {
-  Animated,
-  Dimensions,
-  LayoutChangeEvent,
-  LayoutRectangle,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Animated, LayoutChangeEvent, LayoutRectangle, StyleSheet, View } from 'react-native';
 import isEqual from 'lodash/isEqual';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getPointOnCircle } from 'app/utils/calculateCoordinatesByAngle';
 import MapView from 'app/components/map/Map';
-
-const { width } = Dimensions.get('window');
 
 interface IJumpRunMapProps {
   jumpRun: number;
@@ -138,6 +129,7 @@ function JumpRunMap(props: IJumpRunMapProps) {
           {
             width: MAP_SIZE,
             height: MAP_SIZE,
+            borderRadius: MAP_SIZE / 2,
             position: 'absolute',
             top: 0,
             left: 0,
@@ -247,7 +239,6 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     borderWidth: 2,
-    borderRadius: width / 2,
     borderStyle: 'solid',
     borderColor: 'white',
     alignSelf: 'center',

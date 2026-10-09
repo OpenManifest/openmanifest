@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  Animated,
-  Dimensions,
-  LayoutChangeEvent,
-  LayoutRectangle,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Animated, LayoutChangeEvent, LayoutRectangle, StyleSheet, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   GestureEvent,
@@ -17,8 +10,6 @@ import { calculateAngle } from '../../../utils/calculateAngle';
 import { mapDegreesToDirections } from '../../../utils/mapDegreesToDirection';
 import { getPointOnCircle } from '../../../utils/calculateCoordinatesByAngle';
 import MapView from '../../map/Map';
-
-const { width } = Dimensions.get('window');
 
 interface IJumpRunSelectorProps {
   value: number;
@@ -198,6 +189,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
               {
                 width: MAP_SIZE,
                 height: MAP_SIZE,
+                borderRadius: MAP_SIZE / 2,
               },
             ]}
           >
@@ -348,7 +340,6 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     borderWidth: 10,
-    borderRadius: width / 2,
     borderStyle: 'solid',
     borderColor: '#222222',
     alignSelf: 'center',

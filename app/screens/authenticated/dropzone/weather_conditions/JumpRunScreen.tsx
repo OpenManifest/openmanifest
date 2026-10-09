@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { FAB, useTheme } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
+import FloatingActionArea from 'app/components/layout/FloatingActionArea';
+import ScreenContainer from 'app/components/layout/ScreenContainer';
 
 import * as Location from 'expo-location';
 import { useController } from 'react-hook-form';
@@ -50,31 +52,32 @@ export default function JumpRunScreen() {
   }, [dropzone?.lat, dropzone?.lng, setUsersLocation]);
 
   return (
-    <View style={StyleSheet.absoluteFill}>
-      <JumpRunSelector
-        value={jumpRun.value || 0}
-        latitude={dropzone?.lat || location?.latitude || 0}
-        longitude={dropzone?.lng || location?.longitude || 0}
-        onChange={(value) => jumpRun.onChange(Math.round(value))}
-      />
-      <FAB
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        small
-        icon="check"
-        loading={saving}
-        disabled={saving}
-        onPress={() => onSaveConditions()}
-        label="Save"
-      />
-    </View>
+    <ScreenContainer edges={['bottom']}>
+      <View style={styles.map}>
+        <JumpRunSelector
+          value={jumpRun.value || 0}
+          latitude={dropzone?.lat || location?.latitude || 0}
+          longitude={dropzone?.lng || location?.longitude || 0}
+          onChange={(value) => jumpRun.onChange(Math.round(value))}
+        />
+      </View>
+      <FloatingActionArea>
+        <FAB
+          testID="jump-run-save-primary-action"
+          style={{ backgroundColor: theme.colors.primary }}
+          small
+          icon="check"
+          loading={saving}
+          disabled={saving}
+          onPress={() => onSaveConditions()}
+          label="Save"
+        />
+      </FloatingActionArea>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-  },
+  // The selector fills its parent
+  map: { flex: 1 },
 });

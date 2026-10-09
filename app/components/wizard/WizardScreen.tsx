@@ -1,23 +1,30 @@
 import * as React from 'react';
-import { Dimensions, View, StyleSheet, ScrollViewProps } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, StyleSheet } from 'react-native';
 import { Button, Title } from 'react-native-paper';
-import { SafeAreaViewProps } from 'react-native-safe-area-context';
-import ScrollableScreen from '../layout/ScrollableScreen';
-import { WizardContext } from './Wizard';
+import { KeyboardStickyView } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import type { SafeAreaViewProps } from 'react-native-safe-area-context';
+import { useAppTheme } from 'app/theme';
+import FormColumn from '../layout/FormColumn';
+import { WizardContext, WizardPageContext } from './Wizard';
+
+type ScrollContentStyle = React.ComponentProps<typeof FormColumn>['contentContainerStyle'];
 
 export interface IWizardScreenProps extends SafeAreaViewProps {
   title?: string;
   loading?: boolean;
   backButtonLabel?: string;
   nextButtonLabel?: string;
-  containerStyle?: ScrollViewProps['style'];
-  contentStyle?: ScrollViewProps['contentContainerStyle'];
+  contentStyle?: ScrollContentStyle;
   disableScroll?: boolean;
 
   onBack(currentIndex: number, setIndex: (idx: number) => void): void;
   onNext(currentIndex: number, setIndex: (idx: number) => void): void;
 }
+
+/** Keeps the focused input above the buttons that rise with the keyboard */
+const BUTTONS_CLEARANCE = 128;
+
 function WizardScreen(props: IWizardScreenProps) {
   const {
     children,
@@ -28,48 +35,44 @@ function WizardScreen(props: IWizardScreenProps) {
     nextButtonLabel,
     onNext,
     contentStyle,
-    containerStyle,
     style,
     disableScroll,
   } = props;
-  const { width, height } = Dimensions.get('window');
 
   const { index, setIndex } = React.useContext(WizardContext);
+  const pageIndex = React.useContext(WizardPageContext);
+  // All pages are mounted: only the shown one has a primary action
+  const isCurrent = pageIndex === undefined || pageIndex === index;
+  const insets = useSafeAreaInsets();
+  const { theme } = useAppTheme();
 
-  const scrollRef = React.useRef<ScrollView>(undefined);
+  const scrollRef = React.useRef<React.ElementRef<typeof FormColumn>>(null);
 
   React.useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({ y: 0, animated: false });
-      console.log('Scrolling ', title, ' to 0');
-    } else {
-      console.log('No ref');
-    }
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
   }, [index, title]);
 
   return (
-    <View style={StyleSheet.flatten([styles.wizardScreen, { width }, style])}>
-      <ScrollableScreen
-        style={[styles.container, containerStyle || {}, { width }]}
-        contentContainerStyle={StyleSheet.flatten([
-          styles.content,
-          { minHeight: height, backgroundColor: 'transparent' },
-          contentStyle,
-        ])}
-        scrollEnabled={!disableScroll}
-        pointerEvents="box-none"
-        // @ts-ignore
+    <View style={[styles.wizardScreen, style]}>
+      <FormColumn
         ref={scrollRef}
+        bottomOffset={BUTTONS_CLEARANCE}
+        scrollEnabled={!disableScroll}
+        contentContainerStyle={[styles.content, contentStyle]}
       >
-        <Title style={styles.title}>{title}</Title>
+        {title ? <Title style={styles.title}>{title}</Title> : null}
         {children}
+      </FormColumn>
 
-        <View style={styles.buttons} pointerEvents="box-none">
+      <KeyboardStickyView offset={{ closed: 0, opened: insets.bottom }}>
+        <View style={styles.buttons}>
           <Button
+            testID={isCurrent ? 'wizard-next-primary-action' : undefined}
             key={`button-next-${index}`}
             loading={loading}
             mode="contained"
-            color="#FFFFFF"
+            buttonColor="#FFFFFF"
+            textColor={theme.colors.primary}
             disabled={loading}
             style={styles.button}
             onPress={async () => {
@@ -84,8 +87,8 @@ function WizardScreen(props: IWizardScreenProps) {
               key={`button-${index}`}
               mode="text"
               disabled={loading}
-              color="#FFFFFF"
-              style={styles.buttonBack}
+              textColor="#FFFFFF"
+              style={styles.button}
               onPress={async () => {
                 onBack(index, setIndex);
               }}
@@ -94,25 +97,19 @@ function WizardScreen(props: IWizardScreenProps) {
             </Button>
           )}
         </View>
-      </ScrollableScreen>
+      </KeyboardStickyView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wizardScreen: {
-    justifyContent: 'center',
+    flex: 1,
+    width: '100%',
   },
-  container: {
-    backgroundColor: '#FF1414',
-    paddingHorizontal: 32,
-    alignSelf: 'center',
-  },
-  content: { paddingTop: 200, flexGrow: 1, paddingBottom: 0 },
+  content: { paddingTop: 16, paddingBottom: 16 },
   title: {
-    position: 'absolute',
-    top: 140,
-    marginBottom: 50,
+    marginBottom: 24,
     color: 'white',
     fontSize: 24,
     fontWeight: 'bold',
@@ -123,19 +120,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
   },
-  buttonBack: {
-    alignSelf: 'center',
-    width: '100%',
-    marginHorizontal: 48,
-  },
   buttons: {
     alignSelf: 'center',
     alignItems: 'flex-end',
-    flexGrow: 1,
     justifyContent: 'flex-end',
     width: '100%',
     maxWidth: 404,
-    marginBottom: 100,
+    padding: 16,
   },
 });
 

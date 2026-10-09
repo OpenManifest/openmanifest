@@ -50,7 +50,7 @@ function LoadCard(props: ILoadCardSmall) {
       style={{
         margin: 16,
         borderRadius: 8,
-        minWidth: 300,
+        minWidth: 280,
         maxWidth: 450,
         opacity: ['cancelled', 'landed'].includes(load?.state || '') ? 0.5 : 1.0,
       }}
