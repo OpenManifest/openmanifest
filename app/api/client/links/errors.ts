@@ -44,6 +44,11 @@ export function useErrorLink() {
             return;
           }
 
+          // Somebody else changed the record first: the caller refetches and says so, nothing to add here
+          if (graphQLErrors?.some((err) => err.extensions?.code === 'CONFLICT')) {
+            return;
+          }
+
           if (graphQLErrors && environment !== 'production') {
             graphQLErrors.forEach((err) => {
               const { message, locations, path } = err;

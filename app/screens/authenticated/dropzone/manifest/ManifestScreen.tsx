@@ -29,6 +29,7 @@ import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale
 
 const loadingFragment: LoadDetailsFragment = {
   id: '__LOADING__',
+  lockVersion: 0,
   availableSlots: 0,
   createdAt: '',
   isFull: false,
