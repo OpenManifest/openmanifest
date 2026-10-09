@@ -23,6 +23,7 @@ import InfoGrid from './UserInfo/InfoGrid';
 
 import UserActionsButton from './UserActions';
 import TabBar, { ProfileTab } from './tabs';
+import { useAppTheme } from 'app/theme';
 
 export type ProfileRoute = {
   ProfileScreen: {
@@ -30,7 +31,7 @@ export type ProfileRoute = {
   };
 };
 export default function ProfileScreen() {
-  const state = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
@@ -127,11 +128,9 @@ export default function ProfileScreen() {
   return (
     <>
       <View style={StyleSheet.absoluteFill}>
-        {loading && (
-          <ProgressBar color={state.theme.colors.primary} indeterminate visible={loading} />
-        )}
+        {loading && <ProgressBar color={theme.colors.primary} indeterminate visible={loading} />}
         <FlatList
-          style={{ backgroundColor: state.theme.colors.background }}
+          style={{ backgroundColor: theme.colors.background }}
           contentContainerStyle={[styles.content, { backgroundColor: 'transparent' }]}
           refreshControl={<RefreshControl refreshing={loading} />}
           keyExtractor={(_, idx) => `profile-${idx}`}

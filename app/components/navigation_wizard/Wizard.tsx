@@ -7,9 +7,9 @@ import {
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { useAppSelector } from 'app/state';
 import { IWizardStepProps } from './Step';
 import Dots from './Dots';
+import { useAppTheme } from 'app/theme';
 
 const WizardRoot = createStackNavigator();
 const WizardModal = createStackNavigator();
@@ -33,7 +33,7 @@ export function Content(props: IWizardProps) {
   const [currentIndex, setIndex] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
   const navigation = useNavigation();
-  const { palette } = useAppSelector((root) => root.global);
+  const { palette } = useAppTheme();
 
   return (
     <View style={{ ...StyleSheet.absoluteFill }}>

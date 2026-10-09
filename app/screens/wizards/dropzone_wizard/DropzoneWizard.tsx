@@ -111,12 +111,6 @@ function DropzoneSetupScreen() {
     if (!result?.errors?.length && result?.dropzone?.id) {
       dispatch(actions.forms.dropzone.setOpen(result?.dropzone));
       selectDropzone(result?.dropzone as DropzoneExtensiveFragment);
-      if (result.dropzone.primaryColor) {
-        dispatch(actions.global.setPrimaryColor(result?.dropzone?.primaryColor));
-      }
-      if (result.dropzone.secondaryColor) {
-        dispatch(actions.global.setAccentColor(result?.dropzone?.secondaryColor));
-      }
     } else if (result?.fieldErrors?.length) {
       result?.fieldErrors?.find(({ field, message }) => {
         switch (camelize(field)) {
@@ -208,12 +202,6 @@ function DropzoneSetupScreen() {
           component: DoneStep,
           onNext: async () => {
             selectDropzone(dropzone.original);
-            if (dropzone.fields.primaryColor.value) {
-              dispatch(actions.global.setPrimaryColor(dropzone.fields.primaryColor.value));
-            }
-            if (dropzone.fields.secondaryColor.value) {
-              dispatch(actions.global.setAccentColor(dropzone.fields.secondaryColor.value));
-            }
             selectDropzone(dropzone.original);
 
             dispatch(actions.forms.dropzone.setOpen(false));

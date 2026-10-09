@@ -15,6 +15,7 @@ import { useDropzoneContext } from 'app/providers';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
 import { useUserNavigation } from '../useUserNavigation';
+import { useAppTheme } from 'app/theme';
 
 function UserCardSkeleton() {
   const theme = useTheme();
@@ -75,7 +76,7 @@ export type UserListRoute = {
 };
 
 export default function UsersScreen() {
-  const global = useAppSelector((root) => root.global);
+  const { palette, theme } = useAppTheme();
   const state = useAppSelector((root) => root.screens.users);
   const dispatch = useAppDispatch();
   const {
@@ -113,12 +114,11 @@ export default function UsersScreen() {
   const users = React.useMemo(() => data?.dropzoneUsers?.edges || [], [data?.dropzoneUsers?.edges]);
   console.debug({ users, numColumns });
   const initialLoading = !users?.length && loading;
-  const theme = useTheme();
   const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   return (
     <View style={{ flexGrow: 1, backgroundColor: theme.colors.surface }}>
-      <ProgressBar indeterminate color={global.theme.colors.primary} visible={loading} />
+      <ProgressBar indeterminate color={theme.colors.primary} visible={loading} />
       {users?.length ? null : (
         <View style={styles.empty}>
           <NoResults title="No users" subtitle="" />
@@ -179,7 +179,7 @@ export default function UsersScreen() {
                         style={{
                           alignSelf: 'center',
                           marginHorizontal: 22,
-                          backgroundColor: global.palette.primary.light,
+                          backgroundColor: palette.primary.light,
                         }}
                         size={48}
                       />

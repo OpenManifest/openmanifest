@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { StyleSheet, RefreshControl, View } from 'react-native';
-import { FAB, DataTable, useTheme } from 'react-native-paper';
+import { FAB, DataTable } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 import { useIsFocused } from '@react-navigation/native';
 import { Permission } from 'app/api/schema.d';
 
-import { useAppSelector, useSession } from 'app/state';
+import { useSession } from 'app/state';
 import NoResults from 'app/components/NoResults';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
@@ -14,9 +14,10 @@ import { useAircrafts } from 'app/api/crud';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { PlaneEssentialsFragment } from 'app/api/operations';
 import { useNotifications } from 'app/providers/notifications';
+import { useAppTheme } from 'app/theme';
 
 export default function PlanesScreen() {
-  const global = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const { dialogs } = useDropzoneContext();
   const { aircrafts, archive, loading, refetch } = useAircrafts({
@@ -35,7 +36,6 @@ export default function PlanesScreen() {
 
   const canDeletePlane = useRestriction(Permission.DeletePlane);
   const canCreatePlane = useRestriction(Permission.CreatePlane);
-  const theme = useTheme();
 
   const createArchiveAircraftHandler = React.useCallback(
     (aircraft: PlaneEssentialsFragment) => {
@@ -65,7 +65,7 @@ export default function PlanesScreen() {
       contentContainerStyle={{ backgroundColor: theme.colors.surface }}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
     >
-      <ProgressBar visible={loading} color={global.theme.colors.primary} />
+      <ProgressBar visible={loading} color={theme.colors.primary} />
 
       {aircrafts?.length ? null : (
         <NoResults
@@ -104,7 +104,7 @@ export default function PlanesScreen() {
       )}
 
       <FAB
-        style={[styles.fab, { backgroundColor: global.theme.colors.primary }]}
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         visible={canCreatePlane}
         small
         icon="plus"

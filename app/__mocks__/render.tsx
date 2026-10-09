@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { render as rtlRender } from '@testing-library/react-native';
 import { createStore } from 'redux';
@@ -15,6 +14,7 @@ import { Permission } from 'app/api/schema.d';
 import { Operation } from '@apollo/client';
 
 // Import your own reducer
+import { AppThemeProvider } from 'app/theme';
 import { DropzoneContextProvider, ManifestContextProvider } from 'app/providers';
 import mockQueryDropzone from '../__tests__/manifest/__mocks__/QueryDropzone.mock';
 import { rootReducer, RootState } from '../state/store';
@@ -119,7 +119,7 @@ function render(
             >
               <DropzoneContextProvider dropzoneId={session?.currentDropzoneId?.toString()}>
                 <ManifestContextProvider dropzone={session?.currentDropzoneId?.toString()}>
-                  <PaperProvider theme={store.getState().global.theme}>{children}</PaperProvider>
+                  <AppThemeProvider>{children}</AppThemeProvider>
                 </ManifestContextProvider>
               </DropzoneContextProvider>
             </Apollo>

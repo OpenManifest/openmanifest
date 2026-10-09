@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Divider, List, Switch } from 'react-native-paper';
-import { useAppTheme } from 'app/hooks/useAppTheme';
+import { Divider, List, SegmentedButtons, Switch } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
@@ -9,6 +8,8 @@ import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import { useDropzonesContext } from 'app/api/crud/useDropzones';
 import { useNotifications } from 'app/providers/notifications';
+import { ColorSchemePreference, usePreferences } from 'app/state/preferences';
+import { useAppTheme } from 'app/theme';
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
@@ -17,7 +18,9 @@ export default function SettingsScreen() {
     dropzone: { dropzone },
   } = useDropzoneContext();
 
-  const theme = useAppTheme();
+  const { theme } = useAppTheme();
+  const colorScheme = usePreferences((preferences) => preferences.colorScheme);
+  const setColorScheme = usePreferences((preferences) => preferences.setColorScheme);
 
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
   const canUpdateRigInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
@@ -236,6 +239,19 @@ export default function SettingsScreen() {
             descriptionNumberOfLines={4}
           />
         )}
+      </List.Section>
+
+      <List.Section title="Appearance" style={{ width: '100%' }}>
+        <SegmentedButtons
+          style={{ marginHorizontal: 16 }}
+          value={colorScheme}
+          onValueChange={(value) => setColorScheme(value as ColorSchemePreference)}
+          buttons={[
+            { value: 'system', label: 'System', testID: 'color-scheme-system' },
+            { value: 'light', label: 'Light', testID: 'color-scheme-light' },
+            { value: 'dark', label: 'Dark', testID: 'color-scheme-dark' },
+          ]}
+        />
       </List.Section>
 
       <List.Section title="Tickets" style={{ width: '100%' }}>

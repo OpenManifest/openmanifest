@@ -8,13 +8,14 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { FAB, IconButton, useTheme } from 'react-native-paper';
+import { FAB, IconButton } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 
 import NoResults from 'app/components/NoResults';
 import { View } from 'app/components/Themed';
 import { LoadState, Permission } from 'app/api/schema.d';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useAppTheme } from 'app/theme';
 import { useDropzoneContext, useManifestContext } from 'app/providers';
 import { LoadDetailsFragment } from 'app/api/operations';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
@@ -52,7 +53,7 @@ const setupAircraftsCardFragment = { ...loadingFragment, id: '__SETUP_AIRCRAFT_C
 const setupTicketsCardFragment = { ...loadingFragment, id: '__SETUP_TICKETS_CARD__' };
 
 export default function ManifestScreen() {
-  const state = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const manifestScreen = useAppSelector((root) => root.screens.manifest);
   const dispatch = useAppDispatch();
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
@@ -81,23 +82,6 @@ export default function ManifestScreen() {
     }
   }, [isFocused, refetch]);
 
-  React.useEffect(() => {
-    if (dropzone?.primaryColor && dropzone?.primaryColor !== state.theme?.colors?.primary) {
-      dispatch(actions.global.setPrimaryColor(dropzone.primaryColor));
-    }
-
-    if (dropzone?.secondaryColor && dropzone?.secondaryColor !== state.theme?.colors?.accent) {
-      // dispatch(actions.global.setAccentColor(dropzone.secondaryColor));
-      console.log('Accent color disabled');
-    }
-  }, [
-    dispatch,
-    dropzone?.primaryColor,
-    dropzone?.secondaryColor,
-    state.theme?.colors?.accent,
-    state.theme?.colors?.primary,
-  ]);
-
   const { width } = useWindowDimensions();
 
   let cardWidth = (manifestScreen.display === 'cards' ? 338 : 550) + 32;
@@ -108,8 +92,6 @@ export default function ManifestScreen() {
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
 
   const initialLoading = !dropzone || (!manifest?.loads?.length && manifest?.loading);
-
-  const theme = useTheme();
 
   const data = React.useMemo(
     () =>
@@ -243,7 +225,7 @@ export default function ManifestScreen() {
       <ProgressBar
         visible={loading || manifest.loading}
         indeterminate
-        color={state.theme.colors.primary}
+        color={theme.colors.primary}
       />
 
       <View style={styles.container}>

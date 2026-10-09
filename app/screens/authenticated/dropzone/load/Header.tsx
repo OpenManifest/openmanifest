@@ -5,11 +5,11 @@ import { Avatar, Paragraph, Title } from 'react-native-paper';
 import isAfter from 'date-fns/isAfter';
 import { LinearGradient } from 'expo-linear-gradient';
 import { LoadEssentialsFragment } from 'app/api/operations';
-import { useAppSelector } from 'app/state';
 import { format } from 'date-fns/esm';
 import parseISO from 'date-fns/parseISO';
 import { DateTime } from 'luxon';
 import Countdown from '../manifest/LoadCard/Countdown';
+import { useAppTheme } from 'app/theme';
 
 interface ILoadHeader {
   load?: LoadEssentialsFragment;
@@ -18,7 +18,7 @@ interface ILoadHeader {
 }
 export default function UserHeader(props: ILoadHeader) {
   const { load, renderBadges: RenderBadges, children } = props;
-  const { theme, palette } = useAppSelector((root) => root.global);
+  const { theme, palette } = useAppTheme();
   const { width } = useWindowDimensions();
 
   return (

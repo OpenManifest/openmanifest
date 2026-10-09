@@ -9,6 +9,7 @@ import { DropzoneUserProfileFragmentDoc, useUpdateDropzoneUserMutation } from 'a
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useNotifications } from 'app/providers/notifications';
 import DropzoneUserForm from '../forms/dropzone_user/DropzoneUserForm';
+import { useAppTheme } from 'app/theme';
 
 interface IDropzoneUserDialog {
   open?: boolean;
@@ -21,7 +22,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   const notify = useNotifications();
   const dispatch = useAppDispatch();
   const state = useAppSelector((root) => root.forms.dropzoneUser);
-  const globalState = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const client = useApolloClient();
   const getCachedUser = React.useCallback(
     () =>
@@ -109,11 +110,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
 
   return (
     <Dialog visible={!!open}>
-      <ProgressBar
-        indeterminate
-        visible={createData.loading}
-        color={globalState.theme.colors.primary}
-      />
+      <ProgressBar indeterminate visible={createData.loading} color={theme.colors.primary} />
       <Dialog.Title>{`${state?.original?.id ? 'Edit' : 'New'} dropzone user`}</Dialog.Title>
       <Dialog.Content>
         <DropzoneUserForm />

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { StyleProp, View, ViewStyle } from 'react-native';
-import { useAppSelector } from 'app/state';
+import { useAppTheme } from 'app/theme';
 
 export default function DroppableSlot(
   props: React.PropsWithChildren<{ rowIndex: number; loadId: string; slotId?: string }>
@@ -14,7 +14,7 @@ export default function DroppableSlot(
       loadId,
     },
   });
-  const theme = useAppSelector((root) => root.global.theme);
+  const { theme } = useAppTheme();
 
   const style: StyleProp<ViewStyle> = React.useMemo(
     () => ({

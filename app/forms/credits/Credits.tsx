@@ -6,10 +6,10 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@g
 import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
 import { DropzoneUserDetailsFragment, OrderEssentialsFragment } from 'app/api/operations';
 import useKeyboardVisibility from 'app/hooks/useKeyboardVisibility';
-import { useAppSelector } from 'app/state';
 import { TransactionType } from 'app/api/schema.d';
 import useCreditsForm from './useForm';
 import CreditsForm from './CreditsForm';
+import { useAppTheme } from 'app/theme';
 
 export interface ICreditsSheet {
   open?: boolean;
@@ -19,7 +19,7 @@ export interface ICreditsSheet {
 }
 
 function HandleComponent() {
-  const { theme } = useAppSelector((state) => state.global);
+  const { theme } = useAppTheme();
   return <View style={[styles.sheetHeader, { backgroundColor: theme.colors.primary }]} />;
 }
 
