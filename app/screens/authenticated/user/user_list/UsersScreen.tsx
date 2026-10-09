@@ -17,6 +17,7 @@ import isEmpty from 'lodash/isEmpty';
 import { useUserNavigation } from '../useUserNavigation';
 import { useAppTheme } from 'app/theme';
 import { useUserSearch } from './search';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 function UserCardSkeleton() {
   const theme = useTheme();
@@ -200,6 +201,7 @@ export default function UsersScreen() {
 
       {canCreateUser && (
         <FAB
+          labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           small
           icon="plus"

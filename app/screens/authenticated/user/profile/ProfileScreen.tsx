@@ -152,7 +152,7 @@ function ProfileScreenContent(props: {
                 ) : (
                   <Header dropzoneUser={dropzoneUser} onPressAvatar={onPickImage}>
                     <InfoGrid
-                      style={{ height: 80 }}
+                      style={{ minHeight: 80 }}
                       items={[
                         {
                           title: 'Funds',

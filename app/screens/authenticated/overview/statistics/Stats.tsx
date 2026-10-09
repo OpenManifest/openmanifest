@@ -32,7 +32,7 @@ export default function Stats(props: IStatsProps) {
       <Card.Title title={title} />
       <Card.Content style={styles.row}>
         {data?.map(({ label, color, value }, index) => (
-          <View style={{ flexDirection: 'row', width: itemWidth, height: 70 }}>
+          <View style={{ flexDirection: 'row', width: itemWidth, minHeight: 70 }}>
             <View style={styles.statistic}>
               <View style={styles.value}>
                 <Text style={[styles.valueText, { color }]}>{value}</Text>

@@ -13,7 +13,7 @@ function EmailStep(props: IWizardStepProps) {
           name="email"
           mode="flat"
           label="Email"
-          style={{ width: '100%', backgroundColor: 'transparent', fontSize: 32, height: 70 }}
+          style={{ width: '100%', backgroundColor: 'transparent', fontSize: 32, minHeight: 70 }}
         />
       </Fields>
     </Step>
