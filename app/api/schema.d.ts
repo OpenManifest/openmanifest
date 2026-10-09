@@ -886,6 +886,7 @@ export type Load = AnyResource & {
   isReady: Scalars['Boolean']['output'];
   loadMaster?: Maybe<DropzoneUser>;
   loadNumber: Scalars['Int']['output'];
+  lockVersion: Scalars['Int']['output'];
   maxSlots: Scalars['Int']['output'];
   name?: Maybe<Scalars['String']['output']>;
   occupiedSlots: Scalars['Int']['output'];
@@ -927,6 +928,8 @@ export type LoadInput = {
   dispatchAt?: InputMaybe<Scalars['ISO8601DateTime']['input']>;
   gca?: InputMaybe<Scalars['ID']['input']>;
   loadMaster?: InputMaybe<Scalars['ID']['input']>;
+  /** The lockVersion of the load as the client last saw it; an older one is refused with CONFLICT */
+  lockVersion?: InputMaybe<Scalars['Int']['input']>;
   maxSlots?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   pilot?: InputMaybe<Scalars['ID']['input']>;
@@ -1937,6 +1940,7 @@ export type Slot = AnyResource & SellableItem & {
   id: Scalars['ID']['output'];
   jumpType?: Maybe<JumpType>;
   load: Load;
+  lockVersion: Scalars['Int']['output'];
   order?: Maybe<Order>;
   passengerExitWeight?: Maybe<Scalars['Float']['output']>;
   passengerName?: Maybe<Scalars['String']['output']>;
@@ -1974,6 +1978,8 @@ export type SlotInput = {
   groupNumber?: InputMaybe<Scalars['Int']['input']>;
   jumpType?: InputMaybe<Scalars['ID']['input']>;
   load?: InputMaybe<Scalars['ID']['input']>;
+  /** The lockVersion of the slot as the client last saw it; an older one is refused with CONFLICT */
+  lockVersion?: InputMaybe<Scalars['Int']['input']>;
   passengerExitWeight?: InputMaybe<Scalars['Float']['input']>;
   passengerName?: InputMaybe<Scalars['String']['input']>;
   rig?: InputMaybe<Scalars['ID']['input']>;
