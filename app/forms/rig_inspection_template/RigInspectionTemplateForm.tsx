@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View } from 'react-native';
-
+import { Control, useFieldArray } from 'react-hook-form';
 import {
   Button,
   Checkbox,
@@ -12,26 +12,32 @@ import {
   TextInput,
   useTheme,
 } from 'react-native-paper';
-import { actions, useAppSelector, useAppDispatch } from '../../../state';
-
-import { FieldItem } from './slice';
+import { FieldItem } from './fieldItem';
 import RigInspectionItem from './RigInspectionItem';
+import { RigInspectionTemplateFields } from './useForm';
 
-export default function RigInspectionTemplateForm() {
-  const state = useAppSelector((root) => root.forms.rigInspectionTemplate);
+export interface IRigInspectionTemplateFormProps {
+  control: Control<RigInspectionTemplateFields>;
+}
+
+export default function RigInspectionTemplateForm(props: IRigInspectionTemplateFormProps) {
+  const { control } = props;
+  const { fields, append, update, remove } = useFieldArray({
+    control,
+    name: 'fields',
+    keyName: 'key',
+  });
   const [newItem, setNewItem] = React.useState<(Partial<FieldItem> & { index?: number }) | null>(
     null
   );
   const [fabOpen, setFabOpen] = React.useState(false);
-
-  const dispatch = useAppDispatch();
   const theme = useTheme();
 
   return (
     <>
-      {state.fields?.map((item, index) => {
+      {fields.map(({ key, ...item }, index) => {
         return (
-          <React.Fragment key={`${item.valueType}${index}`}>
+          <React.Fragment key={key}>
             <View
               style={{
                 display: 'flex',
@@ -45,13 +51,8 @@ export default function RigInspectionTemplateForm() {
               </View>
               <IconButton
                 icon="minus-circle"
-                onPress={() =>
-                  dispatch(
-                    actions.forms.rigInspectionTemplate.setFields(
-                      state.fields.filter((_, i) => i !== index)
-                    )
-                  )
-                }
+                accessibilityLabel={`Remove ${item.label}`}
+                onPress={() => remove(index)}
               />
             </View>
             <Divider />
@@ -88,22 +89,12 @@ export default function RigInspectionTemplateForm() {
             <Button onPress={() => setNewItem(null)}>Cancel</Button>
             <Button
               onPress={() => {
-                if (newItem?.index !== undefined) {
-                  // If index was provided, replace existing field at that index
-                  dispatch(
-                    actions.forms.rigInspectionTemplate.setFields(
-                      state.fields.map((field, idx) =>
-                        idx === newItem.index ? newItem : field
-                      ) as FieldItem[]
-                    )
-                  );
+                const { index, ...item } = newItem || {};
+                if (index !== undefined) {
+                  // If an index was provided, replace the existing field at that index
+                  update(index, item as FieldItem);
                 } else {
-                  dispatch(
-                    actions.forms.rigInspectionTemplate.setFields([
-                      ...state.fields,
-                      newItem as FieldItem,
-                    ])
-                  );
+                  append(item as FieldItem);
                 }
                 setNewItem(null);
               }}

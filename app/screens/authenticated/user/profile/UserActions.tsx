@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useProfileDialogs } from './ProfileDialogs';
 
 import { FAB, useTheme } from 'react-native-paper';
-import { actions, useAppDispatch } from 'app/state';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { useNavigation } from '@react-navigation/native';
 import { Permission } from 'app/api/schema.d';
@@ -16,13 +16,12 @@ import { useUserNavigation } from '../useUserNavigation';
 type PropsOf<T> = T extends React.ComponentType<infer P> ? P : never;
 type FABActions = PropsOf<typeof FAB.Group>['actions'];
 interface IUserActionsButtonProps {
-  /** Opens the profile editor */
-  onEdit?(): void;
   dropzoneUser?: DropzoneUserProfileFragment | null;
   visible?: boolean;
 }
 export default function UserActionsButton(props: IUserActionsButtonProps) {
-  const { dropzoneUser, visible, onEdit } = props;
+  const { dropzoneUser, visible } = props;
+  const { editUser, editMembership } = useProfileDialogs();
   const {
     dropzone: { currentUser },
   } = useDropzoneContext();
@@ -30,7 +29,6 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
   const { dialogs } = useManifestContext();
   const notify = useNotifications();
 
-  const dispatch = useAppDispatch();
   const navigation = useUserNavigation();
   const rootNavigator = useNavigation();
   const theme = useTheme();
@@ -48,8 +46,8 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
     if (!dropzoneUser) {
       return;
     }
-    dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser));
-  }, [dispatch, dropzoneUser]);
+    editMembership();
+  }, [dropzoneUser, editMembership]);
 
   const onClickTransactions = React.useCallback(() => {
     if (!dropzoneUser?.id) {
@@ -73,9 +71,9 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
 
   const onClickEdit = React.useCallback(() => {
     if (dropzoneUser?.user) {
-      onEdit?.();
+      editUser();
     }
-  }, [dropzoneUser?.user, onEdit]);
+  }, [dropzoneUser?.user, editUser]);
 
   const isSelf = React.useMemo(
     () => currentUser?.id === dropzoneUser?.id,
