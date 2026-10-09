@@ -5,7 +5,7 @@ import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { Card, Divider, List, useTheme } from 'react-native-paper';
 import WindRow from './WindRow';
 import { useWatch } from 'react-hook-form';
-import { MAX_WINDS, useWeatherForm, WindFields } from '../../../forms/weather/useForm';
+import { MAX_WINDS, useWeatherForm } from '../../../forms/weather/useForm';
 
 interface IWeatherConditionFormProps {
   variant?: 'dark' | 'light';

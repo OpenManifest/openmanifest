@@ -13,24 +13,27 @@ import {
 } from 'app/api/reflection';
 import { Permission } from 'app/api/schema.d';
 
-import { actions, useAppSelector, useAppDispatch, useSession } from 'app/state';
+import { useSession } from 'app/state';
+import createUseDialog from 'app/providers/hooks/useDialog';
+import type { RigEssentialsFragment } from 'app/api/operations';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
-import RigDialog from 'app/components/dialogs/Rig';
+import RigDialog from 'app/forms/rig';
 import useRestriction from 'app/hooks/useRestriction';
 import { useNotifications } from 'app/providers/notifications';
 import { useAppTheme } from 'app/theme';
 
+const useRigDialog = createUseDialog<{ rig?: RigEssentialsFragment }>();
+
 export default function DropzoneRigsScreen() {
   const { theme } = useAppTheme();
   const currentDropzoneId = useSession((session) => session.currentDropzoneId);
-  const rigForm = useAppSelector((root) => root.forms.rig);
+  const rigDialog = useRigDialog();
   const notify = useNotifications();
   const { data, loading, refetch } = useDropzoneRigsQuery({
     variables: {
       dropzoneId: currentDropzoneId?.toString() as string,
     },
   });
-  const dispatch = useAppDispatch();
   const isFocused = useIsFocused();
   const [mutationUpdateRig, updateData] = useUpdateRigMutation();
 
@@ -62,7 +65,7 @@ export default function DropzoneRigsScreen() {
           <DataTable.Row key={`rig-${rig.id}`}>
             <DataTable.Cell
               onPress={() => {
-                dispatch(actions.forms.rig.setOpen(rig));
+                rigDialog.open({ rig });
               }}
             >
               {[rig?.make, rig?.model, `#${rig?.serial}`].join(' ')}
@@ -95,13 +98,11 @@ export default function DropzoneRigsScreen() {
       </DataTable>
 
       <RigDialog
-        onClose={() => dispatch(actions.forms.rig.setOpen(false))}
-        onSuccess={() => {
-          dispatch(actions.forms.rig.setOpen(false));
-          refetch();
-        }}
+        onClose={rigDialog.close}
+        onSuccess={() => refetch()}
         dropzoneId={Number(currentDropzoneId)}
-        open={rigForm.open}
+        open={rigDialog.visible}
+        rig={rigDialog.state?.rig}
       />
 
       <FAB
@@ -109,7 +110,7 @@ export default function DropzoneRigsScreen() {
         style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         small
         icon="plus"
-        onPress={() => dispatch(actions.forms.rig.setOpen(true))}
+        onPress={() => rigDialog.open({})}
         label="New rig"
       />
     </ScrollableScreen>
