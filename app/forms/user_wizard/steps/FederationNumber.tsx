@@ -50,7 +50,7 @@ function FederationWizardSceen(props: IWizardStepProps) {
           {...{ control }}
           name="apfNumber"
           mode="flat"
-          style={{ backgroundColor: 'transparent', fontSize: 32, height: 70 }}
+          style={{ backgroundColor: 'transparent', fontSize: 32, minHeight: 70 }}
           label={`${federation?.name} ID`}
         />
       </Fields>

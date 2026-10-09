@@ -55,7 +55,7 @@ function RealName(props: IWizardStepProps) {
           name="name"
           mode="flat"
           label="Name"
-          style={{ backgroundColor: 'transparent', fontSize: 32, height: 70 }}
+          style={{ backgroundColor: 'transparent', fontSize: 32, minHeight: 70 }}
         />
       </Fields>
     </Step>

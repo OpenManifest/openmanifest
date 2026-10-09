@@ -14,6 +14,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import { useUserProfile } from 'app/api/crud';
 import RigCard from './RigCard';
 import { useAppTheme } from 'app/theme';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 export type EquipmentRoute = {
   EquipmentScreen: {
@@ -70,6 +71,7 @@ export default function EquipmentScreen() {
       />
 
       <FAB
+        labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
         small
         style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         visible={canUpdateUser}

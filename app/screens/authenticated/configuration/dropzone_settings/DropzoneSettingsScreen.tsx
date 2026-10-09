@@ -11,6 +11,7 @@ import ScreenContainer from 'app/components/layout/ScreenContainer';
 import { useNotifications } from 'app/providers/notifications';
 import useDropzoneForm from 'app/forms/dropzone/useForm';
 import { useAppTheme } from 'app/theme';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 export default function UpdateDropzoneScreen() {
   const { theme } = useAppTheme();
@@ -32,6 +33,7 @@ export default function UpdateDropzoneScreen() {
       </Screen>
       <FloatingActionArea>
         <FAB
+          labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
           testID="save-dropzone-primary-action"
           style={{ backgroundColor: theme.colors.primary }}
           visible={Boolean(canUpdateDropzone && formState.isDirty)}

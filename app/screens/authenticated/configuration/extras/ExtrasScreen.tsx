@@ -12,6 +12,7 @@ import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { TicketTypeAddonDetailsFragment } from 'app/api/operations';
 import { useAppTheme } from 'app/theme';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 export default function ExtrasScreen() {
   const { dropzone: currentDropzone, dialogs } = useDropzoneContext();
@@ -58,6 +59,7 @@ export default function ExtrasScreen() {
       </ScrollableScreen>
       <FloatingActionArea>
         <FAB
+          labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
           testID="new-ticket-addon-primary-action"
           style={{ backgroundColor: theme.colors.primary }}
           visible={canCreateExtras}

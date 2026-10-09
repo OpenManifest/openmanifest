@@ -12,6 +12,7 @@ import { DropzoneUsersDocument, useArchiveUserMutation } from 'app/api/reflectio
 import { errorColor, infoColor, successColor, warningColor } from 'app/constants/Colors';
 import { useNotifications } from 'app/providers/notifications';
 import { useUserNavigation } from '../useUserNavigation';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 type PropsOf<T> = T extends React.ComponentType<infer P> ? P : never;
 type FABActions = PropsOf<typeof FAB.Group>['actions'];
@@ -204,7 +205,10 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
         backgroundColor: theme.colors.primary,
       }}
       onStateChange={({ open }) => setFabOpen(open)}
-      actions={fabActions}
+      actions={fabActions.map((action) => ({
+        ...action,
+        labelMaxFontSizeMultiplier: CHROME_MAX_FONT_SIZE_MULTIPLIER,
+      }))}
     />
   );
 }

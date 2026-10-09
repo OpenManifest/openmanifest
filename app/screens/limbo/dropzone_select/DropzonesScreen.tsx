@@ -9,6 +9,7 @@ import ScreenContainer from 'app/components/layout/ScreenContainer';
 import NoResults from '../../../components/NoResults';
 import DropzoneCard, { DROPZONE_CARD_SIZE } from './DropzoneCard';
 import { useAppTheme } from 'app/theme';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 export default function DropzonesScreen() {
   const { theme } = useAppTheme();
@@ -36,6 +37,7 @@ export default function DropzonesScreen() {
       />
       <FloatingActionArea>
         <FAB
+          labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
           testID="create-dropzone-primary-action"
           style={{ backgroundColor: theme.colors.primary }}
           small

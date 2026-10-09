@@ -71,7 +71,6 @@ export default function SwipeActions(props: ISwipeActions) {
       ref={ref}
       enabled={!disabled}
       renderRightActions={rightActions}
-      childrenContainerStyle={{ height: '100%' }}
       useNativeAnimations
     >
       {children}
