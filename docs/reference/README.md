@@ -291,6 +291,7 @@ Full table:
 | `expo-localization` | dep | `~57.0.2` (P3.18)| 57.0.2 | 57.0.2 | `~57.0.2` |  |
 | `expo-location` | dep | `~57.0.20` (P3.18)| 57.0.20 | 57.0.20 | `~57.0.20` |  |
 | `expo-notifications` | dep | `~57.0.22` (P3.18)| 57.0.22 | 57.0.22 | `~57.0.22` |  |
+| `expo-secure-store` | dep | `~57.0.4` (P4.1) | 57.0.4 | 57.0.4 | `~57.0.4` | credentials on native (`app/state/storage.ts`) |
 | `expo-splash-screen` | dep | `~57.0.9` (P3.18)| 57.0.9 | 57.0.9 | `~57.0.9` |  |
 | `expo-status-bar` | dep | `~57.0.1` (P3.18)| 57.0.1 | 57.0.1 | `~57.0.1` |  |
 | `expo-updates` | dep | `~57.0.25` (P3.18)| 57.0.25 | 57.0.25 | `~57.0.25` |  |
@@ -334,6 +335,7 @@ Full table:
 | `redux-persist` | dep | `^6.0.0` | 6.0.0 | 6.0.0 |  |  |
 | `urijs` | dep | `1.19.11` | 1.19.11 | 1.19.11 |  | last publish 2022-06-28 |
 | `yup` | dep | `0.32.11` | 0.32.11 | 1.7.1 |  |  |
+| `zustand` | dep | `5.0.15` (P4.1) | 5.0.15 | 5.0.15 | | session store (`app/state/session.ts`) |
 | `@babel/core` | dev | `^7.28.0` (P3.14) | 7.29.7 | 8.0.7 |  |  |
 | `@babel/plugin-proposal-export-namespace-from` | dev | `7.18.9` | 7.18.9 | 7.18.9 |  | **deprecated on npm**; last publish 2023-09-01 |
 | `@babel/plugin-proposal-numeric-separator` | dev | `7.18.6` | 7.18.6 | 7.18.6 |  | **deprecated on npm**; last publish 2023-09-01 |

@@ -4,6 +4,7 @@ import { GraphQLError } from 'graphql';
 import { LoginDocument } from 'app/api/reflection';
 import { NotificationContext } from 'app/providers/notifications/context';
 import * as appRedux from '../../state';
+import { useSession } from '../../state';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import LoginScreen from '../../screens/unauthenticated/login/LoginScreen';
 
@@ -73,7 +74,7 @@ describe('<LoginScreen />', () => {
     fillAndSubmit(screen);
 
     await waitFor(() => {
-      expect(screen.store.getState().global.credentials).toMatchObject({
+      expect(useSession.getState().credentials).toMatchObject({
         accessToken: 'token',
         client: 'client',
         uid: VARIABLES.email,
@@ -96,7 +97,7 @@ describe('<LoginScreen />', () => {
     await waitFor(() => {
       expect(screen.notifications.error).toHaveBeenCalledWith('Invalid login credentials');
     });
-    expect(screen.store.getState().global.credentials).toBeFalsy();
+    expect(useSession.getState().credentials).toBeFalsy();
   });
 
   it('does not submit when the email is invalid', async () => {
@@ -107,6 +108,6 @@ describe('<LoginScreen />', () => {
     await waitFor(() => {
       expect(screen.getByText('This is not a valid email')).toBeTruthy();
     });
-    expect(screen.store.getState().global.credentials).toBeFalsy();
+    expect(useSession.getState().credentials).toBeFalsy();
   });
 });

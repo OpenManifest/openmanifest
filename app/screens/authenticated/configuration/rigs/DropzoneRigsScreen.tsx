@@ -13,7 +13,7 @@ import {
 } from 'app/api/reflection';
 import { Permission } from 'app/api/schema.d';
 
-import { actions, useAppSelector, useAppDispatch } from 'app/state';
+import { actions, useAppSelector, useAppDispatch, useSession } from 'app/state';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import RigDialog from 'app/components/dialogs/Rig';
 import useRestriction from 'app/hooks/useRestriction';
@@ -21,11 +21,12 @@ import { useNotifications } from 'app/providers/notifications';
 
 export default function DropzoneRigsScreen() {
   const state = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const rigForm = useAppSelector((root) => root.forms.rig);
   const notify = useNotifications();
   const { data, loading, refetch } = useDropzoneRigsQuery({
     variables: {
-      dropzoneId: state.currentDropzoneId?.toString() as string,
+      dropzoneId: currentDropzoneId?.toString() as string,
     },
   });
   const dispatch = useAppDispatch();
@@ -99,7 +100,7 @@ export default function DropzoneRigsScreen() {
           dispatch(actions.forms.rig.setOpen(false));
           refetch();
         }}
-        dropzoneId={Number(state.currentDropzoneId)}
+        dropzoneId={Number(currentDropzoneId)}
         open={rigForm.open}
       />
 

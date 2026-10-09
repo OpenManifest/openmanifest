@@ -1,23 +1,21 @@
 import * as React from 'react';
 import { NavigationState, getPathFromState } from '@react-navigation/native';
-import { useAppSelector, useAppDispatch } from 'app/state/store';
-
-import { actions } from 'app/state';
+import { useSession } from 'app/state';
 
 export default function useRouteChange() {
-  const state = useAppSelector((root) => root.global);
-  const dispatch = useAppDispatch();
+  const currentRouteName = useSession((session) => session.currentRouteName);
+  const setRoute = useSession((session) => session.setRoute);
 
   return React.useCallback(
     (s?: NavigationState) => {
       if (s) {
         const [path] = getPathFromState(s).split(/\?/);
         const [screenName] = path.split(/\//).reverse();
-        if (state.currentRouteName !== screenName) {
-          dispatch(actions.global.setCurrentRouteName(screenName));
+        if (currentRouteName !== screenName) {
+          setRoute(screenName);
         }
       }
     },
-    [dispatch, state.currentRouteName]
+    [currentRouteName, setRoute]
   );
 }

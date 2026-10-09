@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import checkPasswordComplexity, { PasswordStrength } from 'app/utils/checkPasswordComplexity';
 import { useNotifications } from 'app/providers/notifications';
 import { useUserSignUpMutation } from 'app/api/reflection';
-import { useAppSelector } from 'app/state';
+import { useSession } from 'app/state';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { camelCase } from 'lodash';
 
@@ -71,7 +71,7 @@ enum SignUpSteps {
 export default function useSignupForm(opts: ISignUpFormOpts) {
   const { onSuccess } = opts;
   const [loading, setLoading] = React.useState(false);
-  const globalState = useAppSelector((root) => root.global);
+  const expoPushToken = useSession((session) => session.expoPushToken);
 
   const notify = useNotifications();
   const methods = useForm<SignUpFields>({
@@ -95,7 +95,7 @@ export default function useSignupForm(opts: ISignUpFormOpts) {
         setLoading(true);
         const { data } = await onSignUp({
           variables: {
-            pushToken: globalState.expoPushToken,
+            pushToken: expoPushToken,
             email: fields.email,
             name: fields.name,
             password: fields.password,
@@ -120,7 +120,7 @@ export default function useSignupForm(opts: ISignUpFormOpts) {
         }
       }
     },
-    [setValue, onSignUp, globalState.expoPushToken, setError, onSuccess, notify]
+    [setValue, onSignUp, expoPushToken, setError, onSuccess, notify]
   );
 
   return React.useMemo(

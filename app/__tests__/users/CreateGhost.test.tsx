@@ -8,6 +8,7 @@ import MOCK_QUERY_FEDERATIONS from '../manifest/__mocks__/QueryFederations.mock'
 import MOCK_QUERY_LICENSES from '../manifest/__mocks__/QueryLicenses.mock';
 import MOCK_QUERY_ROLES from '../manifest/__mocks__/QueryRoles.mock';
 import CreateGhostDialog from '../../forms/create_user/Dialog';
+import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
@@ -16,14 +17,6 @@ const authenticatedState = {
   global: {
     ...appRedux.initialState.global,
     authenticated: true,
-    credentials: {
-      accessToken: 'jest',
-      client: 'jest',
-      uid: 'jest@example.com',
-      tokenType: 'Bearer',
-      expiry: 9999999999,
-    },
-    currentDropzoneId: 1,
   },
 };
 
@@ -44,6 +37,7 @@ async function renderFilledDialog(createGhost: jest.Mock) {
     </View>,
     {
       initialState: authenticatedState,
+      session: authenticatedSession,
       graphql: [
         MOCK_QUERY_FEDERATIONS(),
         MOCK_QUERY_LICENSES(),

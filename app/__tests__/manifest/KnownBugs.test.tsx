@@ -17,6 +17,7 @@ import mockSubscriptionLoadCreated from './__mocks__/SubscriptionLoadCreated.moc
 import ManifestScreen from '../../screens/authenticated/dropzone/manifest/ManifestScreen';
 import ManifestGroupDialog from '../../components/dialogs/ManifestGroup/ManifestGroup';
 import LoadDialog from '../../forms/load/Dialog';
+import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
@@ -28,14 +29,6 @@ const authenticatedState = {
   global: {
     ...appRedux.initialState.global,
     authenticated: true,
-    credentials: {
-      accessToken: 'jest',
-      client: 'jest',
-      uid: 'jest@example.com',
-      tokenType: 'Bearer',
-      expiry: 9999999999,
-    },
-    currentDropzoneId: 1,
   },
 };
 
@@ -64,6 +57,7 @@ describe('known manifest bugs', () => {
 
     const screen = render(<ManifestScreen />, {
       initialState: authenticatedState,
+      session: authenticatedSession,
       permissions: [Permission.ReadLoad],
       graphql: boardMocks({ ...first, result: loadsRequests } as never).concat([
         { ...second, result: loadsRefetch } as never,
@@ -81,6 +75,7 @@ describe('known manifest bugs', () => {
   it.skip('BUG-066: the manifest group sheet is mounted on the manifest board', async () => {
     const screen = render(<ManifestScreen />, {
       initialState: authenticatedState,
+      session: authenticatedSession,
       permissions: [Permission.ReadLoad, Permission.CreateUserSlot],
       graphql: boardMocks(),
     });
@@ -133,6 +128,7 @@ describe('known manifest bugs', () => {
 
     const screen = render(<LoadDialog open onClose={jest.fn()} onSuccess={jest.fn()} />, {
       initialState: authenticatedState,
+      session: authenticatedSession,
       graphql: [
         mockedDropzone as never,
         MOCK_QUERY_PLANES(),

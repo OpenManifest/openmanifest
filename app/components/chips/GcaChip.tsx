@@ -1,5 +1,6 @@
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import * as React from 'react';
+import { useSession } from 'app/state';
 import { useTheme } from 'react-native-paper';
 import Select, { ISelectOption } from 'app/components/input/select/Select';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
@@ -9,7 +10,6 @@ import Chip from './Chip';
 
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
-import { useAppSelector } from '../../state';
 
 interface IGCAChipSelect {
   value?: { id: string; user: { id: string; name?: string | null } } | null;
@@ -24,7 +24,7 @@ export default function GCAChip(props: IGCAChipSelect) {
   const { small, color: assignedColor, backgroundColor, onSelect, value } = props;
   const theme = useTheme();
   const color = assignedColor || theme.colors.onSurface;
-  const { currentDropzoneId } = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   const { data } = useDropzoneUsersQuery({
     variables: {

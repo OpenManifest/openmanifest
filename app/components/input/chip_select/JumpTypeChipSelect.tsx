@@ -2,9 +2,9 @@ import { JumpTypeEssentialsFragment } from 'app/api/operations';
 import { useAllowedJumpTypesQuery } from 'app/api/reflection';
 import { uniqBy } from 'lodash';
 import * as React from 'react';
+import { useSession } from 'app/state';
 import { List } from 'react-native-paper';
 import { JumpType } from '../../../api/schema.d';
-import { useAppSelector } from '../../../state';
 import { withHookForm } from '../withHookForm';
 import ChipSelect from './ChipSelect';
 import ChipSelectSkeleton from './ChipSelectSkeleton';
@@ -19,7 +19,7 @@ interface IJumpTypeSelect {
 
 function JumpTypeChipSelect(props: IJumpTypeSelect) {
   const { onLoadingStateChanged, userId, value, onChange, error } = props;
-  const { currentDropzoneId } = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const { data, loading } = useAllowedJumpTypesQuery({
     variables: {
       allowedForDropzoneUserIds: [Number(userId) || null].filter(Boolean) as number[],

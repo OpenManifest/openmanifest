@@ -7,7 +7,7 @@ import ProgressBar from 'app/components/ProgressBar';
 import SkeletonContent from 'app/components/Skeleton';
 import NoResults from 'app/components/NoResults';
 import { Permission } from 'app/api/schema.d';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { actions, useAppDispatch, useAppSelector, useSession } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import { DropzoneUserEssentialsFragment, DropzoneUsersQueryVariables } from 'app/api/operations';
@@ -114,6 +114,7 @@ export default function UsersScreen() {
   console.debug({ users, numColumns });
   const initialLoading = !users?.length && loading;
   const theme = useTheme();
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   return (
     <View style={{ flexGrow: 1, backgroundColor: theme.colors.surface }}>
@@ -127,7 +128,7 @@ export default function UsersScreen() {
         data={initialLoading ? new Array(8).fill(loadingFragment) : users.map((edge) => edge?.node)}
         onRefresh={() =>
           refetch({
-            dropzoneId: global.currentDropzoneId?.toString(),
+            dropzoneId: currentDropzoneId?.toString(),
             search: state.searchText,
           })
         }
