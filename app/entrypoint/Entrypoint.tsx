@@ -29,7 +29,7 @@ import { primaryColor } from '../constants/Colors';
 import { useAppTheme } from '../theme';
 import { useSession } from '../state/session';
 import { usePreferences } from '../state/preferences';
-import ImageViewer from '../components/dialogs/ImageViewer/ImageViewer';
+import { ImageViewerProvider } from '../components/dialogs/ImageViewer/context';
 
 import RootNavigator, { options as LinkingConfiguration } from '../screens/routes';
 import {
@@ -76,22 +76,23 @@ function Content() {
                 <GestureHandlerRootView style={{ flex: 1 }}>
                   <PortalProvider>
                     <SafeAreaProvider>
-                      <ImageViewer />
-                      <NotificationsProvider>
-                        <ThemedNavigationContainer onStateChange={onRouteChange}>
-                          <Wrapper>
-                            <DropzonesProvider>
-                              <AppSignalSessionTagger>
-                                <PushNotificationsProvider>
-                                  <RootNavigator />
-                                </PushNotificationsProvider>
-                              </AppSignalSessionTagger>
-                            </DropzonesProvider>
-                          </Wrapper>
-                        </ThemedNavigationContainer>
+                      <ImageViewerProvider>
+                        <NotificationsProvider>
+                          <ThemedNavigationContainer onStateChange={onRouteChange}>
+                            <Wrapper>
+                              <DropzonesProvider>
+                                <AppSignalSessionTagger>
+                                  <PushNotificationsProvider>
+                                    <RootNavigator />
+                                  </PushNotificationsProvider>
+                                </AppSignalSessionTagger>
+                              </DropzonesProvider>
+                            </Wrapper>
+                          </ThemedNavigationContainer>
 
-                        <StatusBar />
-                      </NotificationsProvider>
+                          <StatusBar />
+                        </NotificationsProvider>
+                      </ImageViewerProvider>
                     </SafeAreaProvider>
                   </PortalProvider>
                 </GestureHandlerRootView>

@@ -54,7 +54,7 @@ const setupTicketsCardFragment = { ...loadingFragment, id: '__SETUP_TICKETS_CARD
 
 export default function ManifestScreen() {
   const { theme } = useAppTheme();
-  const manifestScreen = useAppSelector((root) => root.screens.manifest);
+  const [display, setDisplay] = React.useState<'list' | 'cards'>('cards');
   const dispatch = useAppDispatch();
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
   const {
@@ -84,7 +84,7 @@ export default function ManifestScreen() {
 
   const { width } = useWindowDimensions();
 
-  let cardWidth = (manifestScreen.display === 'cards' ? 338 : 550) + 32;
+  let cardWidth = (display === 'cards' ? 338 : 550) + 32;
   cardWidth = cardWidth > width ? width - 32 : cardWidth;
   const numColumns = Math.floor(width / cardWidth) || 1;
   const contentWidth = cardWidth * numColumns;
@@ -129,7 +129,7 @@ export default function ManifestScreen() {
       // 1 means loading, because null and undefined
       // get filtered out
       if (load.id === '__LOADING__') {
-        return manifestScreen.display === 'list' ? (
+        return display === 'list' ? (
           <LoadingCardLarge key={`loading-card-${index}`} />
         ) : (
           <LoadingCardSmall key={`loading-card-${index}`} />
@@ -161,7 +161,7 @@ export default function ManifestScreen() {
           />
         );
       }
-      return manifestScreen.display === 'list' ? (
+      return display === 'list' ? (
         <LoadCardLarge
           controlsVisible={false}
           key={`load-${load?.id}`}
@@ -209,7 +209,7 @@ export default function ManifestScreen() {
       );
     },
     [
-      manifestScreen.display,
+      display,
       aircrafts?.length,
       sheets.aircraft.open,
       sheets.ticketType.open,
@@ -291,17 +291,17 @@ export default function ManifestScreen() {
         >
           <MenuItem
             title="Show expanded cards"
-            bold={manifestScreen.display !== 'cards'}
+            bold={display !== 'cards'}
             onPress={() => {
-              dispatch(actions.screens.manifest.setDisplayStyle('list'));
+              setDisplay('list');
               setDisplayOptionsOpen(false);
             }}
           />
           <MenuItem
             title="Show compact cards"
-            bold={manifestScreen.display === 'cards'}
+            bold={display === 'cards'}
             onPress={() => {
-              dispatch(actions.screens.manifest.setDisplayStyle('cards'));
+              setDisplay('cards');
               setDisplayOptionsOpen(false);
             }}
           />

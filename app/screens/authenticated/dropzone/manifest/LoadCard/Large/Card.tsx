@@ -146,7 +146,6 @@ function LoadCard(props: ILoadCardLarge) {
 
                   if (canManifestGroupWithSelfOnly && !canManifestGroup && currentUser) {
                     // Automatically add current user to selection
-                    dispatch(actions.screens.manifest.setSelected([currentUser]));
                     dispatch(actions.forms.manifestGroup.setDropzoneUsers([currentUser]));
                   }
 
