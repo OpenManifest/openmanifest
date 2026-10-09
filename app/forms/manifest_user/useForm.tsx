@@ -10,6 +10,7 @@ import isEqual from 'lodash/isEqual';
 import { useNotifications } from 'app/providers/notifications';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import camelCase from 'lodash/camelCase';
+import withDefaults from 'app/forms/initialValues';
 
 export type ManifestUserFields = Pick<
   SlotExhaustiveFragment,
@@ -44,7 +45,7 @@ export interface IUseManifestFormOpts {
 
 export default function useManifestForm(opts: IUseManifestFormOpts) {
   const { initial, onSuccess } = opts;
-  const initialValues = React.useMemo(() => ({ ...EMPTY_FORM_VALUES, ...initial }), [initial]);
+  const initialValues = React.useMemo(() => withDefaults(EMPTY_FORM_VALUES, initial), [initial]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
 
   const notify = useNotifications();
