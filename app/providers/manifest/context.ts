@@ -5,6 +5,7 @@ import { uninitializedHandler } from 'app/api/crud/factory';
 import type { IManifestUserDialog } from 'app/forms/manifest_user/Dialog';
 import type { ICreditsSheet } from 'app/forms/credits/Credits';
 import type { ILoadDialog } from 'app/forms/load/Dialog';
+import type { IManifestGroupDialogProps } from 'app/forms/manifest_group';
 import type { IDialogContextSubstate } from '../hooks/useDialog';
 
 interface IManifestContext {
@@ -15,6 +16,10 @@ interface IManifestContext {
     >;
     credits: IDialogContextSubstate<Omit<ICreditsSheet, 'open' | 'onClose' | 'onSuccess'>>;
     load: IDialogContextSubstate<Omit<ILoadDialog, 'open' | 'onClose' | 'onSuccess'>>;
+    /** Opens the group sheet: for the load, with the slots of an existing group or with jumpers to start from */
+    manifestGroup: IDialogContextSubstate<
+      Omit<IManifestGroupDialogProps, 'open' | 'onClose' | 'onSuccess'>
+    >;
   };
 }
 export const INITIAL_CONTEXT: IManifestContext = {
@@ -66,6 +71,12 @@ export const INITIAL_CONTEXT: IManifestContext = {
       state: {
         dropzoneUser: undefined,
       },
+    },
+    manifestGroup: {
+      open: noop,
+      close: noop,
+      visible: false,
+      state: undefined,
     },
   },
 };

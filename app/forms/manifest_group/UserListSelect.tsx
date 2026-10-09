@@ -10,7 +10,7 @@ import { Permission } from 'app/api/schema.d';
 import { useSession } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
-import NoResults from '../../NoResults';
+import NoResults from 'app/components/NoResults';
 
 interface IUserListSelect {
   hideButton?: boolean;
