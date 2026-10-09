@@ -197,9 +197,6 @@ export default function ProfileScreen() {
           onClose={() => dispatch(actions.forms.dropzoneUser.setOpen(false))}
           onSuccess={(user) => {
             dispatch(actions.forms.dropzoneUser.setOpen(false));
-            if (currentUser?.id === dropzoneUser?.id) {
-              dispatch(actions.global.setUser(user.user));
-            }
           }}
           open={forms.dropzoneUser.open}
         />

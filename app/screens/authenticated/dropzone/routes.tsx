@@ -1,7 +1,7 @@
 import { HeaderStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 
 import * as React from 'react';
-import { useAppSelector, useSession } from 'app/state';
+import { useSession } from 'app/state';
 import AppBar from 'app/components/appbar/AppBar';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { AppSignalBoundary } from 'app/components/app_signal';
@@ -29,14 +29,14 @@ export type DropzoneRoutes = {
 const Manifest = createStackNavigator<DropzoneRoutes>();
 
 export default function ManifestTab() {
-  const globalState = useAppSelector((root) => root.global);
   const credentials = useSession((session) => session.credentials);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   return (
     <AppSignalBoundary>
       <Manifest.Navigator
         screenOptions={{
-          headerShown: !!(credentials && globalState.currentDropzone),
+          headerShown: !!(credentials && currentDropzoneId),
           header: (props) => <AppBar {...props} />,
           headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
           cardStyle: {

@@ -1,7 +1,5 @@
 mutation UpdateDropzoneUser($dropzoneUserId: ID!, $attributes: DropzoneUserInput!) {
-  updateDropzoneUser(
-    input: { dropzoneUser: $dropzoneUserId, attributes: $attributes }
-  ) {
+  updateDropzoneUser(input: { dropzoneUser: $dropzoneUserId, attributes: $attributes }) {
     errors
     fieldErrors {
       field

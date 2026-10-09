@@ -2,7 +2,9 @@ import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
 import { Platform } from 'react-native';
-import { persistStore, persistReducer } from 'redux-persist';
+import omit from 'lodash/omit';
+import { persistStore, persistReducer, createMigrate } from 'redux-persist';
+import type { PersistedState } from 'redux-persist';
 import { reducers as forms, initialState as initialStateForms } from '../components/forms/slice';
 import { reducers as screens, initialState as initialStateScreens } from '../screens/slice';
 import imageViewerSlice, {
@@ -18,8 +20,33 @@ export const initialState = {
   imageViewer: imageViewerState,
 } as RootState;
 
+/** Fields the `global` slice used to hold that are derived elsewhere now (Apollo and the theme hook) */
+const REMOVED_GLOBAL_KEYS = [
+  'currentUser',
+  'currentDropzone',
+  'permissions',
+  'theme',
+  'palette',
+  'isDarkMode',
+];
+
+/**
+ * Version 1 drops the snapshots and theme from the persisted `global` slice. The credentials, dropzone id and push
+ * token stay in the blob on purpose: the session store migrates from them on first start (`migrateFromReduxPersist`),
+ * which races with this rehydration, and P4.8 deletes the blob when redux-persist goes.
+ */
+export const persistMigrations = {
+  1: (state: PersistedState) =>
+    state && {
+      ...state,
+      global: omit((state as unknown as { global?: object }).global ?? {}, REMOVED_GLOBAL_KEYS),
+    },
+};
+
 const persistConfig = {
   key: 'open-manifest.0.9.1',
+  version: 1,
+  migrate: createMigrate(persistMigrations as never, { debug: false }),
   storage:
     Platform.OS === 'web' || false ? require('redux-persist/lib/storage').default : AsyncStorage,
   whitelist: ['global'],

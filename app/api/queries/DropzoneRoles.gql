@@ -1,6 +1,6 @@
 query DropzonePermissions($id: ID!) {
   dropzone(id: $id) {
-    ...dropzoneEssentials,
+    ...dropzoneEssentials
     roles {
       ...roleDetailed
     }

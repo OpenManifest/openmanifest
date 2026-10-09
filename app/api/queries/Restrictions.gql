@@ -1,4 +1,4 @@
- query CurrentUserPermissions($dropzoneId: ID!) {
+query CurrentUserPermissions($dropzoneId: ID!) {
   dropzone(id: $dropzoneId) {
     id
     name
