@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { ScrollView, StyleSheet, ScrollViewProps, useWindowDimensions } from 'react-native';
-import { useAppSelector } from '../../state';
+import { useAppTheme } from 'app/theme';
 
 interface IScrollableScreen extends ScrollViewProps {
   children: React.ReactNode;
 }
 export default React.forwardRef<ScrollView, IScrollableScreen>((props, ref) => {
   const { height } = useWindowDimensions();
-  const { theme } = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const { style, children, contentContainerStyle, ...rest } = props;
 
   return (

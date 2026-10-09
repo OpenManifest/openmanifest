@@ -4,8 +4,6 @@ import { SectionList, StyleSheet, View } from 'react-native';
 import { List } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 
-import { useAppSelector } from 'app/state';
-
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { groupBy, map } from 'lodash';
 import { formatDistance, parseISO, startOfDay, differenceInDays, format } from 'date-fns';
@@ -14,6 +12,7 @@ import { OrderEssentialsFragment } from 'app/api/operations';
 import { useUserProfile } from 'app/api/crud';
 import OrderCard from '../../../../components/orders/OrderCard';
 import { useUserNavigation } from '../useUserNavigation';
+import { useAppTheme } from 'app/theme';
 
 export type OrdersRoute = {
   OrdersScreen: {
@@ -21,7 +20,7 @@ export type OrdersRoute = {
   };
 };
 export default function OrdersScreen() {
-  const state = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const {
     dropzone: { currentUser },
   } = useDropzoneContext();
@@ -41,10 +40,8 @@ export default function OrdersScreen() {
   }, [currentUser?.id, dropzoneUser?.id, dropzoneUser?.user?.name, navigation]);
 
   return (
-    <View style={{ flexGrow: 1, backgroundColor: state.theme.colors.surface }}>
-      {loading && (
-        <ProgressBar color={state.theme.colors.primary} indeterminate visible={loading} />
-      )}
+    <View style={{ flexGrow: 1, backgroundColor: theme.colors.surface }}>
+      {loading && <ProgressBar color={theme.colors.primary} indeterminate visible={loading} />}
 
       <SectionList
         sections={map(

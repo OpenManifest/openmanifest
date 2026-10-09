@@ -20,12 +20,13 @@ import Menu, { MenuItem } from 'app/components/popover/Menu';
 import { View } from 'app/components/Themed';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { actions, useAppDispatch } from 'app/state';
 import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
 import LoadSlotTable from 'app/components/slots_table/Table';
 import { SlotFields } from 'app/components/slots_table/UserRow';
 import { useNotifications } from 'app/providers/notifications';
 import LoadingCard from './Loading';
+import { useAppTheme } from 'app/theme';
 
 interface ILoadCardLarge {
   controlsVisible: boolean;
@@ -37,7 +38,7 @@ interface ILoadCardLarge {
 
 function LoadCard(props: ILoadCardLarge) {
   const { onManifest, onManifestGroup, controlsVisible, onSlotGroupPress, onSlotPress } = props;
-  const state = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDispatchOpen, setDispatchOpen] = React.useState(false);
@@ -159,7 +160,7 @@ function LoadCard(props: ILoadCardLarge) {
         }
         subtitle={load?.name}
       />
-      <ProgressBar visible={loading || deletingSlot} color={state.theme.colors.primary} />
+      <ProgressBar visible={loading || deletingSlot} color={theme.colors.primary} />
       <Card.Content
         style={{
           marginVertical: 8,

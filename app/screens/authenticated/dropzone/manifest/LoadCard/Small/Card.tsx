@@ -8,11 +8,11 @@ import PlaneChip from 'app/components/chips/PlaneChip';
 
 import { View } from 'app/components/Themed';
 import { LoadState } from 'app/api/schema.d';
-import { useAppSelector } from 'app/state';
 import { errorColor, warningColor } from 'app/constants/Colors';
 import { useLoadContext, withLoadContext } from 'app/providers/load';
 import Countdown from '../Countdown';
 import Loading from './Loading';
+import { useAppTheme } from 'app/theme';
 
 interface ILoadCardSmall {
   onPress(): void;
@@ -20,7 +20,7 @@ interface ILoadCardSmall {
 
 function LoadCard(props: ILoadCardSmall) {
   const { onPress } = props;
-  const { theme, palette } = useAppSelector((root) => root.global);
+  const { theme, palette } = useAppTheme();
   const {
     load: { load, loading, updatePlane, updatePilot },
   } = useLoadContext();

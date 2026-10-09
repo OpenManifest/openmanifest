@@ -1,9 +1,9 @@
 import { useIsFocused } from '@react-navigation/native';
-import { useAppSelector } from 'app/state';
 import * as React from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import GradientText from '../GradientText';
+import { useAppTheme } from 'app/theme';
 
 export interface IWizardStepProps {
   title?: string | number;
@@ -24,7 +24,7 @@ export function Fields({ children }: { children: React.ReactNode }) {
 }
 export function Step(props: IWizardStepProps) {
   const { children, title, actions, hideContentUntilNavigatedTo } = props;
-  const theme = useAppSelector((state) => state.global.theme);
+  const { theme } = useAppTheme();
 
   const isFocused = useIsFocused();
   if (!isFocused && hideContentUntilNavigatedTo) {

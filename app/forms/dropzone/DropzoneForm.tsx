@@ -10,7 +10,7 @@ import {
   Title,
 } from 'react-native-paper';
 import SkeletonContent from 'app/components/Skeleton';
-import { actions, useAppDispatch } from 'app/state';
+import { useThemeOverrides } from 'app/theme';
 import LottieView from 'app/components/LottieView';
 import useImagePicker from 'app/hooks/useImagePicker';
 import ColorPicker from 'app/components/input/colorpicker';
@@ -30,7 +30,6 @@ interface IDropzoneForm {
 }
 export default function DropzoneForm(props: IDropzoneForm) {
   const { loading, control } = props;
-  const dispatch = useAppDispatch();
   const theme = useTheme();
   const pickImage = useImagePicker();
   const { lat, lng, name, banner, primaryColor } = useWatch({ control });
@@ -193,7 +192,7 @@ export default function DropzoneForm(props: IDropzoneForm) {
               error={fieldState?.error?.message}
               onChange={(color) => {
                 onChange(color);
-                dispatch(actions.global.setPrimaryColor(color));
+                useThemeOverrides.getState().setPrimary(color);
               }}
               value={value || '#000000'}
             />

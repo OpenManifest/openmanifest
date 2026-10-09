@@ -13,6 +13,7 @@ import {
 } from 'react-native-paper';
 import SkeletonContent from 'app/components/Skeleton';
 import { actions, useAppSelector, useAppDispatch } from 'app/state';
+import { useThemeOverrides } from 'app/theme';
 import LottieView from 'app/components/LottieView';
 import { useFederationsQuery } from 'app/api/reflection';
 import useImagePicker from 'app/hooks/useImagePicker';
@@ -196,7 +197,7 @@ export default function DropzoneForm(props: IDropzoneForm) {
           error={state.fields.primaryColor.error || null}
           onChange={(color) => {
             dispatch(actions.forms.dropzone.setField(['primaryColor', color]));
-            dispatch(actions.global.setPrimaryColor(color));
+            useThemeOverrides.getState().setPrimary(color);
           }}
           value={state.fields.primaryColor.value || '#000000'}
         />

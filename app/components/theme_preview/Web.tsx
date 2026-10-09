@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Surface } from 'react-native-paper';
-import { useAppSelector } from 'app/state';
+import { useAppTheme } from 'app/theme';
 
 interface IWebPreview {
   primaryColor?: string;
@@ -9,7 +9,7 @@ interface IWebPreview {
 
 function WebPreview(props: IWebPreview) {
   const { primaryColor } = props;
-  const { palette } = useAppSelector((root) => root.global);
+  const { palette } = useAppTheme();
 
   return (
     <View>

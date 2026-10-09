@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Surface } from 'react-native-paper';
-import { useAppSelector } from '../../state';
+import { useAppTheme } from 'app/theme';
 
 interface IPhonePreview {
   primaryColor?: string;
@@ -9,7 +9,7 @@ interface IPhonePreview {
 
 function PhonePreview(props: IPhonePreview) {
   const { primaryColor } = props;
-  const { theme, palette } = useAppSelector((root) => root.global);
+  const { theme, palette } = useAppTheme();
 
   return (
     <View>
