@@ -2,7 +2,8 @@ import * as React from 'react';
 import { DateTime, Settings } from 'luxon';
 import { FAB } from 'react-native-paper';
 import { LoadState, Permission } from 'app/api/schema.d';
-import { LoadUpdatedDocument, UpdateLoadDocument } from 'app/api/reflection';
+import { FinalizeLoadDocument, LoadUpdatedDocument, UpdateLoadDocument } from 'app/api/reflection';
+import { NotificationContext } from 'app/providers/notifications/context';
 import { LoadContextProvider, useLoadContext } from 'app/providers';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
@@ -84,5 +85,78 @@ describe('<ActionButton />', () => {
     fireEvent.press(call);
 
     await waitFor(() => expect(updateResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
+  });
+
+  describe('finalizing a load', () => {
+    const renderBoardingCall = (finalizeResult: unknown) => {
+      const notifications = { success: jest.fn(), error: jest.fn(), info: jest.fn() };
+      const screen = render(
+        <NotificationContext.Provider value={notifications}>
+          <LoadContextProvider id="1">
+            <LoadActions />
+          </LoadContextProvider>
+        </NotificationContext.Provider>,
+        {
+          session: authenticatedSession,
+          permissions: [Permission.UpdateLoad],
+          graphql: [
+            MOCK_QUERY_LOAD({}, { load: { state: LoadState.BoardingCall } }),
+            {
+              request: { query: LoadUpdatedDocument, variables: { id: '1' } },
+              result: { data: { loadUpdated: { __typename: 'LoadUpdatedPayload', load: null } } },
+            },
+            {
+              request: {
+                query: FinalizeLoadDocument,
+                variables: { id: 1, state: LoadState.Landed },
+              },
+              ...(finalizeResult as object),
+            },
+          ],
+        }
+      );
+      return { screen, notifications };
+    };
+
+    const pressMarkAsLanded = async (screen: ReturnType<typeof render>) => {
+      await waitFor(() => expect(screen.UNSAFE_getAllByType(FAB.Group).length).toBeGreaterThan(0), {
+        timeout: 10000,
+      });
+      const fabs = screen.UNSAFE_getAllByType(FAB);
+      fireEvent.press(fabs[fabs.length - 1]);
+      fireEvent.press(await waitFor(() => screen.getByText('Mark as Landed'), { timeout: 10000 }));
+    };
+
+    it('shows the error the server gives for landing', async () => {
+      const { screen, notifications } = renderBoardingCall({
+        result: {
+          data: {
+            finalizeLoad: {
+              __typename: 'FinalizeLoadPayload',
+              errors: ["Load #1 can't land, it is landed"],
+              fieldErrors: null,
+              load: null,
+            },
+          },
+        },
+      });
+
+      await pressMarkAsLanded(screen);
+
+      await waitFor(
+        () => expect(notifications.error).toHaveBeenCalledWith("Load #1 can't land, it is landed"),
+        { timeout: 10000 }
+      );
+    });
+
+    it('shows an error when the request fails', async () => {
+      const { screen, notifications } = renderBoardingCall({ error: new Error('Network down') });
+
+      await pressMarkAsLanded(screen);
+
+      await waitFor(() => expect(notifications.error).toHaveBeenCalledWith('Network down'), {
+        timeout: 10000,
+      });
+    });
   });
 });
