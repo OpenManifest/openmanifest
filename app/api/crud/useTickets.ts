@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { isEqual, noop } from 'lodash';
+import { noop } from 'lodash';
+import sameVariables from 'app/utils/sameVariables';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useAppSelector } from 'app/state';
 import {
@@ -34,7 +35,7 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
 
   const [getTickets, query] = useTicketTypesLazyQuery();
   React.useEffect(() => {
-    if (authenticated && variables?.dropzone && !isEqual(variables, query.variables)) {
+    if (authenticated && variables?.dropzone && !sameVariables(variables, query.variables)) {
       console.debug('[Context::Tickets] Fetching tickets', variables);
       getTickets({ variables });
     }

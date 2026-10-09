@@ -7,7 +7,8 @@ import { format, parseISO } from 'date-fns';
 import { EventLevel, EventAccessLevel, Permission } from 'app/api/schema.d';
 import { ActivityEssentialsFragment, ActivityQueryVariables } from 'app/api/operations';
 import useRestriction from 'app/hooks/useRestriction';
-import { isEqual, uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
+import sameVariables from 'app/utils/sameVariables';
 import ChipSelect from '../input/chip_select/ChipSelect';
 
 const LEVEL_COLORS = {
@@ -90,7 +91,7 @@ export default function ActivityFeed(props: IActivityFeedProps) {
   const [getActivity, query] = useActivityDetailsLazyQuery();
 
   React.useEffect(() => {
-    if (!isEqual(query?.variables, variables)) {
+    if (!sameVariables(query?.variables, variables)) {
       getActivity({ variables });
     }
   }, [getActivity, query?.variables, variables]);

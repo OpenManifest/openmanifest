@@ -14,7 +14,7 @@ export default function createMockedQuery<Variables extends Record<string, unkno
 ): (
   overrideVariables?: Partial<Variables>,
   overrideResponse?: DeepPartial<Response>
-) => MockedResponse<Omit<Response, 'request'>> & {
+) => MockedResponse<Record<string, unknown>> & {
   request: GraphQLRequest & { variables: Variables };
 } {
   return (overrideVariables?: Partial<Variables>, overrideResponse?: DeepPartial<Response>) => ({
@@ -24,7 +24,7 @@ export default function createMockedQuery<Variables extends Record<string, unkno
       variables: overrideVariables ? { ...variables, ...overrideVariables } : variables,
     },
     result: {
-      data: overrideResponse ? merge(data, overrideResponse) : data,
+      data: (overrideResponse ? merge(data, overrideResponse) : data) as Record<string, unknown>,
     },
   });
 }

@@ -16,7 +16,7 @@ Client diagrams: [diagrams.md](diagrams.md).
 |---|---|---|
 | Runtime | Expo SDK 57.0.27 (P3.18; was 56.0.23), React Native 0.86.3, React 19.2.3 with the New Architecture, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before) | `package.json`, `app.json` |
 | Language | TypeScript 5.9.3 (`strict`), path alias `app/*` via `babel-plugin-module-resolver` | `tsconfig.json`, `babel.config.js` |
-| Server data | Apollo Client 3.7.11 (`BatchHttpLink`, ActionCable link for subscriptions) | `app/api/` |
+| Server data | Apollo Client 3.14.1 (`BatchHttpLink`, ActionCable link for subscriptions) | `app/api/` |
 | Client state | Redux Toolkit 1.9.3 + redux-persist 6 (`global` slice persisted) | `app/state/` |
 | Navigation | React Navigation 7 (stack, drawer, bottom tabs) | `app/screens/**/routes.tsx` |
 | UI kit | react-native-paper 5.15.3 (MD2 theme, P3.11), react-native-reanimated 4.5.1 (with react-native-worklets 0.10.1), @gorhom/bottom-sheet 5.2.14 | |
@@ -235,7 +235,7 @@ Full table:
 
 | Package | Group | package.json | Installed | Latest on npm | Expo SDK 57 pin | Notes |
 |---|---|---|---|---|---|---|
-| `@apollo/client` | dep | `3.7.11` | 3.7.11 | 4.3.2 |  |  |
+| `@apollo/client` | dep | `3.14.1` (P3.19)| 3.14.1 | 4.3.2 |  |  |
 | `@appsignal/javascript` | dep | `1.3.26` | 1.3.26 | 1.6.1 |  |  |
 | `@appsignal/plugin-path-decorator` | dep | `^1.0.15` (P3.14) | 1.0.18 | 1.0.18 |  |  |
 | `@appsignal/plugin-window-events` | dep | `1.0.19` | 1.0.19 | 1.0.26 |  |  |
@@ -294,7 +294,7 @@ Full table:
 | `expo-status-bar` | dep | `~57.0.1` (P3.18)| 57.0.1 | 57.0.1 | `~57.0.1` |  |
 | `expo-updates` | dep | `~57.0.25` (P3.18)| 57.0.25 | 57.0.25 | `~57.0.25` |  |
 | `expo-web-browser` | dep | `~57.0.3` (P3.18)| 57.0.3 | 57.0.3 | `~57.0.3` |  |
-| `graphql` | dep | `15.8.0` | 15.8.0 | 17.0.2 |  |  |
+| `graphql` | dep | `^16` (P3.19)| 16.14.2 | 17.0.2 |  |  |
 | `graphql-tag` | dep | `2.12.6` | 2.12.6 | 2.12.7 |  |  |
 | `lodash` | dep | `^4.17.21` (P3.14) | 4.18.1 | 4.18.1 |  |  |
 | `lottie-react-native` | dep | `~7.3.8` (P3.18)| 7.3.8 | 7.5.0 | `~7.3.8` |  |
@@ -333,8 +333,6 @@ Full table:
 | `redux-persist` | dep | `^6.0.0` | 6.0.0 | 6.0.0 |  |  |
 | `urijs` | dep | `1.19.11` | 1.19.11 | 1.19.11 |  | last publish 2022-06-28 |
 | `yup` | dep | `0.32.11` | 0.32.11 | 1.7.1 |  |  |
-| `zen-observable` | dep | `0.8.15` | 0.8.15 | 0.10.0 |  | last publish 2024-01-08 |
-| `zen-observable-ts` | dep | `1.1.0` | 1.1.0 | 1.1.0 |  | last publish 2022-06-29 |
 | `@babel/core` | dev | `^7.28.0` (P3.14) | 7.29.7 | 8.0.7 |  |  |
 | `@babel/plugin-proposal-export-namespace-from` | dev | `7.18.9` | 7.18.9 | 7.18.9 |  | **deprecated on npm**; last publish 2023-09-01 |
 | `@babel/plugin-proposal-numeric-separator` | dev | `7.18.6` | 7.18.6 | 7.18.6 |  | **deprecated on npm**; last publish 2023-09-01 |
@@ -342,14 +340,14 @@ Full table:
 | `@babel/plugin-syntax-bigint` | dev | `^7.8.3` | 7.8.3 | 7.8.3 |  | last publish 2022-06-12 |
 | `@babel/preset-env` | dev | `^7.28.0` (P3.14) | 7.29.7 | 8.0.7 |  |  |
 | `@babel/runtime` | dev | `^7.28.0` (P3.14) | 7.29.10 | 8.0.7 |  |  |
-| `@graphql-codegen/add` | dev | `3.2.3` | 3.2.3 | 7.1.1 |  |  |
-| `@graphql-codegen/cli` | dev | `2.16.4` | 2.16.4 | 7.4.5 |  |  |
-| `@graphql-codegen/import-types-preset` | dev | `2.2.6` | 2.2.6 | 4.0.1 |  |  |
-| `@graphql-codegen/introspection` | dev | `2.2.3` | 2.2.3 | 6.1.0 |  |  |
-| `@graphql-codegen/schema-ast` | dev | `2.6.1` | 2.6.1 | 6.1.1 |  |  |
-| `@graphql-codegen/typescript` | dev | `2.8.7` | 2.8.7 | 6.1.1 |  |  |
-| `@graphql-codegen/typescript-operations` | dev | `2.5.12` | 2.5.12 | 6.1.10 |  |  |
-| `@graphql-codegen/typescript-react-apollo` | dev | `3.3.7` | 3.3.7 | 5.0.0 |  |  |
+| `@graphql-codegen/add` | dev | `^5.0.3` (P3.19)| 5.0.3 | 7.1.1 |  |  |
+| `@graphql-codegen/cli` | dev | `^5.0.7` (P3.19)| 5.0.7 | 7.4.5 |  |  |
+| `@graphql-codegen/import-types-preset` | dev | `^3.0.1` (P3.19)| 3.0.1 | 4.0.1 |  |  |
+| `@graphql-codegen/introspection` | dev | `^4` (P3.19)| 4.0.3 | 6.1.0 |  |  |
+| `@graphql-codegen/schema-ast` | dev | `^4` (P3.19)| 4.1.0 | 6.1.1 |  |  |
+| `@graphql-codegen/typescript` | dev | `^4.1.6` (P3.19)| 4.1.6 | 6.1.1 |  |  |
+| `@graphql-codegen/typescript-operations` | dev | `^4.6.1` (P3.19)| 4.6.1 | 6.1.10 |  |  |
+| `@graphql-codegen/typescript-react-apollo` | dev | `^4.4.2` (P3.19)| 4.4.2 | 5.0.0 |  |  |
 | `@react-native-community/eslint-config` | dev | `3.2.0` | 3.2.0 | 3.2.0 |  |  |
 | `@testing-library/jest-dom` | dev | `5.16.5` | 5.16.5 | 7.0.1 |  |  |
 | `@testing-library/react-native` | dev | `^13` (P3.14) | 13.3.3 | 14.0.1 |  |  |

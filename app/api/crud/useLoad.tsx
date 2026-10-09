@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { isEqual, noop } from 'lodash';
+import { noop } from 'lodash';
+import sameVariables from 'app/utils/sameVariables';
 import { DateTime } from 'luxon';
 import useRestriction from 'app/hooks/useRestriction';
 import * as yup from 'yup';
@@ -27,7 +28,7 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
   const [getLoad, query] = useLoadLazyQuery();
 
   React.useEffect(() => {
-    if (authenticated && variables?.id && !isEqual(variables, query.variables)) {
+    if (authenticated && variables?.id && !sameVariables(variables, query.variables)) {
       console.debug('[Context::Load] Fetching load', variables);
       getLoad({ variables: variables as LoadQueryVariables });
     }
