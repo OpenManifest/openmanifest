@@ -2,20 +2,11 @@ import * as React from 'react';
 import { Text, TextInput, View } from 'react-native';
 import { CreateAircraftDocument } from 'app/api/reflection';
 import { useDropzoneContext } from 'app/providers';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import AircraftDialog from '../../forms/aircraft/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-  },
-};
 
 // The form refuses to submit until the dropzone has loaded
 function DropzoneReady() {
@@ -44,7 +35,6 @@ describe('<AircraftDialog />', () => {
         <AircraftDialog open onClose={jest.fn()} />
       </View>,
       {
-        initialState: authenticatedState,
         session: authenticatedSession,
         graphql: [
           {
@@ -88,7 +78,7 @@ describe('<AircraftDialog />', () => {
       <View testID="under-test">
         <AircraftDialog open onClose={jest.fn()} />
       </View>,
-      { initialState: authenticatedState, session: authenticatedSession, graphql: [] }
+      { session: authenticatedSession, graphql: [] }
     );
 
     const dialog = within(screen.getByTestId('under-test'));
@@ -105,7 +95,7 @@ describe('<AircraftDialog />', () => {
       <View testID="under-test">
         <AircraftDialog open onClose={jest.fn()} />
       </View>,
-      { initialState: authenticatedState, session: authenticatedSession, graphql: [] }
+      { session: authenticatedSession, graphql: [] }
     );
 
     const dialog = within(screen.getByTestId('under-test'));

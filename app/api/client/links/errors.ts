@@ -1,7 +1,7 @@
 import { onError } from '@apollo/client/link/error';
 import * as React from 'react';
 import { useNotifications } from 'app/providers/notifications';
-import { logout, useAppDispatch, useAppSelector } from 'app/state';
+import { resetSession, useAuthenticated } from 'app/state';
 import environment from 'app/constants/environment';
 
 export const defaultErrorLink = onError(({ graphQLErrors, networkError, operation }) => {
@@ -26,8 +26,7 @@ export const defaultErrorLink = onError(({ graphQLErrors, networkError, operatio
 
 export function useErrorLink() {
   const notify = useNotifications();
-  const dispatch = useAppDispatch();
-  const { authenticated } = useAppSelector((root) => root.global);
+  const authenticated = useAuthenticated();
   // Log any GraphQL errors or network error that occurred
   return React.useMemo(
     () =>
@@ -40,7 +39,7 @@ export function useErrorLink() {
                 '[Apollo::Links::Errors]: Received authentication error, logging out',
                 graphQLErrors
               );
-              logout(dispatch);
+              resetSession({ reason: 'authentication-error' });
             }
             return;
           }
@@ -61,6 +60,6 @@ export function useErrorLink() {
           forward?.(operation);
         }
       }),
-    [dispatch, notify, authenticated]
+    [notify, authenticated]
   );
 }

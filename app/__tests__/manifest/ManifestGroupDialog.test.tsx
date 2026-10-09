@@ -3,7 +3,6 @@ import { View } from 'react-native';
 import { ManifestGroupDocument } from 'app/api/reflection';
 import type { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import { MOCK_QUERY_ALLOWED_JUMP_TYPES } from './__mocks__/QueryAllowedJumpTypes.mock';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
@@ -11,11 +10,6 @@ import ManifestGroupDialog from '../../forms/manifest_group';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: { ...appRedux.initialState.global, authenticated: true },
-};
 
 const load = (MOCK_QUERY_LOAD().result as { data: { load: LoadDetailsFragment } }).data.load;
 // The group being edited: the first two slots of the load
@@ -42,7 +36,6 @@ function renderDialog(
       <ManifestGroupDialog open load={load} slots={slots} onClose={jest.fn()} />
     </View>,
     {
-      initialState: authenticatedState,
       session: authenticatedSession,
       permissions: [Permission.CreateUserSlot],
       graphql: [

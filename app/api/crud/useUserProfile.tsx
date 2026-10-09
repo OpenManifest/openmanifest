@@ -2,7 +2,7 @@ import { useAppSignal } from 'app/components/app_signal';
 import useRestriction from 'app/hooks/useRestriction';
 import * as React from 'react';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
-import { useAppSelector } from 'app/state';
+import { useAuthenticated } from 'app/state';
 import {
   CreateOrderMutationVariables,
   DropzoneUserEssentialsFragment,
@@ -31,7 +31,7 @@ import createCRUDContext, { TMutationResponse, uninitializedHandler } from './fa
 import { useUserUpdated } from './subscriptions/useUserUpdated';
 
 function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
-  const { authenticated } = useAppSelector((root) => root.global);
+  const authenticated = useAuthenticated();
   const { id } = variables || {};
   const [updateMutation] = useUpdateUserMutation();
   const [getProfile, query] = useDropzoneUserProfileLazyQuery();

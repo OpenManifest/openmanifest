@@ -3,7 +3,6 @@ import { BatchHttpLink } from '@apollo/client/link/batch-http';
 import { getServerUrl } from '../utils/getServerUrl';
 import { createWebsocketsLink, hasSubscriptionOperation } from './websockets';
 
-export const abortController = new AbortController();
 export const httpLink = new BatchHttpLink({
   batchDebounce: true,
   batchMax: 10,
@@ -11,7 +10,6 @@ export const httpLink = new BatchHttpLink({
   fetchOptions: {
     mode: 'cors',
     method: 'POST',
-    signal: abortController.signal,
   },
 });
 

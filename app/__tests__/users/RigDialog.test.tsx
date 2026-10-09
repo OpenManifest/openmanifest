@@ -3,17 +3,11 @@ import { View } from 'react-native';
 import { UpdateRigDocument } from 'app/api/reflection';
 import { MUTATION_CREATE_RIG } from 'app/api/hooks/useMutationCreateRig';
 import { currentUserEssentials } from 'app/__fixtures__/rig.fixture';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import RigDialog from '../../forms/rig';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: { ...appRedux.initialState.global, authenticated: true },
-};
 
 function renderDialog(
   props: Partial<React.ComponentProps<typeof RigDialog>>,
@@ -23,7 +17,7 @@ function renderDialog(
     <View testID="under-test">
       <RigDialog open userId={1} onClose={jest.fn()} {...props} />
     </View>,
-    { initialState: authenticatedState, session: authenticatedSession, graphql }
+    { session: authenticatedSession, graphql }
   );
   return within(screen.getByTestId('under-test'));
 }

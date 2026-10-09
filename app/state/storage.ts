@@ -52,24 +52,39 @@ type PersistedBlob = { state?: Record<string, unknown>; version?: number };
  * Storage for the zustand `persist` middleware that writes the `credentials` field of the persisted state to
  * `credentialStorage` and everything else to AsyncStorage (localStorage on web), so credentials never reach AsyncStorage.
  *
- * `fallback` supplies the initial blob when nothing has been stored yet (the migration from redux-persist).
+ * `fallback` supplies the initial blob when nothing has been stored yet (the migration from redux-persist); it is
+ * written to the session's own storage before `afterRestore` runs, which is where the old copy gets deleted.
  */
-export function createSessionStorage(fallback?: () => Promise<PersistedBlob | null>): StateStorage {
-  return {
+export function createSessionStorage(
+  fallback?: () => Promise<PersistedBlob | null>,
+  afterRestore?: () => Promise<void>
+): StateStorage {
+  const storage: StateStorage = {
     async getItem(name) {
       const [plain, credentials] = await Promise.all([getPlainItem(name), credentialStorage.get()]);
       let blob: PersistedBlob | null = plain ? JSON.parse(plain) : null;
+      let migrated = false;
       if (!blob && fallback) {
         blob = await fallback();
+        migrated = !!blob;
       }
-      if (!blob && !credentials) {
-        return null;
+      let result: string | null = null;
+      if (blob || credentials) {
+        const state = { ...(blob?.state ?? {}) };
+        if (credentials) {
+          state.credentials = JSON.parse(credentials);
+        }
+        result = JSON.stringify({ version: blob?.version ?? 0, ...blob, state });
       }
-      const state = { ...(blob?.state ?? {}) };
-      if (credentials) {
-        state.credentials = JSON.parse(credentials);
+      try {
+        if (migrated && result) {
+          await storage.setItem(name, result);
+        }
+        await afterRestore?.();
+      } catch (error) {
+        console.warn('[Session]: Could not finish migrating the stored session', error);
       }
-      return JSON.stringify({ version: blob?.version ?? 0, ...blob, state });
+      return result;
     },
     async setItem(name, value) {
       const blob: PersistedBlob = JSON.parse(value);
@@ -86,4 +101,5 @@ export function createSessionStorage(fallback?: () => Promise<PersistedBlob | nu
       await AsyncStorage.removeItem(name);
     },
   };
+  return storage;
 }

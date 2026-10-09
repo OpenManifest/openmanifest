@@ -4,16 +4,10 @@ import { MUTATION_CREATE_WEATHER_CONDITION } from 'app/api/hooks/useMutationCrea
 import type { WeatherConditionEssentialsFragment } from 'app/api/operations';
 import { useWeatherForm } from 'app/forms/weather';
 import WeatherConditionForm from 'app/components/forms/weather_conditions/WeatherConditionForm';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: { ...appRedux.initialState.global, authenticated: true },
-};
 
 const conditions = {
   __typename: 'WeatherCondition',
@@ -48,7 +42,6 @@ function Harness() {
 
 function renderForm(graphql: Parameters<typeof render>[1]['graphql'] = []) {
   const screen = render(<Harness />, {
-    initialState: authenticatedState,
     session: authenticatedSession,
     graphql,
   });
