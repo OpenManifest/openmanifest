@@ -13,7 +13,7 @@ export interface IAvailableRowProps {
 export default function AvailableRow(props: IAvailableRowProps) {
   const { onPress, index } = props;
   const {
-    load: { load }
+    load: { load },
   } = useLoadContext();
   const { dialogs } = useManifestContext();
 
@@ -30,7 +30,9 @@ export default function AvailableRow(props: IAvailableRowProps) {
     <DroppableSlot loadId={load?.id?.toString() || '0'} rowIndex={index}>
       <DataTable.Row testID="slot-row" style={{ paddingTop: 8 }}>
         <DropzoneUserAutocomplete
-          disabled={[LoadState.Cancelled, LoadState.InFlight, LoadState.Landed].includes(load?.state as LoadState)}
+          disabled={[LoadState.Cancelled, LoadState.InFlight, LoadState.Landed].includes(
+            load?.state as LoadState
+          )}
           placeholder="- Available -"
           value={null}
           onChange={onSelectUser}

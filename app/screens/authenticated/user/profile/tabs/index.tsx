@@ -16,7 +16,7 @@ interface IProfileTabsProps {
 export enum ProfileTabs {
   Funds = 0,
   Jumps = 1,
-  Equipment = 2
+  Equipment = 2,
 }
 
 export function ProfileTab(props: {
@@ -28,10 +28,18 @@ export function ProfileTab(props: {
     return <FundTab {...{ dropzoneUser }} tabIndex={ProfileTabs.Funds} currentTabIndex={active} />;
   }
   if (active === ProfileTabs.Equipment) {
-    return <EquipmentTab {...{ dropzoneUser }} tabIndex={ProfileTabs.Equipment} currentTabIndex={active} />;
+    return (
+      <EquipmentTab
+        {...{ dropzoneUser }}
+        tabIndex={ProfileTabs.Equipment}
+        currentTabIndex={active}
+      />
+    );
   }
   if (active === ProfileTabs.Jumps) {
-    return <JumpHistoryTab {...{ dropzoneUser }} tabIndex={ProfileTabs.Jumps} currentTabIndex={active} />;
+    return (
+      <JumpHistoryTab {...{ dropzoneUser }} tabIndex={ProfileTabs.Jumps} currentTabIndex={active} />
+    );
   }
   return null;
 }

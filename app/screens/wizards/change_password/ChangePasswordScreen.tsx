@@ -35,12 +35,14 @@ export default function SignupWizard() {
         variables: {
           password: state.fields.password.value,
           passwordConfirmation: state.fields.passwordConfirmation.value,
-          token: route.params.token
-        }
+          token: route.params.token,
+        },
       });
 
       if (result?.data?.userUpdatePasswordWithToken?.authenticatable) {
-        dispatch(actions.global.setUser(result.data.userUpdatePasswordWithToken.authenticatable as User));
+        dispatch(
+          actions.global.setUser(result.data.userUpdatePasswordWithToken.authenticatable as User)
+        );
         return;
       }
       if (result.errors?.length) {
@@ -58,7 +60,7 @@ export default function SignupWizard() {
     route.params?.token,
     state.fields.password.value,
     state.fields.passwordConfirmation.value,
-    updatePassword
+    updatePassword,
   ]);
 
   const navigation = useNavigation();
@@ -83,7 +85,7 @@ export default function SignupWizard() {
       steps={[
         { onBack: navigation.goBack, onNext: validatePassword, component: PasswordStep },
         { onNext: onChangePassword, component: PasswordConfirmationStep },
-        { component: DoneStep, onNext: onFinished }
+        { component: DoneStep, onNext: onFinished },
       ]}
     />
   );

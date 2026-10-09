@@ -12,7 +12,10 @@ import { DropzoneEssentialsFragment, FederationEssentialsFragment } from 'app/ap
 import { useFederationsQuery } from 'app/api/reflection';
 import useRestriction from 'app/hooks/useRestriction';
 
-export type DropzoneFields = Required<Omit<DropzoneInput, 'settings' | 'federation' | 'id'> & DropzoneInput['settings'] & { id: number; federation: FederationEssentialsFragment | null }>;
+export type DropzoneFields = Required<
+  Omit<DropzoneInput, 'settings' | 'federation' | 'id'> &
+    DropzoneInput['settings'] & { id: number; federation: FederationEssentialsFragment | null }
+>;
 
 export const dropzoneValidation = yup.object({
   name: yup.string().nullable().default(null),
@@ -26,7 +29,7 @@ export const dropzoneValidation = yup.object({
   requireMembership: yup.boolean(),
   allowNegativeCredits: yup.boolean(),
   allowManifestBypass: yup.boolean(),
-  allowDoubleManifesting: yup.boolean()
+  allowDoubleManifesting: yup.boolean(),
 });
 
 export const EMPTY_FORM_VALUES: Partial<DropzoneFields> = {
@@ -52,27 +55,51 @@ export default function useDropzoneForm(opts: IUseManifestFormOpts) {
   const { initial, onSuccess } = opts;
   const notify = useNotifications();
   const { data } = useFederationsQuery();
-  const { dropzone: { dropzone } } = useDropzoneContext();
-  const initialValues = React.useMemo(() => ({
-    ...EMPTY_FORM_VALUES,
-    id: dropzone?.id ? Number(dropzone?.id) : undefined,
-    lat: dropzone?.lat || undefined,
-    lng: dropzone?.lng || undefined,
-    federation: dropzone?.federation || data?.federations?.[0] || undefined,
-    name: dropzone?.name || undefined,
-    primaryColor: dropzone?.primaryColor || undefined,
-    secondaryColor: dropzone?.secondaryColor || undefined,
-    allowManifestBypass: dropzone?.settings?.allowManifestBypass,
-    allowNegativeCredits: dropzone?.settings?.allowNegativeCredits,
-    allowDoubleManifesting: dropzone?.settings?.allowDoubleManifesting,
-    requireCredits: dropzone?.settings?.requireCredits,
-    requireLicense: dropzone?.settings?.requireLicense,
-    requireMembership: dropzone?.settings?.requireMembership,
-    requireRigInspection: dropzone?.settings?.requireRigInspection,
-    isCreditSystemEnabled: dropzone?.isCreditSystemEnabled,
-    requireEquipment: dropzone?.settings?.requireEquipment,
-    ...initial
-  }), [initial, dropzone?.name, data?.federations, dropzone?.primaryColor, dropzone?.secondaryColor, dropzone?.settings?.allowManifestBypass, dropzone?.settings?.allowNegativeCredits, dropzone?.settings?.allowDoubleManifesting, dropzone?.settings?.requireCredits, dropzone?.settings?.requireLicense, dropzone?.settings?.requireMembership, dropzone?.settings?.requireRigInspection, dropzone?.isCreditSystemEnabled, dropzone?.id, dropzone?.lat, dropzone?.lng, dropzone?.federation, dropzone?.settings?.requireEquipment]);
+  const {
+    dropzone: { dropzone },
+  } = useDropzoneContext();
+  const initialValues = React.useMemo(
+    () => ({
+      ...EMPTY_FORM_VALUES,
+      id: dropzone?.id ? Number(dropzone?.id) : undefined,
+      lat: dropzone?.lat || undefined,
+      lng: dropzone?.lng || undefined,
+      federation: dropzone?.federation || data?.federations?.[0] || undefined,
+      name: dropzone?.name || undefined,
+      primaryColor: dropzone?.primaryColor || undefined,
+      secondaryColor: dropzone?.secondaryColor || undefined,
+      allowManifestBypass: dropzone?.settings?.allowManifestBypass,
+      allowNegativeCredits: dropzone?.settings?.allowNegativeCredits,
+      allowDoubleManifesting: dropzone?.settings?.allowDoubleManifesting,
+      requireCredits: dropzone?.settings?.requireCredits,
+      requireLicense: dropzone?.settings?.requireLicense,
+      requireMembership: dropzone?.settings?.requireMembership,
+      requireRigInspection: dropzone?.settings?.requireRigInspection,
+      isCreditSystemEnabled: dropzone?.isCreditSystemEnabled,
+      requireEquipment: dropzone?.settings?.requireEquipment,
+      ...initial,
+    }),
+    [
+      initial,
+      dropzone?.name,
+      data?.federations,
+      dropzone?.primaryColor,
+      dropzone?.secondaryColor,
+      dropzone?.settings?.allowManifestBypass,
+      dropzone?.settings?.allowNegativeCredits,
+      dropzone?.settings?.allowDoubleManifesting,
+      dropzone?.settings?.requireCredits,
+      dropzone?.settings?.requireLicense,
+      dropzone?.settings?.requireMembership,
+      dropzone?.settings?.requireRigInspection,
+      dropzone?.isCreditSystemEnabled,
+      dropzone?.id,
+      dropzone?.lat,
+      dropzone?.lng,
+      dropzone?.federation,
+      dropzone?.settings?.requireEquipment,
+    ]
+  );
 
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
 
@@ -94,7 +121,7 @@ export default function useDropzoneForm(opts: IUseManifestFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    dropzone: { update }
+    dropzone: { update },
   } = useDropzoneContext();
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
 
@@ -102,11 +129,24 @@ export default function useDropzoneForm(opts: IUseManifestFormOpts) {
     async (fields: DropzoneFields) => {
       try {
         if (!canUpdateDropzone) {
-          return { error: 'You don\'t have permission to update this dropzone' }
+          return { error: "You don't have permission to update this dropzone" };
         }
         const validatedFields = dropzoneValidation.validateSync(fields);
         console.debug({ validatedFields });
-        const { id, banner, isCreditSystemEnabled, federation, primaryColor, lat, lng, name, requestPublication, secondaryColor, isPublic, ...settings } = fields;
+        const {
+          id,
+          banner,
+          isCreditSystemEnabled,
+          federation,
+          primaryColor,
+          lat,
+          lng,
+          name,
+          requestPublication,
+          secondaryColor,
+          isPublic,
+          ...settings
+        } = fields;
 
         const response = await update({
           banner,
@@ -118,7 +158,7 @@ export default function useDropzoneForm(opts: IUseManifestFormOpts) {
           requestPublication,
           isCreditSystemEnabled,
           isPublic,
-          settings
+          settings,
         });
 
         if ('fieldErrors' in response) {
@@ -140,7 +180,10 @@ export default function useDropzoneForm(opts: IUseManifestFormOpts) {
     [update, setError, canUpdateDropzone, notify, onSuccess]
   );
 
-  const onSubmit = React.useMemo(() => handleSubmit(onUpdate, console.error), [handleSubmit, onUpdate]);
+  const onSubmit = React.useMemo(
+    () => handleSubmit(onUpdate, console.error),
+    [handleSubmit, onUpdate]
+  );
 
   return React.useMemo(() => ({ ...methods, onSubmit, loading }), [methods, onSubmit, loading]);
 }

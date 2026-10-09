@@ -6,7 +6,7 @@ import { actions, useAppDispatch } from 'app/state';
 export default function useProfileWizard() {
   const navigation = useNavigation();
   const {
-    dropzone: { currentUser }
+    dropzone: { currentUser },
   } = useDropzoneContext();
 
   return React.useCallback(
@@ -16,8 +16,8 @@ export default function useProfileWizard() {
           screen: 'UserWizardScreen',
           params: {
             dropzoneUserId: currentUser.id,
-            index
-          }
+            index,
+          },
         });
       }
     },

@@ -18,7 +18,7 @@ export default function UpdateDropzoneScreen() {
   const { control, formState, onSubmit, loading } = useDropzoneForm({
     onSuccess: () => {
       notify.success('Your changes have been saved');
-    }
+    },
   });
 
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
@@ -46,13 +46,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    display: 'flex'
+    display: 'flex',
   },
   fab: {
     position: 'absolute',
     margin: 16,
     right: 0,
-    bottom: 0
+    bottom: 0,
   },
   content: {
     display: 'flex',
@@ -61,22 +61,22 @@ const styles = StyleSheet.create({
     paddingRight: 0,
     paddingTop: 0,
     marginTop: 0,
-    width: '100%'
+    width: '100%',
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   separator: {
     marginVertical: 30,
     height: 1,
-    width: '80%'
+    width: '80%',
   },
   fields: {
     width: '100%',
-    marginBottom: 16
+    marginBottom: 16,
   },
   field: {
-    marginBottom: 8
-  }
+    marginBottom: 8,
+  },
 });

@@ -32,7 +32,7 @@ if (isHermesEnabled || isAndroid) {
 
   if ('__setDefaultTimeZone' in Intl.DateTimeFormat) {
     //  Are you using Expo, use this instead of previous 2 lines
-    
+
     // @ts-ignore
     Intl.DateTimeFormat.__setDefaultTimeZone(require('expo-localization').timezone);
   }

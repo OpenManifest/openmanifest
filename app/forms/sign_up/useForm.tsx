@@ -21,7 +21,7 @@ export const signUpValidation = yup.object().shape({
   name: yup.string().default(''),
   email: yup.string().when('step', {
     is: (step: number) => step >= 0,
-    then: yup.string().required('Email is required').min(3).email('Please enter a valid email')
+    then: yup.string().required('Email is required').min(3).email('Please enter a valid email'),
   }),
   password: yup
     .string()
@@ -34,8 +34,8 @@ export const signUpValidation = yup.object().shape({
         .test({
           test: (value) => checkPasswordComplexity(value || '') >= PasswordStrength.Acceptable,
           message: 'Password is too weak',
-          name: 'password-complexity'
-        })
+          name: 'password-complexity',
+        }),
     }),
   passwordConfirmation: yup
     .string()
@@ -45,8 +45,8 @@ export const signUpValidation = yup.object().shape({
       then: yup
         .string()
         .required('Password confirmation is required')
-        .oneOf([yup.ref('password'), null], 'Passwords must match')
-    })
+        .oneOf([yup.ref('password'), null], 'Passwords must match'),
+    }),
 });
 
 export const EMPTY_FORM_VALUES: SignUpFields = {
@@ -54,7 +54,7 @@ export const EMPTY_FORM_VALUES: SignUpFields = {
   name: '',
   email: '',
   password: '',
-  passwordConfirmation: ''
+  passwordConfirmation: '',
 };
 
 export interface ISignUpFormOpts {
@@ -65,7 +65,7 @@ export interface ISignUpFormOpts {
 enum SignUpSteps {
   Email = 0,
   Password = 1,
-  PasswordConfirmation = 2
+  PasswordConfirmation = 2,
 }
 
 export default function useSignupForm(opts: ISignUpFormOpts) {
@@ -77,7 +77,7 @@ export default function useSignupForm(opts: ISignUpFormOpts) {
   const methods = useForm<SignUpFields>({
     defaultValues: EMPTY_FORM_VALUES,
     mode: 'all',
-    resolver: yupResolver(signUpValidation)
+    resolver: yupResolver(signUpValidation),
   });
 
   React.useEffect(() => {
@@ -90,7 +90,8 @@ export default function useSignupForm(opts: ISignUpFormOpts) {
   const onSubmit = React.useCallback(
     async (fields: SignUpFields) => {
       try {
-        if (fields.step !== SignUpSteps.PasswordConfirmation) return setValue('step', fields.step + 1);
+        if (fields.step !== SignUpSteps.PasswordConfirmation)
+          return setValue('step', fields.step + 1);
         setLoading(true);
         const { data } = await onSignUp({
           variables: {
@@ -100,8 +101,8 @@ export default function useSignupForm(opts: ISignUpFormOpts) {
             password: fields.password,
             exitWeight: 60,
             phone: '',
-            passwordConfirmation: fields.passwordConfirmation
-          }
+            passwordConfirmation: fields.passwordConfirmation,
+          },
         });
 
         if (data?.userRegister?.fieldErrors) {

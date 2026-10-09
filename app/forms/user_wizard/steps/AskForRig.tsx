@@ -8,10 +8,12 @@ import { WizardFormStep } from 'app/hooks/forms/useWizard';
 import { useMemo } from 'app/hooks/react';
 
 export const validation = yup.object({
-  hasRig: yup.boolean().default(false)
+  hasRig: yup.boolean().default(false),
 });
 
-type StepFields = { [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K] };
+type StepFields = {
+  [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K];
+};
 
 export function useStep(): WizardFormStep<StepFields> {
   const { dropzoneUser } = useUserProfileContext();
@@ -19,9 +21,9 @@ export function useStep(): WizardFormStep<StepFields> {
   return useMemo(
     () => ({
       defaultValues: {
-        hasRig: !!dropzoneUser?.user?.rigs?.length
+        hasRig: !!dropzoneUser?.user?.rigs?.length,
       },
-      validation
+      validation,
     }),
     [dropzoneUser?.user?.rigs?.length]
   );
@@ -39,7 +41,7 @@ function AskForRigStep(props: IWizardStepProps) {
             <CardSelect
               items={[
                 { value: true, label: 'I have my own rig' },
-                { value: false, label: 'I dont have my own rig' }
+                { value: false, label: 'I dont have my own rig' },
               ]}
               renderItemLabel={({ label }) => label}
               onChangeSelected={(options) => onChange(options?.[0].value)}
@@ -47,7 +49,7 @@ function AskForRigStep(props: IWizardStepProps) {
               selected={[
                 value === false
                   ? { value: false, label: 'I dont have my own rig' }
-                  : { value: true, label: 'I have my own rig' }
+                  : { value: true, label: 'I have my own rig' },
               ]}
             />
           )}

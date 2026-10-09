@@ -43,8 +43,8 @@ export default function SettingsTab() {
           headerShown: true,
           header: (props) => <AppBar {...props} />,
           cardStyle: {
-            flex: 1
-          }
+            flex: 1,
+          },
         }}
       >
         <Configuration.Screen
@@ -57,13 +57,21 @@ export default function SettingsTab() {
           component={DropzoneSettingsScreen}
           options={{ title: 'Basic settings' }}
         />
-        <Configuration.Screen name="AircraftsScreen" component={PlanesScreen} options={{ title: 'Planes' }} />
+        <Configuration.Screen
+          name="AircraftsScreen"
+          component={PlanesScreen}
+          options={{ title: 'Planes' }}
+        />
         <Configuration.Screen
           name="TicketTypesScreen"
           component={TicketTypeSettingsScreen}
           options={{ title: 'Ticket types' }}
         />
-        <Configuration.Screen name="ExtrasScreen" component={ExtrasScreen} options={{ title: 'Ticket add-ons' }} />
+        <Configuration.Screen
+          name="ExtrasScreen"
+          component={ExtrasScreen}
+          options={{ title: 'Ticket add-ons' }}
+        />
         <Configuration.Screen
           name="RigInspectionTemplateScreen"
           component={RigInspectionTemplateScreen}

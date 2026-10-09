@@ -15,7 +15,7 @@ Client diagrams: [diagrams.md](diagrams.md).
 | Concern | Library (installed version) | Where |
 |---|---|---|
 | Runtime | Expo SDK 57.0.27 (P3.18; was 56.0.23), React Native 0.86.3, React 19.2.3 with the New Architecture, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before) | `package.json`, `app.json` |
-| Language | TypeScript 5.9.3 (`strict`), path alias `app/*` via `babel-plugin-module-resolver` | `tsconfig.json`, `babel.config.js` |
+| Language | TypeScript 5.9.3 (`strict`), ESLint 9 (`eslint-config-expo`) + Prettier 3, no Rome, path alias `app/*` via `babel-plugin-module-resolver` | `tsconfig.json`, `babel.config.js` |
 | Server data | Apollo Client 3.14.1 (`BatchHttpLink`, ActionCable link for subscriptions) | `app/api/` |
 | Client state | Redux Toolkit 1.9.3 + redux-persist 6 (`global` slice persisted) | `app/state/` |
 | Navigation | React Navigation 7 (stack, drawer, bottom tabs) | `app/screens/**/routes.tsx` |
@@ -348,7 +348,6 @@ Full table:
 | `@graphql-codegen/typescript` | dev | `^4.1.6` (P3.19)| 4.1.6 | 6.1.1 |  |  |
 | `@graphql-codegen/typescript-operations` | dev | `^4.6.1` (P3.19)| 4.6.1 | 6.1.10 |  |  |
 | `@graphql-codegen/typescript-react-apollo` | dev | `^4.4.2` (P3.19)| 4.4.2 | 5.0.0 |  |  |
-| `@react-native-community/eslint-config` | dev | `3.2.0` | 3.2.0 | 3.2.0 |  |  |
 | `@testing-library/jest-dom` | dev | `5.16.5` | 5.16.5 | 7.0.1 |  |  |
 | `@testing-library/react-native` | dev | `^13` (P3.14) | 13.3.3 | 14.0.1 |  |  |
 | `@types/base-64` | dev | `1.0.0` | 1.0.0 | 1.0.2 |  |  |
@@ -364,19 +363,9 @@ Full table:
 | `@types/react-calendar-heatmap` | dev | `^1.6.3` (P3.14) | 1.9.0 | 1.9.0 |  |  |
 | `@types/react-facebook-login` | dev | `4.1.5` | 4.1.5 | 4.1.11 |  |  |
 | `@types/urijs` | dev | `1.19.19` | 1.19.19 | 1.19.26 |  |  |
-| `@typescript-eslint/eslint-plugin` | dev | `5.57.1` | 5.57.1 | 8.71.1 |  |  |
-| `@typescript-eslint/parser` | dev | `5.57.1` | 5.57.1 | 8.71.1 |  |  |
 | `babel-plugin-module-resolver` | dev | `5.0.0` | 5.0.0 | 5.0.3 |  |  |
 | `base-64` | dev | `1.0.0` | 1.0.0 | 1.0.0 |  | last publish 2024-04-02 |
-| `eslint` | dev | `8.38.0` | 8.38.0 | 10.12.0 |  |  |
-| `eslint-config-airbnb-typescript` | dev | `17.0.0` | 17.0.0 | 18.0.0 |  | last publish 2024-03-02 |
-| `eslint-config-airbnb-typescript-prettier` | dev | `5.0.0` | 5.0.0 | 5.0.0 |  | last publish 2023-04-12 |
-| `eslint-config-universe` | dev | `11.2.0` | 11.2.0 | 16.0.0 |  |  |
-| `eslint-import-resolver-babel-module` | dev | `5.3.2` | 5.3.2 | 5.3.2 |  | last publish 2023-01-16 |
-| `eslint-plugin-import` | dev | `2.27.5` | 2.27.5 | 2.32.0 |  |  |
-| `eslint-plugin-jsx-a11y` | dev | `6.7.1` | 6.7.1 | 6.10.2 |  |  |
-| `eslint-plugin-react` | dev | `7.32.2` | 7.32.2 | 7.37.5 |  |  |
-| `eslint-plugin-react-hooks` | dev | `4.6.0` | 4.6.0 | 7.1.1 |  |  |
+| `eslint` | dev | `^9` (P3.20)| 9.39.5 | 10.12.0 |  |  |
 | `gh-pages` | dev | `4.0.0` | 4.0.0 | 6.3.0 |  |  |
 | `glob` | dev | `9.3.2` | 9.3.2 | 13.0.6 |  |  |
 | `isomorphic-fetch` | dev | `3.0.0` | 3.0.0 | 3.0.0 |  | last publish 2023-10-23 |
@@ -384,9 +373,8 @@ Full table:
 | `jest-expo` | dev | `~57.0.5` (P3.18)| 57.0.5 | 57.0.5 | `~57.0.5` | needs jest 29 |
 | `jest-junit` | dev | `13.0.0` | 13.0.0 | 17.0.0 |  |  |
 | `patch-package` | dev | `6.5.1` | 6.5.1 | 8.0.1 |  |  |
-| `prettier` | dev | `2.8.7` | 2.8.7 | 3.9.9 |  |  |
+| `prettier` | dev | `^3.9.9` (P3.20)| 3.9.9 | 3.9.9 |  |  |
 | `react-test-renderer` | dev | `19.2.3` (P3.17)| 19.2.3 | 19.3.0 |  |  |
-| `rome` | dev | `11.0.0-nightly.aec33ef` | 11.0.0-nightly.aec33ef | 12.1.3 |  | last publish 2024-04-16 |
 | `semver` | dev | `7.3.8` | 7.3.8 | 7.8.5 |  |  |
 | `ts-node` | dev | `^10.9.2` (P3.9) | 10.9.2 | 10.9.2 |  |  |
 | `typescript` | dev | `5.9.3` (P3.9) | 5.9.3 | 7.0.2 |  |  |

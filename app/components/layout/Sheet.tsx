@@ -117,7 +117,6 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     []
   );
 
-
   return (
     <BottomSheetModal
       {...{ name, onDismiss }}

@@ -19,7 +19,7 @@ export default function useImagePicker() {
     });
 
     // expo-image-picker 14.1 (SDK 48) only returns the picked images in `assets`
-    return result.canceled ? undefined : result.assets?.[0]?.base64 ?? undefined;
+    return result.canceled ? undefined : (result.assets?.[0]?.base64 ?? undefined);
   }, []);
 
   return onPickImage;

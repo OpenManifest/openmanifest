@@ -3,7 +3,9 @@ import { fireEvent, render } from '@testing-library/react-native';
 import { PaperProvider } from 'react-native-paper';
 import NumberField, { NumberFieldType } from '../../components/input/number_input/NumberField';
 
-function Harness(props: Partial<React.ComponentProps<typeof NumberField>> & { onValue?: (v: number) => void }) {
+function Harness(
+  props: Partial<React.ComponentProps<typeof NumberField>> & { onValue?: (v: number) => void }
+) {
   const { onValue, value: initial = 80, ...rest } = props;
   const [value, setValue] = React.useState<number>(initial as number);
   return (

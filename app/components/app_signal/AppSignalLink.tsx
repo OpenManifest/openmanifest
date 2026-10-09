@@ -21,20 +21,26 @@ const DEFAULT_OPTIONS: IAppSignalLinkOptions = {
   breadcrumbs: {
     includeQuery: false,
     includeResponse: false,
-    includeVariables: false
+    includeVariables: false,
   },
   excludeOperation: () => false,
-  excludeError: () => false
+  excludeError: () => false,
 };
 
 function isServerError(error: unknown): error is ServerError {
   return (
-    typeof error === 'object' && error !== null && 'response' in error && 'result' in error && 'statusCode' in error
+    typeof error === 'object' &&
+    error !== null &&
+    'response' in error &&
+    'result' in error &&
+    'statusCode' in error
   );
 }
 
 function getDefinition(operation: Operation): OperationDefinitionNode {
-  return operation.query.definitions.find((q) => q.kind === 'OperationDefinition') as OperationDefinitionNode;
+  return operation.query.definitions.find(
+    (q) => q.kind === 'OperationDefinition'
+  ) as OperationDefinitionNode;
 }
 
 function createBreadCrumb(operation: Operation): Breadcrumb {
@@ -45,11 +51,14 @@ function createBreadCrumb(operation: Operation): Breadcrumb {
     category: `graphql.${definition.operation}`,
     action: operation.operationName,
     timestamp: Math.floor(new Date().getTime() / 1000),
-    metadata: {}
+    metadata: {},
   };
 }
 
-function createAppSignalErrorLink(client: AppSignal, options: IAppSignalLinkOptions = DEFAULT_OPTIONS): ApolloLink {
+function createAppSignalErrorLink(
+  client: AppSignal,
+  options: IAppSignalLinkOptions = DEFAULT_OPTIONS
+): ApolloLink {
   return createErrorLink((errors) => {
     const { graphQLErrors, operation, response } = errors;
     if (options?.ignore?.(errors)) {
@@ -134,7 +143,11 @@ export class AppSignalBreadcrumbLink extends ApolloLink {
 
           if (options?.breadcrumbs?.includeVariables) {
             // Always include query, variables and response on errors
-            breadcrumb.metadata.variables = JSON.stringify(omit(operation.variables || {}, ['password']), null, 2);
+            breadcrumb.metadata.variables = JSON.stringify(
+              omit(operation.variables || {}, ['password']),
+              null,
+              2
+            );
           }
 
           originalObserver.next(result);
@@ -162,7 +175,7 @@ export class AppSignalBreadcrumbLink extends ApolloLink {
           this.client?.addBreadcrumb(breadcrumb);
 
           originalObserver.error(error);
-        }
+        },
       });
 
       return () => {
@@ -172,6 +185,12 @@ export class AppSignalBreadcrumbLink extends ApolloLink {
   }
 }
 
-export default function createAppSignalLink(client: AppSignal, options: IAppSignalLinkOptions): ApolloLink {
-  return ApolloLink.from([new AppSignalBreadcrumbLink(client, options), createAppSignalErrorLink(client, options)]);
+export default function createAppSignalLink(
+  client: AppSignal,
+  options: IAppSignalLinkOptions
+): ApolloLink {
+  return ApolloLink.from([
+    new AppSignalBreadcrumbLink(client, options),
+    createAppSignalErrorLink(client, options),
+  ]);
 }

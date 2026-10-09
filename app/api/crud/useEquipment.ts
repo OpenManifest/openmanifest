@@ -9,7 +9,7 @@ import {
 import {
   UpdateRigMutationVariables,
   CreateRigMutationVariables,
-  RigEssentialsFragment
+  RigEssentialsFragment,
 } from '../operations';
 import { TMutationResponse } from './factory';
 
@@ -22,7 +22,6 @@ export function useEquipment() {
     async function CreateRig(
       variables: CreateRigMutationVariables
     ): Promise<TMutationResponse<{ rig: RigEssentialsFragment }>> {
-
       const response = await createRig({ variables });
 
       if (response?.data?.createRig?.rig?.id) {
@@ -53,19 +52,21 @@ export function useEquipment() {
     [updateRig]
   );
 
-  const add = React.useCallback((attributes: CreateRigMutationVariables & { id?: string }) => {
-    if (attributes?.id) {
-      return update({ ...attributes, id: Number(attributes?.id) });
-    }
-    return create(attributes);
-  }, [create, update]);
-
+  const add = React.useCallback(
+    (attributes: CreateRigMutationVariables & { id?: string }) => {
+      if (attributes?.id) {
+        return update({ ...attributes, id: Number(attributes?.id) });
+      }
+      return create(attributes);
+    },
+    [create, update]
+  );
 
   return React.useMemo(
     () => ({
       create,
       update,
-      add
+      add,
     }),
     [create, update, add]
   );

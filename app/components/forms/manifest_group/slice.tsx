@@ -15,11 +15,10 @@ export type SlotUserWithRig = Omit<SlotUser, 'rig'> & {
   name?: string;
 };
 
-interface IFields
-  extends Pick<
-    SlotDetailsFragment & { load: LoadDetailsFragment },
-    'jumpType' | 'load' | 'ticketType' | 'extras' | 'groupNumber'
-  > {
+interface IFields extends Pick<
+  SlotDetailsFragment & { load: LoadDetailsFragment },
+  'jumpType' | 'load' | 'ticketType' | 'extras' | 'groupNumber'
+> {
   users: SlotUserWithRig[];
 }
 

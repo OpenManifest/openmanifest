@@ -17,8 +17,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     alignItems: 'center',
     paddingLeft: 0,
-    paddingRight: 0
-  }
+    paddingRight: 0,
+  },
 });
 
 export default WindsWizardScreen;

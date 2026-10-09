@@ -7,7 +7,7 @@ import {
   Platform,
   StyleSheet,
   useWindowDimensions,
-  View
+  View,
 } from 'react-native';
 import { Carousel, CarouselRef } from 'react-native-reanimated-carousel';
 import { useNavigation } from '@react-navigation/native';
@@ -42,7 +42,7 @@ function Wizard(props: IWizardProps, ref: React.Ref<CarouselRef>) {
     width: 0,
     height: 0,
     x: 0,
-    y: 0
+    y: 0,
   });
   const carouselRef = React.useRef<CarouselRef>(null);
   const screen = useWindowDimensions();
@@ -51,7 +51,7 @@ function Wizard(props: IWizardProps, ref: React.Ref<CarouselRef>) {
     next: () => carouselRef.current?.next(),
     prev: () => carouselRef.current?.prev(),
     getCurrentIndex: () => carouselRef.current?.getCurrentIndex() || 0,
-    scrollTo: (opts) => carouselRef.current?.scrollTo(opts)
+    scrollTo: (opts) => carouselRef.current?.scrollTo(opts),
   }));
 
   const onNext = React.useCallback(
@@ -145,23 +145,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 48,
-    zIndex: 1100
+    zIndex: 1100,
   },
   actions: {
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    paddingBottom: 48
+    paddingBottom: 48,
   },
   next: {
     width: '100%',
     borderRadius: 20,
-    minWidth: 300
+    minWidth: 300,
   },
   content: {
-    flexGrow: 1
-  }
+    flexGrow: 1,
+  },
 });
 
 export default React.forwardRef(Wizard);

@@ -26,11 +26,11 @@ export default function InfoGrid(props: IInfoGrid) {
                     alignSelf: 'center',
                     justifyContent: 'center',
                     color: theme.colors.text,
-                    fontWeight: item.bold !== false ? 'bold' : undefined
-                  }
+                    fontWeight: item.bold !== false ? 'bold' : undefined,
+                  },
                 ]}
                 style={{
-                  paddingTop: 15
+                  paddingTop: 15,
                 }}
                 title={item.value}
                 descriptionStyle={[styles.description, { color: theme.colors.text }]}
@@ -52,18 +52,18 @@ const styles = StyleSheet.create({
   container: { width: '100%', flexDirection: 'row' },
   divider: {
     height: StyleSheet.hairlineWidth,
-    width: '100%'
+    width: '100%',
   },
   verticalDivider: {
     width: StyleSheet.hairlineWidth,
-    height: '100%'
+    height: '100%',
   },
   title: {
     textAlign: 'center',
-    color: 'white'
+    color: 'white',
   },
   description: {
     textAlign: 'center',
-    color: 'white'
-  }
+    color: 'white',
+  },
 });

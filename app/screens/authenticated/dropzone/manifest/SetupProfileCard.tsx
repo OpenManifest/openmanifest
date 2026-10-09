@@ -33,5 +33,5 @@ export default function SetupProfileCard() {
 const styles = StyleSheet.create({
   card: { marginHorizontal: 16, borderRadius: 8 },
   content: { paddingHorizontal: 4, paddingVertical: 4 },
-  icon: { alignSelf: 'center' }
+  icon: { alignSelf: 'center' },
 });

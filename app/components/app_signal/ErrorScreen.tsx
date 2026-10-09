@@ -13,7 +13,10 @@ export default function ErrorScreen(props: IErrorScreenProps) {
   const { error } = props;
   const [isDetailsVisible, setDetailsVisible] = React.useState(false);
   const [reloading, setReloading] = React.useState(false);
-  const onToggleDetails = React.useCallback(() => setDetailsVisible(!isDetailsVisible), [isDetailsVisible]);
+  const onToggleDetails = React.useCallback(
+    () => setDetailsVisible(!isDetailsVisible),
+    [isDetailsVisible]
+  );
 
   const onReloadApp = React.useCallback(async () => {
     try {
@@ -40,7 +43,7 @@ export default function ErrorScreen(props: IErrorScreenProps) {
         height,
         width,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
       }}
     >
       <Card style={{ width: '100%', minHeight: 250, maxWidth: 450, marginHorizontal: 16 }}>
@@ -57,7 +60,7 @@ export default function ErrorScreen(props: IErrorScreenProps) {
             loop={false}
             style={{
               height: Platform.OS === 'web' ? 300 : 150,
-              width: Platform.OS === 'web' ? 300 : 150
+              width: Platform.OS === 'web' ? 300 : 150,
             }}
           />
           {!error ? null : (
@@ -75,7 +78,13 @@ export default function ErrorScreen(props: IErrorScreenProps) {
           <Button compact onPress={onToggleDetails}>
             {isDetailsVisible ? 'Hide' : 'Show'} details
           </Button>
-          <Button disabled={reloading} loading={reloading} compact mode="outlined" onPress={onReloadApp}>
+          <Button
+            disabled={reloading}
+            loading={reloading}
+            compact
+            mode="outlined"
+            onPress={onReloadApp}
+          >
             Reload
           </Button>
         </Card.Actions>

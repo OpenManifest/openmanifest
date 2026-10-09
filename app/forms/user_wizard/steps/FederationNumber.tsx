@@ -12,10 +12,12 @@ import * as yup from 'yup';
 const federation = yup.object() as yup.SchemaOf<FederationEssentialsFragment>;
 
 export const validation = yup.object({
-  apfNumber: yup.string().nullable().default('')
+  apfNumber: yup.string().nullable().default(''),
 });
 
-type StepFields = { [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K] };
+type StepFields = {
+  [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K];
+};
 
 export function useStep(): WizardFormStep<StepFields> {
   const { dropzoneUser } = useUserProfile();
@@ -24,10 +26,11 @@ export function useStep(): WizardFormStep<StepFields> {
     () => ({
       defaultValues: {
         apfNumber:
-          dropzoneUser?.user?.userFederations?.find((f) => f.federation?.id === dropzoneUser?.license?.federation?.id)
-            ?.uid || ''
+          dropzoneUser?.user?.userFederations?.find(
+            (f) => f.federation?.id === dropzoneUser?.license?.federation?.id
+          )?.uid || '',
       },
-      validation
+      validation,
     }),
     [dropzoneUser?.license?.federation?.id, dropzoneUser?.user?.userFederations]
   );

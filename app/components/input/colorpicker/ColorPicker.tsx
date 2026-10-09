@@ -39,7 +39,9 @@ function ColorPicker(props: IColorPicker) {
 
   // Follow the value when it is changed from outside (a preset, a form reset)
   React.useEffect(() => {
-    setText((current) => (current.toLowerCase() === (value || '').toLowerCase() ? current : value || ''));
+    setText((current) =>
+      current.toLowerCase() === (value || '').toLowerCase() ? current : value || ''
+    );
   }, [value]);
 
   const isInvalid = text.length > 0 && !HEX_COLOR.test(text);
@@ -65,16 +67,25 @@ function ColorPicker(props: IColorPicker) {
                 color.toLowerCase() === (value || '').toLowerCase() ? styles.selected : {},
               ]}
             >
-              <View style={[styles.third, { backgroundColor: manipulate(color).lighten(0.6).hex() }]} />
+              <View
+                style={[styles.third, { backgroundColor: manipulate(color).lighten(0.6).hex() }]}
+              />
               <View style={[styles.third, { backgroundColor: color }]} />
-              <View style={[styles.third, { backgroundColor: manipulate(color).darken(0.3).hex() }]} />
+              <View
+                style={[styles.third, { backgroundColor: manipulate(color).darken(0.3).hex() }]}
+              />
             </Surface>
           </TouchableRipple>
         ))}
       </Card.Content>
 
       <Card.Content style={styles.hexRow}>
-        <View style={[styles.preview, { backgroundColor: HEX_COLOR.test(value || '') ? value : '#FFFFFF' }]} />
+        <View
+          style={[
+            styles.preview,
+            { backgroundColor: HEX_COLOR.test(value || '') ? value : '#FFFFFF' },
+          ]}
+        />
         <TextInput
           dense
           mode="outlined"
@@ -87,7 +98,8 @@ function ColorPicker(props: IColorPicker) {
           error={isInvalid}
           style={styles.hexInput}
           onChangeText={(newText) => {
-            const normalised = newText.length > 0 && !newText.startsWith('#') ? `#${newText}` : newText;
+            const normalised =
+              newText.length > 0 && !newText.startsWith('#') ? `#${newText}` : newText;
             setText(normalised);
             if (HEX_COLOR.test(normalised)) {
               onChange(normalised);
@@ -116,7 +128,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   hexRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-  preview: { height: 32, width: 32, borderRadius: 16, borderWidth: 1, borderColor: '#999999', marginRight: 12 },
+  preview: {
+    height: 32,
+    width: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#999999',
+    marginRight: 12,
+  },
   hexInput: { flex: 1 },
 });
 

@@ -23,7 +23,7 @@ export default function JumpRunScreen() {
     onSuccess: () => null,
     onFieldError: (field: keyof typeof state.fields, message: string) =>
       dispatch(actions.forms.weather.setFieldError([field, message])),
-    onError: notify.error
+    onError: notify.error,
   });
 
   const onSaveConditions = React.useCallback(async () => {
@@ -32,7 +32,7 @@ export default function JumpRunScreen() {
       dropzoneId: dropzoneId as number,
       winds: JSON.stringify(state.fields.winds.value),
       jumpRun: state.fields.jumpRun.value,
-      temperature: state.fields.temperature.value
+      temperature: state.fields.temperature.value,
     });
     navigation.goBack();
     notify.success('Weather board updated');
@@ -44,11 +44,11 @@ export default function JumpRunScreen() {
     state.fields.temperature.value,
     dropzoneId,
     navigation,
-    notify
+    notify,
   ]);
 
   const {
-    dropzone: { dropzone }
+    dropzone: { dropzone },
   } = useDropzoneContext();
   const [location, setLocation] = React.useState<Location.LocationObject['coords']>();
   const setUsersLocation = React.useCallback(async () => {
@@ -77,7 +77,9 @@ export default function JumpRunScreen() {
         value={state.fields.jumpRun.value || 0}
         latitude={dropzone?.lat || location?.latitude || 0}
         longitude={dropzone?.lng || location?.longitude || 0}
-        onChange={(value) => dispatch(actions.forms.weather.setField(['jumpRun', Math.round(value)]))}
+        onChange={(value) =>
+          dispatch(actions.forms.weather.setField(['jumpRun', Math.round(value)]))
+        }
       />
       <FAB
         style={[styles.fab, { backgroundColor: theme.colors.primary }]}
@@ -97,6 +99,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     margin: 16,
     right: 0,
-    bottom: 0
-  }
+    bottom: 0,
+  },
 });
