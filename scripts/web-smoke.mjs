@@ -228,6 +228,51 @@ async function run(browser, name, viewport) {
         failures.push(`live update: load ${createdLoad} did not appear on the open board`);
     }
 
+    // Load states (P6.12): the load that was just created gets a boarding call, then lands, through the speed dial
+    if (createdLoad) {
+      await page.goto(`${base}/dropzone/load/${createdLoad}`, {
+        waitUntil: 'networkidle',
+        timeout: 60000,
+      });
+      await page.waitForTimeout(5000);
+      const openActions = async () => {
+        // The confirmation snackbar covers the button on a phone until it goes away
+        await page.waitForTimeout(7000);
+        await pressAt(page, page.getByTestId('load-actions-primary-action'));
+        await page.waitForTimeout(1000);
+      };
+      await openActions();
+      await page.getByText('10 minute call', { exact: true }).last().click({ force: true });
+      await page.waitForTimeout(3000);
+      await openActions();
+      if (
+        !(await page
+          .getByText('Mark as Landed', { exact: true })
+          .last()
+          .isVisible()
+          .catch(() => false))
+      ) {
+        await page.screenshot({ path: join(out, `${name}-load-states-failed.png`) });
+        failures.push('load states: a 10 minute call did not offer "Mark as Landed"');
+      } else {
+        await page.getByText('Mark as Landed', { exact: true }).last().click({ force: true });
+        await page.waitForTimeout(3000);
+        await openActions();
+        if (
+          !(await page
+            .getByText('Re-open load', { exact: true })
+            .last()
+            .isVisible()
+            .catch(() => false))
+        ) {
+          failures.push('load states: landing the load did not offer "Re-open load"');
+        }
+        await page.screenshot({ path: join(out, `${name}-load-landed.png`) });
+      }
+      await page.goto(`${base}/dropzone/manifest`, { waitUntil: 'networkidle', timeout: 60000 });
+      await page.waitForTimeout(4000);
+    }
+
     await page
       .getByText(/Load #1\b/)
       .first()
