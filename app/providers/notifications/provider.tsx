@@ -99,7 +99,7 @@ export function NotificationsProvider(props: React.PropsWithChildren<object>) {
       {animationState === AnimationState.opening && (
         <View
           style={{
-            ...StyleSheet.absoluteFillObject,
+            ...StyleSheet.absoluteFill,
             alignItems: 'center',
             justifyContent: 'center'
           }}

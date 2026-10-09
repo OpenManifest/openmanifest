@@ -88,7 +88,7 @@ export default function AppUpdate(props: IAppUpdateProps) {
 
 const styles = StyleSheet.create({
   blur: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center'
   },

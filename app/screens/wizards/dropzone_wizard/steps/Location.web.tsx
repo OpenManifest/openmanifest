@@ -84,7 +84,7 @@ function LocationWizardStep(props: IWizardStepProps) {
     <Step {...props} title="Location" hideContentUntilNavigatedTo>
       <MapView
         mapStyle={{
-          ...StyleSheet.absoluteFillObject
+          ...StyleSheet.absoluteFill
         }}
         position={{
           x: 0,
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     }
   },
   markerFixed: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'center',
     zIndex: 100,
     alignItems: 'center',
