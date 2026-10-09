@@ -6,7 +6,6 @@ import { useDropzoneContext, useLoadContext, useManifestContext } from 'app/prov
 
 import { Permission, LoadState } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
-import { actions, useAppDispatch } from 'app/state';
 import isSameDay from 'date-fns/isSameDay';
 import { parseISO } from 'date-fns';
 
@@ -15,7 +14,6 @@ interface ILoadActionButtonProps {
 }
 
 export default function ActionButton(props: ILoadActionButtonProps) {
-  const dispatch = useAppDispatch();
   const { dialogs } = useManifestContext();
   const {
     dialogs: { timepicker },
@@ -86,18 +84,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       : {
           label: 'Manifest group',
           icon: 'account-group',
-          onPress: () => {
-            dispatch(actions.forms.manifestGroup.reset());
-            dispatch(actions.forms.manifestGroup.setField(['load', load]));
-
-            if (canManifestGroupWithSelfOnly && !canManifestGroup && currentUser) {
-              // Automatically add current user to selection
-              dispatch(actions.forms.manifestGroup.setDropzoneUsers([currentUser]));
-            }
-
-            dispatch(actions.forms.manifestGroup.setOpen(true));
-            dispatch(actions.forms.manifestGroup.setField(['load', load]));
-          },
+          onPress: () => dialogs.manifestGroup.open({ load }),
         },
   ].filter(Boolean);
 

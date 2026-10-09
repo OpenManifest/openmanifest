@@ -5,12 +5,10 @@ import { Platform } from 'react-native';
 import omit from 'lodash/omit';
 import { persistStore, persistReducer, createMigrate } from 'redux-persist';
 import type { PersistedState } from 'redux-persist';
-import { reducers as forms, initialState as initialStateForms } from '../components/forms/slice';
 
 import globalSlice, { initialState as initialStateGlobal } from './global';
 
 export const initialState = {
-  forms: initialStateForms,
   global: initialStateGlobal,
 } as RootState;
 
@@ -46,34 +44,12 @@ const persistConfig = {
   whitelist: ['global'],
 };
 
-type FormReducers = {
-  [K in keyof typeof forms]: (typeof forms)[K]['reducer'];
-};
-
-type FormActions = {
-  [K in keyof typeof forms]: (typeof forms)[K]['actions'];
-};
-
-const formReducers = Object.keys(forms).reduce(
-  (obj, key) =>
-    !forms || !(key in forms) ? obj : { ...obj, [key]: forms[key as keyof typeof forms].reducer },
-  {}
-) as FormReducers;
-export const formActions = Object.keys(forms).reduce(
-  (obj, key) =>
-    !(key in forms) ? obj : { ...obj, [key]: forms[key as keyof typeof forms].actions },
-  {}
-) as FormActions;
-// eslint-enable
-
 export const actions = {
-  forms: formActions,
   global: globalSlice.actions,
 };
 
 export const rootReducer = combineReducers({
   global: globalSlice.reducer,
-  forms: combineReducers(formReducers),
 });
 export const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({

@@ -18,9 +18,9 @@ const base = arg('base', 'http://localhost:19006').replace(/\/$/, '');
 const out = arg('out', './smoke-output');
 const viewports = { desktop: { width: 1280, height: 800 }, phone360: { width: 360, height: 640 } };
 
-async function pressAt(page, locator) {
+async function pressAt(page, locator, at) {
   // A plain click() does not trigger react-native-gesture-handler touchables on web.
-  const box = await locator.boundingBox();
+  const box = at ? { x: at.x, y: at.y, width: 0, height: 0 } : await locator.boundingBox();
   if (!box) throw new Error('element has no bounding box');
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.down();
@@ -57,6 +57,17 @@ async function run(browser, name, viewport) {
     }
     await page.screenshot({ path: join(out, `${name}-load.png`) });
     const loadUrl = page.url();
+
+    // The manifest context mounts the group sheet once: open it from the load's actions (the button is the speed dial
+    // in the bottom right corner)
+    await pressAt(page, page.locator('body'), { x: viewport.width - 44, y: viewport.height - 128 });
+    await page.waitForTimeout(1000);
+    await page.getByText('Manifest group', { exact: true }).last().click({ force: true });
+    await page.waitForTimeout(3000);
+    if (!(await page.getByTestId('manifest-group-sheet').isVisible().catch(() => false))) {
+      failures.push('the manifest group sheet did not open from the load screen');
+    }
+    await page.screenshot({ path: join(out, `${name}-group-sheet.png`) });
 
     // Deep links: a full page load of each URL must open the right screen (needs the persisted login).
     await page.goto(`${base}/dropzone/manifest`, { waitUntil: 'networkidle', timeout: 60000 });

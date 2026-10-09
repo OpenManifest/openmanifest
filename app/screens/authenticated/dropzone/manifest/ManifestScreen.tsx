@@ -14,7 +14,6 @@ import ProgressBar from 'app/components/ProgressBar';
 import NoResults from 'app/components/NoResults';
 import { View } from 'app/components/Themed';
 import { LoadState, Permission } from 'app/api/schema.d';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useAppTheme } from 'app/theme';
 import { useDropzoneContext, useManifestContext } from 'app/providers';
 import { LoadDetailsFragment } from 'app/api/operations';
@@ -55,7 +54,6 @@ const setupTicketsCardFragment = { ...loadingFragment, id: '__SETUP_TICKETS_CARD
 export default function ManifestScreen() {
   const { theme } = useAppTheme();
   const [display, setDisplay] = React.useState<'list' | 'cards'>('cards');
-  const dispatch = useAppDispatch();
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
   const {
     dropzone: { dropzone, currentUser, loading, refetch, fetchMore },
@@ -174,20 +172,11 @@ export default function ManifestScreen() {
               });
             }
           }}
-          onSlotGroupPress={(slots) => {
-            dispatch(actions.forms.manifestGroup.reset());
-            dispatch(actions.forms.manifestGroup.setFromSlots({ load, slots }));
-            dispatch(actions.forms.manifestGroup.setField(['load', load]));
-            // FIXME: Open manifest group drawer
-          }}
+          onSlotGroupPress={(slots) => dialogs.manifestGroup.open({ load, slots })}
           onManifest={() => {
             dialogs.manifestUser.open({ load, slot: { dropzoneUser: currentUser } });
           }}
-          onManifestGroup={() => {
-            dispatch(actions.forms.manifestGroup.reset());
-            dispatch(actions.forms.manifestGroup.setOpen(true));
-            dispatch(actions.forms.manifestGroup.setField(['load', load]));
-          }}
+          onManifestGroup={() => dialogs.manifestGroup.open({ load })}
         />
       ) : (
         <LoadCardSmall
@@ -215,8 +204,8 @@ export default function ManifestScreen() {
       sheets.ticketType.open,
       ticketTypes?.length,
       dialogs.manifestUser,
+      dialogs.manifestGroup,
       currentUser,
-      dispatch,
       navigation,
     ]
   );
