@@ -18,7 +18,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
     },
     __typename: 'License',
   },
-  credits: 100,
+  creditsCents: 10000,
   hasCredits: true,
   hasExitWeight: true,
   hasMembership: true,

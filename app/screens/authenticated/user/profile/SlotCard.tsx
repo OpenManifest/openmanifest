@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Avatar, Card, List, useTheme } from 'react-native-paper';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { UserSlotDetailsFragment } from 'app/api/operations';
+import { formatCents } from 'app/utils/money';
 
 interface ISlot {
   slot: UserSlotDetailsFragment;
@@ -38,7 +39,7 @@ export default function SlotCard(props: ISlot) {
                     },
                   ]}
                 >
-                  -${slot.cost?.toFixed(2)}
+                  {formatCents(-(slot.costCents || 0))}
                 </Text>
               </View>
             )}

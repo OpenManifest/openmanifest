@@ -6,6 +6,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { successColor } from 'app/constants/Colors';
 import { TransactionEssentialsFragment } from 'app/api/operations';
 import { DateTime } from 'luxon';
+import { formatCents } from 'app/utils/money';
 
 interface ITransaction {
   transaction: TransactionEssentialsFragment;
@@ -53,7 +54,7 @@ export default function TransactionCard(props: ITransaction) {
             left={() => (
               <View style={{ width: 165, alignItems: 'center', flexDirection: 'row' }}>
                 <MaterialCommunityIcons
-                  color={transaction.amount < 0 ? '#FF1414' : successColor}
+                  color={transaction.amountCents < 0 ? '#FF1414' : successColor}
                   name={getIcon(transaction.status)}
                   size={36}
                   style={{ marginHorizontal: 16 }}
@@ -66,9 +67,7 @@ export default function TransactionCard(props: ITransaction) {
                     color: theme.colors.onSurface,
                   }}
                 >
-                  {transaction.amount < 0
-                    ? `-$${transaction.amount * -1}`
-                    : `$${transaction.amount}`}
+                  {formatCents(transaction.amountCents)}
                 </Text>
               </View>
             )}

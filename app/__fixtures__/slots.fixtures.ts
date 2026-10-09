@@ -3,7 +3,7 @@ import { SlotDetailsFragment } from 'app/api/operations';
 export const slotLoadingFragment: SlotDetailsFragment = {
   id: '__LOADING__',
   lockVersion: 0,
-  cost: 0,
+  costCents: 0,
   createdAt: new Date().toISOString(),
   exitWeight: 0,
   groupNumber: 0,

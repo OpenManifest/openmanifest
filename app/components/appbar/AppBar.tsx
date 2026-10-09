@@ -6,6 +6,7 @@ import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import SetupWarning from './SetupWarning';
 import { useAppTheme } from 'app/theme';
+import { formatCents, fromCents } from 'app/utils/money';
 
 interface IAppBarProps extends StackHeaderProps {
   hideWarnings?: boolean;
@@ -48,12 +49,14 @@ function AppBar(props: IAppBarProps) {
               color: palette.onSurface,
               fontFamily: 'Roboto_700Bold',
             }}
-          >{`$${currentUser?.credits || 0}`}</Chip>
+          >
+            {formatCents(currentUser?.creditsCents)}
+          </Chip>
         )}
       </Appbar.Header>
       {hideWarnings ? null : (
         <SetupWarning
-          credits={currentUser?.credits || 0}
+          credits={fromCents(currentUser?.creditsCents)}
           loading={loading}
           isCreditSystemEnabled={!!dropzone?.settings?.requireCredits}
           isExitWeightDefined={!!currentUser?.user?.exitWeight}

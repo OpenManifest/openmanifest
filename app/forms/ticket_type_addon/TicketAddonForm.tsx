@@ -12,6 +12,7 @@ import { Control, useWatch } from 'react-hook-form';
 import { ChipSelectField } from 'app/components/input/chip_select';
 import { FormNumberField } from 'app/components/input/number_input';
 import type { TicketTypeAddonFields } from './useForm';
+import { formatCents } from 'app/utils/money';
 
 interface ITicketTypeAddonFormProps {
   control: Control<TicketTypeAddonFields>;
@@ -53,7 +54,7 @@ export default function TicketTypeForm(props: ITicketTypeAddonFormProps) {
           }
           items={ticketTypes as TicketTypeEssentialsFragment[]}
           renderItemLabel={(item: TicketTypeExtraEssentialsFragment) =>
-            `${item.name} (${item.cost})`
+            `${item.name} (${formatCents(item.costCents)})`
           }
           name="ticketTypes"
         />
