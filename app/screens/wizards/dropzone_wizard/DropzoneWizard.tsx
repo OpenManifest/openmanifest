@@ -207,8 +207,6 @@ function DropzoneSetupScreen() {
             dispatch(actions.forms.dropzone.setOpen(false));
             dispatch(actions.forms.dropzone.reset());
 
-            // Set complete-flag to force navigation from dropzone screen
-            dispatch(actions.screens.dropzoneWizard.complete());
             onComplete();
           },
         },

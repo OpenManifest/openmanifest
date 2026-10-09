@@ -1,30 +1,27 @@
 import * as React from 'react';
 import TextInput from 'app/components/input/text/TextField';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard/Step';
+import { useChangePasswordFields } from '../fields';
 import PasswordComplexityIndicator from 'app/components/input/PasswordComplexityIndicator';
 import checkPasswordComplexity from 'app/utils/checkPasswordComplexity';
 
 function PasswordStep(props: IWizardStepProps) {
-  const { fields } = useAppSelector((state) => state.screens.signup);
-  const dispatch = useAppDispatch();
+  const { values, errors, setValue } = useChangePasswordFields();
   return (
     <Step {...props} title="Password">
       <Fields>
         <TextInput
           mode="flat"
           label="Password"
-          error={fields.password.error}
+          error={errors.password}
           textContentType="password"
           secureTextEntry
           passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
-          value={fields.password.value}
-          onChangeText={(newValue) =>
-            dispatch(actions.screens.signup.setField(['password', newValue]))
-          }
+          value={values.password}
+          onChangeText={(newValue) => setValue('password', newValue)}
           style={{ width: '100%', backgroundColor: 'transparent', fontSize: 32, height: 70 }}
         />
-        <PasswordComplexityIndicator strength={checkPasswordComplexity(fields.password.value)} />
+        <PasswordComplexityIndicator strength={checkPasswordComplexity(values.password)} />
       </Fields>
     </Step>
   );

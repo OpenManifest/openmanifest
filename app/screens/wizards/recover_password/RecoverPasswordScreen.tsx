@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { Wizard } from 'app/components/carousel_wizard';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useRecoverPasswordMutation } from 'app/api/reflection';
 import { WizardRef } from 'app/components/carousel_wizard/Wizard';
 import EmailStep from './steps/Email';
 import DoneStep from './steps/Done';
+import { RecoverPasswordFieldsProvider } from './fields';
+import { useFieldState } from '../fields';
 
 export default function SignupWizard() {
-  const state = useAppSelector((root) => root.screens.signup);
-  const dispatch = useAppDispatch();
+  const fields = useFieldState({ email: '' });
+  const { values, setError } = fields;
   const wizard = React.useRef<WizardRef>(null);
   const [onRecover] = useRecoverPasswordMutation();
 
@@ -16,23 +17,25 @@ export default function SignupWizard() {
     try {
       await onRecover({
         variables: {
-          email: state.fields.email.value,
+          email: values.email,
           redirectUrl: '',
         },
       });
     } catch (e) {
       if (e instanceof Error) {
-        dispatch(actions.screens.signup.setFieldError(['email', e.message]));
+        setError('email', e.message);
       }
       throw e;
     }
-  }, [dispatch, onRecover, state.fields.email.value]);
+  }, [onRecover, setError, values.email]);
 
   return (
-    <Wizard
-      dots
-      ref={wizard}
-      steps={[{ onNext: onClickRecover, component: EmailStep }, { component: DoneStep }]}
-    />
+    <RecoverPasswordFieldsProvider value={fields}>
+      <Wizard
+        dots
+        ref={wizard}
+        steps={[{ onNext: onClickRecover, component: EmailStep }, { component: DoneStep }]}
+      />
+    </RecoverPasswordFieldsProvider>
   );
 }
