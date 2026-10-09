@@ -8,6 +8,8 @@ export interface IWizardButtonsProps {
   nextLabel: string;
   backLabel: string;
   loading?: boolean;
+  /** False for the buttons of pages that are not shown, so only the visible next button is a primary action */
+  isCurrent?: boolean;
   onNext?(): Promise<void>;
   onBack?(): Promise<void> | void;
 }
@@ -16,6 +18,7 @@ export default function Buttons(props: IWizardButtonsProps) {
   const {
     backLabel = 'Back',
     loading: controlledLoading,
+    isCurrent = true,
     nextLabel = 'Next',
     onNext,
     onBack,
@@ -38,6 +41,7 @@ export default function Buttons(props: IWizardButtonsProps) {
     <View style={styles.actions}>
       {onNextPress && (
         <Button
+          testID={isCurrent ? 'wizard-next-primary-action' : undefined}
           disabled={loading || controlledLoading}
           loading={loading || controlledLoading}
           onPress={onNextPress}
@@ -67,15 +71,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    paddingBottom: 48,
     width: '100%',
-    maxWidth: 500,
-    height: 80,
+    maxWidth: 400 + 32,
+    minHeight: 80,
   },
   next: {
     width: '100%',
     borderRadius: 20,
-    minWidth: 300,
     minHeight: 36,
   },
   back: {
