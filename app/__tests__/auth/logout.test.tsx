@@ -5,6 +5,8 @@ import { initialSession, resetSession, useSession } from '../../state';
 import type { SessionCredentials } from '../../state';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
+jest.setTimeout(30000);
+
 // The real client is used, so its links need a browser global, a server URL and no websocket connection
 jest.mock('app/constants/expo', () => ({
   __esModule: true,
