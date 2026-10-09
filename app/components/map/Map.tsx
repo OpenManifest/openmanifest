@@ -29,7 +29,7 @@ function MapNative(props: IMapProps) {
   const { width, height, position, coords, center, shape, interactive, onChange, onDragStart, onDragEnd, children } =
     props;
   const { containerStyle, mapStyle } = props;
-  const map = React.useRef<MapView>();
+  const map = React.useRef<MapView>(undefined);
   const region = coords
     ? {
         latitude: coords.lat,

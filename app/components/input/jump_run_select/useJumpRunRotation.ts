@@ -37,7 +37,7 @@ export default function useJumpRunRotation(value: number) {
 
   /** ANIMATIONS * */
   const planePosition = React.useRef(new Animated.Value(hypothenuse || 0));
-  const planeAnimation = React.useRef<Animated.CompositeAnimation>();
+  const planeAnimation = React.useRef<Animated.CompositeAnimation>(undefined);
 
   React.useEffect(() => {
     planeAnimation.current = Animated.loop(

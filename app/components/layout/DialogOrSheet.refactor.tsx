@@ -53,7 +53,7 @@ export function BottomSheetWrapper({
 
   console.log('Wrapper open', open, animatedIndex);
 
-  return children as JSX.Element;
+  return children as React.JSX.Element;
 }
 export default function DialogOrSheet(props: IBottomSheetProps) {
   const {

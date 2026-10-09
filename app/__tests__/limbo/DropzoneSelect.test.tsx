@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '@testing-library/jest-native';
 import { DropzonesDocument } from 'app/api/reflection';
 import { DropzonesProvider } from 'app/api/crud';
 import { dropzoneExtensive } from 'app/__fixtures__/dropzone.fixture';

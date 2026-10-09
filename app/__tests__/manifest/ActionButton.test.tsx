@@ -1,5 +1,4 @@
 import * as React from 'react';
-import '@testing-library/jest-native';
 import { DateTime, Settings } from 'luxon';
 import { FAB } from 'react-native-paper';
 import { LoadState, Permission } from 'app/api/schema.d';
@@ -97,7 +96,10 @@ describe('<ActionButton />', () => {
     const fabs = screen.UNSAFE_getAllByType(FAB);
     fireEvent.press(fabs[fabs.length - 1]);
 
-    const call = await waitFor(() => screen.getByText('10 minute call'), { timeout: 10000 });
+    // The speed dial items fade in; Testing Library 13 skips elements that are still hidden (opacity 0) by default.
+    const call = await waitFor(() => screen.getByText('10 minute call', { includeHiddenElements: true }), {
+      timeout: 10000,
+    });
     fireEvent.press(call);
 
     await waitFor(() => expect(updateResult).toHaveBeenCalledTimes(1), { timeout: 10000 });

@@ -29,7 +29,7 @@ interface IAnchorProps<T> {
   openMenu(): void;
 }
 
-function Anchor<T>(props: IAnchorProps<T>): JSX.Element {
+function Anchor<T>(props: IAnchorProps<T>): React.JSX.Element {
   const { item, openMenu } = props;
   return <MenuItem key={`select-option-${item?.label}`} onPress={openMenu} title={item?.label} icon="chevron-down" />;
 }

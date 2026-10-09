@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Text, TextInput, View } from 'react-native';
-import '@testing-library/jest-native';
 import { CreateTicketTypeDocument } from 'app/api/reflection';
 import { useDropzoneContext } from 'app/providers';
 import * as appRedux from '../../state';

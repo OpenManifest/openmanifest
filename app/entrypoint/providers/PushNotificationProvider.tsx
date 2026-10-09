@@ -50,9 +50,9 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
     dropzone: { currentUser, loading, called },
   } = useDropzoneContext();
   const notificationListener =
-    React.useRef<ReturnType<typeof Notifications.addNotificationReceivedListener>>();
+    React.useRef<ReturnType<typeof Notifications.addNotificationReceivedListener>>(undefined);
   const responseListener =
-    React.useRef<ReturnType<typeof Notifications.addNotificationResponseReceivedListener>>();
+    React.useRef<ReturnType<typeof Notifications.addNotificationResponseReceivedListener>>(undefined);
 
   const onOutsideLink = React.useCallback((link: { url: string }) => {
     const uri = URI(link.url);
@@ -116,5 +116,5 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       }
     }
   }, [pushToken, currentUser?.id, currentUser?.user?.pushToken, loading, called, updateUser]);
-  return children as JSX.Element;
+  return children as React.JSX.Element;
 }

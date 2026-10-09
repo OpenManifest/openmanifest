@@ -18,7 +18,7 @@ export interface ISwipeActions {
 export default function SwipeActions(props: ISwipeActions) {
   const { children, rightAction, disabled } = props;
 
-  const ref = React.useRef<Swipeable | null>();
+  const ref = React.useRef<Swipeable | null>(null);
   const rightActions = (
     progress: Animated.AnimatedInterpolation<string | number>,
     dragX: Animated.AnimatedInterpolation<string | number>

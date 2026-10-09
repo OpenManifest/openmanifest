@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import GradientText from '../GradientText';
 
 export interface IWizardStepProps {
-  title?: React.ReactText;
+  title?: string | number;
   children?: React.ReactNode;
   hideContentUntilNavigatedTo?: boolean;
 }
