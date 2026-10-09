@@ -1,198 +1,124 @@
-import { sortBy, uniq } from 'lodash';
 import * as React from 'react';
-import { View, StyleSheet, ViewProps } from 'react-native';
-import { Button, Title, useTheme } from 'react-native-paper';
-import {
-  BottomSheetScrollView,
-  BottomSheetBackdrop,
-  BottomSheetBackdropProps,
-  useBottomSheet,
-  BottomSheetView,
-  BottomSheetModal,
-} from '@gorhom/bottom-sheet';
-import useKeyboardVisibility from 'app/hooks/useKeyboardVisibility';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Title, useTheme } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
+import { SheetContext } from './SheetContext';
 
-interface IBottomSheetProps {
-  name?: string;
+export interface ISheetProps {
   open?: boolean;
-  buttonLabel?: string;
-  children: React.ReactNode;
-  loading?: boolean;
-  title?: string;
-  scrollable?: boolean;
-  disablePadding?: boolean;
-  snapPoints?: (string | number)[];
-  handleStyles?: ViewProps['style'];
-  buttonAction?(): void;
+  /** Called after the sheet has been dismissed, by the user or because `open` became false */
   onClose(): void;
+  title?: string;
+  /** Replaces the grab handle, e.g. with tabs */
+  handle?: React.ReactNode;
+  /** Padding and a background for the content of a sheet without a title */
+  disablePadding?: boolean;
+  /** Rendered at the top of the scrolling content */
+  header?: React.ReactNode;
+  name?: string;
+  testID?: string;
+  children?: React.ReactNode;
 }
 
-function BottomSheetWrapper({
-  open,
-  children,
-  initialIndex,
-}: {
-  initialIndex: number;
-  open?: boolean | null;
-  children: React.ReactNode;
-}) {
-  const { snapToIndex, forceClose, expand, snapToPosition } = useBottomSheet();
-  React.useEffect(() => {
-    if (open) {
-      console.log('Opening', open);
-      expand();
-      snapToPosition(400);
-      snapToIndex(initialIndex);
-    } else {
-      console.log('Closing', open);
-      forceClose();
-    }
-  }, [expand, forceClose, initialIndex, open, snapToIndex, snapToPosition]);
+/** Room left above a full height sheet */
+const TOP_MARGIN = 16;
 
-  console.log('Wrapper open', open);
-
-  return children as React.JSX.Element;
-}
-export default function DialogOrSheet(props: IBottomSheetProps) {
-  const {
-    name,
-    open,
-    snapPoints,
-    onClose,
-    scrollable,
-    title,
-    buttonLabel,
-    buttonAction,
-    loading,
-    handleStyles,
-    disablePadding,
-    children,
-  } = props;
-  const sheetRef = React.useRef<BottomSheetModal>(null);
-  const points = React.useMemo(
-    () => sortBy(uniq([0, ...(snapPoints || [600])])).filter((s) => s !== 0),
-    [snapPoints]
+function Backdrop(props: BottomSheetBackdropProps) {
+  return (
+    <BottomSheetBackdrop
+      {...props}
+      appearsOnIndex={0}
+      disappearsOnIndex={-1}
+      pressBehavior="close"
+    />
   );
+}
 
-  const keyboardVisible = useKeyboardVisibility();
-
-  const memoizedClose = React.useMemo(() => onClose, [onClose]);
+/**
+ * The one bottom sheet of the app: sizes to its content (scrolling when taller than the screen), moves above the
+ * keyboard, keeps the content above the gesture bar. Text inputs in the content must be `BottomSheetTextInput`s, which
+ * the app's `TextField` and `NumberField` are while inside a `Sheet`.
+ */
+export default function Sheet(props: ISheetProps) {
+  const { open, onClose, title, handle, disablePadding, header, name, testID, children } = props;
+  const sheetRef = React.useRef<BottomSheetModal>(null);
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
 
   const onDismiss = React.useCallback(() => {
     setTimeout(() => {
-      requestAnimationFrame(() => memoizedClose());
+      requestAnimationFrame(() => onClose());
     });
-  }, [memoizedClose]);
+  }, [onClose]);
 
-  const theme = useTheme();
-  const HandleComponent = React.useCallback(() => {
-    return !title ? (
-      <View
-        style={StyleSheet.flatten([
-          styles.sheetHeader,
-          { shadowColor: theme.colors.onSurface, backgroundColor: theme.colors.surface },
-          handleStyles,
-        ])}
-      >
-        <View style={styles.handle} />
-      </View>
-    ) : (
+  React.useEffect(() => {
+    if (open) {
+      sheetRef.current?.present();
+    } else {
+      sheetRef.current?.dismiss({ duration: 300 });
+    }
+  }, [open]);
+
+  const HandleComponent = React.useCallback(
+    () => (
       <View
         style={[
-          styles.sheetHeaderWithTitle,
+          title ? styles.headerWithTitle : styles.header,
           {
+            overflow: handle ? 'hidden' : undefined,
             shadowColor: theme.colors.onSurface,
             backgroundColor: theme.colors.surface,
           },
         ]}
       >
-        <View style={styles.handle} />
-        <Title>{title}</Title>
+        {handle ?? <View style={styles.handle} />}
+        {title ? <Title style={styles.title}>{title}</Title> : null}
       </View>
-    );
-  }, [handleStyles, theme.colors.onSurface, theme.colors.surface, title]);
-
-  const Backdrop = React.useCallback(
-    (p: BottomSheetBackdropProps) => <BottomSheetBackdrop {...p} pressBehavior="close" />,
-    []
+    ),
+    [handle, theme.colors.onSurface, theme.colors.surface, title]
   );
 
   return (
     <BottomSheetModal
-      {...{ name, onDismiss }}
-      enableContentPanningGesture
-      enableOverDrag
-      enablePanDownToClose
-      enableHandlePanningGesture
       ref={sheetRef}
-      snapPoints={points}
-      enableDynamicSizing={false}
+      name={name}
+      enableDynamicSizing
+      maxDynamicContentSize={height - insets.top - TOP_MARGIN}
+      enablePanDownToClose
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
       backdropComponent={Backdrop}
-      index={(points.length || 1) - 1}
       handleComponent={HandleComponent}
-      onChange={console.log}
+      onDismiss={onDismiss}
     >
-      <BottomSheetWrapper {...{ open }} initialIndex={(points?.length || 0) - 1}>
-        {scrollable !== false ? (
-          <BottomSheetScrollView
-            contentContainerStyle={StyleSheet.flatten([
-              styles.sheet,
-              disablePadding ? styles.noPadding : {},
-              { paddingBottom: keyboardVisible ? 400 : 80, backgroundColor: theme.colors.surface },
-            ])}
-          >
-            {children}
-            <View style={styles.buttonContainer}>
-              <Button
-                onPress={buttonAction}
-                mode="contained"
-                style={styles.button}
-                loading={loading}
-              >
-                {buttonLabel}
-              </Button>
-            </View>
-          </BottomSheetScrollView>
-        ) : (
-          <BottomSheetView>
-            {children}
-            <View style={styles.buttonContainer}>
-              <Button
-                onPress={buttonAction}
-                mode="contained"
-                style={styles.button}
-                loading={loading}
-              >
-                {buttonLabel}
-              </Button>
-            </View>
-          </BottomSheetView>
-        )}
-      </BottomSheetWrapper>
+      <SheetContext.Provider value>
+        <BottomSheetScrollView
+          testID={testID}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={[
+            styles.content,
+            disablePadding ? styles.noPadding : null,
+            { backgroundColor: theme.colors.surface, paddingBottom: insets.bottom + 24 },
+          ]}
+        >
+          {header}
+          {children}
+        </BottomSheetScrollView>
+      </SheetContext.Provider>
     </BottomSheetModal>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    width: '100%',
-    padding: 5,
-    alignSelf: 'flex-end',
-    borderRadius: 20,
-    height: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-  },
-  buttonContainer: {
-    paddingHorizontal: 8,
-    marginBottom: 32,
-  },
-  noPadding: { paddingLeft: 0, paddingRight: 0, paddingTop: 0 },
-  contentContainer: {
+  content: {
     paddingHorizontal: 16,
-    paddingBottom: 32,
+    paddingTop: 8,
   },
+  noPadding: { paddingHorizontal: 0, paddingTop: 0 },
   handle: {
     width: 32,
     height: 4,
@@ -200,43 +126,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#AAAAAA',
     alignSelf: 'center',
   },
-  sheet: {
-    paddingBottom: 30,
-    paddingHorizontal: 16,
-    elevation: 3,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-  sheetHeader: {
+  header: {
     zIndex: 10000,
     elevation: 2,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    height: 40,
+    minHeight: 40,
     paddingTop: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -4,
-    },
+    shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
   },
-  sheetHeaderWithTitle: {
+  headerWithTitle: {
     zIndex: 10000,
     elevation: 2,
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,
-    height: 56,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -4,
-    },
+    minHeight: 56,
+    paddingLeft: 16,
+    paddingTop: 4,
+    shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
-    paddingLeft: 16,
-    paddingTop: 16,
+  },
+  title: {
+    marginTop: 8,
   },
 });

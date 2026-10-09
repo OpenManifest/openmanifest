@@ -3,7 +3,6 @@ import { View } from 'react-native';
 import { FormProvider, useWatch } from 'react-hook-form';
 import { useTheme } from 'react-native-paper';
 import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import type { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import ManifestGroupForm from './ManifestGroupForm';
@@ -33,7 +32,6 @@ export default function ManifestGroupDialog(props: IManifestGroupDialogProps) {
   });
   const { control, getValues, setValue, loading, onSubmit } = methods;
   const users = useWatch({ control, name: 'users' });
-  const isTandem = !!useWatch({ control, name: 'ticketType' })?.isTandem;
 
   const [tabIndex, setTabIndex] = React.useState(0);
   React.useEffect(() => {
@@ -50,15 +48,6 @@ export default function ManifestGroupDialog(props: IManifestGroupDialogProps) {
     await onSubmit();
   }, [onSubmit, tabIndex]);
 
-  const sheetRef = React.useRef<BottomSheetModal>(null);
-
-  React.useEffect(() => {
-    if (isTandem) {
-      sheetRef?.current?.snapToIndex(0);
-    }
-  }, [isTandem]);
-
-  const snapPoints = React.useMemo(() => [550], []);
   const onDismiss = React.useCallback(() => {
     setTimeout(() => {
       requestAnimationFrame(() => {
@@ -78,15 +67,6 @@ export default function ManifestGroupDialog(props: IManifestGroupDialogProps) {
     },
     [getValues, setValue, tabIndex]
   );
-
-  React.useEffect(() => {
-    if (open) {
-      sheetRef.current?.present();
-      sheetRef.current?.snapToIndex((snapPoints?.length || 1) - 1, { duration: 300 });
-    } else {
-      sheetRef.current?.dismiss({ duration: 300 });
-    }
-  }, [open, snapPoints?.length]);
 
   const theme = useTheme();
   const handleStyles = React.useMemo(

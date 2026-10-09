@@ -24,14 +24,11 @@ export default function AircraftDialog(props: IPlaneDialogProps) {
     onSuccess: onClose,
   });
 
-  const snapPoints = React.useMemo(() => [580, '80%'], []);
-
   return (
     <DialogOrSheet
       {...{ open, loading, onClose }}
       title={original?.id ? 'Edit aircraft' : 'New aircraft'}
       open={open}
-      snapPoints={snapPoints}
       buttonLabel="Save"
       buttonAction={onSubmit}
     >
