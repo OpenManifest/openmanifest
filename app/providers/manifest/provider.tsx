@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useDropzoneToday } from 'app/hooks/useDropzoneToday';
 import type { IManifestUserDialog } from 'app/forms/manifest_user/Dialog';
 import type { ILoadDialog } from 'app/forms/load/Dialog';
 import type { ICreditsSheet } from 'app/forms/credits/Credits';
@@ -13,7 +14,6 @@ import type { IManifestGroupInitial } from 'app/forms/manifest_group';
 import { useDropzoneContext } from '../dropzone/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
-import { DateTime } from 'luxon';
 import createUseDialog from '../hooks/useDialog';
 import { ManifestContext, useManifestContext } from './context';
 
@@ -71,7 +71,9 @@ const useCreditsDialog = createUseDialog<Pick<ICreditsSheet, 'dropzoneUser'>>();
 const useManifestGroupDialog = createUseDialog<IManifestGroupInitial>();
 
 export function ManifestContextProvider(props: React.PropsWithChildren<UseManifestOptions>) {
-  const { dropzone, date = DateTime.local().toISODate(), children } = props;
+  // The board shows the dropzone's day, and moves on to the next one when it starts there
+  const today = useDropzoneToday();
+  const { dropzone, date = today, children } = props;
   const manifestUserDialog = useManifestUserDialog();
   const loadDialog = useLoadDialog();
   const creditsDialog = useCreditsDialog();

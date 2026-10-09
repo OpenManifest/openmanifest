@@ -77,6 +77,7 @@ export const DropzoneEssentialsFragmentDoc = gql`
   banner
   isCreditSystemEnabled
   createdAt
+  timeZone
   settings {
     allowManifestBypass
     allowNegativeCredits

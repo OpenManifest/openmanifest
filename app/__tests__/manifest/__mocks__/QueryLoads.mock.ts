@@ -1,4 +1,5 @@
-import { DateTime } from 'luxon';
+import { dropzoneExtensive } from 'app/__fixtures__/dropzone.fixture';
+import { todayInZone } from 'app/utils/dropzoneTime';
 import { LoadsQuery, LoadsQueryVariables } from '../../../api/operations';
 import { LoadsDocument } from '../../../api/reflection';
 import createMockedQuery from './createMockedQuery.mock';
@@ -6,7 +7,8 @@ import { loadEssentials } from './QueryLoad.mock';
 
 export default createMockedQuery<LoadsQueryVariables, LoadsQuery>(
   LoadsDocument,
-  { dropzone: '1', date: DateTime.local().toISODate() },
+  // The board shows the dropzone's day
+  { dropzone: '1', date: todayInZone(dropzoneExtensive.timeZone) },
   {
     loads: {
       __typename: 'LoadConnection',

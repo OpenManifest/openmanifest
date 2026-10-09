@@ -16,6 +16,7 @@ export const dropzoneExtensive: DeepRequired<DropzoneExtensiveFragment> = {
   secondaryColor: '#FFFFFF',
   status: DropzoneState.Public,
   isCreditSystemEnabled: true,
+  timeZone: 'Australia/Brisbane',
   settings: {
     __typename: 'Settings',
     allowManifestBypass: false,

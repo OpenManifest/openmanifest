@@ -406,6 +406,8 @@ export type Dropzone = AnyResource & Wallet & {
   state: DropzoneState;
   statistics: Statistics;
   ticketTypes: Array<TicketType>;
+  /** The dropzone's time zone (IANA name): its days, and the times of its loads, are in it */
+  timeZone: Scalars['String']['output'];
   updatedAt: Scalars['ISO8601DateTime']['output'];
   userRoles: Array<UserRole>;
   walletId: Scalars['ID']['output'];

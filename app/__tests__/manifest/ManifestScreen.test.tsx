@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Settings } from 'luxon';
 import { Permission } from 'app/api/schema.d';
 import set from 'lodash/set';
 import cloneDeep from 'lodash/cloneDeep';
@@ -78,5 +79,46 @@ describe('<ManifestScreen />', () => {
       },
       { timeout: 10000 }
     );
+  });
+
+  describe('the day of a Brisbane dropzone, seen from a device in UTC (BUG-068)', () => {
+    const originalNow = Settings.now;
+    const originalZone = Settings.defaultZone;
+    afterEach(() => {
+      Settings.now = originalNow;
+      Settings.defaultZone = originalZone;
+    });
+
+    const renderBoard = (date: string) =>
+      render(<ManifestScreen />, {
+        graphql: [
+          MOCK_QUERY_DROPZONE(),
+          MOCK_QUERY_ALLOWED_TICKET_TYPES(),
+          MOCK_QUERY_ALLOWED_JUMP_TYPES(),
+          MOCK_QUERY_FEDERATIONS(),
+          MOCK_QUERY_ROLES(),
+          MOCK_QUERY_LICENSES(),
+          MOCK_QUERY_LOADS({ date }),
+          MOCK_QUERY_PLANES(),
+          MOCK_QUERY_ALLOWED_JUMP_TYPES(),
+          MOCK_QUERY_DROPZONE_USERS({ permissions: [Permission.ActAsGca] }),
+          MOCK_QUERY_DROPZONE_USERS({ permissions: [Permission.ActAsPilot] }),
+          mockSubscriptionLoadCreated(),
+        ],
+        permissions: [Permission.ReadLoad, Permission.UpdateSlot],
+        session: authenticatedSession,
+      });
+
+    it("shows the loads of the dropzone's day, not the device's", async () => {
+      // 23:00 UTC on 8 October: still the 8th on the device, already 09:00 on the 9th in Brisbane
+      Settings.defaultZone = 'UTC';
+      Settings.now = () => new Date('2026-10-08T23:00:00Z').valueOf();
+
+      const screen = renderBoard('2026-10-09');
+
+      await waitFor(() => expect(screen.queryAllByTestId('load-card').length).toBe(2), {
+        timeout: 10000,
+      });
+    });
   });
 });
