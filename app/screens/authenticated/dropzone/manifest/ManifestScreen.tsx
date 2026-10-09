@@ -54,7 +54,7 @@ export default function ManifestScreen() {
   const [display, setDisplay] = React.useState<'list' | 'cards'>('cards');
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
   const {
-    dropzone: { dropzone, currentUser, loading, refetch, fetchMore },
+    dropzone: { dropzone, currentUser, loading, refetch },
     dialogs: sheets,
   } = useDropzoneContext();
   const { manifest, dialogs } = useManifestContext();
@@ -245,7 +245,12 @@ export default function ManifestScreen() {
             }}
             numColumns={numColumns}
             {...{ data, renderItem }}
-            refreshControl={<RefreshControl refreshing={loading} onRefresh={() => fetchMore()} />}
+            refreshControl={
+              <RefreshControl
+                refreshing={manifest.refreshing}
+                onRefresh={() => manifest.refetch()}
+              />
+            }
           />
         </DragDropWrapper>
       </View>

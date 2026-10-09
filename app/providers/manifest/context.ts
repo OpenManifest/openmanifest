@@ -26,6 +26,7 @@ export const INITIAL_CONTEXT: IManifestContext = {
   manifest: {
     called: false,
     loading: false,
+    refreshing: false,
     loads: [],
     variables: {} as never,
     refetch: uninitializedHandler as never,

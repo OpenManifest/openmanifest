@@ -4,7 +4,9 @@ import { CreateLoadDocument } from 'app/api/reflection';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_PLANES from './__mocks__/QueryPlane.mock';
 import MOCK_QUERY_DROPZONE_USERS from './__mocks__/QueryDropzoneUsers.mock';
+import MOCK_QUERY_DROPZONE from './__mocks__/QueryDropzone.mock';
 import LoadDialog from '../../forms/load/Dialog';
+import { NotificationContext } from 'app/providers/notifications/context';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
@@ -104,5 +106,112 @@ describe('<LoadDialog />', () => {
     screen.getAllByText('Create').forEach((button) => fireEvent.press(button));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
+  });
+
+  // BUG-067: creating a load used to run the staff member's own jumper prerequisites (membership, licence, rig
+  // inspection, reserve), so manifest staff without a valid membership could not create loads
+  describe('as staff without a valid membership of their own', () => {
+    const dropzone = MOCK_QUERY_DROPZONE();
+    const data = (dropzone.result as { data: { dropzone: Record<string, any> } }).data;
+    const withoutMembership = {
+      ...dropzone,
+      result: {
+        data: {
+          ...data,
+          dropzone: {
+            ...data.dropzone,
+            settings: { ...data.dropzone.settings, requireMembership: true },
+            currentUser: { ...data.dropzone.currentUser, hasMembership: false },
+          },
+        },
+      },
+    };
+
+    function renderDialog(
+      createLoadResult: jest.Mock,
+      notifications = { success: jest.fn(), error: jest.fn(), info: jest.fn() }
+    ) {
+      const screen = render(
+        <NotificationContext.Provider value={notifications}>
+          <LoadDialog open onClose={jest.fn()} onSuccess={jest.fn()} />
+        </NotificationContext.Provider>,
+        {
+          session: authenticatedSession,
+          graphql: [
+            withoutMembership as never,
+            MOCK_QUERY_PLANES(),
+            usersWithPermission(Permission.ActAsGca, dropzoneUser('31', 'Gina GCA')),
+            usersWithPermission(Permission.ActAsPilot, dropzoneUser('32', 'Pete Pilot')),
+            {
+              request: {
+                query: CreateLoadDocument,
+                operationName: 'CreateLoad',
+                variables: {
+                  gca: '31',
+                  pilot: '32',
+                  plane: '1',
+                  maxSlots: 10,
+                  state: 'open',
+                  name: null,
+                },
+              },
+              result: createLoadResult,
+            },
+          ],
+        }
+      );
+      return screen;
+    }
+
+    async function submit(screen: ReturnType<typeof renderDialog>) {
+      await waitFor(() => expect(screen.getAllByText('Pete Pilot').length).toBeGreaterThan(0), {
+        timeout: 10000,
+      });
+      await waitFor(() => expect(screen.getAllByText('Gina GCA').length).toBeGreaterThan(0), {
+        timeout: 10000,
+      });
+      await waitFor(() => expect(screen.getAllByText('Beaver').length).toBeGreaterThan(0), {
+        timeout: 10000,
+      });
+      screen.getAllByText('Create').forEach((button) => fireEvent.press(button));
+    }
+
+    it('still creates the load', async () => {
+      const createLoadResult = jest.fn(() => ({
+        data: {
+          createLoad: {
+            __typename: 'CreateLoadPayload',
+            load: null,
+            errors: null,
+            fieldErrors: null,
+          },
+        },
+      }));
+
+      await submit(renderDialog(createLoadResult));
+
+      await waitFor(() => expect(createLoadResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
+    });
+
+    it('shows an error of the load as a whole, like a missing GCA', async () => {
+      const notifications = { success: jest.fn(), error: jest.fn(), info: jest.fn() };
+      const createLoadResult = jest.fn(() => ({
+        data: {
+          createLoad: {
+            __typename: 'CreateLoadPayload',
+            load: null,
+            errors: ['Every load must have a GCA'],
+            fieldErrors: null,
+          },
+        },
+      }));
+
+      await submit(renderDialog(createLoadResult, notifications));
+
+      await waitFor(
+        () => expect(notifications.error).toHaveBeenCalledWith('Every load must have a GCA'),
+        { timeout: 10000 }
+      );
+    });
   });
 });

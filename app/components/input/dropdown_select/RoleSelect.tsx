@@ -9,11 +9,12 @@ import { withHookForm } from '../withHookForm';
 interface IRoleSelect {
   value?: RoleEssentialsFragment | null;
   disabled?: boolean;
+  error?: string | null;
   onChange(jt: RoleEssentialsFragment): void;
 }
 
 function RoleSelect(props: IRoleSelect) {
-  const { onChange, value } = props;
+  const { onChange, value, error } = props;
   const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const { data } = useRolesQuery({
     variables: {
@@ -34,7 +35,7 @@ function RoleSelect(props: IRoleSelect) {
     <Select<RoleEssentialsFragment>
       label="Access level"
       compare={(a, b) => a?.id === b?.id}
-      {...{ options, value, onChange }}
+      {...{ options, value, onChange, error }}
       onChange={onChange}
     />
   );
