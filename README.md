@@ -9,7 +9,7 @@ You can contribute to OpenManifest by forking this repository and submitting a p
 
 ## Set up
 
-Requirements: Node from `.nvmrc` (20) and Yarn 1 (`corepack enable` or `npm i -g yarn@1`). The Expo CLI runs through
+Requirements: Node from `.nvmrc` (24) and Yarn 1 (`corepack enable` or `npm i -g yarn@1`). The Expo CLI runs through
 `npx expo`; the deprecated global `expo-cli` is not needed.
 
 ```

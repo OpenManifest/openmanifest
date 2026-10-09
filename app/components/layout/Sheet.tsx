@@ -6,7 +6,6 @@ import {
   BottomSheetScrollView,
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
-  useBottomSheetDynamicSnapPoints,
   useBottomSheet,
   BottomSheetView,
   BottomSheetModal,
@@ -74,7 +73,6 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     () => sortBy(uniq([0, ...(snapPoints || [600])])).filter((s) => s !== 0),
     [snapPoints]
   );
-  const snappingPoints = useBottomSheetDynamicSnapPoints(points);
 
   const keyboardVisible = useKeyboardVisibility();
 
@@ -119,7 +117,6 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     []
   );
 
-  console.log('Sheet open', open, points, snappingPoints.animatedSnapPoints);
 
   return (
     <BottomSheetModal
@@ -130,17 +127,15 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
       enableHandlePanningGesture
       ref={sheetRef}
       snapPoints={points}
-      handleHeight={snappingPoints.animatedHandleHeight}
-      contentHeight={snappingPoints.animatedContentHeight}
+      enableDynamicSizing={false}
       backdropComponent={Backdrop}
-      index={(snappingPoints?.animatedSnapPoints.value.length || 1) - 1}
+      index={(points.length || 1) - 1}
       handleComponent={HandleComponent}
       onChange={console.log}
     >
       <BottomSheetWrapper {...{ open }} initialIndex={(points?.length || 0) - 1}>
         {scrollable !== false ? (
           <BottomSheetScrollView
-            onLayout={snappingPoints.handleContentLayout}
             contentContainerStyle={StyleSheet.flatten([
               styles.sheet,
               disablePadding ? styles.noPadding : {},
@@ -160,7 +155,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
             </View>
           </BottomSheetScrollView>
         ) : (
-          <BottomSheetView onLayout={snappingPoints.handleContentLayout}>
+          <BottomSheetView>
             {children}
             <View style={styles.buttonContainer}>
               <Button
