@@ -4,48 +4,26 @@ import { FAB, useTheme } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 
 import * as Location from 'expo-location';
-import { actions, useAppDispatch, useAppSelector, useSession } from 'app/state';
+import { useController } from 'react-hook-form';
+import { useWeatherForm } from 'app/forms/weather';
 import JumpRunSelector from 'app/components/input/jump_run_select/JumpRunSelect';
 
-import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateWeatherConditions';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useNotifications } from 'app/providers/notifications';
 
 export default function JumpRunScreen() {
-  const state = useAppSelector((root) => root.forms.weather);
-  const dropzoneId = useSession((session) => session.currentDropzoneId);
-  const dispatch = useAppDispatch();
+  const { control, save, saving } = useWeatherForm();
+  const { field: jumpRun } = useController({ name: 'jumpRun', control });
   const navigation = useNavigation();
   const theme = useTheme();
   const notify = useNotifications();
 
-  const mutationCreateWeatherConditions = useMutationCreateWeatherConditions({
-    onSuccess: () => null,
-    onFieldError: (field: keyof typeof state.fields, message: string) =>
-      dispatch(actions.forms.weather.setFieldError([field, message])),
-    onError: notify.error,
-  });
-
   const onSaveConditions = React.useCallback(async () => {
-    await mutationCreateWeatherConditions.mutate({
-      id: Number(state.original?.id),
-      dropzoneId: Number(dropzoneId),
-      winds: JSON.stringify(state.fields.winds.value),
-      jumpRun: state.fields.jumpRun.value,
-      temperature: state.fields.temperature.value,
-    });
-    navigation.goBack();
-    notify.success('Weather board updated');
-  }, [
-    mutationCreateWeatherConditions,
-    state.original?.id,
-    state.fields.winds.value,
-    state.fields.jumpRun.value,
-    state.fields.temperature.value,
-    dropzoneId,
-    navigation,
-    notify,
-  ]);
+    if (await save()) {
+      navigation.goBack();
+      notify.success('Weather board updated');
+    }
+  }, [save, navigation, notify]);
 
   const {
     dropzone: { dropzone },
@@ -74,19 +52,17 @@ export default function JumpRunScreen() {
   return (
     <View style={StyleSheet.absoluteFill}>
       <JumpRunSelector
-        value={state.fields.jumpRun.value || 0}
+        value={jumpRun.value || 0}
         latitude={dropzone?.lat || location?.latitude || 0}
         longitude={dropzone?.lng || location?.longitude || 0}
-        onChange={(value) =>
-          dispatch(actions.forms.weather.setField(['jumpRun', Math.round(value)]))
-        }
+        onChange={(value) => jumpRun.onChange(Math.round(value))}
       />
       <FAB
         style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         small
         icon="check"
-        loading={mutationCreateWeatherConditions.loading}
-        disabled={mutationCreateWeatherConditions.loading}
+        loading={saving}
+        disabled={saving}
         onPress={() => onSaveConditions()}
         label="Save"
       />

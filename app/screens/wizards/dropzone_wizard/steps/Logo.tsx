@@ -1,14 +1,15 @@
 import * as React from 'react';
+import { useController } from 'react-hook-form';
 import { Avatar, Paragraph, TouchableRipple, useTheme } from 'react-native-paper';
 import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useDropzoneWizardFields } from '../useDropzoneWizardForm';
 import useImagePicker from 'app/hooks/useImagePicker';
 import { View, StyleSheet } from 'react-native';
 import LottieView from 'app/components/LottieView';
 
 function Logo(props: IWizardStepProps) {
-  const state = useAppSelector((root) => root.forms.dropzone);
-  const dispatch = useAppDispatch();
+  const { control, setField } = useDropzoneWizardFields();
+  const { field } = useController({ name: 'banner', control });
   const pickImage = useImagePicker();
   const onPickImage = React.useCallback(async () => {
     try {
@@ -16,14 +17,14 @@ function Logo(props: IWizardStepProps) {
 
       if (base64) {
         // Upload image
-        dispatch(actions.forms.dropzone.setField(['banner', `data:image/jpeg;base64,${base64}`]));
+        setField('banner', `data:image/jpeg;base64,${base64}`);
       } else {
         console.log({ base64 });
       }
     } catch (e) {
       console.log(e);
     }
-  }, [dispatch, pickImage]);
+  }, [pickImage, setField]);
   const theme = useTheme();
 
   return (
@@ -31,7 +32,7 @@ function Logo(props: IWizardStepProps) {
       <Fields>
         <View style={styles.avatarContainer}>
           <TouchableRipple onPress={onPickImage}>
-            {!state?.fields?.banner?.value ? (
+            {!field.value ? (
               <LottieView
                 style={{ height: 175, width: 175 }}
                 autoPlay
@@ -41,7 +42,7 @@ function Logo(props: IWizardStepProps) {
             ) : (
               <Avatar.Image
                 size={175}
-                source={{ uri: state?.fields?.banner?.value }}
+                source={{ uri: field.value }}
                 style={{
                   borderWidth: StyleSheet.hairlineWidth,
                   backgroundColor: theme.colors.primary,

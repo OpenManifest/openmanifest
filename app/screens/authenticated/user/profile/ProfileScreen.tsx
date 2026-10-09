@@ -8,7 +8,7 @@ import Skeleton from 'app/components/Skeleton';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import DropzoneUserDialog from 'app/components/dialogs/DropzoneUserDialog';
 import RigDialog from 'app/components/dialogs/Rig';
-import EditUserSheet from 'app/components/dialogs/User';
+import EditUserSheet from 'app/forms/user';
 
 import useImagePicker from 'app/hooks/useImagePicker';
 import { useDropzoneContext, useManifestContext } from 'app/providers';
@@ -107,9 +107,9 @@ export default function ProfileScreen() {
     [dispatch]
   );
 
-  const onUserSheetClose = React.useCallback(() => {
-    dispatch(actions.forms.user.setOpen(false));
-  }, [dispatch]);
+  const [isEditingUser, setEditingUser] = React.useState(false);
+  const onUserSheetOpen = React.useCallback(() => setEditingUser(true), []);
+  const onUserSheetClose = React.useCallback(() => setEditingUser(false), []);
 
   const openWizard = useProfileWizard();
 
@@ -201,15 +201,12 @@ export default function ProfileScreen() {
           open={forms.dropzoneUser.open}
         />
         <EditUserSheet
-          dropzoneUserId={dropzoneUser?.id}
+          dropzoneUser={dropzoneUser}
           onClose={onUserSheetClose}
-          onSuccess={() => {
-            dispatch(actions.forms.user.setOpen(false));
-          }}
-          open={forms.user.open}
+          open={isEditingUser}
         />
       </View>
-      <UserActionsButton {...{ dropzoneUser }} visible={isFocused} />
+      <UserActionsButton {...{ dropzoneUser }} onEdit={onUserSheetOpen} visible={isFocused} />
     </>
   );
 }

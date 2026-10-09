@@ -1,4 +1,3 @@
-
 import { cleanup, configure } from '@testing-library/react-native';
 
 import '@testing-library/jest-dom';
@@ -36,7 +35,11 @@ jest.mock('react-native-maps', () => {
 jest.mock('react-native-gesture-handler', () => {
   const actual = jest.requireActual('react-native-gesture-handler');
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { TouchableOpacity, TouchableHighlight, TouchableWithoutFeedback } = require('react-native');
+  const {
+    TouchableOpacity,
+    TouchableHighlight,
+    TouchableWithoutFeedback,
+  } = require('react-native');
   return { ...actual, TouchableOpacity, TouchableHighlight, TouchableWithoutFeedback };
 });
 
@@ -49,6 +52,9 @@ afterEach(cleanup);
 // Testing Library 13 skips elements that are hidden from accessibility (Paper and bottom sheets mark whole subtrees
 // `no-hide-descendants`, and fade items in from opacity 0). The tests were written against the older default.
 configure({ defaultIncludeHiddenElements: true });
+
+// Reanimated's mock loads the real worklets package, which needs its native module
+jest.mock('react-native-worklets', () => jest.requireActual('react-native-worklets/src/mock'));
 
 jest.mock('react-native-reanimated', () => {
   return {
@@ -76,7 +82,9 @@ jest.mock('@gorhom/bottom-sheet', () => require('@gorhom/bottom-sheet/mock'));
 // React Native 0.71's jest setup mocks AccessibilityInfo.addEventListener without a return value, so react-native-paper 4
 // falls back to the removed `removeEventListener` when its Provider unmounts. Return a real subscription.
 jest.mock('react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo', () => {
-  const actual = jest.requireActual('react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo');
+  const actual = jest.requireActual(
+    'react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo'
+  );
   const AccessibilityInfo = (actual && actual.default) || actual;
   return {
     __esModule: true,

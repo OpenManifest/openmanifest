@@ -4,14 +4,12 @@ import { FAB } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDropzonesContext } from 'app/api/crud';
-import { actions, useAppDispatch } from '../../../state';
 
 import NoResults from '../../../components/NoResults';
 import DropzoneCard from './DropzoneCard';
 import { useAppTheme } from 'app/theme';
 
 export default function DropzonesScreen() {
-  const dispatch = useAppDispatch();
   const { theme } = useAppTheme();
   const { dropzones, loading, refetch } = useDropzonesContext();
   const navigation = useNavigation();
@@ -36,7 +34,6 @@ export default function DropzonesScreen() {
         small
         icon="plus"
         onPress={() => {
-          dispatch(actions.forms.dropzone.reset());
           navigation.navigate('Wizards', { screen: 'DropzoneWizardScreen' });
         }}
         label="Create dropzone"
