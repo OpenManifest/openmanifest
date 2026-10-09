@@ -2,7 +2,8 @@ import * as React from 'react';
 import pick from 'lodash/pick';
 import isEqual from 'lodash/isEqual';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
-import { useAppSelector, useSession } from 'app/state';
+import { useCurrentUserQuery } from 'app/api/reflection';
+import { useSession } from 'app/state';
 import { Platform } from 'react-native';
 import { useAppSignalContext, INITIAL_TAGS } from './AppSignalContext';
 
@@ -15,7 +16,9 @@ function AppSignalSessionTagProvider(props: React.PropsWithChildren<object>) {
   const {
     dropzone: { dropzone, currentUser: currentDropzoneUser },
   } = useDropzoneContext();
-  const { currentUser } = useAppSelector((state) => state.global);
+  const credentials = useSession((session) => session.credentials);
+  const { data: currentUserData } = useCurrentUserQuery({ skip: !credentials });
+  const currentUser = currentUserData?.currentUser;
   const currentRouteName = useSession((session) => session.currentRouteName);
   const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const { tags, setTags } = useAppSignalContext();

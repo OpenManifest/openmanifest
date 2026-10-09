@@ -3,7 +3,7 @@ import * as Facebook from 'expo-facebook';
 import { Button } from 'react-native-paper';
 import { FacebookAuthenticationCredential } from 'expo-facebook';
 import { useLoginWithFacebookMutation } from 'app/api/reflection';
-import { actions, useAppDispatch, useSession } from 'app/state';
+import { useSession } from 'app/state';
 import { MutationFunctionOptions, MutationResult } from '@apollo/client';
 import { LoginWithFacebookMutation, LoginWithFacebookMutationVariables } from 'app/api/operations';
 import { useNotifications } from 'app/providers/notifications';
@@ -16,7 +16,6 @@ export function useLoginWithFacebook(
   const expoPushToken = useSession((session) => session.expoPushToken);
   const setCredentials = useSession((session) => session.setCredentials);
   const [onLoginWithFacebook, mutation] = useLoginWithFacebookMutation(opts);
-  const dispatch = useAppDispatch();
   const notify = useNotifications();
 
   const onLogin = React.useCallback(async () => {
@@ -43,7 +42,6 @@ export function useLoginWithFacebook(
         });
         if (data?.loginWithFacebook?.authenticatable && data?.loginWithFacebook?.credentials) {
           setCredentials(data.loginWithFacebook.credentials);
-          dispatch(actions.global.setUser(data.loginWithFacebook.authenticatable));
         }
       }
     } catch (e) {
@@ -52,7 +50,7 @@ export function useLoginWithFacebook(
         notify.error(e.message);
       }
     }
-  }, [dispatch, expoPushToken, notify, onLoginWithFacebook, setCredentials]);
+  }, [expoPushToken, notify, onLoginWithFacebook, setCredentials]);
   return [onLogin, mutation] as [() => Promise<void>, MutationResult<LoginWithFacebookMutation>];
 }
 export default function FacebookButton(

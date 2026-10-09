@@ -62,7 +62,6 @@ describe('<DropzonesScreen />', () => {
     fireEvent.press(card);
 
     expect(useSession.getState().currentDropzoneId).toBe('7');
-    expect(screen.store.getState().global.currentDropzone?.name).toBe('Alpha');
   });
 
   it('shows an empty state when there are no dropzones', async () => {

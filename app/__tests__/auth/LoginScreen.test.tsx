@@ -80,10 +80,6 @@ describe('<LoginScreen />', () => {
         uid: VARIABLES.email,
       });
     });
-    expect(screen.store.getState().global.currentUser).toMatchObject({
-      id: '1',
-      email: VARIABLES.email,
-    });
     expect(screen.notifications.error).not.toHaveBeenCalled();
   });
 

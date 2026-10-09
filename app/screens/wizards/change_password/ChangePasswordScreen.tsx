@@ -3,7 +3,6 @@ import { Wizard } from 'app/components/carousel_wizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useUpdateLostPasswordMutation } from 'app/api/reflection';
 import checkPasswordComplexity, { PasswordStrength } from 'app/utils/checkPasswordComplexity';
-import { User } from 'app/api/schema.d';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { WizardRef } from 'app/components/carousel_wizard/Wizard';
 import DoneStep from './steps/Done';
@@ -40,9 +39,6 @@ export default function SignupWizard() {
       });
 
       if (result?.data?.userUpdatePasswordWithToken?.authenticatable) {
-        dispatch(
-          actions.global.setUser(result.data.userUpdatePasswordWithToken.authenticatable as User)
-        );
         return;
       }
       if (result.errors?.length) {
