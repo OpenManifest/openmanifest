@@ -20,7 +20,6 @@ import Menu, { MenuItem } from 'app/components/popover/Menu';
 import { View } from 'app/components/Themed';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
-import { actions, useAppDispatch } from 'app/state';
 import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
 import LoadSlotTable from 'app/components/slots_table/Table';
 import { SlotFields } from 'app/components/slots_table/UserRow';
@@ -39,7 +38,6 @@ interface ILoadCardLarge {
 function LoadCard(props: ILoadCardLarge) {
   const { onManifest, onManifestGroup, controlsVisible, onSlotGroupPress, onSlotPress } = props;
   const { theme } = useAppTheme();
-  const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDispatchOpen, setDispatchOpen] = React.useState(false);
   const {
@@ -61,9 +59,6 @@ function LoadCard(props: ILoadCardLarge) {
       markAsLanded,
     },
   } = useLoadContext();
-  const { dropzone: currentDropzone } = useDropzoneContext();
-  const { currentUser } = currentDropzone;
-
   const onDeleteSlot = React.useCallback(
     async (slot: SlotDetailsFragment) => {
       try {
@@ -140,19 +135,7 @@ function LoadCard(props: ILoadCardLarge) {
               <IconButton
                 icon="account-group"
                 testID="manifest-group-button"
-                onPress={() => {
-                  dispatch(actions.forms.manifestGroup.reset());
-                  dispatch(actions.forms.manifestGroup.setField(['load', load]));
-
-                  if (canManifestGroupWithSelfOnly && !canManifestGroup && currentUser) {
-                    // Automatically add current user to selection
-                    dispatch(actions.forms.manifestGroup.setDropzoneUsers([currentUser]));
-                  }
-
-                  if (onManifestGroup) {
-                    onManifestGroup();
-                  }
-                }}
+                onPress={() => onManifestGroup?.()}
               />
             )}
           </View>

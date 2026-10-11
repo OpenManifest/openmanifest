@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { RefreshControl } from 'react-native';
+import { RefreshControl, Text } from 'react-native';
 import { Permission } from 'app/api/schema.d';
+import { useManifestContext } from 'app/providers';
 import { CreateLoadDocument } from 'app/api/reflection';
 import * as appRedux from '../../state';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
@@ -15,7 +16,7 @@ import MOCK_QUERY_PLANES from './__mocks__/QueryPlane.mock';
 import MOCK_QUERY_DROPZONE_USERS from './__mocks__/QueryDropzoneUsers.mock';
 import mockSubscriptionLoadCreated from './__mocks__/SubscriptionLoadCreated.mock';
 import ManifestScreen from '../../screens/authenticated/dropzone/manifest/ManifestScreen';
-import ManifestGroupDialog from '../../components/dialogs/ManifestGroup/ManifestGroup';
+import ManifestGroupDialog from '../../forms/manifest_group';
 import LoadDialog from '../../forms/load/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
@@ -72,19 +73,37 @@ describe('known manifest bugs', () => {
     await waitFor(() => expect(loadsRefetch).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });
 
-  it.skip('BUG-066: the manifest group sheet is mounted on the manifest board', async () => {
-    const screen = render(<ManifestScreen />, {
-      initialState: authenticatedState,
-      session: authenticatedSession,
-      permissions: [Permission.ReadLoad, Permission.CreateUserSlot],
-      graphql: boardMocks(),
-    });
+  it('BUG-066: the manifest group sheet is mounted on the manifest board', async () => {
+    // Every "Manifest group" action on the board opens the sheet through the manifest context
+    function OpenGroupSheet() {
+      const { manifest, dialogs } = useManifestContext();
+      return (
+        <Text
+          onPress={() =>
+            manifest.loads[0] && dialogs.manifestGroup.open({ load: manifest.loads[0] as never })
+          }
+        >
+          open group sheet
+        </Text>
+      );
+    }
+    const screen = render(
+      <>
+        <ManifestScreen />
+        <OpenGroupSheet />
+      </>,
+      {
+        initialState: authenticatedState,
+        session: authenticatedSession,
+        permissions: [Permission.ReadLoad, Permission.CreateUserSlot],
+        graphql: boardMocks(),
+      }
+    );
     await waitFor(() => expect(screen.queryAllByTestId('load-card').length).toBe(2), {
       timeout: 10000,
     });
 
-    // Every "Manifest group" action on the board does this
-    screen.store.dispatch(appRedux.actions.forms.manifestGroup.setOpen(true));
+    fireEvent.press(screen.getByText('open group sheet'));
 
     await waitFor(() => {
       const sheets = screen.UNSAFE_queryAllByType(ManifestGroupDialog);
