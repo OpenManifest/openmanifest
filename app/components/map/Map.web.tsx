@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LayoutRectangle, View, ViewStyle } from 'react-native';
+import { DimensionValue, LayoutRectangle, View, ViewStyle } from 'react-native';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import Constants from 'app/constants/expo';
 
@@ -11,8 +11,8 @@ import { useIsFocused } from '@react-navigation/core';
 const DEFAULT_COORDS = { lat: -27.4705, lng: 153.026 };
 
 interface IMapProps {
-  width: number | string;
-  height: number | string;
+  width: DimensionValue;
+  height: DimensionValue;
   position: {
     x: number;
     y: number;

@@ -39,7 +39,7 @@ export default React.forwardRef<ScrollView, IScrollableScreen>((props, ref) => {
           styles.content,
           fullWidth
             ? { paddingHorizontal: 0 }
-            : { width: width < 920 ? '100%' : 920, paddingHorizontal: 16 },
+            : { width: width < 920 ? ('100%' as const) : 920, paddingHorizontal: 16 },
           contentContainerStyle,
         ].filter(Boolean)
       )}

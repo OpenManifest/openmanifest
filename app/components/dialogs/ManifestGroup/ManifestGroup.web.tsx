@@ -5,7 +5,7 @@ import DropzoneUserAutocomplete from 'app/components/autocomplete/DropzoneUserAu
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import { useNotifications } from 'app/providers/notifications';
 import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { DimensionValue, View, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { actions, useAppDispatch, useAppSelector } from '../../../state';
 import ManifestGroupForm from '../../forms/manifest_group/ManifestGroupForm';
@@ -174,7 +174,8 @@ const styles = StyleSheet.create({
     paddingBottom: 32
   },
   userListContainer: {
-    height: 'calc(100% - 200px)',
+    // CSS calc() is valid on web but not part of React Native's DimensionValue type
+    height: 'calc(100% - 200px)' as unknown as DimensionValue,
     backgroundColor: 'white',
     width: '100%',
     padding: 16
