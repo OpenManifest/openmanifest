@@ -39,10 +39,10 @@ export default function AuthenticatedTabBar() {
 
   const screenOptions = React.useMemo(
     () => ({
-      tabBarActiveTintColor: theme.colors.primary,
+      tabBarActiveTintColor: '#FFFFFF',
+      tabBarActiveBackgroundColor: palette.primary.main,
+      tabBarInactiveTintColor: palette.primary.main,
       tabBarInactiveBackgroundColor: theme.dark ? theme.colors.backdrop : theme.colors.surface,
-      tabBarActiveBackgroundColor: theme.colors.surface,
-      tabBarInactiveTintColor: '#CCCCCC',
       tabBarShowLabel: Platform.OS !== 'web',
       headerShown: false,
       tabBarStyle: {
@@ -51,24 +51,12 @@ export default function AuthenticatedTabBar() {
         borderTopColor: '#CCCCCC'
       }
     }),
-    [theme.colors.backdrop, theme.colors.background, theme.colors.primary, theme.colors.surface, theme.dark]
+    [palette.primary.main, theme.colors.backdrop, theme.colors.background, theme.colors.surface, theme.dark]
   );
 
   return (
     <AppSignalBoundary>
       <BottomTab.Navigator
-        // @ts-ignore
-        appearance={{
-          tabBarBackground: theme.colors.surface,
-          topPadding: 16,
-          shadow: true,
-          bottomPadding: 16
-        }}
-        tabBarOptions={{
-          activeTintColor: '#FFFFFF',
-          inactiveTintColor: palette.primary.main,
-          activeBackgroundColor: palette.primary.main
-        }}
         initialRouteName="Manifest"
         {...{ screenOptions }}
       >
