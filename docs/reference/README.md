@@ -308,7 +308,7 @@ Full table:
 | `postinstall-postinstall` | dep | `^2.1.0` | 2.1.0 | 2.1.0 |  | last publish 2022-05-13 |
 | `react` | dep | `18.3.1` (P3.10) | 18.3.1 | 19.3.0 | `19.2.3` |  |
 | `react-calendar-heatmap` | dep | `1.9.0` | 1.9.0 | 1.10.0 |  |  |
-| `react-countdown-circle-timer` | dep | `3.1.0` | 3.1.0 | 3.2.1 |  | last publish 2023-03-15 |
+| `react-countdown-circle-timer` | dep | `3.2.1` (P3.13) | 3.2.1 | 3.2.1 |  | last publish 2023-03-15 |
 | `react-day-picker` | dep | `^7.4.10` | 7.4.10 | 10.0.2 |  |  |
 | `react-dom` | dep | `18.3.1` (P3.10) | 18.3.1 | 19.3.0 | `19.2.3` |  |
 | `react-facebook-login` | dep | `^4.1.1` | 4.1.1 | 4.1.1 |  | last publish 2022-06-25 |
@@ -318,14 +318,12 @@ Full table:
 | `react-native-animatable` | dep | `^1.3.3` | 1.3.3 | 1.4.0 |  | last publish 2023-10-26 |
 | `react-native-animated-nav-tab-bar` | dep | `3.1.8` | 3.1.8 | 3.1.13 |  |  |
 | `react-native-chart-kit` | dep | `6.12.0` | 6.12.0 | 7.0.4 |  |  |
-| `react-native-color-picker` | dep | `^0.6.0` | 0.6.0 | 0.6.0 |  | last publish 2022-06-26 |
-| `react-native-countdown-circle-timer` | dep | `3.1.0` | 3.1.0 | 3.2.1 |  | last publish 2023-03-15 |
+| `react-native-countdown-circle-timer` | dep | `3.2.1` (P3.13) | 3.2.1 | 3.2.1 |  | last publish 2023-03-15 |
 | `react-native-dotenv` | dep | `3.4.8` | 3.4.8 | 5.0.0 |  |  |
 | `react-native-geocoding` | dep | `^0.5.0` | 0.5.0 | 0.5.0 |  | last publish 2022-06-26 |
 | `react-native-gesture-handler` | dep | `~2.8.0` | 2.8.0 | 3.3.0 | `~2.32.0` |  |
 | `react-native-get-random-values` | dep | `~1.8.0` | 1.8.0 | 2.0.0 | `~1.11.0` |  |
 | `react-native-image-viewing` | dep | `0.2.2` | 0.2.2 | 0.2.2 |  | last publish 2022-05-14 |
-| `react-native-input-spinner` | dep | `1.8.0` | 1.8.0 | 1.8.1 |  | last publish 2023-04-25 |
 | `react-native-localize` | dep | `2.2.6` | 2.2.6 | 3.7.2 |  |  |
 | `react-native-maps` | dep | `1.3.2` | 1.3.2 | 1.29.11 | `1.27.2` |  |
 | `react-native-mmkv-storage` | dep | `0.8.0` | 0.8.0 | 12.0.1 |  |  |
@@ -340,7 +338,6 @@ Full table:
 | `react-native-screens` | dep | `~4.4.0` (P3.10) | 4.4.0 | 4.28.0 | `~4.26.0` |  |
 | `react-native-skeleton-content` | dep | `1.0.28` | 1.0.28 | 1.0.28 |  | last publish 2022-10-04 |
 | `react-native-svg` | dep | `13.4.0` | 13.4.0 | 15.15.5 | `15.15.4` |  |
-| `react-native-swiper-flatlist` | dep | `3.0.18` | 3.0.18 | 3.2.5 |  | last publish 2024-09-10 |
 | `react-native-tab-view` | dep | `3.3.4` | 3.3.4 | 4.3.3 |  |  |
 | `react-native-toast-message` | dep | `2.1.6` | 2.1.6 | 2.5.2 |  |  |
 | `react-native-web` | dep | `~0.19.6` (P3.6) | 0.19.13 | 0.21.3 | `~0.21.0` |  |

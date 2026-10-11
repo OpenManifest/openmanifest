@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Avatar } from 'react-native-paper';
-import { PaginationProps } from 'react-native-swiper-flatlist';
 import { successColor } from '../../constants/Colors';
 
-interface IWizardPagination extends PaginationProps {
+interface IWizardPagination {
+  // Number of steps
+  size: number;
+  paginationIndex?: number;
   icons?: string[];
 }
 export default function WizardPagination(props: IWizardPagination) {
