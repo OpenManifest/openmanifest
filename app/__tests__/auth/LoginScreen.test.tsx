@@ -3,7 +3,6 @@ import { TextInput } from 'react-native';
 import { GraphQLError } from 'graphql';
 import { LoginDocument } from 'app/api/reflection';
 import { NotificationContext } from 'app/providers/notifications/context';
-import * as appRedux from '../../state';
 import { useSession } from '../../state';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import LoginScreen from '../../screens/unauthenticated/login/LoginScreen';
@@ -36,7 +35,6 @@ function renderLogin(mock: Record<string, unknown>) {
       <LoginScreen />
     </NotificationContext.Provider>,
     {
-      initialState: appRedux.initialState,
       graphql: [
         {
           request: { query: LoginDocument, operationName: 'Login', variables: VARIABLES },
@@ -64,7 +62,7 @@ describe('<LoginScreen />', () => {
     expect(screen.getByText('Sign up')).toBeTruthy();
   });
 
-  it('stores the credentials and user in Redux after a successful login', async () => {
+  it('stores the credentials in the session after a successful login', async () => {
     const screen = renderLogin({
       result: {
         data: { userLogin: { __typename: 'UserLoginPayload', authenticatable, credentials } },

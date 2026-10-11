@@ -5,16 +5,10 @@ import {
   RigInspectionTemplateForm,
   useRigInspectionTemplateForm,
 } from 'app/forms/rig_inspection_template';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: { ...appRedux.initialState.global, authenticated: true },
-};
 
 const definition = JSON.stringify([
   { label: 'Reserve date', valueType: 'string', isRequired: true },
@@ -37,7 +31,6 @@ function Harness() {
 
 function renderForm(graphql: Parameters<typeof render>[1]['graphql'] = []) {
   const screen = render(<Harness />, {
-    initialState: authenticatedState,
     session: authenticatedSession,
     graphql,
   });

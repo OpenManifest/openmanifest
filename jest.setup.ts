@@ -68,15 +68,6 @@ jest.mock('@react-navigation/native', () => ({
   useIsFocused: jest.fn().mockReturnValue(false),
 }));
 
-// Mock redux-persist
-jest.mock('redux-persist', () => {
-  const real = jest.requireActual('redux-persist');
-  return {
-    ...real,
-    persistReducer: jest.fn().mockImplementation((config, reducers) => reducers),
-  };
-});
-
 jest.mock('@gorhom/bottom-sheet', () => require('@gorhom/bottom-sheet/mock'));
 
 // React Native 0.71's jest setup mocks AccessibilityInfo.addEventListener without a return value, so react-native-paper 4

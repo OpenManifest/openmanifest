@@ -3,7 +3,6 @@ import { RefreshControl, Text } from 'react-native';
 import { Permission } from 'app/api/schema.d';
 import { useManifestContext } from 'app/providers';
 import { CreateLoadDocument } from 'app/api/reflection';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_DROPZONE from './__mocks__/QueryDropzone.mock';
 import MOCK_QUERY_ALLOWED_TICKET_TYPES from './__mocks__/QueryAllowedTicketTypes.mock';
@@ -24,14 +23,6 @@ jest.setTimeout(30000);
 
 // These tests describe the *expected* behaviour of known client bugs (see the backend repo's
 // docs/reference/BUGS.md). They are skipped until the bug is fixed; unskip them in the fixing PR.
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-  },
-};
 
 function boardMocks(loads = MOCK_QUERY_LOADS()) {
   return [
@@ -57,7 +48,6 @@ describe('known manifest bugs', () => {
     const loadsRefetch = jest.fn(() => second.result as never);
 
     const screen = render(<ManifestScreen />, {
-      initialState: authenticatedState,
       session: authenticatedSession,
       permissions: [Permission.ReadLoad],
       graphql: boardMocks({ ...first, result: loadsRequests } as never).concat([
@@ -93,7 +83,6 @@ describe('known manifest bugs', () => {
         <OpenGroupSheet />
       </>,
       {
-        initialState: authenticatedState,
         session: authenticatedSession,
         permissions: [Permission.ReadLoad, Permission.CreateUserSlot],
         graphql: boardMocks(),
@@ -146,7 +135,6 @@ describe('known manifest bugs', () => {
     };
 
     const screen = render(<LoadDialog open onClose={jest.fn()} onSuccess={jest.fn()} />, {
-      initialState: authenticatedState,
       session: authenticatedSession,
       graphql: [
         mockedDropzone as never,

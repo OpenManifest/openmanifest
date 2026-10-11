@@ -269,7 +269,6 @@ Full table:
 | `@react-navigation/drawer` | dep | `7.14.3` (P3.9) | 7.14.3 | 7.14.3 |  |  |
 | `@react-navigation/native` | dep | `7.5.0` (P3.9) | 7.5.0 | 7.5.0 |  |  |
 | `@react-navigation/stack` | dep | `7.12.0` (P3.9) | 7.12.0 | 7.12.0 |  |  |
-| `@reduxjs/toolkit` | dep | `1.9.3` | 1.9.3 | 2.13.0 |  |  |
 | `check-password-strength` | dep | `2.0.7` | 2.0.7 | 3.0.0 |  |  |
 | `color` | dep | `4.2.3` | 4.2.3 | 5.0.3 |  |  |
 | `date-fns` | dep | `2.29.3` | 2.29.3 | 4.4.0 |  |  |
@@ -329,10 +328,7 @@ Full table:
 | `react-native-svg` | dep | `15.15.4` (P3.17)| 15.15.4 | 15.15.5 | `15.15.4` |  |
 | `react-native-toast-message` | dep | `2.1.6` | 2.1.6 | 2.5.2 |  |  |
 | `react-native-web` | dep | `~0.21.0` (P3.15)| 0.21.4 | 0.21.4 | `~0.21.0` |  |
-| `react-redux` | dep | `7.2.6` | 7.2.6 | 9.3.0 |  |  |
 | `react-use` | dep | `^17.4.0` (P3.14) | 17.6.1 | 17.6.1 |  |  |
-| `redux` | dep | `4.2.1` | 4.2.1 | 5.0.1 |  | last publish 2024-05-06 |
-| `redux-persist` | dep | `^6.0.0` | 6.0.0 | 6.0.0 |  |  |
 | `urijs` | dep | `1.19.11` | 1.19.11 | 1.19.11 |  | last publish 2022-06-28 |
 | `yup` | dep | `0.32.11` | 0.32.11 | 1.7.1 |  |  |
 | `zustand` | dep | `5.0.15` (P4.1) | 5.0.15 | 5.0.15 | | session store (`app/state/session.ts`) |

@@ -6,7 +6,6 @@ import { LoadUpdatedDocument } from 'app/api/reflection';
 import { Permission } from 'app/api/schema.d';
 import type { LoadDetailsFragment } from 'app/api/operations';
 import { useManifestContext } from 'app/providers';
-import * as appRedux from '../../state';
 import { render, waitFor, within } from '../../__mocks__/render';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
 import LoadScreen from '../../screens/authenticated/dropzone/load/LoadScreen';
@@ -28,11 +27,6 @@ const loadUpdatedMock = {
   result: { data: { loadUpdated: { __typename: 'LoadUpdatedPayload', load: null } } },
 };
 
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: { ...appRedux.initialState.global, authenticated: true },
-};
-
 const openDialogs = (screen: ReturnType<typeof render>) => ({
   group: screen
     .UNSAFE_queryAllByType(ManifestGroupDialog)
@@ -47,7 +41,6 @@ async function renderLoadScreen(permissions: Permission[]) {
   const screen = render(<LoadScreen />, {
     graphql: [mock, loadUpdatedMock],
     permissions,
-    initialState: authenticatedState,
     session: authenticatedSession,
   });
   await waitFor(() => expect(screen.getByText('Amy Hops')).toBeTruthy(), { timeout: 10000 });
@@ -74,7 +67,6 @@ describe('manifest dialogs in the manifest context', () => {
     const screen = render(<Opener />, {
       graphql: [],
       permissions: [Permission.CreateUserSlot],
-      initialState: authenticatedState,
       session: authenticatedSession,
     });
 

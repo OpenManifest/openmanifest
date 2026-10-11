@@ -7,7 +7,9 @@ import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 const require = createRequire(import.meta.url);
-const { chromium } = require(process.env.PLAYWRIGHT_PATH ?? '/opt/node-tools/node_modules/playwright');
+const { chromium } = require(
+  process.env.PLAYWRIGHT_PATH ?? '/opt/node-tools/node_modules/playwright'
+);
 
 function arg(name, fallback) {
   const i = process.argv.indexOf(`--${name}`);
@@ -50,7 +52,10 @@ async function run(browser, name, viewport) {
     }
     await page.screenshot({ path: join(out, `${name}-manifest.png`) });
 
-    await page.getByText(/Load #1\b/).first().click({ force: true });
+    await page
+      .getByText(/Load #1\b/)
+      .first()
+      .click({ force: true });
     await page.waitForTimeout(6000);
     if (!/\/dropzone\/load\/\d+/.test(new URL(page.url()).pathname)) {
       failures.push(`expected /dropzone/load/<id>, got ${page.url()}`);
@@ -64,7 +69,12 @@ async function run(browser, name, viewport) {
     await page.waitForTimeout(1000);
     await page.getByText('Manifest group', { exact: true }).last().click({ force: true });
     await page.waitForTimeout(3000);
-    if (!(await page.getByTestId('manifest-group-sheet').isVisible().catch(() => false))) {
+    if (
+      !(await page
+        .getByTestId('manifest-group-sheet')
+        .isVisible()
+        .catch(() => false))
+    ) {
       failures.push('the manifest group sheet did not open from the load screen');
     }
     await page.screenshot({ path: join(out, `${name}-group-sheet.png`) });
@@ -74,7 +84,13 @@ async function run(browser, name, viewport) {
     await page.waitForTimeout(6000);
     if (!new URL(page.url()).pathname.endsWith('/dropzone/manifest')) {
       failures.push(`deep link /dropzone/manifest ended on ${page.url()}`);
-    } else if (!(await page.getByText(/Load #1\b/).first().isVisible().catch(() => false))) {
+    } else if (
+      !(await page
+        .getByText(/Load #1\b/)
+        .first()
+        .isVisible()
+        .catch(() => false))
+    ) {
       failures.push('deep link /dropzone/manifest did not show the load board');
     }
     await page.screenshot({ path: join(out, `${name}-deeplink-manifest.png`) });
@@ -83,21 +99,77 @@ async function run(browser, name, viewport) {
     await page.waitForTimeout(6000);
     if (new URL(page.url()).pathname !== new URL(loadUrl).pathname) {
       failures.push(`deep link ${loadUrl} ended on ${page.url()}`);
-    } else if (!(await page.getByText(/Load #1\b/).first().isVisible().catch(() => false))) {
+    } else if (
+      !(await page
+        .getByText(/Load #1\b/)
+        .first()
+        .isVisible()
+        .catch(() => false))
+    ) {
       failures.push(`deep link ${loadUrl} did not show the load`);
     }
     await page.screenshot({ path: join(out, `${name}-deeplink-load.png`) });
+
+    // Log out and log in as somebody else without reloading the page: requests must still go out (they used to be
+    // aborted for good after a logout) and nothing of the first user may be left behind.
+    await page.goto(`${base}/dropzone/manifest`, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.waitForTimeout(4000);
+    await pressAt(page, page.locator('body'), { x: 35, y: 28 });
+    await page.waitForTimeout(1000);
+    await page.getByText('Log out', { exact: true }).last().click({ force: true });
+    await page.waitForTimeout(3000);
+    if (
+      !/\/login/.test(new URL(page.url()).pathname) &&
+      (await page.locator('input').count()) < 2
+    ) {
+      failures.push(`logging out did not show the login screen, got ${page.url()}`);
+    }
+    await page.locator('input').nth(0).click({ force: true });
+    await page.keyboard.type('jumper1@example.com');
+    await page.locator('input').nth(1).click({ force: true });
+    await page.keyboard.type('Password1!');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(6000);
+    await pressAt(page, page.getByText('Dropzone', { exact: true }).first());
+    await page.waitForTimeout(8000);
+    if (!new URL(page.url()).pathname.endsWith('/dropzone/manifest')) {
+      failures.push(`second login: expected /dropzone/manifest, got ${page.url()}`);
+    } else if (
+      !(await page
+        .getByText(/Load #1\b/)
+        .first()
+        .isVisible()
+        .catch(() => false))
+    ) {
+      failures.push('second login did not show the load board');
+    }
+    await pressAt(page, page.locator('body'), { x: 35, y: 28 });
+    await page.waitForTimeout(1500);
+    if (
+      !(await page
+        .getByText('Jo Jumper')
+        .first()
+        .isVisible()
+        .catch(() => false))
+    ) {
+      failures.push('second login: the drawer does not show the second user');
+    }
+    await page.screenshot({ path: join(out, `${name}-second-login.png`) });
   } catch (e) {
     failures.push(`step failed: ${e.message.split('\n')[0]}`);
   } finally {
     await context.close();
   }
-  console.log(`${name} ${viewport.width}x${viewport.height}: ${failures.length ? `FAIL (${failures.join('; ')})` : 'ok'}`);
+  console.log(
+    `${name} ${viewport.width}x${viewport.height}: ${failures.length ? `FAIL (${failures.join('; ')})` : 'ok'}`
+  );
   return failures.length === 0;
 }
 
 mkdirSync(out, { recursive: true });
-const browser = await chromium.launch({ args: ['--proxy-bypass-list=local.openmanifest.org,localhost'] });
+const browser = await chromium.launch({
+  args: ['--proxy-bypass-list=local.openmanifest.org,localhost'],
+});
 let ok = true;
 for (const [name, viewport] of Object.entries(viewports)) {
   ok = (await run(browser, name, viewport)) && ok;

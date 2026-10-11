@@ -2,19 +2,10 @@ import * as React from 'react';
 import { DropzonesDocument } from 'app/api/reflection';
 import { DropzonesProvider } from 'app/api/crud';
 import { dropzoneExtensive } from 'app/__fixtures__/dropzone.fixture';
-import * as appRedux from '../../state';
 import { useSession } from '../../state';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import DropzonesScreen from '../../screens/limbo/dropzone_select/DropzonesScreen';
 import { credentials } from 'app/__fixtures__/session.fixture';
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-  },
-};
 
 const dropzonesMock = (nodes: (typeof dropzoneExtensive)[]) => ({
   request: { query: DropzonesDocument, operationName: 'Dropzones', variables: {} },
@@ -35,7 +26,6 @@ function renderScreen(nodes: (typeof dropzoneExtensive)[]) {
       <DropzonesScreen />
     </DropzonesProvider>,
     {
-      initialState: authenticatedState,
       session: { credentials },
       graphql: [dropzonesMock(nodes)],
     }

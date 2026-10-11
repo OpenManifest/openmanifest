@@ -5,20 +5,11 @@ import { useDropzoneContext } from 'app/providers';
 import { useUserProfile } from 'app/api/crud';
 import { Button } from 'react-native-paper';
 import { dropzoneExtensive } from 'app/__fixtures__/dropzone.fixture';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import CreditSheet from '../../forms/credits/Credits';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-  },
-};
 
 const MEMBER = {
   __typename: 'DropzoneUser',
@@ -44,7 +35,6 @@ function renderSheet(mutationResult: jest.Mock, variables: Record<string, unknow
       <CreditSheet open dropzoneUser={MEMBER} onClose={jest.fn()} />
     </View>,
     {
-      initialState: authenticatedState,
       session: authenticatedSession,
       graphql: [
         {
@@ -107,7 +97,6 @@ describe('<CreditSheet />', () => {
         <Withdraw />
       </View>,
       {
-        initialState: authenticatedState,
         session: authenticatedSession,
         graphql: [
           {

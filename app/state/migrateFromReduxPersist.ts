@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getPlainItem } from './storage';
 
 /** Key redux-persist used for the whole store (`persist:` + the `key` of the old persistConfig). */
@@ -42,7 +43,8 @@ export function parseLegacySession(raw: string | null): LegacySession | null {
 
 /**
  * One-time migration: the first time the session store starts without its own storage entry, take the credentials,
- * current dropzone and push token the Redux `global` slice persisted. The legacy key is left in place (P4.8 removes it).
+ * current dropzone and push token the Redux `global` slice persisted. The caller stores the result and then removes the
+ * legacy key with `removeLegacyReduxPersist`.
  */
 export async function migrateFromReduxPersist(): Promise<{
   state: LegacySession;
@@ -50,4 +52,9 @@ export async function migrateFromReduxPersist(): Promise<{
 } | null> {
   const legacy = parseLegacySession(await getPlainItem(LEGACY_REDUX_PERSIST_KEY));
   return legacy ? { state: legacy, version: 1 } : null;
+}
+
+/** Deletes what redux-persist stored: the session has its own storage now (and nothing reads this key any more). */
+export async function removeLegacyReduxPersist() {
+  await AsyncStorage.removeItem(LEGACY_REDUX_PERSIST_KEY);
 }

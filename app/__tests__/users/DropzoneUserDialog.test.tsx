@@ -2,18 +2,12 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { UpdateDropzoneUserDocument } from 'app/api/reflection';
 import type { DropzoneUserEssentialsFragment } from 'app/api/operations';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import DropzoneUserDialog from '../../forms/dropzone_user';
 import MOCK_QUERY_ROLES from '../manifest/__mocks__/QueryRoles.mock';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: { ...appRedux.initialState.global, authenticated: true },
-};
 
 const role = { __typename: 'UserRole', id: '1', name: 'fun_jumper', dropzoneId: 1 };
 const member = (overrides: Partial<DropzoneUserEssentialsFragment> = {}) =>
@@ -28,7 +22,6 @@ function renderDialog(
       <DropzoneUserDialog open dropzoneUser={dropzoneUser} onClose={jest.fn()} />
     </View>,
     {
-      initialState: authenticatedState,
       session: authenticatedSession,
       graphql: [MOCK_QUERY_ROLES(), ...graphql],
     }

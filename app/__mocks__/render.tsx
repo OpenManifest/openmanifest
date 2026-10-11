@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { render as rtlRender } from '@testing-library/react-native';
-import { createStore } from 'redux';
-import { Provider as Redux } from 'react-redux';
 import {
   MockedProvider,
   MockedProviderProps,
@@ -18,14 +16,12 @@ import { AppThemeProvider } from 'app/theme';
 import { WeatherFormProvider } from 'app/forms/weather';
 import { DropzoneContextProvider, ManifestContextProvider } from 'app/providers';
 import mockQueryDropzone from '../__tests__/manifest/__mocks__/QueryDropzone.mock';
-import { rootReducer, RootState } from '../state/store';
 import { initialSession, SessionState, useSession } from '../state/session';
 import createMockPermissions from '../__tests__/manifest/__mocks__/QueryPermissions.mock';
 
 type RenderOptions = NonNullable<Parameters<typeof rtlRender>[1]>;
 
 interface IRenderer extends RenderOptions {
-  initialState?: RootState;
   /** Session store values (credentials, current dropzone, ...); logged out when omitted */
   session?: Partial<SessionState>;
   permissions?: Permission[];
@@ -87,10 +83,9 @@ function Apollo(props: MockedProviderProps) {
 
 function render(
   ui: React.ReactElement<unknown>,
-  { initialState, session, graphql, permissions, ...renderOptions }: IRenderer
+  { session, graphql, permissions, ...renderOptions }: IRenderer
 ) {
   useSession.setState({ ...initialSession, hydrated: true, ...(session || {}) });
-  const store = createStore(rootReducer, initialState);
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
       <SafeAreaProvider
@@ -100,38 +95,36 @@ function render(
         }}
       >
         <BottomSheetModalProvider>
-          <Redux store={store}>
-            <Apollo
-              addTypename
-              mocks={[
-                ...(graphql || []),
-                mockQueryDropzone(),
-                createMockPermissions(
-                  {},
-                  {
-                    dropzone: {
-                      currentUser: {
-                        permissions: permissions || [],
-                      },
+          <Apollo
+            addTypename
+            mocks={[
+              ...(graphql || []),
+              mockQueryDropzone(),
+              createMockPermissions(
+                {},
+                {
+                  dropzone: {
+                    currentUser: {
+                      permissions: permissions || [],
                     },
-                  }
-                ),
-              ]}
-            >
-              <DropzoneContextProvider dropzoneId={session?.currentDropzoneId?.toString()}>
-                <ManifestContextProvider dropzone={session?.currentDropzoneId?.toString()}>
-                  <AppThemeProvider>
-                    <WeatherFormProvider>{children}</WeatherFormProvider>
-                  </AppThemeProvider>
-                </ManifestContextProvider>
-              </DropzoneContextProvider>
-            </Apollo>
-          </Redux>
+                  },
+                }
+              ),
+            ]}
+          >
+            <DropzoneContextProvider dropzoneId={session?.currentDropzoneId?.toString()}>
+              <ManifestContextProvider dropzone={session?.currentDropzoneId?.toString()}>
+                <AppThemeProvider>
+                  <WeatherFormProvider>{children}</WeatherFormProvider>
+                </AppThemeProvider>
+              </ManifestContextProvider>
+            </DropzoneContextProvider>
+          </Apollo>
         </BottomSheetModalProvider>
       </SafeAreaProvider>
     );
   }
-  return { ...rtlRender(ui, { wrapper: Wrapper, ...renderOptions }), store };
+  return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });
 }
 
 // re-export everything

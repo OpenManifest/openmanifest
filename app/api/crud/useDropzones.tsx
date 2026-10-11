@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useAppSelector } from 'app/state';
+import { useAuthenticated } from 'app/state';
 import { useAppSignal } from 'app/components/app_signal';
 import sameVariables from 'app/utils/sameVariables';
 import {
@@ -12,8 +12,7 @@ import createCRUDContext, { uninitializedHandler, TMutationResponse } from './fa
 import { DropzoneStateEvent } from '../schema.d';
 
 export default function useDropzones(vars: Partial<DropzonesQueryVariables>) {
-  const state = useAppSelector((root) => root.global);
-  const { authenticated } = state;
+  const authenticated = useAuthenticated();
   const variables: DropzonesQueryVariables = React.useMemo(
     () => ({
       state: vars?.state,

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Text, TextInput, View } from 'react-native';
 import { CreateGhostDocument } from 'app/api/reflection';
 import { useDropzoneContext } from 'app/providers';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import MOCK_QUERY_FEDERATIONS from '../manifest/__mocks__/QueryFederations.mock';
 import MOCK_QUERY_LICENSES from '../manifest/__mocks__/QueryLicenses.mock';
@@ -11,14 +10,6 @@ import CreateGhostDialog from '../../forms/create_user/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-  },
-};
 
 // The form refuses to submit until the dropzone has loaded
 function DropzoneReady() {
@@ -36,7 +27,6 @@ async function renderFilledDialog(createGhost: jest.Mock) {
       <CreateGhostDialog open onClose={jest.fn()} />
     </View>,
     {
-      initialState: authenticatedState,
       session: authenticatedSession,
       graphql: [
         MOCK_QUERY_FEDERATIONS(),
