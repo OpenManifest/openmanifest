@@ -57,9 +57,25 @@ async function checkReachable(page, locator, label, route, viewport, failures) {
   }
 }
 
+/** The last row of the slots list can be scrolled to, lies inside the viewport and is what a click there would hit */
+async function checkLastSlotRow(page, route, viewport, failures) {
+  const rows = page.locator('[data-testid="slot-row"]');
+  if (!(await rows.count())) {
+    failures.push(`layout ${route}: no slot rows`);
+    return;
+  }
+  // The list virtualises its rows: scroll to the end so that the last one exists
+  await page.evaluate(() => {
+    const list = document.querySelector('[data-testid="slots"]');
+    if (list) list.scrollTop = list.scrollHeight;
+  });
+  await page.waitForTimeout(1000);
+  await checkReachable(page, rows.last(), 'the last slot row', route, viewport, failures);
+}
+
 /**
- * Layout check for the current route: nothing overflows the viewport horizontally, and every primary action
- * (`data-testid$="-primary-action"`) can be scrolled into view and is the element that receives a click there.
+ * Layout check for the current route: nothing overflows the viewport horizontally, and every visible primary
+ * action (`data-testid$="-primary-action"`) can be scrolled into view and is the element that receives a click there.
  */
 async function checkLayout(page, route, viewport, failures) {
   const scrollWidth = await page.evaluate(() => document.scrollingElement?.scrollWidth ?? 0);
@@ -70,6 +86,8 @@ async function checkLayout(page, route, viewport, failures) {
   const count = await actions.count();
   for (let i = 0; i < count; i += 1) {
     const action = actions.nth(i);
+    // Screens below the current one stay mounted (hidden) in the stack
+    if (!(await action.isVisible())) continue;
     await checkReachable(
       page,
       action,
@@ -112,8 +130,7 @@ async function run(browser, name, viewport) {
     await page.screenshot({ path: join(out, `${name}-signup.png`) });
     await page.goto(`${base}/login`, { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForTimeout(3000);
-    // TODO P5.5: the board and a load (last slot row
-    // reachable with 10 jumpers). P5.6: the configuration routes. P5.7: weather, wind and jump run. P5.8: board and
+    // TODO P5.6: the configuration routes. P5.7: weather, wind and jump run. P5.8: board and
     // load again at `html { font-size: 200% }`.
     await page.locator('input').nth(0).click({ force: true });
     await page.keyboard.type('owner@example.com');
@@ -130,6 +147,7 @@ async function run(browser, name, viewport) {
       failures.push(`expected /dropzone/manifest, got ${page.url()}`);
     }
     await page.screenshot({ path: join(out, `${name}-manifest.png`) });
+    await checkLayout(page, '/dropzone/manifest', viewport, failures);
 
     await page
       .getByText(/Load #1\b/)
@@ -140,11 +158,14 @@ async function run(browser, name, viewport) {
       failures.push(`expected /dropzone/load/<id>, got ${page.url()}`);
     }
     await page.screenshot({ path: join(out, `${name}-load.png`) });
+    await checkLayout(page, 'load', viewport, failures);
+    await checkLastSlotRow(page, 'load', viewport, failures);
+    await page.screenshot({ path: join(out, `${name}-load-end.png`) });
     const loadUrl = page.url();
 
     // The manifest context mounts the group sheet once: open it from the load's actions (the button is the speed dial
     // in the bottom right corner)
-    await pressAt(page, page.locator('body'), { x: viewport.width - 44, y: viewport.height - 128 });
+    await pressAt(page, page.getByTestId('load-actions-primary-action'));
     await page.waitForTimeout(1000);
     await page.getByText('Manifest group', { exact: true }).last().click({ force: true });
     await page.waitForTimeout(3000);

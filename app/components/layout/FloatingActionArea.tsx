@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
+import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const FLOATING_ACTION_MARGIN = 16;
@@ -17,6 +18,8 @@ export interface IFloatingActionAreaProps {
 export default function FloatingActionArea(props: IFloatingActionAreaProps) {
   const { children, testID } = props;
   const insets = useSafeAreaInsets();
+  // Inside a tab navigator the screen ends above the tab bar, which already covers the bottom inset
+  const bottomInset = React.useContext(BottomTabBarHeightContext) === undefined ? insets.bottom : 0;
 
   return (
     <View
@@ -25,13 +28,13 @@ export default function FloatingActionArea(props: IFloatingActionAreaProps) {
       style={[
         styles.container,
         {
-          paddingBottom: insets.bottom + FLOATING_ACTION_MARGIN,
+          paddingBottom: bottomInset + FLOATING_ACTION_MARGIN,
           paddingRight: insets.right + FLOATING_ACTION_MARGIN,
         },
       ]}
     >
       {/* The keyboard height includes the bottom inset, which the padding above already accounts for */}
-      <KeyboardStickyView offset={{ closed: 0, opened: insets.bottom }}>
+      <KeyboardStickyView offset={{ closed: 0, opened: bottomInset }}>
         {children}
       </KeyboardStickyView>
     </View>

@@ -14,17 +14,15 @@ import LoadMasterChip from 'app/components/chips/LoadMasterChip';
 import PilotChip from 'app/components/chips/PilotChip';
 import PlaneChip from 'app/components/chips/PlaneChip';
 
-import { View } from 'app/components/Themed';
 import { LoadState, Permission } from 'app/api/schema.d';
 
 import useRestriction from 'app/hooks/useRestriction';
 import { Divider } from 'react-native-paper';
 import { useNotifications } from 'app/providers/notifications';
-import { Screen } from 'app/components/layout';
+import ScreenContainer from 'app/components/layout/ScreenContainer';
 import ActionButton from './ActionButton';
 import Header from './Header';
 import InfoGrid from './InfoGrid';
-// import CardView from './views/CardView';
 import TableView from './views/TableView';
 import { useAppTheme } from 'app/theme';
 
@@ -126,8 +124,9 @@ function LoadScreen() {
     }
   }, [dialogs.manifestGroup, load]);
 
-  return (
-    <Screen fullWidth scrollable={Platform.OS !== 'web'}>
+  // The header scrolls with the rows: the slots list is the only scroll container of the screen
+  const header = (
+    <>
       <Header
         load={load || undefined}
         renderBadges={() => (
@@ -216,10 +215,14 @@ function LoadScreen() {
           ]}
         />
       </Header>
-      {/* <CardView {...{ load, loading, refetch, onSlotPress, onDeletePress: onDeleteSlot }} /> */}
       <Divider />
+    </>
+  );
+
+  return (
+    <ScreenContainer edges={['bottom']}>
       <TableView
-        scrollable={Platform.OS === 'web'}
+        ListHeaderComponent={header}
         {...{
           slots: load?.slots?.filter(Boolean) || [],
           load,
@@ -232,7 +235,7 @@ function LoadScreen() {
         }}
       />
       {load && isFocused ? <ActionButton load={load} /> : null}
-    </Screen>
+    </ScreenContainer>
   );
 }
 
