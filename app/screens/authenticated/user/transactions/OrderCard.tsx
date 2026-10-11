@@ -10,6 +10,7 @@ import {
 import { DropzoneUser } from 'app/api/schema.d';
 import { successColor } from 'app/constants/Colors';
 import UserAvatar from 'app/components/UserAvatar';
+import { formatCents } from 'app/utils/money';
 
 interface IOrder {
   order: OrderEssentialsFragment;
@@ -52,7 +53,7 @@ export default function OrderCard(props: IOrder) {
                   color: theme.colors.onSurface,
                 }}
               >
-                {`${isSelfBuyer ? '-$' : '$'}${order.amount.toFixed(2)}`}
+                {`${isSelfBuyer ? '-' : ''}${formatCents(order.amountCents)}`}
               </Text>
             )}
             left={() => (

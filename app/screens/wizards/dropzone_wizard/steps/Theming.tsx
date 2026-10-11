@@ -1,13 +1,14 @@
 import * as React from 'react';
+import { useController } from 'react-hook-form';
 import { View } from 'react-native';
 import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useDropzoneWizardFields } from '../useDropzoneWizardForm';
 import { PhonePreview, WebPreview } from 'app/components/theme_preview';
 import ColorPicker from 'app/components/input/colorpicker';
 
 function ThemingStep(props: IWizardStepProps) {
-  const state = useAppSelector((root) => root.forms.dropzone);
-  const dispatch = useAppDispatch();
+  const { control, setField } = useDropzoneWizardFields();
+  const { field, fieldState } = useController({ name: 'primaryColor', control });
 
   return (
     <Step {...props} title="Branding">
@@ -19,17 +20,17 @@ function ThemingStep(props: IWizardStepProps) {
             justifyContent: 'space-evenly',
           }}
         >
-          <PhonePreview primaryColor={state.fields.primaryColor.value || '#000000'} />
+          <PhonePreview primaryColor={field.value || '#000000'} />
 
-          <WebPreview primaryColor={state.fields.primaryColor.value || '#000000'} />
+          <WebPreview primaryColor={field.value || '#000000'} />
         </View>
 
         <ColorPicker
           title="Brand color"
           helperText="This color is used for active elements and calls to action"
-          error={state.fields.primaryColor.error}
-          onChange={(color) => dispatch(actions.forms.dropzone.setField(['primaryColor', color]))}
-          value={state.fields.primaryColor.value || '#000000'}
+          error={fieldState.error?.message}
+          onChange={(color) => setField('primaryColor', color)}
+          value={field.value || '#000000'}
         />
       </Fields>
     </Step>

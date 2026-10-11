@@ -6,7 +6,7 @@ import {
 } from 'app/api/operations';
 import { useLoginWithAppleMutation } from 'app/api/reflection';
 import { useNotifications } from 'app/providers/notifications';
-import { actions, useAppDispatch, useSession } from 'app/state';
+import { useSession } from 'app/state';
 import {
   AppleAuthenticationButton,
   AppleAuthenticationButtonProps,
@@ -24,7 +24,6 @@ export function useLoginWithApple(
   const expoPushToken = useSession((session) => session.expoPushToken);
   const setCredentials = useSession((session) => session.setCredentials);
   const [onLoginWithApple, mutation] = useLoginWithAppleMutation(opts);
-  const dispatch = useAppDispatch();
   const notify = useNotifications();
 
   const onLogin = React.useCallback(async () => {
@@ -44,7 +43,6 @@ export function useLoginWithApple(
         });
         if (data?.loginWithApple?.authenticatable && data?.loginWithApple?.credentials) {
           setCredentials(data.loginWithApple.credentials);
-          dispatch(actions.global.setUser(data.loginWithApple.authenticatable));
         }
       }
     } catch (e) {
@@ -53,7 +51,7 @@ export function useLoginWithApple(
         notify.error(e.message);
       }
     }
-  }, [dispatch, expoPushToken, notify, onLoginWithApple, setCredentials]);
+  }, [expoPushToken, notify, onLoginWithApple, setCredentials]);
   return [onLogin, mutation] as [() => Promise<void>, MutationResult<LoginWithFacebookMutation>];
 }
 

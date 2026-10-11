@@ -1,19 +1,10 @@
 import * as React from 'react';
 import { ManifestUserDocument } from 'app/api/reflection';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_ALLOWED_TICKET_TYPES from './__mocks__/QueryAllowedTicketTypes.mock';
 import { MOCK_QUERY_ALLOWED_JUMP_TYPES } from './__mocks__/QueryAllowedJumpTypes.mock';
 import ManifestUserDialog from '../../forms/manifest_user/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-  },
-};
 
 jest.setTimeout(30000);
 
@@ -42,7 +33,6 @@ describe('<ManifestUserDialog />', () => {
         onSuccess={jest.fn()}
       />,
       {
-        initialState: authenticatedState,
         session: authenticatedSession,
         graphql: [
           MOCK_QUERY_ALLOWED_JUMP_TYPES({ allowedForDropzoneUserIds: [55] }),
@@ -69,7 +59,7 @@ describe('<ManifestUserDialog />', () => {
 
     // Jump and ticket type are auto-selected once their queries resolve
     await waitFor(() => expect(screen.getByText('Freefly')).toBeTruthy(), { timeout: 10000 });
-    await waitFor(() => expect(screen.getAllByText('Height ($45)').length).toBeGreaterThan(0), {
+    await waitFor(() => expect(screen.getAllByText('Height ($45.00)').length).toBeGreaterThan(0), {
       timeout: 10000,
     });
 

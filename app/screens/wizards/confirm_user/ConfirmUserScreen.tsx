@@ -5,8 +5,7 @@ import { Avatar } from 'react-native-paper';
 import { successColor, warningColor } from '../../../constants/Colors';
 import LottieView from '../../../components/LottieView';
 import { useConfirmUserMutation } from '../../../api/reflection';
-import { actions, useAppDispatch, useSession } from '../../../state';
-import { User } from '../../../api/schema.d';
+import { useSession } from '../../../state';
 
 function ConfirmUserScreen() {
   const route = useRoute<{
@@ -15,7 +14,6 @@ function ConfirmUserScreen() {
 
     params?: { token?: string };
   }>();
-  const dispatch = useAppDispatch();
   const setCredentials = useSession((session) => session.setCredentials);
   const [confirmUser, mutation] = useConfirmUserMutation();
   const animation = React.useRef<LottieView>(null);
@@ -32,9 +30,6 @@ function ConfirmUserScreen() {
         .then(({ data, errors }) => {
           if (data?.userConfirmRegistrationWithToken?.credentials?.accessToken) {
             setCredentials(data.userConfirmRegistrationWithToken.credentials);
-            dispatch(
-              actions.global.setUser(data.userConfirmRegistrationWithToken.authenticatable as User)
-            );
             navigation.navigate('Limbo', { screen: 'DropzoneSelectScreen' });
           } else {
             setError(true);
@@ -44,7 +39,7 @@ function ConfirmUserScreen() {
           setError(true);
         });
     }
-  }, [confirmUser, dispatch, navigation, route.params?.token, setCredentials]);
+  }, [confirmUser, navigation, route.params?.token, setCredentials]);
 
   if (mutation.loading) {
     return (

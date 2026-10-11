@@ -7,7 +7,7 @@ import ProgressBar from 'app/components/ProgressBar';
 import SkeletonContent from 'app/components/Skeleton';
 import NoResults from 'app/components/NoResults';
 import { Permission } from 'app/api/schema.d';
-import { actions, useAppDispatch, useAppSelector, useSession } from 'app/state';
+import { useSession } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import { DropzoneUserEssentialsFragment, DropzoneUsersQueryVariables } from 'app/api/operations';
@@ -16,6 +16,8 @@ import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
 import { useUserNavigation } from '../useUserNavigation';
 import { useAppTheme } from 'app/theme';
+import { useUserSearch } from './search';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 function UserCardSkeleton() {
   const theme = useTheme();
@@ -77,8 +79,7 @@ export type UserListRoute = {
 
 export default function UsersScreen() {
   const { palette, theme } = useAppTheme();
-  const state = useAppSelector((root) => root.screens.users);
-  const dispatch = useAppDispatch();
+  const { searchText, searchVisible, setSearchVisible } = useUserSearch();
   const {
     dropzone: { dropzone },
     dialogs,
@@ -88,7 +89,7 @@ export default function UsersScreen() {
     variables: omitBy<DropzoneUsersQueryVariables>(
       {
         dropzoneId: dropzone?.id as string,
-        search: state.searchText,
+        search: searchText,
       },
       isEmpty
     ) as DropzoneUsersQueryVariables,
@@ -100,10 +101,10 @@ export default function UsersScreen() {
 
   const isFocused = useIsFocused();
   React.useEffect(() => {
-    if (state.isSearchVisible && !isFocused) {
-      dispatch(actions.screens.users.setSearchVisible(false));
+    if (searchVisible && !isFocused) {
+      setSearchVisible(false);
     }
-  }, [dispatch, isFocused, state.isSearchVisible]);
+  }, [isFocused, searchVisible, setSearchVisible]);
 
   const canCreateUser = useRestriction(Permission.CreateUser);
   const { width } = useWindowDimensions();
@@ -129,7 +130,7 @@ export default function UsersScreen() {
         onRefresh={() =>
           refetch({
             dropzoneId: currentDropzoneId?.toString(),
-            search: state.searchText,
+            search: searchText,
           })
         }
         keyExtractor={(item, idx) => `user-${item?.id || idx}-${idx}`}
@@ -200,6 +201,7 @@ export default function UsersScreen() {
 
       {canCreateUser && (
         <FAB
+          labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           small
           icon="plus"

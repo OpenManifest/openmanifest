@@ -5,7 +5,7 @@ repo: <https://github.com/OpenManifest/openmanifest-server/blob/staging/docs/ref
 
 ## 1. Navigation map
 
-Root stack branches are chosen from persisted Redux state (`app/screens/routes.tsx`). Paths are the deep-link paths from
+Root stack branches are chosen from the session store (`app/screens/routes.tsx`: credentials, current dropzone id). Paths are the deep-link paths from
 the linking config; tabs marked with a permission are hidden without it.
 
 ```mermaid
@@ -76,47 +76,54 @@ flowchart TD
 ```
 
 Overlays mounted inside screens (not routes): manifest-user sheet (`app/forms/manifest_user`), manifest-group sheet
-(`app/components/dialogs/ManifestGroup`, mounted only in `LoadScreen` — BUG-066), credits sheet (`app/forms/credits`),
+(`app/forms/manifest_group`, mounted once by `ManifestContextProvider`), credits sheet (`app/forms/credits`),
 image viewer, setup form sheets.
 
-## 2. State and data flow (current: Redux + Apollo)
+## 2. State and data flow (zustand + Apollo)
 
 ```mermaid
 flowchart LR
   subgraph Device["Device storage"]
-    AS[("AsyncStorage / localStorage<br/>persist:open-manifest.0.9.1")]
+    AS[("AsyncStorage / localStorage<br/>openmanifest.session.v1<br/>openmanifest.preferences.v1")]
+    SS[("expo-secure-store<br/>openmanifest.credentials<br/>(localStorage on web)")]
   end
 
-  subgraph Redux["Redux store (app/state)"]
-    G["global (persisted)<br/>credentials · currentDropzoneId<br/>currentUser* · currentDropzone* · permissions*<br/>theme · palette · expoPushToken"]
-    S["screens.*<br/>manifest · users · login · signup · dropzoneWizard"]
-    F["forms.*<br/>dropzone · dropzoneUser · rig · rigInspection ·<br/>rigInspectionTemplate · manifest · manifestGroup · user · weather"]
-    IV["imageViewer"]
+  subgraph Zustand["zustand stores (app/state, app/theme)"]
+    Session["useSession<br/>credentials · currentDropzoneId<br/>expoPushToken · currentRouteName"]
+    Prefs["usePreferences<br/>colorScheme"]
+    Over["useThemeOverrides<br/>primary (preview, not persisted)"]
   end
 
   subgraph Apollo["Apollo Client (app/api)"]
-    Cache[("InMemoryCache")]
+    Cache[("InMemoryCache<br/>users · dropzone · permissions · loads")]
     Links["links: authentication → errors → appSignal → split(http | actioncable)"]
   end
 
   API[["Rails GraphQL API<br/>/graphql · /subscriptions"]]
-  UI["Screens & components<br/>(useAppSelector / useAppDispatch,<br/>generated hooks, app/api/crud)"]
+  Theme["useAppTheme()<br/>theme · palette · isDark"]
+  UI["Screens & components<br/>(selectors on the stores, generated hooks,<br/>app/api/crud, react-hook-form forms)"]
+  Reset["resetSession()"]
 
-  G <-->|redux-persist| AS
-  UI -->|dispatch| G & S & F & IV
-  G & S & F & IV -->|useAppSelector| UI
+  Session <-->|"credentials only"| SS
+  Session <-->|"everything else"| AS
+  Prefs <--> AS
+  UI -->|actions| Session & Prefs & Over
+  Session & Prefs & Over --> UI
+  Prefs & Over --> Theme
+  Cache -->|"current dropzone colours"| Theme
+  Theme --> UI
   UI -->|useQuery / useMutation| Cache
   Cache --> UI
   Cache <--> Links
-  Links -->|"headers from global.credentials"| API
-  API -->|"rotated token headers → setCredentials"| G
+  Links -->|"headers from credentials"| API
   API -->|"loadCreated / loadUpdated / userUpdated"| Links
-  Cache -.->|"snapshots copied (deprecated)"| G
-  Links -.->|"auth error → global.logout (cache not cleared, BUG-069)"| G
+  Links -.->|"authentication error"| Reset
+  UI -->|"Log out"| Reset
+  Reset -->|"updateUser(pushToken: null), stop, clearStore"| Cache
+  Reset -->|"reset(): credentials, dropzone"| Session
 ```
 
-`*` deprecated snapshots of server data. Logout: `useLogout` aborts the shared `AbortController` (BUG-063), clears the
-Apollo store and resets `global` only (forms/screens keep state, BUG-069).
-
-Target after plan Phase 4: Apollo cache for all server data; zustand `useSession` (credentials in `expo-secure-store` on
-native) and `usePreferences`; react-hook-form for forms; no Redux.
+Server data is read from Apollo only (no copies of the current user, dropzone or permissions in client state). Forms are
+react-hook-form instances owned by their screen or dialog (`app/forms/<name>`), so they go away with it; shared
+dialogs live in the manifest context, `ProfileDialogsProvider` and `WeatherFormProvider`. Logging out and an expired
+session both go through `resetSession`; switching dropzone resets the Apollo store.

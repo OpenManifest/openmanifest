@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Settings } from 'luxon';
 import { Permission } from 'app/api/schema.d';
 import set from 'lodash/set';
 import cloneDeep from 'lodash/cloneDeep';
@@ -13,21 +14,12 @@ import MOCK_QUERY_LOADS from './__mocks__/QueryLoads.mock';
 import MOCK_QUERY_PLANES from './__mocks__/QueryPlane.mock';
 import MOCK_QUERY_DROPZONE_USERS from './__mocks__/QueryDropzoneUsers.mock';
 import mockSubscriptionLoadCreated from './__mocks__/SubscriptionLoadCreated.mock';
-import * as appRedux from '../../state';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 import ManifestScreen from '../../screens/authenticated/dropzone/manifest/ManifestScreen';
 
 describe('<ManifestScreen />', () => {
   it('should show LoadCards for every load', async () => {
-    const initialState = {
-      ...appRedux.initialState,
-      global: {
-        ...appRedux.initialState.global,
-        authenticated: true,
-      },
-    };
-
     const screen = render(<ManifestScreen />, {
       graphql: [
         MOCK_QUERY_DROPZONE(),
@@ -44,7 +36,6 @@ describe('<ManifestScreen />', () => {
         mockSubscriptionLoadCreated(),
       ],
       permissions: [Permission.ReadLoad, Permission.UpdateSlot],
-      initialState,
       session: authenticatedSession,
     });
 
@@ -59,13 +50,6 @@ describe('<ManifestScreen />', () => {
   });
 
   it('should show an empty message when no loads are available', async () => {
-    const initialState = {
-      ...appRedux.initialState,
-      global: {
-        ...appRedux.initialState.global,
-        authenticated: true,
-      },
-    };
     const screen = render(<ManifestScreen />, {
       graphql: [
         MOCK_QUERY_DROPZONE(),
@@ -82,7 +66,6 @@ describe('<ManifestScreen />', () => {
         mockSubscriptionLoadCreated(),
       ],
       permissions: [Permission.ReadLoad, Permission.UpdateSlot],
-      initialState,
       session: authenticatedSession,
     });
 
@@ -97,124 +80,45 @@ describe('<ManifestScreen />', () => {
       { timeout: 10000 }
     );
   });
-  /*
-  it('should not be possible to manifest if membership expired', async () => {
-    const initialState = {
-      ...appRedux.initialState,
-      global: {
-        ...appRedux.initialState.global,
-        authenticated: true,
-      },
-      screens: {
-        ...appRedux.initialState.screens,
-        manifest: {
-          ...appRedux.initialState.screens.manifest,
-          display: 'list',
-        },
-      },
-    };
-    const screen = render(<ManifestScreen />, {
-      graphql: [
-        MOCK_QUERY_DROPZONE({
-          currentUser: {
-            hasMembership: false,
-          },
-        }),
-        MOCK_QUERY_ALLOWED_TICKET_TYPES,
-        MOCK_QUERY_ALLOWED_JUMP_TYPES,
-        MOCK_QUERY_LOAD({}),
-      ],
-      permissions: ['createSlot'],
-      initialState,
-      session: authenticatedSession,
+
+  describe('the day of a Brisbane dropzone, seen from a device in UTC (BUG-068)', () => {
+    const originalNow = Settings.now;
+    const originalZone = Settings.defaultZone;
+    afterEach(() => {
+      Settings.now = originalNow;
+      Settings.defaultZone = originalZone;
     });
 
-    await waitFor(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      const [manifestButton] = screen.getAllByTestId('manifest-button');
-      await fireEvent.press(manifestButton);
+    const renderBoard = (date: string) =>
+      render(<ManifestScreen />, {
+        graphql: [
+          MOCK_QUERY_DROPZONE(),
+          MOCK_QUERY_ALLOWED_TICKET_TYPES(),
+          MOCK_QUERY_ALLOWED_JUMP_TYPES(),
+          MOCK_QUERY_FEDERATIONS(),
+          MOCK_QUERY_ROLES(),
+          MOCK_QUERY_LICENSES(),
+          MOCK_QUERY_LOADS({ date }),
+          MOCK_QUERY_PLANES(),
+          MOCK_QUERY_ALLOWED_JUMP_TYPES(),
+          MOCK_QUERY_DROPZONE_USERS({ permissions: [Permission.ActAsGca] }),
+          MOCK_QUERY_DROPZONE_USERS({ permissions: [Permission.ActAsPilot] }),
+          mockSubscriptionLoadCreated(),
+        ],
+        permissions: [Permission.ReadLoad, Permission.UpdateSlot],
+        session: authenticatedSession,
+      });
 
-      expect(screen.queryAllByTestId('manifest-form').length).toBe(0);
-      expect(screen.queryAllByTestId('snackbar-message').length).toBe(1);
-    });
-  });
+    it("shows the loads of the dropzone's day, not the device's", async () => {
+      // 23:00 UTC on 8 October: still the 8th on the device, already 09:00 on the 9th in Brisbane
+      Settings.defaultZone = 'UTC';
+      Settings.now = () => new Date('2026-10-08T23:00:00Z').valueOf();
 
-  it('shouldnt be possible to manifest without funds when useCreditSystem = true', async () => {
-    const initialState = {
-      ...appRedux.initialState,
-      global: {
-        ...appRedux.initialState.global,
-        authenticated: true,
-      },
-      screens: {
-        ...appRedux.initialState.screens,
-        manifest: {
-          ...appRedux.initialState.screens.manifest,
-          display: 'list',
-        },
-      },
-    };
-    const screen = render(<ManifestScreen />, {
-      graphql: [
-        MOCK_QUERY_DROPZONE({
-          currentUser: {
-            hasCredits: false,
-          },
-        }),
-        MOCK_QUERY_ALLOWED_TICKET_TYPES,
-        MOCK_QUERY_ALLOWED_JUMP_TYPES,
-        MOCK_QUERY_LOAD({}),
-      ],
-      permissions: ['createSlot'],
-      initialState,
-      session: authenticatedSession,
-    });
+      const screen = renderBoard('2026-10-09');
 
-    await waitFor(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      const [manifestButton] = screen.getAllByTestId('manifest-button');
-      expect(screen.queryAllByTestId('manifest-form').length).not.toBeVisible();
-      await fireEvent.press(manifestButton);
-      const notifications = await screen.findAllByTestId('snackbar-message');
-      expect(notifications.length).toBe(1);
-      expect(screen.queryAllByTestId('manifest-form').length).not.toBeVisible();
+      await waitFor(() => expect(screen.queryAllByTestId('load-card').length).toBe(2), {
+        timeout: 10000,
+      });
     });
   });
-
-  it('should open a bottom sheet or dialog if group manifest button is clicked', async () => {
-    const initialState = {
-      ...appRedux.initialState,
-      global: {
-        ...appRedux.initialState.global,
-        authenticated: true,
-      },
-      screens: {
-        ...appRedux.initialState.screens,
-        manifest: {
-          ...appRedux.initialState.screens.manifest,
-          display: 'list',
-        },
-      },
-    };
-    const screen = render(<ManifestScreen />, {
-      graphql: [
-        MOCK_QUERY_DROPZONE(),
-        MOCK_QUERY_ALLOWED_TICKET_TYPES,
-        MOCK_QUERY_ALLOWED_JUMP_TYPES,
-        MOCK_QUERY_LOAD({}),
-      ],
-      permissions: ['createUserSlot'],
-      initialState,
-      session: authenticatedSession,
-    });
-
-    await waitFor(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      const [manifestGroupButton] = screen.getAllByTestId('manifest-group-button');
-      await fireEvent.press(manifestGroupButton);
-
-      expect(screen.queryAllByTestId('manifest-group-sheet').length).toBe(1);
-    });
-  });
-  */
 });

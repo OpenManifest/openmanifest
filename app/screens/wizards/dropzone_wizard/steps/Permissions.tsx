@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { capitalize } from 'lodash';
 import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
-import { useAppSelector } from 'app/state';
+import { useWatch } from 'react-hook-form';
+import { useDropzoneWizardFields } from '../useDropzoneWizardForm';
 import { Permission } from 'app/api/schema.d';
 import PermissionListItem from 'app/components/permissions/PermissionListItem';
 import { FlatList } from 'react-native';
@@ -16,18 +17,19 @@ interface IPermissionWizardScreen extends IWizardStepProps {
 
 function PermissionWizardScreen(props: IPermissionWizardScreen) {
   const { permission, description, ...rest } = props;
-  const dropzoneForm = useAppSelector((root) => root.forms.dropzone);
+  const { control } = useDropzoneWizardFields();
+  const dropzoneId = useWatch({ control, name: 'id' });
   const [queryRoles, { data, loading, called }] = useDropzonePermissionsLazyQuery();
 
   React.useEffect(() => {
-    if (dropzoneForm.original?.id) {
+    if (dropzoneId) {
       queryRoles({
         variables: {
-          id: dropzoneForm.original.id,
+          id: dropzoneId,
         },
       });
     }
-  }, [dropzoneForm.original, queryRoles]);
+  }, [dropzoneId, queryRoles]);
 
   return (
     <Step {...rest}>

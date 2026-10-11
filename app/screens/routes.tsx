@@ -4,7 +4,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
 import NotFoundScreen from './NotFoundScreen';
-import { useAppSelector } from '../state/store';
 import { useSession } from '../state';
 
 import Limbo, { LimboRoutes } from './limbo/routes';
@@ -138,8 +137,8 @@ declare global {
 }
 
 export default function RootNavigator() {
-  const globalState = useAppSelector((root) => root.global);
   const credentials = useSession((session) => session.credentials);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   return (
     <Stack.Navigator
@@ -151,7 +150,7 @@ export default function RootNavigator() {
       }}
     >
       {credentials ? (
-        globalState.currentDropzone ? (
+        currentDropzoneId ? (
           <Stack.Screen name="Authenticated" component={LeftDrawer} />
         ) : (
           <Stack.Screen name="Limbo" component={Limbo} />

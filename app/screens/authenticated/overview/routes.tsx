@@ -1,7 +1,7 @@
 import { HeaderStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 
 import * as React from 'react';
-import { useAppSelector, useSession } from 'app/state';
+import { useSession } from 'app/state';
 import AppBar from 'app/components/appbar/AppBar';
 import OverviewScreen from './AdminOverview';
 import DashboardScreen from './DropzoneOverview';
@@ -14,13 +14,13 @@ export type OverviewRoutes = {
 const Overview = createStackNavigator<OverviewRoutes>();
 
 export default function OverviewTab() {
-  const globalState = useAppSelector((root) => root.global);
   const credentials = useSession((session) => session.credentials);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   return (
     <Overview.Navigator
       screenOptions={{
-        headerShown: !!(credentials && globalState.currentDropzone),
+        headerShown: !!(credentials && currentDropzoneId),
         header: (props) => <AppBar {...props} />,
         headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
         cardStyle: {

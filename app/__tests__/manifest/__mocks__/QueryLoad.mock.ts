@@ -13,6 +13,7 @@ import createMockedQuery from './createMockedQuery.mock';
 export const loadEssentials: LoadEssentialsFragment = {
   __typename: 'Load',
   id: '1',
+  lockVersion: 0,
   name: 'Test Load',
   createdAt: new Date().toISOString(),
   dispatchAt: null,
@@ -108,8 +109,9 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
         {
           rig: null,
           __typename: 'Slot',
+          lockVersion: 0,
           id: '1',
-          cost: 100,
+          costCents: 10000,
           createdAt: new Date().toISOString(),
           exitWeight: 100,
           passengerName: null,
@@ -121,7 +123,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
             allowManifestingSelf: true,
             __typename: 'TicketType',
             id: '1',
-            cost: 10,
+            costCents: 1000,
             name: 'Height',
             altitude: 14000,
             isTandem: false,
@@ -139,8 +141,9 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
         {
           rig: null,
           __typename: 'Slot',
+          lockVersion: 0,
           id: '2',
-          cost: 100,
+          costCents: 10000,
           createdAt: new Date().toISOString(),
           exitWeight: 70,
           passengerName: null,
@@ -163,7 +166,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
             __typename: 'TicketType',
             id: '2',
             allowManifestingSelf: true,
-            cost: 10,
+            costCents: 1000,
             name: 'Hop n Pop',
             altitude: 4000,
             isTandem: false,
@@ -180,8 +183,9 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
         },
         {
           rig: null,
-          cost: 100,
+          costCents: 10000,
           __typename: 'Slot',
+          lockVersion: 0,
           id: '3',
           groupNumber: 0,
           createdAt: new Date().toISOString(),
@@ -206,12 +210,12 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           ticketType: {
             __typename: 'TicketType',
             id: '3',
-            cost: 10,
+            costCents: 1000,
             allowManifestingSelf: true,
             name: 'Height',
             altitude: 14000,
             isTandem: false,
-            extras: [{ id: '1', name: 'Outside camera', cost: 120 }],
+            extras: [{ id: '1', name: 'Outside camera', costCents: 12000 }],
           },
 
           jumpType: {

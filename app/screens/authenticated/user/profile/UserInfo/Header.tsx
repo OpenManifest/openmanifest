@@ -7,7 +7,7 @@ import { openURL } from 'expo-linking';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
-import { actions, useAppDispatch } from 'app/state';
+import { useProfileDialogs } from '../ProfileDialogs';
 import startCase from 'lodash/startCase';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 import UserAvatar from 'app/components/UserAvatar';
@@ -32,7 +32,7 @@ export default function UserHeader(props: IUserHeader) {
   const { theme, palette } = useAppTheme();
   const [isContactOpen, setContactOpen] = React.useState<boolean>(false);
   const canUpdateUser = useRestriction(Permission.UpdateUser);
-  const dispatch = useAppDispatch();
+  const { editMembership } = useProfileDialogs();
 
   const textColor = variant === 'light' ? theme.colors.surface : theme.colors.onSurface;
   const primaryDark = color(theme.colors.primary).darken(0.3).hex();
@@ -91,7 +91,7 @@ export default function UserHeader(props: IUserHeader) {
               onPress={() => {
                 setContactOpen(false);
                 if (canUpdateUser && dropzoneUser) {
-                  dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser));
+                  editMembership();
                 }
               }}
               icon="card-account-details-star-outline"

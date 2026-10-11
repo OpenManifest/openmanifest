@@ -1,14 +1,18 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet, ScrollViewProps, useWindowDimensions } from 'react-native';
+import { ScrollView, StyleSheet, ScrollViewProps } from 'react-native';
 import { useAppTheme } from 'app/theme';
 
 interface IScrollableScreen extends ScrollViewProps {
   children: React.ReactNode;
+  /** Leaves room below the content for a floating action button */
+  hasFab?: boolean;
 }
+/** Room for a FAB (56) and its margins */
+const FAB_CLEARANCE = 96;
+
 export default React.forwardRef<ScrollView, IScrollableScreen>((props, ref) => {
-  const { height } = useWindowDimensions();
   const { theme } = useAppTheme();
-  const { style, children, contentContainerStyle, ...rest } = props;
+  const { style, children, contentContainerStyle, hasFab = false, ...rest } = props;
 
   return (
     <ScrollView
@@ -17,14 +21,10 @@ export default React.forwardRef<ScrollView, IScrollableScreen>((props, ref) => {
       keyboardDismissMode="on-drag"
       keyboardShouldPersistTaps="handled"
       contentInsetAdjustmentBehavior="always"
-      style={[
-        styles.container,
-        { backgroundColor: theme.colors.surface, height: height - 56 * 2 },
-        style,
-      ]}
+      style={[styles.container, { backgroundColor: theme.colors.surface }, style]}
       contentContainerStyle={[
         styles.content,
-        { backgroundColor: theme.colors.background },
+        { backgroundColor: theme.colors.background, paddingBottom: hasFab ? FAB_CLEARANCE : 50 },
         contentContainerStyle,
       ]}
     >
@@ -41,6 +41,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: 'flex-start',
     flexGrow: 1,
-    paddingBottom: 50,
   },
 });

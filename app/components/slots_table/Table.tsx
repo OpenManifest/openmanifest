@@ -10,93 +10,141 @@ export interface ISlotsTableProps {
   load?: LoadDetailsFragment | null;
   loading?: boolean;
   fields?: SlotFields[];
-  scrollable?: boolean;
   onDeletePress(slot: SlotDetailsFragment): void;
   onSlotPress(slot: SlotDetailsFragment): void;
   onSlotGroupPress(slots: SlotDetailsFragment[]): void;
   onAvailableSlotPress(): void;
 }
-export default function SlotsTable(props: ISlotsTableProps) {
-  const {
-    load,
-    fields,
-    onDeletePress,
-    scrollable = false,
-    onAvailableSlotPress,
-    onSlotGroupPress,
-    onSlotPress,
-  } = props;
 
-  console.log(fields);
+export interface ISlotsListProps extends ISlotsTableProps {
+  /** Rendered above the column headings, scrolling with the rows */
+  ListHeaderComponent?: React.ReactElement | null;
+}
+
+/** One entry per slot of the load: the jumper, or null for a free slot */
+function useSlotEntries(load?: LoadDetailsFragment | null) {
+  return React.useMemo(
+    () =>
+      Array.from({ length: load?.maxSlots || 0 }).map(
+        (_, index) => load?.slots?.[index] || null
+      ) as (SlotDetailsFragment | null)[],
+    [load?.maxSlots, load?.slots]
+  );
+}
+
+function ColumnHeadings({ fields }: Pick<ISlotsTableProps, 'fields'>) {
+  return (
+    <DataTable.Header style={styles.headings}>
+      <DataTable.Title style={rowStyles.avatarCell}>{null}</DataTable.Title>
+      <DataTable.Title style={rowStyles.nameCell}>
+        <Text style={styles.th}>Name</Text>
+      </DataTable.Title>
+      {fields?.includes(SlotFields.License) && (
+        <DataTable.Title numeric style={rowStyles.licenseCell}>
+          <Text style={styles.th}>License</Text>
+        </DataTable.Title>
+      )}
+      {fields?.includes(SlotFields.Rig) && (
+        <DataTable.Title numeric style={rowStyles.rigCell}>
+          <Text style={styles.th}>Equipment</Text>
+        </DataTable.Title>
+      )}
+      {fields?.includes(SlotFields.WingLoading) && (
+        <DataTable.Title numeric style={rowStyles.wingLoadingCell}>
+          <Text style={styles.th}>Wing Loading</Text>
+        </DataTable.Title>
+      )}
+      {!fields ||
+        (fields?.includes(SlotFields.JumpType) && (
+          <DataTable.Title numeric style={rowStyles.jumpTypeCell}>
+            <Text style={styles.th}>Jump type</Text>
+          </DataTable.Title>
+        ))}
+      {fields?.includes(SlotFields.TicketType) && (
+        <DataTable.Title numeric style={rowStyles.ticketCell}>
+          <Text style={styles.th}>Ticket</Text>
+        </DataTable.Title>
+      )}
+      {!fields ||
+        (fields?.includes(SlotFields.Altitude) && (
+          <DataTable.Title numeric style={rowStyles.altitudeCell}>
+            <Text style={styles.th}>Altitude</Text>
+          </DataTable.Title>
+        ))}
+    </DataTable.Header>
+  );
+}
+
+function SlotRow(props: ISlotsTableProps & { slot: SlotDetailsFragment | null; index: number }) {
+  const { slot, index, load, fields, ...handlers } = props;
+  const { onDeletePress, onSlotGroupPress, onSlotPress, onAvailableSlotPress } = handlers;
+
+  return !slot || !load ? (
+    <AvailableRow {...{ onPress: onAvailableSlotPress }} index={index} />
+  ) : (
+    <UserRow {...{ fields, slot, load, onDeletePress, onSlotGroupPress, onSlotPress, index }} />
+  );
+}
+
+/**
+ * Column headings and one row per slot, laid out in place (no scrolling of its own): for tables inside cards and other
+ * content that scrolls.
+ */
+export default function SlotsTable(props: ISlotsTableProps) {
+  const { load, fields } = props;
+  const entries = useSlotEntries(load);
 
   return (
-    <Surface style={scrollable ? { height: '100%' } : undefined}>
-      <DataTable style={scrollable ? { height: '100%', paddingBottom: 80 } : undefined}>
-        <DataTable.Header style={{ width: '100%' }}>
-          <DataTable.Title style={rowStyles.avatarCell}>{null}</DataTable.Title>
-          <DataTable.Title style={rowStyles.nameCell}>
-            <Text style={styles.th}>Name</Text>
-          </DataTable.Title>
-          {fields?.includes(SlotFields.License) && (
-            <DataTable.Title numeric style={rowStyles.licenseCell}>
-              <Text style={styles.th}>License</Text>
-            </DataTable.Title>
-          )}
-          {fields?.includes(SlotFields.Rig) && (
-            <DataTable.Title numeric style={rowStyles.rigCell}>
-              <Text style={styles.th}>Equipment</Text>
-            </DataTable.Title>
-          )}
-          {fields?.includes(SlotFields.WingLoading) && (
-            <DataTable.Title numeric style={rowStyles.wingLoadingCell}>
-              <Text style={styles.th}>Wing Loading</Text>
-            </DataTable.Title>
-          )}
-          {!fields ||
-            (fields?.includes(SlotFields.JumpType) && (
-              <DataTable.Title numeric style={rowStyles.jumpTypeCell}>
-                <Text style={styles.th}>Jump type</Text>
-              </DataTable.Title>
-            ))}
-          {fields?.includes(SlotFields.TicketType) && (
-            <DataTable.Title numeric style={rowStyles.ticketCell}>
-              <Text style={styles.th}>Ticket</Text>
-            </DataTable.Title>
-          )}
-          {!fields ||
-            (fields?.includes(SlotFields.Altitude) && (
-              <DataTable.Title numeric style={rowStyles.altitudeCell}>
-                <Text style={styles.th}>Altitude</Text>
-              </DataTable.Title>
-            ))}
-        </DataTable.Header>
-        <FlatList
-          data={Array.from({ length: load?.maxSlots || 0 })?.map(
-            (_, index) => load?.slots?.[index] || null
-          )}
-          keyExtractor={(item, index) => item?.id || `available-${index}`}
-          renderItem={({ item: slot, index }) =>
-            !slot || !load ? (
-              <AvailableRow
-                {...{ onPress: onAvailableSlotPress }}
-                key={`slot-available-${index}`}
-                index={index}
-              />
-            ) : (
-              <UserRow
-                {...{ fields, slot, load, onDeletePress, onSlotGroupPress, onSlotPress, index }}
-                key={`slot-${slot.id}`}
-              />
-            )
-          }
-        />
+    <Surface>
+      <DataTable>
+        <ColumnHeadings {...{ fields }} />
+        {entries.map((slot, index) => (
+          <SlotRow {...props} key={slot?.id || `available-${index}`} {...{ slot, index }} />
+        ))}
       </DataTable>
     </Surface>
+  );
+}
+
+/** The slots as a list that is the scroll container of its screen, with the screen's header scrolling along */
+export function SlotsList(props: ISlotsListProps) {
+  const { load, fields, ListHeaderComponent } = props;
+  const entries = useSlotEntries(load);
+  const heading = React.useMemo(
+    () => (
+      <>
+        {ListHeaderComponent}
+        <ColumnHeadings {...{ fields }} />
+      </>
+    ),
+    [ListHeaderComponent, fields]
+  );
+
+  return (
+    <FlatList
+      testID="slots"
+      style={styles.list}
+      contentContainerStyle={styles.listContent}
+      data={entries}
+      keyExtractor={(item, index) => item?.id || `available-${index}`}
+      ListHeaderComponent={heading}
+      renderItem={({ item: slot, index }) => <SlotRow {...props} {...{ slot, index }} />}
+    />
   );
 }
 
 const styles = StyleSheet.create({
   th: {
     fontWeight: 'bold',
+  },
+  headings: {
+    width: '100%',
+  },
+  list: {
+    flex: 1,
+  },
+  listContent: {
+    // Room for the floating action button below the last row
+    paddingBottom: 96,
   },
 });

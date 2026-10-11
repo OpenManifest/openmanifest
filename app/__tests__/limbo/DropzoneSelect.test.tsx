@@ -1,22 +1,17 @@
 import * as React from 'react';
-import { DropzonesDocument } from 'app/api/reflection';
+import { DropzonesDocument, JoinDropzoneDocument } from 'app/api/reflection';
 import { DropzonesProvider } from 'app/api/crud';
 import { dropzoneExtensive } from 'app/__fixtures__/dropzone.fixture';
-import * as appRedux from '../../state';
 import { useSession } from '../../state';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import DropzonesScreen from '../../screens/limbo/dropzone_select/DropzonesScreen';
 import { credentials } from 'app/__fixtures__/session.fixture';
 
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-  },
+type DropzoneNode = Omit<typeof dropzoneExtensive, 'currentUser'> & {
+  currentUser: typeof dropzoneExtensive.currentUser | null;
 };
 
-const dropzonesMock = (nodes: (typeof dropzoneExtensive)[]) => ({
+const dropzonesMock = (nodes: DropzoneNode[]) => ({
   request: { query: DropzonesDocument, operationName: 'Dropzones', variables: {} },
   result: {
     data: {
@@ -29,15 +24,14 @@ const dropzonesMock = (nodes: (typeof dropzoneExtensive)[]) => ({
   },
 });
 
-function renderScreen(nodes: (typeof dropzoneExtensive)[]) {
+function renderScreen(nodes: DropzoneNode[], extraMocks: unknown[] = []) {
   return render(
     <DropzonesProvider>
       <DropzonesScreen />
     </DropzonesProvider>,
     {
-      initialState: authenticatedState,
       session: { credentials },
-      graphql: [dropzonesMock(nodes)],
+      graphql: [dropzonesMock(nodes), ...(extraMocks as never[])],
     }
   );
 }
@@ -62,7 +56,64 @@ describe('<DropzonesScreen />', () => {
     fireEvent.press(card);
 
     expect(useSession.getState().currentDropzoneId).toBe('7');
-    expect(screen.store.getState().global.currentDropzone?.name).toBe('Alpha');
+  });
+
+  describe('a dropzone the user has not joined', () => {
+    const joinMock = (result: Record<string, unknown> | jest.Mock) => ({
+      request: {
+        query: JoinDropzoneDocument,
+        operationName: 'JoinDropzone',
+        variables: { dropzone: '8' },
+      },
+      result:
+        typeof result === 'function'
+          ? result
+          : { data: { __typename: 'Mutation', joinDropzone: result } },
+    });
+
+    it('joins it before it becomes the current dropzone', async () => {
+      const joined = jest.fn(() => ({
+        data: {
+          __typename: 'Mutation',
+          joinDropzone: {
+            __typename: 'JoinDropzonePayload',
+            dropzoneUser: { __typename: 'DropzoneUser', id: '99' },
+            errors: null,
+            fieldErrors: null,
+          },
+        },
+      }));
+      const screen = renderScreen(
+        [{ ...dropzoneExtensive, id: '8', name: 'Newcomer', currentUser: null }],
+        [joinMock(joined)]
+      );
+
+      fireEvent.press(await waitFor(() => screen.getByText('Newcomer')));
+
+      await waitFor(() => expect(useSession.getState().currentDropzoneId).toBe('8'));
+      expect(joined).toHaveBeenCalledTimes(1);
+    });
+
+    it('is not selected when joining is refused', async () => {
+      const screen = renderScreen(
+        [{ ...dropzoneExtensive, id: '8', name: 'Newcomer', currentUser: null }],
+        [
+          joinMock({
+            __typename: 'JoinDropzonePayload',
+            dropzoneUser: null,
+            errors: ['This dropzone cannot be joined'],
+            fieldErrors: null,
+          }),
+        ]
+      );
+
+      fireEvent.press(await waitFor(() => screen.getByText('Newcomer')));
+
+      await waitFor(() => expect(screen.getByText('Newcomer')).toBeTruthy());
+      // Give the mutation time to answer before checking that nothing was selected
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      expect(useSession.getState().currentDropzoneId).toBeNull();
+    });
   });
 
   it('shows an empty state when there are no dropzones', async () => {
