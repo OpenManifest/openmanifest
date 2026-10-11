@@ -1,9 +1,22 @@
 # UI/UX modernisation plan
 
 Status: **approved 2026-10-11** (all decisions as recommended; D-UI10 and D-UI11 amended below). The implementation
-plan is **Phase U** in `backend:docs/MODERNISATION_PLAN.md` (tasks UB.1–UB.4 and U0.1–U7.5), which executor sessions pick
+plan is **Phase U** in `backend:docs/MODERNISATION_PLAN.md` (tasks UB.1–UB.3 and U0.1–U6.5, interleaved with Phase 7), which executor sessions pick
 up one task at a time. Written 2026-10-11 against `staging` at `dcc46d1`
 (Expo SDK 57.0.27, React Native 0.86.3, React 19.2.3, react-native-paper 5.15.3 with the MD2 theme).
+
+**Merged with Phase 7 on 2026-10-11.** The backend plan's Execution order is authoritative where it differs from
+§9–§11 and the roadmap below:
+- D-UI6's vocabulary is replaced by D5 (rename in place, `Load` keeps its name) and GENERALISATION §3/§13; code uses
+  `Operator`, `Membership`, `Vehicle`, and users see the operator's terms.
+- i18n reads the operator's terminology from the start (U0.6, after the templates in P7.7) instead of bundled profiles.
+- This document's Phase 6 (terminology finish, units, route aliases) is covered by Phase 7 (P7.12 units and currency,
+  P7.20 enforcement; no aliases, P7.4 renames routes) and is dropped; this document's Phase 7 (hardening) is U6.
+- The board, load, picker, Today, People and Setup screens (U3–U5) are built after Phase 7's generic model
+  (P7.8–P7.17: destinations, several vehicles per load, crew roles, call schedule, certifications, equipment, escorts,
+  eligibility), so they are built once for it.
+- §11's backend asks: eligibility with reasons is P7.16, last slot and call time are UB.3, call presets are P7.11.
+
 Mockups: <https://claude.ai/artifact/Mdiri5pZsNQ8qEBRtR3jdZ> (private until you share it). Screenshots behind the audit are in
 [`docs/ui-audit/`](ui-audit/). Evidence for every number is reproducible with the commands in Appendix A.
 
@@ -23,7 +36,7 @@ Approved by Victor on 2026-10-11 as written, with the two amendments marked **De
 | D-UI3 | **Brand direction**: neutral chrome, the operator's colour for accents and primary actions (as the app already does per dropzone), contrast guaranteed by derivation. The built-in default colour changes from the current red (`#FF1414`, `app/constants/Colors.ts`, 3.9:1 on white) to the navy used in the demo dropzone (`#1D3557`). | Yes. | Keep red as the default; it then needs a darker shade for text and for white-on-red buttons (the derivation handles it, at some cost in vividness). |
 | D-UI4 | **Platform priorities**: web desktop and tablet are first-class for staff and management; native phones for jumpers, instructors and pilots; native tablets follow the web tablet layout. | Yes. This is an assumption: I found no usage data, only that the code has a web build with drag-and-drop and a manifest desk's needs (1.1). | If staff are mostly on phones, Phase 3 builds the phone board first and the desktop board second. |
 | D-UI5 | **Start client-side i18n now**, with the skydiving terms bundled in the app as the default `terms` namespace, without waiting for D5 (backend industry profiles). Each screen is converted in the phase that redesigns it, so no screen is touched twice. | Yes. It does not change what skydiving users see, and it makes the later backend profile a data swap. | Then Phases 3–5 keep hard-coded English and Phase 6 becomes a second pass over every screen (about 2.5× the string work). |
-| D-UI6 | **Generic vocabulary** for the profile layer: Trip (load), Vehicle (aircraft), Place (slot), Participant (jumper), Departure call (call), Destination (altitude on a ticket). Matches `GENERALISATION.md` §2. | Yes. | Give me the words; they are data, not code. |
+| D-UI6 | **Superseded by D5 (see the note above).** ~~Generic vocabulary~~ for the profile layer: Trip (load), Vehicle (aircraft), Place (slot), Participant (jumper), Departure call (call), Destination (altitude on a ticket). Matches `GENERALISATION.md` §2. | Yes. | Give me the words; they are data, not code. |
 | D-UI7 | **Scope cuts**: drop Facebook login (unverifiable, `login/form/FacebookButton*.tsx`); defer the circular jump-run dial (`input/jump_run_select/*`, 700 lines) and replace it with a numeric heading field for now; keep Apple login. | Yes to all three. | Each costs about one small task to keep. |
 | D-UI8 | **System fonts** (San Francisco, Roboto, Segoe UI) instead of the bundled Roboto weights (`theme/palette.ts`). | Yes: smaller bundle, correct font scaling, tabular figures for countdowns and money. | Keep Roboto; nothing else changes. |
 | D-UI9 | **Small backend asks in parallel** (Section 11): per-member eligibility reasons on a load, a member's last slot, call presets from the profile. All additive. | Yes. | The picker shows the fields the API already has (`hasLicense`, `hasMembership`, `hasRigInspection`, `hasReserveInDate`, `hasCredits`) and no reasons or last-jump defaults. |
