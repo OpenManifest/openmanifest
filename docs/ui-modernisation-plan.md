@@ -1,6 +1,8 @@
 # UI/UX modernisation plan
 
-Status: **proposal for approval** (planning only, no code changed). Written 2026-10-11 against `staging` at `dcc46d1`
+Status: **approved 2026-10-11** (all decisions as recommended; D-UI10 and D-UI11 amended below). The implementation
+plan is **Phase U** in `backend:docs/MODERNISATION_PLAN.md` (tasks UB.1–UB.4 and U0.1–U7.5), which executor sessions pick
+up one task at a time. Written 2026-10-11 against `staging` at `dcc46d1`
 (Expo SDK 57.0.27, React Native 0.86.3, React 19.2.3, react-native-paper 5.15.3 with the MD2 theme).
 Mockups: <https://claude.ai/artifact/Mdiri5pZsNQ8qEBRtR3jdZ> (private until you share it). Screenshots behind the audit are in
 [`docs/ui-audit/`](ui-audit/). Evidence for every number is reproducible with the commands in Appendix A.
@@ -12,7 +14,7 @@ Scope is the client. The backend was read only where it settles roles, permissio
 
 ## Decisions for Victor
 
-Approve all of these as written and the roadmap below can start unchanged. Each says what I would do and what changes if you disagree.
+Approved by Victor on 2026-10-11 as written, with the two amendments marked **Decided**.
 
 | # | Decision | My default | If you say no |
 |---|---|---|---|
@@ -25,8 +27,8 @@ Approve all of these as written and the roadmap below can start unchanged. Each 
 | D-UI7 | **Scope cuts**: drop Facebook login (unverifiable, `login/form/FacebookButton*.tsx`); defer the circular jump-run dial (`input/jump_run_select/*`, 700 lines) and replace it with a numeric heading field for now; keep Apple login. | Yes to all three. | Each costs about one small task to keep. |
 | D-UI8 | **System fonts** (San Francisco, Roboto, Segoe UI) instead of the bundled Roboto weights (`theme/palette.ts`). | Yes: smaller bundle, correct font scaling, tabular figures for countdowns and money. | Keep Roboto; nothing else changes. |
 | D-UI9 | **Small backend asks in parallel** (Section 11): per-member eligibility reasons on a load, a member's last slot, call presets from the profile. All additive. | Yes. | The picker shows the fields the API already has (`hasLicense`, `hasMembership`, `hasRigInspection`, `hasReserveInDate`, `hasCredits`) and no reasons or last-jump defaults. |
-| D-UI10 | **CI cost**: Playwright (web, 4 widths, axe) on every PR; Android emulator flows (Maestro) nightly, not per PR. | Yes. | Per-PR Android means about 8–10 extra CI minutes each; nightly only means layout regressions on Android surface a day later. |
-| D-UI11 | **Offline**: the plan assumes a connection (the app is real-time over ActionCable and has no offline queue). Is a dropzone with poor signal a real case you want designed for? | Assume no. | If yes, offline manifesting becomes its own project (queued mutations, conflict handling with `lockVersion`); it is not in this plan. |
+| D-UI10 | **CI cost and test cadence** | **Decided:** slow suites run per batch, not per change. Every PR runs the Playwright *smoke* project (two widths, light, the routes it touched). The full Playwright matrix (four widths, light/dark, two profiles, 200 % text, visual regression) and the Android emulator flows (Maestro) run only in each batch's checkpoint task and weekly on `staging`. iOS is covered by owner device checks. | — |
+| D-UI11 | **Offline and office-only operation** | **Decided:** no offline mode. A dropzone can switch off self-manifesting (`allowSelfManifest`, default on): members still see the board, Today and their wallet, but only staff add, move or remove people, and everything can be run from the office. Built in UB.1; UB.2 closes the one office gap found (staff could not record a member's rig). | — |
 
 ---
 
@@ -227,6 +229,7 @@ Principles, each tied to a workflow in 1.1. The mockups show them.
 10. **Words come from the operator.** No domain noun is hard-coded in a component; skydiving keeps its native feel through the profile (formatters such as "14k" and "20 minute call"), not through special cases in the UI.
 11. **Brand is an accent.** Neutral chrome, the operator's colour for primary actions and active states, never for text on a surface it cannot reach 4.5:1 on.
 12. **One data model, two shells.** A phone is a task stack; a desktop is a workspace of panes. Same components, same permissions, same URLs.
+13. **Everything can be run from the office.** Every action a member can take for themselves has a staff equivalent on the desktop (manifest, move, take off, credit, licence, membership, rigs, walk-in members), and a dropzone can switch member self-service off (D-UI11).
 
 ---
 
@@ -398,7 +401,7 @@ Goal: the Android layout class of bugs (BUG-070…078) cannot come back unnotice
 | **Visual regression** | the gallery and six screens | Playwright `toHaveScreenshot` with per-platform baselines in the repo, 0.2% pixel tolerance, masked clocks and countdowns | web only per PR; Android emulator screenshots nightly with Maestro | as above |
 | **Real device** | feel (haptics, gestures, keyboard on a small phone, sunlight legibility) | `docs/SMOKE_TEST.md`, shortened to what automation cannot see | one iPhone, one Android, one small Android | each phase's owner check |
 
-CI shape: `checks` (unchanged) → `web-ui` (builds the web export, boots the backend, runs Playwright; about 6–8 min with sharding) → nightly `android-ui` (emulator, Maestro) and weekly `ios-ui`. Baselines are updated only by a reviewed PR.
+CI shape and cadence (D-UI10 as decided): `checks` (unchanged) → `web-ui-smoke` on every PR (two widths, light, layout invariants and axe) → `ui-full` (full Playwright matrix and visual regression) and `android-ui` (emulator, Maestro, font scale 1.0 and 2.0) run by hand in each batch's checkpoint task and weekly on `staging`. No iOS simulator job: iOS is the owner's device check. Visual baselines are created and updated only in checkpoint tasks. The "When" column above is superseded by this paragraph: "every PR" means the smoke project, and "nightly"/"weekly" mean the checkpoint and weekly runs.
 
 ---
 
@@ -442,7 +445,7 @@ Phase 0 foundations ──► Phase 1 shell ──► Phase 3 board ──► Ph
 
 ## 10. Phased roadmap
 
-Effort is relative: S ≈ days, M ≈ 1–2 weeks, L ≈ 3–4 weeks of one engineer. Every phase ships: the app is releasable at the end of each and each phase's PR set is stacked so it can merge in order.
+Effort is relative: S ≈ days, M ≈ 1–2 weeks, L ≈ 3–4 weeks of one engineer. Each phase N here is Phase U's `UN.*` tasks in the backend plan (with UB.1–UB.4 for the backend asks in §11 and D-UI11), sized there for one executor session each. Every phase ships: the app is releasable at the end of each and each phase's PR set is stacked so it can merge in order.
 
 | # | Phase | Effort | Depends on | Ships |
 |---|---|---|---|---|
@@ -521,7 +524,7 @@ Effort is relative: S ≈ days, M ≈ 1–2 weeks, L ≈ 3–4 weeks of one engi
 | The board redesign is the whole value and the largest risk | Staff use it under pressure; regressions cost real departures | Phase 3 behind a setting for one release ("New board", on by default for new installs, off for existing); flow tests with step counts; one staffed day of owner checks; keep the old board code until the setting is removed |
 | Drag and drop and live updates fight (items move while dragged) | ActionCable pushes `loadUpdated`; `@dnd-kit` assumes stable lists | Freeze reordering of the dragged column while dragging, apply updates after drop; test with a scripted subscription push |
 | `@rn-primitives` fails the web a11y spike | Peers are `*` and it is maintained by a small team (last release July 2026) | Spike has an explicit fallback (own semantics on existing `Select.web.tsx`, `Menu.web.tsx`); components expose our API, so swapping the internals is local |
-| Playwright in CI is slow or flaky | Needs backend, DB, seed, web export | Shard by width; retry once; baseline updates by PR; fixed seed (`dev_baseline`) and masked countdowns; keep Android nightly, not per PR (D-UI10) |
+| Playwright in CI is slow or flaky | Needs backend, DB, seed, web export | Shard by width; retry once; baseline updates by PR; fixed seed (`dev_baseline`) and masked countdowns; full suites only at batch checkpoints and weekly (D-UI10) |
 | Backend gaps (eligibility reasons, last slot) arrive late | Cross-repo dependency | The picker ships with the boolean fields first (feature flag per field); reasons light up when the API has them |
 | Brand colours chosen by operators break contrast | Arbitrary hex in `Dropzone.primaryColor` (`ColorPicker`) | Derivation guarantees text pairs; picker shows the derived result live; unit tests with 50 colours including extremes |
 | i18n regressions in server-built copy | Notification and activity text is built by the backend (`backend:app/models/notification*.rb`), not by the client | Out of scope for the client; list the strings in the backend plan's Phase 7 (`Operator#term`); keep client-built strings in `common` |
@@ -534,7 +537,7 @@ Effort is relative: S ≈ days, M ≈ 1–2 weeks, L ≈ 3–4 weeks of one engi
 ## 13. Open questions
 
 1. **Staff devices.** What do manifest staff actually use at the desk (tablet on a stand, laptop, phone)? Which browser? (D-UI4.)
-2. **Dropzones with poor signal.** Is offline manifesting needed? (D-UI11.)
+2. ~~Dropzones with poor signal~~: answered (D-UI11): no offline; office-only operation is supported instead.
 3. **Who reads what on the day:** do pilots need a screen at all beyond "which load, when"? Does the DZSO need the conditions strip prominently?
 4. **Tandem operations.** The picker pairs a tandem passenger with an instructor today (`passengerName` fields in `forms/manifest_user/ManifestForm.tsx`). Is a first-class "pair" seat wanted in the board, or is the current flow enough?
 5. **Group manifest** is a bulk flow in `components/dialogs/ManifestGroup/*`. Should groups become a persistent concept on the board (bracketed seats in the mockup), or stay a one-off action?
