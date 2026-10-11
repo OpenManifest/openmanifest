@@ -105,7 +105,7 @@ function render(ui: React.ReactElement<unknown>, { initialState, graphql, permis
       </BottomSheetModalProvider>
     );
   }
-  return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });
+  return { ...rtlRender(ui, { wrapper: Wrapper, ...renderOptions }), store };
 }
 
 // re-export everything
