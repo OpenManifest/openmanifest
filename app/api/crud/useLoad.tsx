@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ApolloError } from '@apollo/client';
 import { noop } from 'lodash';
 import sameVariables from 'app/utils/sameVariables';
 import { DateTime } from 'luxon';
@@ -14,6 +15,14 @@ import {
 import { TMutationResponse, uninitializedHandler } from './factory';
 import { LoadState, Permission } from '../schema.d';
 import { useLoadUpdated } from './subscriptions/useLoadUpdatedSubscription';
+
+/** The server refuses a change made from an older version of a record (optimistic locking) with the code CONFLICT */
+export function isConflict(error: unknown): boolean {
+  return (
+    error instanceof ApolloError &&
+    error.graphQLErrors.some((graphQLError) => graphQLError.extensions?.code === 'CONFLICT')
+  );
+}
 
 export function useLoad(variables: Partial<LoadQueryVariables>) {
   const authenticated = useAuthenticated();
@@ -53,7 +62,8 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
         const { data: response } = await updateLoadMutation({
           variables: {
             id: load?.id as string,
-            attributes,
+            // The version this change is based on: refused when somebody else changed the load since
+            attributes: { lockVersion: load?.lockVersion, ...attributes },
           },
           optimisticResponse: {
             updateLoad: {
@@ -84,11 +94,17 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
           fieldErrors: response?.updateLoad?.fieldErrors || undefined,
         };
       } catch (e) {
+        if (isConflict(e)) {
+          // Show what the other person did, and tell this person their change did not go through
+          refetch();
+          notify.error('This load was changed by someone else');
+          return { error: 'This load was changed by someone else' };
+        }
         console.error(e);
         return { error: 'Something went wrong' };
       }
     },
-    [load, notify, updateLoadMutation]
+    [load, notify, refetch, updateLoadMutation]
   );
 
   const dispatchInMinutes = React.useCallback(

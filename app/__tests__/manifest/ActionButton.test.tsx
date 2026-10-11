@@ -1,4 +1,6 @@
 import * as React from 'react';
+import type { FetchResult } from '@apollo/client';
+import { GraphQLError } from 'graphql';
 import { DateTime, Settings } from 'luxon';
 import { FAB } from 'react-native-paper';
 import { LoadState, Permission } from 'app/api/schema.d';
@@ -66,6 +68,7 @@ describe('<ActionButton />', () => {
               variables: {
                 id: '1',
                 attributes: {
+                  lockVersion: 0,
                   dispatchAt: DateTime.fromMillis(NOW).plus({ minutes: 10 }).toISO(),
                   state: LoadState.BoardingCall,
                 },
@@ -216,6 +219,75 @@ describe('<ActionButton />', () => {
       await waitFor(() => screen.getByText('Cancel load'), { timeout: 10000 });
       expect(screen.queryByText('10 minute call')).toBeNull();
       restore();
+    });
+  });
+
+  describe('changing a load somebody else changed (optimistic locking)', () => {
+    it('refetches the load and says so when the server answers CONFLICT', async () => {
+      const notifications = { success: jest.fn(), error: jest.fn(), info: jest.fn() };
+      const loadMock = MOCK_QUERY_LOAD({}, { load: { lockVersion: 4 } });
+      const loadResult = jest.fn(() => loadMock.result as FetchResult<Record<string, unknown>>);
+      const updateRequest = jest.fn(() => ({
+        errors: [
+          new GraphQLError('This load was changed by someone else', {
+            extensions: { code: 'CONFLICT' },
+          }),
+        ],
+      }));
+      const loadRequest = loadMock.request;
+      const screen = render(
+        <NotificationContext.Provider value={notifications}>
+          <LoadContextProvider id="1">
+            <LoadActions />
+          </LoadContextProvider>
+        </NotificationContext.Provider>,
+        {
+          session: authenticatedSession,
+          permissions: [Permission.UpdateLoad],
+          graphql: [
+            { request: loadRequest, result: loadResult },
+            // The refetch after the conflict
+            { request: loadRequest, result: loadResult },
+            {
+              request: { query: LoadUpdatedDocument, variables: { id: '1' } },
+              result: { data: { loadUpdated: { __typename: 'LoadUpdatedPayload', load: null } } },
+            },
+            {
+              request: {
+                query: UpdateLoadDocument,
+                variables: {
+                  id: '1',
+                  attributes: {
+                    lockVersion: 4,
+                    dispatchAt: DateTime.fromMillis(NOW).plus({ minutes: 10 }).toISO(),
+                    state: LoadState.BoardingCall,
+                  },
+                },
+              },
+              result: updateRequest,
+            },
+          ],
+        }
+      );
+
+      await waitFor(() => expect(screen.UNSAFE_getAllByType(FAB.Group).length).toBeGreaterThan(0), {
+        timeout: 10000,
+      });
+      const fabs = screen.UNSAFE_getAllByType(FAB);
+      fireEvent.press(fabs[fabs.length - 1]);
+      fireEvent.press(await waitFor(() => screen.getByText('10 minute call'), { timeout: 10000 }));
+
+      // The change is sent with the version the screen has seen ...
+      await waitFor(() => expect(updateRequest).toHaveBeenCalledTimes(1), { timeout: 10000 });
+      // ... and a refused change is explained, and the load is fetched again
+      await waitFor(
+        () =>
+          expect(notifications.error).toHaveBeenCalledWith('This load was changed by someone else'),
+        { timeout: 10000 }
+      );
+      await waitFor(() => expect(loadResult.mock.calls.length).toBeGreaterThanOrEqual(2), {
+        timeout: 10000,
+      });
     });
   });
 });

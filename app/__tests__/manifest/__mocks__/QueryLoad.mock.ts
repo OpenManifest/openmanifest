@@ -13,6 +13,7 @@ import createMockedQuery from './createMockedQuery.mock';
 export const loadEssentials: LoadEssentialsFragment = {
   __typename: 'Load',
   id: '1',
+  lockVersion: 0,
   name: 'Test Load',
   createdAt: new Date().toISOString(),
   dispatchAt: null,
@@ -108,6 +109,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
         {
           rig: null,
           __typename: 'Slot',
+          lockVersion: 0,
           id: '1',
           cost: 100,
           createdAt: new Date().toISOString(),
@@ -139,6 +141,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
         {
           rig: null,
           __typename: 'Slot',
+          lockVersion: 0,
           id: '2',
           cost: 100,
           createdAt: new Date().toISOString(),
@@ -182,6 +185,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           rig: null,
           cost: 100,
           __typename: 'Slot',
+          lockVersion: 0,
           id: '3',
           groupNumber: 0,
           createdAt: new Date().toISOString(),

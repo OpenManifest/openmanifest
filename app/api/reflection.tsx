@@ -94,6 +94,7 @@ export const DropzoneEssentialsFragmentDoc = gql`
 export const LoadEssentialsFragmentDoc = gql`
     fragment loadEssentials on Load {
   id
+  lockVersion
   name
   createdAt
   dispatchAt
@@ -143,6 +144,7 @@ export const JumpTypeEssentialsFragmentDoc = gql`
 export const SlotEssentialsFragmentDoc = gql`
     fragment slotEssentials on Slot {
   id
+  lockVersion
   createdAt
   exitWeight
   passengerName
