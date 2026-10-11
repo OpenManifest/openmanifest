@@ -13457,6 +13457,18 @@
             "deprecationReason": null
           },
           {
+            "name": "allowSelfManifest",
+            "description": "When this is disabled, only manifest staff can add, move or remove people on loads",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "requireCredits",
             "description": "When this is enabled, users cannot manifest if they have no credits",
             "args": [],
@@ -13568,6 +13580,18 @@
           {
             "name": "allowNegativeCredits",
             "description": "When this is enabled, users can manifest even if they go into negatives",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "allowSelfManifest",
+            "description": "When this is disabled, only manifest staff can add, move or remove people on loads",
             "type": {
               "kind": "SCALAR",
               "name": "Boolean",

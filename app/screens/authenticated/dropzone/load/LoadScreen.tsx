@@ -20,6 +20,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import { Divider } from 'react-native-paper';
 import { useNotifications } from 'app/providers/notifications';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
+import ManifestDeskNote from 'app/components/ManifestDeskNote';
 import ActionButton from './ActionButton';
 import Header from './Header';
 import InfoGrid from './InfoGrid';
@@ -215,6 +216,7 @@ function LoadScreen() {
           ]}
         />
       </Header>
+      <ManifestDeskNote />
       <Divider />
     </>
   );

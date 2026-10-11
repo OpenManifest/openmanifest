@@ -82,6 +82,7 @@ export const DropzoneEssentialsFragmentDoc = gql`
     allowManifestBypass
     allowNegativeCredits
     allowDoubleManifesting
+    allowSelfManifest
     requireCredits
     requireLicense
     requireMembership

@@ -1,3 +1,4 @@
+import ManifestDeskNote from 'app/components/ManifestDeskNote';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import { ImageBackground, RefreshControl, StyleSheet, useWindowDimensions } from 'react-native';
@@ -225,7 +226,12 @@ export default function ManifestScreen() {
         )}
         <DragDropWrapper>
           <FlatList<LoadDetailsFragment>
-            ListHeaderComponent={() => <WeatherConditions />}
+            ListHeaderComponent={() => (
+              <>
+                <WeatherConditions />
+                <ManifestDeskNote />
+              </>
+            )}
             ListEmptyComponent={() => (
               <NoResults
                 style={{ marginTop: 156 }}
