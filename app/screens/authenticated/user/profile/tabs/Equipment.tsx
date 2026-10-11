@@ -2,9 +2,8 @@ import * as React from 'react';
 import { View } from 'react-native-animatable';
 
 import { DropzoneUserProfileFragment } from 'app/api/operations';
-import { actions, useAppDispatch } from 'app/state';
-
 import RigCard from '../../equipment/RigCard';
+import { useProfileDialogs } from '../ProfileDialogs';
 
 export interface IJumpHistoryTab {
   dropzoneUser?: DropzoneUserProfileFragment | null;
@@ -13,7 +12,7 @@ export interface IJumpHistoryTab {
 }
 export default function EquipmentTab(props: IJumpHistoryTab) {
   const { dropzoneUser, tabIndex, currentTabIndex } = props;
-  const dispatch = useAppDispatch();
+  const { editRig } = useProfileDialogs();
   return (
     <View
       animation={currentTabIndex < tabIndex ? 'slideInRight' : 'slideInLeft'}
@@ -30,7 +29,7 @@ export default function EquipmentTab(props: IJumpHistoryTab) {
             (insp) => insp.rig?.id === item.id && insp.isOk
           )}
           onPress={() => {
-            dispatch(actions.forms.rig.setOpen(item));
+            editRig(item);
           }}
         />
       ))}

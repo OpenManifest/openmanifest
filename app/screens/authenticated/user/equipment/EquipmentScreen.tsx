@@ -4,9 +4,10 @@ import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 
 import { FlatList } from 'react-native-gesture-handler';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import createUseDialog from 'app/providers/hooks/useDialog';
+import type { RigEssentialsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
-import RigDialog from 'app/components/dialogs/Rig';
+import RigDialog from 'app/forms/rig';
 
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useRestriction from 'app/hooks/useRestriction';
@@ -19,10 +20,11 @@ export type EquipmentRoute = {
     userId: string;
   };
 };
+const useRigDialog = createUseDialog<{ rig?: RigEssentialsFragment }>();
+
 export default function EquipmentScreen() {
   const { theme } = useAppTheme();
-  const forms = useAppSelector((root) => root.forms);
-  const dispatch = useAppDispatch();
+  const rigDialog = useRigDialog();
   const {
     dropzone: { currentUser },
   } = useDropzoneContext();
@@ -61,7 +63,7 @@ export default function EquipmentScreen() {
               (insp) => insp.rig?.id === item.id && insp.isOk
             )}
             onPress={() => {
-              dispatch(actions.forms.rig.setOpen(item));
+              rigDialog.open({ rig: item });
             }}
           />
         )}
@@ -72,14 +74,14 @@ export default function EquipmentScreen() {
         style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         visible={canUpdateUser}
         icon="plus"
-        onPress={() => dispatch(actions.forms.rig.setOpen(true))}
+        onPress={() => rigDialog.open({})}
         label="Add rig"
       />
 
       <RigDialog
-        onClose={() => dispatch(actions.forms.rig.setOpen(false))}
-        onSuccess={() => requestAnimationFrame(() => dispatch(actions.forms.rig.setOpen(false)))}
-        open={forms.rig.open}
+        onClose={rigDialog.close}
+        open={rigDialog.visible}
+        rig={rigDialog.state?.rig}
         userId={Number(dropzoneUser?.user?.id)}
       />
     </>

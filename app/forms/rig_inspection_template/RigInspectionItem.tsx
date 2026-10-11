@@ -2,11 +2,11 @@ import NumberField from 'app/components/input/number_input/NumberField';
 import * as React from 'react';
 import { View } from 'react-native';
 import { Checkbox, HelperText, List } from 'react-native-paper';
-import { Permission } from '../../../api/schema.d';
-import useRestriction from '../../../hooks/useRestriction';
-import DatePicker from '../../input/date_picker/DatePicker';
-import TextInput from '../../input/text/TextField';
-import { FieldItem } from './slice';
+import { Permission } from 'app/api/schema.d';
+import useRestriction from 'app/hooks/useRestriction';
+import DatePicker from 'app/components/input/date_picker/DatePicker';
+import TextInput from 'app/components/input/text/TextField';
+import { FieldItem } from './fieldItem';
 
 interface IFormItemItem {
   value: string | number | boolean;

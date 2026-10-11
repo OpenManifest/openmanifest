@@ -5,11 +5,6 @@ import { Chip, Divider } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 import Skeleton from 'app/components/Skeleton';
 
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import DropzoneUserDialog from 'app/components/dialogs/DropzoneUserDialog';
-import RigDialog from 'app/components/dialogs/Rig';
-import EditUserSheet from 'app/forms/user';
-
 import useImagePicker from 'app/hooks/useImagePicker';
 import { useDropzoneContext, useManifestContext } from 'app/providers';
 import { useUpdateUserMutation } from 'app/api/reflection';
@@ -22,6 +17,7 @@ import Header from './UserInfo/Header';
 import InfoGrid from './UserInfo/InfoGrid';
 
 import UserActionsButton from './UserActions';
+import { ProfileDialogsProvider, useProfileDialogs } from './ProfileDialogs';
 import TabBar, { ProfileTab } from './tabs';
 import { useAppTheme } from 'app/theme';
 
@@ -31,10 +27,6 @@ export type ProfileRoute = {
   };
 };
 export default function ProfileScreen() {
-  const { theme } = useAppTheme();
-  const forms = useAppSelector((root) => root.forms);
-  const dispatch = useAppDispatch();
-  const navigation = useNavigation();
   const {
     dropzone: { currentUser },
   } = useDropzoneContext();
@@ -43,6 +35,25 @@ export default function ProfileScreen() {
   const { dropzoneUser, loading } = useUserProfile({
     id: route.params.userId || currentUser?.id,
   });
+
+  return (
+    <ProfileDialogsProvider {...{ dropzoneUser }}>
+      <ProfileScreenContent {...{ dropzoneUser, loading }} />
+    </ProfileDialogsProvider>
+  );
+}
+
+function ProfileScreenContent(props: {
+  dropzoneUser?: ReturnType<typeof useUserProfile>['dropzoneUser'];
+  loading: boolean;
+}) {
+  const { dropzoneUser, loading } = props;
+  const { theme } = useAppTheme();
+  const navigation = useNavigation();
+  const {
+    dropzone: { currentUser },
+  } = useDropzoneContext();
+  const { editMembership } = useProfileDialogs();
   const pickImage = useImagePicker();
   const isFocused = useIsFocused();
   const [defaultIndex, onChangeIndex] = React.useState(1);
@@ -50,8 +61,8 @@ export default function ProfileScreen() {
     if (!dropzoneUser) {
       return;
     }
-    dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser));
-  }, [dispatch, dropzoneUser]);
+    editMembership();
+  }, [dropzoneUser, editMembership]);
   const headerRight = React.useCallback(
     () =>
       !currentUser?.expiresAt ? null : (
@@ -101,15 +112,6 @@ export default function ProfileScreen() {
   }, [dropzoneUser?.id, mutationUpdateUser, pickImage]);
 
   const { dialogs } = useManifestContext();
-
-  const onCloseRigForm = React.useCallback(
-    () => dispatch(actions.forms.rig.setOpen(false)),
-    [dispatch]
-  );
-
-  const [isEditingUser, setEditingUser] = React.useState(false);
-  const onUserSheetOpen = React.useCallback(() => setEditingUser(true), []);
-  const onUserSheetClose = React.useCallback(() => setEditingUser(false), []);
 
   const openWizard = useProfileWizard();
 
@@ -185,28 +187,8 @@ export default function ProfileScreen() {
           renderItem={getContent}
           data={[null, null]}
         />
-
-        <RigDialog
-          onClose={onCloseRigForm}
-          onSuccess={() => requestAnimationFrame(() => dispatch(actions.forms.rig.setOpen(false)))}
-          open={forms.rig.open}
-          userId={Number(dropzoneUser?.user?.id)}
-        />
-
-        <DropzoneUserDialog
-          onClose={() => dispatch(actions.forms.dropzoneUser.setOpen(false))}
-          onSuccess={(user) => {
-            dispatch(actions.forms.dropzoneUser.setOpen(false));
-          }}
-          open={forms.dropzoneUser.open}
-        />
-        <EditUserSheet
-          dropzoneUser={dropzoneUser}
-          onClose={onUserSheetClose}
-          open={isEditingUser}
-        />
       </View>
-      <UserActionsButton {...{ dropzoneUser }} onEdit={onUserSheetOpen} visible={isFocused} />
+      <UserActionsButton {...{ dropzoneUser }} visible={isFocused} />
     </>
   );
 }
