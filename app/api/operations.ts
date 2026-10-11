@@ -288,14 +288,6 @@ export type LoginWithAppleMutationVariables = Types.Exact<{
 
 export type LoginWithAppleMutation = { __typename?: 'Mutation', loginWithApple?: { __typename?: 'ApplePayload', authenticatable?: { __typename?: 'User', id: string, email?: string | null, name?: string | null, phone?: string | null, createdAt: any, updatedAt: any } | null, credentials?: { __typename?: 'Credential', accessToken: string, tokenType: string, client: string, expiry: number, uid: string } | null } | null };
 
-export type LoginWithFacebookMutationVariables = Types.Exact<{
-  token: Types.Scalars['String']['input'];
-  pushToken?: Types.InputMaybe<Types.Scalars['String']['input']>;
-}>;
-
-
-export type LoginWithFacebookMutation = { __typename?: 'Mutation', loginWithFacebook?: { __typename?: 'FacebookPayload', authenticatable?: { __typename?: 'User', id: string, email?: string | null, name?: string | null, phone?: string | null, createdAt: any, updatedAt: any } | null, credentials?: { __typename?: 'Credential', accessToken: string, tokenType: string, client: string, expiry: number, uid: string } | null } | null };
-
 export type ManifestGroupMutationVariables = Types.Exact<{
   jumpType?: Types.InputMaybe<Types.Scalars['ID']['input']>;
   extras?: Types.InputMaybe<Array<Types.Scalars['ID']['input']> | Types.Scalars['ID']['input']>;
