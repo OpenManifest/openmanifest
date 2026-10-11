@@ -22,7 +22,7 @@ describe('<ProfileScreen />', () => {
 
     await waitFor(() => expect(screen.getByText('Court Jester')).toBeTruthy(), { timeout: 10000 });
     expect(screen.getByText('FUN JUMPER')).toBeTruthy();
-    expect(screen.getByText('$100')).toBeTruthy();
+    expect(screen.getByText('$100.00')).toBeTruthy();
     expect(screen.getByText('Certifiate D')).toBeTruthy();
     expect(screen.getByText('Funds')).toBeTruthy();
     // The (closed) edit sheet has a License field too

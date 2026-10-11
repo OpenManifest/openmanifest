@@ -25,9 +25,11 @@ import LoadingCardLarge from './LoadCard/Large/Loading';
 import LoadingCardSmall from './LoadCard/Small/Loading';
 import SetupProfileCard from './SetupProfileCard';
 import { SetupStepCard } from './FinishSetupSteps';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 const loadingFragment: LoadDetailsFragment = {
   id: '__LOADING__',
+  lockVersion: 0,
   availableSlots: 0,
   createdAt: '',
   isFull: false,
@@ -52,7 +54,7 @@ export default function ManifestScreen() {
   const [display, setDisplay] = React.useState<'list' | 'cards'>('cards');
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
   const {
-    dropzone: { dropzone, currentUser, loading, refetch, fetchMore },
+    dropzone: { dropzone, currentUser, loading, refetch },
     dialogs: sheets,
   } = useDropzoneContext();
   const { manifest, dialogs } = useManifestContext();
@@ -243,13 +245,19 @@ export default function ManifestScreen() {
             }}
             numColumns={numColumns}
             {...{ data, renderItem }}
-            refreshControl={<RefreshControl refreshing={loading} onRefresh={() => fetchMore()} />}
+            refreshControl={
+              <RefreshControl
+                refreshing={manifest.refreshing}
+                onRefresh={() => manifest.refetch()}
+              />
+            }
           />
         </DragDropWrapper>
       </View>
       {manifest.permissions.canCreateLoad && (
         <FloatingActionArea>
           <FAB
+            labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
             testID="new-load-primary-action"
             style={{ backgroundColor: theme.colors.primary }}
             small

@@ -54,7 +54,7 @@ export default function UserRow(props: ISlotUserRowProps) {
     <DroppableSlot loadId={load.id} slotId={slot?.id} rowIndex={index}>
       <DraggableWrapper rowProps={props}>
         {({ isDragging }) => (
-          <View style={{ height: 46 }}>
+          <View style={{ minHeight: 46 }}>
             <SwipeActions
               disabled={
                 isDragging ||
@@ -205,7 +205,7 @@ export const styles = StyleSheet.create({
   slotText: {
     fontSize: 12,
     alignSelf: 'center',
-    height: 24,
+    minHeight: 24,
     textAlignVertical: 'center',
   },
   avatarCell: {

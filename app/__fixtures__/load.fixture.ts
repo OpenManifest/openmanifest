@@ -5,6 +5,7 @@ type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]>
 export const loadEssentials: DeepRequired<LoadEssentialsFragment> = {
   __typename: 'Load',
   id: '1',
+  lockVersion: 0,
   name: null,
   state: LoadState.Open,
   loadNumber: 1,

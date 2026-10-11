@@ -59,7 +59,7 @@ describe('<ManifestUserDialog />', () => {
 
     // Jump and ticket type are auto-selected once their queries resolve
     await waitFor(() => expect(screen.getByText('Freefly')).toBeTruthy(), { timeout: 10000 });
-    await waitFor(() => expect(screen.getAllByText('Height ($45)').length).toBeGreaterThan(0), {
+    await waitFor(() => expect(screen.getAllByText('Height ($45.00)').length).toBeGreaterThan(0), {
       timeout: 10000,
     });
 

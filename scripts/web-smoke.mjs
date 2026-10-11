@@ -2,7 +2,7 @@
 // Web smoke test: layout check of /login, then login -> dropzone -> manifest board -> load and the two deep links, at
 // desktop and 360x640.
 // Needs the backend dev server with the dev_baseline seed and a served EXPO_ENV=local web export.
-// Usage: node scripts/web-smoke.mjs [--base http://localhost:19006] [--out ./smoke-output]
+// Usage: node scripts/web-smoke.mjs [--base http://localhost:19006] [--out ./smoke-output] [--api http://local.openmanifest.org:5000/graphql]
 import { createRequire } from 'node:module';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -74,6 +74,35 @@ async function checkLastSlotRow(page, route, viewport, failures) {
 }
 
 /**
+ * Emulates a large system font size: react-native-web writes font sizes in px, so `html { font-size: 200% }` would not
+ * change them. Scales the font size and line height of every element that has text of its own.
+ */
+async function scaleText(page, factor) {
+  await page.evaluate((f) => {
+    for (const el of document.querySelectorAll('body *')) {
+      const hasText = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+      if (!hasText && !['INPUT', 'TEXTAREA'].includes(el.tagName)) continue;
+      const cs = getComputedStyle(el);
+      el.style.fontSize = `${parseFloat(cs.fontSize) * f}px`;
+      const lineHeight = parseFloat(cs.lineHeight);
+      if (Number.isFinite(lineHeight)) el.style.lineHeight = `${lineHeight * f}px`;
+    }
+  }, factor);
+}
+
+/** Rows whose text no longer fits their height: a fixed row height that text outgrew */
+async function checkClippedRows(page, route, failures) {
+  const clipped = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-testid="slot-row"], [data-testid="load-card"]')]
+      .filter((el) => el.offsetParent !== null && el.scrollHeight > el.clientHeight + 1)
+      .map((el) => `${el.getAttribute('data-testid')} ${el.scrollHeight}>${el.clientHeight}`)
+  );
+  if (clipped.length) {
+    failures.push(`layout ${route}: clipped rows (${clipped.slice(0, 3).join(', ')})`);
+  }
+}
+
+/**
  * Layout check for the current route: nothing overflows the viewport horizontally, and every visible primary
  * action (`data-testid$="-primary-action"`) can be scrolled into view and is the element that receives a click there.
  */
@@ -99,6 +128,38 @@ async function checkLayout(page, route, viewport, failures) {
   }
 }
 
+// Creates a load through the API as the seed's owner, the way a second device would
+async function createLoadViaApi(api) {
+  const call = async (query, headers = {}) => {
+    const response = await fetch(api, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...headers },
+      body: JSON.stringify({ query }),
+    });
+    return { json: await response.json(), headers: response.headers };
+  };
+  const login = await call(
+    'mutation { userLogin(email: "owner@example.com", password: "Password1!") { authenticatable { id } } }'
+  );
+  const auth = {
+    'access-token': login.headers.get('access-token'),
+    client: login.headers.get('client'),
+    uid: login.headers.get('uid'),
+  };
+  const { json: dropzones } = await call(
+    '{ dropzones { edges { node { id currentUser { id } } } } }',
+    auth
+  );
+  const dropzone = dropzones.data.dropzones.edges[0].node;
+  const { json: planes } = await call(`{ planes(dropzone: ${dropzone.id}) { id } }`, auth);
+  const member = dropzone.currentUser.id;
+  const { json: created } = await call(
+    `mutation { createLoad(input: { attributes: { name: "Live ${Date.now()}", plane: ${planes.data.planes[0].id}, maxSlots: 10, pilot: ${member}, gca: ${member} } }) { load { id } errors } }`,
+    auth
+  );
+  return created?.data?.createLoad?.load?.id;
+}
+
 async function run(browser, name, viewport) {
   const failures = [];
   const context = await browser.newContext({ viewport });
@@ -108,6 +169,7 @@ async function run(browser, name, viewport) {
     await page.goto(`${base}/login`, { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForTimeout(3000);
     await checkLayout(page, '/login', viewport, failures);
+    await page.screenshot({ path: join(out, `${name}-login.png`) });
     await checkReachable(
       page,
       page.getByText('Sign up', { exact: true }),
@@ -130,8 +192,6 @@ async function run(browser, name, viewport) {
     await page.screenshot({ path: join(out, `${name}-signup.png`) });
     await page.goto(`${base}/login`, { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForTimeout(3000);
-    // TODO P5.7: weather, wind and jump run. P5.8: board and
-    // load again at `html { font-size: 200% }`.
     await page.locator('input').nth(0).click({ force: true });
     await page.keyboard.type('owner@example.com');
     await page.locator('input').nth(1).click({ force: true });
@@ -148,6 +208,70 @@ async function run(browser, name, viewport) {
     }
     await page.screenshot({ path: join(out, `${name}-manifest.png`) });
     await checkLayout(page, '/dropzone/manifest', viewport, failures);
+
+    // Live updates (P6.9): a load created by somebody else appears on the open board without a reload, which only works
+    // when the cable connection is authenticated with this session's credentials.
+    const loadCount = () => page.getByText(/Load #\d+/).count();
+    const loadsBefore = await loadCount();
+    const createdLoad = await createLoadViaApi(
+      arg('api', 'http://local.openmanifest.org:5000/graphql')
+    );
+    if (!createdLoad) {
+      failures.push('live update: could not create a load through the API');
+    } else {
+      let appeared = false;
+      for (let i = 0; i < 20 && !appeared; i += 1) {
+        await page.waitForTimeout(500);
+        appeared = (await loadCount()) > loadsBefore;
+      }
+      if (!appeared)
+        failures.push(`live update: load ${createdLoad} did not appear on the open board`);
+    }
+
+    // Load states (P6.12): the load that was just created gets a boarding call, then lands, through the speed dial
+    if (createdLoad) {
+      await page.goto(`${base}/dropzone/load/${createdLoad}`, {
+        waitUntil: 'networkidle',
+        timeout: 60000,
+      });
+      await page.waitForTimeout(5000);
+      const openActions = async () => {
+        // The confirmation snackbar covers the button on a phone until it goes away
+        await page.waitForTimeout(7000);
+        await pressAt(page, page.getByTestId('load-actions-primary-action'));
+        await page.waitForTimeout(1000);
+      };
+      await openActions();
+      await page.getByText('10 minute call', { exact: true }).last().click({ force: true });
+      await page.waitForTimeout(3000);
+      await openActions();
+      if (
+        !(await page
+          .getByText('Mark as Landed', { exact: true })
+          .last()
+          .isVisible()
+          .catch(() => false))
+      ) {
+        await page.screenshot({ path: join(out, `${name}-load-states-failed.png`) });
+        failures.push('load states: a 10 minute call did not offer "Mark as Landed"');
+      } else {
+        await page.getByText('Mark as Landed', { exact: true }).last().click({ force: true });
+        await page.waitForTimeout(3000);
+        await openActions();
+        if (
+          !(await page
+            .getByText('Re-open load', { exact: true })
+            .last()
+            .isVisible()
+            .catch(() => false))
+        ) {
+          failures.push('load states: landing the load did not offer "Re-open load"');
+        }
+        await page.screenshot({ path: join(out, `${name}-load-landed.png`) });
+      }
+      await page.goto(`${base}/dropzone/manifest`, { waitUntil: 'networkidle', timeout: 60000 });
+      await page.waitForTimeout(4000);
+    }
 
     await page
       .getByText(/Load #1\b/)
@@ -210,6 +334,23 @@ async function run(browser, name, viewport) {
     }
     await page.screenshot({ path: join(out, `${name}-deeplink-load.png`) });
 
+    // Large font size: the board and a load still lay out, and no row clips its text
+    for (const [route, label] of [
+      [`${base}/dropzone/manifest`, 'board at 200% text'],
+      [loadUrl, 'load at 200% text'],
+    ]) {
+      await page.goto(route, { waitUntil: 'networkidle', timeout: 60000 });
+      await page.waitForTimeout(5000);
+      await scaleText(page, 2);
+      await page.waitForTimeout(500);
+      await checkLayout(page, label, viewport, failures);
+      await checkClippedRows(page, label, failures);
+      if (label.startsWith('load')) await checkLastSlotRow(page, label, viewport, failures);
+      await page.screenshot({
+        path: join(out, `${name}-${label.split(' ')[0]}-200.png`),
+      });
+    }
+
     // Configuration screens: floating action buttons stay reachable and nothing overflows
     const configurationRoutes = [
       '/dropzone/configuration',
@@ -222,6 +363,10 @@ async function run(browser, name, viewport) {
       '/dropzone/configuration/basic',
       '/dropzone/transactions',
       '/dropzone/master-log',
+      // Weather: the wizard, then its winds and jump run screens
+      '/dropzone/weather',
+      '/dropzone/weather/winds',
+      '/dropzone/weather/jumprun',
     ];
     for (const route of configurationRoutes) {
       await page.goto(`${base}${route}`, { waitUntil: 'networkidle', timeout: 60000 });
@@ -231,6 +376,9 @@ async function run(browser, name, viewport) {
         continue;
       }
       await checkLayout(page, route, viewport, failures);
+      await page.screenshot({
+        path: join(out, `${name}${route.replace(/\//g, '-')}.png`),
+      });
     }
     // One dark mode screenshot, to see that the screen follows the theme
     await page.emulateMedia({ colorScheme: 'dark' });
@@ -255,6 +403,16 @@ async function run(browser, name, viewport) {
       failures.push('/setup: the wizard next button is not visible');
     }
     await page.screenshot({ path: join(out, `${name}-setup.png`) });
+
+    // The signed in user's own profile, through the drawer
+    await page.goto(`${base}/dropzone/manifest`, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.waitForTimeout(4000);
+    await pressAt(page, page.locator('body'), { x: 35, y: 28 });
+    await page.waitForTimeout(1000);
+    await page.getByText('Profile', { exact: true }).last().click({ force: true });
+    await page.waitForTimeout(5000);
+    await checkLayout(page, 'profile', viewport, failures);
+    await page.screenshot({ path: join(out, `${name}-profile.png`) });
 
     // Log out and log in as somebody else without reloading the page: requests must still go out (they used to be
     // aborted for good after a logout) and nothing of the first user may be left behind.
@@ -301,6 +459,41 @@ async function run(browser, name, viewport) {
       failures.push('second login: the drawer does not show the second user');
     }
     await page.screenshot({ path: join(out, `${name}-second-login.png`) });
+
+    // A brand new user who has not joined the dropzone: selecting it joins them (P6.4), and they reach the board.
+    const api = arg('api', 'http://local.openmanifest.org:5000/graphql');
+    const email = `newjumper+${Date.now()}@example.com`;
+    const registered = await fetch(api, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        query: `mutation($email: String!) { userRegister(email: $email, password: "Password1!", passwordConfirmation: "Password1!", name: "New Jumper", phone: "0400111222", exitWeight: 80, confirmUrl: "https://openmanifest.org/confirm/") { authenticatable { id } errors } }`,
+        variables: { email },
+      }),
+    }).then((r) => r.json());
+    if (!registered?.data?.userRegister?.authenticatable?.id) {
+      failures.push(`could not register a new user: ${JSON.stringify(registered).slice(0, 200)}`);
+    } else {
+      await pressAt(page, page.locator('body'), { x: 35, y: 28 });
+      await page.waitForTimeout(1000);
+      await page.getByText('Log out', { exact: true }).last().click({ force: true });
+      await page.waitForTimeout(3000);
+      await page.locator('input').nth(0).click({ force: true });
+      await page.keyboard.type(email);
+      await page.locator('input').nth(1).click({ force: true });
+      await page.keyboard.type('Password1!');
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(6000);
+      await page.screenshot({ path: join(out, `${name}-new-user-select-dropzone.png`) });
+      await pressAt(page, page.getByText('Dropzone', { exact: true }).first());
+      await page.waitForTimeout(8000);
+      if (!new URL(page.url()).pathname.endsWith('/dropzone/manifest')) {
+        failures.push(
+          `new user: selecting the dropzone did not reach the board, got ${page.url()}`
+        );
+      }
+      await page.screenshot({ path: join(out, `${name}-new-user-board.png`) });
+    }
   } catch (e) {
     failures.push(`step failed: ${e.message.split('\n')[0]}`);
   } finally {
@@ -313,8 +506,14 @@ async function run(browser, name, viewport) {
 }
 
 mkdirSync(out, { recursive: true });
+// Chromium picks the environment's proxy up for WebSockets (ws://) but not for plain HTTP, so the local backend must be
+// bypassed explicitly, with an explicit proxy setting (a bypass list alone is ignored).
+const proxy = process.env.HTTPS_PROXY || process.env.https_proxy;
 const browser = await chromium.launch({
-  args: ['--proxy-bypass-list=local.openmanifest.org,localhost'],
+  args: [
+    ...(proxy ? [`--proxy-server=${proxy}`] : []),
+    '--proxy-bypass-list=local.openmanifest.org;localhost;127.0.0.1',
+  ],
 });
 let ok = true;
 for (const [name, viewport] of Object.entries(viewports)) {

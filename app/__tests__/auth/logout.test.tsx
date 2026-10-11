@@ -13,7 +13,11 @@ jest.mock('app/constants/expo', () => ({
   default: { url: 'http://localhost:5000/graphql', environment: 'local' },
 }));
 jest.mock('@rails/actioncable', () => ({
-  createConsumer: () => ({ subscriptions: { create: jest.fn() } }),
+  createConsumer: () => ({
+    subscriptions: { create: jest.fn() },
+    connect: jest.fn(),
+    disconnect: jest.fn(),
+  }),
 }));
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (global as any).self = global;

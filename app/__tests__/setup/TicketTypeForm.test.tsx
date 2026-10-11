@@ -44,11 +44,10 @@ describe('<TicketTypeDialog />', () => {
               variables: {
                 attributes: {
                   name: 'Hop n Pop',
-                  cost: 45,
-                  // Not the form's default of `true`: see BUG-096 below
-                  allowManifestingSelf: false,
+                  costCents: 4500,
+                  allowManifestingSelf: true,
                   altitude: 14000,
-                  extraIds: undefined,
+                  extraIds: [],
                   isTandem: false,
                   dropzoneId: 1,
                 },
@@ -89,7 +88,7 @@ describe('<TicketTypeDialog />', () => {
 
   // The dialog builds `initial` from the (absent) original ticket, so `cost`, `allowManifestingSelf` and `extras`
   // are `undefined` and override the form defaults (30, true, []): a new ticket starts at $0 and non-public.
-  it.skip('BUG-096: a new ticket starts with the default price', () => {
+  it('BUG-096: a new ticket starts with the default price', () => {
     const screen = render(
       <View testID="under-test">
         <TicketTypeDialog open onClose={jest.fn()} />

@@ -50,7 +50,7 @@ function LoadCard(props: ILoadCardSmall) {
       style={{
         margin: 16,
         borderRadius: 8,
-        minWidth: 300,
+        minWidth: 280,
         maxWidth: 450,
         opacity: ['cancelled', 'landed'].includes(load?.state || '') ? 0.5 : 1.0,
       }}
@@ -64,6 +64,10 @@ function LoadCard(props: ILoadCardSmall) {
           marginRight: -5,
           color: 'white',
           fontSize: 12,
+          // Grows with the text size instead of clipping the label to Paper's fixed 20 dp pill
+          height: 'auto',
+          minHeight: 20,
+          lineHeight: undefined,
         }}
       >
         {load?.state ? loadStates[load?.state] : ''}

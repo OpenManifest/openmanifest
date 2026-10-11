@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, KeyboardAvoidingView, TextInput, Platform } from 'react-native';
+import { StyleSheet, View, Text, TextInput } from 'react-native';
 import { set } from 'lodash';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { Card, Divider, List, useTheme } from 'react-native-paper';
@@ -27,7 +27,7 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
   const jumpRun = typedJumpRun ?? formJumpRun ?? 0;
 
   return (
-    <KeyboardAvoidingView behavior="height" style={styles.content}>
+    <View style={styles.content}>
       <View style={styles.row}>
         <Text
           style={[styles.headerTemperature, { color: variant === 'light' ? 'white' : 'black' }]}
@@ -132,7 +132,7 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
           </View>
         </TouchableOpacity>
       ) : null}
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -149,8 +149,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   altitudeTempRow: {
-    paddingHorizontal: 32,
-    width: 400,
+    gap: 16,
+    width: '100%',
+    maxWidth: 350,
     alignSelf: 'center',
     backgroundColor: 'transparent',
     flexGrow: 1,
@@ -165,12 +166,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   textField: {
-    ...Platform.select({
-      web: { width: '100%' },
-      ios: { flexGrow: 1 },
-    }),
+    // Grows on every platform: without a width the input collapses on Android
+    flexGrow: 1,
+    flexShrink: 1,
+    minWidth: 0,
     paddingBottom: 4,
-    height: 60,
+    minHeight: 60,
     fontWeight: 'bold',
     fontSize: 20,
   },
@@ -190,7 +191,8 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   row: {
-    width: 400,
+    width: '100%',
+    maxWidth: 350,
     alignSelf: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -199,49 +201,49 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   headerTemperature: {
-    width: 120,
+    flex: 1,
 
     color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
   },
   headerJumprun: {
-    width: 120,
+    flex: 1,
 
     color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
   },
   jumpRunCard: {
-    width: 120,
-    height: 60,
+    flex: 1,
+    minHeight: 60,
     flexDirection: 'row',
     backgroundColor: 'white',
     borderRadius: 8,
   },
   temperatureCard: {
-    height: 60,
-    width: 120,
+    minHeight: 60,
+    flex: 1,
     flexDirection: 'row',
     backgroundColor: 'white',
     borderRadius: 8,
   },
   headerAltitude: {
-    width: 120,
+    flex: 1,
 
     color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
   },
   headerSpeed: {
-    width: 120,
+    flex: 1,
 
     color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
   },
   headerDirection: {
-    width: 120,
+    flex: 1,
 
     color: 'white',
     textAlign: 'center',

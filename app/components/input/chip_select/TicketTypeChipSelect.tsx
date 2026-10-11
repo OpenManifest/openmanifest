@@ -6,6 +6,7 @@ import { List } from 'react-native-paper';
 import { withHookForm } from '../withHookForm';
 import ChipSelect from './ChipSelect';
 import ChipSelectSkeleton from './ChipSelectSkeleton';
+import { formatCents } from 'app/utils/money';
 
 interface ITicketTypeSelect {
   value?: TicketTypeEssentialsFragment | null;
@@ -41,7 +42,9 @@ function TicketTypeChipSelect(props: ITicketTypeSelect) {
         autoSelectFirst
         items={data?.ticketTypes || []}
         value={[value].filter(Boolean) as TicketTypeEssentialsFragment[]}
-        renderItemLabel={(ticketType) => `${ticketType?.name} ($${ticketType?.cost})`}
+        renderItemLabel={(ticketType) =>
+          `${ticketType?.name} (${formatCents(ticketType?.costCents)})`
+        }
         isDisabled={() => false}
         onChange={([first]) => (first ? onChange(first) : null)}
       />

@@ -63,7 +63,7 @@ describe('<CreateGhostDialog />', () => {
   // GitHub client#126 "Create Ghost doesn't fire submit button". The button does submit, but the form is invalid
   // (no access level) and `RoleSelect` / `FederationSelect` never pass the `error` prop on to `Select`, so the
   // "You must select a role" message is never shown and nothing appears to happen.
-  it.skip('BUG-086: pressing Create without an access level says what is missing', async () => {
+  it('BUG-086: pressing Create without an access level says what is missing', async () => {
     const dialog = await renderFilledDialog(jest.fn());
 
     fireEvent.press(dialog.getByText('Create'));

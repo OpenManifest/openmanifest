@@ -3,6 +3,7 @@ import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import { TicketTypeDetailsFragment } from 'app/api/operations';
 import TicketTypeForm from './TicketTypeForm';
 import useForm, { TicketTypeFields } from './useForm';
+import { fromCents } from 'app/utils/money';
 
 export interface ITicketTypeDialog {
   open: boolean;
@@ -16,7 +17,7 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
   const { control, loading, onSubmit, reset } = useForm({
     initial: {
       name: original?.name || initial?.name,
-      cost: original?.cost || initial?.cost,
+      cost: original?.costCents != null ? fromCents(original.costCents) : initial?.cost,
       allowManifestingSelf: original?.allowManifestingSelf || initial?.allowManifestingSelf,
       altitude: original?.altitude || initial?.altitude || 14000,
       extras: original?.extras || initial?.extras,

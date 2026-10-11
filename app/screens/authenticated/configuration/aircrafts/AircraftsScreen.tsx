@@ -17,6 +17,7 @@ import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { PlaneEssentialsFragment } from 'app/api/operations';
 import { useNotifications } from 'app/providers/notifications';
 import { useAppTheme } from 'app/theme';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 export default function PlanesScreen() {
   const { theme } = useAppTheme();
@@ -86,7 +87,7 @@ export default function PlanesScreen() {
               <DataTable.Title numeric>Slots</DataTable.Title>
             </DataTable.Header>
             {aircrafts?.map((plane) => (
-              <View style={{ height: 46 }}>
+              <View style={{ minHeight: 46 }}>
                 <SwipeActions
                   key={`plane-${plane.id}`}
                   disabled={!canDeletePlane}
@@ -109,6 +110,7 @@ export default function PlanesScreen() {
       </ScrollableScreen>
       <FloatingActionArea>
         <FAB
+          labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
           testID="new-plane-primary-action"
           style={{ backgroundColor: theme.colors.primary }}
           visible={canCreatePlane}
