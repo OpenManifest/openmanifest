@@ -9,6 +9,7 @@ import { isEqual } from 'lodash';
 import { TransactionType } from 'app/api/schema.d';
 import { useUserProfile } from 'app/api/crud';
 import { useNotifications } from 'app/providers/notifications';
+import withDefaults from 'app/forms/initialValues';
 
 export type CreditFields = {
   amount: number;
@@ -42,7 +43,7 @@ export interface IUseManifestFormOpts {
 
 export default function useCreditsForm(opts: IUseManifestFormOpts) {
   const { initial, dropzoneUser, onSuccess } = opts;
-  const initialValues = React.useMemo(() => ({ ...EMPTY_FORM_VALUES, ...initial }), [initial]);
+  const initialValues = React.useMemo(() => withDefaults(EMPTY_FORM_VALUES, initial), [initial]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
   const { addCredits, withdrawCredits } = useUserProfile();
 

@@ -7,11 +7,12 @@ import { withHookForm } from '../withHookForm';
 
 interface IFederationSelect {
   value?: FederationEssentialsFragment | null;
+  error?: string | null;
   onChange(jt: FederationEssentialsFragment): void;
 }
 
 function FederationSelect(props: IFederationSelect) {
-  const { value, onChange } = props;
+  const { value, onChange, error } = props;
 
   const { data } = useFederationsQuery();
 
@@ -42,6 +43,7 @@ function FederationSelect(props: IFederationSelect) {
         value={selected}
         options={options}
         onChange={onChange}
+        error={error}
       />
     </>
   );

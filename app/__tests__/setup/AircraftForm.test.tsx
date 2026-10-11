@@ -65,7 +65,6 @@ describe('<AircraftDialog />', () => {
     const [name, registration, , maxSlots] = dialog.UNSAFE_getAllByType(TextInput);
     fireEvent.changeText(name, 'Beaver');
     fireEvent.changeText(registration, 'VH-JST');
-    // The dialog does not pass a default for max slots, so it has to be entered (see BUG-096)
     fireEvent.changeText(maxSlots, '8');
     await waitFor(() => expect(dialog.queryByText('Maximum slots is required')).toBeNull());
     fireEvent.press(dialog.getByText('Save'));
@@ -73,7 +72,7 @@ describe('<AircraftDialog />', () => {
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });
 
-  it('asks for the registration and max slots when they are missing', async () => {
+  it('asks for the registration when it is missing', async () => {
     const screen = render(
       <View testID="under-test">
         <AircraftDialog open onClose={jest.fn()} />
@@ -85,12 +84,11 @@ describe('<AircraftDialog />', () => {
     fireEvent.press(dialog.getByText('Save'));
 
     await waitFor(() => expect(dialog.getByText('Registration is required')).toBeTruthy());
-    expect(dialog.getByText('Maximum slots is required')).toBeTruthy();
   });
 
   // The dialog builds `initial` from the (absent) original aircraft, so `maxSlots: undefined` overrides the
   // form's default of 4 and a new aircraft cannot be saved until max slots is typed in.
-  it.skip('BUG-096: a new aircraft starts with the default max slots', async () => {
+  it('BUG-096: a new aircraft starts with the default max slots', async () => {
     const screen = render(
       <View testID="under-test">
         <AircraftDialog open onClose={jest.fn()} />
