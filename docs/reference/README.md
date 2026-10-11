@@ -19,7 +19,7 @@ Client diagrams: [diagrams.md](diagrams.md).
 | Server data | Apollo Client 3.7.11 (`BatchHttpLink`, ActionCable link for subscriptions) | `app/api/` |
 | Client state | Redux Toolkit 1.9.3 + redux-persist 6 (`global` slice persisted) | `app/state/` |
 | Navigation | React Navigation 6 (stack, drawer, material bottom tabs) | `app/screens/**/routes.tsx` |
-| UI kit | react-native-paper 4.12.4, @gorhom/bottom-sheet 4.6.4, react-native-reanimated 3.3.0 | |
+| UI kit | react-native-paper 5.15.3 (MD2 theme, P3.11), @gorhom/bottom-sheet 4.6.4, react-native-reanimated 3.16.7 | |
 | Forms | react-hook-form 7 + yup (newer forms in `app/forms/`); Redux form slices (older forms in `app/components/forms/`) | |
 | Code generation | graphql-codegen (`codegen.yml`) → `app/api/schema.d.ts`, `operations.ts`, `reflection.tsx` | |
 | Web | `expo export --platform web` (Metro, `web.bundler: metro`, `output: single`; was webpack 4 before P3.7). Custom HTML, `404.html` and `.well-known/` live in `public/`, which Metro copies to `dist/` | `app.json`, `metro.config.js`, `public/` |
@@ -331,9 +331,9 @@ Full table:
 | `react-native-mmkv-storage` | dep | `0.8.0` | 0.8.0 | 12.0.1 |  |  |
 | `react-native-numeric-input` | dep | `1.9.1` | 1.9.1 | 1.9.1 |  | last publish 2022-05-14 |
 | `react-native-pager-view` | dep | `6.0.1` | 6.0.1 | 9.0.6 | `8.0.2` |  |
-| `react-native-paper` | dep | `4.12.4` | 4.12.4 | 5.15.3 |  |  |
-| `react-native-paper-dates` | dep | `0.8.7` | 0.8.7 | 0.24.0 |  |  |
-| `react-native-paper-tabs` | dep | `0.7.0` | 0.7.0 | 0.11.4 |  |  |
+| `react-native-paper` | dep | `5.15.3` (P3.11) | 5.15.3 | 5.15.3 |  |  |
+| `react-native-paper-dates` | dep | `0.24.0` (P3.11) | 0.24.0 | 0.24.0 |  |  |
+| `react-native-paper-tabs` | dep | `0.11.4` (P3.11) | 0.11.4 | 0.11.4 |  |  |
 | `react-native-reanimated` | dep | `~3.16.1` (P3.10) | 3.16.7 | 4.7.1 | `4.5.1` |  |
 | `react-native-reanimated-carousel` | dep | `^3.5.1` (P3.6) | 3.5.1 | 5.1.1 |  |  |
 | `react-native-safe-area-context` | dep | `4.4.1` | 4.4.1 | 5.10.1 | `~5.7.0` |  |

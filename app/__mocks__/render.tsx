@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Provider as Material } from 'react-native-paper';
+import { PaperProvider } from 'react-native-paper';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { render as rtlRender } from '@testing-library/react-native';
 import { createStore } from 'redux';
 import { Provider as Redux } from 'react-redux';
@@ -76,6 +77,7 @@ function render(ui: React.ReactElement<unknown>, { initialState, graphql, permis
   const store = createStore(rootReducer, initialState);
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
+      <SafeAreaProvider initialMetrics={{ frame: { x: 0, y: 0, width: 360, height: 640 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}>
       <BottomSheetModalProvider>
         <Redux store={store}>
           <Apollo
@@ -97,14 +99,15 @@ function render(ui: React.ReactElement<unknown>, { initialState, graphql, permis
           >
             <DropzoneContextProvider dropzoneId={initialState?.global?.currentDropzoneId?.toString()}>
               <ManifestContextProvider dropzone={initialState?.global?.currentDropzoneId?.toString()}>
-                <Material>
+                <PaperProvider theme={store.getState().global.theme}>
                   {children}
-                </Material>
+                </PaperProvider>
               </ManifestContextProvider>
             </DropzoneContextProvider>
           </Apollo>
         </Redux>
       </BottomSheetModalProvider>
+      </SafeAreaProvider>
     );
   }
   return { ...rtlRender(ui, { wrapper: Wrapper, ...renderOptions }), store };

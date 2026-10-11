@@ -6,7 +6,8 @@ import { useDropzoneUsersLazyQuery } from 'app/api/reflection';
 import { useAppSelector } from 'app/state';
 import first from 'lodash/first';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Caption, useTheme } from 'react-native-paper';
+import { Caption } from 'react-native-paper';
+import { useAppTheme } from 'app/hooks/useAppTheme';
 import UserAvatar from '../UserAvatar.web.old';
 
 interface IDropzoneUserAutocompleteProps {
@@ -65,7 +66,7 @@ export default function DropzoneUserAutocomplete(props: IDropzoneUserAutocomplet
     }
   }, [currentDropzoneId, searchText, searchUsers]);
 
-  const theme = useTheme();
+  const theme = useAppTheme();
   const getOptionLabel = React.useCallback(
     (option: DropzoneUserEssentialsFragment) =>
       option.user.nickname ? `${option.user.nickname} (${option.user.name})` : (option.user.name as string),

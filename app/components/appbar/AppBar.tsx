@@ -29,7 +29,7 @@ function AppBar(props: IAppBarProps) {
         ) : (
           <IconButton icon="menu" size={32} onPress={openDrawer} />
         )}
-        <Appbar.Content title={options.title} titleStyle={{ fontWeight: 'bold' }} />
+        <Appbar.Content title={options.title ?? ''} titleStyle={{ fontWeight: 'bold' }} />
 
         {options.headerRight ? (
           options.headerRight({ tintColor: 'white' })

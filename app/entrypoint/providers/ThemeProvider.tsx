@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Provider as MaterialProvider } from 'react-native-paper';
+import { PaperProvider } from 'react-native-paper';
 
 import { useAppSelector } from 'app/state/store';
 
@@ -8,7 +8,7 @@ function Content(props: { children: React.ReactNode }) {
   const state = useAppSelector((root) => root.global);
 
   return (
-    <MaterialProvider theme={state.theme as ReactNativePaper.Theme}>{children}</MaterialProvider>
+    <PaperProvider theme={state.theme}>{children}</PaperProvider>
   );
 }
 export default Content;
