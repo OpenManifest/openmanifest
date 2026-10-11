@@ -207,6 +207,12 @@ export default function DropzoneForm(props: IDropzoneForm) {
         <Card style={styles.card}>
           <SwitchField
             {...{ control }}
+            label="Members can book themselves on loads"
+            name="allowSelfManifest"
+            helperText="When off, only manifest staff can add, move or remove people"
+          />
+          <SwitchField
+            {...{ control }}
             label="Require Credits"
             name="requireCredits"
             helperText="Users cannot manifest without credits on their account"

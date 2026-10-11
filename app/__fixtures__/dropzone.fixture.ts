@@ -28,6 +28,7 @@ export const dropzoneExtensive: DeepRequired<DropzoneExtensiveFragment> = {
     requireReserveInDate: false,
     requireRigInspection: false,
     allowDoubleManifesting: false,
+    allowSelfManifest: true,
   },
   createdAt: new Date().toISOString(),
   federation: {

@@ -1087,6 +1087,7 @@ export type Mutation = {
   joinDropzone?: Maybe<JoinDropzonePayload>;
   joinFederation?: Maybe<JoinFederationPayload>;
   loginWithApple?: Maybe<ApplePayload>;
+  /** @deprecated Facebook login removed (D4) */
   loginWithFacebook?: Maybe<FacebookPayload>;
   moveSlot?: Maybe<MoveSlotPayload>;
   reloadWeatherCondition?: Maybe<ReloadWeatherConditionPayload>;
@@ -1897,6 +1898,8 @@ export type Settings = {
   allowManifestBypass?: Maybe<Scalars['Boolean']['output']>;
   /** When this is enabled, users can manifest even if they go into negatives */
   allowNegativeCredits?: Maybe<Scalars['Boolean']['output']>;
+  /** When this is disabled, only manifest staff can add, move or remove people on loads */
+  allowSelfManifest?: Maybe<Scalars['Boolean']['output']>;
   /** When this is enabled, users cannot manifest if they have no credits */
   requireCredits?: Maybe<Scalars['Boolean']['output']>;
   /** When this is enabled, users cannot manifest if they have no equipment */
@@ -1918,6 +1921,8 @@ export type SettingsInput = {
   allowManifestBypass?: InputMaybe<Scalars['Boolean']['input']>;
   /** When this is enabled, users can manifest even if they go into negatives */
   allowNegativeCredits?: InputMaybe<Scalars['Boolean']['input']>;
+  /** When this is disabled, only manifest staff can add, move or remove people on loads */
+  allowSelfManifest?: InputMaybe<Scalars['Boolean']['input']>;
   /** When this is enabled, users cannot manifest if they have no credits */
   requireCredits?: InputMaybe<Scalars['Boolean']['input']>;
   /** When this is enabled, users cannot manifest if they have no equipment */

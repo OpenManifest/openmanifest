@@ -30,6 +30,7 @@ export const dropzoneValidation = yup.object({
   allowNegativeCredits: yup.boolean(),
   allowManifestBypass: yup.boolean(),
   allowDoubleManifesting: yup.boolean(),
+  allowSelfManifest: yup.boolean(),
 });
 
 export const EMPTY_FORM_VALUES: Partial<DropzoneFields> = {
@@ -42,6 +43,7 @@ export const EMPTY_FORM_VALUES: Partial<DropzoneFields> = {
   requireMembership: true,
   allowNegativeCredits: false,
   allowManifestBypass: false,
+  allowSelfManifest: true,
   requireCredits: true,
   requireLicense: true,
 };
@@ -71,6 +73,7 @@ export default function useDropzoneForm(opts: IUseManifestFormOpts) {
       allowManifestBypass: dropzone?.settings?.allowManifestBypass,
       allowNegativeCredits: dropzone?.settings?.allowNegativeCredits,
       allowDoubleManifesting: dropzone?.settings?.allowDoubleManifesting,
+      allowSelfManifest: dropzone?.settings?.allowSelfManifest ?? true,
       requireCredits: dropzone?.settings?.requireCredits,
       requireLicense: dropzone?.settings?.requireLicense,
       requireMembership: dropzone?.settings?.requireMembership,
@@ -88,6 +91,7 @@ export default function useDropzoneForm(opts: IUseManifestFormOpts) {
       dropzone?.settings?.allowManifestBypass,
       dropzone?.settings?.allowNegativeCredits,
       dropzone?.settings?.allowDoubleManifesting,
+      dropzone?.settings?.allowSelfManifest,
       dropzone?.settings?.requireCredits,
       dropzone?.settings?.requireLicense,
       dropzone?.settings?.requireMembership,
