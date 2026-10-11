@@ -1189,7 +1189,7 @@ type Mutation {
     confirmUrl: String
     pushToken: String
     token: String!
-  ): FacebookPayload
+  ): FacebookPayload @deprecated(reason: "Facebook login removed (D4)")
   moveSlot(
     """Parameters for MoveSlot"""
     input: MoveSlotInput!
