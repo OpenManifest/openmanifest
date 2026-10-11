@@ -72,7 +72,19 @@ jest.mock('@react-navigation/native', () => ({
   useIsFocused: jest.fn().mockReturnValue(false),
 }));
 
-jest.mock('@gorhom/bottom-sheet', () => require('@gorhom/bottom-sheet/mock'));
+// The stock mock exports React Native's own `TextInput` as `BottomSheetTextInput`, which makes the two impossible to
+// tell apart in a test. A thin wrapper keeps it identifiable.
+jest.mock('@gorhom/bottom-sheet', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const React = require('react');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { TextInput } = require('react-native');
+  const BottomSheetTextInput = React.forwardRef((props: Record<string, unknown>, ref: unknown) =>
+    React.createElement(TextInput, { ...props, ref })
+  );
+  BottomSheetTextInput.displayName = 'BottomSheetTextInput';
+  return { ...require('@gorhom/bottom-sheet/mock'), BottomSheetTextInput };
+});
 
 // React Native 0.71's jest setup mocks AccessibilityInfo.addEventListener without a return value, so react-native-paper 4
 // falls back to the removed `removeEventListener` when its Provider unmounts. Return a real subscription.

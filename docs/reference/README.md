@@ -85,6 +85,19 @@ Main flows:
 | Weather | `WeatherConditionsScreen`, `WindScreen`, `JumpRunScreen` (form state in `app/forms/weather`, `WeatherFormProvider` above the dropzone stack) |
 | Setup | Configuration stack screens; forms in `app/forms/*` |
 
+### Layout primitives (`app/components/layout/`, since Phase 5)
+
+| Primitive | Use |
+|---|---|
+| `ScreenContainer` | Root of every screen: safe-area `edges` (`['top','bottom']` headerless, `['bottom']` under a header), theme background, `flex: 1` |
+| `FormColumn` | Keyboard-aware scrolling column for forms (`KeyboardAwareScrollView`), full width up to 560 |
+| `FloatingActionArea` | Bottom-right area for FABs, outside scroll content; above the gesture bar, rises with the keyboard |
+| `useBreakpoint` | `compact` < 600 ≤ `medium` < 1024 ≤ `expanded` from the window width |
+| `Sheet` | The one bottom sheet (`DialogOrSheet` and `Credits` use it): dynamic height, interactive keyboard handling, bottom inset padding. `TextField`/`NumberField` render a `BottomSheetTextInput` inside a `Sheet` (`SheetContext`) |
+
+`KeyboardProvider` (react-native-keyboard-controller) sits inside `SafeAreaProvider` in `app/entrypoint/Entrypoint.tsx`;
+`android.softwareKeyboardLayoutMode` is `resize`. Web has no bottom sheets: `*.web.tsx` variants use drawers/dialogs.
+
 ## 3. Store shape
 
 There is no Redux (removed in P4.8). Server data lives in the Apollo `InMemoryCache`; everything else is a small zustand

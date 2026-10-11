@@ -26,13 +26,10 @@ export default function RigDialog(props: IRigDialogProps) {
     },
   });
 
-  const snapPoints = React.useMemo(() => [580], []);
-
   return (
     <DialogOrSheet
       title={rig?.id ? 'Edit rig' : 'New rig'}
       open={open}
-      snapPoints={snapPoints}
       onClose={onClose}
       buttonAction={onSubmit}
       buttonLabel="Save"

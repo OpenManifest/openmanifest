@@ -22,13 +22,10 @@ export default function UserDialog(props: IUserDialogProps) {
     },
   });
 
-  const snapPoints = React.useMemo(() => [740], []);
-
   return (
     <DialogOrSheet
       title="Update information"
       open={open}
-      snapPoints={snapPoints}
       loading={loading}
       onClose={onClose}
       buttonAction={onSubmit}

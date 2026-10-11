@@ -32,12 +32,10 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
     }
   }, [open, reset]);
 
-  const snapPoints = React.useMemo(() => [550, 650], []);
   return (
     <DialogOrSheet
       {...{ open, loading, onClose }}
       title={original?.id ? 'Edit ticket' : 'New ticket'}
-      snapPoints={snapPoints}
       buttonAction={onSubmit}
       buttonLabel="Save"
     >

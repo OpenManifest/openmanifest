@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import Sheet from 'app/components/layout/Sheet';
 
 import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
 import { DropzoneUserDetailsFragment, OrderEssentialsFragment } from 'app/api/operations';
-import useKeyboardVisibility from 'app/hooks/useKeyboardVisibility';
 import { TransactionType } from 'app/api/schema.d';
 import useCreditsForm from './useForm';
 import CreditsForm from './CreditsForm';
@@ -29,84 +28,41 @@ export default function CreditSheet(props: ICreditsSheet) {
     onSuccess,
     dropzoneUser,
   });
-  const keyboardVisible = useKeyboardVisibility();
-  const sheetRef = React.useRef<BottomSheetModal>(null);
-
-  const snapPoints = React.useMemo(() => [550], []);
-
-  const memoizedClose = React.useMemo(() => onClose, [onClose]);
-
-  const onDismiss = React.useCallback(() => {
-    setTimeout(() => {
-      requestAnimationFrame(() => memoizedClose());
-    });
-  }, [memoizedClose]);
-
-  const show = () => {
-    sheetRef.current?.present();
-  };
-
-  const hide = () => {
-    sheetRef.current?.dismiss({ duration: 300 });
-    setTimeout(onDismiss, 350);
-  };
-
-  React.useEffect(() => {
-    if (open) {
-      show();
-      // sheetRef.current?.snapTo(snappingPoints?.length - 1, 300);
-    } else {
-      hide();
-    }
-    // Intentional to not open/close the sheet every time these change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onDismiss, open]);
 
   return (
-    <BottomSheetModal
+    <Sheet
       name="credits-modal"
-      ref={sheetRef}
-      snapPoints={snapPoints}
-      onDismiss={onDismiss}
-      index={0}
-      backdropComponent={BottomSheetBackdrop}
-      handleComponent={HandleComponent}
-    >
-      <View style={{ backgroundColor: 'white', flexGrow: 1 }} testID="credits-sheet">
-        <View>
-          <TabsProvider
-            defaultIndex={0} // default = 0
-            onChangeIndex={(newIndex) => {
-              setValue(
-                'type',
-                newIndex === 1 ? TransactionType.Withdrawal : TransactionType.Deposit
-              );
-            }}
-          >
-            <Tabs mode="fixed">
-              <TabScreen label="Deposit" icon="arrow-up">
-                <View />
-              </TabScreen>
-              <TabScreen label="Withdraw" icon="arrow-down">
-                <View />
-              </TabScreen>
-            </Tabs>
-          </TabsProvider>
-        </View>
-
-        <BottomSheetScrollView
-          style={{ flex: 1, flexGrow: 1, width: '100%', height: '100%' }}
-          contentContainerStyle={[styles.sheet, { paddingBottom: keyboardVisible ? 400 : 80 }]}
+      testID="credits-sheet"
+      {...{ open, onClose }}
+      disablePadding
+      handle={<HandleComponent />}
+      header={
+        <TabsProvider
+          defaultIndex={0}
+          onChangeIndex={(newIndex) => {
+            setValue('type', newIndex === 1 ? TransactionType.Withdrawal : TransactionType.Deposit);
+          }}
         >
-          <CreditsForm {...{ control, dropzoneUser }} />
-          <View style={styles.buttonContainer}>
-            <Button onPress={onSubmit} {...{ loading }} mode="contained" style={styles.button}>
-              Save
-            </Button>
-          </View>
-        </BottomSheetScrollView>
+          <Tabs mode="fixed">
+            <TabScreen label="Deposit" icon="arrow-up">
+              <View />
+            </TabScreen>
+            <TabScreen label="Withdraw" icon="arrow-down">
+              <View />
+            </TabScreen>
+          </Tabs>
+        </TabsProvider>
+      }
+    >
+      <View style={styles.sheet}>
+        <CreditsForm {...{ control, dropzoneUser }} />
+        <View style={styles.buttonContainer}>
+          <Button onPress={onSubmit} {...{ loading }} mode="contained" style={styles.button}>
+            Save
+          </Button>
+        </View>
       </View>
-    </BottomSheetModal>
+    </Sheet>
   );
 }
 
@@ -119,17 +75,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     paddingHorizontal: 16,
   },
-  contentContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 32,
-  },
   sheet: {
-    paddingBottom: 30,
     paddingHorizontal: 16,
-    display: 'flex',
+    paddingTop: 8,
     flexDirection: 'column',
-    justifyContent: 'center',
-    flexGrow: 1,
   },
   sheetHeader: {
     elevation: 2,
@@ -141,7 +90,6 @@ const styles = StyleSheet.create({
       width: 0,
       height: -4,
     },
-    backgroundColor: 'white',
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
   },
