@@ -3744,18 +3744,6 @@
             "deprecationReason": null
           },
           {
-            "name": "credits",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": true,
-            "deprecationReason": "Use creditsCents, an integer number of cents"
-          },
-          {
             "name": "creditsCents",
             "description": "The member's credits in cents",
             "args": [],
@@ -4525,18 +4513,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "credits",
-            "description": "In whole units, use creditsCents",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "creditsCents",
             "description": "In cents",
             "type": {
@@ -5026,22 +5002,6 @@
         "isOneOf": null,
         "fields": [
           {
-            "name": "cost",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "name": "Float",
-                "kind": "SCALAR",
-                "ofType": null
-              }
-            },
-            "isDeprecated": true,
-            "deprecationReason": "Use costCents, an integer number of cents"
-          },
-          {
             "name": "costCents",
             "description": null,
             "args": [],
@@ -5209,18 +5169,6 @@
         "isOneOf": false,
         "fields": null,
         "inputFields": [
-          {
-            "name": "cost",
-            "description": "In whole units, use costCents",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
           {
             "name": "costCents",
             "description": "In cents",
@@ -10063,22 +10011,6 @@
         "isOneOf": null,
         "fields": [
           {
-            "name": "amount",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "name": "Float",
-                "kind": "SCALAR",
-                "ofType": null
-              }
-            },
-            "isDeprecated": true,
-            "deprecationReason": "Use amountCents, an integer number of cents"
-          },
-          {
             "name": "amountCents",
             "description": null,
             "args": [],
@@ -10393,18 +10325,6 @@
         "isOneOf": false,
         "fields": null,
         "inputFields": [
-          {
-            "name": "amount",
-            "description": "In whole units, use amountCents. Total amount of the order",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
           {
             "name": "amountCents",
             "description": "In cents. Total amount of the order",
@@ -13357,18 +13277,6 @@
         "isOneOf": null,
         "fields": [
           {
-            "name": "cost",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": true,
-            "deprecationReason": "Use costCents, an integer number of cents"
-          },
-          {
             "name": "costCents",
             "description": null,
             "args": [],
@@ -13760,22 +13668,6 @@
         "description": null,
         "isOneOf": null,
         "fields": [
-          {
-            "name": "cost",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "name": "Float",
-                "kind": "SCALAR",
-                "ofType": null
-              }
-            },
-            "isDeprecated": true,
-            "deprecationReason": "Use costCents, an integer number of cents"
-          },
           {
             "name": "costCents",
             "description": null,
@@ -15009,22 +14901,6 @@
             "deprecationReason": null
           },
           {
-            "name": "cost",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "name": "Float",
-                "kind": "SCALAR",
-                "ofType": null
-              }
-            },
-            "isDeprecated": true,
-            "deprecationReason": "Use costCents, an integer number of cents"
-          },
-          {
             "name": "costCents",
             "description": null,
             "args": [],
@@ -15237,18 +15113,6 @@
             "deprecationReason": null
           },
           {
-            "name": "cost",
-            "description": "In whole units, use costCents",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "costCents",
             "description": "In cents",
             "type": {
@@ -15375,22 +15239,6 @@
         "description": null,
         "isOneOf": null,
         "fields": [
-          {
-            "name": "amount",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "name": "Float",
-                "kind": "SCALAR",
-                "ofType": null
-              }
-            },
-            "isDeprecated": true,
-            "deprecationReason": "Use amountCents, an integer number of cents"
-          },
           {
             "name": "amountCents",
             "description": null,

@@ -511,7 +511,6 @@ type DropzoneUser implements AnyResource & Wallet {
     loadId: Int
   ): [Rig!]
   createdAt: ISO8601DateTime!
-  credits: Float @deprecated(reason: "Use creditsCents, an integer number of cents")
 
   """The member's credits in cents"""
   creditsCents: Int
@@ -635,9 +634,6 @@ type DropzoneUserEdge {
 }
 
 input DropzoneUserInput {
-  """In whole units, use creditsCents"""
-  credits: Float
-
   """In cents"""
   creditsCents: Int
   email: String
@@ -726,7 +722,6 @@ enum EventLevel {
 }
 
 type Extra implements AnyResource & SellableItem {
-  cost: Float! @deprecated(reason: "Use costCents, an integer number of cents")
   costCents: Int!
   createdAt: ISO8601DateTime!
   dropzone: Dropzone!
@@ -739,9 +734,6 @@ type Extra implements AnyResource & SellableItem {
 }
 
 input ExtraInput {
-  """In whole units, use costCents"""
-  cost: Float
-
   """In cents"""
   costCents: Int
   dropzoneId: Int
@@ -1353,7 +1345,6 @@ enum NotificationType {
 }
 
 type Order implements AnyResource {
-  amount: Float! @deprecated(reason: "Use amountCents, an integer number of cents")
   amountCents: Int!
   buyer: Wallet
   createdAt: ISO8601DateTime!
@@ -1391,9 +1382,6 @@ type OrderEdge {
 }
 
 input OrderInput {
-  """In whole units, use amountCents. Total amount of the order"""
-  amount: Float
-
   """In cents. Total amount of the order"""
   amountCents: Int
 
@@ -1783,7 +1771,6 @@ input RigInspectionInput {
 }
 
 interface SellableItem {
-  cost: Float @deprecated(reason: "Use costCents, an integer number of cents")
   costCents: Int
   title: String
 }
@@ -1882,7 +1869,6 @@ type SignUpPayload {
 }
 
 type Slot implements AnyResource & SellableItem {
-  cost: Float! @deprecated(reason: "Use costCents, an integer number of cents")
   costCents: Int!
   createdAt: ISO8601DateTime!
   dropzoneUser: DropzoneUser
@@ -1993,7 +1979,6 @@ type Subscription {
 type TicketType implements AnyResource & SellableItem {
   allowManifestingSelf: Boolean
   altitude: Int
-  cost: Float! @deprecated(reason: "Use costCents, an integer number of cents")
   costCents: Int!
   createdAt: ISO8601DateTime!
   currency: String
@@ -2011,9 +1996,6 @@ input TicketTypeInput {
   allowManifestingSelf: Boolean
   altitude: Int
 
-  """In whole units, use costCents"""
-  cost: Float
-
   """In cents"""
   costCents: Int
   currency: String
@@ -2029,7 +2011,6 @@ input TimeRangeInput {
 }
 
 type Transaction implements AnyResource {
-  amount: Float! @deprecated(reason: "Use amountCents, an integer number of cents")
   amountCents: Int!
   createdAt: ISO8601DateTime!
   dropzoneUser: DropzoneUser!
