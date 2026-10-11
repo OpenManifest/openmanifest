@@ -79,7 +79,21 @@ async function run(browser, name, viewport) {
     await page.goto(`${base}/login`, { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForTimeout(3000);
     await checkLayout(page, '/login', viewport, failures);
-    // TODO P5.2: /signup and /wizards/dropzone. P5.3: dropzone selection. P5.5: the board and a load (last slot row
+    await page.goto(`${base}/signup`, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.waitForTimeout(3000);
+    await checkLayout(page, '/signup', viewport, failures);
+    if (
+      !(await page
+        .getByTestId('wizard-next-primary-action')
+        .isVisible()
+        .catch(() => false))
+    ) {
+      failures.push('/signup: the wizard next button is not visible');
+    }
+    await page.screenshot({ path: join(out, `${name}-signup.png`) });
+    await page.goto(`${base}/login`, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.waitForTimeout(3000);
+    // TODO P5.3: dropzone selection. P5.5: the board and a load (last slot row
     // reachable with 10 jumpers). P5.6: the configuration routes. P5.7: weather, wind and jump run. P5.8: board and
     // load again at `html { font-size: 200% }`.
     await page.locator('input').nth(0).click({ force: true });
@@ -153,6 +167,20 @@ async function run(browser, name, viewport) {
       failures.push(`deep link ${loadUrl} did not show the load`);
     }
     await page.screenshot({ path: join(out, `${name}-deeplink-load.png`) });
+
+    // The dropzone setup wizard (reachable for any logged in user)
+    await page.goto(`${base}/setup`, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.waitForTimeout(4000);
+    await checkLayout(page, '/setup', viewport, failures);
+    if (
+      !(await page
+        .getByTestId('wizard-next-primary-action')
+        .isVisible()
+        .catch(() => false))
+    ) {
+      failures.push('/setup: the wizard next button is not visible');
+    }
+    await page.screenshot({ path: join(out, `${name}-setup.png`) });
 
     // Log out and log in as somebody else without reloading the page: requests must still go out (they used to be
     // aborted for good after a logout) and nothing of the first user may be left behind.
