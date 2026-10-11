@@ -31,6 +31,32 @@ async function pressAt(page, locator, at) {
   await page.mouse.up();
 }
 
+/** The element can be scrolled into view, lies inside the viewport and is what a click there would hit */
+async function checkReachable(page, locator, label, route, viewport, failures) {
+  try {
+    await locator.scrollIntoViewIfNeeded({ timeout: 5000 });
+    const box = await locator.boundingBox();
+    const reachable =
+      !!box &&
+      box.x >= 0 &&
+      box.x + box.width <= viewport.width &&
+      box.y >= 0 &&
+      box.y + box.height <= viewport.height &&
+      (await locator.evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+        return !!hit && el.contains(hit);
+      }));
+    if (!reachable) {
+      failures.push(
+        `layout ${route}: ${label} is not reachable at ${viewport.width}x${viewport.height}`
+      );
+    }
+  } catch (e) {
+    failures.push(`layout ${route}: ${label}: ${String(e.message).slice(0, 120)}`);
+  }
+}
+
 /**
  * Layout check for the current route: nothing overflows the viewport horizontally, and every primary action
  * (`data-testid$="-primary-action"`) can be scrolled into view and is the element that receives a click there.
@@ -44,29 +70,14 @@ async function checkLayout(page, route, viewport, failures) {
   const count = await actions.count();
   for (let i = 0; i < count; i += 1) {
     const action = actions.nth(i);
-    const testId = await action.getAttribute('data-testid');
-    try {
-      await action.scrollIntoViewIfNeeded({ timeout: 5000 });
-      const box = await action.boundingBox();
-      const reachable =
-        !!box &&
-        box.x >= 0 &&
-        box.x + box.width <= viewport.width &&
-        box.y >= 0 &&
-        box.y + box.height <= viewport.height &&
-        (await action.evaluate((el) => {
-          const r = el.getBoundingClientRect();
-          const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
-          return !!hit && el.contains(hit);
-        }));
-      if (!reachable) {
-        failures.push(
-          `layout ${route}: ${testId} is not reachable at ${viewport.width}x${viewport.height}`
-        );
-      }
-    } catch (e) {
-      failures.push(`layout ${route}: ${testId}: ${String(e.message).slice(0, 120)}`);
-    }
+    await checkReachable(
+      page,
+      action,
+      await action.getAttribute('data-testid'),
+      route,
+      viewport,
+      failures
+    );
   }
 }
 
@@ -79,6 +90,14 @@ async function run(browser, name, viewport) {
     await page.goto(`${base}/login`, { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForTimeout(3000);
     await checkLayout(page, '/login', viewport, failures);
+    await checkReachable(
+      page,
+      page.getByText('Sign up', { exact: true }),
+      'Sign up',
+      '/login',
+      viewport,
+      failures
+    );
     await page.goto(`${base}/signup`, { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForTimeout(3000);
     await checkLayout(page, '/signup', viewport, failures);
@@ -93,7 +112,7 @@ async function run(browser, name, viewport) {
     await page.screenshot({ path: join(out, `${name}-signup.png`) });
     await page.goto(`${base}/login`, { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForTimeout(3000);
-    // TODO P5.3: dropzone selection. P5.5: the board and a load (last slot row
+    // TODO P5.5: the board and a load (last slot row
     // reachable with 10 jumpers). P5.6: the configuration routes. P5.7: weather, wind and jump run. P5.8: board and
     // load again at `html { font-size: 200% }`.
     await page.locator('input').nth(0).click({ force: true });
@@ -103,6 +122,8 @@ async function run(browser, name, viewport) {
     await page.keyboard.press('Enter');
     await page.waitForTimeout(6000);
 
+    await checkLayout(page, 'dropzone selection', viewport, failures);
+    await page.screenshot({ path: join(out, `${name}-select-dropzone.png`) });
     await pressAt(page, page.getByText('Dropzone', { exact: true }).first());
     await page.waitForTimeout(8000);
     if (!new URL(page.url()).pathname.endsWith('/dropzone/manifest')) {

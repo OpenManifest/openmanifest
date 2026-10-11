@@ -1,24 +1,29 @@
 import * as React from 'react';
-import { StyleSheet, FlatList, Platform } from 'react-native';
+import { StyleSheet, FlatList, useWindowDimensions } from 'react-native';
 import { FAB } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDropzonesContext } from 'app/api/crud';
 
+import FloatingActionArea from 'app/components/layout/FloatingActionArea';
+import ScreenContainer from 'app/components/layout/ScreenContainer';
 import NoResults from '../../../components/NoResults';
-import DropzoneCard from './DropzoneCard';
+import DropzoneCard, { DROPZONE_CARD_SIZE } from './DropzoneCard';
 import { useAppTheme } from 'app/theme';
 
 export default function DropzonesScreen() {
   const { theme } = useAppTheme();
   const { dropzones, loading, refetch } = useDropzonesContext();
   const navigation = useNavigation();
+  const { width } = useWindowDimensions();
+  // As many cards as fit next to each other
+  const numColumns = Math.max(1, Math.floor(width / DROPZONE_CARD_SIZE));
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScreenContainer>
       <FlatList
+        key={`dropzones-columns-${numColumns}`}
         data={dropzones}
-        numColumns={Platform.OS === 'web' ? 3 : 2}
+        numColumns={numColumns}
         refreshing={loading}
         keyExtractor={(item) => `dropzone-${item?.id}`}
         onRefresh={() => refetch()}
@@ -29,52 +34,30 @@ export default function DropzonesScreen() {
         )}
         renderItem={({ item: dropzone }) => (!dropzone ? null : <DropzoneCard {...{ dropzone }} />)}
       />
-      <FAB
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        small
-        icon="plus"
-        onPress={() => {
-          navigation.navigate('Wizards', { screen: 'DropzoneWizardScreen' });
-        }}
-        label="Create dropzone"
-      />
-    </SafeAreaView>
+      <FloatingActionArea>
+        <FAB
+          testID="create-dropzone-primary-action"
+          style={{ backgroundColor: theme.colors.primary }}
+          small
+          icon="plus"
+          onPress={() => {
+            navigation.navigate('Wizards', { screen: 'DropzoneWizardScreen' });
+          }}
+          label="Create dropzone"
+        />
+      </FloatingActionArea>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 8,
-    display: 'flex',
-    flexGrow: 1,
-  },
-  flatlist: { flex: 1, width: '100%', flexGrow: 1 },
+  flatlist: { flex: 1, width: '100%' },
   content: {
     flexGrow: 1,
     width: '100%',
-    paddingBottom: 100,
+    // Room for the floating button below the last row
+    paddingBottom: 96,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  dzIcon: {
-    height: 150,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fab: {
-    position: 'absolute',
-    margin: 32,
-    right: 16,
-    bottom: 0,
-    backgroundColor: '#FFFFFF',
-  },
-  empty: {
-    flex: 1,
-    backgroundColor: '#FF1414',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%',
   },
 });
