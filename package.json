@@ -18,6 +18,9 @@
     "check:all": "yarn check:types && yarn check:testing && yarn check:linting && yarn check:graphql",
     "check:graphql": "node scripts/validate-graphql.mjs",
     "sync:schema": "node scripts/sync-schema.mjs",
+    "sync:vocabulary": "node scripts/sync-vocabulary.mjs",
+    "check:vocabulary": "node scripts/check-vocabulary.mjs",
+    "rename:vocabulary": "node scripts/rename-vocabulary.mjs",
     "eas:build": "yarn check:env && eas build --auto-submit --non-interactive --profile $EXPO_ENV",
     "eas:build:ios": "yarn eas:build --platform ios",
     "eas:build:android": "yarn eas:build --platform android",
@@ -49,7 +52,8 @@
     ],
     "moduleNameMapper": {
       "^date-fns/esm$": "date-fns",
-      "^@babel/runtime/helpers/(.+)$": "<rootDir>/node_modules/@babel/runtime/helpers/$1.js"
+      "^@babel/runtime/helpers/(.+)$": "<rootDir>/node_modules/@babel/runtime/helpers/$1.js",
+      "^yaml$": "<rootDir>/node_modules/yaml/dist/index.js"
     },
     "testPathIgnorePatterns": [
       "/__mocks__/.*.mock.ts",
@@ -231,6 +235,7 @@
     "react-test-renderer": "19.2.3",
     "semver": "7.3.8",
     "ts-node": "^10.9.2",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "yaml": "^2"
   }
 }
