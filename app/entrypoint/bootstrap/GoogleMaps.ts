@@ -2,7 +2,6 @@ import config from 'app/constants/expo';
 import { Platform } from 'react-native';
 
 import Geocoder from 'react-native-geocoding';
-import { setGoogleApiKey } from 'expo-location';
 
 const googleMapsApiKey = Platform.select({
   ios: config?.googleMapsIos,
@@ -11,4 +10,3 @@ const googleMapsApiKey = Platform.select({
 });
 
 Geocoder.init(googleMapsApiKey);
-setGoogleApiKey(googleMapsApiKey);

@@ -50,7 +50,7 @@ export function MenuItem(props: IMenuItemProps) {
 export default function Menu(props: IPopoverMenuProps) {
   const { open, setOpen, anchor, children } = props;
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
-  const ref = React.useRef<TouchableOpacity>(null);
+  const ref = React.useRef<React.ElementRef<typeof TouchableOpacity>>(null);
   const onClick = React.useCallback(
     (event: GestureResponderEvent) => {
       setOpen(true);

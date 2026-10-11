@@ -14,7 +14,7 @@ Client diagrams: [diagrams.md](diagrams.md).
 
 | Concern | Library (installed version) | Where |
 |---|---|---|
-| Runtime | Expo SDK 51.0.39 (P3.8; was 50.0.21), React Native 0.74.5, React 18.2.0, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before) | `package.json`, `app.json` |
+| Runtime | Expo SDK 52.0.49 (P3.10; was 51.0.39), React Native 0.76.9, React 18.3.1, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before) | `package.json`, `app.json` |
 | Language | TypeScript 4.9.4 (`strict`), path alias `app/*` via `babel-plugin-module-resolver` | `tsconfig.json`, `babel.config.js` |
 | Server data | Apollo Client 3.7.11 (`BatchHttpLink`, ActionCable link for subscriptions) | `app/api/` |
 | Client state | Redux Toolkit 1.9.3 + redux-persist 6 (`global` slice persisted) | `app/state/` |
@@ -222,8 +222,8 @@ Headline:
 
 | Package | Installed | Latest | Target in plan |
 |---|---|---|---|
-| expo | 51.0.39 (P3.8) | 57.0.27 | 57.0.27 (P3.18) |
-| react-native | 0.74.5 (P3.8) | 0.87.1 (npm `latest`) | 0.86.x pinned by SDK 57 |
+| expo | 52.0.49 (P3.10) | 57.0.27 | 57.0.27 (P3.18) |
+| react-native | 0.76.9 (P3.10) | 0.87.1 (npm `latest`) | 0.86.x pinned by SDK 57 |
 | react | 18.1.0 | 19.3.0 (npm `latest`) | 19.2.x pinned by SDK 57 |
 | @apollo/client | 3.7.11 | 4.3.2 | 3.14.1 (P3.19); 4.x is backlog |
 | typescript | 4.9.4 | 7.0.2 | 5.9.3 (P3.20) |
@@ -245,7 +245,6 @@ Full table:
 | `@emotion/styled` | dep | `11.10.6` | 11.10.6 | 11.14.1 |  |  |
 | `@expo-google-fonts/inter` | dep | `^0.2.2` | 0.2.2 | 0.4.2 |  |  |
 | `@expo-google-fonts/roboto` | dep | `^0.2.2` | 0.2.2 | 0.4.3 |  |  |
-| `@expo/config-plugins` | dep | `^5.0.2` | 5.0.4 | 57.0.10 |  |  |
 | `@expo/vector-icons` | dep | `^13.0.0` | 13.0.0 | 15.1.1 | `^15.0.2` |  |
 | `@formatjs/intl-datetimeformat` | dep | `4.5.1` | 4.5.1 | 7.8.1 |  |  |
 | `@formatjs/intl-displaynames` | dep | `5.4.1` | 5.4.1 | 7.3.15 |  |  |
@@ -292,10 +291,10 @@ Full table:
 | `expo-font` | dep | `~11.0.1` | 11.0.1 | 57.0.4 | `~57.0.4` |  |
 | `expo-image-picker` | dep | `~14.0.2` | 14.0.2 | 57.0.20 | `~57.0.20` |  |
 | `expo-linear-gradient` | dep | `~12.0.1` | 12.0.1 | 57.0.2 | `~57.0.2` |  |
-| `expo-linking` | dep | `~6.3.1` (P3.8) | 6.3.1 | 57.0.12 | `~57.0.12` |  |
+| `expo-linking` | dep | `~7.0.5` (P3.10) | 7.0.5 | 57.0.12 | `~57.0.12` |  |
 | `expo-localization` | dep | `~14.0.0` | 14.0.0 | 57.0.2 | `~57.0.2` |  |
-| `expo-location` | dep | `~15.0.1` | 15.0.1 | 57.0.20 | `~57.0.20` |  |
-| `expo-notifications` | dep | `~0.28.19` (P3.8) | 0.28.19 | 57.0.22 | `~57.0.22` |  |
+| `expo-location` | dep | `~18.0.10` (P3.10) | 18.0.10 | 57.0.20 | `~57.0.20` |  |
+| `expo-notifications` | dep | `~0.29.14` (P3.10) | 0.29.14 | 57.0.22 | `~57.0.22` |  |
 | `expo-splash-screen` | dep | `~0.17.5` | 0.17.5 | 57.0.9 | `~57.0.9` |  |
 | `expo-status-bar` | dep | `~1.4.2` | 1.4.2 | 57.0.1 | `~57.0.1` |  |
 | `expo-updates` | dep | `~0.15.6` | 0.15.6 | 57.0.25 | `~57.0.25` |  |
@@ -307,11 +306,11 @@ Full table:
 | `lottie-react-native` | dep | `5.1.4` | 5.1.4 | 7.5.0 | `~7.3.8` |  |
 | `luxon` | dep | `3.3.0` | 3.3.0 | 3.7.2 |  |  |
 | `postinstall-postinstall` | dep | `^2.1.0` | 2.1.0 | 2.1.0 |  | last publish 2022-05-13 |
-| `react` | dep | `18.1.0` | 18.1.0 | 19.3.0 | `19.2.3` |  |
+| `react` | dep | `18.3.1` (P3.10) | 18.3.1 | 19.3.0 | `19.2.3` |  |
 | `react-calendar-heatmap` | dep | `1.9.0` | 1.9.0 | 1.10.0 |  |  |
 | `react-countdown-circle-timer` | dep | `3.1.0` | 3.1.0 | 3.2.1 |  | last publish 2023-03-15 |
 | `react-day-picker` | dep | `^7.4.10` | 7.4.10 | 10.0.2 |  |  |
-| `react-dom` | dep | `18.1.0` | 18.1.0 | 19.3.0 | `19.2.3` |  |
+| `react-dom` | dep | `18.3.1` (P3.10) | 18.3.1 | 19.3.0 | `19.2.3` |  |
 | `react-facebook-login` | dep | `^4.1.1` | 4.1.1 | 4.1.1 |  | last publish 2022-06-25 |
 | `react-hook-form` | dep | `7.42.1` | 7.42.1 | 7.89.0 |  |  |
 | `react-image-lightbox` | dep | `^5.1.4` | 5.1.4 | 5.1.4 |  | **deprecated on npm**; last publish 2023-01-19 |
@@ -335,10 +334,10 @@ Full table:
 | `react-native-paper` | dep | `4.12.4` | 4.12.4 | 5.15.3 |  |  |
 | `react-native-paper-dates` | dep | `0.8.7` | 0.8.7 | 0.24.0 |  |  |
 | `react-native-paper-tabs` | dep | `0.7.0` | 0.7.0 | 0.11.4 |  |  |
-| `react-native-reanimated` | dep | `~3.10.1` (P3.8) | 3.10.1 | 4.7.1 | `4.5.1` |  |
+| `react-native-reanimated` | dep | `~3.16.1` (P3.10) | 3.16.7 | 4.7.1 | `4.5.1` |  |
 | `react-native-reanimated-carousel` | dep | `^3.5.1` (P3.6) | 3.5.1 | 5.1.1 |  |  |
 | `react-native-safe-area-context` | dep | `4.4.1` | 4.4.1 | 5.10.1 | `~5.7.0` |  |
-| `react-native-screens` | dep | `~3.18.0` | 3.18.2 | 4.28.0 | `~4.26.0` |  |
+| `react-native-screens` | dep | `~4.4.0` (P3.10) | 4.4.0 | 4.28.0 | `~4.26.0` |  |
 | `react-native-skeleton-content` | dep | `1.0.28` | 1.0.28 | 1.0.28 |  | last publish 2022-10-04 |
 | `react-native-svg` | dep | `13.4.0` | 13.4.0 | 15.15.5 | `15.15.4` |  |
 | `react-native-swiper-flatlist` | dep | `3.0.18` | 3.0.18 | 3.2.5 |  | last publish 2024-09-10 |
@@ -363,7 +362,6 @@ Full table:
 | `@babel/plugin-syntax-bigint` | dev | `^7.8.3` | 7.8.3 | 7.8.3 |  | last publish 2022-06-12 |
 | `@babel/preset-env` | dev | `7.21.4` | 7.21.4 | 8.0.7 |  |  |
 | `@babel/runtime` | dev | `7.21.0` | 7.21.0 | 8.0.7 |  |  |
-| `@expo/metro-config` | dev | `0.7.1` | 0.7.1 | 57.0.13 |  |  |
 | `@graphql-codegen/add` | dev | `3.2.3` | 3.2.3 | 7.1.1 |  |  |
 | `@graphql-codegen/cli` | dev | `2.16.4` | 2.16.4 | 7.4.5 |  |  |
 | `@graphql-codegen/import-types-preset` | dev | `2.2.6` | 2.2.6 | 4.0.1 |  |  |
@@ -385,7 +383,7 @@ Full table:
 | `@types/lodash` | dev | `4.14.192` | 4.14.192 | 4.17.25 |  |  |
 | `@types/luxon` | dev | `3.3.0` | 3.3.0 | 3.7.6 |  |  |
 | `@types/rails__actioncable` | dev | `^6.1.6` | 6.1.6 | 8.0.3 |  |  |
-| `@types/react` | dev | `18.0.33` | 18.0.33 | 19.3.0 |  |  |
+| `@types/react` | dev | `~18.3.12` (P3.10) | 18.3.31 | 19.3.0 |  |  |
 | `@types/react-calendar-heatmap` | dev | `^1.6.3` | 1.6.3 | 1.9.0 |  |  |
 | `@types/react-facebook-login` | dev | `4.1.5` | 4.1.5 | 4.1.11 |  |  |
 | `@types/react-native` | dev | `~0.70.6` | 0.70.8 | 0.73.0 |  | **deprecated on npm**; last publish 2023-12-21 |
@@ -409,12 +407,12 @@ Full table:
 | `glob` | dev | `9.3.2` | 9.3.2 | 13.0.6 |  |  |
 | `isomorphic-fetch` | dev | `3.0.0` | 3.0.0 | 3.0.0 |  | last publish 2023-10-23 |
 | `jest` | dev | `^26.6.3` | 26.6.3 | 30.5.2 |  |  |
-| `jest-expo` | dev | `~51.0.4` (P3.8) | 51.0.4 | 57.0.5 | `~57.0.5` | needs jest 29 |
+| `jest-expo` | dev | `~52.0.6` (P3.10) | 52.0.6 | 57.0.5 | `~57.0.5` | needs jest 29 |
 | `jest-junit` | dev | `13.0.0` | 13.0.0 | 17.0.0 |  |  |
 | `json` | dev | `^11.0.0` | 11.0.0 | 11.0.0 |  | last publish 2023-03-04 |
 | `patch-package` | dev | `6.5.1` | 6.5.1 | 8.0.1 |  |  |
 | `prettier` | dev | `2.8.7` | 2.8.7 | 3.9.9 |  |  |
-| `react-test-renderer` | dev | `17.0.1` | 18.1.0 | 19.3.0 |  |  |
+| `react-test-renderer` | dev | `18.3.1` (P3.10) | 18.3.1 | 19.3.0 |  |  |
 | `redux-mock-store` | dev | `^1.5.4` | 1.5.4 | 1.5.5 |  |  |
 | `rome` | dev | `11.0.0-nightly.aec33ef` | 11.0.0-nightly.aec33ef | 12.1.3 |  | last publish 2024-04-16 |
 | `semver` | dev | `7.3.8` | 7.3.8 | 7.8.5 |  |  |
