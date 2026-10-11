@@ -137,6 +137,7 @@ async function run(browser, name, viewport) {
     await page.goto(`${base}/login`, { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForTimeout(3000);
     await checkLayout(page, '/login', viewport, failures);
+    await page.screenshot({ path: join(out, `${name}-login.png`) });
     await checkReachable(
       page,
       page.getByText('Sign up', { exact: true }),
@@ -306,6 +307,16 @@ async function run(browser, name, viewport) {
       failures.push('/setup: the wizard next button is not visible');
     }
     await page.screenshot({ path: join(out, `${name}-setup.png`) });
+
+    // The signed in user's own profile, through the drawer
+    await page.goto(`${base}/dropzone/manifest`, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.waitForTimeout(4000);
+    await pressAt(page, page.locator('body'), { x: 35, y: 28 });
+    await page.waitForTimeout(1000);
+    await page.getByText('Profile', { exact: true }).last().click({ force: true });
+    await page.waitForTimeout(5000);
+    await checkLayout(page, 'profile', viewport, failures);
+    await page.screenshot({ path: join(out, `${name}-profile.png`) });
 
     // Log out and log in as somebody else without reloading the page: requests must still go out (they used to be
     // aborted for good after a logout) and nothing of the first user may be left behind.
