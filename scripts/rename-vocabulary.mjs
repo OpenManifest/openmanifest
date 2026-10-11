@@ -28,7 +28,7 @@ for (const file of tree.paths) {
   if (tree.allowed(file)) continue;
   if (tree.isText(file)) {
     const before = tree.read(file);
-    const after = vocabulary.rewrite(before, list);
+    const after = vocabulary.rewriteKeepingProse(before, list, '', file);
     if (after !== before) {
       if (!dryRun) writeFileSync(join(tree.root, file), after);
       changed.push(file);

@@ -78,6 +78,41 @@ describe('vocabulary.rewrite', () => {
   });
 });
 
+describe('vocabulary.rewriteKeepingProse', () => {
+  const keep = (text: string) =>
+    vocabulary.rewriteKeepingProse(text, vocabulary.entries(['tenant']), '', 'screen.tsx');
+
+  it('renames identifiers, types and typenames', () => {
+    expect(keep("const dropzone: DropzoneUser = { __typename: 'DropzoneUser' };")).toBe(
+      "const operator: Membership = { __typename: 'Membership' };"
+    );
+  });
+
+  it('keeps JSX text, multi-word strings and copy props', () => {
+    const source = `<Card label="Dropzone" title='Your dropzone'><Text>Select a dropzone</Text>{dropzone.name}</Card>`;
+    expect(keep(source)).toBe(
+      `<Card label="Dropzone" title='Your dropzone'><Text>Select a dropzone</Text>{operator.name}</Card>`
+    );
+  });
+
+  it('keeps the text a test looks for', () => {
+    expect(keep("expect(screen.getByText('Dropzone')).toBeTruthy(); dropzone.id;")).toBe(
+      "expect(screen.getByText('Dropzone')).toBeTruthy(); operator.id;"
+    );
+  });
+
+  it('renames everything in files that are not source code', () => {
+    expect(
+      vocabulary.rewriteKeepingProse(
+        'Select a dropzone',
+        vocabulary.entries(['tenant']),
+        '',
+        'a.md'
+      )
+    ).toBe('Select a operator');
+  });
+});
+
 describe('vocabulary.scan', () => {
   it('counts old terms per entry across identifiers', () => {
     const counts = vocabulary.scan(

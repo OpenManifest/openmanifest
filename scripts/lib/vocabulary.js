@@ -133,6 +133,49 @@ function rewrite(text, list, singleWordSep = '') {
   return text.replace(TOKEN, (token) => rewriteToken(token, list, singleWordSep));
 }
 
+const CODE_FILE = /\.(?:[cm]?[jt]sx?)$/;
+const COPY_PROPS =
+  'label|title|placeholder|helperText|subtitle|description|accessibilityLabel|headline|text';
+const TEXT_QUERIES = '(?:get|find|query)(?:All)?ByText';
+// Regions of a source file that are text for people: kept as they are by `rewriteKeepingProse` (terminology moves the
+// visible copy to translated terms in P7.19/P7.20, so a rename task must not change what users read)
+const PROSE_PATTERNS = [
+  // JSX text: <Text>Select a dropzone</Text>
+  />([^<>{}\n]*[A-Za-z][^<>{}\n]*)</g,
+  // string literals with at least two words
+  /(['"])((?:\\.|(?!\1)[^\\\n])*?[A-Za-z]+[ \t]+[A-Za-z]+(?:\\.|(?!\1)[^\\\n])*?)\1/g,
+  // the one-word value of a copy prop: label="Dropzone"
+  new RegExp(`\\b(?:${COPY_PROPS})=(["'])([^"'\\n]+)\\1`, 'g'),
+  // the text a test looks for: getByText('Dropzone')
+  new RegExp(`\\b${TEXT_QUERIES}\\(\\s*(['"])([^'"\\n]+)\\1`, 'g'),
+];
+
+/**
+ * Like `rewrite`, but prose in source files stays as it is: JSX text, strings of several words (outside `${...}` in
+ * template literals), the one-word value of a copy prop and the text a test looks for.
+ */
+function rewriteKeepingProse(text, list, singleWordSep = '', file = '') {
+  if (!CODE_FILE.test(file)) return rewrite(text, list, singleWordSep);
+  const kept = [];
+  let masked = text;
+  for (const pattern of PROSE_PATTERNS) {
+    masked = masked.replace(pattern, (match, ...groups) => {
+      const quoteOrText = groups[0];
+      const body = groups.length > 3 && typeof groups[1] === 'string' ? groups[1] : quoteOrText;
+      const start = match.lastIndexOf(body);
+      kept.push(body);
+      return `${match.slice(0, start)}\uE000${kept.length - 1}\uE001${match.slice(start + body.length)}`;
+    });
+  }
+  const rewritten = rewrite(masked, list, singleWordSep);
+  let restored = rewritten;
+  // A kept region can hold another one (a copy prop whose value was a string of several words)
+  while (/\uE000\d+\uE001/.test(restored)) {
+    restored = restored.replace(/\uE000(\d+)\uE001/g, (_, index) => kept[Number(index)]);
+  }
+  return restored;
+}
+
 /** Counts the old terms in `text`, by the entry's old name */
 function scan(text, list) {
   const counts = {};
@@ -176,6 +219,7 @@ module.exports = {
   entries,
   partsOf,
   rewrite,
+  rewriteKeepingProse,
   rewriteToken,
   scan,
   isAllowed,
