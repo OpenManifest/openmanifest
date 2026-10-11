@@ -48,6 +48,9 @@
     "transformIgnorePatterns": [
       "node_modules/(?!(jest-)?(@react-native|expo-modules-core|react-native)|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|@sentry|react-native-iphone-x-helper|react-native-reanimated|expo-linear-gradient/.*)"
     ],
+    "moduleNameMapper": {
+      "^date-fns/esm$": "date-fns"
+    },
     "testPathIgnorePatterns": [
       "/__mocks__/.*.mock.ts",
       "/__fixtures__/.*.fixture.ts"
