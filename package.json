@@ -11,7 +11,7 @@
     "version:bump:minor": "yarn --silent version --minor",
     "check:env": "yarn ts:script ./build/scripts/check-environment.ts",
     "check:linting": "eslint app && prettier --check \"app/**/*.{ts,tsx}\"",
-    "check:types": "tsc --noEmit --allowJs false --skipLibCheck",
+    "check:types": "tsc --noEmit --allowJs false --skipLibCheck && tsc -p e2e",
     "check:testing": "jest --ci",
     "check:types:ci": "yarn check:types",
     "check:testing:ci": "jest --ci",
@@ -37,7 +37,10 @@
     "ts:graphql:production": "yarn gql:schema:production && yarn graphql-codegen",
     "ts:graphql:local": "yarn gql:schema:local && yarn graphql-codegen",
     "web:upload": "yarn ts:script ./build/scripts/prepare-web.ts",
-    "check:linting:ci": "yarn check:linting"
+    "check:linting:ci": "yarn check:linting",
+    "test:ui:smoke": "playwright test --project='smoke-*'",
+    "test:ui:full": "playwright test --project='full-*'",
+    "test:ui:report": "playwright show-report e2e/.report"
   },
   "jest": {
     "preset": "jest-expo",
@@ -50,7 +53,8 @@
     },
     "testPathIgnorePatterns": [
       "/__mocks__/.*.mock.ts",
-      "/__fixtures__/.*.fixture.ts"
+      "/__fixtures__/.*.fixture.ts",
+      "/e2e/"
     ],
     "moduleFileExtensions": [
       "ts",
@@ -175,6 +179,7 @@
     "@types/react": "~19.2.2"
   },
   "devDependencies": {
+    "@axe-core/playwright": "~4.13",
     "@babel/core": "^7.28.0",
     "@babel/plugin-proposal-export-namespace-from": "7.18.9",
     "@babel/plugin-proposal-numeric-separator": "7.18.6",
@@ -190,6 +195,7 @@
     "@graphql-codegen/typescript": "^4.1.6",
     "@graphql-codegen/typescript-operations": "^4.6.1",
     "@graphql-codegen/typescript-react-apollo": "^4.4.2",
+    "@playwright/test": "~1.64",
     "@react-native/jest-preset": "0.86.3",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react-native": "^13",
