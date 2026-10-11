@@ -9,7 +9,8 @@ export default function useAppearance() {
 
   const listener = React.useRef<ReturnType<typeof Appearance.addChangeListener>>(
     Appearance.addChangeListener(({ colorScheme }) => {
-      if (colorScheme) {
+      // React Native 0.83 can also report 'unspecified'
+      if (colorScheme === 'dark' || colorScheme === 'light') {
         dispatch(actions.global.setAppearance(colorScheme));
       }
     })
