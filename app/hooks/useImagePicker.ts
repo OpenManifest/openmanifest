@@ -10,15 +10,16 @@ export default function useImagePicker() {
         console.error('Sorry, we need camera roll permissions to make this work!');
       }
     }
-    const result = (await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.1,
       base64: true,
-    })) as { base64: string };
+    });
 
-    return result?.base64;
+    // expo-image-picker 14.1 (SDK 48) only returns the picked images in `assets`
+    return result.canceled ? undefined : result.assets?.[0]?.base64 ?? undefined;
   }, []);
 
   return onPickImage;

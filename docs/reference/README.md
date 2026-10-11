@@ -14,7 +14,7 @@ Client diagrams: [diagrams.md](diagrams.md).
 
 | Concern | Library (installed version) | Where |
 |---|---|---|
-| Runtime | Expo SDK 47.0.13, React Native 0.70.8, React 18.1.0, JavaScriptCore on native (no `jsEngine` set; Hermes becomes the default in SDK 48) | `package.json`, `app.json` |
+| Runtime | Expo SDK 48.0.21 (P3.5; was 47.0.13), React Native 0.71.14, React 18.2.0, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before) | `package.json`, `app.json` |
 | Language | TypeScript 4.9.4 (`strict`), path alias `app/*` via `babel-plugin-module-resolver` | `tsconfig.json`, `babel.config.js` |
 | Server data | Apollo Client 3.7.11 (`BatchHttpLink`, ActionCable link for subscriptions) | `app/api/` |
 | Client state | Redux Toolkit 1.9.3 + redux-persist 6 (`global` slice persisted) | `app/state/` |
@@ -222,7 +222,7 @@ Headline:
 
 | Package | Installed | Latest | Target in plan |
 |---|---|---|---|
-| expo | 47.0.13 | 57.0.27 | 57.0.27 (P3.18) |
+| expo | 48.0.21 (P3.5) | 57.0.27 | 57.0.27 (P3.18) |
 | react-native | 0.70.8 | 0.87.1 (npm `latest`) | 0.86.x pinned by SDK 57 |
 | react | 18.1.0 | 19.3.0 (npm `latest`) | 19.2.x pinned by SDK 57 |
 | @apollo/client | 3.7.11 | 4.3.2 | 3.14.1 (P3.19); 4.x is backlog |
@@ -281,7 +281,7 @@ Full table:
 | `date-fns` | dep | `2.29.3` | 2.29.3 | 4.4.0 |  |  |
 | `deprecated-react-native-prop-types` | dep | `2.3.0` | 2.3.0 | 5.0.0 |  |  |
 | `dotenv` | dep | `14.3.2` | 14.3.2 | 18.0.6 |  |  |
-| `expo` | dep | `47.0.13` | 47.0.13 | 57.0.27 | `~57.0.27` |  |
+| `expo` | dep | `~48.0.21` (P3.5) | 48.0.21 | 57.0.27 | `~57.0.27` |  |
 | `expo-apple-authentication` | dep | `~5.0.1` | 5.0.1 | 57.0.2 | `~57.0.2` |  |
 | `expo-application` | dep | `~5.0.1` | 5.0.1 | 57.0.3 | `~57.0.3` |  |
 | `expo-asset` | dep | `~8.7.0` | 8.7.0 | 57.0.19 | `~57.0.19` |  |
@@ -411,7 +411,7 @@ Full table:
 | `glob` | dev | `9.3.2` | 9.3.2 | 13.0.6 |  |  |
 | `isomorphic-fetch` | dev | `3.0.0` | 3.0.0 | 3.0.0 |  | last publish 2023-10-23 |
 | `jest` | dev | `^26.6.3` | 26.6.3 | 30.5.2 |  |  |
-| `jest-expo` | dev | `^47.0.0` | 47.0.1 | 57.0.5 | `~57.0.5` |  |
+| `jest-expo` | dev | `^48` (P3.5) | 48.0.2 | 57.0.5 | `~57.0.5` | needs jest 29 |
 | `jest-junit` | dev | `13.0.0` | 13.0.0 | 17.0.0 |  |  |
 | `json` | dev | `^11.0.0` | 11.0.0 | 11.0.0 |  | last publish 2023-03-04 |
 | `patch-package` | dev | `6.5.1` | 6.5.1 | 8.0.1 |  |  |

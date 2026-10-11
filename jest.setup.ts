@@ -35,3 +35,26 @@ jest.mock('redux-persist', () => {
 });
 
 jest.mock('@gorhom/bottom-sheet', () => require('@gorhom/bottom-sheet/mock'));
+
+// React Native 0.71's jest setup mocks AccessibilityInfo.addEventListener without a return value, so react-native-paper 4
+// falls back to the removed `removeEventListener` when its Provider unmounts. Return a real subscription.
+jest.mock('react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo', () => {
+  const actual = jest.requireActual('react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo');
+  const AccessibilityInfo = (actual && actual.default) || actual;
+  return {
+    __esModule: true,
+    default: { ...AccessibilityInfo, addEventListener: jest.fn(() => ({ remove: jest.fn() })) },
+  };
+});
+
+// Animations that outlive a test would lazily require react-native's `bezier` module after the environment is torn
+// down, which crashes the worker. Load it now.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('react-native').Easing.ease(0.5);
+
+// expo-asset downloads assets through expo-file-system, whose jest mock returns undefined (asset names, fonts and
+// images are requested while the screens render).
+jest.mock('expo-asset/build/PlatformUtils', () => ({
+  ...jest.requireActual('expo-asset/build/PlatformUtils'),
+  downloadAsync: jest.fn(async (uri: string) => uri),
+}));
