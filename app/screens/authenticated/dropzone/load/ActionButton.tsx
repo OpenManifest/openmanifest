@@ -7,8 +7,8 @@ import { useDropzoneContext, useLoadContext, useManifestContext } from 'app/prov
 
 import { Permission, LoadState } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
-import isSameDay from 'date-fns/isSameDay';
-import { parseISO } from 'date-fns';
+import { useDropzoneToday, useDropzoneTimeZone } from 'app/hooks/useDropzoneToday';
+import { dateInZone } from 'app/utils/dropzoneTime';
 import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 interface ILoadActionButtonProps {
@@ -71,7 +71,10 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     },
   ];
 
-  const isToday = isSameDay(new Date(), parseISO(load.createdAt));
+  // The load's day at the dropzone, not on this device
+  const today = useDropzoneToday();
+  const timeZone = useDropzoneTimeZone();
+  const isToday = dateInZone(load.createdAt, timeZone) === today;
 
   const manifestActions = [
     !showManifestButton || !isToday
