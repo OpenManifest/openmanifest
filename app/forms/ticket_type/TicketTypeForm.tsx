@@ -11,6 +11,7 @@ import { FormNumberField } from 'app/components/input/number_input';
 import { SwitchField } from 'app/components/input/switch/Switch';
 import { ChipSelectField } from 'app/components/input/chip_select';
 import { TicketTypeFields } from './useForm';
+import { formatCents } from 'app/utils/money';
 
 interface ITicketTypeFormProps {
   control: Control<TicketTypeFields>;
@@ -81,7 +82,7 @@ export default function TicketTypeForm(props: ITicketTypeFormProps) {
           }
           items={(data?.extras as TicketTypeExtraEssentialsFragment[]) || []}
           renderItemLabel={(item: TicketTypeExtraEssentialsFragment) =>
-            `${item.name} (${item.cost})`
+            `${item.name} (${formatCents(item.costCents)})`
           }
           name="extras"
         />

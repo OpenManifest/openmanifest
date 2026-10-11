@@ -1,29 +1,31 @@
 import * as React from 'react';
+import { ApolloError } from '@apollo/client';
 import { noop } from 'lodash';
 import sameVariables from 'app/utils/sameVariables';
 import { DateTime } from 'luxon';
 import useRestriction from 'app/hooks/useRestriction';
-import * as yup from 'yup';
-import { ValidationError } from 'yup';
 import { useNotifications } from 'app/providers/notifications';
-import { useAppSelector } from 'app/state';
-import {
-  useFinalizeLoadMutation,
-  useLoadLazyQuery,
-  useManifestUserMutation,
-  useUpdateLoadMutation,
-} from '../reflection';
+import { useAuthenticated } from 'app/state';
+import { useFinalizeLoadMutation, useLoadLazyQuery, useUpdateLoadMutation } from '../reflection';
 import {
   LoadDetailsFragment,
   LoadQueryVariables,
   UpdateLoadMutationVariables,
 } from '../operations';
 import { TMutationResponse, uninitializedHandler } from './factory';
-import { CreateSlotPayload, LoadState, Permission } from '../schema.d';
+import { LoadState, Permission } from '../schema.d';
 import { useLoadUpdated } from './subscriptions/useLoadUpdatedSubscription';
 
+/** The server refuses a change made from an older version of a record (optimistic locking) with the code CONFLICT */
+export function isConflict(error: unknown): boolean {
+  return (
+    error instanceof ApolloError &&
+    error.graphQLErrors.some((graphQLError) => graphQLError.extensions?.code === 'CONFLICT')
+  );
+}
+
 export function useLoad(variables: Partial<LoadQueryVariables>) {
-  const { authenticated } = useAppSelector((root) => root.global);
+  const authenticated = useAuthenticated();
   const notify = useNotifications();
   const [getLoad, query] = useLoadLazyQuery();
 
@@ -43,7 +45,6 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
   const { loading, fetchMore, data, called, variables: queryVariables } = query;
   const load = React.useMemo(() => data?.load, [data?.load]);
 
-  const [mutationManifestUser] = useManifestUserMutation();
   const [mutationFinalizeLoad] = useFinalizeLoadMutation();
   const [updateLoadMutation] = useUpdateLoadMutation();
   useLoadUpdated(variables?.id);
@@ -61,7 +62,8 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
         const { data: response } = await updateLoadMutation({
           variables: {
             id: load?.id as string,
-            attributes,
+            // The version this change is based on: refused when somebody else changed the load since
+            attributes: { lockVersion: load?.lockVersion, ...attributes },
           },
           optimisticResponse: {
             updateLoad: {
@@ -92,46 +94,17 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
           fieldErrors: response?.updateLoad?.fieldErrors || undefined,
         };
       } catch (e) {
+        if (isConflict(e)) {
+          // Show what the other person did, and tell this person their change did not go through
+          refetch();
+          notify.error('This load was changed by someone else');
+          return { error: 'This load was changed by someone else' };
+        }
         console.error(e);
         return { error: 'Something went wrong' };
       }
     },
-    [load, notify, updateLoadMutation]
-  );
-
-  const manifestUser = React.useCallback(
-    async (payload: Omit<CreateSlotPayload, 'loadId'>) => {
-      if (load?.id) {
-        return undefined;
-      }
-      const schema = yup.object().shape({
-        dropzoneUser: yup.string().required(),
-        exitWeight: yup.number().nullable(),
-        groupNumber: yup.number().nullable(),
-        passengerExitWeight: yup.number().nullable(),
-        passengerName: yup.string().nullable(),
-        rig: yup.string().nullable(),
-        ticketType: yup.string().required('You must select a ticket type'),
-        jumpType: yup.string().required('You must specify the type of jump'),
-      });
-      const validatedPayload = schema.validateSync(payload);
-      const response = await mutationManifestUser({
-        variables: {
-          load: load?.id,
-          ...validatedPayload,
-        },
-      });
-
-      if (response?.data?.createSlot?.fieldErrors?.length) {
-        throw new ValidationError(
-          response?.data?.createSlot?.fieldErrors?.map(
-            ({ field, message }) => new ValidationError([], message, field)
-          )
-        );
-      }
-      return response?.data?.createSlot?.slot;
-    },
-    [load?.id, mutationManifestUser]
+    [load, notify, refetch, updateLoadMutation]
   );
 
   const dispatchInMinutes = React.useCallback(
@@ -195,20 +168,40 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
     [update]
   );
 
-  const markAsLanded = React.useCallback(async () => {
-    await mutationFinalizeLoad({
-      variables: {
-        id: Number(load?.id),
-        state: LoadState.Landed,
-      },
-    });
-  }, [mutationFinalizeLoad, load]);
+  // Landing and cancelling go through finalizeLoad. The server refuses invalid transitions (a landed load cannot be
+  // cancelled, ...) with `errors`, and the request itself can fail: both are shown instead of being dropped (BUG-082).
+  const loadId = load?.id;
+  const finalize = React.useCallback(
+    async (state: LoadState.Landed | LoadState.Cancelled) => {
+      try {
+        const { data: response } = await mutationFinalizeLoad({
+          variables: { id: Number(loadId), state },
+        });
+        const error =
+          response?.finalizeLoad?.errors?.[0] || response?.finalizeLoad?.fieldErrors?.[0]?.message;
 
-  const cancel = React.useCallback(async () => {
-    await mutationFinalizeLoad({
-      variables: { id: Number(load?.id), state: LoadState.Cancelled },
-    });
-  }, [mutationFinalizeLoad, load]);
+        if (error) {
+          notify.error(error);
+          return { error };
+        }
+        if (!response?.finalizeLoad?.load) {
+          notify.error('Something went wrong');
+          return { error: 'Something went wrong' };
+        }
+        return { load: response.finalizeLoad.load };
+      } catch (e) {
+        console.error(e);
+        const error = e instanceof Error && e.message ? e.message : 'Something went wrong';
+        notify.error(error);
+        return { error };
+      }
+    },
+    [loadId, mutationFinalizeLoad, notify]
+  );
+
+  const markAsLanded = React.useCallback(() => finalize(LoadState.Landed), [finalize]);
+
+  const cancel = React.useCallback(() => finalize(LoadState.Cancelled), [finalize]);
 
   const canDispatchAircraft = useRestriction(Permission.UpdateLoad);
 
@@ -239,7 +232,6 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
       updateGCA,
       updatePlane,
       updateLoadMaster,
-      manifestUser,
       cancel,
       refetch: queryVariables?.id ? refetch : noop,
       fetchMore: queryVariables?.id ? () => fetchMore({ variables }) : uninitializedHandler,
@@ -259,7 +251,6 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
       updateGCA,
       updatePlane,
       updateLoadMaster,
-      manifestUser,
       cancel,
       queryVariables?.id,
       refetch,

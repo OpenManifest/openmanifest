@@ -1,18 +1,21 @@
-import { format } from 'date-fns';
 import * as React from 'react';
 import { List, Modal } from 'react-native-paper';
 import { TimePickerModal } from 'react-native-paper-dates';
 import { DateTime } from 'luxon';
+import { clockInZone, resolveTimeZone, timeTodayInZone } from 'app/utils/dropzoneTime';
 
 interface ITimePickerProps {
   label?: string;
   timestamp?: number;
   disabled?: boolean;
   color?: string;
+  /** The zone the time of day is in: the dropzone's (default: this device's) */
+  timeZone?: string;
   onChange(timestamp: number): void;
 }
 export default function TimePicker(props: ITimePickerProps) {
-  const { disabled, label, timestamp, onChange, color } = props;
+  const { disabled, label, timestamp, onChange, color, timeZone } = props;
+  const zone = resolveTimeZone(timeZone);
   const [open, setOpen] = React.useState(false);
 
   const onDismissSingle = React.useCallback(() => {
@@ -20,14 +23,15 @@ export default function TimePicker(props: ITimePickerProps) {
   }, [setOpen]);
 
   const onConfirm = React.useCallback(
-    ({ date }: { date: Date }) => {
+    (hour: number, minute: number) => {
       setOpen(false);
-      onChange(date.getTime() / 1000);
+      onChange(timeTodayInZone(hour, minute, zone));
     },
-    [setOpen, onChange]
+    [setOpen, onChange, zone]
   );
 
-  const timestampLabel = timestamp ? format(timestamp * 1000, 'hh:mm') : 'No time selected';
+  const timestampLabel = timestamp ? clockInZone(timestamp, zone) : 'No time selected';
+  const shown = DateTime.fromSeconds(timestamp || DateTime.local().toSeconds(), { zone });
 
   return (
     <>
@@ -41,21 +45,12 @@ export default function TimePicker(props: ITimePickerProps) {
 
       <Modal visible={open}>
         <TimePickerModal
-          hours={DateTime.fromSeconds(timestamp || DateTime.local().toSeconds()).hour}
-          minutes={DateTime.fromSeconds(timestamp || DateTime.local().toSeconds()).minute}
+          hours={shown.hour}
+          minutes={shown.minute}
           locale="en"
           visible={open}
           onDismiss={onDismissSingle}
-          onConfirm={(time) =>
-            onConfirm({
-              date: DateTime.local()
-                .set({
-                  hour: time.hours,
-                  minute: time.minutes,
-                })
-                .toJSDate(),
-            })
-          }
+          onConfirm={(time) => onConfirm(time.hours, time.minutes)}
           label={label}
         />
       </Modal>

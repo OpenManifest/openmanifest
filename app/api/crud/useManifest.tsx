@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { NetworkStatus } from '@apollo/client';
 import { useSession } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import uniqBy from 'lodash/uniqBy';
@@ -23,6 +24,7 @@ import {
 } from '../operations';
 import { TMutationResponse } from './factory';
 import { Permission } from '../schema.d';
+import { useDropzoneTimeZone } from 'app/hooks/useDropzoneToday';
 import { useLoadCreated } from './subscriptions/useLoadCreatedSubscription';
 
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
@@ -73,6 +75,8 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
 
   const query = useLoadsQuery({
     initialFetchPolicy: 'cache-first',
+    // So that a refetch (pull to refresh) reports its own status
+    notifyOnNetworkStatusChange: true,
     variables,
     skip: !accessToken || !dropzone,
   });
@@ -82,9 +86,10 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
   const [manifestGroupMutation] = useManifestGroupMutation();
   const [manifestUserMutation] = useManifestUserMutation();
   const [createLoadMutation] = useCreateLoadMutation();
-  useLoadCreated(variables as LoadsQueryVariables);
+  const timeZone = useDropzoneTimeZone();
+  useLoadCreated(variables as LoadsQueryVariables, timeZone);
 
-  const { loading, fetchMore, refetch, data, called, updateQuery } = query;
+  const { loading, fetchMore, refetch, data, called, updateQuery, networkStatus } = query;
 
   const moveSlot = React.useCallback(
     async function MoveSlot(
@@ -246,6 +251,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
   return React.useMemo(
     () => ({
       loading,
+      refreshing: networkStatus === NetworkStatus.refetch,
       called,
       refetch,
       fetchMore,
@@ -266,6 +272,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
       deleteSlot,
       fetchMore,
       loading,
+      networkStatus,
       permissions,
       manifestGroup,
       manifestUser,

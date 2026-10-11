@@ -42,7 +42,7 @@ function NicknameStep(props: IWizardStepProps) {
           name="nickname"
           mode="flat"
           label="Nickname"
-          style={{ backgroundColor: 'transparent', fontSize: 32, height: 70 }}
+          style={{ backgroundColor: 'transparent', fontSize: 32, minHeight: 70 }}
         />
       </Fields>
     </Step>

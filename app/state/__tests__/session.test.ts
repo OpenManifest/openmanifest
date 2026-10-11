@@ -74,10 +74,16 @@ describe('session store', () => {
     expect(state.currentDropzoneId).toBe('7');
     expect(state.expoPushToken).toBe('ExponentPushToken[abc]');
 
-    // The migrated credentials move to the secure store, the old key stays for P4.8
+    // The migrated session is stored (credentials in the secure store) and the old redux-persist key is deleted
     await flush();
     expect(JSON.parse(mockSecure.get('openmanifest.credentials') as string)).toEqual(CREDENTIALS);
-    expect(await AsyncStorage.getItem('persist:open-manifest.0.9.1')).not.toBeNull();
+    expect(
+      JSON.parse((await AsyncStorage.getItem('openmanifest.session.v1')) as string).state
+    ).toEqual({
+      currentDropzoneId: '7',
+      expoPushToken: 'ExponentPushToken[abc]',
+    });
+    expect(await AsyncStorage.getItem('persist:open-manifest.0.9.1')).toBeNull();
     expect(await AsyncStorage.getItem('openmanifest.session.v1')).not.toContain('token-1');
   });
 
@@ -111,6 +117,9 @@ describe('session store', () => {
 
     expect(useSession.getState().credentials?.accessToken).toBe('newer');
     expect(useSession.getState().currentDropzoneId).toBe('9');
+    // A copy left behind by an earlier version is cleaned up as well
+    await flush();
+    expect(await AsyncStorage.getItem('persist:open-manifest.0.9.1')).toBeNull();
   });
 
   it('writes credentials to the secure store and never to AsyncStorage', async () => {

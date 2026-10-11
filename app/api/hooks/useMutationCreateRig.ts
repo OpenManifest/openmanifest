@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 import { createMutation, isNumeric, isRequired } from '../createMutation';
 import { CreateRigPayload, RigInput } from '../schema.d';
 
-const MUTATION_CREATE_RIG = gql`
+export const MUTATION_CREATE_RIG = gql`
   mutation CreateRig(
     $make: String
     $name: String

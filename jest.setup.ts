@@ -1,4 +1,3 @@
-
 import { cleanup, configure } from '@testing-library/react-native';
 
 import '@testing-library/jest-dom';
@@ -31,12 +30,20 @@ jest.mock('react-native-maps', () => {
   };
 });
 
+jest.mock('react-native-keyboard-controller', () =>
+  jest.requireActual('react-native-keyboard-controller/jest')
+);
+
 // The `BaseButton` mock in react-native-gesture-handler 2.28 renders `<View />` instead of its children, which empties
 // every gesture-handler TouchableOpacity (its content sits inside a BaseButton). Use the React Native touchables.
 jest.mock('react-native-gesture-handler', () => {
   const actual = jest.requireActual('react-native-gesture-handler');
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { TouchableOpacity, TouchableHighlight, TouchableWithoutFeedback } = require('react-native');
+  const {
+    TouchableOpacity,
+    TouchableHighlight,
+    TouchableWithoutFeedback,
+  } = require('react-native');
   return { ...actual, TouchableOpacity, TouchableHighlight, TouchableWithoutFeedback };
 });
 
@@ -50,6 +57,9 @@ afterEach(cleanup);
 // `no-hide-descendants`, and fade items in from opacity 0). The tests were written against the older default.
 configure({ defaultIncludeHiddenElements: true });
 
+// Reanimated's mock loads the real worklets package, which needs its native module
+jest.mock('react-native-worklets', () => jest.requireActual('react-native-worklets/src/mock'));
+
 jest.mock('react-native-reanimated', () => {
   return {
     ...jest.requireActual('react-native-reanimated/mock'),
@@ -62,21 +72,26 @@ jest.mock('@react-navigation/native', () => ({
   useIsFocused: jest.fn().mockReturnValue(false),
 }));
 
-// Mock redux-persist
-jest.mock('redux-persist', () => {
-  const real = jest.requireActual('redux-persist');
-  return {
-    ...real,
-    persistReducer: jest.fn().mockImplementation((config, reducers) => reducers),
-  };
+// The stock mock exports React Native's own `TextInput` as `BottomSheetTextInput`, which makes the two impossible to
+// tell apart in a test. A thin wrapper keeps it identifiable.
+jest.mock('@gorhom/bottom-sheet', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const React = require('react');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { TextInput } = require('react-native');
+  const BottomSheetTextInput = React.forwardRef((props: Record<string, unknown>, ref: unknown) =>
+    React.createElement(TextInput, { ...props, ref })
+  );
+  BottomSheetTextInput.displayName = 'BottomSheetTextInput';
+  return { ...require('@gorhom/bottom-sheet/mock'), BottomSheetTextInput };
 });
-
-jest.mock('@gorhom/bottom-sheet', () => require('@gorhom/bottom-sheet/mock'));
 
 // React Native 0.71's jest setup mocks AccessibilityInfo.addEventListener without a return value, so react-native-paper 4
 // falls back to the removed `removeEventListener` when its Provider unmounts. Return a real subscription.
 jest.mock('react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo', () => {
-  const actual = jest.requireActual('react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo');
+  const actual = jest.requireActual(
+    'react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo'
+  );
   const AccessibilityInfo = (actual && actual.default) || actual;
   return {
     __esModule: true,

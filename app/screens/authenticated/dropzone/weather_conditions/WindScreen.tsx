@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { Button, HelperText } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
-import { actions, useAppDispatch, useAppSelector, useSession } from 'app/state';
-
-import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateWeatherConditions';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import { useWeatherForm } from 'app/forms/weather';
+import FormColumn from 'app/components/layout/FormColumn';
+import ScreenContainer from 'app/components/layout/ScreenContainer';
 
 import WeatherConditionForm from 'app/components/forms/weather_conditions/WeatherConditionForm';
 import { useNotifications } from 'app/providers/notifications';
@@ -12,106 +11,83 @@ import { useAuthenticatedNavigation } from '../../useAuthenticatedNavigation';
 import { useAppTheme } from 'app/theme';
 
 export default function WindScreen() {
-  const state = useAppSelector((root) => root.forms.weather);
   const { theme, palette } = useAppTheme();
-  const dropzoneId = useSession((session) => session.currentDropzoneId);
-  const dispatch = useAppDispatch();
+  const { save, saving } = useWeatherForm();
   const navigation = useAuthenticatedNavigation();
   const notify = useNotifications();
 
-  const mutationCreateWeatherConditions = useMutationCreateWeatherConditions({
-    onSuccess: () => null,
-    onFieldError: (field: keyof typeof state.fields, message: string) =>
-      dispatch(actions.forms.weather.setFieldError([field, message])),
-    onError: notify.error,
-  });
-
   const onSaveConditions = React.useCallback(async () => {
-    await mutationCreateWeatherConditions.mutate({
-      id: Number(state.original?.id),
-      dropzoneId: Number(dropzoneId),
-      winds: JSON.stringify(state.fields.winds.value),
-      jumpRun: state.fields.jumpRun.value,
-      temperature: state.fields.temperature.value,
-    });
-    navigation.goBack();
-    notify.success('Weather board updated');
-    dispatch(actions.forms.weather.reset());
-    dispatch(actions.forms.weather.setOpen(false));
-  }, [
-    mutationCreateWeatherConditions,
-    state.original?.id,
-    state.fields.winds.value,
-    state.fields.jumpRun.value,
-    state.fields.temperature.value,
-    dropzoneId,
-    navigation,
-    notify,
-    dispatch,
-  ]);
+    if (await save()) {
+      navigation.goBack();
+      notify.success('Weather board updated');
+    }
+  }, [save, navigation, notify]);
 
   return (
-    <ScrollableScreen contentContainerStyle={{ backgroundColor: theme.colors.background }}>
-      <WeatherConditionForm
-        onPressJumpRun={() =>
-          navigation.navigate('Manifest', {
-            screen: 'JumpRunScreen',
-          })
-        }
-        variant={theme.dark ? 'light' : undefined}
-      />
-      <View style={styles.buttons} pointerEvents="box-none">
-        <Button
-          loading={mutationCreateWeatherConditions.loading}
-          mode="contained"
-          color={palette.primary.main}
-          disabled={mutationCreateWeatherConditions.loading}
-          style={[
-            styles.button,
-            {
-              borderRadius: 20,
-              height: 42,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: 20,
-            },
-          ]}
-          labelStyle={{
-            color: 'white',
-          }}
-          onPress={async () => {
-            onSaveConditions();
-          }}
-        >
-          Save
-        </Button>
-        <Button
-          loading={mutationCreateWeatherConditions.loading}
-          mode="outlined"
-          color={palette.primary.main}
-          disabled={mutationCreateWeatherConditions.loading}
-          style={[
-            styles.button,
-            {
-              borderRadius: 20,
-              height: 42,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: 20,
-            },
-          ]}
-          onPress={async () => {
-            onSaveConditions();
-          }}
-        >
-          Reload Conditions
-        </Button>
-        <HelperText type="info">
-          Winds aloft and temperature are retrieved from MarkSchulze.net's amazing Winds Aloft
-          service.
-        </HelperText>
-      </View>
-    </ScrollableScreen>
+    <ScreenContainer edges={['bottom']}>
+      <FormColumn>
+        <WeatherConditionForm
+          onPressJumpRun={() =>
+            navigation.navigate('Manifest', {
+              screen: 'JumpRunScreen',
+            })
+          }
+          variant={theme.dark ? 'light' : undefined}
+        />
+        <View style={styles.buttons} pointerEvents="box-none">
+          <Button
+            testID="weather-save-primary-action"
+            loading={saving}
+            mode="contained"
+            color={palette.primary.main}
+            disabled={saving}
+            style={[
+              styles.button,
+              {
+                borderRadius: 20,
+                minHeight: 42,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: 20,
+              },
+            ]}
+            labelStyle={{
+              color: 'white',
+            }}
+            onPress={async () => {
+              onSaveConditions();
+            }}
+          >
+            Save
+          </Button>
+          <Button
+            loading={saving}
+            mode="outlined"
+            color={palette.primary.main}
+            disabled={saving}
+            style={[
+              styles.button,
+              {
+                borderRadius: 20,
+                minHeight: 42,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: 20,
+              },
+            ]}
+            onPress={async () => {
+              onSaveConditions();
+            }}
+          >
+            Reload Conditions
+          </Button>
+          <HelperText type="info">
+            Winds aloft and temperature are retrieved from MarkSchulze.net's amazing Winds Aloft
+            service.
+          </HelperText>
+        </View>
+      </FormColumn>
+    </ScreenContainer>
   );
 }
 

@@ -11,6 +11,8 @@ import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { camelCase, isEqual } from 'lodash';
 import { useTickets } from 'app/api/crud';
 import { useNotifications } from 'app/providers/notifications';
+import { toCents } from 'app/utils/money';
+import withDefaults from 'app/forms/initialValues';
 
 export type TicketTypeFields = {
   id?: string;
@@ -49,7 +51,7 @@ export interface IUseTicketTypeFormOpts {
 
 export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
   const { initial, onSuccess } = opts;
-  const initialValues = React.useMemo(() => ({ ...EMPTY_FORM_VALUES, ...initial }), [initial]);
+  const initialValues = React.useMemo(() => withDefaults(EMPTY_FORM_VALUES, initial), [initial]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
 
   const methods = useForm<TicketTypeFields>({
@@ -89,7 +91,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
         const response = fields.id
           ? await updateTicketType(Number(fields.id), {
               name: validated.name,
-              cost: validated.cost,
+              costCents: toCents(validated.cost),
               allowManifestingSelf: validated.allowManifestingSelf,
               altitude: validated.altitude,
               extraIds: (validated.extras as unknown as TicketTypeAddonEssentialsFragment[]).map(
@@ -99,7 +101,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
             })
           : await createTicketType({
               name: validated.name,
-              cost: validated.cost,
+              costCents: toCents(validated.cost),
               allowManifestingSelf: validated.allowManifestingSelf,
               altitude: validated.altitude,
               extraIds: (validated.extras as unknown as TicketTypeAddonEssentialsFragment[])?.map(
