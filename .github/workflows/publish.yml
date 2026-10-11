@@ -89,7 +89,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ steps.environment.outputs.EXPO_ENV == 'staging' }}
         with:
-          publish_dir: ./web-build
+          publish_dir: ./dist
           deploy_key: ${{ secrets.WEB_DEPLOY_KEY_STAGING }}
           external_repository: ${{ steps.environment.outputs.REPOSITORY }}
           cname: ${{ steps.environment.outputs.CNAME }}
@@ -97,7 +97,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ steps.environment.outputs.EXPO_ENV == 'production' }}
         with:
-          publish_dir: ./web-build
+          publish_dir: ./dist
           deploy_key: ${{ secrets.WEB_DEPLOY_KEY_PRODUCTION }}
           external_repository: ${{ steps.environment.outputs.REPOSITORY }}
           cname: ${{ steps.environment.outputs.CNAME }}

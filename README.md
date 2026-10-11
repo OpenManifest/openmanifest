@@ -17,7 +17,7 @@ $ SENTRYCLI_SKIP_DOWNLOAD=1 yarn install --frozen-lockfile
 $ cp .env.example .env                                         # optional keys; never commit .env
 $ EXPO_ENV=local npx expo start                                # native (Expo Go / dev client)
 $ EXPO_ENV=local npx expo start --web                          # web on http://localhost:19006
-$ EXPO_ENV=local npx expo export:web                           # static web build in web-build/
+$ EXPO_ENV=local npx expo export --platform web                # static web build in dist/
 ```
 
 `EXPO_ENV` selects the API: `local` = `http://local.openmanifest.org:5000/graphql` (run
@@ -32,8 +32,8 @@ Needs the API running locally with the offline seed (`bin/rails db:seed db:seed:
 `openmanifest-server`, server on port 5000) and `127.0.0.1 local.openmanifest.org` in `/etc/hosts`.
 
 ```
-$ EXPO_ENV=local npx expo export:web                          # -> web-build/
-$ python3 scripts/serve-web-build.py web-build 19006 &        # SPA server with index.html fallback
+$ EXPO_ENV=local npx expo export --platform web               # -> dist/
+$ python3 scripts/serve-web-build.py dist 19006 &              # SPA server with index.html fallback
 $ node scripts/web-smoke.mjs --base http://localhost:19006 --out /tmp/smoke
 ```
 

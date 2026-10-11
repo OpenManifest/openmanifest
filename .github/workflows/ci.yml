@@ -28,5 +28,5 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version-file: .nvmrc, cache: yarn }
       - run: yarn install --frozen-lockfile
-      - run: npx expo export:web
+      - run: npx expo export --platform web
         env: { EXPO_ENV: staging, NODE_OPTIONS: --max_old_space_size=6144 }
