@@ -2,7 +2,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 
-import { useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { ModerationRole, Permission } from 'app/api/schema.d';
 
@@ -17,6 +16,7 @@ import NotificationsTab, { NotificationRoutes } from './notifications/routes';
 import OverviewTab, { OverviewRoutes } from './overview/routes';
 
 import BottomTab from './TabBar';
+import { useAppTheme } from 'app/theme';
 
 export type AuthenticatedRoutes = {
   Manifest: NavigatorScreenParams<DropzoneRoutes>;
@@ -26,7 +26,7 @@ export type AuthenticatedRoutes = {
 };
 
 export default function AuthenticatedTabBar() {
-  const { palette } = useAppSelector((root) => root.global);
+  const { palette } = useAppTheme();
 
   const {
     dropzone: { currentUser },

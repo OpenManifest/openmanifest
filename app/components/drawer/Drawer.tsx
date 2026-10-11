@@ -13,10 +13,11 @@ import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useDropzonesContext } from 'app/api/crud';
 import { useLogout } from 'app/api/hooks/useLogout';
 import useSelectDropzone from 'app/hooks/useSelectDropzone';
-import { useAppSelector, useSession } from '../../state';
+import { useSession } from '../../state';
+import { useAppTheme } from 'app/theme';
 
 export default function DrawerMenu() {
-  const { theme } = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const routeName = useSession((session) => session.currentRouteName);
   const selectDropzone = useSelectDropzone();
   const {

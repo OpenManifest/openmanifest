@@ -1,48 +1,45 @@
 import { ThemeProvider } from '@mui/material';
 import { Theme, createTheme } from '@mui/material/styles';
 import * as React from 'react';
-import { PaperProvider } from 'react-native-paper';
+import { AppThemeProvider, useAppTheme } from 'app/theme';
 
-import { actions, useAppDispatch, useAppSelector } from 'app/state/store';
-
-function Content(props: { children: React.ReactNode }) {
-  const { children } = props;
-  const state = useAppSelector((root) => root.global);
-  const dispatch = useAppDispatch();
+function MuiBridge(props: { children: React.ReactNode }) {
+  const { palette, isDark } = useAppTheme();
   const muiTheme: Theme = React.useMemo(
     () =>
       createTheme({
         palette: {
-          primary: state.palette.primary,
-          secondary: state.palette.accent,
+          primary: palette.primary,
+          secondary: palette.accent,
           background: {
-            default: state.palette.background,
-            paper: state.palette.surface,
+            default: palette.background,
+            paper: palette.surface,
           },
-          mode: state.theme.dark ? 'dark' : 'light',
+          mode: isDark ? 'dark' : 'light',
           common: {
-            white: state.palette.background,
-            black: state.palette.onSurface,
+            white: palette.background,
+            black: palette.onSurface,
           },
         },
       }),
     [
-      state.palette.accent,
-      state.palette.background,
-      state.palette.onSurface,
-      state.palette.primary,
-      state.palette.surface,
-      state.theme.dark,
+      palette.accent,
+      palette.background,
+      palette.onSurface,
+      palette.primary,
+      palette.surface,
+      isDark,
     ]
   );
 
-  window.matchMedia('(prefers-color-scheme: dark)').addListener((e) => {
-    dispatch(actions.global.setAppearance(e.matches ? 'dark' : 'light'));
-  });
+  return <ThemeProvider theme={muiTheme}>{props.children}</ThemeProvider>;
+}
+
+function Content(props: { children: React.ReactNode }) {
   return (
-    <PaperProvider theme={state.theme}>
-      <ThemeProvider theme={muiTheme}>{children}</ThemeProvider>
-    </PaperProvider>
+    <AppThemeProvider>
+      <MuiBridge>{props.children}</MuiBridge>
+    </AppThemeProvider>
   );
 }
 export default Content;

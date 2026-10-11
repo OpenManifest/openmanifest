@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
-import { useAppSelector } from 'app/state';
 import { View } from 'react-native';
 import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
 import JumpHistoryTab from './JumpHistory';
 import FundTab from './Transactions';
 import EquipmentTab from './Equipment';
+import { useAppTheme } from 'app/theme';
 
 // const ProfileTabs = createMaterialTopTabNavigator();
 
@@ -45,7 +45,7 @@ export function ProfileTab(props: {
 }
 export default function TabBar(props: IProfileTabsProps) {
   const { onChange } = props;
-  const { colors, dark } = useAppSelector((state) => state.global.theme);
+  const { colors, dark } = useAppTheme().theme;
 
   return (
     <TabsProvider defaultIndex={ProfileTabs.Jumps}>

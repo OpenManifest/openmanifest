@@ -1,10 +1,10 @@
 import React from 'react';
 import { Text, TextProps } from 'react-native';
-import { useAppSelector } from 'app/state';
+import { useAppTheme } from 'app/theme';
 
 function GradientText(props: TextProps & { children: string | number }) {
   const { style } = props;
-  const palette = useAppSelector((state) => state.global.palette);
+  const { palette } = useAppTheme();
   return (
     <Text {...props} style={style}>
       <span

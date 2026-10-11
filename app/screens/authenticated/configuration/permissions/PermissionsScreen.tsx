@@ -1,15 +1,16 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Card, List, useTheme } from 'react-native-paper';
+import { Card, List } from 'react-native-paper';
 import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
 
 import { capitalize } from 'lodash';
 import SkeletonContent from 'app/components/Skeleton';
 import { useRolesQuery } from 'app/api/reflection';
-import { useAppSelector, useSession } from 'app/state';
+import { useSession } from 'app/state';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import PermissionListItem from 'app/components/permissions/PermissionListItem';
+import { useAppTheme } from 'app/theme';
 
 /**
  * 
@@ -86,8 +87,7 @@ import PermissionListItem from 'app/components/permissions/PermissionListItem';
     :readUserTransactions,
  */
 export default function DropzonePermissionScreen() {
-  const theme = useTheme();
-  const state = useAppSelector((root) => root.global);
+  const { palette, theme } = useAppTheme();
   const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const { data, loading, refetch } = useRolesQuery({
     variables: {
@@ -136,10 +136,10 @@ export default function DropzonePermissionScreen() {
       <Tabs
         mode="scrollable"
         theme={{
-          ...state.theme,
+          ...theme,
           colors: {
-            ...state.theme.colors,
-            primary: state.palette.primary.light,
+            ...theme.colors,
+            primary: palette.primary.light,
           },
         }}
       >

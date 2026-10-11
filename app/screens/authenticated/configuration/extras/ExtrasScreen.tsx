@@ -6,15 +6,15 @@ import { useTicketTypeExtrasQuery } from 'app/api/reflection';
 import { View } from 'app/components/Themed';
 import { Permission } from 'app/api/schema.d';
 
-import { useAppSelector } from 'app/state';
 import NoResults from 'app/components/NoResults';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { TicketTypeAddonDetailsFragment } from 'app/api/operations';
+import { useAppTheme } from 'app/theme';
 
 export default function ExtrasScreen() {
   const { dropzone: currentDropzone, dialogs } = useDropzoneContext();
-  const globalState = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const { data, loading } = useTicketTypeExtrasQuery({
     variables: {
       dropzoneId: currentDropzone?.dropzone?.id as string,
@@ -29,7 +29,7 @@ export default function ExtrasScreen() {
 
   return (
     <>
-      <ProgressBar visible={loading} indeterminate color={globalState.theme.colors.primary} />
+      <ProgressBar visible={loading} indeterminate color={theme.colors.primary} />
       <View style={styles.container}>
         <DataTable>
           <DataTable.Header>
@@ -52,7 +52,7 @@ export default function ExtrasScreen() {
         )}
 
         <FAB
-          style={[styles.fab, { backgroundColor: globalState.theme.colors.primary }]}
+          style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           visible={canCreateExtras}
           small
           icon="plus"

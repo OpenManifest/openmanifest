@@ -3,7 +3,7 @@ import { Appbar, TextInput } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useAppSelector } from 'app/state';
+import { useAppTheme } from 'app/theme';
 
 interface ISearchableAppBar extends StackHeaderProps {
   searchVisible: boolean;
@@ -21,7 +21,7 @@ function AppBar({
   searchVisible,
   setSearchVisible,
 }: ISearchableAppBar) {
-  const { theme } = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   return (
     <Appbar.Header
       style={{ backgroundColor: theme.dark ? theme.colors.background : theme.colors.surface }}

@@ -9,10 +9,11 @@ import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import WeatherConditionForm from 'app/components/forms/weather_conditions/WeatherConditionForm';
 import { useNotifications } from 'app/providers/notifications';
 import { useAuthenticatedNavigation } from '../../useAuthenticatedNavigation';
+import { useAppTheme } from 'app/theme';
 
 export default function WindScreen() {
   const state = useAppSelector((root) => root.forms.weather);
-  const { theme, palette } = useAppSelector((root) => root.global);
+  const { theme, palette } = useAppTheme();
   const dropzoneId = useSession((session) => session.currentDropzoneId);
   const dispatch = useAppDispatch();
   const navigation = useAuthenticatedNavigation();

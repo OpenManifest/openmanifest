@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
 import { Card, Divider, List, Button } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
-import { useAppSelector } from 'app/state';
+import { useAppTheme } from 'app/theme';
 import calculateWingLoading from 'app/utils/calculateWingLoading';
 import Chip from 'app/components/chips/Chip';
 import TextInput from 'app/components/input/text/TextField';
@@ -41,7 +41,7 @@ export default function UserRigCard(props: IUserRigCard) {
     onChangePassengerName,
     onChangePassengerWeight,
   } = props;
-  const { global: globalState } = useAppSelector((root) => root);
+  const { theme } = useAppTheme();
 
   const { dropzoneUser, loading } = useUserProfile({
     id: dropzoneUserId,
@@ -54,7 +54,7 @@ export default function UserRigCard(props: IUserRigCard) {
   }, [dropzoneUser?.user.exitWeight, exitWeight, onChangeExitWeight]);
   return (
     <Card style={{ marginHorizontal: 16, marginBottom: 16 }} elevation={1}>
-      <ProgressBar indeterminate color={globalState.theme.colors.primary} visible={loading} />
+      <ProgressBar indeterminate color={theme.colors.primary} visible={loading} />
       <Card.Title
         title={dropzoneUser?.user.name}
         left={() => (

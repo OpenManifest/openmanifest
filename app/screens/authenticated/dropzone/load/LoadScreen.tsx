@@ -28,6 +28,7 @@ import Header from './Header';
 import InfoGrid from './InfoGrid';
 // import CardView from './views/CardView';
 import TableView from './views/TableView';
+import { useAppTheme } from 'app/theme';
 
 export type LoadScreenRoute = {
   LoadScreen: {
@@ -43,7 +44,7 @@ function LoadScreen() {
   const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
   const forms = useAppSelector((root) => root.forms);
-  const { palette, theme } = useAppSelector((root) => root.global);
+  const { palette, theme } = useAppTheme();
 
   const {
     manifest: { deleteSlot },

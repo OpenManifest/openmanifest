@@ -15,13 +15,14 @@ import useImagePicker from 'app/hooks/useImagePicker';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
 import useMutationUpdateRig from 'app/api/hooks/useMutationUpdateRig';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { actions, useAppDispatch } from 'app/state';
 import { errorColor, successColor } from 'app/constants/Colors';
 
 import { Permission } from 'app/api/schema.d';
 import { AvailableRigsDocument, DropzoneUsersDetailedDocument } from 'app/api/reflection';
 import { useNotifications } from 'app/providers/notifications';
 import { useUserNavigation } from '../useUserNavigation';
+import { useAppTheme } from 'app/theme';
 
 export interface IRigCardProps {
   rig: RigEssentialsFragment;
@@ -33,7 +34,7 @@ export interface IRigCardProps {
 export default function RigCard(props: IRigCardProps) {
   const { rig, rigInspection, dropzoneUser, onSuccessfulImageUpload, onPress } = props;
   const [isUploading, setUploading] = React.useState(false);
-  const { accent } = useAppSelector((root) => root.global.theme.colors);
+  const { accent } = useAppTheme().theme.colors;
   const dispatch = useAppDispatch();
   const notify = useNotifications();
   const {

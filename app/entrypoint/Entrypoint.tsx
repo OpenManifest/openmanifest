@@ -22,10 +22,13 @@ import {
   ThemeProvider,
 } from './providers';
 
-import { useRouteChange, useAppearanceListener, useCachedResources } from './hooks';
+import { useRouteChange, useCachedResources } from './hooks';
 
-import { store, persistor, useAppSelector } from '../state/store';
+import { store, persistor } from '../state/store';
+import { primaryColor } from '../constants/Colors';
+import { useAppTheme } from '../theme';
 import { useSession } from '../state/session';
+import { usePreferences } from '../state/preferences';
 import ImageViewer from '../components/dialogs/ImageViewer/ImageViewer';
 
 import RootNavigator, { options as LinkingConfiguration } from '../screens/routes';
@@ -35,9 +38,26 @@ import {
   AppSignalSessionTagger,
 } from '../components/app_signal';
 
+function ThemedNavigationContainer(
+  props: React.PropsWithChildren<{ onStateChange: ReturnType<typeof useRouteChange> }>
+) {
+  const { theme } = useAppTheme();
+
+  return (
+    <NavigationContainer
+      documentTitle={{
+        formatter: () => 'OpenManifest',
+      }}
+      onStateChange={props.onStateChange}
+      linking={LinkingConfiguration}
+      theme={theme}
+    >
+      {props.children}
+    </NavigationContainer>
+  );
+}
+
 function Content() {
-  useAppearanceListener();
-  const state = useAppSelector((root) => root.global);
   const onRouteChange = useRouteChange();
 
   return (
@@ -47,7 +67,7 @@ function Content() {
           <React.Suspense
             fallback={
               <View style={{ flex: 1, flexGrow: 1 }}>
-                <ProgressBar indeterminate color={state?.theme?.colors?.primary} visible />
+                <ProgressBar indeterminate color={primaryColor} visible />
               </View>
             }
           >
@@ -58,14 +78,7 @@ function Content() {
                     <SafeAreaProvider>
                       <ImageViewer />
                       <NotificationsProvider>
-                        <NavigationContainer
-                          documentTitle={{
-                            formatter: () => 'OpenManifest',
-                          }}
-                          onStateChange={onRouteChange}
-                          linking={LinkingConfiguration}
-                          theme={state.theme as unknown as never}
-                        >
+                        <ThemedNavigationContainer onStateChange={onRouteChange}>
                           <Wrapper>
                             <DropzonesProvider>
                               <AppSignalSessionTagger>
@@ -75,7 +88,7 @@ function Content() {
                               </AppSignalSessionTagger>
                             </DropzonesProvider>
                           </Wrapper>
-                        </NavigationContainer>
+                        </ThemedNavigationContainer>
 
                         <StatusBar />
                       </NotificationsProvider>
@@ -95,8 +108,9 @@ function App() {
   // The session (credentials, current dropzone) is restored asynchronously: rendering before that would show the login
   // screen and send the first queries without credentials.
   const sessionHydrated = useSession((session) => session.hydrated);
+  const preferencesHydrated = usePreferences((preferences) => preferences.hydrated);
 
-  if (!isLoadingComplete || !sessionHydrated) {
+  if (!isLoadingComplete || !sessionHydrated || !preferencesHydrated) {
     console.debug('[App] Loading resources and rendering nothing');
     return null;
   }

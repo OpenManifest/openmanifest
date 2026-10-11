@@ -2,7 +2,6 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
-import { useAppSelector } from 'app/state';
 
 import { Permission } from 'app/api/schema.d';
 import DropzoneForm from 'app/forms/dropzone/DropzoneForm';
@@ -10,9 +9,10 @@ import useRestriction from 'app/hooks/useRestriction';
 import { Screen } from 'app/components/layout';
 import { useNotifications } from 'app/providers/notifications';
 import useDropzoneForm from 'app/forms/dropzone/useForm';
+import { useAppTheme } from 'app/theme';
 
 export default function UpdateDropzoneScreen() {
-  const globalState = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const notify = useNotifications();
 
   const { control, formState, onSubmit, loading } = useDropzoneForm({
@@ -25,12 +25,12 @@ export default function UpdateDropzoneScreen() {
 
   return (
     <>
-      <ProgressBar indeterminate color={globalState.theme.colors.primary} visible={loading} />
+      <ProgressBar indeterminate color={theme.colors.primary} visible={loading} />
       <Screen fullWidth={false}>
         <DropzoneForm {...{ loading, control }} />
       </Screen>
       <FAB
-        style={[styles.fab, { backgroundColor: globalState.theme.colors.primary }]}
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         visible={Boolean(canUpdateDropzone && formState.isDirty)}
         disabled={!formState.isDirty || loading}
         small

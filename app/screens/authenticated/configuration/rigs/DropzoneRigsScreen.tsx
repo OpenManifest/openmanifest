@@ -1,7 +1,7 @@
 import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet, RefreshControl } from 'react-native';
-import { FAB, DataTable, useTheme } from 'react-native-paper';
+import { FAB, DataTable } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 import { format } from 'date-fns';
 import { Switch } from 'react-native-gesture-handler';
@@ -18,9 +18,10 @@ import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import RigDialog from 'app/components/dialogs/Rig';
 import useRestriction from 'app/hooks/useRestriction';
 import { useNotifications } from 'app/providers/notifications';
+import { useAppTheme } from 'app/theme';
 
 export default function DropzoneRigsScreen() {
-  const state = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const rigForm = useAppSelector((root) => root.forms.rig);
   const notify = useNotifications();
@@ -34,7 +35,6 @@ export default function DropzoneRigsScreen() {
   const [mutationUpdateRig, updateData] = useUpdateRigMutation();
 
   const canCreateRig = useRestriction(Permission.CreateDropzoneRig);
-  const theme = useTheme();
 
   React.useEffect(() => {
     if (isFocused) {
@@ -48,7 +48,7 @@ export default function DropzoneRigsScreen() {
       contentContainerStyle={[styles.content, { backgroundColor: 'white' }]}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={() => refetch()} />}
     >
-      <ProgressBar visible={loading || updateData.loading} color={state.theme.colors.primary} />
+      <ProgressBar visible={loading || updateData.loading} color={theme.colors.primary} />
       <DataTable>
         <DataTable.Header>
           <DataTable.Title>Container</DataTable.Title>

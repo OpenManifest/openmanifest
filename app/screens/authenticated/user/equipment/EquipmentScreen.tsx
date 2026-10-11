@@ -12,6 +12,7 @@ import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { useUserProfile } from 'app/api/crud';
 import RigCard from './RigCard';
+import { useAppTheme } from 'app/theme';
 
 export type EquipmentRoute = {
   EquipmentScreen: {
@@ -19,7 +20,7 @@ export type EquipmentRoute = {
   };
 };
 export default function EquipmentScreen() {
-  const globalState = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const forms = useAppSelector((root) => root.forms);
   const dispatch = useAppDispatch();
   const {
@@ -68,7 +69,7 @@ export default function EquipmentScreen() {
 
       <FAB
         small
-        style={[styles.fab, { backgroundColor: globalState.theme.colors.primary }]}
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         visible={canUpdateUser}
         icon="plus"
         onPress={() => dispatch(actions.forms.rig.setOpen(true))}

@@ -4,8 +4,9 @@ import { StackHeaderProps } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { actions, useAppDispatch, useAppSelector } from '../../state';
+import { actions, useAppDispatch } from '../../state';
 import SetupWarning from './SetupWarning';
+import { useAppTheme } from 'app/theme';
 
 interface IAppBarProps extends StackHeaderProps {
   hideWarnings?: boolean;
@@ -13,7 +14,7 @@ interface IAppBarProps extends StackHeaderProps {
 
 function AppBar(props: IAppBarProps) {
   const { hideWarnings, back, options } = props;
-  const { palette, theme } = useAppSelector((root) => root.global);
+  const { palette, theme } = useAppTheme();
   const dispatch = useAppDispatch();
   const {
     dropzone: { currentUser, loading, dropzone },

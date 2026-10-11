@@ -4,7 +4,6 @@ import { FAB, DataTable, Switch } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 import { Permission } from 'app/api/schema.d';
 
-import { useAppSelector } from 'app/state';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import SwipeActions from 'app/components/layout/SwipeActions';
 import useRestriction from 'app/hooks/useRestriction';
@@ -12,9 +11,10 @@ import { useTickets } from 'app/api/crud';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { TicketTypeEssentialsFragment } from 'app/api/operations';
 import { useNotifications } from 'app/providers/notifications';
+import { useAppTheme } from 'app/theme';
 
 export default function TicketTypesScreen() {
-  const state = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const notify = useNotifications();
   const {
     dropzone: { dropzone },
@@ -63,7 +63,7 @@ export default function TicketTypesScreen() {
       contentContainerStyle={[styles.content, { backgroundColor: 'white' }]}
       refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
     >
-      <ProgressBar visible={loading} color={state.theme.colors.primary} />
+      <ProgressBar visible={loading} color={theme.colors.primary} />
       <DataTable>
         <DataTable.Header>
           <DataTable.Title>Name</DataTable.Title>
@@ -106,7 +106,7 @@ export default function TicketTypesScreen() {
 
       <FAB
         small
-        style={[styles.fab, { backgroundColor: state.theme.colors.primary }]}
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         visible={canCreateTicketTypes}
         icon="plus"
         onPress={() => dialogs.ticketType.open()}

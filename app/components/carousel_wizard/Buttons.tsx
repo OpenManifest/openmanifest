@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useAppSelector } from 'app/state';
+import { useAppTheme } from 'app/theme';
 
 export interface IWizardButtonsProps {
   nextLabel: string;
@@ -21,7 +21,7 @@ export default function Buttons(props: IWizardButtonsProps) {
     onBack,
   } = props;
   const [loading, setLoading] = React.useState(false);
-  const { palette } = useAppSelector((root) => root.global);
+  const { palette } = useAppTheme();
   const onNextPress = React.useCallback(async () => {
     try {
       await onNext?.();

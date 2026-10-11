@@ -2,8 +2,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Chip } from 'react-native-paper';
-import { useAppSelector } from '../state';
 import { Permission } from '../api/schema.d';
+import { useAppTheme } from 'app/theme';
 
 export interface IBadgeProps {
   disabled?: boolean;
@@ -19,7 +19,7 @@ export interface IBadgeProps {
 
 function Badge(props: IBadgeProps) {
   const { type, selected, disabled, onPress } = props;
-  const { palette } = useAppSelector((root) => root.global);
+  const { palette } = useAppTheme();
   const iconName = {
     [Permission.ActAsDzso]: 'shield-cross',
     [Permission.ActAsGca]: 'radio-handheld',
