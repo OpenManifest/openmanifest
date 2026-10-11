@@ -13,13 +13,13 @@ Before doing any work:
    PRs, status updates in the backend copy, stop conditions).
 2. Then read the task you picked and every document it links.
 
-Feature plans (commerce foundation, booking, webshop) live in the backend repo's `docs/features/README.md` and follow the
-same executor rules.
+Every task (modernisation, generalisation, UI, commerce, booking, webshop) is in that one plan; pick from its
+**Execution order**. UI design: `docs/ui-modernisation-plan.md`; feature designs: the backend repo's `docs/features/`.
 
 Reference: `docs/reference/README.md` (navigation, store, API layer, platform files, dependencies),
 `docs/reference/diagrams.md`; bugs for both repos are in the backend repo's `docs/reference/BUGS.md`; cloud VM setup in
 the backend repo's `docs/reference/CLOUD_ENV.md`.
 
-Quick commands (Node 20 until plan task P3.15, then Node 24): `SENTRYCLI_SKIP_DOWNLOAD=1 yarn install --frozen-lockfile`,
-`yarn check:types`, `yarn check:linting`, `yarn check:testing`, `EXPO_ENV=staging npx expo export:web`.
+Quick commands (Node 24, `.nvmrc`): `SENTRYCLI_SKIP_DOWNLOAD=1 yarn install --frozen-lockfile`, `yarn check:types`,
+`yarn check:linting`, `yarn check:testing`, `EXPO_ENV=staging npx expo export --platform web`.
 Never commit secrets, `.env` files, `node_modules`, `web-build/` or `dist/`.
