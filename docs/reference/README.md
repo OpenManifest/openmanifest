@@ -97,6 +97,8 @@ Main flows:
 
 `KeyboardProvider` (react-native-keyboard-controller) sits inside `SafeAreaProvider` in `app/entrypoint/Entrypoint.tsx`;
 `android.softwareKeyboardLayoutMode` is `resize`. Web has no bottom sheets: `*.web.tsx` variants use drawers/dialogs.
+ESLint (`eslint.config.js`) rejects `KeyboardAvoidingView` and React Native's `SafeAreaView` imports and `Dimensions.get(...)`
+calls under `app/`, except in `app/components/layout/`.
 
 ## 3. Store shape
 
