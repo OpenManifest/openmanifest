@@ -525,7 +525,10 @@ export type DropzoneUser = AnyResource & Wallet & {
   /** Get user rigs that have been inspected and marked as OK + dropzone rigs */
   availableRigs?: Maybe<Array<Rig>>;
   createdAt: Scalars['ISO8601DateTime']['output'];
-  credits?: Maybe<Scalars['Int']['output']>;
+  /** @deprecated Use creditsCents, an integer number of cents */
+  credits?: Maybe<Scalars['Float']['output']>;
+  /** The member's credits in cents */
+  creditsCents?: Maybe<Scalars['Int']['output']>;
   dropzone: Dropzone;
   expiresAt?: Maybe<Scalars['Int']['output']>;
   guid: Scalars['ID']['output'];
@@ -621,7 +624,10 @@ export type DropzoneUserEdge = {
 };
 
 export type DropzoneUserInput = {
+  /** In whole units, use creditsCents */
   credits?: InputMaybe<Scalars['Float']['input']>;
+  /** In cents */
+  creditsCents?: InputMaybe<Scalars['Int']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   exitWeight?: InputMaybe<Scalars['Float']['input']>;
   expiresAt?: InputMaybe<Scalars['Int']['input']>;
@@ -701,7 +707,9 @@ export enum EventLevel {
 
 export type Extra = AnyResource & SellableItem & {
   __typename?: 'Extra';
+  /** @deprecated Use costCents, an integer number of cents */
   cost: Scalars['Float']['output'];
+  costCents: Scalars['Int']['output'];
   createdAt: Scalars['ISO8601DateTime']['output'];
   dropzone: Dropzone;
   guid: Scalars['ID']['output'];
@@ -713,7 +721,10 @@ export type Extra = AnyResource & SellableItem & {
 };
 
 export type ExtraInput = {
+  /** In whole units, use costCents */
   cost?: InputMaybe<Scalars['Float']['input']>;
+  /** In cents */
+  costCents?: InputMaybe<Scalars['Int']['input']>;
   dropzoneId?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   ticketTypeIds?: InputMaybe<Array<Scalars['Int']['input']>>;
@@ -1437,7 +1448,9 @@ export enum NotificationType {
 
 export type Order = AnyResource & {
   __typename?: 'Order';
+  /** @deprecated Use amountCents, an integer number of cents */
   amount: Scalars['Float']['output'];
+  amountCents: Scalars['Int']['output'];
   buyer?: Maybe<Wallet>;
   createdAt: Scalars['ISO8601DateTime']['output'];
   dropzone: Dropzone;
@@ -1473,8 +1486,10 @@ export type OrderEdge = {
 };
 
 export type OrderInput = {
-  /** Total amount of the order */
-  amount: Scalars['Float']['input'];
+  /** In whole units, use amountCents. Total amount of the order */
+  amount?: InputMaybe<Scalars['Float']['input']>;
+  /** In cents. Total amount of the order */
+  amountCents?: InputMaybe<Scalars['Int']['input']>;
   /** Any buyer peer, e.g DropzoneUser or Dropzone */
   buyer: Scalars['ID']['input'];
   dropzone: Scalars['ID']['input'];
@@ -1868,7 +1883,9 @@ export type RigInspectionInput = {
 };
 
 export type SellableItem = {
+  /** @deprecated Use costCents, an integer number of cents */
   cost?: Maybe<Scalars['Float']['output']>;
+  costCents?: Maybe<Scalars['Int']['output']>;
   title?: Maybe<Scalars['String']['output']>;
 };
 
@@ -1930,7 +1947,9 @@ export type SignUpPayload = {
 
 export type Slot = AnyResource & SellableItem & {
   __typename?: 'Slot';
+  /** @deprecated Use costCents, an integer number of cents */
   cost: Scalars['Float']['output'];
+  costCents: Scalars['Int']['output'];
   createdAt: Scalars['ISO8601DateTime']['output'];
   dropzoneUser?: Maybe<DropzoneUser>;
   exitWeight: Scalars['Int']['output'];
@@ -2089,7 +2108,9 @@ export type TicketType = AnyResource & SellableItem & {
   __typename?: 'TicketType';
   allowManifestingSelf?: Maybe<Scalars['Boolean']['output']>;
   altitude?: Maybe<Scalars['Int']['output']>;
+  /** @deprecated Use costCents, an integer number of cents */
   cost: Scalars['Float']['output'];
+  costCents: Scalars['Int']['output'];
   createdAt: Scalars['ISO8601DateTime']['output'];
   currency?: Maybe<Scalars['String']['output']>;
   dropzone?: Maybe<Dropzone>;
@@ -2105,7 +2126,10 @@ export type TicketType = AnyResource & SellableItem & {
 export type TicketTypeInput = {
   allowManifestingSelf?: InputMaybe<Scalars['Boolean']['input']>;
   altitude?: InputMaybe<Scalars['Int']['input']>;
+  /** In whole units, use costCents */
   cost?: InputMaybe<Scalars['Float']['input']>;
+  /** In cents */
+  costCents?: InputMaybe<Scalars['Int']['input']>;
   currency?: InputMaybe<Scalars['String']['input']>;
   dropzoneId?: InputMaybe<Scalars['Int']['input']>;
   extraIds?: InputMaybe<Array<Scalars['Int']['input']>>;
@@ -2120,7 +2144,9 @@ export type TimeRangeInput = {
 
 export type Transaction = AnyResource & {
   __typename?: 'Transaction';
+  /** @deprecated Use amountCents, an integer number of cents */
   amount: Scalars['Float']['output'];
+  amountCents: Scalars['Int']['output'];
   createdAt: Scalars['ISO8601DateTime']['output'];
   dropzoneUser: DropzoneUser;
   guid: Scalars['ID']['output'];

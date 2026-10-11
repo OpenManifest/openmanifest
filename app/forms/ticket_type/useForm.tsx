@@ -11,6 +11,7 @@ import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { camelCase, isEqual } from 'lodash';
 import { useTickets } from 'app/api/crud';
 import { useNotifications } from 'app/providers/notifications';
+import { toCents } from 'app/utils/money';
 
 export type TicketTypeFields = {
   id?: string;
@@ -89,7 +90,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
         const response = fields.id
           ? await updateTicketType(Number(fields.id), {
               name: validated.name,
-              cost: validated.cost,
+              costCents: toCents(validated.cost),
               allowManifestingSelf: validated.allowManifestingSelf,
               altitude: validated.altitude,
               extraIds: (validated.extras as unknown as TicketTypeAddonEssentialsFragment[]).map(
@@ -99,7 +100,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
             })
           : await createTicketType({
               name: validated.name,
-              cost: validated.cost,
+              costCents: toCents(validated.cost),
               allowManifestingSelf: validated.allowManifestingSelf,
               altitude: validated.altitude,
               extraIds: (validated.extras as unknown as TicketTypeAddonEssentialsFragment[])?.map(

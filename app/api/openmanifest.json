@@ -3749,6 +3749,18 @@
             "args": [],
             "type": {
               "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": true,
+            "deprecationReason": "Use creditsCents, an integer number of cents"
+          },
+          {
+            "name": "creditsCents",
+            "description": "The member's credits in cents",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
               "name": "Int",
               "ofType": null
             },
@@ -4514,10 +4526,22 @@
         "inputFields": [
           {
             "name": "credits",
-            "description": null,
+            "description": "In whole units, use creditsCents",
             "type": {
               "kind": "SCALAR",
               "name": "Float",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "creditsCents",
+            "description": "In cents",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -5014,6 +5038,22 @@
                 "ofType": null
               }
             },
+            "isDeprecated": true,
+            "deprecationReason": "Use costCents, an integer number of cents"
+          },
+          {
+            "name": "costCents",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "Int",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -5171,10 +5211,22 @@
         "inputFields": [
           {
             "name": "cost",
-            "description": null,
+            "description": "In whole units, use costCents",
             "type": {
               "kind": "SCALAR",
               "name": "Float",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "costCents",
+            "description": "In cents",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -10023,6 +10075,22 @@
                 "ofType": null
               }
             },
+            "isDeprecated": true,
+            "deprecationReason": "Use amountCents, an integer number of cents"
+          },
+          {
+            "name": "amountCents",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "Int",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -10327,15 +10395,23 @@
         "inputFields": [
           {
             "name": "amount",
-            "description": "Total amount of the order",
+            "description": "In whole units, use amountCents. Total amount of the order",
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "name": "Float",
-                "kind": "SCALAR",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "amountCents",
+            "description": "In cents. Total amount of the order",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -13289,6 +13365,18 @@
               "name": "Float",
               "ofType": null
             },
+            "isDeprecated": true,
+            "deprecationReason": "Use costCents, an integer number of cents"
+          },
+          {
+            "name": "costCents",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -13657,6 +13745,22 @@
               "name": null,
               "ofType": {
                 "name": "Float",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "isDeprecated": true,
+            "deprecationReason": "Use costCents, an integer number of cents"
+          },
+          {
+            "name": "costCents",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "Int",
                 "kind": "SCALAR",
                 "ofType": null
               }
@@ -14893,6 +14997,22 @@
                 "ofType": null
               }
             },
+            "isDeprecated": true,
+            "deprecationReason": "Use costCents, an integer number of cents"
+          },
+          {
+            "name": "costCents",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "Int",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -15094,10 +15214,22 @@
           },
           {
             "name": "cost",
-            "description": null,
+            "description": "In whole units, use costCents",
             "type": {
               "kind": "SCALAR",
               "name": "Float",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "costCents",
+            "description": "In cents",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
               "ofType": null
             },
             "defaultValue": null,
@@ -15228,6 +15360,22 @@
               "name": null,
               "ofType": {
                 "name": "Float",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "isDeprecated": true,
+            "deprecationReason": "Use amountCents, an integer number of cents"
+          },
+          {
+            "name": "amountCents",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "Int",
                 "kind": "SCALAR",
                 "ofType": null
               }

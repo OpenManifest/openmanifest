@@ -28,7 +28,7 @@ export type LoadValue = Pick<LoadDetailsFragment, 'id'> & {
   slots?: { groupNumber?: number | null }[] | null;
 };
 export type JumpTypeValue = Pick<JumpType, 'id' | 'name'>;
-export type TicketTypeExtraValue = Pick<Extra, 'id' | 'name' | 'cost'>;
+export type TicketTypeExtraValue = Pick<Extra, 'id' | 'name' | 'costCents'>;
 export type TicketTypeValue = Pick<TicketType, 'id' | 'name' | 'isTandem'> & {
   extras?: TicketTypeExtraValue[] | null;
 };

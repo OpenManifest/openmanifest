@@ -20,7 +20,7 @@ const ticketType = {
   __typename: 'TicketType',
   id: '1',
   name: 'Height',
-  cost: 45,
+  costCents: 4500,
   isTandem: false,
   altitude: 14000,
   allowManifestingSelf: true,

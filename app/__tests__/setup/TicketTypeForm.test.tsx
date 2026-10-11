@@ -44,7 +44,7 @@ describe('<TicketTypeDialog />', () => {
               variables: {
                 attributes: {
                   name: 'Hop n Pop',
-                  cost: 45,
+                  costCents: 4500,
                   // Not the form's default of `true`: see BUG-096 below
                   allowManifestingSelf: false,
                   altitude: 14000,
