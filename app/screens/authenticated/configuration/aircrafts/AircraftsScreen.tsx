@@ -8,6 +8,8 @@ import { Permission } from 'app/api/schema.d';
 import { useSession } from 'app/state';
 import NoResults from 'app/components/NoResults';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import FloatingActionArea from 'app/components/layout/FloatingActionArea';
+import ScreenContainer from 'app/components/layout/ScreenContainer';
 import useRestriction from 'app/hooks/useRestriction';
 import SwipeActions from 'app/components/layout/SwipeActions';
 import { useAircrafts } from 'app/api/crud';
@@ -61,69 +63,68 @@ export default function PlanesScreen() {
     [dialogs.aircraft]
   );
   return (
-    <ScrollableScreen
-      contentContainerStyle={{ backgroundColor: theme.colors.surface }}
-      refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
-    >
-      <ProgressBar visible={loading} color={theme.colors.primary} />
+    <ScreenContainer edges={['bottom']}>
+      <ScrollableScreen
+        hasFab
+        contentContainerStyle={{ backgroundColor: theme.colors.surface }}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
+      >
+        <ProgressBar visible={loading} color={theme.colors.primary} />
 
-      {aircrafts?.length ? null : (
-        <NoResults
-          title="No planes?"
-          subtitle="You need to have at least one plane to manifest loads"
+        {aircrafts?.length ? null : (
+          <NoResults
+            title="No planes?"
+            subtitle="You need to have at least one plane to manifest loads"
+          />
+        )}
+
+        {!aircrafts?.length ? null : (
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title>Name</DataTable.Title>
+              <DataTable.Title numeric>Registration</DataTable.Title>
+              <DataTable.Title numeric>Slots</DataTable.Title>
+            </DataTable.Header>
+            {aircrafts?.map((plane) => (
+              <View style={{ height: 46 }}>
+                <SwipeActions
+                  key={`plane-${plane.id}`}
+                  disabled={!canDeletePlane}
+                  rightAction={{
+                    label: 'Delete',
+                    backgroundColor: 'red',
+                    onPress: createArchiveAircraftHandler(plane),
+                  }}
+                >
+                  <DataTable.Row pointerEvents="none" onPress={createEditAircraftHandler(plane)}>
+                    <DataTable.Cell>{plane.name}</DataTable.Cell>
+                    <DataTable.Cell numeric>{plane.registration}</DataTable.Cell>
+                    <DataTable.Cell numeric>{plane.maxSlots}</DataTable.Cell>
+                  </DataTable.Row>
+                </SwipeActions>
+              </View>
+            ))}
+          </DataTable>
+        )}
+      </ScrollableScreen>
+      <FloatingActionArea>
+        <FAB
+          testID="new-plane-primary-action"
+          style={{ backgroundColor: theme.colors.primary }}
+          visible={canCreatePlane}
+          small
+          icon="plus"
+          onPress={() => dialogs.aircraft.open()}
+          label="New plane"
         />
-      )}
-
-      {!aircrafts?.length ? null : (
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title>Name</DataTable.Title>
-            <DataTable.Title numeric>Registration</DataTable.Title>
-            <DataTable.Title numeric>Slots</DataTable.Title>
-          </DataTable.Header>
-          {aircrafts?.map((plane) => (
-            <View style={{ height: 46 }}>
-              <SwipeActions
-                key={`plane-${plane.id}`}
-                disabled={!canDeletePlane}
-                rightAction={{
-                  label: 'Delete',
-                  backgroundColor: 'red',
-                  onPress: createArchiveAircraftHandler(plane),
-                }}
-              >
-                <DataTable.Row pointerEvents="none" onPress={createEditAircraftHandler(plane)}>
-                  <DataTable.Cell>{plane.name}</DataTable.Cell>
-                  <DataTable.Cell numeric>{plane.registration}</DataTable.Cell>
-                  <DataTable.Cell numeric>{plane.maxSlots}</DataTable.Cell>
-                </DataTable.Row>
-              </SwipeActions>
-            </View>
-          ))}
-        </DataTable>
-      )}
-
-      <FAB
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        visible={canCreatePlane}
-        small
-        icon="plus"
-        onPress={() => dialogs.aircraft.open()}
-        label="New plane"
-      />
-    </ScrollableScreen>
+      </FloatingActionArea>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
-  },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
   },
   empty: {
     flex: 1,

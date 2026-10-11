@@ -130,7 +130,7 @@ async function run(browser, name, viewport) {
     await page.screenshot({ path: join(out, `${name}-signup.png`) });
     await page.goto(`${base}/login`, { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForTimeout(3000);
-    // TODO P5.6: the configuration routes. P5.7: weather, wind and jump run. P5.8: board and
+    // TODO P5.7: weather, wind and jump run. P5.8: board and
     // load again at `html { font-size: 200% }`.
     await page.locator('input').nth(0).click({ force: true });
     await page.keyboard.type('owner@example.com');
@@ -209,6 +209,38 @@ async function run(browser, name, viewport) {
       failures.push(`deep link ${loadUrl} did not show the load`);
     }
     await page.screenshot({ path: join(out, `${name}-deeplink-load.png`) });
+
+    // Configuration screens: floating action buttons stay reachable and nothing overflows
+    const configurationRoutes = [
+      '/dropzone/configuration',
+      '/dropzone/configuration/aircrafts',
+      '/dropzone/configuration/ticket-types',
+      '/dropzone/ticket-types/extra',
+      '/dropzone/configuration/rigs',
+      '/dropzone/configuration/rig-inspection',
+      '/dropzone/configuration/permissions',
+      '/dropzone/configuration/basic',
+      '/dropzone/transactions',
+      '/dropzone/master-log',
+    ];
+    for (const route of configurationRoutes) {
+      await page.goto(`${base}${route}`, { waitUntil: 'networkidle', timeout: 60000 });
+      await page.waitForTimeout(4000);
+      if (new URL(page.url()).pathname !== route) {
+        failures.push(`configuration route ${route} ended on ${page.url()}`);
+        continue;
+      }
+      await checkLayout(page, route, viewport, failures);
+    }
+    // One dark mode screenshot, to see that the screen follows the theme
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await page.goto(`${base}/dropzone/configuration/ticket-types`, {
+      waitUntil: 'networkidle',
+      timeout: 60000,
+    });
+    await page.waitForTimeout(4000);
+    await page.screenshot({ path: join(out, `${name}-ticket-types-dark.png`) });
+    await page.emulateMedia({ colorScheme: 'light' });
 
     // The dropzone setup wizard (reachable for any logged in user)
     await page.goto(`${base}/setup`, { waitUntil: 'networkidle', timeout: 60000 });
