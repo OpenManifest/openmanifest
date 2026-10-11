@@ -1,7 +1,7 @@
 import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ProgressBar } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 // import gql from 'graphql-tag';
 
 import { FlatList } from 'react-native-gesture-handler';

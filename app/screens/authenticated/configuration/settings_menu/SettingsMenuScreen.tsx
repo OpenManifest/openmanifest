@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Divider, List, Switch, useTheme } from 'react-native-paper';
+import { Divider, List, Switch } from 'react-native-paper';
+import { useAppTheme } from 'app/hooks/useAppTheme';
 import { useNavigation } from '@react-navigation/native';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
@@ -16,7 +17,7 @@ export default function SettingsScreen() {
     dropzone: { dropzone }
   } = useDropzoneContext();
 
-  const theme = useTheme();
+  const theme = useAppTheme();
 
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
   const canUpdateRigInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);

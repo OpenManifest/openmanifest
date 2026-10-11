@@ -8,7 +8,8 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { FAB, IconButton, ProgressBar, useTheme } from 'react-native-paper';
+import { FAB, IconButton, useTheme } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 
 import NoResults from 'app/components/NoResults';
 import { View } from 'app/components/Themed';

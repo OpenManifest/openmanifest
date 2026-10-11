@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Avatar, Badge, Card, Chip, useTheme } from 'react-native-paper';
+import { Avatar, Badge, Card, Chip } from 'react-native-paper';
+import { useAppTheme } from 'app/hooks/useAppTheme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ViewProps } from 'app/components/Themed';
 import { SlotDetailsFragment } from 'app/api/operations';
@@ -15,7 +16,7 @@ interface ISlotCardProps {
 
 export default function SlotCard(props: ISlotCardProps) {
   const { slot, onPress, onDelete, style } = props;
-  const theme = useTheme();
+  const theme = useAppTheme();
 
   const hasPassenger = !!slot?.passengerName;
   const navigation = useDropzoneNavigation();

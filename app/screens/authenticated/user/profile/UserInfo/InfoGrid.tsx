@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View, ViewProps } from 'react-native';
-import { Divider, List, useTheme } from 'react-native-paper';
+import { Divider, List } from 'react-native-paper';
+import { useAppTheme } from 'app/hooks/useAppTheme';
 
 interface IInfoGrid {
   items: { title: string; value: string; onPress?(): void; bold?: boolean }[];
@@ -9,7 +10,7 @@ interface IInfoGrid {
 export default function InfoGrid(props: IInfoGrid) {
   const { items, style } = props;
   const flex = 1 / items.length;
-  const theme = useTheme();
+  const theme = useAppTheme();
 
   return (
     <>

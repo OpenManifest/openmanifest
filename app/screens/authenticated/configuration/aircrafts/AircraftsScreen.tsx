@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, RefreshControl, View } from 'react-native';
-import { FAB, DataTable, ProgressBar, useTheme } from 'react-native-paper';
+import { FAB, DataTable, useTheme } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 import { useIsFocused } from '@react-navigation/native';
 import { Permission } from 'app/api/schema.d';
 
@@ -106,7 +107,7 @@ export default function PlanesScreen() {
         visible={canCreatePlane}
         small
         icon="plus"
-        onPress={dialogs.aircraft.open}
+        onPress={() => dialogs.aircraft.open()}
         label="New plane"
       />
     </ScrollableScreen>

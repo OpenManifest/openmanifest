@@ -1,7 +1,8 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { SectionList, StyleSheet, View } from 'react-native';
-import { List, ProgressBar } from 'react-native-paper';
+import { List } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 
 import { useAppSelector } from 'app/state';
 

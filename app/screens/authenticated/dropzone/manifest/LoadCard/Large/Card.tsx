@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Platform, ScrollView } from 'react-native';
-import { Button, Card, IconButton, Paragraph, ProgressBar, Text } from 'react-native-paper';
+import { Button, Card, IconButton, Paragraph, Text } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 
 import { SlotDetailsFragment } from 'app/api/operations';

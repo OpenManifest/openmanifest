@@ -1,7 +1,8 @@
 import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
-import { Chip, Divider, ProgressBar } from 'react-native-paper';
+import { Chip, Divider } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 import Skeleton from 'app/components/Skeleton';
 
 import { actions, useAppDispatch, useAppSelector } from 'app/state';

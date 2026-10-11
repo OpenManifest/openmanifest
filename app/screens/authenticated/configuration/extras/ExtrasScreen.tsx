@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { FAB, DataTable, ProgressBar } from 'react-native-paper';
+import { FAB, DataTable } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 import { useTicketTypeExtrasQuery } from 'app/api/reflection';
 import { View } from 'app/components/Themed';
 import { Permission } from 'app/api/schema.d';
@@ -55,7 +56,7 @@ export default function ExtrasScreen() {
           visible={canCreateExtras}
           small
           icon="plus"
-          onPress={dialogs.ticketTypeAddon.open}
+          onPress={() => dialogs.ticketTypeAddon.open()}
           label="New ticket addon"
         />
       </View>

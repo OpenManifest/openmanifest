@@ -23,6 +23,8 @@ export default function Chip(props: ChipProps) {
       backgroundColor: mode !== 'flat' ? backgroundColor : undefined,
       height: small ? 25 : undefined,
       alignItems: 'center' as const,
+      // Paper 5 gives the label numberOfLines={1}, so chips in a row would shrink and truncate instead of overflowing.
+      flexShrink: 0,
       borderColor: mode !== 'flat' ? color || undefined : undefined,
     }),
     [backgroundColor, color, mode, small]
