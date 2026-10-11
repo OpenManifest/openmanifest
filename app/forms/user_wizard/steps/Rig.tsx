@@ -15,10 +15,14 @@ export const validation = yup.object({
   rigId: yup.string().nullable().default(null),
   make: yup.string().required('Please select a manufacturer').default('Icon'),
   model: yup.string().required('Please enter the model of your container'),
-  serial: yup.string().required('Serial number makes it faster to identify and inspect your container')
+  serial: yup
+    .string()
+    .required('Serial number makes it faster to identify and inspect your container'),
 });
 
-type StepFields = { [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K] };
+type StepFields = {
+  [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K];
+};
 
 export function useStep(): WizardFormStep<StepFields> {
   const { dropzoneUser } = useUserProfileContext();
@@ -29,9 +33,9 @@ export function useStep(): WizardFormStep<StepFields> {
         make: dropzoneUser?.user?.rigs?.[0]?.make || '',
         model: dropzoneUser?.user?.rigs?.[0]?.model || '',
         serial: dropzoneUser?.user?.rigs?.[0]?.serial || '',
-        rigId: dropzoneUser?.user?.rigs?.[0]?.id || null
+        rigId: dropzoneUser?.user?.rigs?.[0]?.id || null,
       },
-      validation
+      validation,
     }),
     [dropzoneUser?.user?.rigs]
   );
@@ -65,7 +69,7 @@ function RigWizardScreen(props: IWizardStepProps) {
                   'Infinity',
                   'Parachutes de France',
                   'Parachute Systems',
-                  'Racer'
+                  'Racer',
                 ]
                   .map((label) => ({ label, value: label }))
                   .concat([{ label: 'Other', value: 'other' }])}
@@ -112,25 +116,25 @@ function RigWizardScreen(props: IWizardStepProps) {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 48,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   field: {
     marginBottom: 8,
     backgroundColor: 'transparent',
-    marginVertical: 16
+    marginVertical: 16,
   },
   content: {
     width: '100%',
     justifyContent: 'space-around',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   card: { marginVertical: 8 },
   title: {
     color: 'white',
     marginBottom: 16,
     fontSize: 24,
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });
 
 export default RigWizardScreen;

@@ -21,7 +21,6 @@ export const initialState = {
 const persistConfig = {
   key: 'open-manifest.0.9.1',
   storage:
-
     Platform.OS === 'web' || false ? require('redux-persist/lib/storage').default : AsyncStorage,
   whitelist: ['global'],
 };
@@ -42,9 +41,7 @@ type FormActions = {
   [K in keyof typeof forms]: (typeof forms)[K]['actions'];
 };
 
-
 const screenReducers = Object.keys(screens).reduce(
-
   (obj, key) =>
     !screens || !(key in screens)
       ? obj

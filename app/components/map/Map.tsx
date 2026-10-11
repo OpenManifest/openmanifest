@@ -26,8 +26,19 @@ interface IMapProps {
   onDragEnd?(coords: { lat: number; lng: number }): void;
 }
 function MapNative(props: IMapProps) {
-  const { width, height, position, coords, center, shape, interactive, onChange, onDragStart, onDragEnd, children } =
-    props;
+  const {
+    width,
+    height,
+    position,
+    coords,
+    center,
+    shape,
+    interactive,
+    onChange,
+    onDragStart,
+    onDragEnd,
+    children,
+  } = props;
   const { containerStyle, mapStyle } = props;
   const map = React.useRef<MapView>(undefined);
   const region = coords
@@ -35,7 +46,7 @@ function MapNative(props: IMapProps) {
         latitude: coords.lat,
         longitude: coords.lng,
         latitudeDelta: calculateLatLngDelta(coords.lat),
-        longitudeDelta: calculateLatLngDelta(coords.lat)
+        longitudeDelta: calculateLatLngDelta(coords.lat),
       }
     : undefined;
 
@@ -44,7 +55,7 @@ function MapNative(props: IMapProps) {
   React.useEffect(() => {
     if (center?.lat && center?.lng && map.current) {
       map.current?.animateCamera({
-        center: { latitude: center.lat, longitude: center.lng }
+        center: { latitude: center.lat, longitude: center.lng },
       });
     }
   }, [center?.lat, center?.lng]);
@@ -61,10 +72,10 @@ function MapNative(props: IMapProps) {
           ? {
               position: 'absolute',
               top: position.y,
-              left: position.x
+              left: position.x,
             }
           : {}),
-        ...(containerStyle || {})
+        ...(containerStyle || {}),
       }}
     >
       <MapView
@@ -74,7 +85,7 @@ function MapNative(props: IMapProps) {
         style={{
           width: '100%',
           height: '100%',
-          ...(mapStyle || {})
+          ...(mapStyle || {}),
         }}
         initialRegion={region}
         region={region}

@@ -24,7 +24,7 @@ export default function SlotsTable(props: ISlotsTableProps) {
     scrollable = false,
     onAvailableSlotPress,
     onSlotGroupPress,
-    onSlotPress
+    onSlotPress,
   } = props;
 
   console.log(fields);
@@ -71,11 +71,17 @@ export default function SlotsTable(props: ISlotsTableProps) {
             ))}
         </DataTable.Header>
         <FlatList
-          data={Array.from({ length: load?.maxSlots || 0 })?.map((_, index) => load?.slots?.[index] || null)}
+          data={Array.from({ length: load?.maxSlots || 0 })?.map(
+            (_, index) => load?.slots?.[index] || null
+          )}
           keyExtractor={(item, index) => item?.id || `available-${index}`}
           renderItem={({ item: slot, index }) =>
             !slot || !load ? (
-              <AvailableRow {...{ onPress: onAvailableSlotPress }} key={`slot-available-${index}`} index={index} />
+              <AvailableRow
+                {...{ onPress: onAvailableSlotPress }}
+                key={`slot-available-${index}`}
+                index={index}
+              />
             ) : (
               <UserRow
                 {...{ fields, slot, load, onDeletePress, onSlotGroupPress, onSlotPress, index }}
@@ -91,6 +97,6 @@ export default function SlotsTable(props: ISlotsTableProps) {
 
 const styles = StyleSheet.create({
   th: {
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });

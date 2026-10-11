@@ -24,7 +24,7 @@ export default function Countdown(props: ICountdownProps) {
           ? ([
               [variant === 'light' ? '#FFFFFF' : '#004777', fractionTwentyMinutes],
               [variant === 'light' ? '#FFFFFF' : '#F7B801', fractionTenMinutes],
-              [variant === 'light' ? '#FFFFFF' : '#A30000', fractionFiveMinutes]
+              [variant === 'light' ? '#FFFFFF' : '#A30000', fractionFiveMinutes],
             ] as never)
           : ([[variant === 'light' ? '#FFFFFF' : '#A30000', 1]] as never)
       }

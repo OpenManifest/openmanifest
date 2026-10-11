@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Animated, Dimensions, LayoutChangeEvent, LayoutRectangle, StyleSheet, View } from 'react-native';
+import {
+  Animated,
+  Dimensions,
+  LayoutChangeEvent,
+  LayoutRectangle,
+  StyleSheet,
+  View,
+} from 'react-native';
 import isEqual from 'lodash/isEqual';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getPointOnCircle } from 'app/utils/calculateCoordinatesByAngle';
@@ -20,20 +27,22 @@ function JumpRunMap(props: IJumpRunMapProps) {
     x: 0,
     y: 0,
     height: 0,
-    width: 0
+    width: 0,
   });
   const MAP_SIZE = rootLayout.width * MAP_SIZE_PERCENTAGE;
   const CENTER_Y = rootLayout.height / 2;
   const CENTER_X = rootLayout.width / 2;
 
   const { jumpRun } = props;
-  const [origin, setOrigin] = React.useState<LayoutRectangle & { originX: number; originY: number }>({
+  const [origin, setOrigin] = React.useState<
+    LayoutRectangle & { originX: number; originY: number }
+  >({
     x: 0,
     y: 0,
     height: 0,
     width: 0,
     originX: 0,
-    originY: 0
+    originY: 0,
   });
 
   const opacity = React.useRef(new Animated.Value(0));
@@ -45,10 +54,10 @@ function JumpRunMap(props: IJumpRunMapProps) {
       Animated.timing(planePosition.current, {
         duration: 3000,
         toValue: -400,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       {
-        resetBeforeIteration: true
+        resetBeforeIteration: true,
       }
     )
   );
@@ -60,7 +69,7 @@ function JumpRunMap(props: IJumpRunMapProps) {
         ...layout,
         // Center of spinny thing
         originX: layout.x + rootLayout.width / 2,
-        originY: layout.y + rootLayout.height / 2
+        originY: layout.y + rootLayout.height / 2,
       });
     },
     [rootLayout.height, rootLayout.width]
@@ -90,14 +99,17 @@ function JumpRunMap(props: IJumpRunMapProps) {
     degrees: jumpRun,
     offsetX: 0,
     offsetY: 0,
-    radius: rootLayout.height / 2
+    radius: rootLayout.height / 2,
   });
 
   const position = React.useMemo(() => ({ x: 0, y: 0 }), []);
   const coords = React.useMemo(() => (lat && lng ? { lat, lng } : undefined), [lat, lng]);
 
   return (
-    <View onLayout={({ nativeEvent }) => setRootLayout(nativeEvent.layout)} style={{ width: '100%', height: '100%' }}>
+    <View
+      onLayout={({ nativeEvent }) => setRootLayout(nativeEvent.layout)}
+      style={{ width: '100%', height: '100%' }}
+    >
       <View
         style={{
           width: MAP_SIZE,
@@ -106,7 +118,7 @@ function JumpRunMap(props: IJumpRunMapProps) {
           overflow: 'hidden',
           position: 'absolute',
           top: 0,
-          left: 0
+          left: 0,
         }}
       >
         <MapView
@@ -131,10 +143,10 @@ function JumpRunMap(props: IJumpRunMapProps) {
             left: 0,
             transform: [
               {
-                rotate: `${jumpRun}deg`
-              }
-            ]
-          }
+                rotate: `${jumpRun}deg`,
+              },
+            ],
+          },
         ]}
       >
         <Animated.View
@@ -144,16 +156,16 @@ function JumpRunMap(props: IJumpRunMapProps) {
             backgroundColor: '#FF1414',
             opacity: opacity.current.interpolate({
               inputRange: [0, 1],
-              outputRange: [0.6, 1]
+              outputRange: [0.6, 1],
             }),
             transform: [
               {
                 scaleX: opacity.current.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [3, 1]
-                })
-              }
-            ]
+                  outputRange: [3, 1],
+                }),
+              },
+            ],
           }}
         />
       </Animated.View>
@@ -168,20 +180,25 @@ function JumpRunMap(props: IJumpRunMapProps) {
               left: planeStartPosition.x,
               opacity: planePosition.current.interpolate({
                 inputRange: [-MAP_SIZE, -MAP_SIZE / 2, MAP_SIZE],
-                outputRange: [0.0, 1.0, 0.0]
+                outputRange: [0.0, 1.0, 0.0],
               }),
               transform: [
                 {
-                  rotate: `${jumpRun}deg`
+                  rotate: `${jumpRun}deg`,
                 },
                 {
-                  translateY: planePosition.current
-                }
-              ]
-            }
+                  translateY: planePosition.current,
+                },
+              ],
+            },
           ]}
         >
-          <MaterialCommunityIcons name="airplane" size={20} color="#ffffff" style={styles.planeIcon} />
+          <MaterialCommunityIcons
+            name="airplane"
+            size={20}
+            color="#ffffff"
+            style={styles.planeIcon}
+          />
         </Animated.View>
       )}
       <Animated.Text
@@ -190,8 +207,8 @@ function JumpRunMap(props: IJumpRunMapProps) {
           {
             opacity: opacity.current,
             top: CENTER_Y,
-            left: CENTER_X
-          }
+            left: CENTER_X,
+          },
         ]}
       >
         {Math.round(jumpRun)}
@@ -205,7 +222,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     alignItems: 'center',
     paddingLeft: 0,
-    paddingRight: 0
+    paddingRight: 0,
   },
   planeIcon: { transform: [{ rotate: '-45deg' }] },
 
@@ -217,16 +234,16 @@ const styles = StyleSheet.create({
     textShadowRadius: 10,
     textShadowOffset: {
       width: 2,
-      height: 2
+      height: 2,
     },
     fontSize: 100,
     color: 'white',
-    position: 'absolute'
+    position: 'absolute',
   },
 
   content: {
     width: '100%',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   iconContainer: {
     borderWidth: 2,
@@ -235,8 +252,8 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     alignSelf: 'center',
     alignItems: 'center',
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
 });
 
 export default React.memo(JumpRunMap, (a, b) => isEqual(a, b));

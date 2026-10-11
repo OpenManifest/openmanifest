@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { TicketTypeAddonEssentialsFragment, TicketTypeEssentialsFragment } from 'app/api/operations';
+import {
+  TicketTypeAddonEssentialsFragment,
+  TicketTypeEssentialsFragment,
+} from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
@@ -26,7 +29,7 @@ export const ticketTypeValidation = yup.object({
   allowManifestingSelf: yup.boolean().default(false),
   altitude: yup.number().default(14000).required().default(14000),
   extras: yup.array().of(yup.object()),
-  isTandem: yup.boolean().default(false)
+  isTandem: yup.boolean().default(false),
 });
 
 export const EMPTY_FORM_VALUES: Partial<TicketTypeFields> = {
@@ -36,7 +39,7 @@ export const EMPTY_FORM_VALUES: Partial<TicketTypeFields> = {
   altitude: 14000,
   extras: [],
   id: undefined,
-  isTandem: false
+  isTandem: false,
 };
 
 export interface IUseTicketTypeFormOpts {
@@ -52,7 +55,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
   const methods = useForm<TicketTypeFields>({
     defaultValues,
     mode: 'all',
-    resolver: yupResolver(ticketTypeValidation)
+    resolver: yupResolver(ticketTypeValidation),
   });
   React.useEffect(() => {
     if (!isEqual(defaultValues, initialValues)) {
@@ -71,7 +74,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    dropzone: { dropzone }
+    dropzone: { dropzone },
   } = useDropzoneContext();
   const { createTicketType, updateTicketType } = useTickets();
   const notify = useNotifications();
@@ -89,16 +92,20 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
               cost: validated.cost,
               allowManifestingSelf: validated.allowManifestingSelf,
               altitude: validated.altitude,
-              extraIds: (validated.extras as unknown as TicketTypeAddonEssentialsFragment[]).map((e) => Number(e.id)),
-              isTandem: validated.isTandem
+              extraIds: (validated.extras as unknown as TicketTypeAddonEssentialsFragment[]).map(
+                (e) => Number(e.id)
+              ),
+              isTandem: validated.isTandem,
             })
           : await createTicketType({
               name: validated.name,
               cost: validated.cost,
               allowManifestingSelf: validated.allowManifestingSelf,
               altitude: validated.altitude,
-              extraIds: (validated.extras as unknown as TicketTypeAddonEssentialsFragment[])?.map((e) => Number(e.id)),
-              isTandem: validated.isTandem
+              extraIds: (validated.extras as unknown as TicketTypeAddonEssentialsFragment[])?.map(
+                (e) => Number(e.id)
+              ),
+              isTandem: validated.isTandem,
             });
 
         if (response) {

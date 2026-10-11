@@ -39,24 +39,44 @@ export default function ManifestTab() {
           header: (props) => <AppBar {...props} />,
           headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
           cardStyle: {
-            flex: 1
-          }
+            flex: 1,
+          },
         }}
       >
-        <Manifest.Screen name="ManifestScreen" component={ManifestScreen} options={{ title: 'Manifest' }} />
+        <Manifest.Screen
+          name="ManifestScreen"
+          component={ManifestScreen}
+          options={{ title: 'Manifest' }}
+        />
 
         <Manifest.Screen
           name="WeatherConditionsScreen"
           component={WeatherConditionsScreen}
           options={{ headerShown: false }}
         />
-        <Manifest.Screen name="WindScreen" component={WindScreen} options={{ title: 'Winds Aloft' }} />
-        <Manifest.Screen name="JumpRunScreen" component={JumpRunScreen} options={{ title: 'Jump Run' }} />
+        <Manifest.Screen
+          name="WindScreen"
+          component={WindScreen}
+          options={{ title: 'Winds Aloft' }}
+        />
+        <Manifest.Screen
+          name="JumpRunScreen"
+          component={JumpRunScreen}
+          options={{ title: 'Jump Run' }}
+        />
         <Manifest.Screen name="LoadScreen" component={LoadScreen} options={{ title: 'Load' }} />
 
-        <Manifest.Screen name="User" component={User} options={{ headerShown: false, presentation: 'modal' }} />
+        <Manifest.Screen
+          name="User"
+          component={User}
+          options={{ headerShown: false, presentation: 'modal' }}
+        />
 
-        <Manifest.Screen name="Configuration" component={Configuration} options={{ headerShown: false }} />
+        <Manifest.Screen
+          name="Configuration"
+          component={Configuration}
+          options={{ headerShown: false }}
+        />
       </Manifest.Navigator>
     </AppSignalBoundary>
   );

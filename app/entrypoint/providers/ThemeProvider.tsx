@@ -7,8 +7,6 @@ function Content(props: { children: React.ReactNode }) {
   const { children } = props;
   const state = useAppSelector((root) => root.global);
 
-  return (
-    <PaperProvider theme={state.theme}>{children}</PaperProvider>
-  );
+  return <PaperProvider theme={state.theme}>{children}</PaperProvider>;
 }
 export default Content;

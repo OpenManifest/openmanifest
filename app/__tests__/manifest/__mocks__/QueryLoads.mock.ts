@@ -11,8 +11,14 @@ export default createMockedQuery<LoadsQueryVariables, LoadsQuery>(
     loads: {
       __typename: 'LoadConnection',
       edges: [
-        { __typename: 'LoadEdge', node: { ...loadEssentials, id: '1', name: 'Load 1', loadNumber: 1 } },
-        { __typename: 'LoadEdge', node: { ...loadEssentials, id: '2', name: 'Load 2', loadNumber: 2 } },
+        {
+          __typename: 'LoadEdge',
+          node: { ...loadEssentials, id: '1', name: 'Load 1', loadNumber: 1 },
+        },
+        {
+          __typename: 'LoadEdge',
+          node: { ...loadEssentials, id: '2', name: 'Load 2', loadNumber: 2 },
+        },
       ],
     },
   }

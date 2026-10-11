@@ -26,12 +26,19 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     let hasErrors = false;
     if (!state.fields.jumpType.value?.id) {
       hasErrors = true;
-      dispatch(actions.forms.manifestGroup.setFieldError(['jumpType', 'You must specify the type of jump']));
+      dispatch(
+        actions.forms.manifestGroup.setFieldError(['jumpType', 'You must specify the type of jump'])
+      );
     }
 
     if (!state.fields.ticketType.value?.id) {
       hasErrors = true;
-      dispatch(actions.forms.manifestGroup.setFieldError(['ticketType', 'You must select a ticket type to manifest']));
+      dispatch(
+        actions.forms.manifestGroup.setFieldError([
+          'ticketType',
+          'You must select a ticket type to manifest',
+        ])
+      );
     }
 
     return !hasErrors;
@@ -55,10 +62,10 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
               rig: rigId?.toString() || rig?.id || undefined,
               exitWeight,
               passengerName,
-              passengerExitWeight
+              passengerExitWeight,
             })
-          )
-        }
+          ),
+        },
       });
 
       result.data?.createSlots?.fieldErrors?.map(({ field, message }) => {
@@ -101,7 +108,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     mutationCreateSlots,
     dispatch,
     notify,
-    onClose
+    onClose,
   ]);
 
   // dispatch(actions.forms.manifestGroup.setDropzoneUsers(screens.manifest.selectedUsers));
@@ -135,8 +142,8 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
               onChange={(user) => {
                 fetchProfile({
                   variables: {
-                    id: user.id
-                  }
+                    id: user.id,
+                  },
                 }).then((result) => {
                   if (result.data?.dropzoneUser) {
                     onSelectUser(result.data?.dropzoneUser);
@@ -163,22 +170,22 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 16,
     padding: 5,
-    paddingTop: 0
+    paddingTop: 0,
   },
   buttonContainer: {
     paddingHorizontal: 16,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   contentContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 32
+    paddingBottom: 32,
   },
   userListContainer: {
     // CSS calc() is valid on web but not part of React Native's DimensionValue type
     height: 'calc(100% - 200px)' as unknown as DimensionValue,
     backgroundColor: 'white',
     width: '100%',
-    padding: 16
+    padding: 16,
   },
   sheet: {
     elevation: 3,
@@ -188,7 +195,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    paddingBottom: 32
+    paddingBottom: 32,
   },
   sheetHeader: {
     elevation: 2,
@@ -198,10 +205,10 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: -4
+      height: -4,
     },
     backgroundColor: 'white',
     shadowOpacity: 0.22,
-    shadowRadius: 2.22
-  }
+    shadowRadius: 2.22,
+  },
 });

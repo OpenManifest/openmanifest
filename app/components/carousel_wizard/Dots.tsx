@@ -17,7 +17,7 @@ export default function Dots(props: IDotsProps) {
           key={`paginatiom-dot-${idx}`}
           style={[
             idx === index ? styles.activeDot : styles.inactiveDot,
-            { backgroundColor: idx === index ? palette.primary.main : palette.primary.light }
+            { backgroundColor: idx === index ? palette.primary.main : palette.primary.light },
           ]}
         />
       ))}
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     marginTop: 1,
     marginLeft: 2,
     marginRight: 2,
-    borderRadius: 3
+    borderRadius: 3,
   },
-  activeDot: { width: 8, height: 8, marginLeft: 2, marginRight: 2, borderRadius: 4 }
+  activeDot: { width: 8, height: 8, marginLeft: 2, marginRight: 2, borderRadius: 4 },
 });

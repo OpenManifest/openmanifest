@@ -36,7 +36,12 @@ function renderLogin(mock: Record<string, unknown>) {
     </NotificationContext.Provider>,
     {
       initialState: appRedux.initialState,
-      graphql: [{ request: { query: LoginDocument, operationName: 'Login', variables: VARIABLES }, ...mock }],
+      graphql: [
+        {
+          request: { query: LoginDocument, operationName: 'Login', variables: VARIABLES },
+          ...mock,
+        },
+      ],
     }
   );
   return { ...screen, notifications };
@@ -60,7 +65,9 @@ describe('<LoginScreen />', () => {
 
   it('stores the credentials and user in Redux after a successful login', async () => {
     const screen = renderLogin({
-      result: { data: { userLogin: { __typename: 'UserLoginPayload', authenticatable, credentials } } },
+      result: {
+        data: { userLogin: { __typename: 'UserLoginPayload', authenticatable, credentials } },
+      },
     });
 
     fillAndSubmit(screen);
@@ -72,12 +79,17 @@ describe('<LoginScreen />', () => {
         uid: VARIABLES.email,
       });
     });
-    expect(screen.store.getState().global.currentUser).toMatchObject({ id: '1', email: VARIABLES.email });
+    expect(screen.store.getState().global.currentUser).toMatchObject({
+      id: '1',
+      email: VARIABLES.email,
+    });
     expect(screen.notifications.error).not.toHaveBeenCalled();
   });
 
   it('shows the server error and stores nothing when the login fails', async () => {
-    const screen = renderLogin({ result: { errors: [new GraphQLError('Invalid login credentials')] } });
+    const screen = renderLogin({
+      result: { errors: [new GraphQLError('Invalid login credentials')] },
+    });
 
     fillAndSubmit(screen);
 

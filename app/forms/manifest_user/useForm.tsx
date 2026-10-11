@@ -34,7 +34,7 @@ export const EMPTY_FORM_VALUES: ManifestUserFields = {
   passengerExitWeight: null,
   passengerName: null,
   extras: null,
-  groupNumber: 0
+  groupNumber: 0,
 };
 
 export interface IUseManifestFormOpts {
@@ -49,7 +49,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
 
   const notify = useNotifications();
   const {
-    dropzone: { dropzone }
+    dropzone: { dropzone },
   } = useDropzoneContext();
   const manifestUserValidation = yup.object().shape({
     load: yup.object().required(),
@@ -60,17 +60,17 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
       .when({
         is: () => !!dropzone?.settings?.requireEquipment,
         then: yup.object().required('You cant manifest without a rig').nullable(),
-        otherwise: yup.object().nullable()
+        otherwise: yup.object().nullable(),
       }),
     jumpType: yup.object().required('Jump type is required').nullable(),
     ticketType: yup.object().required('Ticket is required to manifest').nullable(),
     original: yup.object().nullable(),
-    extras: yup.array().of(yup.object()).nullable()
+    extras: yup.array().of(yup.object()).nullable(),
   });
   const methods = useForm<ManifestUserFields>({
     defaultValues,
     mode: 'all',
-    resolver: yupResolver(manifestUserValidation)
+    resolver: yupResolver(manifestUserValidation),
   });
   React.useEffect(() => {
     if (!isEqual(defaultValues, initialValues)) {
@@ -84,7 +84,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    manifest: { manifestUser }
+    manifest: { manifestUser },
   } = useManifestContext();
   const { canManifest } = useManifestValidator();
 
@@ -105,8 +105,8 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
             ? {}
             : {
                 passengerName: fields.passengerName,
-                passengerExitWeight: fields.passengerExitWeight
-              })
+                passengerExitWeight: fields.passengerExitWeight,
+              }),
         });
 
         if ('fieldErrors' in response) {

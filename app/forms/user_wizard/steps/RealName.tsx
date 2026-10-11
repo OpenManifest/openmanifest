@@ -18,11 +18,13 @@ export const validation = yup.object({
         console.debug('VALIDATING NAME', value);
         return /\w+\s\w+/.test(value || '');
       },
-      message: 'Please enter your full name, including surname'
-    })
+      message: 'Please enter your full name, including surname',
+    }),
 });
 
-type StepFields = { [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K] };
+type StepFields = {
+  [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K];
+};
 
 export function useStep(): WizardFormStep<StepFields> {
   const { dropzoneUser } = useUserProfileContext();
@@ -30,9 +32,9 @@ export function useStep(): WizardFormStep<StepFields> {
   return useMemo(
     () => ({
       defaultValues: {
-        name: dropzoneUser?.user?.name || ''
+        name: dropzoneUser?.user?.name || '',
       },
-      validation
+      validation,
     }),
     [dropzoneUser?.user?.name]
   );

@@ -4,8 +4,10 @@ import { HelperText, TextInput, useTheme } from 'react-native-paper';
 import { withHookForm } from '../withHookForm';
 
 type Extract<T> = T extends React.ComponentType<infer U> ? U : never;
-interface ITextFieldProps
-  extends Omit<Extract<typeof TextInput>, 'onChange' | 'onChangeText' | 'error'> {
+interface ITextFieldProps extends Omit<
+  Extract<typeof TextInput>,
+  'onChange' | 'onChangeText' | 'error'
+> {
   error?: string | null;
   helperText?: string | null;
   onChangeText?(newValue: string): void;

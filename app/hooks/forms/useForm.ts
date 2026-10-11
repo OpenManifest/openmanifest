@@ -1,5 +1,12 @@
 import { useCallback, useState } from 'react';
-import { DeepPartial, FieldPath, FieldValues, Merge, useForm as useHookForm, useWatch } from 'react-hook-form';
+import {
+  DeepPartial,
+  FieldPath,
+  FieldValues,
+  Merge,
+  useForm as useHookForm,
+  useWatch,
+} from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import concat from 'lodash/concat';
@@ -26,9 +33,9 @@ export function useForm<T extends FieldValues>(opts: IUseFormOpts<T>): IUseFormR
 
   const { handleSubmit } = form;
 
-  const onSubmit = useMemo(() =>
-    handleSubmit(
-      async (fields: T) => {
+  const onSubmit = useMemo(
+    () =>
+      handleSubmit(async (fields: T) => {
         setLoading(true);
         try {
           await onOuterSubmit(fields);
@@ -36,8 +43,9 @@ export function useForm<T extends FieldValues>(opts: IUseFormOpts<T>): IUseFormR
         } finally {
           setLoading(false);
         }
-      }), [handleSubmit, onOuterSubmit, onSuccess]);
+      }),
+    [handleSubmit, onOuterSubmit, onSuccess]
+  );
 
   return useMemo(() => ({ ...form, loading, onSubmit }), [form, loading, onSubmit]);
 }
-

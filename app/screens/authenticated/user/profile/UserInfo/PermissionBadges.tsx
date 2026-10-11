@@ -21,7 +21,10 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
 
   const canGrantPermission = useRestriction(Permission.GrantPermission);
 
-  const badges = React.useMemo(() => permissions?.filter((name) => /^actAs/.test(name)) || [], [permissions]);
+  const badges = React.useMemo(
+    () => permissions?.filter((name) => /^actAs/.test(name)) || [],
+    [permissions]
+  );
 
   const shouldShowBadge = React.useCallback(
     (permission: Permission) => canGrantPermission || badges.includes(permission),
@@ -59,14 +62,18 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
         Permission.ActAsDzso,
         Permission.ActAsGca,
         Permission.ActAsRigInspector,
-        Permission.ActAsLoadMaster
+        Permission.ActAsLoadMaster,
       ].map((permission) =>
         !shouldShowBadge(permission) ? null : (
           <Badge
             type={permission as IBadgeProps['type']}
             selected={badges.includes(permission)}
             onPress={() =>
-              !canGrantPermission ? null : badges.includes(permission) ? revoke(permission) : grant(permission)
+              !canGrantPermission
+                ? null
+                : badges.includes(permission)
+                  ? revoke(permission)
+                  : grant(permission)
             }
           />
         )
@@ -79,6 +86,6 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     paddingVertical: 12,
-    justifyContent: 'space-evenly'
-  }
+    justifyContent: 'space-evenly',
+  },
 });

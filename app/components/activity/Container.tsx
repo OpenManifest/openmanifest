@@ -25,7 +25,7 @@ export default function ActivityFeedContainer(props: IActivityFeedContainerProps
       dropzone,
       levels,
       accessLevels,
-      timeRange
+      timeRange,
     }),
     [accessLevels, dropzone, levels, timeRange]
   );
@@ -44,27 +44,29 @@ export default function ActivityFeedContainer(props: IActivityFeedContainerProps
       !query?.loading &&
       query?.data?.activity?.pageInfo?.endCursor !== query?.variables?.after
     ) {
-      query?.fetchMore({ variables: { after: query?.data?.activity?.pageInfo?.endCursor } }).then((result) => {
-        query?.updateQuery((prev) => ({
-          ...prev,
-          activity: {
-            ...prev?.activity,
-            ...result?.data?.activity,
-            pageInfo: result?.data?.activity?.pageInfo,
-            edges: uniqBy(
-              [...(prev.activity.edges || []), ...(result?.data?.activity?.edges || [])],
-              (edge) => edge?.node?.id
-            )
-          }
-        }));
-      });
+      query
+        ?.fetchMore({ variables: { after: query?.data?.activity?.pageInfo?.endCursor } })
+        .then((result) => {
+          query?.updateQuery((prev) => ({
+            ...prev,
+            activity: {
+              ...prev?.activity,
+              ...result?.data?.activity,
+              pageInfo: result?.data?.activity?.pageInfo,
+              edges: uniqBy(
+                [...(prev.activity.edges || []), ...(result?.data?.activity?.edges || [])],
+                (edge) => edge?.node?.id
+              ),
+            },
+          }));
+        });
     }
   }, [query]);
 
   const onChangeEventLevel = React.useCallback(
     (newLevels: EventLevel[]) =>
       onChange({
-        levels: newLevels
+        levels: newLevels,
       }),
     [onChange]
   );
@@ -72,7 +74,7 @@ export default function ActivityFeedContainer(props: IActivityFeedContainerProps
   const onChangeAccessLevel = React.useCallback(
     (newAccessLevels: EventAccessLevel[]) => {
       onChange({
-        accessLevels: newAccessLevels
+        accessLevels: newAccessLevels,
       });
     },
     [onChange]
@@ -94,7 +96,7 @@ export default function ActivityFeedContainer(props: IActivityFeedContainerProps
                   [
                     canViewAdminActivity && EventAccessLevel.Admin,
                     canViewUserActivity && EventAccessLevel.User,
-                    canViewSystemActivity && EventAccessLevel.System
+                    canViewSystemActivity && EventAccessLevel.System,
                   ].filter(Boolean) as EventAccessLevel[]
                 }
                 onChange={onChangeAccessLevel}
@@ -115,13 +117,15 @@ export default function ActivityFeedContainer(props: IActivityFeedContainerProps
                   [
                     canViewUserActivity && EventLevel.Info,
                     canViewSystemActivity && EventLevel.Debug,
-                    canViewAdminActivity && EventLevel.Error
+                    canViewAdminActivity && EventLevel.Error,
                   ].filter(Boolean) as EventLevel[]
                 }
                 onChange={onChangeEventLevel}
                 value={(levels || []) as EventLevel[]}
                 renderItemLabel={(value) =>
-                  Object.keys(EventLevel).find((key) => EventLevel[key as keyof typeof EventLevel] === value)
+                  Object.keys(EventLevel).find(
+                    (key) => EventLevel[key as keyof typeof EventLevel] === value
+                  )
                 }
               />
             </View>
@@ -149,6 +153,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 8,
     marginHorizontal: 8,
-    marginBottom: 16
-  }
+    marginBottom: 16,
+  },
 });

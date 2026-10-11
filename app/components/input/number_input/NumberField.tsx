@@ -45,7 +45,12 @@ export default function NumberField(props: INumberFieldProps) {
     onChange(clamped);
   };
 
-  const unit = variant === NumberFieldType.Weight ? 'kg' : variant === NumberFieldType.CanopySize ? 'ft' : undefined;
+  const unit =
+    variant === NumberFieldType.Weight
+      ? 'kg'
+      : variant === NumberFieldType.CanopySize
+        ? 'ft'
+        : undefined;
   return (
     <>
       {label && <List.Subheader>{label}</List.Subheader>}
@@ -74,7 +79,13 @@ export default function NumberField(props: INumberFieldProps) {
               onChange(round(clamp(parsed, min, max)));
             }
           }}
-          onBlur={() => update(Number.isFinite(Number(text.replace(',', '.'))) ? Number(text.replace(',', '.')) : current)}
+          onBlur={() =>
+            update(
+              Number.isFinite(Number(text.replace(',', '.')))
+                ? Number(text.replace(',', '.'))
+                : current
+            )
+          }
         />
         <IconButton
           icon="plus"

@@ -17,7 +17,7 @@ export default function AppUpdate(props: IAppUpdateProps) {
   const { children } = props;
   const { useFonts, __metadata__, ...rest } = fonts;
   const [fontsLoaded] = fonts.useFonts({
-    ...rest
+    ...rest,
   });
 
   const [overlay, setOverlay] = React.useState(false);
@@ -66,7 +66,7 @@ export default function AppUpdate(props: IAppUpdateProps) {
             ref={animation}
             style={{
               width: 120,
-              height: 120
+              height: 120,
             }}
             source={require('../../../assets/images/loading.json')}
           />
@@ -90,19 +90,19 @@ const styles = StyleSheet.create({
   blur: {
     ...StyleSheet.absoluteFill,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   title: {
     color: 'white',
     fontSize: 24,
     fontWeight: '400',
     position: 'absolute',
-    top: 100
+    top: 100,
   },
   button: {
     position: 'absolute',
     bottom: 100,
     borderColor: 'white',
-    borderRadius: 20
-  }
+    borderRadius: 20,
+  },
 });

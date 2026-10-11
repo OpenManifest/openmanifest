@@ -17,7 +17,7 @@ interface IWizardContext {
 export const WizardContext = React.createContext<IWizardContext>({
   index: 0,
   count: 0,
-  setIndex: () => null
+  setIndex: () => null,
 } as IWizardContext);
 
 function Wizard(props: IWizardProps) {
@@ -38,7 +38,7 @@ function Wizard(props: IWizardProps) {
         }
         ref.current?.scrollToIndex({ index: idx, animated: true });
         setIndex(idx);
-      }
+      },
     }),
     [count, index]
   );
@@ -53,7 +53,9 @@ function Wizard(props: IWizardProps) {
           scrollEnabled={false}
           showsHorizontalScrollIndicator={false}
           data={pages}
-          keyExtractor={(page, idx) => (React.isValidElement(page) && page.key ? String(page.key) : String(idx))}
+          keyExtractor={(page, idx) =>
+            React.isValidElement(page) && page.key ? String(page.key) : String(idx)
+          }
           getItemLayout={(_, idx) => ({ length: width, offset: width * idx, index: idx })}
           renderItem={({ item }) => <View style={{ width }}>{item}</View>}
         />
@@ -66,8 +68,8 @@ function Wizard(props: IWizardProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 0
-  }
+    paddingBottom: 0,
+  },
 });
 
 export default Wizard;

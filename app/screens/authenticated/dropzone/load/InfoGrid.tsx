@@ -20,11 +20,11 @@ export default function InfoGrid(props: IInfoGrid) {
                 titleStyle={[
                   styles.title,
                   {
-                    fontWeight: item.bold !== false ? 'bold' : undefined
-                  }
+                    fontWeight: item.bold !== false ? 'bold' : undefined,
+                  },
                 ]}
                 style={{
-                  paddingVertical: 20
+                  paddingVertical: 20,
                 }}
                 title={item.value}
                 descriptionStyle={styles.description}
@@ -32,7 +32,9 @@ export default function InfoGrid(props: IInfoGrid) {
                 onPress={item.onPress}
               />
             </View>
-            {i === items.length - 1 ? null : <Divider key={`info-grid-divider-${i}`} style={styles.verticalDivider} />}
+            {i === items.length - 1 ? null : (
+              <Divider key={`info-grid-divider-${i}`} style={styles.verticalDivider} />
+            )}
           </React.Fragment>
         ))}
       </View>
@@ -44,16 +46,16 @@ const styles = StyleSheet.create({
   container: { width: '100%', flexDirection: 'row' },
   divider: {
     height: StyleSheet.hairlineWidth,
-    width: '100%'
+    width: '100%',
   },
   verticalDivider: {
     width: StyleSheet.hairlineWidth,
-    height: '100%'
+    height: '100%',
   },
   title: {
-    textAlign: 'center'
+    textAlign: 'center',
   },
   description: {
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });

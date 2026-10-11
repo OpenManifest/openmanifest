@@ -11,21 +11,30 @@ const authenticatedState = {
   global: {
     ...appRedux.initialState.global,
     authenticated: true,
-    credentials: { accessToken: 'jest', client: 'jest', uid: 'jest@example.com', tokenType: 'Bearer', expiry: 9999999999 },
+    credentials: {
+      accessToken: 'jest',
+      client: 'jest',
+      uid: 'jest@example.com',
+      tokenType: 'Bearer',
+      expiry: 9999999999,
+    },
   },
 };
 
-const dropzonesMock = (nodes: Array<typeof dropzoneExtensive>) => ({
+const dropzonesMock = (nodes: (typeof dropzoneExtensive)[]) => ({
   request: { query: DropzonesDocument, operationName: 'Dropzones', variables: {} },
   result: {
     data: {
       __typename: 'Query',
-      dropzones: { __typename: 'DropzoneConnection', edges: nodes.map((node) => ({ __typename: 'DropzoneEdge', node })) },
+      dropzones: {
+        __typename: 'DropzoneConnection',
+        edges: nodes.map((node) => ({ __typename: 'DropzoneEdge', node })),
+      },
     },
   },
 });
 
-function renderScreen(nodes: Array<typeof dropzoneExtensive>) {
+function renderScreen(nodes: (typeof dropzoneExtensive)[]) {
   return render(
     <DropzonesProvider>
       <DropzonesScreen />

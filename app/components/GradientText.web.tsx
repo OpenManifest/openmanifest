@@ -16,7 +16,7 @@ function GradientText(props: TextProps & { children: string | number }) {
           // @ts-ignore This is ok in web
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
-          'background-clip': 'text'
+          'background-clip': 'text',
         }}
       />
     </Text>

@@ -13,7 +13,13 @@ export interface IWizardButtonsProps {
 }
 
 export default function Buttons(props: IWizardButtonsProps) {
-  const { backLabel = 'Back', loading: controlledLoading, nextLabel = 'Next', onNext, onBack } = props;
+  const {
+    backLabel = 'Back',
+    loading: controlledLoading,
+    nextLabel = 'Next',
+    onNext,
+    onBack,
+  } = props;
   const [loading, setLoading] = React.useState(false);
   const { palette } = useAppSelector((root) => root.global);
   const onNextPress = React.useCallback(async () => {
@@ -42,7 +48,12 @@ export default function Buttons(props: IWizardButtonsProps) {
         </Button>
       )}
       {onBack && (
-        <Button style={styles.back} disabled={loading || controlledLoading} mode="text" onPress={onBack}>
+        <Button
+          style={styles.back}
+          disabled={loading || controlledLoading}
+          mode="text"
+          onPress={onBack}
+        >
           {backLabel}
         </Button>
       )}
@@ -59,15 +70,15 @@ const styles = StyleSheet.create({
     paddingBottom: 48,
     width: '100%',
     maxWidth: 500,
-    height: 80
+    height: 80,
   },
   next: {
     width: '100%',
     borderRadius: 20,
     minWidth: 300,
-    minHeight: 36
+    minHeight: 36,
   },
   back: {
-    minHeight: 36
-  }
+    minHeight: 36,
+  },
 });

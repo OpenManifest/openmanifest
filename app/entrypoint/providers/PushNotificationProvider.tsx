@@ -23,7 +23,9 @@ async function registerForPushNotificationsAsync(): Promise<string | null> {
       return null;
     }
     token = (
-      await Notifications.getExpoPushTokenAsync({ projectId: Constants.expoConfig?.extra?.eas?.projectId })
+      await Notifications.getExpoPushTokenAsync({
+        projectId: Constants.expoConfig?.extra?.eas?.projectId,
+      })
     ).data;
   } else {
     console.warn('Must use physical device for Push Notifications');
@@ -52,7 +54,9 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
   const notificationListener =
     React.useRef<ReturnType<typeof Notifications.addNotificationReceivedListener>>(undefined);
   const responseListener =
-    React.useRef<ReturnType<typeof Notifications.addNotificationResponseReceivedListener>>(undefined);
+    React.useRef<ReturnType<typeof Notifications.addNotificationResponseReceivedListener>>(
+      undefined
+    );
 
   const onOutsideLink = React.useCallback((link: { url: string }) => {
     const uri = URI(link.url);

@@ -24,7 +24,13 @@ describe('<ManifestScreen />', () => {
       global: {
         ...appRedux.initialState.global,
         authenticated: true,
-        credentials: { accessToken: 'jest', client: 'jest', uid: 'jest@example.com', tokenType: 'Bearer', expiry: 9999999999 },
+        credentials: {
+          accessToken: 'jest',
+          client: 'jest',
+          uid: 'jest@example.com',
+          tokenType: 'Bearer',
+          expiry: 9999999999,
+        },
         currentDropzoneId: 1,
       },
     };
@@ -48,11 +54,14 @@ describe('<ManifestScreen />', () => {
       initialState,
     });
 
-    await waitFor(async () => {
-      const loads = screen.queryAllByTestId('load-card');
+    await waitFor(
+      async () => {
+        const loads = screen.queryAllByTestId('load-card');
 
-      expect(loads.length).toBe(2);
-    }, { timeout: 10000 });
+        expect(loads.length).toBe(2);
+      },
+      { timeout: 10000 }
+    );
   });
 
   it('should show an empty message when no loads are available', async () => {
@@ -61,7 +70,13 @@ describe('<ManifestScreen />', () => {
       global: {
         ...appRedux.initialState.global,
         authenticated: true,
-        credentials: { accessToken: 'jest', client: 'jest', uid: 'jest@example.com', tokenType: 'Bearer', expiry: 9999999999 },
+        credentials: {
+          accessToken: 'jest',
+          client: 'jest',
+          uid: 'jest@example.com',
+          tokenType: 'Bearer',
+          expiry: 9999999999,
+        },
         currentDropzoneId: 1,
       },
     };

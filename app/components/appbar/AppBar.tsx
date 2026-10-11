@@ -16,14 +16,16 @@ function AppBar(props: IAppBarProps) {
   const { palette, theme } = useAppSelector((root) => root.global);
   const dispatch = useAppDispatch();
   const {
-    dropzone: { currentUser, loading, dropzone }
+    dropzone: { currentUser, loading, dropzone },
   } = useDropzoneContext();
 
   const navigation = useNavigation();
   const { openDrawer } = useNavigation<DrawerNavigationProp<never>>();
   return (
     <>
-      <Appbar.Header style={{ backgroundColor: theme.dark ? theme.colors.background : theme.colors.surface }}>
+      <Appbar.Header
+        style={{ backgroundColor: theme.dark ? theme.colors.background : theme.colors.surface }}
+      >
         {back ? (
           <Appbar.BackAction onPress={navigation.goBack} />
         ) : (
@@ -40,12 +42,12 @@ function AppBar(props: IAppBarProps) {
               height: 36,
               padding: 4,
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
             }}
             mode="flat"
             textStyle={{
               color: palette.onSurface,
-              fontFamily: 'Roboto_700Bold'
+              fontFamily: 'Roboto_700Bold',
             }}
           >{`$${currentUser?.credits || 0}`}</Chip>
         )}
@@ -83,8 +85,8 @@ function AppBar(props: IAppBarProps) {
                 screen: 'UserWizardScreen',
                 params: {
                   index: undefined,
-                  dropzoneUserId: currentUser.id
-                }
+                  dropzoneUserId: currentUser.id,
+                },
               });
             }
           }}

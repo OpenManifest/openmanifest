@@ -27,7 +27,7 @@ function LocationWizardStep(props: IWizardStepProps) {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
         latitudeDelta: calculateLatLngDelta(location.coords.latitude),
-        longitudeDelta: calculateLatLngDelta(location.coords.latitude)
+        longitudeDelta: calculateLatLngDelta(location.coords.latitude),
       });
       map.current?.animateCamera({ center: location.coords });
     } catch (error) {
@@ -42,7 +42,7 @@ function LocationWizardStep(props: IWizardStepProps) {
             latitude: state.fields.lat.value,
             longitude: state.fields.lng.value,
             latitudeDelta: calculateLatLngDelta(state.fields.lat.value),
-            longitudeDelta: calculateLatLngDelta(state.fields.lat.value)
+            longitudeDelta: calculateLatLngDelta(state.fields.lat.value),
           }
         : undefined,
     [state.fields.lat.value, state.fields.lng.value]
@@ -64,14 +64,14 @@ function LocationWizardStep(props: IWizardStepProps) {
     Animated.timing(opacity.current, {
       duration: 100,
       toValue: 0.0,
-      useNativeDriver: true
+      useNativeDriver: true,
     })
   );
   const fadeIn = React.useRef(
     Animated.timing(opacity.current, {
       duration: 100,
       toValue: 1.0,
-      useNativeDriver: true
+      useNativeDriver: true,
     })
   );
   const setCoordinateFade = React.useCallback((visible: boolean) => {
@@ -116,7 +116,12 @@ function LocationWizardStep(props: IWizardStepProps) {
         focusable
       >
         {!internalRegion ? null : (
-          <Marker title={state.fields.name.value || undefined} ref={markerRef} flat coordinate={internalRegion}>
+          <Marker
+            title={state.fields.name.value || undefined}
+            ref={markerRef}
+            flat
+            coordinate={internalRegion}
+          >
             <MaterialCommunityIcons
               pointerEvents="none"
               size={60}
@@ -125,10 +130,10 @@ function LocationWizardStep(props: IWizardStepProps) {
                 textShadowColor: 'rgba(14,14,14,0.8)',
                 textShadowOffset: {
                   width: 5,
-                  height: 5
+                  height: 5,
                 },
                 textShadowRadius: 10,
-                zIndex: 10
+                zIndex: 10,
               }}
               name={isDragging ? 'map-marker' : 'map-marker-check-outline'}
             />
@@ -165,9 +170,9 @@ function LocationWizardStep(props: IWizardStepProps) {
             textShadowColor: 'rgba(14,14,14,0.8)',
             textShadowOffset: {
               width: 3,
-              height: 3
+              height: 3,
             },
-            textShadowRadius: 10
+            textShadowRadius: 10,
           }}
         >
           {!region?.latitude || !region?.longitude ? null : (
@@ -185,7 +190,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 48,
     alignItems: 'center',
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
   titleContainer: {
     position: 'absolute',
@@ -195,7 +200,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
   },
   title: {
     fontSize: 30,
@@ -206,25 +211,25 @@ const styles = StyleSheet.create({
     textShadowRadius: 10,
     textShadowOffset: {
       width: 2,
-      height: 2
-    }
+      height: 2,
+    },
   },
   markerFixed: {
     ...StyleSheet.absoluteFill,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   content: {
     width: '100%',
     justifyContent: 'space-around',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   card: {
     padding: 0,
     paddingVertical: 16,
     marginVertical: 16,
-    width: '100%'
+    width: '100%',
   },
   myLocation: {
     position: 'absolute',
@@ -232,8 +237,8 @@ const styles = StyleSheet.create({
     right: 30,
     backgroundColor: 'white',
     borderRadius: 50,
-    padding: 12
-  }
+    padding: 12,
+  },
 });
 
 export default LocationWizardStep;

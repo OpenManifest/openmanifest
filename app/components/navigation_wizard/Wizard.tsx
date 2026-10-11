@@ -134,7 +134,9 @@ export function Content(props: IWizardProps) {
                 navigation.goBack();
               } else {
                 // @ts-ignore These are dynamically created screens
-                navigation.navigate(`${name}${currentIndex - backIndexFactor}`, undefined, { pop: true });
+                navigation.navigate(`${name}${currentIndex - backIndexFactor}`, undefined, {
+                  pop: true,
+                });
                 setIndex(currentIndex - backIndexFactor || 0);
               }
               return undefined;

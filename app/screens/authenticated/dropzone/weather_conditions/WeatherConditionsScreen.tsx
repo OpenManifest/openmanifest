@@ -20,7 +20,7 @@ function WeatherConditionsScreen() {
     onSuccess: () => null,
     onFieldError: (field: keyof typeof state.fields, message: string) =>
       dispatch(actions.forms.weather.setFieldError([field, message])),
-    onError: notify.error
+    onError: notify.error,
   });
 
   const onSaveConditions = React.useCallback(
@@ -30,7 +30,7 @@ function WeatherConditionsScreen() {
         dropzoneId: dropzoneId as number,
         winds: JSON.stringify(state.fields.winds.value),
         jumpRun: state.fields.jumpRun.value,
-        temperature: state.fields.temperature.value
+        temperature: state.fields.temperature.value,
       });
       setIndex(currentIndex + 1);
     },

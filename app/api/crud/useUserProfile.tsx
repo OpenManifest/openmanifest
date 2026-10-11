@@ -12,7 +12,7 @@ import {
   UpdateDropzoneUserMutationVariables,
   UpdateUserMutationVariables,
   UserEssentialsFragment,
-  UserFederationEssentialsFragment
+  UserFederationEssentialsFragment,
 } from '../operations';
 import {
   DropzoneUserProfileDocument,
@@ -24,7 +24,7 @@ import {
   useGrantPermissionMutation,
   useJoinFederationMutation,
   useRevokePermissionMutation,
-  useUpdateUserMutation
+  useUpdateUserMutation,
 } from '../reflection';
 import { GhostInput, JoinFederationInput, Permission } from '../schema.d';
 import createCRUDContext, { TMutationResponse, uninitializedHandler } from './factory';
@@ -39,7 +39,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
   const [mutationCreateGhost] = useCreateGhostMutation();
   const [updateFederation] = useJoinFederationMutation();
   const {
-    dropzone: { dropzone }
+    dropzone: { dropzone },
   } = useDropzoneContext();
   const { appSignal } = useAppSignal();
   const canGrantPermission = useRestriction(Permission.GrantPermission);
@@ -55,14 +55,16 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
   }, [authenticated, getProfile, id, query?.variables?.id]);
 
   const create = React.useCallback(
-    async function CreateGhost(attributes: GhostInput): Promise<TMutationResponse<{ user: UserEssentialsFragment }>> {
+    async function CreateGhost(
+      attributes: GhostInput
+    ): Promise<TMutationResponse<{ user: UserEssentialsFragment }>> {
       try {
         const response = await mutationCreateGhost({
           variables: attributes,
           refetchQueries: [
             DropzoneUsersDocument,
-            { query: DropzoneUsersDocument, variables: { dropzoneId: dropzone?.id } }
-          ]
+            { query: DropzoneUsersDocument, variables: { dropzoneId: dropzone?.id } },
+          ],
         });
 
         if (response?.data?.createGhost?.user?.id) {
@@ -70,7 +72,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
         }
         return {
           error: response?.data?.createGhost?.errors?.[0],
-          fieldErrors: response?.data?.createGhost?.fieldErrors || undefined
+          fieldErrors: response?.data?.createGhost?.fieldErrors || undefined,
         };
       } catch (error) {
         console.debug('CreateGhost failed', error);
@@ -89,8 +91,8 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
       const { data } = await updateMutation({
         variables: {
           dropzoneUser: query?.data?.dropzoneUser?.id,
-          ...attributes
-        }
+          ...attributes,
+        },
       });
 
       if (data?.updateUser?.dropzoneUser?.id) {
@@ -99,7 +101,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
 
       return {
         error: data?.updateUser?.errors?.[0],
-        fieldErrors: data?.updateUser?.fieldErrors || undefined
+        fieldErrors: data?.updateUser?.fieldErrors || undefined,
       };
     },
     [query?.data?.dropzoneUser?.id, updateMutation]
@@ -110,7 +112,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
       attributes: JoinFederationInput['attributes']
     ): Promise<TMutationResponse<{ userFederation: UserFederationEssentialsFragment }>> {
       const { data } = await updateFederation({
-        variables: attributes
+        variables: attributes,
       });
 
       if (data?.joinFederation?.userFederation?.id) {
@@ -119,7 +121,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
 
       return {
         error: data?.joinFederation?.errors?.[0],
-        fieldErrors: data?.joinFederation?.fieldErrors || undefined
+        fieldErrors: data?.joinFederation?.fieldErrors || undefined,
       };
     },
     [updateFederation]
@@ -132,7 +134,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
       try {
         const { data } = await mutationCreateOrder({
           variables: {
-            ...attributes
+            ...attributes,
           },
           update: (cache, { data: mutationResult }) => {
             if (mutationResult?.createOrder?.order?.id) {
@@ -144,7 +146,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
                   fragment: DropzoneUserProfileFragmentDoc,
                   fragmentName: 'dropzoneUserProfile',
                   id: cache.identify(order.buyer),
-                  data: order.buyer
+                  data: order.buyer,
                 });
               } else if (order?.seller?.__typename === 'DropzoneUser') {
                 // Add credits
@@ -152,11 +154,11 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
                   fragment: DropzoneUserProfileFragmentDoc,
                   fragmentName: 'dropzoneUserProfile',
                   id: cache.identify(order.seller),
-                  data: order.seller
+                  data: order.seller,
                 });
               }
             }
-          }
+          },
         });
         if (data?.createOrder?.order?.id) {
           return { order: data?.createOrder?.order };
@@ -164,7 +166,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
 
         return {
           error: data?.createOrder?.errors?.[0],
-          fieldErrors: data?.createOrder?.fieldErrors || undefined
+          fieldErrors: data?.createOrder?.fieldErrors || undefined,
         };
       } catch (error) {
         appSignal.sendError(error as Error);
@@ -187,7 +189,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
         title: message || 'Added funds',
         seller: dropzoneUser.walletId,
         buyer: dropzone.walletId,
-        dropzone: dropzone.id
+        dropzone: dropzone.id,
       });
     },
     [createOrder, dropzone]
@@ -206,7 +208,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
         title: message || 'Withdrew funds',
         buyer: dropzoneUser.walletId,
         seller: dropzone.walletId,
-        dropzone: dropzone.id
+        dropzone: dropzone.id,
       });
     },
     [createOrder, dropzone]
@@ -226,30 +228,30 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
       const { data } = await grant({
         variables: {
           dropzoneUserId,
-          permissionName
+          permissionName,
         },
         refetchQueries: [
           {
             query: DropzoneUsersDocument,
-            variables: { dropzoneId: dropzone?.id, permissions: [permissionName] }
+            variables: { dropzoneId: dropzone?.id, permissions: [permissionName] },
           },
           {
             query: DropzoneUserProfileDocument,
             variables: {
-              dropzoneUserId
-            }
-          }
-        ]
+              dropzoneUserId,
+            },
+          },
+        ],
       });
 
       if (data?.grantPermission?.dropzoneUser?.id) {
         return {
-          dropzoneUser: data?.grantPermission?.dropzoneUser
+          dropzoneUser: data?.grantPermission?.dropzoneUser,
         };
       }
       return {
         error: data?.grantPermission?.errors?.[0],
-        fieldErrors: data?.grantPermission?.fieldErrors || undefined
+        fieldErrors: data?.grantPermission?.fieldErrors || undefined,
       };
     },
     [canGrantPermission, dropzone?.id, grant]
@@ -266,30 +268,30 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
       const { data } = await revoke({
         variables: {
           dropzoneUserId,
-          permissionName
+          permissionName,
         },
         refetchQueries: [
           {
             query: DropzoneUsersDocument,
-            variables: { dropzoneId: dropzone?.id, permissions: [permissionName] }
+            variables: { dropzoneId: dropzone?.id, permissions: [permissionName] },
           },
           {
             query: DropzoneUserProfileDocument,
             variables: {
-              dropzoneUserId
-            }
-          }
-        ]
+              dropzoneUserId,
+            },
+          },
+        ],
       });
 
       if (data?.revokePermission?.dropzoneUser?.id) {
         return {
-          dropzoneUser: data?.revokePermission?.dropzoneUser
+          dropzoneUser: data?.revokePermission?.dropzoneUser,
         };
       }
       return {
         error: data?.revokePermission?.errors?.[0],
-        fieldErrors: data?.revokePermission?.fieldErrors || undefined
+        fieldErrors: data?.revokePermission?.fieldErrors || undefined,
       };
     },
     [canRevokePermission, dropzone?.id, revoke]
@@ -306,7 +308,7 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
       grantPermission,
       joinFederation,
       revokePermission,
-      withdrawCredits
+      withdrawCredits,
     }),
     [
       addCredits,
@@ -318,22 +320,25 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
       query?.loading,
       revokePermission,
       update,
-      withdrawCredits
+      withdrawCredits,
     ]
   );
 }
 
-const { Provider: UserProfileProvider, useContext: useUserProfileContext } = createCRUDContext(useUserProfile, {
-  loading: false,
-  dropzoneUser: null,
-  joinFederation: uninitializedHandler as never,
-  refetch: uninitializedHandler as never,
-  update: uninitializedHandler as never,
-  create: uninitializedHandler as never,
-  addCredits: uninitializedHandler as never,
-  withdrawCredits: uninitializedHandler as never,
-  grantPermission: uninitializedHandler as never,
-  revokePermission: uninitializedHandler as never
-});
+const { Provider: UserProfileProvider, useContext: useUserProfileContext } = createCRUDContext(
+  useUserProfile,
+  {
+    loading: false,
+    dropzoneUser: null,
+    joinFederation: uninitializedHandler as never,
+    refetch: uninitializedHandler as never,
+    update: uninitializedHandler as never,
+    create: uninitializedHandler as never,
+    addCredits: uninitializedHandler as never,
+    withdrawCredits: uninitializedHandler as never,
+    grantPermission: uninitializedHandler as never,
+    revokePermission: uninitializedHandler as never,
+  }
+);
 
 export { UserProfileProvider, useUserProfileContext, useUserProfile };

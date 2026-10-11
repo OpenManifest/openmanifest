@@ -2,11 +2,15 @@ import * as React from 'react';
 import { noop } from 'lodash';
 import sameVariables from 'app/utils/sameVariables';
 import { useAppSelector } from 'app/state';
-import { useCurrentUserPermissionsLazyQuery, useDropzoneLazyQuery, useUpdateDropzoneMutation } from '../reflection';
+import {
+  useCurrentUserPermissionsLazyQuery,
+  useDropzoneLazyQuery,
+  useUpdateDropzoneMutation,
+} from '../reflection';
 import {
   CurrentUserPermissionsQueryVariables,
   DropzoneEssentialsFragment,
-  DropzoneQueryVariables
+  DropzoneQueryVariables,
 } from '../operations';
 import { TMutationResponse, uninitializedHandler } from './factory';
 import { DropzoneInput } from '../schema';
@@ -16,7 +20,7 @@ export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
   const variables: DropzoneQueryVariables | undefined = React.useMemo(() => {
     if (vars?.dropzoneId) {
       return {
-        dropzoneId: vars.dropzoneId
+        dropzoneId: vars.dropzoneId,
       };
     }
     return undefined;
@@ -24,19 +28,25 @@ export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
 
   const [getDropzone, query] = useDropzoneLazyQuery();
   const [updateDropzone] = useUpdateDropzoneMutation();
-  const permissionsVariables = React.useMemo(() => ({ dropzoneId: variables?.dropzoneId }), [variables?.dropzoneId]);
+  const permissionsVariables = React.useMemo(
+    () => ({ dropzoneId: variables?.dropzoneId }),
+    [variables?.dropzoneId]
+  );
 
   const [getPermissions, permissions] = useCurrentUserPermissionsLazyQuery();
 
   const update = React.useCallback(
-    async (attributes: DropzoneInput): Promise<TMutationResponse<{ dropzone: DropzoneEssentialsFragment }>> => {
+    async (
+      attributes: DropzoneInput
+    ): Promise<TMutationResponse<{ dropzone: DropzoneEssentialsFragment }>> => {
       try {
-        if (!query?.data?.dropzone?.id && !currentDropzoneId) return { error: 'No dropzone selected' };
+        if (!query?.data?.dropzone?.id && !currentDropzoneId)
+          return { error: 'No dropzone selected' };
         const { data: response } = await updateDropzone({
           variables: {
             id: Number(query?.data?.dropzone?.id || currentDropzoneId),
-            attributes
-          }
+            attributes,
+          },
         });
 
         if (response?.updateDropzone?.dropzone) {
@@ -44,7 +54,7 @@ export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
         }
         return {
           error: response?.updateDropzone?.errors?.[0],
-          fieldErrors: response?.updateDropzone?.fieldErrors || undefined
+          fieldErrors: response?.updateDropzone?.fieldErrors || undefined,
         };
       } catch (err) {
         if (err instanceof Error) {
@@ -63,7 +73,11 @@ export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
   }, [authenticated, getDropzone, query.variables, variables]);
 
   React.useEffect(() => {
-    if (authenticated && permissionsVariables?.dropzoneId && !sameVariables(permissionsVariables, permissions.variables)) {
+    if (
+      authenticated &&
+      permissionsVariables?.dropzoneId &&
+      !sameVariables(permissionsVariables, permissions.variables)
+    ) {
       console.debug('[Context::Dropzone] Fetching user permissions', permissionsVariables);
       getPermissions({ variables: permissionsVariables as CurrentUserPermissionsQueryVariables });
     }
@@ -74,7 +88,7 @@ export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
     permissions.variables,
     permissionsVariables,
     query.variables,
-    variables
+    variables,
   ]);
 
   const { loading, fetchMore, data, called, variables: queryVariables } = query;
@@ -94,7 +108,7 @@ export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
       refetch: queryVariables?.dropzoneId ? refetch : noop,
       fetchMore: queryVariables?.dropzoneId ? () => fetchMore({ variables }) : uninitializedHandler,
       dropzone: data?.dropzone,
-      currentUser: data?.dropzone?.currentUser
+      currentUser: data?.dropzone?.currentUser,
     }),
     [
       variables,
@@ -105,7 +119,7 @@ export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
       refetch,
       queryVariables?.dropzoneId,
       fetchMore,
-      data?.dropzone
+      data?.dropzone,
     ]
   );
 }

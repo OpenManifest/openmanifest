@@ -19,7 +19,6 @@
     "app/**/*",
     "png.d.ts",
     "global.d.ts",
-    ".eslintrc.js",
     "index.ts",
     "main.ts",
     "build/**/*.ts",
