@@ -1,5 +1,5 @@
 
-import { cleanup } from '@testing-library/react-native';
+import { cleanup, configure } from '@testing-library/react-native';
 
 import '@testing-library/jest-dom';
 import 'react-native-gesture-handler/jestSetup';
@@ -7,11 +7,24 @@ import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/asy
 
 jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
 
+// The `BaseButton` mock in react-native-gesture-handler 2.28 renders `<View />` instead of its children, which empties
+// every gesture-handler TouchableOpacity (its content sits inside a BaseButton). Use the React Native touchables.
+jest.mock('react-native-gesture-handler', () => {
+  const actual = jest.requireActual('react-native-gesture-handler');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { TouchableOpacity, TouchableHighlight, TouchableWithoutFeedback } = require('react-native');
+  return { ...actual, TouchableOpacity, TouchableHighlight, TouchableWithoutFeedback };
+});
+
 declare const global: { __reanimatedWorkletInit: ReturnType<typeof jest.fn> };
 
 global.__reanimatedWorkletInit = jest.fn();
 
 afterEach(cleanup);
+
+// Testing Library 13 skips elements that are hidden from accessibility (Paper and bottom sheets mark whole subtrees
+// `no-hide-descendants`, and fade items in from opacity 0). The tests were written against the older default.
+configure({ defaultIncludeHiddenElements: true });
 
 jest.mock('react-native-reanimated', () => {
   return {

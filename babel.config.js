@@ -16,7 +16,7 @@ module.exports = function (api) {
       '@babel/plugin-proposal-numeric-separator',
       '@babel/plugin-proposal-logical-assignment-operators',
       '@babel/plugin-proposal-export-namespace-from',
-      'react-native-reanimated/plugin',
+      // react-native-worklets/plugin (Reanimated 4) is added last by babel-preset-expo when react-native-worklets is installed
     ],
   };
 };

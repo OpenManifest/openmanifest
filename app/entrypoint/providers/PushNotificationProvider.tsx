@@ -90,10 +90,10 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
 
     return () => {
       if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(notificationListener.current);
+        notificationListener.current.remove();
       }
       if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
+        responseListener.current.remove();
       }
       subscription.remove();
     };

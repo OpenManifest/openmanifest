@@ -6,7 +6,6 @@ import {
   BottomSheetModal,
   enableLogging,
   BottomSheetScrollView,
-  useBottomSheetDynamicSnapPoints,
   useBottomSheet,
   BottomSheetView,
   useBottomSheetModal
@@ -73,7 +72,6 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
   const sheetRef = React.useRef<BottomSheetModal>(null);
   const points = React.useMemo(() => sortBy(uniq([0, ...(snapPoints || [600])])).filter((s) => s !== 0), [snapPoints]);
   const [index, onChange] = React.useState(-1);
-  const snappingPoints = useBottomSheetDynamicSnapPoints(points);
   const keyboardVisible = useKeyboardVisibility();
 
   const onDismiss = React.useCallback(() => {
@@ -130,13 +128,11 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
       ref={sheetRef}
       snapPoints={points}
       onAnimate={console.log}
-      handleHeight={snappingPoints.animatedHandleHeight}
-      contentHeight={snappingPoints.animatedContentHeight}
+      enableDynamicSizing={false}
       handleComponent={HandleComponent}
     >
       {scrollable !== false ? (
         <BottomSheetScrollView
-          onLayout={snappingPoints.handleContentLayout}
           contentContainerStyle={StyleSheet.flatten([
             styles.sheet,
             disablePadding ? styles.noPadding : {},
@@ -154,7 +150,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
           </View>
         </BottomSheetScrollView>
       ) : (
-        <BottomSheetView onLayout={snappingPoints.handleContentLayout}>
+        <BottomSheetView>
           {children}
           <View style={styles.buttonContainer}>
             <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>

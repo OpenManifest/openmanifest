@@ -6,7 +6,6 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetBackdrop,
-  useBottomSheetDynamicSnapPoints
 } from '@gorhom/bottom-sheet';
 import useKeyboardVisibility from 'app/hooks/useKeyboardVisibility';
 
@@ -34,8 +33,6 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
     () => sortBy(uniq([0, ...(snapPoints || [600])])).filter((s) => s !== 0),
     [snapPoints]
   );
-
-  const dynamicSnapPoints = useBottomSheetDynamicSnapPoints(snappingPoints);
 
   const keyboardVisible = useKeyboardVisibility();
 
@@ -113,7 +110,7 @@ export default function DialogOrSheet(props: IBottomSheetProps) {
       onDismiss={onDismiss}
       ref={sheetRef}
       snapPoints={snappingPoints}
-      handleHeight={dynamicSnapPoints.animatedHandleHeight}
+      enableDynamicSizing={false}
       backdropComponent={BottomSheetBackdrop}
       index={(snappingPoints?.length || 1) - 1}
       handleComponent={HandleComponent}
