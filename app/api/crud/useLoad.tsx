@@ -152,20 +152,40 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
     [update]
   );
 
-  const markAsLanded = React.useCallback(async () => {
-    await mutationFinalizeLoad({
-      variables: {
-        id: Number(load?.id),
-        state: LoadState.Landed,
-      },
-    });
-  }, [mutationFinalizeLoad, load]);
+  // Landing and cancelling go through finalizeLoad. The server refuses invalid transitions (a landed load cannot be
+  // cancelled, ...) with `errors`, and the request itself can fail: both are shown instead of being dropped (BUG-082).
+  const loadId = load?.id;
+  const finalize = React.useCallback(
+    async (state: LoadState.Landed | LoadState.Cancelled) => {
+      try {
+        const { data: response } = await mutationFinalizeLoad({
+          variables: { id: Number(loadId), state },
+        });
+        const error =
+          response?.finalizeLoad?.errors?.[0] || response?.finalizeLoad?.fieldErrors?.[0]?.message;
 
-  const cancel = React.useCallback(async () => {
-    await mutationFinalizeLoad({
-      variables: { id: Number(load?.id), state: LoadState.Cancelled },
-    });
-  }, [mutationFinalizeLoad, load]);
+        if (error) {
+          notify.error(error);
+          return { error };
+        }
+        if (!response?.finalizeLoad?.load) {
+          notify.error('Something went wrong');
+          return { error: 'Something went wrong' };
+        }
+        return { load: response.finalizeLoad.load };
+      } catch (e) {
+        console.error(e);
+        const error = e instanceof Error && e.message ? e.message : 'Something went wrong';
+        notify.error(error);
+        return { error };
+      }
+    },
+    [loadId, mutationFinalizeLoad, notify]
+  );
+
+  const markAsLanded = React.useCallback(() => finalize(LoadState.Landed), [finalize]);
+
+  const cancel = React.useCallback(() => finalize(LoadState.Cancelled), [finalize]);
 
   const canDispatchAircraft = useRestriction(Permission.UpdateLoad);
 
