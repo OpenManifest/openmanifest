@@ -60,7 +60,12 @@ export default function DropzonesScreen(props: DropzoneCardProps) {
       {dropzone?.banner ? (
         <View style={styles.cardContainer}>
           <ImageBackground source={{ uri: dropzone?.banner as string }} style={styles.banner}>
-            <Text style={styles.title} numberOfLines={1}>
+            <Text
+              style={styles.title}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              accessibilityLabel={dropzone.name ?? undefined}
+            >
               {dropzone.name}
             </Text>
           </ImageBackground>

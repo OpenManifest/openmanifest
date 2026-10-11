@@ -12,6 +12,7 @@ import JumpRunSelector from 'app/components/input/jump_run_select/JumpRunSelect'
 
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useNotifications } from 'app/providers/notifications';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 export default function JumpRunScreen() {
   const { control, save, saving } = useWeatherForm();
@@ -63,6 +64,7 @@ export default function JumpRunScreen() {
       </View>
       <FloatingActionArea>
         <FAB
+          labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
           testID="jump-run-save-primary-action"
           style={{ backgroundColor: theme.colors.primary }}
           small

@@ -9,6 +9,7 @@ import { Permission, LoadState } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import isSameDay from 'date-fns/isSameDay';
 import { parseISO } from 'date-fns';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 interface ILoadActionButtonProps {
   load: LoadDetailsFragment;
@@ -136,7 +137,10 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       style={styles.group}
       fabStyle={{ backgroundColor: theme.colors.primary }}
       // @ts-ignore
-      actions={buttonActions}
+      actions={buttonActions.map((action) => ({
+        ...action,
+        labelMaxFontSizeMultiplier: CHROME_MAX_FONT_SIZE_MULTIPLIER,
+      }))}
       onStateChange={({ open }) => setExpanded(open)}
     />
   );

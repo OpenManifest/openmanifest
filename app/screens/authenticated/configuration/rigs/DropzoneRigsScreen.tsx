@@ -23,6 +23,7 @@ import RigDialog from 'app/forms/rig';
 import useRestriction from 'app/hooks/useRestriction';
 import { useNotifications } from 'app/providers/notifications';
 import { useAppTheme } from 'app/theme';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 const useRigDialog = createUseDialog<{ rig?: RigEssentialsFragment }>();
 
@@ -111,6 +112,7 @@ export default function DropzoneRigsScreen() {
       </ScrollableScreen>
       <FloatingActionArea>
         <FAB
+          labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
           testID="new-rig-primary-action"
           visible={canCreateRig}
           style={{ backgroundColor: theme.colors.primary }}

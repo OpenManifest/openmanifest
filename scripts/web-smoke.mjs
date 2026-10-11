@@ -74,6 +74,35 @@ async function checkLastSlotRow(page, route, viewport, failures) {
 }
 
 /**
+ * Emulates a large system font size: react-native-web writes font sizes in px, so `html { font-size: 200% }` would not
+ * change them. Scales the font size and line height of every element that has text of its own.
+ */
+async function scaleText(page, factor) {
+  await page.evaluate((f) => {
+    for (const el of document.querySelectorAll('body *')) {
+      const hasText = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+      if (!hasText && !['INPUT', 'TEXTAREA'].includes(el.tagName)) continue;
+      const cs = getComputedStyle(el);
+      el.style.fontSize = `${parseFloat(cs.fontSize) * f}px`;
+      const lineHeight = parseFloat(cs.lineHeight);
+      if (Number.isFinite(lineHeight)) el.style.lineHeight = `${lineHeight * f}px`;
+    }
+  }, factor);
+}
+
+/** Rows whose text no longer fits their height: a fixed row height that text outgrew */
+async function checkClippedRows(page, route, failures) {
+  const clipped = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-testid="slot-row"], [data-testid="load-card"]')]
+      .filter((el) => el.offsetParent !== null && el.scrollHeight > el.clientHeight + 1)
+      .map((el) => `${el.getAttribute('data-testid')} ${el.scrollHeight}>${el.clientHeight}`)
+  );
+  if (clipped.length) {
+    failures.push(`layout ${route}: clipped rows (${clipped.slice(0, 3).join(', ')})`);
+  }
+}
+
+/**
  * Layout check for the current route: nothing overflows the viewport horizontally, and every visible primary
  * action (`data-testid$="-primary-action"`) can be scrolled into view and is the element that receives a click there.
  */
@@ -130,8 +159,6 @@ async function run(browser, name, viewport) {
     await page.screenshot({ path: join(out, `${name}-signup.png`) });
     await page.goto(`${base}/login`, { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForTimeout(3000);
-    // TODO P5.8: board and
-    // load again at `html { font-size: 200% }`.
     await page.locator('input').nth(0).click({ force: true });
     await page.keyboard.type('owner@example.com');
     await page.locator('input').nth(1).click({ force: true });
@@ -209,6 +236,23 @@ async function run(browser, name, viewport) {
       failures.push(`deep link ${loadUrl} did not show the load`);
     }
     await page.screenshot({ path: join(out, `${name}-deeplink-load.png`) });
+
+    // Large font size: the board and a load still lay out, and no row clips its text
+    for (const [route, label] of [
+      [`${base}/dropzone/manifest`, 'board at 200% text'],
+      [loadUrl, 'load at 200% text'],
+    ]) {
+      await page.goto(route, { waitUntil: 'networkidle', timeout: 60000 });
+      await page.waitForTimeout(5000);
+      await scaleText(page, 2);
+      await page.waitForTimeout(500);
+      await checkLayout(page, label, viewport, failures);
+      await checkClippedRows(page, label, failures);
+      if (label.startsWith('load')) await checkLastSlotRow(page, label, viewport, failures);
+      await page.screenshot({
+        path: join(out, `${name}-${label.split(' ')[0]}-200.png`),
+      });
+    }
 
     // Configuration screens: floating action buttons stay reachable and nothing overflows
     const configurationRoutes = [

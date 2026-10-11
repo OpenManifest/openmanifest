@@ -14,6 +14,7 @@ import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { TicketTypeEssentialsFragment } from 'app/api/operations';
 import { useNotifications } from 'app/providers/notifications';
 import { useAppTheme } from 'app/theme';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 export default function TicketTypesScreen() {
   const { theme } = useAppTheme();
@@ -77,7 +78,7 @@ export default function TicketTypesScreen() {
           </DataTable.Header>
 
           {ticketTypes?.map((ticketType) => (
-            <View style={{ height: 46 }}>
+            <View style={{ minHeight: 46 }}>
               <SwipeActions
                 rightAction={{
                   label: 'Delete',
@@ -110,6 +111,7 @@ export default function TicketTypesScreen() {
       </ScrollableScreen>
       <FloatingActionArea>
         <FAB
+          labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
           testID="new-ticket-type-primary-action"
           small
           style={{ backgroundColor: theme.colors.primary }}

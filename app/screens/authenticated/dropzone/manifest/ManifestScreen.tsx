@@ -25,6 +25,7 @@ import LoadingCardLarge from './LoadCard/Large/Loading';
 import LoadingCardSmall from './LoadCard/Small/Loading';
 import SetupProfileCard from './SetupProfileCard';
 import { SetupStepCard } from './FinishSetupSteps';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 const loadingFragment: LoadDetailsFragment = {
   id: '__LOADING__',
@@ -250,6 +251,7 @@ export default function ManifestScreen() {
       {manifest.permissions.canCreateLoad && (
         <FloatingActionArea>
           <FAB
+            labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
             testID="new-load-primary-action"
             style={{ backgroundColor: theme.colors.primary }}
             small
