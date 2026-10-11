@@ -5,26 +5,26 @@ import set from 'lodash/set';
 import { Permission } from 'app/api/schema.d';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 import ManifestDeskNote from 'app/components/ManifestDeskNote';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { render } from '../../__mocks__/render';
-import MOCK_QUERY_DROPZONE from './__mocks__/QueryDropzone.mock';
+import MOCK_QUERY_OPERATOR from './__mocks__/QueryOperator.mock';
 
 jest.setTimeout(30000);
 
-/** Shows the setting once the dropzone and the permissions have loaded, so absence checks are not vacuous */
+/** Shows the setting once the operator and the permissions have loaded, so absence checks are not vacuous */
 function LoadedProbe() {
   const {
-    dropzone: { dropzone, permissions },
-  } = useDropzoneContext();
-  return dropzone && permissions ? (
-    <Text testID="loaded">{`allowSelfManifest=${dropzone.settings?.allowSelfManifest}`}</Text>
+    operator: { operator, permissions },
+  } = useOperatorContext();
+  return operator && permissions ? (
+    <Text testID="loaded">{`allowSelfManifest=${operator.settings?.allowSelfManifest}`}</Text>
   ) : null;
 }
 
 function renderNote(allowSelfManifest: boolean, permissions: Permission[]) {
-  const dropzone = set(
-    cloneDeep(MOCK_QUERY_DROPZONE()),
-    'result.data.dropzone.settings.allowSelfManifest',
+  const operator = set(
+    cloneDeep(MOCK_QUERY_OPERATOR()),
+    'result.data.operator.settings.allowSelfManifest',
     allowSelfManifest
   );
   return render(
@@ -35,7 +35,7 @@ function renderNote(allowSelfManifest: boolean, permissions: Permission[]) {
     {
       session: authenticatedSession,
       permissions,
-      graphql: [dropzone],
+      graphql: [operator],
     }
   );
 }

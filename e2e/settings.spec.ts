@@ -4,20 +4,20 @@ import { expect, gotoRoute, test } from './support/test';
 
 // Configuration screens: floating action buttons stay reachable and nothing overflows
 const CONFIGURATION_ROUTES = [
-  '/dropzone/configuration',
-  '/dropzone/configuration/aircrafts',
-  '/dropzone/configuration/ticket-types',
-  '/dropzone/ticket-types/extra',
-  '/dropzone/configuration/rigs',
-  '/dropzone/configuration/rig-inspection',
-  '/dropzone/configuration/permissions',
-  '/dropzone/configuration/basic',
-  '/dropzone/transactions',
-  '/dropzone/master-log',
+  '/configuration',
+  '/configuration/aircrafts',
+  '/configuration/ticket-types',
+  '/ticket-types/extra',
+  '/configuration/rigs',
+  '/configuration/rig-inspection',
+  '/configuration/permissions',
+  '/configuration/basic',
+  '/transactions',
+  '/master-log',
   // Weather: the wizard, then its winds and jump run screens
-  '/dropzone/weather',
-  '/dropzone/weather/winds',
-  '/dropzone/weather/jumprun',
+  '/weather',
+  '/weather/winds',
+  '/weather/jumprun',
 ];
 
 test.describe('settings @setup', () => {
@@ -33,7 +33,7 @@ test.describe('settings @setup', () => {
 
   test('ticket types follow the dark theme', async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'dark' });
-    await gotoRoute(page, '/dropzone/configuration/ticket-types');
+    await gotoRoute(page, '/configuration/ticket-types');
     await page.waitForTimeout(2500);
     await expectLayout(page, 'ticket types (dark)');
     await test.info().attach('ticket-types-dark', {
@@ -42,7 +42,7 @@ test.describe('settings @setup', () => {
     });
   });
 
-  // The dropzone setup wizard (reachable for any logged in user)
+  // The operator setup wizard (reachable for any logged in user)
   test('the setup wizard shows its next button', async ({ page }) => {
     await gotoRoute(page, '/setup');
     await page.waitForTimeout(2500);

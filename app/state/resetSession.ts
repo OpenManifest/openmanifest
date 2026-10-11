@@ -22,7 +22,7 @@ async function clearPushToken() {
 
 /**
  * Logs the user out and forgets everything about their session: the push token on the server (when the credentials are
- * still valid), in-flight requests, the Apollo cache, the credentials (secure storage) and the current dropzone.
+ * still valid), in-flight requests, the Apollo cache, the credentials (secure storage) and the current operator.
  * Used by the logout action and when the server says the session has expired.
  */
 export function resetSession({ reason }: { reason: ResetSessionReason }) {

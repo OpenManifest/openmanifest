@@ -19,8 +19,8 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     initial: {
       id: slot?.id,
       load,
-      exitWeight: slot?.exitWeight || Number(slot?.dropzoneUser?.user?.exitWeight || 70),
-      dropzoneUser: slot?.dropzoneUser,
+      exitWeight: slot?.exitWeight || Number(slot?.membership?.user?.exitWeight || 70),
+      membership: slot?.membership,
       extras: slot?.extras || null,
       groupNumber: slot?.groupNumber,
       jumpType: slot?.jumpType,

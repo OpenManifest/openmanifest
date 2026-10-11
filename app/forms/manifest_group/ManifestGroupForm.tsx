@@ -64,7 +64,7 @@ function UserCard(props: IUserCardProps) {
   return (
     <UserRigCard
       key={`user-rig-card-${slotUser.id}`}
-      dropzoneUserId={slotUser.id?.toString()}
+      membershipId={slotUser.id?.toString()}
       selectedRig={slotUser.rig || undefined}
       exitWeight={slotUser.exitWeight}
       {...{
@@ -84,7 +84,7 @@ function UserCard(props: IUserCardProps) {
 /** The jump, ticket and jumpers of a group. Needs to be inside the group form's `FormProvider`. */
 export default function ManifestGroupForm() {
   const { control } = useFormContext<ManifestGroupFields>();
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
   const canManifestOthers = useRestriction(Permission.CreateUserSlot);
 
   const users = useWatch({ control, name: 'users' });
@@ -103,9 +103,9 @@ export default function ManifestGroupForm() {
 
   const { data } = useAllowedJumpTypesQuery({
     variables: {
-      allowedForDropzoneUserIds: users?.map((slotUser) => slotUser.id) as number[],
+      allowedForMembershipIds: users?.map((slotUser) => slotUser.id) as number[],
       isPublic: canManifestOthers ? null : true,
-      dropzoneId: currentDropzoneId?.toString() as string,
+      operatorId: currentOperatorId?.toString() as string,
     },
     onError: console.error,
   });
@@ -113,7 +113,7 @@ export default function ManifestGroupForm() {
   const jumpTypes = React.useMemo(
     () =>
       uniqBy(
-        [...(data?.dropzone?.allowedJumpTypes || []), ...(data?.jumpTypes || [])],
+        [...(data?.operator?.allowedJumpTypes || []), ...(data?.jumpTypes || [])],
         ({ id }) => id
       ) || [],
     [data]
@@ -138,7 +138,7 @@ export default function ManifestGroupForm() {
           value={jumpType.value ? [jumpType.value] : []}
           renderItemLabel={(item: JumpType) => item.name}
           isDisabled={(item: JumpType) =>
-            !data?.dropzone?.allowedJumpTypes?.map(({ id }) => id).includes(item.id)
+            !data?.operator?.allowedJumpTypes?.map(({ id }) => id).includes(item.id)
           }
           onChange={([selected]) => jumpType.onChange(selected)}
         />
@@ -150,7 +150,7 @@ export default function ManifestGroupForm() {
         <List.Subheader>Ticket</List.Subheader>
         <ChipSelect<TicketTypeValue>
           autoSelectFirst
-          items={(data?.dropzone?.ticketTypes || []) as TicketTypeValue[]}
+          items={(data?.operator?.ticketTypes || []) as TicketTypeValue[]}
           value={ticketType.value ? [ticketType.value] : []}
           renderItemLabel={(item) => item.name}
           onChange={([selected]) => ticketType.onChange(selected)}

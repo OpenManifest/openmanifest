@@ -15,7 +15,9 @@ const args = process.argv.slice(2);
 const groups = args.flatMap((arg, i) => (arg === '--group' ? [args[i + 1]] : []));
 const dryRun = args.includes('--dry-run');
 if (groups.length === 0) {
-  console.error(`Pass at least one --group (${Object.keys(vocabulary.loadConfig().groups).join(', ')})`);
+  console.error(
+    `Pass at least one --group (${Object.keys(vocabulary.loadConfig().groups).join(', ')})`
+  );
   process.exit(1);
 }
 
@@ -47,6 +49,8 @@ for (const [from, to] of moved) {
   execFileSync('git', ['-C', tree.root, 'mv', from, to]);
 }
 
-console.log(`${dryRun ? 'Would change' : 'Changed'} ${changed.length} files and move ${moved.length}:`);
+console.log(
+  `${dryRun ? 'Would change' : 'Changed'} ${changed.length} files and move ${moved.length}:`
+);
 changed.forEach((file) => console.log(`  M ${file}`));
 moved.forEach(([from, to]) => console.log(`  R ${from} -> ${to}`));

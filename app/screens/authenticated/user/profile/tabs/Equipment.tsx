@@ -2,29 +2,29 @@ import * as React from 'react';
 import { View } from 'react-native-animatable';
 import { Button } from 'react-native-paper';
 
-import { DropzoneUserProfileFragment } from 'app/api/operations';
+import { MembershipProfileFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import RigCard from '../../equipment/RigCard';
 import { useProfileDialogs } from '../ProfileDialogs';
 
 export interface IJumpHistoryTab {
-  dropzoneUser?: DropzoneUserProfileFragment | null;
+  membership?: MembershipProfileFragment | null;
   tabIndex: number;
   currentTabIndex: number;
 }
 export default function EquipmentTab(props: IJumpHistoryTab) {
-  const { dropzoneUser, tabIndex, currentTabIndex } = props;
+  const { membership, tabIndex, currentTabIndex } = props;
   const { editRig } = useProfileDialogs();
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
   const canCreateRig = useRestriction(Permission.CreateRig);
   const canUpdateUser = useRestriction(Permission.UpdateUser);
 
   // Members manage their own rigs; staff with UpdateUser run a member's rigs from the office (UB.2)
-  const isSelf = !!currentUser?.id && currentUser.id === dropzoneUser?.id;
+  const isSelf = !!currentUser?.id && currentUser.id === membership?.id;
   const canManage = (isSelf && canCreateRig) || canUpdateUser;
 
   return (
@@ -45,13 +45,13 @@ export default function EquipmentTab(props: IJumpHistoryTab) {
           Add rig
         </Button>
       ) : null}
-      {dropzoneUser?.user?.rigs?.map((item) => (
+      {membership?.user?.rigs?.map((item) => (
         <RigCard
           key={item.id}
-          {...{ dropzoneUser }}
+          {...{ membership }}
           onSuccessfulImageUpload={() => null}
           rig={item}
-          rigInspection={dropzoneUser?.rigInspections?.find(
+          rigInspection={membership?.rigInspections?.find(
             (insp) => insp.rig?.id === item.id && insp.isOk
           )}
           onPress={

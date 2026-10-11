@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { PlaneEssentialsFragment } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 
 import { camelCase, isEqual } from 'lodash';
@@ -85,13 +85,13 @@ export default function useAircraftForm(opts: IUseAircraftFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const { create, update } = useAircrafts();
 
   const [{ loading }, onCreateOrder] = useAsyncFn(
     async (fields: AircraftFields) => {
-      if (!dropzone?.id) {
+      if (!operator?.id) {
         return;
       }
       const validated = await aircraftValidation.validate(fields, { abortEarly: false });
@@ -99,14 +99,14 @@ export default function useAircraftForm(opts: IUseAircraftFormOpts) {
         const response = fields.id
           ? await update(Number(fields.id), {
               name: validated.name,
-              dropzoneId: Number(dropzone?.id),
+              operatorId: Number(operator?.id),
               maxSlots: validated.maxSlots,
               minSlots: validated.minSlots,
               registration: validated.registration,
             })
           : await create({
               name: validated.name,
-              dropzoneId: Number(dropzone?.id),
+              operatorId: Number(operator?.id),
               maxSlots: validated.maxSlots,
               minSlots: validated.minSlots,
               registration: validated.registration,
@@ -139,7 +139,7 @@ export default function useAircraftForm(opts: IUseAircraftFormOpts) {
         }
       }
     },
-    [dropzone?.id, setError, notify, onSuccess, create, update]
+    [operator?.id, setError, notify, onSuccess, create, update]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onCreateOrder), [handleSubmit, onCreateOrder]);

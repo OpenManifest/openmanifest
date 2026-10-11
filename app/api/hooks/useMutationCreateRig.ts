@@ -12,7 +12,7 @@ export const MUTATION_CREATE_RIG = gql`
     $canopySize: Int
     $repackExpiresAt: Int
     $userId: Int
-    $dropzoneId: Int
+    $operatorId: Int
   ) {
     createRig(
       input: {
@@ -22,7 +22,7 @@ export const MUTATION_CREATE_RIG = gql`
           model: $model
           serial: $serial
           repackExpiresAt: $repackExpiresAt
-          dropzoneId: $dropzoneId
+          operatorId: $operatorId
           userId: $userId
           canopySize: $canopySize
           rigType: $rigType

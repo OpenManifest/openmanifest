@@ -4,7 +4,7 @@ import { Avatar, Badge, Card, Chip } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ViewProps } from 'app/components/Themed';
 import { SlotDetailsFragment } from 'app/api/operations';
-import { useDropzoneNavigation } from 'app/screens/authenticated/dropzone/useDropzoneNavigation';
+import { useOperatorNavigation } from 'app/screens/authenticated/manifest/useOperatorNavigation';
 import { useAppTheme } from 'app/theme';
 
 export interface ISlotCardProps {
@@ -21,15 +21,15 @@ export default function SlotCard(props: ISlotCardProps) {
   const { theme } = useAppTheme();
 
   const hasPassenger = !!slot?.passengerName;
-  const navigation = useDropzoneNavigation();
+  const navigation = useOperatorNavigation();
   return (
     <>
       <Card
         onPress={() =>
-          slot.dropzoneUser?.id &&
+          slot.membership?.id &&
           navigation.navigate('User', {
             screen: 'ProfileScreen',
-            params: { userId: slot.dropzoneUser?.id },
+            params: { userId: slot.membership?.id },
           })
         }
         onLongPress={() => onPress?.(slot)}
@@ -37,12 +37,12 @@ export default function SlotCard(props: ISlotCardProps) {
         style={StyleSheet.flatten([styles.card, { marginBottom: hasPassenger ? -4 : 12 }, style])}
       >
         <Card.Title
-          title={slot?.dropzoneUser?.user.name || slot?.passengerName}
+          title={slot?.membership?.user.name || slot?.passengerName}
           left={() =>
-            slot?.dropzoneUser?.user?.image ? (
+            slot?.membership?.user?.image ? (
               <Avatar.Image
                 style={{ backgroundColor: theme.colors.surface }}
-                source={{ uri: slot?.dropzoneUser?.user.image }}
+                source={{ uri: slot?.membership?.user.image }}
                 size={42}
               />
             ) : (
@@ -76,7 +76,7 @@ export default function SlotCard(props: ISlotCardProps) {
             mode="outlined"
             disabled
           >
-            {slot?.dropzoneUser?.role?.name}
+            {slot?.membership?.role?.name}
           </Chip>
           <Chip
             style={styles.infoChip}
@@ -91,7 +91,7 @@ export default function SlotCard(props: ISlotCardProps) {
             mode="outlined"
             disabled
           >
-            {slot?.dropzoneUser?.license?.name}
+            {slot?.membership?.license?.name}
           </Chip>
           <Chip
             style={styles.infoChip}

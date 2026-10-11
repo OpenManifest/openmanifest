@@ -9,7 +9,7 @@ import { NotificationContext } from 'app/providers/notifications/context';
 import { LoadContextProvider, useLoadContext } from 'app/providers';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
-import ActionButton from '../../screens/authenticated/dropzone/load/ActionButton';
+import ActionButton from '../../screens/authenticated/manifest/load/ActionButton';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
@@ -211,7 +211,7 @@ describe('<ActionButton />', () => {
     });
 
     it('offers no call for a load of the dropzone day before, though the device date matches', async () => {
-      // 19:00 on 8 October in Brisbane, 09:00 on 8 October in UTC: the same day on the device, yesterday at the dropzone
+      // 19:00 on 8 October in Brisbane, 09:00 on 8 October in UTC: the same day on the device, yesterday at the operator
       const { screen, restore } = renderLoadCreatedAt('2026-10-08T09:00:00Z');
 
       await openActions(screen);

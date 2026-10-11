@@ -34,12 +34,12 @@ export const rigInspectionTemplateValidation = yup.object({
 
 export interface IUseRigInspectionTemplateFormOpts {
   template?: { id: string; definition?: string | null } | null;
-  dropzoneId?: string | null;
+  operatorId?: string | null;
   onSuccess?(): void;
 }
 
 export default function useRigInspectionTemplateForm(opts: IUseRigInspectionTemplateFormOpts) {
-  const { template, dropzoneId, onSuccess } = opts;
+  const { template, operatorId, onSuccess } = opts;
   const notify = useNotifications();
   const initialValues = React.useMemo<RigInspectionTemplateFields>(
     () => ({ fields: parseFields(template?.definition) }),
@@ -71,7 +71,7 @@ export default function useRigInspectionTemplateForm(opts: IUseRigInspectionTemp
         await mutationUpdateForm({
           variables: {
             formId: Number(template?.id),
-            dropzoneId: Number(dropzoneId),
+            operatorId: Number(operatorId),
             definition: JSON.stringify(fields),
           },
         });
@@ -83,7 +83,7 @@ export default function useRigInspectionTemplateForm(opts: IUseRigInspectionTemp
         }
       }
     },
-    [dropzoneId, mutationUpdateForm, notify, onSuccess, template?.id]
+    [operatorId, mutationUpdateForm, notify, onSuccess, template?.id]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onSave), [handleSubmit, onSave]);

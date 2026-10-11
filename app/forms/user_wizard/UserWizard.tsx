@@ -16,7 +16,7 @@ import DoneStep from './steps/Done';
 import AvatarStep from './steps/Avatar';
 import { useUserWizardForm } from './useForm';
 import { UserProfileProvider, useUserProfileContext } from 'app/api/crud';
-import { useDropzoneContext } from 'app/providers';
+import { useOperatorContext } from 'app/providers';
 import { FormProvider, useWatch } from 'react-hook-form';
 
 const steps = [
@@ -38,7 +38,7 @@ export function UserWizard() {
   const { params } = useRoute<{
     key: string;
     name: string;
-    params: { index: number; dropzoneUserId: string };
+    params: { index: number; membershipId: string };
   }>();
   const notify = useNotifications();
   const methods = useUserWizardForm({
@@ -59,12 +59,12 @@ export function UserWizardScreen() {
   const { params } = useRoute<{
     key: string;
     name: string;
-    params: { index: number; dropzoneUserId: string };
+    params: { index: number; membershipId: string };
   }>();
-  const { dropzoneUserId } = params;
+  const { membershipId } = params;
 
   return (
-    <UserProfileProvider id={dropzoneUserId}>
+    <UserProfileProvider id={membershipId}>
       <UserWizard />
     </UserProfileProvider>
   );

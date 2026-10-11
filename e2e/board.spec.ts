@@ -9,12 +9,12 @@ import {
 import { press } from './support/press';
 import { expect, gotoRoute, test } from './support/test';
 
-const BOARD = '/dropzone/manifest';
+const BOARD = '/manifest';
 
 test.describe('manifest board @manifest', () => {
   test('board lays out and is accessible', async ({ page }) => {
     await gotoRoute(page, BOARD);
-    await expect(page).toHaveURL(/\/dropzone\/manifest$/);
+    await expect(page).toHaveURL(/\/manifest$/);
     await expect(page.getByText(/Load #1\b/).first()).toBeVisible();
     await expectLayout(page, BOARD);
     await expectAccessible(page, BOARD);
@@ -35,7 +35,7 @@ test.describe('manifest board @manifest', () => {
   test('a boarding call and landing show the next actions', async ({ page }) => {
     const id = await createLoadViaApi();
     expect(id, 'could not create a load through the API').toBeTruthy();
-    await gotoRoute(page, `/dropzone/load/${id}`);
+    await gotoRoute(page, `/loads/${id}`);
 
     const openActions = async () => {
       // A confirmation snackbar covers the button on a phone until it goes away
@@ -60,7 +60,7 @@ test.describe('manifest board @manifest', () => {
       .getByText(/Load #1\b/)
       .first()
       .click({ force: true });
-    await page.waitForURL(/\/dropzone\/load\/\d+/);
+    await page.waitForURL(/\/loads\/\d+/);
     await page.waitForTimeout(3000);
     await expectLayout(page, 'load');
     await expectLastSlotRowReachable(page);
@@ -74,7 +74,7 @@ test.describe('manifest board @manifest', () => {
       .getByText(/Load #1\b/)
       .first()
       .click({ force: true });
-    await page.waitForURL(/\/dropzone\/load\/\d+/);
+    await page.waitForURL(/\/loads\/\d+/);
     await page.waitForTimeout(3000);
     await press(page, page.getByTestId('load-actions-primary-action'));
     await page.waitForTimeout(1000);
@@ -90,7 +90,7 @@ test.describe('manifest board @manifest', () => {
       .getByText(/Load #1\b/)
       .first()
       .click({ force: true });
-    await page.waitForURL(/\/dropzone\/load\/\d+/);
+    await page.waitForURL(/\/loads\/\d+/);
     const loadPath = new URL(page.url()).pathname;
 
     await gotoRoute(page, loadPath);
@@ -105,7 +105,7 @@ test.describe('manifest board @manifest', () => {
       .getByText(/Load #1\b/)
       .first()
       .click({ force: true });
-    await page.waitForURL(/\/dropzone\/load\/\d+/);
+    await page.waitForURL(/\/loads\/\d+/);
     const loadPath = new URL(page.url()).pathname;
 
     for (const route of [BOARD, loadPath]) {

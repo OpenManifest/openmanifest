@@ -1,4 +1,4 @@
-import { loginViaUi, selectDropzone, submitLogin } from './support/auth';
+import { loginViaUi, selectOperator, submitLogin } from './support/auth';
 import { expectAccessible } from './support/a11y';
 import { expectLayout, expectReachable } from './support/layout';
 import { openDrawer } from './support/press';
@@ -29,8 +29,8 @@ test.describe('login @login', () => {
     await submitLogin(page, ROLES.owner);
     await page.getByText('Dropzone', { exact: true }).first().waitFor({ timeout: 30_000 });
     await expectLayout(page, 'dropzone selection');
-    await selectDropzone(page);
-    await expectLayout(page, '/dropzone/manifest');
+    await selectOperator(page);
+    await expectLayout(page, '/manifest');
   });
 
   // The requests of a second login must still go out (they used to be aborted for good after a logout) and nothing of
@@ -42,16 +42,16 @@ test.describe('login @login', () => {
     await expect(page.locator('input').nth(1)).toBeVisible({ timeout: 15_000 });
 
     await submitLogin(page, ROLES.jumper);
-    await selectDropzone(page);
+    await selectOperator(page);
     await expect(page.getByText(/Load #1\b/).first()).toBeVisible({ timeout: 30_000 });
     await openDrawer(page);
     await expect(page.getByText('Jo Jumper').first()).toBeVisible();
   });
 
-  // Selecting a dropzone the user has not joined joins them (P6.4)
+  // Selecting a operator the user has not joined joins them (P6.4)
   test('a brand new user joins the dropzone and reaches the board', async ({ page }) => {
     const email = await registerNewUser();
     await loginViaUi(page, email);
-    await expect(page).toHaveURL(/\/dropzone\/manifest$/);
+    await expect(page).toHaveURL(/\/manifest$/);
   });
 });

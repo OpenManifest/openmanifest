@@ -3,21 +3,21 @@ import { StyleSheet } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 
 /**
- * One line in place of the add actions: shown to a member who cannot manifest anybody because the dropzone has
+ * One line in place of the add actions: shown to a member who cannot manifest anybody because the operator has
  * switched off self-manifesting (the API then leaves out the self-service slot permissions).
  */
 export default function ManifestDeskNote() {
   const theme = useTheme();
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const canManifestSelf = useRestriction(Permission.CreateSlot);
   const canManifestOthers = useRestriction(Permission.CreateUserSlot);
 
-  if (dropzone?.settings?.allowSelfManifest !== false || canManifestSelf || canManifestOthers) {
+  if (operator?.settings?.allowSelfManifest !== false || canManifestSelf || canManifestOthers) {
     return null;
   }
   return (

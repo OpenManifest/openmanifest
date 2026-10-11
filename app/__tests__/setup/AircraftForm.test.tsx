@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { Text, TextInput, View } from 'react-native';
 import { CreateAircraftDocument } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/providers';
+import { useOperatorContext } from 'app/providers';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import AircraftDialog from '../../forms/aircraft/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
-// The form refuses to submit until the dropzone has loaded
-function DropzoneReady() {
+// The form refuses to submit until the operator has loaded
+function OperatorReady() {
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
-  return dropzone?.id ? <Text>dropzone ready</Text> : null;
+    operator: { operator },
+  } = useOperatorContext();
+  return operator?.id ? <Text>dropzone ready</Text> : null;
 }
 
 describe('<AircraftDialog />', () => {
@@ -31,7 +31,7 @@ describe('<AircraftDialog />', () => {
 
     const screen = render(
       <View testID="under-test">
-        <DropzoneReady />
+        <OperatorReady />
         <AircraftDialog open onClose={jest.fn()} />
       </View>,
       {
@@ -44,7 +44,7 @@ describe('<AircraftDialog />', () => {
               variables: {
                 attributes: {
                   name: 'Beaver',
-                  dropzoneId: 1,
+                  operatorId: 1,
                   maxSlots: 8,
                   minSlots: 1,
                   registration: 'VH-JST',
@@ -57,7 +57,7 @@ describe('<AircraftDialog />', () => {
       }
     );
 
-    // The dropzone provider mounts its own closed copy of this dialog, so scope to ours
+    // The operator provider mounts its own closed copy of this dialog, so scope to ours
     const dialog = within(screen.getByTestId('under-test'));
     await waitFor(() => expect(dialog.getByText('dropzone ready')).toBeTruthy(), {
       timeout: 10000,

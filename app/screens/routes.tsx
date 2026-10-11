@@ -27,43 +27,41 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
             screens: {
               Overview: {
                 screens: {
-                  DashboardScreen: '/dropzone/dashboard',
+                  DashboardScreen: '/dashboard',
                   OverviewScreen: '/overview',
                 },
               },
               Manifest: {
                 screens: {
-                  ManifestScreen: '/dropzone/manifest',
+                  ManifestScreen: '/manifest',
                   User: {
                     screens: {
-                      EquipmentScreen: '/dropzone/manifest/users/:userId/equipment/',
-                      OrderReceiptScreen:
-                        '/dropzone/manifest/users/:userId/orders/:orderId/receipts',
-                      ProfileScreen: '/dropzone/manifest/users/:userId',
-                      OrdersScreen: '/dropzone/manifest/users/:userId/orders',
-                      RigInspectionScreen:
-                        '/dropzone/manifest/users/:dropzoneUserId/rig/:rigId/inspection',
-                      UserListScreen: '/dropzone/manifest/users',
+                      EquipmentScreen: '/manifest/users/:userId/equipment/',
+                      OrderReceiptScreen: '/manifest/users/:userId/orders/:orderId/receipts',
+                      ProfileScreen: '/manifest/users/:userId',
+                      OrdersScreen: '/manifest/users/:userId/orders',
+                      RigInspectionScreen: '/manifest/users/:membershipId/rig/:rigId/inspection',
+                      UserListScreen: '/manifest/users',
                     },
                   },
                   Configuration: {
                     screens: {
-                      TicketTypesScreen: '/dropzone/configuration/ticket-types',
-                      DropzoneRigsScreen: '/dropzone/configuration/rigs',
-                      ExtrasScreen: '/dropzone/ticket-types/extra',
-                      MasterLogScreen: '/dropzone/master-log',
-                      SettingsMenuScreen: '/dropzone/configuration',
-                      AircraftsScreen: '/dropzone/configuration/aircrafts',
-                      DropzoneSettingsScreen: '/dropzone/configuration/basic',
-                      PermissionScreen: '/dropzone/configuration/permissions',
-                      RigInspectionTemplateScreen: '/dropzone/configuration/rig-inspection',
-                      TransactionsScreen: '/dropzone/transactions',
+                      TicketTypesScreen: '/configuration/ticket-types',
+                      OperatorRigsScreen: '/configuration/rigs',
+                      ExtrasScreen: '/ticket-types/extra',
+                      MasterLogScreen: '/master-log',
+                      SettingsMenuScreen: '/configuration',
+                      AircraftsScreen: '/configuration/aircrafts',
+                      OperatorSettingsScreen: '/configuration/basic',
+                      PermissionScreen: '/configuration/permissions',
+                      RigInspectionTemplateScreen: '/configuration/rig-inspection',
+                      TransactionsScreen: '/transactions',
                     },
                   },
-                  JumpRunScreen: '/dropzone/weather/jumprun',
-                  WeatherConditionsScreen: '/dropzone/weather',
-                  LoadScreen: '/dropzone/load/:loadId',
-                  WindScreen: '/dropzone/weather/winds',
+                  JumpRunScreen: '/weather/jumprun',
+                  WeatherConditionsScreen: '/weather',
+                  LoadScreen: '/loads/:loadId',
+                  WindScreen: '/weather/winds',
                 },
               },
               Users: {
@@ -73,7 +71,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                   EquipmentScreen: '/user/:userId/equipment',
                   OrdersScreen: '/user/:userId/transactions',
                   OrderReceiptScreen: '/user/:userId/transactions/:orderId/receipt',
-                  RigInspectionScreen: '/user/:dropzoneUserId/rig-inspection/:rig',
+                  RigInspectionScreen: '/user/:membershipId/rig-inspection/:rig',
                 },
               },
               Notifications: {
@@ -87,7 +85,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
       },
       Limbo: {
         screens: {
-          DropzoneSelectScreen: '/select-dropzone',
+          OperatorSelectScreen: '/operators/select',
         },
       },
       Unauthenticated: {
@@ -101,7 +99,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
           ConfirmUserScreen: '/confirm',
           RecoverPasswordScreen: '/recover-password',
           ChangePasswordScreen: '/change-password',
-          DropzoneWizardScreen: '/setup',
+          OperatorWizardScreen: '/setup',
           User: {
             screens: {
               UserListScreen: '/modal/users',
@@ -109,7 +107,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
               EquipmentScreen: '/modal/user/:userId/equipment',
               OrdersScreen: '/modal/user/:userId/transactions',
               OrderReceiptScreen: '/modal/user/:userId/transactions/:orderId/receipt',
-              RigInspectionScreen: '/modal/user/:dropzoneUserId/rig-inspection/:rig',
+              RigInspectionScreen: '/modal/user/:membershipId/rig-inspection/:rig',
             },
           },
         },
@@ -138,7 +136,7 @@ declare global {
 
 export default function RootNavigator() {
   const credentials = useSession((session) => session.credentials);
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
 
   return (
     <Stack.Navigator
@@ -150,7 +148,7 @@ export default function RootNavigator() {
       }}
     >
       {credentials ? (
-        currentDropzoneId ? (
+        currentOperatorId ? (
           <Stack.Screen name="Authenticated" component={LeftDrawer} />
         ) : (
           <Stack.Screen name="Limbo" component={Limbo} />

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { noop } from 'lodash';
 import sameVariables from 'app/utils/sameVariables';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { useAuthenticated } from 'app/state';
 import {
   useCreateTicketTypeMutation,
@@ -27,7 +27,7 @@ import { TMutationResponse, uninitializedHandler } from './factory';
 export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
   const authenticated = useAuthenticated();
   const variables: TicketTypesQueryVariables | undefined = React.useMemo(() => {
-    if (vars?.dropzone) {
+    if (vars?.operator) {
       return vars as TicketTypesQueryVariables;
     }
     return undefined;
@@ -35,15 +35,15 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
 
   const [getTickets, query] = useTicketTypesLazyQuery();
   React.useEffect(() => {
-    if (authenticated && variables?.dropzone && !sameVariables(variables, query.variables)) {
+    if (authenticated && variables?.operator && !sameVariables(variables, query.variables)) {
       console.debug('[Context::Tickets] Fetching tickets', variables);
       getTickets({ variables });
     }
   }, [authenticated, getTickets, query.variables, variables]);
 
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const { loading, fetchMore, data, called, variables: queryVariables } = query;
   const ticketTypes = React.useMemo(() => data?.ticketTypes, [data?.ticketTypes]);
   const [createTicket] = useCreateTicketTypeMutation();
@@ -53,20 +53,20 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
   const [updateAddon] = useUpdateTicketAddonMutation();
 
   const refetch = React.useCallback(() => {
-    if (variables?.dropzone) {
+    if (variables?.operator) {
       query?.refetch();
     }
   }, [query, variables]);
 
   const createTicketType = React.useCallback(
     async function CreateTicketType(
-      attributes: Omit<CreateTicketTypeMutationVariables['attributes'], 'dropzoneId'>
+      attributes: Omit<CreateTicketTypeMutationVariables['attributes'], 'operatorId'>
     ): Promise<TMutationResponse<{ ticketType: TicketTypeEssentialsFragment }>> {
       const response = await createTicket({
         variables: {
-          attributes: { ...attributes, dropzoneId: Number(variables?.dropzone || dropzone?.id) },
+          attributes: { ...attributes, operatorId: Number(variables?.operator || operator?.id) },
         },
-        refetchQueries: [{ query: TicketTypesDocument, variables: { dropzone: dropzone?.id } }],
+        refetchQueries: [{ query: TicketTypesDocument, variables: { operator: operator?.id } }],
       });
 
       if (response?.data?.createTicketType?.ticketType?.id) {
@@ -77,13 +77,13 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
         fieldErrors: response?.data?.createTicketType?.fieldErrors || undefined,
       };
     },
-    [createTicket, dropzone?.id, variables?.dropzone]
+    [createTicket, operator?.id, variables?.operator]
   );
 
   const updateTicketType = React.useCallback(
     async function UpdateTicketType(
       id: number,
-      attributes: Omit<UpdateTicketTypeMutationVariables['attributes'], 'dropzoneId'>
+      attributes: Omit<UpdateTicketTypeMutationVariables['attributes'], 'operatorId'>
     ): Promise<TMutationResponse<{ ticketType: TicketTypeEssentialsFragment }>> {
       const response = await updateTicket({
         variables: { id, attributes: { ...attributes } },
@@ -102,16 +102,16 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
 
   const createTicketTypeAddon = React.useCallback(
     async function CreateTicketTypeAddon(
-      attributes: Omit<CreateTicketAddonMutationVariables['attributes'], 'dropzoneId'>
+      attributes: Omit<CreateTicketAddonMutationVariables['attributes'], 'operatorId'>
     ): Promise<TMutationResponse<{ ticketTypeAddon: TicketTypeAddonDetailsFragment }>> {
       const response = await createAddon({
         variables: {
-          attributes: { ...attributes, dropzoneId: Number(variables?.dropzone || dropzone?.id) },
+          attributes: { ...attributes, operatorId: Number(variables?.operator || operator?.id) },
         },
         refetchQueries: [
           {
             query: TicketTypeExtrasDocument,
-            variables: { dropzoneId: dropzone?.id },
+            variables: { operatorId: operator?.id },
             fetchPolicy: 'network-only',
           },
         ],
@@ -125,13 +125,13 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
         fieldErrors: response?.data?.createExtra?.fieldErrors || undefined,
       };
     },
-    [createAddon, dropzone?.id, variables?.dropzone]
+    [createAddon, operator?.id, variables?.operator]
   );
 
   const updateTicketTypeAddon = React.useCallback(
     async function UpdateTicketTypeAddon(
       id: number,
-      attributes: Omit<UpdateTicketAddonMutationVariables['attributes'], 'dropzoneId'>
+      attributes: Omit<UpdateTicketAddonMutationVariables['attributes'], 'operatorId'>
     ): Promise<TMutationResponse<{ ticketTypeAddon: TicketTypeAddonDetailsFragment }>> {
       const response = await updateAddon({
         variables: { id, attributes: { ...attributes } },
@@ -186,8 +186,8 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
     () => ({
       loading,
       called,
-      refetch: queryVariables?.dropzone ? refetch : noop,
-      fetchMore: queryVariables?.dropzone ? () => fetchMore({ variables }) : uninitializedHandler,
+      refetch: queryVariables?.operator ? refetch : noop,
+      fetchMore: queryVariables?.operator ? () => fetchMore({ variables }) : uninitializedHandler,
       ticketTypes,
       createTicketType,
       createTicketTypeAddon,
@@ -198,7 +198,7 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
     [
       loading,
       called,
-      queryVariables?.dropzone,
+      queryVariables?.operator,
       refetch,
       ticketTypes,
       createTicketType,

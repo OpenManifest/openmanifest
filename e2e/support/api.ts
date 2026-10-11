@@ -19,13 +19,13 @@ export async function createLoadViaApi(): Promise<string | undefined> {
     client: login.headers.get('client') ?? '',
     uid: login.headers.get('uid') ?? '',
   };
-  const { json: dropzones } = await call(
-    '{ dropzones { edges { node { id currentUser { id } } } } }',
+  const { json: operators } = await call(
+    '{ operators { edges { node { id currentUser { id } } } } }',
     auth
   );
-  const dropzone = dropzones.data.dropzones.edges[0].node;
-  const { json: planes } = await call(`{ planes(dropzone: ${dropzone.id}) { id } }`, auth);
-  const member = dropzone.currentUser.id;
+  const operator = operators.data.operators.edges[0].node;
+  const { json: planes } = await call(`{ planes(operator: ${operator.id}) { id } }`, auth);
+  const member = operator.currentUser.id;
   const { json: created } = await call(
     `mutation { createLoad(input: { attributes: { name: "Live ${Date.now()}", plane: ${planes.data.planes[0].id}, maxSlots: 10, pilot: ${member}, gca: ${member} } }) { load { id } errors } }`,
     auth
@@ -33,7 +33,7 @@ export async function createLoadViaApi(): Promise<string | undefined> {
   return created?.data?.createLoad?.load?.id;
 }
 
-/** Registers a brand new user who has not joined the dropzone. Returns the email. */
+/** Registers a brand new user who has not joined the operator. Returns the email. */
 export async function registerNewUser(): Promise<string> {
   const email = `newjumper+${Date.now()}@example.com`;
   const { json } = await call(

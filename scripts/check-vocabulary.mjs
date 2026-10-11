@@ -30,7 +30,9 @@ if (markdown) {
   const width = Math.max(4, ...rows.map((row) => row[1].length));
   console.log(`${'term'.padEnd(width)}  group           hits  allowed`);
   rows.forEach(([group, old, , hits, ok]) =>
-    console.log(`${old.padEnd(width)}  ${group.padEnd(14)}  ${String(hits).padStart(4)}  ${String(ok).padStart(7)}`)
+    console.log(
+      `${old.padEnd(width)}  ${group.padEnd(14)}  ${String(hits).padStart(4)}  ${String(ok).padStart(7)}`
+    )
   );
   console.log('\nby directory:');
   directories.forEach(([dir, n]) => console.log(`  ${dir.padEnd(24)} ${n}`));

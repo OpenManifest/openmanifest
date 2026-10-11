@@ -23,11 +23,11 @@ export default function PlaneChip(props: IPlaneChipSelect) {
   const { small, color: assignedColor, backgroundColor, value, onSelect } = props;
   const theme = useTheme();
   const color = assignedColor || theme.colors.onSurface;
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
 
   const { data } = usePlanesQuery({
     variables: {
-      dropzoneId: currentDropzoneId?.toString() as string,
+      operatorId: currentOperatorId?.toString() as string,
     },
   });
   const allowed = useRestriction(Permission.UpdateLoad);

@@ -6,8 +6,8 @@ import isEqual from 'lodash/isEqual';
 import xorBy from 'lodash/xorBy';
 import { yupResolver } from '@hookform/resolvers/yup';
 import type {
-  DropzoneUserEssentialsFragment,
-  DropzoneUserProfileFragment,
+  MembershipEssentialsFragment,
+  MembershipProfileFragment,
   LoadDetailsFragment,
   RigEssentialsFragment,
   SlotDetailsFragment,
@@ -72,12 +72,12 @@ export const EMPTY_FORM_VALUES: ManifestGroupFields = {
   users: [],
 };
 
-/** Turns members into jumpers for the group, each with the first of their rigs (or the dropzone's) */
+/** Turns members into jumpers for the group, each with the first of their rigs (or the operator's) */
 export function toSlotUsers(
-  dropzoneUsers: (DropzoneUserProfileFragment | DropzoneUserEssentialsFragment)[]
+  memberships: (MembershipProfileFragment | MembershipEssentialsFragment)[]
 ): SlotUserWithRig[] {
-  return dropzoneUsers.map((dzUser) => {
-    const profile = dzUser as DropzoneUserProfileFragment;
+  return memberships.map((dzUser) => {
+    const profile = dzUser as MembershipProfileFragment;
     const autoSelectedRig = profile?.user?.rigs?.length
       ? first(profile.user.rigs)
       : first(profile.availableRigs);
@@ -96,9 +96,9 @@ export function toSlotUsers(
 /** Adds the members that are not in the group yet and removes the ones that are */
 export function toggleSlotUsers(
   current: SlotUserWithRig[],
-  dropzoneUsers: (DropzoneUserProfileFragment | DropzoneUserEssentialsFragment)[]
+  memberships: (MembershipProfileFragment | MembershipEssentialsFragment)[]
 ): SlotUserWithRig[] {
-  return xorBy(current, toSlotUsers(dropzoneUsers), 'id');
+  return xorBy(current, toSlotUsers(memberships), 'id');
 }
 
 export interface IManifestGroupInitial {
@@ -106,7 +106,7 @@ export interface IManifestGroupInitial {
   /** The slots of the group being edited */
   slots?: SlotDetailsFragment[];
   /** Members to start the group with */
-  users?: (DropzoneUserProfileFragment | DropzoneUserEssentialsFragment)[];
+  users?: (MembershipProfileFragment | MembershipEssentialsFragment)[];
 }
 
 export function toFormValues(initial: IManifestGroupInitial): ManifestGroupFields {
@@ -122,7 +122,7 @@ export function toFormValues(initial: IManifestGroupInitial): ManifestGroupField
     ...(slots
       ? {
           users: slots.map((slot) => ({
-            id: Number(slot.dropzoneUser?.id),
+            id: Number(slot.membership?.id),
             rigId: slot.rig?.id ? Number(slot.rig.id) : null,
             rig: slot.rig,
             exitWeight: Number(slot.exitWeight),

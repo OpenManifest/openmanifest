@@ -6,7 +6,7 @@ import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { MasterLogInput } from 'app/api/schema.d';
 import { useNotifications } from 'app/providers/notifications';
 import { useUpdateMasterLogMutation } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/providers';
+import { useOperatorContext } from 'app/providers';
 import { MasterLogEntryFragment, MasterLogUserFragment } from 'app/api/operations';
 import { camelCase, isEqual } from 'lodash';
 
@@ -54,8 +54,8 @@ export default function useMasterLogForm(opts: IUseMasterLogFormOpts) {
 
   const { handleSubmit, reset, setError } = methods;
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const [updateMasterLog] = useUpdateMasterLogMutation();
 
   React.useEffect(() => {
@@ -66,15 +66,15 @@ export default function useMasterLogForm(opts: IUseMasterLogFormOpts) {
     async (fields: MasterLogFields) => {
       try {
         const validatedFields = masterLogValidation.validateSync(fields);
-        console.debug({ validatedFields, dropzone });
-        if (!dropzone?.id) {
+        console.debug({ validatedFields, operator });
+        if (!operator?.id) {
           return;
         }
 
         const { data: response } = await updateMasterLog({
           variables: {
             date: validatedFields.date,
-            dropzone: dropzone?.id,
+            operator: operator?.id,
             attributes: {
               dzso: validatedFields.dzso?.id,
               notes: validatedFields.notes,
@@ -98,7 +98,7 @@ export default function useMasterLogForm(opts: IUseMasterLogFormOpts) {
         }
       }
     },
-    [dropzone, updateMasterLog]
+    [operator, updateMasterLog]
   );
 
   const { notes, dzso } = useWatch<MasterLogFields>({ control: methods.control });

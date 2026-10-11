@@ -21,7 +21,7 @@ interface IManifestFormProps {
 export default function ManifestForm(props: IManifestFormProps) {
   const { control } = props;
 
-  const { id, dropzoneUser, ticketType, load } = useWatch<ManifestUserFields>({ control });
+  const { id, membership, ticketType, load } = useWatch<ManifestUserFields>({ control });
 
   const allowedToManifestOthers = useRestriction(
     id ? Permission.UpdateUserSlot : Permission.CreateUserSlot
@@ -33,7 +33,7 @@ export default function ManifestForm(props: IManifestFormProps) {
       <JumpTypeChipSelectField
         {...{ control }}
         name="jumpType"
-        userId={Number(dropzoneUser?.id) || null}
+        userId={Number(membership?.id) || null}
       />
 
       <TicketTypeChipSelectField
@@ -59,13 +59,13 @@ export default function ManifestForm(props: IManifestFormProps) {
         name="extras"
       />
       <Divider />
-      {!dropzoneUser ? null : (
+      {!membership ? null : (
         <RigSelectField
           {...{ control }}
           loadId={load?.id ? Number(load?.id) : undefined}
           name="rig"
           label="Equipment"
-          dropzoneUserId={Number(dropzoneUser?.id)}
+          membershipId={Number(membership?.id)}
         />
       )}
       <FormNumberField

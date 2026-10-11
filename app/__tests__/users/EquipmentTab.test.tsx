@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import { Permission } from 'app/api/schema.d';
 import { currentUserDetailed } from 'app/__fixtures__/currentUser.fixture';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import EquipmentTab from '../../screens/authenticated/user/profile/tabs/Equipment';
 import { render } from '../../__mocks__/render';
 
@@ -16,22 +16,22 @@ jest.mock('@react-navigation/native', () => ({
   useIsFocused: () => true,
 }));
 
-/** Shows once the dropzone's permissions have loaded, so absence checks are not vacuous */
+/** Shows once the operator's permissions have loaded, so absence checks are not vacuous */
 function LoadedProbe() {
   const {
-    dropzone: { permissions, currentUser },
-  } = useDropzoneContext();
+    operator: { permissions, currentUser },
+  } = useOperatorContext();
   return permissions && currentUser ? <Text testID="loaded">loaded</Text> : null;
 }
 
 const SELF = currentUserDetailed as never;
 const OTHER_MEMBER = { ...currentUserDetailed, id: '999' } as never;
 
-function renderTab(dropzoneUser: never, permissions: Permission[]) {
+function renderTab(membership: never, permissions: Permission[]) {
   return render(
     <>
       <LoadedProbe />
-      <EquipmentTab dropzoneUser={dropzoneUser} tabIndex={2} currentTabIndex={2} />
+      <EquipmentTab membership={membership} tabIndex={2} currentTabIndex={2} />
     </>,
     { session: authenticatedSession, permissions, graphql: [] }
   );

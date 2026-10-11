@@ -6,7 +6,7 @@ import { expect, gotoRoute, test } from './support/test';
 test.describe('profile @profile', () => {
   // The signed in user's own profile, through the drawer
   test('own profile opens from the drawer', async ({ page }) => {
-    await gotoRoute(page, '/dropzone/manifest');
+    await gotoRoute(page, '/manifest');
     await openDrawer(page);
     await page.getByText('Profile', { exact: true }).last().click({ force: true });
     await page.waitForTimeout(4000);
@@ -20,7 +20,7 @@ test.describe('profile as a jumper @profile', () => {
   test.use({ role: 'jumper' });
 
   test('a fun jumper reaches their own profile', async ({ page }) => {
-    await gotoRoute(page, '/dropzone/manifest');
+    await gotoRoute(page, '/manifest');
     await openDrawer(page);
     await page.getByText('Profile', { exact: true }).last().click({ force: true });
     await page.waitForTimeout(4000);

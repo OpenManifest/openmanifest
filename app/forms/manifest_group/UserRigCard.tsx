@@ -13,7 +13,7 @@ import RigSelect from 'app/components/input/dropdown_select/RigSelect';
 import NumberField, { NumberFieldType } from 'app/components/input/number_input/NumberField';
 
 interface IUserRigCard {
-  dropzoneUserId: string;
+  membershipId: string;
   exitWeight?: number;
   isTandem?: boolean;
   selectedRig?: RigEssentialsFragment;
@@ -29,7 +29,7 @@ interface IUserRigCard {
 
 export default function UserRigCard(props: IUserRigCard) {
   const {
-    dropzoneUserId,
+    membershipId,
     onChangeRig,
     exitWeight,
     selectedRig,
@@ -43,22 +43,22 @@ export default function UserRigCard(props: IUserRigCard) {
   } = props;
   const { theme } = useAppTheme();
 
-  const { dropzoneUser, loading } = useUserProfile({
-    id: dropzoneUserId,
+  const { membership, loading } = useUserProfile({
+    id: membershipId,
   });
 
   React.useEffect(() => {
-    if (!exitWeight && dropzoneUser?.user?.exitWeight) {
-      onChangeExitWeight(Number(dropzoneUser.user.exitWeight));
+    if (!exitWeight && membership?.user?.exitWeight) {
+      onChangeExitWeight(Number(membership.user.exitWeight));
     }
-  }, [dropzoneUser?.user.exitWeight, exitWeight, onChangeExitWeight]);
+  }, [membership?.user.exitWeight, exitWeight, onChangeExitWeight]);
   return (
     <Card style={{ marginHorizontal: 16, marginBottom: 16 }} elevation={1}>
       <ProgressBar indeterminate color={theme.colors.primary} visible={loading} />
       <Card.Title
-        title={dropzoneUser?.user.name}
+        title={membership?.user.name}
         left={() => (
-          <UserAvatar name={dropzoneUser?.user?.name} image={dropzoneUser?.user?.image} size={36} />
+          <UserAvatar name={membership?.user?.name} image={membership?.user?.image} size={36} />
         )}
         titleStyle={{ paddingRight: 0 }}
         right={() => (
@@ -80,7 +80,7 @@ export default function UserRigCard(props: IUserRigCard) {
             <RigSelect
               small
               variant="chip"
-              dropzoneUserId={dropzoneUserId ? Number(dropzoneUserId) : undefined}
+              membershipId={membershipId ? Number(membershipId) : undefined}
               onChange={onChangeRig}
               value={selectedRig}
               tandem={isTandem}
@@ -93,10 +93,10 @@ export default function UserRigCard(props: IUserRigCard) {
             </Chip>
           )}
           <Chip small icon="lock" mode="outlined" disabled>
-            {dropzoneUser?.role?.name}
+            {membership?.role?.name}
           </Chip>
           <Chip small icon="ticket-account" mode="outlined" disabled>
-            {dropzoneUser?.license?.name}
+            {membership?.license?.name}
           </Chip>
         </ScrollView>
         {!isTandem ? null : (

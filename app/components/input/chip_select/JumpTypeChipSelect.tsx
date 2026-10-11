@@ -19,11 +19,11 @@ interface IJumpTypeSelect {
 
 function JumpTypeChipSelect(props: IJumpTypeSelect) {
   const { onLoadingStateChanged, userId, value, onChange, error } = props;
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
   const { data, loading } = useAllowedJumpTypesQuery({
     variables: {
-      allowedForDropzoneUserIds: [Number(userId) || null].filter(Boolean) as number[],
-      dropzoneId: currentDropzoneId?.toString() as string,
+      allowedForMembershipIds: [Number(userId) || null].filter(Boolean) as number[],
+      operatorId: currentOperatorId?.toString() as string,
     },
     onError: console.error,
   });
@@ -42,14 +42,14 @@ function JumpTypeChipSelect(props: IJumpTypeSelect) {
         autoSelectFirst
         items={
           uniqBy(
-            [...(data?.dropzone?.allowedJumpTypes || []), ...(data?.jumpTypes || [])],
+            [...(data?.operator?.allowedJumpTypes || []), ...(data?.jumpTypes || [])],
             ({ id }) => id
           ) || []
         }
         value={[value].filter(Boolean) as JumpType[]}
         renderItemLabel={(jumpType) => jumpType?.name || 'Unknown'}
         isDisabled={(jumpType) =>
-          !data?.dropzone?.allowedJumpTypes?.map(({ id }) => id).includes(jumpType?.id)
+          !data?.operator?.allowedJumpTypes?.map(({ id }) => id).includes(jumpType?.id)
         }
         onChange={([first]) => (first ? onChange(first) : null)}
       />

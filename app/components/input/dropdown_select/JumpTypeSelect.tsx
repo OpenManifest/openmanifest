@@ -7,18 +7,18 @@ import { withHookForm } from '../withHookForm';
 
 interface IJumpTypeSelect {
   value?: JumpTypeEssentialsFragment | null;
-  allowedForDropzoneUserIds?: number[] | null;
+  allowedForMembershipIds?: number[] | null;
   onChange(jt: JumpTypeEssentialsFragment): void;
 }
 
 function JumpTypeSelect(props: IJumpTypeSelect) {
-  const { allowedForDropzoneUserIds, onChange, value } = props;
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const { allowedForMembershipIds, onChange, value } = props;
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
 
   const { data } = useAllowedJumpTypesQuery({
     variables: {
-      dropzoneId: currentDropzoneId?.toString() as string,
-      allowedForDropzoneUserIds: allowedForDropzoneUserIds as number[],
+      operatorId: currentOperatorId?.toString() as string,
+      allowedForMembershipIds: allowedForMembershipIds as number[],
     },
   });
 
