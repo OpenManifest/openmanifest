@@ -13,10 +13,12 @@ const federation = yup.object() as yup.SchemaOf<FederationEssentialsFragment>;
 const license = yup.object() as yup.SchemaOf<LicenseEssentialsFragment>;
 
 export const validation = yup.object({
-  license: license.nullable().default(null)
+  license: license.nullable().default(null),
 });
 
-type StepFields = { [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K] };
+type StepFields = {
+  [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K];
+};
 
 export function useStep(): WizardFormStep<StepFields> {
   const { dropzoneUser } = useUserProfileContext();
@@ -25,9 +27,9 @@ export function useStep(): WizardFormStep<StepFields> {
     () => ({
       defaultValues: {
         federation: dropzoneUser?.license?.federation,
-        license: dropzoneUser?.license
+        license: dropzoneUser?.license,
       },
-      validation
+      validation,
     }),
     [dropzoneUser?.license]
   );
@@ -48,7 +50,9 @@ function LicenseStep(props: IWizardStepProps) {
             render={({ field: { value, onChange: onSelect }, fieldState }) => (
               <>
                 <LicenseCardSelect {...{ value, onSelect }} federationId={Number(federation?.id)} />
-                <HelperText type={fieldState.error ? 'error' : 'info'}>{fieldState.error?.message || ''}</HelperText>
+                <HelperText type={fieldState.error ? 'error' : 'info'}>
+                  {fieldState.error?.message || ''}
+                </HelperText>
               </>
             )}
           />

@@ -8,6 +8,7 @@ import { FormNumberField } from 'app/components/input/number_input';
 import { DropzoneUserDetailsFragment } from 'app/api/operations';
 import { NumberFieldType } from '../../components/input/number_input/NumberField';
 import { CreditFields } from './useForm';
+import { formatCents, fromCents } from 'app/utils/money';
 
 interface ICreditsFormProps {
   control: Control<CreditFields>;
@@ -19,8 +20,8 @@ export default function CreditsForm(props: ICreditsFormProps) {
 
   const subtotal =
     type === TransactionType.Deposit
-      ? (dropzoneUser?.credits || 0) + amount
-      : (dropzoneUser?.credits || 0) - amount;
+      ? fromCents(dropzoneUser?.creditsCents) + amount
+      : fromCents(dropzoneUser?.creditsCents) - amount;
   return (
     <>
       <FormTextField
@@ -41,7 +42,7 @@ export default function CreditsForm(props: ICreditsFormProps) {
         <DataTable>
           <DataTable.Row>
             <DataTable.Title>Current balance</DataTable.Title>
-            <DataTable.Cell numeric>{`$${dropzoneUser?.credits || 0}`}</DataTable.Cell>
+            <DataTable.Cell numeric>{formatCents(dropzoneUser?.creditsCents)}</DataTable.Cell>
           </DataTable.Row>
           <DataTable.Row>
             <DataTable.Title>

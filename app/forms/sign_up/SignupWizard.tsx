@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Wizard } from 'app/components/carousel_wizard';
 import { FormProvider } from 'react-hook-form';
 import { useNotifications } from 'app/providers/notifications';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import PasswordStep from './steps/Password';
 import EmailStep from './steps/Email';
 import PasswordConfirmationStep from './steps/PasswordConfirmation';

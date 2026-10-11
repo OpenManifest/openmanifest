@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { UserWizardScreen } from 'app/forms/user_wizard';
-import { NavigationProp, NavigatorScreenParams, useNavigation } from '@react-navigation/core';
+import { NavigationProp, NavigatorScreenParams, useNavigation } from '@react-navigation/native';
 
 import DropzoneWizardScreen from './dropzone_wizard/DropzoneWizard';
 import RecoverPasswordScreen from './recover_password/RecoverPasswordScreen';
@@ -33,7 +33,7 @@ export default function Routes() {
       screenOptions={{
         headerShown: false,
         presentation: 'modal',
-        cardStyle: { flex: 1 }
+        cardStyle: { flex: 1 },
       }}
     >
       <Wizards.Screen name="DropzoneWizardScreen" component={DropzoneWizardScreen} />

@@ -24,7 +24,8 @@ export default createMockedQuery<CurrentUserPermissionsQueryVariables, CurrentUs
         role: {
           __typename: 'UserRole',
           id: '1',
-          name: 'jest',
+          // Same role as `currentUserDetailed`: both write DropzoneUser 123's role, and the last one to arrive wins.
+          name: 'fun_jumper',
           dropzoneId: 1,
         },
         permissions: [],

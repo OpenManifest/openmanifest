@@ -1,12 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/core';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { Avatar } from 'react-native-paper';
 import { successColor, warningColor } from '../../../constants/Colors';
 import LottieView from '../../../components/LottieView';
 import { useConfirmUserMutation } from '../../../api/reflection';
-import { actions, useAppDispatch } from '../../../state';
-import { User } from '../../../api/schema.d';
+import { useSession } from '../../../state';
 
 function ConfirmUserScreen() {
   const route = useRoute<{
@@ -15,7 +14,7 @@ function ConfirmUserScreen() {
 
     params?: { token?: string };
   }>();
-  const dispatch = useAppDispatch();
+  const setCredentials = useSession((session) => session.setCredentials);
   const [confirmUser, mutation] = useConfirmUserMutation();
   const animation = React.useRef<LottieView>(null);
   const [error, setError] = React.useState(false);
@@ -25,13 +24,12 @@ function ConfirmUserScreen() {
     if (route?.params?.token) {
       confirmUser({
         variables: {
-          token: route.params.token
-        }
+          token: route.params.token,
+        },
       })
         .then(({ data, errors }) => {
           if (data?.userConfirmRegistrationWithToken?.credentials?.accessToken) {
-            dispatch(actions.global.setCredentials(data.userConfirmRegistrationWithToken.credentials));
-            dispatch(actions.global.setUser(data.userConfirmRegistrationWithToken.authenticatable as User));
+            setCredentials(data.userConfirmRegistrationWithToken.credentials);
             navigation.navigate('Limbo', { screen: 'DropzoneSelectScreen' });
           } else {
             setError(true);
@@ -41,7 +39,7 @@ function ConfirmUserScreen() {
           setError(true);
         });
     }
-  }, [confirmUser, dispatch, navigation, route.params?.token]);
+  }, [confirmUser, navigation, route.params?.token, setCredentials]);
 
   if (mutation.loading) {
     return (
@@ -55,7 +53,7 @@ function ConfirmUserScreen() {
             width: 120,
             height: 120,
             marginTop: 24,
-            marginBottom: 32
+            marginBottom: 32,
           }}
           source={require('../../../../assets/images/loading.json')}
         />
@@ -84,24 +82,24 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#EFEFEF',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   icon: {
     backgroundColor: successColor,
-    marginBottom: 16
+    marginBottom: 16,
   },
   errorIcon: {
     backgroundColor: warningColor,
-    marginBottom: 16
+    marginBottom: 16,
   },
   title: {
     fontSize: 38,
-    marginBottom: 16
+    marginBottom: 16,
   },
   subtitle: {
     fontSize: 26,
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
 
 export default ConfirmUserScreen;

@@ -1,18 +1,19 @@
 import * as React from 'react';
+import { useWatch } from 'react-hook-form';
 import { Animated, StyleSheet, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { Step, IWizardStepProps } from 'app/components/carousel_wizard';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useDropzoneWizardFields } from '../useDropzoneWizardForm';
 import { calculateLatLngDelta } from 'app/utils/calculateLatLngDelta';
 import MapView from 'app/components/map/Map';
 import AddressSearchBar from 'app/components/input/search/AddressSearchBar';
-import { useIsFocused } from '@react-navigation/core';
+import { useIsFocused } from '@react-navigation/native';
 
 function LocationWizardStep(props: IWizardStepProps) {
-  const state = useAppSelector((root) => root.forms.dropzone);
+  const { control, setField } = useDropzoneWizardFields();
+  const [name, lat, lng] = useWatch({ control, name: ['name', 'lat', 'lng'] });
   const [searchText, setSearchText] = React.useState('');
-  const dispatch = useAppDispatch();
   const [center, setCenter] = React.useState<{ lat: number; lng: number }>();
 
   const setUsersLocation = React.useCallback(async () => {
@@ -23,34 +24,34 @@ function LocationWizardStep(props: IWizardStepProps) {
       }
       const location = await Location.getCurrentPositionAsync({});
 
-      dispatch(actions.forms.dropzone.setField(['lat', location.coords.latitude]));
-      dispatch(actions.forms.dropzone.setField(['lng', location.coords.longitude]));
+      setField('lat', location.coords.latitude);
+      setField('lng', location.coords.longitude);
 
       setCenter({
         lat: location.coords.latitude,
-        lng: location.coords.longitude
+        lng: location.coords.longitude,
       });
     } catch (error) {
       console.log(error);
     }
-  }, [dispatch]);
+  }, [setField]);
 
   // Start at user location
   React.useEffect(() => {
-    if (state.fields.lat.value === null || state.fields.lng.value == null) {
+    if (lat === null || lng == null) {
       setUsersLocation();
     }
-  }, [setUsersLocation, state.fields.lat.value, state.fields.lng.value]);
+  }, [setUsersLocation, lat, lng]);
 
   const opacity = React.useRef(new Animated.Value(0));
 
   const region =
-    state.fields.lat.value && state.fields.lng.value
+    lat && lng
       ? {
-          latitude: state.fields.lat.value,
-          longitude: state.fields.lng.value,
-          latitudeDelta: calculateLatLngDelta(state.fields.lat.value),
-          longitudeDelta: calculateLatLngDelta(state.fields.lat.value)
+          latitude: lat,
+          longitude: lng,
+          latitudeDelta: calculateLatLngDelta(lat),
+          longitudeDelta: calculateLatLngDelta(lat),
         }
       : undefined;
 
@@ -58,14 +59,14 @@ function LocationWizardStep(props: IWizardStepProps) {
     Animated.timing(opacity.current, {
       duration: 100,
       toValue: 0.0,
-      useNativeDriver: true
+      useNativeDriver: true,
     })
   );
   const fadeIn = React.useRef(
     Animated.timing(opacity.current, {
       duration: 100,
       toValue: 1.0,
-      useNativeDriver: true
+      useNativeDriver: true,
     })
   );
   const setCoordinateFade = React.useCallback((visible: boolean) => {
@@ -84,14 +85,18 @@ function LocationWizardStep(props: IWizardStepProps) {
     <Step {...props} title="Location" hideContentUntilNavigatedTo>
       <MapView
         mapStyle={{
-          ...StyleSheet.absoluteFillObject
+          ...StyleSheet.absoluteFill,
         }}
         position={{
           x: 0,
-          y: 0
+          y: 0,
         }}
         {...{ height, width }}
-        coords={region?.latitude && region?.longitude ? { lat: region?.latitude, lng: region?.longitude } : undefined}
+        coords={
+          region?.latitude && region?.longitude
+            ? { lat: region?.latitude, lng: region?.longitude }
+            : undefined
+        }
         onDragStart={() => {
           setDragging(true);
           setCoordinateFade(false);
@@ -102,8 +107,8 @@ function LocationWizardStep(props: IWizardStepProps) {
           fadeIn.current?.stop();
           setCoordinateFade(true);
           setDragging(false);
-          dispatch(actions.forms.dropzone.setField(['lat', r.lat]));
-          dispatch(actions.forms.dropzone.setField(['lng', r.lng]));
+          setField('lat', r.lat);
+          setField('lng', r.lng);
         }}
         interactive
       >
@@ -117,10 +122,10 @@ function LocationWizardStep(props: IWizardStepProps) {
                 textShadowColor: 'rgba(14,14,14,0.8)',
                 textShadowOffset: {
                   width: 5,
-                  height: 5
+                  height: 5,
                 },
                 textShadowRadius: 10,
-                zIndex: 10
+                zIndex: 10,
               }}
               name={isDragging ? 'map-marker' : 'map-marker-check-outline'}
             />
@@ -143,8 +148,8 @@ function LocationWizardStep(props: IWizardStepProps) {
             onChange={setSearchText}
             autocomplete
             onSelect={(item) => {
-              dispatch(actions.forms.dropzone.setField(['lat', item.lat]));
-              dispatch(actions.forms.dropzone.setField(['lng', item.lng]));
+              setField('lat', item.lat ?? null);
+              setField('lng', item.lng ?? null);
             }}
           />
         </View>
@@ -158,9 +163,9 @@ function LocationWizardStep(props: IWizardStepProps) {
             textShadowColor: 'rgba(14,14,14,0.8)',
             textShadowOffset: {
               width: 3,
-              height: 3
+              height: 3,
             },
-            textShadowRadius: 10
+            textShadowRadius: 10,
           }}
         >
           {!region?.latitude || !region?.longitude ? null : (
@@ -178,7 +183,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 48,
     alignItems: 'center',
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
   titleContainer: {
     position: 'absolute',
@@ -187,7 +192,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
   },
   title: {
     fontSize: 30,
@@ -198,26 +203,26 @@ const styles = StyleSheet.create({
     textShadowRadius: 10,
     textShadowOffset: {
       width: 2,
-      height: 2
-    }
+      height: 2,
+    },
   },
   markerFixed: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'center',
     zIndex: 100,
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   content: {
     width: '100%',
     justifyContent: 'space-around',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   card: {
     padding: 0,
     paddingVertical: 16,
     marginVertical: 16,
-    width: '100%'
+    width: '100%',
   },
   myLocation: {
     position: 'absolute',
@@ -225,8 +230,8 @@ const styles = StyleSheet.create({
     right: 30,
     backgroundColor: 'white',
     borderRadius: 50,
-    padding: 12
-  }
+    padding: 12,
+  },
 });
 
 export default LocationWizardStep;

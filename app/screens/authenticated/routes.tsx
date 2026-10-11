@@ -1,14 +1,13 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Text } from 'react-native';
 
-import { useAppSelector } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { ModerationRole, Permission } from 'app/api/schema.d';
 
 import { useTheme } from 'react-native-paper';
 
-import { NavigatorScreenParams } from '@react-navigation/core';
+import { NavigatorScreenParams } from '@react-navigation/native';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { AppSignalBoundary } from 'app/components/app_signal';
 import ManifestTab, { DropzoneRoutes } from './dropzone/routes';
@@ -17,6 +16,8 @@ import NotificationsTab, { NotificationRoutes } from './notifications/routes';
 import OverviewTab, { OverviewRoutes } from './overview/routes';
 
 import BottomTab from './TabBar';
+import { useAppTheme } from 'app/theme';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 export type AuthenticatedRoutes = {
   Manifest: NavigatorScreenParams<DropzoneRoutes>;
@@ -26,10 +27,10 @@ export type AuthenticatedRoutes = {
 };
 
 export default function AuthenticatedTabBar() {
-  const { palette } = useAppSelector((root) => root.global);
+  const { palette } = useAppTheme();
 
   const {
-    dropzone: { currentUser }
+    dropzone: { currentUser },
   } = useDropzoneContext();
   const isAdmin = currentUser?.user?.moderationRole !== ModerationRole.User;
   const canViewUsers = useRestriction(Permission.ReadUser);
@@ -39,39 +40,39 @@ export default function AuthenticatedTabBar() {
 
   const screenOptions = React.useMemo(
     () => ({
-      tabBarActiveTintColor: theme.colors.primary,
+      tabBarActiveTintColor: '#FFFFFF',
+      tabBarActiveBackgroundColor: palette.primary.main,
+      tabBarInactiveTintColor: palette.primary.main,
       tabBarInactiveBackgroundColor: theme.dark ? theme.colors.backdrop : theme.colors.surface,
-      tabBarActiveBackgroundColor: theme.colors.surface,
-      tabBarInactiveTintColor: '#CCCCCC',
       tabBarShowLabel: Platform.OS !== 'web',
+      tabBarLabel: ({ children, color }: { children: string; color: string }) => (
+        <Text
+          maxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
+          numberOfLines={1}
+          style={[styles.tabLabel, { color }]}
+        >
+          {children}
+        </Text>
+      ),
       headerShown: false,
       tabBarStyle: {
         backgroundColor: theme.dark ? theme.colors.background : '#FFFFFF',
         borderTopWidth: StyleSheet.hairlineWidth,
-        borderTopColor: '#CCCCCC'
-      }
+        borderTopColor: '#CCCCCC',
+      },
     }),
-    [theme.colors.backdrop, theme.colors.background, theme.colors.primary, theme.colors.surface, theme.dark]
+    [
+      palette.primary.main,
+      theme.colors.backdrop,
+      theme.colors.background,
+      theme.colors.surface,
+      theme.dark,
+    ]
   );
 
   return (
     <AppSignalBoundary>
-      <BottomTab.Navigator
-        // @ts-ignore
-        appearance={{
-          tabBarBackground: theme.colors.surface,
-          topPadding: 16,
-          shadow: true,
-          bottomPadding: 16
-        }}
-        tabBarOptions={{
-          activeTintColor: '#FFFFFF',
-          inactiveTintColor: palette.primary.main,
-          activeBackgroundColor: palette.primary.main
-        }}
-        initialRouteName="Manifest"
-        {...{ screenOptions }}
-      >
+      <BottomTab.Navigator initialRouteName="Manifest" {...{ screenOptions }}>
         {(canViewDashboard || isAdmin) && (
           <BottomTab.Screen
             name="Overview"
@@ -84,7 +85,6 @@ export default function AuthenticatedTabBar() {
                   style={[styles.icon, focused ? styles.iconActive : undefined]}
                 />
               ),
-              unmountOnBlur: false
             }}
           />
         )}
@@ -99,7 +99,6 @@ export default function AuthenticatedTabBar() {
                 style={[styles.icon, focused ? styles.iconActive : undefined]}
               />
             ),
-            unmountOnBlur: false
           }}
         />
         <BottomTab.Screen
@@ -113,7 +112,7 @@ export default function AuthenticatedTabBar() {
                 {...{ size, color }}
               />
             ),
-            unmountOnBlur: true
+            popToTopOnBlur: true,
           }}
         />
         {canViewUsers && (
@@ -128,7 +127,7 @@ export default function AuthenticatedTabBar() {
                   style={[styles.icon, focused ? styles.iconActive : undefined]}
                 />
               ),
-              unmountOnBlur: true
+              popToTopOnBlur: true,
             }}
           />
         )}
@@ -138,14 +137,15 @@ export default function AuthenticatedTabBar() {
 }
 
 const styles = StyleSheet.create({
+  tabLabel: { fontSize: 10, textAlign: 'center' },
   icon: {
-    opacity: 0.75
+    opacity: 0.75,
   },
   iconActive: {
-    opacity: 1.0
+    opacity: 1.0,
   },
   label: {
     color: '#FFFFFF',
-    fontSize: 12
-  }
+    fontSize: 12,
+  },
 });

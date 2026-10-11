@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version-file: .nvmrc
       - uses: expo/expo-github-action@v7
         with:
           expo-version: latest
@@ -80,8 +80,6 @@ jobs:
           GOOGLE_MAPS_WEB: ${{ secrets.GOOGLE_MAPS_WEB }}
           GOOGLE_MAPS_IOS: ${{ secrets.GOOGLE_MAPS_IOS }}
           GOOGLE_MAPS_ANDROID: ${{ secrets.GOOGLE_MAPS_ANDROID }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          SENTRY_API_KEY: ${{ secrets.SENTRY_API_KEY }}
           NODE_OPTIONS: --max_old_space_size=4096
           APPSIGNAL_STAGING_API_KEY: ${{ secrets.APPSIGNAL_STAGING_API_KEY }}
           APPSIGNAL_PRODUCTION_API_KEY: ${{ secrets.APPSIGNAL_PRODUCTION_API_KEY }}
@@ -91,7 +89,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ steps.environment.outputs.EXPO_ENV == 'staging' }}
         with:
-          publish_dir: ./web-build
+          publish_dir: ./dist
           deploy_key: ${{ secrets.WEB_DEPLOY_KEY_STAGING }}
           external_repository: ${{ steps.environment.outputs.REPOSITORY }}
           cname: ${{ steps.environment.outputs.CNAME }}
@@ -99,7 +97,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ steps.environment.outputs.EXPO_ENV == 'production' }}
         with:
-          publish_dir: ./web-build
+          publish_dir: ./dist
           deploy_key: ${{ secrets.WEB_DEPLOY_KEY_PRODUCTION }}
           external_repository: ${{ steps.environment.outputs.REPOSITORY }}
           cname: ${{ steps.environment.outputs.CNAME }}
@@ -112,7 +110,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version-file: .nvmrc
       - run: yarn install --frozen-lockfile
       - name: Determine version cache key
         id: version-environment-cache

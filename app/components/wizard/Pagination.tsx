@@ -1,19 +1,22 @@
 import * as React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-paper';
-import { PaginationProps } from 'react-native-swiper-flatlist';
 import { successColor } from '../../constants/Colors';
 
-interface IWizardPagination extends PaginationProps {
+interface IWizardPagination {
+  // Number of steps
+  size: number;
+  paginationIndex?: number;
   icons?: string[];
+  /** Width of the wizard, which the connecting bars are sized from */
+  width: number;
 }
 export default function WizardPagination(props: IWizardPagination) {
-  const { size, paginationIndex, icons } = props;
+  const { size, paginationIndex, icons, width } = props;
 
-  const { width } = Dimensions.get('window');
-  const screenWidth = width > 500 ? 500 : width;
+  const available = width > 500 ? 500 : width;
 
-  const bridgeLength = (screenWidth - 48 * 2 - size * 30) / size;
+  const bridgeLength = Math.max(0, (available - 48 * 2 - size * 30) / size);
 
   return (
     <View style={styles.pagination}>
@@ -36,7 +39,7 @@ export default function WizardPagination(props: IWizardPagination) {
                 style={[
                   styles.bridge,
                   { width: bridgeLength },
-                  (paginationIndex || 0) > index ? styles.bridgeDone : undefined
+                  (paginationIndex || 0) > index ? styles.bridgeDone : undefined,
                 ]}
               />
             ) : null}
@@ -50,26 +53,26 @@ export default function WizardPagination(props: IWizardPagination) {
 const styles = StyleSheet.create({
   pagination: {
     flexDirection: 'row',
-    position: 'absolute',
-    top: 100,
-    alignSelf: 'center'
+    alignSelf: 'center',
+    marginTop: 16,
+    marginBottom: 8,
   },
   bridge: {
     height: 10,
     marginTop: 10,
     marginLeft: -2,
     width: 50,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   bridgeDone: {
-    backgroundColor: successColor
+    backgroundColor: successColor,
   },
   icon: {
     backgroundColor: 'white',
-    marginLeft: -1
+    marginLeft: -1,
   },
   iconDone: {
     backgroundColor: successColor,
-    marginLeft: -1
-  }
+    marginLeft: -1,
+  },
 });

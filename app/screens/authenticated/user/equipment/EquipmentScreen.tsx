@@ -1,27 +1,31 @@
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/core';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 
 import { FlatList } from 'react-native-gesture-handler';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import createUseDialog from 'app/providers/hooks/useDialog';
+import type { RigEssentialsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
-import RigDialog from 'app/components/dialogs/Rig';
+import RigDialog from 'app/forms/rig';
 
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { useUserProfile } from 'app/api/crud';
 import RigCard from './RigCard';
+import { useAppTheme } from 'app/theme';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 export type EquipmentRoute = {
   EquipmentScreen: {
     userId: string;
   };
 };
+const useRigDialog = createUseDialog<{ rig?: RigEssentialsFragment }>();
+
 export default function EquipmentScreen() {
-  const globalState = useAppSelector((root) => root.global);
-  const forms = useAppSelector((root) => root.forms);
-  const dispatch = useAppDispatch();
+  const { theme } = useAppTheme();
+  const rigDialog = useRigDialog();
   const {
     dropzone: { currentUser },
   } = useDropzoneContext();
@@ -60,25 +64,26 @@ export default function EquipmentScreen() {
               (insp) => insp.rig?.id === item.id && insp.isOk
             )}
             onPress={() => {
-              dispatch(actions.forms.rig.setOpen(item));
+              rigDialog.open({ rig: item });
             }}
           />
         )}
       />
 
       <FAB
+        labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
         small
-        style={[styles.fab, { backgroundColor: globalState.theme.colors.primary }]}
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         visible={canUpdateUser}
         icon="plus"
-        onPress={() => dispatch(actions.forms.rig.setOpen(true))}
+        onPress={() => rigDialog.open({})}
         label="Add rig"
       />
 
       <RigDialog
-        onClose={() => dispatch(actions.forms.rig.setOpen(false))}
-        onSuccess={() => requestAnimationFrame(() => dispatch(actions.forms.rig.setOpen(false)))}
-        open={forms.rig.open}
+        onClose={rigDialog.close}
+        open={rigDialog.visible}
+        rig={rigDialog.state?.rig}
         userId={Number(dropzoneUser?.user?.id)}
       />
     </>

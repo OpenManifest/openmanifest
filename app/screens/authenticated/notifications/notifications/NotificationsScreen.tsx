@@ -1,7 +1,7 @@
-import { useIsFocused } from '@react-navigation/core';
+import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ProgressBar } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 // import gql from 'graphql-tag';
 
 import { FlatList } from 'react-native-gesture-handler';
@@ -9,7 +9,6 @@ import { NotificationType } from 'app/api/schema.d';
 import { useNotificationsLazyQuery } from 'app/api/reflection';
 import { NotificationsQueryVariables } from 'app/api/operations';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
-import { useAppSelector } from '../../../../state';
 import NoResults from '../../../../components/NoResults';
 
 import ManifestedCard from './Cards/Manifested';
@@ -18,9 +17,10 @@ import FundsNotification from './Cards/Funds';
 import RigInspectionNotification from './Cards/RigInspection';
 import PermissionNotification from './Cards/Permission';
 import PublicationRequestNotification from './Cards/PublicationRequest';
+import { useAppTheme } from 'app/theme';
 
 export default function NotificationScreen() {
-  const state = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const {
     dropzone: { dropzone },
   } = useDropzoneContext();
@@ -56,9 +56,7 @@ export default function NotificationScreen() {
 
   return (
     <View style={StyleSheet.absoluteFill}>
-      {loading && (
-        <ProgressBar color={state.theme.colors.primary} indeterminate visible={loading} />
-      )}
+      {loading && <ProgressBar color={theme.colors.primary} indeterminate visible={loading} />}
       <FlatList
         ListEmptyComponent={() => (
           <View style={styles.empty}>
@@ -121,7 +119,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   empty: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     height: '100%',
     flexGrow: 1,
     flex: 1,

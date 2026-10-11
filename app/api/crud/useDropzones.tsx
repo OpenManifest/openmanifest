@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useAppSelector } from 'app/state';
+import { useAuthenticated } from 'app/state';
 import { useAppSignal } from 'app/components/app_signal';
-import { isEqual } from 'lodash';
+import sameVariables from 'app/utils/sameVariables';
 import {
   useDropzonesLazyQuery,
   useDropzonesQuery,
@@ -12,8 +12,7 @@ import createCRUDContext, { uninitializedHandler, TMutationResponse } from './fa
 import { DropzoneStateEvent } from '../schema.d';
 
 export default function useDropzones(vars: Partial<DropzonesQueryVariables>) {
-  const state = useAppSelector((root) => root.global);
-  const { authenticated } = state;
+  const authenticated = useAuthenticated();
   const variables: DropzonesQueryVariables = React.useMemo(
     () => ({
       state: vars?.state,
@@ -24,7 +23,7 @@ export default function useDropzones(vars: Partial<DropzonesQueryVariables>) {
   const [getDropzones, query] = useDropzonesLazyQuery();
 
   React.useEffect(() => {
-    if (authenticated && (!isEqual(variables, query.variables) || !query.called)) {
+    if (authenticated && (!sameVariables(variables, query.variables) || !query.called)) {
       console.debug('[Context::Dropzones] Fetching dropzones', variables);
       getDropzones({ variables });
     }

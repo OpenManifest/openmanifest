@@ -10,7 +10,7 @@ import createMockedQuery from '../../manifest/__mocks__/createMockedQuery.mock';
 export const profileSlot = {
   __typename: 'Slot' as const,
   id: '900',
-  cost: 25,
+  costCents: 2500,
   createdAt: new Date().toISOString(),
   exitWeight: 100,
   passengerName: null,
@@ -31,7 +31,7 @@ export default createMockedQuery<DropzoneUserProfileQueryVariables, DropzoneUser
   {
     dropzoneUser: {
       ...currentUserDetailed,
-      credits: 100,
+      creditsCents: 10000,
       slots: {
         __typename: 'SlotConnection',
         edges: [{ __typename: 'SlotEdge', node: profileSlot as never }],

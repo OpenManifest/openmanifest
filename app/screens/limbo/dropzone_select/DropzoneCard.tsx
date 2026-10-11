@@ -1,19 +1,23 @@
 import * as React from 'react';
 import { StyleSheet, View, ImageBackground } from 'react-native';
 import { Avatar, Text } from 'react-native-paper';
-import { StackActions, useNavigation } from '@react-navigation/core';
-import { DropzoneEssentialsFragment, DropzoneExtensiveFragment } from 'app/api/operations';
+import { StackActions, useNavigation } from '@react-navigation/native';
+import { DropzoneEssentialsFragment } from 'app/api/operations';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Color from 'color';
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
+import { useSession } from '../../../state';
+import useSelectDropzone from '../../../hooks/useSelectDropzone';
+
+/** Width of a card including its margin */
+export const DROPZONE_CARD_SIZE = 160 + 2 * 16;
 
 interface DropzoneCardProps {
   dropzone: DropzoneEssentialsFragment;
 }
 export default function DropzonesScreen(props: DropzoneCardProps) {
   const { dropzone } = props;
-  const dispatch = useAppDispatch();
-  const globalState = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const selectDropzone = useSelectDropzone();
   const navigation = useNavigation();
 
   const nameLines = dropzone?.name?.split(/\s/) || [];
@@ -34,10 +38,10 @@ export default function DropzonesScreen(props: DropzoneCardProps) {
       style={{ alignSelf: 'center' }}
       onPress={async () => {
         if (dropzone) {
-          const shouldPushRoute = !!globalState.currentDropzoneId;
-          dispatch(actions.global.setDropzone(dropzone as DropzoneExtensiveFragment));
+          const shouldPushRoute = !!currentDropzoneId;
+          const selected = await selectDropzone(dropzone);
 
-          if (shouldPushRoute) {
+          if (selected && shouldPushRoute) {
             navigation.dispatch(
               StackActions.replace('Authenticated', {
                 screen: 'LeftDrawer',
@@ -56,7 +60,12 @@ export default function DropzonesScreen(props: DropzoneCardProps) {
       {dropzone?.banner ? (
         <View style={styles.cardContainer}>
           <ImageBackground source={{ uri: dropzone?.banner as string }} style={styles.banner}>
-            <Text style={styles.title} numberOfLines={1}>
+            <Text
+              style={styles.title}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              accessibilityLabel={dropzone.name ?? undefined}
+            >
               {dropzone.name}
             </Text>
           </ImageBackground>

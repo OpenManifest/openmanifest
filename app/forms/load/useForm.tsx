@@ -5,12 +5,14 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useManifestContext } from 'app/providers/manifest/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
-import useManifestValidator from 'app/hooks/useManifestValidator';
 import { camelCase, isEqual } from 'lodash';
 import { LoadState } from 'app/api/schema.d';
 import { useNotifications } from 'app/providers/notifications';
+import withDefaults from 'app/forms/initialValues';
 
-export type LoadFields = Required<Pick<LoadDetailsFragment, 'gca' | 'pilot' | 'maxSlots' | 'plane' | 'isOpen'>> &
+export type LoadFields = Required<
+  Pick<LoadDetailsFragment, 'gca' | 'pilot' | 'maxSlots' | 'plane' | 'isOpen'>
+> &
   Pick<LoadDetailsFragment, 'name'> & { id?: string | null };
 
 export const loadValidation = yup.object({
@@ -21,7 +23,7 @@ export const loadValidation = yup.object({
   original: yup.object().nullable(),
   maxSlots: yup.number().required('You must specify max slots').default(0),
   id: yup.string().nullable(),
-  isOpen: yup.boolean().default(true)
+  isOpen: yup.boolean().default(true),
 });
 
 export const EMPTY_FORM_VALUES: Partial<LoadFields> = {
@@ -30,7 +32,7 @@ export const EMPTY_FORM_VALUES: Partial<LoadFields> = {
   pilot: null,
   plane: undefined,
   maxSlots: 0,
-  name: null
+  name: null,
 };
 
 export interface IUseManifestFormOpts {
@@ -41,13 +43,13 @@ export interface IUseManifestFormOpts {
 export default function useManifestForm(opts: IUseManifestFormOpts) {
   const { initial, onSuccess } = opts;
   const notify = useNotifications();
-  const initialValues = React.useMemo(() => ({ ...EMPTY_FORM_VALUES, ...initial }), [initial]);
+  const initialValues = React.useMemo(() => withDefaults(EMPTY_FORM_VALUES, initial), [initial]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
 
   const methods = useForm<LoadFields>({
     defaultValues,
     mode: 'all',
-    resolver: yupResolver(loadValidation)
+    resolver: yupResolver(loadValidation),
   });
   React.useEffect(() => {
     if (!isEqual(defaultValues, initialValues)) {
@@ -62,9 +64,8 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    manifest: { createLoad }
+    manifest: { createLoad },
   } = useManifestContext();
-  const { canManifest } = useManifestValidator();
 
   const { plane } = useWatch<LoadFields>({ control });
 
@@ -77,7 +78,6 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
   const [{ loading }, onManifest] = useAsyncFn(
     async (fields: LoadFields) => {
       try {
-        await canManifest();
         const validatedFields = loadValidation.validateSync(fields);
 
         const response = await createLoad({
@@ -86,9 +86,13 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           pilot: validatedFields.pilot?.id,
           plane: validatedFields.plane?.id,
           maxSlots: Number(validatedFields.maxSlots),
-          name: validatedFields.name
+          name: validatedFields.name,
         });
 
+        if ('error' in response && response.error) {
+          // Errors of the load as a whole, e.g. "Every load must have a GCA"
+          notify.error(response.error);
+        }
         if ('fieldErrors' in response) {
           response.fieldErrors?.forEach(({ field, message }) => {
             const camelizedField = camelCase(field);
@@ -105,7 +109,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
         }
       }
     },
-    [createLoad]
+    [createLoad, notify, setError, onSuccess]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onManifest), [handleSubmit, onManifest]);

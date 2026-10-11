@@ -2,7 +2,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
 import { DropzoneEssentialsFragment } from 'app/api/operations';
-import { NavigationProp, useNavigation } from '@react-navigation/core';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import AppBar from 'app/components/appbar/AppBar';
 import { AppSignalBoundary } from 'app/components/app_signal';
 import SettingsMenuScreen from './settings_menu/SettingsMenuScreen';
@@ -43,8 +43,8 @@ export default function SettingsTab() {
           headerShown: true,
           header: (props) => <AppBar {...props} />,
           cardStyle: {
-            flex: 1
-          }
+            flex: 1,
+          },
         }}
       >
         <Configuration.Screen
@@ -57,13 +57,21 @@ export default function SettingsTab() {
           component={DropzoneSettingsScreen}
           options={{ title: 'Basic settings' }}
         />
-        <Configuration.Screen name="AircraftsScreen" component={PlanesScreen} options={{ title: 'Planes' }} />
+        <Configuration.Screen
+          name="AircraftsScreen"
+          component={PlanesScreen}
+          options={{ title: 'Planes' }}
+        />
         <Configuration.Screen
           name="TicketTypesScreen"
           component={TicketTypeSettingsScreen}
           options={{ title: 'Ticket types' }}
         />
-        <Configuration.Screen name="ExtrasScreen" component={ExtrasScreen} options={{ title: 'Ticket add-ons' }} />
+        <Configuration.Screen
+          name="ExtrasScreen"
+          component={ExtrasScreen}
+          options={{ title: 'Ticket add-ons' }}
+        />
         <Configuration.Screen
           name="RigInspectionTemplateScreen"
           component={RigInspectionTemplateScreen}

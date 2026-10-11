@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
-import { useAppSelector } from 'app/state';
 import { View } from 'react-native';
-import { Tabs, TabScreen } from 'react-native-paper-tabs';
+import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
 import JumpHistoryTab from './JumpHistory';
 import FundTab from './Transactions';
 import EquipmentTab from './Equipment';
+import { useAppTheme } from 'app/theme';
 
 // const ProfileTabs = createMaterialTopTabNavigator();
 
@@ -16,7 +16,7 @@ interface IProfileTabsProps {
 export enum ProfileTabs {
   Funds = 0,
   Jumps = 1,
-  Equipment = 2
+  Equipment = 2,
 }
 
 export function ProfileTab(props: {
@@ -28,34 +28,38 @@ export function ProfileTab(props: {
     return <FundTab {...{ dropzoneUser }} tabIndex={ProfileTabs.Funds} currentTabIndex={active} />;
   }
   if (active === ProfileTabs.Equipment) {
-    return <EquipmentTab {...{ dropzoneUser }} tabIndex={ProfileTabs.Equipment} currentTabIndex={active} />;
+    return (
+      <EquipmentTab
+        {...{ dropzoneUser }}
+        tabIndex={ProfileTabs.Equipment}
+        currentTabIndex={active}
+      />
+    );
   }
   if (active === ProfileTabs.Jumps) {
-    return <JumpHistoryTab {...{ dropzoneUser }} tabIndex={ProfileTabs.Jumps} currentTabIndex={active} />;
+    return (
+      <JumpHistoryTab {...{ dropzoneUser }} tabIndex={ProfileTabs.Jumps} currentTabIndex={active} />
+    );
   }
   return null;
 }
 export default function TabBar(props: IProfileTabsProps) {
   const { onChange } = props;
-  const { colors, dark } = useAppSelector((state) => state.global.theme);
+  const { colors, dark } = useAppTheme().theme;
 
   return (
-    <Tabs
-      defaultIndex={ProfileTabs.Jumps}
-      disableSwipe
-      style={{ backgroundColor: colors.surface }}
-      mode="fixed"
-      dark={dark}
-    >
-      <TabScreen label="Funds" icon="cash" key="funds" onPress={() => onChange(0)}>
-        <View />
-      </TabScreen>
-      <TabScreen label="Jumps" icon="airplane-takeoff" key="jumps" onPress={() => onChange(1)}>
-        <View />
-      </TabScreen>
-      <TabScreen label="Equipment" icon="parachute" key="equipment" onPress={() => onChange(2)}>
-        <View />
-      </TabScreen>
-    </Tabs>
+    <TabsProvider defaultIndex={ProfileTabs.Jumps}>
+      <Tabs disableSwipe style={{ backgroundColor: colors.surface }} mode="fixed" dark={dark}>
+        <TabScreen label="Funds" icon="cash" key="funds" onPress={() => onChange(0)}>
+          <View />
+        </TabScreen>
+        <TabScreen label="Jumps" icon="airplane-takeoff" key="jumps" onPress={() => onChange(1)}>
+          <View />
+        </TabScreen>
+        <TabScreen label="Equipment" icon="parachute" key="equipment" onPress={() => onChange(2)}>
+          <View />
+        </TabScreen>
+      </Tabs>
+    </TabsProvider>
   );
 }

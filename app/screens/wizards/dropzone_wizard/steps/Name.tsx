@@ -1,11 +1,12 @@
 import * as React from 'react';
+import { useController } from 'react-hook-form';
 import TextInput from 'app/components/input/text/TextField';
 import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useDropzoneWizardFields } from '../useDropzoneWizardForm';
 
 function Name(props: IWizardStepProps) {
-  const state = useAppSelector((root) => root.forms.dropzone);
-  const dispatch = useAppDispatch();
+  const { control, setField } = useDropzoneWizardFields();
+  const { field, fieldState } = useController({ name: 'name', control });
 
   return (
     <Step {...props} title="Name">
@@ -13,9 +14,9 @@ function Name(props: IWizardStepProps) {
         <TextInput
           mode="flat"
           label="Name"
-          error={state.fields.name.error}
-          value={state.fields.name.value || ''}
-          onChange={(newValue) => dispatch(actions.forms.dropzone.setField(['name', newValue]))}
+          error={fieldState.error?.message}
+          value={field.value}
+          onChange={(newValue) => setField('name', newValue)}
         />
       </Fields>
     </Step>

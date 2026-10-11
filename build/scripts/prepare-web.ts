@@ -8,8 +8,8 @@ import { publish } from 'gh-pages';
 
 const ROOT_DIR = join(__dirname, '..', '..');
 const WEB_BUILD_DIRECTORY = join(ROOT_DIR, 'build', 'web');
-const WEB_TEMPLATE_FILES = join(ROOT_DIR, 'web');
-const DEFAULT_EXPO_WEB_OUTPUT = join(ROOT_DIR, 'web-build');
+const WEB_TEMPLATE_FILES = join(ROOT_DIR, 'public');
+const DEFAULT_EXPO_WEB_OUTPUT = join(ROOT_DIR, 'dist');
 
 // Delete the current build directory
 if (existsSync(WEB_BUILD_DIRECTORY)) {
@@ -44,7 +44,7 @@ globSync(join(WEB_TEMPLATE_FILES, '**', '*'), { dot: true }).forEach((file) => {
 
 // Check if expo has built the web app, and if not, throw
 if (!existsSync(DEFAULT_EXPO_WEB_OUTPUT) || globSync(join(DEFAULT_EXPO_WEB_OUTPUT, '**', '*')).length === 0) {
-  throw new Error(`No files found in ${DEFAULT_EXPO_WEB_OUTPUT}. Did you run expo build:web?`);
+  throw new Error(`No files found in ${DEFAULT_EXPO_WEB_OUTPUT}. Did you run expo export --platform web?`);
 }
 
 if (['production', 'staging'].includes(getEnvironment())) {

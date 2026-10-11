@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Paragraph, useTheme, IconButton } from 'react-native-paper';
 import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import Color from 'color';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 
 interface ISetupWarning {
@@ -36,7 +36,7 @@ function Warning(props: { title: string; action?: () => void }) {
       </Paragraph>
       {!action ? null : (
         <View style={{ width: 40 }}>
-          <IconButton icon="launch" color={textColor} onPress={action} style={{ width: 24 }} />
+          <IconButton icon="launch" iconColor={textColor} onPress={action} style={{ width: 24 }} />
         </View>
       )}
     </View>
@@ -53,11 +53,11 @@ export default function SetupWarning(props: ISetupWarning) {
     isMembershipInDate,
     isReserveInDate,
     isRigInspectionComplete,
-    onSetupWizard
+    onSetupWizard,
   } = props;
   const navigation = useNavigation();
   const {
-    dropzone: { currentUser }
+    dropzone: { currentUser },
   } = useDropzoneContext();
 
   if (loading) {
@@ -65,10 +65,16 @@ export default function SetupWarning(props: ISetupWarning) {
   }
 
   if (!isExitWeightDefined || !isRigSetUp) {
-    const missing = [!isExitWeightDefined ? 'exit weight' : null, !isRigSetUp ? 'equipment' : null].filter(Boolean);
+    const missing = [
+      !isExitWeightDefined ? 'exit weight' : null,
+      !isRigSetUp ? 'equipment' : null,
+    ].filter(Boolean);
 
     return (
-      <Warning title={`You need to define ${missing.join(' and ')} in your profile`} action={() => onSetupWizard?.()} />
+      <Warning
+        title={`You need to define ${missing.join(' and ')} in your profile`}
+        action={() => onSetupWizard?.()}
+      />
     );
   }
   if (!isMembershipInDate) {
@@ -89,9 +95,9 @@ export default function SetupWarning(props: ISetupWarning) {
               screen: 'Manifest',
               params: {
                 screen: 'User',
-                params: { screen: 'EquipmentScreen', params: { userId: currentUser.id } }
-              }
-            }
+                params: { screen: 'EquipmentScreen', params: { userId: currentUser.id } },
+              },
+            },
           })
         }
       />
@@ -108,10 +114,11 @@ const styles = StyleSheet.create({
   warning: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 56,
+    minHeight: 56,
+    paddingVertical: 8,
     width: '100%',
     backgroundColor: 'black',
     justifyContent: 'space-between',
-    paddingHorizontal: 16
-  }
+    paddingHorizontal: 16,
+  },
 });

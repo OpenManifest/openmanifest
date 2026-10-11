@@ -18,19 +18,19 @@ export interface ISwipeActions {
 export default function SwipeActions(props: ISwipeActions) {
   const { children, rightAction, disabled } = props;
 
-  const ref = React.useRef<Swipeable | null>();
+  const ref = React.useRef<Swipeable | null>(null);
   const rightActions = (
     progress: Animated.AnimatedInterpolation<string | number>,
     dragX: Animated.AnimatedInterpolation<string | number>
   ) => {
     const scale = dragX.interpolate({
       inputRange: [-100, 0],
-      outputRange: [1.0, 0]
+      outputRange: [1.0, 0],
     });
 
     const translateX = dragX.interpolate({
       inputRange: [-150, 0],
-      outputRange: [0, 10]
+      outputRange: [0, 10],
     });
 
     return (
@@ -48,7 +48,7 @@ export default function SwipeActions(props: ISwipeActions) {
             justifyContent: 'center',
             height: '100%',
             width: 75,
-            transform: [{ translateX }]
+            transform: [{ translateX }],
           }}
         >
           <Animated.Text
@@ -56,7 +56,7 @@ export default function SwipeActions(props: ISwipeActions) {
               color: 'white',
               paddingHorizontal: 10,
               fontWeight: '600',
-              transform: [{ scale }]
+              transform: [{ scale }],
             }}
           >
             {rightAction?.label}
@@ -71,7 +71,6 @@ export default function SwipeActions(props: ISwipeActions) {
       ref={ref}
       enabled={!disabled}
       renderRightActions={rightActions}
-      childrenContainerStyle={{ height: '100%' }}
       useNativeAnimations
     >
       {children}

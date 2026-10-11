@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useAppSelector } from 'app/state';
+import { NetworkStatus } from '@apollo/client';
+import { useSession } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import uniqBy from 'lodash/uniqBy';
 import {
@@ -9,7 +10,7 @@ import {
   useMoveSlotMutation,
   useDeleteSlotMutation,
   useCreateLoadMutation,
-  LoadDocument
+  LoadDocument,
 } from '../reflection';
 import {
   CreateLoadMutationVariables,
@@ -19,16 +20,17 @@ import {
   ManifestGroupMutationVariables,
   ManifestUserMutationVariables,
   MoveSlotMutationVariables,
-  SlotExhaustiveFragment
+  SlotExhaustiveFragment,
 } from '../operations';
 import { TMutationResponse } from './factory';
 import { Permission } from '../schema.d';
+import { useDropzoneTimeZone } from 'app/hooks/useDropzoneToday';
 import { useLoadCreated } from './subscriptions/useLoadCreatedSubscription';
 
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
 
 export default function useManifest({ dropzone, date }: UseManifestOptions) {
-  const state = useAppSelector((root) => root.global);
+  const accessToken = useSession((session) => session.credentials?.accessToken);
 
   const canCreateLoad = useRestriction(Permission.CreateLoad);
   const canDeleteOwnSlot = useRestriction(Permission.DeleteSlot);
@@ -47,7 +49,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
       canManifestSelf,
       canManifestOthers,
       canUpdateSlot,
-      canUpdateOwnSlot
+      canUpdateOwnSlot,
     }),
     [
       canAddTransaction,
@@ -57,7 +59,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
       canManifestOthers,
       canManifestSelf,
       canUpdateOwnSlot,
-      canUpdateSlot
+      canUpdateSlot,
     ]
   );
 
@@ -67,14 +69,16 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
     }
     return {
       dropzone,
-      date
+      date,
     };
   }, [date, dropzone]);
 
   const query = useLoadsQuery({
     initialFetchPolicy: 'cache-first',
+    // So that a refetch (pull to refresh) reports its own status
+    notifyOnNetworkStatusChange: true,
     variables,
-    skip: !state?.credentials?.accessToken || !dropzone
+    skip: !accessToken || !dropzone,
   });
 
   const [moveSlotMutation] = useMoveSlotMutation();
@@ -82,9 +86,10 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
   const [manifestGroupMutation] = useManifestGroupMutation();
   const [manifestUserMutation] = useManifestUserMutation();
   const [createLoadMutation] = useCreateLoadMutation();
-  useLoadCreated(variables as LoadsQueryVariables);
+  const timeZone = useDropzoneTimeZone();
+  useLoadCreated(variables as LoadsQueryVariables, timeZone);
 
-  const { loading, fetchMore, refetch, data, called, updateQuery } = query;
+  const { loading, fetchMore, refetch, data, called, updateQuery, networkStatus } = query;
 
   const moveSlot = React.useCallback(
     async function MoveSlot(
@@ -95,24 +100,24 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
         variables: mutationVariables,
         refetchQueries: [
           { query: LoadDocument, variables: { id: sourceLoad } },
-          { query: LoadDocument, variables: { id: mutationVariables?.targetLoad?.toString() } }
-        ]
+          { query: LoadDocument, variables: { id: mutationVariables?.targetLoad?.toString() } },
+        ],
       });
 
       if (result?.data?.moveSlot?.fieldErrors?.length || result?.data?.moveSlot?.errors?.length) {
         return {
           error: result?.data?.moveSlot?.errors?.[0],
-          fieldErrors: result?.data?.moveSlot?.fieldErrors || undefined
+          fieldErrors: result?.data?.moveSlot?.fieldErrors || undefined,
         };
       }
       if (result.data?.moveSlot?.loads) {
         return {
-          loads: result.data.moveSlot.loads
+          loads: result.data.moveSlot.loads,
         };
       }
       return {
         error: result?.errors?.[0]?.message,
-        fieldErrors: undefined
+        fieldErrors: undefined,
       };
     },
     [moveSlotMutation]
@@ -124,20 +129,23 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
     ): Promise<TMutationResponse<{ slot: SlotExhaustiveFragment }>> {
       const result = await manifestUserMutation({ variables: mutationVariables });
 
-      if (result?.data?.createSlot?.fieldErrors?.length || result?.data?.createSlot?.errors?.length) {
+      if (
+        result?.data?.createSlot?.fieldErrors?.length ||
+        result?.data?.createSlot?.errors?.length
+      ) {
         return {
           error: result?.data?.createSlot?.errors?.[0],
-          fieldErrors: result?.data?.createSlot?.fieldErrors || undefined
+          fieldErrors: result?.data?.createSlot?.fieldErrors || undefined,
         };
       }
       if (result.data?.createSlot?.slot) {
         return {
-          slot: result.data.createSlot.slot
+          slot: result.data.createSlot.slot,
         };
       }
       return {
         error: result?.errors?.[0]?.message,
-        fieldErrors: undefined
+        fieldErrors: undefined,
       };
     },
     [manifestUserMutation]
@@ -149,20 +157,23 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
     ): Promise<TMutationResponse<{ load: LoadDetailsFragment }>> {
       const result = await manifestGroupMutation({ variables: mutationVariables });
 
-      if (result?.data?.createSlots?.fieldErrors?.length || result?.data?.createSlots?.errors?.length) {
+      if (
+        result?.data?.createSlots?.fieldErrors?.length ||
+        result?.data?.createSlots?.errors?.length
+      ) {
         return {
           error: result?.data?.createSlots?.errors?.[0],
-          fieldErrors: result?.data?.createSlots?.fieldErrors || undefined
+          fieldErrors: result?.data?.createSlots?.fieldErrors || undefined,
         };
       }
       if (result.data?.createSlots?.load?.id) {
         return {
-          load: result.data.createSlots.load
+          load: result.data.createSlots.load,
         };
       }
       return {
         error: result?.errors?.[0]?.message,
-        fieldErrors: undefined
+        fieldErrors: undefined,
       };
     },
     [manifestGroupMutation]
@@ -174,20 +185,23 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
     ): Promise<TMutationResponse<{ slot: SlotExhaustiveFragment }>> {
       const result = await deleteSlotMutation({ variables: mutationVariables });
 
-      if (result?.data?.deleteSlot?.fieldErrors?.length || result?.data?.deleteSlot?.errors?.length) {
+      if (
+        result?.data?.deleteSlot?.fieldErrors?.length ||
+        result?.data?.deleteSlot?.errors?.length
+      ) {
         return {
           error: result?.data?.deleteSlot?.errors?.[0],
-          fieldErrors: result?.data?.deleteSlot?.fieldErrors || undefined
+          fieldErrors: result?.data?.deleteSlot?.fieldErrors || undefined,
         };
       }
       if (result.data?.deleteSlot?.slot?.id) {
         return {
-          slot: result.data.deleteSlot?.slot
+          slot: result.data.deleteSlot?.slot,
         };
       }
       return {
         error: result?.errors?.[0]?.message,
-        fieldErrors: undefined
+        fieldErrors: undefined,
       };
     },
     [deleteSlotMutation]
@@ -199,10 +213,13 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
     ): Promise<TMutationResponse<{ load: LoadDetailsFragment }>> {
       const result = await createLoadMutation({ variables: mutationVariables });
 
-      if (result?.data?.createLoad?.fieldErrors?.length || result?.data?.createLoad?.errors?.length) {
+      if (
+        result?.data?.createLoad?.fieldErrors?.length ||
+        result?.data?.createLoad?.errors?.length
+      ) {
         return {
           error: result?.data?.createLoad?.errors?.[0],
-          fieldErrors: result?.data?.createLoad?.fieldErrors || undefined
+          fieldErrors: result?.data?.createLoad?.fieldErrors || undefined,
         };
       }
       if (result?.data?.createLoad?.load?.id) {
@@ -216,16 +233,16 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
                 ? previous?.loads?.edges
                 : [{ node: load, __typename: 'LoadEdge' }, ...(previous?.loads?.edges || [])],
               (edge) => edge?.node?.id
-            )
-          }
+            ),
+          },
         }));
         return {
-          load: result.data.createLoad.load
+          load: result.data.createLoad.load,
         };
       }
       return {
         error: result?.errors?.[0]?.message,
-        fieldErrors: undefined
+        fieldErrors: undefined,
       };
     },
     [createLoadMutation, updateQuery]
@@ -234,6 +251,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
   return React.useMemo(
     () => ({
       loading,
+      refreshing: networkStatus === NetworkStatus.refetch,
       called,
       refetch,
       fetchMore,
@@ -244,7 +262,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
       createLoad,
       permissions,
       variables,
-      loads: data?.loads?.edges?.map((edge) => edge?.node) || []
+      loads: data?.loads?.edges?.map((edge) => edge?.node) || [],
     }),
     [
       called,
@@ -254,11 +272,12 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
       deleteSlot,
       fetchMore,
       loading,
+      networkStatus,
       permissions,
       manifestGroup,
       manifestUser,
       moveSlot,
-      refetch
+      refetch,
     ]
   );
 }

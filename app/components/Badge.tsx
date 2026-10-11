@@ -2,8 +2,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Chip } from 'react-native-paper';
-import { useAppSelector } from '../state';
 import { Permission } from '../api/schema.d';
+import { useAppTheme } from 'app/theme';
 
 export interface IBadgeProps {
   disabled?: boolean;
@@ -19,13 +19,13 @@ export interface IBadgeProps {
 
 function Badge(props: IBadgeProps) {
   const { type, selected, disabled, onPress } = props;
-  const { palette } = useAppSelector((root) => root.global);
+  const { palette } = useAppTheme();
   const iconName = {
     [Permission.ActAsDzso]: 'shield-cross',
     [Permission.ActAsGca]: 'radio-handheld',
     [Permission.ActAsLoadMaster]: 'shield-account',
     [Permission.ActAsPilot]: 'account-tie-hat',
-    [Permission.ActAsRigInspector]: 'shield-search'
+    [Permission.ActAsRigInspector]: 'shield-search',
   }[type];
 
   const label = {
@@ -33,15 +33,17 @@ function Badge(props: IBadgeProps) {
     [Permission.ActAsGca]: 'GCA',
     [Permission.ActAsLoadMaster]: 'Load Master',
     [Permission.ActAsPilot]: 'Pilot',
-    [Permission.ActAsRigInspector]: 'Rig Inspector'
+    [Permission.ActAsRigInspector]: 'Rig Inspector',
   }[type];
 
   return (
     <Chip
       mode={selected ? 'outlined' : 'flat'}
-      style={[styles.chip, { borderColor: palette.primary.dark }, selected ? undefined : { opacity: 0.5 }].filter(
-        Boolean
-      )}
+      style={[
+        styles.chip,
+        { borderColor: palette.primary.dark },
+        selected ? undefined : { opacity: 0.5 },
+      ].filter(Boolean)}
       disabled={disabled}
       onPress={() => onPress?.()}
     >
@@ -68,12 +70,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'transparent',
     borderColor: 'white',
-    width: 'auto'
+    width: 'auto',
   },
   innerChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 30
-  }
+    height: 30,
+  },
 });
 export default Badge;

@@ -1,38 +1,21 @@
 import * as React from 'react';
 import { Text, TextInput, View } from 'react-native';
-import '@testing-library/jest-native';
 import { CreateOrderDocument } from 'app/api/reflection';
 import { useDropzoneContext } from 'app/providers';
 import { useUserProfile } from 'app/api/crud';
 import { Button } from 'react-native-paper';
 import { dropzoneExtensive } from 'app/__fixtures__/dropzone.fixture';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import CreditSheet from '../../forms/credits/Credits';
+import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-    credentials: {
-      accessToken: 'jest',
-      client: 'jest',
-      uid: 'jest@example.com',
-      tokenType: 'Bearer',
-      expiry: 9999999999,
-    },
-    currentDropzoneId: 1,
-  },
-};
 
 const MEMBER = {
   __typename: 'DropzoneUser',
   id: '77',
   walletId: 'member-wallet',
-  credits: 20,
+  creditsCents: 2000,
   user: { __typename: 'User', id: '77', name: 'Member Jumper' },
 };
 
@@ -52,7 +35,7 @@ function renderSheet(mutationResult: jest.Mock, variables: Record<string, unknow
       <CreditSheet open dropzoneUser={MEMBER} onClose={jest.fn()} />
     </View>,
     {
-      initialState: authenticatedState,
+      session: authenticatedSession,
       graphql: [
         {
           request: { query: CreateOrderDocument, operationName: 'CreateOrder', variables },
@@ -79,7 +62,7 @@ describe('<CreditSheet />', () => {
   it('a deposit of 50 sells credits from the dropzone wallet to the member wallet', async () => {
     const mutationResult = orderResult();
     const screen = renderSheet(mutationResult, {
-      amount: 50,
+      amountCents: 5000,
       title: 'Added funds',
       seller: MEMBER.walletId,
       buyer: dropzoneExtensive.walletId,
@@ -114,14 +97,14 @@ describe('<CreditSheet />', () => {
         <Withdraw />
       </View>,
       {
-        initialState: authenticatedState,
+        session: authenticatedSession,
         graphql: [
           {
             request: {
               query: CreateOrderDocument,
               operationName: 'CreateOrder',
               variables: {
-                amount: 15,
+                amountCents: 1500,
                 title: 'Withdrew funds',
                 buyer: MEMBER.walletId,
                 seller: dropzoneExtensive.walletId,

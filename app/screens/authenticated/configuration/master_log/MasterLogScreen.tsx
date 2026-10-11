@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Card, DataTable, IconButton, List, Paragraph } from 'react-native-paper';
 import { Linking, View } from 'react-native';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import { Screen } from 'app/components/layout';
 import DatePicker from 'app/components/input/date_picker/DatePicker';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
@@ -32,14 +32,14 @@ export default function DropzoneMasterLogScreen() {
           value={date ? DateTime.fromISO(date).toSeconds() : DateTime.local().toSeconds()}
           color={theme.text}
         />
-      )
+      ),
     });
   }, [date, navigation, theme.text]);
 
   const variables: MasterLogQueryVariables = React.useMemo(
     () => ({
       dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
-      date
+      date,
     }),
     [currentDropzone?.dropzone?.id, date]
   );
@@ -57,9 +57,9 @@ export default function DropzoneMasterLogScreen() {
     initial: {
       date,
       notes: entry?.notes,
-      dzso: entry?.dzso
+      dzso: entry?.dzso,
     },
-    onSuccess: () => setIsEditing(false)
+    onSuccess: () => setIsEditing(false),
   });
 
   return (
@@ -67,7 +67,9 @@ export default function DropzoneMasterLogScreen() {
       <View style={{ width: '100%', paddingTop: 48 }}>
         <Card>
           <Card.Title
-            right={() => <IconButton icon="download" onPress={onDownload} style={{ marginRight: 8 }} />}
+            right={() => (
+              <IconButton icon="download" onPress={onDownload} style={{ marginRight: 8 }} />
+            )}
             title={`${DateTime.fromISO(date || new Date().toISOString()).toLocaleString(
               DateTime.DATE_MED_WITH_WEEKDAY
             )}`}
@@ -94,7 +96,9 @@ export default function DropzoneMasterLogScreen() {
               <>
                 <List.Item title={entry?.dzso?.name} description="DZSO" />
                 <List.Subheader>Notes</List.Subheader>
-                <Paragraph style={{ padding: 16 }}>{entry?.notes || 'No notes for this day'}</Paragraph>
+                <Paragraph style={{ padding: 16 }}>
+                  {entry?.notes || 'No notes for this day'}
+                </Paragraph>
               </>
             )}
           </Card.Content>

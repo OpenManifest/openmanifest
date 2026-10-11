@@ -1,22 +1,25 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Avatar, Drawer, List } from 'react-native-paper';
-import { DrawerActions, useNavigation } from '@react-navigation/core';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import capitalize from 'lodash/capitalize';
 import SkeletonContent from 'app/components/Skeleton';
-import { DropzoneExtensiveFragment } from 'app/api/operations';
 import InfoGrid from 'app/screens/authenticated/dropzone/load/InfoGrid';
 import useRestriction from 'app/hooks/useRestriction';
 import { ModerationRole, Permission } from 'app/api/schema.d';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useDropzonesContext } from 'app/api/crud';
 import { useLogout } from 'app/api/hooks/useLogout';
-import { actions, useAppDispatch, useAppSelector } from '../../state';
+import useSelectDropzone from 'app/hooks/useSelectDropzone';
+import { useSession } from '../../state';
+import { useAppTheme } from 'app/theme';
+import { formatCents } from 'app/utils/money';
 
 export default function DrawerMenu() {
-  const { theme, currentRouteName: routeName } = useAppSelector((root) => root.global);
-  const dispatch = useAppDispatch();
+  const { theme } = useAppTheme();
+  const routeName = useSession((session) => session.currentRouteName);
+  const selectDropzone = useSelectDropzone();
   const {
     dropzone: { currentUser, dropzone, loading },
   } = useDropzoneContext();
@@ -108,7 +111,7 @@ export default function DrawerMenu() {
           },
           {
             title: 'Funds',
-            value: `$${currentUser?.credits || 0}`,
+            value: formatCents(currentUser?.creditsCents),
           },
         ]}
       />
@@ -297,9 +300,8 @@ export default function DrawerMenu() {
                   : 'map-marker'
               }
               active={dropzone?.id === item?.id}
-              onPress={() => {
-                if (item) {
-                  dispatch(actions.global.setDropzone(item as DropzoneExtensiveFragment));
+              onPress={async () => {
+                if (item && (await selectDropzone(item))) {
                   navigation.navigate('Authenticated', {
                     screen: 'LeftDrawer',
                     params: {

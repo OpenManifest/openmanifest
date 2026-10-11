@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Divider, List, Switch, useTheme } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/core';
+import { Divider, List, SegmentedButtons, Switch } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
 import { DropzoneState, DropzoneStateEvent, Permission } from 'app/api/schema.d';
@@ -8,15 +8,19 @@ import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 import { useDropzonesContext } from 'app/api/crud/useDropzones';
 import { useNotifications } from 'app/providers/notifications';
+import { ColorSchemePreference, usePreferences } from 'app/state/preferences';
+import { useAppTheme } from 'app/theme';
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
   const notify = useNotifications();
   const {
-    dropzone: { dropzone }
+    dropzone: { dropzone },
   } = useDropzoneContext();
 
-  const theme = useTheme();
+  const { theme } = useAppTheme();
+  const colorScheme = usePreferences((preferences) => preferences.colorScheme);
+  const setColorScheme = usePreferences((preferences) => preferences.setColorScheme);
 
   const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
   const canUpdateRigInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
@@ -53,10 +57,10 @@ export default function SettingsScreen() {
                       params: {
                         screen: 'Configuration',
                         params: {
-                          screen: 'DropzoneSettingsScreen'
-                        }
-                      }
-                    }
+                          screen: 'DropzoneSettingsScreen',
+                        },
+                      },
+                    },
                   })
             }
             left={() => <List.Icon color={theme.colors.text} icon="information-outline" />}
@@ -78,10 +82,10 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'PermissionScreen'
-                  }
-                }
-              }
+                    screen: 'PermissionScreen',
+                  },
+                },
+              },
             })
           }
         />
@@ -97,10 +101,10 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'AircraftsScreen'
-                  }
-                }
-              }
+                    screen: 'AircraftsScreen',
+                  },
+                },
+              },
             })
           }
           left={() => <List.Icon color={theme.colors.text} icon="airplane" />}
@@ -118,10 +122,10 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'DropzoneRigsScreen'
-                  }
-                }
-              }
+                    screen: 'DropzoneRigsScreen',
+                  },
+                },
+              },
             })
           }
         />
@@ -139,10 +143,10 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'RigInspectionTemplateScreen'
-                  }
-                }
-              }
+                    screen: 'RigInspectionTemplateScreen',
+                  },
+                },
+              },
             })
           }
         />
@@ -162,10 +166,10 @@ export default function SettingsScreen() {
                     params: {
                       screen: 'Configuration',
                       params: {
-                        screen: 'MasterLogScreen'
-                      }
-                    }
-                  }
+                        screen: 'MasterLogScreen',
+                      },
+                    },
+                  },
                 })
               }
             />
@@ -179,7 +183,7 @@ export default function SettingsScreen() {
                 [DropzoneState.Archived]: 'Re-open dropzone',
                 [DropzoneState.Public]: 'Go offline',
                 [DropzoneState.Private]: 'Go live',
-                [DropzoneState.InReview]: 'Awaiting review'
+                [DropzoneState.InReview]: 'Awaiting review',
               }[dropzone?.status || DropzoneState.Private]
             }
             left={() => (
@@ -190,7 +194,7 @@ export default function SettingsScreen() {
                     [DropzoneState.Archived]: 'archive',
                     [DropzoneState.Public]: 'check',
                     [DropzoneState.Private]: 'upload',
-                    [DropzoneState.InReview]: 'progress-upload'
+                    [DropzoneState.InReview]: 'progress-upload',
                   }[dropzone?.status || DropzoneState.Private] as IconSource
                 }
               />
@@ -202,7 +206,9 @@ export default function SettingsScreen() {
                 )}
                 disabled={dropzone?.status === DropzoneState.InReview}
                 onValueChange={(value) => {
-                  onChangeVisibility(value ? DropzoneStateEvent.RequestPublication : DropzoneStateEvent.Unpublish);
+                  onChangeVisibility(
+                    value ? DropzoneStateEvent.RequestPublication : DropzoneStateEvent.Unpublish
+                  );
                 }}
               />
             )}
@@ -221,15 +227,31 @@ export default function SettingsScreen() {
             }}
             description={
               {
-                [DropzoneState.Archived]: 'Your dropzone has been archived and is not visible to users',
+                [DropzoneState.Archived]:
+                  'Your dropzone has been archived and is not visible to users',
                 [DropzoneState.Public]: 'Your dropzone is available to the public',
-                [DropzoneState.Private]: 'Request a review to make your dropzone available to all users',
-                [DropzoneState.InReview]: 'You may be contacted to verify the legitimacy of your dropzone.'
+                [DropzoneState.Private]:
+                  'Request a review to make your dropzone available to all users',
+                [DropzoneState.InReview]:
+                  'You may be contacted to verify the legitimacy of your dropzone.',
               }[dropzone?.status || DropzoneState.Private]
             }
             descriptionNumberOfLines={4}
           />
         )}
+      </List.Section>
+
+      <List.Section title="Appearance" style={{ width: '100%' }}>
+        <SegmentedButtons
+          style={{ marginHorizontal: 16 }}
+          value={colorScheme}
+          onValueChange={(value) => setColorScheme(value as ColorSchemePreference)}
+          buttons={[
+            { value: 'system', label: 'System', testID: 'color-scheme-system' },
+            { value: 'light', label: 'Light', testID: 'color-scheme-light' },
+            { value: 'dark', label: 'Dark', testID: 'color-scheme-dark' },
+          ]}
+        />
       </List.Section>
 
       <List.Section title="Tickets" style={{ width: '100%' }}>
@@ -244,10 +266,10 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'TicketTypesScreen'
-                  }
-                }
-              }
+                    screen: 'TicketTypesScreen',
+                  },
+                },
+              },
             })
           }
           left={() => <List.Icon color={theme.colors.text} icon="ticket" />}
@@ -265,10 +287,10 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'ExtrasScreen'
-                  }
-                }
-              }
+                    screen: 'ExtrasScreen',
+                  },
+                },
+              },
             })
           }
           left={() => <List.Icon color={theme.colors.text} icon="plus" />}

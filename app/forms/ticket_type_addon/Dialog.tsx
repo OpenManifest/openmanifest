@@ -4,6 +4,7 @@ import { TicketTypeAddonDetailsFragment } from 'app/api/operations';
 import TicketTypeForm from './TicketAddonForm';
 import useForm from './useForm';
 import type { TicketTypeAddonFields } from './useForm';
+import { fromCents } from 'app/utils/money';
 
 export interface ITicketTypeAddonDialog {
   open: boolean;
@@ -17,19 +18,17 @@ export default function TicketTypeDialog(props: ITicketTypeAddonDialog) {
   const { control, loading, onSubmit } = useForm({
     initial: {
       name: original?.name || initial?.name,
-      cost: original?.cost || initial?.cost,
+      cost: original?.costCents != null ? fromCents(original.costCents) : initial?.cost,
       ticketTypes: original?.ticketTypes || initial?.ticketTypes || [],
       id: original?.id || initial?.id || undefined,
     },
     onSuccess: onClose,
   });
 
-  const snapPoints = React.useMemo(() => [550, 650], []);
   return (
     <DialogOrSheet
       {...{ open, loading, onClose }}
       title={original?.id ? 'Edit ticket' : 'New ticket'}
-      snapPoints={snapPoints}
       buttonAction={onSubmit}
       buttonLabel="Save"
     >

@@ -28,9 +28,9 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       passengerExitWeight: slot?.passengerExitWeight,
       passengerName: slot?.passengerName,
       rig: slot?.rig,
-      ticketType: slot?.ticketType || undefined
+      ticketType: slot?.ticketType || undefined,
     },
-    onSuccess
+    onSuccess,
   });
 
   const portal = usePortal('drawer');

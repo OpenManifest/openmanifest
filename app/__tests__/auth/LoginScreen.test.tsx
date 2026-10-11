@@ -1,10 +1,9 @@
 import * as React from 'react';
-import '@testing-library/jest-native';
 import { TextInput } from 'react-native';
 import { GraphQLError } from 'graphql';
 import { LoginDocument } from 'app/api/reflection';
 import { NotificationContext } from 'app/providers/notifications/context';
-import * as appRedux from '../../state';
+import { useSession } from '../../state';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import LoginScreen from '../../screens/unauthenticated/login/LoginScreen';
 
@@ -36,8 +35,12 @@ function renderLogin(mock: Record<string, unknown>) {
       <LoginScreen />
     </NotificationContext.Provider>,
     {
-      initialState: appRedux.initialState,
-      graphql: [{ request: { query: LoginDocument, operationName: 'Login', variables: VARIABLES }, ...mock }],
+      graphql: [
+        {
+          request: { query: LoginDocument, operationName: 'Login', variables: VARIABLES },
+          ...mock,
+        },
+      ],
     }
   );
   return { ...screen, notifications };
@@ -59,33 +62,36 @@ describe('<LoginScreen />', () => {
     expect(screen.getByText('Sign up')).toBeTruthy();
   });
 
-  it('stores the credentials and user in Redux after a successful login', async () => {
+  it('stores the credentials in the session after a successful login', async () => {
     const screen = renderLogin({
-      result: { data: { userLogin: { __typename: 'UserLoginPayload', authenticatable, credentials } } },
+      result: {
+        data: { userLogin: { __typename: 'UserLoginPayload', authenticatable, credentials } },
+      },
     });
 
     fillAndSubmit(screen);
 
     await waitFor(() => {
-      expect(screen.store.getState().global.credentials).toMatchObject({
+      expect(useSession.getState().credentials).toMatchObject({
         accessToken: 'token',
         client: 'client',
         uid: VARIABLES.email,
       });
     });
-    expect(screen.store.getState().global.currentUser).toMatchObject({ id: '1', email: VARIABLES.email });
     expect(screen.notifications.error).not.toHaveBeenCalled();
   });
 
   it('shows the server error and stores nothing when the login fails', async () => {
-    const screen = renderLogin({ result: { errors: [new GraphQLError('Invalid login credentials')] } });
+    const screen = renderLogin({
+      result: { errors: [new GraphQLError('Invalid login credentials')] },
+    });
 
     fillAndSubmit(screen);
 
     await waitFor(() => {
       expect(screen.notifications.error).toHaveBeenCalledWith('Invalid login credentials');
     });
-    expect(screen.store.getState().global.credentials).toBeFalsy();
+    expect(useSession.getState().credentials).toBeFalsy();
   });
 
   it('does not submit when the email is invalid', async () => {
@@ -96,6 +102,6 @@ describe('<LoginScreen />', () => {
     await waitFor(() => {
       expect(screen.getByText('This is not a valid email')).toBeTruthy();
     });
-    expect(screen.store.getState().global.credentials).toBeFalsy();
+    expect(useSession.getState().credentials).toBeFalsy();
   });
 });

@@ -1,18 +1,20 @@
-import { useNavigation, useRoute } from '@react-navigation/core';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { ProgressBar } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 
 import { FlatList } from 'react-native-gesture-handler';
-import { useAppSelector } from 'app/state';
+import { useSession } from 'app/state';
 
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useDropzoneTransactionsLazyQuery } from 'app/api/reflection';
 import { useUserProfile } from 'app/api/crud';
 import OrderCard from '../../../../components/orders/OrderCard';
+import { useAppTheme } from 'app/theme';
 
 export default function TransactionsScreen() {
-  const state = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const {
     dropzone: { currentUser },
   } = useDropzoneContext();
@@ -25,18 +27,16 @@ export default function TransactionsScreen() {
   const navigation = useNavigation();
 
   React.useEffect(() => {
-    if (state.currentDropzoneId) {
+    if (currentDropzoneId) {
       fetchTransactions({
-        variables: { dropzoneId: state.currentDropzoneId?.toString() as string },
+        variables: { dropzoneId: currentDropzoneId.toString() },
       });
     }
-  }, [state?.currentDropzoneId, fetchTransactions]);
+  }, [currentDropzoneId, fetchTransactions]);
 
   return (
     <>
-      {loading && (
-        <ProgressBar color={state.theme.colors.primary} indeterminate visible={loading} />
-      )}
+      {loading && <ProgressBar color={theme.colors.primary} indeterminate visible={loading} />}
 
       <FlatList
         style={styles.flatList}

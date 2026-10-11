@@ -2,20 +2,29 @@ import * as React from 'react';
 
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useAppSelector } from 'app/state';
+import { useAppTheme } from 'app/theme';
 
 export interface IWizardButtonsProps {
   nextLabel: string;
   backLabel: string;
   loading?: boolean;
+  /** False for the buttons of pages that are not shown, so only the visible next button is a primary action */
+  isCurrent?: boolean;
   onNext?(): Promise<void>;
   onBack?(): Promise<void> | void;
 }
 
 export default function Buttons(props: IWizardButtonsProps) {
-  const { backLabel = 'Back', loading: controlledLoading, nextLabel = 'Next', onNext, onBack } = props;
+  const {
+    backLabel = 'Back',
+    loading: controlledLoading,
+    isCurrent = true,
+    nextLabel = 'Next',
+    onNext,
+    onBack,
+  } = props;
   const [loading, setLoading] = React.useState(false);
-  const { palette } = useAppSelector((root) => root.global);
+  const { palette } = useAppTheme();
   const onNextPress = React.useCallback(async () => {
     try {
       await onNext?.();
@@ -32,6 +41,7 @@ export default function Buttons(props: IWizardButtonsProps) {
     <View style={styles.actions}>
       {onNextPress && (
         <Button
+          testID={isCurrent ? 'wizard-next-primary-action' : undefined}
           disabled={loading || controlledLoading}
           loading={loading || controlledLoading}
           onPress={onNextPress}
@@ -42,7 +52,12 @@ export default function Buttons(props: IWizardButtonsProps) {
         </Button>
       )}
       {onBack && (
-        <Button style={styles.back} disabled={loading || controlledLoading} mode="text" onPress={onBack}>
+        <Button
+          style={styles.back}
+          disabled={loading || controlledLoading}
+          mode="text"
+          onPress={onBack}
+        >
           {backLabel}
         </Button>
       )}
@@ -56,18 +71,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    paddingBottom: 48,
     width: '100%',
-    maxWidth: 500,
-    height: 80
+    maxWidth: 400 + 32,
+    minHeight: 80,
   },
   next: {
     width: '100%',
     borderRadius: 20,
-    minWidth: 300,
-    minHeight: 36
+    minHeight: 36,
   },
   back: {
-    minHeight: 36
-  }
+    minHeight: 36,
+  },
 });

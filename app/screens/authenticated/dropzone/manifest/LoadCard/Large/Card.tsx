@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Platform, ScrollView } from 'react-native';
-import { Button, Card, IconButton, Paragraph, ProgressBar, Text } from 'react-native-paper';
+import { ScrollView } from 'react-native';
+import { Button, Card, IconButton, Paragraph, Text } from 'react-native-paper';
+import ProgressBar from 'app/components/ProgressBar';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 
 import { SlotDetailsFragment } from 'app/api/operations';
@@ -19,12 +20,12 @@ import Menu, { MenuItem } from 'app/components/popover/Menu';
 import { View } from 'app/components/Themed';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
 import LoadSlotTable from 'app/components/slots_table/Table';
 import { SlotFields } from 'app/components/slots_table/UserRow';
 import { useNotifications } from 'app/providers/notifications';
 import LoadingCard from './Loading';
+import { useAppTheme } from 'app/theme';
 
 interface ILoadCardLarge {
   controlsVisible: boolean;
@@ -36,8 +37,7 @@ interface ILoadCardLarge {
 
 function LoadCard(props: ILoadCardLarge) {
   const { onManifest, onManifestGroup, controlsVisible, onSlotGroupPress, onSlotPress } = props;
-  const state = useAppSelector((root) => root.global);
-  const dispatch = useAppDispatch();
+  const { theme } = useAppTheme();
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDispatchOpen, setDispatchOpen] = React.useState(false);
   const {
@@ -59,9 +59,6 @@ function LoadCard(props: ILoadCardLarge) {
       markAsLanded,
     },
   } = useLoadContext();
-  const { dropzone: currentDropzone } = useDropzoneContext();
-  const { currentUser } = currentDropzone;
-
   const onDeleteSlot = React.useCallback(
     async (slot: SlotDetailsFragment) => {
       try {
@@ -138,27 +135,14 @@ function LoadCard(props: ILoadCardLarge) {
               <IconButton
                 icon="account-group"
                 testID="manifest-group-button"
-                onPress={() => {
-                  dispatch(actions.forms.manifestGroup.reset());
-                  dispatch(actions.forms.manifestGroup.setField(['load', load]));
-
-                  if (canManifestGroupWithSelfOnly && !canManifestGroup && currentUser) {
-                    // Automatically add current user to selection
-                    dispatch(actions.screens.manifest.setSelected([currentUser]));
-                    dispatch(actions.forms.manifestGroup.setDropzoneUsers([currentUser]));
-                  }
-
-                  if (onManifestGroup) {
-                    onManifestGroup();
-                  }
-                }}
+                onPress={() => onManifestGroup?.()}
               />
             )}
           </View>
         }
         subtitle={load?.name}
       />
-      <ProgressBar visible={loading || deletingSlot} color={state.theme.colors.primary} />
+      <ProgressBar visible={loading || deletingSlot} color={theme.colors.primary} />
       <Card.Content
         style={{
           marginVertical: 8,
@@ -201,7 +185,6 @@ function LoadCard(props: ILoadCardLarge) {
           </ScrollView>
         </View>
         <LoadSlotTable
-          scrollable={Platform.OS === 'web'}
           {...{ load, loading, onSlotPress, onSlotGroupPress }}
           onDeletePress={onDeleteSlot}
           onAvailableSlotPress={() =>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, FlatList, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import { Card, DataTable, HelperText } from 'react-native-paper';
 import UserAvatar from 'app/components/UserAvatar';
 import { format, parseISO } from 'date-fns';
@@ -111,12 +111,10 @@ export default function DropzonesTable(props: IDropzonesTableProps) {
               <DataTable.Title style={styles.loadsCell}>Loads</DataTable.Title>
               <DataTable.Title style={styles.usersCell}>Active Users</DataTable.Title>
             </DataTable.Header>
-            <FlatList
-              data={dropzones}
-              renderItem={({ item }) =>
-                !item ? null : <DropzoneTableRow key={`dropzone-row=${item?.id}`} dropzone={item} />
-              }
-            />
+            {/* Rows in place: the overview screen is the vertical scroll container */}
+            {dropzones.map((item) =>
+              !item ? null : <DropzoneTableRow key={`dropzone-row-${item?.id}`} dropzone={item} />
+            )}
           </DataTable>
         </ScrollView>
       </Card.Content>

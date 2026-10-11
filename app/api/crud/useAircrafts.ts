@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { isEqual, noop } from 'lodash';
+import { noop } from 'lodash';
+import sameVariables from 'app/utils/sameVariables';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
-import { useAppSelector } from 'app/state';
+import { useAuthenticated } from 'app/state';
 import {
   useCreateAircraftMutation,
   useUpdateAircraftMutation,
@@ -20,7 +21,7 @@ import {
 import { TMutationResponse, uninitializedHandler } from './factory';
 
 export function useAircrafts(vars?: Partial<PlanesQueryVariables>) {
-  const { authenticated } = useAppSelector((root) => root.global);
+  const authenticated = useAuthenticated();
   const variables: DropzoneQueryVariables | undefined = React.useMemo(() => {
     if (vars?.dropzoneId) {
       return {
@@ -35,7 +36,7 @@ export function useAircrafts(vars?: Partial<PlanesQueryVariables>) {
   });
 
   React.useEffect(() => {
-    if (authenticated && variables?.dropzoneId && !isEqual(variables, query.variables)) {
+    if (authenticated && variables?.dropzoneId && !sameVariables(variables, query.variables)) {
       console.debug('[Context::Aircrafts] Fetching aircrafts', variables);
       getAircrafts({ variables });
     }

@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { useCustomEqualityCheck } from './useCustomEqualityCheck';
 
-export default function useEffect<EffectFn extends () => void | (() => void), Dependencies extends unknown[] = []>(
+export default function useEffect<
+  EffectFn extends () => void | (() => void),
+  Dependencies extends unknown[] = [],
+>(
   effect: EffectFn,
   dependencies?: Dependencies,
   isEqual?: (current: React.DependencyList, next: React.DependencyList) => boolean
