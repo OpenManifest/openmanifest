@@ -212,7 +212,7 @@ that file. Open GitHub issues referenced there: client#127 (maps), client#126 (c
 
 ## 10. Dependency inventory
 
-Checked 2026-10-08 with `npm view <package> version time.modified deprecated` for every entry in `package.json`.
+Checked 2026-10-08 with `npm view <package> version time.modified deprecated` for every entry in `package.json`; "Latest" and the Expo SDK pin were refreshed again on 2026-10-09 (P3.22).
 "Installed" is the version in `node_modules` after `yarn install --frozen-lockfile`. "Expo SDK 57 pin" is the version
 range from `expo@57.0.27`'s `bundledNativeModules.json` (use `npx expo install` for these). "Last publish" is shown when
 the package has not been published for two years or more — a sign of abandonment. The plan's Phase 3 removes or
@@ -227,15 +227,15 @@ Headline:
 | expo | 57.0.27 (P3.18) | 57.0.27 | 57.0.27 (P3.18) |
 | react-native | 0.86.3 (P3.18) | 0.87.1 (npm `latest`) | 0.86.x pinned by SDK 57 |
 | react | 19.2.3 (P3.17) | 19.3.0 (npm `latest`) | 19.2.x pinned by SDK 57 |
-| @apollo/client | 3.7.11 | 4.3.2 | 3.14.1 (P3.19); 4.x is backlog |
-| typescript | 4.9.4 | 7.0.2 | 5.9.3 (P3.20) |
-| Node (tooling) | 16/18 in CI | 24.21.0 LTS | 20 until P3.15, then 24 |
+| @apollo/client | 3.14.1 (P3.19) | 4.3.3 | 3.14.1; 4.x is backlog |
+| typescript | 5.9.3 (P3.9) | 7.0.2 | 5.9.3 (P3.20) |
+| Node (tooling) | 24.21.0 (P3.15; CI reads `.nvmrc`) | 24.21.0 LTS | 20 until P3.15, then 24 |
 
 Full table:
 
 | Package | Group | package.json | Installed | Latest on npm | Expo SDK 57 pin | Notes |
 |---|---|---|---|---|---|---|
-| `@apollo/client` | dep | `3.14.1` (P3.19)| 3.14.1 | 4.3.2 |  |  |
+| `@apollo/client` | dep | `3.14.1` (P3.19)| 3.14.1 | 4.3.3 |  |  |
 | `@appsignal/javascript` | dep | `1.3.26` | 1.3.26 | 1.6.1 |  |  |
 | `@appsignal/plugin-path-decorator` | dep | `^1.0.15` (P3.14) | 1.0.18 | 1.0.18 |  |  |
 | `@appsignal/plugin-window-events` | dep | `1.0.19` | 1.0.19 | 1.0.26 |  |  |
@@ -275,7 +275,7 @@ Full table:
 | `date-fns` | dep | `2.29.3` | 2.29.3 | 4.4.0 |  |  |
 | `deprecated-react-native-prop-types` | dep | `2.3.0` | 2.3.0 | 5.0.0 |  |  |
 | `dotenv` | dep | `14.3.2` | 14.3.2 | 18.0.6 |  |  |
-| `expo` | dep | `^57.0.27` (P3.18)| 57.0.27 | 57.0.27 | `~57.0.27` |  |
+| `expo` | dep | `^57.0.27` (P3.18)| 57.0.27 | 57.0.27 |  |  |
 | `expo-apple-authentication` | dep | `~57.0.2` (P3.18)| 57.0.2 | 57.0.2 | `~57.0.2` |  |
 | `expo-application` | dep | `~57.0.3` (P3.18)| 57.0.3 | 57.0.3 | `~57.0.3` |  |
 | `expo-asset` | dep | `~57.0.19` (P3.18)| 57.0.19 | 57.0.19 | `~57.0.19` |  |
@@ -317,7 +317,7 @@ Full table:
 | `react-native-gesture-handler` | dep | `~2.32.0` (P3.18)| 2.32.0 | 3.3.0 | `~2.32.0` |  |
 | `react-native-image-viewing` | dep | `0.2.2` | 0.2.2 | 0.2.2 |  | last publish 2022-05-14 |
 | `react-native-maps` | dep | `1.27.2` (P3.16)| 1.27.2 | 1.29.11 | `1.27.2` |  |
-| `react-native-pager-view` | dep | `8.0.2` (P3.18)| 8.0.2 | 9.0.6 | `8.0.2` |  |
+| `react-native-pager-view` | dep | `8.0.2` (P3.18)| 8.0.2 | 9.0.7 | `8.0.2` |  |
 | `react-native-paper` | dep | `5.15.3` (P3.11) | 5.15.3 | 5.15.3 |  |  |
 | `react-native-paper-dates` | dep | `0.24.0` (P3.11) | 0.24.0 | 0.24.0 |  |  |
 | `react-native-paper-tabs` | dep | `0.11.4` (P3.11) | 0.11.4 | 0.11.4 |  |  |
@@ -327,7 +327,7 @@ Full table:
 | `react-native-screens` | dep | `~4.26.0` (P3.17)| 4.26.2 | 4.28.0 | `~4.26.0` |  |
 | `react-native-svg` | dep | `15.15.4` (P3.17)| 15.15.4 | 15.15.5 | `15.15.4` |  |
 | `react-native-toast-message` | dep | `2.1.6` | 2.1.6 | 2.5.2 |  |  |
-| `react-native-web` | dep | `~0.21.0` (P3.15)| 0.21.4 | 0.21.3 | `~0.21.0` |  |
+| `react-native-web` | dep | `~0.21.0` (P3.15)| 0.21.4 | 0.21.4 | `~0.21.0` |  |
 | `react-redux` | dep | `7.2.6` | 7.2.6 | 9.3.0 |  |  |
 | `react-use` | dep | `^17.4.0` (P3.14) | 17.6.1 | 17.6.1 |  |  |
 | `redux` | dep | `4.2.1` | 4.2.1 | 5.0.1 |  | last publish 2024-05-06 |
@@ -350,7 +350,7 @@ Full table:
 | `@graphql-codegen/typescript-operations` | dev | `^4.6.1` (P3.19)| 4.6.1 | 6.1.10 |  |  |
 | `@graphql-codegen/typescript-react-apollo` | dev | `^4.4.2` (P3.19)| 4.4.2 | 5.0.0 |  |  |
 | `@testing-library/jest-dom` | dev | `5.16.5` | 5.16.5 | 7.0.1 |  |  |
-| `@testing-library/react-native` | dev | `^13` (P3.14) | 13.3.3 | 14.0.1 |  |  |
+| `@testing-library/react-native` | dev | `^13` (P3.14) | 13.3.3 | 14.1.0 |  |  |
 | `@types/base-64` | dev | `1.0.0` | 1.0.0 | 1.0.2 |  |  |
 | `@types/color` | dev | `3.0.3` | 3.0.3 | 4.2.1 |  |  |
 | `@types/facebook-js-sdk` | dev | `3.3.6` | 3.3.6 | 3.3.13 |  |  |
