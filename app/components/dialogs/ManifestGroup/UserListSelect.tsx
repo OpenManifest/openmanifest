@@ -7,7 +7,7 @@ import { useDropzoneUsersDetailedQuery } from 'app/api/reflection';
 import { DropzoneUserEssentialsFragment } from 'app/api/operations';
 import UserAvatar from 'app/components/UserAvatar';
 import { Permission } from 'app/api/schema.d';
-import { useAppSelector } from 'app/state';
+import { useSession } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import NoResults from '../../NoResults';
@@ -23,7 +23,7 @@ interface IUserListSelect {
 export default function UserListSelect(props: IUserListSelect) {
   const { value, onSelect, containerProps, scrollable } = props;
   const [searchText, setSearchText] = React.useState('');
-  const { currentDropzoneId } = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const { data } = useDropzoneUsersDetailedQuery({
     variables: {
       dropzoneId: currentDropzoneId?.toString() as string,

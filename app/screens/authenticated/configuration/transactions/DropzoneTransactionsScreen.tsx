@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 import ProgressBar from 'app/components/ProgressBar';
 
 import { FlatList } from 'react-native-gesture-handler';
-import { useAppSelector } from 'app/state';
+import { useAppSelector, useSession } from 'app/state';
 
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { useDropzoneTransactionsLazyQuery } from 'app/api/reflection';
@@ -13,6 +13,7 @@ import OrderCard from '../../../../components/orders/OrderCard';
 
 export default function TransactionsScreen() {
   const state = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const {
     dropzone: { currentUser },
   } = useDropzoneContext();
@@ -25,12 +26,12 @@ export default function TransactionsScreen() {
   const navigation = useNavigation();
 
   React.useEffect(() => {
-    if (state.currentDropzoneId) {
+    if (currentDropzoneId) {
       fetchTransactions({
-        variables: { dropzoneId: state.currentDropzoneId?.toString() as string },
+        variables: { dropzoneId: currentDropzoneId.toString() },
       });
     }
-  }, [state?.currentDropzoneId, fetchTransactions]);
+  }, [currentDropzoneId, fetchTransactions]);
 
   return (
     <>

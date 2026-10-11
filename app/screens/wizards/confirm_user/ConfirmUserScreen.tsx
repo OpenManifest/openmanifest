@@ -5,7 +5,7 @@ import { Avatar } from 'react-native-paper';
 import { successColor, warningColor } from '../../../constants/Colors';
 import LottieView from '../../../components/LottieView';
 import { useConfirmUserMutation } from '../../../api/reflection';
-import { actions, useAppDispatch } from '../../../state';
+import { actions, useAppDispatch, useSession } from '../../../state';
 import { User } from '../../../api/schema.d';
 
 function ConfirmUserScreen() {
@@ -16,6 +16,7 @@ function ConfirmUserScreen() {
     params?: { token?: string };
   }>();
   const dispatch = useAppDispatch();
+  const setCredentials = useSession((session) => session.setCredentials);
   const [confirmUser, mutation] = useConfirmUserMutation();
   const animation = React.useRef<LottieView>(null);
   const [error, setError] = React.useState(false);
@@ -30,9 +31,7 @@ function ConfirmUserScreen() {
       })
         .then(({ data, errors }) => {
           if (data?.userConfirmRegistrationWithToken?.credentials?.accessToken) {
-            dispatch(
-              actions.global.setCredentials(data.userConfirmRegistrationWithToken.credentials)
-            );
+            setCredentials(data.userConfirmRegistrationWithToken.credentials);
             dispatch(
               actions.global.setUser(data.userConfirmRegistrationWithToken.authenticatable as User)
             );
@@ -45,7 +44,7 @@ function ConfirmUserScreen() {
           setError(true);
         });
     }
-  }, [confirmUser, dispatch, navigation, route.params?.token]);
+  }, [confirmUser, dispatch, navigation, route.params?.token, setCredentials]);
 
   if (mutation.loading) {
     return (

@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useLoginMutation } from 'app/api/reflection';
 import { useNotifications } from 'app/providers/notifications';
-import { actions, useAppDispatch } from 'app/state';
+import { actions, useAppDispatch, useSession } from 'app/state';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -25,6 +25,7 @@ const EMPTY_FORM_VALUES: LoginFields = {
 
 export default function useLoginForm() {
   const dispatch = useAppDispatch();
+  const setCredentials = useSession((session) => session.setCredentials);
   const methods = useForm({
     defaultValues: EMPTY_FORM_VALUES,
     mode: 'all',
@@ -46,7 +47,7 @@ export default function useLoginForm() {
         });
 
         if (result?.data?.userLogin?.authenticatable && result?.data?.userLogin?.credentials) {
-          dispatch(actions.global.setCredentials(result.data.userLogin.credentials));
+          setCredentials(result.data.userLogin.credentials);
           dispatch(actions.global.setUser(result.data.userLogin.authenticatable));
         }
       } catch (e) {
@@ -55,7 +56,7 @@ export default function useLoginForm() {
         }
       }
     },
-    [dispatch, mutationLogin, notify]
+    [dispatch, mutationLogin, notify, setCredentials]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onLogin), [handleSubmit, onLogin]);

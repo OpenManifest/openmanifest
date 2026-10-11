@@ -1,7 +1,7 @@
 import { onError } from '@apollo/client/link/error';
 import * as React from 'react';
 import { useNotifications } from 'app/providers/notifications';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { logout, useAppDispatch, useAppSelector } from 'app/state';
 import environment from 'app/constants/environment';
 
 export const defaultErrorLink = onError(({ graphQLErrors, networkError, operation }) => {
@@ -40,7 +40,7 @@ export function useErrorLink() {
                 '[Apollo::Links::Errors]: Received authentication error, logging out',
                 graphQLErrors
               );
-              dispatch(actions.global.logout());
+              logout(dispatch);
             }
             return;
           }

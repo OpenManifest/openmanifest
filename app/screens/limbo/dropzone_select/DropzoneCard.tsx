@@ -5,15 +5,16 @@ import { StackActions, useNavigation } from '@react-navigation/native';
 import { DropzoneEssentialsFragment, DropzoneExtensiveFragment } from 'app/api/operations';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Color from 'color';
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
+import { useSession } from '../../../state';
+import useSelectDropzone from '../../../hooks/useSelectDropzone';
 
 interface DropzoneCardProps {
   dropzone: DropzoneEssentialsFragment;
 }
 export default function DropzonesScreen(props: DropzoneCardProps) {
   const { dropzone } = props;
-  const dispatch = useAppDispatch();
-  const globalState = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const selectDropzone = useSelectDropzone();
   const navigation = useNavigation();
 
   const nameLines = dropzone?.name?.split(/\s/) || [];
@@ -34,8 +35,8 @@ export default function DropzonesScreen(props: DropzoneCardProps) {
       style={{ alignSelf: 'center' }}
       onPress={async () => {
         if (dropzone) {
-          const shouldPushRoute = !!globalState.currentDropzoneId;
-          dispatch(actions.global.setDropzone(dropzone as DropzoneExtensiveFragment));
+          const shouldPushRoute = !!currentDropzoneId;
+          selectDropzone(dropzone as DropzoneExtensiveFragment);
 
           if (shouldPushRoute) {
             navigation.dispatch(

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 import * as appRedux from '../../state';
+import { initialSession, useSession } from '../../state';
 import { createStore } from 'redux';
 import { Provider as Redux } from 'react-redux';
 import { MockedProvider } from '@apollo/client/testing';
@@ -8,6 +9,7 @@ import { fireEvent, render as rtlRender } from '@testing-library/react-native';
 import { rootReducer } from '../../state/store';
 import { useLogout } from '../../api/hooks/useLogout';
 import { abortController } from '../../api/client/links';
+import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 // The real links module needs a browser global (`self`), a server URL and an AbortController at import time.
 jest.mock('../../api/client/links', () => ({
@@ -19,18 +21,12 @@ const authenticatedState = {
   global: {
     ...appRedux.initialState.global,
     authenticated: true,
-    credentials: {
-      accessToken: 'jest',
-      client: 'jest',
-      uid: 'jest@example.com',
-      tokenType: 'Bearer',
-      expiry: 9999999999,
-    },
   },
 };
 
 // Only Redux and Apollo are needed here, so avoid the full app wrapper (its Paper animations outlive a sync test).
 function render(ui: React.ReactElement) {
+  useSession.setState({ ...initialSession, ...authenticatedSession, hydrated: true });
   const store = createStore(rootReducer, authenticatedState);
   const screen = rtlRender(
     <Redux store={store}>
@@ -54,11 +50,12 @@ describe('useLogout', () => {
     const abort = jest.spyOn(abortController, 'abort');
     const screen = render(<LogoutButton />);
 
-    expect(screen.store.getState().global.credentials).toBeTruthy();
+    expect(useSession.getState().credentials).toBeTruthy();
     fireEvent.press(screen.getByText('Log out'));
 
     expect(abort).toHaveBeenCalledTimes(1);
-    expect(screen.store.getState().global.credentials).toBeFalsy();
+    expect(useSession.getState().credentials).toBeNull();
+    expect(useSession.getState().currentDropzoneId).toBeNull();
     expect(screen.store.getState().global.authenticated).toBe(false);
     abort.mockRestore();
     screen.unmount();

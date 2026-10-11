@@ -1,8 +1,8 @@
 import { TicketTypeEssentialsFragment } from 'app/api/operations';
 import { useAllowedTicketTypesQuery } from 'app/api/reflection';
 import * as React from 'react';
+import { useSession } from 'app/state';
 import { List } from 'react-native-paper';
-import { useAppSelector } from '../../../state';
 import { withHookForm } from '../withHookForm';
 import ChipSelect from './ChipSelect';
 import ChipSelectSkeleton from './ChipSelectSkeleton';
@@ -17,7 +17,7 @@ interface ITicketTypeSelect {
 
 function TicketTypeChipSelect(props: ITicketTypeSelect) {
   const { value, onLoadingStateChanged, onChange, onlyPublicTickets, error } = props;
-  const { currentDropzoneId } = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   const { data, loading } = useAllowedTicketTypesQuery({
     variables: {

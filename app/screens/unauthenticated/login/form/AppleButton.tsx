@@ -6,7 +6,7 @@ import {
 } from 'app/api/operations';
 import { useLoginWithAppleMutation } from 'app/api/reflection';
 import { useNotifications } from 'app/providers/notifications';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { actions, useAppDispatch, useSession } from 'app/state';
 import {
   AppleAuthenticationButton,
   AppleAuthenticationButtonProps,
@@ -21,7 +21,8 @@ import { useTheme } from 'react-native-paper';
 export function useLoginWithApple(
   opts?: MutationFunctionOptions<LoginWithAppleMutation, LoginWithAppleMutationVariables>
 ) {
-  const { expoPushToken } = useAppSelector((root) => root.global);
+  const expoPushToken = useSession((session) => session.expoPushToken);
+  const setCredentials = useSession((session) => session.setCredentials);
   const [onLoginWithApple, mutation] = useLoginWithAppleMutation(opts);
   const dispatch = useAppDispatch();
   const notify = useNotifications();
@@ -42,7 +43,7 @@ export function useLoginWithApple(
           },
         });
         if (data?.loginWithApple?.authenticatable && data?.loginWithApple?.credentials) {
-          dispatch(actions.global.setCredentials(data.loginWithApple.credentials));
+          setCredentials(data.loginWithApple.credentials);
           dispatch(actions.global.setUser(data.loginWithApple.authenticatable));
         }
       }
@@ -52,7 +53,7 @@ export function useLoginWithApple(
         notify.error(e.message);
       }
     }
-  }, [dispatch, expoPushToken, notify, onLoginWithApple]);
+  }, [dispatch, expoPushToken, notify, onLoginWithApple, setCredentials]);
   return [onLogin, mutation] as [() => Promise<void>, MutationResult<LoginWithFacebookMutation>];
 }
 

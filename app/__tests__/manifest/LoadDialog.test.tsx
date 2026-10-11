@@ -6,6 +6,7 @@ import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_PLANES from './__mocks__/QueryPlane.mock';
 import MOCK_QUERY_DROPZONE_USERS from './__mocks__/QueryDropzoneUsers.mock';
 import LoadDialog from '../../forms/load/Dialog';
+import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
@@ -14,14 +15,6 @@ const authenticatedState = {
   global: {
     ...appRedux.initialState.global,
     authenticated: true,
-    credentials: {
-      accessToken: 'jest',
-      client: 'jest',
-      uid: 'jest@example.com',
-      tokenType: 'Bearer',
-      expiry: 9999999999,
-    },
-    currentDropzoneId: 1,
   },
 };
 
@@ -82,6 +75,7 @@ describe('<LoadDialog />', () => {
 
     const screen = render(<LoadDialog open onClose={jest.fn()} onSuccess={jest.fn()} />, {
       initialState: authenticatedState,
+      session: authenticatedSession,
       graphql: [
         MOCK_QUERY_PLANES(),
         usersWithPermission(Permission.ActAsGca, dropzoneUser('31', 'Gina GCA')),

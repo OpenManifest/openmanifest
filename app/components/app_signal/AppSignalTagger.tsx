@@ -2,7 +2,7 @@ import * as React from 'react';
 import pick from 'lodash/pick';
 import isEqual from 'lodash/isEqual';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
-import { useAppSelector } from 'app/state';
+import { useAppSelector, useSession } from 'app/state';
 import { Platform } from 'react-native';
 import { useAppSignalContext, INITIAL_TAGS } from './AppSignalContext';
 
@@ -15,9 +15,9 @@ function AppSignalSessionTagProvider(props: React.PropsWithChildren<object>) {
   const {
     dropzone: { dropzone, currentUser: currentDropzoneUser },
   } = useDropzoneContext();
-  const { currentRouteName, currentUser, currentDropzoneId } = useAppSelector(
-    (state) => state.global
-  );
+  const { currentUser } = useAppSelector((state) => state.global);
+  const currentRouteName = useSession((session) => session.currentRouteName);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const { tags, setTags } = useAppSignalContext();
 
   const sessionTags: { [key: string]: string } = React.useMemo(

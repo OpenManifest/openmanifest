@@ -6,7 +6,7 @@ import Constants from 'expo-constants';
 import URI from 'urijs';
 import { useUpdateUserMutation } from 'app/api/reflection';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useSession } from 'app/state';
 import { useNotifications } from 'app/providers/notifications';
 
 async function registerForPushNotificationsAsync(): Promise<string | null> {
@@ -45,9 +45,9 @@ async function registerForPushNotificationsAsync(): Promise<string | null> {
 
 export default function PushNotifications(props: React.PropsWithChildren<object>) {
   const { children } = props;
-  const pushToken = useAppSelector((root) => root.global.expoPushToken);
+  const pushToken = useSession((session) => session.expoPushToken);
+  const setPushToken = useSession((session) => session.setPushToken);
   const notify = useNotifications();
-  const dispatch = useAppDispatch();
   const {
     dropzone: { currentUser, loading, called },
   } = useDropzoneContext();
@@ -72,7 +72,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
 
     registerForPushNotificationsAsync().then((token: string | null) => {
       if (token) {
-        dispatch(actions.global.setExpoPushToken(token));
+        setPushToken(token);
       }
     });
 
@@ -101,7 +101,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       }
       subscription.remove();
     };
-  }, [dispatch, notify, onOutsideLink]);
+  }, [notify, onOutsideLink, setPushToken]);
 
   // Update remote push token if we have a local token, but no
   // token saved on the server. This is done so that the server

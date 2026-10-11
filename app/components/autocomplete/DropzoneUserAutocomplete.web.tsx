@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import { useDropzoneUsersLazyQuery } from 'app/api/reflection';
-import { useAppSelector } from 'app/state';
+import { useSession } from 'app/state';
 import first from 'lodash/first';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Caption } from 'react-native-paper';
@@ -59,7 +59,7 @@ export default function DropzoneUserAutocomplete(props: IDropzoneUserAutocomplet
   const { label, onChange, disabled, placeholder, color } = props;
   const [searchUsers, { data, loading }] = useDropzoneUsersLazyQuery();
   const [searchText, setSearchText] = React.useState('');
-  const { currentDropzoneId } = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   React.useEffect(() => {
     if (currentDropzoneId && searchText !== null) {

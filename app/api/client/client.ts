@@ -1,6 +1,6 @@
 import { ApolloClient } from '@apollo/client';
 import * as React from 'react';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { actions, useAppDispatch, useAppSelector, useSession } from 'app/state';
 import { defaultLink, useLink } from './links';
 import { cache } from './cache';
 
@@ -12,7 +12,8 @@ const client = new ApolloClient({
 export default function useApolloClient() {
   const link = useLink();
   const dispatch = useAppDispatch();
-  const { credentials, authenticated } = useAppSelector((root) => root?.global);
+  const { authenticated } = useAppSelector((root) => root?.global);
+  const credentials = useSession((session) => session.credentials);
 
   // Install the link while rendering, not in an effect: effects of the children run before this component's, so queries
   // started by the first render after a reload would otherwise go out through the unauthenticated default link.

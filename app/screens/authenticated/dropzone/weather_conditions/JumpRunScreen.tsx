@@ -4,7 +4,7 @@ import { FAB, useTheme } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 
 import * as Location from 'expo-location';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { actions, useAppDispatch, useAppSelector, useSession } from 'app/state';
 import JumpRunSelector from 'app/components/input/jump_run_select/JumpRunSelect';
 
 import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateWeatherConditions';
@@ -13,7 +13,7 @@ import { useNotifications } from 'app/providers/notifications';
 
 export default function JumpRunScreen() {
   const state = useAppSelector((root) => root.forms.weather);
-  const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
+  const dropzoneId = useSession((session) => session.currentDropzoneId);
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const theme = useTheme();
@@ -29,7 +29,7 @@ export default function JumpRunScreen() {
   const onSaveConditions = React.useCallback(async () => {
     await mutationCreateWeatherConditions.mutate({
       id: Number(state.original?.id),
-      dropzoneId: dropzoneId as number,
+      dropzoneId: Number(dropzoneId),
       winds: JSON.stringify(state.fields.winds.value),
       jumpRun: state.fields.jumpRun.value,
       temperature: state.fields.temperature.value,

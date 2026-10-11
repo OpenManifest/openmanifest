@@ -14,6 +14,7 @@ import MOCK_QUERY_PLANES from './__mocks__/QueryPlane.mock';
 import MOCK_QUERY_DROPZONE_USERS from './__mocks__/QueryDropzoneUsers.mock';
 import mockSubscriptionLoadCreated from './__mocks__/SubscriptionLoadCreated.mock';
 import * as appRedux from '../../state';
+import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 import ManifestScreen from '../../screens/authenticated/dropzone/manifest/ManifestScreen';
 
@@ -24,14 +25,6 @@ describe('<ManifestScreen />', () => {
       global: {
         ...appRedux.initialState.global,
         authenticated: true,
-        credentials: {
-          accessToken: 'jest',
-          client: 'jest',
-          uid: 'jest@example.com',
-          tokenType: 'Bearer',
-          expiry: 9999999999,
-        },
-        currentDropzoneId: 1,
       },
     };
 
@@ -52,6 +45,7 @@ describe('<ManifestScreen />', () => {
       ],
       permissions: [Permission.ReadLoad, Permission.UpdateSlot],
       initialState,
+      session: authenticatedSession,
     });
 
     await waitFor(
@@ -70,14 +64,6 @@ describe('<ManifestScreen />', () => {
       global: {
         ...appRedux.initialState.global,
         authenticated: true,
-        credentials: {
-          accessToken: 'jest',
-          client: 'jest',
-          uid: 'jest@example.com',
-          tokenType: 'Bearer',
-          expiry: 9999999999,
-        },
-        currentDropzoneId: 1,
       },
     };
     const screen = render(<ManifestScreen />, {
@@ -97,6 +83,7 @@ describe('<ManifestScreen />', () => {
       ],
       permissions: [Permission.ReadLoad, Permission.UpdateSlot],
       initialState,
+      session: authenticatedSession,
     });
 
     await waitFor(
@@ -117,8 +104,6 @@ describe('<ManifestScreen />', () => {
       global: {
         ...appRedux.initialState.global,
         authenticated: true,
-        credentials: { accessToken: 'jest', client: 'jest', uid: 'jest@example.com', tokenType: 'Bearer', expiry: 9999999999 },
-        currentDropzoneId: 1,
       },
       screens: {
         ...appRedux.initialState.screens,
@@ -141,6 +126,7 @@ describe('<ManifestScreen />', () => {
       ],
       permissions: ['createSlot'],
       initialState,
+      session: authenticatedSession,
     });
 
     await waitFor(async () => {
@@ -159,8 +145,6 @@ describe('<ManifestScreen />', () => {
       global: {
         ...appRedux.initialState.global,
         authenticated: true,
-        credentials: { accessToken: 'jest', client: 'jest', uid: 'jest@example.com', tokenType: 'Bearer', expiry: 9999999999 },
-        currentDropzoneId: 1,
       },
       screens: {
         ...appRedux.initialState.screens,
@@ -183,6 +167,7 @@ describe('<ManifestScreen />', () => {
       ],
       permissions: ['createSlot'],
       initialState,
+      session: authenticatedSession,
     });
 
     await waitFor(async () => {
@@ -202,8 +187,6 @@ describe('<ManifestScreen />', () => {
       global: {
         ...appRedux.initialState.global,
         authenticated: true,
-        credentials: { accessToken: 'jest', client: 'jest', uid: 'jest@example.com', tokenType: 'Bearer', expiry: 9999999999 },
-        currentDropzoneId: 1,
       },
       screens: {
         ...appRedux.initialState.screens,
@@ -222,6 +205,7 @@ describe('<ManifestScreen />', () => {
       ],
       permissions: ['createUserSlot'],
       initialState,
+      session: authenticatedSession,
     });
 
     await waitFor(async () => {

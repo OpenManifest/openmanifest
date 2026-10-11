@@ -7,7 +7,7 @@ import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
 import { capitalize } from 'lodash';
 import SkeletonContent from 'app/components/Skeleton';
 import { useRolesQuery } from 'app/api/reflection';
-import { useAppSelector } from 'app/state';
+import { useAppSelector, useSession } from 'app/state';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import PermissionListItem from 'app/components/permissions/PermissionListItem';
 
@@ -88,9 +88,10 @@ import PermissionListItem from 'app/components/permissions/PermissionListItem';
 export default function DropzonePermissionScreen() {
   const theme = useTheme();
   const state = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const { data, loading, refetch } = useRolesQuery({
     variables: {
-      dropzoneId: state.currentDropzoneId?.toString() as string,
+      dropzoneId: currentDropzoneId?.toString() as string,
     },
   });
   const isFocused = useIsFocused();

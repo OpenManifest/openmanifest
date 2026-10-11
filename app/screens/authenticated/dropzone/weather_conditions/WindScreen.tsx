@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, HelperText } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { actions, useAppDispatch, useAppSelector, useSession } from 'app/state';
 
 import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateWeatherConditions';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
@@ -13,7 +13,7 @@ import { useAuthenticatedNavigation } from '../../useAuthenticatedNavigation';
 export default function WindScreen() {
   const state = useAppSelector((root) => root.forms.weather);
   const { theme, palette } = useAppSelector((root) => root.global);
-  const dropzoneId = useAppSelector((root) => root.global.currentDropzoneId);
+  const dropzoneId = useSession((session) => session.currentDropzoneId);
   const dispatch = useAppDispatch();
   const navigation = useAuthenticatedNavigation();
   const notify = useNotifications();
@@ -28,7 +28,7 @@ export default function WindScreen() {
   const onSaveConditions = React.useCallback(async () => {
     await mutationCreateWeatherConditions.mutate({
       id: Number(state.original?.id),
-      dropzoneId: dropzoneId as number,
+      dropzoneId: Number(dropzoneId),
       winds: JSON.stringify(state.fields.winds.value),
       jumpRun: state.fields.jumpRun.value,
       temperature: state.fields.temperature.value,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { noop } from 'lodash';
 import sameVariables from 'app/utils/sameVariables';
-import { useAppSelector } from 'app/state';
+import { useAppSelector, useSession } from 'app/state';
 import {
   useCurrentUserPermissionsLazyQuery,
   useDropzoneLazyQuery,
@@ -16,7 +16,8 @@ import { TMutationResponse, uninitializedHandler } from './factory';
 import { DropzoneInput } from '../schema';
 
 export function useDropzone(vars: Partial<DropzoneQueryVariables>) {
-  const { authenticated, currentDropzoneId } = useAppSelector((root) => root.global);
+  const { authenticated } = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const variables: DropzoneQueryVariables | undefined = React.useMemo(() => {
     if (vars?.dropzoneId) {
       return {

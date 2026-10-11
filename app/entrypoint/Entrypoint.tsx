@@ -25,6 +25,7 @@ import {
 import { useRouteChange, useAppearanceListener, useCachedResources } from './hooks';
 
 import { store, persistor, useAppSelector } from '../state/store';
+import { useSession } from '../state/session';
 import ImageViewer from '../components/dialogs/ImageViewer/ImageViewer';
 
 import RootNavigator, { options as LinkingConfiguration } from '../screens/routes';
@@ -91,8 +92,11 @@ function Content() {
 }
 function App() {
   const isLoadingComplete = useCachedResources();
+  // The session (credentials, current dropzone) is restored asynchronously: rendering before that would show the login
+  // screen and send the first queries without credentials.
+  const sessionHydrated = useSession((session) => session.hydrated);
 
-  if (!isLoadingComplete) {
+  if (!isLoadingComplete || !sessionHydrated) {
     console.debug('[App] Loading resources and rendering nothing');
     return null;
   }

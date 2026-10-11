@@ -2,7 +2,7 @@ import { RoleEssentialsFragment } from 'app/api/operations';
 import { useRolesQuery } from 'app/api/reflection';
 import startCase from 'lodash/startCase';
 import * as React from 'react';
-import { useAppSelector } from '../../../state';
+import { useSession } from 'app/state';
 import Select from '../select/Select';
 import { withHookForm } from '../withHookForm';
 
@@ -14,7 +14,7 @@ interface IRoleSelect {
 
 function RoleSelect(props: IRoleSelect) {
   const { onChange, value } = props;
-  const { currentDropzoneId } = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const { data } = useRolesQuery({
     variables: {
       dropzoneId: currentDropzoneId?.toString() as string,
