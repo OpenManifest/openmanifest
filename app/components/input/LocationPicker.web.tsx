@@ -84,7 +84,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
       width="100%"
       height="100%"
       mapStyle={{
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         marginTop: -50
       }}
       coords={region}
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     }
   },
   markerFixed: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column'

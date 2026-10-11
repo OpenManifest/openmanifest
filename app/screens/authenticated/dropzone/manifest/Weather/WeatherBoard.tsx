@@ -116,7 +116,7 @@ export default function WeatherBoard() {
       >
         <ImageBackground
           source={defaultBackground}
-          style={{ ...StyleSheet.absoluteFillObject, opacity: 0.75 }}
+          style={{ ...StyleSheet.absoluteFill, opacity: 0.75 }}
           resizeMode="cover"
         >
           <Card.Content

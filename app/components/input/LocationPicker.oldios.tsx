@@ -87,7 +87,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
       // @ts-ignore
       ref={map}
       style={{
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         marginTop: -50
       }}
       initialRegion={region}
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     }
   },
   markerFixed: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column'

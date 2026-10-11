@@ -36,7 +36,7 @@ export function Content(props: IWizardProps) {
   const { palette } = useAppSelector((root) => root.global);
 
   return (
-    <View style={{ ...StyleSheet.absoluteFillObject }}>
+    <View style={{ ...StyleSheet.absoluteFill }}>
       {!dots ? null : (
         <View style={styles.dots}>
           <Dots count={steps.length} index={currentIndex} />
