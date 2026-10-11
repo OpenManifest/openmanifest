@@ -8779,8 +8779,8 @@
               "name": "FacebookPayload",
               "ofType": null
             },
-            "isDeprecated": false,
-            "deprecationReason": null
+            "isDeprecated": true,
+            "deprecationReason": "Facebook login removed (D4)"
           },
           {
             "name": "moveSlot",
