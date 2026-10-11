@@ -48,6 +48,6 @@ export default createMutation<ExtraInput, CreateExtraPayload>(MUTATION_CREATE_EX
   },
   validates: {
     name: [isRequired('Tickets must have names')],
-    cost: [isRequired('Tickets must have a price'), isNumeric('Price must be a number')],
+    costCents: [isRequired('Tickets must have a price'), isNumeric('Price must be a number')],
   },
 });

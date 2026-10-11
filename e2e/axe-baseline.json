@@ -1,0 +1,91 @@
+{
+  "/dropzone/configuration": [
+    "color-contrast",
+    "label",
+    "role-img-alt"
+  ],
+  "/dropzone/configuration/aircrafts": [
+    "aria-progressbar-name",
+    "role-img-alt"
+  ],
+  "/dropzone/configuration/basic": [
+    "aria-progressbar-name",
+    "aria-prohibited-attr",
+    "color-contrast",
+    "label",
+    "role-img-alt"
+  ],
+  "/dropzone/configuration/permissions": [
+    "color-contrast",
+    "label",
+    "role-img-alt"
+  ],
+  "/dropzone/configuration/rig-inspection": [
+    "aria-required-attr",
+    "button-name",
+    "label",
+    "nested-interactive",
+    "role-img-alt"
+  ],
+  "/dropzone/configuration/rigs": [
+    "aria-progressbar-name",
+    "role-img-alt"
+  ],
+  "/dropzone/configuration/ticket-types": [
+    "aria-progressbar-name",
+    "label",
+    "role-img-alt"
+  ],
+  "/dropzone/manifest": [
+    "aria-progressbar-name",
+    "color-contrast",
+    "role-img-alt"
+  ],
+  "/dropzone/master-log": [
+    "color-contrast",
+    "role-img-alt"
+  ],
+  "/dropzone/ticket-types/extra": [
+    "aria-progressbar-name",
+    "role-img-alt"
+  ],
+  "/dropzone/transactions": [
+    "role-img-alt"
+  ],
+  "/dropzone/weather": [
+    "color-contrast",
+    "label",
+    "nested-interactive",
+    "role-img-alt"
+  ],
+  "/dropzone/weather/jumprun": [
+    "role-img-alt"
+  ],
+  "/dropzone/weather/winds": [
+    "color-contrast",
+    "label",
+    "nested-interactive",
+    "role-img-alt"
+  ],
+  "/login": [
+    "color-contrast",
+    "label"
+  ],
+  "/setup": [
+    "label"
+  ],
+  "/signup": [
+    "color-contrast",
+    "label"
+  ],
+  "load": [
+    "button-name",
+    "nested-interactive",
+    "role-img-alt"
+  ],
+  "profile": [
+    "button-name",
+    "nested-interactive",
+    "role-img-alt"
+  ]
+}

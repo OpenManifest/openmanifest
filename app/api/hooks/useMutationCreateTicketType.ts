@@ -73,7 +73,7 @@ export default createMutation<
   },
   validates: {
     name: [isRequired('Tickets must have names')],
-    cost: [isRequired('Tickets must have a price')],
+    costCents: [isRequired('Tickets must have a price')],
     altitude: [isRequired('Altitude must be specified'), isNumeric('Altitude must be a number')],
   },
 });
