@@ -19,7 +19,7 @@ iOS: Larger Accessibility Sizes). Until EAS builds exist (Phase 3, decision D2),
 - [ ] Settings → Appearance: System / Light / Dark switch the theme; System follows the phone's dark mode.
 ## Manifest
 - [ ] Select a dropzone; manifest board shows today's loads; pull to refresh updates the list.
-- [ ] Create a load (staff); it appears on another device without refreshing.
+- [ ] Create a load (staff); it appears on another device without refreshing (also on a phone logged in with Apple: P6.9).
 - [ ] Manifest yourself; manifest a group (speed dial on the load screen, and an "Available" row); tap a slot to edit it;
       take someone off; slot counts are correct ("2/14" for two jumpers).
 - [ ] Give a 10-minute call: push notification arrives on the jumper's device; countdown shows the right time.

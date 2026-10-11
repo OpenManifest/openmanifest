@@ -128,6 +128,38 @@ async function checkLayout(page, route, viewport, failures) {
   }
 }
 
+// Creates a load through the API as the seed's owner, the way a second device would
+async function createLoadViaApi(api) {
+  const call = async (query, headers = {}) => {
+    const response = await fetch(api, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', ...headers },
+      body: JSON.stringify({ query }),
+    });
+    return { json: await response.json(), headers: response.headers };
+  };
+  const login = await call(
+    'mutation { userLogin(email: "owner@example.com", password: "Password1!") { authenticatable { id } } }'
+  );
+  const auth = {
+    'access-token': login.headers.get('access-token'),
+    client: login.headers.get('client'),
+    uid: login.headers.get('uid'),
+  };
+  const { json: dropzones } = await call(
+    '{ dropzones { edges { node { id currentUser { id } } } } }',
+    auth
+  );
+  const dropzone = dropzones.data.dropzones.edges[0].node;
+  const { json: planes } = await call(`{ planes(dropzone: ${dropzone.id}) { id } }`, auth);
+  const member = dropzone.currentUser.id;
+  const { json: created } = await call(
+    `mutation { createLoad(input: { attributes: { name: "Live ${Date.now()}", plane: ${planes.data.planes[0].id}, maxSlots: 10, pilot: ${member}, gca: ${member} } }) { load { id } errors } }`,
+    auth
+  );
+  return created?.data?.createLoad?.load?.id;
+}
+
 async function run(browser, name, viewport) {
   const failures = [];
   const context = await browser.newContext({ viewport });
@@ -176,6 +208,25 @@ async function run(browser, name, viewport) {
     }
     await page.screenshot({ path: join(out, `${name}-manifest.png`) });
     await checkLayout(page, '/dropzone/manifest', viewport, failures);
+
+    // Live updates (P6.9): a load created by somebody else appears on the open board without a reload, which only works
+    // when the cable connection is authenticated with this session's credentials.
+    const loadCount = () => page.getByText(/Load #\d+/).count();
+    const loadsBefore = await loadCount();
+    const createdLoad = await createLoadViaApi(
+      arg('api', 'http://local.openmanifest.org:5000/graphql')
+    );
+    if (!createdLoad) {
+      failures.push('live update: could not create a load through the API');
+    } else {
+      let appeared = false;
+      for (let i = 0; i < 20 && !appeared; i += 1) {
+        await page.waitForTimeout(500);
+        appeared = (await loadCount()) > loadsBefore;
+      }
+      if (!appeared)
+        failures.push(`live update: load ${createdLoad} did not appear on the open board`);
+    }
 
     await page
       .getByText(/Load #1\b/)
@@ -410,8 +461,14 @@ async function run(browser, name, viewport) {
 }
 
 mkdirSync(out, { recursive: true });
+// Chromium picks the environment's proxy up for WebSockets (ws://) but not for plain HTTP, so the local backend must be
+// bypassed explicitly, with an explicit proxy setting (a bypass list alone is ignored).
+const proxy = process.env.HTTPS_PROXY || process.env.https_proxy;
 const browser = await chromium.launch({
-  args: ['--proxy-bypass-list=local.openmanifest.org,localhost'],
+  args: [
+    ...(proxy ? [`--proxy-server=${proxy}`] : []),
+    '--proxy-bypass-list=local.openmanifest.org;localhost;127.0.0.1',
+  ],
 });
 let ok = true;
 for (const [name, viewport] of Object.entries(viewports)) {
