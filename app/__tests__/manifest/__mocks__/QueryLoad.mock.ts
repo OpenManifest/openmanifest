@@ -10,7 +10,7 @@ import {
 import { LoadDocument } from '../../../api/reflection';
 import createMockedQuery from './createMockedQuery.mock';
 
-const loadEssentials: LoadEssentialsFragment = {
+export const loadEssentials: LoadEssentialsFragment = {
   __typename: 'Load',
   id: '1',
   name: 'Test Load',
