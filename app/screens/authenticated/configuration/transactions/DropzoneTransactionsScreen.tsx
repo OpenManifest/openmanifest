@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from '@react-navigation/core';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { ProgressBar } from 'react-native-paper';

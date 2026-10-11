@@ -7,7 +7,7 @@ import useMutationCreateDropzone from 'app/api/hooks/useMutationCreateDropzone';
 import useMutationUpdateDropzone from 'app/api/hooks/useMutationUpdateDropzone';
 import camelize from 'lodash/camelCase';
 import { Permission } from 'app/api/schema.d';
-import { StackActions, useNavigation } from '@react-navigation/core';
+import { StackActions, useNavigation } from '@react-navigation/native';
 import { useNotifications } from 'app/providers/notifications';
 import NameStep from './steps/Name';
 import FederationStep from './steps/Federation';

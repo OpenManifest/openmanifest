@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Card, DataTable, IconButton, List, Paragraph } from 'react-native-paper';
 import { Linking, View } from 'react-native';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import { Screen } from 'app/components/layout';
 import DatePicker from 'app/components/input/date_picker/DatePicker';
 import { useDropzoneContext } from 'app/providers/dropzone/context';

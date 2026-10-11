@@ -2,7 +2,7 @@ import * as React from 'react';
 import Wizard from 'app/components/carousel_wizard/HookFormWizard';
 import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { IWizardStepDefinition, WizardRef } from 'app/components/carousel_wizard/Wizard';
-import { useNavigation, useRoute } from '@react-navigation/core';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useNotifications } from 'app/providers/notifications';
 import FederationStep from './steps/Federation';
 import FederationNumberStep from './steps/FederationNumber';

@@ -2,7 +2,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
 import { DropzoneEssentialsFragment } from 'app/api/operations';
-import { NavigationProp, useNavigation } from '@react-navigation/core';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import AppBar from 'app/components/appbar/AppBar';
 import { AppSignalBoundary } from 'app/components/app_signal';
 import SettingsMenuScreen from './settings_menu/SettingsMenuScreen';

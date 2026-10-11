@@ -1,4 +1,4 @@
-import { RouteProp, useRoute } from '@react-navigation/core';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { SectionList, StyleSheet, View } from 'react-native';
 import { List, ProgressBar } from 'react-native-paper';

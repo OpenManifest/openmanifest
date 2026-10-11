@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/core';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { Avatar } from 'react-native-paper';
 import { successColor, warningColor } from '../../../constants/Colors';

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Web smoke test: login -> dropzone -> manifest board -> load, at desktop and 360x640.
+// Web smoke test: login -> dropzone -> manifest board -> load, then the two deep links, at desktop and 360x640.
 // Needs the backend dev server with the dev_baseline seed and a served EXPO_ENV=local web export.
 // Usage: node scripts/web-smoke.mjs [--base http://localhost:19006] [--out ./smoke-output]
 import { createRequire } from 'node:module';
@@ -56,6 +56,26 @@ async function run(browser, name, viewport) {
       failures.push(`expected /dropzone/load/<id>, got ${page.url()}`);
     }
     await page.screenshot({ path: join(out, `${name}-load.png`) });
+    const loadUrl = page.url();
+
+    // Deep links: a full page load of each URL must open the right screen (needs the persisted login).
+    await page.goto(`${base}/dropzone/manifest`, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.waitForTimeout(6000);
+    if (!new URL(page.url()).pathname.endsWith('/dropzone/manifest')) {
+      failures.push(`deep link /dropzone/manifest ended on ${page.url()}`);
+    } else if (!(await page.getByText(/Load #1\b/).first().isVisible().catch(() => false))) {
+      failures.push('deep link /dropzone/manifest did not show the load board');
+    }
+    await page.screenshot({ path: join(out, `${name}-deeplink-manifest.png`) });
+
+    await page.goto(loadUrl, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.waitForTimeout(6000);
+    if (new URL(page.url()).pathname !== new URL(loadUrl).pathname) {
+      failures.push(`deep link ${loadUrl} ended on ${page.url()}`);
+    } else if (!(await page.getByText(/Load #1\b/).first().isVisible().catch(() => false))) {
+      failures.push(`deep link ${loadUrl} did not show the load`);
+    }
+    await page.screenshot({ path: join(out, `${name}-deeplink-load.png`) });
   } catch (e) {
     failures.push(`step failed: ${e.message.split('\n')[0]}`);
   } finally {

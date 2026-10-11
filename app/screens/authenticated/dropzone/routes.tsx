@@ -3,7 +3,7 @@ import { HeaderStyleInterpolators, createStackNavigator } from '@react-navigatio
 import * as React from 'react';
 import { useAppSelector } from 'app/state';
 import AppBar from 'app/components/appbar/AppBar';
-import { NavigatorScreenParams } from '@react-navigation/core';
+import { NavigatorScreenParams } from '@react-navigation/native';
 import { AppSignalBoundary } from 'app/components/app_signal';
 import LoadScreen, { LoadScreenRoute } from './load/LoadScreen';
 

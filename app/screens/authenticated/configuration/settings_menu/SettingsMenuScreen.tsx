@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Divider, List, Switch, useTheme } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
 import { DropzoneState, DropzoneStateEvent, Permission } from 'app/api/schema.d';

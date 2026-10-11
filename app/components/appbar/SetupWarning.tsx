@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Paragraph, useTheme, IconButton } from 'react-native-paper';
 import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import Color from 'color';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 
 interface ISetupWarning {

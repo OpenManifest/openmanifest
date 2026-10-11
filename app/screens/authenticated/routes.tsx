@@ -8,7 +8,7 @@ import { ModerationRole, Permission } from 'app/api/schema.d';
 
 import { useTheme } from 'react-native-paper';
 
-import { NavigatorScreenParams } from '@react-navigation/core';
+import { NavigatorScreenParams } from '@react-navigation/native';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { AppSignalBoundary } from 'app/components/app_signal';
 import ManifestTab, { DropzoneRoutes } from './dropzone/routes';
@@ -71,8 +71,7 @@ export default function AuthenticatedTabBar() {
                   {...{ size, color }}
                   style={[styles.icon, focused ? styles.iconActive : undefined]}
                 />
-              ),
-              unmountOnBlur: false
+              )
             }}
           />
         )}
@@ -86,8 +85,7 @@ export default function AuthenticatedTabBar() {
                 {...{ size, color }}
                 style={[styles.icon, focused ? styles.iconActive : undefined]}
               />
-            ),
-            unmountOnBlur: false
+            )
           }}
         />
         <BottomTab.Screen
@@ -101,7 +99,7 @@ export default function AuthenticatedTabBar() {
                 {...{ size, color }}
               />
             ),
-            unmountOnBlur: true
+            popToTopOnBlur: true
           }}
         />
         {canViewUsers && (
@@ -116,7 +114,7 @@ export default function AuthenticatedTabBar() {
                   style={[styles.icon, focused ? styles.iconActive : undefined]}
                 />
               ),
-              unmountOnBlur: true
+              popToTopOnBlur: true
             }}
           />
         )}

@@ -16,7 +16,7 @@ import { actions, useAppSelector, useAppDispatch } from 'app/state';
 import LottieView from 'app/components/LottieView';
 import { useFederationsQuery } from 'app/api/reflection';
 import useImagePicker from 'app/hooks/useImagePicker';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import ColorPicker from '../../input/colorpicker';
 import { PhonePreview, WebPreview } from '../../theme_preview';
 import FederationSelect from '../../input/dropdown_select/FederationSelect';

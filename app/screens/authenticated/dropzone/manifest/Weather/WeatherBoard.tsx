@@ -19,7 +19,7 @@ import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { actions, useAppDispatch } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import parseISO from 'date-fns/parseISO';
 import nightBackground from '../../../../../../assets/images/night.png';
 import weatherBackground from '../../../../../../assets/images/weather.png';

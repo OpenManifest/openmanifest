@@ -10,7 +10,7 @@ import {
   View
 } from 'react-native';
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 import { IWizardStepProps } from './Step';
 import Dots from './Dots';
 import Buttons from './Buttons';

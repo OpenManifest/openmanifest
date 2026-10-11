@@ -4,7 +4,7 @@ import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import Constants from 'app/constants/expo';
 
 import * as Location from 'expo-location';
-import { useIsFocused } from '@react-navigation/core';
+import { useIsFocused } from '@react-navigation/native';
 
 // Used if user location cant be used and we have no other fallback
 // This points to Brisbane:
