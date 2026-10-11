@@ -1,0 +1,54 @@
+name: UI full
+# Tier 3: the full Playwright matrix (four widths, light and dark, 200 % text). Run by hand on a branch in checkpoint
+# and verify tasks, and weekly on staging.
+on:
+  workflow_dispatch:
+    inputs:
+      backend-ref:
+        description: Branch, tag or SHA of openmanifest-server to run against
+        default: staging
+      grep:
+        description: Playwright --grep filter (for example @manifest); empty runs everything
+        default: ""
+  schedule:
+    - cron: "0 17 * * 0" # Monday 03:00 Australia/Brisbane (UTC+10, no daylight saving)
+concurrency:
+  group: ui-full-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  EXPO_NO_TELEMETRY: "1"
+  CI: "1"
+jobs:
+  ui-full:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: postgres, POSTGRES_PASSWORD: postgres }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version-file: .nvmrc, cache: yarn }
+      - run: yarn install --frozen-lockfile
+      - run: npx playwright install --with-deps chromium
+      - uses: ./.github/actions/ui-env
+        with:
+          backend-ref: ${{ inputs.backend-ref || 'staging' }}
+      - name: Run the full suite
+        env:
+          GREP: ${{ inputs.grep }}
+        run: |
+          if [ -n "$GREP" ]; then yarn test:ui:full --grep "$GREP"; else yarn test:ui:full; fi
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-full-report
+          path: |
+            e2e/.report
+            e2e/.results
+          if-no-files-found: ignore
+          retention-days: 14

@@ -50,3 +50,16 @@ Environment: `UI_BASE_URL` (default `http://localhost:19006`), `UI_API_URL` (def
 `axe-baseline.json` lists the known serious and critical violations per route (rule ids). To record it after adding a
 route: `UPDATE_AXE_BASELINE=1 yarn test:ui:smoke --workers=1` (record only; it merges and never removes). Delete entries
 as the findings are fixed so the baseline only shrinks.
+
+## CI
+
+- `web-ui-smoke` (job in `.github/workflows/ci.yml`) runs `yarn test:ui:smoke` on every pull request that touches
+  `app/**`, `e2e/**`, `package.json`, `yarn.lock`, `playwright.config.ts` or the CI files. It boots the API of
+  `openmanifest-server@staging` with the dev seed and a local web export through the composite action
+  `.github/actions/ui-env`. On failure the HTML report and traces are uploaded as the artifact `ui-smoke-report`.
+- `ui-full` (`.github/workflows/ui-full.yml`) runs `yarn test:ui:full`, weekly (Monday 03:00 Australia/Brisbane) and by
+  hand. Inputs: `backend-ref` (default `staging`; use the matching branch for a cross-repo task) and `grep`.
+  Trigger it on a branch with `gh workflow run ui-full.yml --ref <branch> -f grep=@login`, or with the GitHub MCP tool
+  `actions_run_trigger` (`workflow_id: ui-full.yml`, `ref: <branch>`, `inputs`). Read the result with
+  `gh run list --workflow ui-full.yml` / `gh run view <id> --log-failed`, or `actions_list` and `get_job_logs`; the
+  report and the screenshot diffs are in the artifact `ui-full-report`.
