@@ -17,10 +17,10 @@ Client diagrams: [diagrams.md](diagrams.md).
 | Runtime | Expo SDK 57.0.27 (P3.18; was 56.0.23), React Native 0.86.3, React 19.2.3 with the New Architecture, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before) | `package.json`, `app.json` |
 | Language | TypeScript 5.9.3 (`strict`), ESLint 9 (`eslint-config-expo`) + Prettier 3, no Rome, path alias `app/*` via `babel-plugin-module-resolver` | `tsconfig.json`, `babel.config.js` |
 | Server data | Apollo Client 3.14.1 (`BatchHttpLink`, ActionCable link for subscriptions) | `app/api/` |
-| Client state | Redux Toolkit 1.9.3 + redux-persist 6 (`global` slice persisted) | `app/state/` |
+| Client state | zustand 5 stores: `useSession` (credentials, current dropzone, push token; credentials in `expo-secure-store` on native), `usePreferences` (colour scheme), `useThemeOverrides` (colour preview); no Redux (P4.8) | `app/state/`, `app/theme/` |
 | Navigation | React Navigation 7 (stack, drawer, bottom tabs) | `app/screens/**/routes.tsx` |
 | UI kit | react-native-paper 5.15.3 (MD2 theme, P3.11), react-native-reanimated 4.5.1 (with react-native-worklets 0.10.1), @gorhom/bottom-sheet 5.2.14 | |
-| Forms | react-hook-form 7 + yup (newer forms in `app/forms/`); Redux form slices (older forms in `app/components/forms/`) | |
+| Forms | react-hook-form 7 + yup, one `useForm` hook per form in `app/forms/<name>/` (P4.5–P4.7) | `app/forms/` |
 | Code generation | graphql-codegen (`codegen.yml`) → `app/api/schema.d.ts`, `operations.ts`, `reflection.tsx` | |
 | Web | `expo export --platform web` (Metro, `web.bundler: metro`, `output: single`; was webpack 4 before P3.7). Custom HTML, `404.html` and `.well-known/` live in `public/`, which Metro copies to `dist/` | `app.json`, `metro.config.js`, `public/` |
 | Builds | EAS Build / EAS Update (`eas.json`, project id `1d8fa34d-2ff8-4095-ab49-29a426117a8c`) | |
@@ -34,9 +34,9 @@ Environment selection: `EXPO_ENV` ∈ `local` | `staging` | `production` (defaul
 
 ## 2. Navigation map and screens
 
-Root stack (`app/screens/routes.tsx`, header hidden). Which branch renders depends on persisted Redux state:
-`credentials` absent → **Unauthenticated**; `credentials` present and `currentDropzone` (deprecated snapshot) absent →
-**Limbo**; both present → **Authenticated**. **Wizards** and **NotFound** are always registered.
+Root stack (`app/screens/routes.tsx`, header hidden). Which branch renders depends on the session store:
+`credentials` absent → **Unauthenticated**; `credentials` present and `currentDropzoneId` absent → **Limbo**; both
+present → **Authenticated**. **Wizards** and **NotFound** are always registered.
 
 ```
 Root (stack)
@@ -82,31 +82,34 @@ Main flows:
 | Load | `LoadScreen` (slots table `app/components/slots_table/`, `ActionButton.tsx` for calls/land/cancel, drag-and-drop on web) |
 | Manifest a jumper / group | `app/forms/manifest_user/*` sheet, `app/components/dialogs/ManifestGroup/*` |
 | Credits | `app/forms/credits/*` (`createOrder`) from profile and transactions |
-| Weather | `WeatherConditionsScreen`, `WindScreen`, `JumpRunScreen` (`app/components/forms/weather_conditions/`) |
-| Setup | Configuration stack screens; forms in `app/forms/{aircraft,ticket_type,ticket_type_addon,dropzone}` and `app/components/forms/*` |
+| Weather | `WeatherConditionsScreen`, `WindScreen`, `JumpRunScreen` (form state in `app/forms/weather`, `WeatherFormProvider` above the dropzone stack) |
+| Setup | Configuration stack screens; forms in `app/forms/*` |
 
 ## 3. Store shape
 
-Redux store (`app/state/store.ts`), persisted with redux-persist under key `persist:open-manifest.0.9.1` (AsyncStorage on
-native, `localStorage` on web), whitelist `global` only.
+There is no Redux (removed in P4.8). Server data lives in the Apollo `InMemoryCache`; everything else is a small zustand
+store or component state.
 
-| Slice | Fields | Kind | Notes |
+| Store | Fields | Persisted | Notes |
 |---|---|---|---|
-| `global` | `credentials` (`accessToken`, `client`, `uid`, `expiry`, `tokenType`), `authenticated` | session | persisted unencrypted (BUG-017) |
-| `global` | `currentDropzoneId` | session | read in 21 files |
-| `global` | `currentUser`, `currentDropzone`, `permissions` | **server-data snapshot (deprecated)** | duplicates Apollo data; `currentDropzone` still decides Limbo vs Authenticated in `routes.tsx` |
-| `global` | `expoPushToken`, `currentRouteName` | device/UI | |
-| `global` | `theme`, `palette`, `isDarkMode` | UI preferences | theme derived from dropzone colours; read in ~19 files |
-| `imageViewer` | open image | UI | |
-| `screens.*` | `manifest`, `users`, `login`, `signup`, `dropzoneWizard` | UI | `app/screens/slice.ts` |
-| `forms.*` | `dropzone`, `dropzoneUser`, `rig`, `rigInspection`, `rigInspectionTemplate`, `manifest`, `manifestGroup`, `user`, `weather` | form state | `app/components/forms/slice.ts`; `useAppSelector` on `forms.*` in ~25 files |
+| `useSession` (`app/state/session.ts`) | `credentials` (`accessToken`, `client`, `uid`, `expiry`, `tokenType`), `currentDropzoneId`, `expoPushToken`, `currentRouteName`, `hydrated` | yes: `openmanifest.session.v1` (AsyncStorage / `localStorage`); `credentials` go to `expo-secure-store` (`openmanifest.credentials`) on native and `localStorage` on web (`app/state/storage.ts`) | `useAuthenticated()` = an access token exists. `reset()` logs out but keeps the device push token. `Entrypoint` renders nothing until `hydrated`. Migrated once from the old redux-persist blob (`migrateFromReduxPersist.ts`), which is then deleted. |
+| `usePreferences` (`app/state/preferences.ts`) | `colorScheme`: `system` / `light` / `dark`, `hydrated` | yes: `openmanifest.preferences.v1` | device level, survives logout |
+| `useThemeOverrides` (`app/theme/overrides.ts`) | `primary` | no | colour preview in the dropzone form, dropped once Apollo holds the saved colour |
 
-Server data lives in the Apollo `InMemoryCache` (`app/api/client/cache.ts`, type policies for pagination). Mutations update
-it via `refetchQueries`, `update` functions and optimistic responses (`app/api/crud/useLoad.tsx`).
+Derived, not stored: the theme and palette (`useAppTheme()` in `app/theme`: colour scheme preference or device, the current
+dropzone's `primaryColor` / `secondaryColor` from Apollo, preview override), `authenticated`, the current user, dropzone
+and permissions (Apollo, through `app/api/crud` and the dropzone / manifest context providers).
 
-Problems: logout resets only `global` (BUG-069); auth-error logout does not clear Apollo; form slices survive dropzone
-switches. Target state (plan Phase 4): Apollo for server data, zustand `useSession` / `usePreferences` stores,
-react-hook-form for forms, no Redux.
+Where the rest went (P4.4–P4.7): the manifest board's list/cards switch is `useState` in `ManifestScreen`; the user list's
+search is `UserSearchProvider`; the image viewer is `ImageViewerProvider`; the password wizards use `useFieldState`; every
+form is react-hook-form (`app/forms/<name>`), opened with the record to edit as a prop or from a context (`dialogs` in
+`ManifestContext` and `ProfileDialogsProvider`, `WeatherFormProvider`).
+
+Server data is updated through `refetchQueries`, `update` functions and optimistic responses (`app/api/crud/useLoad.tsx`).
+
+Logging out (`resetSession`, `app/state/resetSession.ts`): best-effort `updateUser(pushToken: null)`, `client.stop()`,
+`useSession.reset()` (credentials deleted from secure storage, dropzone cleared), `client.clearStore()`. The error link
+calls it when the server says the session expired; switching dropzone calls `resetStore()`.
 
 ## 4. API layer
 
@@ -122,9 +125,9 @@ Operations: 76 named operations (41 mutations, 32 queries, 3 subscriptions: `loa
 Pass 1 validated all of them against the live server schema: 0 validation errors, and the committed
 `app/api/openmanifest.graphql` matches the server's introspection (0 differences).
 
-Links (`app/api/client/links/`): `authentication.ts` (adds `access-token`, `client`, `uid` headers from Redux; stores
-refreshed tokens from response headers), `errors.ts` (logs out on authentication errors, shows snackbars), `appSignal.ts`
-(reports errors), `http.ts` (`BatchHttpLink`, batch max 10, with a module-level `AbortController` — BUG-063),
+Links (`app/api/client/links/`): `authentication.ts` (adds `access-token`, `client`, `uid` headers from the session store), `errors.ts` (calls
+`resetSession` on authentication errors, shows snackbars), `appSignal.ts`
+(reports errors), `http.ts` (`BatchHttpLink`, batch max 10),
 `websockets.ts` (`@rails/actioncable` + `graphql-ruby-client` `ActionCableLink`, URL `<api host>/subscriptions`),
 `link.ts`/`index.ts` (split subscriptions vs HTTP).
 
@@ -133,19 +136,17 @@ Scripts: `yarn sync:schema` (download schema), `yarn ts:graphql` (codegen), `yar
 
 ## 5. Authentication and session
 
-1. `userLogin(email, password)` (graphql_devise) returns `credentials`; `LoginForm` dispatches `global.setCredentials`
-   and `global.setUser`. Apple: `loginWithApple(token)`; Facebook: `loginWithFacebook(token)` via `expo-facebook`
+1. `userLogin(email, password)` (graphql_devise) returns `credentials`; `LoginForm` stores them with
+   `useSession().setCredentials`. Apple: `loginWithApple(token)`; Facebook: `loginWithFacebook(token)` via `expo-facebook`
    (cannot be built on current SDKs, BUG-084).
-2. Every request carries `access-token`, `client`, `uid` (authentication link). devise_token_auth may rotate tokens; the
-   link stores new values from response headers.
+2. Every request carries `access-token`, `client`, `uid` (authentication link, from `useSession`).
 3. Subscriptions: credentials are passed as ActionCable channel params; the server looks the user up by `email: uid`
    (fails for Apple users, BUG-060).
-4. Dropzone selection writes `currentDropzoneId` and the `currentDropzone` snapshot; the backend auto-creates a
-   membership when the user's permissions are read (BUG-005).
+4. Dropzone selection (`useSelectDropzone`) writes `useSession().currentDropzoneId` and resets the Apollo store; the
+   backend auto-creates a membership when the user's permissions are read (BUG-005).
 5. Push: `app/entrypoint/providers/PushNotificationProvider.tsx` registers an Expo push token and writes it to the user
-   with `updateUser(pushToken)`; it is never cleared on logout (BUG-018).
-6. Logout (`app/api/hooks/useLogout.ts`): `abortController.abort()` (breaks all later requests, BUG-063),
-   `client.clearStore()`, `global.logout()`.
+   with `updateUser(pushToken)`; logging out clears it with `updateUser(pushToken: null)` (client part of BUG-018).
+6. Logout (`useLogout`) and an expired session (`errors.ts`) both call `resetSession` (see §3).
 
 ## 6. Platform-specific files
 
