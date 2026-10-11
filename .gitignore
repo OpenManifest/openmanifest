@@ -74,3 +74,8 @@ web-build/
 dist/
 
 # @end expo-cli
+
+# Playwright
+/e2e/.auth/
+/e2e/.results/
+/e2e/.report/

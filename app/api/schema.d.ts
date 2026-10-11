@@ -1087,6 +1087,7 @@ export type Mutation = {
   joinDropzone?: Maybe<JoinDropzonePayload>;
   joinFederation?: Maybe<JoinFederationPayload>;
   loginWithApple?: Maybe<ApplePayload>;
+  /** @deprecated Facebook login removed (D4) */
   loginWithFacebook?: Maybe<FacebookPayload>;
   moveSlot?: Maybe<MoveSlotPayload>;
   reloadWeatherCondition?: Maybe<ReloadWeatherConditionPayload>;
