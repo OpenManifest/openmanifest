@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Wizard from 'app/components/carousel_wizard/HookFormWizard';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { IWizardStepDefinition, WizardRef } from 'app/components/carousel_wizard/Wizard';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useNotifications } from 'app/providers/notifications';
@@ -31,12 +30,16 @@ const steps = [
   RigStep,
   ReserveRepackStep,
   WingloadingStep,
-  DoneStep
+  DoneStep,
 ];
 export function UserWizard() {
   const wizard = React.useRef<WizardRef>(null);
   const navigation = useNavigation();
-  const { params } = useRoute<{ key: string; name: string; params: { index: number; dropzoneUserId: string } }>();
+  const { params } = useRoute<{
+    key: string;
+    name: string;
+    params: { index: number; dropzoneUserId: string };
+  }>();
   const notify = useNotifications();
   const methods = useUserWizardForm({
     startIndex: params.index || 0,
@@ -46,14 +49,18 @@ export function UserWizard() {
     },
     onClose: () => {
       navigation.goBack();
-    }
+    },
   });
 
   return <Wizard ref={wizard} dots {...{ steps }} {...methods} />;
 }
 
 export function UserWizardScreen() {
-  const { params } = useRoute<{ key: string; name: string; params: { index: number; dropzoneUserId: string } }>();
+  const { params } = useRoute<{
+    key: string;
+    name: string;
+    params: { index: number; dropzoneUserId: string };
+  }>();
   const { dropzoneUserId } = params;
 
   return (

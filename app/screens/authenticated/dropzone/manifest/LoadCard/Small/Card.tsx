@@ -8,11 +8,11 @@ import PlaneChip from 'app/components/chips/PlaneChip';
 
 import { View } from 'app/components/Themed';
 import { LoadState } from 'app/api/schema.d';
-import { useAppSelector } from 'app/state';
 import { errorColor, warningColor } from 'app/constants/Colors';
 import { useLoadContext, withLoadContext } from 'app/providers/load';
 import Countdown from '../Countdown';
 import Loading from './Loading';
+import { useAppTheme } from 'app/theme';
 
 interface ILoadCardSmall {
   onPress(): void;
@@ -20,7 +20,7 @@ interface ILoadCardSmall {
 
 function LoadCard(props: ILoadCardSmall) {
   const { onPress } = props;
-  const { theme, palette } = useAppSelector((root) => root.global);
+  const { theme, palette } = useAppTheme();
   const {
     load: { load, loading, updatePlane, updatePilot },
   } = useLoadContext();
@@ -50,7 +50,7 @@ function LoadCard(props: ILoadCardSmall) {
       style={{
         margin: 16,
         borderRadius: 8,
-        minWidth: 300,
+        minWidth: 280,
         maxWidth: 450,
         opacity: ['cancelled', 'landed'].includes(load?.state || '') ? 0.5 : 1.0,
       }}
@@ -64,6 +64,10 @@ function LoadCard(props: ILoadCardSmall) {
           marginRight: -5,
           color: 'white',
           fontSize: 12,
+          // Grows with the text size instead of clipping the label to Paper's fixed 20 dp pill
+          height: 'auto',
+          minHeight: 20,
+          lineHeight: undefined,
         }}
       >
         {load?.state ? loadStates[load?.state] : ''}

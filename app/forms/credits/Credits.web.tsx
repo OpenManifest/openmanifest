@@ -18,7 +18,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
   const { open, onClose, dropzoneUser, onSuccess } = props;
   const { onSubmit, control, setValue, loading } = useCreditsForm({
     onSuccess,
-    dropzoneUser
+    dropzoneUser,
   });
 
   return (
@@ -55,6 +55,6 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
 
 const styles = StyleSheet.create({
   form: {
-    paddingHorizontal: 16
-  }
+    paddingHorizontal: 16,
+  },
 });

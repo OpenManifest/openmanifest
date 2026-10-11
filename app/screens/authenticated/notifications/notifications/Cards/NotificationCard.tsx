@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Avatar, Caption, Card, List } from 'react-native-paper';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { useAppSelector } from 'app/state';
+import { useAppTheme } from 'app/theme';
 
 interface INotification {
   title: string;
@@ -14,7 +14,7 @@ interface INotification {
 
 export default function NotificationCard(props: INotification) {
   const { title, description, icon, timestamp, onPress } = props;
-  const { theme, palette } = useAppSelector((root) => root.global);
+  const { theme, palette } = useAppTheme();
   return (
     <TouchableOpacity onPress={onPress}>
       <Card style={styles.notification} elevation={3}>

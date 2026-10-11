@@ -1,12 +1,9 @@
 import * as React from 'react';
 import Lightbox from 'react-image-lightbox';
-import { actions, useAppDispatch, useAppSelector } from '../../../state';
+import { useImageViewer } from './context';
 
 export default function ImageViewer() {
-  const { open, image } = useAppSelector((root) => root.imageViewer);
-  const dispatch = useAppDispatch();
+  const { image, close } = useImageViewer();
 
-  return !open || !image ? null : (
-    <Lightbox mainSrc={image} onCloseRequest={() => dispatch(actions.imageViewer.close())} />
-  );
+  return !image ? null : <Lightbox mainSrc={image} onCloseRequest={close} />;
 }

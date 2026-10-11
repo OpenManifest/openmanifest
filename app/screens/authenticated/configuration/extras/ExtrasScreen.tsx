@@ -1,24 +1,27 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
 import { FAB, DataTable } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 import { useTicketTypeExtrasQuery } from 'app/api/reflection';
-import { View } from 'app/components/Themed';
 import { Permission } from 'app/api/schema.d';
 
-import { useAppSelector } from 'app/state';
 import NoResults from 'app/components/NoResults';
+import FloatingActionArea from 'app/components/layout/FloatingActionArea';
+import ScreenContainer from 'app/components/layout/ScreenContainer';
+import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { TicketTypeAddonDetailsFragment } from 'app/api/operations';
+import { useAppTheme } from 'app/theme';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
+import { formatCents } from 'app/utils/money';
 
 export default function ExtrasScreen() {
   const { dropzone: currentDropzone, dialogs } = useDropzoneContext();
-  const globalState = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const { data, loading } = useTicketTypeExtrasQuery({
     variables: {
-      dropzoneId: currentDropzone?.dropzone?.id as string
-    }
+      dropzoneId: currentDropzone?.dropzone?.id as string,
+    },
   });
   const createEditHandler = React.useCallback(
     (ticketTypeAddon: TicketTypeAddonDetailsFragment) => () =>
@@ -28,9 +31,9 @@ export default function ExtrasScreen() {
   const canCreateExtras = useRestriction(Permission.CreateExtra);
 
   return (
-    <>
-      <ProgressBar visible={loading} indeterminate color={globalState.theme.colors.primary} />
-      <View style={styles.container}>
+    <ScreenContainer edges={['bottom']}>
+      <ProgressBar visible={loading} indeterminate color={theme.colors.primary} />
+      <ScrollableScreen hasFab contentContainerStyle={{ backgroundColor: theme.colors.surface }}>
         <DataTable>
           <DataTable.Header>
             <DataTable.Title>Name</DataTable.Title>
@@ -38,9 +41,13 @@ export default function ExtrasScreen() {
           </DataTable.Header>
 
           {data?.extras?.map((extra) => (
-            <DataTable.Row onPress={createEditHandler(extra)} pointerEvents="none">
+            <DataTable.Row
+              key={`extra-${extra.id}`}
+              onPress={createEditHandler(extra)}
+              pointerEvents="none"
+            >
               <DataTable.Cell>{extra.name}</DataTable.Cell>
-              <DataTable.Cell numeric>${extra.cost}</DataTable.Cell>
+              <DataTable.Cell numeric>{formatCents(extra.costCents)}</DataTable.Cell>
             </DataTable.Row>
           ))}
         </DataTable>
@@ -50,37 +57,19 @@ export default function ExtrasScreen() {
             subtitle="You can add multiple addons to assign to tickets, e.g outside camera, or coach"
           />
         )}
-
+      </ScrollableScreen>
+      <FloatingActionArea>
         <FAB
-          style={[styles.fab, { backgroundColor: globalState.theme.colors.primary }]}
+          labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
+          testID="new-ticket-addon-primary-action"
+          style={{ backgroundColor: theme.colors.primary }}
           visible={canCreateExtras}
           small
           icon="plus"
           onPress={() => dialogs.ticketTypeAddon.open()}
           label="New ticket addon"
         />
-      </View>
-    </>
+      </FloatingActionArea>
+    </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 8,
-    display: 'flex'
-  },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0
-  },
-  empty: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%'
-  }
-});

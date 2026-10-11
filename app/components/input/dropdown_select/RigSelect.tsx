@@ -2,7 +2,7 @@ import { UserRigDetailedFragment } from 'app/api/operations';
 import { useAvailableRigsLazyQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { useTheme } from 'react-native-paper';
-import { useAppSelector } from 'app/state';
+import { useSession } from 'app/state';
 import Chip from 'app/components/chips/Chip';
 import Select, { ISelectOption } from '../select/Select';
 import { withHookForm } from '../withHookForm';
@@ -37,7 +37,7 @@ function RigSelect(props: IRigSelect) {
     tandem,
     error,
   } = props;
-  const { currentDropzoneId } = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
   const theme = useTheme();
   const color = assignedColor || theme.colors.onSurface;
   const [fetchRigs, { data }] = useAvailableRigsLazyQuery({

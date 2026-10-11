@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
 import NotFoundScreen from './NotFoundScreen';
-import { useAppSelector } from '../state/store';
+import { useSession } from '../state';
 
 import Limbo, { LimboRoutes } from './limbo/routes';
 import Unauthenticated, { UnauthenticatedRoutes } from './unauthenticated/routes';
@@ -17,7 +17,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
     'https://www.openmanifest.org',
     'https://staging.openmanifest.org',
     'openmanifest://',
-    'http://localhost:19006'
+    'http://localhost:19006',
   ],
   config: {
     screens: {
@@ -28,8 +28,8 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
               Overview: {
                 screens: {
                   DashboardScreen: '/dropzone/dashboard',
-                  OverviewScreen: '/overview'
-                }
+                  OverviewScreen: '/overview',
+                },
               },
               Manifest: {
                 screens: {
@@ -37,12 +37,14 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                   User: {
                     screens: {
                       EquipmentScreen: '/dropzone/manifest/users/:userId/equipment/',
-                      OrderReceiptScreen: '/dropzone/manifest/users/:userId/orders/:orderId/receipts',
+                      OrderReceiptScreen:
+                        '/dropzone/manifest/users/:userId/orders/:orderId/receipts',
                       ProfileScreen: '/dropzone/manifest/users/:userId',
                       OrdersScreen: '/dropzone/manifest/users/:userId/orders',
-                      RigInspectionScreen: '/dropzone/manifest/users/:dropzoneUserId/rig/:rigId/inspection',
-                      UserListScreen: '/dropzone/manifest/users'
-                    }
+                      RigInspectionScreen:
+                        '/dropzone/manifest/users/:dropzoneUserId/rig/:rigId/inspection',
+                      UserListScreen: '/dropzone/manifest/users',
+                    },
                   },
                   Configuration: {
                     screens: {
@@ -55,14 +57,14 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                       DropzoneSettingsScreen: '/dropzone/configuration/basic',
                       PermissionScreen: '/dropzone/configuration/permissions',
                       RigInspectionTemplateScreen: '/dropzone/configuration/rig-inspection',
-                      TransactionsScreen: '/dropzone/transactions'
-                    }
+                      TransactionsScreen: '/dropzone/transactions',
+                    },
                   },
                   JumpRunScreen: '/dropzone/weather/jumprun',
                   WeatherConditionsScreen: '/dropzone/weather',
                   LoadScreen: '/dropzone/load/:loadId',
-                  WindScreen: '/dropzone/weather/winds'
-                }
+                  WindScreen: '/dropzone/weather/winds',
+                },
               },
               Users: {
                 screens: {
@@ -71,28 +73,28 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                   EquipmentScreen: '/user/:userId/equipment',
                   OrdersScreen: '/user/:userId/transactions',
                   OrderReceiptScreen: '/user/:userId/transactions/:orderId/receipt',
-                  RigInspectionScreen: '/user/:dropzoneUserId/rig-inspection/:rig'
-                }
+                  RigInspectionScreen: '/user/:dropzoneUserId/rig-inspection/:rig',
+                },
               },
               Notifications: {
                 screens: {
-                  NotificationsScreen: '/notifications'
-                }
-              }
-            }
-          }
-        }
+                  NotificationsScreen: '/notifications',
+                },
+              },
+            },
+          },
+        },
       },
       Limbo: {
         screens: {
-          DropzoneSelectScreen: '/select-dropzone'
-        }
+          DropzoneSelectScreen: '/select-dropzone',
+        },
       },
       Unauthenticated: {
         screens: {
           LoginScreen: '/login',
-          SignUpScreen: '/signup'
-        }
+          SignUpScreen: '/signup',
+        },
       },
       Wizards: {
         screens: {
@@ -107,15 +109,15 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
               EquipmentScreen: '/modal/user/:userId/equipment',
               OrdersScreen: '/modal/user/:userId/transactions',
               OrderReceiptScreen: '/modal/user/:userId/transactions/:orderId/receipt',
-              RigInspectionScreen: '/modal/user/:dropzoneUserId/rig-inspection/:rig'
-            }
-          }
-        }
-      }
+              RigInspectionScreen: '/modal/user/:dropzoneUserId/rig-inspection/:rig',
+            },
+          },
+        },
+      },
       // FIXME: Remove in release
       // NotFound: '*',
-    }
-  }
+    },
+  },
 };
 
 export type Routes = {
@@ -135,19 +137,20 @@ declare global {
 }
 
 export default function RootNavigator() {
-  const globalState = useAppSelector((root) => root.global);
+  const credentials = useSession((session) => session.credentials);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
         cardStyle: {
-          flex: 1
-        }
+          flex: 1,
+        },
       }}
     >
-      {globalState.credentials ? (
-        globalState.currentDropzone ? (
+      {credentials ? (
+        currentDropzoneId ? (
           <Stack.Screen name="Authenticated" component={LeftDrawer} />
         ) : (
           <Stack.Screen name="Limbo" component={Limbo} />

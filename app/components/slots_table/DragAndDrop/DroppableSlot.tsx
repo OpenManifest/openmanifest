@@ -4,5 +4,5 @@ export default function DroppableSlot(
   props: React.PropsWithChildren<{ rowIndex: number; loadId: string; slotId?: string }>
 ) {
   const { children } = props;
-  return children as JSX.Element;
+  return children as React.JSX.Element;
 }

@@ -6,7 +6,7 @@ export default createMock<AllowedTicketTypesQueryVariables, AllowedTicketTypesQu
   AllowedTicketTypesDocument,
   {
     dropzone: '1',
-    onlyPublicTickets: true
+    onlyPublicTickets: true,
   },
   {
     __typename: 'Query',
@@ -17,20 +17,20 @@ export default createMock<AllowedTicketTypesQueryVariables, AllowedTicketTypesQu
         altitude: 14000,
         id: '1',
         name: 'Height',
-        cost: 45,
+        costCents: 4500,
         isTandem: false,
-        extras: []
+        extras: [],
       },
       {
         __typename: 'TicketType',
         id: '3',
         name: 'Hop n Pop',
-        cost: 30,
+        costCents: 3000,
         allowManifestingSelf: true,
         altitude: 4000,
         isTandem: false,
-        extras: []
-      }
-    ]
+        extras: [],
+      },
+    ],
   }
 );

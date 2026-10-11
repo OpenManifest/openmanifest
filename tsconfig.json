@@ -19,10 +19,16 @@
     "app/**/*",
     "png.d.ts",
     "global.d.ts",
-    ".eslintrc.js",
     "index.ts",
     "main.ts",
     "build/**/*.ts",
     "patches/deprecated-prop-types.ts"
-  ]
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "node10",
+      "customConditions": null
+    }
+  }
 }

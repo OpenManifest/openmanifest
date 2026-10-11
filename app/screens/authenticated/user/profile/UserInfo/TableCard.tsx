@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { IconButton, List } from 'react-native-paper';
 
-import { useAppSelector } from 'app/state';
+import { useAppTheme } from 'app/theme';
 
 interface ITableCard {
   children: React.ReactNode;
@@ -11,7 +11,7 @@ interface ITableCard {
   onPressButton?(): void;
 }
 export default function TableCard(props: ITableCard) {
-  const state = useAppSelector((root) => root.global);
+  const { theme } = useAppTheme();
   const { title, children, buttonIcon, onPressButton } = props;
 
   return (
@@ -22,7 +22,7 @@ export default function TableCard(props: ITableCard) {
           <IconButton
             icon={buttonIcon}
             onPress={() => (!onPressButton ? null : onPressButton())}
-            iconColor={state.theme.colors.primary}
+            iconColor={theme.colors.primary}
           />
         )}
       </View>

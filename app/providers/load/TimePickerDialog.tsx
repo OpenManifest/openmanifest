@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Dialog } from 'react-native-paper';
 import TimePicker from 'app/components/input/time_picker/TimePicker';
+import { useDropzoneTimeZone } from 'app/hooks/useDropzoneToday';
 
 export interface ITimePickerDialog {
   open: boolean;
@@ -10,6 +11,7 @@ export interface ITimePickerDialog {
 
 export function TimePickerDialog(props: ITimePickerDialog) {
   const { open, onClose, onChange } = props;
+  const timeZone = useDropzoneTimeZone();
   const [time, setTime] = React.useState<number>();
   const [loading, setLoading] = React.useState(false);
 
@@ -28,7 +30,7 @@ export function TimePickerDialog(props: ITimePickerDialog) {
     <Dialog visible={open} dismissable onDismiss={onClose}>
       <Dialog.Title>Dispatch Aircraft</Dialog.Title>
       <Dialog.Content>
-        <TimePicker onChange={setTime} timestamp={time} label="Take-off" />
+        <TimePicker onChange={setTime} timestamp={time} timeZone={timeZone} label="Take-off" />
       </Dialog.Content>
       <Dialog.Actions>
         <Button disabled={loading} onPress={onClose}>

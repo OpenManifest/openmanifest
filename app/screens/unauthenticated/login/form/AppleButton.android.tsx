@@ -12,7 +12,7 @@ export function useLoginWithApple(
 ) {
   return [() => null, null] as unknown as [
     () => Promise<void>,
-    MutationResult<LoginWithFacebookMutation>
+    MutationResult<LoginWithFacebookMutation>,
   ];
 }
 

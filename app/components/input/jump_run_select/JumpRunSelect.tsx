@@ -63,7 +63,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
         >
           <View
             style={{
-              ...StyleSheet.absoluteFillObject,
+              ...StyleSheet.absoluteFill,
               alignItems: 'center',
               justifyContent: 'center',
             }}

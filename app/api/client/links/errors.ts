@@ -1,7 +1,7 @@
 import { onError } from '@apollo/client/link/error';
 import * as React from 'react';
 import { useNotifications } from 'app/providers/notifications';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { resetSession, useAuthenticated } from 'app/state';
 import environment from 'app/constants/environment';
 
 export const defaultErrorLink = onError(({ graphQLErrors, networkError, operation }) => {
@@ -12,11 +12,9 @@ export const defaultErrorLink = onError(({ graphQLErrors, networkError, operatio
 
   if (graphQLErrors && environment !== 'production') {
     graphQLErrors.forEach((err) => {
-      const { message, locations, path, name, nodes } = err;
+      const { message, locations, path } = err;
       console.error(
-        `[Apollo::Links::Errors::Default]: ${message}, ${JSON.stringify(
-          locations
-        )}, ${path}, ${name}, ${nodes}`
+        `[Apollo::Links::Errors::Default]: ${message}, ${JSON.stringify(locations)}, ${path}`
       );
       console.log(operation);
     });
@@ -28,8 +26,7 @@ export const defaultErrorLink = onError(({ graphQLErrors, networkError, operatio
 
 export function useErrorLink() {
   const notify = useNotifications();
-  const dispatch = useAppDispatch();
-  const { authenticated } = useAppSelector((root) => root.global);
+  const authenticated = useAuthenticated();
   // Log any GraphQL errors or network error that occurred
   return React.useMemo(
     () =>
@@ -42,20 +39,21 @@ export function useErrorLink() {
                 '[Apollo::Links::Errors]: Received authentication error, logging out',
                 graphQLErrors
               );
-              dispatch(actions.global.logout());
+              resetSession({ reason: 'authentication-error' });
             }
+            return;
+          }
+
+          // Somebody else changed the record first: the caller refetches and says so, nothing to add here
+          if (graphQLErrors?.some((err) => err.extensions?.code === 'CONFLICT')) {
             return;
           }
 
           if (graphQLErrors && environment !== 'production') {
             graphQLErrors.forEach((err) => {
-              const { message, locations, path, name, nodes } = err;
+              const { message, locations, path } = err;
               notify.error(`[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}`);
-              console.error(
-                `[GraphQL error]: ${message}, ${JSON.stringify(
-                  locations
-                )}, ${path}, ${name}, ${nodes}`
-              );
+              console.error(`[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}`);
               // console.log(JSON.stringify(err));
               console.log(operation);
             });
@@ -67,6 +65,6 @@ export function useErrorLink() {
           forward?.(operation);
         }
       }),
-    [dispatch, notify, authenticated]
+    [notify, authenticated]
   );
 }

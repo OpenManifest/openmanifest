@@ -5,7 +5,7 @@ import { MutationCreateTicketTypeArgs, CreateTicketPayload } from '../schema.d';
 const MUTATION_CREATE_TICKET_TYPE = gql`
   mutation CreateTicketType(
     $name: String
-    $cost: Float
+    $costCents: Int
     $dropzoneId: Int!
     $altitude: Int
     $allowManifestingSelf: Boolean
@@ -16,7 +16,7 @@ const MUTATION_CREATE_TICKET_TYPE = gql`
       input: {
         attributes: {
           name: $name
-          cost: $cost
+          costCents: $costCents
           dropzoneId: $dropzoneId
           altitude: $altitude
           allowManifestingSelf: $allowManifestingSelf
@@ -34,12 +34,12 @@ const MUTATION_CREATE_TICKET_TYPE = gql`
         id
         name
         altitude
-        cost
+        costCents
         allowManifestingSelf
         extras {
           id
           name
-          cost
+          costCents
         }
 
         dropzone {
@@ -49,12 +49,12 @@ const MUTATION_CREATE_TICKET_TYPE = gql`
             id
             name
             altitude
-            cost
+            costCents
             allowManifestingSelf
             extras {
               id
               name
-              cost
+              costCents
             }
           }
         }

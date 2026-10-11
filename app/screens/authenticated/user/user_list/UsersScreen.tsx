@@ -7,7 +7,7 @@ import ProgressBar from 'app/components/ProgressBar';
 import SkeletonContent from 'app/components/Skeleton';
 import NoResults from 'app/components/NoResults';
 import { Permission } from 'app/api/schema.d';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useSession } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { useDropzoneUsersQuery } from 'app/api/reflection';
 import { DropzoneUserEssentialsFragment, DropzoneUsersQueryVariables } from 'app/api/operations';
@@ -15,6 +15,9 @@ import { useDropzoneContext } from 'app/providers';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
 import { useUserNavigation } from '../useUserNavigation';
+import { useAppTheme } from 'app/theme';
+import { useUserSearch } from './search';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 function UserCardSkeleton() {
   const theme = useTheme();
@@ -75,9 +78,8 @@ export type UserListRoute = {
 };
 
 export default function UsersScreen() {
-  const global = useAppSelector((root) => root.global);
-  const state = useAppSelector((root) => root.screens.users);
-  const dispatch = useAppDispatch();
+  const { palette, theme } = useAppTheme();
+  const { searchText, searchVisible, setSearchVisible } = useUserSearch();
   const {
     dropzone: { dropzone },
     dialogs,
@@ -87,7 +89,7 @@ export default function UsersScreen() {
     variables: omitBy<DropzoneUsersQueryVariables>(
       {
         dropzoneId: dropzone?.id as string,
-        search: state.searchText,
+        search: searchText,
       },
       isEmpty
     ) as DropzoneUsersQueryVariables,
@@ -99,10 +101,10 @@ export default function UsersScreen() {
 
   const isFocused = useIsFocused();
   React.useEffect(() => {
-    if (state.isSearchVisible && !isFocused) {
-      dispatch(actions.screens.users.setSearchVisible(false));
+    if (searchVisible && !isFocused) {
+      setSearchVisible(false);
     }
-  }, [dispatch, isFocused, state.isSearchVisible]);
+  }, [isFocused, searchVisible, setSearchVisible]);
 
   const canCreateUser = useRestriction(Permission.CreateUser);
   const { width } = useWindowDimensions();
@@ -113,11 +115,11 @@ export default function UsersScreen() {
   const users = React.useMemo(() => data?.dropzoneUsers?.edges || [], [data?.dropzoneUsers?.edges]);
   console.debug({ users, numColumns });
   const initialLoading = !users?.length && loading;
-  const theme = useTheme();
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   return (
     <View style={{ flexGrow: 1, backgroundColor: theme.colors.surface }}>
-      <ProgressBar indeterminate color={global.theme.colors.primary} visible={loading} />
+      <ProgressBar indeterminate color={theme.colors.primary} visible={loading} />
       {users?.length ? null : (
         <View style={styles.empty}>
           <NoResults title="No users" subtitle="" />
@@ -127,8 +129,8 @@ export default function UsersScreen() {
         data={initialLoading ? new Array(8).fill(loadingFragment) : users.map((edge) => edge?.node)}
         onRefresh={() =>
           refetch({
-            dropzoneId: global.currentDropzoneId?.toString(),
-            search: state.searchText,
+            dropzoneId: currentDropzoneId?.toString(),
+            search: searchText,
           })
         }
         keyExtractor={(item, idx) => `user-${item?.id || idx}-${idx}`}
@@ -178,7 +180,7 @@ export default function UsersScreen() {
                         style={{
                           alignSelf: 'center',
                           marginHorizontal: 22,
-                          backgroundColor: global.palette.primary.light,
+                          backgroundColor: palette.primary.light,
                         }}
                         size={48}
                       />
@@ -199,6 +201,7 @@ export default function UsersScreen() {
 
       {canCreateUser && (
         <FAB
+          labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
           style={[styles.fab, { backgroundColor: theme.colors.primary }]}
           small
           icon="plus"
@@ -215,7 +218,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   empty: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     flexGrow: 1,
     flex: 1,
     alignSelf: 'center',

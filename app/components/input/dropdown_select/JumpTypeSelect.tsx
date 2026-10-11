@@ -1,6 +1,6 @@
 import { JumpTypeEssentialsFragment } from 'app/api/operations';
 import { useAllowedJumpTypesQuery } from 'app/api/reflection';
-import { useAppSelector } from 'app/state';
+import { useSession } from 'app/state';
 import * as React from 'react';
 import Select from '../select/Select';
 import { withHookForm } from '../withHookForm';
@@ -13,7 +13,7 @@ interface IJumpTypeSelect {
 
 function JumpTypeSelect(props: IJumpTypeSelect) {
   const { allowedForDropzoneUserIds, onChange, value } = props;
-  const { currentDropzoneId } = useAppSelector((state) => state.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   const { data } = useAllowedJumpTypesQuery({
     variables: {

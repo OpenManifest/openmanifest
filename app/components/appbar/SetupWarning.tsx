@@ -53,11 +53,11 @@ export default function SetupWarning(props: ISetupWarning) {
     isMembershipInDate,
     isReserveInDate,
     isRigInspectionComplete,
-    onSetupWizard
+    onSetupWizard,
   } = props;
   const navigation = useNavigation();
   const {
-    dropzone: { currentUser }
+    dropzone: { currentUser },
   } = useDropzoneContext();
 
   if (loading) {
@@ -65,10 +65,16 @@ export default function SetupWarning(props: ISetupWarning) {
   }
 
   if (!isExitWeightDefined || !isRigSetUp) {
-    const missing = [!isExitWeightDefined ? 'exit weight' : null, !isRigSetUp ? 'equipment' : null].filter(Boolean);
+    const missing = [
+      !isExitWeightDefined ? 'exit weight' : null,
+      !isRigSetUp ? 'equipment' : null,
+    ].filter(Boolean);
 
     return (
-      <Warning title={`You need to define ${missing.join(' and ')} in your profile`} action={() => onSetupWizard?.()} />
+      <Warning
+        title={`You need to define ${missing.join(' and ')} in your profile`}
+        action={() => onSetupWizard?.()}
+      />
     );
   }
   if (!isMembershipInDate) {
@@ -89,9 +95,9 @@ export default function SetupWarning(props: ISetupWarning) {
               screen: 'Manifest',
               params: {
                 screen: 'User',
-                params: { screen: 'EquipmentScreen', params: { userId: currentUser.id } }
-              }
-            }
+                params: { screen: 'EquipmentScreen', params: { userId: currentUser.id } },
+              },
+            },
           })
         }
       />
@@ -108,10 +114,11 @@ const styles = StyleSheet.create({
   warning: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 56,
+    minHeight: 56,
+    paddingVertical: 8,
     width: '100%',
     backgroundColor: 'black',
     justifyContent: 'space-between',
-    paddingHorizontal: 16
-  }
+    paddingHorizontal: 16,
+  },
 });

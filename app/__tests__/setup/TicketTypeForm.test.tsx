@@ -1,29 +1,12 @@
 import * as React from 'react';
 import { Text, TextInput, View } from 'react-native';
-import '@testing-library/jest-native';
 import { CreateTicketTypeDocument } from 'app/api/reflection';
 import { useDropzoneContext } from 'app/providers';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import TicketTypeDialog from '../../forms/ticket_type/Dialog';
+import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-    credentials: {
-      accessToken: 'jest',
-      client: 'jest',
-      uid: 'jest@example.com',
-      tokenType: 'Bearer',
-      expiry: 9999999999,
-    },
-    currentDropzoneId: 1,
-  },
-};
 
 // The form refuses to submit until the dropzone has loaded
 function DropzoneReady() {
@@ -52,7 +35,7 @@ describe('<TicketTypeDialog />', () => {
         <TicketTypeDialog open onClose={jest.fn()} />
       </View>,
       {
-        initialState: authenticatedState,
+        session: authenticatedSession,
         graphql: [
           {
             request: {
@@ -61,11 +44,10 @@ describe('<TicketTypeDialog />', () => {
               variables: {
                 attributes: {
                   name: 'Hop n Pop',
-                  cost: 45,
-                  // Not the form's default of `true`: see BUG-096 below
-                  allowManifestingSelf: false,
+                  costCents: 4500,
+                  allowManifestingSelf: true,
                   altitude: 14000,
-                  extraIds: undefined,
+                  extraIds: [],
                   isTandem: false,
                   dropzoneId: 1,
                 },
@@ -95,7 +77,7 @@ describe('<TicketTypeDialog />', () => {
       <View testID="under-test">
         <TicketTypeDialog open onClose={jest.fn()} />
       </View>,
-      { initialState: authenticatedState, graphql: [] }
+      { session: authenticatedSession, graphql: [] }
     );
 
     const dialog = within(screen.getByTestId('under-test'));
@@ -106,12 +88,12 @@ describe('<TicketTypeDialog />', () => {
 
   // The dialog builds `initial` from the (absent) original ticket, so `cost`, `allowManifestingSelf` and `extras`
   // are `undefined` and override the form defaults (30, true, []): a new ticket starts at $0 and non-public.
-  it.skip('BUG-096: a new ticket starts with the default price', () => {
+  it('BUG-096: a new ticket starts with the default price', () => {
     const screen = render(
       <View testID="under-test">
         <TicketTypeDialog open onClose={jest.fn()} />
       </View>,
-      { initialState: authenticatedState, graphql: [] }
+      { session: authenticatedSession, graphql: [] }
     );
 
     const dialog = within(screen.getByTestId('under-test'));

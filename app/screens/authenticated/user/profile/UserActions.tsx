@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useProfileDialogs } from './ProfileDialogs';
 
 import { FAB, useTheme } from 'react-native-paper';
-import { actions, useAppDispatch } from 'app/state';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { useNavigation } from '@react-navigation/native';
 import { Permission } from 'app/api/schema.d';
@@ -12,6 +12,7 @@ import { DropzoneUsersDocument, useArchiveUserMutation } from 'app/api/reflectio
 import { errorColor, infoColor, successColor, warningColor } from 'app/constants/Colors';
 import { useNotifications } from 'app/providers/notifications';
 import { useUserNavigation } from '../useUserNavigation';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 type PropsOf<T> = T extends React.ComponentType<infer P> ? P : never;
 type FABActions = PropsOf<typeof FAB.Group>['actions'];
@@ -21,14 +22,14 @@ interface IUserActionsButtonProps {
 }
 export default function UserActionsButton(props: IUserActionsButtonProps) {
   const { dropzoneUser, visible } = props;
+  const { editUser, editMembership } = useProfileDialogs();
   const {
-    dropzone: { currentUser }
+    dropzone: { currentUser },
   } = useDropzoneContext();
   const [fabOpen, setFabOpen] = React.useState(false);
   const { dialogs } = useManifestContext();
   const notify = useNotifications();
 
-  const dispatch = useAppDispatch();
   const navigation = useUserNavigation();
   const rootNavigator = useNavigation();
   const theme = useTheme();
@@ -37,7 +38,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
     if (dropzoneUser) {
       rootNavigator.navigate('Wizards', {
         screen: 'UserWizardScreen',
-        params: { index: undefined, dropzoneUserId: dropzoneUser.id }
+        params: { index: undefined, dropzoneUserId: dropzoneUser.id },
       });
     }
   }, [dropzoneUser, rootNavigator]);
@@ -46,8 +47,8 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
     if (!dropzoneUser) {
       return;
     }
-    dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser));
-  }, [dispatch, dropzoneUser]);
+    editMembership();
+  }, [dropzoneUser, editMembership]);
 
   const onClickTransactions = React.useCallback(() => {
     if (!dropzoneUser?.id) {
@@ -71,11 +72,14 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
 
   const onClickEdit = React.useCallback(() => {
     if (dropzoneUser?.user) {
-      dispatch(actions.forms.user.setOpen(dropzoneUser));
+      editUser();
     }
-  }, [dispatch, dropzoneUser]);
+  }, [dropzoneUser?.user, editUser]);
 
-  const isSelf = React.useMemo(() => currentUser?.id === dropzoneUser?.id, [currentUser?.id, dropzoneUser?.id]);
+  const isSelf = React.useMemo(
+    () => currentUser?.id === dropzoneUser?.id,
+    [currentUser?.id, dropzoneUser?.id]
+  );
   const canAddTransaction = useRestriction(Permission.CreateUserTransaction);
   const canViewOthersTransactions = useRestriction(Permission.ReadUserTransactions);
   const canUpdateUsers = useRestriction(Permission.UpdateUser);
@@ -98,9 +102,9 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
             try {
               const { data } = await deleteUser({
                 variables: {
-                  id: Number(dropzoneUser?.id)
+                  id: Number(dropzoneUser?.id),
                 },
-                refetchQueries: [DropzoneUsersDocument]
+                refetchQueries: [DropzoneUsersDocument],
               });
 
               data?.deleteUser?.errors?.forEach((message) => {
@@ -114,8 +118,8 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
             } catch (e) {
               console.log(e);
             }
-          }
-        }
+          },
+        },
       ]
     );
   }, [deleteUser, dropzoneUser?.id, dropzoneUser?.user?.name, isSelf, navigation, notify]);
@@ -127,21 +131,21 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
           ? {
               icon: 'pencil',
               label: 'Edit',
-              onPress: onClickEdit
+              onPress: onClickEdit,
             }
           : null,
         {
           icon: 'account-convert',
           label: 'Setup Wizard',
           color: infoColor,
-          onPress: onClickSetupWizard
+          onPress: onClickSetupWizard,
         },
         canUpdateUsers
           ? {
               icon: 'lock',
               label: 'Access & Membership',
               color: warningColor,
-              onPress: onClickAccessAndMembership
+              onPress: onClickAccessAndMembership,
             }
           : null,
         canAddTransaction
@@ -149,29 +153,29 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
               icon: 'cash-plus',
               label: 'Add Funds',
               color: successColor,
-              onPress: onClickAddFunds
+              onPress: onClickAddFunds,
             }
           : null,
         isSelf || canViewOthersTransactions
           ? {
               icon: 'account-cash',
               label: 'Manage Transactions',
-              onPress: onClickTransactions
+              onPress: onClickTransactions,
             }
           : null,
         {
           icon: 'parachute',
           label: 'Manage Equipment',
-          onPress: onClickEquipment
+          onPress: onClickEquipment,
         },
         canDeleteUsers
           ? {
               icon: 'account-off',
               label: 'Delete user',
               onPress: onDeleteUser,
-              color: errorColor
+              color: errorColor,
             }
-          : null
+          : null,
       ].filter(Boolean) as FABActions,
     [
       canAddTransaction,
@@ -185,7 +189,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
       onClickEquipment,
       onClickSetupWizard,
       onClickTransactions,
-      onDeleteUser
+      onDeleteUser,
     ]
   );
 
@@ -198,10 +202,13 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
       fabStyle={{
         marginLeft: 16,
         marginBottom: 16,
-        backgroundColor: theme.colors.primary
+        backgroundColor: theme.colors.primary,
       }}
       onStateChange={({ open }) => setFabOpen(open)}
-      actions={fabActions}
+      actions={fabActions.map((action) => ({
+        ...action,
+        labelMaxFontSizeMultiplier: CHROME_MAX_FONT_SIZE_MULTIPLIER,
+      }))}
     />
   );
 }

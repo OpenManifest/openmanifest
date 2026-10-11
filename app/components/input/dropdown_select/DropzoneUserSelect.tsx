@@ -3,7 +3,7 @@ import { useDropzoneUsersQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { Title } from 'react-native-paper';
 import { DropzoneUser, Permission } from '../../../api/schema.d';
-import { useAppSelector } from '../../../state';
+import { useSession } from '../../../state';
 import Select from '../select/Select';
 import { withHookForm } from '../withHookForm';
 
@@ -16,11 +16,11 @@ interface IDropzoneUserSelect {
 
 function DropzoneUserSelect(props: IDropzoneUserSelect) {
   const { requiredPermissions, value, onChange, label } = props;
-  const globalState = useAppSelector((root) => root.global);
+  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
 
   const { data } = useDropzoneUsersQuery({
     variables: {
-      dropzoneId: globalState.currentDropzoneId?.toString() as string,
+      dropzoneId: currentDropzoneId?.toString() as string,
       permissions: requiredPermissions,
     },
   });

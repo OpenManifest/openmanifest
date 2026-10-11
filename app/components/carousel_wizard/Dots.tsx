@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useAppSelector } from 'app/state';
+import { useAppTheme } from 'app/theme';
 
 interface IDotsProps {
   count: number;
@@ -8,7 +8,7 @@ interface IDotsProps {
 }
 export default function Dots(props: IDotsProps) {
   const { count, index } = props;
-  const palette = useAppSelector((state) => state.global.palette);
+  const { palette } = useAppTheme();
 
   return (
     <View style={{ flexDirection: 'row' }}>
@@ -17,7 +17,7 @@ export default function Dots(props: IDotsProps) {
           key={`paginatiom-dot-${idx}`}
           style={[
             idx === index ? styles.activeDot : styles.inactiveDot,
-            { backgroundColor: idx === index ? palette.primary.main : palette.primary.light }
+            { backgroundColor: idx === index ? palette.primary.main : palette.primary.light },
           ]}
         />
       ))}
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     marginTop: 1,
     marginLeft: 2,
     marginRight: 2,
-    borderRadius: 3
+    borderRadius: 3,
   },
-  activeDot: { width: 8, height: 8, marginLeft: 2, marginRight: 2, borderRadius: 4 }
+  activeDot: { width: 8, height: 8, marginLeft: 2, marginRight: 2, borderRadius: 4 },
 });

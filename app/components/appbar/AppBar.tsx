@@ -4,8 +4,9 @@ import { StackHeaderProps } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { actions, useAppDispatch, useAppSelector } from '../../state';
 import SetupWarning from './SetupWarning';
+import { useAppTheme } from 'app/theme';
+import { formatCents, fromCents } from 'app/utils/money';
 
 interface IAppBarProps extends StackHeaderProps {
   hideWarnings?: boolean;
@@ -13,17 +14,18 @@ interface IAppBarProps extends StackHeaderProps {
 
 function AppBar(props: IAppBarProps) {
   const { hideWarnings, back, options } = props;
-  const { palette, theme } = useAppSelector((root) => root.global);
-  const dispatch = useAppDispatch();
+  const { palette, theme } = useAppTheme();
   const {
-    dropzone: { currentUser, loading, dropzone }
+    dropzone: { currentUser, loading, dropzone },
   } = useDropzoneContext();
 
   const navigation = useNavigation();
   const { openDrawer } = useNavigation<DrawerNavigationProp<never>>();
   return (
     <>
-      <Appbar.Header style={{ backgroundColor: theme.dark ? theme.colors.background : theme.colors.surface }}>
+      <Appbar.Header
+        style={{ backgroundColor: theme.dark ? theme.colors.background : theme.colors.surface }}
+      >
         {back ? (
           <Appbar.BackAction onPress={navigation.goBack} />
         ) : (
@@ -40,19 +42,21 @@ function AppBar(props: IAppBarProps) {
               height: 36,
               padding: 4,
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
             }}
             mode="flat"
             textStyle={{
               color: palette.onSurface,
-              fontFamily: 'Roboto_700Bold'
+              fontFamily: 'Roboto_700Bold',
             }}
-          >{`$${currentUser?.credits || 0}`}</Chip>
+          >
+            {formatCents(currentUser?.creditsCents)}
+          </Chip>
         )}
       </Appbar.Header>
       {hideWarnings ? null : (
         <SetupWarning
-          credits={currentUser?.credits || 0}
+          credits={fromCents(currentUser?.creditsCents)}
           loading={loading}
           isCreditSystemEnabled={!!dropzone?.settings?.requireCredits}
           isExitWeightDefined={!!currentUser?.user?.exitWeight}
@@ -83,8 +87,8 @@ function AppBar(props: IAppBarProps) {
                 screen: 'UserWizardScreen',
                 params: {
                   index: undefined,
-                  dropzoneUserId: currentUser.id
-                }
+                  dropzoneUserId: currentUser.id,
+                },
               });
             }
           }}

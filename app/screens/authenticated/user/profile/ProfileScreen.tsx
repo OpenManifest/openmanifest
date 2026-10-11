@@ -5,11 +5,6 @@ import { Chip, Divider } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 import Skeleton from 'app/components/Skeleton';
 
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
-import DropzoneUserDialog from 'app/components/dialogs/DropzoneUserDialog';
-import RigDialog from 'app/components/dialogs/Rig';
-import EditUserSheet from 'app/components/dialogs/User';
-
 import useImagePicker from 'app/hooks/useImagePicker';
 import { useDropzoneContext, useManifestContext } from 'app/providers';
 import { useUpdateUserMutation } from 'app/api/reflection';
@@ -22,7 +17,10 @@ import Header from './UserInfo/Header';
 import InfoGrid from './UserInfo/InfoGrid';
 
 import UserActionsButton from './UserActions';
+import { ProfileDialogsProvider, useProfileDialogs } from './ProfileDialogs';
 import TabBar, { ProfileTab } from './tabs';
+import { useAppTheme } from 'app/theme';
+import { formatCents } from 'app/utils/money';
 
 export type ProfileRoute = {
   ProfileScreen: {
@@ -30,10 +28,6 @@ export type ProfileRoute = {
   };
 };
 export default function ProfileScreen() {
-  const state = useAppSelector((root) => root.global);
-  const forms = useAppSelector((root) => root.forms);
-  const dispatch = useAppDispatch();
-  const navigation = useNavigation();
   const {
     dropzone: { currentUser },
   } = useDropzoneContext();
@@ -42,6 +36,25 @@ export default function ProfileScreen() {
   const { dropzoneUser, loading } = useUserProfile({
     id: route.params.userId || currentUser?.id,
   });
+
+  return (
+    <ProfileDialogsProvider {...{ dropzoneUser }}>
+      <ProfileScreenContent {...{ dropzoneUser, loading }} />
+    </ProfileDialogsProvider>
+  );
+}
+
+function ProfileScreenContent(props: {
+  dropzoneUser?: ReturnType<typeof useUserProfile>['dropzoneUser'];
+  loading: boolean;
+}) {
+  const { dropzoneUser, loading } = props;
+  const { theme } = useAppTheme();
+  const navigation = useNavigation();
+  const {
+    dropzone: { currentUser },
+  } = useDropzoneContext();
+  const { editMembership } = useProfileDialogs();
   const pickImage = useImagePicker();
   const isFocused = useIsFocused();
   const [defaultIndex, onChangeIndex] = React.useState(1);
@@ -49,8 +62,8 @@ export default function ProfileScreen() {
     if (!dropzoneUser) {
       return;
     }
-    dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser));
-  }, [dispatch, dropzoneUser]);
+    editMembership();
+  }, [dropzoneUser, editMembership]);
   const headerRight = React.useCallback(
     () =>
       !currentUser?.expiresAt ? null : (
@@ -101,15 +114,6 @@ export default function ProfileScreen() {
 
   const { dialogs } = useManifestContext();
 
-  const onCloseRigForm = React.useCallback(
-    () => dispatch(actions.forms.rig.setOpen(false)),
-    [dispatch]
-  );
-
-  const onUserSheetClose = React.useCallback(() => {
-    dispatch(actions.forms.user.setOpen(false));
-  }, [dispatch]);
-
   const openWizard = useProfileWizard();
 
   const getContent = React.useCallback(
@@ -127,11 +131,9 @@ export default function ProfileScreen() {
   return (
     <>
       <View style={StyleSheet.absoluteFill}>
-        {loading && (
-          <ProgressBar color={state.theme.colors.primary} indeterminate visible={loading} />
-        )}
+        {loading && <ProgressBar color={theme.colors.primary} indeterminate visible={loading} />}
         <FlatList
-          style={{ backgroundColor: state.theme.colors.background }}
+          style={{ backgroundColor: theme.colors.background }}
           contentContainerStyle={[styles.content, { backgroundColor: 'transparent' }]}
           refreshControl={<RefreshControl refreshing={loading} />}
           keyExtractor={(_, idx) => `profile-${idx}`}
@@ -151,11 +153,11 @@ export default function ProfileScreen() {
                 ) : (
                   <Header dropzoneUser={dropzoneUser} onPressAvatar={onPickImage}>
                     <InfoGrid
-                      style={{ height: 80 }}
+                      style={{ minHeight: 80 }}
                       items={[
                         {
                           title: 'Funds',
-                          value: `$${dropzoneUser?.credits || 0}`,
+                          value: formatCents(dropzoneUser?.creditsCents),
                           onPress: () => {
                             dialogs.credits.open({ dropzoneUser });
                           },
@@ -185,32 +187,6 @@ export default function ProfileScreen() {
           )}
           renderItem={getContent}
           data={[null, null]}
-        />
-
-        <RigDialog
-          onClose={onCloseRigForm}
-          onSuccess={() => requestAnimationFrame(() => dispatch(actions.forms.rig.setOpen(false)))}
-          open={forms.rig.open}
-          userId={Number(dropzoneUser?.user?.id)}
-        />
-
-        <DropzoneUserDialog
-          onClose={() => dispatch(actions.forms.dropzoneUser.setOpen(false))}
-          onSuccess={(user) => {
-            dispatch(actions.forms.dropzoneUser.setOpen(false));
-            if (currentUser?.id === dropzoneUser?.id) {
-              dispatch(actions.global.setUser(user.user));
-            }
-          }}
-          open={forms.dropzoneUser.open}
-        />
-        <EditUserSheet
-          dropzoneUserId={dropzoneUser?.id}
-          onClose={onUserSheetClose}
-          onSuccess={() => {
-            dispatch(actions.forms.user.setOpen(false));
-          }}
-          open={forms.user.open}
         />
       </View>
       <UserActionsButton {...{ dropzoneUser }} visible={isFocused} />

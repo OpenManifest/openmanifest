@@ -15,13 +15,14 @@ import useImagePicker from 'app/hooks/useImagePicker';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
 import useMutationUpdateRig from 'app/api/hooks/useMutationUpdateRig';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useImageViewer } from 'app/components/dialogs/ImageViewer/context';
 import { errorColor, successColor } from 'app/constants/Colors';
 
 import { Permission } from 'app/api/schema.d';
 import { AvailableRigsDocument, DropzoneUsersDetailedDocument } from 'app/api/reflection';
 import { useNotifications } from 'app/providers/notifications';
 import { useUserNavigation } from '../useUserNavigation';
+import { useAppTheme } from 'app/theme';
 
 export interface IRigCardProps {
   rig: RigEssentialsFragment;
@@ -33,8 +34,8 @@ export interface IRigCardProps {
 export default function RigCard(props: IRigCardProps) {
   const { rig, rigInspection, dropzoneUser, onSuccessfulImageUpload, onPress } = props;
   const [isUploading, setUploading] = React.useState(false);
-  const { accent } = useAppSelector((root) => root.global.theme.colors);
-  const dispatch = useAppDispatch();
+  const { accent } = useAppTheme().theme.colors;
+  const { open: openImage } = useImageViewer();
   const notify = useNotifications();
   const {
     dropzone: { currentUser },
@@ -134,7 +135,7 @@ export default function RigCard(props: IRigCardProps) {
                 if (canUpdateRig) {
                   setPackingCardMenuOpen(true);
                 } else if (rig?.packingCard) {
-                  dispatch(actions.imageViewer.setOpen(rig.packingCard));
+                  openImage(rig.packingCard);
                 }
               }}
             >
@@ -160,7 +161,7 @@ export default function RigCard(props: IRigCardProps) {
                 onPress={() => {
                   setPackingCardMenuOpen(false);
                   if (rig.packingCard) {
-                    dispatch(actions.imageViewer.setOpen(rig.packingCard));
+                    openImage(rig.packingCard);
                   }
                 }}
               />

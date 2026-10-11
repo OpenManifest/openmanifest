@@ -1,24 +1,29 @@
 import * as React from 'react';
-import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { render as rtlRender } from '@testing-library/react-native';
-import { createStore } from 'redux';
-import { Provider as Redux } from 'react-redux';
-import { MockedProvider, MockedProviderProps, MockedResponse, MockLink } from '@apollo/client/testing';
+import {
+  MockedProvider,
+  MockedProviderProps,
+  MockedResponse,
+  MockLink,
+} from '@apollo/client/testing';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { Permission } from 'app/api/schema.d';
 import { Operation } from '@apollo/client';
 
 // Import your own reducer
+import { AppThemeProvider } from 'app/theme';
+import { WeatherFormProvider } from 'app/forms/weather';
 import { DropzoneContextProvider, ManifestContextProvider } from 'app/providers';
 import mockQueryDropzone from '../__tests__/manifest/__mocks__/QueryDropzone.mock';
-import { rootReducer, RootState } from '../state/store';
+import { initialSession, SessionState, useSession } from '../state/session';
 import createMockPermissions from '../__tests__/manifest/__mocks__/QueryPermissions.mock';
 
 type RenderOptions = NonNullable<Parameters<typeof rtlRender>[1]>;
 
 interface IRenderer extends RenderOptions {
-  initialState?: RootState;
+  /** Session store values (credentials, current dropzone, ...); logged out when omitted */
+  session?: Partial<SessionState>;
   permissions?: Permission[];
   graphql: MockedResponse<Record<string, unknown>>[];
 }
@@ -27,7 +32,10 @@ interface IRenderer extends RenderOptions {
 class MyMockLink extends MockLink {
   private mockedResponsesByKey: { [key: string]: MockedResponse<Record<string, unknown>> };
 
-  constructor(readonly mockedResponses: MockedResponse<Record<string, unknown>>[], addTypename?: boolean) {
+  constructor(
+    readonly mockedResponses: MockedResponse<Record<string, unknown>>[],
+    addTypename?: boolean
+  ) {
     super(mockedResponses, addTypename);
 
     if (addTypename === undefined) {
@@ -73,13 +81,20 @@ function Apollo(props: MockedProviderProps) {
   return <MockedProvider {...otherProps} link={mockLink} />;
 }
 
-function render(ui: React.ReactElement<unknown>, { initialState, graphql, permissions, ...renderOptions }: IRenderer) {
-  const store = createStore(rootReducer, initialState);
+function render(
+  ui: React.ReactElement<unknown>,
+  { session, graphql, permissions, ...renderOptions }: IRenderer
+) {
+  useSession.setState({ ...initialSession, hydrated: true, ...(session || {}) });
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
-      <SafeAreaProvider initialMetrics={{ frame: { x: 0, y: 0, width: 360, height: 640 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}>
-      <BottomSheetModalProvider>
-        <Redux store={store}>
+      <SafeAreaProvider
+        initialMetrics={{
+          frame: { x: 0, y: 0, width: 360, height: 640 },
+          insets: { top: 0, left: 0, right: 0, bottom: 0 },
+        }}
+      >
+        <BottomSheetModalProvider>
           <Apollo
             addTypename
             mocks={[
@@ -90,27 +105,26 @@ function render(ui: React.ReactElement<unknown>, { initialState, graphql, permis
                 {
                   dropzone: {
                     currentUser: {
-                      permissions: permissions || []
-                    }
-                  }
+                      permissions: permissions || [],
+                    },
+                  },
                 }
-              )
+              ),
             ]}
           >
-            <DropzoneContextProvider dropzoneId={initialState?.global?.currentDropzoneId?.toString()}>
-              <ManifestContextProvider dropzone={initialState?.global?.currentDropzoneId?.toString()}>
-                <PaperProvider theme={store.getState().global.theme}>
-                  {children}
-                </PaperProvider>
+            <DropzoneContextProvider dropzoneId={session?.currentDropzoneId?.toString()}>
+              <ManifestContextProvider dropzone={session?.currentDropzoneId?.toString()}>
+                <AppThemeProvider>
+                  <WeatherFormProvider>{children}</WeatherFormProvider>
+                </AppThemeProvider>
               </ManifestContextProvider>
             </DropzoneContextProvider>
           </Apollo>
-        </Redux>
-      </BottomSheetModalProvider>
+        </BottomSheetModalProvider>
       </SafeAreaProvider>
     );
   }
-  return { ...rtlRender(ui, { wrapper: Wrapper, ...renderOptions }), store };
+  return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });
 }
 
 // re-export everything

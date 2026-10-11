@@ -6,7 +6,7 @@ import Constants from 'expo-constants';
 import URI from 'urijs';
 import { useUpdateUserMutation } from 'app/api/reflection';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
+import { useSession } from 'app/state';
 import { useNotifications } from 'app/providers/notifications';
 
 async function registerForPushNotificationsAsync(): Promise<string | null> {
@@ -23,7 +23,9 @@ async function registerForPushNotificationsAsync(): Promise<string | null> {
       return null;
     }
     token = (
-      await Notifications.getExpoPushTokenAsync({ projectId: Constants.expoConfig?.extra?.eas?.projectId })
+      await Notifications.getExpoPushTokenAsync({
+        projectId: Constants.expoConfig?.extra?.eas?.projectId,
+      })
     ).data;
   } else {
     console.warn('Must use physical device for Push Notifications');
@@ -43,16 +45,18 @@ async function registerForPushNotificationsAsync(): Promise<string | null> {
 
 export default function PushNotifications(props: React.PropsWithChildren<object>) {
   const { children } = props;
-  const pushToken = useAppSelector((root) => root.global.expoPushToken);
+  const pushToken = useSession((session) => session.expoPushToken);
+  const setPushToken = useSession((session) => session.setPushToken);
   const notify = useNotifications();
-  const dispatch = useAppDispatch();
   const {
     dropzone: { currentUser, loading, called },
   } = useDropzoneContext();
   const notificationListener =
-    React.useRef<ReturnType<typeof Notifications.addNotificationReceivedListener>>();
+    React.useRef<ReturnType<typeof Notifications.addNotificationReceivedListener>>(undefined);
   const responseListener =
-    React.useRef<ReturnType<typeof Notifications.addNotificationResponseReceivedListener>>();
+    React.useRef<ReturnType<typeof Notifications.addNotificationResponseReceivedListener>>(
+      undefined
+    );
 
   const onOutsideLink = React.useCallback((link: { url: string }) => {
     const uri = URI(link.url);
@@ -68,7 +72,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
 
     registerForPushNotificationsAsync().then((token: string | null) => {
       if (token) {
-        dispatch(actions.global.setExpoPushToken(token));
+        setPushToken(token);
       }
     });
 
@@ -90,14 +94,14 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
 
     return () => {
       if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(notificationListener.current);
+        notificationListener.current.remove();
       }
       if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
+        responseListener.current.remove();
       }
       subscription.remove();
     };
-  }, [dispatch, notify, onOutsideLink]);
+  }, [notify, onOutsideLink, setPushToken]);
 
   // Update remote push token if we have a local token, but no
   // token saved on the server. This is done so that the server
@@ -116,5 +120,5 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       }
     }
   }, [pushToken, currentUser?.id, currentUser?.user?.pushToken, loading, called, updateUser]);
-  return children as JSX.Element;
+  return children as React.JSX.Element;
 }

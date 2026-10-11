@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Divider as MaterialDivider, Text, useTheme } from 'react-native-paper';
 
-export default function Divider(props: { children: React.ReactText }) {
+export default function Divider(props: { children: string | number }) {
   const { children } = props;
   const theme = useTheme();
   return (

@@ -46,7 +46,7 @@ function ChipSelect<T>(props: IChipSelect<T>) {
       variant === 'scroll' ? (
         <ScrollView horizontal>{children} </ScrollView>
       ) : (
-        (children as JSX.Element)
+        (children as React.JSX.Element)
       ),
     [variant]
   );

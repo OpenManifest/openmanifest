@@ -1,10 +1,10 @@
 import { setContext } from '@apollo/client/link/context';
 import * as React from 'react';
-import { useAppSelector } from 'app/state';
+import { useSession } from 'app/state';
 import isEmpty from 'lodash/isEmpty';
 
 export function useAuthenticationLink() {
-  const credentials = useAppSelector((root) => root.global.credentials);
+  const credentials = useSession((session) => session.credentials);
   const authHeaders = React.useMemo(() => {
     if (!credentials?.accessToken) return {};
     return {
