@@ -10,6 +10,11 @@ on:
       grep:
         description: Playwright --grep filter (for example @manifest); empty runs everything
         default: ""
+  # Changes to this workflow or the environment action run a reduced suite (@login) so they are proven before merge
+  pull_request:
+    paths:
+      - .github/workflows/ui-full.yml
+      - .github/actions/ui-env/**
   schedule:
     - cron: "0 17 * * 0" # Monday 03:00 Australia/Brisbane (UTC+10, no daylight saving)
 concurrency:
@@ -40,7 +45,7 @@ jobs:
           backend-ref: ${{ inputs.backend-ref || 'staging' }}
       - name: Run the full suite
         env:
-          GREP: ${{ inputs.grep }}
+          GREP: ${{ inputs.grep || (github.event_name == 'pull_request' && '@login' || '') }}
         run: |
           if [ -n "$GREP" ]; then yarn test:ui:full --grep "$GREP"; else yarn test:ui:full; fi
       - if: always()
