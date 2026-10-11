@@ -13,6 +13,9 @@ Before doing any work:
    PRs, status updates in the backend copy, stop conditions).
 2. Then read the task you picked and every document it links.
 
+Feature plans (commerce foundation, booking, webshop) live in the backend repo's `docs/features/README.md` and follow the
+same executor rules.
+
 Reference: `docs/reference/README.md` (navigation, store, API layer, platform files, dependencies),
 `docs/reference/diagrams.md`; bugs for both repos are in the backend repo's `docs/reference/BUGS.md`; cloud VM setup in
 the backend repo's `docs/reference/CLOUD_ENV.md`.
