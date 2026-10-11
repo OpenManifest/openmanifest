@@ -1,21 +1,21 @@
 import * as React from 'react';
-import { FAB, Portal, useTheme } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { FAB, useTheme } from 'react-native-paper';
 import { LoadDetailsFragment } from 'app/api/operations';
 
 import { useDropzoneContext, useLoadContext, useManifestContext } from 'app/providers';
 
 import { Permission, LoadState } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
-import { actions, useAppDispatch } from 'app/state';
-import isSameDay from 'date-fns/isSameDay';
-import { parseISO } from 'date-fns';
+import { useDropzoneToday, useDropzoneTimeZone } from 'app/hooks/useDropzoneToday';
+import { dateInZone } from 'app/utils/dropzoneTime';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 interface ILoadActionButtonProps {
   load: LoadDetailsFragment;
 }
 
 export default function ActionButton(props: ILoadActionButtonProps) {
-  const dispatch = useAppDispatch();
   const { dialogs } = useManifestContext();
   const {
     dialogs: { timepicker },
@@ -71,7 +71,10 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     },
   ];
 
-  const isToday = isSameDay(new Date(), parseISO(load.createdAt));
+  // The load's day at the dropzone, not on this device
+  const today = useDropzoneToday();
+  const timeZone = useDropzoneTimeZone();
+  const isToday = dateInZone(load.createdAt, timeZone) === today;
 
   const manifestActions = [
     !showManifestButton || !isToday
@@ -86,19 +89,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       : {
           label: 'Manifest group',
           icon: 'account-group',
-          onPress: () => {
-            dispatch(actions.forms.manifestGroup.reset());
-            dispatch(actions.forms.manifestGroup.setField(['load', load]));
-
-            if (canManifestGroupWithSelfOnly && !canManifestGroup && currentUser) {
-              // Automatically add current user to selection
-              dispatch(actions.screens.manifest.setSelected([currentUser]));
-              dispatch(actions.forms.manifestGroup.setDropzoneUsers([currentUser]));
-            }
-
-            dispatch(actions.forms.manifestGroup.setOpen(true));
-            dispatch(actions.forms.manifestGroup.setField(['load', load]));
-          },
+          onPress: () => dialogs.manifestGroup.open({ load }),
         },
   ].filter(Boolean);
 
@@ -139,21 +130,25 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     ...(canUpdateLoad ? workflowActions : []),
   ];
 
+  // Not in a Portal: the group fills the screen area above the tab bar, which already covers the bottom inset
   return (
-    <Portal>
-      <FAB.Group
-        visible={!!buttonActions.length}
-        open={isExpanded}
-        icon={isExpanded ? 'close' : 'plus'}
-        fabStyle={{
-          marginLeft: 16,
-          marginBottom: 100,
-          backgroundColor: theme.colors.primary,
-        }}
-        // @ts-ignore
-        actions={buttonActions}
-        onStateChange={({ open }) => setExpanded(open)}
-      />
-    </Portal>
+    <FAB.Group
+      testID="load-actions-primary-action"
+      visible={!!buttonActions.length}
+      open={isExpanded}
+      icon={isExpanded ? 'close' : 'plus'}
+      style={styles.group}
+      fabStyle={{ backgroundColor: theme.colors.primary }}
+      // @ts-ignore
+      actions={buttonActions.map((action) => ({
+        ...action,
+        labelMaxFontSizeMultiplier: CHROME_MAX_FONT_SIZE_MULTIPLIER,
+      }))}
+      onStateChange={({ open }) => setExpanded(open)}
+    />
   );
 }
+
+const styles = StyleSheet.create({
+  group: { paddingBottom: 0 },
+});

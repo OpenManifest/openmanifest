@@ -1,18 +1,10 @@
 import * as React from 'react';
 
-import {
-  KeyboardAvoidingView,
-  LayoutChangeEvent,
-  LayoutRectangle,
-  Platform,
-  StyleSheet,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Carousel, CarouselRef } from 'react-native-reanimated-carousel';
 import { useNavigation } from '@react-navigation/native';
 import { Step } from './Step';
-import Dots from './Dots';
+import WizardFrame from './WizardFrame';
 import Buttons from './Buttons';
 import type { IUseWizardReturnValue } from 'app/hooks/forms';
 import { FormProvider, useWatch } from 'react-hook-form';
@@ -38,14 +30,7 @@ function Wizard<WizardSteps extends WizardFormStep[]>(
   const { stepIndex: step, lastStepIndex } = useWatch({ control });
   const currentIndex = useMemo(() => step || 0, [step]);
 
-  const [dimensions, setDimensions] = React.useState<LayoutRectangle>({
-    width: 0,
-    height: 0,
-    x: 0,
-    y: 0,
-  });
   const carouselRef = React.useRef<CarouselRef>(null);
-  const screen = useWindowDimensions();
 
   React.useImperativeHandle(ref, () => ({
     next: () => carouselRef.current?.next(),
@@ -60,12 +45,6 @@ function Wizard<WizardSteps extends WizardFormStep[]>(
     }
   }, [currentIndex]);
 
-  const onLayout = React.useCallback((event: LayoutChangeEvent) => {
-    setDimensions(event.nativeEvent.layout);
-  }, []);
-
-  const { width } = dimensions;
-
   useEffect(() => {
     if (lastStepIndex !== (steps?.length || 0)) {
       setMaxIndex(steps?.length || 0);
@@ -74,77 +53,43 @@ function Wizard<WizardSteps extends WizardFormStep[]>(
 
   return (
     <FormProvider {...form}>
-      <KeyboardAvoidingView
-        style={StyleSheet.absoluteFill}
-        behavior={Platform.OS === 'android' ? undefined : 'padding'}
-        {...{ onLayout }}
-      >
-        {!dots ? null : (
-          <View style={styles.dots}>
-            <Dots count={lastStepIndex || 0} index={currentIndex} />
-          </View>
+      <WizardFrame dotCount={dots ? lastStepIndex || 0 : undefined} dotIndex={currentIndex}>
+        {(pageWidth) => (
+          <Carousel
+            autoplay={false}
+            loop={false}
+            layout={{ type: 'parallax', scale: 1, offset: 32 }}
+            // The steps are changed with the buttons, not by swiping
+            scrollEnabled={false}
+            style={StyleSheet.absoluteFill}
+            data={steps}
+            itemSize={pageWidth}
+            onSnapToItem={setIndex}
+            ref={carouselRef}
+            renderItem={({ item: WizardStep, index }) => {
+              if (!WizardStep) {
+                return <View />;
+              }
+              return (
+                <WizardStep
+                  actions={
+                    <Buttons
+                      {...{ loading }}
+                      isCurrent={index === currentIndex}
+                      nextLabel={currentIndex === lastStepIndex ? 'Done' : 'Next'}
+                      backLabel="Back"
+                      onNext={next}
+                      onBack={back}
+                    />
+                  }
+                />
+              );
+            }}
+          />
         )}
-        <Carousel
-          autoplay={false}
-          loop={false}
-          layout={{ type: 'parallax', scale: 1, offset: 32 }}
-          // The steps are changed with the buttons, not by swiping
-          scrollEnabled={false}
-          style={StyleSheet.absoluteFill}
-          data={steps}
-          itemSize={width || screen.width}
-          onSnapToItem={setIndex}
-          ref={carouselRef}
-          renderItem={({ item: WizardStep }) => {
-            if (!WizardStep) {
-              return <View />;
-            }
-            return (
-              <WizardStep
-                actions={
-                  <Buttons
-                    {...{ loading }}
-                    nextLabel={currentIndex === lastStepIndex ? 'Done' : 'Next'}
-                    backLabel="Back"
-                    onNext={next}
-                    onBack={back}
-                  />
-                }
-              />
-            );
-          }}
-        />
-      </KeyboardAvoidingView>
+      </WizardFrame>
     </FormProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  dots: {
-    alignSelf: 'center',
-    minWidth: 400,
-    maxWidth: 500,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 48,
-    zIndex: 1100,
-  },
-  actions: {
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    paddingBottom: 48,
-  },
-  next: {
-    width: '100%',
-    borderRadius: 20,
-    minWidth: 300,
-  },
-  content: {
-    flexGrow: 1,
-  },
-});
 
 export default React.forwardRef(Wizard);

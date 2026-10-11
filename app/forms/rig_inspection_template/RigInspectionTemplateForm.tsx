@@ -1,0 +1,142 @@
+import * as React from 'react';
+import { View } from 'react-native';
+import { Control, useFieldArray } from 'react-hook-form';
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  Divider,
+  FAB,
+  IconButton,
+  Portal,
+  TextInput,
+  useTheme,
+} from 'react-native-paper';
+import { FieldItem } from './fieldItem';
+import RigInspectionItem from './RigInspectionItem';
+import { RigInspectionTemplateFields } from './useForm';
+
+export interface IRigInspectionTemplateFormProps {
+  control: Control<RigInspectionTemplateFields>;
+}
+
+export default function RigInspectionTemplateForm(props: IRigInspectionTemplateFormProps) {
+  const { control } = props;
+  const { fields, append, update, remove } = useFieldArray({
+    control,
+    name: 'fields',
+    keyName: 'key',
+  });
+  const [newItem, setNewItem] = React.useState<(Partial<FieldItem> & { index?: number }) | null>(
+    null
+  );
+  const [fabOpen, setFabOpen] = React.useState(false);
+  const theme = useTheme();
+
+  return (
+    <>
+      {fields.map(({ key, ...item }, index) => {
+        return (
+          <React.Fragment key={key}>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <View style={{ flexGrow: 1 }} onTouchEnd={() => setNewItem({ ...item, index })}>
+                <RigInspectionItem config={item} value={item?.value || ''} onChange={() => null} />
+              </View>
+              <IconButton
+                icon="minus-circle"
+                accessibilityLabel={`Remove ${item.label}`}
+                onPress={() => remove(index)}
+              />
+            </View>
+            <Divider />
+          </React.Fragment>
+        );
+      })}
+      <Portal>
+        <Dialog visible={!!newItem}>
+          <Dialog.Title>New field</Dialog.Title>
+          <Dialog.Content>
+            <TextInput
+              label="Name"
+              mode="outlined"
+              value={newItem?.label}
+              onChangeText={(text) => setNewItem({ ...newItem, label: text })}
+            />
+
+            <TextInput
+              label="Description"
+              placeholder="optional"
+              mode="outlined"
+              value={newItem?.description}
+              onChangeText={(text) => setNewItem({ ...newItem, description: text })}
+            />
+
+            <Checkbox.Item
+              label="This is a required field"
+              mode="android"
+              onPress={() => setNewItem({ ...newItem, isRequired: !newItem?.isRequired })}
+              status={newItem?.isRequired ? 'checked' : 'unchecked'}
+            />
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setNewItem(null)}>Cancel</Button>
+            <Button
+              onPress={() => {
+                const { index, ...item } = newItem || {};
+                if (index !== undefined) {
+                  // If an index was provided, replace the existing field at that index
+                  update(index, item as FieldItem);
+                } else {
+                  append(item as FieldItem);
+                }
+                setNewItem(null);
+              }}
+            >
+              Save
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+        <FAB.Group
+          open={fabOpen}
+          visible
+          icon={fabOpen ? 'close' : 'plus'}
+          fabStyle={{
+            marginLeft: 16,
+            marginBottom: 48,
+            backgroundColor: theme.colors.primary,
+          }}
+          actions={[
+            {
+              icon: 'pencil',
+              label: 'Text',
+              onPress: () => setNewItem({ valueType: 'string' }),
+            },
+            {
+              icon: 'calendar',
+              label: 'Date',
+              onPress: () => setNewItem({ valueType: 'date' }),
+            },
+            {
+              icon: 'counter',
+              label: 'Number',
+              onPress: () => setNewItem({ valueType: 'integer' }),
+            },
+            {
+              icon: 'checkbox-marked-circle-outline',
+              label: 'Checkbox',
+              onPress: () => setNewItem({ valueType: 'boolean' }),
+            },
+          ]}
+          onStateChange={({ open }) => setFabOpen(open)}
+        />
+      </Portal>
+    </>
+  );
+}

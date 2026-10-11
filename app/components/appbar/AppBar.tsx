@@ -4,9 +4,9 @@ import { StackHeaderProps } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { actions, useAppDispatch } from '../../state';
 import SetupWarning from './SetupWarning';
 import { useAppTheme } from 'app/theme';
+import { formatCents, fromCents } from 'app/utils/money';
 
 interface IAppBarProps extends StackHeaderProps {
   hideWarnings?: boolean;
@@ -15,7 +15,6 @@ interface IAppBarProps extends StackHeaderProps {
 function AppBar(props: IAppBarProps) {
   const { hideWarnings, back, options } = props;
   const { palette, theme } = useAppTheme();
-  const dispatch = useAppDispatch();
   const {
     dropzone: { currentUser, loading, dropzone },
   } = useDropzoneContext();
@@ -50,12 +49,14 @@ function AppBar(props: IAppBarProps) {
               color: palette.onSurface,
               fontFamily: 'Roboto_700Bold',
             }}
-          >{`$${currentUser?.credits || 0}`}</Chip>
+          >
+            {formatCents(currentUser?.creditsCents)}
+          </Chip>
         )}
       </Appbar.Header>
       {hideWarnings ? null : (
         <SetupWarning
-          credits={currentUser?.credits || 0}
+          credits={fromCents(currentUser?.creditsCents)}
           loading={loading}
           isCreditSystemEnabled={!!dropzone?.settings?.requireCredits}
           isExitWeightDefined={!!currentUser?.user?.exitWeight}

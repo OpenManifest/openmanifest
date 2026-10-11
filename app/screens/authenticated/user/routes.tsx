@@ -1,11 +1,11 @@
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, StackHeaderProps } from '@react-navigation/stack';
 import * as React from 'react';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useDropzoneContext } from 'app/providers/dropzone/context';
 
 import { AppSignalBoundary } from 'app/components/app_signal';
 import UsersScreen, { UserListRoute } from './user_list/UsersScreen';
 import SearchableAppBar from './user_list/AppBar';
+import { UserSearchProvider, useUserSearch } from './user_list/search';
 import RigInspectionScreen, { RigInspectionRoute } from './rig_inspection/RigInspectionScreen';
 import ProfileScreen, { ProfileRoute } from './profile/ProfileScreen';
 import OrdersScreen, { OrdersRoute } from './orders/OrdersScreen';
@@ -21,71 +21,75 @@ export type UserRoutes = EquipmentRoute &
 
 const Users = createStackNavigator<UserRoutes>();
 
+function UserListHeader(props: StackHeaderProps) {
+  const { searchText, searchVisible, setSearchText, setSearchVisible } = useUserSearch();
+
+  return (
+    <SearchableAppBar
+      {...props}
+      searchText={searchText}
+      searchVisible={searchVisible}
+      setSearchVisible={setSearchVisible}
+      onSearch={setSearchText}
+    />
+  );
+}
+
 export default function Routes() {
-  const { isSearchVisible, searchText } = useAppSelector((root) => root.screens.users);
-  const dispatch = useAppDispatch();
   const {
     dropzone: { currentUser },
   } = useDropzoneContext();
 
   return (
-    <AppSignalBoundary>
-      <Users.Navigator
-        screenOptions={{
-          cardStyle: {
-            flex: 1,
-          },
-          presentation: 'modal',
-        }}
-      >
-        <Users.Screen
-          name="UserListScreen"
-          component={UsersScreen}
-          options={{
-            title: 'Dropzone users',
-            headerShown: true,
-            header: (props) => (
-              <SearchableAppBar
-                {...props}
-                searchText={searchText}
-                searchVisible={isSearchVisible}
-                setSearchVisible={(visible) =>
-                  dispatch(actions.screens.users.setSearchVisible(visible))
-                }
-                onSearch={(text) => dispatch(actions.screens.users.setSearchText(text))}
-              />
-            ),
+    <UserSearchProvider>
+      <AppSignalBoundary>
+        <Users.Navigator
+          screenOptions={{
+            cardStyle: {
+              flex: 1,
+            },
+            presentation: 'modal',
           }}
-        />
-        <Users.Screen
-          name="ProfileScreen"
-          component={ProfileScreen}
-          options={{ title: 'User' }}
-          initialParams={{
-            userId: currentUser?.id,
-          }}
-        />
-        <Users.Screen
-          name="RigInspectionScreen"
-          component={RigInspectionScreen}
-          options={{ title: 'Inspection' }}
-        />
-        <Users.Screen
-          name="OrdersScreen"
-          component={OrdersScreen}
-          options={{ title: 'Transactions' }}
-        />
-        <Users.Screen
-          name="EquipmentScreen"
-          component={EquipmentScreen}
-          options={{ title: 'Equipment' }}
-        />
-        <Users.Screen
-          name="OrderReceiptScreen"
-          component={OrderReceiptScreen}
-          options={{ title: 'Order' }}
-        />
-      </Users.Navigator>
-    </AppSignalBoundary>
+        >
+          <Users.Screen
+            name="UserListScreen"
+            component={UsersScreen}
+            options={{
+              title: 'Dropzone users',
+              headerShown: true,
+              header: (props) => <UserListHeader {...props} />,
+            }}
+          />
+          <Users.Screen
+            name="ProfileScreen"
+            component={ProfileScreen}
+            options={{ title: 'User' }}
+            initialParams={{
+              userId: currentUser?.id,
+            }}
+          />
+          <Users.Screen
+            name="RigInspectionScreen"
+            component={RigInspectionScreen}
+            options={{ title: 'Inspection' }}
+          />
+          <Users.Screen
+            name="OrdersScreen"
+            component={OrdersScreen}
+            options={{ title: 'Transactions' }}
+          />
+          <Users.Screen
+            name="EquipmentScreen"
+            component={EquipmentScreen}
+            options={{ title: 'Equipment' }}
+          />
+          <Users.Screen
+            name="OrderReceiptScreen"
+            component={OrderReceiptScreen}
+            options={{ title: 'Order' }}
+          />
+        </Users.Navigator>
+      </AppSignalBoundary>
+    </UserSearchProvider>
   );
 }

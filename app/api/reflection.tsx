@@ -77,6 +77,7 @@ export const DropzoneEssentialsFragmentDoc = gql`
   banner
   isCreditSystemEnabled
   createdAt
+  timeZone
   settings {
     allowManifestBypass
     allowNegativeCredits
@@ -93,6 +94,7 @@ export const DropzoneEssentialsFragmentDoc = gql`
 export const LoadEssentialsFragmentDoc = gql`
     fragment loadEssentials on Load {
   id
+  lockVersion
   name
   createdAt
   dispatchAt
@@ -112,7 +114,7 @@ export const TicketTypeEssentialsFragmentDoc = gql`
   id
   name
   altitude
-  cost
+  costCents
   isTandem
   allowManifestingSelf
 }
@@ -121,7 +123,7 @@ export const TicketTypeAddonEssentialsFragmentDoc = gql`
     fragment ticketTypeAddonEssentials on Extra {
   id
   name
-  cost
+  costCents
 }
     `;
 export const TicketTypeDetailsFragmentDoc = gql`
@@ -142,13 +144,14 @@ export const JumpTypeEssentialsFragmentDoc = gql`
 export const SlotEssentialsFragmentDoc = gql`
     fragment slotEssentials on Slot {
   id
+  lockVersion
   createdAt
   exitWeight
   passengerName
   passengerExitWeight
   wingLoading
   groupNumber
-  cost
+  costCents
   ticketType {
     ...ticketTypeDetails
   }
@@ -281,7 +284,7 @@ ${UserRigDetailedFragmentDoc}`;
 export const DropzoneUserDetailsFragmentDoc = gql`
     fragment dropzoneUserDetails on DropzoneUser {
   ...dropzoneUserEssentials
-  credits
+  creditsCents
   license {
     ...licenseDetails
   }
@@ -314,7 +317,7 @@ export const TransactionEssentialsFragmentDoc = gql`
     fragment transactionEssentials on Transaction {
   id
   transactionType
-  amount
+  amountCents
   status
   createdAt
   message
@@ -361,7 +364,7 @@ export const OrderEssentialsFragmentDoc = gql`
     fragment orderEssentials on Order {
   id
   state
-  amount
+  amountCents
   title
   orderNumber
   createdAt
@@ -385,18 +388,18 @@ export const OrderEssentialsFragmentDoc = gql`
   }
   item {
     title
-    cost
+    costCents
     ... on Slot {
       id
       ticketType {
         id
         name
-        cost
+        costCents
       }
       extras {
         id
         name
-        cost
+        costCents
       }
     }
     ... on TicketType {
@@ -531,7 +534,7 @@ export const CurrentUserEssentialsFragmentDoc = gql`
     fragment currentUserEssentials on DropzoneUser {
   id
   walletId
-  credits
+  creditsCents
   hasCredits
   hasExitWeight
   hasMembership
@@ -598,7 +601,7 @@ export const TicketTypeExtraEssentialsFragmentDoc = gql`
   id
   name
   createdAt
-  cost
+  costCents
 }
     `;
 export const TicketTypeExtraDetailedFragmentDoc = gql`
@@ -1114,9 +1117,9 @@ export type CreateLoadMutationHookResult = ReturnType<typeof useCreateLoadMutati
 export type CreateLoadMutationResult = Apollo.MutationResult<Operation.CreateLoadMutation>;
 export type CreateLoadMutationOptions = Apollo.BaseMutationOptions<Operation.CreateLoadMutation, Operation.CreateLoadMutationVariables>;
 export const CreateOrderDocument = gql`
-    mutation CreateOrder($buyer: ID!, $seller: ID!, $dropzone: ID!, $title: String, $amount: Float!) {
+    mutation CreateOrder($buyer: ID!, $seller: ID!, $dropzone: ID!, $title: String, $amountCents: Int!) {
   createOrder(
-    input: {attributes: {dropzone: $dropzone, title: $title, buyer: $buyer, seller: $seller, amount: $amount}}
+    input: {attributes: {dropzone: $dropzone, title: $title, buyer: $buyer, seller: $seller, amountCents: $amountCents}}
   ) {
     fieldErrors {
       field
@@ -1148,7 +1151,7 @@ export type CreateOrderMutationFn = Apollo.MutationFunction<Operation.CreateOrde
  *      seller: // value for 'seller'
  *      dropzone: // value for 'dropzone'
  *      title: // value for 'title'
- *      amount: // value for 'amount'
+ *      amountCents: // value for 'amountCents'
  *   },
  * });
  */
@@ -1312,12 +1315,12 @@ export const CreateTicketTypeDocument = gql`
       id
       name
       altitude
-      cost
+      costCents
       allowManifestingSelf
       extras {
         id
         name
-        cost
+        costCents
       }
       dropzone {
         id
@@ -1325,12 +1328,12 @@ export const CreateTicketTypeDocument = gql`
           id
           name
           altitude
-          cost
+          costCents
           allowManifestingSelf
           extras {
             id
             name
-            cost
+            costCents
           }
         }
       }
@@ -1543,6 +1546,46 @@ export function useGrantPermissionMutation(baseOptions?: Apollo.MutationHookOpti
 export type GrantPermissionMutationHookResult = ReturnType<typeof useGrantPermissionMutation>;
 export type GrantPermissionMutationResult = Apollo.MutationResult<Operation.GrantPermissionMutation>;
 export type GrantPermissionMutationOptions = Apollo.BaseMutationOptions<Operation.GrantPermissionMutation, Operation.GrantPermissionMutationVariables>;
+export const JoinDropzoneDocument = gql`
+    mutation JoinDropzone($dropzone: ID!) {
+  joinDropzone(input: {dropzone: $dropzone}) {
+    dropzoneUser {
+      id
+    }
+    errors
+    fieldErrors {
+      field
+      message
+    }
+  }
+}
+    `;
+export type JoinDropzoneMutationFn = Apollo.MutationFunction<Operation.JoinDropzoneMutation, Operation.JoinDropzoneMutationVariables>;
+
+/**
+ * __useJoinDropzoneMutation__
+ *
+ * To run a mutation, you first call `useJoinDropzoneMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useJoinDropzoneMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [joinDropzoneMutation, { data, loading, error }] = useJoinDropzoneMutation({
+ *   variables: {
+ *      dropzone: // value for 'dropzone'
+ *   },
+ * });
+ */
+export function useJoinDropzoneMutation(baseOptions?: Apollo.MutationHookOptions<Operation.JoinDropzoneMutation, Operation.JoinDropzoneMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.JoinDropzoneMutation, Operation.JoinDropzoneMutationVariables>(JoinDropzoneDocument, options);
+      }
+export type JoinDropzoneMutationHookResult = ReturnType<typeof useJoinDropzoneMutation>;
+export type JoinDropzoneMutationResult = Apollo.MutationResult<Operation.JoinDropzoneMutation>;
+export type JoinDropzoneMutationOptions = Apollo.BaseMutationOptions<Operation.JoinDropzoneMutation, Operation.JoinDropzoneMutationVariables>;
 export const JoinFederationDocument = gql`
     mutation JoinFederation($federation: ID!, $uid: String, $license: ID) {
   joinFederation(
@@ -2487,12 +2530,12 @@ export const UpdateTicketTypeDocument = gql`
       id
       name
       altitude
-      cost
+      costCents
       allowManifestingSelf
       extras {
         id
         name
-        cost
+        costCents
       }
       dropzone {
         ...dropzoneEssentials
@@ -3397,6 +3440,9 @@ export const DropzonesDocument = gql`
     edges {
       node {
         ...dropzoneEssentials
+        currentUser {
+          id
+        }
       }
     }
   }
@@ -3871,7 +3917,7 @@ export const NotificationsDocument = gql`
               }
               ... on Transaction {
                 id
-                amount
+                amountCents
                 message
                 status
               }

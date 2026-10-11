@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useProfileDialogs } from './ProfileDialogs';
 
 import { FAB, useTheme } from 'react-native-paper';
-import { actions, useAppDispatch } from 'app/state';
 import { DropzoneUserProfileFragment } from 'app/api/operations';
 import { useNavigation } from '@react-navigation/native';
 import { Permission } from 'app/api/schema.d';
@@ -12,6 +12,7 @@ import { DropzoneUsersDocument, useArchiveUserMutation } from 'app/api/reflectio
 import { errorColor, infoColor, successColor, warningColor } from 'app/constants/Colors';
 import { useNotifications } from 'app/providers/notifications';
 import { useUserNavigation } from '../useUserNavigation';
+import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 type PropsOf<T> = T extends React.ComponentType<infer P> ? P : never;
 type FABActions = PropsOf<typeof FAB.Group>['actions'];
@@ -21,6 +22,7 @@ interface IUserActionsButtonProps {
 }
 export default function UserActionsButton(props: IUserActionsButtonProps) {
   const { dropzoneUser, visible } = props;
+  const { editUser, editMembership } = useProfileDialogs();
   const {
     dropzone: { currentUser },
   } = useDropzoneContext();
@@ -28,7 +30,6 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
   const { dialogs } = useManifestContext();
   const notify = useNotifications();
 
-  const dispatch = useAppDispatch();
   const navigation = useUserNavigation();
   const rootNavigator = useNavigation();
   const theme = useTheme();
@@ -46,8 +47,8 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
     if (!dropzoneUser) {
       return;
     }
-    dispatch(actions.forms.dropzoneUser.setOpen(dropzoneUser));
-  }, [dispatch, dropzoneUser]);
+    editMembership();
+  }, [dropzoneUser, editMembership]);
 
   const onClickTransactions = React.useCallback(() => {
     if (!dropzoneUser?.id) {
@@ -71,9 +72,9 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
 
   const onClickEdit = React.useCallback(() => {
     if (dropzoneUser?.user) {
-      dispatch(actions.forms.user.setOpen(dropzoneUser));
+      editUser();
     }
-  }, [dispatch, dropzoneUser]);
+  }, [dropzoneUser?.user, editUser]);
 
   const isSelf = React.useMemo(
     () => currentUser?.id === dropzoneUser?.id,
@@ -204,7 +205,10 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
         backgroundColor: theme.colors.primary,
       }}
       onStateChange={({ open }) => setFabOpen(open)}
-      actions={fabActions}
+      actions={fabActions.map((action) => ({
+        ...action,
+        labelMaxFontSizeMultiplier: CHROME_MAX_FONT_SIZE_MULTIPLIER,
+      }))}
     />
   );
 }

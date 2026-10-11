@@ -1,4 +1,3 @@
-export * from './store';
-export { useSession, initialSession } from './session';
+export { useSession, useAuthenticated, initialSession } from './session';
 export type { SessionState, SessionCredentials } from './session';
-export { logout } from './logout';
+export { resetSession } from './resetSession';

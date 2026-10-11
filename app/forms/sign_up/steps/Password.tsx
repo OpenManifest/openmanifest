@@ -19,7 +19,7 @@ function PasswordStep(props: IWizardStepProps) {
           textContentType="password"
           secureTextEntry
           passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
-          style={{ width: '100%', backgroundColor: 'transparent', fontSize: 32, height: 70 }}
+          style={{ width: '100%', backgroundColor: 'transparent', fontSize: 32, minHeight: 70 }}
         />
         <PasswordComplexityIndicator strength={checkPasswordComplexity(password)} />
       </Fields>

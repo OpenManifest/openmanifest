@@ -26,7 +26,7 @@ export default function WindRow(props: IWindRowProps) {
               <TouchableOpacity
                 style={{
                   flexGrow: 1,
-                  height: 60,
+                  minHeight: 60,
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -97,9 +97,9 @@ export default function WindRow(props: IWindRowProps) {
 }
 
 const CARD_STYLE: ViewStyle = {
-  height: 60,
+  minHeight: 60,
   flexDirection: 'row',
-  width: 350 / 3,
+  flex: 1,
 };
 
 const styles = StyleSheet.create({
@@ -115,8 +115,8 @@ const styles = StyleSheet.create({
   },
   card: {
     marginVertical: 8,
-    marginHorizontal: 18,
-    width: 350,
+    width: '100%',
+    maxWidth: 350,
     alignSelf: 'center',
 
     borderRadius: 10,
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
     width: '100%',
-    minWidth: 80,
+    minWidth: 60,
   },
   row: {
     flexGrow: 1,

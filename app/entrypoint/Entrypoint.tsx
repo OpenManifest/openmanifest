@@ -2,9 +2,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { ActivityIndicator } from 'react-native-paper';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import ProgressBar from 'app/components/ProgressBar';
 import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -24,12 +22,11 @@ import {
 
 import { useRouteChange, useCachedResources } from './hooks';
 
-import { store, persistor } from '../state/store';
 import { primaryColor } from '../constants/Colors';
 import { useAppTheme } from '../theme';
 import { useSession } from '../state/session';
 import { usePreferences } from '../state/preferences';
-import ImageViewer from '../components/dialogs/ImageViewer/ImageViewer';
+import { ImageViewerProvider } from '../components/dialogs/ImageViewer/context';
 
 import RootNavigator, { options as LinkingConfiguration } from '../screens/routes';
 import {
@@ -76,22 +73,25 @@ function Content() {
                 <GestureHandlerRootView style={{ flex: 1 }}>
                   <PortalProvider>
                     <SafeAreaProvider>
-                      <ImageViewer />
-                      <NotificationsProvider>
-                        <ThemedNavigationContainer onStateChange={onRouteChange}>
-                          <Wrapper>
-                            <DropzonesProvider>
-                              <AppSignalSessionTagger>
-                                <PushNotificationsProvider>
-                                  <RootNavigator />
-                                </PushNotificationsProvider>
-                              </AppSignalSessionTagger>
-                            </DropzonesProvider>
-                          </Wrapper>
-                        </ThemedNavigationContainer>
+                      <KeyboardProvider>
+                        <ImageViewerProvider>
+                          <NotificationsProvider>
+                            <ThemedNavigationContainer onStateChange={onRouteChange}>
+                              <Wrapper>
+                                <DropzonesProvider>
+                                  <AppSignalSessionTagger>
+                                    <PushNotificationsProvider>
+                                      <RootNavigator />
+                                    </PushNotificationsProvider>
+                                  </AppSignalSessionTagger>
+                                </DropzonesProvider>
+                              </Wrapper>
+                            </ThemedNavigationContainer>
 
-                        <StatusBar />
-                      </NotificationsProvider>
+                            <StatusBar />
+                          </NotificationsProvider>
+                        </ImageViewerProvider>
+                      </KeyboardProvider>
                     </SafeAreaProvider>
                   </PortalProvider>
                 </GestureHandlerRootView>
@@ -114,20 +114,7 @@ function App() {
     console.debug('[App] Loading resources and rendering nothing');
     return null;
   }
-  return (
-    <Provider store={store}>
-      <PersistGate
-        persistor={persistor}
-        loading={
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <ActivityIndicator size="large" />
-          </View>
-        }
-      >
-        <Content />
-      </PersistGate>
-    </Provider>
-  );
+  return <Content />;
 }
 
 export default App;

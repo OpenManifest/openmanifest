@@ -13,20 +13,16 @@ import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
 import PilotChip from 'app/components/chips/PilotChip';
 import PlaneChip from 'app/components/chips/PlaneChip';
-import ManifestGroupSheet from 'app/components/dialogs/ManifestGroup/ManifestGroup';
 
-import { View } from 'app/components/Themed';
 import { LoadState, Permission } from 'app/api/schema.d';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
 
 import useRestriction from 'app/hooks/useRestriction';
 import { Divider } from 'react-native-paper';
 import { useNotifications } from 'app/providers/notifications';
-import { Screen } from 'app/components/layout';
+import ScreenContainer from 'app/components/layout/ScreenContainer';
 import ActionButton from './ActionButton';
 import Header from './Header';
 import InfoGrid from './InfoGrid';
-// import CardView from './views/CardView';
 import TableView from './views/TableView';
 import { useAppTheme } from 'app/theme';
 
@@ -41,13 +37,12 @@ export type LoadScreenRoute = {
  * @returns
  */
 function LoadScreen() {
-  const dispatch = useAppDispatch();
   const [isExpanded, setExpanded] = React.useState(false);
-  const forms = useAppSelector((root) => root.forms);
   const { palette, theme } = useAppTheme();
 
   const {
     manifest: { deleteSlot },
+    dialogs,
   } = useManifestContext();
   const {
     load: { load, loading, refetch, updateGCA, updateLoadMaster, updatePilot, updatePlane },
@@ -63,8 +58,6 @@ function LoadScreen() {
   const { dropzone: currentDropzone } = useDropzoneContext();
   const { currentUser } = currentDropzone;
 
-  const canManifestGroup = useRestriction(Permission.CreateUserSlot);
-  const canManifestGroupWithSelfOnly = useRestriction(Permission.CreateUserSlotWithSelf);
   const canEditSelf = useRestriction(Permission.UpdateSlot);
   const canEditOthers = useRestriction(Permission.UpdateUserSlot);
   const maxSlots = load?.maxSlots || 0;
@@ -95,75 +88,45 @@ function LoadScreen() {
 
   const onSlotPress = React.useCallback(
     (slot: SlotDetailsFragment) => {
-      const slotGroup = load?.slots?.filter(
+      if (!load) {
+        return;
+      }
+      // `updateSlot` is for a member's own slot, `updateUserSlot` for other people's (as the API checks it)
+      const isOwnSlot = slot.dropzoneUser?.id === currentUser?.id;
+      if (!(isOwnSlot ? canEditSelf : canEditOthers)) {
+        return;
+      }
+
+      const slotGroup = load.slots?.filter(
         ({ groupNumber }) => groupNumber && groupNumber === slot.groupNumber
       );
-      const onSlotGroupPress = () => {
-        if (slotGroup && load) {
-          dispatch(actions.forms.manifestGroup.reset());
-          dispatch(actions.forms.manifestGroup.setOpen(true));
-          dispatch(
-            actions.forms.manifestGroup.setFromSlots({
-              slots: slotGroup?.length ? slotGroup : [slot],
-              load,
-            })
-          );
-          dispatch(actions.forms.manifestGroup.setField(['load', load]));
-
-          // FIXME: Open ManifestGroup Drawer
-        }
-      };
-      const onSlotSinglePress = () => {
-        dispatch(actions.forms.manifest.setOpen(slot));
-        dispatch(actions.forms.manifest.setField(['load', load]));
-      };
-
-      if ((canEditSelf && slot.dropzoneUser?.id === currentUser?.id) || canEditOthers) {
-        if (canEditSelf) {
-          if (slotGroup?.length || Platform.OS === 'web') {
-            onSlotGroupPress();
-          } else {
-            onSlotSinglePress();
-          }
-        }
+      if (slotGroup?.length || Platform.OS === 'web') {
+        dialogs.manifestGroup.open({ load, slots: slotGroup?.length ? slotGroup : [slot] });
+      } else {
+        dialogs.manifestUser.open({ load, slot });
       }
     },
-    [canEditOthers, canEditSelf, currentUser?.id, dispatch, load]
+    [canEditOthers, canEditSelf, currentUser?.id, dialogs.manifestGroup, dialogs.manifestUser, load]
   );
 
   const onSlotGroupPress = React.useCallback(
     (slotGroup: SlotDetailsFragment[]) => {
       if (load) {
-        dispatch(actions.forms.manifestGroup.reset());
-        dispatch(actions.forms.manifestGroup.setOpen(true));
-        dispatch(
-          actions.forms.manifestGroup.setFromSlots({
-            slots: slotGroup,
-            load,
-          })
-        );
-        dispatch(actions.forms.manifestGroup.setField(['load', load]));
+        dialogs.manifestGroup.open({ load, slots: slotGroup });
       }
     },
-    [dispatch, load]
+    [dialogs.manifestGroup, load]
   );
 
   const onAvailableSlotPress = React.useCallback(() => {
-    dispatch(actions.forms.manifestGroup.reset());
-    dispatch(actions.forms.manifestGroup.setField(['load', load]));
-
-    if (canManifestGroupWithSelfOnly && !canManifestGroup && currentUser) {
-      // Automatically add current user to selection
-      dispatch(actions.screens.manifest.setSelected([currentUser]));
-      dispatch(actions.forms.manifestGroup.setDropzoneUsers([currentUser]));
+    if (load) {
+      dialogs.manifestGroup.open({ load });
     }
+  }, [dialogs.manifestGroup, load]);
 
-    dispatch(actions.forms.manifestGroup.setOpen(true));
-    dispatch(actions.forms.manifestGroup.setField(['load', load]));
-  }, [canManifestGroup, canManifestGroupWithSelfOnly, currentUser, dispatch, load]);
-
-  return (
-    <Screen fullWidth scrollable={Platform.OS !== 'web'}>
+  // The header scrolls with the rows: the slots list is the only scroll container of the screen
+  const header = (
+    <>
       <Header
         load={load || undefined}
         renderBadges={() => (
@@ -252,10 +215,14 @@ function LoadScreen() {
           ]}
         />
       </Header>
-      {/* <CardView {...{ load, loading, refetch, onSlotPress, onDeletePress: onDeleteSlot }} /> */}
       <Divider />
+    </>
+  );
+
+  return (
+    <ScreenContainer edges={['bottom']}>
       <TableView
-        scrollable={Platform.OS === 'web'}
+        ListHeaderComponent={header}
         {...{
           slots: load?.slots?.filter(Boolean) || [],
           load,
@@ -268,15 +235,7 @@ function LoadScreen() {
         }}
       />
       {load && isFocused ? <ActionButton load={load} /> : null}
-      <ManifestGroupSheet
-        open={forms.manifestGroup.open}
-        onClose={() => {
-          dispatch(actions.forms.manifestGroup.setOpen(false));
-          dispatch(actions.forms.manifestGroup.reset());
-        }}
-        onSuccess={() => dispatch(actions.forms.manifestGroup.setOpen(false))}
-      />
-    </Screen>
+    </ScreenContainer>
   );
 }
 

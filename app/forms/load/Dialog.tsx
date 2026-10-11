@@ -26,8 +26,6 @@ export default function LoadDialog(props: ILoadDialog) {
     onSuccess,
   });
 
-  const snapPoints = React.useMemo(() => ['30%', 650], []);
-
   return (
     <DialogOrSheet
       open={open}
@@ -35,7 +33,6 @@ export default function LoadDialog(props: ILoadDialog) {
       buttonAction={onSubmit}
       scrollable
       buttonLabel="Create"
-      snapPoints={snapPoints}
       loading={loading}
       title="New Load"
     >

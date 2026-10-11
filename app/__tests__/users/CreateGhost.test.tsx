@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Text, TextInput, View } from 'react-native';
 import { CreateGhostDocument } from 'app/api/reflection';
 import { useDropzoneContext } from 'app/providers';
-import * as appRedux from '../../state';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import MOCK_QUERY_FEDERATIONS from '../manifest/__mocks__/QueryFederations.mock';
 import MOCK_QUERY_LICENSES from '../manifest/__mocks__/QueryLicenses.mock';
@@ -11,14 +10,6 @@ import CreateGhostDialog from '../../forms/create_user/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
-
-const authenticatedState = {
-  ...appRedux.initialState,
-  global: {
-    ...appRedux.initialState.global,
-    authenticated: true,
-  },
-};
 
 // The form refuses to submit until the dropzone has loaded
 function DropzoneReady() {
@@ -36,7 +27,6 @@ async function renderFilledDialog(createGhost: jest.Mock) {
       <CreateGhostDialog open onClose={jest.fn()} />
     </View>,
     {
-      initialState: authenticatedState,
       session: authenticatedSession,
       graphql: [
         MOCK_QUERY_FEDERATIONS(),
@@ -73,7 +63,7 @@ describe('<CreateGhostDialog />', () => {
   // GitHub client#126 "Create Ghost doesn't fire submit button". The button does submit, but the form is invalid
   // (no access level) and `RoleSelect` / `FederationSelect` never pass the `error` prop on to `Select`, so the
   // "You must select a role" message is never shown and nothing appears to happen.
-  it.skip('BUG-086: pressing Create without an access level says what is missing', async () => {
+  it('BUG-086: pressing Create without an access level says what is missing', async () => {
     const dialog = await renderFilledDialog(jest.fn());
 
     fireEvent.press(dialog.getByText('Create'));

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Wizard } from 'app/components/carousel_wizard';
-import { actions, useAppDispatch, useAppSelector } from 'app/state';
 import { useUpdateLostPasswordMutation } from 'app/api/reflection';
 import checkPasswordComplexity, { PasswordStrength } from 'app/utils/checkPasswordComplexity';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -8,10 +7,12 @@ import { WizardRef } from 'app/components/carousel_wizard/Wizard';
 import DoneStep from './steps/Done';
 import PasswordStep from './steps/Password';
 import PasswordConfirmationStep from './steps/PasswordConfirmation';
+import { ChangePasswordFieldsProvider } from './fields';
+import { useFieldState } from '../fields';
 
 export default function SignupWizard() {
-  const state = useAppSelector((root) => root.screens.signup);
-  const dispatch = useAppDispatch();
+  const fields = useFieldState({ password: '', passwordConfirmation: '' });
+  const { values, setError } = fields;
   const route = useRoute<{
     key: string;
     name: string;
@@ -24,7 +25,7 @@ export default function SignupWizard() {
 
   const onChangePassword = React.useCallback(async () => {
     try {
-      if (state.fields.password.value !== state.fields.passwordConfirmation.value) {
+      if (values.password !== values.passwordConfirmation) {
         throw new Error('Password mismatch. Did you type exactly the same password?');
       }
       if (!route.params?.token) {
@@ -32,8 +33,8 @@ export default function SignupWizard() {
       }
       const result = await updatePassword({
         variables: {
-          password: state.fields.password.value,
-          passwordConfirmation: state.fields.passwordConfirmation.value,
+          password: values.password,
+          passwordConfirmation: values.passwordConfirmation,
           token: route.params.token,
         },
       });
@@ -47,26 +48,20 @@ export default function SignupWizard() {
       throw new Error('Password change failed');
     } catch (e) {
       if (e instanceof Error) {
-        dispatch(actions.screens.signup.setFieldError(['passwordConfirmation', e.message]));
+        setError('passwordConfirmation', e.message);
       }
       throw e;
     }
-  }, [
-    dispatch,
-    route.params?.token,
-    state.fields.password.value,
-    state.fields.passwordConfirmation.value,
-    updatePassword,
-  ]);
+  }, [route.params?.token, setError, values.password, values.passwordConfirmation, updatePassword]);
 
   const navigation = useNavigation();
 
   const validatePassword = React.useCallback(async () => {
-    if (checkPasswordComplexity(state.fields.password.value) < PasswordStrength.Acceptable) {
-      dispatch(actions.screens.signup.setFieldError(['password', 'Password too weak']));
+    if (checkPasswordComplexity(values.password) < PasswordStrength.Acceptable) {
+      setError('password', 'Password too weak');
       throw new Error('Password too weak');
     }
-  }, [dispatch, state.fields.password.value]);
+  }, [setError, values.password]);
 
   const onFinished = React.useCallback(async () => {
     // @ts-ignore
@@ -75,14 +70,16 @@ export default function SignupWizard() {
   }, [navigation]);
 
   return (
-    <Wizard
-      dots
-      ref={wizard}
-      steps={[
-        { onBack: navigation.goBack, onNext: validatePassword, component: PasswordStep },
-        { onNext: onChangePassword, component: PasswordConfirmationStep },
-        { component: DoneStep, onNext: onFinished },
-      ]}
-    />
+    <ChangePasswordFieldsProvider value={fields}>
+      <Wizard
+        dots
+        ref={wizard}
+        steps={[
+          { onBack: navigation.goBack, onNext: validatePassword, component: PasswordStep },
+          { onNext: onChangePassword, component: PasswordConfirmationStep },
+          { component: DoneStep, onNext: onFinished },
+        ]}
+      />
+    </ChangePasswordFieldsProvider>
   );
 }
