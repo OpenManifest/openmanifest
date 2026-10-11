@@ -30,6 +30,10 @@ jest.mock('react-native-maps', () => {
   };
 });
 
+jest.mock('react-native-keyboard-controller', () =>
+  jest.requireActual('react-native-keyboard-controller/jest')
+);
+
 // The `BaseButton` mock in react-native-gesture-handler 2.28 renders `<View />` instead of its children, which empties
 // every gesture-handler TouchableOpacity (its content sits inside a BaseButton). Use the React Native touchables.
 jest.mock('react-native-gesture-handler', () => {
