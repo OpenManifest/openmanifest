@@ -282,6 +282,7 @@ Full table:
 | `expo-blur` | dep | `~57.0.3` (P3.18)| 57.0.3 | 57.0.3 | `~57.0.3` |  |
 | `expo-constants` | dep | `~57.0.21` (P3.18)| 57.0.21 | 57.0.21 | `~57.0.21` |  |
 | `expo-device` | dep | `~57.0.2` (P3.18)| 57.0.2 | 57.0.2 | `~57.0.2` |  |
+| `expo-dev-client` | dep | `~57.0.19` (P3.21) | 57.0.19 | 57.0.19 | `~57.0.19` | development builds (`eas.json` `development` profile) |
 | `expo-facebook` | dep | `12.2.0` | 12.2.0 | 12.2.0 |  |  |
 | `expo-font` | dep | `~57.0.4` (P3.18)| 57.0.4 | 57.0.4 | `~57.0.4` |  |
 | `expo-image-picker` | dep | `~57.0.20` (P3.18)| 57.0.20 | 57.0.20 | `~57.0.20` |  |

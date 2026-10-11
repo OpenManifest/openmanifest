@@ -1,9 +1,11 @@
 {
   "cli": {
-    "version": ">= 3.6.1"
+    "version": ">= 24.12.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
+      "developmentClient": true,
       "distribution": "internal",
       "android": {
         "gradleCommand": ":app:assembleDebug"
@@ -20,7 +22,8 @@
         "resourceClass": "m-medium"
       },
       "distribution": "store",
-      "channel": "staging"
+      "channel": "staging",
+      "autoIncrement": true
     },
     "production": {
       "env": {
@@ -30,7 +33,8 @@
         "resourceClass": "m-medium"
       },
       "distribution": "store",
-      "channel": "production"
+      "channel": "production",
+      "autoIncrement": true
     }
   },
   "submit": {
