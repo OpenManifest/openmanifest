@@ -12,11 +12,9 @@ export const defaultErrorLink = onError(({ graphQLErrors, networkError, operatio
 
   if (graphQLErrors && environment !== 'production') {
     graphQLErrors.forEach((err) => {
-      const { message, locations, path, name, nodes } = err;
+      const { message, locations, path } = err;
       console.error(
-        `[Apollo::Links::Errors::Default]: ${message}, ${JSON.stringify(
-          locations
-        )}, ${path}, ${name}, ${nodes}`
+        `[Apollo::Links::Errors::Default]: ${message}, ${JSON.stringify(locations)}, ${path}`
       );
       console.log(operation);
     });
@@ -49,13 +47,9 @@ export function useErrorLink() {
 
           if (graphQLErrors && environment !== 'production') {
             graphQLErrors.forEach((err) => {
-              const { message, locations, path, name, nodes } = err;
+              const { message, locations, path } = err;
               notify.error(`[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}`);
-              console.error(
-                `[GraphQL error]: ${message}, ${JSON.stringify(
-                  locations
-                )}, ${path}, ${name}, ${nodes}`
-              );
+              console.error(`[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}`);
               // console.log(JSON.stringify(err));
               console.log(operation);
             });

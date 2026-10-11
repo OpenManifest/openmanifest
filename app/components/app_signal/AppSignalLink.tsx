@@ -1,9 +1,9 @@
 import { ApolloLink, FetchResult, NextLink, Operation, ServerError } from '@apollo/client';
 import { ErrorResponse, onError as createErrorLink } from '@apollo/client/link/error';
-import { Observable } from 'zen-observable-ts';
+import { Observable } from '@apollo/client/utilities';
 import AppSignal from '@appsignal/javascript';
 import type { Breadcrumb } from '@appsignal/types';
-import { GraphQLError, OperationDefinitionNode, print } from 'graphql';
+import { GraphQLFormattedError, OperationDefinitionNode, print } from 'graphql';
 import { omit } from 'lodash';
 
 export interface IAppSignalLinkOptions {
@@ -13,7 +13,7 @@ export interface IAppSignalLinkOptions {
     includeVariables?: boolean;
   };
   excludeOperation?(operation: Operation): boolean;
-  excludeError?(error: GraphQLError): boolean;
+  excludeError?(error: GraphQLFormattedError): boolean;
   ignore?(errors: ErrorResponse): boolean;
 }
 
