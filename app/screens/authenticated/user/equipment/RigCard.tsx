@@ -75,9 +75,13 @@ export default function RigCard(props: IRigCardProps) {
   }, [pickImage, rig?.id, updateRig]);
 
   const canManageDropzoneRigs = useRestriction(Permission.UpdateDropzoneRig);
+  // Staff with UpdateUser run a member's personal rigs from the office (UB.2)
+  const canUpdateUser = useRestriction(Permission.UpdateUser);
   const navigation = useUserNavigation();
   const canUpdateRig =
-    currentUser?.user?.id === rig.owner?.id || (rig?.dropzone?.id && canManageDropzoneRigs);
+    currentUser?.user?.id === rig.owner?.id ||
+    (rig?.dropzone?.id && canManageDropzoneRigs) ||
+    (rig?.owner?.id && canUpdateUser);
 
   const theme = useTheme();
 
