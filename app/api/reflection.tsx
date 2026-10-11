@@ -1543,6 +1543,46 @@ export function useGrantPermissionMutation(baseOptions?: Apollo.MutationHookOpti
 export type GrantPermissionMutationHookResult = ReturnType<typeof useGrantPermissionMutation>;
 export type GrantPermissionMutationResult = Apollo.MutationResult<Operation.GrantPermissionMutation>;
 export type GrantPermissionMutationOptions = Apollo.BaseMutationOptions<Operation.GrantPermissionMutation, Operation.GrantPermissionMutationVariables>;
+export const JoinDropzoneDocument = gql`
+    mutation JoinDropzone($dropzone: ID!) {
+  joinDropzone(input: {dropzone: $dropzone}) {
+    dropzoneUser {
+      id
+    }
+    errors
+    fieldErrors {
+      field
+      message
+    }
+  }
+}
+    `;
+export type JoinDropzoneMutationFn = Apollo.MutationFunction<Operation.JoinDropzoneMutation, Operation.JoinDropzoneMutationVariables>;
+
+/**
+ * __useJoinDropzoneMutation__
+ *
+ * To run a mutation, you first call `useJoinDropzoneMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useJoinDropzoneMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [joinDropzoneMutation, { data, loading, error }] = useJoinDropzoneMutation({
+ *   variables: {
+ *      dropzone: // value for 'dropzone'
+ *   },
+ * });
+ */
+export function useJoinDropzoneMutation(baseOptions?: Apollo.MutationHookOptions<Operation.JoinDropzoneMutation, Operation.JoinDropzoneMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.JoinDropzoneMutation, Operation.JoinDropzoneMutationVariables>(JoinDropzoneDocument, options);
+      }
+export type JoinDropzoneMutationHookResult = ReturnType<typeof useJoinDropzoneMutation>;
+export type JoinDropzoneMutationResult = Apollo.MutationResult<Operation.JoinDropzoneMutation>;
+export type JoinDropzoneMutationOptions = Apollo.BaseMutationOptions<Operation.JoinDropzoneMutation, Operation.JoinDropzoneMutationVariables>;
 export const JoinFederationDocument = gql`
     mutation JoinFederation($federation: ID!, $uid: String, $license: ID) {
   joinFederation(
@@ -3397,6 +3437,9 @@ export const DropzonesDocument = gql`
     edges {
       node {
         ...dropzoneEssentials
+        currentUser {
+          id
+        }
       }
     }
   }

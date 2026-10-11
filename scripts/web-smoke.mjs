@@ -2,7 +2,7 @@
 // Web smoke test: layout check of /login, then login -> dropzone -> manifest board -> load and the two deep links, at
 // desktop and 360x640.
 // Needs the backend dev server with the dev_baseline seed and a served EXPO_ENV=local web export.
-// Usage: node scripts/web-smoke.mjs [--base http://localhost:19006] [--out ./smoke-output]
+// Usage: node scripts/web-smoke.mjs [--base http://localhost:19006] [--out ./smoke-output] [--api http://local.openmanifest.org:5000/graphql]
 import { createRequire } from 'node:module';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -363,6 +363,41 @@ async function run(browser, name, viewport) {
       failures.push('second login: the drawer does not show the second user');
     }
     await page.screenshot({ path: join(out, `${name}-second-login.png`) });
+
+    // A brand new user who has not joined the dropzone: selecting it joins them (P6.4), and they reach the board.
+    const api = arg('api', 'http://local.openmanifest.org:5000/graphql');
+    const email = `newjumper+${Date.now()}@example.com`;
+    const registered = await fetch(api, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        query: `mutation($email: String!) { userRegister(email: $email, password: "Password1!", passwordConfirmation: "Password1!", name: "New Jumper", phone: "0400111222", exitWeight: 80, confirmUrl: "https://openmanifest.org/confirm/") { authenticatable { id } errors } }`,
+        variables: { email },
+      }),
+    }).then((r) => r.json());
+    if (!registered?.data?.userRegister?.authenticatable?.id) {
+      failures.push(`could not register a new user: ${JSON.stringify(registered).slice(0, 200)}`);
+    } else {
+      await pressAt(page, page.locator('body'), { x: 35, y: 28 });
+      await page.waitForTimeout(1000);
+      await page.getByText('Log out', { exact: true }).last().click({ force: true });
+      await page.waitForTimeout(3000);
+      await page.locator('input').nth(0).click({ force: true });
+      await page.keyboard.type(email);
+      await page.locator('input').nth(1).click({ force: true });
+      await page.keyboard.type('Password1!');
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(6000);
+      await page.screenshot({ path: join(out, `${name}-new-user-select-dropzone.png`) });
+      await pressAt(page, page.getByText('Dropzone', { exact: true }).first());
+      await page.waitForTimeout(8000);
+      if (!new URL(page.url()).pathname.endsWith('/dropzone/manifest')) {
+        failures.push(
+          `new user: selecting the dropzone did not reach the board, got ${page.url()}`
+        );
+      }
+      await page.screenshot({ path: join(out, `${name}-new-user-board.png`) });
+    }
   } catch (e) {
     failures.push(`step failed: ${e.message.split('\n')[0]}`);
   } finally {

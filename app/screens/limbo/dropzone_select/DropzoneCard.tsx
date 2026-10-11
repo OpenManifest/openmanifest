@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet, View, ImageBackground } from 'react-native';
 import { Avatar, Text } from 'react-native-paper';
 import { StackActions, useNavigation } from '@react-navigation/native';
-import { DropzoneEssentialsFragment, DropzoneExtensiveFragment } from 'app/api/operations';
+import { DropzoneEssentialsFragment } from 'app/api/operations';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Color from 'color';
 import { useSession } from '../../../state';
@@ -39,9 +39,9 @@ export default function DropzonesScreen(props: DropzoneCardProps) {
       onPress={async () => {
         if (dropzone) {
           const shouldPushRoute = !!currentDropzoneId;
-          selectDropzone(dropzone as DropzoneExtensiveFragment);
+          const selected = await selectDropzone(dropzone);
 
-          if (shouldPushRoute) {
+          if (selected && shouldPushRoute) {
             navigation.dispatch(
               StackActions.replace('Authenticated', {
                 screen: 'LeftDrawer',

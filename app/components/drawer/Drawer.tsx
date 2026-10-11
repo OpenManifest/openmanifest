@@ -5,7 +5,6 @@ import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import capitalize from 'lodash/capitalize';
 import SkeletonContent from 'app/components/Skeleton';
-import { DropzoneExtensiveFragment } from 'app/api/operations';
 import InfoGrid from 'app/screens/authenticated/dropzone/load/InfoGrid';
 import useRestriction from 'app/hooks/useRestriction';
 import { ModerationRole, Permission } from 'app/api/schema.d';
@@ -300,9 +299,8 @@ export default function DrawerMenu() {
                   : 'map-marker'
               }
               active={dropzone?.id === item?.id}
-              onPress={() => {
-                if (item) {
-                  selectDropzone(item as DropzoneExtensiveFragment);
+              onPress={async () => {
+                if (item && (await selectDropzone(item))) {
                   navigation.navigate('Authenticated', {
                     screen: 'LeftDrawer',
                     params: {
