@@ -15,7 +15,6 @@ export const validation = yup.object({
     .test({
       name: 'fullName',
       test: (value) => {
-        console.debug('VALIDATING NAME', value);
         return /\w+\s\w+/.test(value || '');
       },
       message: 'Please enter your full name, including surname',
@@ -27,16 +26,16 @@ type StepFields = {
 };
 
 export function useStep(): WizardFormStep<StepFields> {
-  const { dropzoneUser } = useUserProfileContext();
+  const { membership } = useUserProfileContext();
 
   return useMemo(
     () => ({
       defaultValues: {
-        name: dropzoneUser?.user?.name || '',
+        name: membership?.user?.name || '',
       },
       validation,
     }),
-    [dropzoneUser?.user?.name]
+    [membership?.user?.name]
   );
 }
 export interface IRealNameStepProps extends IWizardStepProps {

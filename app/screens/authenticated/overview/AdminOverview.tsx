@@ -1,4 +1,4 @@
-import { useDropzonesStatisticsQuery } from 'app/api/reflection';
+import { useOperatorsStatisticsQuery } from 'app/api/reflection';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import * as React from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
@@ -6,14 +6,14 @@ import { successColor, warningColor } from 'app/constants/Colors';
 import { parseISO, subMonths } from 'date-fns';
 import Chip from 'app/components/chips/Chip';
 import { sumBy } from 'lodash';
-import { DropzoneStatisticsFragment } from 'app/api/operations';
+import { OperatorStatisticsFragment } from 'app/api/operations';
 import { Card } from 'react-native-paper';
-import { DropzonesProvider } from 'app/api/crud';
-import { DropzoneState } from 'app/api/schema.d';
+import { OperatorsProvider } from 'app/api/crud';
+import { OperatorState } from 'app/api/schema.d';
 import Stats, { IStatsProps } from './statistics/Stats';
 import LoadsByDay from './statistics/LoadsByDay';
-import DropzonesTable from './DropzonesTable';
-import JumpTypePieChart from './statistics/JumpTypePieChart';
+import OperatorsTable from './OperatorsTable';
+import ActivityTypePieChart from './statistics/ActivityTypePieChart';
 
 enum TimeRange {
   AllTime = 0,
@@ -45,65 +45,68 @@ function AdminOverviewPage() {
     []
   );
 
-  const [selectedDropzones, setSelectedDropzones] = React.useState<DropzoneStatisticsFragment[]>();
+  const [selectedOperators, setSelectedOperators] = React.useState<OperatorStatisticsFragment[]>();
 
-  const { data } = useDropzonesStatisticsQuery({
+  const { data } = useOperatorsStatisticsQuery({
     variables: {
       timeRange,
     },
   });
   React.useEffect(() => {
-    if (data?.dropzones?.edges?.length && selectedDropzones === undefined) {
-      setSelectedDropzones(
-        data.dropzones.edges.map((edge) => edge?.node as DropzoneStatisticsFragment).filter(Boolean)
+    if (data?.operators?.edges?.length && selectedOperators === undefined) {
+      setSelectedOperators(
+        data.operators.edges.map((edge) => edge?.node as OperatorStatisticsFragment).filter(Boolean)
       );
     }
-  }, [data?.dropzones.edges, selectedDropzones]);
+  }, [data?.operators.edges, selectedOperators]);
 
   const summedStatistics = React.useMemo(
     () => ({
       revenueCents: sumBy(
-        selectedDropzones || [],
-        (dropzone) => dropzone?.statistics?.revenueCentsCount || 0
+        selectedOperators || [],
+        (operator) => operator?.statistics?.revenueCentsCount || 0
       ),
       loadsCount: sumBy(
-        selectedDropzones || [],
-        (dropzone) => dropzone?.statistics?.loadsCount || 0
+        selectedOperators || [],
+        (operator) => operator?.statistics?.loadsCount || 0
       ),
       cancelledLoadsCount: sumBy(
-        selectedDropzones || [],
-        (dropzone) => dropzone?.statistics?.cancelledLoadsCount || 0
+        selectedOperators || [],
+        (operator) => operator?.statistics?.cancelledLoadsCount || 0
       ),
       slotsCount: sumBy(
-        selectedDropzones || [],
-        (dropzone) => dropzone?.statistics?.slotsCount || 0
+        selectedOperators || [],
+        (operator) => operator?.statistics?.slotsCount || 0
       ),
       pilotCount: sumBy(
-        selectedDropzones || [],
-        (dropzone) => dropzone?.statistics?.pilotCount || 0
+        selectedOperators || [],
+        (operator) => operator?.statistics?.pilotCount || 0
       ),
-      dzsoCount: sumBy(selectedDropzones || [], (dropzone) => dropzone?.statistics?.dzsoCount || 0),
-      gcaCount: sumBy(selectedDropzones || [], (dropzone) => dropzone?.statistics?.gcaCount || 0),
+      dutyOfficerCount: sumBy(
+        selectedOperators || [],
+        (operator) => operator?.statistics?.dutyOfficerCount || 0
+      ),
+      gcaCount: sumBy(selectedOperators || [], (operator) => operator?.statistics?.gcaCount || 0),
       totalUserCount: sumBy(
-        selectedDropzones || [],
-        (dropzone) => dropzone?.statistics?.totalUserCount || 0
+        selectedOperators || [],
+        (operator) => operator?.statistics?.totalUserCount || 0
       ),
       activeUserCount: sumBy(
-        selectedDropzones || [],
-        (dropzone) => dropzone?.statistics?.activeUserCount || 0
+        selectedOperators || [],
+        (operator) => operator?.statistics?.activeUserCount || 0
       ),
       inactiveUserCount: sumBy(
-        selectedDropzones || [],
-        (dropzone) => dropzone?.statistics?.inactiveUserCount || 0
+        selectedOperators || [],
+        (operator) => operator?.statistics?.inactiveUserCount || 0
       ),
-      loadCountByDay: (selectedDropzones || []).flatMap(
-        (dropzone) => dropzone?.statistics?.loadCountByDay || []
+      loadCountByDay: (selectedOperators || []).flatMap(
+        (operator) => operator?.statistics?.loadCountByDay || []
       ),
-      slotsByJumpType: (selectedDropzones || []).flatMap(
-        (dropzone) => dropzone?.statistics?.slotsByJumpType || []
+      slotsByActivityType: (selectedOperators || []).flatMap(
+        (operator) => operator?.statistics?.slotsByActivityType || []
       ),
     }),
-    [selectedDropzones]
+    [selectedOperators]
   );
   return (
     <ScrollableScreen stickyHeaderIndices={[0]}>
@@ -170,7 +173,7 @@ function AdminOverviewPage() {
           title="Accounts"
           columns={Platform.OS === 'web' ? undefined : 3}
           data={[
-            { label: 'Dropzones', value: data?.dropzones.edges?.length || 0 },
+            { label: 'Dropzones', value: data?.operators.edges?.length || 0 },
             { label: 'Users', value: summedStatistics?.totalUserCount || 0 },
             {
               label: 'Active',
@@ -189,7 +192,7 @@ function AdminOverviewPage() {
             },
             {
               label: 'DZSO',
-              value: summedStatistics.dzsoCount || 0,
+              value: summedStatistics.dutyOfficerCount || 0,
             },
           ]}
         />
@@ -203,17 +206,17 @@ function AdminOverviewPage() {
           }
         />
 
-        <JumpTypePieChart
-          style={styles.jumpTypesCard}
-          data={summedStatistics?.slotsByJumpType || []}
+        <ActivityTypePieChart
+          style={styles.activityTypesCard}
+          data={summedStatistics?.slotsByActivityType || []}
         />
       </View>
       <View style={StyleSheet.flatten([styles.row, styles.table])}>
-        <DropzonesTable
-          selected={selectedDropzones || []}
-          onChangeSelected={setSelectedDropzones}
-          dropzones={
-            data?.dropzones?.edges?.map((edge) => edge?.node as DropzoneStatisticsFragment) || []
+        <OperatorsTable
+          selected={selectedOperators || []}
+          onChangeSelected={setSelectedOperators}
+          operators={
+            data?.operators?.edges?.map((edge) => edge?.node as OperatorStatisticsFragment) || []
           }
         />
       </View>
@@ -223,16 +226,16 @@ function AdminOverviewPage() {
 
 export default function AdminOverviewPageWrapper() {
   return (
-    <DropzonesProvider
+    <OperatorsProvider
       state={[
-        DropzoneState.Archived,
-        DropzoneState.InReview,
-        DropzoneState.Private,
-        DropzoneState.Public,
+        OperatorState.Archived,
+        OperatorState.InReview,
+        OperatorState.Private,
+        OperatorState.Public,
       ]}
     >
       <AdminOverviewPage />
-    </DropzonesProvider>
+    </OperatorsProvider>
   );
 }
 
@@ -264,7 +267,7 @@ const styles = StyleSheet.create({
     flex: Platform.OS === 'web' ? 3 / 4 : undefined,
     marginVertical: 4,
   },
-  jumpTypesCard: {
+  activityTypesCard: {
     height: 300,
     marginVertical: 4,
     width: Platform.OS === 'web' ? undefined : '100%',

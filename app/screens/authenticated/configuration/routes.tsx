@@ -1,33 +1,33 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
-import { DropzoneEssentialsFragment } from 'app/api/operations';
+import { OperatorEssentialsFragment } from 'app/api/operations';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import AppBar from 'app/components/appbar/AppBar';
 import { AppSignalBoundary } from 'app/components/app_signal';
 import SettingsMenuScreen from './settings_menu/SettingsMenuScreen';
 import TicketTypeSettingsScreen from './ticket_types/TicketTypesScreen';
-import DropzoneSettingsScreen from './dropzone_settings/DropzoneSettingsScreen';
-import PlanesScreen from './aircrafts/AircraftsScreen';
+import OperatorSettingsScreen from './operator_settings/OperatorSettingsScreen';
+import VehiclesScreen from './vehicles/VehiclesScreen';
 import RigInspectionTemplateScreen from './rig_inspection_template/RigInspectionTemplateScreen';
-import DropzoneRigsScreen from './rigs/DropzoneRigsScreen';
-import DropzonePermissionScreen from './permissions/PermissionsScreen';
-import DropzoneMasterLogScreen from './master_log/MasterLogScreen';
-import DropzoneTransactionsScreen from './transactions/DropzoneTransactionsScreen';
+import OperatorRigsScreen from './rigs/OperatorRigsScreen';
+import OperatorPermissionScreen from './permissions/PermissionsScreen';
+import OperatorDailyLogScreen from './daily_log/DailyLogScreen';
+import OperatorTransactionsScreen from './transactions/OperatorTransactionsScreen';
 import ExtrasScreen from './extras/ExtrasScreen';
 
 export type ConfigurationRoutes = {
-  DropzoneSettingsScreen: undefined;
+  OperatorSettingsScreen: undefined;
   SettingsMenuScreen: undefined;
   TicketTypesScreen: undefined;
-  AircraftsScreen: undefined;
-  AircraftScreen: undefined;
+  VehiclesScreen: undefined;
+  VehicleScreen: undefined;
   ExtrasScreen: undefined;
   RigInspectionTemplateScreen: undefined;
-  DropzoneRigsScreen: undefined;
+  OperatorRigsScreen: undefined;
   TransactionsScreen: undefined;
   PermissionScreen: undefined;
-  MasterLogScreen: undefined;
+  DailyLogScreen: undefined;
 };
 
 const Configuration = createStackNavigator<ConfigurationRoutes>();
@@ -53,13 +53,13 @@ export default function SettingsTab() {
           options={{ title: 'Settings' }}
         />
         <Configuration.Screen
-          name="DropzoneSettingsScreen"
-          component={DropzoneSettingsScreen}
+          name="OperatorSettingsScreen"
+          component={OperatorSettingsScreen}
           options={{ title: 'Basic settings' }}
         />
         <Configuration.Screen
-          name="AircraftsScreen"
-          component={PlanesScreen}
+          name="VehiclesScreen"
+          component={VehiclesScreen}
           options={{ title: 'Planes' }}
         />
         <Configuration.Screen
@@ -78,23 +78,23 @@ export default function SettingsTab() {
           options={{ title: 'Rig Inspection Form' }}
         />
         <Configuration.Screen
-          name="DropzoneRigsScreen"
-          component={DropzoneRigsScreen}
+          name="OperatorRigsScreen"
+          component={OperatorRigsScreen}
           options={{ title: 'Dropzone rigs' }}
         />
         <Configuration.Screen
           name="TransactionsScreen"
-          component={DropzoneTransactionsScreen}
+          component={OperatorTransactionsScreen}
           options={{ title: 'Transactions' }}
         />
         <Configuration.Screen
           name="PermissionScreen"
-          component={DropzonePermissionScreen}
+          component={OperatorPermissionScreen}
           options={{ title: 'Permissions' }}
         />
         <Configuration.Screen
-          name="MasterLogScreen"
-          component={DropzoneMasterLogScreen}
+          name="DailyLogScreen"
+          component={OperatorDailyLogScreen}
           options={{ title: 'Master log' }}
         />
       </Configuration.Navigator>
