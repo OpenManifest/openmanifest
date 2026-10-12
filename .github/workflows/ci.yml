@@ -33,7 +33,8 @@ jobs:
         with: { node-version-file: .nvmrc, cache: yarn }
       - run: yarn install --frozen-lockfile
       - run: npx expo export --platform web
-        env: { EXPO_ENV: staging, NODE_OPTIONS: --max_old_space_size=6144 }
+        # The gallery is part of the CI export, so its routes are proven to build (constants/gallery.ts)
+        env: { EXPO_ENV: staging, EXPO_PUBLIC_GALLERY: "1", NODE_OPTIONS: --max_old_space_size=6144 }
   web-ui-smoke:
     needs: checks
     runs-on: ubuntu-24.04

@@ -70,7 +70,7 @@ function Select<Value extends string = string>({
         style={{ ...box, justifyContent: 'space-between' }}
       >
         <View style={{ flexShrink: 1 }}>
-          <Text tone={chosen ? 'default' : 'muted'} numberOfLines={1}>
+          <Text tone={chosen && !disabled ? 'default' : 'muted'} numberOfLines={1}>
             {chosen?.label ?? placeholder ?? ''}
           </Text>
         </View>

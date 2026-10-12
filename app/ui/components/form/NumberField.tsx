@@ -122,7 +122,7 @@ function NumberField({
               ...theme.type.body,
               flexGrow: 1,
               flexShrink: 1,
-              color: theme.colour.text,
+              color: disabled ? theme.colour.textMuted : theme.colour.text,
               paddingVertical: theme.space.sm,
             }}
           />

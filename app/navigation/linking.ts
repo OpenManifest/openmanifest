@@ -1,11 +1,7 @@
 import { LinkingOptions, getStateFromPath } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
-import { Platform } from 'react-native';
-import environment from '../constants/environment';
+import { GALLERY_ENABLED } from '../constants/gallery';
 import { redirectLegacyPath } from './legacyPaths';
-
-// The primitives spike (U0.8) exists on the web outside production only
-export const SPIKE_ENABLED = Platform.OS === 'web' && environment !== 'production';
 
 /** The paths of the app: the screens of the tabs, the wizards and the sign-in. */
 export const options: LinkingOptions<ReactNavigation.RootParamList> = {
@@ -89,7 +85,10 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
           OperatorWizardScreen: '/setup',
         },
       },
-      ...(SPIKE_ENABLED ? { Overlays: '/__overlays', Forms: '/__forms' } : {}),
+      // The dev pages: the component gallery and the pages the keyboard specs drive (see constants/gallery.ts)
+      ...(GALLERY_ENABLED
+        ? { Gallery: '/__gallery', Overlays: '/__overlays', Forms: '/__forms' }
+        : {}),
       // FIXME: Remove in release
       // NotFound: '*',
     },

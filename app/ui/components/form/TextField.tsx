@@ -61,8 +61,8 @@ export function useBoxStyle({
       : focused
         ? theme.colour.brand
         : theme.colour.border,
-    backgroundColor: theme.colour.surface,
-    opacity: disabled ? 0.5 : 1,
+    // A disabled field keeps readable text (muted on the raised fill): fading it would fail the contrast it is exempt from
+    backgroundColor: disabled ? theme.colour.raised : theme.colour.surface,
   } as const;
 }
 
@@ -114,7 +114,7 @@ function TextField({
             ...theme.type.body,
             flexGrow: 1,
             flexShrink: 1,
-            color: theme.colour.text,
+            color: disabled ? theme.colour.textMuted : theme.colour.text,
             paddingVertical: theme.space.sm,
             ...(multiline ? { textAlignVertical: 'top' as const } : {}),
           }}

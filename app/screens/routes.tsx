@@ -11,7 +11,9 @@ import Wizards, { WizardRoutes } from './wizards/routes';
 import Authenticated, { AuthenticatedRoutes } from './authenticated/routes';
 import OverlaysScreen from './dev/OverlaysScreen';
 import FormsScreen from './dev/FormsScreen';
-import { options, SPIKE_ENABLED } from '../navigation/linking';
+import { GALLERY_ENABLED } from '../constants/gallery';
+import { options } from '../navigation/linking';
+import GalleryScreen from './dev/gallery/GalleryScreen';
 
 export { options };
 
@@ -21,6 +23,7 @@ export type Routes = {
   Limbo: NavigatorScreenParams<LimboRoutes>;
   Wizards: NavigatorScreenParams<WizardRoutes>;
   NotFound: undefined;
+  Gallery: undefined;
   Overlays: undefined;
   Forms: undefined;
 };
@@ -56,8 +59,9 @@ export default function RootNavigator() {
         <Stack.Screen name="Unauthenticated" component={Unauthenticated} />
       )}
       <Stack.Screen name="Wizards" component={Wizards} />
-      {SPIKE_ENABLED ? <Stack.Screen name="Overlays" component={OverlaysScreen} /> : null}
-      {SPIKE_ENABLED ? <Stack.Screen name="Forms" component={FormsScreen} /> : null}
+      {GALLERY_ENABLED ? <Stack.Screen name="Gallery" component={GalleryScreen} /> : null}
+      {GALLERY_ENABLED ? <Stack.Screen name="Overlays" component={OverlaysScreen} /> : null}
+      {GALLERY_ENABLED ? <Stack.Screen name="Forms" component={FormsScreen} /> : null}
 
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>

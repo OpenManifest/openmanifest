@@ -47,7 +47,11 @@ export default function Tabs<Value extends string = string>({
         : to === 'last'
           ? enabled[enabled.length - 1]
           : enabled[(index + (to === 'next' ? 1 : -1) + enabled.length) % enabled.length];
-    if (target) onChange(target.value);
+    if (target) {
+      onChange(target.value);
+      // Focus follows the choice, or the next arrow key would start from the tab left behind
+      if (Platform.OS === 'web') document.getElementById(tabId(target.value))?.focus();
+    }
   };
 
   return (

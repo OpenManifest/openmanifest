@@ -110,7 +110,13 @@ export default function Button({
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.space.sm }}>
         {loading ? (
-          <ActivityIndicator size="small" color={fg} testID="button-spinner" />
+          <ActivityIndicator
+            size="small"
+            color={fg}
+            testID="button-spinner"
+            aria-hidden
+            importantForAccessibility="no-hide-descendants"
+          />
         ) : icon ? (
           <MaterialCommunityIcons name={icon} size={ICON_SIZE} color={fg} />
         ) : null}

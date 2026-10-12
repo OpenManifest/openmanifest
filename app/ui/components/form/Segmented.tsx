@@ -43,11 +43,16 @@ function Segmented<Value extends string = string>({
   const enabled = options.filter((option) => !option.disabled);
   const checked = options.find((option) => option.value === value);
   const tabStop = (checked ?? enabled[0])?.value;
+  const radioId = (option: string) => `${ids.labelId}-radio-${option}`;
 
   const move = (from: Value, direction: 1 | -1) => {
     const index = enabled.findIndex((option) => option.value === from);
     const next = enabled[(index + direction + enabled.length) % enabled.length];
-    if (next) onChange?.(next.value);
+    if (next) {
+      onChange?.(next.value);
+      // Focus follows the choice, or the next arrow key would start from the radio left behind
+      if (Platform.OS === 'web') document.getElementById(radioId(next.value))?.focus();
+    }
   };
 
   return (
@@ -71,6 +76,7 @@ function Segmented<Value extends string = string>({
           const web =
             Platform.OS === 'web'
               ? ({
+                  id: radioId(option.value),
                   tabIndex: option.value === tabStop ? 0 : -1,
                   onKeyDown: (event: { key: string; preventDefault(): void }) => {
                     if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
