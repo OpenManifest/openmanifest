@@ -4,6 +4,7 @@ import { TicketTypeDetailsFragment } from 'app/api/operations';
 import TicketTypeForm from './TicketTypeForm';
 import useForm, { TicketTypeFields } from './useForm';
 import { fromCents } from 'app/utils/money';
+import { useTranslation } from 'react-i18next';
 
 export interface ITicketTypeDialog {
   open: boolean;
@@ -13,6 +14,7 @@ export interface ITicketTypeDialog {
 }
 
 export default function TicketTypeDialog(props: ITicketTypeDialog) {
+  const { t } = useTranslation('common');
   const { open, initial, original, onClose } = props;
   const { control, loading, onSubmit, reset } = useForm({
     initial: {
@@ -36,9 +38,9 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
   return (
     <DialogOrSheet
       {...{ open, loading, onClose }}
-      title={original?.id ? 'Edit ticket' : 'New ticket'}
+      title={original?.id ? t('forms.ticket_type.editTicket') : t('forms.ticket_type.newTicket')}
       buttonAction={onSubmit}
-      buttonLabel="Save"
+      buttonLabel={t('forms.save')}
     >
       <TicketTypeForm {...{ control }} />
     </DialogOrSheet>

@@ -4,7 +4,7 @@ import { FormProvider, useWatch } from 'react-hook-form';
 import { useTheme } from 'react-native-paper';
 import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
-import type { DropzoneUserEssentialsFragment } from 'app/api/operations';
+import type { MembershipEssentialsFragment } from 'app/api/operations';
 import ManifestGroupForm from './ManifestGroupForm';
 import UserListSelect from './UserListSelect';
 import useManifestGroupForm, {
@@ -58,9 +58,9 @@ export default function ManifestGroupDialog(props: IManifestGroupDialogProps) {
   }, [onClose]);
 
   const onSelect = React.useCallback(
-    (dropzoneUser: DropzoneUserEssentialsFragment) => {
-      if (tabIndex === 0 && dropzoneUser) {
-        setValue('users', toggleSlotUsers(getValues('users'), [dropzoneUser]), {
+    (membership: MembershipEssentialsFragment) => {
+      if (tabIndex === 0 && membership) {
+        setValue('users', toggleSlotUsers(getValues('users'), [membership]), {
           shouldDirty: true,
         });
       }

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { Control, useFormState, useWatch } from 'react-hook-form';
-import { HelperText } from 'react-native-paper';
+
 import RigInspectionItem from '../rig_inspection_template/RigInspectionItem';
 import { FieldItem } from '../rig_inspection_template/fieldItem';
 import { RigInspectionFields } from './useForm';
+import { FieldError } from 'app/ui';
 
 export interface IRigInspectionFormProps {
   control: Control<RigInspectionFields>;
@@ -27,7 +28,7 @@ export default function RigInspectionForm(props: IRigInspectionFormProps) {
               onChange={(value) => onChangeField(index, value)}
             />
             {fieldErrors?.[index]?.value?.message ? (
-              <HelperText type="error">{fieldErrors[index]?.value?.message}</HelperText>
+              <FieldError>{fieldErrors[index]?.value?.message}</FieldError>
             ) : null}
           </React.Fragment>
         );
