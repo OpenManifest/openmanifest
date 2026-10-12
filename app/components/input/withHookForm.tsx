@@ -24,7 +24,6 @@ export function withHookForm<BaseProps extends object, Value = unknown>(
             {...(rest as BaseProps)}
             {...{ value, onBlur }}
             onChange={(val) => {
-              console.debug('CHANGE: ', val);
               onChange(val);
             }}
             error={fieldState?.error?.message}

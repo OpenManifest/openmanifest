@@ -2,6 +2,7 @@ import { LinkingOptions, NavigatorScreenParams } from '@react-navigation/native'
 import * as Linking from 'expo-linking';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
+import { Platform } from 'react-native';
 
 import NotFoundScreen from './NotFoundScreen';
 import { useSession } from '../state';
@@ -9,7 +10,12 @@ import { useSession } from '../state';
 import Limbo, { LimboRoutes } from './limbo/routes';
 import Unauthenticated, { UnauthenticatedRoutes } from './unauthenticated/routes';
 import Wizards, { WizardRoutes } from './wizards/routes';
-import LeftDrawer, { LeftDrawerRoutes } from './drawers/UserDrawer';
+import Authenticated, { AuthenticatedRoutes } from './authenticated/routes';
+import SpikeScreen from './dev/SpikeScreen';
+import environment from '../constants/environment';
+
+// The primitives spike (U0.8) exists on the web outside production only
+const SPIKE_ENABLED = Platform.OS === 'web' && environment !== 'production';
 
 export const options: LinkingOptions<ReactNavigation.RootParamList> = {
   prefixes: [
@@ -23,71 +29,67 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
     screens: {
       Authenticated: {
         screens: {
-          LeftDrawer: {
+          Overview: {
             screens: {
-              Overview: {
-                screens: {
-                  DashboardScreen: '/dropzone/dashboard',
-                  OverviewScreen: '/overview',
-                },
-              },
-              Manifest: {
-                screens: {
-                  ManifestScreen: '/dropzone/manifest',
-                  User: {
-                    screens: {
-                      EquipmentScreen: '/dropzone/manifest/users/:userId/equipment/',
-                      OrderReceiptScreen:
-                        '/dropzone/manifest/users/:userId/orders/:orderId/receipts',
-                      ProfileScreen: '/dropzone/manifest/users/:userId',
-                      OrdersScreen: '/dropzone/manifest/users/:userId/orders',
-                      RigInspectionScreen:
-                        '/dropzone/manifest/users/:dropzoneUserId/rig/:rigId/inspection',
-                      UserListScreen: '/dropzone/manifest/users',
-                    },
-                  },
-                  Configuration: {
-                    screens: {
-                      TicketTypesScreen: '/dropzone/configuration/ticket-types',
-                      DropzoneRigsScreen: '/dropzone/configuration/rigs',
-                      ExtrasScreen: '/dropzone/ticket-types/extra',
-                      MasterLogScreen: '/dropzone/master-log',
-                      SettingsMenuScreen: '/dropzone/configuration',
-                      AircraftsScreen: '/dropzone/configuration/aircrafts',
-                      DropzoneSettingsScreen: '/dropzone/configuration/basic',
-                      PermissionScreen: '/dropzone/configuration/permissions',
-                      RigInspectionTemplateScreen: '/dropzone/configuration/rig-inspection',
-                      TransactionsScreen: '/dropzone/transactions',
-                    },
-                  },
-                  JumpRunScreen: '/dropzone/weather/jumprun',
-                  WeatherConditionsScreen: '/dropzone/weather',
-                  LoadScreen: '/dropzone/load/:loadId',
-                  WindScreen: '/dropzone/weather/winds',
-                },
-              },
-              Users: {
-                screens: {
-                  UserListScreen: '/users',
-                  ProfileScreen: '/user/:userId',
-                  EquipmentScreen: '/user/:userId/equipment',
-                  OrdersScreen: '/user/:userId/transactions',
-                  OrderReceiptScreen: '/user/:userId/transactions/:orderId/receipt',
-                  RigInspectionScreen: '/user/:dropzoneUserId/rig-inspection/:rig',
-                },
-              },
-              Notifications: {
-                screens: {
-                  NotificationsScreen: '/notifications',
-                },
-              },
+              DashboardScreen: '/dashboard',
+              OverviewScreen: '/overview',
             },
           },
+          Manifest: {
+            screens: {
+              ManifestScreen: '/manifest',
+              User: {
+                screens: {
+                  EquipmentScreen: '/manifest/users/:userId/equipment/',
+                  OrderReceiptScreen: '/manifest/users/:userId/orders/:orderId/receipts',
+                  ProfileScreen: '/manifest/users/:userId',
+                  OrdersScreen: '/manifest/users/:userId/orders',
+                  RigInspectionScreen: '/manifest/users/:membershipId/rig/:rigId/inspection',
+                  UserListScreen: '/manifest/users',
+                },
+              },
+              Configuration: {
+                screens: {
+                  TicketTypesScreen: '/configuration/ticket-types',
+                  OperatorRigsScreen: '/configuration/rigs',
+                  ExtrasScreen: '/ticket-types/extra',
+                  DailyLogScreen: '/daily-log',
+                  SettingsMenuScreen: '/configuration',
+                  VehiclesScreen: '/configuration/vehicles',
+                  OperatorSettingsScreen: '/configuration/basic',
+                  PermissionScreen: '/configuration/permissions',
+                  RigInspectionTemplateScreen: '/configuration/rig-inspection',
+                  TransactionsScreen: '/transactions',
+                },
+              },
+              JumpRunScreen: '/weather/jumprun',
+              WeatherConditionsScreen: '/weather',
+              LoadScreen: '/loads/:loadId',
+              WindScreen: '/weather/winds',
+            },
+          },
+          Users: {
+            screens: {
+              UserListScreen: '/users',
+              ProfileScreen: '/user/:userId',
+              EquipmentScreen: '/user/:userId/equipment',
+              OrdersScreen: '/user/:userId/transactions',
+              OrderReceiptScreen: '/user/:userId/transactions/:orderId/receipt',
+              RigInspectionScreen: '/user/:membershipId/rig-inspection/:rig',
+            },
+          },
+          Notifications: {
+            screens: {
+              NotificationsScreen: '/notifications',
+            },
+          },
+          More: '/more',
+          Account: '/account',
         },
       },
       Limbo: {
         screens: {
-          DropzoneSelectScreen: '/select-dropzone',
+          OperatorSelectScreen: '/operators/select',
         },
       },
       Unauthenticated: {
@@ -101,7 +103,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
           ConfirmUserScreen: '/confirm',
           RecoverPasswordScreen: '/recover-password',
           ChangePasswordScreen: '/change-password',
-          DropzoneWizardScreen: '/setup',
+          OperatorWizardScreen: '/setup',
           User: {
             screens: {
               UserListScreen: '/modal/users',
@@ -109,11 +111,12 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
               EquipmentScreen: '/modal/user/:userId/equipment',
               OrdersScreen: '/modal/user/:userId/transactions',
               OrderReceiptScreen: '/modal/user/:userId/transactions/:orderId/receipt',
-              RigInspectionScreen: '/modal/user/:dropzoneUserId/rig-inspection/:rig',
+              RigInspectionScreen: '/modal/user/:membershipId/rig-inspection/:rig',
             },
           },
         },
       },
+      ...(SPIKE_ENABLED ? { Spike: '/__spike' } : {}),
       // FIXME: Remove in release
       // NotFound: '*',
     },
@@ -121,11 +124,12 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
 };
 
 export type Routes = {
-  Authenticated: NavigatorScreenParams<LeftDrawerRoutes>;
+  Authenticated: NavigatorScreenParams<AuthenticatedRoutes>;
   Unauthenticated: NavigatorScreenParams<UnauthenticatedRoutes>;
   Limbo: NavigatorScreenParams<LimboRoutes>;
   Wizards: NavigatorScreenParams<WizardRoutes>;
   NotFound: undefined;
+  Spike: undefined;
 };
 
 const Stack = createStackNavigator<Routes>();
@@ -138,7 +142,7 @@ declare global {
 
 export default function RootNavigator() {
   const credentials = useSession((session) => session.credentials);
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
 
   return (
     <Stack.Navigator
@@ -150,8 +154,8 @@ export default function RootNavigator() {
       }}
     >
       {credentials ? (
-        currentDropzoneId ? (
-          <Stack.Screen name="Authenticated" component={LeftDrawer} />
+        currentOperatorId ? (
+          <Stack.Screen name="Authenticated" component={Authenticated} />
         ) : (
           <Stack.Screen name="Limbo" component={Limbo} />
         )
@@ -159,6 +163,7 @@ export default function RootNavigator() {
         <Stack.Screen name="Unauthenticated" component={Unauthenticated} />
       )}
       <Stack.Screen name="Wizards" component={Wizards} />
+      {SPIKE_ENABLED ? <Stack.Screen name="Spike" component={SpikeScreen} /> : null}
 
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
