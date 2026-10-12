@@ -81,6 +81,7 @@ export const OperatorEssentialsFragmentDoc = gql`
   terminology
   industry
   modules
+  callScheduleMinutes
   settings {
     allowManifestBypass
     allowNegativeCredits

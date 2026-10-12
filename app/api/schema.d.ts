@@ -1572,6 +1572,8 @@ export type Operator = AnyResource & Wallet & {
   __typename?: 'Operator';
   allowedActivityTypes: Array<ActivityType>;
   banner?: Maybe<Scalars['String']['output']>;
+  /** Minutes before departure at which a boarding call is offered: the operator's own, else its template's */
+  callScheduleMinutes: Array<Scalars['Int']['output']>;
   createdAt: Scalars['ISO8601DateTime']['output'];
   /** The jobs on a load of this operator */
   crewRoles: Array<CrewRole>;
@@ -2188,6 +2190,8 @@ export type SettingsInput = {
   allowNegativeCredits?: InputMaybe<Scalars['Boolean']['input']>;
   /** When this is disabled, only manifest staff can add, move or remove people on loads */
   allowSelfManifest?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Minutes before departure at which a boarding call is offered, longest first (up to six); none: loads depart directly */
+  callScheduleMinutes?: InputMaybe<Array<Scalars['Int']['input']>>;
   /** When this is enabled, users cannot manifest if they have no credits */
   requireCredits?: InputMaybe<Scalars['Boolean']['input']>;
   /** When this is enabled, users cannot manifest if they have no equipment */

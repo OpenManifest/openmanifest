@@ -9,6 +9,7 @@ import { Permission, LoadState } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { useOperatorToday, useOperatorTimeZone } from 'app/hooks/useOperatorToday';
 import { dateInZone } from 'app/utils/operatorTime';
+import { formatCall } from 'app/i18n/format';
 import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 interface ILoadActionButtonProps {
@@ -48,28 +49,28 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     load?.state !== LoadState.Completed &&
     (!load?.dispatchAt || load.dispatchAt > new Date().getTime() / 1000);
 
-  const callActions = [
-    {
-      label: 'Custom call',
-      onPress: timepicker.open,
-      icon: 'airplane-takeoff',
-    },
-    {
-      label: '20 minute call',
-      onPress: createVehicleDispatchAction(20),
-      icon: 'airplane-takeoff',
-    },
-    {
-      label: '15 minute call',
-      onPress: createVehicleDispatchAction(15),
-      icon: 'airplane-takeoff',
-    },
-    {
-      label: '10 minute call',
-      onPress: createVehicleDispatchAction(10),
-      icon: 'airplane-takeoff',
-    },
-  ];
+  // The calls the operator offers (the template's until it sets its own); with none, the load departs directly
+  const callMinutes = currentOperator.operator?.callScheduleMinutes ?? [];
+  const callActions = callMinutes.length
+    ? [
+        {
+          label: 'Custom call',
+          onPress: timepicker.open,
+          icon: 'airplane-takeoff',
+        },
+        ...callMinutes.map((minutes) => ({
+          label: formatCall(minutes),
+          onPress: createVehicleDispatchAction(minutes),
+          icon: 'airplane-takeoff',
+        })),
+      ]
+    : [
+        {
+          label: 'Depart now',
+          onPress: () => updateLoadState(LoadState.Departed),
+          icon: 'airplane-takeoff',
+        },
+      ];
 
   // The load's day at the operator, not on this device
   const today = useOperatorToday();

@@ -15,7 +15,8 @@ import LoadCrewChips from 'app/components/chips/LoadCrewChips';
 import VehicleChip from 'app/components/chips/VehicleChip';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
-import { Permission } from 'app/api/schema.d';
+import { LoadState, Permission } from 'app/api/schema.d';
+import { formatCall } from 'app/i18n/format';
 import useRestriction from 'app/hooks/useRestriction';
 import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';
 import LoadSlotTable from 'app/components/slots_table/Table';
@@ -44,8 +45,20 @@ function LoadCard(props: ILoadCardLarge) {
   const notify = useNotifications();
 
   const {
-    load: { load, loading, refetch, updateCrew, updateVehicle, dispatchInMinutes, complete },
+    load: {
+      load,
+      loading,
+      refetch,
+      updateCrew,
+      updateVehicle,
+      dispatchInMinutes,
+      updateLoadState,
+      complete,
+    },
   } = useLoadContext();
+  const { operator: currentOperator } = useOperatorContext();
+  // The calls the operator offers; with none, the load departs directly
+  const callMinutes = currentOperator.operator?.callScheduleMinutes ?? [];
   const onDeleteSlot = React.useCallback(
     async (slot: SlotDetailsFragment) => {
       try {
@@ -222,37 +235,27 @@ function LoadCard(props: ILoadCardLarge) {
                 </Button>
               }
             >
-              <MenuItem
-                testID="dispatch-call"
-                onPress={() => {
-                  setDispatchOpen(false);
-                  dispatchInMinutes(20);
-                }}
-                title="20 minute call"
-              />
-              <MenuItem
-                testID="dispatch-call"
-                onPress={() => {
-                  setDispatchOpen(false);
-                  dispatchInMinutes(15);
-                }}
-                title="15 minute call"
-              />
-              <MenuItem
-                testID="dispatch-call"
-                onPress={() => {
-                  setDispatchOpen(false);
-                  dispatchInMinutes(10);
-                }}
-                title="10 minute call"
-              />
-              <MenuItem
-                onPress={() => {
-                  setDispatchOpen(false);
-                  dispatchInMinutes(5);
-                }}
-                title="5 minute call"
-              />
+              {callMinutes.map((minutes) => (
+                <MenuItem
+                  key={minutes}
+                  testID="dispatch-call"
+                  onPress={() => {
+                    setDispatchOpen(false);
+                    dispatchInMinutes(minutes);
+                  }}
+                  title={formatCall(minutes)}
+                />
+              ))}
+              {callMinutes.length ? null : (
+                <MenuItem
+                  testID="dispatch-depart"
+                  onPress={() => {
+                    setDispatchOpen(false);
+                    updateLoadState(LoadState.Departed);
+                  }}
+                  title="Depart now"
+                />
+              )}
             </Menu>
           )}
 

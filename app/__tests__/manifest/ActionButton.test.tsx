@@ -8,6 +8,7 @@ import { NotificationContext } from 'app/providers/notifications/context';
 import { LoadContextProvider, useLoadContext } from 'app/providers';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
+import MOCK_QUERY_OPERATOR from './__mocks__/QueryOperator.mock';
 import ActionButton from '../../screens/authenticated/manifest/load/ActionButton';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
@@ -223,6 +224,53 @@ describe('<ActionButton />', () => {
       await waitFor(() => screen.getByText('Cancel load'), { timeout: 10000 });
       expect(screen.queryByText('10 minute call')).toBeNull();
       restore();
+    });
+  });
+
+  describe('the call schedule of the operator', () => {
+    const renderWithSchedule = async (callScheduleMinutes: number[]) => {
+      Settings.now = () => NOW;
+      const screen = await render(
+        <LoadContextProvider id="1">
+          <LoadActions />
+        </LoadContextProvider>,
+        {
+          session: authenticatedSession,
+          permissions: [Permission.UpdateLoad],
+          graphql: [
+            MOCK_QUERY_OPERATOR({}, { operator: { callScheduleMinutes } } as never),
+            MOCK_QUERY_LOAD(
+              {},
+              { load: { createdAt: new Date(NOW).toISOString() as never, state: LoadState.Open } }
+            ),
+            {
+              request: { query: LoadUpdatedDocument, variables: { id: '1' } },
+              result: { data: { loadUpdated: { __typename: 'LoadUpdatedPayload', load: null } } },
+            },
+          ],
+        }
+      );
+      await fireEvent.press(
+        await screen.findByTestId('load-actions-primary-action', {}, { timeout: 10000 })
+      );
+      return screen;
+    };
+
+    it('offers the calls it sets, not the usual ones', async () => {
+      const screen = await renderWithSchedule([30, 5]);
+
+      await waitFor(() => screen.getByText('30 minute call'), { timeout: 10000 });
+      expect(screen.getByText('5 minute call')).toBeTruthy();
+      expect(screen.queryByText('20 minute call')).toBeNull();
+      expect(screen.queryByText('10 minute call')).toBeNull();
+    });
+
+    it('offers to depart directly when it sets none', async () => {
+      const screen = await renderWithSchedule([]);
+
+      await waitFor(() => screen.getByText('Depart now'), { timeout: 10000 });
+      expect(screen.queryByText('Custom call')).toBeNull();
+      expect(screen.queryByText(/minute call/)).toBeNull();
     });
   });
 

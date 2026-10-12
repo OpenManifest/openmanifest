@@ -12,10 +12,16 @@ import { OperatorEssentialsFragment, FederationEssentialsFragment } from 'app/ap
 import { useFederationsQuery } from 'app/api/reflection';
 import useRestriction from 'app/hooks/useRestriction';
 import i18n from 'app/i18n';
+import { formatCallSchedule, parseCallSchedule } from 'app/utils/callSchedule';
 
 export type OperatorFields = Required<
   Omit<OperatorInput, 'settings' | 'federation' | 'id'> &
-    OperatorInput['settings'] & { id: number; federation: FederationEssentialsFragment | null }
+    Omit<NonNullable<OperatorInput['settings']>, 'callScheduleMinutes'> & {
+      id: number;
+      federation: FederationEssentialsFragment | null;
+      /** The minutes of the boarding calls as the person types them: "20, 15, 10" */
+      callSchedule: string;
+    }
 >;
 
 export const operatorValidation = yup.object({
@@ -32,6 +38,14 @@ export const operatorValidation = yup.object({
   allowManifestBypass: yup.boolean(),
   allowDoubleManifesting: yup.boolean(),
   allowSelfManifest: yup.boolean(),
+  callSchedule: yup
+    .string()
+    .default('')
+    .test(
+      'call-schedule',
+      () => i18n.t('forms.operator.callScheduleInvalid'),
+      (value) => parseCallSchedule(value) !== null
+    ),
 });
 
 export const EMPTY_FORM_VALUES: Partial<OperatorFields> = {
@@ -47,6 +61,7 @@ export const EMPTY_FORM_VALUES: Partial<OperatorFields> = {
   allowSelfManifest: true,
   requireCredits: true,
   requireLicense: true,
+  callSchedule: '',
 };
 
 export interface IUseManifestFormOpts {
@@ -81,6 +96,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
       requireRigInspection: operator?.settings?.requireRigInspection,
       isCreditSystemEnabled: operator?.isCreditSystemEnabled,
       requireEquipment: operator?.settings?.requireEquipment,
+      callSchedule: formatCallSchedule(operator?.callScheduleMinutes),
       ...initial,
     }),
     [
@@ -103,6 +119,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
       operator?.lng,
       operator?.federation,
       operator?.settings?.requireEquipment,
+      operator?.callScheduleMinutes,
     ]
   );
 
@@ -150,6 +167,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
           requestPublication,
           secondaryColor,
           isPublic,
+          callSchedule,
           ...settings
         } = fields;
 
@@ -163,7 +181,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
           requestPublication,
           isCreditSystemEnabled,
           isPublic,
-          settings,
+          settings: { ...settings, callScheduleMinutes: parseCallSchedule(callSchedule) ?? [] },
         });
 
         if ('fieldErrors' in response) {

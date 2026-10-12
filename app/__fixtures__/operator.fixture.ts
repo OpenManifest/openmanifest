@@ -20,6 +20,7 @@ export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
   terminology: {},
   industry: Industry.Skydiving,
   modules: {},
+  callScheduleMinutes: [20, 15, 10],
   settings: {
     __typename: 'Settings',
     allowManifestBypass: false,

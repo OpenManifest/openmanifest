@@ -241,6 +241,13 @@ export default function OperatorForm(props: IOperatorForm) {
               name="allowDoubleManifesting"
               helperText={t('forms.operator.usersAreAllowedToManifest')}
             />
+            <FormTextField
+              {...{ control }}
+              name="callSchedule"
+              label={t('forms.operator.callSchedule')}
+              helperText={t('forms.operator.callScheduleHelp')}
+              keyboardType="numbers-and-punctuation"
+            />
           </Stack>
         </Card>
       )}

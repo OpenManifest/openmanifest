@@ -250,7 +250,10 @@
       "changeBanner": "Change the banner",
       "bannerHelp": "Your banner is displayed on the weather board and on the operator selection screen",
       "name": "Name",
-      "location": "Location"
+      "location": "Location",
+      "callSchedule": "Boarding calls (minutes before departure)",
+      "callScheduleHelp": "Longest first, up to six, for example 20, 15, 10. Leave empty to depart without a call.",
+      "callScheduleInvalid": "Use whole minutes, longest first, up to six: 20, 15, 10"
     },
     "rig": {
       "youCanGiveYourEquipment": "You can give your equipment a nickname",
