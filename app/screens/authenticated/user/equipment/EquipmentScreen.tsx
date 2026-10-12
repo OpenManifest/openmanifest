@@ -1,5 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 
@@ -9,7 +10,7 @@ import type { RigEssentialsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
 import RigDialog from 'app/forms/rig';
 
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { useUserProfile } from 'app/api/crud';
 import RigCard from './RigCard';
@@ -27,29 +28,39 @@ export default function EquipmentScreen() {
   const { theme } = useAppTheme();
   const rigDialog = useRigDialog();
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
   const navigation = useNavigation();
 
   const route = useRoute<RouteProp<EquipmentRoute, 'EquipmentScreen'>>();
 
-  const { dropzoneUser, loading } = useUserProfile({
+  const { membership, loading } = useUserProfile({
     id: (route?.params?.userId || currentUser?.id) as string,
   });
 
+  const { t } = useTranslation(['common', 'terms']);
   React.useEffect(() => {
-    if (dropzoneUser?.user?.name && dropzoneUser?.id !== currentUser?.id) {
-      const [firstName] = dropzoneUser.user?.name.split(/\s/) || [];
-      navigation.setOptions({ title: `${firstName}'s Equipment` });
+    if (membership?.user?.name && membership?.id !== currentUser?.id) {
+      const [firstName] = membership.user?.name.split(/\s/) || [];
+      navigation.setOptions({
+        title: t('common:screens.equipmentOf', {
+          name: firstName,
+          equipment: t('terms:equipment', { count: 1 }).toLowerCase(),
+        }),
+      });
     } else {
-      navigation.setOptions({ title: 'Your Equipment' });
+      navigation.setOptions({
+        title: t('common:screens.yourEquipment', {
+          equipment: t('terms:equipment', { count: 1 }).toLowerCase(),
+        }),
+      });
     }
-  }, [currentUser?.id, dropzoneUser?.id, dropzoneUser?.user?.name, navigation]);
+  }, [currentUser?.id, membership?.id, membership?.user?.name, navigation, t]);
   const canUpdateUser = useRestriction(Permission.UpdateUser);
   return (
     <>
       <FlatList
-        data={dropzoneUser?.user?.rigs || []}
+        data={membership?.user?.rigs || []}
         numColumns={1}
         style={{ flex: 1 }}
         refreshing={loading}
@@ -57,10 +68,10 @@ export default function EquipmentScreen() {
         contentContainerStyle={{ padding: 16 }}
         renderItem={({ item }) => (
           <RigCard
-            {...{ dropzoneUser }}
+            {...{ membership }}
             // onSuccessfulImageUpload={refetch}
             rig={item}
-            rigInspection={dropzoneUser?.rigInspections?.find(
+            rigInspection={membership?.rigInspections?.find(
               (insp) => insp.rig?.id === item.id && insp.isOk
             )}
             onPress={() => {
@@ -84,7 +95,7 @@ export default function EquipmentScreen() {
         onClose={rigDialog.close}
         open={rigDialog.visible}
         rig={rigDialog.state?.rig}
-        userId={Number(dropzoneUser?.user?.id)}
+        userId={Number(membership?.user?.id)}
       />
     </>
   );

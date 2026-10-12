@@ -1,7 +1,8 @@
 import { FederationEssentialsFragment } from 'app/api/operations';
 import { useFederationsQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { List } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
+import { Subheader } from 'app/ui';
 import Select from '../select/Select';
 import { withHookForm } from '../withHookForm';
 
@@ -12,6 +13,7 @@ interface IFederationSelect {
 }
 
 function FederationSelect(props: IFederationSelect) {
+  const { t } = useTranslation(['common', 'terms']);
   const { value, onChange, error } = props;
 
   const { data } = useFederationsQuery();
@@ -38,7 +40,7 @@ function FederationSelect(props: IFederationSelect) {
 
   return (
     <>
-      <List.Subheader>Federation</List.Subheader>
+      <Subheader>{t('terms:certification_body', { count: 1 })}</Subheader>
       <Select<FederationEssentialsFragment>
         value={selected}
         options={options}

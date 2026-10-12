@@ -5,6 +5,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { DataTable, Surface, Text } from 'react-native-paper';
 import UserRow, { SlotFields, styles as rowStyles } from './UserRow';
 import AvailableRow from './AvailableRow';
+import useTerms from 'app/i18n/useTerms';
 
 export interface ISlotsTableProps {
   load?: LoadDetailsFragment | null;
@@ -33,6 +34,7 @@ function useSlotEntries(load?: LoadDetailsFragment | null) {
 }
 
 function ColumnHeadings({ fields }: Pick<ISlotsTableProps, 'fields'>) {
+  const term = useTerms();
   return (
     <DataTable.Header style={styles.headings}>
       <DataTable.Title style={rowStyles.avatarCell}>{null}</DataTable.Title>
@@ -55,8 +57,8 @@ function ColumnHeadings({ fields }: Pick<ISlotsTableProps, 'fields'>) {
         </DataTable.Title>
       )}
       {!fields ||
-        (fields?.includes(SlotFields.JumpType) && (
-          <DataTable.Title numeric style={rowStyles.jumpTypeCell}>
+        (fields?.includes(SlotFields.ActivityType) && (
+          <DataTable.Title numeric style={rowStyles.activityTypeCell}>
             <Text style={styles.th}>Jump type</Text>
           </DataTable.Title>
         ))}
@@ -68,7 +70,7 @@ function ColumnHeadings({ fields }: Pick<ISlotsTableProps, 'fields'>) {
       {!fields ||
         (fields?.includes(SlotFields.Altitude) && (
           <DataTable.Title numeric style={rowStyles.altitudeCell}>
-            <Text style={styles.th}>Altitude</Text>
+            <Text style={styles.th}>{term('destination')}</Text>
           </DataTable.Title>
         ))}
     </DataTable.Header>

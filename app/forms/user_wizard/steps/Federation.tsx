@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HelperText } from 'react-native-paper';
+
 import FederationCardSelect from 'app/components/input/card_select/FederationCardSelect';
 import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
 import { FederationEssentialsFragment } from 'app/api/operations';
@@ -8,7 +8,9 @@ import { useUserProfileContext } from 'app/api/crud';
 import { WizardFormStep } from 'app/hooks/forms/useWizard';
 import { useMemo } from 'app/hooks/react';
 import * as yup from 'yup';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
+import { useTranslation } from 'react-i18next';
+import { FieldError } from 'app/ui';
 
 const federation = yup.object() as yup.SchemaOf<FederationEssentialsFragment>;
 
@@ -21,19 +23,19 @@ type StepFields = {
 };
 
 export function useStep(): WizardFormStep<StepFields> {
-  const { dropzoneUser } = useUserProfileContext();
+  const { membership } = useUserProfileContext();
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
 
   return useMemo(
     () => ({
       defaultValues: {
-        federation: dropzoneUser?.license?.federation || dropzone?.federation,
+        federation: membership?.license?.federation || operator?.federation,
       },
       validation,
     }),
-    [dropzone?.federation, dropzoneUser?.license?.federation]
+    [operator?.federation, membership?.license?.federation]
   );
 }
 
@@ -42,10 +44,11 @@ export interface IFederationStepProps extends IWizardStepProps {
 }
 
 function FederationWizardSceen(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   const { control } = useFormContext<StepFields>();
 
   return (
-    <Step {...props} title="Affiliation">
+    <Step {...props} title={t('forms.user_wizard.affiliation')}>
       <Fields>
         <Controller
           {...{ control }}
@@ -53,9 +56,7 @@ function FederationWizardSceen(props: IWizardStepProps) {
           render={({ field: { value, onChange: onSelect }, fieldState }) => (
             <>
               <FederationCardSelect {...{ value, onSelect }} />
-              <HelperText type={fieldState?.error ? 'error' : 'info'}>
-                {fieldState?.error?.message || ''}
-              </HelperText>
+              <FieldError>{fieldState?.error?.message || ''}</FieldError>
             </>
           )}
         />

@@ -5,6 +5,7 @@ import { LoadDetailsFragment } from 'app/api/operations';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import LoadForm from './LoadForm';
 import useForm from './useForm';
+import { useTranslation } from 'react-i18next';
 
 export interface ILoadDialog {
   open?: boolean;
@@ -13,6 +14,7 @@ export interface ILoadDialog {
   onSuccess(load: LoadDetailsFragment): void;
 }
 export default function LoadDialog(props: ILoadDialog) {
+  const { t } = useTranslation('common');
   const { open, load, onClose, onSuccess } = props;
   const { control, onSubmit, loading } = useForm({
     initial: {
@@ -20,7 +22,7 @@ export default function LoadDialog(props: ILoadDialog) {
       maxSlots: load?.maxSlots,
       name: load?.name,
       pilot: load?.pilot,
-      plane: load?.plane,
+      vehicle: load?.vehicle,
       id: load?.id,
     },
     onSuccess,
@@ -32,9 +34,9 @@ export default function LoadDialog(props: ILoadDialog) {
       onClose={onClose}
       buttonAction={onSubmit}
       scrollable
-      buttonLabel="Create"
+      buttonLabel={t('forms.create')}
       loading={loading}
-      title="New Load"
+      title={t('forms.load.newLoad')}
     >
       <LoadForm {...{ control }} />
     </DialogOrSheet>

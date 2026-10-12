@@ -1,5 +1,5 @@
-import { DropzoneUserEssentialsFragment } from 'app/api/operations';
-import { useDropzoneUsersQuery } from 'app/api/reflection';
+import { MembershipEssentialsFragment } from 'app/api/operations';
+import { useMembershipsQuery } from 'app/api/reflection';
 import { truncate } from 'lodash';
 import * as React from 'react';
 import { useSession } from 'app/state';
@@ -22,11 +22,11 @@ export default function PilotChip(props: IPilotChipSelect) {
   const { small, color: assignedColor, backgroundColor, onSelect, value } = props;
   const theme = useTheme();
   const color = assignedColor || theme.colors.onSurface;
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
 
-  const { data } = useDropzoneUsersQuery({
+  const { data } = useMembershipsQuery({
     variables: {
-      dropzoneId: currentDropzoneId?.toString() as string,
+      operatorId: currentOperatorId?.toString() as string,
       permissions: [Permission.ActAsPilot],
     },
   });
@@ -34,24 +34,24 @@ export default function PilotChip(props: IPilotChipSelect) {
 
   const options = React.useMemo(
     () =>
-      data?.dropzoneUsers?.edges
+      data?.memberships?.edges
         ?.filter((edge) => !!edge?.node)
         .map((edge) => ({
           label: edge?.node?.user?.name || '',
-          value: edge?.node as DropzoneUserEssentialsFragment,
+          value: edge?.node as MembershipEssentialsFragment,
           avatar: edge?.node?.user?.image,
         })) || [],
-    [data?.dropzoneUsers?.edges]
+    [data?.memberships?.edges]
   );
 
   const selected = React.useMemo(
     () =>
-      data?.dropzoneUsers?.edges?.map((edge) => edge?.node).find((node) => node?.id === value?.id),
-    [data?.dropzoneUsers?.edges, value?.id]
+      data?.memberships?.edges?.map((edge) => edge?.node).find((node) => node?.id === value?.id),
+    [data?.memberships?.edges, value?.id]
   );
 
   const renderAnchor: React.FC<{
-    item?: ISelectOption<DropzoneUserEssentialsFragment>;
+    item?: ISelectOption<MembershipEssentialsFragment>;
     openMenu(): void;
   }> = React.useCallback(
     ({ item, openMenu }) => (
@@ -72,7 +72,7 @@ export default function PilotChip(props: IPilotChipSelect) {
     </Chip>
   ) : (
     <View style={{ maxWidth: 146 }}>
-      <Select<DropzoneUserEssentialsFragment>
+      <Select<MembershipEssentialsFragment>
         value={selected}
         options={options}
         renderAnchor={renderAnchor}

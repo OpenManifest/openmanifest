@@ -2,9 +2,9 @@ import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Avatar, Badge, Card, Chip } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { ViewProps } from 'app/components/Themed';
+import type { ViewProps } from 'react-native';
 import { SlotDetailsFragment } from 'app/api/operations';
-import { useDropzoneNavigation } from 'app/screens/authenticated/dropzone/useDropzoneNavigation';
+import useOpenUser from 'app/navigation/useOpenUser';
 import { useAppTheme } from 'app/theme';
 
 export interface ISlotCardProps {
@@ -20,29 +20,25 @@ export default function SlotCard(props: ISlotCardProps) {
   const { slot, onPress, onDelete, style } = props;
   const { theme } = useAppTheme();
 
-  const hasPassenger = !!slot?.passengerName;
-  const navigation = useDropzoneNavigation();
+  const hasGuest = !!slot?.guestName;
+  const openUser = useOpenUser();
   return (
     <>
       <Card
         onPress={() =>
-          slot.dropzoneUser?.id &&
-          navigation.navigate('User', {
-            screen: 'ProfileScreen',
-            params: { userId: slot.dropzoneUser?.id },
-          })
+          slot.membership?.id && openUser('ProfileScreen', { userId: slot.membership?.id })
         }
         onLongPress={() => onPress?.(slot)}
         elevation={3}
-        style={StyleSheet.flatten([styles.card, { marginBottom: hasPassenger ? -4 : 12 }, style])}
+        style={StyleSheet.flatten([styles.card, { marginBottom: hasGuest ? -4 : 12 }, style])}
       >
         <Card.Title
-          title={slot?.dropzoneUser?.user.name || slot?.passengerName}
+          title={slot?.membership?.user.name || slot?.guestName}
           left={() =>
-            slot?.dropzoneUser?.user?.image ? (
+            slot?.membership?.user?.image ? (
               <Avatar.Image
                 style={{ backgroundColor: theme.colors.surface }}
-                source={{ uri: slot?.dropzoneUser?.user.image }}
+                source={{ uri: slot?.membership?.user.image }}
                 size={42}
               />
             ) : (
@@ -76,7 +72,7 @@ export default function SlotCard(props: ISlotCardProps) {
             mode="outlined"
             disabled
           >
-            {slot?.dropzoneUser?.role?.name}
+            {slot?.membership?.role?.name}
           </Chip>
           <Chip
             style={styles.infoChip}
@@ -91,7 +87,7 @@ export default function SlotCard(props: ISlotCardProps) {
             mode="outlined"
             disabled
           >
-            {slot?.dropzoneUser?.license?.name}
+            {slot?.membership?.license?.name}
           </Chip>
           <Chip
             style={styles.infoChip}
@@ -106,7 +102,7 @@ export default function SlotCard(props: ISlotCardProps) {
             mode="outlined"
             disabled
           >
-            {slot?.jumpType?.name}
+            {slot?.activityType?.name}
           </Chip>
           <Chip
             style={styles.infoChip}
@@ -142,7 +138,7 @@ export default function SlotCard(props: ISlotCardProps) {
           )}
         </Card.Content>
       </Card>
-      {!slot?.passengerName ? null : (
+      {!slot?.guestName ? null : (
         <>
           <View
             style={{
@@ -167,7 +163,7 @@ export default function SlotCard(props: ISlotCardProps) {
             elevation={3}
           >
             <Card.Title
-              title={slot?.passengerName}
+              title={slot?.guestName}
               left={() => (
                 <Avatar.Icon
                   icon={(iconProps) => (
@@ -180,7 +176,7 @@ export default function SlotCard(props: ISlotCardProps) {
               )}
             />
             <Card.Content>
-              <Text style={styles.passengerTitle}>P A S S E N G E R</Text>
+              <Text style={styles.guestTitle}>P A S S E N G E R</Text>
             </Card.Content>
           </Card>
         </>
@@ -211,12 +207,12 @@ const styles = StyleSheet.create({
     marginTop: 0,
     fontSize: 12,
   },
-  passengerChip: {
+  guestChip: {
     margin: 12,
     height: 150,
     width: '100%',
   },
-  passengerTitle: {
+  guestTitle: {
     fontSize: 30,
     opacity: 0.5,
     alignSelf: 'center',

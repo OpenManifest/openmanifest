@@ -8,12 +8,13 @@ import {
 } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { camelCase, isEqual } from 'lodash';
 import { useUserProfile } from 'app/api/crud';
 import { useNotifications } from 'app/providers/notifications';
 import withDefaults from 'app/forms/initialValues';
+import i18n from 'app/i18n';
 
 export type UserFields = {
   id?: string | null;
@@ -22,7 +23,7 @@ export type UserFields = {
   federationUid?: string | null;
   nickname: string;
   email: string;
-  exitWeight: number;
+  bodyMassKg: number;
   federation?: FederationEssentialsFragment;
   license?: LicenseDetailsFragment;
   role?: RoleEssentialsFragment;
@@ -30,19 +31,19 @@ export type UserFields = {
 
 export const ghostValidation = yup.object({
   id: yup.string().nullable().default(null),
-  name: yup.string().required('Name is required'),
+  name: yup.string().required(() => i18n.t('forms.create_user.nameIsRequired')),
   nickname: yup.string().optional().nullable(),
-  email: yup.string().required('Email is required to invite the user'),
+  email: yup.string().required(() => i18n.t('forms.create_user.emailIsRequiredToInviteThe')),
   phone: yup.string().optional().nullable(),
   federationUid: yup.string().optional().nullable(),
-  exitWeight: yup
+  bodyMassKg: yup
     .number()
-    .required('Exit weight is required')
-    .min(40, 'Exit weight must be more than 40kg')
+    .required(() => i18n.t('forms.create_user.exitWeightIsRequired'))
+    .min(40, () => i18n.t('forms.create_user.exitWeightMustBeMoreThan'))
     .default(50),
-  federation: yup.object().required('Federation must be selected'),
-  license: yup.object().required('All jumpers must have a license'),
-  role: yup.object().required('You must select a role'),
+  federation: yup.object().required(() => i18n.t('forms.create_user.federationMustBeSelected')),
+  license: yup.object().required(() => i18n.t('forms.create_user.allJumpersMustHaveALicense')),
+  role: yup.object().required(() => i18n.t('forms.create_user.youMustSelectARole')),
 });
 
 export const EMPTY_FORM_VALUES: Partial<UserFields> = {
@@ -51,7 +52,7 @@ export const EMPTY_FORM_VALUES: Partial<UserFields> = {
   email: '',
   role: undefined,
   license: undefined,
-  exitWeight: 50,
+  bodyMassKg: 50,
   federation: undefined,
   id: null,
   phone: '',
@@ -92,23 +93,23 @@ export default function useUserForm(opts: IUseUserFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const { create } = useUserProfile();
   const notify = useNotifications();
 
   const [{ loading }, createUser] = useAsyncFn(
     async (fields: UserFields) => {
-      if (!dropzone?.id) {
+      if (!operator?.id) {
         return;
       }
       const validated = await ghostValidation.validate(fields, { abortEarly: false });
       try {
         const response = await create({
-          dropzone: Number(dropzone.id),
+          operator: Number(operator.id),
           email: validated.email,
           name: validated.name,
-          exitWeight: validated.exitWeight,
+          bodyMassKg: validated.bodyMassKg,
           role: Number(validated.role?.id),
           license: Number(validated?.license?.id),
           federationNumber: validated?.federationUid,
@@ -134,7 +135,7 @@ export default function useUserForm(opts: IUseUserFormOpts) {
         }
       }
     },
-    [dropzone?.id, setError, notify, defaultValues, create]
+    [operator?.id, setError, notify, defaultValues, create]
   );
 
   const { control, setValue } = methods;
