@@ -9,7 +9,7 @@ import type { MembershipProfileQuery, MembershipProfileQueryVariables } from 'ap
 import {
   OperatorDocument,
   MembershipProfileDocument,
-  useCreateRigInspectionMutation,
+  useCreateEquipmentInspectionMutation,
 } from 'app/api/reflection';
 import type { Query } from 'app/api/schema.d';
 import { useNotifications } from 'app/providers/notifications';
@@ -84,12 +84,12 @@ export default function useRigInspectionForm(opts: IUseRigInspectionFormOpts) {
     reset(defaultValues);
   }, [defaultValues, reset]);
 
-  const [mutationCreateRigInspection, { loading }] = useCreateRigInspectionMutation();
+  const [mutationCreateEquipmentInspection, { loading }] = useCreateEquipmentInspectionMutation();
 
   const [, onSave] = useAsyncFn(
     async (values: RigInspectionFields) => {
       try {
-        await mutationCreateRigInspection({
+        await mutationCreateEquipmentInspection({
           variables: {
             operator: operatorId,
             rig: rigId,
@@ -97,7 +97,7 @@ export default function useRigInspectionForm(opts: IUseRigInspectionFormOpts) {
             isOk: !!values.ok,
           },
           update: async (client, mutationResult) => {
-            const rigInspection = mutationResult.data?.createRigInspection?.rigInspection;
+            const rigInspection = mutationResult.data?.createEquipmentInspection?.rigInspection;
             const result = client.readQuery<
               MembershipProfileQuery,
               MembershipProfileQueryVariables
@@ -174,7 +174,7 @@ export default function useRigInspectionForm(opts: IUseRigInspectionFormOpts) {
         }
       }
     },
-    [operatorId, mutationCreateRigInspection, notify, onSuccess, rigId]
+    [operatorId, mutationCreateEquipmentInspection, notify, onSuccess, rigId]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onSave), [handleSubmit, onSave]);

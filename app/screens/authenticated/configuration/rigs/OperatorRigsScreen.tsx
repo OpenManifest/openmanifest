@@ -9,7 +9,7 @@ import {
   AvailableRigsDocument,
   MembershipsDetailedDocument,
   useOperatorRigsQuery,
-  useUpdateRigMutation,
+  useUpdateEquipmentMutation,
 } from 'app/api/reflection';
 import { Permission } from 'app/api/schema.d';
 
@@ -38,9 +38,9 @@ export default function OperatorRigsScreen() {
     },
   });
   const isFocused = useIsFocused();
-  const [mutationUpdateRig, updateData] = useUpdateRigMutation();
+  const [mutationUpdateEquipment, updateData] = useUpdateEquipmentMutation();
 
-  const canCreateRig = useRestriction(Permission.CreateOperatorRig);
+  const canCreateEquipment = useRestriction(Permission.CreateOperatorRig);
 
   React.useEffect(() => {
     if (isFocused) {
@@ -83,7 +83,7 @@ export default function OperatorRigsScreen() {
               <DataTable.Cell numeric>
                 <Switch
                   onValueChange={async () => {
-                    const { data: result } = await mutationUpdateRig({
+                    const { data: result } = await mutationUpdateEquipment({
                       variables: {
                         id: Number(rig.id),
                         isPublic: !rig.isPublic,
@@ -91,8 +91,8 @@ export default function OperatorRigsScreen() {
                       refetchQueries: [AvailableRigsDocument, MembershipsDetailedDocument],
                     });
 
-                    if (result?.updateRig?.errors?.length) {
-                      notify.error(result?.updateRig.errors[0]);
+                    if (result?.updateEquipment?.errors?.length) {
+                      notify.error(result?.updateEquipment.errors[0]);
                     }
                   }}
                   value={!!rig.isPublic}
@@ -114,7 +114,7 @@ export default function OperatorRigsScreen() {
         <FAB
           labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
           testID="new-rig-primary-action"
-          visible={canCreateRig}
+          visible={canCreateEquipment}
           style={{ backgroundColor: theme.colors.primary }}
           small
           icon="plus"

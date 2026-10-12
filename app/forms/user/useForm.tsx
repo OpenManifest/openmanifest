@@ -19,7 +19,7 @@ export type UserFields = {
   nickname: string;
   email: string;
   phone: string;
-  exitWeight: number;
+  bodyMassKg: number;
   federation: FederationEssentialsFragment | null;
   license: LicenseDetailsFragment | null;
   apfNumber: string;
@@ -30,7 +30,7 @@ export const userValidation = yup.object({
   nickname: yup.string().default(''),
   email: yup.string().trim().email('Not a valid email').required('Email is required'),
   phone: yup.string().default(''),
-  exitWeight: yup
+  bodyMassKg: yup
     .number()
     .typeError('Exit weight must be a valid number')
     .required('Exit weight is required')
@@ -45,7 +45,7 @@ export const EMPTY_FORM_VALUES: UserFields = {
   nickname: '',
   email: '',
   phone: '',
-  exitWeight: 60,
+  bodyMassKg: 60,
   federation: null,
   license: null,
   apfNumber: '',
@@ -66,7 +66,7 @@ export function toFormValues(membership?: MembershipDetailsFragment | null): Use
     nickname: user?.nickname || '',
     email: user?.email || '',
     phone: user?.phone || '',
-    exitWeight: Number(user?.exitWeight) || EMPTY_FORM_VALUES.exitWeight,
+    bodyMassKg: Number(user?.bodyMassKg) || EMPTY_FORM_VALUES.bodyMassKg,
     federation: license?.federation || null,
     license: license || null,
     apfNumber: userFederation?.uid || '',
@@ -125,7 +125,7 @@ export default function useUserForm(opts: IUseUserFormOpts) {
         name: fields.name,
         license: !fields.license?.id ? null : Number(fields.license.id),
         phone: fields.phone,
-        exitWeight: fields.exitWeight,
+        bodyMassKg: fields.bodyMassKg,
         email: fields.email,
       });
       if (!result || result.errors?.length || result.fieldErrors?.length) {

@@ -20,7 +20,7 @@ export default function SlotCard(props: ISlotCardProps) {
   const { slot, onPress, onDelete, style } = props;
   const { theme } = useAppTheme();
 
-  const hasPassenger = !!slot?.passengerName;
+  const hasGuest = !!slot?.guestName;
   const navigation = useOperatorNavigation();
   return (
     <>
@@ -34,10 +34,10 @@ export default function SlotCard(props: ISlotCardProps) {
         }
         onLongPress={() => onPress?.(slot)}
         elevation={3}
-        style={StyleSheet.flatten([styles.card, { marginBottom: hasPassenger ? -4 : 12 }, style])}
+        style={StyleSheet.flatten([styles.card, { marginBottom: hasGuest ? -4 : 12 }, style])}
       >
         <Card.Title
-          title={slot?.membership?.user.name || slot?.passengerName}
+          title={slot?.membership?.user.name || slot?.guestName}
           left={() =>
             slot?.membership?.user?.image ? (
               <Avatar.Image
@@ -106,7 +106,7 @@ export default function SlotCard(props: ISlotCardProps) {
             mode="outlined"
             disabled
           >
-            {slot?.jumpType?.name}
+            {slot?.activityType?.name}
           </Chip>
           <Chip
             style={styles.infoChip}
@@ -142,7 +142,7 @@ export default function SlotCard(props: ISlotCardProps) {
           )}
         </Card.Content>
       </Card>
-      {!slot?.passengerName ? null : (
+      {!slot?.guestName ? null : (
         <>
           <View
             style={{
@@ -167,7 +167,7 @@ export default function SlotCard(props: ISlotCardProps) {
             elevation={3}
           >
             <Card.Title
-              title={slot?.passengerName}
+              title={slot?.guestName}
               left={() => (
                 <Avatar.Icon
                   icon={(iconProps) => (
@@ -180,7 +180,7 @@ export default function SlotCard(props: ISlotCardProps) {
               )}
             />
             <Card.Content>
-              <Text style={styles.passengerTitle}>P A S S E N G E R</Text>
+              <Text style={styles.guestTitle}>P A S S E N G E R</Text>
             </Card.Content>
           </Card>
         </>
@@ -211,12 +211,12 @@ const styles = StyleSheet.create({
     marginTop: 0,
     fontSize: 12,
   },
-  passengerChip: {
+  guestChip: {
     margin: 12,
     height: 150,
     width: '100%',
   },
-  passengerTitle: {
+  guestTitle: {
     fontSize: 30,
     opacity: 0.5,
     alignSelf: 'center',

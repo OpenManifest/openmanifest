@@ -4,7 +4,10 @@ import { View } from 'react-native';
 import { FormTextField } from 'app/components/input/text/TextField';
 import { Divider } from 'react-native-paper';
 import { Control } from 'react-hook-form';
-import { MembershipChipSelectField, PlaneChipSelectField } from 'app/components/input/chip_select';
+import {
+  MembershipChipSelectField,
+  VehicleChipSelectField,
+} from 'app/components/input/chip_select';
 import { FormNumberField } from 'app/components/input/number_input';
 import { LoadFields } from './useForm';
 
@@ -20,7 +23,7 @@ export default function LoadForm(props: ILoadFormProps) {
 
       <FormNumberField label="Max Slots" {...{ control }} name="maxSlots" />
       <View style={{ width: '100%' }}>
-        <PlaneChipSelectField {...{ control }} name="plane" />
+        <VehicleChipSelectField {...{ control }} name="vehicle" />
 
         <MembershipChipSelectField
           label="GCA"

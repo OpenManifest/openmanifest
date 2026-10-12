@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import isEqual from 'lodash/isEqual';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
-import { useUpdateRigInspectionTemplateMutation } from 'app/api/reflection';
+import { useUpdateEquipmentInspectionTemplateMutation } from 'app/api/reflection';
 import { useNotifications } from 'app/providers/notifications';
 import { FieldItem, parseFields } from './fieldItem';
 
@@ -63,7 +63,7 @@ export default function useRigInspectionTemplateForm(opts: IUseRigInspectionTemp
     reset(defaultValues);
   }, [defaultValues, reset]);
 
-  const [mutationUpdateForm, { loading }] = useUpdateRigInspectionTemplateMutation();
+  const [mutationUpdateForm, { loading }] = useUpdateEquipmentInspectionTemplateMutation();
 
   const [, onSave] = useAsyncFn(
     async ({ fields }: RigInspectionTemplateFields) => {

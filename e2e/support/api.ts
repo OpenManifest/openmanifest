@@ -24,10 +24,10 @@ export async function createLoadViaApi(): Promise<string | undefined> {
     auth
   );
   const operator = operators.data.operators.edges[0].node;
-  const { json: planes } = await call(`{ planes(operator: ${operator.id}) { id } }`, auth);
+  const { json: vehicles } = await call(`{ vehicles(operator: ${operator.id}) { id } }`, auth);
   const member = operator.currentUser.id;
   const { json: created } = await call(
-    `mutation { createLoad(input: { attributes: { name: "Live ${Date.now()}", plane: ${planes.data.planes[0].id}, maxSlots: 10, pilot: ${member}, gca: ${member} } }) { load { id } errors } }`,
+    `mutation { createLoad(input: { attributes: { name: "Live ${Date.now()}", vehicle: ${vehicles.data.vehicles[0].id}, maxSlots: 10, pilot: ${member}, gca: ${member} } }) { load { id } errors } }`,
     auth
   );
   return created?.data?.createLoad?.load?.id;
@@ -37,7 +37,7 @@ export async function createLoadViaApi(): Promise<string | undefined> {
 export async function registerNewUser(): Promise<string> {
   const email = `newjumper+${Date.now()}@example.com`;
   const { json } = await call(
-    `mutation($email: String!) { userRegister(email: $email, password: "${PASSWORD}", passwordConfirmation: "${PASSWORD}", name: "New Jumper", phone: "0400111222", exitWeight: 80, confirmUrl: "https://openmanifest.org/confirm/") { authenticatable { id } errors } }`,
+    `mutation($email: String!) { userRegister(email: $email, password: "${PASSWORD}", passwordConfirmation: "${PASSWORD}", name: "New Jumper", phone: "0400111222", bodyMassKg: 80, confirmUrl: "https://openmanifest.org/confirm/") { authenticatable { id } errors } }`,
     {},
     { email }
   );

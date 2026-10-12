@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Text, View } from 'react-native';
-import { UpdateRigInspectionTemplateDocument } from 'app/api/reflection';
+import { UpdateEquipmentInspectionTemplateDocument } from 'app/api/reflection';
 import {
   RigInspectionTemplateForm,
   useRigInspectionTemplateForm,
@@ -59,8 +59,8 @@ describe('rig inspection template form', () => {
     const form = renderForm([
       {
         request: {
-          query: UpdateRigInspectionTemplateDocument,
-          operationName: 'UpdateRigInspectionTemplate',
+          query: UpdateEquipmentInspectionTemplateDocument,
+          operationName: 'UpdateEquipmentInspectionTemplate',
           variables: {
             formId: 4,
             operatorId: 1,

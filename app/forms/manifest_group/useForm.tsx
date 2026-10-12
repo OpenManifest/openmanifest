@@ -13,7 +13,7 @@ import type {
   SlotDetailsFragment,
 } from 'app/api/operations';
 import { useManifestGroupMutation } from 'app/api/reflection';
-import type { JumpType, SlotUser, TicketType, Extra } from 'app/api/schema.d';
+import type { ActivityType, SlotUser, TicketType, Extra } from 'app/api/schema.d';
 import { useNotifications } from 'app/providers/notifications';
 
 export type SlotUserWithRig = Omit<SlotUser, 'rig'> & {
@@ -27,7 +27,7 @@ export type SlotUserWithRig = Omit<SlotUser, 'rig'> & {
 export type LoadValue = Pick<LoadDetailsFragment, 'id'> & {
   slots?: { groupNumber?: number | null }[] | null;
 };
-export type JumpTypeValue = Pick<JumpType, 'id' | 'name'>;
+export type ActivityTypeValue = Pick<ActivityType, 'id' | 'name'>;
 export type TicketTypeExtraValue = Pick<Extra, 'id' | 'name' | 'costCents'>;
 export type TicketTypeValue = Pick<TicketType, 'id' | 'name' | 'isTandem'> & {
   extras?: TicketTypeExtraValue[] | null;
@@ -35,7 +35,7 @@ export type TicketTypeValue = Pick<TicketType, 'id' | 'name' | 'isTandem'> & {
 
 export type ManifestGroupFields = {
   load: LoadValue | null;
-  jumpType: JumpTypeValue | null;
+  activityType: ActivityTypeValue | null;
   ticketType: TicketTypeValue | null;
   extras: TicketTypeExtraValue[];
   groupNumber: number | null;
@@ -44,28 +44,22 @@ export type ManifestGroupFields = {
 
 export const manifestGroupValidation = yup.object({
   load: yup.object().nullable().default(null),
-  jumpType: yup.object().nullable().required('You must specify the type of jump'),
+  activityType: yup.object().nullable().required('You must specify the type of jump'),
   ticketType: yup.object().nullable().required('You must select a ticket type to manifest'),
   extras: yup.array().default([]),
   groupNumber: yup.number().nullable().default(null),
   users: yup
     .array()
     .min(1, 'Add at least one jumper to the group')
-    .test(
-      'tandem-passengers',
-      'You cant manifest tandems without passengers',
-      function check(users) {
-        const isTandem = !!(this.parent as ManifestGroupFields).ticketType?.isTandem;
-        return (
-          !isTandem || (users as SlotUserWithRig[]).every((slotUser) => !!slotUser.passengerName)
-        );
-      }
-    ),
+    .test('tandem-guests', 'You cant manifest tandems without passengers', function check(users) {
+      const isTandem = !!(this.parent as ManifestGroupFields).ticketType?.isTandem;
+      return !isTandem || (users as SlotUserWithRig[]).every((slotUser) => !!slotUser.guestName);
+    }),
 });
 
 export const EMPTY_FORM_VALUES: ManifestGroupFields = {
   load: null,
-  jumpType: null,
+  activityType: null,
   ticketType: null,
   extras: [],
   groupNumber: null,
@@ -88,7 +82,7 @@ export function toSlotUsers(
       rig: autoSelectedRig,
       name: dzUser.user.name,
       avatar: dzUser.user.image,
-      exitWeight: Number(dzUser?.user?.exitWeight),
+      bodyMassKg: Number(dzUser?.user?.bodyMassKg),
     };
   }) as SlotUserWithRig[];
 }
@@ -125,9 +119,9 @@ export function toFormValues(initial: IManifestGroupInitial): ManifestGroupField
             id: Number(slot.membership?.id),
             rigId: slot.rig?.id ? Number(slot.rig.id) : null,
             rig: slot.rig,
-            exitWeight: Number(slot.exitWeight),
+            bodyMassKg: Number(slot.bodyMassKg),
           })) as SlotUserWithRig[],
-          jumpType: (firstSlot?.jumpType as JumpTypeValue) ?? null,
+          activityType: (firstSlot?.activityType as ActivityTypeValue) ?? null,
           groupNumber: firstSlot?.groupNumber || null,
           extras: (firstSlot?.extras as TicketTypeExtraValue[]) || [],
         }
@@ -138,8 +132,8 @@ export function toFormValues(initial: IManifestGroupInitial): ManifestGroupField
 
 /** Server field names, as the API reports them */
 const FIELD_OF_SERVER_FIELD: Record<string, keyof ManifestGroupFields> = {
-  jump_type: 'jumpType',
-  jump_type_id: 'jumpType',
+  activity_type: 'activityType',
+  activity_type_id: 'activityType',
   load: 'load',
   credits: 'extras',
   extras: 'extras',
@@ -183,18 +177,18 @@ export default function useManifestGroupForm(opts: IUseManifestGroupFormOpts) {
       try {
         const result = await mutationCreateSlots({
           variables: {
-            jumpType: fields.jumpType?.id,
+            activityType: fields.activityType?.id,
             ticketType: fields.ticketType?.id,
             groupNumber: fields.groupNumber || null,
             extras: fields.extras?.map(({ id }) => id),
             load: fields.load?.id,
             userGroup: fields.users.map(
-              ({ id, exitWeight, rigId, rig, passengerName, passengerExitWeight }) => ({
+              ({ id, bodyMassKg, rigId, rig, guestName, guestBodyMassKg }) => ({
                 id,
                 rig: rigId?.toString() || rig?.id || undefined,
-                exitWeight,
-                passengerName,
-                passengerExitWeight,
+                bodyMassKg,
+                guestName,
+                guestBodyMassKg,
               })
             ),
           },

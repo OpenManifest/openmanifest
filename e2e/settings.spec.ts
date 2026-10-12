@@ -5,7 +5,7 @@ import { expect, gotoRoute, test } from './support/test';
 // Configuration screens: floating action buttons stay reachable and nothing overflows
 const CONFIGURATION_ROUTES = [
   '/configuration',
-  '/configuration/aircrafts',
+  '/configuration/vehicles',
   '/configuration/ticket-types',
   '/ticket-types/extra',
   '/configuration/rigs',
@@ -13,7 +13,7 @@ const CONFIGURATION_ROUTES = [
   '/configuration/permissions',
   '/configuration/basic',
   '/transactions',
-  '/master-log',
+  '/daily-log',
   // Weather: the wizard, then its winds and jump run screens
   '/weather',
   '/weather/winds',

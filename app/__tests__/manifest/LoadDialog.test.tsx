@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Permission } from 'app/api/schema.d';
 import { CreateLoadDocument } from 'app/api/reflection';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
-import MOCK_QUERY_PLANES from './__mocks__/QueryPlane.mock';
+import MOCK_QUERY_VEHICLES from './__mocks__/QueryVehicle.mock';
 import MOCK_QUERY_MEMBERSHIPS from './__mocks__/QueryMemberships.mock';
 import MOCK_QUERY_OPERATOR from './__mocks__/QueryOperator.mock';
 import LoadDialog from '../../forms/load/Dialog';
@@ -19,7 +19,7 @@ const membership = (id: string, name: string) => ({
   hasCredits: true,
   hasMembership: true,
   hasLicense: true,
-  hasExitWeight: true,
+  hasBodyMassKg: true,
   role: null,
   license: null,
   user: {
@@ -29,7 +29,7 @@ const membership = (id: string, name: string) => ({
     nickname: null,
     phone: null,
     email: null,
-    exitWeight: '80',
+    bodyMassKg: '80',
     moderationRole: null,
     image: null,
     apfNumber: null,
@@ -69,7 +69,7 @@ describe('<LoadDialog />', () => {
     const screen = render(<LoadDialog open onClose={jest.fn()} onSuccess={jest.fn()} />, {
       session: authenticatedSession,
       graphql: [
-        MOCK_QUERY_PLANES(),
+        MOCK_QUERY_VEHICLES(),
         usersWithPermission(Permission.ActAsGca, membership('31', 'Gina GCA')),
         usersWithPermission(Permission.ActAsPilot, membership('32', 'Pete Pilot')),
         {
@@ -79,7 +79,7 @@ describe('<LoadDialog />', () => {
             variables: {
               gca: '31',
               pilot: '32',
-              plane: '1',
+              vehicle: '1',
               maxSlots: 10,
               state: 'open',
               name: null,
@@ -90,7 +90,7 @@ describe('<LoadDialog />', () => {
       ],
     });
 
-    // Plane, GCA and pilot are auto-selected once their queries resolve, and the plane sets max slots
+    // Vehicle, GCA and pilot are auto-selected once their queries resolve, and the vehicle sets max slots
     await waitFor(() => expect(screen.getAllByText('Gina GCA').length).toBeGreaterThan(0), {
       timeout: 10000,
     });
@@ -139,7 +139,7 @@ describe('<LoadDialog />', () => {
           session: authenticatedSession,
           graphql: [
             withoutMembership as never,
-            MOCK_QUERY_PLANES(),
+            MOCK_QUERY_VEHICLES(),
             usersWithPermission(Permission.ActAsGca, membership('31', 'Gina GCA')),
             usersWithPermission(Permission.ActAsPilot, membership('32', 'Pete Pilot')),
             {
@@ -149,7 +149,7 @@ describe('<LoadDialog />', () => {
                 variables: {
                   gca: '31',
                   pilot: '32',
-                  plane: '1',
+                  vehicle: '1',
                   maxSlots: 10,
                   state: 'open',
                   name: null,

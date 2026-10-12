@@ -8,7 +8,7 @@ const schema = yup.object().shape({
   hasMembership: yup.boolean().isTrue('Your membership is out of date'),
   hasRigInspection: yup.boolean().isTrue('Your rig needs to be inspected before you can manifest'),
   hasReserveInDate: yup.boolean().isTrue('Your rig needs a reserve repack'),
-  hasExitWeight: yup.boolean().isTrue('You need to set your exit weight on your profile'),
+  hasBodyMassKg: yup.boolean().isTrue('You need to set your exit weight on your profile'),
 });
 
 export default function useManifestValidator() {

@@ -23,9 +23,9 @@ interface IUserHeader {
 const badgesInitials = {
   [Permission.ActAsLoadMaster]: 'LM',
   [Permission.ActAsPilot]: 'Pilot',
-  [Permission.ActAsRigInspector]: 'Rig.Insp',
+  [Permission.ActAsEquipmentInspector]: 'Rig.Insp',
   [Permission.ActAsGca]: 'GCA',
-  [Permission.ActAsDzso]: 'DZSO',
+  [Permission.ActAsDutyOfficer]: 'DutyOfficer',
 };
 export default function UserHeader(props: IUserHeader) {
   const { membership, variant, children, onPressAvatar } = props;

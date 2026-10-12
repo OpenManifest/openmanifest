@@ -59,7 +59,7 @@ function AppBar(props: IAppBarProps) {
           credits={fromCents(currentUser?.creditsCents)}
           loading={loading}
           isCreditSystemEnabled={!!operator?.settings?.requireCredits}
-          isExitWeightDefined={!!currentUser?.user?.exitWeight}
+          isBodyMassKgDefined={!!currentUser?.user?.bodyMassKg}
           isMembershipInDate={
             !operator?.settings?.requireMembership ||
             (!!currentUser?.expiresAt && currentUser?.expiresAt > new Date().getTime() / 1000)

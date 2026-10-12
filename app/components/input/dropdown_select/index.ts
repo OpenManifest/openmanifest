@@ -1,9 +1,9 @@
 import AltitudeSelect, { AltitudeSelectField } from './AltitudeSelect';
 import MembershipSelect, { MembershipSelectField } from './MembershipSelect';
 import FederationSelect, { FederationSelectField } from './FederationSelect';
-import JumpTypeSelect, { JumpTypeSelectField } from './JumpTypeSelect';
+import ActivityTypeSelect, { ActivityTypeSelectField } from './ActivityTypeSelect';
 import LicenseSelect, { LicenseSelectField } from './LicenseSelect';
-import PlaneSelect, { PlaneSelectField } from './PlaneSelect';
+import VehicleSelect, { VehicleSelectField } from './VehicleSelect';
 import RigSelect, { RigSelectField } from './RigSelect';
 import RoleSelect, { RoleSelectField } from './RoleSelect';
 import TicketTypeSelect, { TicketTypeSelectField } from './TicketTypeSelect';
@@ -12,9 +12,9 @@ export {
   AltitudeSelect,
   MembershipSelect,
   FederationSelect,
-  JumpTypeSelect,
+  ActivityTypeSelect,
   LicenseSelect,
-  PlaneSelect,
+  VehicleSelect,
   RigSelect,
   RoleSelect,
   TicketTypeSelect,
@@ -24,9 +24,9 @@ export {
   AltitudeSelectField,
   MembershipSelectField,
   FederationSelectField,
-  JumpTypeSelectField,
+  ActivityTypeSelectField,
   LicenseSelectField,
-  PlaneSelectField,
+  VehicleSelectField,
   RigSelectField,
   RoleSelectField,
   TicketTypeSelectField,

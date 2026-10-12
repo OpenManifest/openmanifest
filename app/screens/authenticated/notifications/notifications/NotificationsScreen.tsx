@@ -12,7 +12,7 @@ import { useOperatorContext } from 'app/providers/operator/context';
 import NoResults from '../../../../components/NoResults';
 
 import ManifestedCard from './Cards/Manifested';
-import BoardingCallNotification from './Cards/BoardingCall';
+import BoardingNotification from './Cards/Boarding';
 import FundsNotification from './Cards/Funds';
 import RigInspectionNotification from './Cards/RigInspection';
 import PermissionNotification from './Cards/Permission';
@@ -73,10 +73,8 @@ export default function NotificationScreen() {
         renderItem={({ item: edge }) => {
           console.debug('Rendering notification ', edge?.node?.notificationType);
           switch (edge?.node?.notificationType) {
-            case NotificationType.BoardingCall:
-              return (
-                <BoardingCallNotification key={edge.node.id} notification={edge.node as never} />
-              );
+            case NotificationType.Boarding:
+              return <BoardingNotification key={edge.node.id} notification={edge.node as never} />;
             case NotificationType.UserManifested:
               console.debug('Renderign manifest card');
               return <ManifestedCard key={edge.node.id} notification={edge.node as never} />;

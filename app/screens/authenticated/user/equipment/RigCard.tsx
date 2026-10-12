@@ -14,7 +14,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import useImagePicker from 'app/hooks/useImagePicker';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
-import useMutationUpdateRig from 'app/api/hooks/useMutationUpdateRig';
+import useMutationUpdateEquipment from 'app/api/hooks/useMutationUpdateEquipment';
 import { useImageViewer } from 'app/components/dialogs/ImageViewer/context';
 import { errorColor, successColor } from 'app/constants/Colors';
 
@@ -42,7 +42,7 @@ export default function RigCard(props: IRigCardProps) {
   } = useOperatorContext();
   const pickImage = useImagePicker();
 
-  const updateRig = useMutationUpdateRig({
+  const updateEquipment = useMutationUpdateEquipment({
     mutation: {
       refetchQueries: [AvailableRigsDocument, MembershipsDetailedDocument],
     },
@@ -65,20 +65,20 @@ export default function RigCard(props: IRigCardProps) {
 
       setUploading(true);
       // Upload image
-      await updateRig.mutate({
+      await updateEquipment.mutate({
         id: Number(rig?.id),
         packingCard: `data:image/jpeg;base64,${result}`,
       });
     } catch (e) {
       console.log(e);
     }
-  }, [pickImage, rig?.id, updateRig]);
+  }, [pickImage, rig?.id, updateEquipment]);
 
   const canManageOperatorRigs = useRestriction(Permission.UpdateOperatorRig);
   // Staff with UpdateUser run a member's personal rigs from the office (UB.2)
   const canUpdateUser = useRestriction(Permission.UpdateUser);
   const navigation = useUserNavigation();
-  const canUpdateRig =
+  const canUpdateEquipment =
     currentUser?.user?.id === rig.owner?.id ||
     (rig?.operator?.id && canManageOperatorRigs) ||
     (rig?.owner?.id && canUpdateUser);
@@ -136,7 +136,7 @@ export default function RigCard(props: IRigCardProps) {
               style={{ height: 24, alignItems: 'center' }}
               textStyle={{ marginTop: 0 }}
               onPress={() => {
-                if (canUpdateRig) {
+                if (canUpdateEquipment) {
                   setPackingCardMenuOpen(true);
                 } else if (rig?.packingCard) {
                   openImage(rig.packingCard);

@@ -8,11 +8,11 @@ import { AppSignalBoundary } from 'app/components/app_signal';
 import SettingsMenuScreen from './settings_menu/SettingsMenuScreen';
 import TicketTypeSettingsScreen from './ticket_types/TicketTypesScreen';
 import OperatorSettingsScreen from './operator_settings/OperatorSettingsScreen';
-import PlanesScreen from './aircrafts/AircraftsScreen';
+import VehiclesScreen from './vehicles/VehiclesScreen';
 import RigInspectionTemplateScreen from './rig_inspection_template/RigInspectionTemplateScreen';
 import OperatorRigsScreen from './rigs/OperatorRigsScreen';
 import OperatorPermissionScreen from './permissions/PermissionsScreen';
-import OperatorMasterLogScreen from './master_log/MasterLogScreen';
+import OperatorDailyLogScreen from './daily_log/DailyLogScreen';
 import OperatorTransactionsScreen from './transactions/OperatorTransactionsScreen';
 import ExtrasScreen from './extras/ExtrasScreen';
 
@@ -20,14 +20,14 @@ export type ConfigurationRoutes = {
   OperatorSettingsScreen: undefined;
   SettingsMenuScreen: undefined;
   TicketTypesScreen: undefined;
-  AircraftsScreen: undefined;
-  AircraftScreen: undefined;
+  VehiclesScreen: undefined;
+  VehicleScreen: undefined;
   ExtrasScreen: undefined;
   RigInspectionTemplateScreen: undefined;
   OperatorRigsScreen: undefined;
   TransactionsScreen: undefined;
   PermissionScreen: undefined;
-  MasterLogScreen: undefined;
+  DailyLogScreen: undefined;
 };
 
 const Configuration = createStackNavigator<ConfigurationRoutes>();
@@ -58,8 +58,8 @@ export default function SettingsTab() {
           options={{ title: 'Basic settings' }}
         />
         <Configuration.Screen
-          name="AircraftsScreen"
-          component={PlanesScreen}
+          name="VehiclesScreen"
+          component={VehiclesScreen}
           options={{ title: 'Planes' }}
         />
         <Configuration.Screen
@@ -93,8 +93,8 @@ export default function SettingsTab() {
           options={{ title: 'Permissions' }}
         />
         <Configuration.Screen
-          name="MasterLogScreen"
-          component={OperatorMasterLogScreen}
+          name="DailyLogScreen"
+          component={OperatorDailyLogScreen}
           options={{ title: 'Master log' }}
         />
       </Configuration.Navigator>

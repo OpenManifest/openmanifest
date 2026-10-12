@@ -21,7 +21,7 @@ const membership = {
     nickname: 'CJ',
     email: 'cj@example.com',
     phone: '0400 000 000',
-    exitWeight: 70,
+    bodyMassKg: 70,
     userFederations: [],
   },
 } as unknown as MembershipDetailsFragment;
@@ -86,7 +86,7 @@ describe('<UserDialog />', () => {
             name: 'Court J. Jester',
             license: 2,
             phone: '0411 111 111',
-            exitWeight: 70,
+            bodyMassKg: 70,
             email: 'cj@example.com',
           },
         },

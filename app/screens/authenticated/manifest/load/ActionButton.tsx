@@ -19,7 +19,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
   const { dialogs } = useManifestContext();
   const {
     dialogs: { timepicker },
-    load: { cancel, markAsLanded, updateLoadState, createAircraftDispatchAction },
+    load: { cancel, complete, updateLoadState, createVehicleDispatchAction },
   } = useLoadContext();
   const [isExpanded, setExpanded] = React.useState(false);
 
@@ -35,8 +35,8 @@ export default function ActionButton(props: ILoadActionButtonProps) {
   const canManifestGroup = useRestriction(Permission.CreateUserSlot);
   const canManifestGroupWithSelfOnly = useRestriction(Permission.CreateUserSlotWithSelf);
 
-  const isOpen = [LoadState.Open, LoadState.BoardingCall].includes(load.state);
-  const isFull = (load?.slots?.length || 0) >= (load?.maxSlots || load?.plane?.maxSlots || 0);
+  const isOpen = [LoadState.Open, LoadState.Boarding].includes(load.state);
+  const isFull = (load?.slots?.length || 0) >= (load?.maxSlots || load?.vehicle?.capacity || 0);
   const showManifestButton =
     isOpen &&
     !isFull &&
@@ -45,7 +45,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
 
   const showGroupIcon =
     (canManifestGroup || canManifestGroupWithSelfOnly) &&
-    load?.state !== LoadState.Landed &&
+    load?.state !== LoadState.Completed &&
     (!load?.dispatchAt || load.dispatchAt > new Date().getTime() / 1000);
 
   const callActions = [
@@ -56,17 +56,17 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     },
     {
       label: '20 minute call',
-      onPress: createAircraftDispatchAction(20),
+      onPress: createVehicleDispatchAction(20),
       icon: 'airplane-takeoff',
     },
     {
       label: '15 minute call',
-      onPress: createAircraftDispatchAction(15),
+      onPress: createVehicleDispatchAction(15),
       icon: 'airplane-takeoff',
     },
     {
       label: '10 minute call',
-      onPress: createAircraftDispatchAction(10),
+      onPress: createVehicleDispatchAction(10),
       icon: 'airplane-takeoff',
     },
   ];
@@ -94,12 +94,12 @@ export default function ActionButton(props: ILoadActionButtonProps) {
   ].filter(Boolean);
 
   const workflowActions = [
-    ![LoadState.BoardingCall].includes(load.state)
+    ![LoadState.Boarding].includes(load.state)
       ? null
       : {
           label: 'Cancel boarding call',
           icon: 'airplane-off',
-          onPress: createAircraftDispatchAction(null),
+          onPress: createVehicleDispatchAction(null),
         },
     ![LoadState.Open].includes(load.state)
       ? null
@@ -108,19 +108,19 @@ export default function ActionButton(props: ILoadActionButtonProps) {
           icon: 'delete-sweep',
           onPress: cancel,
         },
-    ![LoadState.Cancelled, LoadState.Landed].includes(load.state) || !isToday
+    ![LoadState.Cancelled, LoadState.Completed].includes(load.state) || !isToday
       ? null
       : {
           label: 'Re-open load',
           icon: 'undo',
           onPress: () => updateLoadState(LoadState.Open),
         },
-    ![LoadState.BoardingCall, LoadState.InFlight].includes(load.state)
+    ![LoadState.Boarding, LoadState.Departed].includes(load.state)
       ? null
       : {
           label: 'Mark as Landed',
           icon: 'airplane-landing',
-          onPress: markAsLanded,
+          onPress: complete,
         },
   ].filter(Boolean);
 

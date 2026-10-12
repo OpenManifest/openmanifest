@@ -174,7 +174,7 @@ function ProfileScreenContent(props: {
                           onPress: () => {
                             openWizard(9);
                           },
-                          value: Math.round(Number(membership?.user?.exitWeight)).toString() || '-',
+                          value: Math.round(Number(membership?.user?.bodyMassKg)).toString() || '-',
                         },
                       ]}
                     />

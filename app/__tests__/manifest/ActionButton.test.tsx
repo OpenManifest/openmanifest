@@ -70,7 +70,7 @@ describe('<ActionButton />', () => {
                 attributes: {
                   lockVersion: 0,
                   dispatchAt: DateTime.fromMillis(NOW).plus({ minutes: 10 }).toISO(),
-                  state: LoadState.BoardingCall,
+                  state: LoadState.Boarding,
                 },
               },
             },
@@ -94,7 +94,7 @@ describe('<ActionButton />', () => {
   });
 
   describe('finalizing a load', () => {
-    const renderBoardingCall = (finalizeResult: unknown) => {
+    const renderBoarding = (finalizeResult: unknown) => {
       const notifications = { success: jest.fn(), error: jest.fn(), info: jest.fn() };
       const screen = render(
         <NotificationContext.Provider value={notifications}>
@@ -106,7 +106,7 @@ describe('<ActionButton />', () => {
           session: authenticatedSession,
           permissions: [Permission.UpdateLoad],
           graphql: [
-            MOCK_QUERY_LOAD({}, { load: { state: LoadState.BoardingCall } }),
+            MOCK_QUERY_LOAD({}, { load: { state: LoadState.Boarding } }),
             {
               request: { query: LoadUpdatedDocument, variables: { id: '1' } },
               result: { data: { loadUpdated: { __typename: 'LoadUpdatedPayload', load: null } } },
@@ -114,7 +114,7 @@ describe('<ActionButton />', () => {
             {
               request: {
                 query: FinalizeLoadDocument,
-                variables: { id: 1, state: LoadState.Landed },
+                variables: { id: 1, state: LoadState.Completed },
               },
               ...(finalizeResult as object),
             },
@@ -124,7 +124,7 @@ describe('<ActionButton />', () => {
       return { screen, notifications };
     };
 
-    const pressMarkAsLanded = async (screen: ReturnType<typeof render>) => {
+    const pressComplete = async (screen: ReturnType<typeof render>) => {
       await waitFor(() => expect(screen.UNSAFE_getAllByType(FAB.Group).length).toBeGreaterThan(0), {
         timeout: 10000,
       });
@@ -134,7 +134,7 @@ describe('<ActionButton />', () => {
     };
 
     it('shows the error the server gives for landing', async () => {
-      const { screen, notifications } = renderBoardingCall({
+      const { screen, notifications } = renderBoarding({
         result: {
           data: {
             finalizeLoad: {
@@ -147,7 +147,7 @@ describe('<ActionButton />', () => {
         },
       });
 
-      await pressMarkAsLanded(screen);
+      await pressComplete(screen);
 
       await waitFor(
         () => expect(notifications.error).toHaveBeenCalledWith("Load #1 can't land, it is landed"),
@@ -156,9 +156,9 @@ describe('<ActionButton />', () => {
     });
 
     it('shows an error when the request fails', async () => {
-      const { screen, notifications } = renderBoardingCall({ error: new Error('Network down') });
+      const { screen, notifications } = renderBoarding({ error: new Error('Network down') });
 
-      await pressMarkAsLanded(screen);
+      await pressComplete(screen);
 
       await waitFor(() => expect(notifications.error).toHaveBeenCalledWith('Network down'), {
         timeout: 10000,
@@ -260,7 +260,7 @@ describe('<ActionButton />', () => {
                   attributes: {
                     lockVersion: 4,
                     dispatchAt: DateTime.fromMillis(NOW).plus({ minutes: 10 }).toISO(),
-                    state: LoadState.BoardingCall,
+                    state: LoadState.Boarding,
                   },
                 },
               },

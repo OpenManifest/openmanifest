@@ -46,14 +46,14 @@ import { useAppTheme } from 'app/theme';
     :deleteExtra,
     :readExtra,
 
-    :createPlane,
-    :updatePlane,
-    :deletePlane,
+    :createVehicle,
+    :updateVehicle,
+    :deleteVehicle,
 
-    :createRig,
-    :updateRig,
-    :deleteRig,
-    :readRig,
+    :createEquipment,
+    :updateEquipment,
+    :deleteEquipment,
+    :readEquipment,
 
     :createOperatorRig,
     :updateOperatorRig,
@@ -80,8 +80,8 @@ import { useAppTheme } from 'app/theme';
     :actAsPilot,
     :actAsLoadMaster,
     :actAsGCA,
-    :actAsDZSO,
-    :actAsRigInspector,
+    :actAsDutyOfficer,
+    :actAsEquipmentInspector,
 
     :createUserTransaction,
     :readUserTransactions,
@@ -356,21 +356,21 @@ export default function OperatorPermissionScreen() {
                   <List.Accordion title="Planes" style={{ backgroundColor: theme.colors.surface }}>
                     <PermissionListItem
                       role={role}
-                      permissionName="createPlane"
+                      permissionName="createVehicle"
                       description="Add new aircrafts"
                       title="Create Aircraft"
                     />
 
                     <PermissionListItem
                       role={role}
-                      permissionName="updatePlane"
+                      permissionName="updateVehicle"
                       description="Make changes to existing aircrafts"
                       title="Update Aircraft"
                     />
 
                     <PermissionListItem
                       role={role}
-                      permissionName="deletePlane"
+                      permissionName="deleteVehicle"
                       description="Remove existing aircrafts"
                       title="Remove Aircraft"
                     />

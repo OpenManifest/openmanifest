@@ -20,12 +20,12 @@ export default function EquipmentTab(props: IJumpHistoryTab) {
   const {
     operator: { currentUser },
   } = useOperatorContext();
-  const canCreateRig = useRestriction(Permission.CreateRig);
+  const canCreateEquipment = useRestriction(Permission.CreateEquipment);
   const canUpdateUser = useRestriction(Permission.UpdateUser);
 
   // Members manage their own rigs; staff with UpdateUser run a member's rigs from the office (UB.2)
   const isSelf = !!currentUser?.id && currentUser.id === membership?.id;
-  const canManage = (isSelf && canCreateRig) || canUpdateUser;
+  const canManage = (isSelf && canCreateEquipment) || canUpdateUser;
 
   return (
     <View

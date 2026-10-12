@@ -13,7 +13,7 @@ import * as yup from 'yup';
 
 export const validation = yup.object({
   canopySize: yup.number().required('Please enter your canopy size in square feet'),
-  exitWeight: yup.number().required('Enter your exit weight').default(70),
+  bodyMassKg: yup.number().required('Enter your exit weight').default(70),
 });
 
 type StepFields = {
@@ -29,18 +29,18 @@ export function useStep(): WizardFormStep<StepFields> {
         canopySize: membership?.user?.rigs?.[0]?.canopySize
           ? Number(membership?.user?.rigs?.[0]?.canopySize)
           : 150,
-        exitWeight: membership?.user?.exitWeight ? parseFloat(membership?.user?.exitWeight) : 70,
+        bodyMassKg: membership?.user?.bodyMassKg ? parseFloat(membership?.user?.bodyMassKg) : 70,
       },
       validation,
     }),
-    [membership?.user?.exitWeight, membership?.user?.rigs]
+    [membership?.user?.bodyMassKg, membership?.user?.rigs]
   );
 }
 
 function WingloadingWizardScreen(props: IWizardStepProps) {
   const { control } = useFormContext<StepFields>();
 
-  const { canopySize, exitWeight } = useWatch({ control });
+  const { canopySize, bodyMassKg } = useWatch({ control });
   return (
     <Step {...props} title="Wing Loading">
       <Fields>
@@ -54,7 +54,7 @@ function WingloadingWizardScreen(props: IWizardStepProps) {
           <View style={styles.wingLoadingCardLeft}>
             <Avatar.Text
               label={ceil(
-                (2.205 * Number(exitWeight || 50)) / Number(canopySize || 150),
+                (2.205 * Number(bodyMassKg || 50)) / Number(canopySize || 150),
                 2
               ).toString()}
               size={100}
@@ -72,7 +72,7 @@ function WingloadingWizardScreen(props: IWizardStepProps) {
         <Card style={styles.card} elevation={3}>
           <FormNumberField
             {...{ control }}
-            name="exitWeight"
+            name="bodyMassKg"
             label="Your exit weight"
             variant={NumberFieldType.Weight}
             helperText="Your weight in kg's with all equipment on"

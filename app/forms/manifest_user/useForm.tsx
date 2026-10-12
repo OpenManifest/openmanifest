@@ -14,26 +14,26 @@ import withDefaults from 'app/forms/initialValues';
 
 export type ManifestUserFields = Pick<
   SlotExhaustiveFragment,
-  | 'jumpType'
+  | 'activityType'
   // | 'load'
   | 'rig'
   | 'membership'
-  | 'exitWeight'
+  | 'bodyMassKg'
   | 'extras'
   | 'groupNumber'
-  | 'passengerExitWeight'
-  | 'passengerName'
+  | 'guestBodyMassKg'
+  | 'guestName'
 > & { id?: string; load?: { id: string }; ticketType: TicketTypeDetailsFragment | null };
 
 export const EMPTY_FORM_VALUES: ManifestUserFields = {
   id: undefined,
   load: undefined,
-  exitWeight: 50,
+  bodyMassKg: 50,
   rig: null,
   ticketType: null,
-  jumpType: null,
-  passengerExitWeight: null,
-  passengerName: null,
+  activityType: null,
+  guestBodyMassKg: null,
+  guestName: null,
   extras: null,
   groupNumber: 0,
 };
@@ -54,7 +54,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
   } = useOperatorContext();
   const manifestUserValidation = yup.object().shape({
     load: yup.object().required(),
-    exitWeight: yup.number().required('Please specify exit weight').min(0).max(300),
+    bodyMassKg: yup.number().required('Please specify exit weight').min(0).max(300),
     rig: yup
       .object()
       .nullable()
@@ -63,7 +63,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
         then: yup.object().required('You cant manifest without a rig').nullable(),
         otherwise: yup.object().nullable(),
       }),
-    jumpType: yup.object().required('Jump type is required').nullable(),
+    activityType: yup.object().required('Jump type is required').nullable(),
     ticketType: yup.object().required('Ticket is required to manifest').nullable(),
     original: yup.object().nullable(),
     extras: yup.array().of(yup.object()).nullable(),
@@ -95,18 +95,18 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
         // await canManifest();
 
         const response = await manifestUser({
-          jumpType: fields.jumpType?.id,
+          activityType: fields.activityType?.id,
           extras: fields.extras?.map(({ id }) => id),
           load: fields?.load?.id,
           rig: !fields.rig?.id ? undefined : fields.rig?.id,
           ticketType: fields.ticketType?.id,
           membership: fields.membership?.id,
-          exitWeight: fields.exitWeight,
+          bodyMassKg: fields.bodyMassKg,
           ...(!fields.ticketType?.isTandem
             ? {}
             : {
-                passengerName: fields.passengerName,
-                passengerExitWeight: fields.passengerExitWeight,
+                guestName: fields.guestName,
+                guestBodyMassKg: fields.guestBodyMassKg,
               }),
         });
 

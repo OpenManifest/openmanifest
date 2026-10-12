@@ -59,9 +59,9 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
     >
       {[
         Permission.ActAsPilot,
-        Permission.ActAsDzso,
+        Permission.ActAsDutyOfficer,
         Permission.ActAsGca,
-        Permission.ActAsRigInspector,
+        Permission.ActAsEquipmentInspector,
         Permission.ActAsLoadMaster,
       ].map((permission) =>
         !shouldShowBadge(permission) ? null : (

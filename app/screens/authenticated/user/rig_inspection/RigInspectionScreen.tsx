@@ -54,7 +54,7 @@ export default function RigInspectionScreen() {
     [existingInspection?.definition, template?.definition]
   );
 
-  const canInspect = useRestriction(Permission.ActAsRigInspector);
+  const canInspect = useRestriction(Permission.ActAsEquipmentInspector);
   const navigation = useNavigation();
   const { control, setValue, loading, onSubmit, formState } = useRigInspectionForm({
     fields,

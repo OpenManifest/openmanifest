@@ -12,7 +12,7 @@ import {
 import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
 import PilotChip from 'app/components/chips/PilotChip';
-import PlaneChip from 'app/components/chips/PlaneChip';
+import VehicleChip from 'app/components/chips/VehicleChip';
 
 import { LoadState, Permission } from 'app/api/schema.d';
 
@@ -46,7 +46,7 @@ function LoadScreen() {
     dialogs,
   } = useManifestContext();
   const {
-    load: { load, loading, refetch, updateGCA, updateLoadMaster, updatePilot, updatePlane },
+    load: { load, loading, refetch, updateGCA, updateLoadMaster, updatePilot, updateVehicle },
   } = useLoadContext();
   const isFocused = useIsFocused();
 
@@ -135,23 +135,23 @@ function LoadScreen() {
             horizontal
             showsHorizontalScrollIndicator={false}
             style={{ marginVertical: 8 }}
-            data={['plane', 'pilot', 'gca', 'loadMaster']}
+            data={['vehicle', 'pilot', 'gca', 'loadMaster']}
             keyExtractor={(item) => item.toString()}
             renderItem={({ item }) => {
               switch (item) {
-                case 'plane':
+                case 'vehicle':
                   return (
-                    <PlaneChip
-                      value={load?.plane}
-                      onSelect={async (plane) => {
-                        if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
-                          const diff = (load?.slots?.length || 0) - (plane.maxSlots || 0);
+                    <VehicleChip
+                      value={load?.vehicle}
+                      onSelect={async (vehicle) => {
+                        if ((load?.slots?.length || 0) > (vehicle.capacity || 0)) {
+                          const diff = (load?.slots?.length || 0) - (vehicle.capacity || 0);
 
                           notify.info(
                             `You need to take ${diff} people off the load to fit on this plane`
                           );
                         } else {
-                          await updatePlane(plane);
+                          await updateVehicle(vehicle);
                           refetch();
                         }
                       }}
@@ -202,10 +202,10 @@ function LoadScreen() {
               title: 'Status',
               value: {
                 [LoadState.Open]: 'Open',
-                [LoadState.BoardingCall]: 'On call',
+                [LoadState.Boarding]: 'On call',
                 [LoadState.Cancelled]: 'Cancelled',
-                [LoadState.InFlight]: 'In air',
-                [LoadState.Landed]: 'Landed',
+                [LoadState.Departed]: 'In air',
+                [LoadState.Completed]: 'Completed',
               }[load?.state || LoadState.Open],
             },
             { title: 'Slots', value: `${occupiedSlots}/${maxSlots}` },

@@ -14,32 +14,32 @@ import NumberField, { NumberFieldType } from 'app/components/input/number_input/
 
 interface IUserRigCard {
   membershipId: string;
-  exitWeight?: number;
+  bodyMassKg?: number;
   isTandem?: boolean;
   selectedRig?: RigEssentialsFragment;
 
-  passengerName?: string | null;
-  passengerWeight?: number | null;
+  guestName?: string | null;
+  guestWeight?: number | null;
   onRemove?(): void;
-  onChangeExitWeight(weight: number): void;
+  onChangeBodyMassKg(weight: number): void;
   onChangeRig(rig: RigEssentialsFragment): void;
-  onChangePassengerName?(name: string): void;
-  onChangePassengerWeight?(weight: number): void;
+  onChangeGuestName?(name: string): void;
+  onChangeGuestWeight?(weight: number): void;
 }
 
 export default function UserRigCard(props: IUserRigCard) {
   const {
     membershipId,
     onChangeRig,
-    exitWeight,
+    bodyMassKg,
     selectedRig,
     isTandem,
-    passengerName,
-    passengerWeight,
+    guestName,
+    guestWeight,
     onRemove,
-    onChangeExitWeight,
-    onChangePassengerName,
-    onChangePassengerWeight,
+    onChangeBodyMassKg,
+    onChangeGuestName,
+    onChangeGuestWeight,
   } = props;
   const { theme } = useAppTheme();
 
@@ -48,10 +48,10 @@ export default function UserRigCard(props: IUserRigCard) {
   });
 
   React.useEffect(() => {
-    if (!exitWeight && membership?.user?.exitWeight) {
-      onChangeExitWeight(Number(membership.user.exitWeight));
+    if (!bodyMassKg && membership?.user?.bodyMassKg) {
+      onChangeBodyMassKg(Number(membership.user.bodyMassKg));
     }
-  }, [membership?.user.exitWeight, exitWeight, onChangeExitWeight]);
+  }, [membership?.user.bodyMassKg, bodyMassKg, onChangeBodyMassKg]);
   return (
     <Card style={{ marginHorizontal: 16, marginBottom: 16 }} elevation={1}>
       <ProgressBar indeterminate color={theme.colors.primary} visible={loading} />
@@ -64,10 +64,10 @@ export default function UserRigCard(props: IUserRigCard) {
         right={() => (
           <View style={{ maxWidth: 100, marginRight: 16 }}>
             <NumberField
-              value={!exitWeight ? 0 : exitWeight}
+              value={!bodyMassKg ? 0 : bodyMassKg}
               mode="flat"
               variant={NumberFieldType.Weight}
-              onChange={(num) => onChangeExitWeight(num)}
+              onChange={(num) => onChangeBodyMassKg(num)}
             />
           </View>
         )}
@@ -87,9 +87,9 @@ export default function UserRigCard(props: IUserRigCard) {
               autoSelectFirst
             />
           </View>
-          {!selectedRig || !exitWeight || !selectedRig.canopySize ? null : (
+          {!selectedRig || !bodyMassKg || !selectedRig.canopySize ? null : (
             <Chip small icon="escalator-down" mode="outlined" disabled>
-              {calculateWingLoading(exitWeight, selectedRig.canopySize)}
+              {calculateWingLoading(bodyMassKg, selectedRig.canopySize)}
             </Chip>
           )}
           <Chip small icon="lock" mode="outlined" disabled>
@@ -107,15 +107,15 @@ export default function UserRigCard(props: IUserRigCard) {
               <View style={styles.rowFirst}>
                 <TextInput
                   mode="flat"
-                  value={passengerName || ''}
-                  onChangeText={(text: string) => onChangePassengerName?.(text)}
+                  value={guestName || ''}
+                  onChangeText={(text: string) => onChangeGuestName?.(text)}
                   label="Passenger name"
                 />
               </View>
               <View style={styles.rowLast}>
                 <NumberField
-                  value={!passengerWeight ? 0 : passengerWeight}
-                  onChange={(num) => onChangePassengerWeight?.(num)}
+                  value={!guestWeight ? 0 : guestWeight}
+                  onChange={(num) => onChangeGuestWeight?.(num)}
                   variant={NumberFieldType.Weight}
                 />
               </View>

@@ -28,12 +28,12 @@ export default function DrawerMenu() {
   const navigation = useNavigation();
 
   const canUpdateOperator = useRestriction(Permission.UpdateOperator);
-  const canUpdatePlane = useRestriction(Permission.UpdatePlane);
+  const canUpdateVehicle = useRestriction(Permission.UpdateVehicle);
   const canUpdateTicketTypes = useRestriction(Permission.UpdateTicketType);
   const canUpdateExtras = useRestriction(Permission.UpdateExtra);
   const canUpdatePermissions = useRestriction(Permission.GrantPermission);
   const canUpdateDzRigs = useRestriction(Permission.UpdateOperatorRig);
-  const canUpdateRigInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
+  const canUpdateEquipmentInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
   const logout = useLogout();
   const onLogout = React.useCallback(() => {
     navigation.dispatch(DrawerActions.closeDrawer());
@@ -42,12 +42,12 @@ export default function DrawerMenu() {
 
   const shouldShowSettings =
     canUpdateOperator ||
-    canUpdatePlane ||
+    canUpdateVehicle ||
     canUpdateTicketTypes ||
     canUpdateExtras ||
     canUpdatePermissions ||
     canUpdateDzRigs ||
-    canUpdateRigInspectionTemplate;
+    canUpdateEquipmentInspectionTemplate;
 
   return (
     <View style={{ flex: 1, paddingTop: 100 }}>

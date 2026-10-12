@@ -2,14 +2,14 @@ import * as React from 'react';
 import { ManifestUserDocument } from 'app/api/reflection';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_ALLOWED_TICKET_TYPES from './__mocks__/QueryAllowedTicketTypes.mock';
-import { MOCK_QUERY_ALLOWED_JUMP_TYPES } from './__mocks__/QueryAllowedJumpTypes.mock';
+import { MOCK_QUERY_ALLOWED_ACTIVITY_TYPES } from './__mocks__/QueryAllowedActivityTypes.mock';
 import ManifestUserDialog from '../../forms/manifest_user/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
 const LOAD = { id: '7', loadNumber: 7, name: 'Load 7' };
-const MEMBERSHIP = { id: '55', user: { id: '55', name: 'Test Jumper', exitWeight: '82' } };
+const MEMBERSHIP = { id: '55', user: { id: '55', name: 'Test Jumper', bodyMassKg: '82' } };
 
 describe('<ManifestUserDialog />', () => {
   it('sends the selected load, user, ticket, jump type and exit weight to ManifestUser', async () => {
@@ -35,20 +35,20 @@ describe('<ManifestUserDialog />', () => {
       {
         session: authenticatedSession,
         graphql: [
-          MOCK_QUERY_ALLOWED_JUMP_TYPES({ allowedForMembershipIds: [55] }),
+          MOCK_QUERY_ALLOWED_ACTIVITY_TYPES({ allowedForMembershipIds: [55] }),
           MOCK_QUERY_ALLOWED_TICKET_TYPES(),
           {
             request: {
               query: ManifestUserDocument,
               operationName: 'ManifestUser',
               variables: {
-                jumpType: '1',
+                activityType: '1',
                 extras: undefined,
                 load: '7',
                 rig: undefined,
                 ticketType: '1',
                 membership: '55',
-                exitWeight: 82,
+                bodyMassKg: 82,
               },
             },
             result: mutationResult,

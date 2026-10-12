@@ -47,14 +47,14 @@ describe('<EquipmentTab />', () => {
   });
 
   it('does not offer another member to add a rig for someone else', async () => {
-    const screen = renderTab(OTHER_MEMBER, [Permission.CreateRig]);
+    const screen = renderTab(OTHER_MEMBER, [Permission.CreateEquipment]);
 
     await screen.findByTestId('loaded');
     expect(screen.queryByTestId('profile-add-rig')).toBeNull();
   });
 
   it('lets members add a rig to their own profile', async () => {
-    const screen = renderTab(SELF, [Permission.CreateRig]);
+    const screen = renderTab(SELF, [Permission.CreateEquipment]);
 
     expect(await screen.findByTestId('profile-add-rig')).toBeTruthy();
   });

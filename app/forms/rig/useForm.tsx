@@ -6,8 +6,8 @@ import isEqual from 'lodash/isEqual';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import type { RigEssentialsFragment } from 'app/api/operations';
-import useMutationCreateRig from 'app/api/hooks/useMutationCreateRig';
-import useMutationUpdateRig from 'app/api/hooks/useMutationUpdateRig';
+import useMutationCreateEquipment from 'app/api/hooks/useMutationCreateEquipment';
+import useMutationUpdateEquipment from 'app/api/hooks/useMutationUpdateEquipment';
 import { useNotifications } from 'app/providers/notifications';
 
 export type RigFields = {
@@ -101,8 +101,8 @@ export default function useRigForm(opts: IUseRigFormOpts) {
     },
     onError: (message: string) => notify.error(message),
   };
-  const updateRig = useMutationUpdateRig(handlers);
-  const createRig = useMutationCreateRig(handlers);
+  const updateEquipment = useMutationUpdateEquipment(handlers);
+  const createEquipment = useMutationCreateEquipment(handlers);
 
   const [{ loading }, onSave] = useAsyncFn(
     async (fields: RigFields) => {
@@ -112,14 +112,14 @@ export default function useRigForm(opts: IUseRigFormOpts) {
         operatorId: operatorId ? Number(operatorId) : null,
       };
       const result = rig?.id
-        ? await updateRig.mutate({ id: Number(rig.id), ...attributes })
-        : await createRig.mutate(attributes);
+        ? await updateEquipment.mutate({ id: Number(rig.id), ...attributes })
+        : await createEquipment.mutate(attributes);
 
       if (result && !result.errors?.length && !result.fieldErrors?.length) {
         onSuccess?.();
       }
     },
-    [rig?.id, userId, operatorId, updateRig.mutate, createRig.mutate, onSuccess]
+    [rig?.id, userId, operatorId, updateEquipment.mutate, createEquipment.mutate, onSuccess]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onSave), [handleSubmit, onSave]);

@@ -3,14 +3,14 @@
 //
 // An identifier is split into words (snake, kebab, camel, Pascal, SCREAMING); word sequences equal to an entry's `old`
 // words are replaced by its `new` words in the style of the identifier. Words are never split inside, so `airplane`
-// does not contain `plane`.
+// does not contain `vehicle`.
 const fs = require('node:fs');
 const path = require('node:path');
 const YAML = require('yaml');
 
 const CONFIG_PATH = path.join(__dirname, '..', '..', 'config', 'vocabulary.yml');
 const TOKEN = /[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*/g;
-// A word of an identifier: an acronym (DZSO), a Capitalised or lowercase word, or digits
+// A word of an identifier: an acronym (DutyOfficer), a Capitalised or lowercase word, or digits
 const WORD = /[A-Z]+(?![a-z])|[A-Z]?[a-z]+|[0-9]+/g;
 
 function loadConfig(file = CONFIG_PATH) {

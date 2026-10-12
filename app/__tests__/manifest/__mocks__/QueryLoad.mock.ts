@@ -17,7 +17,7 @@ export const loadEssentials: LoadEssentialsFragment = {
   name: 'Test Load',
   createdAt: new Date().toISOString(),
   dispatchAt: null,
-  hasLanded: false,
+  hasCompleted: false,
   loadNumber: 1,
   isFull: false,
   state: LoadState.Open,
@@ -37,7 +37,7 @@ const membershipEssentials: MembershipEssentialsFragment = {
     name: 'jest',
   },
   hasCredits: true,
-  hasExitWeight: true,
+  hasBodyMassKg: true,
   hasMembership: true,
   hasLicense: false,
   license: null,
@@ -67,7 +67,7 @@ const membershipDetails: MembershipDetailsFragment = merge({}, membershipEssenti
     phone: null,
     id: '21',
     name: 'Amy Hops',
-    exitWeight: '100',
+    bodyMassKg: '100',
   },
   license: {
     __typename: 'License',
@@ -81,12 +81,12 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
   {
     load: {
       ...loadEssentials,
-      plane: {
-        __typename: 'Plane',
-        minSlots: 0,
+      vehicle: {
+        __typename: 'Vehicle',
+        minCapacity: 0,
         registration: 'ABC123',
         id: '1',
-        maxSlots: 10,
+        capacity: 10,
         name: 'Beaver',
       },
       // Distinct ids: the Apollo cache normalises Membership by id, so sharing one with a slot would overwrite it.
@@ -113,9 +113,9 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           id: '1',
           costCents: 10000,
           createdAt: new Date().toISOString(),
-          exitWeight: 100,
-          passengerName: null,
-          passengerExitWeight: null,
+          bodyMassKg: 100,
+          guestName: null,
+          guestBodyMassKg: null,
           wingLoading: 1.3,
           groupNumber: 0,
           membership: membershipDetails,
@@ -131,8 +131,8 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
             extras: [],
           },
 
-          jumpType: {
-            __typename: 'JumpType',
+          activityType: {
+            __typename: 'ActivityType',
             id: '1',
             name: 'Freefly',
           },
@@ -145,9 +145,9 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           id: '2',
           costCents: 10000,
           createdAt: new Date().toISOString(),
-          exitWeight: 70,
-          passengerName: null,
-          passengerExitWeight: null,
+          bodyMassKg: 70,
+          guestName: null,
+          guestBodyMassKg: null,
           wingLoading: 1.3,
           groupNumber: 0,
           membership: merge({}, membershipDetails, {
@@ -155,7 +155,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
             user: {
               id: '2',
               name: 'Ali Falls',
-              exitWeight: '100',
+              bodyMassKg: '100',
             },
             license: {
               id: '21',
@@ -174,8 +174,8 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
             extras: [],
           },
 
-          jumpType: {
-            __typename: 'JumpType',
+          activityType: {
+            __typename: 'ActivityType',
             id: '2',
             name: 'Hop n Pop',
           },
@@ -189,9 +189,9 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           id: '3',
           groupNumber: 0,
           createdAt: new Date().toISOString(),
-          exitWeight: 100,
-          passengerName: null,
-          passengerExitWeight: null,
+          bodyMassKg: 100,
+          guestName: null,
+          guestBodyMassKg: null,
 
           wingLoading: 1.3,
           membership: merge({}, membershipDetails, {
@@ -200,7 +200,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
               __typename: 'User',
               id: '3',
               name: 'John Stumble',
-              exitWeight: '100',
+              bodyMassKg: '100',
             },
             license: {
               id: '3',
@@ -218,7 +218,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
             extras: [{ id: '1', name: 'Outside camera', costCents: 12000 }],
           },
 
-          jumpType: {
+          activityType: {
             id: '3',
 
             name: 'Tandem',

@@ -13,7 +13,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import { Card } from 'react-native-paper';
 import Stats, { IStatsProps } from './statistics/Stats';
 import LoadsByDay from './statistics/LoadsByDay';
-import JumpTypePieChart from './statistics/JumpTypePieChart';
+import ActivityTypePieChart from './statistics/ActivityTypePieChart';
 
 enum TimeRange {
   AllTime = 0,
@@ -151,7 +151,7 @@ export default function DashboardPage() {
             },
             {
               label: 'DZSO',
-              value: data?.operator?.statistics.dzsoCount || 0,
+              value: data?.operator?.statistics.dutyOfficerCount || 0,
             },
           ]}
         />
@@ -181,9 +181,9 @@ export default function DashboardPage() {
             data={data?.operator?.statistics?.loadCountByDay || []}
             startTime={timeRange?.startTime || subMonths(new Date(), 6)}
           />
-          <JumpTypePieChart
-            style={styles.jumpTypesCard}
-            data={data?.operator?.statistics?.slotsByJumpType || []}
+          <ActivityTypePieChart
+            style={styles.activityTypesCard}
+            data={data?.operator?.statistics?.slotsByActivityType || []}
           />
         </View>
       )}
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     width: Platform.OS === 'web' ? undefined : '100%',
     flex: Platform.OS === 'web' ? 3 / 4 : undefined,
   },
-  jumpTypesCard: {
+  activityTypesCard: {
     height: 300,
     marginVertical: 4,
     width: Platform.OS === 'web' ? undefined : '100%',

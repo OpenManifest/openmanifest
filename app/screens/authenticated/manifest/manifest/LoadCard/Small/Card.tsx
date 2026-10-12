@@ -4,7 +4,7 @@ import { Badge, Card, Chip } from 'react-native-paper';
 import { isBefore } from 'date-fns';
 
 import PilotChip from 'app/components/chips/PilotChip';
-import PlaneChip from 'app/components/chips/PlaneChip';
+import VehicleChip from 'app/components/chips/VehicleChip';
 
 import { View } from 'app/components/Themed';
 import { LoadState } from 'app/api/schema.d';
@@ -22,13 +22,13 @@ function LoadCard(props: ILoadCardSmall) {
   const { onPress } = props;
   const { theme, palette } = useAppTheme();
   const {
-    load: { load, loading, updatePlane, updatePilot },
+    load: { load, loading, updateVehicle, updatePilot },
   } = useLoadContext();
   const LOAD_BADGE_COLOR: { [K in LoadState]?: string } = React.useMemo(
     () => ({
       open: palette.accent.main,
       cancelled: errorColor,
-      boarding_call: warningColor,
+      boarding: warningColor,
     }),
     [palette.accent.main]
   );
@@ -39,10 +39,10 @@ function LoadCard(props: ILoadCardSmall) {
 
   const loadStates = {
     [LoadState.Open]: 'Open',
-    [LoadState.BoardingCall]: 'On call',
+    [LoadState.Boarding]: 'On call',
     [LoadState.Cancelled]: 'Cancelled',
-    [LoadState.InFlight]: 'In air',
-    [LoadState.Landed]: 'Landed',
+    [LoadState.Departed]: 'In air',
+    [LoadState.Completed]: 'Completed',
   };
   return (
     <Card
@@ -52,7 +52,7 @@ function LoadCard(props: ILoadCardSmall) {
         borderRadius: 8,
         minWidth: 280,
         maxWidth: 450,
-        opacity: ['cancelled', 'landed'].includes(load?.state || '') ? 0.5 : 1.0,
+        opacity: ['cancelled', 'completed'].includes(load?.state || '') ? 0.5 : 1.0,
       }}
       elevation={1}
       onPress={onPress}
@@ -95,12 +95,12 @@ function LoadCard(props: ILoadCardSmall) {
           }}
           horizontal
         >
-          <PlaneChip
-            value={load?.plane}
+          <VehicleChip
+            value={load?.vehicle}
             small
             color={theme.colors.onSurface}
-            onSelect={async (plane) => {
-              await updatePlane(plane);
+            onSelect={async (vehicle) => {
+              await updateVehicle(vehicle);
             }}
           />
           <PilotChip
@@ -121,7 +121,7 @@ function LoadCard(props: ILoadCardSmall) {
             }}
             textStyle={{ color: theme.colors.onSurface, fontSize: 12, marginTop: 0 }}
           >
-            {load?.occupiedSlots || 0} / {load?.plane?.maxSlots}
+            {load?.occupiedSlots || 0} / {load?.vehicle?.capacity}
           </Chip>
         </ScrollView>
       </Card.Content>

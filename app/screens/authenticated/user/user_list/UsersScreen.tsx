@@ -65,7 +65,7 @@ const loadingFragment: MembershipEssentialsFragment = {
   id: '__LOADING__',
   hasCredits: false,
   walletId: '__LOADING__',
-  hasExitWeight: false,
+  hasBodyMassKg: false,
   hasLicense: false,
   hasMembership: false,
   user: {

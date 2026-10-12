@@ -6,7 +6,7 @@ export default function checkOperatorSetupComplete(operator: OperatorDetailedFra
     [OperatorWizardStep.Name]: false,
     [OperatorWizardStep.Federation]: false,
     [OperatorWizardStep.Location]: false,
-    [OperatorWizardStep.Aircraft]: false,
+    [OperatorWizardStep.Vehicle]: false,
     [OperatorWizardStep.Tickets]: false,
     [OperatorWizardStep.Branding]: false,
   };

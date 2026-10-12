@@ -23,7 +23,7 @@ export const UserEssentialsFragmentDoc = gql`
   nickname
   phone
   email
-  exitWeight
+  bodyMassKg
   moderationRole
   image
   apfNumber
@@ -37,7 +37,7 @@ export const MembershipEssentialsFragmentDoc = gql`
   hasCredits
   hasMembership
   hasLicense
-  hasExitWeight
+  hasBodyMassKg
   role {
     ...roleEssentials
   }
@@ -99,7 +99,7 @@ export const LoadEssentialsFragmentDoc = gql`
   name
   createdAt
   dispatchAt
-  hasLanded
+  hasCompleted
   loadNumber
   isFull
   state
@@ -136,8 +136,8 @@ export const TicketTypeDetailsFragmentDoc = gql`
 }
     ${TicketTypeEssentialsFragmentDoc}
 ${TicketTypeAddonEssentialsFragmentDoc}`;
-export const JumpTypeEssentialsFragmentDoc = gql`
-    fragment jumpTypeEssentials on JumpType {
+export const ActivityTypeEssentialsFragmentDoc = gql`
+    fragment activityTypeEssentials on ActivityType {
   id
   name
 }
@@ -147,17 +147,17 @@ export const SlotEssentialsFragmentDoc = gql`
   id
   lockVersion
   createdAt
-  exitWeight
-  passengerName
-  passengerExitWeight
+  bodyMassKg
+  guestName
+  guestBodyMassKg
   wingLoading
   groupNumber
   costCents
   ticketType {
     ...ticketTypeDetails
   }
-  jumpType {
-    ...jumpTypeEssentials
+  activityType {
+    ...activityTypeEssentials
   }
   extras {
     id
@@ -165,7 +165,7 @@ export const SlotEssentialsFragmentDoc = gql`
   }
 }
     ${TicketTypeDetailsFragmentDoc}
-${JumpTypeEssentialsFragmentDoc}`;
+${ActivityTypeEssentialsFragmentDoc}`;
 export const RigEssentialsFragmentDoc = gql`
     fragment rigEssentials on Rig {
   id
@@ -189,11 +189,11 @@ export const RigEssentialsFragmentDoc = gql`
   }
 }
     `;
-export const PlaneEssentialsFragmentDoc = gql`
-    fragment planeEssentials on Plane {
+export const VehicleEssentialsFragmentDoc = gql`
+    fragment vehicleEssentials on Vehicle {
   id
-  minSlots
-  maxSlots
+  minCapacity
+  capacity
   name
   registration
 }
@@ -217,8 +217,8 @@ export const ActivityDetailsFragmentDoc = gql`
     ... on Rig {
       ...rigEssentials
     }
-    ... on Plane {
-      ...planeEssentials
+    ... on Vehicle {
+      ...vehicleEssentials
     }
   }
 }
@@ -228,7 +228,82 @@ ${MembershipEssentialsFragmentDoc}
 ${LoadEssentialsFragmentDoc}
 ${SlotEssentialsFragmentDoc}
 ${RigEssentialsFragmentDoc}
-${PlaneEssentialsFragmentDoc}`;
+${VehicleEssentialsFragmentDoc}`;
+export const DailyLogUserFragmentDoc = gql`
+    fragment dailyLogUser on DailyLogUser {
+  id
+  email
+  name
+  nickname
+  phone
+}
+    `;
+export const DailyLogVehicleFragmentDoc = gql`
+    fragment dailyLogVehicle on DailyLogVehicle {
+  id
+  name
+  registration
+}
+    `;
+export const DailyLogSlotFragmentDoc = gql`
+    fragment dailyLogSlot on DailyLogSlot {
+  id
+  altitude
+  activityType
+  name
+}
+    `;
+export const DailyLogLoadFragmentDoc = gql`
+    fragment dailyLogLoad on DailyLogLoad {
+  id
+  loadNumber
+  dispatchAt
+  vehicle {
+    ...dailyLogVehicle
+  }
+  gca {
+    ...dailyLogUser
+  }
+  pilot {
+    ...dailyLogUser
+  }
+  loadMaster {
+    ...dailyLogUser
+  }
+  slots {
+    ...dailyLogSlot
+  }
+}
+    ${DailyLogVehicleFragmentDoc}
+${DailyLogUserFragmentDoc}
+${DailyLogSlotFragmentDoc}`;
+export const LocationFragmentDoc = gql`
+    fragment location on GeocodedLocation {
+  id
+  lat
+  lng
+  formattedString
+}
+    `;
+export const DailyLogEntryFragmentDoc = gql`
+    fragment dailyLogEntry on DailyLogEntry {
+  id
+  date
+  notes
+  downloadUrl
+  dutyOfficer {
+    ...dailyLogUser
+  }
+  loads {
+    ...dailyLogLoad
+  }
+  location {
+    ...location
+  }
+}
+    ${DailyLogUserFragmentDoc}
+${DailyLogLoadFragmentDoc}
+${LocationFragmentDoc}`;
 export const TicketTypeExtraEssentialsFragmentDoc = gql`
     fragment ticketTypeExtraEssentials on Extra {
   id
@@ -246,81 +321,6 @@ export const TicketTypeExtraDetailedFragmentDoc = gql`
 }
     ${TicketTypeExtraEssentialsFragmentDoc}
 ${TicketTypeEssentialsFragmentDoc}`;
-export const MasterLogUserFragmentDoc = gql`
-    fragment masterLogUser on MasterLogUser {
-  id
-  email
-  name
-  nickname
-  phone
-}
-    `;
-export const MasterLogAircraftFragmentDoc = gql`
-    fragment masterLogAircraft on MasterLogAircraft {
-  id
-  name
-  registration
-}
-    `;
-export const MasterLogSlotFragmentDoc = gql`
-    fragment masterLogSlot on MasterLogSlot {
-  id
-  altitude
-  jumpType
-  name
-}
-    `;
-export const MasterLogLoadFragmentDoc = gql`
-    fragment masterLogLoad on MasterLogLoad {
-  id
-  loadNumber
-  dispatchAt
-  aircraft {
-    ...masterLogAircraft
-  }
-  gca {
-    ...masterLogUser
-  }
-  pilot {
-    ...masterLogUser
-  }
-  loadMaster {
-    ...masterLogUser
-  }
-  slots {
-    ...masterLogSlot
-  }
-}
-    ${MasterLogAircraftFragmentDoc}
-${MasterLogUserFragmentDoc}
-${MasterLogSlotFragmentDoc}`;
-export const LocationFragmentDoc = gql`
-    fragment location on GeocodedLocation {
-  id
-  lat
-  lng
-  formattedString
-}
-    `;
-export const MasterLogEntryFragmentDoc = gql`
-    fragment masterLogEntry on MasterLogEntry {
-  id
-  date
-  notes
-  downloadUrl
-  dzso {
-    ...masterLogUser
-  }
-  loads {
-    ...masterLogLoad
-  }
-  location {
-    ...location
-  }
-}
-    ${MasterLogUserFragmentDoc}
-${MasterLogLoadFragmentDoc}
-${LocationFragmentDoc}`;
 export const FederationEssentialsFragmentDoc = gql`
     fragment federationEssentials on Federation {
   id
@@ -563,13 +563,13 @@ export const OperatorStatisticsEssentialsFragmentDoc = gql`
   id
   activeUserCount
   totalUserCount
-  slotsByJumpType(timeRange: $timeRange) {
+  slotsByActivityType(timeRange: $timeRange) {
     name
     count
   }
   slotsCount(timeRange: $timeRange)
   cancelledLoadsCount(timeRange: $timeRange)
-  dzsoCount
+  dutyOfficerCount
   finalizedLoadsCount(timeRange: $timeRange)
   gcaCount
   pilotCount
@@ -629,7 +629,7 @@ export const CurrentUserEssentialsFragmentDoc = gql`
   walletId
   creditsCents
   hasCredits
-  hasExitWeight
+  hasBodyMassKg
   hasMembership
   hasReserveInDate
   hasRigInspection
@@ -724,8 +724,8 @@ export const RoleDetailedFragmentDoc = gql`
 export const LoadDetailsFragmentDoc = gql`
     fragment loadDetails on Load {
   ...loadEssentials
-  plane {
-    ...planeEssentials
+  vehicle {
+    ...vehicleEssentials
   }
   gca {
     ...membershipEssentials
@@ -741,7 +741,7 @@ export const LoadDetailsFragmentDoc = gql`
   }
 }
     ${LoadEssentialsFragmentDoc}
-${PlaneEssentialsFragmentDoc}
+${VehicleEssentialsFragmentDoc}
 ${MembershipEssentialsFragmentDoc}
 ${SlotDetailsFragmentDoc}`;
 export const SlotExhaustiveFragmentDoc = gql`
@@ -770,46 +770,6 @@ export const TicketTypeAddonDetailsFragmentDoc = gql`
 }
     ${TicketTypeAddonEssentialsFragmentDoc}
 ${TicketTypeEssentialsFragmentDoc}`;
-export const ArchivePlaneDocument = gql`
-    mutation ArchivePlane($id: Int!) {
-  deletePlane(input: {id: $id}) {
-    fieldErrors {
-      field
-      message
-    }
-    errors
-    plane {
-      ...planeEssentials
-    }
-  }
-}
-    ${PlaneEssentialsFragmentDoc}`;
-export type ArchivePlaneMutationFn = Apollo.MutationFunction<Operation.ArchivePlaneMutation, Operation.ArchivePlaneMutationVariables>;
-
-/**
- * __useArchivePlaneMutation__
- *
- * To run a mutation, you first call `useArchivePlaneMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useArchivePlaneMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [archivePlaneMutation, { data, loading, error }] = useArchivePlaneMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useArchivePlaneMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ArchivePlaneMutation, Operation.ArchivePlaneMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.ArchivePlaneMutation, Operation.ArchivePlaneMutationVariables>(ArchivePlaneDocument, options);
-      }
-export type ArchivePlaneMutationHookResult = ReturnType<typeof useArchivePlaneMutation>;
-export type ArchivePlaneMutationResult = Apollo.MutationResult<Operation.ArchivePlaneMutation>;
-export type ArchivePlaneMutationOptions = Apollo.BaseMutationOptions<Operation.ArchivePlaneMutation, Operation.ArchivePlaneMutationVariables>;
 export const ArchiveRigDocument = gql`
     mutation ArchiveRig($id: Int!) {
   archiveRig(input: {id: $id}) {
@@ -930,6 +890,46 @@ export function useArchiveUserMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ArchiveUserMutationHookResult = ReturnType<typeof useArchiveUserMutation>;
 export type ArchiveUserMutationResult = Apollo.MutationResult<Operation.ArchiveUserMutation>;
 export type ArchiveUserMutationOptions = Apollo.BaseMutationOptions<Operation.ArchiveUserMutation, Operation.ArchiveUserMutationVariables>;
+export const ArchiveVehicleDocument = gql`
+    mutation ArchiveVehicle($id: Int!) {
+  deleteVehicle(input: {id: $id}) {
+    fieldErrors {
+      field
+      message
+    }
+    errors
+    vehicle {
+      ...vehicleEssentials
+    }
+  }
+}
+    ${VehicleEssentialsFragmentDoc}`;
+export type ArchiveVehicleMutationFn = Apollo.MutationFunction<Operation.ArchiveVehicleMutation, Operation.ArchiveVehicleMutationVariables>;
+
+/**
+ * __useArchiveVehicleMutation__
+ *
+ * To run a mutation, you first call `useArchiveVehicleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useArchiveVehicleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [archiveVehicleMutation, { data, loading, error }] = useArchiveVehicleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useArchiveVehicleMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ArchiveVehicleMutation, Operation.ArchiveVehicleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.ArchiveVehicleMutation, Operation.ArchiveVehicleMutationVariables>(ArchiveVehicleDocument, options);
+      }
+export type ArchiveVehicleMutationHookResult = ReturnType<typeof useArchiveVehicleMutation>;
+export type ArchiveVehicleMutationResult = Apollo.MutationResult<Operation.ArchiveVehicleMutation>;
+export type ArchiveVehicleMutationOptions = Apollo.BaseMutationOptions<Operation.ArchiveVehicleMutation, Operation.ArchiveVehicleMutationVariables>;
 export const ConfirmUserDocument = gql`
     mutation ConfirmUser($token: String!) {
   userConfirmRegistrationWithToken(confirmationToken: $token) {
@@ -976,17 +976,63 @@ export function useConfirmUserMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ConfirmUserMutationHookResult = ReturnType<typeof useConfirmUserMutation>;
 export type ConfirmUserMutationResult = Apollo.MutationResult<Operation.ConfirmUserMutation>;
 export type ConfirmUserMutationOptions = Apollo.BaseMutationOptions<Operation.ConfirmUserMutation, Operation.ConfirmUserMutationVariables>;
-export const CreateAircraftDocument = gql`
-    mutation CreateAircraft($attributes: PlaneInput!) {
-  createPlane(input: {attributes: $attributes}) {
-    plane {
-      ...planeEssentials
-      operator {
-        id
-        planes {
-          ...planeEssentials
-        }
+export const CreateEquipmentDocument = gql`
+    mutation CreateEquipment($make: String, $name: String, $model: String, $serial: String, $rigType: String, $canopySize: Int, $repackExpiresAt: Int, $userId: Int, $operatorId: Int) {
+  createEquipment(
+    input: {attributes: {name: $name, make: $make, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, operatorId: $operatorId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    rig {
+      ...userRigDetailed
+    }
+  }
+}
+    ${UserRigDetailedFragmentDoc}`;
+export type CreateEquipmentMutationFn = Apollo.MutationFunction<Operation.CreateEquipmentMutation, Operation.CreateEquipmentMutationVariables>;
+
+/**
+ * __useCreateEquipmentMutation__
+ *
+ * To run a mutation, you first call `useCreateEquipmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateEquipmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createEquipmentMutation, { data, loading, error }] = useCreateEquipmentMutation({
+ *   variables: {
+ *      make: // value for 'make'
+ *      name: // value for 'name'
+ *      model: // value for 'model'
+ *      serial: // value for 'serial'
+ *      rigType: // value for 'rigType'
+ *      canopySize: // value for 'canopySize'
+ *      repackExpiresAt: // value for 'repackExpiresAt'
+ *      userId: // value for 'userId'
+ *      operatorId: // value for 'operatorId'
+ *   },
+ * });
+ */
+export function useCreateEquipmentMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateEquipmentMutation, Operation.CreateEquipmentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.CreateEquipmentMutation, Operation.CreateEquipmentMutationVariables>(CreateEquipmentDocument, options);
       }
+export type CreateEquipmentMutationHookResult = ReturnType<typeof useCreateEquipmentMutation>;
+export type CreateEquipmentMutationResult = Apollo.MutationResult<Operation.CreateEquipmentMutation>;
+export type CreateEquipmentMutationOptions = Apollo.BaseMutationOptions<Operation.CreateEquipmentMutation, Operation.CreateEquipmentMutationVariables>;
+export const CreateEquipmentInspectionDocument = gql`
+    mutation CreateEquipmentInspection($operator: ID, $rig: ID, $isOk: Boolean, $definition: String) {
+  createEquipmentInspection(
+    input: {attributes: {operator: $operator, rig: $rig, isOk: $isOk, definition: $definition}}
+  ) {
+    rigInspection {
+      ...rigInspectionMutationEssentials
     }
     fieldErrors {
       field
@@ -995,37 +1041,40 @@ export const CreateAircraftDocument = gql`
     errors
   }
 }
-    ${PlaneEssentialsFragmentDoc}`;
-export type CreateAircraftMutationFn = Apollo.MutationFunction<Operation.CreateAircraftMutation, Operation.CreateAircraftMutationVariables>;
+    ${RigInspectionMutationEssentialsFragmentDoc}`;
+export type CreateEquipmentInspectionMutationFn = Apollo.MutationFunction<Operation.CreateEquipmentInspectionMutation, Operation.CreateEquipmentInspectionMutationVariables>;
 
 /**
- * __useCreateAircraftMutation__
+ * __useCreateEquipmentInspectionMutation__
  *
- * To run a mutation, you first call `useCreateAircraftMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateAircraftMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateEquipmentInspectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateEquipmentInspectionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createAircraftMutation, { data, loading, error }] = useCreateAircraftMutation({
+ * const [createEquipmentInspectionMutation, { data, loading, error }] = useCreateEquipmentInspectionMutation({
  *   variables: {
- *      attributes: // value for 'attributes'
+ *      operator: // value for 'operator'
+ *      rig: // value for 'rig'
+ *      isOk: // value for 'isOk'
+ *      definition: // value for 'definition'
  *   },
  * });
  */
-export function useCreateAircraftMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateAircraftMutation, Operation.CreateAircraftMutationVariables>) {
+export function useCreateEquipmentInspectionMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateEquipmentInspectionMutation, Operation.CreateEquipmentInspectionMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.CreateAircraftMutation, Operation.CreateAircraftMutationVariables>(CreateAircraftDocument, options);
+        return Apollo.useMutation<Operation.CreateEquipmentInspectionMutation, Operation.CreateEquipmentInspectionMutationVariables>(CreateEquipmentInspectionDocument, options);
       }
-export type CreateAircraftMutationHookResult = ReturnType<typeof useCreateAircraftMutation>;
-export type CreateAircraftMutationResult = Apollo.MutationResult<Operation.CreateAircraftMutation>;
-export type CreateAircraftMutationOptions = Apollo.BaseMutationOptions<Operation.CreateAircraftMutation, Operation.CreateAircraftMutationVariables>;
+export type CreateEquipmentInspectionMutationHookResult = ReturnType<typeof useCreateEquipmentInspectionMutation>;
+export type CreateEquipmentInspectionMutationResult = Apollo.MutationResult<Operation.CreateEquipmentInspectionMutation>;
+export type CreateEquipmentInspectionMutationOptions = Apollo.BaseMutationOptions<Operation.CreateEquipmentInspectionMutation, Operation.CreateEquipmentInspectionMutationVariables>;
 export const CreateLoadDocument = gql`
-    mutation CreateLoad($name: String, $pilot: ID, $gca: ID, $maxSlots: Int, $plane: ID, $state: LoadState) {
+    mutation CreateLoad($name: String, $pilot: ID, $gca: ID, $maxSlots: Int, $vehicle: ID, $state: LoadState) {
   createLoad(
-    input: {attributes: {name: $name, pilot: $pilot, gca: $gca, maxSlots: $maxSlots, plane: $plane, state: $state}}
+    input: {attributes: {name: $name, pilot: $pilot, gca: $gca, maxSlots: $maxSlots, vehicle: $vehicle, state: $state}}
   ) {
     load {
       ...loadDetails
@@ -1057,7 +1106,7 @@ export type CreateLoadMutationFn = Apollo.MutationFunction<Operation.CreateLoadM
  *      pilot: // value for 'pilot'
  *      gca: // value for 'gca'
  *      maxSlots: // value for 'maxSlots'
- *      plane: // value for 'plane'
+ *      vehicle: // value for 'vehicle'
  *      state: // value for 'state'
  *   },
  * });
@@ -1163,101 +1212,6 @@ export function useCreateOrderMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMutation>;
 export type CreateOrderMutationResult = Apollo.MutationResult<Operation.CreateOrderMutation>;
 export type CreateOrderMutationOptions = Apollo.BaseMutationOptions<Operation.CreateOrderMutation, Operation.CreateOrderMutationVariables>;
-export const CreateRigDocument = gql`
-    mutation CreateRig($make: String, $name: String, $model: String, $serial: String, $rigType: String, $canopySize: Int, $repackExpiresAt: Int, $userId: Int, $operatorId: Int) {
-  createRig(
-    input: {attributes: {name: $name, make: $make, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, operatorId: $operatorId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
-  ) {
-    errors
-    fieldErrors {
-      field
-      message
-    }
-    rig {
-      ...userRigDetailed
-    }
-  }
-}
-    ${UserRigDetailedFragmentDoc}`;
-export type CreateRigMutationFn = Apollo.MutationFunction<Operation.CreateRigMutation, Operation.CreateRigMutationVariables>;
-
-/**
- * __useCreateRigMutation__
- *
- * To run a mutation, you first call `useCreateRigMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateRigMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createRigMutation, { data, loading, error }] = useCreateRigMutation({
- *   variables: {
- *      make: // value for 'make'
- *      name: // value for 'name'
- *      model: // value for 'model'
- *      serial: // value for 'serial'
- *      rigType: // value for 'rigType'
- *      canopySize: // value for 'canopySize'
- *      repackExpiresAt: // value for 'repackExpiresAt'
- *      userId: // value for 'userId'
- *      operatorId: // value for 'operatorId'
- *   },
- * });
- */
-export function useCreateRigMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateRigMutation, Operation.CreateRigMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.CreateRigMutation, Operation.CreateRigMutationVariables>(CreateRigDocument, options);
-      }
-export type CreateRigMutationHookResult = ReturnType<typeof useCreateRigMutation>;
-export type CreateRigMutationResult = Apollo.MutationResult<Operation.CreateRigMutation>;
-export type CreateRigMutationOptions = Apollo.BaseMutationOptions<Operation.CreateRigMutation, Operation.CreateRigMutationVariables>;
-export const CreateRigInspectionDocument = gql`
-    mutation CreateRigInspection($operator: ID, $rig: ID, $isOk: Boolean, $definition: String) {
-  createRigInspection(
-    input: {attributes: {operator: $operator, rig: $rig, isOk: $isOk, definition: $definition}}
-  ) {
-    rigInspection {
-      ...rigInspectionMutationEssentials
-    }
-    fieldErrors {
-      field
-      message
-    }
-    errors
-  }
-}
-    ${RigInspectionMutationEssentialsFragmentDoc}`;
-export type CreateRigInspectionMutationFn = Apollo.MutationFunction<Operation.CreateRigInspectionMutation, Operation.CreateRigInspectionMutationVariables>;
-
-/**
- * __useCreateRigInspectionMutation__
- *
- * To run a mutation, you first call `useCreateRigInspectionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateRigInspectionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createRigInspectionMutation, { data, loading, error }] = useCreateRigInspectionMutation({
- *   variables: {
- *      operator: // value for 'operator'
- *      rig: // value for 'rig'
- *      isOk: // value for 'isOk'
- *      definition: // value for 'definition'
- *   },
- * });
- */
-export function useCreateRigInspectionMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateRigInspectionMutation, Operation.CreateRigInspectionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.CreateRigInspectionMutation, Operation.CreateRigInspectionMutationVariables>(CreateRigInspectionDocument, options);
-      }
-export type CreateRigInspectionMutationHookResult = ReturnType<typeof useCreateRigInspectionMutation>;
-export type CreateRigInspectionMutationResult = Apollo.MutationResult<Operation.CreateRigInspectionMutation>;
-export type CreateRigInspectionMutationOptions = Apollo.BaseMutationOptions<Operation.CreateRigInspectionMutation, Operation.CreateRigInspectionMutationVariables>;
 export const CreateTicketAddonDocument = gql`
     mutation CreateTicketAddon($attributes: ExtraInput!) {
   createExtra(input: {attributes: $attributes}) {
@@ -1369,9 +1323,9 @@ export type CreateTicketTypeMutationHookResult = ReturnType<typeof useCreateTick
 export type CreateTicketTypeMutationResult = Apollo.MutationResult<Operation.CreateTicketTypeMutation>;
 export type CreateTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.CreateTicketTypeMutation, Operation.CreateTicketTypeMutationVariables>;
 export const CreateGhostDocument = gql`
-    mutation CreateGhost($name: String!, $phone: String, $email: String!, $federationNumber: String, $role: Int!, $license: Int, $operator: Int!, $exitWeight: Float!) {
+    mutation CreateGhost($name: String!, $phone: String, $email: String!, $federationNumber: String, $role: Int!, $license: Int, $operator: Int!, $bodyMassKg: Float!) {
   createGhost(
-    input: {attributes: {role: $role, federationNumber: $federationNumber, name: $name, phone: $phone, email: $email, operator: $operator, license: $license, exitWeight: $exitWeight}}
+    input: {attributes: {role: $role, federationNumber: $federationNumber, name: $name, phone: $phone, email: $email, operator: $operator, license: $license, bodyMassKg: $bodyMassKg}}
   ) {
     errors
     fieldErrors {
@@ -1406,7 +1360,7 @@ export type CreateGhostMutationFn = Apollo.MutationFunction<Operation.CreateGhos
  *      role: // value for 'role'
  *      license: // value for 'license'
  *      operator: // value for 'operator'
- *      exitWeight: // value for 'exitWeight'
+ *      bodyMassKg: // value for 'bodyMassKg'
  *   },
  * });
  */
@@ -1417,6 +1371,52 @@ export function useCreateGhostMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateGhostMutationHookResult = ReturnType<typeof useCreateGhostMutation>;
 export type CreateGhostMutationResult = Apollo.MutationResult<Operation.CreateGhostMutation>;
 export type CreateGhostMutationOptions = Apollo.BaseMutationOptions<Operation.CreateGhostMutation, Operation.CreateGhostMutationVariables>;
+export const CreateVehicleDocument = gql`
+    mutation CreateVehicle($attributes: VehicleInput!) {
+  createVehicle(input: {attributes: $attributes}) {
+    vehicle {
+      ...vehicleEssentials
+      operator {
+        id
+        vehicles {
+          ...vehicleEssentials
+        }
+      }
+    }
+    fieldErrors {
+      field
+      message
+    }
+    errors
+  }
+}
+    ${VehicleEssentialsFragmentDoc}`;
+export type CreateVehicleMutationFn = Apollo.MutationFunction<Operation.CreateVehicleMutation, Operation.CreateVehicleMutationVariables>;
+
+/**
+ * __useCreateVehicleMutation__
+ *
+ * To run a mutation, you first call `useCreateVehicleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateVehicleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createVehicleMutation, { data, loading, error }] = useCreateVehicleMutation({
+ *   variables: {
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useCreateVehicleMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateVehicleMutation, Operation.CreateVehicleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.CreateVehicleMutation, Operation.CreateVehicleMutationVariables>(CreateVehicleDocument, options);
+      }
+export type CreateVehicleMutationHookResult = ReturnType<typeof useCreateVehicleMutation>;
+export type CreateVehicleMutationResult = Apollo.MutationResult<Operation.CreateVehicleMutation>;
+export type CreateVehicleMutationOptions = Apollo.BaseMutationOptions<Operation.CreateVehicleMutation, Operation.CreateVehicleMutationVariables>;
 export const DeleteSlotDocument = gql`
     mutation DeleteSlot($id: Int!) {
   deleteSlot(input: {id: $id}) {
@@ -1732,9 +1732,9 @@ export type LoginWithAppleMutationHookResult = ReturnType<typeof useLoginWithApp
 export type LoginWithAppleMutationResult = Apollo.MutationResult<Operation.LoginWithAppleMutation>;
 export type LoginWithAppleMutationOptions = Apollo.BaseMutationOptions<Operation.LoginWithAppleMutation, Operation.LoginWithAppleMutationVariables>;
 export const ManifestGroupDocument = gql`
-    mutation ManifestGroup($jumpType: ID, $extras: [ID!], $load: ID, $ticketType: ID, $groupNumber: Int, $userGroup: [SlotUser!]!) {
+    mutation ManifestGroup($activityType: ID, $extras: [ID!], $load: ID, $ticketType: ID, $groupNumber: Int, $userGroup: [SlotUser!]!) {
   createSlots(
-    input: {attributes: {jumpType: $jumpType, groupNumber: $groupNumber, extras: $extras, load: $load, ticketType: $ticketType, userGroup: $userGroup}}
+    input: {attributes: {activityType: $activityType, groupNumber: $groupNumber, extras: $extras, load: $load, ticketType: $ticketType, userGroup: $userGroup}}
   ) {
     errors
     fieldErrors {
@@ -1762,7 +1762,7 @@ export type ManifestGroupMutationFn = Apollo.MutationFunction<Operation.Manifest
  * @example
  * const [manifestGroupMutation, { data, loading, error }] = useManifestGroupMutation({
  *   variables: {
- *      jumpType: // value for 'jumpType'
+ *      activityType: // value for 'activityType'
  *      extras: // value for 'extras'
  *      load: // value for 'load'
  *      ticketType: // value for 'ticketType'
@@ -1779,9 +1779,9 @@ export type ManifestGroupMutationHookResult = ReturnType<typeof useManifestGroup
 export type ManifestGroupMutationResult = Apollo.MutationResult<Operation.ManifestGroupMutation>;
 export type ManifestGroupMutationOptions = Apollo.BaseMutationOptions<Operation.ManifestGroupMutation, Operation.ManifestGroupMutationVariables>;
 export const ManifestUserDocument = gql`
-    mutation ManifestUser($jumpType: ID, $extras: [ID!], $load: ID, $rig: ID, $ticketType: ID, $membership: ID, $exitWeight: Float, $passengerName: String, $groupNumber: Int, $passengerExitWeight: Float) {
+    mutation ManifestUser($activityType: ID, $extras: [ID!], $load: ID, $rig: ID, $ticketType: ID, $membership: ID, $bodyMassKg: Float, $guestName: String, $groupNumber: Int, $guestBodyMassKg: Float) {
   createSlot(
-    input: {attributes: {jumpType: $jumpType, extras: $extras, load: $load, rig: $rig, groupNumber: $groupNumber, ticketType: $ticketType, membership: $membership, exitWeight: $exitWeight, passengerExitWeight: $passengerExitWeight, passengerName: $passengerName}}
+    input: {attributes: {activityType: $activityType, extras: $extras, load: $load, rig: $rig, groupNumber: $groupNumber, ticketType: $ticketType, membership: $membership, bodyMassKg: $bodyMassKg, guestBodyMassKg: $guestBodyMassKg, guestName: $guestName}}
   ) {
     errors
     fieldErrors {
@@ -1809,16 +1809,16 @@ export type ManifestUserMutationFn = Apollo.MutationFunction<Operation.ManifestU
  * @example
  * const [manifestUserMutation, { data, loading, error }] = useManifestUserMutation({
  *   variables: {
- *      jumpType: // value for 'jumpType'
+ *      activityType: // value for 'activityType'
  *      extras: // value for 'extras'
  *      load: // value for 'load'
  *      rig: // value for 'rig'
  *      ticketType: // value for 'ticketType'
  *      membership: // value for 'membership'
- *      exitWeight: // value for 'exitWeight'
- *      passengerName: // value for 'passengerName'
+ *      bodyMassKg: // value for 'bodyMassKg'
+ *      guestName: // value for 'guestName'
  *      groupNumber: // value for 'groupNumber'
- *      passengerExitWeight: // value for 'passengerExitWeight'
+ *      guestBodyMassKg: // value for 'guestBodyMassKg'
  *   },
  * });
  */
@@ -2009,24 +2009,112 @@ export function useRevokePermissionMutation(baseOptions?: Apollo.MutationHookOpt
 export type RevokePermissionMutationHookResult = ReturnType<typeof useRevokePermissionMutation>;
 export type RevokePermissionMutationResult = Apollo.MutationResult<Operation.RevokePermissionMutation>;
 export type RevokePermissionMutationOptions = Apollo.BaseMutationOptions<Operation.RevokePermissionMutation, Operation.RevokePermissionMutationVariables>;
-export const UpdateAircraftDocument = gql`
-    mutation UpdateAircraft($id: Int!, $attributes: PlaneInput!) {
-  updatePlane(input: {id: $id, attributes: $attributes}) {
-    plane {
-      ...planeEssentials
-      operator {
-        id
-        name
-        planes {
-          id
-          name
-          registration
-          minSlots
-          maxSlots
-          hours
-          nextMaintenanceHours
-        }
+export const UpdateDailyLogDocument = gql`
+    mutation UpdateDailyLog($date: ISO8601Date!, $operator: ID!, $attributes: DailyLogInput!) {
+  updateDailyLog(
+    input: {operator: $operator, date: $date, attributes: $attributes}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    dailyLog {
+      ...dailyLogEntry
+    }
+  }
+}
+    ${DailyLogEntryFragmentDoc}`;
+export type UpdateDailyLogMutationFn = Apollo.MutationFunction<Operation.UpdateDailyLogMutation, Operation.UpdateDailyLogMutationVariables>;
+
+/**
+ * __useUpdateDailyLogMutation__
+ *
+ * To run a mutation, you first call `useUpdateDailyLogMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDailyLogMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDailyLogMutation, { data, loading, error }] = useUpdateDailyLogMutation({
+ *   variables: {
+ *      date: // value for 'date'
+ *      operator: // value for 'operator'
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useUpdateDailyLogMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateDailyLogMutation, Operation.UpdateDailyLogMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateDailyLogMutation, Operation.UpdateDailyLogMutationVariables>(UpdateDailyLogDocument, options);
       }
+export type UpdateDailyLogMutationHookResult = ReturnType<typeof useUpdateDailyLogMutation>;
+export type UpdateDailyLogMutationResult = Apollo.MutationResult<Operation.UpdateDailyLogMutation>;
+export type UpdateDailyLogMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateDailyLogMutation, Operation.UpdateDailyLogMutationVariables>;
+export const UpdateEquipmentDocument = gql`
+    mutation UpdateEquipment($id: Int!, $name: String, $make: String, $model: String, $serial: String, $isPublic: Boolean, $rigType: String, $canopySize: Int, $packingCard: String, $repackExpiresAt: Int, $userId: Int, $operatorId: Int) {
+  updateEquipment(
+    input: {id: $id, attributes: {name: $name, make: $make, packingCard: $packingCard, isPublic: $isPublic, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, operatorId: $operatorId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    rig {
+      ...userRigDetailed
+    }
+  }
+}
+    ${UserRigDetailedFragmentDoc}`;
+export type UpdateEquipmentMutationFn = Apollo.MutationFunction<Operation.UpdateEquipmentMutation, Operation.UpdateEquipmentMutationVariables>;
+
+/**
+ * __useUpdateEquipmentMutation__
+ *
+ * To run a mutation, you first call `useUpdateEquipmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEquipmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateEquipmentMutation, { data, loading, error }] = useUpdateEquipmentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      make: // value for 'make'
+ *      model: // value for 'model'
+ *      serial: // value for 'serial'
+ *      isPublic: // value for 'isPublic'
+ *      rigType: // value for 'rigType'
+ *      canopySize: // value for 'canopySize'
+ *      packingCard: // value for 'packingCard'
+ *      repackExpiresAt: // value for 'repackExpiresAt'
+ *      userId: // value for 'userId'
+ *      operatorId: // value for 'operatorId'
+ *   },
+ * });
+ */
+export function useUpdateEquipmentMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateEquipmentMutation, Operation.UpdateEquipmentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateEquipmentMutation, Operation.UpdateEquipmentMutationVariables>(UpdateEquipmentDocument, options);
+      }
+export type UpdateEquipmentMutationHookResult = ReturnType<typeof useUpdateEquipmentMutation>;
+export type UpdateEquipmentMutationResult = Apollo.MutationResult<Operation.UpdateEquipmentMutation>;
+export type UpdateEquipmentMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateEquipmentMutation, Operation.UpdateEquipmentMutationVariables>;
+export const UpdateEquipmentInspectionTemplateDocument = gql`
+    mutation UpdateEquipmentInspectionTemplate($operatorId: Int, $formId: Int, $definition: String) {
+  updateFormTemplate(
+    input: {id: $formId, attributes: {operatorId: $operatorId, definition: $definition}}
+  ) {
+    formTemplate {
+      id
+      name
+      definition
     }
     fieldErrors {
       field
@@ -2035,34 +2123,35 @@ export const UpdateAircraftDocument = gql`
     errors
   }
 }
-    ${PlaneEssentialsFragmentDoc}`;
-export type UpdateAircraftMutationFn = Apollo.MutationFunction<Operation.UpdateAircraftMutation, Operation.UpdateAircraftMutationVariables>;
+    `;
+export type UpdateEquipmentInspectionTemplateMutationFn = Apollo.MutationFunction<Operation.UpdateEquipmentInspectionTemplateMutation, Operation.UpdateEquipmentInspectionTemplateMutationVariables>;
 
 /**
- * __useUpdateAircraftMutation__
+ * __useUpdateEquipmentInspectionTemplateMutation__
  *
- * To run a mutation, you first call `useUpdateAircraftMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateAircraftMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateEquipmentInspectionTemplateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateEquipmentInspectionTemplateMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateAircraftMutation, { data, loading, error }] = useUpdateAircraftMutation({
+ * const [updateEquipmentInspectionTemplateMutation, { data, loading, error }] = useUpdateEquipmentInspectionTemplateMutation({
  *   variables: {
- *      id: // value for 'id'
- *      attributes: // value for 'attributes'
+ *      operatorId: // value for 'operatorId'
+ *      formId: // value for 'formId'
+ *      definition: // value for 'definition'
  *   },
  * });
  */
-export function useUpdateAircraftMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateAircraftMutation, Operation.UpdateAircraftMutationVariables>) {
+export function useUpdateEquipmentInspectionTemplateMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateEquipmentInspectionTemplateMutation, Operation.UpdateEquipmentInspectionTemplateMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.UpdateAircraftMutation, Operation.UpdateAircraftMutationVariables>(UpdateAircraftDocument, options);
+        return Apollo.useMutation<Operation.UpdateEquipmentInspectionTemplateMutation, Operation.UpdateEquipmentInspectionTemplateMutationVariables>(UpdateEquipmentInspectionTemplateDocument, options);
       }
-export type UpdateAircraftMutationHookResult = ReturnType<typeof useUpdateAircraftMutation>;
-export type UpdateAircraftMutationResult = Apollo.MutationResult<Operation.UpdateAircraftMutation>;
-export type UpdateAircraftMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateAircraftMutation, Operation.UpdateAircraftMutationVariables>;
+export type UpdateEquipmentInspectionTemplateMutationHookResult = ReturnType<typeof useUpdateEquipmentInspectionTemplateMutation>;
+export type UpdateEquipmentInspectionTemplateMutationResult = Apollo.MutationResult<Operation.UpdateEquipmentInspectionTemplateMutation>;
+export type UpdateEquipmentInspectionTemplateMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateEquipmentInspectionTemplateMutation, Operation.UpdateEquipmentInspectionTemplateMutationVariables>;
 export const UpdateLoadDocument = gql`
     mutation UpdateLoad($id: ID!, $attributes: LoadInput!) {
   updateLoad(input: {id: $id, attributes: $attributes}) {
@@ -2152,50 +2241,6 @@ export function useUpdateLostPasswordMutation(baseOptions?: Apollo.MutationHookO
 export type UpdateLostPasswordMutationHookResult = ReturnType<typeof useUpdateLostPasswordMutation>;
 export type UpdateLostPasswordMutationResult = Apollo.MutationResult<Operation.UpdateLostPasswordMutation>;
 export type UpdateLostPasswordMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateLostPasswordMutation, Operation.UpdateLostPasswordMutationVariables>;
-export const UpdateMasterLogDocument = gql`
-    mutation UpdateMasterLog($date: ISO8601Date!, $operator: ID!, $attributes: MasterLogInput!) {
-  updateMasterLog(
-    input: {operator: $operator, date: $date, attributes: $attributes}
-  ) {
-    errors
-    fieldErrors {
-      field
-      message
-    }
-    masterLog {
-      ...masterLogEntry
-    }
-  }
-}
-    ${MasterLogEntryFragmentDoc}`;
-export type UpdateMasterLogMutationFn = Apollo.MutationFunction<Operation.UpdateMasterLogMutation, Operation.UpdateMasterLogMutationVariables>;
-
-/**
- * __useUpdateMasterLogMutation__
- *
- * To run a mutation, you first call `useUpdateMasterLogMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateMasterLogMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateMasterLogMutation, { data, loading, error }] = useUpdateMasterLogMutation({
- *   variables: {
- *      date: // value for 'date'
- *      operator: // value for 'operator'
- *      attributes: // value for 'attributes'
- *   },
- * });
- */
-export function useUpdateMasterLogMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateMasterLogMutation, Operation.UpdateMasterLogMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.UpdateMasterLogMutation, Operation.UpdateMasterLogMutationVariables>(UpdateMasterLogDocument, options);
-      }
-export type UpdateMasterLogMutationHookResult = ReturnType<typeof useUpdateMasterLogMutation>;
-export type UpdateMasterLogMutationResult = Apollo.MutationResult<Operation.UpdateMasterLogMutation>;
-export type UpdateMasterLogMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateMasterLogMutation, Operation.UpdateMasterLogMutationVariables>;
 export const UpdateMembershipDocument = gql`
     mutation UpdateMembership($membershipId: ID!, $attributes: MembershipInput!) {
   updateMembership(input: {membership: $membershipId, attributes: $attributes}) {
@@ -2278,105 +2323,6 @@ export function useUpdateOperatorMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateOperatorMutationHookResult = ReturnType<typeof useUpdateOperatorMutation>;
 export type UpdateOperatorMutationResult = Apollo.MutationResult<Operation.UpdateOperatorMutation>;
 export type UpdateOperatorMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateOperatorMutation, Operation.UpdateOperatorMutationVariables>;
-export const UpdateRigDocument = gql`
-    mutation UpdateRig($id: Int!, $name: String, $make: String, $model: String, $serial: String, $isPublic: Boolean, $rigType: String, $canopySize: Int, $packingCard: String, $repackExpiresAt: Int, $userId: Int, $operatorId: Int) {
-  updateRig(
-    input: {id: $id, attributes: {name: $name, make: $make, packingCard: $packingCard, isPublic: $isPublic, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, operatorId: $operatorId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
-  ) {
-    errors
-    fieldErrors {
-      field
-      message
-    }
-    rig {
-      ...userRigDetailed
-    }
-  }
-}
-    ${UserRigDetailedFragmentDoc}`;
-export type UpdateRigMutationFn = Apollo.MutationFunction<Operation.UpdateRigMutation, Operation.UpdateRigMutationVariables>;
-
-/**
- * __useUpdateRigMutation__
- *
- * To run a mutation, you first call `useUpdateRigMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateRigMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateRigMutation, { data, loading, error }] = useUpdateRigMutation({
- *   variables: {
- *      id: // value for 'id'
- *      name: // value for 'name'
- *      make: // value for 'make'
- *      model: // value for 'model'
- *      serial: // value for 'serial'
- *      isPublic: // value for 'isPublic'
- *      rigType: // value for 'rigType'
- *      canopySize: // value for 'canopySize'
- *      packingCard: // value for 'packingCard'
- *      repackExpiresAt: // value for 'repackExpiresAt'
- *      userId: // value for 'userId'
- *      operatorId: // value for 'operatorId'
- *   },
- * });
- */
-export function useUpdateRigMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateRigMutation, Operation.UpdateRigMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.UpdateRigMutation, Operation.UpdateRigMutationVariables>(UpdateRigDocument, options);
-      }
-export type UpdateRigMutationHookResult = ReturnType<typeof useUpdateRigMutation>;
-export type UpdateRigMutationResult = Apollo.MutationResult<Operation.UpdateRigMutation>;
-export type UpdateRigMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateRigMutation, Operation.UpdateRigMutationVariables>;
-export const UpdateRigInspectionTemplateDocument = gql`
-    mutation UpdateRigInspectionTemplate($operatorId: Int, $formId: Int, $definition: String) {
-  updateFormTemplate(
-    input: {id: $formId, attributes: {operatorId: $operatorId, definition: $definition}}
-  ) {
-    formTemplate {
-      id
-      name
-      definition
-    }
-    fieldErrors {
-      field
-      message
-    }
-    errors
-  }
-}
-    `;
-export type UpdateRigInspectionTemplateMutationFn = Apollo.MutationFunction<Operation.UpdateRigInspectionTemplateMutation, Operation.UpdateRigInspectionTemplateMutationVariables>;
-
-/**
- * __useUpdateRigInspectionTemplateMutation__
- *
- * To run a mutation, you first call `useUpdateRigInspectionTemplateMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateRigInspectionTemplateMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateRigInspectionTemplateMutation, { data, loading, error }] = useUpdateRigInspectionTemplateMutation({
- *   variables: {
- *      operatorId: // value for 'operatorId'
- *      formId: // value for 'formId'
- *      definition: // value for 'definition'
- *   },
- * });
- */
-export function useUpdateRigInspectionTemplateMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateRigInspectionTemplateMutation, Operation.UpdateRigInspectionTemplateMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.UpdateRigInspectionTemplateMutation, Operation.UpdateRigInspectionTemplateMutationVariables>(UpdateRigInspectionTemplateDocument, options);
-      }
-export type UpdateRigInspectionTemplateMutationHookResult = ReturnType<typeof useUpdateRigInspectionTemplateMutation>;
-export type UpdateRigInspectionTemplateMutationResult = Apollo.MutationResult<Operation.UpdateRigInspectionTemplateMutation>;
-export type UpdateRigInspectionTemplateMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateRigInspectionTemplateMutation, Operation.UpdateRigInspectionTemplateMutationVariables>;
 export const UpdateRoleDocument = gql`
     mutation UpdateRole($roleId: Int!, $permissionName: String!, $enabled: Boolean!) {
   updateRole(input: {id: $roleId, permission: $permissionName, enabled: $enabled}) {
@@ -2521,9 +2467,9 @@ export type UpdateTicketTypeMutationHookResult = ReturnType<typeof useUpdateTick
 export type UpdateTicketTypeMutationResult = Apollo.MutationResult<Operation.UpdateTicketTypeMutation>;
 export type UpdateTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>;
 export const UpdateUserDocument = gql`
-    mutation UpdateUser($membership: ID, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $license: Int, $exitWeight: Float) {
+    mutation UpdateUser($membership: ID, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $license: Int, $bodyMassKg: Float) {
   updateUser(
-    input: {membership: $membership, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, license: $license, exitWeight: $exitWeight}}
+    input: {membership: $membership, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, license: $license, bodyMassKg: $bodyMassKg}}
   ) {
     errors
     fieldErrors {
@@ -2559,7 +2505,7 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<Operation.UpdateUserM
  *      pushToken: // value for 'pushToken'
  *      nickname: // value for 'nickname'
  *      license: // value for 'license'
- *      exitWeight: // value for 'exitWeight'
+ *      bodyMassKg: // value for 'bodyMassKg'
  *   },
  * });
  */
@@ -2570,6 +2516,60 @@ export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<O
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<Operation.UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateUserMutation, Operation.UpdateUserMutationVariables>;
+export const UpdateVehicleDocument = gql`
+    mutation UpdateVehicle($id: Int!, $attributes: VehicleInput!) {
+  updateVehicle(input: {id: $id, attributes: $attributes}) {
+    vehicle {
+      ...vehicleEssentials
+      operator {
+        id
+        name
+        vehicles {
+          id
+          name
+          registration
+          minCapacity
+          capacity
+          hours
+          nextMaintenanceHours
+        }
+      }
+    }
+    fieldErrors {
+      field
+      message
+    }
+    errors
+  }
+}
+    ${VehicleEssentialsFragmentDoc}`;
+export type UpdateVehicleMutationFn = Apollo.MutationFunction<Operation.UpdateVehicleMutation, Operation.UpdateVehicleMutationVariables>;
+
+/**
+ * __useUpdateVehicleMutation__
+ *
+ * To run a mutation, you first call `useUpdateVehicleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateVehicleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateVehicleMutation, { data, loading, error }] = useUpdateVehicleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useUpdateVehicleMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateVehicleMutation, Operation.UpdateVehicleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateVehicleMutation, Operation.UpdateVehicleMutationVariables>(UpdateVehicleDocument, options);
+      }
+export type UpdateVehicleMutationHookResult = ReturnType<typeof useUpdateVehicleMutation>;
+export type UpdateVehicleMutationResult = Apollo.MutationResult<Operation.UpdateVehicleMutation>;
+export type UpdateVehicleMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateVehicleMutation, Operation.UpdateVehicleMutationVariables>;
 export const UpdateVisibilityDocument = gql`
     mutation UpdateVisibility($operator: ID!, $event: OperatorStateEvent!) {
   updateVisibility(input: {operator: $operator, event: $event}) {
@@ -2612,12 +2612,12 @@ export type UpdateVisibilityMutationHookResult = ReturnType<typeof useUpdateVisi
 export type UpdateVisibilityMutationResult = Apollo.MutationResult<Operation.UpdateVisibilityMutation>;
 export type UpdateVisibilityMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateVisibilityMutation, Operation.UpdateVisibilityMutationVariables>;
 export const UserSignUpDocument = gql`
-    mutation UserSignUp($email: String!, $password: String!, $passwordConfirmation: String!, $name: String!, $phone: String!, $pushToken: String, $exitWeight: Float!, $licenseId: Int) {
+    mutation UserSignUp($email: String!, $password: String!, $passwordConfirmation: String!, $name: String!, $phone: String!, $pushToken: String, $bodyMassKg: Float!, $licenseId: Int) {
   userRegister(
     email: $email
     password: $password
     passwordConfirmation: $passwordConfirmation
-    exitWeight: $exitWeight
+    bodyMassKg: $bodyMassKg
     name: $name
     phone: $phone
     pushToken: $pushToken
@@ -2667,7 +2667,7 @@ export type UserSignUpMutationFn = Apollo.MutationFunction<Operation.UserSignUpM
  *      name: // value for 'name'
  *      phone: // value for 'phone'
  *      pushToken: // value for 'pushToken'
- *      exitWeight: // value for 'exitWeight'
+ *      bodyMassKg: // value for 'bodyMassKg'
  *      licenseId: // value for 'licenseId'
  *   },
  * });
@@ -2803,6 +2803,104 @@ export type ActivityDetailsQueryHookResult = ReturnType<typeof useActivityDetail
 export type ActivityDetailsLazyQueryHookResult = ReturnType<typeof useActivityDetailsLazyQuery>;
 export type ActivityDetailsSuspenseQueryHookResult = ReturnType<typeof useActivityDetailsSuspenseQuery>;
 export type ActivityDetailsQueryResult = Apollo.QueryResult<Operation.ActivityDetailsQuery, Operation.ActivityDetailsQueryVariables>;
+export const ActivityTypesDocument = gql`
+    query ActivityTypes($allowedForMembershipIds: [Int!]) {
+  activityTypes(memberships: $allowedForMembershipIds) {
+    ...activityTypeEssentials
+  }
+}
+    ${ActivityTypeEssentialsFragmentDoc}`;
+
+/**
+ * __useActivityTypesQuery__
+ *
+ * To run a query within a React component, call `useActivityTypesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useActivityTypesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useActivityTypesQuery({
+ *   variables: {
+ *      allowedForMembershipIds: // value for 'allowedForMembershipIds'
+ *   },
+ * });
+ */
+export function useActivityTypesQuery(baseOptions?: Apollo.QueryHookOptions<Operation.ActivityTypesQuery, Operation.ActivityTypesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.ActivityTypesQuery, Operation.ActivityTypesQueryVariables>(ActivityTypesDocument, options);
+      }
+export function useActivityTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.ActivityTypesQuery, Operation.ActivityTypesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.ActivityTypesQuery, Operation.ActivityTypesQueryVariables>(ActivityTypesDocument, options);
+        }
+// @ts-ignore
+export function useActivityTypesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.ActivityTypesQuery, Operation.ActivityTypesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.ActivityTypesQuery, Operation.ActivityTypesQueryVariables>;
+export function useActivityTypesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.ActivityTypesQuery, Operation.ActivityTypesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.ActivityTypesQuery | undefined, Operation.ActivityTypesQueryVariables>;
+export function useActivityTypesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.ActivityTypesQuery, Operation.ActivityTypesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.ActivityTypesQuery, Operation.ActivityTypesQueryVariables>(ActivityTypesDocument, options);
+        }
+export type ActivityTypesQueryHookResult = ReturnType<typeof useActivityTypesQuery>;
+export type ActivityTypesLazyQueryHookResult = ReturnType<typeof useActivityTypesLazyQuery>;
+export type ActivityTypesSuspenseQueryHookResult = ReturnType<typeof useActivityTypesSuspenseQuery>;
+export type ActivityTypesQueryResult = Apollo.QueryResult<Operation.ActivityTypesQuery, Operation.ActivityTypesQueryVariables>;
+export const AllowedActivityTypesDocument = gql`
+    query AllowedActivityTypes($operatorId: ID!, $allowedForMembershipIds: [Int!]!, $isPublic: Boolean) {
+  operator(id: $operatorId) {
+    id
+    allowedActivityTypes(userId: $allowedForMembershipIds) {
+      ...activityTypeEssentials
+    }
+    ticketTypes(isPublic: $isPublic) {
+      ...ticketTypeEssentials
+    }
+  }
+  activityTypes {
+    ...activityTypeEssentials
+  }
+}
+    ${ActivityTypeEssentialsFragmentDoc}
+${TicketTypeEssentialsFragmentDoc}`;
+
+/**
+ * __useAllowedActivityTypesQuery__
+ *
+ * To run a query within a React component, call `useAllowedActivityTypesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllowedActivityTypesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAllowedActivityTypesQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *      allowedForMembershipIds: // value for 'allowedForMembershipIds'
+ *      isPublic: // value for 'isPublic'
+ *   },
+ * });
+ */
+export function useAllowedActivityTypesQuery(baseOptions: Apollo.QueryHookOptions<Operation.AllowedActivityTypesQuery, Operation.AllowedActivityTypesQueryVariables> & ({ variables: Operation.AllowedActivityTypesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.AllowedActivityTypesQuery, Operation.AllowedActivityTypesQueryVariables>(AllowedActivityTypesDocument, options);
+      }
+export function useAllowedActivityTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.AllowedActivityTypesQuery, Operation.AllowedActivityTypesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.AllowedActivityTypesQuery, Operation.AllowedActivityTypesQueryVariables>(AllowedActivityTypesDocument, options);
+        }
+// @ts-ignore
+export function useAllowedActivityTypesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.AllowedActivityTypesQuery, Operation.AllowedActivityTypesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.AllowedActivityTypesQuery, Operation.AllowedActivityTypesQueryVariables>;
+export function useAllowedActivityTypesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.AllowedActivityTypesQuery, Operation.AllowedActivityTypesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.AllowedActivityTypesQuery | undefined, Operation.AllowedActivityTypesQueryVariables>;
+export function useAllowedActivityTypesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.AllowedActivityTypesQuery, Operation.AllowedActivityTypesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.AllowedActivityTypesQuery, Operation.AllowedActivityTypesQueryVariables>(AllowedActivityTypesDocument, options);
+        }
+export type AllowedActivityTypesQueryHookResult = ReturnType<typeof useAllowedActivityTypesQuery>;
+export type AllowedActivityTypesLazyQueryHookResult = ReturnType<typeof useAllowedActivityTypesLazyQuery>;
+export type AllowedActivityTypesSuspenseQueryHookResult = ReturnType<typeof useAllowedActivityTypesSuspenseQuery>;
+export type AllowedActivityTypesQueryResult = Apollo.QueryResult<Operation.AllowedActivityTypesQuery, Operation.AllowedActivityTypesQueryVariables>;
 export const CurrentUserDocument = gql`
     query CurrentUser {
   currentUser {
@@ -2845,6 +2943,50 @@ export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
 export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
 export type CurrentUserSuspenseQueryHookResult = ReturnType<typeof useCurrentUserSuspenseQuery>;
 export type CurrentUserQueryResult = Apollo.QueryResult<Operation.CurrentUserQuery, Operation.CurrentUserQueryVariables>;
+export const DailyLogDocument = gql`
+    query DailyLog($operatorId: ID!, $date: ISO8601Date!) {
+  dailyLog(operator: $operatorId, date: $date) {
+    ...dailyLogEntry
+  }
+}
+    ${DailyLogEntryFragmentDoc}`;
+
+/**
+ * __useDailyLogQuery__
+ *
+ * To run a query within a React component, call `useDailyLogQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDailyLogQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDailyLogQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *      date: // value for 'date'
+ *   },
+ * });
+ */
+export function useDailyLogQuery(baseOptions: Apollo.QueryHookOptions<Operation.DailyLogQuery, Operation.DailyLogQueryVariables> & ({ variables: Operation.DailyLogQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.DailyLogQuery, Operation.DailyLogQueryVariables>(DailyLogDocument, options);
+      }
+export function useDailyLogLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DailyLogQuery, Operation.DailyLogQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.DailyLogQuery, Operation.DailyLogQueryVariables>(DailyLogDocument, options);
+        }
+// @ts-ignore
+export function useDailyLogSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DailyLogQuery, Operation.DailyLogQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DailyLogQuery, Operation.DailyLogQueryVariables>;
+export function useDailyLogSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DailyLogQuery, Operation.DailyLogQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DailyLogQuery | undefined, Operation.DailyLogQueryVariables>;
+export function useDailyLogSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DailyLogQuery, Operation.DailyLogQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.DailyLogQuery, Operation.DailyLogQueryVariables>(DailyLogDocument, options);
+        }
+export type DailyLogQueryHookResult = ReturnType<typeof useDailyLogQuery>;
+export type DailyLogLazyQueryHookResult = ReturnType<typeof useDailyLogLazyQuery>;
+export type DailyLogSuspenseQueryHookResult = ReturnType<typeof useDailyLogSuspenseQuery>;
+export type DailyLogQueryResult = Apollo.QueryResult<Operation.DailyLogQuery, Operation.DailyLogQueryVariables>;
 export const TicketTypeExtrasDocument = gql`
     query TicketTypeExtras($operatorId: ID!) {
   extras(operator: $operatorId) {
@@ -2976,104 +3118,6 @@ export type AddressToLocationQueryHookResult = ReturnType<typeof useAddressToLoc
 export type AddressToLocationLazyQueryHookResult = ReturnType<typeof useAddressToLocationLazyQuery>;
 export type AddressToLocationSuspenseQueryHookResult = ReturnType<typeof useAddressToLocationSuspenseQuery>;
 export type AddressToLocationQueryResult = Apollo.QueryResult<Operation.AddressToLocationQuery, Operation.AddressToLocationQueryVariables>;
-export const JumpTypesDocument = gql`
-    query JumpTypes($allowedForMembershipIds: [Int!]) {
-  jumpTypes(memberships: $allowedForMembershipIds) {
-    ...jumpTypeEssentials
-  }
-}
-    ${JumpTypeEssentialsFragmentDoc}`;
-
-/**
- * __useJumpTypesQuery__
- *
- * To run a query within a React component, call `useJumpTypesQuery` and pass it any options that fit your needs.
- * When your component renders, `useJumpTypesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useJumpTypesQuery({
- *   variables: {
- *      allowedForMembershipIds: // value for 'allowedForMembershipIds'
- *   },
- * });
- */
-export function useJumpTypesQuery(baseOptions?: Apollo.QueryHookOptions<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>(JumpTypesDocument, options);
-      }
-export function useJumpTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>(JumpTypesDocument, options);
-        }
-// @ts-ignore
-export function useJumpTypesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>;
-export function useJumpTypesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.JumpTypesQuery | undefined, Operation.JumpTypesQueryVariables>;
-export function useJumpTypesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>(JumpTypesDocument, options);
-        }
-export type JumpTypesQueryHookResult = ReturnType<typeof useJumpTypesQuery>;
-export type JumpTypesLazyQueryHookResult = ReturnType<typeof useJumpTypesLazyQuery>;
-export type JumpTypesSuspenseQueryHookResult = ReturnType<typeof useJumpTypesSuspenseQuery>;
-export type JumpTypesQueryResult = Apollo.QueryResult<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>;
-export const AllowedJumpTypesDocument = gql`
-    query AllowedJumpTypes($operatorId: ID!, $allowedForMembershipIds: [Int!]!, $isPublic: Boolean) {
-  operator(id: $operatorId) {
-    id
-    allowedJumpTypes(userId: $allowedForMembershipIds) {
-      ...jumpTypeEssentials
-    }
-    ticketTypes(isPublic: $isPublic) {
-      ...ticketTypeEssentials
-    }
-  }
-  jumpTypes {
-    ...jumpTypeEssentials
-  }
-}
-    ${JumpTypeEssentialsFragmentDoc}
-${TicketTypeEssentialsFragmentDoc}`;
-
-/**
- * __useAllowedJumpTypesQuery__
- *
- * To run a query within a React component, call `useAllowedJumpTypesQuery` and pass it any options that fit your needs.
- * When your component renders, `useAllowedJumpTypesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAllowedJumpTypesQuery({
- *   variables: {
- *      operatorId: // value for 'operatorId'
- *      allowedForMembershipIds: // value for 'allowedForMembershipIds'
- *      isPublic: // value for 'isPublic'
- *   },
- * });
- */
-export function useAllowedJumpTypesQuery(baseOptions: Apollo.QueryHookOptions<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables> & ({ variables: Operation.AllowedJumpTypesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>(AllowedJumpTypesDocument, options);
-      }
-export function useAllowedJumpTypesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>(AllowedJumpTypesDocument, options);
-        }
-// @ts-ignore
-export function useAllowedJumpTypesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>;
-export function useAllowedJumpTypesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.AllowedJumpTypesQuery | undefined, Operation.AllowedJumpTypesQueryVariables>;
-export function useAllowedJumpTypesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>(AllowedJumpTypesDocument, options);
-        }
-export type AllowedJumpTypesQueryHookResult = ReturnType<typeof useAllowedJumpTypesQuery>;
-export type AllowedJumpTypesLazyQueryHookResult = ReturnType<typeof useAllowedJumpTypesLazyQuery>;
-export type AllowedJumpTypesSuspenseQueryHookResult = ReturnType<typeof useAllowedJumpTypesSuspenseQuery>;
-export type AllowedJumpTypesQueryResult = Apollo.QueryResult<Operation.AllowedJumpTypesQuery, Operation.AllowedJumpTypesQueryVariables>;
 export const LicensesDocument = gql`
     query Licenses($federationId: Int) {
   licenses(federationId: $federationId) {
@@ -3208,50 +3252,6 @@ export type LoadsQueryHookResult = ReturnType<typeof useLoadsQuery>;
 export type LoadsLazyQueryHookResult = ReturnType<typeof useLoadsLazyQuery>;
 export type LoadsSuspenseQueryHookResult = ReturnType<typeof useLoadsSuspenseQuery>;
 export type LoadsQueryResult = Apollo.QueryResult<Operation.LoadsQuery, Operation.LoadsQueryVariables>;
-export const MasterLogDocument = gql`
-    query MasterLog($operatorId: ID!, $date: ISO8601Date!) {
-  masterLog(operator: $operatorId, date: $date) {
-    ...masterLogEntry
-  }
-}
-    ${MasterLogEntryFragmentDoc}`;
-
-/**
- * __useMasterLogQuery__
- *
- * To run a query within a React component, call `useMasterLogQuery` and pass it any options that fit your needs.
- * When your component renders, `useMasterLogQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMasterLogQuery({
- *   variables: {
- *      operatorId: // value for 'operatorId'
- *      date: // value for 'date'
- *   },
- * });
- */
-export function useMasterLogQuery(baseOptions: Apollo.QueryHookOptions<Operation.MasterLogQuery, Operation.MasterLogQueryVariables> & ({ variables: Operation.MasterLogQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>(MasterLogDocument, options);
-      }
-export function useMasterLogLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>(MasterLogDocument, options);
-        }
-// @ts-ignore
-export function useMasterLogSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>;
-export function useMasterLogSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MasterLogQuery | undefined, Operation.MasterLogQueryVariables>;
-export function useMasterLogSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>(MasterLogDocument, options);
-        }
-export type MasterLogQueryHookResult = ReturnType<typeof useMasterLogQuery>;
-export type MasterLogLazyQueryHookResult = ReturnType<typeof useMasterLogLazyQuery>;
-export type MasterLogSuspenseQueryHookResult = ReturnType<typeof useMasterLogSuspenseQuery>;
-export type MasterLogQueryResult = Apollo.QueryResult<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>;
 export const MembershipsDocument = gql`
     query Memberships($operatorId: ID!, $search: String, $permissions: [Permission!], $first: Int, $after: String, $licensed: Boolean) {
   memberships(
@@ -3933,49 +3933,6 @@ export type OperatorsQueryHookResult = ReturnType<typeof useOperatorsQuery>;
 export type OperatorsLazyQueryHookResult = ReturnType<typeof useOperatorsLazyQuery>;
 export type OperatorsSuspenseQueryHookResult = ReturnType<typeof useOperatorsSuspenseQuery>;
 export type OperatorsQueryResult = Apollo.QueryResult<Operation.OperatorsQuery, Operation.OperatorsQueryVariables>;
-export const PlanesDocument = gql`
-    query Planes($operatorId: ID!) {
-  planes(operator: $operatorId) {
-    ...planeEssentials
-  }
-}
-    ${PlaneEssentialsFragmentDoc}`;
-
-/**
- * __usePlanesQuery__
- *
- * To run a query within a React component, call `usePlanesQuery` and pass it any options that fit your needs.
- * When your component renders, `usePlanesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePlanesQuery({
- *   variables: {
- *      operatorId: // value for 'operatorId'
- *   },
- * });
- */
-export function usePlanesQuery(baseOptions: Apollo.QueryHookOptions<Operation.PlanesQuery, Operation.PlanesQueryVariables> & ({ variables: Operation.PlanesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.PlanesQuery, Operation.PlanesQueryVariables>(PlanesDocument, options);
-      }
-export function usePlanesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.PlanesQuery, Operation.PlanesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.PlanesQuery, Operation.PlanesQueryVariables>(PlanesDocument, options);
-        }
-// @ts-ignore
-export function usePlanesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.PlanesQuery, Operation.PlanesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.PlanesQuery, Operation.PlanesQueryVariables>;
-export function usePlanesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.PlanesQuery, Operation.PlanesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.PlanesQuery | undefined, Operation.PlanesQueryVariables>;
-export function usePlanesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.PlanesQuery, Operation.PlanesQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.PlanesQuery, Operation.PlanesQueryVariables>(PlanesDocument, options);
-        }
-export type PlanesQueryHookResult = ReturnType<typeof usePlanesQuery>;
-export type PlanesLazyQueryHookResult = ReturnType<typeof usePlanesLazyQuery>;
-export type PlanesSuspenseQueryHookResult = ReturnType<typeof usePlanesSuspenseQuery>;
-export type PlanesQueryResult = Apollo.QueryResult<Operation.PlanesQuery, Operation.PlanesQueryVariables>;
 export const CurrentUserPermissionsDocument = gql`
     query CurrentUserPermissions($operatorId: ID!) {
   operator(id: $operatorId) {
@@ -4257,6 +4214,49 @@ export type TicketTypesQueryHookResult = ReturnType<typeof useTicketTypesQuery>;
 export type TicketTypesLazyQueryHookResult = ReturnType<typeof useTicketTypesLazyQuery>;
 export type TicketTypesSuspenseQueryHookResult = ReturnType<typeof useTicketTypesSuspenseQuery>;
 export type TicketTypesQueryResult = Apollo.QueryResult<Operation.TicketTypesQuery, Operation.TicketTypesQueryVariables>;
+export const VehiclesDocument = gql`
+    query Vehicles($operatorId: ID!) {
+  vehicles(operator: $operatorId) {
+    ...vehicleEssentials
+  }
+}
+    ${VehicleEssentialsFragmentDoc}`;
+
+/**
+ * __useVehiclesQuery__
+ *
+ * To run a query within a React component, call `useVehiclesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVehiclesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVehiclesQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *   },
+ * });
+ */
+export function useVehiclesQuery(baseOptions: Apollo.QueryHookOptions<Operation.VehiclesQuery, Operation.VehiclesQueryVariables> & ({ variables: Operation.VehiclesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.VehiclesQuery, Operation.VehiclesQueryVariables>(VehiclesDocument, options);
+      }
+export function useVehiclesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.VehiclesQuery, Operation.VehiclesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.VehiclesQuery, Operation.VehiclesQueryVariables>(VehiclesDocument, options);
+        }
+// @ts-ignore
+export function useVehiclesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.VehiclesQuery, Operation.VehiclesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.VehiclesQuery, Operation.VehiclesQueryVariables>;
+export function useVehiclesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.VehiclesQuery, Operation.VehiclesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.VehiclesQuery | undefined, Operation.VehiclesQueryVariables>;
+export function useVehiclesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.VehiclesQuery, Operation.VehiclesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.VehiclesQuery, Operation.VehiclesQueryVariables>(VehiclesDocument, options);
+        }
+export type VehiclesQueryHookResult = ReturnType<typeof useVehiclesQuery>;
+export type VehiclesLazyQueryHookResult = ReturnType<typeof useVehiclesLazyQuery>;
+export type VehiclesSuspenseQueryHookResult = ReturnType<typeof useVehiclesSuspenseQuery>;
+export type VehiclesQueryResult = Apollo.QueryResult<Operation.VehiclesQuery, Operation.VehiclesQueryVariables>;
 export const LoadCreatedDocument = gql`
     subscription LoadCreated($operatorId: ID!) {
   loadCreated(operatorId: $operatorId) {

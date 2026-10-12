@@ -13,7 +13,7 @@ import { OperatorState } from 'app/api/schema.d';
 import Stats, { IStatsProps } from './statistics/Stats';
 import LoadsByDay from './statistics/LoadsByDay';
 import OperatorsTable from './OperatorsTable';
-import JumpTypePieChart from './statistics/JumpTypePieChart';
+import ActivityTypePieChart from './statistics/ActivityTypePieChart';
 
 enum TimeRange {
   AllTime = 0,
@@ -82,7 +82,10 @@ function AdminOverviewPage() {
         selectedOperators || [],
         (operator) => operator?.statistics?.pilotCount || 0
       ),
-      dzsoCount: sumBy(selectedOperators || [], (operator) => operator?.statistics?.dzsoCount || 0),
+      dutyOfficerCount: sumBy(
+        selectedOperators || [],
+        (operator) => operator?.statistics?.dutyOfficerCount || 0
+      ),
       gcaCount: sumBy(selectedOperators || [], (operator) => operator?.statistics?.gcaCount || 0),
       totalUserCount: sumBy(
         selectedOperators || [],
@@ -99,8 +102,8 @@ function AdminOverviewPage() {
       loadCountByDay: (selectedOperators || []).flatMap(
         (operator) => operator?.statistics?.loadCountByDay || []
       ),
-      slotsByJumpType: (selectedOperators || []).flatMap(
-        (operator) => operator?.statistics?.slotsByJumpType || []
+      slotsByActivityType: (selectedOperators || []).flatMap(
+        (operator) => operator?.statistics?.slotsByActivityType || []
       ),
     }),
     [selectedOperators]
@@ -189,7 +192,7 @@ function AdminOverviewPage() {
             },
             {
               label: 'DZSO',
-              value: summedStatistics.dzsoCount || 0,
+              value: summedStatistics.dutyOfficerCount || 0,
             },
           ]}
         />
@@ -203,9 +206,9 @@ function AdminOverviewPage() {
           }
         />
 
-        <JumpTypePieChart
-          style={styles.jumpTypesCard}
-          data={summedStatistics?.slotsByJumpType || []}
+        <ActivityTypePieChart
+          style={styles.activityTypesCard}
+          data={summedStatistics?.slotsByActivityType || []}
         />
       </View>
       <View style={StyleSheet.flatten([styles.row, styles.table])}>
@@ -264,7 +267,7 @@ const styles = StyleSheet.create({
     flex: Platform.OS === 'web' ? 3 / 4 : undefined,
     marginVertical: 4,
   },
-  jumpTypesCard: {
+  activityTypesCard: {
     height: 300,
     marginVertical: 4,
     width: Platform.OS === 'web' ? undefined : '100%',

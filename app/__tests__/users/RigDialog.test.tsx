@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View } from 'react-native';
-import { UpdateRigDocument } from 'app/api/reflection';
-import { MUTATION_CREATE_RIG } from 'app/api/hooks/useMutationCreateRig';
+import { UpdateEquipmentDocument } from 'app/api/reflection';
+import { MUTATION_CREATE_EQUIPMENT } from 'app/api/hooks/useMutationCreateEquipment';
 import { currentUserEssentials } from 'app/__fixtures__/rig.fixture';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import RigDialog from '../../forms/rig';
@@ -47,14 +47,19 @@ describe('<RigDialog />', () => {
   it('sends the edited values to UpdateRig', async () => {
     const mutationResult = jest.fn(() => ({
       data: {
-        updateRig: { __typename: 'UpdateRigPayload', rig: null, errors: null, fieldErrors: null },
+        updateEquipment: {
+          __typename: 'UpdateEquipmentPayload',
+          rig: null,
+          errors: null,
+          fieldErrors: null,
+        },
       },
     }));
     const dialog = renderDialog({ rig: currentUserEssentials }, [
       {
         request: {
-          query: UpdateRigDocument,
-          operationName: 'UpdateRig',
+          query: UpdateEquipmentDocument,
+          operationName: 'UpdateEquipment',
           variables: {
             id: 2,
             name: 'Pond',
@@ -82,14 +87,19 @@ describe('<RigDialog />', () => {
   it('sends a new rig to CreateRig', async () => {
     const mutationResult = jest.fn(() => ({
       data: {
-        createRig: { __typename: 'CreateRigPayload', rig: null, errors: null, fieldErrors: null },
+        createEquipment: {
+          __typename: 'CreateEquipmentPayload',
+          rig: null,
+          errors: null,
+          fieldErrors: null,
+        },
       },
     }));
     const dialog = renderDialog({ rig: { ...currentUserEssentials, id: undefined } as never }, [
       {
         request: {
-          query: MUTATION_CREATE_RIG,
-          operationName: 'CreateRig',
+          query: MUTATION_CREATE_EQUIPMENT,
+          operationName: 'CreateEquipment',
           variables: {
             name: 'Pond',
             make: 'Mirage',

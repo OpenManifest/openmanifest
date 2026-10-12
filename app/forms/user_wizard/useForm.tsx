@@ -66,7 +66,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               apfNumber,
               avatar,
               canopySize,
-              exitWeight,
+              bodyMassKg,
               federation,
               hasRig,
               license,
@@ -188,7 +188,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
 
             if (stepIndex === lastStepIndex) {
               const result = await update({
-                exitWeight,
+                bodyMassKg,
                 image: avatar || undefined,
                 license: license?.id ? Number(license.id) : null,
                 nickname,
@@ -204,8 +204,8 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                     return setError('nickname', { message, type: 'required' });
                   if (camelizedField === 'license')
                     return setError('license', { message, type: 'required' });
-                  if (camelizedField === 'exitWeight')
-                    return setError('exitWeight', { message, type: 'required' });
+                  if (camelizedField === 'bodyMassKg')
+                    return setError('bodyMassKg', { message, type: 'required' });
                   if (camelizedField in fields)
                     return setError(camelizedField as keyof typeof fields, { message });
                 });

@@ -23,7 +23,7 @@ export default function SettingsScreen() {
   const setColorScheme = usePreferences((preferences) => preferences.setColorScheme);
 
   const canUpdateOperator = useRestriction(Permission.UpdateOperator);
-  const canUpdateRigInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
+  const canUpdateEquipmentInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
 
   const { updateVisibility } = useOperatorsContext();
   const onChangeVisibility = React.useCallback(
@@ -101,7 +101,7 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'AircraftsScreen',
+                    screen: 'VehiclesScreen',
                   },
                 },
               },
@@ -131,7 +131,7 @@ export default function SettingsScreen() {
         />
         <Divider />
         <List.Item
-          disabled={!canUpdateRigInspectionTemplate}
+          disabled={!canUpdateEquipmentInspectionTemplate}
           title="Rig Inspection Template"
           right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           left={() => <List.Icon color={theme.colors.text} icon="check" />}
@@ -166,7 +166,7 @@ export default function SettingsScreen() {
                     params: {
                       screen: 'Configuration',
                       params: {
-                        screen: 'MasterLogScreen',
+                        screen: 'DailyLogScreen',
                       },
                     },
                   },

@@ -4,7 +4,7 @@ import { ManifestGroupDocument } from 'app/api/reflection';
 import type { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
-import { MOCK_QUERY_ALLOWED_JUMP_TYPES } from './__mocks__/QueryAllowedJumpTypes.mock';
+import { MOCK_QUERY_ALLOWED_ACTIVITY_TYPES } from './__mocks__/QueryAllowedActivityTypes.mock';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
 import ManifestGroupDialog from '../../forms/manifest_group';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
@@ -39,7 +39,7 @@ function renderDialog(
       session: authenticatedSession,
       permissions: [Permission.CreateUserSlot],
       graphql: [
-        MOCK_QUERY_ALLOWED_JUMP_TYPES(
+        MOCK_QUERY_ALLOWED_ACTIVITY_TYPES(
           { allowedForMembershipIds: userIds, isPublic: null as never },
           { operator: { ticketTypes } } as never
         ),
@@ -83,7 +83,7 @@ describe('<ManifestGroupDialog />', () => {
             query: ManifestGroupDocument,
             operationName: 'ManifestGroup',
             variables: {
-              jumpType: '1',
+              activityType: '1',
               ticketType: '1',
               groupNumber: null,
               extras: [],
@@ -91,9 +91,9 @@ describe('<ManifestGroupDialog />', () => {
               userGroup: slots.map((slot) => ({
                 id: Number(slot.membership?.id),
                 rig: undefined,
-                exitWeight: Number(slot.exitWeight),
-                passengerName: undefined,
-                passengerExitWeight: undefined,
+                bodyMassKg: Number(slot.bodyMassKg),
+                guestName: undefined,
+                guestBodyMassKg: undefined,
               })),
             },
           },

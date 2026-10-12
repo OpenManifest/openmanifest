@@ -16,7 +16,7 @@ import { useOperatorContext, useManifestContext } from 'app/providers';
 import { LoadDetailsFragment } from 'app/api/operations';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
-import { useAircrafts, useTickets } from 'app/api/crud';
+import { useVehicles, useTickets } from 'app/api/crud';
 import useRestriction from 'app/hooks/useRestriction';
 import DragDropWrapper from '../../../../components/slots_table/DragAndDrop/DragDropSlotProvider';
 import LoadCardSmall from './LoadCard/Small/Card';
@@ -38,16 +38,16 @@ const loadingFragment: LoadDetailsFragment = {
   loadNumber: 0,
   maxSlots: 0,
   occupiedSlots: 0,
-  plane: {
+  vehicle: {
     id: '__LOADING__',
-    maxSlots: 0,
+    capacity: 0,
   },
   state: LoadState.Open,
   weight: 0,
 };
 
 const setupProfileCardFragment = { ...loadingFragment, id: '__SETUP_PROFILE_CARD__' };
-const setupAircraftsCardFragment = { ...loadingFragment, id: '__SETUP_AIRCRAFT_CARD__' };
+const setupVehiclesCardFragment = { ...loadingFragment, id: '__SETUP_VEHICLE_CARD__' };
 const setupTicketsCardFragment = { ...loadingFragment, id: '__SETUP_TICKETS_CARD__' };
 
 export default function ManifestScreen() {
@@ -59,7 +59,7 @@ export default function ManifestScreen() {
     dialogs: sheets,
   } = useOperatorContext();
   const { manifest, dialogs } = useManifestContext();
-  const { aircrafts, loading: loadingAircrafts } = useAircrafts({ operatorId: operator?.id });
+  const { vehicles, loading: loadingVehicles } = useVehicles({ operatorId: operator?.id });
   const { ticketTypes, loading: loadingTickets } = useTickets({ operator: operator?.id });
 
   const navigation = useNavigation();
@@ -93,28 +93,28 @@ export default function ManifestScreen() {
   const data = React.useMemo(
     () =>
       [
-        !loadingAircrafts &&
-          (!ticketTypes?.length || !aircrafts?.length) &&
+        !loadingVehicles &&
+          (!ticketTypes?.length || !vehicles?.length) &&
           canUpdateOperator &&
-          setupAircraftsCardFragment,
+          setupVehiclesCardFragment,
         !loadingTickets &&
-          (!ticketTypes?.length || !aircrafts?.length) &&
+          (!ticketTypes?.length || !vehicles?.length) &&
           canUpdateOperator &&
           setupTicketsCardFragment,
         !initialLoading &&
-        (!currentUser?.hasExitWeight || !currentUser?.hasLicense || !currentUser.user?.name)
+        (!currentUser?.hasBodyMassKg || !currentUser?.hasLicense || !currentUser.user?.name)
           ? setupProfileCardFragment
           : null,
         ...(initialLoading ? new Array(5).fill(loadingFragment) : manifest.loads),
       ].filter(Boolean),
     [
-      loadingAircrafts,
+      loadingVehicles,
       ticketTypes?.length,
-      aircrafts?.length,
+      vehicles?.length,
       canUpdateOperator,
       loadingTickets,
       initialLoading,
-      currentUser?.hasExitWeight,
+      currentUser?.hasBodyMassKg,
       currentUser?.hasLicense,
       currentUser?.user?.name,
       manifest.loads,
@@ -137,12 +137,12 @@ export default function ManifestScreen() {
         return <SetupProfileCard />;
       }
 
-      if (load.id === '__SETUP_AIRCRAFT_CARD__') {
+      if (load.id === '__SETUP_VEHICLE_CARD__') {
         return (
           <SetupStepCard
             title="Add an aircraft"
-            completed={!!aircrafts?.length}
-            onPress={sheets.aircraft.open}
+            completed={!!vehicles?.length}
+            onPress={sheets.vehicle.open}
             index={1}
           />
         );
@@ -198,8 +198,8 @@ export default function ManifestScreen() {
     },
     [
       display,
-      aircrafts?.length,
-      sheets.aircraft.open,
+      vehicles?.length,
+      sheets.vehicle.open,
       sheets.ticketType.open,
       ticketTypes?.length,
       dialogs.manifestUser,

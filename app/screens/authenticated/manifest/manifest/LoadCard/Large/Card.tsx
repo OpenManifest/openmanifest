@@ -14,7 +14,7 @@ import {
 import GCAChip from 'app/components/chips/GcaChip';
 import LoadMasterChip from 'app/components/chips/LoadMasterChip';
 import PilotChip from 'app/components/chips/PilotChip';
-import PlaneChip from 'app/components/chips/PlaneChip';
+import VehicleChip from 'app/components/chips/VehicleChip';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
 import { View } from 'app/components/Themed';
@@ -52,11 +52,11 @@ function LoadCard(props: ILoadCardLarge) {
       loading,
       refetch,
       updateGCA,
-      updatePlane,
+      updateVehicle,
       updatePilot,
       dispatchInMinutes,
       updateLoadMaster,
-      markAsLanded,
+      complete,
     },
   } = useLoadContext();
   const onDeleteSlot = React.useCallback(
@@ -105,7 +105,7 @@ function LoadCard(props: ILoadCardLarge) {
   const showGroupIcon =
     controlsVisible &&
     (canManifestGroup || canManifestGroupWithSelfOnly) &&
-    !load?.hasLanded &&
+    !load?.hasCompleted &&
     (!load?.dispatchAt || load.dispatchAt > new Date().getTime() / 1000);
 
   if (loading) {
@@ -114,7 +114,7 @@ function LoadCard(props: ILoadCardLarge) {
   return (
     <Card
       testID="load-card"
-      style={{ margin: 16, opacity: load?.hasLanded ? 0.5 : 1.0 }}
+      style={{ margin: 16, opacity: load?.hasCompleted ? 0.5 : 1.0 }}
       elevation={3}
     >
       <Card.Title
@@ -160,16 +160,16 @@ function LoadCard(props: ILoadCardLarge) {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ backgroundColor: 'transparent' }}
           >
-            <PlaneChip
+            <VehicleChip
               small
-              value={load?.plane}
-              onSelect={async (plane) => {
-                if ((load?.slots?.length || 0) > (plane.maxSlots || 0)) {
-                  const diff = (load?.slots?.length || 0) - (plane.maxSlots || 0);
+              value={load?.vehicle}
+              onSelect={async (vehicle) => {
+                if ((load?.slots?.length || 0) > (vehicle.capacity || 0)) {
+                  const diff = (load?.slots?.length || 0) - (vehicle.capacity || 0);
 
                   notify.info(`You need to take ${diff} people off the load to fit on this plane`);
                 } else {
-                  await updatePlane(plane);
+                  await updateVehicle(vehicle);
                   refetch();
                 }
               }}
@@ -195,7 +195,7 @@ function LoadCard(props: ILoadCardLarge) {
             })
           }
           onSlotPress={onSlotPress}
-          fields={[SlotFields.JumpType].filter(Boolean) as SlotFields[]}
+          fields={[SlotFields.ActivityType].filter(Boolean) as SlotFields[]}
         />
       </Card.Content>
       {!!load?.dispatchAt && load?.dispatchAt > new Date().getTime() / 1000 && (
@@ -220,7 +220,7 @@ function LoadCard(props: ILoadCardLarge) {
             </Button>
           )}
           <View style={{ flexGrow: 1 }} />
-          {!canUpdateLoad || !!load?.hasLanded ? null : load?.dispatchAt ? (
+          {!canUpdateLoad || !!load?.hasCompleted ? null : load?.dispatchAt ? (
             <Button
               mode="outlined"
               onPress={() => dispatchInMinutes(null)}
@@ -276,7 +276,7 @@ function LoadCard(props: ILoadCardLarge) {
             </Menu>
           )}
 
-          {load?.hasLanded ? null : load?.dispatchAt &&
+          {load?.hasCompleted ? null : load?.dispatchAt &&
             load.dispatchAt < new Date().getTime() / 1000 &&
             canUpdateLoad ? (
             <Button
@@ -292,10 +292,10 @@ function LoadCard(props: ILoadCardLarge) {
                 if (!load?.pilot?.id) {
                   return notify.info('You must select a pilot before this load can be finalized');
                 }
-                return markAsLanded();
+                return complete();
               }}
             >
-              Mark as landed
+              Mark as completed
             </Button>
           ) : (
             <Button

@@ -30,7 +30,7 @@ export default function AvailableRow(props: IAvailableRowProps) {
     <DroppableSlot loadId={load?.id?.toString() || '0'} rowIndex={index}>
       <DataTable.Row testID="slot-row" style={{ paddingTop: 8 }}>
         <MembershipAutocomplete
-          disabled={[LoadState.Cancelled, LoadState.InFlight, LoadState.Landed].includes(
+          disabled={[LoadState.Cancelled, LoadState.Departed, LoadState.Completed].includes(
             load?.state as LoadState
           )}
           placeholder="- Available -"

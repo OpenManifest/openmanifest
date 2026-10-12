@@ -1,6 +1,6 @@
 {
   "/configuration": ["color-contrast", "label", "role-img-alt"],
-  "/configuration/aircrafts": ["aria-progressbar-name", "role-img-alt"],
+  "/configuration/vehicles": ["aria-progressbar-name", "role-img-alt"],
   "/configuration/basic": [
     "aria-progressbar-name",
     "aria-prohibited-attr",
@@ -19,7 +19,7 @@
   "/configuration/rigs": ["aria-progressbar-name", "role-img-alt"],
   "/configuration/ticket-types": ["aria-progressbar-name", "label", "role-img-alt"],
   "/manifest": ["aria-progressbar-name", "color-contrast", "role-img-alt"],
-  "/master-log": ["color-contrast", "role-img-alt"],
+  "/daily-log": ["color-contrast", "role-img-alt"],
   "/ticket-types/extra": ["aria-progressbar-name", "role-img-alt"],
   "/transactions": ["role-img-alt"],
   "/weather": ["color-contrast", "label", "nested-interactive", "role-img-alt"],

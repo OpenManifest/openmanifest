@@ -11,7 +11,7 @@ interface ISetupWarning {
   isRigSetUp: boolean;
   isRigInspectionComplete: boolean;
   isCreditSystemEnabled: boolean;
-  isExitWeightDefined: boolean;
+  isBodyMassKgDefined: boolean;
   isReserveInDate: boolean;
   isMembershipInDate: boolean;
   onSetupWizard?(): void;
@@ -49,7 +49,7 @@ export default function SetupWarning(props: ISetupWarning) {
     loading,
     isCreditSystemEnabled,
     isRigSetUp,
-    isExitWeightDefined,
+    isBodyMassKgDefined,
     isMembershipInDate,
     isReserveInDate,
     isRigInspectionComplete,
@@ -64,9 +64,9 @@ export default function SetupWarning(props: ISetupWarning) {
     return null;
   }
 
-  if (!isExitWeightDefined || !isRigSetUp) {
+  if (!isBodyMassKgDefined || !isRigSetUp) {
     const missing = [
-      !isExitWeightDefined ? 'exit weight' : null,
+      !isBodyMassKgDefined ? 'exit weight' : null,
       !isRigSetUp ? 'equipment' : null,
     ].filter(Boolean);
 

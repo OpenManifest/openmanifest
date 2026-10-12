@@ -8,7 +8,7 @@ import { ChipSelectField } from 'app/components/input/chip_select';
 import { FormNumberField } from 'app/components/input/number_input';
 
 import { Permission } from 'app/api/schema.d';
-import { JumpTypeChipSelectField } from 'app/components/input/chip_select/JumpTypeChipSelect';
+import { ActivityTypeChipSelectField } from 'app/components/input/chip_select/ActivityTypeChipSelect';
 import { TicketTypeChipSelectField } from 'app/components/input/chip_select/TicketTypeChipSelect';
 import useRestriction from 'app/hooks/useRestriction';
 import { RigSelectField } from 'app/components/input/dropdown_select/RigSelect';
@@ -30,9 +30,9 @@ export default function ManifestForm(props: IManifestFormProps) {
 
   return (
     <>
-      <JumpTypeChipSelectField
+      <ActivityTypeChipSelectField
         {...{ control }}
-        name="jumpType"
+        name="activityType"
         userId={Number(membership?.id) || null}
       />
 
@@ -72,19 +72,15 @@ export default function ManifestForm(props: IManifestFormProps) {
         label="Exit weight"
         variant={NumberFieldType.Weight}
         {...{ control }}
-        name="exitWeight"
+        name="bodyMassKg"
       />
 
       {!ticketType?.isTandem ? null : (
         <>
           <List.Subheader>Passenger</List.Subheader>
-          <FormTextField {...{ control }} label="Passenger name" name="passengerName" />
+          <FormTextField {...{ control }} label="Passenger name" name="guestName" />
 
-          <FormNumberField
-            {...{ control }}
-            label="Passenger exit weight"
-            name="passengerExitWeight"
-          />
+          <FormNumberField {...{ control }} label="Passenger exit weight" name="guestBodyMassKg" />
         </>
       )}
     </>

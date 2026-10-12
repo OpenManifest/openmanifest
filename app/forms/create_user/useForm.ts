@@ -22,7 +22,7 @@ export type UserFields = {
   federationUid?: string | null;
   nickname: string;
   email: string;
-  exitWeight: number;
+  bodyMassKg: number;
   federation?: FederationEssentialsFragment;
   license?: LicenseDetailsFragment;
   role?: RoleEssentialsFragment;
@@ -35,7 +35,7 @@ export const ghostValidation = yup.object({
   email: yup.string().required('Email is required to invite the user'),
   phone: yup.string().optional().nullable(),
   federationUid: yup.string().optional().nullable(),
-  exitWeight: yup
+  bodyMassKg: yup
     .number()
     .required('Exit weight is required')
     .min(40, 'Exit weight must be more than 40kg')
@@ -51,7 +51,7 @@ export const EMPTY_FORM_VALUES: Partial<UserFields> = {
   email: '',
   role: undefined,
   license: undefined,
-  exitWeight: 50,
+  bodyMassKg: 50,
   federation: undefined,
   id: null,
   phone: '',
@@ -108,7 +108,7 @@ export default function useUserForm(opts: IUseUserFormOpts) {
           operator: Number(operator.id),
           email: validated.email,
           name: validated.name,
-          exitWeight: validated.exitWeight,
+          bodyMassKg: validated.bodyMassKg,
           role: Number(validated.role?.id),
           license: Number(validated?.license?.id),
           federationNumber: validated?.federationUid,

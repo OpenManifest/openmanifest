@@ -39,10 +39,10 @@ function JumpRunMap(props: IJumpRunMapProps) {
   const opacity = React.useRef(new Animated.Value(0));
 
   /** ANIMATIONS * */
-  const planePosition = React.useRef(new Animated.Value(0));
-  const planeAnimation = React.useRef(
+  const vehiclePosition = React.useRef(new Animated.Value(0));
+  const vehicleAnimation = React.useRef(
     Animated.loop(
-      Animated.timing(planePosition.current, {
+      Animated.timing(vehiclePosition.current, {
         duration: 3000,
         toValue: -400,
         useNativeDriver: true,
@@ -69,22 +69,22 @@ function JumpRunMap(props: IJumpRunMapProps) {
   React.useEffect(() => {
     'worklet';
 
-    planeAnimation.current.start();
+    vehicleAnimation.current.start();
   }, []);
 
   const animate = () => {
     'worklet';
 
-    planeAnimation.current.stop();
-    planeAnimation.current.reset();
-    planeAnimation.current.start();
+    vehicleAnimation.current.stop();
+    vehicleAnimation.current.reset();
+    vehicleAnimation.current.start();
   };
 
   React.useEffect(() => {
     animate();
   }, [jumpRun]);
 
-  const planeStartPosition = getPointOnCircle({
+  const vehicleStartPosition = getPointOnCircle({
     x: origin.x,
     y: origin.y,
     degrees: jumpRun,
@@ -168,9 +168,9 @@ function JumpRunMap(props: IJumpRunMapProps) {
               position: 'absolute',
               width: 20,
               height: 20,
-              top: planeStartPosition.y,
-              left: planeStartPosition.x,
-              opacity: planePosition.current.interpolate({
+              top: vehicleStartPosition.y,
+              left: vehicleStartPosition.x,
+              opacity: vehiclePosition.current.interpolate({
                 inputRange: [-MAP_SIZE, -MAP_SIZE / 2, MAP_SIZE],
                 outputRange: [0.0, 1.0, 0.0],
               }),
@@ -179,7 +179,7 @@ function JumpRunMap(props: IJumpRunMapProps) {
                   rotate: `${jumpRun}deg`,
                 },
                 {
-                  translateY: planePosition.current,
+                  translateY: vehiclePosition.current,
                 },
               ],
             },
@@ -189,7 +189,7 @@ function JumpRunMap(props: IJumpRunMapProps) {
             name="airplane"
             size={20}
             color="#ffffff"
-            style={styles.planeIcon}
+            style={styles.vehicleIcon}
           />
         </Animated.View>
       )}
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
     paddingRight: 0,
   },
-  planeIcon: { transform: [{ rotate: '-45deg' }] },
+  vehicleIcon: { transform: [{ rotate: '-45deg' }] },
 
   degreeLabel: {
     width: 200,
