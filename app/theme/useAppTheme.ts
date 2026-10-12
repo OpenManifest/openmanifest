@@ -10,6 +10,8 @@ export type AppThemeState = {
   theme: AppTheme;
   palette: AppPalette;
   isDark: boolean;
+  /** The operator's brand colour (or a preview of it); `null` for the default brand */
+  brand: string | null;
 };
 
 const lightTheme = createAppTheme(false);
@@ -18,6 +20,7 @@ export const AppThemeContext = React.createContext<AppThemeState>({
   theme: lightTheme,
   palette: createPalette(lightTheme),
   isDark: false,
+  brand: null,
 });
 
 /**
@@ -51,7 +54,7 @@ export function useCreateAppTheme(): AppThemeState {
 
   return React.useMemo(() => {
     const theme = createAppTheme(isDark, { primary, accent });
-    return { theme, palette: createPalette(theme), isDark };
+    return { theme, palette: createPalette(theme), isDark, brand: primary || null };
   }, [isDark, primary, accent]);
 }
 

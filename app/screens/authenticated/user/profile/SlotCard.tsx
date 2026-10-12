@@ -77,7 +77,6 @@ const styles = StyleSheet.create({
   },
   activityType: {
     fontSize: 16,
-    fontFamily: 'Roboto_400Regular',
     fontWeight: '400',
     textAlign: 'center',
     alignSelf: 'center',

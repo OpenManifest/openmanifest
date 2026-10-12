@@ -47,7 +47,7 @@ function AppBar(props: IAppBarProps) {
             mode="flat"
             textStyle={{
               color: palette.onSurface,
-              fontFamily: 'Roboto_700Bold',
+              fontWeight: '700',
             }}
           >
             {formatCents(currentUser?.creditsCents)}

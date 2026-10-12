@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontStyle: 'italic',
-    fontFamily: 'Roboto_700Bold_Italic',
+    fontWeight: '700',
     textAlign: 'center',
     fontSize: 26,
     color: 'white',

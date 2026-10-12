@@ -34,7 +34,6 @@ export default function OrderCard(props: IOrder) {
       <Text
         style={{
           fontSize: 16,
-          fontFamily: 'Roboto_400Regular',
           fontWeight: '400',
           textAlign: 'center',
           alignSelf: 'center',

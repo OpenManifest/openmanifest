@@ -90,7 +90,6 @@
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
     "@expo-google-fonts/inter": "^0.2.2",
-    "@expo-google-fonts/roboto": "^0.2.2",
     "@expo/metro-runtime": "~57.0.16",
     "@expo/vector-icons": "^15.0.2",
     "@formatjs/intl-datetimeformat": "4.5.1",
