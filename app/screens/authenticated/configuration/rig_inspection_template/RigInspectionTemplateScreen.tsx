@@ -7,30 +7,30 @@ import {
   RigInspectionTemplateForm,
   useRigInspectionTemplateForm,
 } from 'app/forms/rig_inspection_template';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import FormColumn from 'app/components/layout/FormColumn';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { useWindowDimensions, View } from 'react-native';
 
 export default function RigInspectionTemplateScreen() {
-  const { dropzone: currentDropzone } = useDropzoneContext();
+  const { operator: currentOperator } = useOperatorContext();
   const { data } = useRigInspectionTemplateQuery({
     variables: {
-      dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
+      operatorId: currentOperator?.operator?.id?.toString() as string,
     },
   });
 
   const canEdit = useRestriction(Permission.UpdateFormTemplate);
   const { control, loading, onSubmit } = useRigInspectionTemplateForm({
-    template: data?.dropzone?.rigInspectionTemplate,
-    dropzoneId: data?.dropzone?.id,
+    template: data?.operator?.rigInspectionTemplate,
+    operatorId: data?.operator?.id,
   });
 
   const { width } = useWindowDimensions();
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <ScrollableScreen style={{ marginTop: 16, width: width > 550 ? 550 : '100%' }}>
+      <FormColumn style={{ marginTop: 16, width: width > 550 ? 550 : '100%' }}>
         <Card style={{ width: '100%' }}>
           <Card.Title title="Rig Inspection Form Template" />
 
@@ -47,7 +47,7 @@ export default function RigInspectionTemplateScreen() {
         >
           Save template
         </Button>
-      </ScrollableScreen>
+      </FormColumn>
     </View>
   );
 }

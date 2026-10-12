@@ -24,12 +24,12 @@ import {
 } from '../operations';
 import { TMutationResponse } from './factory';
 import { Permission } from '../schema.d';
-import { useDropzoneTimeZone } from 'app/hooks/useDropzoneToday';
+import { useOperatorTimeZone } from 'app/hooks/useOperatorToday';
 import { useLoadCreated } from './subscriptions/useLoadCreatedSubscription';
 
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
 
-export default function useManifest({ dropzone, date }: UseManifestOptions) {
+export default function useManifest({ operator, date }: UseManifestOptions) {
   const accessToken = useSession((session) => session.credentials?.accessToken);
 
   const canCreateLoad = useRestriction(Permission.CreateLoad);
@@ -64,21 +64,21 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
   );
 
   const variables: LoadsQueryVariables | undefined = React.useMemo(() => {
-    if (!dropzone) {
+    if (!operator) {
       return undefined;
     }
     return {
-      dropzone,
+      operator,
       date,
     };
-  }, [date, dropzone]);
+  }, [date, operator]);
 
   const query = useLoadsQuery({
     initialFetchPolicy: 'cache-first',
     // So that a refetch (pull to refresh) reports its own status
     notifyOnNetworkStatusChange: true,
     variables,
-    skip: !accessToken || !dropzone,
+    skip: !accessToken || !operator,
   });
 
   const [moveSlotMutation] = useMoveSlotMutation();
@@ -86,7 +86,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
   const [manifestGroupMutation] = useManifestGroupMutation();
   const [manifestUserMutation] = useManifestUserMutation();
   const [createLoadMutation] = useCreateLoadMutation();
-  const timeZone = useDropzoneTimeZone();
+  const timeZone = useOperatorTimeZone();
   useLoadCreated(variables as LoadsQueryVariables, timeZone);
 
   const { loading, fetchMore, refetch, data, called, updateQuery, networkStatus } = query;

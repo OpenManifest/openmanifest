@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Notification } from 'app/api/schema.d';
 import { RigEssentialsFragment } from 'app/api/operations';
 import NotificationCard from './NotificationCard';
-import { useNotificationNavigation } from '../../useNotificationNavigation';
+import useOpenUser from 'app/navigation/useOpenUser';
 
 interface INotification {
   notification: Notification;
@@ -10,7 +10,7 @@ interface INotification {
 
 export default function RigInspectionNotification(props: INotification) {
   const { notification } = props;
-  const navigation = useNotificationNavigation();
+  const openUser = useOpenUser();
   return (
     <NotificationCard
       title={
@@ -23,20 +23,14 @@ export default function RigInspectionNotification(props: INotification) {
       icon={notification.notificationType === 'rig_inspection_requested' ? 'eye' : 'parachute'}
       onPress={() =>
         notification.notificationType === 'rig_inspection_requested'
-          ? navigation.navigate('User', {
-              screen: 'RigInspectionScreen',
-              params: {
-                rigId: (notification.resource as unknown as RigEssentialsFragment).id,
-                dropzoneUserId: (notification.resource as unknown as RigEssentialsFragment).owner
-                  ?.id as string,
-              },
+          ? openUser('RigInspectionScreen', {
+              rigId: (notification.resource as unknown as RigEssentialsFragment).id,
+              membershipId: (notification.resource as unknown as RigEssentialsFragment).owner
+                ?.id as string,
             })
-          : navigation.navigate('User', {
-              screen: 'ProfileScreen',
-              params: {
-                userId: (notification.resource as unknown as RigEssentialsFragment).owner
-                  ?.id as string,
-              },
+          : openUser('ProfileScreen', {
+              userId: (notification.resource as unknown as RigEssentialsFragment).owner
+                ?.id as string,
             })
       }
     />

@@ -6,7 +6,7 @@ const MUTATION_CREATE_TICKET_TYPE = gql`
   mutation CreateTicketType(
     $name: String
     $costCents: Int
-    $dropzoneId: Int!
+    $operatorId: Int!
     $altitude: Int
     $allowManifestingSelf: Boolean
     $isTandem: Boolean
@@ -17,7 +17,7 @@ const MUTATION_CREATE_TICKET_TYPE = gql`
         attributes: {
           name: $name
           costCents: $costCents
-          dropzoneId: $dropzoneId
+          operatorId: $operatorId
           altitude: $altitude
           allowManifestingSelf: $allowManifestingSelf
           isTandem: $isTandem
@@ -42,7 +42,7 @@ const MUTATION_CREATE_TICKET_TYPE = gql`
           costCents
         }
 
-        dropzone {
+        operator {
           id
 
           ticketTypes {
@@ -73,7 +73,7 @@ export default createMutation<
   },
   validates: {
     name: [isRequired('Tickets must have names')],
-    cost: [isRequired('Tickets must have a price')],
+    costCents: [isRequired('Tickets must have a price')],
     altitude: [isRequired('Altitude must be specified'), isNumeric('Altitude must be a number')],
   },
 });

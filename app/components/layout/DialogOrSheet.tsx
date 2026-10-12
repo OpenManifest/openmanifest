@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { Button } from 'react-native-paper';
-import Sheet from './Sheet';
+import { Button, Overlay } from 'app/ui';
 
 interface IBottomSheetProps {
   open?: boolean;
@@ -10,7 +8,7 @@ interface IBottomSheetProps {
   loading?: boolean;
   title?: string;
   disablePadding?: boolean;
-
+  /** Ignored: the overlay scrolls its content */
   scrollable?: boolean;
   handle?: React.ReactNode;
 
@@ -18,40 +16,40 @@ interface IBottomSheetProps {
   onClose(): void;
 }
 
-/** A sheet with a form and one action button below it (a drawer on web) */
-export default function DialogOrSheet(props: IBottomSheetProps) {
-  const {
-    open,
-    disablePadding,
-    onClose,
-    title,
-    buttonLabel,
-    buttonAction,
-    handle,
-    loading,
-    children,
-  } = props;
-
+/**
+ * A form with one action button below it, in the overlay of `app/ui`: a bottom sheet on a phone, a side panel on a wide
+ * window, a dialog elsewhere. Call sites keep the props they always had.
+ */
+export default function DialogOrSheet({
+  open,
+  disablePadding,
+  onClose,
+  title,
+  buttonLabel,
+  buttonAction,
+  handle,
+  loading,
+  children,
+}: IBottomSheetProps) {
   return (
-    <Sheet {...{ open, onClose, title, handle, disablePadding }}>
+    <Overlay
+      open={!!open}
+      onClose={onClose}
+      title={title ?? buttonLabel ?? ''}
+      showTitle={!!title}
+      handle={handle}
+      disablePadding={disablePadding}
+      footer={
+        <Button
+          label={buttonLabel ?? ''}
+          fullWidth
+          loading={loading}
+          disabled={!buttonAction}
+          onPress={buttonAction}
+        />
+      }
+    >
       {children}
-      <Button onPress={buttonAction} mode="contained" style={styles.button} loading={loading}>
-        {buttonLabel}
-      </Button>
-    </Sheet>
+    </Overlay>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    width: '100%',
-    padding: 5,
-    alignSelf: 'flex-end',
-    borderRadius: 20,
-    minHeight: 42,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-  },
-});

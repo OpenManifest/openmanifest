@@ -1,19 +1,20 @@
 import * as React from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { CreateTicketTypeDocument } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/providers';
-import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
+import { useOperatorContext } from 'app/providers';
+import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import TicketTypeDialog from '../../forms/ticket_type/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
+import { scoped, textInputs } from 'app/test-utils/hosts';
 
 jest.setTimeout(30000);
 
-// The form refuses to submit until the dropzone has loaded
-function DropzoneReady() {
+// The form refuses to submit until the operator has loaded
+function OperatorReady() {
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
-  return dropzone?.id ? <Text>dropzone ready</Text> : null;
+    operator: { operator },
+  } = useOperatorContext();
+  return operator?.id ? <Text>dropzone ready</Text> : null;
 }
 
 describe('<TicketTypeDialog />', () => {
@@ -29,9 +30,9 @@ describe('<TicketTypeDialog />', () => {
       },
     }));
 
-    const screen = render(
+    const screen = await render(
       <View testID="under-test">
-        <DropzoneReady />
+        <OperatorReady />
         <TicketTypeDialog open onClose={jest.fn()} />
       </View>,
       {
@@ -49,7 +50,7 @@ describe('<TicketTypeDialog />', () => {
                   altitude: 14000,
                   extraIds: [],
                   isTandem: false,
-                  dropzoneId: 1,
+                  operatorId: 1,
                 },
               },
             },
@@ -59,45 +60,45 @@ describe('<TicketTypeDialog />', () => {
       }
     );
 
-    // The dropzone provider mounts its own closed copy of this dialog, so scope to ours
-    const dialog = within(screen.getByTestId('under-test'));
+    // The operator provider mounts its own closed copy of this dialog, so scope to ours
+    const dialog = scoped(screen.getByTestId('under-test'));
     await waitFor(() => expect(dialog.getByText('dropzone ready')).toBeTruthy(), {
       timeout: 10000,
     });
-    const [name, cost] = dialog.UNSAFE_getAllByType(TextInput);
-    fireEvent.changeText(name, 'Hop n Pop');
-    fireEvent.changeText(cost, '45');
-    fireEvent.press(dialog.getByText('Save'));
+    const [name, cost] = textInputs(dialog.container);
+    await fireEvent.changeText(name, 'Hop n Pop');
+    await fireEvent.changeText(cost, '45');
+    await fireEvent.press(dialog.getByText('Save'));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });
 
   it('asks for a name when it is missing', async () => {
-    const screen = render(
+    const screen = await render(
       <View testID="under-test">
         <TicketTypeDialog open onClose={jest.fn()} />
       </View>,
       { session: authenticatedSession, graphql: [] }
     );
 
-    const dialog = within(screen.getByTestId('under-test'));
-    fireEvent.press(dialog.getByText('Save'));
+    const dialog = scoped(screen.getByTestId('under-test'));
+    await fireEvent.press(dialog.getByText('Save'));
 
     await waitFor(() => expect(dialog.getByText('Name is required')).toBeTruthy());
   });
 
   // The dialog builds `initial` from the (absent) original ticket, so `cost`, `allowManifestingSelf` and `extras`
   // are `undefined` and override the form defaults (30, true, []): a new ticket starts at $0 and non-public.
-  it('BUG-096: a new ticket starts with the default price', () => {
-    const screen = render(
+  it('BUG-096: a new ticket starts with the default price', async () => {
+    const screen = await render(
       <View testID="under-test">
         <TicketTypeDialog open onClose={jest.fn()} />
       </View>,
       { session: authenticatedSession, graphql: [] }
     );
 
-    const dialog = within(screen.getByTestId('under-test'));
-    const [, cost] = dialog.UNSAFE_getAllByType(TextInput);
+    const dialog = scoped(screen.getByTestId('under-test'));
+    const [, cost] = textInputs(dialog.container);
 
     expect(cost.props.value).toBe('30');
   });

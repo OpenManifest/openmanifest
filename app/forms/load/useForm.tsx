@@ -11,7 +11,7 @@ import { useNotifications } from 'app/providers/notifications';
 import withDefaults from 'app/forms/initialValues';
 
 export type LoadFields = Required<
-  Pick<LoadDetailsFragment, 'gca' | 'pilot' | 'maxSlots' | 'plane' | 'isOpen'>
+  Pick<LoadDetailsFragment, 'gca' | 'pilot' | 'maxSlots' | 'vehicle' | 'isOpen'>
 > &
   Pick<LoadDetailsFragment, 'name'> & { id?: string | null };
 
@@ -19,7 +19,7 @@ export const loadValidation = yup.object({
   name: yup.string().nullable().default(null),
   gca: yup.object().required('You must select a GCA'),
   pilot: yup.object().required('Every load needs a pilot'),
-  plane: yup.object().required('You cant create a load without an aircraft'),
+  vehicle: yup.object().required('You cant create a load without an aircraft'),
   original: yup.object().nullable(),
   maxSlots: yup.number().required('You must specify max slots').default(0),
   id: yup.string().nullable(),
@@ -30,7 +30,7 @@ export const EMPTY_FORM_VALUES: Partial<LoadFields> = {
   id: undefined,
   gca: null,
   pilot: null,
-  plane: undefined,
+  vehicle: undefined,
   maxSlots: 0,
   name: null,
 };
@@ -67,13 +67,13 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
     manifest: { createLoad },
   } = useManifestContext();
 
-  const { plane } = useWatch<LoadFields>({ control });
+  const { vehicle } = useWatch<LoadFields>({ control });
 
   React.useEffect(() => {
-    if (plane?.maxSlots) {
-      setValue('maxSlots', plane.maxSlots);
+    if (vehicle?.capacity) {
+      setValue('maxSlots', vehicle.capacity);
     }
-  }, [plane?.maxSlots, setValue]);
+  }, [vehicle?.capacity, setValue]);
 
   const [{ loading }, onManifest] = useAsyncFn(
     async (fields: LoadFields) => {
@@ -84,7 +84,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           gca: validatedFields.gca?.id,
           state: LoadState.Open,
           pilot: validatedFields.pilot?.id,
-          plane: validatedFields.plane?.id,
+          vehicle: validatedFields.vehicle?.id,
           maxSlots: Number(validatedFields.maxSlots),
           name: validatedFields.name,
         });
