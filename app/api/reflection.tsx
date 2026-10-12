@@ -1518,6 +1518,7 @@ export const CreateTicketTypeDocument = gql`
       message
     }
     ticketType {
+      ...ticketTypeEssentials
       id
       name
       defaultDestination {
@@ -1550,7 +1551,8 @@ export const CreateTicketTypeDocument = gql`
     }
   }
 }
-    ${DestinationEssentialsFragmentDoc}`;
+    ${TicketTypeEssentialsFragmentDoc}
+${DestinationEssentialsFragmentDoc}`;
 export type CreateTicketTypeMutationFn = Apollo.MutationFunction<Operation.CreateTicketTypeMutation, Operation.CreateTicketTypeMutationVariables>;
 
 /**
