@@ -1,7 +1,7 @@
 import { loginViaUi, selectOperator, submitLogin } from './support/auth';
 import { expectAccessible } from './support/a11y';
 import { expectLayout, expectReachable } from './support/layout';
-import { openDrawer } from './support/press';
+import { openAccount } from './support/account';
 import { registerNewUser } from './support/api';
 import { ROLES } from './support/roles';
 import { expect, gotoRoute, test } from './support/test';
@@ -37,15 +37,15 @@ test.describe('login @login', () => {
   // the first user may be left behind.
   test('logout then login as somebody else without reloading', async ({ page }) => {
     await loginViaUi(page, ROLES.owner);
-    await openDrawer(page);
-    await page.getByText('Log out', { exact: true }).last().click({ force: true });
+    await openAccount(page);
+    await page.getByTestId('account-logout').click();
     await expect(page.locator('input').nth(1)).toBeVisible({ timeout: 15_000 });
 
     await submitLogin(page, ROLES.jumper);
     await selectOperator(page);
     await expect(page.getByText(/Load #1\b/).first()).toBeVisible({ timeout: 30_000 });
-    await openDrawer(page);
-    await expect(page.getByText('Jo Jumper').first()).toBeVisible();
+    await openAccount(page);
+    await expect(page.getByRole('heading', { name: 'Jo Jumper' })).toBeVisible();
   });
 
   // Selecting an operator the user has not joined joins them (P6.4)

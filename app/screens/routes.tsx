@@ -10,7 +10,7 @@ import { useSession } from '../state';
 import Limbo, { LimboRoutes } from './limbo/routes';
 import Unauthenticated, { UnauthenticatedRoutes } from './unauthenticated/routes';
 import Wizards, { WizardRoutes } from './wizards/routes';
-import LeftDrawer, { LeftDrawerRoutes } from './drawers/UserDrawer';
+import Authenticated, { AuthenticatedRoutes } from './authenticated/routes';
 import SpikeScreen from './dev/SpikeScreen';
 import environment from '../constants/environment';
 
@@ -29,64 +29,62 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
     screens: {
       Authenticated: {
         screens: {
-          LeftDrawer: {
+          Overview: {
             screens: {
-              Overview: {
-                screens: {
-                  DashboardScreen: '/dashboard',
-                  OverviewScreen: '/overview',
-                },
-              },
-              Manifest: {
-                screens: {
-                  ManifestScreen: '/manifest',
-                  User: {
-                    screens: {
-                      EquipmentScreen: '/manifest/users/:userId/equipment/',
-                      OrderReceiptScreen: '/manifest/users/:userId/orders/:orderId/receipts',
-                      ProfileScreen: '/manifest/users/:userId',
-                      OrdersScreen: '/manifest/users/:userId/orders',
-                      RigInspectionScreen: '/manifest/users/:membershipId/rig/:rigId/inspection',
-                      UserListScreen: '/manifest/users',
-                    },
-                  },
-                  Configuration: {
-                    screens: {
-                      TicketTypesScreen: '/configuration/ticket-types',
-                      OperatorRigsScreen: '/configuration/rigs',
-                      ExtrasScreen: '/ticket-types/extra',
-                      DailyLogScreen: '/daily-log',
-                      SettingsMenuScreen: '/configuration',
-                      VehiclesScreen: '/configuration/vehicles',
-                      OperatorSettingsScreen: '/configuration/basic',
-                      PermissionScreen: '/configuration/permissions',
-                      RigInspectionTemplateScreen: '/configuration/rig-inspection',
-                      TransactionsScreen: '/transactions',
-                    },
-                  },
-                  JumpRunScreen: '/weather/jumprun',
-                  WeatherConditionsScreen: '/weather',
-                  LoadScreen: '/loads/:loadId',
-                  WindScreen: '/weather/winds',
-                },
-              },
-              Users: {
-                screens: {
-                  UserListScreen: '/users',
-                  ProfileScreen: '/user/:userId',
-                  EquipmentScreen: '/user/:userId/equipment',
-                  OrdersScreen: '/user/:userId/transactions',
-                  OrderReceiptScreen: '/user/:userId/transactions/:orderId/receipt',
-                  RigInspectionScreen: '/user/:membershipId/rig-inspection/:rig',
-                },
-              },
-              Notifications: {
-                screens: {
-                  NotificationsScreen: '/notifications',
-                },
-              },
+              DashboardScreen: '/dashboard',
+              OverviewScreen: '/overview',
             },
           },
+          Manifest: {
+            screens: {
+              ManifestScreen: '/manifest',
+              User: {
+                screens: {
+                  EquipmentScreen: '/manifest/users/:userId/equipment/',
+                  OrderReceiptScreen: '/manifest/users/:userId/orders/:orderId/receipts',
+                  ProfileScreen: '/manifest/users/:userId',
+                  OrdersScreen: '/manifest/users/:userId/orders',
+                  RigInspectionScreen: '/manifest/users/:membershipId/rig/:rigId/inspection',
+                  UserListScreen: '/manifest/users',
+                },
+              },
+              Configuration: {
+                screens: {
+                  TicketTypesScreen: '/configuration/ticket-types',
+                  OperatorRigsScreen: '/configuration/rigs',
+                  ExtrasScreen: '/ticket-types/extra',
+                  DailyLogScreen: '/daily-log',
+                  SettingsMenuScreen: '/configuration',
+                  VehiclesScreen: '/configuration/vehicles',
+                  OperatorSettingsScreen: '/configuration/basic',
+                  PermissionScreen: '/configuration/permissions',
+                  RigInspectionTemplateScreen: '/configuration/rig-inspection',
+                  TransactionsScreen: '/transactions',
+                },
+              },
+              JumpRunScreen: '/weather/jumprun',
+              WeatherConditionsScreen: '/weather',
+              LoadScreen: '/loads/:loadId',
+              WindScreen: '/weather/winds',
+            },
+          },
+          Users: {
+            screens: {
+              UserListScreen: '/users',
+              ProfileScreen: '/user/:userId',
+              EquipmentScreen: '/user/:userId/equipment',
+              OrdersScreen: '/user/:userId/transactions',
+              OrderReceiptScreen: '/user/:userId/transactions/:orderId/receipt',
+              RigInspectionScreen: '/user/:membershipId/rig-inspection/:rig',
+            },
+          },
+          Notifications: {
+            screens: {
+              NotificationsScreen: '/notifications',
+            },
+          },
+          More: '/more',
+          Account: '/account',
         },
       },
       Limbo: {
@@ -126,7 +124,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
 };
 
 export type Routes = {
-  Authenticated: NavigatorScreenParams<LeftDrawerRoutes>;
+  Authenticated: NavigatorScreenParams<AuthenticatedRoutes>;
   Unauthenticated: NavigatorScreenParams<UnauthenticatedRoutes>;
   Limbo: NavigatorScreenParams<LimboRoutes>;
   Wizards: NavigatorScreenParams<WizardRoutes>;
@@ -157,7 +155,7 @@ export default function RootNavigator() {
     >
       {credentials ? (
         currentOperatorId ? (
-          <Stack.Screen name="Authenticated" component={LeftDrawer} />
+          <Stack.Screen name="Authenticated" component={Authenticated} />
         ) : (
           <Stack.Screen name="Limbo" component={Limbo} />
         )

@@ -83,8 +83,14 @@ export async function expectLayout(page: Page, route: string) {
   const count = await actions.count();
   for (let i = 0; i < count; i += 1) {
     const action = actions.nth(i);
-    // Screens below the current one stay mounted (hidden) in the stack
+    // Screens below the current one, and the other tabs, stay mounted but hidden (display, visibility, opacity or inert)
     if (!(await action.isVisible())) continue;
+    const shown = await action.evaluate(
+      (el) =>
+        !el.closest('[inert]') &&
+        el.checkVisibility({ opacityProperty: true, visibilityProperty: true })
+    );
+    if (!shown) continue;
     await expectReachable(page, action, `${route}: ${await action.getAttribute('data-testid')}`);
   }
 }

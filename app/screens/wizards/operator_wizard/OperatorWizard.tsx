@@ -62,14 +62,11 @@ function OperatorSetupScreen() {
   const onComplete = React.useCallback(() => {
     navigation.dispatch(
       StackActions.replace('Authenticated', {
-        screen: 'LeftDrawer',
-        params: {
           screen: 'Manifest',
           params: {
             screen: 'ManifestScreen',
           },
-        },
-      })
+        })
     );
   }, [navigation]);
 

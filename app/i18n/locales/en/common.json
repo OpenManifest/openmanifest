@@ -21,7 +21,8 @@
     "reports": "Reports",
     "setup": "Setup",
     "platform": "Platform",
-    "account": "Account"
+    "account": "Account",
+    "more": "More"
   },
   "noAccess": {
     "title": "You don't have access to this",
@@ -37,5 +38,28 @@
     "switchOperator": "Switch operator",
     "account": "Account menu"
   },
-  "loading": "Loading"
+  "loading": "Loading",
+  "account": {
+    "title": "Account",
+    "profile": "Profile",
+    "equipment": "Equipment",
+    "transactions": "Transactions",
+    "appearance": "Appearance",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "density": "Density",
+    "auto": "Auto",
+    "compact": "Compact",
+    "regular": "Regular",
+    "comfortable": "Comfortable",
+    "switchOperator": "Switch operator",
+    "createOperator": "Create new",
+    "logout": "Log out",
+    "role": "Role",
+    "funds": "Funds"
+  },
+  "more": {
+    "title": "More"
+  }
 }

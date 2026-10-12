@@ -19,7 +19,7 @@ export type DestinationKey =
 
 /** Which tab of the authenticated navigator holds the destination, and its web path */
 export type DestinationRoute = {
-  tab: 'Overview' | 'Manifest' | 'Users' | 'Notifications';
+  tab: 'Overview' | 'Manifest' | 'Users' | 'Notifications' | 'More' | 'Account';
   path: string;
 };
 
@@ -43,8 +43,12 @@ export type Destination = AccessRule & {
   icon: string;
   /** Key in the `common` namespace */
   labelKey: string;
-  /** Where it opens today; `undefined` until its screen is built (U3 to U5) */
+  /** Where it opens as a tab of the authenticated navigator; `undefined` for the ones that are not a tab */
   route?: DestinationRoute;
+  /** Where it opens when it is not a tab (a web path, resolved by the linking config); `undefined` until it is built (U3 to U5) */
+  path?: string;
+  /** Names of the screens it is the home of: it is the current item while one of them is shown */
+  routeNames?: string[];
 };
 
 const asList = <T>(value: T | T[] | undefined): T[] =>
@@ -88,6 +92,8 @@ export const DESTINATIONS: Destination[] = [
     icon: 'cash-multiple',
     labelKey: 'destinations.money',
     permission: Permission.ReadUserTransactions,
+    path: '/transactions',
+    routeNames: ['TransactionsScreen', 'OperatorTransactionsScreen'],
   },
   {
     key: 'reports',
@@ -102,6 +108,21 @@ export const DESTINATIONS: Destination[] = [
     icon: 'cog-outline',
     labelKey: 'destinations.setup',
     permission: [Permission.UpdateOperator, Permission.UpdateUser],
+    path: '/configuration',
+    routeNames: [
+      'SettingsMenuScreen',
+      'OperatorSettingsScreen',
+      'VehiclesScreen',
+      'TicketTypesScreen',
+      'ExtrasScreen',
+      'OperatorRigsScreen',
+      'RigInspectionTemplateScreen',
+      'PermissionScreen',
+      'DailyLogScreen',
+      'WeatherConditionsScreen',
+      'JumpRunScreen',
+      'WindScreen',
+    ],
   },
   {
     key: 'platform',

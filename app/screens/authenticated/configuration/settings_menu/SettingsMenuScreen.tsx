@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Divider, List, SegmentedButtons, Switch } from 'react-native-paper';
+import { Divider, List, Switch } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
@@ -19,8 +19,6 @@ export default function SettingsScreen() {
   } = useOperatorContext();
 
   const { theme } = useAppTheme();
-  const colorScheme = usePreferences((preferences) => preferences.colorScheme);
-  const setColorScheme = usePreferences((preferences) => preferences.setColorScheme);
 
   const canUpdateOperator = useRestriction(Permission.UpdateOperator);
   const canUpdateEquipmentInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
@@ -51,8 +49,6 @@ export default function SettingsScreen() {
               !operator
                 ? null
                 : navigation.navigate('Authenticated', {
-                    screen: 'LeftDrawer',
-                    params: {
                       screen: 'Manifest',
                       params: {
                         screen: 'Configuration',
@@ -60,8 +56,7 @@ export default function SettingsScreen() {
                           screen: 'OperatorSettingsScreen',
                         },
                       },
-                    },
-                  })
+                    })
             }
             left={() => <List.Icon color={theme.colors.text} icon="information-outline" />}
             description="Set up name, branding and other settings"
@@ -76,8 +71,6 @@ export default function SettingsScreen() {
           left={() => <List.Icon color={theme.colors.text} icon="lock" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'LeftDrawer',
-              params: {
                 screen: 'Manifest',
                 params: {
                   screen: 'Configuration',
@@ -85,8 +78,7 @@ export default function SettingsScreen() {
                     screen: 'PermissionScreen',
                   },
                 },
-              },
-            })
+              })
           }
         />
         <Divider />
@@ -95,8 +87,6 @@ export default function SettingsScreen() {
           right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'LeftDrawer',
-              params: {
                 screen: 'Manifest',
                 params: {
                   screen: 'Configuration',
@@ -104,8 +94,7 @@ export default function SettingsScreen() {
                     screen: 'VehiclesScreen',
                   },
                 },
-              },
-            })
+              })
           }
           left={() => <List.Icon color={theme.colors.text} icon="airplane" />}
         />
@@ -116,8 +105,6 @@ export default function SettingsScreen() {
           description="Dropzone rigs, e.g tandems and student rigs"
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'LeftDrawer',
-              params: {
                 screen: 'Manifest',
                 params: {
                   screen: 'Configuration',
@@ -125,8 +112,7 @@ export default function SettingsScreen() {
                     screen: 'OperatorRigsScreen',
                   },
                 },
-              },
-            })
+              })
           }
         />
         <Divider />
@@ -137,8 +123,6 @@ export default function SettingsScreen() {
           left={() => <List.Icon color={theme.colors.text} icon="clipboard-check-outline" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'LeftDrawer',
-              params: {
                 screen: 'Manifest',
                 params: {
                   screen: 'Configuration',
@@ -146,8 +130,7 @@ export default function SettingsScreen() {
                     screen: 'RigInspectionTemplateScreen',
                   },
                 },
-              },
-            })
+              })
           }
         />
         {!canUpdateOperator ? null : (
@@ -160,8 +143,6 @@ export default function SettingsScreen() {
               description="View historic data for daily operations"
               onPress={() =>
                 navigation.navigate('Authenticated', {
-                  screen: 'LeftDrawer',
-                  params: {
                     screen: 'Manifest',
                     params: {
                       screen: 'Configuration',
@@ -169,8 +150,7 @@ export default function SettingsScreen() {
                         screen: 'DailyLogScreen',
                       },
                     },
-                  },
-                })
+                  })
               }
             />
           </>
@@ -241,27 +221,12 @@ export default function SettingsScreen() {
         )}
       </List.Section>
 
-      <List.Section title="Appearance" style={{ width: '100%' }}>
-        <SegmentedButtons
-          style={{ marginHorizontal: 16 }}
-          value={colorScheme}
-          onValueChange={(value) => setColorScheme(value as ColorSchemePreference)}
-          buttons={[
-            { value: 'system', label: 'System', testID: 'color-scheme-system' },
-            { value: 'light', label: 'Light', testID: 'color-scheme-light' },
-            { value: 'dark', label: 'Dark', testID: 'color-scheme-dark' },
-          ]}
-        />
-      </List.Section>
-
       <List.Section title="Tickets" style={{ width: '100%' }}>
         <List.Item
           right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           title="Ticket types"
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'LeftDrawer',
-              params: {
                 screen: 'Manifest',
                 params: {
                   screen: 'Configuration',
@@ -269,8 +234,7 @@ export default function SettingsScreen() {
                     screen: 'TicketTypesScreen',
                   },
                 },
-              },
-            })
+              })
           }
           left={() => <List.Icon color={theme.colors.text} icon="ticket" />}
           description="Manage ticket prices and accessibility"
@@ -281,8 +245,6 @@ export default function SettingsScreen() {
           right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'LeftDrawer',
-              params: {
                 screen: 'Manifest',
                 params: {
                   screen: 'Configuration',
@@ -290,8 +252,7 @@ export default function SettingsScreen() {
                     screen: 'ExtrasScreen',
                   },
                 },
-              },
-            })
+              })
           }
           left={() => <List.Icon color={theme.colors.text} icon="plus" />}
           description="Supplementary tickets like coach, camera, night jumpi"

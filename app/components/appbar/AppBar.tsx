@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Appbar, IconButton, Chip } from 'react-native-paper';
+import { Appbar, Chip } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { useOperatorContext } from 'app/providers/operator/context';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
 import SetupWarning from './SetupWarning';
 import { useAppTheme } from 'app/theme';
 import { formatCents, fromCents } from 'app/utils/money';
@@ -20,17 +19,12 @@ function AppBar(props: IAppBarProps) {
   } = useOperatorContext();
 
   const navigation = useNavigation();
-  const { openDrawer } = useNavigation<DrawerNavigationProp<never>>();
   return (
     <>
       <Appbar.Header
         style={{ backgroundColor: theme.dark ? theme.colors.background : theme.colors.surface }}
       >
-        {back ? (
-          <Appbar.BackAction onPress={navigation.goBack} />
-        ) : (
-          <IconButton icon="menu" size={32} onPress={openDrawer} />
-        )}
+        {back ? <Appbar.BackAction onPress={navigation.goBack} /> : null}
         <Appbar.Content title={options.title ?? ''} titleStyle={{ fontWeight: 'bold' }} />
 
         {options.headerRight ? (

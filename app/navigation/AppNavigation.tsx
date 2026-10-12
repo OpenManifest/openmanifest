@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { DrawerActions } from '@react-navigation/native';
+import { useLinkTo } from '@react-navigation/native';
 import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 import { useOperatorContext } from 'app/providers/operator/context';
+import { useSession } from 'app/state';
 import { Tappable, useDevice, useStyles } from 'app/ui';
 import type { Destination } from './destinations';
 import NavItem from './NavItem';
@@ -21,20 +22,29 @@ export function tabBarPositionFor(
 }
 
 /**
- * The destinations that have a screen today, one per tab (the dashboard of the statistics and the platform overview
- * share the Overview tab: the first one the user may use names it).
+ * The destinations shown in the bar. A phone has the primary ones (the rest are under More, with the account); wider
+ * windows have everything that has a screen. The dashboard of the statistics and the platform overview share the
+ * Overview tab: the first one the user may use names it. The account is not an item: it has its own button.
  */
-export function barItems(
-  destinations: Destination[]
-): (Destination & { route: NonNullable<Destination['route']> })[] {
+export function barItems(destinations: Destination[], compact = false): Destination[] {
   const seen = new Set<string>();
-  return destinations.filter(
-    (destination): destination is Destination & { route: NonNullable<Destination['route']> } => {
-      if (!destination.route || seen.has(destination.route.tab)) return false;
+  return destinations.filter((destination) => {
+    if (destination.group === 'account') return false;
+    if (compact && destination.group !== 'primary') return false;
+    if (!destination.route && !destination.path) return false;
+    if (destination.route) {
+      if (seen.has(destination.route.tab)) return false;
       seen.add(destination.route.tab);
-      return true;
     }
-  );
+    return true;
+  });
+}
+
+/** The current item: the destination that is the home of the shown screen, else the one of the focused tab */
+export function activeKey(items: Destination[], tab: string | undefined, leaf: string | null) {
+  const home = items.find((item) => leaf && item.routeNames?.includes(leaf));
+  if (home) return home.key;
+  return items.find((item) => item.route?.tab === tab && !item.routeNames)?.key;
 }
 
 /**
@@ -45,13 +55,16 @@ export default function AppNavigation({ state, navigation }: BottomTabBarProps) 
   const { t } = useTranslation(['common', 'terms']);
   const { breakpoint } = useDevice();
   const { ready, destinations } = useDestinations();
+  const linkTo = useLinkTo();
+  const leaf = useSession((session) => session.currentRouteName);
   const {
     operator: { operator, currentUser },
   } = useOperatorContext();
   const focused = state.routes[state.index]?.name;
-  const items = barItems(destinations);
   const variant =
     breakpoint === 'compact' ? 'bottom' : breakpoint === 'medium' ? 'rail' : 'sidebar';
+  const items = barItems(destinations, variant === 'bottom');
+  const current = activeKey(items, focused, leaf);
 
   const styles = useStyles((theme) => ({
     bottom: {
@@ -90,9 +103,8 @@ export default function AppNavigation({ state, navigation }: BottomTabBarProps) 
     accountName: { ...theme.type.bodyCompact, color: theme.colour.text },
   }));
 
-  const open = React.useCallback(
-    (destination: (typeof items)[number]) => {
-      const { tab } = destination.route;
+  const openTab = React.useCallback(
+    (tab: string) => {
       const route = state.routes.find((candidate) => candidate.name === tab);
       if (!route) return;
       const event = navigation.emit({
@@ -104,9 +116,13 @@ export default function AppNavigation({ state, navigation }: BottomTabBarProps) 
     },
     [navigation, state.routes]
   );
-  const openDrawer = React.useCallback(
-    () => navigation.dispatch(DrawerActions.openDrawer()),
-    [navigation]
+  const open = React.useCallback(
+    (destination: Destination) => {
+      // A path-based destination lives inside a tab: the linking config resolves it
+      if (destination.path && !destination.route) linkTo(destination.path);
+      else if (destination.route) openTab(destination.route.tab);
+    },
+    [linkTo, openTab]
   );
 
   if (!ready) return null;
@@ -117,16 +133,25 @@ export default function AppNavigation({ state, navigation }: BottomTabBarProps) 
       testID={`nav-${destination.key}`}
       label={t(destination.labelKey)}
       icon={destination.icon}
-      active={destination.route.tab === focused}
+      active={destination.key === current}
       variant={variant}
       onPress={() => open(destination)}
     />
   ));
+  const accountActive = focused === 'Account';
 
   if (variant === 'bottom') {
     return (
       <View role="navigation" aria-label={t('navigation.main')} style={styles.bottom}>
         {list}
+        <NavItem
+          testID="nav-more"
+          label={t('destinations.more')}
+          icon="dots-horizontal"
+          active={focused === 'More' || accountActive}
+          variant="bottom"
+          onPress={() => openTab('More')}
+        />
       </View>
     );
   }
@@ -136,13 +161,26 @@ export default function AppNavigation({ state, navigation }: BottomTabBarProps) 
       <View role="navigation" aria-label={t('navigation.main')} style={styles.rail}>
         {list}
         <View style={styles.spacer} />
+        <NavItem
+          testID="nav-account"
+          label={t('destinations.account')}
+          icon="account-circle-outline"
+          active={accountActive}
+          variant="rail"
+          onPress={() => openTab('Account')}
+        />
       </View>
     );
   }
 
   return (
     <View role="navigation" aria-label={t('navigation.main')} style={styles.sidebar}>
-      <Tappable role="button" aria-label={t('navigation.switchOperator')} onPress={openDrawer}>
+      <Tappable
+        role="button"
+        aria-label={t('navigation.switchOperator')}
+        testID="nav-operator"
+        onPress={() => openTab('Account')}
+      >
         <Text
           numberOfLines={1}
           maxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
@@ -163,7 +201,9 @@ export default function AppNavigation({ state, navigation }: BottomTabBarProps) 
       <Tappable
         role="button"
         aria-label={t('navigation.account')}
-        onPress={openDrawer}
+        aria-current={accountActive ? 'page' : undefined}
+        testID="nav-account"
+        onPress={() => openTab('Account')}
         style={styles.account}
       >
         <Text numberOfLines={1} style={styles.accountName}>

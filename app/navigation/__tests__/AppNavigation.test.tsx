@@ -34,7 +34,7 @@ describe('tabBarPositionFor', () => {
 });
 
 describe('barItems', () => {
-  it('lists the destinations that have a screen, one per tab', () => {
+  it('lists, on a wide window, the destinations that have a screen, one per tab', () => {
     const everything = destinationsFor({
       permissions: ['readLoad', 'readUser', 'viewStatistics', 'readUserTransactions'] as never,
       modules: {},
@@ -45,7 +45,29 @@ describe('barItems', () => {
       'board',
       'people',
       'inbox',
+      'money',
       'platform',
+    ]);
+  });
+});
+
+describe('barItems on a phone', () => {
+  it('keeps the primary destinations: the rest is under More', () => {
+    const everything = destinationsFor({
+      permissions: [
+        'readLoad',
+        'readUser',
+        'viewStatistics',
+        'readUserTransactions',
+        'updateOperator',
+      ] as never,
+      modules: {},
+    });
+
+    expect(barItems(everything, true).map((item) => item.key)).toEqual([
+      'board',
+      'people',
+      'inbox',
     ]);
   });
 });
@@ -66,11 +88,11 @@ describe('AppNavigation', () => {
       .map((tab) => tab.props['aria-label'] ?? tab.props.accessibilityLabel);
 
   it('shows an owner the board, the inbox and people, in the order of the table', async () => {
-    expect(names(await tabs('owner'))).toEqual(['Board', 'People', 'Inbox']);
+    expect(names(await tabs('owner'))).toEqual(['Board', 'People', 'Inbox', 'More']);
   });
 
   it('shows a student the board and the inbox', async () => {
-    expect(names(await tabs('student'))).toEqual(['Board', 'Inbox']);
+    expect(names(await tabs('student'))).toEqual(['Board', 'Inbox', 'More']);
   });
 
   it('marks the focused tab as current and names the landmark', async () => {

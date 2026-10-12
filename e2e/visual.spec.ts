@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { openDrawer } from './support/press';
+import { openAccount } from './support/account';
 import { expect, gotoRoute, test } from './support/test';
 
 // Visual baselines (checkpoint tasks only: tier 3). They are created and updated with `--update-snapshots` in checkpoint
@@ -54,8 +54,8 @@ test.describe('visual baselines @visual', () => {
 
   test('profile', async ({ page }) => {
     await gotoRoute(page, '/manifest');
-    await openDrawer(page);
-    await page.getByText('Profile', { exact: true }).last().click({ force: true });
+    await openAccount(page);
+    await page.getByTestId('account-profile').click();
     await page.waitForTimeout(4000);
     await expect(page).toHaveScreenshot('profile.png', { ...OPTIONS, mask: dynamicText(page) });
   });

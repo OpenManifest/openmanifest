@@ -70,6 +70,7 @@ jest.mock('@react-navigation/native', () => ({
   ...jest.requireActual('@react-navigation/native'),
   useNavigation: () => jest.fn(),
   useIsFocused: jest.fn().mockReturnValue(false),
+  useLinkTo: () => jest.fn(),
 }));
 
 // The stock mock exports React Native's own `TextInput` as `BottomSheetTextInput`, which makes the two impossible to

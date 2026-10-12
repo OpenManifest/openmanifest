@@ -183,15 +183,12 @@ export default function ManifestScreen() {
           id={load?.id}
           onPress={() =>
             navigation.navigate('Authenticated', {
-              screen: 'LeftDrawer',
-              params: {
                 screen: 'Manifest',
                 params: {
                   screen: 'LoadScreen',
                   params: { loadId: load?.id },
                 },
-              },
-            })
+              })
           }
         />
       );

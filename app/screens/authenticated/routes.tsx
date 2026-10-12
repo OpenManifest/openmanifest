@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, View } from 'react-native';
-import type { NavigatorScreenParams } from '@react-navigation/native';
+import { useIsFocused, type NavigatorScreenParams } from '@react-navigation/native';
 
 import { Permission } from 'app/api/schema.d';
 import { AppSignalBoundary } from 'app/components/app_signal';
@@ -14,6 +14,8 @@ import ManifestTab, { OperatorRoutes } from './manifest/routes';
 import UsersTab, { UserRoutes } from './user/routes';
 import NotificationsTab, { NotificationRoutes } from './notifications/routes';
 import OverviewTab, { OverviewRoutes } from './overview/routes';
+import AccountScreen from './account/AccountScreen';
+import MoreScreen from './account/MoreScreen';
 
 import BottomTab from './TabBar';
 
@@ -22,6 +24,8 @@ export type AuthenticatedRoutes = {
   Overview: NavigatorScreenParams<OverviewRoutes>;
   Users: NavigatorScreenParams<UserRoutes>;
   Notifications: NavigatorScreenParams<NotificationRoutes>;
+  More: undefined;
+  Account: undefined;
 };
 
 const USERS_RULE: AccessRule = { permission: Permission.ReadUser };
@@ -30,13 +34,27 @@ const OVERVIEW_RULE: AccessRule = {
   any: [{ permission: Permission.ViewStatistics }, { moderator: true }],
 };
 
-/** The content of a tab is the `<main>` landmark of the page (the skip link of the navigation jumps to it) */
+/**
+ * The content of a tab is the `<main>` landmark of the page (the skip link of the navigation jumps to it). The screens of
+ * the other tabs stay mounted underneath, covered: on the web they are made `inert`, or the keyboard and screen readers
+ * would reach their controls (hiding them would lose their scroll position).
+ */
 function inMain<Props extends object>(
   Screen: React.ComponentType<Props>
 ): React.ComponentType<Props> {
   function Main(props: Props) {
+    const focused = useIsFocused();
+    const ref = React.useRef<View>(null);
+
+    React.useEffect(() => {
+      if (Platform.OS !== 'web') return;
+      const node = ref.current as unknown as HTMLElement | null;
+      if (focused) node?.removeAttribute('inert');
+      else node?.setAttribute('inert', '');
+    }, [focused]);
+
     return (
-      <View role="main" tabIndex={-1} style={{ flex: 1 }}>
+      <View ref={ref} role="main" tabIndex={-1} style={{ flex: 1 }}>
         <Screen {...props} />
       </View>
     );
@@ -51,6 +69,8 @@ const OverviewScreen = inMain(guarded(OverviewTab, OVERVIEW_RULE));
 const UsersScreen = inMain(guarded(UsersTab, USERS_RULE));
 const ManifestScreen = inMain(ManifestTab);
 const NotificationsScreen = inMain(NotificationsTab);
+const MoreTab = inMain(MoreScreen);
+const AccountTab = inMain(AccountScreen);
 
 export default function AuthenticatedTabBar() {
   const { t } = useTranslation('common');
@@ -93,6 +113,16 @@ export default function AuthenticatedTabBar() {
           name="Users"
           component={UsersScreen}
           options={{ title: t('destinations.people'), popToTopOnBlur: true }}
+        />
+        <BottomTab.Screen
+          name="More"
+          component={MoreTab}
+          options={{ title: t('destinations.more') }}
+        />
+        <BottomTab.Screen
+          name="Account"
+          component={AccountTab}
+          options={{ title: t('destinations.account') }}
         />
       </BottomTab.Navigator>
     </AppSignalBoundary>

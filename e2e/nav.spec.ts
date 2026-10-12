@@ -71,7 +71,6 @@ test.describe('navigation @nav', () => {
   test('the skip link jumps to the content', async ({ page }) => {
     await gotoRoute(page, '/manifest');
 
-    // (The closed drawer of the shell, replaced in U1.3, still has focusable items ahead of it.)
     const skip = page.getByRole('button', { name: 'Skip to content' });
     await skip.focus();
     await expect(skip).toBeFocused();

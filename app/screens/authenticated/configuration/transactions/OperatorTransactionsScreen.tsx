@@ -51,8 +51,6 @@ export default function TransactionsScreen() {
                 !item?.node?.id
                   ? null
                   : navigation.navigate('Authenticated', {
-                      screen: 'LeftDrawer',
-                      params: {
                         screen: 'Manifest',
                         params: {
                           screen: 'User',
@@ -64,8 +62,7 @@ export default function TransactionsScreen() {
                             },
                           },
                         },
-                      },
-                    })
+                      })
               }
               order={item?.node}
               showAvatar

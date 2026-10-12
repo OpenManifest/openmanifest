@@ -57,8 +57,6 @@ export default function JumpHistoryTab(props: IJumpHistoryTab) {
                 onPress={() => {
                   if (item?.node?.load?.id) {
                     navigation.navigate('Authenticated', {
-                      screen: 'LeftDrawer',
-                      params: {
                         screen: 'Manifest',
                         params: {
                           screen: 'LoadScreen',
@@ -66,8 +64,7 @@ export default function JumpHistoryTab(props: IJumpHistoryTab) {
                             loadId: item.node?.load?.id,
                           },
                         },
-                      },
-                    });
+                      });
                   }
                 }}
               />

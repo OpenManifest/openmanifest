@@ -21,7 +21,7 @@ export default function SkipLink() {
   const skip = React.useCallback(() => {
     const mains = Array.from(document.querySelectorAll<HTMLElement>('main'));
     // Screens of the other tabs stay mounted but hidden: take the one that is shown
-    const shown = mains.find((main) => main.offsetParent !== null);
+    const shown = mains.find((main) => !main.hasAttribute('inert'));
     shown?.focus();
   }, []);
 
