@@ -23,6 +23,7 @@ import {
 import { useRouteChange, useCachedResources } from './hooks';
 
 import { primaryColor } from '../constants/Colors';
+import useOrientationLock from 'app/navigation/useOrientationLock';
 import { useAppTheme } from '../theme';
 import { useSession } from '../state/session';
 import { usePreferences } from '../state/preferences';
@@ -105,6 +106,7 @@ function Content() {
 }
 function App() {
   const isLoadingComplete = useCachedResources();
+  useOrientationLock();
   // The session (credentials, current operator) is restored asynchronously: rendering before that would show the login
   // screen and send the first queries without credentials.
   const sessionHydrated = useSession((session) => session.hydrated);

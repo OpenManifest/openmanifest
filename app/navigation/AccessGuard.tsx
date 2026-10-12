@@ -1,41 +1,56 @@
 import * as React from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useStyles } from 'app/ui';
 import type { AccessRule } from './destinations';
 import { useAccessDecision } from './useDestinations';
+
+function Notice({ title, body, testID }: { title: string; body: string; testID: string }) {
+  const styles = useStyles((t) => ({
+    box: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: t.space.xl,
+      gap: t.space.sm,
+    },
+    title: { ...t.type.title, color: t.colour.text, textAlign: 'center' },
+    body: { ...t.type.body, color: t.colour.textMuted, textAlign: 'center' },
+  }));
+
+  return (
+    <View style={styles.box}>
+      <Text role="heading" aria-level={2} testID={testID} style={styles.title}>
+        {title}
+      </Text>
+      <Text style={styles.body}>{body}</Text>
+    </View>
+  );
+}
 
 export function NoAccess() {
   const { t } = useTranslation('common');
 
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-      <Text
-        role="heading"
-        aria-level={2}
-        testID="no-access"
-        style={{ fontWeight: '600', fontSize: 18 }}
-      >
-        {t('noAccess.title')}
-      </Text>
-      <Text style={{ marginTop: 8, textAlign: 'center' }}>{t('noAccess.body')}</Text>
-    </View>
-  );
+  return <Notice testID="no-access" title={t('noAccess.title')} body={t('noAccess.body')} />;
 }
 
 export function NotAvailable() {
   const { t } = useTranslation('common');
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-      <Text
-        role="heading"
-        aria-level={2}
-        testID="not-available"
-        style={{ fontWeight: '600', fontSize: 18 }}
-      >
-        {t('notAvailable.title')}
-      </Text>
-      <Text style={{ marginTop: 8, textAlign: 'center' }}>{t('notAvailable.body')}</Text>
+    <Notice testID="not-available" title={t('notAvailable.title')} body={t('notAvailable.body')} />
+  );
+}
+
+function Loading() {
+  const { t } = useTranslation('common');
+  const styles = useStyles(() => ({
+    box: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  }));
+
+  return (
+    <View style={styles.box}>
+      <ActivityIndicator accessibilityLabel={t('loading')} />
     </View>
   );
 }
@@ -51,13 +66,7 @@ export default function guarded<Props extends object>(
   function Guarded(props: Props) {
     const decision = useAccessDecision(rule);
 
-    if (decision === 'loading') {
-      return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <ActivityIndicator accessibilityLabel="Loading" />
-        </View>
-      );
-    }
+    if (decision === 'loading') return <Loading />;
     if (decision === 'no-access') return <NoAccess />;
     if (decision === 'not-available') return <NotAvailable />;
     return <Screen {...props} />;

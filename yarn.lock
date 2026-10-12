@@ -6837,6 +6837,11 @@ expo-notifications@~57.0.22:
     expo-application "~57.0.3"
     expo-constants "~57.0.21"
 
+expo-screen-orientation@~57.0.2:
+  version "57.0.2"
+  resolved "https://registry.yarnpkg.com/expo-screen-orientation/-/expo-screen-orientation-57.0.2.tgz#6c576475cdc5356a7345d270db023cbafb805407"
+  integrity sha512-9wIa/dU561fidHYChkg6LIDAcYr8uMBa8fOws1Km9/slaF3N/a2kgcy0TUZWvNIe7at3r4g2kVva9vRBJBkaEQ==
+
 expo-secure-store@~57.0.4:
   version "57.0.4"
   resolved "https://registry.yarnpkg.com/expo-secure-store/-/expo-secure-store-57.0.4.tgz#a5eefc7490d1de26fd62e83bc5fdceacd94f5342"

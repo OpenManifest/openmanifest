@@ -30,5 +30,12 @@
   "notAvailable": {
     "title": "Not available",
     "body": "This isn't available for this operator."
-  }
+  },
+  "navigation": {
+    "main": "Main",
+    "skip": "Skip to content",
+    "switchOperator": "Switch operator",
+    "account": "Account menu"
+  },
+  "loading": "Loading"
 }

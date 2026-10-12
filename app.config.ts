@@ -20,7 +20,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     // X.Y.0 from package.json. Build numbers (iOS buildNumber, Android versionCode) come from EAS remote versioning.
     version: APP_VERSION,
     runtimeVersion: { policy: 'appVersion' },
-    orientation: 'portrait',
+    // Tablets rotate; phones are locked to portrait at runtime (app/navigation/useOrientationLock.ts)
+    orientation: 'default',
     icon: './assets/images/android-icon.png',
     scheme: 'openmanifest',
     userInterfaceStyle: 'automatic',
