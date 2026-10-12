@@ -3,7 +3,7 @@ import { Permission } from 'app/api/schema.d';
 import { LoadUpdatedDocument } from 'app/api/reflection';
 import { render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
-import LoadScreen from '../../screens/authenticated/dropzone/load/LoadScreen';
+import LoadScreen from '../../screens/authenticated/manifest/load/LoadScreen';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.mock('@react-navigation/native', () => ({
@@ -25,7 +25,7 @@ describe('<LoadScreen />', () => {
       mock.result as { data: { load: { slots: unknown[]; maxSlots: number } } }
     ).data.load;
 
-    const screen = render(<LoadScreen />, {
+    const screen = await render(<LoadScreen />, {
       graphql: [mock, loadUpdatedMock],
       permissions: [Permission.ReadLoad],
       session: authenticatedSession,
@@ -46,7 +46,7 @@ describe('<LoadScreen />', () => {
 
   it('shows the load status, slot count and weight', async () => {
     const mock = MOCK_QUERY_LOAD();
-    const screen = render(<LoadScreen />, {
+    const screen = await render(<LoadScreen />, {
       graphql: [mock, loadUpdatedMock],
       permissions: [Permission.ReadLoad],
       session: authenticatedSession,

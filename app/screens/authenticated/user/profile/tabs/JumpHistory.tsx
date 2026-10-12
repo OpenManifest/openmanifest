@@ -6,23 +6,23 @@ import enAU from 'date-fns/locale/en-AU';
 
 import { groupBy, map } from 'lodash';
 import { differenceInDays, format, formatDistance, parseISO, startOfDay } from 'date-fns';
-import { DropzoneUserProfileFragment } from 'app/api/operations';
+import { MembershipProfileFragment } from 'app/api/operations';
 
 import SlotCard from '../SlotCard';
 
 export interface IJumpHistoryTab {
   tabIndex: number;
   currentTabIndex: number;
-  dropzoneUser?: DropzoneUserProfileFragment | null;
+  membership?: MembershipProfileFragment | null;
 }
 export default function JumpHistoryTab(props: IJumpHistoryTab) {
-  const { dropzoneUser, tabIndex, currentTabIndex } = props;
+  const { membership, tabIndex, currentTabIndex } = props;
   const navigation = useNavigation();
 
   const sections = React.useMemo(
     () =>
       map(
-        groupBy(dropzoneUser?.slots?.edges, (e) =>
+        groupBy(membership?.slots?.edges, (e) =>
           startOfDay(parseISO(e?.node?.createdAt)).toISOString()
         ),
         (d, t) => {
@@ -37,7 +37,7 @@ export default function JumpHistoryTab(props: IJumpHistoryTab) {
           };
         }
       ),
-    [dropzoneUser?.slots?.edges]
+    [membership?.slots?.edges]
   );
 
   return (

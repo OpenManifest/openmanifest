@@ -6,7 +6,7 @@ import ProgressBar from 'app/components/ProgressBar';
 import Skeleton from 'app/components/Skeleton';
 
 import useImagePicker from 'app/hooks/useImagePicker';
-import { useDropzoneContext, useManifestContext } from 'app/providers';
+import { useOperatorContext, useManifestContext } from 'app/providers';
 import { useUpdateUserMutation } from 'app/api/reflection';
 
 import { errorColor, successColor } from 'app/constants/Colors';
@@ -29,41 +29,41 @@ export type ProfileRoute = {
 };
 export default function ProfileScreen() {
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
   const route = useRoute<RouteProp<ProfileRoute>>();
 
-  const { dropzoneUser, loading } = useUserProfile({
+  const { membership, loading } = useUserProfile({
     id: route.params.userId || currentUser?.id,
   });
 
   return (
-    <ProfileDialogsProvider {...{ dropzoneUser }}>
-      <ProfileScreenContent {...{ dropzoneUser, loading }} />
+    <ProfileDialogsProvider {...{ membership }}>
+      <ProfileScreenContent {...{ membership, loading }} />
     </ProfileDialogsProvider>
   );
 }
 
 function ProfileScreenContent(props: {
-  dropzoneUser?: ReturnType<typeof useUserProfile>['dropzoneUser'];
+  membership?: ReturnType<typeof useUserProfile>['membership'];
   loading: boolean;
 }) {
-  const { dropzoneUser, loading } = props;
+  const { membership, loading } = props;
   const { theme } = useAppTheme();
   const navigation = useNavigation();
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
   const { editMembership } = useProfileDialogs();
   const pickImage = useImagePicker();
   const isFocused = useIsFocused();
   const [defaultIndex, onChangeIndex] = React.useState(1);
   const onClickAccessAndMembership = React.useCallback(() => {
-    if (!dropzoneUser) {
+    if (!membership) {
       return;
     }
     editMembership();
-  }, [dropzoneUser, editMembership]);
+  }, [membership, editMembership]);
   const headerRight = React.useCallback(
     () =>
       !currentUser?.expiresAt ? null : (
@@ -102,7 +102,7 @@ function ProfileScreenContent(props: {
         // Upload image
         await mutationUpdateUser({
           variables: {
-            dropzoneUser: dropzoneUser?.id,
+            membership: membership?.id,
             image: `data:image/jpeg;base64,${base64}`,
           },
         });
@@ -110,7 +110,7 @@ function ProfileScreenContent(props: {
     } catch (e) {
       console.log(e);
     }
-  }, [dropzoneUser?.id, mutationUpdateUser, pickImage]);
+  }, [membership?.id, mutationUpdateUser, pickImage]);
 
   const { dialogs } = useManifestContext();
 
@@ -121,12 +121,12 @@ function ProfileScreenContent(props: {
       if (index === 0) {
         return <TabBar onChange={onChangeIndex} />;
       }
-      if (dropzoneUser) {
-        return <ProfileTab active={defaultIndex} {...{ dropzoneUser }} />;
+      if (membership) {
+        return <ProfileTab active={defaultIndex} {...{ membership }} />;
       }
       return null;
     },
-    [defaultIndex, dropzoneUser]
+    [defaultIndex, membership]
   );
   return (
     <>
@@ -140,7 +140,7 @@ function ProfileScreenContent(props: {
           ListHeaderComponent={() => (
             <View style={styles.wrappingHeader}>
               <View style={{ width: '100%' }}>
-                {!dropzoneUser ? (
+                {!membership ? (
                   <Skeleton
                     key="profile-header"
                     containerStyle={{
@@ -151,20 +151,20 @@ function ProfileScreenContent(props: {
                     layout={[{ key: 'header', width: '100%', height: 256, borderRadius: 8 }]}
                   />
                 ) : (
-                  <Header dropzoneUser={dropzoneUser} onPressAvatar={onPickImage}>
+                  <Header membership={membership} onPressAvatar={onPickImage}>
                     <InfoGrid
                       style={{ minHeight: 80 }}
                       items={[
                         {
                           title: 'Funds',
-                          value: formatCents(dropzoneUser?.creditsCents),
+                          value: formatCents(membership?.creditsCents),
                           onPress: () => {
-                            dialogs.credits.open({ dropzoneUser });
+                            dialogs.credits.open({ membership });
                           },
                         },
                         {
                           title: 'License',
-                          value: `${dropzoneUser?.license?.name || '-'}`,
+                          value: `${membership?.license?.name || '-'}`,
                           onPress: () => {
                             openWizard(5);
                           },
@@ -174,8 +174,7 @@ function ProfileScreenContent(props: {
                           onPress: () => {
                             openWizard(9);
                           },
-                          value:
-                            Math.round(Number(dropzoneUser?.user?.exitWeight)).toString() || '-',
+                          value: Math.round(Number(membership?.user?.bodyMassKg)).toString() || '-',
                         },
                       ]}
                     />
@@ -189,7 +188,7 @@ function ProfileScreenContent(props: {
           data={[null, null]}
         />
       </View>
-      <UserActionsButton {...{ dropzoneUser }} visible={isFocused} />
+      <UserActionsButton {...{ membership }} visible={isFocused} />
     </>
   );
 }

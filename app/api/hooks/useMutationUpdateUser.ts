@@ -10,11 +10,11 @@ export default createMutation<
   validates: {
     email: [isRequired('Email is required'), isEmail('Not a valid email')],
     name: [isRequired('Name is required')],
-    exitWeight: [
+    bodyMassKg: [
       isRequired('Exit weight is required'),
       isNumeric('Exit weight must be a valid number'),
-      validates('Exit weight seems too low?', ({ exitWeight }) => {
-        return Number(exitWeight) > 30;
+      validates('Exit weight seems too low?', ({ bodyMassKg }) => {
+        return Number(bodyMassKg) > 30;
       }),
     ],
   },

@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, Text } from 'react-native';
 
 import useRestriction from 'app/hooks/useRestriction';
@@ -8,9 +9,9 @@ import { ModerationRole, Permission } from 'app/api/schema.d';
 import { useTheme } from 'react-native-paper';
 
 import { NavigatorScreenParams } from '@react-navigation/native';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { AppSignalBoundary } from 'app/components/app_signal';
-import ManifestTab, { DropzoneRoutes } from './dropzone/routes';
+import ManifestTab, { OperatorRoutes } from './manifest/routes';
 import UsersTab, { UserRoutes } from './user/routes';
 import NotificationsTab, { NotificationRoutes } from './notifications/routes';
 import OverviewTab, { OverviewRoutes } from './overview/routes';
@@ -20,18 +21,19 @@ import { useAppTheme } from 'app/theme';
 import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 export type AuthenticatedRoutes = {
-  Manifest: NavigatorScreenParams<DropzoneRoutes>;
+  Manifest: NavigatorScreenParams<OperatorRoutes>;
   Overview: NavigatorScreenParams<OverviewRoutes>;
   Users: NavigatorScreenParams<UserRoutes>;
   Notifications: NavigatorScreenParams<NotificationRoutes>;
 };
 
 export default function AuthenticatedTabBar() {
+  const { t } = useTranslation('common');
   const { palette } = useAppTheme();
 
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
   const isAdmin = currentUser?.user?.moderationRole !== ModerationRole.User;
   const canViewUsers = useRestriction(Permission.ReadUser);
   const canViewDashboard = useRestriction(Permission.ViewStatistics);
@@ -78,6 +80,7 @@ export default function AuthenticatedTabBar() {
             name="Overview"
             component={OverviewTab}
             options={{
+              title: t('tabs.overview'),
               tabBarIcon: ({ focused, color, size }) => (
                 <MaterialCommunityIcons
                   name="view-dashboard-outline"
@@ -92,6 +95,7 @@ export default function AuthenticatedTabBar() {
           name="Manifest"
           component={ManifestTab}
           options={{
+            title: t('tabs.manifest'),
             tabBarIcon: ({ focused, color, size }) => (
               <MaterialCommunityIcons
                 name="airplane"
@@ -105,6 +109,7 @@ export default function AuthenticatedTabBar() {
           name="Notifications"
           component={NotificationsTab}
           options={{
+            title: t('tabs.notifications'),
             tabBarIcon: ({ focused, color, size }) => (
               <MaterialCommunityIcons
                 name="bell-outline"
@@ -120,6 +125,7 @@ export default function AuthenticatedTabBar() {
             name="Users"
             component={UsersTab}
             options={{
+              title: t('tabs.users'),
               tabBarIcon: ({ size, color, focused }) => (
                 <MaterialCommunityIcons
                   {...{ size, color }}

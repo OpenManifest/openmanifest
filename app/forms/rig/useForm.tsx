@@ -6,8 +6,8 @@ import isEqual from 'lodash/isEqual';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import type { RigEssentialsFragment } from 'app/api/operations';
-import useMutationCreateRig from 'app/api/hooks/useMutationCreateRig';
-import useMutationUpdateRig from 'app/api/hooks/useMutationUpdateRig';
+import useMutationCreateEquipment from 'app/api/hooks/useMutationCreateEquipment';
+import useMutationUpdateEquipment from 'app/api/hooks/useMutationUpdateEquipment';
 import { useNotifications } from 'app/providers/notifications';
 
 export type RigFields = {
@@ -65,12 +65,12 @@ export interface IUseRigFormOpts {
   /** The rig being edited; a new rig when absent */
   rig?: RigEssentialsFragment | null;
   userId?: number;
-  dropzoneId?: number;
+  operatorId?: number;
   onSuccess?(): void;
 }
 
 export default function useRigForm(opts: IUseRigFormOpts) {
-  const { rig, userId, dropzoneId, onSuccess } = opts;
+  const { rig, userId, operatorId, onSuccess } = opts;
   const notify = useNotifications();
   const initialValues = React.useMemo(() => toFormValues(rig), [rig]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
@@ -101,25 +101,25 @@ export default function useRigForm(opts: IUseRigFormOpts) {
     },
     onError: (message: string) => notify.error(message),
   };
-  const updateRig = useMutationUpdateRig(handlers);
-  const createRig = useMutationCreateRig(handlers);
+  const updateEquipment = useMutationUpdateEquipment(handlers);
+  const createEquipment = useMutationCreateEquipment(handlers);
 
   const [{ loading }, onSave] = useAsyncFn(
     async (fields: RigFields) => {
       const attributes = {
         ...fields,
         userId: userId ? Number(userId) : null,
-        dropzoneId: dropzoneId ? Number(dropzoneId) : null,
+        operatorId: operatorId ? Number(operatorId) : null,
       };
       const result = rig?.id
-        ? await updateRig.mutate({ id: Number(rig.id), ...attributes })
-        : await createRig.mutate(attributes);
+        ? await updateEquipment.mutate({ id: Number(rig.id), ...attributes })
+        : await createEquipment.mutate(attributes);
 
       if (result && !result.errors?.length && !result.fieldErrors?.length) {
         onSuccess?.();
       }
     },
-    [rig?.id, userId, dropzoneId, updateRig.mutate, createRig.mutate, onSuccess]
+    [rig?.id, userId, operatorId, updateEquipment.mutate, createEquipment.mutate, onSuccess]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onSave), [handleSubmit, onSave]);

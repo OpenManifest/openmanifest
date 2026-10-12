@@ -92,7 +92,7 @@ export function WeatherFormProvider(props: React.PropsWithChildren<object>) {
   });
   const { reset, getValues, setError, trigger } = methods;
   const notify = useNotifications();
-  const dropzoneId = useSession((session) => session.currentDropzoneId);
+  const operatorId = useSession((session) => session.currentOperatorId);
 
   const mutation = useMutationCreateWeatherConditions({
     onSuccess: () => null,
@@ -118,14 +118,14 @@ export function WeatherFormProvider(props: React.PropsWithChildren<object>) {
     const values = getValues();
     const result = await mutate({
       id: Number(values.id),
-      dropzoneId: Number(dropzoneId),
+      operatorId: Number(operatorId),
       winds: JSON.stringify(values.winds),
       jumpRun: values.jumpRun,
       temperature: values.temperature,
     });
 
     return !!result && !result.errors?.length && !result.fieldErrors?.length;
-  }, [dropzoneId, getValues, mutate, trigger]);
+  }, [operatorId, getValues, mutate, trigger]);
 
   const api = React.useMemo(
     () => ({ open, save, saving: mutation.loading }),
