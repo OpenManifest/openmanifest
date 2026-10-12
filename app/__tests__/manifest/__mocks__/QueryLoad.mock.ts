@@ -1,6 +1,6 @@
 import { fullAltitude, hopNPop } from 'app/__fixtures__/destination.fixture';
 import { merge } from 'lodash';
-import { LoadState } from '../../../api/schema.d';
+import { LoadState, LoadVehicleRole } from '../../../api/schema.d';
 import {
   MembershipDetailsFragment,
   MembershipEssentialsFragment,
@@ -76,6 +76,15 @@ const membershipDetails: MembershipDetailsFragment = merge({}, membershipEssenti
     name: 'Certificate A',
   },
 });
+const beaver = {
+  __typename: 'Vehicle' as const,
+  minCapacity: 0,
+  registration: 'ABC123',
+  id: '1',
+  capacity: 10,
+  name: 'Beaver',
+};
+
 export default createMockedQuery<LoadQueryVariables, LoadQuery>(
   LoadDocument,
   { id: '1' },
@@ -83,14 +92,18 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
     load: {
       ...loadEssentials,
       destinations: [],
-      vehicle: {
-        __typename: 'Vehicle',
-        minCapacity: 0,
-        registration: 'ABC123',
-        id: '1',
-        capacity: 10,
-        name: 'Beaver',
-      },
+      vehicle: beaver,
+      vehicles: [
+        {
+          __typename: 'LoadVehicle',
+          id: '1',
+          role: LoadVehicleRole.Carrying,
+          position: 0,
+          capacity: 10,
+          slotsCount: 0,
+          vehicle: beaver,
+        },
+      ],
       // Distinct ids: the Apollo cache normalises Membership by id, so sharing one with a slot would overwrite it.
       gca: merge({}, membershipEssentials, {
         id: '11',

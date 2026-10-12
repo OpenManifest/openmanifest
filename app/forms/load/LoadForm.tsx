@@ -15,6 +15,8 @@ import { Divider, Stack } from 'app/ui';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { DestinationListField } from 'app/components/input/destination_select';
 import { destinationsModule } from 'app/utils/destinations';
+import { moduleEnabled } from 'app/utils/modules';
+import { VehicleListField } from 'app/components/input/vehicle_list/VehicleListField';
 
 interface ILoadFormProps {
   control: Control<LoadFields>;
@@ -25,6 +27,7 @@ export default function LoadForm(props: ILoadFormProps) {
   const {
     operator: { operator },
   } = useOperatorContext();
+  const multiVehicle = moduleEnabled(operator?.modules, 'multi_vehicle');
   const perLoadDestinations =
     destinationsModule(operator?.modules as Record<string, unknown>)?.scope === 'per_load';
 
@@ -39,7 +42,11 @@ export default function LoadForm(props: ILoadFormProps) {
 
       <FormNumberField label={t('forms.load.maxSlots')} {...{ control }} name="maxSlots" />
       <View style={{ width: '100%' }}>
-        <VehicleChipSelectField {...{ control }} name="vehicle" />
+        {multiVehicle ? (
+          <VehicleListField {...{ control }} name="vehicleRoles" />
+        ) : (
+          <VehicleChipSelectField {...{ control }} name="vehicle" />
+        )}
 
         <MembershipChipSelectField
           label={t('forms.load.gca')}

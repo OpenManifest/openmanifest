@@ -204,7 +204,15 @@
       "noDestinations": "No {{destinations}} yet. Add one before the load is called.",
       "moveUp": "Move {{name}} up",
       "moveDown": "Move {{name}} down",
-      "removeDestination": "Remove {{name}}"
+      "removeDestination": "Remove {{name}}",
+      "vehicleCarries": "Carries {{seats}}",
+      "vehicleSupports": "Supports the load",
+      "makeSupport": "Make {{name}} support the load",
+      "makeCarry": "Make {{name}} carry",
+      "removeVehicle": "Remove {{name}}",
+      "addVehicle": "Add {{vehicle}}",
+      "groupSeats": "{{count}} of {{seats}}",
+      "notAssigned": "Not in a {{vehicle}}"
     },
     "membership": {
       "membershipExpires": "Membership expires",

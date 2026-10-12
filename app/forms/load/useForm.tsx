@@ -6,7 +6,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useManifestContext } from 'app/providers/manifest/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { camelCase, isEqual } from 'lodash';
-import { LoadState } from 'app/api/schema.d';
+import { LoadState, LoadVehicleRole } from 'app/api/schema.d';
+import { VehicleEssentialsFragment } from 'app/api/operations';
+import { useOperatorContext } from 'app/providers/operator/context';
+import { moduleEnabled } from 'app/utils/modules';
 import { useNotifications } from 'app/providers/notifications';
 import withDefaults from 'app/forms/initialValues';
 import i18n from 'app/i18n';
@@ -18,6 +21,8 @@ export type LoadFields = Required<
     id?: string | null;
     /** The places the load visits, in order (operators with per-load destinations) */
     destinationIds: string[];
+    /** The vehicles of the load and what they do (operators with the multi_vehicle module); `vehicle` is the first that carries */
+    vehicleRoles: { vehicle: VehicleEssentialsFragment; role: LoadVehicleRole }[];
   };
 
 export const loadValidation = yup.object({
@@ -33,6 +38,7 @@ export const loadValidation = yup.object({
   id: yup.string().nullable(),
   isOpen: yup.boolean().default(true),
   destinationIds: yup.array().of(yup.string().required()).default([]),
+  vehicleRoles: yup.array().default([]),
 });
 
 export const EMPTY_FORM_VALUES: Partial<LoadFields> = {
@@ -43,6 +49,7 @@ export const EMPTY_FORM_VALUES: Partial<LoadFields> = {
   maxSlots: 0,
   name: null,
   destinationIds: [],
+  vehicleRoles: [],
 };
 
 export interface IUseManifestFormOpts {
@@ -77,13 +84,32 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
     manifest: { createLoad },
   } = useManifestContext();
 
-  const { vehicle } = useWatch<LoadFields>({ control });
+  const {
+    operator: { operator },
+  } = useOperatorContext();
+  const multiVehicle = moduleEnabled(operator?.modules, 'multi_vehicle');
+  const { vehicle, vehicleRoles } = useWatch<LoadFields>({ control });
+
+  // With several vehicles the load takes the first that carries as its vehicle, and the seats of all that carry
+  React.useEffect(() => {
+    if (!multiVehicle) return;
+    const carrying = (vehicleRoles ?? []).filter(({ role }) => role === LoadVehicleRole.Carrying);
+    setValue('vehicle', (carrying[0]?.vehicle ?? undefined) as LoadFields['vehicle'], {
+      shouldValidate: true,
+    });
+    if (carrying.length) {
+      setValue(
+        'maxSlots',
+        carrying.reduce((sum, { vehicle: carrier }) => sum + (carrier?.capacity ?? 0), 0)
+      );
+    }
+  }, [multiVehicle, vehicleRoles, setValue]);
 
   React.useEffect(() => {
-    if (vehicle?.capacity) {
+    if (!multiVehicle && vehicle?.capacity) {
       setValue('maxSlots', vehicle.capacity);
     }
-  }, [vehicle?.capacity, setValue]);
+  }, [multiVehicle, vehicle?.capacity, setValue]);
 
   const [{ loading }, onManifest] = useAsyncFn(
     async (fields: LoadFields) => {
@@ -94,7 +120,12 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           gca: validatedFields.gca?.id,
           state: LoadState.Open,
           pilot: validatedFields.pilot?.id,
-          vehicle: validatedFields.vehicle?.id,
+          vehicle: multiVehicle ? undefined : validatedFields.vehicle?.id,
+          vehicles: multiVehicle
+            ? (validatedFields.vehicleRoles as LoadFields['vehicleRoles']).map(
+                ({ vehicle: carrier, role }) => ({ vehicleId: carrier.id, role })
+              )
+            : undefined,
           maxSlots: Number(validatedFields.maxSlots),
           name: validatedFields.name,
           destinationIds: validatedFields.destinationIds?.length
@@ -124,7 +155,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
         }
       }
     },
-    [createLoad, notify, setError, onSuccess]
+    [createLoad, notify, setError, onSuccess, multiVehicle]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onManifest), [handleSubmit, onManifest]);

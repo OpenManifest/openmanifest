@@ -802,7 +802,10 @@ export type Load = AnyResource & {
   slots?: Maybe<Array<Slot>>;
   state: LoadState;
   updatedAt: Scalars['ISO8601DateTime']['output'];
+  /** The first vehicle that carries participants */
   vehicle: Vehicle;
+  /** The vehicles of the load, those that carry first */
+  vehicles: Array<LoadVehicle>;
   weight: Scalars['Int']['output'];
 };
 
@@ -845,6 +848,8 @@ export type LoadInput = {
   pilot?: InputMaybe<Scalars['ID']['input']>;
   state?: InputMaybe<LoadState>;
   vehicle?: InputMaybe<Scalars['ID']['input']>;
+  /** The vehicles of the load and their roles; they replace the load's. One that carries is needed */
+  vehicles?: InputMaybe<Array<LoadVehicleInput>>;
 };
 
 export enum LoadState {
@@ -865,6 +870,32 @@ export type LoadUpdatedPayload = {
   __typename?: 'LoadUpdatedPayload';
   load?: Maybe<Load>;
 };
+
+export type LoadVehicle = AnyResource & {
+  __typename?: 'LoadVehicle';
+  availableSlots: Scalars['Int']['output'];
+  /** The seats it offers participants (0 for a support vehicle) */
+  capacity: Scalars['Int']['output'];
+  guid: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  position: Scalars['Int']['output'];
+  role: LoadVehicleRole;
+  /** The slots assigned to this vehicle */
+  slotsCount: Scalars['Int']['output'];
+  vehicle: Vehicle;
+};
+
+export type LoadVehicleInput = {
+  role?: InputMaybe<LoadVehicleRole>;
+  vehicleId: Scalars['ID']['input'];
+};
+
+export enum LoadVehicleRole {
+  /** Carries participants; its seats count towards the load's capacity */
+  Carrying = 'carrying',
+  /** Supports the load (a tug, a chase vehicle, a shuttle); has no participants */
+  Support = 'support'
+}
 
 export type Membership = AnyResource & Wallet & {
   __typename?: 'Membership';
@@ -1000,6 +1031,8 @@ export type MoveSlotInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   sourceSlot: Scalars['Int']['input'];
   targetLoad: Scalars['Int']['input'];
+  /** The vehicle of the target load the slot rides in */
+  targetLoadVehicle?: InputMaybe<Scalars['Int']['input']>;
   targetSlot?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -2077,6 +2110,7 @@ export type Slot = AnyResource & SellableItem & {
   guid: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
   load: Load;
+  loadVehicle?: Maybe<LoadVehicle>;
   lockVersion: Scalars['Int']['output'];
   membership?: Maybe<Membership>;
   order?: Maybe<Order>;
@@ -2117,6 +2151,8 @@ export type SlotInput = {
   guestBodyMassKg?: InputMaybe<Scalars['Float']['input']>;
   guestName?: InputMaybe<Scalars['String']['input']>;
   load?: InputMaybe<Scalars['ID']['input']>;
+  /** The vehicle of the load this slot rides in (loads with several vehicles that carry) */
+  loadVehicle?: InputMaybe<Scalars['ID']['input']>;
   /** The lockVersion of the slot as the client last saw it; an older one is refused with CONFLICT */
   lockVersion?: InputMaybe<Scalars['Int']['input']>;
   membership?: InputMaybe<Scalars['ID']['input']>;

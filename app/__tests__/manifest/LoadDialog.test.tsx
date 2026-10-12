@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { scoped } from 'app/test-utils/hosts';
 import { Permission } from 'app/api/schema.d';
-import { CreateLoadDocument, DestinationsDocument } from 'app/api/reflection';
+import { CreateLoadDocument, DestinationsDocument, VehiclesDocument } from 'app/api/reflection';
 import { fullAltitude, reef } from 'app/__fixtures__/destination.fixture';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_VEHICLES from './__mocks__/QueryVehicle.mock';
@@ -13,6 +13,15 @@ import { NotificationContext } from 'app/providers/notifications/context';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
+
+const BEAVER = {
+  __typename: 'Vehicle',
+  id: '1',
+  name: 'Beaver',
+  registration: 'ABC123',
+  minCapacity: 0,
+  capacity: 10,
+};
 
 const membership = (id: string, name: string) => ({
   __typename: 'Membership',
@@ -194,6 +203,69 @@ describe('<LoadDialog />', () => {
     }
     await waitFor(() => expect(form.getByText('2. Full altitude')).toBeTruthy());
 
+    await fireEvent.press(form.getByText('Create'));
+
+    await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
+  });
+
+  it('sends the vehicles with their roles when the operator has loads with several', async () => {
+    const mutationResult = jest.fn(() => ({
+      data: {
+        createLoad: {
+          __typename: 'CreateLoadPayload',
+          load: null,
+          errors: null,
+          fieldErrors: null,
+        },
+      },
+    }));
+    const tug = { ...BEAVER, id: '2', name: 'Tug', registration: 'TUG1', capacity: 1 };
+
+    // The manifest provider mounts its own closed copy of the dialog, so queries are scoped to ours
+    const screen = await render(
+      <View testID="under-test">
+        <LoadDialog open onClose={jest.fn()} onSuccess={jest.fn()} />
+      </View>,
+      {
+        session: authenticatedSession,
+        graphql: [
+          MOCK_QUERY_OPERATOR({}, { operator: { modules: { multi_vehicle: {} } } } as never),
+          {
+            request: { query: VehiclesDocument, variables: { operatorId: '1' } },
+            result: { data: { __typename: 'Query', vehicles: [BEAVER, tug] } },
+            maxUsageCount: 10,
+          },
+          usersWithPermission(Permission.ActAsGca, membership('31', 'Gina GCA')),
+          usersWithPermission(Permission.ActAsPilot, membership('32', 'Pete Pilot')),
+          {
+            request: {
+              query: CreateLoadDocument,
+              operationName: 'CreateLoad',
+              variables: {
+                gca: '31',
+                pilot: '32',
+                maxSlots: 10,
+                state: 'open',
+                name: null,
+                vehicles: [
+                  { vehicleId: '1', role: 'carrying' },
+                  { vehicleId: '2', role: 'support' },
+                ],
+              },
+            },
+            result: mutationResult,
+          },
+        ],
+      }
+    );
+    const form = scoped(screen.getByTestId('under-test'));
+
+    await waitFor(() => expect(form.getByText('Gina GCA')).toBeTruthy(), { timeout: 10000 });
+    await waitFor(() => expect(form.getByText('Pete Pilot')).toBeTruthy(), { timeout: 10000 });
+    await waitFor(() => expect(form.getByText('Carries 10')).toBeTruthy(), { timeout: 10000 });
+    await fireEvent.press(form.getByRole('combobox', { name: 'Add vehicle' }));
+    await fireEvent.press(screen.getByRole('option', { name: 'Tug' }));
+    await fireEvent.press(await form.findByRole('button', { name: 'Make Tug support the load' }));
     await fireEvent.press(form.getByText('Create'));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });

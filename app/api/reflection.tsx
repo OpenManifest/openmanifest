@@ -177,6 +177,9 @@ export const SlotEssentialsFragmentDoc = gql`
   destination {
     ...destinationEssentials
   }
+  loadVehicle {
+    id
+  }
   activityType {
     ...activityTypeEssentials
   }
@@ -743,11 +746,26 @@ export const RoleDetailedFragmentDoc = gql`
   permissions
 }
     ${RoleEssentialsFragmentDoc}`;
+export const LoadVehicleEssentialsFragmentDoc = gql`
+    fragment loadVehicleEssentials on LoadVehicle {
+  id
+  role
+  position
+  capacity
+  slotsCount
+  vehicle {
+    ...vehicleEssentials
+  }
+}
+    ${VehicleEssentialsFragmentDoc}`;
 export const LoadDetailsFragmentDoc = gql`
     fragment loadDetails on Load {
   ...loadEssentials
   vehicle {
     ...vehicleEssentials
+  }
+  vehicles {
+    ...loadVehicleEssentials
   }
   gca {
     ...membershipEssentials
@@ -767,6 +785,7 @@ export const LoadDetailsFragmentDoc = gql`
 }
     ${LoadEssentialsFragmentDoc}
 ${VehicleEssentialsFragmentDoc}
+${LoadVehicleEssentialsFragmentDoc}
 ${MembershipEssentialsFragmentDoc}
 ${DestinationEssentialsFragmentDoc}
 ${SlotDetailsFragmentDoc}`;
@@ -1178,9 +1197,9 @@ export type CreateEquipmentInspectionMutationHookResult = ReturnType<typeof useC
 export type CreateEquipmentInspectionMutationResult = Apollo.MutationResult<Operation.CreateEquipmentInspectionMutation>;
 export type CreateEquipmentInspectionMutationOptions = Apollo.BaseMutationOptions<Operation.CreateEquipmentInspectionMutation, Operation.CreateEquipmentInspectionMutationVariables>;
 export const CreateLoadDocument = gql`
-    mutation CreateLoad($name: String, $pilot: ID, $gca: ID, $maxSlots: Int, $vehicle: ID, $state: LoadState, $destinationIds: [Int!]) {
+    mutation CreateLoad($name: String, $pilot: ID, $gca: ID, $maxSlots: Int, $vehicle: ID, $vehicles: [LoadVehicleInput!], $state: LoadState, $destinationIds: [Int!]) {
   createLoad(
-    input: {attributes: {name: $name, pilot: $pilot, gca: $gca, maxSlots: $maxSlots, vehicle: $vehicle, state: $state, destinationIds: $destinationIds}}
+    input: {attributes: {name: $name, pilot: $pilot, gca: $gca, maxSlots: $maxSlots, vehicle: $vehicle, vehicles: $vehicles, state: $state, destinationIds: $destinationIds}}
   ) {
     load {
       ...loadDetails
@@ -1213,6 +1232,7 @@ export type CreateLoadMutationFn = Apollo.MutationFunction<Operation.CreateLoadM
  *      gca: // value for 'gca'
  *      maxSlots: // value for 'maxSlots'
  *      vehicle: // value for 'vehicle'
+ *      vehicles: // value for 'vehicles'
  *      state: // value for 'state'
  *      destinationIds: // value for 'destinationIds'
  *   },
