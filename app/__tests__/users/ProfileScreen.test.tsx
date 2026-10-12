@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, waitFor } from '../../__mocks__/render';
-import MOCK_QUERY_PROFILE from './__mocks__/QueryDropzoneUserProfile.mock';
+import MOCK_QUERY_PROFILE from './__mocks__/QueryMembershipProfile.mock';
 import ProfileScreen from '../../screens/authenticated/user/profile/ProfileScreen';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
@@ -15,7 +15,7 @@ jest.mock('@react-navigation/native', () => ({
 
 describe('<ProfileScreen />', () => {
   it('shows the name, role, funds and licence of the jumper', async () => {
-    const screen = render(<ProfileScreen />, {
+    const screen = await render(<ProfileScreen />, {
       session: authenticatedSession,
       graphql: [MOCK_QUERY_PROFILE()],
     });
@@ -30,7 +30,7 @@ describe('<ProfileScreen />', () => {
   });
 
   it('offers the funds, jumps and equipment tabs and lists the jump history by default', async () => {
-    const screen = render(<ProfileScreen />, {
+    const screen = await render(<ProfileScreen />, {
       session: authenticatedSession,
       graphql: [MOCK_QUERY_PROFILE()],
     });

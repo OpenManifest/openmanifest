@@ -3,7 +3,7 @@ import { Paragraph, useTheme, IconButton } from 'react-native-paper';
 import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import Color from 'color';
 import { useNavigation } from '@react-navigation/native';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 
 interface ISetupWarning {
   credits: number;
@@ -11,7 +11,7 @@ interface ISetupWarning {
   isRigSetUp: boolean;
   isRigInspectionComplete: boolean;
   isCreditSystemEnabled: boolean;
-  isExitWeightDefined: boolean;
+  isBodyMassKgDefined: boolean;
   isReserveInDate: boolean;
   isMembershipInDate: boolean;
   onSetupWizard?(): void;
@@ -49,7 +49,7 @@ export default function SetupWarning(props: ISetupWarning) {
     loading,
     isCreditSystemEnabled,
     isRigSetUp,
-    isExitWeightDefined,
+    isBodyMassKgDefined,
     isMembershipInDate,
     isReserveInDate,
     isRigInspectionComplete,
@@ -57,16 +57,16 @@ export default function SetupWarning(props: ISetupWarning) {
   } = props;
   const navigation = useNavigation();
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
 
   if (loading) {
     return null;
   }
 
-  if (!isExitWeightDefined || !isRigSetUp) {
+  if (!isBodyMassKgDefined || !isRigSetUp) {
     const missing = [
-      !isExitWeightDefined ? 'exit weight' : null,
+      !isBodyMassKgDefined ? 'exit weight' : null,
       !isRigSetUp ? 'equipment' : null,
     ].filter(Boolean);
 
@@ -90,13 +90,10 @@ export default function SetupWarning(props: ISetupWarning) {
         action={() =>
           currentUser?.id &&
           navigation.navigate('Authenticated', {
-            screen: 'LeftDrawer',
+            screen: 'Manifest',
             params: {
-              screen: 'Manifest',
-              params: {
-                screen: 'User',
-                params: { screen: 'EquipmentScreen', params: { userId: currentUser.id } },
-              },
+              screen: 'User',
+              params: { screen: 'EquipmentScreen', params: { userId: currentUser.id } },
             },
           })
         }

@@ -16,7 +16,7 @@ export interface IRigFormProps {
 
 export default function RigForm(props: IRigFormProps) {
   const { control, showTypeSelect } = props;
-  const canCreateRigs = useRestriction(Permission.CreateRig);
+  const canCreateEquipments = useRestriction(Permission.CreateEquipment);
   const { field: canopySize, fieldState: canopySizeState } = useController({
     name: 'canopySize',
     control,
@@ -66,7 +66,7 @@ export default function RigForm(props: IRigFormProps) {
         <ChipSelect<string>
           items={['student', 'sport', 'tandem']}
           renderItemLabel={(item) => item}
-          isDisabled={(item) => (!canCreateRigs ? item !== 'sport' : false)}
+          isDisabled={(item) => (!canCreateEquipments ? item !== 'sport' : false)}
           value={[rigType.value || 'sport']}
           onChange={([newType]) => rigType.onChange(newType)}
         />

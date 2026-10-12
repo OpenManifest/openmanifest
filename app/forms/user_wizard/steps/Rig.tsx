@@ -25,19 +25,19 @@ type StepFields = {
 };
 
 export function useStep(): WizardFormStep<StepFields> {
-  const { dropzoneUser } = useUserProfileContext();
+  const { membership } = useUserProfileContext();
 
   return useMemo(
     () => ({
       defaultValues: {
-        make: dropzoneUser?.user?.rigs?.[0]?.make || '',
-        model: dropzoneUser?.user?.rigs?.[0]?.model || '',
-        serial: dropzoneUser?.user?.rigs?.[0]?.serial || '',
-        rigId: dropzoneUser?.user?.rigs?.[0]?.id || null,
+        make: membership?.user?.rigs?.[0]?.make || '',
+        model: membership?.user?.rigs?.[0]?.model || '',
+        serial: membership?.user?.rigs?.[0]?.serial || '',
+        rigId: membership?.user?.rigs?.[0]?.id || null,
       },
       validation,
     }),
-    [dropzoneUser?.user?.rigs]
+    [membership?.user?.rigs]
   );
 }
 

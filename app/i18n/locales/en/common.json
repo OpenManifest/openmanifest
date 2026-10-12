@@ -1,0 +1,65 @@
+{
+  "tabs": {
+    "overview": "Overview",
+    "manifest": "Manifest",
+    "notifications": "Notifications",
+    "users": "Users"
+  },
+  "call": {
+    "minutes": "{{minutes}} minute {{call}}"
+  },
+  "time": {
+    "now": "now"
+  },
+  "destinations": {
+    "today": "Today",
+    "board": "Board",
+    "people": "People",
+    "inbox": "Inbox",
+    "wallet": "Wallet",
+    "money": "Money",
+    "reports": "Reports",
+    "setup": "Setup",
+    "platform": "Platform",
+    "account": "Account",
+    "more": "More"
+  },
+  "noAccess": {
+    "title": "You don't have access to this",
+    "body": "Ask the people who run this place to give you access."
+  },
+  "notAvailable": {
+    "title": "Not available",
+    "body": "This isn't available for this operator."
+  },
+  "navigation": {
+    "main": "Main",
+    "skip": "Skip to content",
+    "switchOperator": "Switch operator",
+    "account": "Account menu"
+  },
+  "loading": "Loading",
+  "account": {
+    "title": "Account",
+    "profile": "Profile",
+    "equipment": "Equipment",
+    "transactions": "Transactions",
+    "appearance": "Appearance",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "density": "Density",
+    "auto": "Auto",
+    "compact": "Compact",
+    "regular": "Regular",
+    "comfortable": "Comfortable",
+    "switchOperator": "Switch operator",
+    "createOperator": "Create new",
+    "logout": "Log out",
+    "role": "Role",
+    "funds": "Funds"
+  },
+  "more": {
+    "title": "More"
+  }
+}
