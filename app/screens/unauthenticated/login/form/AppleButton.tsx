@@ -1,9 +1,5 @@
 import { MutationFunctionOptions, MutationResult } from '@apollo/client';
-import {
-  LoginWithAppleMutation,
-  LoginWithAppleMutationVariables,
-  LoginWithFacebookMutation,
-} from 'app/api/operations';
+import { LoginWithAppleMutation, LoginWithAppleMutationVariables } from 'app/api/operations';
 import { useLoginWithAppleMutation } from 'app/api/reflection';
 import { useNotifications } from 'app/providers/notifications';
 import { useSession } from 'app/state';
@@ -47,12 +43,11 @@ export function useLoginWithApple(
       }
     } catch (e) {
       if (e instanceof Error) {
-        console.log(e);
         notify.error(e.message);
       }
     }
   }, [expoPushToken, notify, onLoginWithApple, setCredentials]);
-  return [onLogin, mutation] as [() => Promise<void>, MutationResult<LoginWithFacebookMutation>];
+  return [onLogin, mutation] as [() => Promise<void>, MutationResult<LoginWithAppleMutation>];
 }
 
 export default function AppleButton(

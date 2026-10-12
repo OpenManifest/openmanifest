@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Appbar, IconButton, Chip } from 'react-native-paper';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import SetupWarning from './SetupWarning';
 import { useAppTheme } from 'app/theme';
@@ -16,8 +16,8 @@ function AppBar(props: IAppBarProps) {
   const { hideWarnings, back, options } = props;
   const { palette, theme } = useAppTheme();
   const {
-    dropzone: { currentUser, loading, dropzone },
-  } = useDropzoneContext();
+    operator: { currentUser, loading, operator },
+  } = useOperatorContext();
 
   const navigation = useNavigation();
   const { openDrawer } = useNavigation<DrawerNavigationProp<never>>();
@@ -47,7 +47,7 @@ function AppBar(props: IAppBarProps) {
             mode="flat"
             textStyle={{
               color: palette.onSurface,
-              fontFamily: 'Roboto_700Bold',
+              fontWeight: '700',
             }}
           >
             {formatCents(currentUser?.creditsCents)}
@@ -58,16 +58,16 @@ function AppBar(props: IAppBarProps) {
         <SetupWarning
           credits={fromCents(currentUser?.creditsCents)}
           loading={loading}
-          isCreditSystemEnabled={!!dropzone?.settings?.requireCredits}
-          isExitWeightDefined={!!currentUser?.user?.exitWeight}
+          isCreditSystemEnabled={!!operator?.settings?.requireCredits}
+          isBodyMassKgDefined={!!currentUser?.user?.bodyMassKg}
           isMembershipInDate={
-            !dropzone?.settings?.requireMembership ||
+            !operator?.settings?.requireMembership ||
             (!!currentUser?.expiresAt && currentUser?.expiresAt > new Date().getTime() / 1000)
           }
           isReserveInDate={
-            !dropzone?.settings?.requireEquipment ||
+            !operator?.settings?.requireEquipment ||
             !!currentUser?.user?.rigs?.some((rig) => {
-              const isRigInspected = dropzone?.currentUser?.rigInspections?.map(
+              const isRigInspected = operator?.currentUser?.rigInspections?.map(
                 (inspection) => inspection?.rig?.id === rig.id
               );
               const isRepackInDate = (rig.repackExpiresAt || 0) > new Date().getTime() / 1000;
@@ -75,19 +75,18 @@ function AppBar(props: IAppBarProps) {
             })
           }
           isRigInspectionComplete={
-            !dropzone?.settings?.requireEquipment ||
-            !dropzone?.settings?.requireRigInspection ||
+            !operator?.settings?.requireEquipment ||
+            !operator?.settings?.requireRigInspection ||
             !!currentUser?.rigInspections?.length
           }
-          isRigSetUp={!dropzone?.settings?.requireEquipment || !!currentUser?.user?.rigs?.length}
+          isRigSetUp={!operator?.settings?.requireEquipment || !!currentUser?.user?.rigs?.length}
           onSetupWizard={() => {
-            console.log('opening setup wizard');
             if (currentUser) {
               navigation.navigate('Wizards', {
                 screen: 'UserWizardScreen',
                 params: {
                   index: undefined,
-                  dropzoneUserId: currentUser.id,
+                  membershipId: currentUser.id,
                 },
               });
             }

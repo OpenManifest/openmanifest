@@ -15,7 +15,7 @@ interface IFormItemItem {
 }
 
 export default function RigInspectionItem(props: IFormItemItem) {
-  const canInspect = useRestriction(Permission.ActAsRigInspector);
+  const canInspect = useRestriction(Permission.ActAsEquipmentInspector);
   const { value, onChange, config } = props;
 
   if (config?.valueType && config?.valueType === 'string') {

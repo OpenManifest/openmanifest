@@ -7,7 +7,7 @@ import {
 } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { camelCase, isEqual } from 'lodash';
 import { useTickets } from 'app/api/crud';
@@ -72,14 +72,14 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const { createTicketTypeAddon, updateTicketTypeAddon } = useTickets();
   const notify = useNotifications();
 
   const [{ loading }, onSave] = useAsyncFn(
     async (fields: TicketTypeAddonFields) => {
-      if (!dropzone?.id) {
+      if (!operator?.id) {
         return;
       }
       const validated = await ticketAddonValidation.validate(fields, { abortEarly: false });
@@ -121,7 +121,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
       }
     },
     [
-      dropzone?.id,
+      operator?.id,
       setError,
       notify,
       onSuccess,

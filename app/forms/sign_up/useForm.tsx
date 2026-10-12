@@ -99,7 +99,7 @@ export default function useSignupForm(opts: ISignUpFormOpts) {
             email: fields.email,
             name: fields.name,
             password: fields.password,
-            exitWeight: 60,
+            bodyMassKg: 60,
             phone: '',
             passwordConfirmation: fields.passwordConfirmation,
           },

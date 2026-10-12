@@ -25,14 +25,11 @@ export function LocationWizardStep(props: ILocationPickerProps) {
         return;
       }
       const location = await Location.getCurrentPositionAsync({});
-      console.log('user location', location.coords);
       setCenter({
         lat: location.coords.latitude,
         lng: location.coords.longitude,
       });
-    } catch (error) {
-      console.log(error);
-    }
+    } catch {}
   }, []);
 
   // Start at user location
