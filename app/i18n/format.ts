@@ -7,10 +7,10 @@ import { resolveTimeZone } from 'app/utils/operatorTime';
 export const DEFAULT_CURRENCY = 'AUD';
 const NUMBER_LOCALE = 'en-AU';
 
-type Instant = DateTime | Date | string | number;
+export type Instant = DateTime | Date | string | number;
 
 /** An instant as a luxon date in the operator's zone: a luxon date, a Date, an ISO string or seconds since the epoch */
-function inZone(value: Instant, timeZone?: string | null): DateTime {
+export function inZone(value: Instant, timeZone?: string | null): DateTime {
   const zone = resolveTimeZone(timeZone);
   if (DateTime.isDateTime(value)) return value.setZone(zone);
   if (value instanceof Date) return DateTime.fromJSDate(value, { zone });

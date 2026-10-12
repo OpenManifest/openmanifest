@@ -14,3 +14,4 @@ export { default as Text, useTone } from './Text';
 export type { TextProps, TextTone } from './Text';
 export * from './form';
 export * from './overlay';
+export * from './display';

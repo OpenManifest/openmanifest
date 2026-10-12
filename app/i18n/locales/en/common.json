@@ -117,5 +117,13 @@
   },
   "toast": {
     "dismiss": "Dismiss"
+  },
+  "countdown": {
+    "announce_one": "{{label}}: {{count}} minute left, at {{time}}",
+    "announce_other": "{{label}}: {{count}} minutes left, at {{time}}",
+    "elapsed": "{{label}}: time is up"
+  },
+  "avatar": {
+    "photoOf": "Photo of {{name}}"
   }
 }
