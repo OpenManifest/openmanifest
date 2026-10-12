@@ -17,6 +17,7 @@ const beaver = {
   registration: 'ABC123',
   minCapacity: 1,
   capacity: 10,
+  kind: 'aircraft',
 };
 const tug = { ...beaver, id: '2', name: 'Tug', registration: 'TUG1', capacity: 1 };
 const otter = { ...beaver, id: '3', name: 'Otter', registration: 'OTT1', capacity: 4 };

@@ -11,9 +11,7 @@ import {
   useManifestContext,
   withLoadContext,
 } from 'app/providers';
-import GCAChip from 'app/components/chips/GcaChip';
-import LoadMasterChip from 'app/components/chips/LoadMasterChip';
-import PilotChip from 'app/components/chips/PilotChip';
+import LoadCrewChips from 'app/components/chips/LoadCrewChips';
 import VehicleChip from 'app/components/chips/VehicleChip';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
@@ -46,17 +44,7 @@ function LoadCard(props: ILoadCardLarge) {
   const notify = useNotifications();
 
   const {
-    load: {
-      load,
-      loading,
-      refetch,
-      updateGCA,
-      updateVehicle,
-      updatePilot,
-      dispatchInMinutes,
-      updateLoadMaster,
-      complete,
-    },
+    load: { load, loading, refetch, updateCrew, updateVehicle, dispatchInMinutes, complete },
   } = useLoadContext();
   const onDeleteSlot = React.useCallback(
     async (slot: SlotDetailsFragment) => {
@@ -173,14 +161,7 @@ function LoadCard(props: ILoadCardLarge) {
                 }
               }}
             />
-            <GCAChip small value={load?.gca} onSelect={updateGCA} />
-            <PilotChip small value={load?.pilot} onSelect={updatePilot} />
-            <LoadMasterChip
-              small
-              value={load?.loadMaster}
-              slots={load?.slots || []}
-              onSelect={updateLoadMaster}
-            />
+            <LoadCrewChips small load={load} onSelect={updateCrew} />
           </ScrollView>
         </View>
         <LoadSlotTable

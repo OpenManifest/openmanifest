@@ -16,6 +16,7 @@ export default createMockedQuery<VehiclesQueryVariables, DeepRequired<VehiclesQu
         minCapacity: 0,
         capacity: 10,
         name: 'Beaver',
+        kind: 'aircraft',
       },
     ],
   }

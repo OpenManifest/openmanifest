@@ -7,28 +7,28 @@ import { useManifestContext } from 'app/providers/manifest/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { camelCase, isEqual } from 'lodash';
 import { LoadState, LoadVehicleRole } from 'app/api/schema.d';
-import { VehicleEssentialsFragment } from 'app/api/operations';
+import { MembershipEssentialsFragment, VehicleEssentialsFragment } from 'app/api/operations';
+import { useCrewRolesQuery } from 'app/api/reflection';
+import { carryingVehicles, crewSlots } from './crew';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { moduleEnabled } from 'app/utils/modules';
 import { useNotifications } from 'app/providers/notifications';
 import withDefaults from 'app/forms/initialValues';
 import i18n from 'app/i18n';
 
-export type LoadFields = Required<
-  Pick<LoadDetailsFragment, 'gca' | 'pilot' | 'maxSlots' | 'vehicle' | 'isOpen'>
-> &
+export type LoadFields = Required<Pick<LoadDetailsFragment, 'maxSlots' | 'vehicle' | 'isOpen'>> &
   Pick<LoadDetailsFragment, 'name'> & {
     id?: string | null;
     /** The places the load visits, in order (operators with per-load destinations) */
     destinationIds: string[];
+    /** Who fills each place in the crew, by the key of `crewSlots` */
+    crew: Record<string, MembershipEssentialsFragment | null | undefined>;
     /** The vehicles of the load and what they do (operators with the multi_vehicle module); `vehicle` is the first that carries */
     vehicleRoles: { vehicle: VehicleEssentialsFragment; role: LoadVehicleRole }[];
   };
 
 export const loadValidation = yup.object({
   name: yup.string().nullable().default(null),
-  gca: yup.object().required(() => i18n.t('forms.load.youMustSelectAGca')),
-  pilot: yup.object().required(() => i18n.t('forms.load.everyLoadNeedsAPilot')),
   vehicle: yup.object().required(() => i18n.t('forms.load.youCantCreateALoadWithout')),
   original: yup.object().nullable(),
   maxSlots: yup
@@ -39,17 +39,17 @@ export const loadValidation = yup.object({
   isOpen: yup.boolean().default(true),
   destinationIds: yup.array().of(yup.string().required()).default([]),
   vehicleRoles: yup.array().default([]),
+  crew: yup.object().default({}),
 });
 
 export const EMPTY_FORM_VALUES: Partial<LoadFields> = {
   id: undefined,
-  gca: null,
-  pilot: null,
   vehicle: undefined,
   maxSlots: 0,
   name: null,
   destinationIds: [],
   vehicleRoles: [],
+  crew: {},
 };
 
 export interface IUseManifestFormOpts {
@@ -116,15 +116,40 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
     }
   }, [multiVehicle, vehicle?.capacity, setValue]);
 
+  const { data: crewData } = useCrewRolesQuery({
+    variables: { operatorId: operator?.id?.toString() as string },
+    skip: !operator?.id,
+  });
+  const crewRoles = crewData?.operator?.crewRoles;
+  // Who is on the crew, by place: the roles of the operator, once for the load or for each vehicle that carries
+  const crewEntries = React.useCallback(
+    (fields: { vehicle?: unknown; vehicleRoles?: unknown; crew?: LoadFields['crew'] }) => {
+      const vehicles = carryingVehicles({
+        vehicle: fields.vehicle as never,
+        vehicleRoles: fields.vehicleRoles as never,
+        multiVehicle,
+      });
+      const entries = crewSlots(crewRoles ?? [], vehicles).flatMap(
+        ({ key, role, vehicle: carrier }) => {
+          const member = fields.crew?.[key];
+          return member
+            ? [{ crewRoleId: role.id, membershipId: member.id, vehicleId: carrier?.id }]
+            : [];
+        }
+      );
+      return entries.length ? entries : undefined;
+    },
+    [crewRoles, multiVehicle]
+  );
+
   const [{ loading }, onManifest] = useAsyncFn(
     async (fields: LoadFields) => {
       try {
         const validatedFields = loadValidation.validateSync(fields);
 
         const response = await createLoad({
-          gca: validatedFields.gca?.id,
           state: LoadState.Open,
-          pilot: validatedFields.pilot?.id,
+          crew: crewEntries(validatedFields),
           vehicle: multiVehicle ? undefined : validatedFields.vehicle?.id,
           vehicles: multiVehicle
             ? (validatedFields.vehicleRoles as LoadFields['vehicleRoles']).map(
@@ -160,7 +185,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
         }
       }
     },
-    [createLoad, notify, setError, onSuccess, multiVehicle]
+    [createLoad, notify, setError, onSuccess, multiVehicle, crewEntries]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onManifest), [handleSubmit, onManifest]);

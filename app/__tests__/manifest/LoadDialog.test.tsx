@@ -6,6 +6,7 @@ import { CreateLoadDocument, DestinationsDocument, VehiclesDocument } from 'app/
 import { fullAltitude, reef } from 'app/__fixtures__/destination.fixture';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_VEHICLES from './__mocks__/QueryVehicle.mock';
+import MOCK_QUERY_CREW_ROLES from './__mocks__/QueryCrewRoles.mock';
 import MOCK_QUERY_MEMBERSHIPS from './__mocks__/QueryMemberships.mock';
 import MOCK_QUERY_OPERATOR from './__mocks__/QueryOperator.mock';
 import LoadDialog from '../../forms/load/Dialog';
@@ -21,6 +22,7 @@ const BEAVER = {
   registration: 'ABC123',
   minCapacity: 0,
   capacity: 10,
+  kind: 'aircraft',
 };
 
 const membership = (id: string, name: string) => ({
@@ -82,6 +84,7 @@ describe('<LoadDialog />', () => {
       session: authenticatedSession,
       graphql: [
         MOCK_QUERY_VEHICLES(),
+        MOCK_QUERY_CREW_ROLES(),
         usersWithPermission(Permission.ActAsGca, membership('31', 'Gina GCA')),
         usersWithPermission(Permission.ActAsPilot, membership('32', 'Pete Pilot')),
         {
@@ -89,8 +92,10 @@ describe('<LoadDialog />', () => {
             query: CreateLoadDocument,
             operationName: 'CreateLoad',
             variables: {
-              gca: '31',
-              pilot: '32',
+              crew: [
+                { crewRoleId: '1', membershipId: '32', vehicleId: '1' },
+                { crewRoleId: '2', membershipId: '31' },
+              ],
               vehicle: '1',
               maxSlots: 10,
               state: 'open',
@@ -160,6 +165,8 @@ describe('<LoadDialog />', () => {
             maxUsageCount: 10,
           },
           MOCK_QUERY_VEHICLES(),
+          MOCK_QUERY_CREW_ROLES(),
+          MOCK_QUERY_CREW_ROLES(),
           usersWithPermission(Permission.ActAsGca, membership('31', 'Gina GCA')),
           usersWithPermission(Permission.ActAsPilot, membership('32', 'Pete Pilot')),
           {
@@ -167,8 +174,10 @@ describe('<LoadDialog />', () => {
               query: CreateLoadDocument,
               operationName: 'CreateLoad',
               variables: {
-                gca: '31',
-                pilot: '32',
+                crew: [
+                  { crewRoleId: '1', membershipId: '32', vehicleId: '1' },
+                  { crewRoleId: '2', membershipId: '31' },
+                ],
                 vehicle: '1',
                 maxSlots: 10,
                 state: 'open',
@@ -235,6 +244,7 @@ describe('<LoadDialog />', () => {
             result: { data: { __typename: 'Query', vehicles: [BEAVER, tug] } },
             maxUsageCount: 10,
           },
+          MOCK_QUERY_CREW_ROLES(),
           usersWithPermission(Permission.ActAsGca, membership('31', 'Gina GCA')),
           usersWithPermission(Permission.ActAsPilot, membership('32', 'Pete Pilot')),
           {
@@ -242,8 +252,10 @@ describe('<LoadDialog />', () => {
               query: CreateLoadDocument,
               operationName: 'CreateLoad',
               variables: {
-                gca: '31',
-                pilot: '32',
+                crew: [
+                  { crewRoleId: '1', membershipId: '32', vehicleId: '1' },
+                  { crewRoleId: '2', membershipId: '31' },
+                ],
                 maxSlots: 10,
                 state: 'open',
                 name: null,
@@ -303,6 +315,8 @@ describe('<LoadDialog />', () => {
           graphql: [
             withoutMembership as never,
             MOCK_QUERY_VEHICLES(),
+            MOCK_QUERY_CREW_ROLES(),
+            MOCK_QUERY_CREW_ROLES(),
             usersWithPermission(Permission.ActAsGca, membership('31', 'Gina GCA')),
             usersWithPermission(Permission.ActAsPilot, membership('32', 'Pete Pilot')),
             {
@@ -310,8 +324,10 @@ describe('<LoadDialog />', () => {
                 query: CreateLoadDocument,
                 operationName: 'CreateLoad',
                 variables: {
-                  gca: '31',
-                  pilot: '32',
+                  crew: [
+                    { crewRoleId: '1', membershipId: '32', vehicleId: '1' },
+                    { crewRoleId: '2', membershipId: '31' },
+                  ],
                   vehicle: '1',
                   maxSlots: 10,
                   state: 'open',

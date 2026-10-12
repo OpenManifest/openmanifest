@@ -83,6 +83,7 @@ const beaver = {
   id: '1',
   capacity: 10,
   name: 'Beaver',
+  kind: 'aircraft',
 };
 
 export default createMockedQuery<LoadQueryVariables, LoadQuery>(
@@ -92,6 +93,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
     load: {
       ...loadEssentials,
       destinations: [],
+      crew: [],
       vehicle: beaver,
       vehicles: [
         {

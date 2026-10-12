@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FlatList, Platform } from 'react-native';
+import { FlatList, Platform, View } from 'react-native';
 
 import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -10,9 +10,7 @@ import {
   useManifestContext,
   useOperatorContext,
 } from 'app/providers';
-import GCAChip from 'app/components/chips/GcaChip';
-import LoadMasterChip from 'app/components/chips/LoadMasterChip';
-import PilotChip from 'app/components/chips/PilotChip';
+import LoadCrewChips from 'app/components/chips/LoadCrewChips';
 import VehicleChip from 'app/components/chips/VehicleChip';
 
 import { LoadState, Permission } from 'app/api/schema.d';
@@ -47,7 +45,7 @@ function LoadScreen() {
     dialogs,
   } = useManifestContext();
   const {
-    load: { load, loading, refetch, updateGCA, updateLoadMaster, updatePilot, updateVehicle },
+    load: { load, loading, refetch, updateCrew, updateVehicle },
   } = useLoadContext();
   const isFocused = useIsFocused();
   const navigation = useNavigation();
@@ -150,7 +148,7 @@ function LoadScreen() {
             horizontal
             showsHorizontalScrollIndicator={false}
             style={{ marginVertical: 8 }}
-            data={['vehicle', 'pilot', 'gca', 'loadMaster']}
+            data={['vehicle', 'crew']}
             keyExtractor={(item) => item.toString()}
             renderItem={({ item }) => {
               switch (item) {
@@ -175,36 +173,17 @@ function LoadScreen() {
                       color={palette.onSurface}
                     />
                   );
-                case 'gca':
-                  return (
-                    <GCAChip
-                      value={load?.gca}
-                      onSelect={updateGCA}
-                      small
-                      backgroundColor="transparent"
-                      color={palette.onSurface}
-                    />
-                  );
-                case 'pilot':
-                  return (
-                    <PilotChip
-                      value={load?.pilot}
-                      onSelect={updatePilot}
-                      small
-                      backgroundColor="transparent"
-                      color={palette.onSurface}
-                    />
-                  );
                 default:
                   return (
-                    <LoadMasterChip
-                      value={load?.loadMaster}
-                      slots={load?.slots || []}
-                      onSelect={updateLoadMaster}
-                      small
-                      backgroundColor="transparent"
-                      color={palette.onSurface}
-                    />
+                    <View style={{ flexDirection: 'row' }}>
+                      <LoadCrewChips
+                        load={load}
+                        onSelect={updateCrew}
+                        small
+                        backgroundColor="transparent"
+                        color={palette.onSurface}
+                      />
+                    </View>
                   );
               }
             }}

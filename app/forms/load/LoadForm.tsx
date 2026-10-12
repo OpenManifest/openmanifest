@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { Permission } from 'app/api/schema.d';
 import { View } from 'react-native';
 import { FormTextField } from 'app/components/input/text/TextField';
 
 import { Control } from 'react-hook-form';
-import {
-  MembershipChipSelectField,
-  VehicleChipSelectField,
-} from 'app/components/input/chip_select';
+import { VehicleChipSelectField } from 'app/components/input/chip_select';
 import { FormNumberField } from 'app/components/input/number_input';
 import { LoadFields } from './useForm';
+import CrewFields from './CrewFields';
 import { useTranslation } from 'react-i18next';
 import { Divider, Stack } from 'app/ui';
 import { useOperatorContext } from 'app/providers/operator/context';
@@ -48,19 +45,7 @@ export default function LoadForm(props: ILoadFormProps) {
           <VehicleChipSelectField {...{ control }} name="vehicle" />
         )}
 
-        <MembershipChipSelectField
-          label={t('forms.load.gca')}
-          {...{ control }}
-          name="gca"
-          requiredPermissions={[Permission.ActAsGca]}
-        />
-
-        <MembershipChipSelectField
-          label={t('forms.load.pilot')}
-          name="pilot"
-          {...{ control }}
-          requiredPermissions={[Permission.ActAsPilot]}
-        />
+        <CrewFields {...{ control }} />
         {perLoadDestinations ? (
           <DestinationListField {...{ control }} name="destinationIds" />
         ) : null}

@@ -45,6 +45,7 @@ const loadingFragment: LoadDetailsFragment = {
   occupiedSlots: 0,
   destinations: [],
   vehicles: [],
+  crew: [],
   vehicle: {
     id: '__LOADING__',
     capacity: 0,

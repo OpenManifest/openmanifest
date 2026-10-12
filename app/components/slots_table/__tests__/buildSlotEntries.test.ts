@@ -14,6 +14,7 @@ const vehicle = (id: string, name: string, capacity: number) => ({
   capacity,
   minCapacity: 1,
   registration: name,
+  kind: 'aircraft',
 });
 
 const loadVehicle = (id: string, role: LoadVehicleRole, capacity: number) => ({

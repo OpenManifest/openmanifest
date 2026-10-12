@@ -128,37 +128,35 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
     [update]
   );
 
-  const updatePilot = React.useCallback(
-    async (pilot: { id: string }) => {
+  // Puts `member` on the crew role, for the load or for one of its vehicles; the rest of the crew stays as it is
+  const updateCrew = React.useCallback(
+    async (role: { id: string }, member: { id: string }, loadVehicleId: string | null = null) => {
+      const others = (load?.crew ?? []).filter(
+        ({ crewRole, loadVehicle }) =>
+          !(crewRole.id === role.id && (loadVehicle?.id ?? null) === loadVehicleId)
+      );
       await update({
-        pilot: pilot.id,
+        crew: [
+          ...others.map(({ crewRole, membership, loadVehicle }) => ({
+            crewRoleId: crewRole.id,
+            membershipId: membership.id,
+            loadVehicleId: loadVehicle?.id,
+          })),
+          {
+            crewRoleId: role.id,
+            membershipId: member.id,
+            loadVehicleId: loadVehicleId ?? undefined,
+          },
+        ],
       });
     },
-    [update]
-  );
-
-  const updateGCA = React.useCallback(
-    async (gca: { id: string }) => {
-      await update({
-        gca: gca.id,
-      });
-    },
-    [update]
+    [load?.crew, update]
   );
 
   const updateVehicle = React.useCallback(
     async (vehicle: { id: string; capacity: number }) => {
       await update({
         vehicle: vehicle.id,
-      });
-    },
-    [update]
-  );
-
-  const updateLoadMaster = React.useCallback(
-    async (lm: { id: string }) => {
-      await update({
-        loadMaster: lm.id,
       });
     },
     [update]
@@ -224,10 +222,8 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
       loading,
       called,
       update,
-      updatePilot,
-      updateGCA,
+      updateCrew,
       updateVehicle,
-      updateLoadMaster,
       cancel,
       refetch: queryVariables?.id ? refetch : noop,
       fetchMore: queryVariables?.id ? () => fetchMore({ variables }) : uninitializedHandler,
@@ -243,10 +239,8 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
       loading,
       called,
       update,
-      updatePilot,
-      updateGCA,
+      updateCrew,
       updateVehicle,
-      updateLoadMaster,
       cancel,
       queryVariables?.id,
       refetch,

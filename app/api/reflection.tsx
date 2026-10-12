@@ -221,6 +221,7 @@ export const VehicleEssentialsFragmentDoc = gql`
   capacity
   name
   registration
+  kind
 }
     `;
 export const ActivityDetailsFragmentDoc = gql`
@@ -758,6 +759,34 @@ export const LoadVehicleEssentialsFragmentDoc = gql`
   }
 }
     ${VehicleEssentialsFragmentDoc}`;
+export const CrewRoleEssentialsFragmentDoc = gql`
+    fragment crewRoleEssentials on CrewRole {
+  id
+  key
+  name
+  scope
+  required
+  occupiesSlot
+  permission
+  vehicleKinds
+  position
+}
+    `;
+export const LoadCrewEssentialsFragmentDoc = gql`
+    fragment loadCrewEssentials on LoadCrewAssignment {
+  id
+  crewRole {
+    ...crewRoleEssentials
+  }
+  membership {
+    ...membershipEssentials
+  }
+  loadVehicle {
+    id
+  }
+}
+    ${CrewRoleEssentialsFragmentDoc}
+${MembershipEssentialsFragmentDoc}`;
 export const LoadDetailsFragmentDoc = gql`
     fragment loadDetails on Load {
   ...loadEssentials
@@ -766,6 +795,9 @@ export const LoadDetailsFragmentDoc = gql`
   }
   vehicles {
     ...loadVehicleEssentials
+  }
+  crew {
+    ...loadCrewEssentials
   }
   gca {
     ...membershipEssentials
@@ -786,6 +818,7 @@ export const LoadDetailsFragmentDoc = gql`
     ${LoadEssentialsFragmentDoc}
 ${VehicleEssentialsFragmentDoc}
 ${LoadVehicleEssentialsFragmentDoc}
+${LoadCrewEssentialsFragmentDoc}
 ${MembershipEssentialsFragmentDoc}
 ${DestinationEssentialsFragmentDoc}
 ${SlotDetailsFragmentDoc}`;
@@ -1197,9 +1230,9 @@ export type CreateEquipmentInspectionMutationHookResult = ReturnType<typeof useC
 export type CreateEquipmentInspectionMutationResult = Apollo.MutationResult<Operation.CreateEquipmentInspectionMutation>;
 export type CreateEquipmentInspectionMutationOptions = Apollo.BaseMutationOptions<Operation.CreateEquipmentInspectionMutation, Operation.CreateEquipmentInspectionMutationVariables>;
 export const CreateLoadDocument = gql`
-    mutation CreateLoad($name: String, $pilot: ID, $gca: ID, $maxSlots: Int, $vehicle: ID, $vehicles: [LoadVehicleInput!], $state: LoadState, $destinationIds: [Int!]) {
+    mutation CreateLoad($name: String, $pilot: ID, $gca: ID, $maxSlots: Int, $vehicle: ID, $vehicles: [LoadVehicleInput!], $crew: [LoadCrewInput!], $state: LoadState, $destinationIds: [Int!]) {
   createLoad(
-    input: {attributes: {name: $name, pilot: $pilot, gca: $gca, maxSlots: $maxSlots, vehicle: $vehicle, vehicles: $vehicles, state: $state, destinationIds: $destinationIds}}
+    input: {attributes: {name: $name, pilot: $pilot, gca: $gca, maxSlots: $maxSlots, vehicle: $vehicle, vehicles: $vehicles, crew: $crew, state: $state, destinationIds: $destinationIds}}
   ) {
     load {
       ...loadDetails
@@ -1233,6 +1266,7 @@ export type CreateLoadMutationFn = Apollo.MutationFunction<Operation.CreateLoadM
  *      maxSlots: // value for 'maxSlots'
  *      vehicle: // value for 'vehicle'
  *      vehicles: // value for 'vehicles'
+ *      crew: // value for 'crew'
  *      state: // value for 'state'
  *      destinationIds: // value for 'destinationIds'
  *   },
@@ -3078,6 +3112,52 @@ export type AllowedActivityTypesQueryHookResult = ReturnType<typeof useAllowedAc
 export type AllowedActivityTypesLazyQueryHookResult = ReturnType<typeof useAllowedActivityTypesLazyQuery>;
 export type AllowedActivityTypesSuspenseQueryHookResult = ReturnType<typeof useAllowedActivityTypesSuspenseQuery>;
 export type AllowedActivityTypesQueryResult = Apollo.QueryResult<Operation.AllowedActivityTypesQuery, Operation.AllowedActivityTypesQueryVariables>;
+export const CrewRolesDocument = gql`
+    query CrewRoles($operatorId: ID!) {
+  operator(id: $operatorId) {
+    id
+    crewRoles {
+      ...crewRoleEssentials
+    }
+  }
+}
+    ${CrewRoleEssentialsFragmentDoc}`;
+
+/**
+ * __useCrewRolesQuery__
+ *
+ * To run a query within a React component, call `useCrewRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCrewRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCrewRolesQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *   },
+ * });
+ */
+export function useCrewRolesQuery(baseOptions: Apollo.QueryHookOptions<Operation.CrewRolesQuery, Operation.CrewRolesQueryVariables> & ({ variables: Operation.CrewRolesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.CrewRolesQuery, Operation.CrewRolesQueryVariables>(CrewRolesDocument, options);
+      }
+export function useCrewRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.CrewRolesQuery, Operation.CrewRolesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.CrewRolesQuery, Operation.CrewRolesQueryVariables>(CrewRolesDocument, options);
+        }
+// @ts-ignore
+export function useCrewRolesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.CrewRolesQuery, Operation.CrewRolesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.CrewRolesQuery, Operation.CrewRolesQueryVariables>;
+export function useCrewRolesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.CrewRolesQuery, Operation.CrewRolesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.CrewRolesQuery | undefined, Operation.CrewRolesQueryVariables>;
+export function useCrewRolesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.CrewRolesQuery, Operation.CrewRolesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.CrewRolesQuery, Operation.CrewRolesQueryVariables>(CrewRolesDocument, options);
+        }
+export type CrewRolesQueryHookResult = ReturnType<typeof useCrewRolesQuery>;
+export type CrewRolesLazyQueryHookResult = ReturnType<typeof useCrewRolesLazyQuery>;
+export type CrewRolesSuspenseQueryHookResult = ReturnType<typeof useCrewRolesSuspenseQuery>;
+export type CrewRolesQueryResult = Apollo.QueryResult<Operation.CrewRolesQuery, Operation.CrewRolesQueryVariables>;
 export const CurrentUserDocument = gql`
     query CurrentUser {
   currentUser {

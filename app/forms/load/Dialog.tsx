@@ -18,10 +18,8 @@ export default function LoadDialog(props: ILoadDialog) {
   const { open, load, onClose, onSuccess } = props;
   const { control, onSubmit, loading } = useForm({
     initial: {
-      gca: load?.gca,
       maxSlots: load?.maxSlots,
       name: load?.name,
-      pilot: load?.pilot,
       vehicle: load?.vehicle,
       id: load?.id,
     },

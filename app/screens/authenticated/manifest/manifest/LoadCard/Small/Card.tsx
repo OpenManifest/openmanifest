@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { Badge, Card, Chip } from 'react-native-paper';
 import { isBefore } from 'date-fns';
 
-import PilotChip from 'app/components/chips/PilotChip';
+import LoadCrewChips from 'app/components/chips/LoadCrewChips';
 import VehicleChip from 'app/components/chips/VehicleChip';
 
 import { LoadState } from 'app/api/schema.d';
@@ -21,7 +21,7 @@ function LoadCard(props: ILoadCardSmall) {
   const { onPress } = props;
   const { theme, palette } = useAppTheme();
   const {
-    load: { load, loading, updateVehicle, updatePilot },
+    load: { load, loading, updateVehicle, updateCrew },
   } = useLoadContext();
   const LOAD_BADGE_COLOR: { [K in LoadState]?: string } = React.useMemo(
     () => ({
@@ -102,12 +102,7 @@ function LoadCard(props: ILoadCardSmall) {
               await updateVehicle(vehicle);
             }}
           />
-          <PilotChip
-            color={theme.colors.onSurface}
-            value={load?.pilot}
-            onSelect={updatePilot}
-            small
-          />
+          <LoadCrewChips color={theme.colors.onSurface} load={load} onSelect={updateCrew} small />
           <Chip
             mode="outlined"
             icon="parachute"
