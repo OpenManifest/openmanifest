@@ -4,8 +4,8 @@ import { render } from '@testing-library/react-native';
 import Skeleton from '../../components/Skeleton';
 
 describe('<Skeleton />', () => {
-  it('shows one block per layout item while loading and hides the children', () => {
-    const screen = render(
+  it('shows one block per layout item while loading and hides the children', async () => {
+    const screen = await render(
       <Skeleton
         isLoading
         layout={[
@@ -22,8 +22,8 @@ describe('<Skeleton />', () => {
     expect(screen.queryByText('Loaded content')).toBeNull();
   });
 
-  it('renders nested layout blocks inside their container', () => {
-    const screen = render(
+  it('renders nested layout blocks inside their container', async () => {
+    const screen = await render(
       <Skeleton
         isLoading
         layout={[
@@ -42,8 +42,8 @@ describe('<Skeleton />', () => {
     expect(screen.getAllByTestId('skeleton-bone')).toHaveLength(2);
   });
 
-  it('turns every child into a block when there is no layout', () => {
-    const screen = render(
+  it('turns every child into a block when there is no layout', async () => {
+    const screen = await render(
       <Skeleton isLoading>
         <View style={{ height: 10, width: 100 }} />
         <View style={{ height: 10, width: 80 }} />
@@ -53,8 +53,8 @@ describe('<Skeleton />', () => {
     expect(screen.getAllByTestId('skeleton-bone')).toHaveLength(2);
   });
 
-  it('renders the children and no blocks once loaded', () => {
-    const screen = render(
+  it('renders the children and no blocks once loaded', async () => {
+    const screen = await render(
       <Skeleton isLoading={false} layout={[{ key: 'box', width: '100%', height: 300 }]}>
         <Text>Loaded content</Text>
       </Skeleton>

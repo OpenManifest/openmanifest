@@ -8,7 +8,7 @@ import {
 } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { camelCase, isEqual } from 'lodash';
 import { useUserProfile } from 'app/api/crud';
@@ -22,7 +22,7 @@ export type UserFields = {
   federationUid?: string | null;
   nickname: string;
   email: string;
-  exitWeight: number;
+  bodyMassKg: number;
   federation?: FederationEssentialsFragment;
   license?: LicenseDetailsFragment;
   role?: RoleEssentialsFragment;
@@ -35,7 +35,7 @@ export const ghostValidation = yup.object({
   email: yup.string().required('Email is required to invite the user'),
   phone: yup.string().optional().nullable(),
   federationUid: yup.string().optional().nullable(),
-  exitWeight: yup
+  bodyMassKg: yup
     .number()
     .required('Exit weight is required')
     .min(40, 'Exit weight must be more than 40kg')
@@ -51,7 +51,7 @@ export const EMPTY_FORM_VALUES: Partial<UserFields> = {
   email: '',
   role: undefined,
   license: undefined,
-  exitWeight: 50,
+  bodyMassKg: 50,
   federation: undefined,
   id: null,
   phone: '',
@@ -92,23 +92,23 @@ export default function useUserForm(opts: IUseUserFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const { create } = useUserProfile();
   const notify = useNotifications();
 
   const [{ loading }, createUser] = useAsyncFn(
     async (fields: UserFields) => {
-      if (!dropzone?.id) {
+      if (!operator?.id) {
         return;
       }
       const validated = await ghostValidation.validate(fields, { abortEarly: false });
       try {
         const response = await create({
-          dropzone: Number(dropzone.id),
+          operator: Number(operator.id),
           email: validated.email,
           name: validated.name,
-          exitWeight: validated.exitWeight,
+          bodyMassKg: validated.bodyMassKg,
           role: Number(validated.role?.id),
           license: Number(validated?.license?.id),
           federationNumber: validated?.federationUid,
@@ -134,7 +134,7 @@ export default function useUserForm(opts: IUseUserFormOpts) {
         }
       }
     },
-    [dropzone?.id, setError, notify, defaultValues, create]
+    [operator?.id, setError, notify, defaultValues, create]
   );
 
   const { control, setValue } = methods;

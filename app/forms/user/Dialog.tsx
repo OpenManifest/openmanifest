@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { DropzoneUserDetailsFragment } from 'app/api/operations';
+import type { MembershipDetailsFragment } from 'app/api/operations';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import UserForm from './UserForm';
 import useUserForm from './useForm';
@@ -7,15 +7,15 @@ import useUserForm from './useForm';
 export interface IUserDialogProps {
   open: boolean;
   /** The member being edited */
-  dropzoneUser?: DropzoneUserDetailsFragment | null;
+  membership?: MembershipDetailsFragment | null;
   onClose(): void;
   onSuccess?(): void;
 }
 
 export default function UserDialog(props: IUserDialogProps) {
-  const { open, dropzoneUser, onClose, onSuccess } = props;
+  const { open, membership, onClose, onSuccess } = props;
   const { control, loading, onSubmit } = useUserForm({
-    dropzoneUser,
+    membership,
     onSuccess: () => {
       onSuccess?.();
       onClose();

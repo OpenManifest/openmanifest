@@ -8,17 +8,17 @@ export interface IRigDialogProps {
   open?: boolean;
   /** The rig being edited; a new rig when absent */
   rig?: RigEssentialsFragment | null;
-  dropzoneId?: number;
+  operatorId?: number;
   userId?: number;
   onClose(): void;
   onSuccess?(): void;
 }
 
 export default function RigDialog(props: IRigDialogProps) {
-  const { open, rig, dropzoneId, userId, onClose, onSuccess } = props;
+  const { open, rig, operatorId, userId, onClose, onSuccess } = props;
   const { control, loading, onSubmit } = useRigForm({
     rig,
-    dropzoneId,
+    operatorId,
     userId,
     onSuccess: () => {
       onSuccess?.();
@@ -35,7 +35,7 @@ export default function RigDialog(props: IRigDialogProps) {
       buttonLabel="Save"
       loading={loading}
     >
-      <RigForm {...{ control }} showTypeSelect={!!dropzoneId} />
+      <RigForm {...{ control }} showTypeSelect={!!operatorId} />
     </DialogOrSheet>
   );
 }

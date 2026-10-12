@@ -20,7 +20,7 @@ export default function LoadDialog(props: ILoadDialog) {
       maxSlots: load?.maxSlots,
       name: load?.name,
       pilot: load?.pilot,
-      plane: load?.plane,
+      vehicle: load?.vehicle,
       id: load?.id,
     },
     onSuccess,
