@@ -70,7 +70,7 @@ export const INITIAL_CONTEXT: IManifestContext = {
       close: noop,
       visible: false,
       state: {
-        dropzoneUser: undefined,
+        membership: undefined,
       },
     },
     manifestGroup: {

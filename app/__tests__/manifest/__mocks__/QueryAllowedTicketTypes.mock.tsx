@@ -1,3 +1,4 @@
+import { fullAltitude, hopNPop } from 'app/__fixtures__/destination.fixture';
 import { AllowedTicketTypesDocument } from 'app/api/reflection';
 import { AllowedTicketTypesQueryVariables, AllowedTicketTypesQuery } from 'app/api/operations';
 import createMock from './createMockedQuery.mock';
@@ -5,7 +6,7 @@ import createMock from './createMockedQuery.mock';
 export default createMock<AllowedTicketTypesQueryVariables, AllowedTicketTypesQuery>(
   AllowedTicketTypesDocument,
   {
-    dropzone: '1',
+    operator: '1',
     onlyPublicTickets: true,
   },
   {
@@ -14,7 +15,7 @@ export default createMock<AllowedTicketTypesQueryVariables, AllowedTicketTypesQu
       {
         __typename: 'TicketType',
         allowManifestingSelf: true,
-        altitude: 14000,
+        defaultDestination: fullAltitude,
         id: '1',
         name: 'Height',
         costCents: 4500,
@@ -27,7 +28,7 @@ export default createMock<AllowedTicketTypesQueryVariables, AllowedTicketTypesQu
         name: 'Hop n Pop',
         costCents: 3000,
         allowManifestingSelf: true,
-        altitude: 4000,
+        defaultDestination: hopNPop,
         isTandem: false,
         extras: [],
       },

@@ -1,29 +1,30 @@
 import * as React from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { CreateGhostDocument } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/providers';
-import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
+import { useOperatorContext } from 'app/providers';
+import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_FEDERATIONS from '../manifest/__mocks__/QueryFederations.mock';
 import MOCK_QUERY_LICENSES from '../manifest/__mocks__/QueryLicenses.mock';
 import MOCK_QUERY_ROLES from '../manifest/__mocks__/QueryRoles.mock';
 import CreateGhostDialog from '../../forms/create_user/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
+import { scoped, textInputs } from 'app/test-utils/hosts';
 
 jest.setTimeout(30000);
 
-// The form refuses to submit until the dropzone has loaded
-function DropzoneReady() {
+// The form refuses to submit until the operator has loaded
+function OperatorReady() {
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
-  return dropzone?.id ? <Text>dropzone ready</Text> : null;
+    operator: { operator },
+  } = useOperatorContext();
+  return operator?.id ? <Text>dropzone ready</Text> : null;
 }
 
 // Name and email filled in; the federation and licence are picked automatically (single option), the access level is not.
 async function renderFilledDialog(createGhost: jest.Mock) {
-  const screen = render(
+  const screen = await render(
     <View testID="under-test">
-      <DropzoneReady />
+      <OperatorReady />
       <CreateGhostDialog open onClose={jest.fn()} />
     </View>,
     {
@@ -40,12 +41,12 @@ async function renderFilledDialog(createGhost: jest.Mock) {
       ],
     }
   );
-  const dialog = within(screen.getByTestId('under-test'));
+  const dialog = scoped(screen.getByTestId('under-test'));
   await waitFor(() => expect(dialog.getByText('dropzone ready')).toBeTruthy(), { timeout: 10000 });
   await waitFor(() => expect(dialog.getByText('Certificate A')).toBeTruthy(), { timeout: 10000 });
-  const inputs = dialog.UNSAFE_getAllByType(TextInput);
-  fireEvent.changeText(inputs[0], 'Gina Ghost');
-  fireEvent.changeText(inputs[2], 'gina@example.com');
+  const inputs = textInputs(dialog.container);
+  await fireEvent.changeText(inputs[0], 'Gina Ghost');
+  await fireEvent.changeText(inputs[2], 'gina@example.com');
   return dialog;
 }
 
@@ -54,7 +55,7 @@ describe('<CreateGhostDialog />', () => {
     const createGhost = jest.fn();
     const dialog = await renderFilledDialog(createGhost);
 
-    fireEvent.press(dialog.getByText('Create'));
+    await fireEvent.press(dialog.getByRole('button', { name: 'Create' }));
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     expect(createGhost).not.toHaveBeenCalled();
@@ -66,7 +67,7 @@ describe('<CreateGhostDialog />', () => {
   it('BUG-086: pressing Create without an access level says what is missing', async () => {
     const dialog = await renderFilledDialog(jest.fn());
 
-    fireEvent.press(dialog.getByText('Create'));
+    await fireEvent.press(dialog.getByRole('button', { name: 'Create' }));
 
     await waitFor(() => expect(dialog.getByText('You must select a role')).toBeTruthy());
   });
