@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { DropzoneUserEssentialsFragment } from 'app/api/operations';
+import { MembershipEssentialsFragment } from 'app/api/operations';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import GhostForm from './Form';
 import useForm, { UserFields } from './useForm';
 
 export interface ICreateGhostDialog {
   open?: boolean;
-  original?: DropzoneUserEssentialsFragment;
+  original?: MembershipEssentialsFragment;
   initial?: Partial<UserFields>;
   onClose(): void;
 }

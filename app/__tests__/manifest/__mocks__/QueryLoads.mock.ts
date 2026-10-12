@@ -1,5 +1,5 @@
-import { dropzoneExtensive } from 'app/__fixtures__/dropzone.fixture';
-import { todayInZone } from 'app/utils/dropzoneTime';
+import { operatorExtensive } from 'app/__fixtures__/operator.fixture';
+import { todayInZone } from 'app/utils/operatorTime';
 import { LoadsQuery, LoadsQueryVariables } from '../../../api/operations';
 import { LoadsDocument } from '../../../api/reflection';
 import createMockedQuery from './createMockedQuery.mock';
@@ -7,8 +7,8 @@ import { loadEssentials } from './QueryLoad.mock';
 
 export default createMockedQuery<LoadsQueryVariables, LoadsQuery>(
   LoadsDocument,
-  // The board shows the dropzone's day
-  { dropzone: '1', date: todayInZone(dropzoneExtensive.timeZone) },
+  // The board shows the operator's day
+  { operator: '1', date: todayInZone(operatorExtensive.timeZone) },
   {
     loads: {
       __typename: 'LoadConnection',

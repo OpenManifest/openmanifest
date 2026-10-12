@@ -36,13 +36,7 @@ export function useLoadUpdated(loadId?: string) {
             },
           })
         );
-
-        console.debug('[Subscription::LoadUpdated] Updated load fragment for', load);
       } else {
-        console.debug(
-          '[Subscription::LoadUpdated] Received subscription data without load id',
-          result
-        );
       }
     },
     []

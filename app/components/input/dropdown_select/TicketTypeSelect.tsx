@@ -14,10 +14,10 @@ interface ITicketTypeSelect {
 
 function TicketTypeSelect(props: ITicketTypeSelect) {
   const { allowManifestingSelf, value, onChange } = props;
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
   const { data } = useTicketTypesQuery({
     variables: {
-      dropzone: currentDropzoneId?.toString() as string,
+      operator: currentOperatorId?.toString() as string,
       allowManifestingSelf,
     },
   });

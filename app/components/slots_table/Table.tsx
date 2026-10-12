@@ -55,8 +55,8 @@ function ColumnHeadings({ fields }: Pick<ISlotsTableProps, 'fields'>) {
         </DataTable.Title>
       )}
       {!fields ||
-        (fields?.includes(SlotFields.JumpType) && (
-          <DataTable.Title numeric style={rowStyles.jumpTypeCell}>
+        (fields?.includes(SlotFields.ActivityType) && (
+          <DataTable.Title numeric style={rowStyles.activityTypeCell}>
             <Text style={styles.th}>Jump type</Text>
           </DataTable.Title>
         ))}
