@@ -2,14 +2,14 @@ import * as React from 'react';
 import { StyleSheet, View, ViewProps } from 'react-native';
 import { Checkbox, Divider, List, Searchbar } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useDropzoneUsersDetailedQuery } from 'app/api/reflection';
+import { useMembershipsDetailedQuery } from 'app/api/reflection';
 
-import { DropzoneUserEssentialsFragment } from 'app/api/operations';
+import { MembershipEssentialsFragment } from 'app/api/operations';
 import UserAvatar from 'app/components/UserAvatar';
 import { Permission } from 'app/api/schema.d';
 import { useSession } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import NoResults from 'app/components/NoResults';
 
 interface IUserListSelect {
@@ -17,23 +17,23 @@ interface IUserListSelect {
   containerProps?: ViewProps;
   scrollable?: boolean;
   value: { id: number }[];
-  onSelect(dropzoneUser: DropzoneUserEssentialsFragment): void;
+  onSelect(membership: MembershipEssentialsFragment): void;
 }
 
 export default function UserListSelect(props: IUserListSelect) {
   const { value, onSelect, containerProps, scrollable } = props;
   const [searchText, setSearchText] = React.useState('');
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
-  const { data } = useDropzoneUsersDetailedQuery({
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
+  const { data } = useMembershipsDetailedQuery({
     variables: {
-      dropzoneId: currentDropzoneId?.toString() as string,
+      operatorId: currentOperatorId?.toString() as string,
       search: searchText,
     },
   });
 
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
   const canManifestGroup = useRestriction(Permission.CreateUserSlot);
   const canManifestGroupWithSelfOnly = useRestriction(Permission.CreateUserSlotWithSelf);
 
@@ -51,9 +51,9 @@ export default function UserListSelect(props: IUserListSelect) {
       <Searchbar value={searchText} onChangeText={setSearchText} placeholder="Search skydivers" />
       <View {...containerProps}>
         <Wrapper>
-          {!data?.dropzoneUsers?.edges?.length && <NoResults title="No users" subtitle="" />}
+          {!data?.memberships?.edges?.length && <NoResults title="No users" subtitle="" />}
 
-          {data?.dropzoneUsers?.edges?.map((edge) => (
+          {data?.memberships?.edges?.map((edge) => (
             <React.Fragment key={`user-${edge?.node?.id || 0}`}>
               <List.Item
                 style={{ width: '100%' }}

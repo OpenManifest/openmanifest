@@ -13,61 +13,61 @@ import RigSelect from 'app/components/input/dropdown_select/RigSelect';
 import NumberField, { NumberFieldType } from 'app/components/input/number_input/NumberField';
 
 interface IUserRigCard {
-  dropzoneUserId: string;
-  exitWeight?: number;
+  membershipId: string;
+  bodyMassKg?: number;
   isTandem?: boolean;
   selectedRig?: RigEssentialsFragment;
 
-  passengerName?: string | null;
-  passengerWeight?: number | null;
+  guestName?: string | null;
+  guestWeight?: number | null;
   onRemove?(): void;
-  onChangeExitWeight(weight: number): void;
+  onChangeBodyMassKg(weight: number): void;
   onChangeRig(rig: RigEssentialsFragment): void;
-  onChangePassengerName?(name: string): void;
-  onChangePassengerWeight?(weight: number): void;
+  onChangeGuestName?(name: string): void;
+  onChangeGuestWeight?(weight: number): void;
 }
 
 export default function UserRigCard(props: IUserRigCard) {
   const {
-    dropzoneUserId,
+    membershipId,
     onChangeRig,
-    exitWeight,
+    bodyMassKg,
     selectedRig,
     isTandem,
-    passengerName,
-    passengerWeight,
+    guestName,
+    guestWeight,
     onRemove,
-    onChangeExitWeight,
-    onChangePassengerName,
-    onChangePassengerWeight,
+    onChangeBodyMassKg,
+    onChangeGuestName,
+    onChangeGuestWeight,
   } = props;
   const { theme } = useAppTheme();
 
-  const { dropzoneUser, loading } = useUserProfile({
-    id: dropzoneUserId,
+  const { membership, loading } = useUserProfile({
+    id: membershipId,
   });
 
   React.useEffect(() => {
-    if (!exitWeight && dropzoneUser?.user?.exitWeight) {
-      onChangeExitWeight(Number(dropzoneUser.user.exitWeight));
+    if (!bodyMassKg && membership?.user?.bodyMassKg) {
+      onChangeBodyMassKg(Number(membership.user.bodyMassKg));
     }
-  }, [dropzoneUser?.user.exitWeight, exitWeight, onChangeExitWeight]);
+  }, [membership?.user.bodyMassKg, bodyMassKg, onChangeBodyMassKg]);
   return (
     <Card style={{ marginHorizontal: 16, marginBottom: 16 }} elevation={1}>
       <ProgressBar indeterminate color={theme.colors.primary} visible={loading} />
       <Card.Title
-        title={dropzoneUser?.user.name}
+        title={membership?.user.name}
         left={() => (
-          <UserAvatar name={dropzoneUser?.user?.name} image={dropzoneUser?.user?.image} size={36} />
+          <UserAvatar name={membership?.user?.name} image={membership?.user?.image} size={36} />
         )}
         titleStyle={{ paddingRight: 0 }}
         right={() => (
           <View style={{ maxWidth: 100, marginRight: 16 }}>
             <NumberField
-              value={!exitWeight ? 0 : exitWeight}
+              value={!bodyMassKg ? 0 : bodyMassKg}
               mode="flat"
               variant={NumberFieldType.Weight}
-              onChange={(num) => onChangeExitWeight(num)}
+              onChange={(num) => onChangeBodyMassKg(num)}
             />
           </View>
         )}
@@ -80,23 +80,23 @@ export default function UserRigCard(props: IUserRigCard) {
             <RigSelect
               small
               variant="chip"
-              dropzoneUserId={dropzoneUserId ? Number(dropzoneUserId) : undefined}
+              membershipId={membershipId ? Number(membershipId) : undefined}
               onChange={onChangeRig}
               value={selectedRig}
               tandem={isTandem}
               autoSelectFirst
             />
           </View>
-          {!selectedRig || !exitWeight || !selectedRig.canopySize ? null : (
+          {!selectedRig || !bodyMassKg || !selectedRig.canopySize ? null : (
             <Chip small icon="escalator-down" mode="outlined" disabled>
-              {calculateWingLoading(exitWeight, selectedRig.canopySize)}
+              {calculateWingLoading(bodyMassKg, selectedRig.canopySize)}
             </Chip>
           )}
           <Chip small icon="lock" mode="outlined" disabled>
-            {dropzoneUser?.role?.name}
+            {membership?.role?.name}
           </Chip>
           <Chip small icon="ticket-account" mode="outlined" disabled>
-            {dropzoneUser?.license?.name}
+            {membership?.license?.name}
           </Chip>
         </ScrollView>
         {!isTandem ? null : (
@@ -107,15 +107,15 @@ export default function UserRigCard(props: IUserRigCard) {
               <View style={styles.rowFirst}>
                 <TextInput
                   mode="flat"
-                  value={passengerName || ''}
-                  onChangeText={(text: string) => onChangePassengerName?.(text)}
+                  value={guestName || ''}
+                  onChangeText={(text: string) => onChangeGuestName?.(text)}
                   label="Passenger name"
                 />
               </View>
               <View style={styles.rowLast}>
                 <NumberField
-                  value={!passengerWeight ? 0 : passengerWeight}
-                  onChange={(num) => onChangePassengerWeight?.(num)}
+                  value={!guestWeight ? 0 : guestWeight}
+                  onChange={(num) => onChangeGuestWeight?.(num)}
                   variant={NumberFieldType.Weight}
                 />
               </View>
