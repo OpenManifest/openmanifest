@@ -71,9 +71,9 @@ export default function WeatherBoard() {
     if (canUpdate && operator?.currentConditions) {
       openWeatherForm(operator?.currentConditions);
       navigation.navigate('Authenticated', {
-          screen: 'Manifest',
-          params: { screen: 'WindScreen' },
-        });
+        screen: 'Manifest',
+        params: { screen: 'WindScreen' },
+      });
     }
   }, [canUpdate, openWeatherForm, operator?.currentConditions, navigation]);
 
@@ -81,9 +81,9 @@ export default function WeatherBoard() {
     if (operator?.currentConditions && canUpdate) {
       openWeatherForm(operator.currentConditions);
       navigation.navigate('Authenticated', {
-          screen: 'Manifest',
-          params: { screen: 'JumpRunScreen' },
-        });
+        screen: 'Manifest',
+        params: { screen: 'JumpRunScreen' },
+      });
     }
   }, [canUpdate, openWeatherForm, operator?.currentConditions, navigation]);
 

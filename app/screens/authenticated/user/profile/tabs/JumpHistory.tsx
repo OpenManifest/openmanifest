@@ -57,14 +57,14 @@ export default function JumpHistoryTab(props: IJumpHistoryTab) {
                 onPress={() => {
                   if (item?.node?.load?.id) {
                     navigation.navigate('Authenticated', {
-                        screen: 'Manifest',
+                      screen: 'Manifest',
+                      params: {
+                        screen: 'LoadScreen',
                         params: {
-                          screen: 'LoadScreen',
-                          params: {
-                            loadId: item.node?.load?.id,
-                          },
+                          loadId: item.node?.load?.id,
                         },
-                      });
+                      },
+                    });
                   }
                 }}
               />

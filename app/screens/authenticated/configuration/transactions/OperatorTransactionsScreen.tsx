@@ -51,18 +51,18 @@ export default function TransactionsScreen() {
                 !item?.node?.id
                   ? null
                   : navigation.navigate('Authenticated', {
-                        screen: 'Manifest',
+                      screen: 'Manifest',
+                      params: {
+                        screen: 'User',
                         params: {
-                          screen: 'User',
+                          screen: 'OrderReceiptScreen',
                           params: {
-                            screen: 'OrderReceiptScreen',
-                            params: {
-                              orderId: item?.node?.id as string,
-                              userId: item?.node?.buyer?.id as string,
-                            },
+                            orderId: item?.node?.id as string,
+                            userId: item?.node?.buyer?.id as string,
                           },
                         },
-                      })
+                      },
+                    })
               }
               order={item?.node}
               showAvatar

@@ -49,14 +49,14 @@ export default function SettingsScreen() {
               !operator
                 ? null
                 : navigation.navigate('Authenticated', {
-                      screen: 'Manifest',
+                    screen: 'Manifest',
+                    params: {
+                      screen: 'Configuration',
                       params: {
-                        screen: 'Configuration',
-                        params: {
-                          screen: 'OperatorSettingsScreen',
-                        },
+                        screen: 'OperatorSettingsScreen',
                       },
-                    })
+                    },
+                  })
             }
             left={() => <List.Icon color={theme.colors.text} icon="information-outline" />}
             description="Set up name, branding and other settings"
@@ -71,14 +71,14 @@ export default function SettingsScreen() {
           left={() => <List.Icon color={theme.colors.text} icon="lock" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
-                screen: 'Manifest',
+              screen: 'Manifest',
+              params: {
+                screen: 'Configuration',
                 params: {
-                  screen: 'Configuration',
-                  params: {
-                    screen: 'PermissionScreen',
-                  },
+                  screen: 'PermissionScreen',
                 },
-              })
+              },
+            })
           }
         />
         <Divider />
@@ -87,14 +87,14 @@ export default function SettingsScreen() {
           right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
-                screen: 'Manifest',
+              screen: 'Manifest',
+              params: {
+                screen: 'Configuration',
                 params: {
-                  screen: 'Configuration',
-                  params: {
-                    screen: 'VehiclesScreen',
-                  },
+                  screen: 'VehiclesScreen',
                 },
-              })
+              },
+            })
           }
           left={() => <List.Icon color={theme.colors.text} icon="airplane" />}
         />
@@ -105,14 +105,14 @@ export default function SettingsScreen() {
           description="Dropzone rigs, e.g tandems and student rigs"
           onPress={() =>
             navigation.navigate('Authenticated', {
-                screen: 'Manifest',
+              screen: 'Manifest',
+              params: {
+                screen: 'Configuration',
                 params: {
-                  screen: 'Configuration',
-                  params: {
-                    screen: 'OperatorRigsScreen',
-                  },
+                  screen: 'OperatorRigsScreen',
                 },
-              })
+              },
+            })
           }
         />
         <Divider />
@@ -123,14 +123,14 @@ export default function SettingsScreen() {
           left={() => <List.Icon color={theme.colors.text} icon="clipboard-check-outline" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
-                screen: 'Manifest',
+              screen: 'Manifest',
+              params: {
+                screen: 'Configuration',
                 params: {
-                  screen: 'Configuration',
-                  params: {
-                    screen: 'RigInspectionTemplateScreen',
-                  },
+                  screen: 'RigInspectionTemplateScreen',
                 },
-              })
+              },
+            })
           }
         />
         {!canUpdateOperator ? null : (
@@ -143,14 +143,14 @@ export default function SettingsScreen() {
               description="View historic data for daily operations"
               onPress={() =>
                 navigation.navigate('Authenticated', {
-                    screen: 'Manifest',
+                  screen: 'Manifest',
+                  params: {
+                    screen: 'Configuration',
                     params: {
-                      screen: 'Configuration',
-                      params: {
-                        screen: 'DailyLogScreen',
-                      },
+                      screen: 'DailyLogScreen',
                     },
-                  })
+                  },
+                })
               }
             />
           </>
@@ -227,14 +227,14 @@ export default function SettingsScreen() {
           title="Ticket types"
           onPress={() =>
             navigation.navigate('Authenticated', {
-                screen: 'Manifest',
+              screen: 'Manifest',
+              params: {
+                screen: 'Configuration',
                 params: {
-                  screen: 'Configuration',
-                  params: {
-                    screen: 'TicketTypesScreen',
-                  },
+                  screen: 'TicketTypesScreen',
                 },
-              })
+              },
+            })
           }
           left={() => <List.Icon color={theme.colors.text} icon="ticket" />}
           description="Manage ticket prices and accessibility"
@@ -245,14 +245,14 @@ export default function SettingsScreen() {
           right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
-                screen: 'Manifest',
+              screen: 'Manifest',
+              params: {
+                screen: 'Configuration',
                 params: {
-                  screen: 'Configuration',
-                  params: {
-                    screen: 'ExtrasScreen',
-                  },
+                  screen: 'ExtrasScreen',
                 },
-              })
+              },
+            })
           }
           left={() => <List.Icon color={theme.colors.text} icon="plus" />}
           description="Supplementary tickets like coach, camera, night jumpi"

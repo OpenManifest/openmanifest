@@ -44,11 +44,11 @@ export default function OperatorsScreen(props: OperatorCardProps) {
           if (selected && shouldPushRoute) {
             navigation.dispatch(
               StackActions.replace('Authenticated', {
-                  screen: 'Manifest',
-                  params: {
-                    screen: 'ManifestScreen',
-                  },
-                })
+                screen: 'Manifest',
+                params: {
+                  screen: 'ManifestScreen',
+                },
+              })
             );
           }
         }
