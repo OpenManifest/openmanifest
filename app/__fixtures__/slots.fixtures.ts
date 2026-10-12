@@ -7,7 +7,7 @@ export const slotLoadingFragment: SlotDetailsFragment = {
   createdAt: new Date().toISOString(),
   exitWeight: 0,
   groupNumber: 0,
-  dropzoneUser: null,
+  membership: null,
   rig: null,
   extras: null,
   jumpType: null,

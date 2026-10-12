@@ -1,8 +1,8 @@
 import { merge } from 'lodash';
 import { LoadState } from '../../../api/schema.d';
 import {
-  DropzoneUserDetailsFragment,
-  DropzoneUserEssentialsFragment,
+  MembershipDetailsFragment,
+  MembershipEssentialsFragment,
   LoadEssentialsFragment,
   LoadQuery,
   LoadQueryVariables,
@@ -28,8 +28,8 @@ export const loadEssentials: LoadEssentialsFragment = {
   occupiedSlots: 3,
 };
 
-const dropzoneUserEssentials: DropzoneUserEssentialsFragment = {
-  __typename: 'DropzoneUser',
+const membershipEssentials: MembershipEssentialsFragment = {
+  __typename: 'Membership',
   id: '1',
   walletId: '1',
   user: {
@@ -44,17 +44,17 @@ const dropzoneUserEssentials: DropzoneUserEssentialsFragment = {
   role: {
     id: '1',
     name: 'jest',
-    dropzoneId: 1,
+    operatorId: 1,
   },
   expiresAt: null,
 };
 
-const dropzoneUserDetails: DropzoneUserDetailsFragment = merge({}, dropzoneUserEssentials, {
-  __typename: 'DropzoneUser',
+const membershipDetails: MembershipDetailsFragment = merge({}, membershipEssentials, {
+  __typename: 'Membership',
   id: '21',
   role: {
     id: '1',
-    dropzoneId: 1,
+    operatorId: 1,
     name: 'fun_jumper',
   },
   user: {
@@ -89,15 +89,15 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
         maxSlots: 10,
         name: 'Beaver',
       },
-      // Distinct ids: the Apollo cache normalises DropzoneUser by id, so sharing one with a slot would overwrite it.
-      gca: merge({}, dropzoneUserEssentials, {
+      // Distinct ids: the Apollo cache normalises Membership by id, so sharing one with a slot would overwrite it.
+      gca: merge({}, membershipEssentials, {
         id: '11',
         user: {
           id: '11',
           name: 'jest',
         },
       }),
-      pilot: merge({}, dropzoneUserEssentials, {
+      pilot: merge({}, membershipEssentials, {
         id: '12',
         user: {
           id: '12',
@@ -118,7 +118,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           passengerExitWeight: null,
           wingLoading: 1.3,
           groupNumber: 0,
-          dropzoneUser: dropzoneUserDetails,
+          membership: membershipDetails,
           ticketType: {
             allowManifestingSelf: true,
             __typename: 'TicketType',
@@ -150,7 +150,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           passengerExitWeight: null,
           wingLoading: 1.3,
           groupNumber: 0,
-          dropzoneUser: merge({}, dropzoneUserDetails, {
+          membership: merge({}, membershipDetails, {
             id: '2',
             user: {
               id: '2',
@@ -194,7 +194,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           passengerExitWeight: null,
 
           wingLoading: 1.3,
-          dropzoneUser: merge({}, dropzoneUserDetails, {
+          membership: merge({}, membershipDetails, {
             id: '3',
             user: {
               __typename: 'User',

@@ -39,7 +39,7 @@ const MUTATION_UPDATE_PLANE = gql`
         hours
         nextMaintenanceHours
 
-        dropzone {
+        operator {
           id
           name
           planes {

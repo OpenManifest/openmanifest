@@ -13,7 +13,7 @@ import ScreenContainer from 'app/components/layout/ScreenContainer';
 import useRestriction from 'app/hooks/useRestriction';
 import SwipeActions from 'app/components/layout/SwipeActions';
 import { useAircrafts } from 'app/api/crud';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { PlaneEssentialsFragment } from 'app/api/operations';
 import { useNotifications } from 'app/providers/notifications';
 import { useAppTheme } from 'app/theme';
@@ -21,10 +21,10 @@ import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale
 
 export default function PlanesScreen() {
   const { theme } = useAppTheme();
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
-  const { dialogs } = useDropzoneContext();
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
+  const { dialogs } = useOperatorContext();
   const { aircrafts, archive, loading, refetch } = useAircrafts({
-    dropzoneId: currentDropzoneId?.toString() as string,
+    operatorId: currentOperatorId?.toString() as string,
   });
 
   const notify = useNotifications();

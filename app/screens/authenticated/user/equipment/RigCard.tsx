@@ -7,9 +7,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   RigInspectionEssentialsFragment,
   RigEssentialsFragment,
-  DropzoneUserEssentialsFragment,
+  MembershipEssentialsFragment,
 } from 'app/api/operations';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import useRestriction from 'app/hooks/useRestriction';
 import useImagePicker from 'app/hooks/useImagePicker';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
@@ -19,32 +19,32 @@ import { useImageViewer } from 'app/components/dialogs/ImageViewer/context';
 import { errorColor, successColor } from 'app/constants/Colors';
 
 import { Permission } from 'app/api/schema.d';
-import { AvailableRigsDocument, DropzoneUsersDetailedDocument } from 'app/api/reflection';
+import { AvailableRigsDocument, MembershipsDetailedDocument } from 'app/api/reflection';
 import { useNotifications } from 'app/providers/notifications';
 import { useUserNavigation } from '../useUserNavigation';
 import { useAppTheme } from 'app/theme';
 
 export interface IRigCardProps {
   rig: RigEssentialsFragment;
-  dropzoneUser?: DropzoneUserEssentialsFragment | null;
+  membership?: MembershipEssentialsFragment | null;
   rigInspection?: RigInspectionEssentialsFragment;
   onSuccessfulImageUpload?(): void;
   onPress?(): void;
 }
 export default function RigCard(props: IRigCardProps) {
-  const { rig, rigInspection, dropzoneUser, onSuccessfulImageUpload, onPress } = props;
+  const { rig, rigInspection, membership, onSuccessfulImageUpload, onPress } = props;
   const [isUploading, setUploading] = React.useState(false);
   const { accent } = useAppTheme().theme.colors;
   const { open: openImage } = useImageViewer();
   const notify = useNotifications();
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
   const pickImage = useImagePicker();
 
   const updateRig = useMutationUpdateRig({
     mutation: {
-      refetchQueries: [AvailableRigsDocument, DropzoneUsersDetailedDocument],
+      refetchQueries: [AvailableRigsDocument, MembershipsDetailedDocument],
     },
     onSuccess: () => {
       setUploading(false);
@@ -74,10 +74,14 @@ export default function RigCard(props: IRigCardProps) {
     }
   }, [pickImage, rig?.id, updateRig]);
 
-  const canManageDropzoneRigs = useRestriction(Permission.UpdateDropzoneRig);
+  const canManageOperatorRigs = useRestriction(Permission.UpdateOperatorRig);
+  // Staff with UpdateUser run a member's personal rigs from the office (UB.2)
+  const canUpdateUser = useRestriction(Permission.UpdateUser);
   const navigation = useUserNavigation();
   const canUpdateRig =
-    currentUser?.user?.id === rig.owner?.id || (rig?.dropzone?.id && canManageDropzoneRigs);
+    currentUser?.user?.id === rig.owner?.id ||
+    (rig?.operator?.id && canManageOperatorRigs) ||
+    (rig?.owner?.id && canUpdateUser);
 
   const theme = useTheme();
 
@@ -180,7 +184,7 @@ export default function RigCard(props: IRigCardProps) {
           onPress={() => {
             navigation.navigate('RigInspectionScreen', {
               rigId: rig.id,
-              dropzoneUserId: dropzoneUser?.id as string,
+              membershipId: membership?.id as string,
             });
           }}
         >

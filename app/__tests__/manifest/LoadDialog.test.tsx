@@ -3,16 +3,16 @@ import { Permission } from 'app/api/schema.d';
 import { CreateLoadDocument } from 'app/api/reflection';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_PLANES from './__mocks__/QueryPlane.mock';
-import MOCK_QUERY_DROPZONE_USERS from './__mocks__/QueryDropzoneUsers.mock';
-import MOCK_QUERY_DROPZONE from './__mocks__/QueryDropzone.mock';
+import MOCK_QUERY_MEMBERSHIPS from './__mocks__/QueryMemberships.mock';
+import MOCK_QUERY_OPERATOR from './__mocks__/QueryOperator.mock';
 import LoadDialog from '../../forms/load/Dialog';
 import { NotificationContext } from 'app/providers/notifications/context';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
-const dropzoneUser = (id: string, name: string) => ({
-  __typename: 'DropzoneUser',
+const membership = (id: string, name: string) => ({
+  __typename: 'Membership',
   id,
   walletId: id,
   expiresAt: null,
@@ -37,16 +37,16 @@ const dropzoneUser = (id: string, name: string) => ({
 });
 
 // Builds the mock without touching the shared fixture (the helper merges overrides in place).
-function usersWithPermission(permission: Permission, user: ReturnType<typeof dropzoneUser>) {
-  const mock = MOCK_QUERY_DROPZONE_USERS({ permissions: [permission] });
+function usersWithPermission(permission: Permission, user: ReturnType<typeof membership>) {
+  const mock = MOCK_QUERY_MEMBERSHIPS({ permissions: [permission] });
   return {
     ...mock,
     result: {
       data: {
         __typename: 'Query',
-        dropzoneUsers: {
-          __typename: 'DropzoneUserConnection',
-          edges: [{ __typename: 'DropzoneUserEdge', node: user }],
+        memberships: {
+          __typename: 'MembershipConnection',
+          edges: [{ __typename: 'MembershipEdge', node: user }],
         },
       },
     },
@@ -70,8 +70,8 @@ describe('<LoadDialog />', () => {
       session: authenticatedSession,
       graphql: [
         MOCK_QUERY_PLANES(),
-        usersWithPermission(Permission.ActAsGca, dropzoneUser('31', 'Gina GCA')),
-        usersWithPermission(Permission.ActAsPilot, dropzoneUser('32', 'Pete Pilot')),
+        usersWithPermission(Permission.ActAsGca, membership('31', 'Gina GCA')),
+        usersWithPermission(Permission.ActAsPilot, membership('32', 'Pete Pilot')),
         {
           request: {
             query: CreateLoadDocument,
@@ -111,17 +111,17 @@ describe('<LoadDialog />', () => {
   // BUG-067: creating a load used to run the staff member's own jumper prerequisites (membership, licence, rig
   // inspection, reserve), so manifest staff without a valid membership could not create loads
   describe('as staff without a valid membership of their own', () => {
-    const dropzone = MOCK_QUERY_DROPZONE();
-    const data = (dropzone.result as { data: { dropzone: Record<string, any> } }).data;
+    const operator = MOCK_QUERY_OPERATOR();
+    const data = (operator.result as { data: { operator: Record<string, any> } }).data;
     const withoutMembership = {
-      ...dropzone,
+      ...operator,
       result: {
         data: {
           ...data,
-          dropzone: {
-            ...data.dropzone,
-            settings: { ...data.dropzone.settings, requireMembership: true },
-            currentUser: { ...data.dropzone.currentUser, hasMembership: false },
+          operator: {
+            ...data.operator,
+            settings: { ...data.operator.settings, requireMembership: true },
+            currentUser: { ...data.operator.currentUser, hasMembership: false },
           },
         },
       },
@@ -140,8 +140,8 @@ describe('<LoadDialog />', () => {
           graphql: [
             withoutMembership as never,
             MOCK_QUERY_PLANES(),
-            usersWithPermission(Permission.ActAsGca, dropzoneUser('31', 'Gina GCA')),
-            usersWithPermission(Permission.ActAsPilot, dropzoneUser('32', 'Pete Pilot')),
+            usersWithPermission(Permission.ActAsGca, membership('31', 'Gina GCA')),
+            usersWithPermission(Permission.ActAsPilot, membership('32', 'Pete Pilot')),
             {
               request: {
                 query: CreateLoadDocument,

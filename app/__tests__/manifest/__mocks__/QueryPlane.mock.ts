@@ -5,7 +5,7 @@ import createMockedQuery from './createMockedQuery.mock';
 type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]> } : T;
 export default createMockedQuery<PlanesQueryVariables, DeepRequired<PlanesQuery>>(
   PlanesDocument,
-  { dropzoneId: '1' },
+  { operatorId: '1' },
   {
     __typename: 'Query',
     planes: [

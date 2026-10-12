@@ -8,7 +8,7 @@ import {
 } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { camelCase, isEqual } from 'lodash';
 import { useUserProfile } from 'app/api/crud';
@@ -92,20 +92,20 @@ export default function useUserForm(opts: IUseUserFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const { create } = useUserProfile();
   const notify = useNotifications();
 
   const [{ loading }, createUser] = useAsyncFn(
     async (fields: UserFields) => {
-      if (!dropzone?.id) {
+      if (!operator?.id) {
         return;
       }
       const validated = await ghostValidation.validate(fields, { abortEarly: false });
       try {
         const response = await create({
-          dropzone: Number(dropzone.id),
+          operator: Number(operator.id),
           email: validated.email,
           name: validated.name,
           exitWeight: validated.exitWeight,
@@ -134,7 +134,7 @@ export default function useUserForm(opts: IUseUserFormOpts) {
         }
       }
     },
-    [dropzone?.id, setError, notify, defaultValues, create]
+    [operator?.id, setError, notify, defaultValues, create]
   );
 
   const { control, setValue } = methods;

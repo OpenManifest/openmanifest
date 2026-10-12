@@ -1,4 +1,4 @@
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import * as React from 'react';
 import * as yup from 'yup';
 import { ValidationError } from 'yup';
@@ -13,20 +13,20 @@ const schema = yup.object().shape({
 
 export default function useManifestValidator() {
   const {
-    dropzone: { currentUser, dropzone },
-  } = useDropzoneContext();
+    operator: { currentUser, operator },
+  } = useOperatorContext();
 
   const canManifest = React.useCallback(
     async function CheckManifestRequirements() {
       try {
         await schema.validate(
           {
-            hasLicense: currentUser?.hasLicense || !dropzone?.settings?.requireLicense,
-            hasMembership: currentUser?.hasMembership || !dropzone?.settings?.requireMembership,
+            hasLicense: currentUser?.hasLicense || !operator?.settings?.requireLicense,
+            hasMembership: currentUser?.hasMembership || !operator?.settings?.requireMembership,
             hasRigInspection:
-              currentUser?.hasRigInspection || !dropzone?.settings?.requireRigInspection,
+              currentUser?.hasRigInspection || !operator?.settings?.requireRigInspection,
             hasReserveInDate:
-              currentUser?.hasReserveInDate || !dropzone?.settings?.requireReserveInDate,
+              currentUser?.hasReserveInDate || !operator?.settings?.requireReserveInDate,
           },
           { abortEarly: true }
         );
@@ -42,11 +42,11 @@ export default function useManifestValidator() {
       currentUser?.hasMembership,
       currentUser?.hasRigInspection,
       currentUser?.hasLicense,
-      dropzone?.settings?.requireLicense,
-      dropzone?.settings?.requireMembership,
-      dropzone?.settings?.requireRigInspection,
+      operator?.settings?.requireLicense,
+      operator?.settings?.requireMembership,
+      operator?.settings?.requireRigInspection,
       currentUser?.hasReserveInDate,
-      dropzone?.settings?.requireReserveInDate,
+      operator?.settings?.requireReserveInDate,
     ]
   );
 

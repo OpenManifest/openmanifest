@@ -4,7 +4,7 @@ import { addDays, startOfDay } from 'date-fns';
 
 type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]> } : T;
 export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
-  __typename: 'DropzoneUser',
+  __typename: 'Membership',
   id: '123',
   walletId: '123',
   license: {
@@ -34,7 +34,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
 
   role: {
     id: '1',
-    dropzoneId: 1,
+    operatorId: 1,
     name: 'fun_jumper',
     __typename: 'UserRole',
   },
@@ -55,7 +55,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
     phone: '123456789',
     pushToken: null,
     image: null,
-    dropzoneUsers: [],
+    memberships: [],
 
     rigs: [
       {
@@ -68,7 +68,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         model: 'V310',
         serial: '12345',
         canopySize: 150,
-        dropzone: null,
+        operator: null,
         maintainedAt: null,
         packValue: null,
         rigType: 'sport',
@@ -90,7 +90,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         model: 'G4.1',
         serial: '34567',
         canopySize: 170,
-        dropzone: null,
+        operator: null,
         maintainedAt: null,
         packValue: null,
         rigType: 'sport',

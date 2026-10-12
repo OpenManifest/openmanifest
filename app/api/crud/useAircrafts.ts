@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { noop } from 'lodash';
 import sameVariables from 'app/utils/sameVariables';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { useAuthenticated } from 'app/state';
 import {
   useCreateAircraftMutation,
@@ -13,7 +13,7 @@ import {
 import {
   CreateAircraftMutationVariables,
   PlanesQuery,
-  DropzoneQueryVariables,
+  OperatorQueryVariables,
   PlaneEssentialsFragment,
   PlanesQueryVariables,
   UpdateAircraftMutationVariables,
@@ -22,10 +22,10 @@ import { TMutationResponse, uninitializedHandler } from './factory';
 
 export function useAircrafts(vars?: Partial<PlanesQueryVariables>) {
   const authenticated = useAuthenticated();
-  const variables: DropzoneQueryVariables | undefined = React.useMemo(() => {
-    if (vars?.dropzoneId) {
+  const variables: OperatorQueryVariables | undefined = React.useMemo(() => {
+    if (vars?.operatorId) {
       return {
-        dropzoneId: vars.dropzoneId,
+        operatorId: vars.operatorId,
       };
     }
     return undefined;
@@ -36,7 +36,7 @@ export function useAircrafts(vars?: Partial<PlanesQueryVariables>) {
   });
 
   React.useEffect(() => {
-    if (authenticated && variables?.dropzoneId && !sameVariables(variables, query.variables)) {
+    if (authenticated && variables?.operatorId && !sameVariables(variables, query.variables)) {
       console.debug('[Context::Aircrafts] Fetching aircrafts', variables);
       getAircrafts({ variables });
     }
@@ -45,14 +45,14 @@ export function useAircrafts(vars?: Partial<PlanesQueryVariables>) {
   const { loading, fetchMore, data, called, variables: queryVariables } = query;
 
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const [createAircraft] = useCreateAircraftMutation();
   const [updateAircraft] = useUpdateAircraftMutation();
   const [archiveAircraft] = useArchivePlaneMutation();
 
   const refetch = React.useCallback(() => {
-    if (variables?.dropzoneId) {
+    if (variables?.operatorId) {
       query?.refetch();
     }
   }, [query, variables]);
@@ -61,18 +61,18 @@ export function useAircrafts(vars?: Partial<PlanesQueryVariables>) {
     async function CreateAircraft(
       attributes: CreateAircraftMutationVariables['attributes']
     ): Promise<TMutationResponse<{ aircraft: PlaneEssentialsFragment }>> {
-      if (!dropzone) {
+      if (!operator) {
         return { error: 'No dropzone selected' };
       }
       const response = await createAircraft({
         variables: { attributes },
-        refetchQueries: [{ query: PlanesDocument, variables: { dropzoneId: dropzone.id } }],
+        refetchQueries: [{ query: PlanesDocument, variables: { operatorId: operator.id } }],
         update: (cache, { data: mutationData }) => {
           cache.updateQuery<PlanesQuery, PlanesQueryVariables>(
             {
               query: PlanesDocument,
-              variables: { dropzoneId: dropzone.id },
-              id: cache.identify(dropzone),
+              variables: { operatorId: operator.id },
+              id: cache.identify(operator),
             },
             (prev) => {
               if (!prev) {
@@ -99,7 +99,7 @@ export function useAircrafts(vars?: Partial<PlanesQueryVariables>) {
         fieldErrors: response?.data?.createPlane?.fieldErrors || undefined,
       };
     },
-    [createAircraft, dropzone]
+    [createAircraft, operator]
   );
 
   const update = React.useCallback(
@@ -159,8 +159,8 @@ export function useAircrafts(vars?: Partial<PlanesQueryVariables>) {
     () => ({
       loading,
       called,
-      refetch: queryVariables?.dropzoneId ? refetch : noop,
-      fetchMore: queryVariables?.dropzoneId ? () => fetchMore({ variables }) : uninitializedHandler,
+      refetch: queryVariables?.operatorId ? refetch : noop,
+      fetchMore: queryVariables?.operatorId ? () => fetchMore({ variables }) : uninitializedHandler,
       aircrafts: data?.planes,
       create,
       update,
@@ -169,7 +169,7 @@ export function useAircrafts(vars?: Partial<PlanesQueryVariables>) {
     [
       loading,
       called,
-      queryVariables?.dropzoneId,
+      queryVariables?.operatorId,
       refetch,
       data?.planes,
       create,

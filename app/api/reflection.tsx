@@ -7,7 +7,7 @@ export const RoleEssentialsFragmentDoc = gql`
     fragment roleEssentials on UserRole {
   id
   name
-  dropzoneId
+  operatorId
 }
     `;
 export const LicenseEssentialsFragmentDoc = gql`
@@ -29,8 +29,8 @@ export const UserEssentialsFragmentDoc = gql`
   apfNumber
 }
     `;
-export const DropzoneUserEssentialsFragmentDoc = gql`
-    fragment dropzoneUserEssentials on DropzoneUser {
+export const MembershipEssentialsFragmentDoc = gql`
+    fragment membershipEssentials on Membership {
   id
   walletId
   expiresAt
@@ -60,12 +60,12 @@ export const ActivityEssentialsFragmentDoc = gql`
   details
   createdAt
   createdBy {
-    ...dropzoneUserEssentials
+    ...membershipEssentials
   }
 }
-    ${DropzoneUserEssentialsFragmentDoc}`;
-export const DropzoneEssentialsFragmentDoc = gql`
-    fragment dropzoneEssentials on Dropzone {
+    ${MembershipEssentialsFragmentDoc}`;
+export const OperatorEssentialsFragmentDoc = gql`
+    fragment operatorEssentials on Operator {
   id
   walletId
   lat
@@ -82,6 +82,7 @@ export const DropzoneEssentialsFragmentDoc = gql`
     allowManifestBypass
     allowNegativeCredits
     allowDoubleManifesting
+    allowSelfManifest
     requireCredits
     requireLicense
     requireMembership
@@ -183,7 +184,7 @@ export const RigEssentialsFragmentDoc = gql`
     id
     name
   }
-  dropzone {
+  operator {
     id
   }
 }
@@ -201,11 +202,11 @@ export const ActivityDetailsFragmentDoc = gql`
     fragment activityDetails on Event {
   ...activityEssentials
   resource {
-    ... on Dropzone {
-      ...dropzoneEssentials
+    ... on Operator {
+      ...operatorEssentials
     }
-    ... on DropzoneUser {
-      ...dropzoneUserEssentials
+    ... on Membership {
+      ...membershipEssentials
     }
     ... on Load {
       ...loadEssentials
@@ -222,380 +223,12 @@ export const ActivityDetailsFragmentDoc = gql`
   }
 }
     ${ActivityEssentialsFragmentDoc}
-${DropzoneEssentialsFragmentDoc}
-${DropzoneUserEssentialsFragmentDoc}
+${OperatorEssentialsFragmentDoc}
+${MembershipEssentialsFragmentDoc}
 ${LoadEssentialsFragmentDoc}
 ${SlotEssentialsFragmentDoc}
 ${RigEssentialsFragmentDoc}
 ${PlaneEssentialsFragmentDoc}`;
-export const FederationEssentialsFragmentDoc = gql`
-    fragment federationEssentials on Federation {
-  id
-  name
-  slug
-}
-    `;
-export const LicenseDetailsFragmentDoc = gql`
-    fragment licenseDetails on License {
-  ...licenseEssentials
-  federation {
-    ...federationEssentials
-  }
-}
-    ${LicenseEssentialsFragmentDoc}
-${FederationEssentialsFragmentDoc}`;
-export const UserFederationEssentialsFragmentDoc = gql`
-    fragment userFederationEssentials on UserFederation {
-  id
-  uid
-  federation {
-    ...federationEssentials
-  }
-  license {
-    ...licenseEssentials
-  }
-}
-    ${FederationEssentialsFragmentDoc}
-${LicenseEssentialsFragmentDoc}`;
-export const UserRigDetailedFragmentDoc = gql`
-    fragment userRigDetailed on Rig {
-  ...rigEssentials
-  owner {
-    id
-    rigs {
-      ...rigEssentials
-    }
-  }
-}
-    ${RigEssentialsFragmentDoc}`;
-export const UserDetailedFragmentDoc = gql`
-    fragment userDetailed on User {
-  ...userEssentials
-  userFederations {
-    ...userFederationEssentials
-  }
-  rigs {
-    ...userRigDetailed
-  }
-}
-    ${UserEssentialsFragmentDoc}
-${UserFederationEssentialsFragmentDoc}
-${UserRigDetailedFragmentDoc}`;
-export const DropzoneUserDetailsFragmentDoc = gql`
-    fragment dropzoneUserDetails on DropzoneUser {
-  ...dropzoneUserEssentials
-  creditsCents
-  license {
-    ...licenseDetails
-  }
-  user {
-    ...userDetailed
-  }
-  availableRigs {
-    ...rigEssentials
-  }
-}
-    ${DropzoneUserEssentialsFragmentDoc}
-${LicenseDetailsFragmentDoc}
-${UserDetailedFragmentDoc}
-${RigEssentialsFragmentDoc}`;
-export const RigInspectionEssentialsFragmentDoc = gql`
-    fragment rigInspectionEssentials on RigInspection {
-  id
-  isOk
-  definition
-  inspectedBy {
-    ...dropzoneUserEssentials
-  }
-  rig {
-    ...rigEssentials
-  }
-}
-    ${DropzoneUserEssentialsFragmentDoc}
-${RigEssentialsFragmentDoc}`;
-export const TransactionEssentialsFragmentDoc = gql`
-    fragment transactionEssentials on Transaction {
-  id
-  transactionType
-  amountCents
-  status
-  createdAt
-  message
-  sender {
-    ... on DropzoneUser {
-      id
-      user {
-        id
-        name
-      }
-    }
-    ... on Dropzone {
-      id
-      name
-    }
-  }
-  receiver {
-    ... on DropzoneUser {
-      id
-      user {
-        id
-        name
-      }
-    }
-    ... on Dropzone {
-      id
-      name
-    }
-  }
-}
-    `;
-export const ReceiptEssentialsFragmentDoc = gql`
-    fragment receiptEssentials on Receipt {
-  id
-  amountCents
-  createdAt
-  updatedAt
-  transactions {
-    ...transactionEssentials
-  }
-}
-    ${TransactionEssentialsFragmentDoc}`;
-export const OrderEssentialsFragmentDoc = gql`
-    fragment orderEssentials on Order {
-  id
-  state
-  amountCents
-  title
-  orderNumber
-  createdAt
-  buyer {
-    ... on DropzoneUser {
-      ...dropzoneUserDetails
-    }
-    ... on Dropzone {
-      id
-      name
-      banner
-    }
-  }
-  seller {
-    ... on DropzoneUser {
-      ...dropzoneUserDetails
-    }
-    ... on Dropzone {
-      ...dropzoneEssentials
-    }
-  }
-  item {
-    title
-    costCents
-    ... on Slot {
-      id
-      ticketType {
-        id
-        name
-        costCents
-      }
-      extras {
-        id
-        name
-        costCents
-      }
-    }
-    ... on TicketType {
-      id
-    }
-    ... on Extra {
-      id
-      name
-    }
-  }
-  receipts {
-    ...receiptEssentials
-  }
-}
-    ${DropzoneUserDetailsFragmentDoc}
-${DropzoneEssentialsFragmentDoc}
-${ReceiptEssentialsFragmentDoc}`;
-export const SlotDetailsFragmentDoc = gql`
-    fragment slotDetails on Slot {
-  ...slotEssentials
-  rig {
-    ...rigEssentials
-  }
-  dropzoneUser {
-    ...dropzoneUserEssentials
-  }
-}
-    ${SlotEssentialsFragmentDoc}
-${RigEssentialsFragmentDoc}
-${DropzoneUserEssentialsFragmentDoc}`;
-export const UserSlotDetailsFragmentDoc = gql`
-    fragment userSlotDetails on Slot {
-  ...slotDetails
-  load {
-    ...loadEssentials
-  }
-}
-    ${SlotDetailsFragmentDoc}
-${LoadEssentialsFragmentDoc}`;
-export const DropzoneUserProfileFragmentDoc = gql`
-    fragment dropzoneUserProfile on DropzoneUser {
-  ...dropzoneUserDetails
-  permissions
-  rigInspections {
-    ...rigInspectionEssentials
-  }
-  orders {
-    edges {
-      node {
-        ...orderEssentials
-      }
-    }
-  }
-  slots {
-    edges {
-      node {
-        ...userSlotDetails
-      }
-    }
-  }
-}
-    ${DropzoneUserDetailsFragmentDoc}
-${RigInspectionEssentialsFragmentDoc}
-${OrderEssentialsFragmentDoc}
-${UserSlotDetailsFragmentDoc}`;
-export const DropzoneStatisticsEssentialsFragmentDoc = gql`
-    fragment dropzoneStatisticsEssentials on Statistics {
-  id
-  activeUserCount
-  totalUserCount
-  slotsByJumpType(timeRange: $timeRange) {
-    name
-    count
-  }
-  slotsCount(timeRange: $timeRange)
-  cancelledLoadsCount(timeRange: $timeRange)
-  dzsoCount
-  finalizedLoadsCount(timeRange: $timeRange)
-  gcaCount
-  pilotCount
-  inactiveUserCount
-  loadsCount(timeRange: $timeRange)
-  loadCountByDay(timeRange: $timeRange) {
-    date
-    count
-  }
-  revenueCentsCount(timeRange: $timeRange)
-  rigInspectorCount
-}
-    `;
-export const DropzoneStatisticsFragmentDoc = gql`
-    fragment dropzoneStatistics on Dropzone {
-  ...dropzoneEssentials
-  statistics {
-    ...dropzoneStatisticsEssentials
-  }
-}
-    ${DropzoneEssentialsFragmentDoc}
-${DropzoneStatisticsEssentialsFragmentDoc}`;
-export const WeatherConditionEssentialsFragmentDoc = gql`
-    fragment weatherConditionEssentials on WeatherCondition {
-  id
-  jumpRun
-  temperature
-  offsetDirection
-  offsetMiles
-  createdAt
-  exitSpotMiles
-  winds {
-    temperature
-    altitude
-    speed
-    direction
-  }
-}
-    `;
-export const DropzoneDetailedFragmentDoc = gql`
-    fragment dropzoneDetailed on Dropzone {
-  ...dropzoneEssentials
-  federation {
-    id
-    name
-    slug
-  }
-  currentConditions {
-    ...weatherConditionEssentials
-  }
-}
-    ${DropzoneEssentialsFragmentDoc}
-${WeatherConditionEssentialsFragmentDoc}`;
-export const CurrentUserEssentialsFragmentDoc = gql`
-    fragment currentUserEssentials on DropzoneUser {
-  id
-  walletId
-  creditsCents
-  hasCredits
-  hasExitWeight
-  hasMembership
-  hasReserveInDate
-  hasRigInspection
-  hasLicense
-  permissions
-  expiresAt
-  role {
-    ...roleEssentials
-  }
-}
-    ${RoleEssentialsFragmentDoc}`;
-export const CurrentUserFragmentDoc = gql`
-    fragment currentUser on User {
-  ...userDetailed
-  dropzoneUsers {
-    ...dropzoneUserDetails
-  }
-  pushToken
-}
-    ${UserDetailedFragmentDoc}
-${DropzoneUserDetailsFragmentDoc}`;
-export const CurrentUserDetailedFragmentDoc = gql`
-    fragment currentUserDetailed on DropzoneUser {
-  ...currentUserEssentials
-  rigInspections {
-    ...rigInspectionEssentials
-  }
-  orders {
-    edges {
-      node {
-        ...orderEssentials
-      }
-    }
-  }
-  availableRigs {
-    ...rigEssentials
-  }
-  license {
-    ...licenseDetails
-  }
-  user {
-    ...currentUser
-  }
-}
-    ${CurrentUserEssentialsFragmentDoc}
-${RigInspectionEssentialsFragmentDoc}
-${OrderEssentialsFragmentDoc}
-${RigEssentialsFragmentDoc}
-${LicenseDetailsFragmentDoc}
-${CurrentUserFragmentDoc}`;
-export const DropzoneExtensiveFragmentDoc = gql`
-    fragment dropzoneExtensive on Dropzone {
-  ...dropzoneDetailed
-  currentUser {
-    ...currentUserDetailed
-  }
-}
-    ${DropzoneDetailedFragmentDoc}
-${CurrentUserDetailedFragmentDoc}`;
 export const TicketTypeExtraEssentialsFragmentDoc = gql`
     fragment ticketTypeExtraEssentials on Extra {
   id
@@ -688,6 +321,374 @@ export const MasterLogEntryFragmentDoc = gql`
     ${MasterLogUserFragmentDoc}
 ${MasterLogLoadFragmentDoc}
 ${LocationFragmentDoc}`;
+export const FederationEssentialsFragmentDoc = gql`
+    fragment federationEssentials on Federation {
+  id
+  name
+  slug
+}
+    `;
+export const LicenseDetailsFragmentDoc = gql`
+    fragment licenseDetails on License {
+  ...licenseEssentials
+  federation {
+    ...federationEssentials
+  }
+}
+    ${LicenseEssentialsFragmentDoc}
+${FederationEssentialsFragmentDoc}`;
+export const UserFederationEssentialsFragmentDoc = gql`
+    fragment userFederationEssentials on UserFederation {
+  id
+  uid
+  federation {
+    ...federationEssentials
+  }
+  license {
+    ...licenseEssentials
+  }
+}
+    ${FederationEssentialsFragmentDoc}
+${LicenseEssentialsFragmentDoc}`;
+export const UserRigDetailedFragmentDoc = gql`
+    fragment userRigDetailed on Rig {
+  ...rigEssentials
+  owner {
+    id
+    rigs {
+      ...rigEssentials
+    }
+  }
+}
+    ${RigEssentialsFragmentDoc}`;
+export const UserDetailedFragmentDoc = gql`
+    fragment userDetailed on User {
+  ...userEssentials
+  userFederations {
+    ...userFederationEssentials
+  }
+  rigs {
+    ...userRigDetailed
+  }
+}
+    ${UserEssentialsFragmentDoc}
+${UserFederationEssentialsFragmentDoc}
+${UserRigDetailedFragmentDoc}`;
+export const MembershipDetailsFragmentDoc = gql`
+    fragment membershipDetails on Membership {
+  ...membershipEssentials
+  creditsCents
+  license {
+    ...licenseDetails
+  }
+  user {
+    ...userDetailed
+  }
+  availableRigs {
+    ...rigEssentials
+  }
+}
+    ${MembershipEssentialsFragmentDoc}
+${LicenseDetailsFragmentDoc}
+${UserDetailedFragmentDoc}
+${RigEssentialsFragmentDoc}`;
+export const RigInspectionEssentialsFragmentDoc = gql`
+    fragment rigInspectionEssentials on RigInspection {
+  id
+  isOk
+  definition
+  inspectedBy {
+    ...membershipEssentials
+  }
+  rig {
+    ...rigEssentials
+  }
+}
+    ${MembershipEssentialsFragmentDoc}
+${RigEssentialsFragmentDoc}`;
+export const TransactionEssentialsFragmentDoc = gql`
+    fragment transactionEssentials on Transaction {
+  id
+  transactionType
+  amountCents
+  status
+  createdAt
+  message
+  sender {
+    ... on Membership {
+      id
+      user {
+        id
+        name
+      }
+    }
+    ... on Operator {
+      id
+      name
+    }
+  }
+  receiver {
+    ... on Membership {
+      id
+      user {
+        id
+        name
+      }
+    }
+    ... on Operator {
+      id
+      name
+    }
+  }
+}
+    `;
+export const ReceiptEssentialsFragmentDoc = gql`
+    fragment receiptEssentials on Receipt {
+  id
+  amountCents
+  createdAt
+  updatedAt
+  transactions {
+    ...transactionEssentials
+  }
+}
+    ${TransactionEssentialsFragmentDoc}`;
+export const OrderEssentialsFragmentDoc = gql`
+    fragment orderEssentials on Order {
+  id
+  state
+  amountCents
+  title
+  orderNumber
+  createdAt
+  buyer {
+    ... on Membership {
+      ...membershipDetails
+    }
+    ... on Operator {
+      id
+      name
+      banner
+    }
+  }
+  seller {
+    ... on Membership {
+      ...membershipDetails
+    }
+    ... on Operator {
+      ...operatorEssentials
+    }
+  }
+  item {
+    title
+    costCents
+    ... on Slot {
+      id
+      ticketType {
+        id
+        name
+        costCents
+      }
+      extras {
+        id
+        name
+        costCents
+      }
+    }
+    ... on TicketType {
+      id
+    }
+    ... on Extra {
+      id
+      name
+    }
+  }
+  receipts {
+    ...receiptEssentials
+  }
+}
+    ${MembershipDetailsFragmentDoc}
+${OperatorEssentialsFragmentDoc}
+${ReceiptEssentialsFragmentDoc}`;
+export const SlotDetailsFragmentDoc = gql`
+    fragment slotDetails on Slot {
+  ...slotEssentials
+  rig {
+    ...rigEssentials
+  }
+  membership {
+    ...membershipEssentials
+  }
+}
+    ${SlotEssentialsFragmentDoc}
+${RigEssentialsFragmentDoc}
+${MembershipEssentialsFragmentDoc}`;
+export const UserSlotDetailsFragmentDoc = gql`
+    fragment userSlotDetails on Slot {
+  ...slotDetails
+  load {
+    ...loadEssentials
+  }
+}
+    ${SlotDetailsFragmentDoc}
+${LoadEssentialsFragmentDoc}`;
+export const MembershipProfileFragmentDoc = gql`
+    fragment membershipProfile on Membership {
+  ...membershipDetails
+  permissions
+  rigInspections {
+    ...rigInspectionEssentials
+  }
+  orders {
+    edges {
+      node {
+        ...orderEssentials
+      }
+    }
+  }
+  slots {
+    edges {
+      node {
+        ...userSlotDetails
+      }
+    }
+  }
+}
+    ${MembershipDetailsFragmentDoc}
+${RigInspectionEssentialsFragmentDoc}
+${OrderEssentialsFragmentDoc}
+${UserSlotDetailsFragmentDoc}`;
+export const OperatorStatisticsEssentialsFragmentDoc = gql`
+    fragment operatorStatisticsEssentials on Statistics {
+  id
+  activeUserCount
+  totalUserCount
+  slotsByJumpType(timeRange: $timeRange) {
+    name
+    count
+  }
+  slotsCount(timeRange: $timeRange)
+  cancelledLoadsCount(timeRange: $timeRange)
+  dzsoCount
+  finalizedLoadsCount(timeRange: $timeRange)
+  gcaCount
+  pilotCount
+  inactiveUserCount
+  loadsCount(timeRange: $timeRange)
+  loadCountByDay(timeRange: $timeRange) {
+    date
+    count
+  }
+  revenueCentsCount(timeRange: $timeRange)
+  rigInspectorCount
+}
+    `;
+export const OperatorStatisticsFragmentDoc = gql`
+    fragment operatorStatistics on Operator {
+  ...operatorEssentials
+  statistics {
+    ...operatorStatisticsEssentials
+  }
+}
+    ${OperatorEssentialsFragmentDoc}
+${OperatorStatisticsEssentialsFragmentDoc}`;
+export const WeatherConditionEssentialsFragmentDoc = gql`
+    fragment weatherConditionEssentials on WeatherCondition {
+  id
+  jumpRun
+  temperature
+  offsetDirection
+  offsetMiles
+  createdAt
+  exitSpotMiles
+  winds {
+    temperature
+    altitude
+    speed
+    direction
+  }
+}
+    `;
+export const OperatorDetailedFragmentDoc = gql`
+    fragment operatorDetailed on Operator {
+  ...operatorEssentials
+  federation {
+    id
+    name
+    slug
+  }
+  currentConditions {
+    ...weatherConditionEssentials
+  }
+}
+    ${OperatorEssentialsFragmentDoc}
+${WeatherConditionEssentialsFragmentDoc}`;
+export const CurrentUserEssentialsFragmentDoc = gql`
+    fragment currentUserEssentials on Membership {
+  id
+  walletId
+  creditsCents
+  hasCredits
+  hasExitWeight
+  hasMembership
+  hasReserveInDate
+  hasRigInspection
+  hasLicense
+  permissions
+  expiresAt
+  role {
+    ...roleEssentials
+  }
+}
+    ${RoleEssentialsFragmentDoc}`;
+export const CurrentUserFragmentDoc = gql`
+    fragment currentUser on User {
+  ...userDetailed
+  memberships {
+    ...membershipDetails
+  }
+  pushToken
+}
+    ${UserDetailedFragmentDoc}
+${MembershipDetailsFragmentDoc}`;
+export const CurrentUserDetailedFragmentDoc = gql`
+    fragment currentUserDetailed on Membership {
+  ...currentUserEssentials
+  rigInspections {
+    ...rigInspectionEssentials
+  }
+  orders {
+    edges {
+      node {
+        ...orderEssentials
+      }
+    }
+  }
+  availableRigs {
+    ...rigEssentials
+  }
+  license {
+    ...licenseDetails
+  }
+  user {
+    ...currentUser
+  }
+}
+    ${CurrentUserEssentialsFragmentDoc}
+${RigInspectionEssentialsFragmentDoc}
+${OrderEssentialsFragmentDoc}
+${RigEssentialsFragmentDoc}
+${LicenseDetailsFragmentDoc}
+${CurrentUserFragmentDoc}`;
+export const OperatorExtensiveFragmentDoc = gql`
+    fragment operatorExtensive on Operator {
+  ...operatorDetailed
+  currentUser {
+    ...currentUserDetailed
+  }
+}
+    ${OperatorDetailedFragmentDoc}
+${CurrentUserDetailedFragmentDoc}`;
 export const RigInspectionDetailedFragmentDoc = gql`
     fragment rigInspectionDetailed on RigInspection {
   ...rigInspectionEssentials
@@ -704,15 +705,15 @@ export const RigInspectionMutationEssentialsFragmentDoc = gql`
     id
     definition
   }
-  dropzoneUser {
-    ...dropzoneUserEssentials
+  membership {
+    ...membershipEssentials
     rigInspections {
       ...rigInspectionEssentials
     }
   }
 }
     ${RigInspectionDetailedFragmentDoc}
-${DropzoneUserEssentialsFragmentDoc}
+${MembershipEssentialsFragmentDoc}
 ${RigInspectionEssentialsFragmentDoc}`;
 export const RoleDetailedFragmentDoc = gql`
     fragment roleDetailed on UserRole {
@@ -727,13 +728,13 @@ export const LoadDetailsFragmentDoc = gql`
     ...planeEssentials
   }
   gca {
-    ...dropzoneUserEssentials
+    ...membershipEssentials
   }
   pilot {
-    ...dropzoneUserEssentials
+    ...membershipEssentials
   }
   loadMaster {
-    ...dropzoneUserEssentials
+    ...membershipEssentials
   }
   slots {
     ...slotDetails
@@ -741,13 +742,13 @@ export const LoadDetailsFragmentDoc = gql`
 }
     ${LoadEssentialsFragmentDoc}
 ${PlaneEssentialsFragmentDoc}
-${DropzoneUserEssentialsFragmentDoc}
+${MembershipEssentialsFragmentDoc}
 ${SlotDetailsFragmentDoc}`;
 export const SlotExhaustiveFragmentDoc = gql`
     fragment slotExhaustive on Slot {
   ...slotDetails
-  dropzoneUser {
-    ...dropzoneUserDetails
+  membership {
+    ...membershipDetails
   }
   load {
     ...loadDetails
@@ -757,7 +758,7 @@ export const SlotExhaustiveFragmentDoc = gql`
   }
 }
     ${SlotDetailsFragmentDoc}
-${DropzoneUserDetailsFragmentDoc}
+${MembershipDetailsFragmentDoc}
 ${LoadDetailsFragmentDoc}
 ${RigEssentialsFragmentDoc}`;
 export const TicketTypeAddonDetailsFragmentDoc = gql`
@@ -897,12 +898,12 @@ export const ArchiveUserDocument = gql`
       field
       message
     }
-    dropzoneUser {
-      ...dropzoneUserEssentials
+    membership {
+      ...membershipEssentials
     }
   }
 }
-    ${DropzoneUserEssentialsFragmentDoc}`;
+    ${MembershipEssentialsFragmentDoc}`;
 export type ArchiveUserMutationFn = Apollo.MutationFunction<Operation.ArchiveUserMutation, Operation.ArchiveUserMutationVariables>;
 
 /**
@@ -980,7 +981,7 @@ export const CreateAircraftDocument = gql`
   createPlane(input: {attributes: $attributes}) {
     plane {
       ...planeEssentials
-      dropzone {
+      operator {
         id
         planes {
           ...planeEssentials
@@ -1021,54 +1022,6 @@ export function useCreateAircraftMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateAircraftMutationHookResult = ReturnType<typeof useCreateAircraftMutation>;
 export type CreateAircraftMutationResult = Apollo.MutationResult<Operation.CreateAircraftMutation>;
 export type CreateAircraftMutationOptions = Apollo.BaseMutationOptions<Operation.CreateAircraftMutation, Operation.CreateAircraftMutationVariables>;
-export const CreateDropzoneDocument = gql`
-    mutation CreateDropzone($name: String!, $banner: String, $federation: Int!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String) {
-  createDropzone(
-    input: {attributes: {name: $name, banner: $banner, federation: $federation, primaryColor: $primaryColor, secondaryColor: $secondaryColor, lat: $lat, lng: $lng}}
-  ) {
-    fieldErrors {
-      field
-      message
-    }
-    errors
-    dropzone {
-      ...dropzoneExtensive
-    }
-  }
-}
-    ${DropzoneExtensiveFragmentDoc}`;
-export type CreateDropzoneMutationFn = Apollo.MutationFunction<Operation.CreateDropzoneMutation, Operation.CreateDropzoneMutationVariables>;
-
-/**
- * __useCreateDropzoneMutation__
- *
- * To run a mutation, you first call `useCreateDropzoneMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateDropzoneMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createDropzoneMutation, { data, loading, error }] = useCreateDropzoneMutation({
- *   variables: {
- *      name: // value for 'name'
- *      banner: // value for 'banner'
- *      federation: // value for 'federation'
- *      lat: // value for 'lat'
- *      lng: // value for 'lng'
- *      primaryColor: // value for 'primaryColor'
- *      secondaryColor: // value for 'secondaryColor'
- *   },
- * });
- */
-export function useCreateDropzoneMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateDropzoneMutation, Operation.CreateDropzoneMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.CreateDropzoneMutation, Operation.CreateDropzoneMutationVariables>(CreateDropzoneDocument, options);
-      }
-export type CreateDropzoneMutationHookResult = ReturnType<typeof useCreateDropzoneMutation>;
-export type CreateDropzoneMutationResult = Apollo.MutationResult<Operation.CreateDropzoneMutation>;
-export type CreateDropzoneMutationOptions = Apollo.BaseMutationOptions<Operation.CreateDropzoneMutation, Operation.CreateDropzoneMutationVariables>;
 export const CreateLoadDocument = gql`
     mutation CreateLoad($name: String, $pilot: ID, $gca: ID, $maxSlots: Int, $plane: ID, $state: LoadState) {
   createLoad(
@@ -1116,10 +1069,58 @@ export function useCreateLoadMutation(baseOptions?: Apollo.MutationHookOptions<O
 export type CreateLoadMutationHookResult = ReturnType<typeof useCreateLoadMutation>;
 export type CreateLoadMutationResult = Apollo.MutationResult<Operation.CreateLoadMutation>;
 export type CreateLoadMutationOptions = Apollo.BaseMutationOptions<Operation.CreateLoadMutation, Operation.CreateLoadMutationVariables>;
+export const CreateOperatorDocument = gql`
+    mutation CreateOperator($name: String!, $banner: String, $federation: Int!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String) {
+  createOperator(
+    input: {attributes: {name: $name, banner: $banner, federation: $federation, primaryColor: $primaryColor, secondaryColor: $secondaryColor, lat: $lat, lng: $lng}}
+  ) {
+    fieldErrors {
+      field
+      message
+    }
+    errors
+    operator {
+      ...operatorExtensive
+    }
+  }
+}
+    ${OperatorExtensiveFragmentDoc}`;
+export type CreateOperatorMutationFn = Apollo.MutationFunction<Operation.CreateOperatorMutation, Operation.CreateOperatorMutationVariables>;
+
+/**
+ * __useCreateOperatorMutation__
+ *
+ * To run a mutation, you first call `useCreateOperatorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOperatorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOperatorMutation, { data, loading, error }] = useCreateOperatorMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      banner: // value for 'banner'
+ *      federation: // value for 'federation'
+ *      lat: // value for 'lat'
+ *      lng: // value for 'lng'
+ *      primaryColor: // value for 'primaryColor'
+ *      secondaryColor: // value for 'secondaryColor'
+ *   },
+ * });
+ */
+export function useCreateOperatorMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateOperatorMutation, Operation.CreateOperatorMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.CreateOperatorMutation, Operation.CreateOperatorMutationVariables>(CreateOperatorDocument, options);
+      }
+export type CreateOperatorMutationHookResult = ReturnType<typeof useCreateOperatorMutation>;
+export type CreateOperatorMutationResult = Apollo.MutationResult<Operation.CreateOperatorMutation>;
+export type CreateOperatorMutationOptions = Apollo.BaseMutationOptions<Operation.CreateOperatorMutation, Operation.CreateOperatorMutationVariables>;
 export const CreateOrderDocument = gql`
-    mutation CreateOrder($buyer: ID!, $seller: ID!, $dropzone: ID!, $title: String, $amountCents: Int!) {
+    mutation CreateOrder($buyer: ID!, $seller: ID!, $operator: ID!, $title: String, $amountCents: Int!) {
   createOrder(
-    input: {attributes: {dropzone: $dropzone, title: $title, buyer: $buyer, seller: $seller, amountCents: $amountCents}}
+    input: {attributes: {operator: $operator, title: $title, buyer: $buyer, seller: $seller, amountCents: $amountCents}}
   ) {
     fieldErrors {
       field
@@ -1149,7 +1150,7 @@ export type CreateOrderMutationFn = Apollo.MutationFunction<Operation.CreateOrde
  *   variables: {
  *      buyer: // value for 'buyer'
  *      seller: // value for 'seller'
- *      dropzone: // value for 'dropzone'
+ *      operator: // value for 'operator'
  *      title: // value for 'title'
  *      amountCents: // value for 'amountCents'
  *   },
@@ -1163,9 +1164,9 @@ export type CreateOrderMutationHookResult = ReturnType<typeof useCreateOrderMuta
 export type CreateOrderMutationResult = Apollo.MutationResult<Operation.CreateOrderMutation>;
 export type CreateOrderMutationOptions = Apollo.BaseMutationOptions<Operation.CreateOrderMutation, Operation.CreateOrderMutationVariables>;
 export const CreateRigDocument = gql`
-    mutation CreateRig($make: String, $name: String, $model: String, $serial: String, $rigType: String, $canopySize: Int, $repackExpiresAt: Int, $userId: Int, $dropzoneId: Int) {
+    mutation CreateRig($make: String, $name: String, $model: String, $serial: String, $rigType: String, $canopySize: Int, $repackExpiresAt: Int, $userId: Int, $operatorId: Int) {
   createRig(
-    input: {attributes: {name: $name, make: $make, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, dropzoneId: $dropzoneId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
+    input: {attributes: {name: $name, make: $make, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, operatorId: $operatorId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
   ) {
     errors
     fieldErrors {
@@ -1201,7 +1202,7 @@ export type CreateRigMutationFn = Apollo.MutationFunction<Operation.CreateRigMut
  *      canopySize: // value for 'canopySize'
  *      repackExpiresAt: // value for 'repackExpiresAt'
  *      userId: // value for 'userId'
- *      dropzoneId: // value for 'dropzoneId'
+ *      operatorId: // value for 'operatorId'
  *   },
  * });
  */
@@ -1213,9 +1214,9 @@ export type CreateRigMutationHookResult = ReturnType<typeof useCreateRigMutation
 export type CreateRigMutationResult = Apollo.MutationResult<Operation.CreateRigMutation>;
 export type CreateRigMutationOptions = Apollo.BaseMutationOptions<Operation.CreateRigMutation, Operation.CreateRigMutationVariables>;
 export const CreateRigInspectionDocument = gql`
-    mutation CreateRigInspection($dropzone: ID, $rig: ID, $isOk: Boolean, $definition: String) {
+    mutation CreateRigInspection($operator: ID, $rig: ID, $isOk: Boolean, $definition: String) {
   createRigInspection(
-    input: {attributes: {dropzone: $dropzone, rig: $rig, isOk: $isOk, definition: $definition}}
+    input: {attributes: {operator: $operator, rig: $rig, isOk: $isOk, definition: $definition}}
   ) {
     rigInspection {
       ...rigInspectionMutationEssentials
@@ -1243,7 +1244,7 @@ export type CreateRigInspectionMutationFn = Apollo.MutationFunction<Operation.Cr
  * @example
  * const [createRigInspectionMutation, { data, loading, error }] = useCreateRigInspectionMutation({
  *   variables: {
- *      dropzone: // value for 'dropzone'
+ *      operator: // value for 'operator'
  *      rig: // value for 'rig'
  *      isOk: // value for 'isOk'
  *      definition: // value for 'definition'
@@ -1267,7 +1268,7 @@ export const CreateTicketAddonDocument = gql`
     }
     extra {
       ...ticketTypeAddonDetails
-      dropzone {
+      operator {
         id
         extras {
           ...ticketTypeAddonDetails
@@ -1322,7 +1323,7 @@ export const CreateTicketTypeDocument = gql`
         name
         costCents
       }
-      dropzone {
+      operator {
         id
         ticketTypes {
           id
@@ -1368,9 +1369,9 @@ export type CreateTicketTypeMutationHookResult = ReturnType<typeof useCreateTick
 export type CreateTicketTypeMutationResult = Apollo.MutationResult<Operation.CreateTicketTypeMutation>;
 export type CreateTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.CreateTicketTypeMutation, Operation.CreateTicketTypeMutationVariables>;
 export const CreateGhostDocument = gql`
-    mutation CreateGhost($name: String!, $phone: String, $email: String!, $federationNumber: String, $role: Int!, $license: Int, $dropzone: Int!, $exitWeight: Float!) {
+    mutation CreateGhost($name: String!, $phone: String, $email: String!, $federationNumber: String, $role: Int!, $license: Int, $operator: Int!, $exitWeight: Float!) {
   createGhost(
-    input: {attributes: {role: $role, federationNumber: $federationNumber, name: $name, phone: $phone, email: $email, dropzone: $dropzone, license: $license, exitWeight: $exitWeight}}
+    input: {attributes: {role: $role, federationNumber: $federationNumber, name: $name, phone: $phone, email: $email, operator: $operator, license: $license, exitWeight: $exitWeight}}
   ) {
     errors
     fieldErrors {
@@ -1404,7 +1405,7 @@ export type CreateGhostMutationFn = Apollo.MutationFunction<Operation.CreateGhos
  *      federationNumber: // value for 'federationNumber'
  *      role: // value for 'role'
  *      license: // value for 'license'
- *      dropzone: // value for 'dropzone'
+ *      operator: // value for 'operator'
  *      exitWeight: // value for 'exitWeight'
  *   },
  * });
@@ -1498,17 +1499,15 @@ export type FinalizeLoadMutationHookResult = ReturnType<typeof useFinalizeLoadMu
 export type FinalizeLoadMutationResult = Apollo.MutationResult<Operation.FinalizeLoadMutation>;
 export type FinalizeLoadMutationOptions = Apollo.BaseMutationOptions<Operation.FinalizeLoadMutation, Operation.FinalizeLoadMutationVariables>;
 export const GrantPermissionDocument = gql`
-    mutation GrantPermission($dropzoneUserId: ID!, $permissionName: Permission!) {
-  grantPermission(
-    input: {dropzoneUser: $dropzoneUserId, permission: $permissionName}
-  ) {
+    mutation GrantPermission($membershipId: ID!, $permissionName: Permission!) {
+  grantPermission(input: {membership: $membershipId, permission: $permissionName}) {
     fieldErrors {
       message
       field
     }
     errors
-    dropzoneUser {
-      ...dropzoneUserEssentials
+    membership {
+      ...membershipEssentials
       permissions
     }
     fieldErrors {
@@ -1518,7 +1517,7 @@ export const GrantPermissionDocument = gql`
     errors
   }
 }
-    ${DropzoneUserEssentialsFragmentDoc}`;
+    ${MembershipEssentialsFragmentDoc}`;
 export type GrantPermissionMutationFn = Apollo.MutationFunction<Operation.GrantPermissionMutation, Operation.GrantPermissionMutationVariables>;
 
 /**
@@ -1534,7 +1533,7 @@ export type GrantPermissionMutationFn = Apollo.MutationFunction<Operation.GrantP
  * @example
  * const [grantPermissionMutation, { data, loading, error }] = useGrantPermissionMutation({
  *   variables: {
- *      dropzoneUserId: // value for 'dropzoneUserId'
+ *      membershipId: // value for 'membershipId'
  *      permissionName: // value for 'permissionName'
  *   },
  * });
@@ -1546,46 +1545,6 @@ export function useGrantPermissionMutation(baseOptions?: Apollo.MutationHookOpti
 export type GrantPermissionMutationHookResult = ReturnType<typeof useGrantPermissionMutation>;
 export type GrantPermissionMutationResult = Apollo.MutationResult<Operation.GrantPermissionMutation>;
 export type GrantPermissionMutationOptions = Apollo.BaseMutationOptions<Operation.GrantPermissionMutation, Operation.GrantPermissionMutationVariables>;
-export const JoinDropzoneDocument = gql`
-    mutation JoinDropzone($dropzone: ID!) {
-  joinDropzone(input: {dropzone: $dropzone}) {
-    dropzoneUser {
-      id
-    }
-    errors
-    fieldErrors {
-      field
-      message
-    }
-  }
-}
-    `;
-export type JoinDropzoneMutationFn = Apollo.MutationFunction<Operation.JoinDropzoneMutation, Operation.JoinDropzoneMutationVariables>;
-
-/**
- * __useJoinDropzoneMutation__
- *
- * To run a mutation, you first call `useJoinDropzoneMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useJoinDropzoneMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [joinDropzoneMutation, { data, loading, error }] = useJoinDropzoneMutation({
- *   variables: {
- *      dropzone: // value for 'dropzone'
- *   },
- * });
- */
-export function useJoinDropzoneMutation(baseOptions?: Apollo.MutationHookOptions<Operation.JoinDropzoneMutation, Operation.JoinDropzoneMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.JoinDropzoneMutation, Operation.JoinDropzoneMutationVariables>(JoinDropzoneDocument, options);
-      }
-export type JoinDropzoneMutationHookResult = ReturnType<typeof useJoinDropzoneMutation>;
-export type JoinDropzoneMutationResult = Apollo.MutationResult<Operation.JoinDropzoneMutation>;
-export type JoinDropzoneMutationOptions = Apollo.BaseMutationOptions<Operation.JoinDropzoneMutation, Operation.JoinDropzoneMutationVariables>;
 export const JoinFederationDocument = gql`
     mutation JoinFederation($federation: ID!, $uid: String, $license: ID) {
   joinFederation(
@@ -1630,6 +1589,46 @@ export function useJoinFederationMutation(baseOptions?: Apollo.MutationHookOptio
 export type JoinFederationMutationHookResult = ReturnType<typeof useJoinFederationMutation>;
 export type JoinFederationMutationResult = Apollo.MutationResult<Operation.JoinFederationMutation>;
 export type JoinFederationMutationOptions = Apollo.BaseMutationOptions<Operation.JoinFederationMutation, Operation.JoinFederationMutationVariables>;
+export const JoinOperatorDocument = gql`
+    mutation JoinOperator($operator: ID!) {
+  joinOperator(input: {operator: $operator}) {
+    membership {
+      id
+    }
+    errors
+    fieldErrors {
+      field
+      message
+    }
+  }
+}
+    `;
+export type JoinOperatorMutationFn = Apollo.MutationFunction<Operation.JoinOperatorMutation, Operation.JoinOperatorMutationVariables>;
+
+/**
+ * __useJoinOperatorMutation__
+ *
+ * To run a mutation, you first call `useJoinOperatorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useJoinOperatorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [joinOperatorMutation, { data, loading, error }] = useJoinOperatorMutation({
+ *   variables: {
+ *      operator: // value for 'operator'
+ *   },
+ * });
+ */
+export function useJoinOperatorMutation(baseOptions?: Apollo.MutationHookOptions<Operation.JoinOperatorMutation, Operation.JoinOperatorMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.JoinOperatorMutation, Operation.JoinOperatorMutationVariables>(JoinOperatorDocument, options);
+      }
+export type JoinOperatorMutationHookResult = ReturnType<typeof useJoinOperatorMutation>;
+export type JoinOperatorMutationResult = Apollo.MutationResult<Operation.JoinOperatorMutation>;
+export type JoinOperatorMutationOptions = Apollo.BaseMutationOptions<Operation.JoinOperatorMutation, Operation.JoinOperatorMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   userLogin(email: $email, password: $password) {
@@ -1732,58 +1731,6 @@ export function useLoginWithAppleMutation(baseOptions?: Apollo.MutationHookOptio
 export type LoginWithAppleMutationHookResult = ReturnType<typeof useLoginWithAppleMutation>;
 export type LoginWithAppleMutationResult = Apollo.MutationResult<Operation.LoginWithAppleMutation>;
 export type LoginWithAppleMutationOptions = Apollo.BaseMutationOptions<Operation.LoginWithAppleMutation, Operation.LoginWithAppleMutationVariables>;
-export const LoginWithFacebookDocument = gql`
-    mutation LoginWithFacebook($token: String!, $pushToken: String) {
-  loginWithFacebook(
-    token: $token
-    pushToken: $pushToken
-    confirmUrl: "https://openmanifest.org/confirm/"
-  ) {
-    authenticatable {
-      id
-      email
-      name
-      phone
-      createdAt
-      updatedAt
-    }
-    credentials {
-      accessToken
-      tokenType
-      client
-      expiry
-      uid
-    }
-  }
-}
-    `;
-export type LoginWithFacebookMutationFn = Apollo.MutationFunction<Operation.LoginWithFacebookMutation, Operation.LoginWithFacebookMutationVariables>;
-
-/**
- * __useLoginWithFacebookMutation__
- *
- * To run a mutation, you first call `useLoginWithFacebookMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useLoginWithFacebookMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [loginWithFacebookMutation, { data, loading, error }] = useLoginWithFacebookMutation({
- *   variables: {
- *      token: // value for 'token'
- *      pushToken: // value for 'pushToken'
- *   },
- * });
- */
-export function useLoginWithFacebookMutation(baseOptions?: Apollo.MutationHookOptions<Operation.LoginWithFacebookMutation, Operation.LoginWithFacebookMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.LoginWithFacebookMutation, Operation.LoginWithFacebookMutationVariables>(LoginWithFacebookDocument, options);
-      }
-export type LoginWithFacebookMutationHookResult = ReturnType<typeof useLoginWithFacebookMutation>;
-export type LoginWithFacebookMutationResult = Apollo.MutationResult<Operation.LoginWithFacebookMutation>;
-export type LoginWithFacebookMutationOptions = Apollo.BaseMutationOptions<Operation.LoginWithFacebookMutation, Operation.LoginWithFacebookMutationVariables>;
 export const ManifestGroupDocument = gql`
     mutation ManifestGroup($jumpType: ID, $extras: [ID!], $load: ID, $ticketType: ID, $groupNumber: Int, $userGroup: [SlotUser!]!) {
   createSlots(
@@ -1832,9 +1779,9 @@ export type ManifestGroupMutationHookResult = ReturnType<typeof useManifestGroup
 export type ManifestGroupMutationResult = Apollo.MutationResult<Operation.ManifestGroupMutation>;
 export type ManifestGroupMutationOptions = Apollo.BaseMutationOptions<Operation.ManifestGroupMutation, Operation.ManifestGroupMutationVariables>;
 export const ManifestUserDocument = gql`
-    mutation ManifestUser($jumpType: ID, $extras: [ID!], $load: ID, $rig: ID, $ticketType: ID, $dropzoneUser: ID, $exitWeight: Float, $passengerName: String, $groupNumber: Int, $passengerExitWeight: Float) {
+    mutation ManifestUser($jumpType: ID, $extras: [ID!], $load: ID, $rig: ID, $ticketType: ID, $membership: ID, $exitWeight: Float, $passengerName: String, $groupNumber: Int, $passengerExitWeight: Float) {
   createSlot(
-    input: {attributes: {jumpType: $jumpType, extras: $extras, load: $load, rig: $rig, groupNumber: $groupNumber, ticketType: $ticketType, dropzoneUser: $dropzoneUser, exitWeight: $exitWeight, passengerExitWeight: $passengerExitWeight, passengerName: $passengerName}}
+    input: {attributes: {jumpType: $jumpType, extras: $extras, load: $load, rig: $rig, groupNumber: $groupNumber, ticketType: $ticketType, membership: $membership, exitWeight: $exitWeight, passengerExitWeight: $passengerExitWeight, passengerName: $passengerName}}
   ) {
     errors
     fieldErrors {
@@ -1867,7 +1814,7 @@ export type ManifestUserMutationFn = Apollo.MutationFunction<Operation.ManifestU
  *      load: // value for 'load'
  *      rig: // value for 'rig'
  *      ticketType: // value for 'ticketType'
- *      dropzoneUser: // value for 'dropzoneUser'
+ *      membership: // value for 'membership'
  *      exitWeight: // value for 'exitWeight'
  *      passengerName: // value for 'passengerName'
  *      groupNumber: // value for 'groupNumber'
@@ -2014,17 +1961,17 @@ export type ReloadWeatherMutationHookResult = ReturnType<typeof useReloadWeather
 export type ReloadWeatherMutationResult = Apollo.MutationResult<Operation.ReloadWeatherMutation>;
 export type ReloadWeatherMutationOptions = Apollo.BaseMutationOptions<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
 export const RevokePermissionDocument = gql`
-    mutation RevokePermission($dropzoneUserId: ID!, $permissionName: Permission!) {
+    mutation RevokePermission($membershipId: ID!, $permissionName: Permission!) {
   revokePermission(
-    input: {dropzoneUser: $dropzoneUserId, permission: $permissionName}
+    input: {membership: $membershipId, permission: $permissionName}
   ) {
     fieldErrors {
       message
       field
     }
     errors
-    dropzoneUser {
-      ...dropzoneUserEssentials
+    membership {
+      ...membershipEssentials
       permissions
     }
     fieldErrors {
@@ -2034,7 +1981,7 @@ export const RevokePermissionDocument = gql`
     errors
   }
 }
-    ${DropzoneUserEssentialsFragmentDoc}`;
+    ${MembershipEssentialsFragmentDoc}`;
 export type RevokePermissionMutationFn = Apollo.MutationFunction<Operation.RevokePermissionMutation, Operation.RevokePermissionMutationVariables>;
 
 /**
@@ -2050,7 +1997,7 @@ export type RevokePermissionMutationFn = Apollo.MutationFunction<Operation.Revok
  * @example
  * const [revokePermissionMutation, { data, loading, error }] = useRevokePermissionMutation({
  *   variables: {
- *      dropzoneUserId: // value for 'dropzoneUserId'
+ *      membershipId: // value for 'membershipId'
  *      permissionName: // value for 'permissionName'
  *   },
  * });
@@ -2067,7 +2014,7 @@ export const UpdateAircraftDocument = gql`
   updatePlane(input: {id: $id, attributes: $attributes}) {
     plane {
       ...planeEssentials
-      dropzone {
+      operator {
         id
         name
         planes {
@@ -2116,90 +2063,6 @@ export function useUpdateAircraftMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateAircraftMutationHookResult = ReturnType<typeof useUpdateAircraftMutation>;
 export type UpdateAircraftMutationResult = Apollo.MutationResult<Operation.UpdateAircraftMutation>;
 export type UpdateAircraftMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateAircraftMutation, Operation.UpdateAircraftMutationVariables>;
-export const UpdateDropzoneDocument = gql`
-    mutation UpdateDropzone($id: Int!, $attributes: DropzoneInput!) {
-  updateDropzone(input: {id: $id, attributes: $attributes}) {
-    fieldErrors {
-      field
-      message
-    }
-    errors
-    dropzone {
-      ...dropzoneExtensive
-    }
-  }
-}
-    ${DropzoneExtensiveFragmentDoc}`;
-export type UpdateDropzoneMutationFn = Apollo.MutationFunction<Operation.UpdateDropzoneMutation, Operation.UpdateDropzoneMutationVariables>;
-
-/**
- * __useUpdateDropzoneMutation__
- *
- * To run a mutation, you first call `useUpdateDropzoneMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateDropzoneMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateDropzoneMutation, { data, loading, error }] = useUpdateDropzoneMutation({
- *   variables: {
- *      id: // value for 'id'
- *      attributes: // value for 'attributes'
- *   },
- * });
- */
-export function useUpdateDropzoneMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateDropzoneMutation, Operation.UpdateDropzoneMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.UpdateDropzoneMutation, Operation.UpdateDropzoneMutationVariables>(UpdateDropzoneDocument, options);
-      }
-export type UpdateDropzoneMutationHookResult = ReturnType<typeof useUpdateDropzoneMutation>;
-export type UpdateDropzoneMutationResult = Apollo.MutationResult<Operation.UpdateDropzoneMutation>;
-export type UpdateDropzoneMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateDropzoneMutation, Operation.UpdateDropzoneMutationVariables>;
-export const UpdateDropzoneUserDocument = gql`
-    mutation UpdateDropzoneUser($dropzoneUserId: ID!, $attributes: DropzoneUserInput!) {
-  updateDropzoneUser(
-    input: {dropzoneUser: $dropzoneUserId, attributes: $attributes}
-  ) {
-    errors
-    fieldErrors {
-      field
-      message
-    }
-    dropzoneUser {
-      ...dropzoneUserDetails
-    }
-  }
-}
-    ${DropzoneUserDetailsFragmentDoc}`;
-export type UpdateDropzoneUserMutationFn = Apollo.MutationFunction<Operation.UpdateDropzoneUserMutation, Operation.UpdateDropzoneUserMutationVariables>;
-
-/**
- * __useUpdateDropzoneUserMutation__
- *
- * To run a mutation, you first call `useUpdateDropzoneUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateDropzoneUserMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateDropzoneUserMutation, { data, loading, error }] = useUpdateDropzoneUserMutation({
- *   variables: {
- *      dropzoneUserId: // value for 'dropzoneUserId'
- *      attributes: // value for 'attributes'
- *   },
- * });
- */
-export function useUpdateDropzoneUserMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateDropzoneUserMutation, Operation.UpdateDropzoneUserMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.UpdateDropzoneUserMutation, Operation.UpdateDropzoneUserMutationVariables>(UpdateDropzoneUserDocument, options);
-      }
-export type UpdateDropzoneUserMutationHookResult = ReturnType<typeof useUpdateDropzoneUserMutation>;
-export type UpdateDropzoneUserMutationResult = Apollo.MutationResult<Operation.UpdateDropzoneUserMutation>;
-export type UpdateDropzoneUserMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateDropzoneUserMutation, Operation.UpdateDropzoneUserMutationVariables>;
 export const UpdateLoadDocument = gql`
     mutation UpdateLoad($id: ID!, $attributes: LoadInput!) {
   updateLoad(input: {id: $id, attributes: $attributes}) {
@@ -2290,9 +2153,9 @@ export type UpdateLostPasswordMutationHookResult = ReturnType<typeof useUpdateLo
 export type UpdateLostPasswordMutationResult = Apollo.MutationResult<Operation.UpdateLostPasswordMutation>;
 export type UpdateLostPasswordMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateLostPasswordMutation, Operation.UpdateLostPasswordMutationVariables>;
 export const UpdateMasterLogDocument = gql`
-    mutation UpdateMasterLog($date: ISO8601Date!, $dropzone: ID!, $attributes: MasterLogInput!) {
+    mutation UpdateMasterLog($date: ISO8601Date!, $operator: ID!, $attributes: MasterLogInput!) {
   updateMasterLog(
-    input: {dropzone: $dropzone, date: $date, attributes: $attributes}
+    input: {operator: $operator, date: $date, attributes: $attributes}
   ) {
     errors
     fieldErrors {
@@ -2321,7 +2184,7 @@ export type UpdateMasterLogMutationFn = Apollo.MutationFunction<Operation.Update
  * const [updateMasterLogMutation, { data, loading, error }] = useUpdateMasterLogMutation({
  *   variables: {
  *      date: // value for 'date'
- *      dropzone: // value for 'dropzone'
+ *      operator: // value for 'operator'
  *      attributes: // value for 'attributes'
  *   },
  * });
@@ -2333,10 +2196,92 @@ export function useUpdateMasterLogMutation(baseOptions?: Apollo.MutationHookOpti
 export type UpdateMasterLogMutationHookResult = ReturnType<typeof useUpdateMasterLogMutation>;
 export type UpdateMasterLogMutationResult = Apollo.MutationResult<Operation.UpdateMasterLogMutation>;
 export type UpdateMasterLogMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateMasterLogMutation, Operation.UpdateMasterLogMutationVariables>;
+export const UpdateMembershipDocument = gql`
+    mutation UpdateMembership($membershipId: ID!, $attributes: MembershipInput!) {
+  updateMembership(input: {membership: $membershipId, attributes: $attributes}) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    membership {
+      ...membershipDetails
+    }
+  }
+}
+    ${MembershipDetailsFragmentDoc}`;
+export type UpdateMembershipMutationFn = Apollo.MutationFunction<Operation.UpdateMembershipMutation, Operation.UpdateMembershipMutationVariables>;
+
+/**
+ * __useUpdateMembershipMutation__
+ *
+ * To run a mutation, you first call `useUpdateMembershipMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateMembershipMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateMembershipMutation, { data, loading, error }] = useUpdateMembershipMutation({
+ *   variables: {
+ *      membershipId: // value for 'membershipId'
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useUpdateMembershipMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateMembershipMutation, Operation.UpdateMembershipMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateMembershipMutation, Operation.UpdateMembershipMutationVariables>(UpdateMembershipDocument, options);
+      }
+export type UpdateMembershipMutationHookResult = ReturnType<typeof useUpdateMembershipMutation>;
+export type UpdateMembershipMutationResult = Apollo.MutationResult<Operation.UpdateMembershipMutation>;
+export type UpdateMembershipMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateMembershipMutation, Operation.UpdateMembershipMutationVariables>;
+export const UpdateOperatorDocument = gql`
+    mutation UpdateOperator($id: Int!, $attributes: OperatorInput!) {
+  updateOperator(input: {id: $id, attributes: $attributes}) {
+    fieldErrors {
+      field
+      message
+    }
+    errors
+    operator {
+      ...operatorExtensive
+    }
+  }
+}
+    ${OperatorExtensiveFragmentDoc}`;
+export type UpdateOperatorMutationFn = Apollo.MutationFunction<Operation.UpdateOperatorMutation, Operation.UpdateOperatorMutationVariables>;
+
+/**
+ * __useUpdateOperatorMutation__
+ *
+ * To run a mutation, you first call `useUpdateOperatorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOperatorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOperatorMutation, { data, loading, error }] = useUpdateOperatorMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useUpdateOperatorMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateOperatorMutation, Operation.UpdateOperatorMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateOperatorMutation, Operation.UpdateOperatorMutationVariables>(UpdateOperatorDocument, options);
+      }
+export type UpdateOperatorMutationHookResult = ReturnType<typeof useUpdateOperatorMutation>;
+export type UpdateOperatorMutationResult = Apollo.MutationResult<Operation.UpdateOperatorMutation>;
+export type UpdateOperatorMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateOperatorMutation, Operation.UpdateOperatorMutationVariables>;
 export const UpdateRigDocument = gql`
-    mutation UpdateRig($id: Int!, $name: String, $make: String, $model: String, $serial: String, $isPublic: Boolean, $rigType: String, $canopySize: Int, $packingCard: String, $repackExpiresAt: Int, $userId: Int, $dropzoneId: Int) {
+    mutation UpdateRig($id: Int!, $name: String, $make: String, $model: String, $serial: String, $isPublic: Boolean, $rigType: String, $canopySize: Int, $packingCard: String, $repackExpiresAt: Int, $userId: Int, $operatorId: Int) {
   updateRig(
-    input: {id: $id, attributes: {name: $name, make: $make, packingCard: $packingCard, isPublic: $isPublic, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, dropzoneId: $dropzoneId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
+    input: {id: $id, attributes: {name: $name, make: $make, packingCard: $packingCard, isPublic: $isPublic, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, operatorId: $operatorId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
   ) {
     errors
     fieldErrors {
@@ -2375,7 +2320,7 @@ export type UpdateRigMutationFn = Apollo.MutationFunction<Operation.UpdateRigMut
  *      packingCard: // value for 'packingCard'
  *      repackExpiresAt: // value for 'repackExpiresAt'
  *      userId: // value for 'userId'
- *      dropzoneId: // value for 'dropzoneId'
+ *      operatorId: // value for 'operatorId'
  *   },
  * });
  */
@@ -2387,9 +2332,9 @@ export type UpdateRigMutationHookResult = ReturnType<typeof useUpdateRigMutation
 export type UpdateRigMutationResult = Apollo.MutationResult<Operation.UpdateRigMutation>;
 export type UpdateRigMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateRigMutation, Operation.UpdateRigMutationVariables>;
 export const UpdateRigInspectionTemplateDocument = gql`
-    mutation UpdateRigInspectionTemplate($dropzoneId: Int, $formId: Int, $definition: String) {
+    mutation UpdateRigInspectionTemplate($operatorId: Int, $formId: Int, $definition: String) {
   updateFormTemplate(
-    input: {id: $formId, attributes: {dropzoneId: $dropzoneId, definition: $definition}}
+    input: {id: $formId, attributes: {operatorId: $operatorId, definition: $definition}}
   ) {
     formTemplate {
       id
@@ -2419,7 +2364,7 @@ export type UpdateRigInspectionTemplateMutationFn = Apollo.MutationFunction<Oper
  * @example
  * const [updateRigInspectionTemplateMutation, { data, loading, error }] = useUpdateRigInspectionTemplateMutation({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
+ *      operatorId: // value for 'operatorId'
  *      formId: // value for 'formId'
  *      definition: // value for 'definition'
  *   },
@@ -2537,8 +2482,8 @@ export const UpdateTicketTypeDocument = gql`
         name
         costCents
       }
-      dropzone {
-        ...dropzoneEssentials
+      operator {
+        ...operatorEssentials
         ticketTypes {
           ...ticketTypeEssentials
         }
@@ -2547,7 +2492,7 @@ export const UpdateTicketTypeDocument = gql`
   }
 }
     ${TicketTypeEssentialsFragmentDoc}
-${DropzoneEssentialsFragmentDoc}`;
+${OperatorEssentialsFragmentDoc}`;
 export type UpdateTicketTypeMutationFn = Apollo.MutationFunction<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>;
 
 /**
@@ -2576,21 +2521,21 @@ export type UpdateTicketTypeMutationHookResult = ReturnType<typeof useUpdateTick
 export type UpdateTicketTypeMutationResult = Apollo.MutationResult<Operation.UpdateTicketTypeMutation>;
 export type UpdateTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>;
 export const UpdateUserDocument = gql`
-    mutation UpdateUser($dropzoneUser: ID, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $license: Int, $exitWeight: Float) {
+    mutation UpdateUser($membership: ID, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $license: Int, $exitWeight: Float) {
   updateUser(
-    input: {dropzoneUser: $dropzoneUser, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, license: $license, exitWeight: $exitWeight}}
+    input: {membership: $membership, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, license: $license, exitWeight: $exitWeight}}
   ) {
     errors
     fieldErrors {
       field
       message
     }
-    dropzoneUser {
-      ...dropzoneUserDetails
+    membership {
+      ...membershipDetails
     }
   }
 }
-    ${DropzoneUserDetailsFragmentDoc}`;
+    ${MembershipDetailsFragmentDoc}`;
 export type UpdateUserMutationFn = Apollo.MutationFunction<Operation.UpdateUserMutation, Operation.UpdateUserMutationVariables>;
 
 /**
@@ -2606,7 +2551,7 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<Operation.UpdateUserM
  * @example
  * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
  *   variables: {
- *      dropzoneUser: // value for 'dropzoneUser'
+ *      membership: // value for 'membership'
  *      name: // value for 'name'
  *      phone: // value for 'phone'
  *      email: // value for 'email'
@@ -2626,19 +2571,19 @@ export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutati
 export type UpdateUserMutationResult = Apollo.MutationResult<Operation.UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateUserMutation, Operation.UpdateUserMutationVariables>;
 export const UpdateVisibilityDocument = gql`
-    mutation UpdateVisibility($dropzone: ID!, $event: DropzoneStateEvent!) {
-  updateVisibility(input: {dropzone: $dropzone, event: $event}) {
+    mutation UpdateVisibility($operator: ID!, $event: OperatorStateEvent!) {
+  updateVisibility(input: {operator: $operator, event: $event}) {
     errors
     fieldErrors {
       field
       message
     }
-    dropzone {
-      ...dropzoneDetailed
+    operator {
+      ...operatorDetailed
     }
   }
 }
-    ${DropzoneDetailedFragmentDoc}`;
+    ${OperatorDetailedFragmentDoc}`;
 export type UpdateVisibilityMutationFn = Apollo.MutationFunction<Operation.UpdateVisibilityMutation, Operation.UpdateVisibilityMutationVariables>;
 
 /**
@@ -2654,7 +2599,7 @@ export type UpdateVisibilityMutationFn = Apollo.MutationFunction<Operation.Updat
  * @example
  * const [updateVisibilityMutation, { data, loading, error }] = useUpdateVisibilityMutation({
  *   variables: {
- *      dropzone: // value for 'dropzone'
+ *      operator: // value for 'operator'
  *      event: // value for 'event'
  *   },
  * });
@@ -2735,9 +2680,9 @@ export type UserSignUpMutationHookResult = ReturnType<typeof useUserSignUpMutati
 export type UserSignUpMutationResult = Apollo.MutationResult<Operation.UserSignUpMutation>;
 export type UserSignUpMutationOptions = Apollo.BaseMutationOptions<Operation.UserSignUpMutation, Operation.UserSignUpMutationVariables>;
 export const ActivityDocument = gql`
-    query Activity($dropzone: [ID!], $levels: [EventLevel!], $actions: [EventAction!], $accessLevels: [EventAccessLevel!], $timeRange: TimeRangeInput, $createdBy: [ID!]) {
+    query Activity($operator: [ID!], $levels: [EventLevel!], $actions: [EventAction!], $accessLevels: [EventAccessLevel!], $timeRange: TimeRangeInput, $createdBy: [ID!]) {
   activity(
-    dropzone: $dropzone
+    operator: $operator
     timeRange: $timeRange
     accessLevels: $accessLevels
     levels: $levels
@@ -2765,7 +2710,7 @@ export const ActivityDocument = gql`
  * @example
  * const { data, loading, error } = useActivityQuery({
  *   variables: {
- *      dropzone: // value for 'dropzone'
+ *      operator: // value for 'operator'
  *      levels: // value for 'levels'
  *      actions: // value for 'actions'
  *      accessLevels: // value for 'accessLevels'
@@ -2794,9 +2739,9 @@ export type ActivityLazyQueryHookResult = ReturnType<typeof useActivityLazyQuery
 export type ActivitySuspenseQueryHookResult = ReturnType<typeof useActivitySuspenseQuery>;
 export type ActivityQueryResult = Apollo.QueryResult<Operation.ActivityQuery, Operation.ActivityQueryVariables>;
 export const ActivityDetailsDocument = gql`
-    query ActivityDetails($dropzone: [ID!], $levels: [EventLevel!], $actions: [EventAction!], $accessLevels: [EventAccessLevel!], $timeRange: TimeRangeInput, $createdBy: [ID!], $after: String) {
+    query ActivityDetails($operator: [ID!], $levels: [EventLevel!], $actions: [EventAction!], $accessLevels: [EventAccessLevel!], $timeRange: TimeRangeInput, $createdBy: [ID!], $after: String) {
   activity(
-    dropzone: $dropzone
+    operator: $operator
     timeRange: $timeRange
     accessLevels: $accessLevels
     levels: $levels
@@ -2829,7 +2774,7 @@ export const ActivityDetailsDocument = gql`
  * @example
  * const { data, loading, error } = useActivityDetailsQuery({
  *   variables: {
- *      dropzone: // value for 'dropzone'
+ *      operator: // value for 'operator'
  *      levels: // value for 'levels'
  *      actions: // value for 'actions'
  *      accessLevels: // value for 'accessLevels'
@@ -2900,593 +2845,9 @@ export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
 export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
 export type CurrentUserSuspenseQueryHookResult = ReturnType<typeof useCurrentUserSuspenseQuery>;
 export type CurrentUserQueryResult = Apollo.QueryResult<Operation.CurrentUserQuery, Operation.CurrentUserQueryVariables>;
-export const DropzoneDocument = gql`
-    query Dropzone($dropzoneId: ID!) {
-  dropzone(id: $dropzoneId) {
-    ...dropzoneExtensive
-  }
-}
-    ${DropzoneExtensiveFragmentDoc}`;
-
-/**
- * __useDropzoneQuery__
- *
- * To run a query within a React component, call `useDropzoneQuery` and pass it any options that fit your needs.
- * When your component renders, `useDropzoneQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDropzoneQuery({
- *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
- *   },
- * });
- */
-export function useDropzoneQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneQuery, Operation.DropzoneQueryVariables> & ({ variables: Operation.DropzoneQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.DropzoneQuery, Operation.DropzoneQueryVariables>(DropzoneDocument, options);
-      }
-export function useDropzoneLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneQuery, Operation.DropzoneQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.DropzoneQuery, Operation.DropzoneQueryVariables>(DropzoneDocument, options);
-        }
-// @ts-ignore
-export function useDropzoneSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DropzoneQuery, Operation.DropzoneQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneQuery, Operation.DropzoneQueryVariables>;
-export function useDropzoneSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneQuery, Operation.DropzoneQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneQuery | undefined, Operation.DropzoneQueryVariables>;
-export function useDropzoneSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneQuery, Operation.DropzoneQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.DropzoneQuery, Operation.DropzoneQueryVariables>(DropzoneDocument, options);
-        }
-export type DropzoneQueryHookResult = ReturnType<typeof useDropzoneQuery>;
-export type DropzoneLazyQueryHookResult = ReturnType<typeof useDropzoneLazyQuery>;
-export type DropzoneSuspenseQueryHookResult = ReturnType<typeof useDropzoneSuspenseQuery>;
-export type DropzoneQueryResult = Apollo.QueryResult<Operation.DropzoneQuery, Operation.DropzoneQueryVariables>;
-export const DropzoneStatisticsDocument = gql`
-    query DropzoneStatistics($dropzoneId: ID!, $timeRange: TimeRangeInput) {
-  dropzone(id: $dropzoneId) {
-    ...dropzoneStatistics
-  }
-}
-    ${DropzoneStatisticsFragmentDoc}`;
-
-/**
- * __useDropzoneStatisticsQuery__
- *
- * To run a query within a React component, call `useDropzoneStatisticsQuery` and pass it any options that fit your needs.
- * When your component renders, `useDropzoneStatisticsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDropzoneStatisticsQuery({
- *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
- *      timeRange: // value for 'timeRange'
- *   },
- * });
- */
-export function useDropzoneStatisticsQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneStatisticsQuery, Operation.DropzoneStatisticsQueryVariables> & ({ variables: Operation.DropzoneStatisticsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.DropzoneStatisticsQuery, Operation.DropzoneStatisticsQueryVariables>(DropzoneStatisticsDocument, options);
-      }
-export function useDropzoneStatisticsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneStatisticsQuery, Operation.DropzoneStatisticsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.DropzoneStatisticsQuery, Operation.DropzoneStatisticsQueryVariables>(DropzoneStatisticsDocument, options);
-        }
-// @ts-ignore
-export function useDropzoneStatisticsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DropzoneStatisticsQuery, Operation.DropzoneStatisticsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneStatisticsQuery, Operation.DropzoneStatisticsQueryVariables>;
-export function useDropzoneStatisticsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneStatisticsQuery, Operation.DropzoneStatisticsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneStatisticsQuery | undefined, Operation.DropzoneStatisticsQueryVariables>;
-export function useDropzoneStatisticsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneStatisticsQuery, Operation.DropzoneStatisticsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.DropzoneStatisticsQuery, Operation.DropzoneStatisticsQueryVariables>(DropzoneStatisticsDocument, options);
-        }
-export type DropzoneStatisticsQueryHookResult = ReturnType<typeof useDropzoneStatisticsQuery>;
-export type DropzoneStatisticsLazyQueryHookResult = ReturnType<typeof useDropzoneStatisticsLazyQuery>;
-export type DropzoneStatisticsSuspenseQueryHookResult = ReturnType<typeof useDropzoneStatisticsSuspenseQuery>;
-export type DropzoneStatisticsQueryResult = Apollo.QueryResult<Operation.DropzoneStatisticsQuery, Operation.DropzoneStatisticsQueryVariables>;
-export const DropzonesStatisticsDocument = gql`
-    query DropzonesStatistics($timeRange: TimeRangeInput, $after: String) {
-  dropzones(after: $after) {
-    pageInfo {
-      hasNextPage
-      hasPreviousPage
-      endCursor
-    }
-    edges {
-      cursor
-      node {
-        ...dropzoneStatistics
-      }
-    }
-  }
-}
-    ${DropzoneStatisticsFragmentDoc}`;
-
-/**
- * __useDropzonesStatisticsQuery__
- *
- * To run a query within a React component, call `useDropzonesStatisticsQuery` and pass it any options that fit your needs.
- * When your component renders, `useDropzonesStatisticsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDropzonesStatisticsQuery({
- *   variables: {
- *      timeRange: // value for 'timeRange'
- *      after: // value for 'after'
- *   },
- * });
- */
-export function useDropzonesStatisticsQuery(baseOptions?: Apollo.QueryHookOptions<Operation.DropzonesStatisticsQuery, Operation.DropzonesStatisticsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.DropzonesStatisticsQuery, Operation.DropzonesStatisticsQueryVariables>(DropzonesStatisticsDocument, options);
-      }
-export function useDropzonesStatisticsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzonesStatisticsQuery, Operation.DropzonesStatisticsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.DropzonesStatisticsQuery, Operation.DropzonesStatisticsQueryVariables>(DropzonesStatisticsDocument, options);
-        }
-// @ts-ignore
-export function useDropzonesStatisticsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DropzonesStatisticsQuery, Operation.DropzonesStatisticsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzonesStatisticsQuery, Operation.DropzonesStatisticsQueryVariables>;
-export function useDropzonesStatisticsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzonesStatisticsQuery, Operation.DropzonesStatisticsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzonesStatisticsQuery | undefined, Operation.DropzonesStatisticsQueryVariables>;
-export function useDropzonesStatisticsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzonesStatisticsQuery, Operation.DropzonesStatisticsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.DropzonesStatisticsQuery, Operation.DropzonesStatisticsQueryVariables>(DropzonesStatisticsDocument, options);
-        }
-export type DropzonesStatisticsQueryHookResult = ReturnType<typeof useDropzonesStatisticsQuery>;
-export type DropzonesStatisticsLazyQueryHookResult = ReturnType<typeof useDropzonesStatisticsLazyQuery>;
-export type DropzonesStatisticsSuspenseQueryHookResult = ReturnType<typeof useDropzonesStatisticsSuspenseQuery>;
-export type DropzonesStatisticsQueryResult = Apollo.QueryResult<Operation.DropzonesStatisticsQuery, Operation.DropzonesStatisticsQueryVariables>;
-export const DropzoneRigsDocument = gql`
-    query DropzoneRigs($dropzoneId: ID!) {
-  dropzone(id: $dropzoneId) {
-    id
-    rigs {
-      ...rigEssentials
-    }
-  }
-}
-    ${RigEssentialsFragmentDoc}`;
-
-/**
- * __useDropzoneRigsQuery__
- *
- * To run a query within a React component, call `useDropzoneRigsQuery` and pass it any options that fit your needs.
- * When your component renders, `useDropzoneRigsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDropzoneRigsQuery({
- *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
- *   },
- * });
- */
-export function useDropzoneRigsQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables> & ({ variables: Operation.DropzoneRigsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>(DropzoneRigsDocument, options);
-      }
-export function useDropzoneRigsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>(DropzoneRigsDocument, options);
-        }
-// @ts-ignore
-export function useDropzoneRigsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>;
-export function useDropzoneRigsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneRigsQuery | undefined, Operation.DropzoneRigsQueryVariables>;
-export function useDropzoneRigsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>(DropzoneRigsDocument, options);
-        }
-export type DropzoneRigsQueryHookResult = ReturnType<typeof useDropzoneRigsQuery>;
-export type DropzoneRigsLazyQueryHookResult = ReturnType<typeof useDropzoneRigsLazyQuery>;
-export type DropzoneRigsSuspenseQueryHookResult = ReturnType<typeof useDropzoneRigsSuspenseQuery>;
-export type DropzoneRigsQueryResult = Apollo.QueryResult<Operation.DropzoneRigsQuery, Operation.DropzoneRigsQueryVariables>;
-export const DropzonePermissionsDocument = gql`
-    query DropzonePermissions($id: ID!) {
-  dropzone(id: $id) {
-    ...dropzoneEssentials
-    roles {
-      ...roleDetailed
-    }
-  }
-}
-    ${DropzoneEssentialsFragmentDoc}
-${RoleDetailedFragmentDoc}`;
-
-/**
- * __useDropzonePermissionsQuery__
- *
- * To run a query within a React component, call `useDropzonePermissionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useDropzonePermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDropzonePermissionsQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDropzonePermissionsQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzonePermissionsQuery, Operation.DropzonePermissionsQueryVariables> & ({ variables: Operation.DropzonePermissionsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.DropzonePermissionsQuery, Operation.DropzonePermissionsQueryVariables>(DropzonePermissionsDocument, options);
-      }
-export function useDropzonePermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzonePermissionsQuery, Operation.DropzonePermissionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.DropzonePermissionsQuery, Operation.DropzonePermissionsQueryVariables>(DropzonePermissionsDocument, options);
-        }
-// @ts-ignore
-export function useDropzonePermissionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DropzonePermissionsQuery, Operation.DropzonePermissionsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzonePermissionsQuery, Operation.DropzonePermissionsQueryVariables>;
-export function useDropzonePermissionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzonePermissionsQuery, Operation.DropzonePermissionsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzonePermissionsQuery | undefined, Operation.DropzonePermissionsQueryVariables>;
-export function useDropzonePermissionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzonePermissionsQuery, Operation.DropzonePermissionsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.DropzonePermissionsQuery, Operation.DropzonePermissionsQueryVariables>(DropzonePermissionsDocument, options);
-        }
-export type DropzonePermissionsQueryHookResult = ReturnType<typeof useDropzonePermissionsQuery>;
-export type DropzonePermissionsLazyQueryHookResult = ReturnType<typeof useDropzonePermissionsLazyQuery>;
-export type DropzonePermissionsSuspenseQueryHookResult = ReturnType<typeof useDropzonePermissionsSuspenseQuery>;
-export type DropzonePermissionsQueryResult = Apollo.QueryResult<Operation.DropzonePermissionsQuery, Operation.DropzonePermissionsQueryVariables>;
-export const DropzoneTransactionsDocument = gql`
-    query DropzoneTransactions($dropzoneId: ID!, $after: String) {
-  dropzone(id: $dropzoneId) {
-    ...dropzoneEssentials
-    orders(after: $after) {
-      edges {
-        node {
-          id
-        }
-      }
-    }
-  }
-}
-    ${DropzoneEssentialsFragmentDoc}`;
-
-/**
- * __useDropzoneTransactionsQuery__
- *
- * To run a query within a React component, call `useDropzoneTransactionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useDropzoneTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDropzoneTransactionsQuery({
- *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
- *      after: // value for 'after'
- *   },
- * });
- */
-export function useDropzoneTransactionsQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables> & ({ variables: Operation.DropzoneTransactionsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>(DropzoneTransactionsDocument, options);
-      }
-export function useDropzoneTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>(DropzoneTransactionsDocument, options);
-        }
-// @ts-ignore
-export function useDropzoneTransactionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>;
-export function useDropzoneTransactionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneTransactionsQuery | undefined, Operation.DropzoneTransactionsQueryVariables>;
-export function useDropzoneTransactionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>(DropzoneTransactionsDocument, options);
-        }
-export type DropzoneTransactionsQueryHookResult = ReturnType<typeof useDropzoneTransactionsQuery>;
-export type DropzoneTransactionsLazyQueryHookResult = ReturnType<typeof useDropzoneTransactionsLazyQuery>;
-export type DropzoneTransactionsSuspenseQueryHookResult = ReturnType<typeof useDropzoneTransactionsSuspenseQuery>;
-export type DropzoneTransactionsQueryResult = Apollo.QueryResult<Operation.DropzoneTransactionsQuery, Operation.DropzoneTransactionsQueryVariables>;
-export const DropzoneUsersDocument = gql`
-    query DropzoneUsers($dropzoneId: ID!, $search: String, $permissions: [Permission!], $first: Int, $after: String, $licensed: Boolean) {
-  dropzoneUsers(
-    dropzone: $dropzoneId
-    licensed: $licensed
-    search: $search
-    permissions: $permissions
-    first: $first
-    after: $after
-  ) {
-    edges {
-      cursor
-      node {
-        ...dropzoneUserEssentials
-      }
-    }
-  }
-}
-    ${DropzoneUserEssentialsFragmentDoc}`;
-
-/**
- * __useDropzoneUsersQuery__
- *
- * To run a query within a React component, call `useDropzoneUsersQuery` and pass it any options that fit your needs.
- * When your component renders, `useDropzoneUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDropzoneUsersQuery({
- *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
- *      search: // value for 'search'
- *      permissions: // value for 'permissions'
- *      first: // value for 'first'
- *      after: // value for 'after'
- *      licensed: // value for 'licensed'
- *   },
- * });
- */
-export function useDropzoneUsersQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables> & ({ variables: Operation.DropzoneUsersQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>(DropzoneUsersDocument, options);
-      }
-export function useDropzoneUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>(DropzoneUsersDocument, options);
-        }
-// @ts-ignore
-export function useDropzoneUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>;
-export function useDropzoneUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneUsersQuery | undefined, Operation.DropzoneUsersQueryVariables>;
-export function useDropzoneUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>(DropzoneUsersDocument, options);
-        }
-export type DropzoneUsersQueryHookResult = ReturnType<typeof useDropzoneUsersQuery>;
-export type DropzoneUsersLazyQueryHookResult = ReturnType<typeof useDropzoneUsersLazyQuery>;
-export type DropzoneUsersSuspenseQueryHookResult = ReturnType<typeof useDropzoneUsersSuspenseQuery>;
-export type DropzoneUsersQueryResult = Apollo.QueryResult<Operation.DropzoneUsersQuery, Operation.DropzoneUsersQueryVariables>;
-export const DropzoneUsersDetailedDocument = gql`
-    query DropzoneUsersDetailed($dropzoneId: ID!, $search: String, $permissions: [Permission!], $first: Int, $after: String, $licensed: Boolean) {
-  dropzoneUsers(
-    dropzone: $dropzoneId
-    licensed: $licensed
-    search: $search
-    permissions: $permissions
-    first: $first
-    after: $after
-  ) {
-    edges {
-      cursor
-      node {
-        ...dropzoneUserEssentials
-      }
-    }
-  }
-}
-    ${DropzoneUserEssentialsFragmentDoc}`;
-
-/**
- * __useDropzoneUsersDetailedQuery__
- *
- * To run a query within a React component, call `useDropzoneUsersDetailedQuery` and pass it any options that fit your needs.
- * When your component renders, `useDropzoneUsersDetailedQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDropzoneUsersDetailedQuery({
- *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
- *      search: // value for 'search'
- *      permissions: // value for 'permissions'
- *      first: // value for 'first'
- *      after: // value for 'after'
- *      licensed: // value for 'licensed'
- *   },
- * });
- */
-export function useDropzoneUsersDetailedQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables> & ({ variables: Operation.DropzoneUsersDetailedQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>(DropzoneUsersDetailedDocument, options);
-      }
-export function useDropzoneUsersDetailedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>(DropzoneUsersDetailedDocument, options);
-        }
-// @ts-ignore
-export function useDropzoneUsersDetailedSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>;
-export function useDropzoneUsersDetailedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneUsersDetailedQuery | undefined, Operation.DropzoneUsersDetailedQueryVariables>;
-export function useDropzoneUsersDetailedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>(DropzoneUsersDetailedDocument, options);
-        }
-export type DropzoneUsersDetailedQueryHookResult = ReturnType<typeof useDropzoneUsersDetailedQuery>;
-export type DropzoneUsersDetailedLazyQueryHookResult = ReturnType<typeof useDropzoneUsersDetailedLazyQuery>;
-export type DropzoneUsersDetailedSuspenseQueryHookResult = ReturnType<typeof useDropzoneUsersDetailedSuspenseQuery>;
-export type DropzoneUsersDetailedQueryResult = Apollo.QueryResult<Operation.DropzoneUsersDetailedQuery, Operation.DropzoneUsersDetailedQueryVariables>;
-export const DropzoneUserDocument = gql`
-    query DropzoneUser($id: ID!) {
-  dropzoneUser(id: $id) {
-    ...dropzoneUserEssentials
-  }
-}
-    ${DropzoneUserEssentialsFragmentDoc}`;
-
-/**
- * __useDropzoneUserQuery__
- *
- * To run a query within a React component, call `useDropzoneUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useDropzoneUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDropzoneUserQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDropzoneUserQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneUserQuery, Operation.DropzoneUserQueryVariables> & ({ variables: Operation.DropzoneUserQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.DropzoneUserQuery, Operation.DropzoneUserQueryVariables>(DropzoneUserDocument, options);
-      }
-export function useDropzoneUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneUserQuery, Operation.DropzoneUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.DropzoneUserQuery, Operation.DropzoneUserQueryVariables>(DropzoneUserDocument, options);
-        }
-// @ts-ignore
-export function useDropzoneUserSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DropzoneUserQuery, Operation.DropzoneUserQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneUserQuery, Operation.DropzoneUserQueryVariables>;
-export function useDropzoneUserSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneUserQuery, Operation.DropzoneUserQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneUserQuery | undefined, Operation.DropzoneUserQueryVariables>;
-export function useDropzoneUserSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneUserQuery, Operation.DropzoneUserQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.DropzoneUserQuery, Operation.DropzoneUserQueryVariables>(DropzoneUserDocument, options);
-        }
-export type DropzoneUserQueryHookResult = ReturnType<typeof useDropzoneUserQuery>;
-export type DropzoneUserLazyQueryHookResult = ReturnType<typeof useDropzoneUserLazyQuery>;
-export type DropzoneUserSuspenseQueryHookResult = ReturnType<typeof useDropzoneUserSuspenseQuery>;
-export type DropzoneUserQueryResult = Apollo.QueryResult<Operation.DropzoneUserQuery, Operation.DropzoneUserQueryVariables>;
-export const DropzoneUserDetailedDocument = gql`
-    query DropzoneUserDetailed($id: ID!) {
-  dropzoneUser(id: $id) {
-    ...dropzoneUserDetails
-  }
-}
-    ${DropzoneUserDetailsFragmentDoc}`;
-
-/**
- * __useDropzoneUserDetailedQuery__
- *
- * To run a query within a React component, call `useDropzoneUserDetailedQuery` and pass it any options that fit your needs.
- * When your component renders, `useDropzoneUserDetailedQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDropzoneUserDetailedQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDropzoneUserDetailedQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneUserDetailedQuery, Operation.DropzoneUserDetailedQueryVariables> & ({ variables: Operation.DropzoneUserDetailedQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.DropzoneUserDetailedQuery, Operation.DropzoneUserDetailedQueryVariables>(DropzoneUserDetailedDocument, options);
-      }
-export function useDropzoneUserDetailedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneUserDetailedQuery, Operation.DropzoneUserDetailedQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.DropzoneUserDetailedQuery, Operation.DropzoneUserDetailedQueryVariables>(DropzoneUserDetailedDocument, options);
-        }
-// @ts-ignore
-export function useDropzoneUserDetailedSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DropzoneUserDetailedQuery, Operation.DropzoneUserDetailedQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneUserDetailedQuery, Operation.DropzoneUserDetailedQueryVariables>;
-export function useDropzoneUserDetailedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneUserDetailedQuery, Operation.DropzoneUserDetailedQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneUserDetailedQuery | undefined, Operation.DropzoneUserDetailedQueryVariables>;
-export function useDropzoneUserDetailedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneUserDetailedQuery, Operation.DropzoneUserDetailedQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.DropzoneUserDetailedQuery, Operation.DropzoneUserDetailedQueryVariables>(DropzoneUserDetailedDocument, options);
-        }
-export type DropzoneUserDetailedQueryHookResult = ReturnType<typeof useDropzoneUserDetailedQuery>;
-export type DropzoneUserDetailedLazyQueryHookResult = ReturnType<typeof useDropzoneUserDetailedLazyQuery>;
-export type DropzoneUserDetailedSuspenseQueryHookResult = ReturnType<typeof useDropzoneUserDetailedSuspenseQuery>;
-export type DropzoneUserDetailedQueryResult = Apollo.QueryResult<Operation.DropzoneUserDetailedQuery, Operation.DropzoneUserDetailedQueryVariables>;
-export const DropzoneUserProfileDocument = gql`
-    query DropzoneUserProfile($id: ID!) {
-  dropzoneUser(id: $id) {
-    ...dropzoneUserProfile
-  }
-}
-    ${DropzoneUserProfileFragmentDoc}`;
-
-/**
- * __useDropzoneUserProfileQuery__
- *
- * To run a query within a React component, call `useDropzoneUserProfileQuery` and pass it any options that fit your needs.
- * When your component renders, `useDropzoneUserProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDropzoneUserProfileQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDropzoneUserProfileQuery(baseOptions: Apollo.QueryHookOptions<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables> & ({ variables: Operation.DropzoneUserProfileQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>(DropzoneUserProfileDocument, options);
-      }
-export function useDropzoneUserProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>(DropzoneUserProfileDocument, options);
-        }
-// @ts-ignore
-export function useDropzoneUserProfileSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>;
-export function useDropzoneUserProfileSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzoneUserProfileQuery | undefined, Operation.DropzoneUserProfileQueryVariables>;
-export function useDropzoneUserProfileSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>(DropzoneUserProfileDocument, options);
-        }
-export type DropzoneUserProfileQueryHookResult = ReturnType<typeof useDropzoneUserProfileQuery>;
-export type DropzoneUserProfileLazyQueryHookResult = ReturnType<typeof useDropzoneUserProfileLazyQuery>;
-export type DropzoneUserProfileSuspenseQueryHookResult = ReturnType<typeof useDropzoneUserProfileSuspenseQuery>;
-export type DropzoneUserProfileQueryResult = Apollo.QueryResult<Operation.DropzoneUserProfileQuery, Operation.DropzoneUserProfileQueryVariables>;
-export const DropzonesDocument = gql`
-    query Dropzones($state: [DropzoneState!]) {
-  dropzones(state: $state) {
-    edges {
-      node {
-        ...dropzoneEssentials
-        currentUser {
-          id
-        }
-      }
-    }
-  }
-}
-    ${DropzoneEssentialsFragmentDoc}`;
-
-/**
- * __useDropzonesQuery__
- *
- * To run a query within a React component, call `useDropzonesQuery` and pass it any options that fit your needs.
- * When your component renders, `useDropzonesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useDropzonesQuery({
- *   variables: {
- *      state: // value for 'state'
- *   },
- * });
- */
-export function useDropzonesQuery(baseOptions?: Apollo.QueryHookOptions<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>(DropzonesDocument, options);
-      }
-export function useDropzonesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>(DropzonesDocument, options);
-        }
-// @ts-ignore
-export function useDropzonesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>;
-export function useDropzonesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DropzonesQuery | undefined, Operation.DropzonesQueryVariables>;
-export function useDropzonesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>(DropzonesDocument, options);
-        }
-export type DropzonesQueryHookResult = ReturnType<typeof useDropzonesQuery>;
-export type DropzonesLazyQueryHookResult = ReturnType<typeof useDropzonesLazyQuery>;
-export type DropzonesSuspenseQueryHookResult = ReturnType<typeof useDropzonesSuspenseQuery>;
-export type DropzonesQueryResult = Apollo.QueryResult<Operation.DropzonesQuery, Operation.DropzonesQueryVariables>;
 export const TicketTypeExtrasDocument = gql`
-    query TicketTypeExtras($dropzoneId: ID!) {
-  extras(dropzone: $dropzoneId) {
+    query TicketTypeExtras($operatorId: ID!) {
+  extras(operator: $operatorId) {
     ...ticketTypeExtraDetailed
   }
 }
@@ -3504,7 +2865,7 @@ export const TicketTypeExtrasDocument = gql`
  * @example
  * const { data, loading, error } = useTicketTypeExtrasQuery({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
+ *      operatorId: // value for 'operatorId'
  *   },
  * });
  */
@@ -3616,8 +2977,8 @@ export type AddressToLocationLazyQueryHookResult = ReturnType<typeof useAddressT
 export type AddressToLocationSuspenseQueryHookResult = ReturnType<typeof useAddressToLocationSuspenseQuery>;
 export type AddressToLocationQueryResult = Apollo.QueryResult<Operation.AddressToLocationQuery, Operation.AddressToLocationQueryVariables>;
 export const JumpTypesDocument = gql`
-    query JumpTypes($allowedForDropzoneUserIds: [Int!]) {
-  jumpTypes(dropzoneUsers: $allowedForDropzoneUserIds) {
+    query JumpTypes($allowedForMembershipIds: [Int!]) {
+  jumpTypes(memberships: $allowedForMembershipIds) {
     ...jumpTypeEssentials
   }
 }
@@ -3635,7 +2996,7 @@ export const JumpTypesDocument = gql`
  * @example
  * const { data, loading, error } = useJumpTypesQuery({
  *   variables: {
- *      allowedForDropzoneUserIds: // value for 'allowedForDropzoneUserIds'
+ *      allowedForMembershipIds: // value for 'allowedForMembershipIds'
  *   },
  * });
  */
@@ -3659,10 +3020,10 @@ export type JumpTypesLazyQueryHookResult = ReturnType<typeof useJumpTypesLazyQue
 export type JumpTypesSuspenseQueryHookResult = ReturnType<typeof useJumpTypesSuspenseQuery>;
 export type JumpTypesQueryResult = Apollo.QueryResult<Operation.JumpTypesQuery, Operation.JumpTypesQueryVariables>;
 export const AllowedJumpTypesDocument = gql`
-    query AllowedJumpTypes($dropzoneId: ID!, $allowedForDropzoneUserIds: [Int!]!, $isPublic: Boolean) {
-  dropzone(id: $dropzoneId) {
+    query AllowedJumpTypes($operatorId: ID!, $allowedForMembershipIds: [Int!]!, $isPublic: Boolean) {
+  operator(id: $operatorId) {
     id
-    allowedJumpTypes(userId: $allowedForDropzoneUserIds) {
+    allowedJumpTypes(userId: $allowedForMembershipIds) {
       ...jumpTypeEssentials
     }
     ticketTypes(isPublic: $isPublic) {
@@ -3688,8 +3049,8 @@ ${TicketTypeEssentialsFragmentDoc}`;
  * @example
  * const { data, loading, error } = useAllowedJumpTypesQuery({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
- *      allowedForDropzoneUserIds: // value for 'allowedForDropzoneUserIds'
+ *      operatorId: // value for 'operatorId'
+ *      allowedForMembershipIds: // value for 'allowedForMembershipIds'
  *      isPublic: // value for 'isPublic'
  *   },
  * });
@@ -3800,8 +3161,8 @@ export type LoadLazyQueryHookResult = ReturnType<typeof useLoadLazyQuery>;
 export type LoadSuspenseQueryHookResult = ReturnType<typeof useLoadSuspenseQuery>;
 export type LoadQueryResult = Apollo.QueryResult<Operation.LoadQuery, Operation.LoadQueryVariables>;
 export const LoadsDocument = gql`
-    query Loads($date: ISO8601Date, $dropzone: ID!) {
-  loads(date: $date, dropzone: $dropzone) {
+    query Loads($date: ISO8601Date, $operator: ID!) {
+  loads(date: $date, operator: $operator) {
     edges {
       node {
         ...loadEssentials
@@ -3824,7 +3185,7 @@ export const LoadsDocument = gql`
  * const { data, loading, error } = useLoadsQuery({
  *   variables: {
  *      date: // value for 'date'
- *      dropzone: // value for 'dropzone'
+ *      operator: // value for 'operator'
  *   },
  * });
  */
@@ -3848,8 +3209,8 @@ export type LoadsLazyQueryHookResult = ReturnType<typeof useLoadsLazyQuery>;
 export type LoadsSuspenseQueryHookResult = ReturnType<typeof useLoadsSuspenseQuery>;
 export type LoadsQueryResult = Apollo.QueryResult<Operation.LoadsQuery, Operation.LoadsQueryVariables>;
 export const MasterLogDocument = gql`
-    query MasterLog($dropzoneId: ID!, $date: ISO8601Date!) {
-  masterLog(dropzone: $dropzoneId, date: $date) {
+    query MasterLog($operatorId: ID!, $date: ISO8601Date!) {
+  masterLog(operator: $operatorId, date: $date) {
     ...masterLogEntry
   }
 }
@@ -3867,7 +3228,7 @@ export const MasterLogDocument = gql`
  * @example
  * const { data, loading, error } = useMasterLogQuery({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
+ *      operatorId: // value for 'operatorId'
  *      date: // value for 'date'
  *   },
  * });
@@ -3891,9 +3252,258 @@ export type MasterLogQueryHookResult = ReturnType<typeof useMasterLogQuery>;
 export type MasterLogLazyQueryHookResult = ReturnType<typeof useMasterLogLazyQuery>;
 export type MasterLogSuspenseQueryHookResult = ReturnType<typeof useMasterLogSuspenseQuery>;
 export type MasterLogQueryResult = Apollo.QueryResult<Operation.MasterLogQuery, Operation.MasterLogQueryVariables>;
+export const MembershipsDocument = gql`
+    query Memberships($operatorId: ID!, $search: String, $permissions: [Permission!], $first: Int, $after: String, $licensed: Boolean) {
+  memberships(
+    operator: $operatorId
+    licensed: $licensed
+    search: $search
+    permissions: $permissions
+    first: $first
+    after: $after
+  ) {
+    edges {
+      cursor
+      node {
+        ...membershipEssentials
+      }
+    }
+  }
+}
+    ${MembershipEssentialsFragmentDoc}`;
+
+/**
+ * __useMembershipsQuery__
+ *
+ * To run a query within a React component, call `useMembershipsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMembershipsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMembershipsQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *      search: // value for 'search'
+ *      permissions: // value for 'permissions'
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *      licensed: // value for 'licensed'
+ *   },
+ * });
+ */
+export function useMembershipsQuery(baseOptions: Apollo.QueryHookOptions<Operation.MembershipsQuery, Operation.MembershipsQueryVariables> & ({ variables: Operation.MembershipsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.MembershipsQuery, Operation.MembershipsQueryVariables>(MembershipsDocument, options);
+      }
+export function useMembershipsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.MembershipsQuery, Operation.MembershipsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.MembershipsQuery, Operation.MembershipsQueryVariables>(MembershipsDocument, options);
+        }
+// @ts-ignore
+export function useMembershipsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.MembershipsQuery, Operation.MembershipsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MembershipsQuery, Operation.MembershipsQueryVariables>;
+export function useMembershipsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MembershipsQuery, Operation.MembershipsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MembershipsQuery | undefined, Operation.MembershipsQueryVariables>;
+export function useMembershipsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MembershipsQuery, Operation.MembershipsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.MembershipsQuery, Operation.MembershipsQueryVariables>(MembershipsDocument, options);
+        }
+export type MembershipsQueryHookResult = ReturnType<typeof useMembershipsQuery>;
+export type MembershipsLazyQueryHookResult = ReturnType<typeof useMembershipsLazyQuery>;
+export type MembershipsSuspenseQueryHookResult = ReturnType<typeof useMembershipsSuspenseQuery>;
+export type MembershipsQueryResult = Apollo.QueryResult<Operation.MembershipsQuery, Operation.MembershipsQueryVariables>;
+export const MembershipsDetailedDocument = gql`
+    query MembershipsDetailed($operatorId: ID!, $search: String, $permissions: [Permission!], $first: Int, $after: String, $licensed: Boolean) {
+  memberships(
+    operator: $operatorId
+    licensed: $licensed
+    search: $search
+    permissions: $permissions
+    first: $first
+    after: $after
+  ) {
+    edges {
+      cursor
+      node {
+        ...membershipEssentials
+      }
+    }
+  }
+}
+    ${MembershipEssentialsFragmentDoc}`;
+
+/**
+ * __useMembershipsDetailedQuery__
+ *
+ * To run a query within a React component, call `useMembershipsDetailedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMembershipsDetailedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMembershipsDetailedQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *      search: // value for 'search'
+ *      permissions: // value for 'permissions'
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *      licensed: // value for 'licensed'
+ *   },
+ * });
+ */
+export function useMembershipsDetailedQuery(baseOptions: Apollo.QueryHookOptions<Operation.MembershipsDetailedQuery, Operation.MembershipsDetailedQueryVariables> & ({ variables: Operation.MembershipsDetailedQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.MembershipsDetailedQuery, Operation.MembershipsDetailedQueryVariables>(MembershipsDetailedDocument, options);
+      }
+export function useMembershipsDetailedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.MembershipsDetailedQuery, Operation.MembershipsDetailedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.MembershipsDetailedQuery, Operation.MembershipsDetailedQueryVariables>(MembershipsDetailedDocument, options);
+        }
+// @ts-ignore
+export function useMembershipsDetailedSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.MembershipsDetailedQuery, Operation.MembershipsDetailedQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MembershipsDetailedQuery, Operation.MembershipsDetailedQueryVariables>;
+export function useMembershipsDetailedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MembershipsDetailedQuery, Operation.MembershipsDetailedQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MembershipsDetailedQuery | undefined, Operation.MembershipsDetailedQueryVariables>;
+export function useMembershipsDetailedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MembershipsDetailedQuery, Operation.MembershipsDetailedQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.MembershipsDetailedQuery, Operation.MembershipsDetailedQueryVariables>(MembershipsDetailedDocument, options);
+        }
+export type MembershipsDetailedQueryHookResult = ReturnType<typeof useMembershipsDetailedQuery>;
+export type MembershipsDetailedLazyQueryHookResult = ReturnType<typeof useMembershipsDetailedLazyQuery>;
+export type MembershipsDetailedSuspenseQueryHookResult = ReturnType<typeof useMembershipsDetailedSuspenseQuery>;
+export type MembershipsDetailedQueryResult = Apollo.QueryResult<Operation.MembershipsDetailedQuery, Operation.MembershipsDetailedQueryVariables>;
+export const MembershipDocument = gql`
+    query Membership($id: ID!) {
+  membership(id: $id) {
+    ...membershipEssentials
+  }
+}
+    ${MembershipEssentialsFragmentDoc}`;
+
+/**
+ * __useMembershipQuery__
+ *
+ * To run a query within a React component, call `useMembershipQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMembershipQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMembershipQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useMembershipQuery(baseOptions: Apollo.QueryHookOptions<Operation.MembershipQuery, Operation.MembershipQueryVariables> & ({ variables: Operation.MembershipQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.MembershipQuery, Operation.MembershipQueryVariables>(MembershipDocument, options);
+      }
+export function useMembershipLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.MembershipQuery, Operation.MembershipQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.MembershipQuery, Operation.MembershipQueryVariables>(MembershipDocument, options);
+        }
+// @ts-ignore
+export function useMembershipSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.MembershipQuery, Operation.MembershipQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MembershipQuery, Operation.MembershipQueryVariables>;
+export function useMembershipSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MembershipQuery, Operation.MembershipQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MembershipQuery | undefined, Operation.MembershipQueryVariables>;
+export function useMembershipSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MembershipQuery, Operation.MembershipQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.MembershipQuery, Operation.MembershipQueryVariables>(MembershipDocument, options);
+        }
+export type MembershipQueryHookResult = ReturnType<typeof useMembershipQuery>;
+export type MembershipLazyQueryHookResult = ReturnType<typeof useMembershipLazyQuery>;
+export type MembershipSuspenseQueryHookResult = ReturnType<typeof useMembershipSuspenseQuery>;
+export type MembershipQueryResult = Apollo.QueryResult<Operation.MembershipQuery, Operation.MembershipQueryVariables>;
+export const MembershipDetailedDocument = gql`
+    query MembershipDetailed($id: ID!) {
+  membership(id: $id) {
+    ...membershipDetails
+  }
+}
+    ${MembershipDetailsFragmentDoc}`;
+
+/**
+ * __useMembershipDetailedQuery__
+ *
+ * To run a query within a React component, call `useMembershipDetailedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMembershipDetailedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMembershipDetailedQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useMembershipDetailedQuery(baseOptions: Apollo.QueryHookOptions<Operation.MembershipDetailedQuery, Operation.MembershipDetailedQueryVariables> & ({ variables: Operation.MembershipDetailedQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.MembershipDetailedQuery, Operation.MembershipDetailedQueryVariables>(MembershipDetailedDocument, options);
+      }
+export function useMembershipDetailedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.MembershipDetailedQuery, Operation.MembershipDetailedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.MembershipDetailedQuery, Operation.MembershipDetailedQueryVariables>(MembershipDetailedDocument, options);
+        }
+// @ts-ignore
+export function useMembershipDetailedSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.MembershipDetailedQuery, Operation.MembershipDetailedQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MembershipDetailedQuery, Operation.MembershipDetailedQueryVariables>;
+export function useMembershipDetailedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MembershipDetailedQuery, Operation.MembershipDetailedQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MembershipDetailedQuery | undefined, Operation.MembershipDetailedQueryVariables>;
+export function useMembershipDetailedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MembershipDetailedQuery, Operation.MembershipDetailedQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.MembershipDetailedQuery, Operation.MembershipDetailedQueryVariables>(MembershipDetailedDocument, options);
+        }
+export type MembershipDetailedQueryHookResult = ReturnType<typeof useMembershipDetailedQuery>;
+export type MembershipDetailedLazyQueryHookResult = ReturnType<typeof useMembershipDetailedLazyQuery>;
+export type MembershipDetailedSuspenseQueryHookResult = ReturnType<typeof useMembershipDetailedSuspenseQuery>;
+export type MembershipDetailedQueryResult = Apollo.QueryResult<Operation.MembershipDetailedQuery, Operation.MembershipDetailedQueryVariables>;
+export const MembershipProfileDocument = gql`
+    query MembershipProfile($id: ID!) {
+  membership(id: $id) {
+    ...membershipProfile
+  }
+}
+    ${MembershipProfileFragmentDoc}`;
+
+/**
+ * __useMembershipProfileQuery__
+ *
+ * To run a query within a React component, call `useMembershipProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMembershipProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMembershipProfileQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useMembershipProfileQuery(baseOptions: Apollo.QueryHookOptions<Operation.MembershipProfileQuery, Operation.MembershipProfileQueryVariables> & ({ variables: Operation.MembershipProfileQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.MembershipProfileQuery, Operation.MembershipProfileQueryVariables>(MembershipProfileDocument, options);
+      }
+export function useMembershipProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.MembershipProfileQuery, Operation.MembershipProfileQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.MembershipProfileQuery, Operation.MembershipProfileQueryVariables>(MembershipProfileDocument, options);
+        }
+// @ts-ignore
+export function useMembershipProfileSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.MembershipProfileQuery, Operation.MembershipProfileQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MembershipProfileQuery, Operation.MembershipProfileQueryVariables>;
+export function useMembershipProfileSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MembershipProfileQuery, Operation.MembershipProfileQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MembershipProfileQuery | undefined, Operation.MembershipProfileQueryVariables>;
+export function useMembershipProfileSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MembershipProfileQuery, Operation.MembershipProfileQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.MembershipProfileQuery, Operation.MembershipProfileQueryVariables>(MembershipProfileDocument, options);
+        }
+export type MembershipProfileQueryHookResult = ReturnType<typeof useMembershipProfileQuery>;
+export type MembershipProfileLazyQueryHookResult = ReturnType<typeof useMembershipProfileLazyQuery>;
+export type MembershipProfileSuspenseQueryHookResult = ReturnType<typeof useMembershipProfileSuspenseQuery>;
+export type MembershipProfileQueryResult = Apollo.QueryResult<Operation.MembershipProfileQuery, Operation.MembershipProfileQueryVariables>;
 export const NotificationsDocument = gql`
-    query Notifications($dropzoneId: ID!) {
-  dropzone(id: $dropzoneId) {
+    query Notifications($operatorId: ID!) {
+  operator(id: $operatorId) {
     id
     currentUser {
       id
@@ -3926,7 +3536,7 @@ export const NotificationsDocument = gql`
               }
               ... on Rig {
                 ...rigEssentials
-                rigInspections(dropzoneId: $dropzoneId) {
+                rigInspections(operatorId: $operatorId) {
                   id
                   createdAt
                   inspectedBy {
@@ -3965,7 +3575,7 @@ ${RigInspectionEssentialsFragmentDoc}`;
  * @example
  * const { data, loading, error } = useNotificationsQuery({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
+ *      operatorId: // value for 'operatorId'
  *   },
  * });
  */
@@ -3988,9 +3598,344 @@ export type NotificationsQueryHookResult = ReturnType<typeof useNotificationsQue
 export type NotificationsLazyQueryHookResult = ReturnType<typeof useNotificationsLazyQuery>;
 export type NotificationsSuspenseQueryHookResult = ReturnType<typeof useNotificationsSuspenseQuery>;
 export type NotificationsQueryResult = Apollo.QueryResult<Operation.NotificationsQuery, Operation.NotificationsQueryVariables>;
+export const OperatorDocument = gql`
+    query Operator($operatorId: ID!) {
+  operator(id: $operatorId) {
+    ...operatorExtensive
+  }
+}
+    ${OperatorExtensiveFragmentDoc}`;
+
+/**
+ * __useOperatorQuery__
+ *
+ * To run a query within a React component, call `useOperatorQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOperatorQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOperatorQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *   },
+ * });
+ */
+export function useOperatorQuery(baseOptions: Apollo.QueryHookOptions<Operation.OperatorQuery, Operation.OperatorQueryVariables> & ({ variables: Operation.OperatorQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.OperatorQuery, Operation.OperatorQueryVariables>(OperatorDocument, options);
+      }
+export function useOperatorLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.OperatorQuery, Operation.OperatorQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.OperatorQuery, Operation.OperatorQueryVariables>(OperatorDocument, options);
+        }
+// @ts-ignore
+export function useOperatorSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.OperatorQuery, Operation.OperatorQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorQuery, Operation.OperatorQueryVariables>;
+export function useOperatorSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorQuery, Operation.OperatorQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorQuery | undefined, Operation.OperatorQueryVariables>;
+export function useOperatorSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorQuery, Operation.OperatorQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.OperatorQuery, Operation.OperatorQueryVariables>(OperatorDocument, options);
+        }
+export type OperatorQueryHookResult = ReturnType<typeof useOperatorQuery>;
+export type OperatorLazyQueryHookResult = ReturnType<typeof useOperatorLazyQuery>;
+export type OperatorSuspenseQueryHookResult = ReturnType<typeof useOperatorSuspenseQuery>;
+export type OperatorQueryResult = Apollo.QueryResult<Operation.OperatorQuery, Operation.OperatorQueryVariables>;
+export const OperatorStatisticsDocument = gql`
+    query OperatorStatistics($operatorId: ID!, $timeRange: TimeRangeInput) {
+  operator(id: $operatorId) {
+    ...operatorStatistics
+  }
+}
+    ${OperatorStatisticsFragmentDoc}`;
+
+/**
+ * __useOperatorStatisticsQuery__
+ *
+ * To run a query within a React component, call `useOperatorStatisticsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOperatorStatisticsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOperatorStatisticsQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *      timeRange: // value for 'timeRange'
+ *   },
+ * });
+ */
+export function useOperatorStatisticsQuery(baseOptions: Apollo.QueryHookOptions<Operation.OperatorStatisticsQuery, Operation.OperatorStatisticsQueryVariables> & ({ variables: Operation.OperatorStatisticsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.OperatorStatisticsQuery, Operation.OperatorStatisticsQueryVariables>(OperatorStatisticsDocument, options);
+      }
+export function useOperatorStatisticsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.OperatorStatisticsQuery, Operation.OperatorStatisticsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.OperatorStatisticsQuery, Operation.OperatorStatisticsQueryVariables>(OperatorStatisticsDocument, options);
+        }
+// @ts-ignore
+export function useOperatorStatisticsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.OperatorStatisticsQuery, Operation.OperatorStatisticsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorStatisticsQuery, Operation.OperatorStatisticsQueryVariables>;
+export function useOperatorStatisticsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorStatisticsQuery, Operation.OperatorStatisticsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorStatisticsQuery | undefined, Operation.OperatorStatisticsQueryVariables>;
+export function useOperatorStatisticsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorStatisticsQuery, Operation.OperatorStatisticsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.OperatorStatisticsQuery, Operation.OperatorStatisticsQueryVariables>(OperatorStatisticsDocument, options);
+        }
+export type OperatorStatisticsQueryHookResult = ReturnType<typeof useOperatorStatisticsQuery>;
+export type OperatorStatisticsLazyQueryHookResult = ReturnType<typeof useOperatorStatisticsLazyQuery>;
+export type OperatorStatisticsSuspenseQueryHookResult = ReturnType<typeof useOperatorStatisticsSuspenseQuery>;
+export type OperatorStatisticsQueryResult = Apollo.QueryResult<Operation.OperatorStatisticsQuery, Operation.OperatorStatisticsQueryVariables>;
+export const OperatorsStatisticsDocument = gql`
+    query OperatorsStatistics($timeRange: TimeRangeInput, $after: String) {
+  operators(after: $after) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      endCursor
+    }
+    edges {
+      cursor
+      node {
+        ...operatorStatistics
+      }
+    }
+  }
+}
+    ${OperatorStatisticsFragmentDoc}`;
+
+/**
+ * __useOperatorsStatisticsQuery__
+ *
+ * To run a query within a React component, call `useOperatorsStatisticsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOperatorsStatisticsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOperatorsStatisticsQuery({
+ *   variables: {
+ *      timeRange: // value for 'timeRange'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function useOperatorsStatisticsQuery(baseOptions?: Apollo.QueryHookOptions<Operation.OperatorsStatisticsQuery, Operation.OperatorsStatisticsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.OperatorsStatisticsQuery, Operation.OperatorsStatisticsQueryVariables>(OperatorsStatisticsDocument, options);
+      }
+export function useOperatorsStatisticsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.OperatorsStatisticsQuery, Operation.OperatorsStatisticsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.OperatorsStatisticsQuery, Operation.OperatorsStatisticsQueryVariables>(OperatorsStatisticsDocument, options);
+        }
+// @ts-ignore
+export function useOperatorsStatisticsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.OperatorsStatisticsQuery, Operation.OperatorsStatisticsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorsStatisticsQuery, Operation.OperatorsStatisticsQueryVariables>;
+export function useOperatorsStatisticsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorsStatisticsQuery, Operation.OperatorsStatisticsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorsStatisticsQuery | undefined, Operation.OperatorsStatisticsQueryVariables>;
+export function useOperatorsStatisticsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorsStatisticsQuery, Operation.OperatorsStatisticsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.OperatorsStatisticsQuery, Operation.OperatorsStatisticsQueryVariables>(OperatorsStatisticsDocument, options);
+        }
+export type OperatorsStatisticsQueryHookResult = ReturnType<typeof useOperatorsStatisticsQuery>;
+export type OperatorsStatisticsLazyQueryHookResult = ReturnType<typeof useOperatorsStatisticsLazyQuery>;
+export type OperatorsStatisticsSuspenseQueryHookResult = ReturnType<typeof useOperatorsStatisticsSuspenseQuery>;
+export type OperatorsStatisticsQueryResult = Apollo.QueryResult<Operation.OperatorsStatisticsQuery, Operation.OperatorsStatisticsQueryVariables>;
+export const OperatorRigsDocument = gql`
+    query OperatorRigs($operatorId: ID!) {
+  operator(id: $operatorId) {
+    id
+    rigs {
+      ...rigEssentials
+    }
+  }
+}
+    ${RigEssentialsFragmentDoc}`;
+
+/**
+ * __useOperatorRigsQuery__
+ *
+ * To run a query within a React component, call `useOperatorRigsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOperatorRigsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOperatorRigsQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *   },
+ * });
+ */
+export function useOperatorRigsQuery(baseOptions: Apollo.QueryHookOptions<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables> & ({ variables: Operation.OperatorRigsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>(OperatorRigsDocument, options);
+      }
+export function useOperatorRigsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>(OperatorRigsDocument, options);
+        }
+// @ts-ignore
+export function useOperatorRigsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>;
+export function useOperatorRigsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorRigsQuery | undefined, Operation.OperatorRigsQueryVariables>;
+export function useOperatorRigsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>(OperatorRigsDocument, options);
+        }
+export type OperatorRigsQueryHookResult = ReturnType<typeof useOperatorRigsQuery>;
+export type OperatorRigsLazyQueryHookResult = ReturnType<typeof useOperatorRigsLazyQuery>;
+export type OperatorRigsSuspenseQueryHookResult = ReturnType<typeof useOperatorRigsSuspenseQuery>;
+export type OperatorRigsQueryResult = Apollo.QueryResult<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>;
+export const OperatorPermissionsDocument = gql`
+    query OperatorPermissions($id: ID!) {
+  operator(id: $id) {
+    ...operatorEssentials
+    roles {
+      ...roleDetailed
+    }
+  }
+}
+    ${OperatorEssentialsFragmentDoc}
+${RoleDetailedFragmentDoc}`;
+
+/**
+ * __useOperatorPermissionsQuery__
+ *
+ * To run a query within a React component, call `useOperatorPermissionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOperatorPermissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOperatorPermissionsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useOperatorPermissionsQuery(baseOptions: Apollo.QueryHookOptions<Operation.OperatorPermissionsQuery, Operation.OperatorPermissionsQueryVariables> & ({ variables: Operation.OperatorPermissionsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.OperatorPermissionsQuery, Operation.OperatorPermissionsQueryVariables>(OperatorPermissionsDocument, options);
+      }
+export function useOperatorPermissionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.OperatorPermissionsQuery, Operation.OperatorPermissionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.OperatorPermissionsQuery, Operation.OperatorPermissionsQueryVariables>(OperatorPermissionsDocument, options);
+        }
+// @ts-ignore
+export function useOperatorPermissionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.OperatorPermissionsQuery, Operation.OperatorPermissionsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorPermissionsQuery, Operation.OperatorPermissionsQueryVariables>;
+export function useOperatorPermissionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorPermissionsQuery, Operation.OperatorPermissionsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorPermissionsQuery | undefined, Operation.OperatorPermissionsQueryVariables>;
+export function useOperatorPermissionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorPermissionsQuery, Operation.OperatorPermissionsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.OperatorPermissionsQuery, Operation.OperatorPermissionsQueryVariables>(OperatorPermissionsDocument, options);
+        }
+export type OperatorPermissionsQueryHookResult = ReturnType<typeof useOperatorPermissionsQuery>;
+export type OperatorPermissionsLazyQueryHookResult = ReturnType<typeof useOperatorPermissionsLazyQuery>;
+export type OperatorPermissionsSuspenseQueryHookResult = ReturnType<typeof useOperatorPermissionsSuspenseQuery>;
+export type OperatorPermissionsQueryResult = Apollo.QueryResult<Operation.OperatorPermissionsQuery, Operation.OperatorPermissionsQueryVariables>;
+export const OperatorTransactionsDocument = gql`
+    query OperatorTransactions($operatorId: ID!, $after: String) {
+  operator(id: $operatorId) {
+    ...operatorEssentials
+    orders(after: $after) {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+  }
+}
+    ${OperatorEssentialsFragmentDoc}`;
+
+/**
+ * __useOperatorTransactionsQuery__
+ *
+ * To run a query within a React component, call `useOperatorTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOperatorTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOperatorTransactionsQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function useOperatorTransactionsQuery(baseOptions: Apollo.QueryHookOptions<Operation.OperatorTransactionsQuery, Operation.OperatorTransactionsQueryVariables> & ({ variables: Operation.OperatorTransactionsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.OperatorTransactionsQuery, Operation.OperatorTransactionsQueryVariables>(OperatorTransactionsDocument, options);
+      }
+export function useOperatorTransactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.OperatorTransactionsQuery, Operation.OperatorTransactionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.OperatorTransactionsQuery, Operation.OperatorTransactionsQueryVariables>(OperatorTransactionsDocument, options);
+        }
+// @ts-ignore
+export function useOperatorTransactionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.OperatorTransactionsQuery, Operation.OperatorTransactionsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorTransactionsQuery, Operation.OperatorTransactionsQueryVariables>;
+export function useOperatorTransactionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorTransactionsQuery, Operation.OperatorTransactionsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorTransactionsQuery | undefined, Operation.OperatorTransactionsQueryVariables>;
+export function useOperatorTransactionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorTransactionsQuery, Operation.OperatorTransactionsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.OperatorTransactionsQuery, Operation.OperatorTransactionsQueryVariables>(OperatorTransactionsDocument, options);
+        }
+export type OperatorTransactionsQueryHookResult = ReturnType<typeof useOperatorTransactionsQuery>;
+export type OperatorTransactionsLazyQueryHookResult = ReturnType<typeof useOperatorTransactionsLazyQuery>;
+export type OperatorTransactionsSuspenseQueryHookResult = ReturnType<typeof useOperatorTransactionsSuspenseQuery>;
+export type OperatorTransactionsQueryResult = Apollo.QueryResult<Operation.OperatorTransactionsQuery, Operation.OperatorTransactionsQueryVariables>;
+export const OperatorsDocument = gql`
+    query Operators($state: [OperatorState!]) {
+  operators(state: $state) {
+    edges {
+      node {
+        ...operatorEssentials
+        currentUser {
+          id
+        }
+      }
+    }
+  }
+}
+    ${OperatorEssentialsFragmentDoc}`;
+
+/**
+ * __useOperatorsQuery__
+ *
+ * To run a query within a React component, call `useOperatorsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOperatorsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOperatorsQuery({
+ *   variables: {
+ *      state: // value for 'state'
+ *   },
+ * });
+ */
+export function useOperatorsQuery(baseOptions?: Apollo.QueryHookOptions<Operation.OperatorsQuery, Operation.OperatorsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.OperatorsQuery, Operation.OperatorsQueryVariables>(OperatorsDocument, options);
+      }
+export function useOperatorsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.OperatorsQuery, Operation.OperatorsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.OperatorsQuery, Operation.OperatorsQueryVariables>(OperatorsDocument, options);
+        }
+// @ts-ignore
+export function useOperatorsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.OperatorsQuery, Operation.OperatorsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorsQuery, Operation.OperatorsQueryVariables>;
+export function useOperatorsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorsQuery, Operation.OperatorsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorsQuery | undefined, Operation.OperatorsQueryVariables>;
+export function useOperatorsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorsQuery, Operation.OperatorsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.OperatorsQuery, Operation.OperatorsQueryVariables>(OperatorsDocument, options);
+        }
+export type OperatorsQueryHookResult = ReturnType<typeof useOperatorsQuery>;
+export type OperatorsLazyQueryHookResult = ReturnType<typeof useOperatorsLazyQuery>;
+export type OperatorsSuspenseQueryHookResult = ReturnType<typeof useOperatorsSuspenseQuery>;
+export type OperatorsQueryResult = Apollo.QueryResult<Operation.OperatorsQuery, Operation.OperatorsQueryVariables>;
 export const PlanesDocument = gql`
-    query Planes($dropzoneId: ID!) {
-  planes(dropzone: $dropzoneId) {
+    query Planes($operatorId: ID!) {
+  planes(operator: $operatorId) {
     ...planeEssentials
   }
 }
@@ -4008,7 +3953,7 @@ export const PlanesDocument = gql`
  * @example
  * const { data, loading, error } = usePlanesQuery({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
+ *      operatorId: // value for 'operatorId'
  *   },
  * });
  */
@@ -4032,8 +3977,8 @@ export type PlanesLazyQueryHookResult = ReturnType<typeof usePlanesLazyQuery>;
 export type PlanesSuspenseQueryHookResult = ReturnType<typeof usePlanesSuspenseQuery>;
 export type PlanesQueryResult = Apollo.QueryResult<Operation.PlanesQuery, Operation.PlanesQueryVariables>;
 export const CurrentUserPermissionsDocument = gql`
-    query CurrentUserPermissions($dropzoneId: ID!) {
-  dropzone(id: $dropzoneId) {
+    query CurrentUserPermissions($operatorId: ID!) {
+  operator(id: $operatorId) {
     id
     name
     primaryColor
@@ -4061,7 +4006,7 @@ export const CurrentUserPermissionsDocument = gql`
  * @example
  * const { data, loading, error } = useCurrentUserPermissionsQuery({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
+ *      operatorId: // value for 'operatorId'
  *   },
  * });
  */
@@ -4085,8 +4030,8 @@ export type CurrentUserPermissionsLazyQueryHookResult = ReturnType<typeof useCur
 export type CurrentUserPermissionsSuspenseQueryHookResult = ReturnType<typeof useCurrentUserPermissionsSuspenseQuery>;
 export type CurrentUserPermissionsQueryResult = Apollo.QueryResult<Operation.CurrentUserPermissionsQuery, Operation.CurrentUserPermissionsQueryVariables>;
 export const RigInspectionTemplateDocument = gql`
-    query RigInspectionTemplate($dropzoneId: ID!) {
-  dropzone(id: $dropzoneId) {
+    query RigInspectionTemplate($operatorId: ID!) {
+  operator(id: $operatorId) {
     id
     rigInspectionTemplate {
       id
@@ -4109,7 +4054,7 @@ export const RigInspectionTemplateDocument = gql`
  * @example
  * const { data, loading, error } = useRigInspectionTemplateQuery({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
+ *      operatorId: // value for 'operatorId'
  *   },
  * });
  */
@@ -4133,12 +4078,8 @@ export type RigInspectionTemplateLazyQueryHookResult = ReturnType<typeof useRigI
 export type RigInspectionTemplateSuspenseQueryHookResult = ReturnType<typeof useRigInspectionTemplateSuspenseQuery>;
 export type RigInspectionTemplateQueryResult = Apollo.QueryResult<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>;
 export const AvailableRigsDocument = gql`
-    query AvailableRigs($dropzoneUserId: Int!, $isTandem: Boolean, $loadId: Int) {
-  availableRigs(
-    dropzoneUser: $dropzoneUserId
-    isTandem: $isTandem
-    loadId: $loadId
-  ) {
+    query AvailableRigs($membershipId: Int!, $isTandem: Boolean, $loadId: Int) {
+  availableRigs(membership: $membershipId, isTandem: $isTandem, loadId: $loadId) {
     ...userRigDetailed
   }
 }
@@ -4156,7 +4097,7 @@ export const AvailableRigsDocument = gql`
  * @example
  * const { data, loading, error } = useAvailableRigsQuery({
  *   variables: {
- *      dropzoneUserId: // value for 'dropzoneUserId'
+ *      membershipId: // value for 'membershipId'
  *      isTandem: // value for 'isTandem'
  *      loadId: // value for 'loadId'
  *   },
@@ -4182,8 +4123,8 @@ export type AvailableRigsLazyQueryHookResult = ReturnType<typeof useAvailableRig
 export type AvailableRigsSuspenseQueryHookResult = ReturnType<typeof useAvailableRigsSuspenseQuery>;
 export type AvailableRigsQueryResult = Apollo.QueryResult<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>;
 export const RolesDocument = gql`
-    query Roles($dropzoneId: ID!, $selectable: Boolean) {
-  dropzone(id: $dropzoneId) {
+    query Roles($operatorId: ID!, $selectable: Boolean) {
+  operator(id: $operatorId) {
     id
     roles(selectable: $selectable) {
       ...roleDetailed
@@ -4204,7 +4145,7 @@ export const RolesDocument = gql`
  * @example
  * const { data, loading, error } = useRolesQuery({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
+ *      operatorId: // value for 'operatorId'
  *      selectable: // value for 'selectable'
  *   },
  * });
@@ -4229,8 +4170,8 @@ export type RolesLazyQueryHookResult = ReturnType<typeof useRolesLazyQuery>;
 export type RolesSuspenseQueryHookResult = ReturnType<typeof useRolesSuspenseQuery>;
 export type RolesQueryResult = Apollo.QueryResult<Operation.RolesQuery, Operation.RolesQueryVariables>;
 export const AllowedTicketTypesDocument = gql`
-    query AllowedTicketTypes($dropzone: ID!, $onlyPublicTickets: Boolean) {
-  ticketTypes(dropzone: $dropzone, allowManifestingSelf: $onlyPublicTickets) {
+    query AllowedTicketTypes($operator: ID!, $onlyPublicTickets: Boolean) {
+  ticketTypes(operator: $operator, allowManifestingSelf: $onlyPublicTickets) {
     ...ticketTypeDetails
   }
 }
@@ -4248,7 +4189,7 @@ export const AllowedTicketTypesDocument = gql`
  * @example
  * const { data, loading, error } = useAllowedTicketTypesQuery({
  *   variables: {
- *      dropzone: // value for 'dropzone'
+ *      operator: // value for 'operator'
  *      onlyPublicTickets: // value for 'onlyPublicTickets'
  *   },
  * });
@@ -4273,8 +4214,8 @@ export type AllowedTicketTypesLazyQueryHookResult = ReturnType<typeof useAllowed
 export type AllowedTicketTypesSuspenseQueryHookResult = ReturnType<typeof useAllowedTicketTypesSuspenseQuery>;
 export type AllowedTicketTypesQueryResult = Apollo.QueryResult<Operation.AllowedTicketTypesQuery, Operation.AllowedTicketTypesQueryVariables>;
 export const TicketTypesDocument = gql`
-    query TicketTypes($dropzone: ID!, $allowManifestingSelf: Boolean) {
-  ticketTypes(dropzone: $dropzone, allowManifestingSelf: $allowManifestingSelf) {
+    query TicketTypes($operator: ID!, $allowManifestingSelf: Boolean) {
+  ticketTypes(operator: $operator, allowManifestingSelf: $allowManifestingSelf) {
     ...ticketTypeDetails
   }
 }
@@ -4292,7 +4233,7 @@ export const TicketTypesDocument = gql`
  * @example
  * const { data, loading, error } = useTicketTypesQuery({
  *   variables: {
- *      dropzone: // value for 'dropzone'
+ *      operator: // value for 'operator'
  *      allowManifestingSelf: // value for 'allowManifestingSelf'
  *   },
  * });
@@ -4317,8 +4258,8 @@ export type TicketTypesLazyQueryHookResult = ReturnType<typeof useTicketTypesLaz
 export type TicketTypesSuspenseQueryHookResult = ReturnType<typeof useTicketTypesSuspenseQuery>;
 export type TicketTypesQueryResult = Apollo.QueryResult<Operation.TicketTypesQuery, Operation.TicketTypesQueryVariables>;
 export const LoadCreatedDocument = gql`
-    subscription LoadCreated($dropzoneId: ID!) {
-  loadCreated(dropzoneId: $dropzoneId) {
+    subscription LoadCreated($operatorId: ID!) {
+  loadCreated(operatorId: $operatorId) {
     load {
       ...loadDetails
     }
@@ -4338,7 +4279,7 @@ export const LoadCreatedDocument = gql`
  * @example
  * const { data, loading, error } = useLoadCreatedSubscription({
  *   variables: {
- *      dropzoneId: // value for 'dropzoneId'
+ *      operatorId: // value for 'operatorId'
  *   },
  * });
  */
@@ -4382,13 +4323,13 @@ export type LoadUpdatedSubscriptionHookResult = ReturnType<typeof useLoadUpdated
 export type LoadUpdatedSubscriptionResult = Apollo.SubscriptionResult<Operation.LoadUpdatedSubscription>;
 export const UserUpdatedDocument = gql`
     subscription UserUpdated($id: ID!) {
-  userUpdated(dropzoneUserId: $id) {
-    dropzoneUser {
-      ...dropzoneUserDetails
+  userUpdated(membershipId: $id) {
+    membership {
+      ...membershipDetails
     }
   }
 }
-    ${DropzoneUserDetailsFragmentDoc}`;
+    ${MembershipDetailsFragmentDoc}`;
 
 /**
  * __useUserUpdatedSubscription__

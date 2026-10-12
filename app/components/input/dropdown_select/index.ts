@@ -1,5 +1,5 @@
 import AltitudeSelect, { AltitudeSelectField } from './AltitudeSelect';
-import DropzoneUserSelect, { DropzoneUserSelectField } from './DropzoneUserSelect';
+import MembershipSelect, { MembershipSelectField } from './MembershipSelect';
 import FederationSelect, { FederationSelectField } from './FederationSelect';
 import JumpTypeSelect, { JumpTypeSelectField } from './JumpTypeSelect';
 import LicenseSelect, { LicenseSelectField } from './LicenseSelect';
@@ -10,7 +10,7 @@ import TicketTypeSelect, { TicketTypeSelectField } from './TicketTypeSelect';
 
 export {
   AltitudeSelect,
-  DropzoneUserSelect,
+  MembershipSelect,
   FederationSelect,
   JumpTypeSelect,
   LicenseSelect,
@@ -22,7 +22,7 @@ export {
 
 export {
   AltitudeSelectField,
-  DropzoneUserSelectField,
+  MembershipSelectField,
   FederationSelectField,
   JumpTypeSelectField,
   LicenseSelectField,

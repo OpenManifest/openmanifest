@@ -1,5 +1,5 @@
 import ChipSelect, { ChipSelectField } from './ChipSelect';
-import DropzoneUserChipSelect, { DropzoneUserChipSelectField } from './DropzoneUserChipSelect';
+import MembershipChipSelect, { MembershipChipSelectField } from './MembershipChipSelect';
 import JumpTypeChipSelect, { JumpTypeChipSelectField } from './JumpTypeChipSelect';
 import LicenseChipSelect, { LicenseChipSelectField } from './LicenseChipSelect';
 import PlaneChipSelect, { PlaneChipSelectField } from './PlaneChipSelect';
@@ -7,7 +7,7 @@ import TicketTypeChipSelect, { TicketTypeChipSelectField } from './TicketTypeChi
 
 export {
   ChipSelect,
-  DropzoneUserChipSelect,
+  MembershipChipSelect,
   JumpTypeChipSelect,
   LicenseChipSelect,
   PlaneChipSelect,
@@ -16,7 +16,7 @@ export {
 
 export {
   ChipSelectField,
-  DropzoneUserChipSelectField,
+  MembershipChipSelectField,
   JumpTypeChipSelectField,
   LicenseChipSelectField,
   PlaneChipSelectField,

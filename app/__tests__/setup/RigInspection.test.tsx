@@ -19,7 +19,7 @@ function Harness(props: { onSuccess?(): void }) {
   const { control, setValue, onSubmit } = useRigInspectionForm({
     fields: template,
     rigId: '2',
-    dropzoneId: '1',
+    operatorId: '1',
     onSuccess: props.onSuccess,
   });
   const { field: ok } = useController({ name: 'ok', control });
@@ -92,7 +92,7 @@ describe('rig inspection form', () => {
             query: CreateRigInspectionDocument,
             operationName: 'CreateRigInspection',
             variables: {
-              dropzone: '1',
+              operator: '1',
               rig: '2',
               isOk: true,
               definition: JSON.stringify([

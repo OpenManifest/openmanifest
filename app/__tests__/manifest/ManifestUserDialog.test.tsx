@@ -9,7 +9,7 @@ import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 jest.setTimeout(30000);
 
 const LOAD = { id: '7', loadNumber: 7, name: 'Load 7' };
-const DROPZONE_USER = { id: '55', user: { id: '55', name: 'Test Jumper', exitWeight: '82' } };
+const MEMBERSHIP = { id: '55', user: { id: '55', name: 'Test Jumper', exitWeight: '82' } };
 
 describe('<ManifestUserDialog />', () => {
   it('sends the selected load, user, ticket, jump type and exit weight to ManifestUser', async () => {
@@ -28,14 +28,14 @@ describe('<ManifestUserDialog />', () => {
       <ManifestUserDialog
         open
         load={LOAD}
-        slot={{ dropzoneUser: DROPZONE_USER } as never}
+        slot={{ membership: MEMBERSHIP } as never}
         onClose={jest.fn()}
         onSuccess={jest.fn()}
       />,
       {
         session: authenticatedSession,
         graphql: [
-          MOCK_QUERY_ALLOWED_JUMP_TYPES({ allowedForDropzoneUserIds: [55] }),
+          MOCK_QUERY_ALLOWED_JUMP_TYPES({ allowedForMembershipIds: [55] }),
           MOCK_QUERY_ALLOWED_TICKET_TYPES(),
           {
             request: {
@@ -47,7 +47,7 @@ describe('<ManifestUserDialog />', () => {
                 load: '7',
                 rig: undefined,
                 ticketType: '1',
-                dropzoneUser: '55',
+                membership: '55',
                 exitWeight: 82,
               },
             },

@@ -18,7 +18,7 @@ const definition = JSON.stringify([
 function Harness() {
   const { control, onSubmit } = useRigInspectionTemplateForm({
     template: { id: '4', definition },
-    dropzoneId: '1',
+    operatorId: '1',
   });
 
   return (
@@ -63,7 +63,7 @@ describe('rig inspection template form', () => {
           operationName: 'UpdateRigInspectionTemplate',
           variables: {
             formId: 4,
-            dropzoneId: 1,
+            operatorId: 1,
             definition: JSON.stringify([{ label: 'Pin check', valueType: 'boolean' }]),
           },
         },

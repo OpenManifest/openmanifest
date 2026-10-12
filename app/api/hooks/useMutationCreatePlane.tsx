@@ -6,7 +6,7 @@ const MUTATION_CREATE_PLANE = gql`
   mutation CreatePlane(
     $name: String!
     $registration: String!
-    $dropzoneId: Int!
+    $operatorId: Int!
     $minSlots: Int!
     $maxSlots: Int!
     $hours: Int
@@ -17,7 +17,7 @@ const MUTATION_CREATE_PLANE = gql`
         attributes: {
           name: $name
           registration: $registration
-          dropzoneId: $dropzoneId
+          operatorId: $operatorId
           minSlots: $minSlots
           maxSlots: $maxSlots
           hours: $hours
@@ -39,7 +39,7 @@ const MUTATION_CREATE_PLANE = gql`
         hours
         nextMaintenanceHours
 
-        dropzone {
+        operator {
           id
           name
           planes {
@@ -61,7 +61,7 @@ export default createMutation<
   {
     name: string;
     registration: string;
-    dropzoneId: number;
+    operatorId: number;
     minSlots: number;
     maxSlots: number;
     hours?: number;
@@ -71,7 +71,7 @@ export default createMutation<
 >(MUTATION_CREATE_PLANE, {
   getPayload: (result) => result.createPlane,
   fieldErrorMap: {
-    dropzoneId: 'dropzone',
+    operatorId: 'operator',
   },
   validates: {
     name: [isRequired('Name is required')],

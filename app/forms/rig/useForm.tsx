@@ -65,12 +65,12 @@ export interface IUseRigFormOpts {
   /** The rig being edited; a new rig when absent */
   rig?: RigEssentialsFragment | null;
   userId?: number;
-  dropzoneId?: number;
+  operatorId?: number;
   onSuccess?(): void;
 }
 
 export default function useRigForm(opts: IUseRigFormOpts) {
-  const { rig, userId, dropzoneId, onSuccess } = opts;
+  const { rig, userId, operatorId, onSuccess } = opts;
   const notify = useNotifications();
   const initialValues = React.useMemo(() => toFormValues(rig), [rig]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
@@ -109,7 +109,7 @@ export default function useRigForm(opts: IUseRigFormOpts) {
       const attributes = {
         ...fields,
         userId: userId ? Number(userId) : null,
-        dropzoneId: dropzoneId ? Number(dropzoneId) : null,
+        operatorId: operatorId ? Number(operatorId) : null,
       };
       const result = rig?.id
         ? await updateRig.mutate({ id: Number(rig.id), ...attributes })
@@ -119,7 +119,7 @@ export default function useRigForm(opts: IUseRigFormOpts) {
         onSuccess?.();
       }
     },
-    [rig?.id, userId, dropzoneId, updateRig.mutate, createRig.mutate, onSuccess]
+    [rig?.id, userId, operatorId, updateRig.mutate, createRig.mutate, onSuccess]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onSave), [handleSubmit, onSave]);

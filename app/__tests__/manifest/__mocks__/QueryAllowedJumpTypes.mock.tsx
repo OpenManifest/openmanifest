@@ -10,16 +10,16 @@ export const MOCK_QUERY_ALLOWED_JUMP_TYPES = createMockedQuery<
 >(
   AllowedJumpTypesDocument,
   {
-    dropzoneId: '1',
+    operatorId: '1',
 
-    allowedForDropzoneUserIds: [],
+    allowedForMembershipIds: [],
   },
   {
     __typename: 'Query',
-    dropzone: {
+    operator: {
       id: '1',
       ticketTypes: [],
-      __typename: 'Dropzone',
+      __typename: 'Operator',
 
       allowedJumpTypes: [
         { id: '1', name: 'Freefly', __typename: 'JumpType' },

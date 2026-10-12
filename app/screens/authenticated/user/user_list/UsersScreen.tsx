@@ -9,9 +9,9 @@ import NoResults from 'app/components/NoResults';
 import { Permission } from 'app/api/schema.d';
 import { useSession } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
-import { useDropzoneUsersQuery } from 'app/api/reflection';
-import { DropzoneUserEssentialsFragment, DropzoneUsersQueryVariables } from 'app/api/operations';
-import { useDropzoneContext } from 'app/providers';
+import { useMembershipsQuery } from 'app/api/reflection';
+import { MembershipEssentialsFragment, MembershipsQueryVariables } from 'app/api/operations';
+import { useOperatorContext } from 'app/providers';
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
 import { useUserNavigation } from '../useUserNavigation';
@@ -61,7 +61,7 @@ function UserCardSkeleton() {
   );
 }
 
-const loadingFragment: DropzoneUserEssentialsFragment = {
+const loadingFragment: MembershipEssentialsFragment = {
   id: '__LOADING__',
   hasCredits: false,
   walletId: '__LOADING__',
@@ -81,19 +81,19 @@ export default function UsersScreen() {
   const { palette, theme } = useAppTheme();
   const { searchText, searchVisible, setSearchVisible } = useUserSearch();
   const {
-    dropzone: { dropzone },
+    operator: { operator },
     dialogs,
-  } = useDropzoneContext();
+  } = useOperatorContext();
 
-  const { data, loading, refetch } = useDropzoneUsersQuery({
-    variables: omitBy<DropzoneUsersQueryVariables>(
+  const { data, loading, refetch } = useMembershipsQuery({
+    variables: omitBy<MembershipsQueryVariables>(
       {
-        dropzoneId: dropzone?.id as string,
+        operatorId: operator?.id as string,
         search: searchText,
       },
       isEmpty
-    ) as DropzoneUsersQueryVariables,
-    skip: !dropzone?.id,
+    ) as MembershipsQueryVariables,
+    skip: !operator?.id,
     fetchPolicy: 'cache-and-network',
   });
 
@@ -112,10 +112,10 @@ export default function UsersScreen() {
   const cardWidth = 370;
   const numColumns = Math.floor(width / cardWidth) || 1;
 
-  const users = React.useMemo(() => data?.dropzoneUsers?.edges || [], [data?.dropzoneUsers?.edges]);
+  const users = React.useMemo(() => data?.memberships?.edges || [], [data?.memberships?.edges]);
   console.debug({ users, numColumns });
   const initialLoading = !users?.length && loading;
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
 
   return (
     <View style={{ flexGrow: 1, backgroundColor: theme.colors.surface }}>
@@ -125,11 +125,11 @@ export default function UsersScreen() {
           <NoResults title="No users" subtitle="" />
         </View>
       )}
-      <FlatList<DropzoneUserEssentialsFragment>
+      <FlatList<MembershipEssentialsFragment>
         data={initialLoading ? new Array(8).fill(loadingFragment) : users.map((edge) => edge?.node)}
         onRefresh={() =>
           refetch({
-            dropzoneId: currentDropzoneId?.toString(),
+            operatorId: currentOperatorId?.toString(),
             search: searchText,
           })
         }

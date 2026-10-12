@@ -14,7 +14,7 @@ jest.setTimeout(30000);
 const load = (MOCK_QUERY_LOAD().result as { data: { load: LoadDetailsFragment } }).data.load;
 // The group being edited: the first two slots of the load
 const slots = (load.slots as SlotDetailsFragment[]).slice(0, 2);
-const userIds = slots.map((slot) => Number(slot.dropzoneUser?.id));
+const userIds = slots.map((slot) => Number(slot.membership?.id));
 
 const ticketType = {
   __typename: 'TicketType',
@@ -40,8 +40,8 @@ function renderDialog(
       permissions: [Permission.CreateUserSlot],
       graphql: [
         MOCK_QUERY_ALLOWED_JUMP_TYPES(
-          { allowedForDropzoneUserIds: userIds, isPublic: null as never },
-          { dropzone: { ticketTypes } } as never
+          { allowedForMembershipIds: userIds, isPublic: null as never },
+          { operator: { ticketTypes } } as never
         ),
         ...extraGraphql,
       ],
@@ -89,7 +89,7 @@ describe('<ManifestGroupDialog />', () => {
               extras: [],
               load: '1',
               userGroup: slots.map((slot) => ({
-                id: Number(slot.dropzoneUser?.id),
+                id: Number(slot.membership?.id),
                 rig: undefined,
                 exitWeight: Number(slot.exitWeight),
                 passengerName: undefined,

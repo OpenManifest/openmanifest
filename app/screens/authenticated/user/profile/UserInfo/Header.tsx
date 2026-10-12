@@ -4,7 +4,7 @@ import { Caption, Divider, Paragraph, Title, TouchableRipple } from 'react-nativ
 import format from 'date-fns/format';
 import color from 'color';
 import { openURL } from 'expo-linking';
-import { DropzoneUserProfileFragment } from 'app/api/operations';
+import { MembershipProfileFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { useProfileDialogs } from '../ProfileDialogs';
@@ -14,7 +14,7 @@ import UserAvatar from 'app/components/UserAvatar';
 import { useAppTheme } from 'app/theme';
 
 interface IUserHeader {
-  dropzoneUser?: DropzoneUserProfileFragment;
+  membership?: MembershipProfileFragment;
   children?: React.ReactNode;
   variant?: 'dark' | 'light';
   onPressAvatar?(): void;
@@ -28,7 +28,7 @@ const badgesInitials = {
   [Permission.ActAsDzso]: 'DZSO',
 };
 export default function UserHeader(props: IUserHeader) {
-  const { dropzoneUser, variant, children, onPressAvatar } = props;
+  const { membership, variant, children, onPressAvatar } = props;
   const { theme, palette } = useAppTheme();
   const [isContactOpen, setContactOpen] = React.useState<boolean>(false);
   const canUpdateUser = useRestriction(Permission.UpdateUser);
@@ -38,20 +38,16 @@ export default function UserHeader(props: IUserHeader) {
   const primaryDark = color(theme.colors.primary).darken(0.3).hex();
 
   const actingPermissions = (
-    dropzoneUser?.permissions?.filter((name) => /^actAs/.test(name)) || []
+    membership?.permissions?.filter((name) => /^actAs/.test(name)) || []
   ).map((str) => badgesInitials[str as keyof typeof badgesInitials]);
 
-  console.log('image', dropzoneUser?.user?.image);
+  console.log('image', membership?.user?.image);
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <View style={styles.avatarContainer}>
         <View style={{ flex: 1 / 3, alignItems: 'center', justifyContent: 'center' }}>
           <TouchableRipple onPress={onPressAvatar}>
-            <UserAvatar
-              image={dropzoneUser?.user?.image}
-              name={dropzoneUser?.user?.name}
-              size={80}
-            />
+            <UserAvatar image={membership?.user?.image} name={membership?.user?.name} size={80} />
           </TouchableRipple>
         </View>
         <View style={styles.titleContainer}>
@@ -61,7 +57,7 @@ export default function UserHeader(props: IUserHeader) {
             anchor={
               <TouchableRipple onPress={() => setContactOpen(true)}>
                 <Title style={[styles.title, { color: primaryDark, fontSize: 26 }]}>
-                  {dropzoneUser?.user?.name}
+                  {membership?.user?.name}
                 </Title>
               </TouchableRipple>
             }
@@ -70,35 +66,35 @@ export default function UserHeader(props: IUserHeader) {
               onPress={() => {
                 setContactOpen(false);
                 // TODO: Send email
-                if (dropzoneUser?.user.email) {
-                  openURL(`mail:${dropzoneUser?.user.email}`);
+                if (membership?.user.email) {
+                  openURL(`mail:${membership?.user.email}`);
                 }
               }}
               icon="email"
-              title={dropzoneUser?.user?.email}
+              title={membership?.user?.email}
             />
             <MenuItem
               onPress={() => {
                 setContactOpen(false);
-                if (dropzoneUser?.user.email) {
-                  openURL(`tel:${dropzoneUser?.user.phone}`);
+                if (membership?.user.email) {
+                  openURL(`tel:${membership?.user.phone}`);
                 }
               }}
               icon="phone"
-              title={dropzoneUser?.user?.phone}
+              title={membership?.user?.phone}
             />
             <MenuItem
               onPress={() => {
                 setContactOpen(false);
-                if (canUpdateUser && dropzoneUser) {
+                if (canUpdateUser && membership) {
                   editMembership();
                 }
               }}
               icon="card-account-details-star-outline"
               title={
-                !dropzoneUser?.expiresAt
+                !membership?.expiresAt
                   ? 'Not a member'
-                  : format((dropzoneUser?.expiresAt || 0) * 1000, 'yyyy/MM/dd')
+                  : format((membership?.expiresAt || 0) * 1000, 'yyyy/MM/dd')
               }
             />
           </Menu>
@@ -109,7 +105,7 @@ export default function UserHeader(props: IUserHeader) {
               { fontWeight: 'bold', fontSize: 14, paddingLeft: 4, color: textColor },
             ]}
           >
-            {dropzoneUser?.role?.name?.replace('_', ' ').toUpperCase()}
+            {membership?.role?.name?.replace('_', ' ').toUpperCase()}
             {actingPermissions.length ? (
               <Caption style={{ marginTop: 4 }}>
                 {` ${actingPermissions.map(startCase).join(', ')}`}

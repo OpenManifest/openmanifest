@@ -4,19 +4,19 @@ import { Linking, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Screen } from 'app/components/layout';
 import DatePicker from 'app/components/input/date_picker/DatePicker';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { useMasterLogQuery } from 'app/api/reflection';
 import { MasterLogQueryVariables } from 'app/api/operations';
 import { DateTime } from 'luxon';
 import { FormTextField } from 'app/components/input/text/TextField';
-import { DropzoneUserSelectField } from 'app/components/input/dropdown_select';
+import { MembershipSelectField } from 'app/components/input/dropdown_select';
 import { Permission } from 'app/api/schema.d';
 import usePalette from 'app/hooks/usePalette';
 import NoResults from 'app/components/NoResults';
 import useMasterLogForm from './useForm';
 
-export default function DropzoneMasterLogScreen() {
-  const { dropzone: currentDropzone } = useDropzoneContext();
+export default function OperatorMasterLogScreen() {
+  const { operator: currentOperator } = useOperatorContext();
   const [date, setDate] = React.useState(DateTime.local().toISODate());
   const navigation = useNavigation();
   const [isEditing, setIsEditing] = React.useState(false);
@@ -38,13 +38,13 @@ export default function DropzoneMasterLogScreen() {
 
   const variables: MasterLogQueryVariables = React.useMemo(
     () => ({
-      dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
+      operatorId: currentOperator?.operator?.id?.toString() as string,
       date,
     }),
-    [currentDropzone?.dropzone?.id, date]
+    [currentOperator?.operator?.id, date]
   );
 
-  const { data } = useMasterLogQuery({ variables, skip: !currentDropzone?.dropzone?.id });
+  const { data } = useMasterLogQuery({ variables, skip: !currentOperator?.operator?.id });
   const entry = React.useMemo(() => data?.masterLog, [data?.masterLog]);
 
   const onDownload = React.useCallback(() => {
@@ -77,7 +77,7 @@ export default function DropzoneMasterLogScreen() {
           <Card.Content>
             {isEditing ? (
               <>
-                <DropzoneUserSelectField
+                <MembershipSelectField
                   name="dzso"
                   label="DZSO"
                   requiredPermissions={[Permission.ActAsDzso]}

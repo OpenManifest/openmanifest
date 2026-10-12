@@ -1,7 +1,7 @@
 import { OnDataOptions } from '@apollo/client';
 import { LoadCreatedSubscription, LoadsQuery, LoadsQueryVariables } from 'app/api/operations';
 import { useLoadCreatedSubscription, LoadsDocument } from 'app/api/reflection';
-import { dateInZone } from 'app/utils/dropzoneTime';
+import { dateInZone } from 'app/utils/operatorTime';
 import uniqBy from 'lodash/uniqBy';
 import * as React from 'react';
 
@@ -21,7 +21,7 @@ export function useLoadCreated(variables: Partial<LoadsQueryVariables>, timeZone
             broadcast: true,
             variables: {
               ...variables,
-              // The board of the day the load was created on at the dropzone
+              // The board of the day the load was created on at the operator
               date: dateInZone(load.createdAt, timeZone),
             },
           },
@@ -51,10 +51,10 @@ export function useLoadCreated(variables: Partial<LoadsQueryVariables>, timeZone
   );
 
   return useLoadCreatedSubscription({
-    skip: !variables?.dropzone,
+    skip: !variables?.operator,
     shouldResubscribe: true,
     variables: {
-      dropzoneId: variables?.dropzone as string,
+      operatorId: variables?.operator as string,
     },
     onData,
   });

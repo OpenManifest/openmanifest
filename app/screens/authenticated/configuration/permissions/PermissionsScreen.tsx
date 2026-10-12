@@ -16,8 +16,8 @@ import { useAppTheme } from 'app/theme';
  * 
  * @returns
  * 
- *  :updateDropzone,
-    :deleteDropzone,
+ *  :updateOperator,
+    :deleteOperator,
 
     :createLoad,
     :updateLoad,
@@ -55,9 +55,9 @@ import { useAppTheme } from 'app/theme';
     :deleteRig,
     :readRig,
 
-    :createDropzoneRig,
-    :updateDropzoneRig,
-    :deleteDropzoneRig,
+    :createOperatorRig,
+    :updateOperatorRig,
+    :deleteOperatorRig,
 
     :readPermissions,
     :updatePermissions,
@@ -86,12 +86,12 @@ import { useAppTheme } from 'app/theme';
     :createUserTransaction,
     :readUserTransactions,
  */
-export default function DropzonePermissionScreen() {
+export default function OperatorPermissionScreen() {
   const { palette, theme } = useAppTheme();
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
   const { data, loading, refetch } = useRolesQuery({
     variables: {
-      dropzoneId: currentDropzoneId?.toString() as string,
+      operatorId: currentOperatorId?.toString() as string,
     },
   });
   const isFocused = useIsFocused();
@@ -104,7 +104,7 @@ export default function DropzonePermissionScreen() {
     }
   }, [isFocused, navigation, refetch]);
 
-  return loading || !data?.dropzone?.roles?.length ? (
+  return loading || !data?.operator?.roles?.length ? (
     <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
       <View style={{ maxWidth: 550 }}>
         <SkeletonContent
@@ -143,7 +143,7 @@ export default function DropzonePermissionScreen() {
           },
         }}
       >
-        {data?.dropzone?.roles?.map((role) => (
+        {data?.operator?.roles?.map((role) => (
           <TabScreen
             label={capitalize(role.name?.replace('_', ' '))}
             key={`permission-tab-role-${role.id}`}
@@ -291,13 +291,13 @@ export default function DropzonePermissionScreen() {
                   >
                     <PermissionListItem
                       role={role}
-                      permissionName="updateDropzone"
+                      permissionName="updateOperator"
                       description="Change dropzone name, visibility, and branding"
                       title="Update Dropzone"
                     />
                     <PermissionListItem
                       role={role}
-                      permissionName="deleteDropzone"
+                      permissionName="deleteOperator"
                       description="Permanently delete dropzone"
                       title="Delete Dropzone"
                     />
@@ -379,19 +379,19 @@ export default function DropzonePermissionScreen() {
                   <List.Accordion title="Rigs" style={{ backgroundColor: theme.colors.surface }}>
                     <PermissionListItem
                       role={role}
-                      permissionName="createDropzoneRig"
+                      permissionName="createOperatorRig"
                       description="Create dropzone managed rigs, e.g tandem and student rigs"
                       title="Create Rig"
                     />
                     <PermissionListItem
                       role={role}
-                      permissionName="updateDropzoneRig"
+                      permissionName="updateOperatorRig"
                       description="Make changes to existing student and tandem rigs"
                       title="Update Rigs"
                     />
                     <PermissionListItem
                       role={role}
-                      permissionName="deleteDropzoneRig"
+                      permissionName="deleteOperatorRig"
                       description="Delete existing student and tandem rigs"
                       title="Remove Rigs"
                     />

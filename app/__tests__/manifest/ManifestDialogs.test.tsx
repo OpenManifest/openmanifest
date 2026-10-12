@@ -8,7 +8,7 @@ import type { LoadDetailsFragment } from 'app/api/operations';
 import { useManifestContext } from 'app/providers';
 import { render, waitFor, within } from '../../__mocks__/render';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
-import LoadScreen from '../../screens/authenticated/dropzone/load/LoadScreen';
+import LoadScreen from '../../screens/authenticated/manifest/load/LoadScreen';
 import ManifestGroupDialog from '../../forms/manifest_group';
 import ManifestUserDialog from '../../forms/manifest_user/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';

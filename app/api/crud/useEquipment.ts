@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import {
   useCreateRigMutation,
   useUpdateRigMutation,

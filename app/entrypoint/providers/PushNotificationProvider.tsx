@@ -5,7 +5,7 @@ import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import URI from 'urijs';
 import { useUpdateUserMutation } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { useSession } from 'app/state';
 import { useNotifications } from 'app/providers/notifications';
 
@@ -49,8 +49,8 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
   const setPushToken = useSession((session) => session.setPushToken);
   const notify = useNotifications();
   const {
-    dropzone: { currentUser, loading, called },
-  } = useDropzoneContext();
+    operator: { currentUser, loading, called },
+  } = useOperatorContext();
   const notificationListener =
     React.useRef<ReturnType<typeof Notifications.addNotificationReceivedListener>>(undefined);
   const responseListener =
@@ -113,7 +113,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       if (pushToken && pushToken !== remoteToken) {
         updateUser({
           variables: {
-            dropzoneUser: currentUser.id,
+            membership: currentUser.id,
             pushToken,
           },
         });

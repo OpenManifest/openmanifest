@@ -8,7 +8,7 @@ import useAsyncFn from 'react-use/lib/useAsyncFn';
 import useManifestValidator from 'app/hooks/useManifestValidator';
 import isEqual from 'lodash/isEqual';
 import { useNotifications } from 'app/providers/notifications';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import camelCase from 'lodash/camelCase';
 import withDefaults from 'app/forms/initialValues';
 
@@ -17,7 +17,7 @@ export type ManifestUserFields = Pick<
   | 'jumpType'
   // | 'load'
   | 'rig'
-  | 'dropzoneUser'
+  | 'membership'
   | 'exitWeight'
   | 'extras'
   | 'groupNumber'
@@ -50,8 +50,8 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
 
   const notify = useNotifications();
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const manifestUserValidation = yup.object().shape({
     load: yup.object().required(),
     exitWeight: yup.number().required('Please specify exit weight').min(0).max(300),
@@ -59,7 +59,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
       .object()
       .nullable()
       .when({
-        is: () => !!dropzone?.settings?.requireEquipment,
+        is: () => !!operator?.settings?.requireEquipment,
         then: yup.object().required('You cant manifest without a rig').nullable(),
         otherwise: yup.object().nullable(),
       }),
@@ -100,7 +100,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           load: fields?.load?.id,
           rig: !fields.rig?.id ? undefined : fields.rig?.id,
           ticketType: fields.ticketType?.id,
-          dropzoneUser: fields.dropzoneUser?.id,
+          membership: fields.membership?.id,
           exitWeight: fields.exitWeight,
           ...(!fields.ticketType?.isTandem
             ? {}
@@ -120,7 +120,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           notify.error(response.error);
         }
         if ('slot' in response) {
-          notify.success(`${fields.dropzoneUser?.user?.name} has been added to the load`);
+          notify.success(`${fields.membership?.user?.name} has been added to the load`);
           onSuccess?.();
         }
       } catch (error) {

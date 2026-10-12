@@ -3,7 +3,7 @@ import { Paragraph, useTheme, IconButton } from 'react-native-paper';
 import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import Color from 'color';
 import { useNavigation } from '@react-navigation/native';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 
 interface ISetupWarning {
   credits: number;
@@ -57,8 +57,8 @@ export default function SetupWarning(props: ISetupWarning) {
   } = props;
   const navigation = useNavigation();
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
 
   if (loading) {
     return null;

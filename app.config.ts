@@ -3,7 +3,6 @@ import 'dotenv/config';
 import { APP_NAME, APP_VERSION, ENDPOINTS, getEndpoint } from './build/constants';
 
 const EAS_PROJECT_ID = '1d8fa34d-2ff8-4095-ab49-29a426117a8c';
-const FACEBOOK_APP_ID = '686479516065674';
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   const environment = process.env.EXPO_ENV as 'development' | 'staging' | 'production' | undefined;
@@ -35,18 +34,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       url: `https://u.expo.dev/${EAS_PROJECT_ID}`,
     },
     assetBundlePatterns: ['**/*'],
-    facebookAppId: FACEBOOK_APP_ID,
-    facebookDisplayName: 'OpenManifest',
-    facebookAutoInitEnabled: true,
-    facebookScheme: `fb${FACEBOOK_APP_ID}`,
-    plugins: [
-      [
-        'expo-facebook',
-        {
-          userTrackingPermission: false,
-        },
-      ],
-    ],
     ios: {
       config: {
         usesNonExemptEncryption: false,
@@ -55,10 +42,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       usesAppleSignIn: true,
       infoPlist: {
         photosPermission: 'OpenManifest needs access to photos to let you upload avatars',
-        fbAppId: FACEBOOK_APP_ID,
-        fbAppName: 'OpenManifest',
-        fbAppUrl: 'https://www.openmanifest.org',
-        facebookScheme: `fb${FACEBOOK_APP_ID}`,
       },
       bundleIdentifier: 'com.dangertechnologies.openmanifest',
       supportsTablet: true,
@@ -107,8 +90,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       url: getEndpoint(),
       urls: ENDPOINTS,
       environment: process.env.EXPO_ENV,
-      facebookAppId: process.env.FACEBOOK_APP_ID,
-      facebookClientToken: process.env.FACEBOOK_CLIENT_TOKEN,
       googleMapsAndroid: process.env.GOOGLE_MAPS_ANDROID,
       googleMapsIos: process.env.GOOGLE_MAPS_IOS,
       googleMapsWeb: process.env.GOOGLE_MAPS_WEB,

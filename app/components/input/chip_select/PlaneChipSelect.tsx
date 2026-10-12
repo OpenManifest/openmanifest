@@ -17,11 +17,11 @@ interface IPlaneSelect {
 
 function PlaneChipSelect(props: IPlaneSelect) {
   const { value, onChange, onLoadingStateChanged, error } = props;
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
 
   const { data, loading } = usePlanesQuery({
     variables: {
-      dropzoneId: currentDropzoneId?.toString() as string,
+      operatorId: currentOperatorId?.toString() as string,
     },
   });
 

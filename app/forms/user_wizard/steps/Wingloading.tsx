@@ -21,21 +21,19 @@ type StepFields = {
 };
 
 export function useStep(): WizardFormStep<StepFields> {
-  const { dropzoneUser } = useUserProfileContext();
+  const { membership } = useUserProfileContext();
 
   return useMemo(
     () => ({
       defaultValues: {
-        canopySize: dropzoneUser?.user?.rigs?.[0]?.canopySize
-          ? Number(dropzoneUser?.user?.rigs?.[0]?.canopySize)
+        canopySize: membership?.user?.rigs?.[0]?.canopySize
+          ? Number(membership?.user?.rigs?.[0]?.canopySize)
           : 150,
-        exitWeight: dropzoneUser?.user?.exitWeight
-          ? parseFloat(dropzoneUser?.user?.exitWeight)
-          : 70,
+        exitWeight: membership?.user?.exitWeight ? parseFloat(membership?.user?.exitWeight) : 70,
       },
       validation,
     }),
-    [dropzoneUser?.user?.exitWeight, dropzoneUser?.user?.rigs]
+    [membership?.user?.exitWeight, membership?.user?.rigs]
   );
 }
 
