@@ -5,13 +5,24 @@ import path from 'node:path';
 const root = path.resolve(__dirname, '../..');
 // The config is passed in, not loaded by ESLint: its loader needs a dynamic import, which Jest does not support
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const config = require('../../eslint.config.js');
+const loaded = require('../../eslint.config.js');
+// eslint-plugin-i18next finds its rules with requireindex, which reads `require.extensions`: empty under Jest
+const i18nextPlugin = {
+  rules: { 'no-literal-string': require('eslint-plugin-i18next/lib/rules/no-literal-string') },
+};
+const config = loaded.map((entry: { plugins?: Record<string, unknown> }) =>
+  entry.plugins?.i18next
+    ? { ...entry, plugins: { ...entry.plugins, i18next: i18nextPlugin } }
+    : entry
+);
 const eslint = new ESLint({ cwd: root, overrideConfigFile: true, overrideConfig: config });
 
 async function messages(code: string, file = 'app/ui/Example.tsx') {
   const [result] = await eslint.lintText(code, { filePath: path.join(root, file) });
-  return result.messages.filter(
-    (m) => m.ruleId === 'no-restricted-syntax' || m.ruleId === 'no-restricted-imports'
+  return result.messages.filter((m) =>
+    ['no-restricted-syntax', 'no-restricted-imports', 'i18next/no-literal-string'].includes(
+      m.ruleId ?? ''
+    )
   );
 }
 
@@ -51,9 +62,14 @@ describe('UI lint rules in converted directories', () => {
     ['a raw Pressable', `const a = <Pressable onPress={() => {}} />;`],
     ['a TouchableOpacity', `const a = <TouchableOpacity onPress={f}>x</TouchableOpacity>;`],
     ['an Image without a label', `const a = <Image source={1} />;`],
+    ['literal text in JSX', `const a = <Text>Hello there</Text>;`],
     ['an Image with accessible={true}', `const a = <Image source={1} accessible />;`],
   ])('reject %s', async (_name, code) => {
     expect((await messages(code)).length).toBeGreaterThan(0);
+  });
+
+  it('allow text that goes through t()', async () => {
+    expect(await messages(`const a = <Text>{t('common:save')}</Text>;`)).toEqual([]);
   });
 
   it('allow a Pressable without onPress', async () => {

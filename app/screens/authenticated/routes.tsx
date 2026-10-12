@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, Text } from 'react-native';
 
 import useRestriction from 'app/hooks/useRestriction';
@@ -27,6 +28,7 @@ export type AuthenticatedRoutes = {
 };
 
 export default function AuthenticatedTabBar() {
+  const { t } = useTranslation('common');
   const { palette } = useAppTheme();
 
   const {
@@ -78,6 +80,7 @@ export default function AuthenticatedTabBar() {
             name="Overview"
             component={OverviewTab}
             options={{
+              title: t('tabs.overview'),
               tabBarIcon: ({ focused, color, size }) => (
                 <MaterialCommunityIcons
                   name="view-dashboard-outline"
@@ -92,6 +95,7 @@ export default function AuthenticatedTabBar() {
           name="Manifest"
           component={ManifestTab}
           options={{
+            title: t('tabs.manifest'),
             tabBarIcon: ({ focused, color, size }) => (
               <MaterialCommunityIcons
                 name="airplane"
@@ -105,6 +109,7 @@ export default function AuthenticatedTabBar() {
           name="Notifications"
           component={NotificationsTab}
           options={{
+            title: t('tabs.notifications'),
             tabBarIcon: ({ focused, color, size }) => (
               <MaterialCommunityIcons
                 name="bell-outline"
@@ -120,6 +125,7 @@ export default function AuthenticatedTabBar() {
             name="Users"
             component={UsersTab}
             options={{
+              title: t('tabs.users'),
               tabBarIcon: ({ size, color, focused }) => (
                 <MaterialCommunityIcons
                   {...{ size, color }}

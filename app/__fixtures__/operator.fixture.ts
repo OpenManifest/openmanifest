@@ -17,6 +17,7 @@ export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
   status: OperatorState.Public,
   isCreditSystemEnabled: true,
   timeZone: 'Australia/Brisbane',
+  terminology: {},
   settings: {
     __typename: 'Settings',
     allowManifestBypass: false,

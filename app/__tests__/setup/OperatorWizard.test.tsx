@@ -2,6 +2,7 @@ import * as React from 'react';
 import { TextInput } from 'react-native';
 import OperatorWizard from '../../screens/wizards/operator_wizard/OperatorWizard';
 import { CreateOperatorDocument } from 'app/api/reflection';
+import { resolveTimeZone } from 'app/utils/operatorTime';
 import { COLOR_PRESETS } from '../../components/input/colorpicker/ColorPicker';
 import { act, fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_FEDERATIONS from '../manifest/__mocks__/QueryFederations.mock';
@@ -110,6 +111,8 @@ describe('<OperatorWizard />', () => {
           query: CreateOperatorDocument,
           operationName: 'CreateOperator',
           variables: {
+            industry: 'SKYDIVING',
+            timeZone: resolveTimeZone(),
             name: 'Skydive Alpha',
             banner: '',
             federation: 1,

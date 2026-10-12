@@ -5,7 +5,8 @@ import type { WizardRef } from 'app/components/carousel_wizard/Wizard';
 import useMutationCreateOperator from 'app/api/hooks/useMutationCreateOperator';
 import useMutationUpdateOperator from 'app/api/hooks/useMutationUpdateOperator';
 import camelize from 'lodash/camelCase';
-import { Permission } from 'app/api/schema.d';
+import { Industry, Permission } from 'app/api/schema.d';
+import { resolveTimeZone } from 'app/utils/operatorTime';
 import useSelectOperator from 'app/hooks/useSelectOperator';
 import { StackActions, useNavigation } from '@react-navigation/native';
 import { useNotifications } from 'app/providers/notifications';
@@ -93,6 +94,9 @@ function OperatorSetupScreen() {
     // Create or update operator
     const result = !values.id
       ? await mutationCreateOperator.mutate({
+          // Until the wizard asks for an industry (P7.23) every new operator is a skydiving one, in the device's zone
+          industry: Industry.Skydiving,
+          timeZone: resolveTimeZone(),
           federation: Number(values.federation?.id),
           name: values.name,
           banner: values.banner,

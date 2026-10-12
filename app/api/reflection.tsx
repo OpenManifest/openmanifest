@@ -78,6 +78,7 @@ export const OperatorEssentialsFragmentDoc = gql`
   isCreditSystemEnabled
   createdAt
   timeZone
+  terminology
   settings {
     allowManifestBypass
     allowNegativeCredits
@@ -1119,9 +1120,9 @@ export type CreateLoadMutationHookResult = ReturnType<typeof useCreateLoadMutati
 export type CreateLoadMutationResult = Apollo.MutationResult<Operation.CreateLoadMutation>;
 export type CreateLoadMutationOptions = Apollo.BaseMutationOptions<Operation.CreateLoadMutation, Operation.CreateLoadMutationVariables>;
 export const CreateOperatorDocument = gql`
-    mutation CreateOperator($name: String!, $banner: String, $federation: Int!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String) {
+    mutation CreateOperator($industry: Industry!, $name: String!, $banner: String, $federation: Int!, $timeZone: String!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String) {
   createOperator(
-    input: {attributes: {name: $name, banner: $banner, federation: $federation, primaryColor: $primaryColor, secondaryColor: $secondaryColor, lat: $lat, lng: $lng}}
+    input: {industry: $industry, attributes: {name: $name, banner: $banner, federation: $federation, timeZone: $timeZone, primaryColor: $primaryColor, secondaryColor: $secondaryColor, lat: $lat, lng: $lng}}
   ) {
     fieldErrors {
       field
@@ -1149,9 +1150,11 @@ export type CreateOperatorMutationFn = Apollo.MutationFunction<Operation.CreateO
  * @example
  * const [createOperatorMutation, { data, loading, error }] = useCreateOperatorMutation({
  *   variables: {
+ *      industry: // value for 'industry'
  *      name: // value for 'name'
  *      banner: // value for 'banner'
  *      federation: // value for 'federation'
+ *      timeZone: // value for 'timeZone'
  *      lat: // value for 'lat'
  *      lng: // value for 'lng'
  *      primaryColor: // value for 'primaryColor'

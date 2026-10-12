@@ -1,6 +1,7 @@
 const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
 const prettierConfig = require('eslint-config-prettier/flat');
+const i18next = require('eslint-plugin-i18next');
 const uiConverted = require('./eslint/ui-converted');
 
 // Rules that report findings in the existing code. They are warnings until the code is cleaned up (the counts are in
@@ -115,7 +116,10 @@ module.exports = defineConfig([
     // Converted directories (eslint/ui-converted.js): the UI rules are errors
     files: uiConverted.converted,
     ignores: uiConverted.exempt,
+    plugins: { i18next },
     rules: {
+      // Every visible string goes through t() (jsx-text-only: text between tags; props are checked by the debt counter)
+      'i18next/no-literal-string': ['error', { mode: 'jsx-text-only' }],
       'no-restricted-imports': [
         'error',
         {
