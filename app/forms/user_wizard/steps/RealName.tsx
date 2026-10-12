@@ -27,16 +27,16 @@ type StepFields = {
 };
 
 export function useStep(): WizardFormStep<StepFields> {
-  const { dropzoneUser } = useUserProfileContext();
+  const { membership } = useUserProfileContext();
 
   return useMemo(
     () => ({
       defaultValues: {
-        name: dropzoneUser?.user?.name || '',
+        name: membership?.user?.name || '',
       },
       validation,
     }),
-    [dropzoneUser?.user?.name]
+    [membership?.user?.name]
   );
 }
 export interface IRealNameStepProps extends IWizardStepProps {

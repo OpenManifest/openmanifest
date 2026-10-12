@@ -1,0 +1,87 @@
+import { HeaderStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
+
+import * as React from 'react';
+import { useSession } from 'app/state';
+import AppBar from 'app/components/appbar/AppBar';
+import { NavigatorScreenParams } from '@react-navigation/native';
+import { AppSignalBoundary } from 'app/components/app_signal';
+import LoadScreen, { LoadScreenRoute } from './load/LoadScreen';
+
+import WeatherConditionsScreen from './weather_conditions/WeatherConditionsScreen';
+import JumpRunScreen from './weather_conditions/JumpRunScreen';
+import WindScreen from './weather_conditions/WindScreen';
+import { WeatherFormProvider } from 'app/forms/weather';
+
+import ManifestScreen from './manifest/ManifestScreen';
+
+import User, { UserRoutes } from '../user/routes';
+import Configuration, { ConfigurationRoutes } from '../configuration/routes';
+
+export type OperatorRoutes = {
+  WeatherConditionsScreen: undefined;
+  WindScreen: undefined;
+  ManifestScreen: undefined;
+  JumpRunScreen: undefined;
+  DashboardScreen: undefined;
+  User: NavigatorScreenParams<UserRoutes>;
+  Configuration: NavigatorScreenParams<ConfigurationRoutes>;
+} & LoadScreenRoute;
+
+const Manifest = createStackNavigator<OperatorRoutes>();
+
+export default function ManifestTab() {
+  const credentials = useSession((session) => session.credentials);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
+
+  return (
+    <AppSignalBoundary>
+      <WeatherFormProvider>
+        <Manifest.Navigator
+          screenOptions={{
+            headerShown: !!(credentials && currentOperatorId),
+            header: (props) => <AppBar {...props} />,
+            headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
+            cardStyle: {
+              flex: 1,
+            },
+          }}
+        >
+          <Manifest.Screen
+            name="ManifestScreen"
+            component={ManifestScreen}
+            options={{ title: 'Manifest' }}
+          />
+
+          <Manifest.Screen
+            name="WeatherConditionsScreen"
+            component={WeatherConditionsScreen}
+            options={{ headerShown: false }}
+          />
+          <Manifest.Screen
+            name="WindScreen"
+            component={WindScreen}
+            options={{ title: 'Winds Aloft' }}
+          />
+          <Manifest.Screen
+            name="JumpRunScreen"
+            component={JumpRunScreen}
+            options={{ title: 'Jump Run' }}
+          />
+          <Manifest.Screen name="LoadScreen" component={LoadScreen} options={{ title: 'Load' }} />
+
+          <Manifest.Screen
+            name="User"
+            component={User}
+            options={{ headerShown: false, presentation: 'modal' }}
+          />
+
+          <Manifest.Screen
+            name="Configuration"
+            component={Configuration}
+            options={{ headerShown: false }}
+          />
+        </Manifest.Navigator>
+      </WeatherFormProvider>
+    </AppSignalBoundary>
+  );
+}

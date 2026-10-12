@@ -27,7 +27,7 @@ export default function RigInspectionNotification(props: INotification) {
               screen: 'RigInspectionScreen',
               params: {
                 rigId: (notification.resource as unknown as RigEssentialsFragment).id,
-                dropzoneUserId: (notification.resource as unknown as RigEssentialsFragment).owner
+                membershipId: (notification.resource as unknown as RigEssentialsFragment).owner
                   ?.id as string,
               },
             })

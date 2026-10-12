@@ -57,7 +57,7 @@ const fetchMock = jest.fn(async (_url: string, init: { body: string; headers: He
             __typename: 'UpdateUserPayload',
             errors: null,
             fieldErrors: null,
-            dropzoneUser: null,
+            membership: null,
           },
         },
       };
@@ -107,7 +107,7 @@ describe('logging out and in again without a reload', () => {
       token: 'a',
     });
     expect(useSession.getState().credentials).toBeNull();
-    expect(useSession.getState().currentDropzoneId).toBeNull();
+    expect(useSession.getState().currentOperatorId).toBeNull();
     expect(client.cache.extract()).toEqual({});
 
     // User B logs in, in the same app session
