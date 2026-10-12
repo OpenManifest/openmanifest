@@ -1,0 +1,14 @@
+{
+  "tabs": {
+    "overview": "Overview",
+    "manifest": "Manifest",
+    "notifications": "Notifications",
+    "users": "Users"
+  },
+  "call": {
+    "minutes": "{{minutes}} minute {{call}}"
+  },
+  "time": {
+    "now": "now"
+  }
+}

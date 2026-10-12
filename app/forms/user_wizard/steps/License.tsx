@@ -21,17 +21,17 @@ type StepFields = {
 };
 
 export function useStep(): WizardFormStep<StepFields> {
-  const { dropzoneUser } = useUserProfileContext();
+  const { membership } = useUserProfileContext();
 
   return useMemo(
     () => ({
       defaultValues: {
-        federation: dropzoneUser?.license?.federation,
-        license: dropzoneUser?.license,
+        federation: membership?.license?.federation,
+        license: membership?.license,
       },
       validation,
     }),
-    [dropzoneUser?.license]
+    [membership?.license]
   );
 }
 

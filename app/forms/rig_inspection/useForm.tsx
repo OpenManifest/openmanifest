@@ -5,14 +5,11 @@ import { startOfDay } from 'date-fns';
 import isEqual from 'lodash/isEqual';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
-import type {
-  DropzoneUserProfileQuery,
-  DropzoneUserProfileQueryVariables,
-} from 'app/api/operations';
+import type { MembershipProfileQuery, MembershipProfileQueryVariables } from 'app/api/operations';
 import {
-  DropzoneDocument,
-  DropzoneUserProfileDocument,
-  useCreateRigInspectionMutation,
+  OperatorDocument,
+  MembershipProfileDocument,
+  useCreateEquipmentInspectionMutation,
 } from 'app/api/reflection';
 import type { Query } from 'app/api/schema.d';
 import { useNotifications } from 'app/providers/notifications';
@@ -29,7 +26,7 @@ const isBlank = (value: FieldItem['value']) =>
   value === undefined || value === null || value === '';
 
 /**
- * The fields come from the dropzone's template, so the rules do too: a rig can only be marked OK to jump once the
+ * The fields come from the operator's template, so the rules do too: a rig can only be marked OK to jump once the
  * fields the template marks as required have an answer (a rig that is not OK can be recorded with gaps).
  */
 export function buildRigInspectionValidation(template: FieldItem[]) {
@@ -56,16 +53,16 @@ export function buildRigInspectionValidation(template: FieldItem[]) {
 }
 
 export interface IUseRigInspectionFormOpts {
-  /** The fields to show: an earlier inspection of this rig, or else the dropzone's template */
+  /** The fields to show: an earlier inspection of this rig, or else the operator's template */
   fields: FieldItem[];
   ok?: boolean;
   rigId?: string;
-  dropzoneId?: string;
+  operatorId?: string;
   onSuccess?(): void;
 }
 
 export default function useRigInspectionForm(opts: IUseRigInspectionFormOpts) {
-  const { fields, ok = false, rigId, dropzoneId, onSuccess } = opts;
+  const { fields, ok = false, rigId, operatorId, onSuccess } = opts;
   const notify = useNotifications();
   const initialValues = React.useMemo<RigInspectionFields>(() => ({ fields, ok }), [fields, ok]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
@@ -87,53 +84,53 @@ export default function useRigInspectionForm(opts: IUseRigInspectionFormOpts) {
     reset(defaultValues);
   }, [defaultValues, reset]);
 
-  const [mutationCreateRigInspection, { loading }] = useCreateRigInspectionMutation();
+  const [mutationCreateEquipmentInspection, { loading }] = useCreateEquipmentInspectionMutation();
 
   const [, onSave] = useAsyncFn(
     async (values: RigInspectionFields) => {
       try {
-        await mutationCreateRigInspection({
+        await mutationCreateEquipmentInspection({
           variables: {
-            dropzone: dropzoneId,
+            operator: operatorId,
             rig: rigId,
             definition: JSON.stringify(values.fields),
             isOk: !!values.ok,
           },
           update: async (client, mutationResult) => {
-            const rigInspection = mutationResult.data?.createRigInspection?.rigInspection;
+            const rigInspection = mutationResult.data?.createEquipmentInspection?.rigInspection;
             const result = client.readQuery<
-              DropzoneUserProfileQuery,
-              DropzoneUserProfileQueryVariables
+              MembershipProfileQuery,
+              MembershipProfileQueryVariables
             >({
-              query: DropzoneUserProfileDocument,
+              query: MembershipProfileDocument,
               variables: {
-                id: dropzoneId as string,
+                id: operatorId as string,
               },
             });
 
             const currentDz = client.readQuery<Query>({
-              query: DropzoneDocument,
+              query: OperatorDocument,
               variables: {
-                dropzoneId: dropzoneId?.toString() as string,
+                operatorId: operatorId?.toString() as string,
                 earliestTimestamp: startOfDay(new Date()).toISOString(),
               },
             });
 
-            if (currentDz?.dropzone?.currentUser?.id === rigInspection?.dropzoneUser?.id) {
+            if (currentDz?.operator?.currentUser?.id === rigInspection?.membership?.id) {
               client.writeQuery({
-                query: DropzoneDocument,
+                query: OperatorDocument,
                 variables: {
-                  dropzoneId: dropzoneId?.toString() as string,
+                  operatorId: operatorId?.toString() as string,
                   earliestTimestamp: startOfDay(new Date()).toISOString(),
                 },
                 data: {
                   ...currentDz,
-                  dropzone: {
-                    ...currentDz?.dropzone,
+                  operator: {
+                    ...currentDz?.operator,
                     currentUser: {
-                      ...currentDz?.dropzone?.currentUser,
+                      ...currentDz?.operator?.currentUser,
                       rigInspections: [
-                        ...(currentDz?.dropzone?.currentUser?.rigInspections || []).filter(
+                        ...(currentDz?.operator?.currentUser?.rigInspections || []).filter(
                           (ins) => ins.id !== rigInspection?.id
                         ),
                         rigInspection,
@@ -145,9 +142,9 @@ export default function useRigInspectionForm(opts: IUseRigInspectionFormOpts) {
             }
 
             const newData = {
-              dropzoneUser: {
+              membership: {
                 rigInspections: [
-                  ...(result?.dropzoneUser?.rigInspections || []).filter(
+                  ...(result?.membership?.rigInspections || []).filter(
                     (ins) => ins.id !== rigInspection?.id
                   ),
                   rigInspection,
@@ -156,10 +153,10 @@ export default function useRigInspectionForm(opts: IUseRigInspectionFormOpts) {
             };
 
             client.writeQuery({
-              query: DropzoneUserProfileDocument,
+              query: MembershipProfileDocument,
               variables: {
-                dropzoneId: dropzoneId?.toString() as string,
-                dropzoneUserId: Number(rigInspection?.dropzoneUser?.id),
+                operatorId: operatorId?.toString() as string,
+                membershipId: Number(rigInspection?.membership?.id),
               },
               data: newData,
             });
@@ -177,7 +174,7 @@ export default function useRigInspectionForm(opts: IUseRigInspectionFormOpts) {
         }
       }
     },
-    [dropzoneId, mutationCreateRigInspection, notify, onSuccess, rigId]
+    [operatorId, mutationCreateEquipmentInspection, notify, onSuccess, rigId]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onSave), [handleSubmit, onSave]);

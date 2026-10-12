@@ -1,7 +1,7 @@
 import * as React from 'react';
 import noop from 'lodash/noop';
-import type { DropzoneUserProfileFragment, RigEssentialsFragment } from 'app/api/operations';
-import DropzoneUserDialog from 'app/forms/dropzone_user';
+import type { MembershipProfileFragment, RigEssentialsFragment } from 'app/api/operations';
+import MembershipDialog from 'app/forms/membership';
 import RigDialog from 'app/forms/rig';
 import UserDialog from 'app/forms/user';
 import createUseDialog from 'app/providers/hooks/useDialog';
@@ -27,9 +27,9 @@ const useRigDialog = createUseDialog<{ rig?: RigEssentialsFragment }>();
 
 /** Mounts the sheets a profile can open once, so any part of the profile can open them. */
 export function ProfileDialogsProvider(
-  props: React.PropsWithChildren<{ dropzoneUser?: DropzoneUserProfileFragment | null }>
+  props: React.PropsWithChildren<{ membership?: MembershipProfileFragment | null }>
 ) {
-  const { dropzoneUser, children } = props;
+  const { membership, children } = props;
   const userDialog = useUserDialog();
   const membershipDialog = useMembershipDialog();
   const rigDialog = useRigDialog();
@@ -52,19 +52,15 @@ export function ProfileDialogsProvider(
       <RigDialog
         open={rigDialog.visible}
         rig={rigDialog.state?.rig}
-        userId={Number(dropzoneUser?.user?.id)}
+        userId={Number(membership?.user?.id)}
         onClose={rigDialog.close}
       />
-      <DropzoneUserDialog
+      <MembershipDialog
         open={membershipDialog.visible}
-        dropzoneUser={dropzoneUser}
+        membership={membership}
         onClose={membershipDialog.close}
       />
-      <UserDialog
-        open={userDialog.visible}
-        dropzoneUser={dropzoneUser}
-        onClose={userDialog.close}
-      />
+      <UserDialog open={userDialog.visible} membership={membership} onClose={userDialog.close} />
     </ProfileDialogsContext.Provider>
   );
 }

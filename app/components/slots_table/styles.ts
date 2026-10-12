@@ -13,7 +13,7 @@ export default StyleSheet.create({
   wingLoadingCell: {
     flex: 2,
   },
-  jumpTypeCell: {
+  activityTypeCell: {
     flex: 2,
   },
   altitudeCell: {

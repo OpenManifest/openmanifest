@@ -3,10 +3,10 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { useController, useFormContext, useWatch } from 'react-hook-form';
 import { HelperText, Divider, Chip, List } from 'react-native-paper';
 import uniqBy from 'lodash/uniqBy';
-import { useAllowedJumpTypesQuery } from 'app/api/reflection';
+import { useAllowedActivityTypesQuery } from 'app/api/reflection';
 import { useSession } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
-import { JumpType, Permission } from 'app/api/schema.d';
+import { ActivityType, Permission } from 'app/api/schema.d';
 import type { RigEssentialsFragment } from 'app/api/operations';
 import ChipSelect from 'app/components/input/chip_select/ChipSelect';
 import UserRigCard from './UserRigCard';
@@ -43,8 +43,8 @@ function UserCard(props: IUserCardProps) {
     [getValues, setValue, slotUser]
   );
 
-  const onChangeExitWeight = React.useCallback(
-    (exitWeight: number) => update({ exitWeight }),
+  const onChangeBodyMassKg = React.useCallback(
+    (bodyMassKg: number) => update({ bodyMassKg }),
     [update]
   );
   const onRemove = React.useCallback(() => update(null), [update]);
@@ -52,31 +52,31 @@ function UserCard(props: IUserCardProps) {
     (newRig: RigEssentialsFragment) => update({ rigId: Number(newRig.id), rig: newRig }),
     [update]
   );
-  const onChangePassengerName = React.useCallback(
-    (passengerName: string) => update({ passengerName }),
+  const onChangeGuestName = React.useCallback(
+    (guestName: string) => update({ guestName }),
     [update]
   );
-  const onChangePassengerWeight = React.useCallback(
-    (passengerExitWeight: number) => update({ passengerExitWeight }),
+  const onChangeGuestWeight = React.useCallback(
+    (guestBodyMassKg: number) => update({ guestBodyMassKg }),
     [update]
   );
 
   return (
     <UserRigCard
       key={`user-rig-card-${slotUser.id}`}
-      dropzoneUserId={slotUser.id?.toString()}
+      membershipId={slotUser.id?.toString()}
       selectedRig={slotUser.rig || undefined}
-      exitWeight={slotUser.exitWeight}
+      bodyMassKg={slotUser.bodyMassKg}
       {...{
-        onChangeExitWeight,
+        onChangeBodyMassKg,
         onRemove,
         onChangeRig,
-        onChangePassengerName,
-        onChangePassengerWeight,
+        onChangeGuestName,
+        onChangeGuestWeight,
       }}
       {...{ isTandem }}
-      passengerName={slotUser.passengerName}
-      passengerWeight={slotUser.passengerExitWeight}
+      guestName={slotUser.guestName}
+      guestWeight={slotUser.guestBodyMassKg}
     />
   );
 }
@@ -84,13 +84,13 @@ function UserCard(props: IUserCardProps) {
 /** The jump, ticket and jumpers of a group. Needs to be inside the group form's `FormProvider`. */
 export default function ManifestGroupForm() {
   const { control } = useFormContext<ManifestGroupFields>();
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
   const canManifestOthers = useRestriction(Permission.CreateUserSlot);
 
   const users = useWatch({ control, name: 'users' });
   const load = useWatch({ control, name: 'load' });
-  const { field: jumpType, fieldState: jumpTypeState } = useController({
-    name: 'jumpType',
+  const { field: activityType, fieldState: activityTypeState } = useController({
+    name: 'activityType',
     control,
   });
   const { field: ticketType, fieldState: ticketTypeState } = useController({
@@ -101,19 +101,19 @@ export default function ManifestGroupForm() {
   const { field: groupNumber } = useController({ name: 'groupNumber', control });
   const { fieldState: usersState } = useController({ name: 'users', control });
 
-  const { data } = useAllowedJumpTypesQuery({
+  const { data } = useAllowedActivityTypesQuery({
     variables: {
-      allowedForDropzoneUserIds: users?.map((slotUser) => slotUser.id) as number[],
+      allowedForMembershipIds: users?.map((slotUser) => slotUser.id) as number[],
       isPublic: canManifestOthers ? null : true,
-      dropzoneId: currentDropzoneId?.toString() as string,
+      operatorId: currentOperatorId?.toString() as string,
     },
     onError: console.error,
   });
 
-  const jumpTypes = React.useMemo(
+  const activityTypes = React.useMemo(
     () =>
       uniqBy(
-        [...(data?.dropzone?.allowedJumpTypes || []), ...(data?.jumpTypes || [])],
+        [...(data?.operator?.allowedActivityTypes || []), ...(data?.activityTypes || [])],
         ({ id }) => id
       ) || [],
     [data]
@@ -134,23 +134,23 @@ export default function ManifestGroupForm() {
         <List.Subheader>Jump type</List.Subheader>
         <ChipSelect
           autoSelectFirst
-          items={jumpTypes}
-          value={jumpType.value ? [jumpType.value] : []}
-          renderItemLabel={(item: JumpType) => item.name}
-          isDisabled={(item: JumpType) =>
-            !data?.dropzone?.allowedJumpTypes?.map(({ id }) => id).includes(item.id)
+          items={activityTypes}
+          value={activityType.value ? [activityType.value] : []}
+          renderItemLabel={(item: ActivityType) => item.name}
+          isDisabled={(item: ActivityType) =>
+            !data?.operator?.allowedActivityTypes?.map(({ id }) => id).includes(item.id)
           }
-          onChange={([selected]) => jumpType.onChange(selected)}
+          onChange={([selected]) => activityType.onChange(selected)}
         />
 
-        <HelperText type={jumpTypeState.error ? 'error' : 'info'}>
-          {jumpTypeState.error?.message || ''}
+        <HelperText type={activityTypeState.error ? 'error' : 'info'}>
+          {activityTypeState.error?.message || ''}
         </HelperText>
 
         <List.Subheader>Ticket</List.Subheader>
         <ChipSelect<TicketTypeValue>
           autoSelectFirst
-          items={(data?.dropzone?.ticketTypes || []) as TicketTypeValue[]}
+          items={(data?.operator?.ticketTypes || []) as TicketTypeValue[]}
           value={ticketType.value ? [ticketType.value] : []}
           renderItemLabel={(item) => item.name}
           onChange={([selected]) => ticketType.onChange(selected)}
