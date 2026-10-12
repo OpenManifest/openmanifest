@@ -10,7 +10,6 @@ import Divider from 'app/components/Divider';
 
 import LottieView from 'app/components/LottieView';
 import { FormTextField } from 'app/components/input/text/TextField';
-import FacebookButton from './FacebookButton';
 import AppleButton from './AppleButton';
 import useLoginForm from './useForm';
 
@@ -18,7 +17,7 @@ export default function LoginForm() {
   const navigation = useNavigation();
   const theme = useTheme();
 
-  const { control, onSubmit, loading, loginWithApple, loginWithFacebook } = useLoginForm();
+  const { control, onSubmit, loading, loginWithApple } = useLoginForm();
   return (
     <View>
       {loading ? (
@@ -75,7 +74,6 @@ export default function LoginForm() {
       </Button>
 
       <Divider>or</Divider>
-      <FacebookButton disabled={loading} style={{ marginTop: 8 }} onPress={loginWithFacebook} />
 
       <AppleButton onPress={loginWithApple} style={{ width: '100%', flex: 1 }} />
 

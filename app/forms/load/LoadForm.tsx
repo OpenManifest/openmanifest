@@ -5,8 +5,8 @@ import { FormTextField } from 'app/components/input/text/TextField';
 import { Divider } from 'react-native-paper';
 import { Control } from 'react-hook-form';
 import {
-  DropzoneUserChipSelectField,
-  PlaneChipSelectField,
+  MembershipChipSelectField,
+  VehicleChipSelectField,
 } from 'app/components/input/chip_select';
 import { FormNumberField } from 'app/components/input/number_input';
 import { LoadFields } from './useForm';
@@ -23,16 +23,16 @@ export default function LoadForm(props: ILoadFormProps) {
 
       <FormNumberField label="Max Slots" {...{ control }} name="maxSlots" />
       <View style={{ width: '100%' }}>
-        <PlaneChipSelectField {...{ control }} name="plane" />
+        <VehicleChipSelectField {...{ control }} name="vehicle" />
 
-        <DropzoneUserChipSelectField
+        <MembershipChipSelectField
           label="GCA"
           {...{ control }}
           name="gca"
           requiredPermissions={[Permission.ActAsGca]}
         />
 
-        <DropzoneUserChipSelectField
+        <MembershipChipSelectField
           label="Pilot"
           name="pilot"
           {...{ control }}

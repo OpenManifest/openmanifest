@@ -141,7 +141,6 @@ export default function Select<T>(props: ISelectProps<T>) {
       >
         {options?.map(({ value: val, icon, avatar, label: title }) => {
           const isSelected = compare?.(selectedOption?.value, val as T);
-          console.debug({ title, isSelected, a: selectedOption?.value, b: val });
           return (
             // @ts-ignore
             <MuiMenuItem value={JSON.stringify(val as T)} selected={isSelected}>

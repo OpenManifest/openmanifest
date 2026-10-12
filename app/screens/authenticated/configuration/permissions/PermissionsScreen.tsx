@@ -1,5 +1,6 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Card, List } from 'react-native-paper';
 import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
@@ -16,8 +17,8 @@ import { useAppTheme } from 'app/theme';
  * 
  * @returns
  * 
- *  :updateDropzone,
-    :deleteDropzone,
+ *  :updateOperator,
+    :deleteOperator,
 
     :createLoad,
     :updateLoad,
@@ -46,18 +47,18 @@ import { useAppTheme } from 'app/theme';
     :deleteExtra,
     :readExtra,
 
-    :createPlane,
-    :updatePlane,
-    :deletePlane,
+    :createVehicle,
+    :updateVehicle,
+    :deleteVehicle,
 
-    :createRig,
-    :updateRig,
-    :deleteRig,
-    :readRig,
+    :createEquipment,
+    :updateEquipment,
+    :deleteEquipment,
+    :readEquipment,
 
-    :createDropzoneRig,
-    :updateDropzoneRig,
-    :deleteDropzoneRig,
+    :createOperatorRig,
+    :updateOperatorRig,
+    :deleteOperatorRig,
 
     :readPermissions,
     :updatePermissions,
@@ -80,31 +81,32 @@ import { useAppTheme } from 'app/theme';
     :actAsPilot,
     :actAsLoadMaster,
     :actAsGCA,
-    :actAsDZSO,
-    :actAsRigInspector,
+    :actAsDutyOfficer,
+    :actAsEquipmentInspector,
 
     :createUserTransaction,
     :readUserTransactions,
  */
-export default function DropzonePermissionScreen() {
+export default function OperatorPermissionScreen() {
   const { palette, theme } = useAppTheme();
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
   const { data, loading, refetch } = useRolesQuery({
     variables: {
-      dropzoneId: currentDropzoneId?.toString() as string,
+      operatorId: currentOperatorId?.toString() as string,
     },
   });
   const isFocused = useIsFocused();
 
   const navigation = useNavigation();
+  const { t } = useTranslation('common');
   React.useEffect(() => {
     if (isFocused) {
-      navigation.setOptions({ title: 'Permissions' });
+      navigation.setOptions({ title: t('screens.permissions') });
       refetch();
     }
-  }, [isFocused, navigation, refetch]);
+  }, [isFocused, navigation, refetch, t]);
 
-  return loading || !data?.dropzone?.roles?.length ? (
+  return loading || !data?.operator?.roles?.length ? (
     <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
       <View style={{ maxWidth: 550 }}>
         <SkeletonContent
@@ -143,7 +145,7 @@ export default function DropzonePermissionScreen() {
           },
         }}
       >
-        {data?.dropzone?.roles?.map((role) => (
+        {data?.operator?.roles?.map((role) => (
           <TabScreen
             label={capitalize(role.name?.replace('_', ' '))}
             key={`permission-tab-role-${role.id}`}
@@ -291,13 +293,13 @@ export default function DropzonePermissionScreen() {
                   >
                     <PermissionListItem
                       role={role}
-                      permissionName="updateDropzone"
+                      permissionName="updateOperator"
                       description="Change dropzone name, visibility, and branding"
                       title="Update Dropzone"
                     />
                     <PermissionListItem
                       role={role}
-                      permissionName="deleteDropzone"
+                      permissionName="deleteOperator"
                       description="Permanently delete dropzone"
                       title="Delete Dropzone"
                     />
@@ -356,21 +358,21 @@ export default function DropzonePermissionScreen() {
                   <List.Accordion title="Planes" style={{ backgroundColor: theme.colors.surface }}>
                     <PermissionListItem
                       role={role}
-                      permissionName="createPlane"
+                      permissionName="createVehicle"
                       description="Add new aircrafts"
                       title="Create Aircraft"
                     />
 
                     <PermissionListItem
                       role={role}
-                      permissionName="updatePlane"
+                      permissionName="updateVehicle"
                       description="Make changes to existing aircrafts"
                       title="Update Aircraft"
                     />
 
                     <PermissionListItem
                       role={role}
-                      permissionName="deletePlane"
+                      permissionName="deleteVehicle"
                       description="Remove existing aircrafts"
                       title="Remove Aircraft"
                     />
@@ -379,19 +381,19 @@ export default function DropzonePermissionScreen() {
                   <List.Accordion title="Rigs" style={{ backgroundColor: theme.colors.surface }}>
                     <PermissionListItem
                       role={role}
-                      permissionName="createDropzoneRig"
+                      permissionName="createOperatorRig"
                       description="Create dropzone managed rigs, e.g tandem and student rigs"
                       title="Create Rig"
                     />
                     <PermissionListItem
                       role={role}
-                      permissionName="updateDropzoneRig"
+                      permissionName="updateOperatorRig"
                       description="Make changes to existing student and tandem rigs"
                       title="Update Rigs"
                     />
                     <PermissionListItem
                       role={role}
-                      permissionName="deleteDropzoneRig"
+                      permissionName="deleteOperatorRig"
                       description="Delete existing student and tandem rigs"
                       title="Remove Rigs"
                     />

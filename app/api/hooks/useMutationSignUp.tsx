@@ -10,14 +10,14 @@ export const MUTATION_USER_SIGNUP = gql`
     $name: String!
     $phone: String!
     $pushToken: String
-    $exitWeight: Float!
+    $bodyMassKg: Float!
     $licenseId: Int
   ) {
     userSignUp(
       email: $email
       password: $password
       passwordConfirmation: $passwordConfirmation
-      exitWeight: $exitWeight
+      bodyMassKg: $bodyMassKg
       name: $name
       phone: $phone
       pushToken: $pushToken
