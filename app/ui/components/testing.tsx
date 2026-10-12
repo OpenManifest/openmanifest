@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { render } from '@testing-library/react-native';
+import { I18nextProvider } from 'react-i18next';
+import i18n from 'app/i18n';
 import { ThemeProvider } from '../theme';
 import { colour, type Density, type Scheme } from '../tokens';
 
@@ -10,9 +12,11 @@ export function renderThemed(
   { scheme = 'light', density }: { scheme?: Scheme; density?: Density } = {}
 ) {
   return render(
-    <ThemeProvider scheme={scheme} density={density}>
-      {ui}
-    </ThemeProvider>
+    <I18nextProvider i18n={i18n}>
+      <ThemeProvider scheme={scheme} density={density}>
+        {ui}
+      </ThemeProvider>
+    </I18nextProvider>
   );
 }
 

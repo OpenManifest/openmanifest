@@ -12,7 +12,16 @@ export type TappableProps = Omit<
   'style' | 'children' | 'role' | 'accessibilityLabel'
 > & {
   /** What the control is and what it is called: every pressable has both (design plan §3.5) */
-  role: 'button' | 'link' | 'tab' | 'menuitem' | 'switch' | 'checkbox' | 'radio';
+  role:
+    | 'button'
+    | 'link'
+    | 'tab'
+    | 'menuitem'
+    | 'switch'
+    | 'checkbox'
+    | 'radio'
+    | 'combobox'
+    | 'option';
   'aria-label': string;
   style?:
     ViewStyle | ((state: { pressed: boolean; hovered: boolean; focused: boolean }) => ViewStyle);
@@ -28,6 +37,12 @@ type WebState = { pressed: boolean; hovered?: boolean; focused?: boolean };
  * target, it shows a focus ring from the tokens on keyboard focus and keeps hover and pressed states for the caller to
  * style. `onPress` and the rest are passed through.
  */
+// React Native Web's Pressable presses on Enter and Space for buttons only; a native checkbox, switch or radio toggles on
+// Space, so those roles do it here
+const SPACE_ROLES = ['switch', 'checkbox', 'radio'];
+
+type KeyEvent = { key: string; preventDefault(): void };
+
 export default function Tappable({ style, minTarget = true, children, ...rest }: TappableProps) {
   const theme = useTheme();
   const target = minTarget ? theme.density.touchTarget : undefined;
@@ -35,6 +50,17 @@ export default function Tappable({ style, minTarget = true, children, ...rest }:
   return (
     <NativePressable
       {...rest}
+      {...(Platform.OS === 'web' && SPACE_ROLES.includes(rest.role)
+        ? ({
+            onKeyDown: (event: KeyEvent) => {
+              (rest as { onKeyDown?(event: KeyEvent): void }).onKeyDown?.(event);
+              if (event.key === ' ' && !rest.disabled) {
+                event.preventDefault();
+                rest.onPress?.(event as never);
+              }
+            },
+          } as object)
+        : {})}
       style={(state) => {
         const { pressed, hovered = false, focused = false } = state as WebState;
         const given = typeof style === 'function' ? style({ pressed, hovered, focused }) : style;

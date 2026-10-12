@@ -103,5 +103,13 @@
     "transactionsOf": "{{name}}'s transactions",
     "yourEquipment": "Your {{equipment}}",
     "equipmentOf": "{{name}}'s {{equipment}}"
+  },
+  "form": {
+    "cancel": "Cancel",
+    "increase": "Increase {{label}}",
+    "decrease": "Decrease {{label}}",
+    "remove": "Remove {{label}}",
+    "optional": "Optional",
+    "selected": "Selected"
   }
 }

@@ -11,6 +11,8 @@ export type ColourTokens = {
   surface: string;
   raised: string;
   border: string;
+  /** Dims what is behind an overlay */
+  scrim: string;
   text: string;
   textMuted: string;
   /** Operator brand as a fill; text on it is `onBrand`. */
@@ -31,6 +33,7 @@ const light: ColourTokens = {
   surface: '#FFFFFF',
   raised: '#EEF0F3',
   border: '#DDE1E6',
+  scrim: 'rgba(14, 17, 22, 0.45)',
   text: '#14181F',
   textMuted: '#5B6472',
   brand: DEFAULT_BRAND,
@@ -56,6 +59,7 @@ const dark: ColourTokens = {
   surface: '#171B22',
   raised: '#232A34',
   border: '#2A313C',
+  scrim: 'rgba(0, 0, 0, 0.6)',
   text: '#E8EBF0',
   textMuted: '#A9B2BF',
   brand: '#35C3CF',

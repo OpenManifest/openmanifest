@@ -10,6 +10,7 @@ import Unauthenticated, { UnauthenticatedRoutes } from './unauthenticated/routes
 import Wizards, { WizardRoutes } from './wizards/routes';
 import Authenticated, { AuthenticatedRoutes } from './authenticated/routes';
 import SpikeScreen from './dev/SpikeScreen';
+import FormsScreen from './dev/FormsScreen';
 import { options, SPIKE_ENABLED } from '../navigation/linking';
 
 export { options };
@@ -21,6 +22,7 @@ export type Routes = {
   Wizards: NavigatorScreenParams<WizardRoutes>;
   NotFound: undefined;
   Spike: undefined;
+  Forms: undefined;
 };
 
 const Stack = createStackNavigator<Routes>();
@@ -55,6 +57,7 @@ export default function RootNavigator() {
       )}
       <Stack.Screen name="Wizards" component={Wizards} />
       {SPIKE_ENABLED ? <Stack.Screen name="Spike" component={SpikeScreen} /> : null}
+      {SPIKE_ENABLED ? <Stack.Screen name="Forms" component={FormsScreen} /> : null}
 
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
