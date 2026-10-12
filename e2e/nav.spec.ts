@@ -23,7 +23,7 @@ test.describe('navigation @nav', () => {
     await expectAccessible(page, '/manifest');
   });
 
-  test('the bar sits at the bottom on a phone and as a sidebar with the operator on a desktop', async ({
+  test('the bar is tabs on a phone, a rail on a tablet and a sidebar with the operator on a desktop', async ({
     page,
   }) => {
     await gotoRoute(page, '/manifest');
@@ -38,6 +38,9 @@ test.describe('navigation @nav', () => {
         'Demo Dropzone'
       );
       await expect(nav.getByRole('button', { name: 'Account menu' })).toBeVisible();
+    } else if (viewport.width >= 600) {
+      expect(box?.x).toBe(0);
+      expect(box?.width).toBe(80);
     } else {
       expect((box?.y ?? 0) + (box?.height ?? 0)).toBe(viewport.height);
       expect(box?.width).toBe(viewport.width);
