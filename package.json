@@ -17,6 +17,7 @@
     "check:testing:ci": "jest --ci",
     "check:all": "yarn check:types && yarn check:testing && yarn check:linting && yarn check:graphql",
     "check:graphql": "node scripts/validate-graphql.mjs",
+    "ui:debt": "node scripts/ui-debt.mjs",
     "sync:schema": "node scripts/sync-schema.mjs",
     "sync:vocabulary": "node scripts/sync-vocabulary.mjs",
     "check:vocabulary": "node scripts/check-vocabulary.mjs",

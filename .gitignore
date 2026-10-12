@@ -79,3 +79,4 @@ dist/
 /e2e/.auth/
 /e2e/.results/
 /e2e/.report/
+/ui-debt.json

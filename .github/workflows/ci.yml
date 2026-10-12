@@ -23,6 +23,8 @@ jobs:
       - run: yarn check:graphql
       - name: Vocabulary check (report only until P7.20)
         run: node scripts/check-vocabulary.mjs --markdown >> "$GITHUB_STEP_SUMMARY"
+      - name: UI debt (report only)
+        run: node scripts/ui-debt.mjs --markdown >> "$GITHUB_STEP_SUMMARY"
   web-export:
     runs-on: ubuntu-24.04
     steps:

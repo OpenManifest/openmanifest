@@ -63,3 +63,16 @@ as the findings are fixed so the baseline only shrinks.
   `actions_run_trigger` (`workflow_id: ui-full.yml`, `ref: <branch>`, `inputs`). Read the result with
   `gh run list --workflow ui-full.yml` / `gh run view <id> --log-failed`, or `actions_list` and `get_job_logs`; the
   report and the screenshot diffs are in the artifact `ui-full-report`.
+
+## UI debt
+
+`yarn ui:debt` (`scripts/ui-debt.mjs`) counts, per directory, what the UI rules of the design plan §3.5 forbid in converted
+code: Paper imports, colour literals (hex, `rgb(`, `rgba(`, `'white'`, `'black'`), raw `Pressable`/`Touchable*` with
+`onPress`, numeric `fontSize` and literal JSX strings (text children and `label`, `title`, `placeholder`, … props). It
+prints a table, writes `ui-debt.json` (git-ignored) and never fails; CI prints it in the `checks` job summary. Directories
+listed in `eslint/ui-converted.js` are held at zero by ESLint errors instead and are not counted. Every task that converts
+a directory adds it to that list and puts the new total in its pull request body.
+
+| Date              | Paper imports | Colour literals | Raw touchables | Numeric font sizes | Literal JSX strings |
+| ----------------- | ------------: | --------------: | -------------: | -----------------: | ------------------: |
+| 2026-10-12 (U0.5) |           161 |             262 |             21 |                 93 |                 474 |
