@@ -31,13 +31,19 @@ function VehicleList({ value, error, onChange }: IVehicleListProps) {
   const rows = React.useMemo(() => value ?? [], [value]);
   const vehicles = React.useMemo(() => data?.vehicles ?? [], [data?.vehicles]);
 
+  // The field subscribes to the form after its children have run their effects, so a value set by the first effect of a
+  // field would be missed: the list is started on the render after that
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
+  // The list is never empty once it has one (the last vehicle that carries cannot be removed), so an empty list is one the
+  // form has just reset
   React.useEffect(() => {
-    if (!rows.length && vehicles[0]) {
+    if (mounted && !rows.length && vehicles[0]) {
       onChange([{ vehicle: vehicles[0], role: LoadVehicleRole.Carrying }]);
     }
-    // Only the first time the vehicles arrive: later, an empty list is the person's choice
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vehicles]);
+  }, [mounted, vehicles, rows.length]);
 
   const carrying = rows.filter(({ role }) => role === LoadVehicleRole.Carrying).length;
   const toggle = (index: number) =>

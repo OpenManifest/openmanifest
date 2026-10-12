@@ -74,7 +74,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
     }
   }, [defaultValues, initialValues]);
 
-  const { control, reset, setValue } = methods;
+  const { control, reset, setValue, getValues } = methods;
   React.useEffect(() => {
     reset(defaultValues);
   }, [defaultValues, reset]);
@@ -90,10 +90,15 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
   const multiVehicle = moduleEnabled(operator?.modules, 'multi_vehicle');
   const { vehicle, vehicleRoles } = useWatch<LoadFields>({ control });
 
+  // The watched list is a new array on every render: the effect below depends on what is in it
+  const rolesKey = (vehicleRoles ?? []).map((row) => `${row?.vehicle?.id}:${row?.role}`).join(',');
+
   // With several vehicles the load takes the first that carries as its vehicle, and the seats of all that carry
   React.useEffect(() => {
     if (!multiVehicle) return;
-    const carrying = (vehicleRoles ?? []).filter(({ role }) => role === LoadVehicleRole.Carrying);
+    const carrying = (getValues('vehicleRoles') ?? []).filter(
+      ({ role }) => role === LoadVehicleRole.Carrying
+    );
     setValue('vehicle', (carrying[0]?.vehicle ?? undefined) as LoadFields['vehicle'], {
       shouldValidate: true,
     });
@@ -103,7 +108,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
         carrying.reduce((sum, { vehicle: carrier }) => sum + (carrier?.capacity ?? 0), 0)
       );
     }
-  }, [multiVehicle, vehicleRoles, setValue]);
+  }, [multiVehicle, rolesKey, setValue, getValues]);
 
   React.useEffect(() => {
     if (!multiVehicle && vehicle?.capacity) {

@@ -11,7 +11,7 @@ import { VehicleListField, VehicleRole } from '../VehicleListField';
 jest.setTimeout(30000);
 
 const beaver = {
-  __typename: 'Vehicle',
+  __typename: 'Vehicle' as const,
   id: '1',
   name: 'Beaver',
   registration: 'ABC123',
