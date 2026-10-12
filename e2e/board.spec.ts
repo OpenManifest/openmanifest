@@ -44,7 +44,7 @@ test.describe('manifest board @manifest', () => {
       await page.waitForTimeout(1000);
     };
     await openActions();
-    await page.getByText('10 minute call', { exact: true }).last().click({ force: true });
+    await page.getByText('10 minute boarding call', { exact: true }).last().click({ force: true });
     await page.waitForTimeout(3000);
     await openActions();
     await expect(page.getByText('Mark as Landed', { exact: true }).last()).toBeVisible();
