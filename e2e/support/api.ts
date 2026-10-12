@@ -9,16 +9,35 @@ async function call(query: string, headers: Record<string, string> = {}, variabl
   return { json: (await response.json()) as any, headers: response.headers };
 }
 
-/** Creates a load through the API as the seed's owner, the way a second device would. Returns its id. */
-export async function createLoadViaApi(): Promise<string | undefined> {
+async function loginAsOwner() {
   const login = await call(
     `mutation { userLogin(email: "owner@example.com", password: "${PASSWORD}") { authenticatable { id } } }`
   );
-  const auth = {
+  return {
     'access-token': login.headers.get('access-token') ?? '',
     client: login.headers.get('client') ?? '',
     uid: login.headers.get('uid') ?? '',
   };
+}
+
+const createdLoads: string[] = [];
+
+/**
+ * Deletes the loads this worker created through `createLoadViaApi`: the board lists every load of the day and the
+ * specs look for the seeded "Load #1", which scrolls out of the rendered list once dozens of loads pile up.
+ */
+export async function deleteCreatedLoads() {
+  const ids = createdLoads.splice(0);
+  if (!ids.length) return;
+  const auth = await loginAsOwner();
+  for (const id of ids) {
+    await call(`mutation { deleteLoad(input: { id: ${Number(id)} }) { errors } }`, auth);
+  }
+}
+
+/** Creates a load through the API as the seed's owner, the way a second device would. Returns its id. */
+export async function createLoadViaApi(): Promise<string | undefined> {
+  const auth = await loginAsOwner();
   const { json: operators } = await call(
     '{ operators { edges { node { id currentUser { id } } } } }',
     auth
@@ -30,7 +49,9 @@ export async function createLoadViaApi(): Promise<string | undefined> {
     `mutation { createLoad(input: { attributes: { name: "Live ${Date.now()}", vehicle: ${vehicles.data.vehicles[0].id}, maxSlots: 10, pilot: ${member}, gca: ${member} } }) { load { id } errors } }`,
     auth
   );
-  return created?.data?.createLoad?.load?.id;
+  const id = created?.data?.createLoad?.load?.id;
+  if (id) createdLoads.push(id);
+  return id;
 }
 
 /** Registers a brand new user who has not joined the operator. Returns the email. */

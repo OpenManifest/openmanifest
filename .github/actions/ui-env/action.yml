@@ -34,6 +34,8 @@ runs:
         CORS_ORIGINS: http://localhost:19006
         DISABLE_SPRING: "1"
         WEB_CONCURRENCY: "0"
+        # The suites sign in dozens of times as the seed users; the default limit of 10 devices evicts the stored session
+        MAX_DEVICES_PER_USER: "1000"
       run: |
         echo "127.0.0.1 local.openmanifest.org" | sudo tee -a /etc/hosts
         export SECRET_KEY_BASE="$(openssl rand -hex 64)"

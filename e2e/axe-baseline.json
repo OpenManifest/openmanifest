@@ -26,7 +26,7 @@
   "/weather/jumprun": ["role-img-alt"],
   "/weather/winds": ["color-contrast", "label", "nested-interactive", "role-img-alt"],
   "/login": ["color-contrast", "label"],
-  "/setup": ["label"],
+  "/setup": ["color-contrast", "label"],
   "/signup": ["color-contrast", "label"],
   "load": ["button-name", "nested-interactive", "role-img-alt"],
   "profile": ["button-name", "nested-interactive", "role-img-alt"]

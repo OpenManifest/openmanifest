@@ -29,7 +29,11 @@ export default function SpikeScreen() {
   const [fruit, setFruit] = React.useState<Select.Option>(undefined);
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16, gap: 24 }} testID="spike">
+    <ScrollView
+      style={{ backgroundColor: '#F4F5F7' }}
+      contentContainerStyle={{ padding: 16, gap: 24 }}
+      testID="spike"
+    >
       <Text
         role="heading"
         aria-level={1}
