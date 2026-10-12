@@ -102,7 +102,9 @@ export default function ManifestScreen() {
           canUpdateOperator &&
           setupTicketsCardFragment,
         !initialLoading &&
-        (!currentUser?.hasBodyMassKg || !currentUser?.hasLicense || !currentUser.user?.name)
+        (!currentUser?.hasBodyMassKg ||
+          !currentUser?.hasCertificationLevel ||
+          !currentUser.user?.name)
           ? setupProfileCardFragment
           : null,
         ...(initialLoading ? new Array(5).fill(loadingFragment) : manifest.loads),
@@ -115,7 +117,7 @@ export default function ManifestScreen() {
       loadingTickets,
       initialLoading,
       currentUser?.hasBodyMassKg,
-      currentUser?.hasLicense,
+      currentUser?.hasCertificationLevel,
       currentUser?.user?.name,
       manifest.loads,
     ]

@@ -4,16 +4,21 @@ import { UpdateUserDocument } from 'app/api/reflection';
 import type { MembershipDetailsFragment } from 'app/api/operations';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import UserDialog from '../../forms/user/Dialog';
-import MOCK_QUERY_FEDERATIONS from '../manifest/__mocks__/QueryFederations.mock';
+import MOCK_QUERY_CERTIFICATION_BODIES from '../manifest/__mocks__/QueryCertificationBodies.mock';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
-const federation = { __typename: 'Federation', id: '1', name: 'APF', slug: 'apf' };
+const certificationBody = { __typename: 'CertificationBody', id: '1', name: 'APF', slug: 'apf' };
 const membership = {
   __typename: 'Membership',
   id: '5',
-  license: { __typename: 'License', id: '2', name: 'Certificate D', federation },
+  certificationLevel: {
+    __typename: 'CertificationLevel',
+    id: '2',
+    name: 'Certificate D',
+    certificationBody,
+  },
   user: {
     __typename: 'User',
     id: '9',
@@ -22,7 +27,7 @@ const membership = {
     email: 'cj@example.com',
     phone: '0400 000 000',
     bodyMassKg: 70,
-    userFederations: [],
+    userCertifications: [],
   },
 } as unknown as MembershipDetailsFragment;
 
@@ -33,7 +38,7 @@ async function renderDialog(graphql: Parameters<typeof render>[1]['graphql'] = [
     </View>,
     {
       session: authenticatedSession,
-      graphql: [MOCK_QUERY_FEDERATIONS(), ...graphql],
+      graphql: [MOCK_QUERY_CERTIFICATION_BODIES(), ...graphql],
     }
   );
   return within(screen.getByTestId('under-test'));
@@ -84,7 +89,7 @@ describe('<UserDialog />', () => {
           variables: {
             membership: '5',
             name: 'Court J. Jester',
-            license: 2,
+            certificationLevel: 2,
             phone: '0411 111 111',
             bodyMassKg: 70,
             email: 'cj@example.com',

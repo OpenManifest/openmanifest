@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { Image, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Control, Controller, useWatch } from 'react-hook-form';
@@ -22,7 +23,7 @@ import { PhonePreview, WebPreview } from 'app/components/theme_preview';
 import LocationPicker from 'app/components/input/LocationPicker';
 import imagePickDark from 'assets/images/image-pick.json';
 import imagePickLight from 'assets/images/image-pick-light.json';
-import { FederationSelectField } from 'app/components/input/dropdown_select';
+import { CertificationBodyChipSelectField } from 'app/components/input/chip_select';
 import { OperatorFields } from './useForm';
 import { FormTextField } from 'app/components/input/text/TextField';
 import { SwitchField } from 'app/components/input/switch/Switch';
@@ -56,6 +57,9 @@ export default function OperatorForm(props: IOperatorForm) {
   const theme = useTheme();
   const pickImage = useImagePicker();
   const { name, banner, primaryColor } = useWatch({ control });
+  const {
+    operator: { operator },
+  } = useOperatorContext();
 
   return (
     <Stack gap="lg">
@@ -125,7 +129,11 @@ export default function OperatorForm(props: IOperatorForm) {
           <Stack gap="md">
             <Subheader>{t('forms.operator.name')}</Subheader>
             <FormTextField {...{ control }} name="name" label={t('forms.operator.name')} />
-            <FederationSelectField {...{ control }} name="federation" />
+            <CertificationBodyChipSelectField
+              {...{ control }}
+              name="certificationBodies"
+              industry={operator?.industry}
+            />
           </Stack>
         </Card>
       )}
@@ -266,8 +274,8 @@ export default function OperatorForm(props: IOperatorForm) {
             />
             <SwitchField
               {...{ control }}
-              label={t('forms.operator.requireLicense')}
-              name="requireLicense"
+              label={t('forms.operator.requireCertification')}
+              name="requireCertification"
               helperText={t('forms.operator.requireUsersToHaveA')}
             />
             <SwitchField

@@ -5,8 +5,8 @@ import { Control, useController, useWatch } from 'react-hook-form';
 import { FormTextField } from 'app/components/input/text/TextField';
 import { FormNumberField } from 'app/components/input/number_input';
 import { NumberFieldType } from 'app/components/input/number_input/NumberField';
-import { LicenseChipSelectField } from 'app/components/input/chip_select/LicenseChipSelect';
-import FederationSelect from 'app/components/input/dropdown_select/FederationSelect';
+import { CertificationLevelChipSelectField } from 'app/components/input/chip_select/CertificationLevelChipSelect';
+import CertificationBodySelect from 'app/components/input/dropdown_select/CertificationBodySelect';
 import { UserFields } from './useForm';
 import { useTranslation } from 'react-i18next';
 import { Divider, FieldError, Stack } from 'app/ui';
@@ -18,12 +18,13 @@ export interface IUserFormProps {
 export default function UserForm(props: IUserFormProps) {
   const { t } = useTranslation('common');
   const { control } = props;
-  const { field: federation, fieldState: federationState } = useController({
-    name: 'federation',
+  const { field: certificationBody, fieldState: certificationBodyState } = useController({
+    name: 'certificationBody',
     control,
   });
-  const license = useWatch({ control, name: 'license' });
-  const federationId = license?.federation?.id || federation.value?.id;
+  const certificationLevel = useWatch({ control, name: 'certificationLevel' });
+  const certificationBodyId =
+    certificationLevel?.certificationBody?.id || certificationBody.value?.id;
 
   return (
     <Stack gap="md">
@@ -41,18 +42,18 @@ export default function UserForm(props: IUserFormProps) {
       <Divider />
 
       <View style={{ width: '100%' }}>
-        <FederationSelect
-          value={license?.federation || federation.value}
-          onChange={federation.onChange}
+        <CertificationBodySelect
+          value={certificationLevel?.certificationBody || certificationBody.value}
+          onChange={certificationBody.onChange}
         />
 
-        <FieldError>{federationState.error?.message || ''}</FieldError>
+        <FieldError>{certificationBodyState.error?.message || ''}</FieldError>
 
-        {federationId && (
-          <LicenseChipSelectField
+        {certificationBodyId && (
+          <CertificationLevelChipSelectField
             {...{ control }}
-            name="license"
-            federationId={Number(federationId)}
+            name="certificationLevel"
+            certificationBodyId={Number(certificationBodyId)}
           />
         )}
       </View>

@@ -2,13 +2,14 @@ import * as React from 'react';
 import { useForm, UseFormReturn, useFormContext } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import type { FederationEssentialsFragment } from 'app/api/operations';
+import type { CertificationBodyEssentialsFragment } from 'app/api/operations';
 
 export type OperatorWizardFields = {
   /** Set once the operator has been created, so going back and forward updates it instead */
   id: string | null;
   name: string;
-  federation: FederationEssentialsFragment | null;
+  /** The certification bodies the operator accepts */
+  certificationBodies: CertificationBodyEssentialsFragment[];
   lat: number | null;
   lng: number | null;
   primaryColor: string;
@@ -19,7 +20,7 @@ export type OperatorWizardFields = {
 export const EMPTY_WIZARD_VALUES: OperatorWizardFields = {
   id: null,
   name: '',
-  federation: null,
+  certificationBodies: [],
   lat: null,
   lng: null,
   primaryColor: '',
@@ -30,10 +31,11 @@ export const EMPTY_WIZARD_VALUES: OperatorWizardFields = {
 export const operatorWizardValidation = yup.object({
   id: yup.string().nullable().default(null),
   name: yup.string().trim().required('Your dropzone must have a name'),
-  federation: yup
-    .object()
-    .nullable()
-    .required('Your dropzone must have an associated organization'),
+  certificationBodies: yup
+    .array()
+    .of(yup.object())
+    .min(1, 'Your dropzone must accept at least one organization')
+    .required('Your dropzone must accept at least one organization'),
   lat: yup.number().nullable().default(null),
   lng: yup.number().nullable().default(null),
   primaryColor: yup.string().required('Please pick a primary color'),

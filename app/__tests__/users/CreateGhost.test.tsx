@@ -3,8 +3,8 @@ import { Text, View } from 'react-native';
 import { CreateGhostDocument } from 'app/api/reflection';
 import { useOperatorContext } from 'app/providers';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
-import MOCK_QUERY_FEDERATIONS from '../manifest/__mocks__/QueryFederations.mock';
-import MOCK_QUERY_LICENSES from '../manifest/__mocks__/QueryLicenses.mock';
+import MOCK_QUERY_CERTIFICATION_BODIES from '../manifest/__mocks__/QueryCertificationBodies.mock';
+import MOCK_QUERY_CERTIFICATION_LEVELS from '../manifest/__mocks__/QueryCertificationLevels.mock';
 import MOCK_QUERY_ROLES from '../manifest/__mocks__/QueryRoles.mock';
 import CreateGhostDialog from '../../forms/create_user/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
@@ -20,7 +20,7 @@ function OperatorReady() {
   return operator?.id ? <Text>dropzone ready</Text> : null;
 }
 
-// Name and email filled in; the federation and licence are picked automatically (single option), the access level is not.
+// Name and email filled in; the certificationBody and licence are picked automatically (single option), the access level is not.
 async function renderFilledDialog(createGhost: jest.Mock) {
   const screen = await render(
     <View testID="under-test">
@@ -30,8 +30,8 @@ async function renderFilledDialog(createGhost: jest.Mock) {
     {
       session: authenticatedSession,
       graphql: [
-        MOCK_QUERY_FEDERATIONS(),
-        MOCK_QUERY_LICENSES(),
+        MOCK_QUERY_CERTIFICATION_BODIES(),
+        MOCK_QUERY_CERTIFICATION_LEVELS(),
         MOCK_QUERY_ROLES(),
         // Any CreateGhost request is acceptable here, the point is whether one is made
         {
@@ -62,7 +62,7 @@ describe('<CreateGhostDialog />', () => {
   });
 
   // GitHub client#126 "Create Ghost doesn't fire submit button". The button does submit, but the form is invalid
-  // (no access level) and `RoleSelect` / `FederationSelect` never pass the `error` prop on to `Select`, so the
+  // (no access level) and `RoleSelect` / `CertificationBodySelect` never pass the `error` prop on to `Select`, so the
   // "You must select a role" message is never shown and nothing appears to happen.
   it('BUG-086: pressing Create without an access level says what is missing', async () => {
     const dialog = await renderFilledDialog(jest.fn());

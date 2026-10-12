@@ -30,7 +30,7 @@ export default function LoadTableView(props: ITableViewProps) {
         [
           SlotFields.Altitude,
           SlotFields.ActivityType,
-          numFields > 2 ? SlotFields.License : null,
+          numFields > 2 ? SlotFields.CertificationLevel : null,
           numFields > 3 ? SlotFields.TicketType : null,
           numFields > 4 ? SlotFields.WingLoading : null,
           numFields > 5 ? SlotFields.Rig : null,

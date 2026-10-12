@@ -14,7 +14,7 @@ import DraggableWrapper from './DragAndDrop/DraggableRow';
 import DroppableSlot from './DragAndDrop/DroppableSlot';
 
 export enum SlotFields {
-  License = 'license',
+  CertificationLevel = 'certificationLevel',
   Group = 'groupNumber',
   WingLoading = 'wingloading',
   Altitude = 'altitude',
@@ -119,9 +119,11 @@ export default function UserRow(props: ISlotUserRowProps) {
                     <Caption>{`(${slot?.membership?.user?.name})`}</Caption>
                   ) : null}
                 </DataTable.Cell>
-                {fields?.includes(SlotFields.License) ? (
-                  <DataTable.Cell numeric style={styles.licenseCell}>
-                    <Paragraph style={styles.slotText}>{slot?.membership?.license?.name}</Paragraph>
+                {fields?.includes(SlotFields.CertificationLevel) ? (
+                  <DataTable.Cell numeric style={styles.certificationLevelCell}>
+                    <Paragraph style={styles.slotText}>
+                      {slot?.membership?.certificationLevel?.name}
+                    </Paragraph>
                   </DataTable.Cell>
                 ) : null}
                 {fields?.includes(SlotFields.Rig) ? (
@@ -208,7 +210,7 @@ export const styles = StyleSheet.create({
   avatarCell: {
     flex: 1,
   },
-  licenseCell: {
+  certificationLevelCell: {
     flex: 3,
   },
   rigCell: {

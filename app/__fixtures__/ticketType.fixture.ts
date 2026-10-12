@@ -9,4 +9,6 @@ export const ticketTypeEssentials: Required<TicketTypeEssentialsFragment> = {
   allowManifestingSelf: true,
   defaultDestination: fullAltitude,
   isTandem: false,
+  minCertificationRank: null,
+  requiredQualification: null,
 };

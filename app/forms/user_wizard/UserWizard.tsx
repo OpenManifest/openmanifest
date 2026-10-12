@@ -3,11 +3,12 @@ import Wizard from 'app/components/carousel_wizard/HookFormWizard';
 import { IWizardStepDefinition, WizardRef } from 'app/components/carousel_wizard/Wizard';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useNotifications } from 'app/providers/notifications';
-import FederationStep from './steps/Federation';
-import FederationNumberStep from './steps/FederationNumber';
+import CertificationBodyStep from './steps/CertificationBody';
+import CertificationBodyNumberStep from './steps/CertificationBodyNumber';
 import RealNameStep from './steps/RealName';
 import NicknameStep from './steps/Nickname';
-import LicenseStep from './steps/License';
+import CertificationLevelStep from './steps/CertificationLevel';
+import QualificationsStep, { useQualificationStepRequired } from './steps/Qualifications';
 import RigStep from './steps/Rig';
 import ReserveRepackStep from './steps/ReserveRepack';
 import AskForRigStep from './steps/AskForRig';
@@ -20,13 +21,15 @@ import { useOperatorContext } from 'app/providers';
 import { FormProvider, useWatch } from 'react-hook-form';
 import i18n from 'app/i18n';
 
-const steps = [
+const stepsBeforeQualifications = [
   RealNameStep,
   NicknameStep,
   AvatarStep,
-  FederationStep,
-  FederationNumberStep,
-  LicenseStep,
+  CertificationBodyStep,
+  CertificationBodyNumberStep,
+  CertificationLevelStep,
+];
+const stepsAfterQualifications = [
   AskForRigStep,
   RigStep,
   ReserveRepackStep,
@@ -35,6 +38,15 @@ const steps = [
 ];
 export function UserWizard() {
   const wizard = React.useRef<WizardRef>(null);
+  const withQualifications = useQualificationStepRequired();
+  const steps = React.useMemo(
+    () => [
+      ...stepsBeforeQualifications,
+      ...(withQualifications ? [QualificationsStep] : []),
+      ...stepsAfterQualifications,
+    ],
+    [withQualifications]
+  );
   const navigation = useNavigation();
   const { params } = useRoute<{
     key: string;

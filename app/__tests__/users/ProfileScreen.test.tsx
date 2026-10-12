@@ -25,8 +25,8 @@ describe('<ProfileScreen />', () => {
     expect(screen.getByText('$100.00')).toBeTruthy();
     expect(screen.getByText('Certifiate D')).toBeTruthy();
     expect(screen.getByText('Funds')).toBeTruthy();
-    // The (closed) edit sheet has a License field too
-    expect(screen.getAllByText('License').length).toBeGreaterThan(0);
+    // The (closed) edit sheet has a certification field too
+    expect(screen.getAllByText('Certification').length).toBeGreaterThan(0);
   });
 
   it('offers the funds, jumps and equipment tabs and lists the jump history by default', async () => {

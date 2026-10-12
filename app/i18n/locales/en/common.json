@@ -127,7 +127,7 @@
     "photoOf": "Photo of {{name}}"
   },
   "fields": {
-    "license": "License",
+    "certificationLevel": "Certification level",
     "unknown": "Unknown"
   },
   "password": {
@@ -160,8 +160,8 @@
       "emailIsRequiredToInviteThe": "Email is required to invite the user",
       "exitWeightIsRequired": "Exit weight is required",
       "exitWeightMustBeMoreThan": "Exit weight must be more than 40kg",
-      "federationMustBeSelected": "Federation must be selected",
-      "allJumpersMustHaveALicense": "All jumpers must have a license",
+      "certificationBodyMustBeSelected": "Certification body must be selected",
+      "allJumpersMustHaveACertificationLevel": "All jumpers must have a certification level",
       "youMustSelectARole": "You must select a role"
     },
     "create": "Create",
@@ -235,8 +235,8 @@
       "manifestCanBypassAllRules": "Manifest can bypass all rules",
       "allowNegativeCredits": "Allow Negative Credits",
       "allowUsersToGoInto": "Allow users to go into negative credits",
-      "requireLicense": "Require License",
-      "requireUsersToHaveA": "Require users to have a valid license to manifest",
+      "requireCertification": "Require certification",
+      "requireUsersToHaveA": "Require users to have a valid certification to manifest",
       "requireInDateMembership": "Require in-date membership",
       "requireMembershipToBeIn": "Require membership to be in-date",
       "requireEquipment": "Require Equipment",
@@ -245,7 +245,7 @@
       "usersCannotManifestBeforeTheir": "Users cannot manifest before their rig is inspected",
       "allowDoubleManifesting": "Allow double manifesting",
       "usersAreAllowedToManifest": "Users are allowed to manifest on multiple loads",
-      "yourDropzoneMustBePartOf": "Your dropzone must be part of a federation",
+      "yourDropzoneMustBePartOf": "Your dropzone must accept at least one certification body",
       "yourChangesHaveBeenSaved": "Your changes have been saved",
       "changeBanner": "Change the banner",
       "bannerHelp": "Your banner is displayed on the weather board and on the operator selection screen",
@@ -348,7 +348,7 @@
       "avatar": "Avatar",
       "profileUpdated": "Profile updated",
       "affiliation": "Affiliation",
-      "license": "License",
+      "certificationLevel": "Certification level",
       "realName": "Real name",
       "nextReserveRepack": "Next reserve repack?",
       "reserveRepackDueDate": "Reserve repack due date",
@@ -369,15 +369,18 @@
       "serialNumberMakesItFasterTo": "Serial number makes it faster to identify and inspect your container",
       "pleaseEnterYourCanopySizeIn": "Please enter your canopy size in square feet",
       "enterYourExitWeight": "Enter your exit weight",
-      "youMustSelectAFederation": "You must select a federation",
-      "youMustSelectALicense": "You must select a license",
+      "youMustSelectACertificationBody": "You must select a certification body",
+      "youMustSelectACertificationLevel": "You must select a certification level",
       "uploadPhoto": "Upload a photo",
       "pressToUpload": "Press to upload a photo",
       "dueDate": "Due date",
       "other": "Other",
       "wingLoadingIs": "Your wingloading is an indicator of your descent rate under canopy",
       "iHaveMyOwnRig": "I have my own rig",
-      "iDontHaveMyOwnRig": "I don't have my own rig"
+      "iDontHaveMyOwnRig": "I don't have my own rig",
+      "qualifications": "Qualifications",
+      "qualificationNumber": "Number",
+      "qualificationExpires": "Expires"
     },
     "vehicle": {
       "registration": "Registration",

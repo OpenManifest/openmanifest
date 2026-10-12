@@ -32,10 +32,10 @@ const membership = (id: string, name: string) => ({
   expiresAt: null,
   hasCredits: true,
   hasMembership: true,
-  hasLicense: true,
+  hasCertificationLevel: true,
   hasBodyMassKg: true,
   role: null,
-  license: null,
+  certificationLevel: null,
   user: {
     __typename: 'User',
     id,

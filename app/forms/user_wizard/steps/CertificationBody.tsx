@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import FederationCardSelect from 'app/components/input/card_select/FederationCardSelect';
+import CertificationBodyCardSelect from 'app/components/input/card_select/CertificationBodyCardSelect';
 import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
-import { FederationEssentialsFragment } from 'app/api/operations';
+import { CertificationBodyEssentialsFragment } from 'app/api/operations';
 import { Control, Controller, useFormContext } from 'react-hook-form';
 import { useUserProfileContext } from 'app/api/crud';
 import { WizardFormStep } from 'app/hooks/forms/useWizard';
@@ -12,10 +12,10 @@ import { useOperatorContext } from 'app/providers/operator/context';
 import { useTranslation } from 'react-i18next';
 import { FieldError } from 'app/ui';
 
-const federation = yup.object() as yup.SchemaOf<FederationEssentialsFragment>;
+const certificationBody = yup.object() as yup.SchemaOf<CertificationBodyEssentialsFragment>;
 
 export const validation = yup.object({
-  federation: federation.nullable().default(null),
+  certificationBody: certificationBody.nullable().default(null),
 });
 
 type StepFields = {
@@ -31,20 +31,24 @@ export function useStep(): WizardFormStep<StepFields> {
   return useMemo(
     () => ({
       defaultValues: {
-        federation: membership?.license?.federation || operator?.federation,
+        certificationBody:
+          membership?.certificationLevel?.certificationBody || operator?.certificationBodies?.[0],
       },
       validation,
     }),
-    [operator?.federation, membership?.license?.federation]
+    [operator?.certificationBodies, membership?.certificationLevel?.certificationBody]
   );
 }
 
-export interface IFederationStepProps extends IWizardStepProps {
+export interface ICertificationBodyStepProps extends IWizardStepProps {
   control: Control<StepFields>;
 }
 
-function FederationWizardSceen(props: IWizardStepProps) {
+function CertificationBodyWizardSceen(props: IWizardStepProps) {
   const { t } = useTranslation('common');
+  const {
+    operator: { operator },
+  } = useOperatorContext();
   const { control } = useFormContext<StepFields>();
 
   return (
@@ -52,10 +56,13 @@ function FederationWizardSceen(props: IWizardStepProps) {
       <Fields>
         <Controller
           {...{ control }}
-          name="federation"
+          name="certificationBody"
           render={({ field: { value, onChange: onSelect }, fieldState }) => (
             <>
-              <FederationCardSelect {...{ value, onSelect }} />
+              <CertificationBodyCardSelect
+                {...{ value, onSelect }}
+                bodies={operator?.certificationBodies}
+              />
               <FieldError>{fieldState?.error?.message || ''}</FieldError>
             </>
           )}
@@ -65,4 +72,4 @@ function FederationWizardSceen(props: IWizardStepProps) {
   );
 }
 
-export default FederationWizardSceen;
+export default CertificationBodyWizardSceen;

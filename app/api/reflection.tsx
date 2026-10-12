@@ -10,10 +10,12 @@ export const RoleEssentialsFragmentDoc = gql`
   operatorId
 }
     `;
-export const LicenseEssentialsFragmentDoc = gql`
-    fragment licenseEssentials on License {
+export const CertificationLevelEssentialsFragmentDoc = gql`
+    fragment certificationLevelEssentials on CertificationLevel {
   id
   name
+  rank
+  equivalenceKey
 }
     `;
 export const UserEssentialsFragmentDoc = gql`
@@ -26,7 +28,6 @@ export const UserEssentialsFragmentDoc = gql`
   bodyMassKg
   moderationRole
   image
-  apfNumber
 }
     `;
 export const MembershipEssentialsFragmentDoc = gql`
@@ -36,20 +37,20 @@ export const MembershipEssentialsFragmentDoc = gql`
   expiresAt
   hasCredits
   hasMembership
-  hasLicense
+  hasCertificationLevel
   hasBodyMassKg
   role {
     ...roleEssentials
   }
-  license {
-    ...licenseEssentials
+  certificationLevel {
+    ...certificationLevelEssentials
   }
   user {
     ...userEssentials
   }
 }
     ${RoleEssentialsFragmentDoc}
-${LicenseEssentialsFragmentDoc}
+${CertificationLevelEssentialsFragmentDoc}
 ${UserEssentialsFragmentDoc}`;
 export const ActivityEssentialsFragmentDoc = gql`
     fragment activityEssentials on Event {
@@ -90,7 +91,7 @@ export const OperatorEssentialsFragmentDoc = gql`
     allowDoubleManifesting
     allowSelfManifest
     requireCredits
-    requireLicense
+    requireCertification
     requireMembership
     requireRigInspection
     requireEquipment
@@ -128,6 +129,13 @@ export const DestinationEssentialsFragmentDoc = gql`
   discardedAt
 }
     `;
+export const QualificationEssentialsFragmentDoc = gql`
+    fragment qualificationEssentials on Qualification {
+  id
+  name
+  slug
+}
+    `;
 export const TicketTypeEssentialsFragmentDoc = gql`
     fragment ticketTypeEssentials on TicketType {
   id
@@ -138,15 +146,23 @@ export const TicketTypeEssentialsFragmentDoc = gql`
   costCents
   isTandem
   allowManifestingSelf
+  minCertificationRank
+  requiredQualification {
+    ...qualificationEssentials
+  }
 }
-    ${DestinationEssentialsFragmentDoc}`;
+    ${DestinationEssentialsFragmentDoc}
+${QualificationEssentialsFragmentDoc}`;
 export const TicketTypeAddonEssentialsFragmentDoc = gql`
     fragment ticketTypeAddonEssentials on Extra {
   id
   name
   costCents
+  requiredQualification {
+    ...qualificationEssentials
+  }
 }
-    `;
+    ${QualificationEssentialsFragmentDoc}`;
 export const TicketTypeDetailsFragmentDoc = gql`
     fragment ticketTypeDetails on TicketType {
   ...ticketTypeEssentials
@@ -338,8 +354,11 @@ export const TicketTypeExtraEssentialsFragmentDoc = gql`
   name
   createdAt
   costCents
+  requiredQualification {
+    ...qualificationEssentials
+  }
 }
-    `;
+    ${QualificationEssentialsFragmentDoc}`;
 export const TicketTypeExtraDetailedFragmentDoc = gql`
     fragment ticketTypeExtraDetailed on Extra {
   ...ticketTypeExtraEssentials
@@ -349,35 +368,56 @@ export const TicketTypeExtraDetailedFragmentDoc = gql`
 }
     ${TicketTypeExtraEssentialsFragmentDoc}
 ${TicketTypeEssentialsFragmentDoc}`;
-export const FederationEssentialsFragmentDoc = gql`
-    fragment federationEssentials on Federation {
+export const CertificationBodyEssentialsFragmentDoc = gql`
+    fragment certificationBodyEssentials on CertificationBody {
   id
   name
   slug
+  industry
+  verificationProvider
 }
     `;
-export const LicenseDetailsFragmentDoc = gql`
-    fragment licenseDetails on License {
-  ...licenseEssentials
-  federation {
-    ...federationEssentials
+export const CertificationLevelDetailsFragmentDoc = gql`
+    fragment certificationLevelDetails on CertificationLevel {
+  ...certificationLevelEssentials
+  certificationBody {
+    ...certificationBodyEssentials
   }
 }
-    ${LicenseEssentialsFragmentDoc}
-${FederationEssentialsFragmentDoc}`;
-export const UserFederationEssentialsFragmentDoc = gql`
-    fragment userFederationEssentials on UserFederation {
+    ${CertificationLevelEssentialsFragmentDoc}
+${CertificationBodyEssentialsFragmentDoc}`;
+export const UserQualificationEssentialsFragmentDoc = gql`
+    fragment userQualificationEssentials on UserQualification {
+  id
+  name
+  number
+  expiresAt
+  current
+  verifiedAt
+  qualification {
+    ...qualificationEssentials
+  }
+}
+    ${QualificationEssentialsFragmentDoc}`;
+export const UserCertificationEssentialsFragmentDoc = gql`
+    fragment userCertificationEssentials on UserCertification {
   id
   uid
-  federation {
-    ...federationEssentials
+  number
+  verifiedAt
+  certificationBody {
+    ...certificationBodyEssentials
   }
-  license {
-    ...licenseEssentials
+  certificationLevel {
+    ...certificationLevelEssentials
+  }
+  qualifications {
+    ...userQualificationEssentials
   }
 }
-    ${FederationEssentialsFragmentDoc}
-${LicenseEssentialsFragmentDoc}`;
+    ${CertificationBodyEssentialsFragmentDoc}
+${CertificationLevelEssentialsFragmentDoc}
+${UserQualificationEssentialsFragmentDoc}`;
 export const UserRigDetailedFragmentDoc = gql`
     fragment userRigDetailed on Rig {
   ...rigEssentials
@@ -392,22 +432,22 @@ export const UserRigDetailedFragmentDoc = gql`
 export const UserDetailedFragmentDoc = gql`
     fragment userDetailed on User {
   ...userEssentials
-  userFederations {
-    ...userFederationEssentials
+  userCertifications {
+    ...userCertificationEssentials
   }
   rigs {
     ...userRigDetailed
   }
 }
     ${UserEssentialsFragmentDoc}
-${UserFederationEssentialsFragmentDoc}
+${UserCertificationEssentialsFragmentDoc}
 ${UserRigDetailedFragmentDoc}`;
 export const MembershipDetailsFragmentDoc = gql`
     fragment membershipDetails on Membership {
   ...membershipEssentials
   creditsCents
-  license {
-    ...licenseDetails
+  certificationLevel {
+    ...certificationLevelDetails
   }
   user {
     ...userDetailed
@@ -417,7 +457,7 @@ export const MembershipDetailsFragmentDoc = gql`
   }
 }
     ${MembershipEssentialsFragmentDoc}
-${LicenseDetailsFragmentDoc}
+${CertificationLevelDetailsFragmentDoc}
 ${UserDetailedFragmentDoc}
 ${RigEssentialsFragmentDoc}`;
 export const RigInspectionEssentialsFragmentDoc = gql`
@@ -640,16 +680,19 @@ export const WeatherConditionEssentialsFragmentDoc = gql`
 export const OperatorDetailedFragmentDoc = gql`
     fragment operatorDetailed on Operator {
   ...operatorEssentials
-  federation {
-    id
-    name
-    slug
+  certificationBodies {
+    ...certificationBodyEssentials
+  }
+  requiredQualifications {
+    ...qualificationEssentials
   }
   currentConditions {
     ...weatherConditionEssentials
   }
 }
     ${OperatorEssentialsFragmentDoc}
+${CertificationBodyEssentialsFragmentDoc}
+${QualificationEssentialsFragmentDoc}
 ${WeatherConditionEssentialsFragmentDoc}`;
 export const CurrentUserEssentialsFragmentDoc = gql`
     fragment currentUserEssentials on Membership {
@@ -661,7 +704,7 @@ export const CurrentUserEssentialsFragmentDoc = gql`
   hasMembership
   hasReserveInDate
   hasRigInspection
-  hasLicense
+  hasCertificationLevel
   permissions
   expiresAt
   role {
@@ -695,8 +738,8 @@ export const CurrentUserDetailedFragmentDoc = gql`
   availableRigs {
     ...rigEssentials
   }
-  license {
-    ...licenseDetails
+  certificationLevel {
+    ...certificationLevelDetails
   }
   user {
     ...currentUser
@@ -706,7 +749,7 @@ export const CurrentUserDetailedFragmentDoc = gql`
 ${RigInspectionEssentialsFragmentDoc}
 ${OrderEssentialsFragmentDoc}
 ${RigEssentialsFragmentDoc}
-${LicenseDetailsFragmentDoc}
+${CertificationLevelDetailsFragmentDoc}
 ${CurrentUserFragmentDoc}`;
 export const OperatorExtensiveFragmentDoc = gql`
     fragment operatorExtensive on Operator {
@@ -850,6 +893,50 @@ export const TicketTypeAddonDetailsFragmentDoc = gql`
 }
     ${TicketTypeAddonEssentialsFragmentDoc}
 ${TicketTypeEssentialsFragmentDoc}`;
+export const AddUserQualificationDocument = gql`
+    mutation AddUserQualification($qualificationId: ID!, $number: String, $expiresAt: ISO8601DateTime) {
+  addUserQualification(
+    input: {qualificationId: $qualificationId, number: $number, expiresAt: $expiresAt}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    userQualification {
+      ...userQualificationEssentials
+    }
+  }
+}
+    ${UserQualificationEssentialsFragmentDoc}`;
+export type AddUserQualificationMutationFn = Apollo.MutationFunction<Operation.AddUserQualificationMutation, Operation.AddUserQualificationMutationVariables>;
+
+/**
+ * __useAddUserQualificationMutation__
+ *
+ * To run a mutation, you first call `useAddUserQualificationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddUserQualificationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addUserQualificationMutation, { data, loading, error }] = useAddUserQualificationMutation({
+ *   variables: {
+ *      qualificationId: // value for 'qualificationId'
+ *      number: // value for 'number'
+ *      expiresAt: // value for 'expiresAt'
+ *   },
+ * });
+ */
+export function useAddUserQualificationMutation(baseOptions?: Apollo.MutationHookOptions<Operation.AddUserQualificationMutation, Operation.AddUserQualificationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.AddUserQualificationMutation, Operation.AddUserQualificationMutationVariables>(AddUserQualificationDocument, options);
+      }
+export type AddUserQualificationMutationHookResult = ReturnType<typeof useAddUserQualificationMutation>;
+export type AddUserQualificationMutationResult = Apollo.MutationResult<Operation.AddUserQualificationMutation>;
+export type AddUserQualificationMutationOptions = Apollo.BaseMutationOptions<Operation.AddUserQualificationMutation, Operation.AddUserQualificationMutationVariables>;
 export const ArchiveDestinationDocument = gql`
     mutation ArchiveDestination($id: Int!) {
   archiveDestination(input: {id: $id}) {
@@ -1055,7 +1142,6 @@ export const ConfirmUserDocument = gql`
   userConfirmRegistrationWithToken(confirmationToken: $token) {
     authenticatable {
       id
-      apfNumber
       phone
       pushToken
       email
@@ -1282,9 +1368,9 @@ export type CreateLoadMutationHookResult = ReturnType<typeof useCreateLoadMutati
 export type CreateLoadMutationResult = Apollo.MutationResult<Operation.CreateLoadMutation>;
 export type CreateLoadMutationOptions = Apollo.BaseMutationOptions<Operation.CreateLoadMutation, Operation.CreateLoadMutationVariables>;
 export const CreateOperatorDocument = gql`
-    mutation CreateOperator($industry: Industry!, $name: String!, $banner: String, $federation: Int!, $timeZone: String!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String) {
+    mutation CreateOperator($industry: Industry!, $name: String!, $banner: String, $certificationBodyIds: [Int!], $timeZone: String!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String) {
   createOperator(
-    input: {industry: $industry, attributes: {name: $name, banner: $banner, federation: $federation, timeZone: $timeZone, primaryColor: $primaryColor, secondaryColor: $secondaryColor, lat: $lat, lng: $lng}}
+    input: {industry: $industry, attributes: {name: $name, banner: $banner, certificationBodyIds: $certificationBodyIds, timeZone: $timeZone, primaryColor: $primaryColor, secondaryColor: $secondaryColor, lat: $lat, lng: $lng}}
   ) {
     fieldErrors {
       field
@@ -1315,7 +1401,7 @@ export type CreateOperatorMutationFn = Apollo.MutationFunction<Operation.CreateO
  *      industry: // value for 'industry'
  *      name: // value for 'name'
  *      banner: // value for 'banner'
- *      federation: // value for 'federation'
+ *      certificationBodyIds: // value for 'certificationBodyIds'
  *      timeZone: // value for 'timeZone'
  *      lat: // value for 'lat'
  *      lng: // value for 'lng'
@@ -1492,9 +1578,9 @@ export type CreateTicketTypeMutationHookResult = ReturnType<typeof useCreateTick
 export type CreateTicketTypeMutationResult = Apollo.MutationResult<Operation.CreateTicketTypeMutation>;
 export type CreateTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.CreateTicketTypeMutation, Operation.CreateTicketTypeMutationVariables>;
 export const CreateGhostDocument = gql`
-    mutation CreateGhost($name: String!, $phone: String, $email: String!, $federationNumber: String, $role: Int!, $license: Int, $operator: Int!, $bodyMassKg: Float!) {
+    mutation CreateGhost($name: String!, $phone: String, $email: String!, $certificationBodyNumber: String, $role: Int!, $certificationLevel: Int, $operator: Int!, $bodyMassKg: Float!) {
   createGhost(
-    input: {attributes: {role: $role, federationNumber: $federationNumber, name: $name, phone: $phone, email: $email, operator: $operator, license: $license, bodyMassKg: $bodyMassKg}}
+    input: {attributes: {role: $role, certificationBodyNumber: $certificationBodyNumber, name: $name, phone: $phone, email: $email, operator: $operator, certificationLevel: $certificationLevel, bodyMassKg: $bodyMassKg}}
   ) {
     errors
     fieldErrors {
@@ -1525,9 +1611,9 @@ export type CreateGhostMutationFn = Apollo.MutationFunction<Operation.CreateGhos
  *      name: // value for 'name'
  *      phone: // value for 'phone'
  *      email: // value for 'email'
- *      federationNumber: // value for 'federationNumber'
+ *      certificationBodyNumber: // value for 'certificationBodyNumber'
  *      role: // value for 'role'
- *      license: // value for 'license'
+ *      certificationLevel: // value for 'certificationLevel'
  *      operator: // value for 'operator'
  *      bodyMassKg: // value for 'bodyMassKg'
  *   },
@@ -1714,50 +1800,51 @@ export function useGrantPermissionMutation(baseOptions?: Apollo.MutationHookOpti
 export type GrantPermissionMutationHookResult = ReturnType<typeof useGrantPermissionMutation>;
 export type GrantPermissionMutationResult = Apollo.MutationResult<Operation.GrantPermissionMutation>;
 export type GrantPermissionMutationOptions = Apollo.BaseMutationOptions<Operation.GrantPermissionMutation, Operation.GrantPermissionMutationVariables>;
-export const JoinFederationDocument = gql`
-    mutation JoinFederation($federation: ID!, $uid: String, $license: ID) {
-  joinFederation(
-    input: {attributes: {federation: $federation, uid: $uid, license: $license}}
+export const JoinCertificationBodyDocument = gql`
+    mutation JoinCertificationBody($certificationBody: ID!, $uid: String, $number: String, $certificationLevel: ID) {
+  joinCertificationBody(
+    input: {attributes: {certificationBody: $certificationBody, uid: $uid, number: $number, certificationLevel: $certificationLevel}}
   ) {
     errors
     fieldErrors {
       field
       message
     }
-    userFederation {
-      ...userFederationEssentials
+    userCertification {
+      ...userCertificationEssentials
     }
   }
 }
-    ${UserFederationEssentialsFragmentDoc}`;
-export type JoinFederationMutationFn = Apollo.MutationFunction<Operation.JoinFederationMutation, Operation.JoinFederationMutationVariables>;
+    ${UserCertificationEssentialsFragmentDoc}`;
+export type JoinCertificationBodyMutationFn = Apollo.MutationFunction<Operation.JoinCertificationBodyMutation, Operation.JoinCertificationBodyMutationVariables>;
 
 /**
- * __useJoinFederationMutation__
+ * __useJoinCertificationBodyMutation__
  *
- * To run a mutation, you first call `useJoinFederationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useJoinFederationMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useJoinCertificationBodyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useJoinCertificationBodyMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [joinFederationMutation, { data, loading, error }] = useJoinFederationMutation({
+ * const [joinCertificationBodyMutation, { data, loading, error }] = useJoinCertificationBodyMutation({
  *   variables: {
- *      federation: // value for 'federation'
+ *      certificationBody: // value for 'certificationBody'
  *      uid: // value for 'uid'
- *      license: // value for 'license'
+ *      number: // value for 'number'
+ *      certificationLevel: // value for 'certificationLevel'
  *   },
  * });
  */
-export function useJoinFederationMutation(baseOptions?: Apollo.MutationHookOptions<Operation.JoinFederationMutation, Operation.JoinFederationMutationVariables>) {
+export function useJoinCertificationBodyMutation(baseOptions?: Apollo.MutationHookOptions<Operation.JoinCertificationBodyMutation, Operation.JoinCertificationBodyMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.JoinFederationMutation, Operation.JoinFederationMutationVariables>(JoinFederationDocument, options);
+        return Apollo.useMutation<Operation.JoinCertificationBodyMutation, Operation.JoinCertificationBodyMutationVariables>(JoinCertificationBodyDocument, options);
       }
-export type JoinFederationMutationHookResult = ReturnType<typeof useJoinFederationMutation>;
-export type JoinFederationMutationResult = Apollo.MutationResult<Operation.JoinFederationMutation>;
-export type JoinFederationMutationOptions = Apollo.BaseMutationOptions<Operation.JoinFederationMutation, Operation.JoinFederationMutationVariables>;
+export type JoinCertificationBodyMutationHookResult = ReturnType<typeof useJoinCertificationBodyMutation>;
+export type JoinCertificationBodyMutationResult = Apollo.MutationResult<Operation.JoinCertificationBodyMutation>;
+export type JoinCertificationBodyMutationOptions = Apollo.BaseMutationOptions<Operation.JoinCertificationBodyMutation, Operation.JoinCertificationBodyMutationVariables>;
 export const JoinOperatorDocument = gql`
     mutation JoinOperator($operator: ID!) {
   joinOperator(input: {operator: $operator}) {
@@ -2668,9 +2755,9 @@ export type UpdateTicketTypeMutationHookResult = ReturnType<typeof useUpdateTick
 export type UpdateTicketTypeMutationResult = Apollo.MutationResult<Operation.UpdateTicketTypeMutation>;
 export type UpdateTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>;
 export const UpdateUserDocument = gql`
-    mutation UpdateUser($membership: ID, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $license: Int, $bodyMassKg: Float) {
+    mutation UpdateUser($membership: ID, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $certificationLevel: Int, $bodyMassKg: Float) {
   updateUser(
-    input: {membership: $membership, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, license: $license, bodyMassKg: $bodyMassKg}}
+    input: {membership: $membership, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, certificationLevel: $certificationLevel, bodyMassKg: $bodyMassKg}}
   ) {
     errors
     fieldErrors {
@@ -2705,7 +2792,7 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<Operation.UpdateUserM
  *      image: // value for 'image'
  *      pushToken: // value for 'pushToken'
  *      nickname: // value for 'nickname'
- *      license: // value for 'license'
+ *      certificationLevel: // value for 'certificationLevel'
  *      bodyMassKg: // value for 'bodyMassKg'
  *   },
  * });
@@ -2813,7 +2900,7 @@ export type UpdateVisibilityMutationHookResult = ReturnType<typeof useUpdateVisi
 export type UpdateVisibilityMutationResult = Apollo.MutationResult<Operation.UpdateVisibilityMutation>;
 export type UpdateVisibilityMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateVisibilityMutation, Operation.UpdateVisibilityMutationVariables>;
 export const UserSignUpDocument = gql`
-    mutation UserSignUp($email: String!, $password: String!, $passwordConfirmation: String!, $name: String!, $phone: String!, $pushToken: String, $bodyMassKg: Float!, $licenseId: Int) {
+    mutation UserSignUp($email: String!, $password: String!, $passwordConfirmation: String!, $name: String!, $phone: String!, $pushToken: String, $bodyMassKg: Float!, $certificationLevelId: Int) {
   userRegister(
     email: $email
     password: $password
@@ -2822,7 +2909,7 @@ export const UserSignUpDocument = gql`
     name: $name
     phone: $phone
     pushToken: $pushToken
-    licenseId: $licenseId
+    certificationLevelId: $certificationLevelId
     confirmUrl: "https://openmanifest.org/confirm/"
   ) {
     fieldErrors {
@@ -2869,7 +2956,7 @@ export type UserSignUpMutationFn = Apollo.MutationFunction<Operation.UserSignUpM
  *      phone: // value for 'phone'
  *      pushToken: // value for 'pushToken'
  *      bodyMassKg: // value for 'bodyMassKg'
- *      licenseId: // value for 'licenseId'
+ *      certificationLevelId: // value for 'certificationLevelId'
  *   },
  * });
  */
@@ -3102,6 +3189,92 @@ export type AllowedActivityTypesQueryHookResult = ReturnType<typeof useAllowedAc
 export type AllowedActivityTypesLazyQueryHookResult = ReturnType<typeof useAllowedActivityTypesLazyQuery>;
 export type AllowedActivityTypesSuspenseQueryHookResult = ReturnType<typeof useAllowedActivityTypesSuspenseQuery>;
 export type AllowedActivityTypesQueryResult = Apollo.QueryResult<Operation.AllowedActivityTypesQuery, Operation.AllowedActivityTypesQueryVariables>;
+export const CertificationBodiesDocument = gql`
+    query CertificationBodies($industry: Industry) {
+  certificationBodies(industry: $industry) {
+    ...certificationBodyEssentials
+  }
+}
+    ${CertificationBodyEssentialsFragmentDoc}`;
+
+/**
+ * __useCertificationBodiesQuery__
+ *
+ * To run a query within a React component, call `useCertificationBodiesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCertificationBodiesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCertificationBodiesQuery({
+ *   variables: {
+ *      industry: // value for 'industry'
+ *   },
+ * });
+ */
+export function useCertificationBodiesQuery(baseOptions?: Apollo.QueryHookOptions<Operation.CertificationBodiesQuery, Operation.CertificationBodiesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.CertificationBodiesQuery, Operation.CertificationBodiesQueryVariables>(CertificationBodiesDocument, options);
+      }
+export function useCertificationBodiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.CertificationBodiesQuery, Operation.CertificationBodiesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.CertificationBodiesQuery, Operation.CertificationBodiesQueryVariables>(CertificationBodiesDocument, options);
+        }
+// @ts-ignore
+export function useCertificationBodiesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.CertificationBodiesQuery, Operation.CertificationBodiesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.CertificationBodiesQuery, Operation.CertificationBodiesQueryVariables>;
+export function useCertificationBodiesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.CertificationBodiesQuery, Operation.CertificationBodiesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.CertificationBodiesQuery | undefined, Operation.CertificationBodiesQueryVariables>;
+export function useCertificationBodiesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.CertificationBodiesQuery, Operation.CertificationBodiesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.CertificationBodiesQuery, Operation.CertificationBodiesQueryVariables>(CertificationBodiesDocument, options);
+        }
+export type CertificationBodiesQueryHookResult = ReturnType<typeof useCertificationBodiesQuery>;
+export type CertificationBodiesLazyQueryHookResult = ReturnType<typeof useCertificationBodiesLazyQuery>;
+export type CertificationBodiesSuspenseQueryHookResult = ReturnType<typeof useCertificationBodiesSuspenseQuery>;
+export type CertificationBodiesQueryResult = Apollo.QueryResult<Operation.CertificationBodiesQuery, Operation.CertificationBodiesQueryVariables>;
+export const CertificationLevelsDocument = gql`
+    query CertificationLevels($certificationBodyId: Int) {
+  certificationLevels(certificationBodyId: $certificationBodyId) {
+    ...certificationLevelDetails
+  }
+}
+    ${CertificationLevelDetailsFragmentDoc}`;
+
+/**
+ * __useCertificationLevelsQuery__
+ *
+ * To run a query within a React component, call `useCertificationLevelsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCertificationLevelsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCertificationLevelsQuery({
+ *   variables: {
+ *      certificationBodyId: // value for 'certificationBodyId'
+ *   },
+ * });
+ */
+export function useCertificationLevelsQuery(baseOptions?: Apollo.QueryHookOptions<Operation.CertificationLevelsQuery, Operation.CertificationLevelsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.CertificationLevelsQuery, Operation.CertificationLevelsQueryVariables>(CertificationLevelsDocument, options);
+      }
+export function useCertificationLevelsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.CertificationLevelsQuery, Operation.CertificationLevelsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.CertificationLevelsQuery, Operation.CertificationLevelsQueryVariables>(CertificationLevelsDocument, options);
+        }
+// @ts-ignore
+export function useCertificationLevelsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.CertificationLevelsQuery, Operation.CertificationLevelsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.CertificationLevelsQuery, Operation.CertificationLevelsQueryVariables>;
+export function useCertificationLevelsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.CertificationLevelsQuery, Operation.CertificationLevelsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.CertificationLevelsQuery | undefined, Operation.CertificationLevelsQueryVariables>;
+export function useCertificationLevelsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.CertificationLevelsQuery, Operation.CertificationLevelsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.CertificationLevelsQuery, Operation.CertificationLevelsQueryVariables>(CertificationLevelsDocument, options);
+        }
+export type CertificationLevelsQueryHookResult = ReturnType<typeof useCertificationLevelsQuery>;
+export type CertificationLevelsLazyQueryHookResult = ReturnType<typeof useCertificationLevelsLazyQuery>;
+export type CertificationLevelsSuspenseQueryHookResult = ReturnType<typeof useCertificationLevelsSuspenseQuery>;
+export type CertificationLevelsQueryResult = Apollo.QueryResult<Operation.CertificationLevelsQuery, Operation.CertificationLevelsQueryVariables>;
 export const CrewRolesDocument = gql`
     query CrewRoles($operatorId: ID!) {
   operator(id: $operatorId) {
@@ -3323,48 +3496,6 @@ export type TicketTypeExtrasQueryHookResult = ReturnType<typeof useTicketTypeExt
 export type TicketTypeExtrasLazyQueryHookResult = ReturnType<typeof useTicketTypeExtrasLazyQuery>;
 export type TicketTypeExtrasSuspenseQueryHookResult = ReturnType<typeof useTicketTypeExtrasSuspenseQuery>;
 export type TicketTypeExtrasQueryResult = Apollo.QueryResult<Operation.TicketTypeExtrasQuery, Operation.TicketTypeExtrasQueryVariables>;
-export const FederationsDocument = gql`
-    query Federations {
-  federations {
-    ...federationEssentials
-  }
-}
-    ${FederationEssentialsFragmentDoc}`;
-
-/**
- * __useFederationsQuery__
- *
- * To run a query within a React component, call `useFederationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useFederationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFederationsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useFederationsQuery(baseOptions?: Apollo.QueryHookOptions<Operation.FederationsQuery, Operation.FederationsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.FederationsQuery, Operation.FederationsQueryVariables>(FederationsDocument, options);
-      }
-export function useFederationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.FederationsQuery, Operation.FederationsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.FederationsQuery, Operation.FederationsQueryVariables>(FederationsDocument, options);
-        }
-// @ts-ignore
-export function useFederationsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.FederationsQuery, Operation.FederationsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.FederationsQuery, Operation.FederationsQueryVariables>;
-export function useFederationsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.FederationsQuery, Operation.FederationsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.FederationsQuery | undefined, Operation.FederationsQueryVariables>;
-export function useFederationsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.FederationsQuery, Operation.FederationsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.FederationsQuery, Operation.FederationsQueryVariables>(FederationsDocument, options);
-        }
-export type FederationsQueryHookResult = ReturnType<typeof useFederationsQuery>;
-export type FederationsLazyQueryHookResult = ReturnType<typeof useFederationsLazyQuery>;
-export type FederationsSuspenseQueryHookResult = ReturnType<typeof useFederationsSuspenseQuery>;
-export type FederationsQueryResult = Apollo.QueryResult<Operation.FederationsQuery, Operation.FederationsQueryVariables>;
 export const AddressToLocationDocument = gql`
     query AddressToLocation($search: String!) {
   geocode(search: $search) {
@@ -3411,49 +3542,6 @@ export type AddressToLocationQueryHookResult = ReturnType<typeof useAddressToLoc
 export type AddressToLocationLazyQueryHookResult = ReturnType<typeof useAddressToLocationLazyQuery>;
 export type AddressToLocationSuspenseQueryHookResult = ReturnType<typeof useAddressToLocationSuspenseQuery>;
 export type AddressToLocationQueryResult = Apollo.QueryResult<Operation.AddressToLocationQuery, Operation.AddressToLocationQueryVariables>;
-export const LicensesDocument = gql`
-    query Licenses($federationId: Int) {
-  licenses(federationId: $federationId) {
-    ...licenseDetails
-  }
-}
-    ${LicenseDetailsFragmentDoc}`;
-
-/**
- * __useLicensesQuery__
- *
- * To run a query within a React component, call `useLicensesQuery` and pass it any options that fit your needs.
- * When your component renders, `useLicensesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useLicensesQuery({
- *   variables: {
- *      federationId: // value for 'federationId'
- *   },
- * });
- */
-export function useLicensesQuery(baseOptions?: Apollo.QueryHookOptions<Operation.LicensesQuery, Operation.LicensesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.LicensesQuery, Operation.LicensesQueryVariables>(LicensesDocument, options);
-      }
-export function useLicensesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.LicensesQuery, Operation.LicensesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.LicensesQuery, Operation.LicensesQueryVariables>(LicensesDocument, options);
-        }
-// @ts-ignore
-export function useLicensesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.LicensesQuery, Operation.LicensesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.LicensesQuery, Operation.LicensesQueryVariables>;
-export function useLicensesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.LicensesQuery, Operation.LicensesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.LicensesQuery | undefined, Operation.LicensesQueryVariables>;
-export function useLicensesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.LicensesQuery, Operation.LicensesQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.LicensesQuery, Operation.LicensesQueryVariables>(LicensesDocument, options);
-        }
-export type LicensesQueryHookResult = ReturnType<typeof useLicensesQuery>;
-export type LicensesLazyQueryHookResult = ReturnType<typeof useLicensesLazyQuery>;
-export type LicensesSuspenseQueryHookResult = ReturnType<typeof useLicensesSuspenseQuery>;
-export type LicensesQueryResult = Apollo.QueryResult<Operation.LicensesQuery, Operation.LicensesQueryVariables>;
 export const LoadDocument = gql`
     query Load($id: ID!) {
   load(id: $id) {
@@ -4226,6 +4314,53 @@ export type OperatorsQueryHookResult = ReturnType<typeof useOperatorsQuery>;
 export type OperatorsLazyQueryHookResult = ReturnType<typeof useOperatorsLazyQuery>;
 export type OperatorsSuspenseQueryHookResult = ReturnType<typeof useOperatorsSuspenseQuery>;
 export type OperatorsQueryResult = Apollo.QueryResult<Operation.OperatorsQuery, Operation.OperatorsQueryVariables>;
+export const QualificationsDocument = gql`
+    query Qualifications($certificationBodyId: Int) {
+  qualifications(certificationBodyId: $certificationBodyId) {
+    ...qualificationEssentials
+    certificationBody {
+      ...certificationBodyEssentials
+    }
+  }
+}
+    ${QualificationEssentialsFragmentDoc}
+${CertificationBodyEssentialsFragmentDoc}`;
+
+/**
+ * __useQualificationsQuery__
+ *
+ * To run a query within a React component, call `useQualificationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useQualificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useQualificationsQuery({
+ *   variables: {
+ *      certificationBodyId: // value for 'certificationBodyId'
+ *   },
+ * });
+ */
+export function useQualificationsQuery(baseOptions?: Apollo.QueryHookOptions<Operation.QualificationsQuery, Operation.QualificationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.QualificationsQuery, Operation.QualificationsQueryVariables>(QualificationsDocument, options);
+      }
+export function useQualificationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.QualificationsQuery, Operation.QualificationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.QualificationsQuery, Operation.QualificationsQueryVariables>(QualificationsDocument, options);
+        }
+// @ts-ignore
+export function useQualificationsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.QualificationsQuery, Operation.QualificationsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.QualificationsQuery, Operation.QualificationsQueryVariables>;
+export function useQualificationsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.QualificationsQuery, Operation.QualificationsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.QualificationsQuery | undefined, Operation.QualificationsQueryVariables>;
+export function useQualificationsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.QualificationsQuery, Operation.QualificationsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.QualificationsQuery, Operation.QualificationsQueryVariables>(QualificationsDocument, options);
+        }
+export type QualificationsQueryHookResult = ReturnType<typeof useQualificationsQuery>;
+export type QualificationsLazyQueryHookResult = ReturnType<typeof useQualificationsLazyQuery>;
+export type QualificationsSuspenseQueryHookResult = ReturnType<typeof useQualificationsSuspenseQuery>;
+export type QualificationsQueryResult = Apollo.QueryResult<Operation.QualificationsQuery, Operation.QualificationsQueryVariables>;
 export const CurrentUserPermissionsDocument = gql`
     query CurrentUserPermissions($operatorId: ID!) {
   operator(id: $operatorId) {

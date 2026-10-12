@@ -7,16 +7,20 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
   __typename: 'Membership',
   id: '123',
   walletId: '123',
-  license: {
+  certificationLevel: {
     id: '1',
     name: 'Certifiate D',
-    federation: {
-      __typename: 'Federation',
+    rank: 50,
+    equivalenceKey: 'd',
+    certificationBody: {
+      __typename: 'CertificationBody',
       id: '1',
       name: 'APF',
       slug: 'apf',
+      industry: 'skydiving',
+      verificationProvider: 'apf',
     },
-    __typename: 'License',
+    __typename: 'CertificationLevel',
   },
   creditsCents: 10000,
   hasCredits: true,
@@ -24,7 +28,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
   hasMembership: true,
   hasReserveInDate: true,
   hasRigInspection: true,
-  hasLicense: true,
+  hasCertificationLevel: true,
   permissions: [],
   expiresAt: null,
   orders: {
@@ -44,10 +48,9 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
 
   user: {
     __typename: 'User',
-    apfNumber: null,
     moderationRole: ModerationRole.User,
     nickname: 'Jex',
-    userFederations: [],
+    userCertifications: [],
     id: '234',
     name: 'Court Jester',
     bodyMassKg: '100',

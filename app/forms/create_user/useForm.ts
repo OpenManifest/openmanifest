@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import {
-  FederationEssentialsFragment,
-  LicenseDetailsFragment,
+  CertificationBodyEssentialsFragment,
+  CertificationLevelDetailsFragment,
   RoleEssentialsFragment,
   UserEssentialsFragment,
 } from 'app/api/operations';
@@ -20,12 +20,12 @@ export type UserFields = {
   id?: string | null;
   name: string;
   phone?: string | null;
-  federationUid?: string | null;
+  certificationBodyUid?: string | null;
   nickname: string;
   email: string;
   bodyMassKg: number;
-  federation?: FederationEssentialsFragment;
-  license?: LicenseDetailsFragment;
+  certificationBody?: CertificationBodyEssentialsFragment;
+  certificationLevel?: CertificationLevelDetailsFragment;
   role?: RoleEssentialsFragment;
 };
 
@@ -35,14 +35,18 @@ export const ghostValidation = yup.object({
   nickname: yup.string().optional().nullable(),
   email: yup.string().required(() => i18n.t('forms.create_user.emailIsRequiredToInviteThe')),
   phone: yup.string().optional().nullable(),
-  federationUid: yup.string().optional().nullable(),
+  certificationBodyUid: yup.string().optional().nullable(),
   bodyMassKg: yup
     .number()
     .required(() => i18n.t('forms.create_user.exitWeightIsRequired'))
     .min(40, () => i18n.t('forms.create_user.exitWeightMustBeMoreThan'))
     .default(50),
-  federation: yup.object().required(() => i18n.t('forms.create_user.federationMustBeSelected')),
-  license: yup.object().required(() => i18n.t('forms.create_user.allJumpersMustHaveALicense')),
+  certificationBody: yup
+    .object()
+    .required(() => i18n.t('forms.create_user.certificationBodyMustBeSelected')),
+  certificationLevel: yup
+    .object()
+    .required(() => i18n.t('forms.create_user.allJumpersMustHaveACertificationLevel')),
   role: yup.object().required(() => i18n.t('forms.create_user.youMustSelectARole')),
 });
 
@@ -51,12 +55,12 @@ export const EMPTY_FORM_VALUES: Partial<UserFields> = {
   nickname: '',
   email: '',
   role: undefined,
-  license: undefined,
+  certificationLevel: undefined,
   bodyMassKg: 50,
-  federation: undefined,
+  certificationBody: undefined,
   id: null,
   phone: '',
-  federationUid: null,
+  certificationBodyUid: null,
 };
 
 export interface IUseUserFormOpts {
@@ -82,8 +86,8 @@ export default function useUserForm(opts: IUseUserFormOpts) {
   const { reset, register } = methods;
   React.useEffect(() => {
     register('id');
-    register('license');
-    register('federation');
+    register('certificationLevel');
+    register('certificationBody');
     register('role');
   }, [register]);
 
@@ -111,8 +115,8 @@ export default function useUserForm(opts: IUseUserFormOpts) {
           name: validated.name,
           bodyMassKg: validated.bodyMassKg,
           role: Number(validated.role?.id),
-          license: Number(validated?.license?.id),
-          federationNumber: validated?.federationUid,
+          certificationLevel: Number(validated?.certificationLevel?.id),
+          certificationBodyNumber: validated?.certificationBodyUid,
           phone: validated?.phone,
         });
         if (response) {
@@ -139,13 +143,19 @@ export default function useUserForm(opts: IUseUserFormOpts) {
   );
 
   const { control, setValue } = methods;
-  const { federation, license } = useWatch({ control });
+  const { certificationBody, certificationLevel } = useWatch({ control });
 
   React.useEffect(() => {
-    if (license?.federation && license?.federation?.id !== federation?.id) {
-      setValue('federation', license.federation as FederationEssentialsFragment);
+    if (
+      certificationLevel?.certificationBody &&
+      certificationLevel?.certificationBody?.id !== certificationBody?.id
+    ) {
+      setValue(
+        'certificationBody',
+        certificationLevel.certificationBody as CertificationBodyEssentialsFragment
+      );
     }
-  }, [federation?.id, license?.federation, setValue]);
+  }, [certificationBody?.id, certificationLevel?.certificationBody, setValue]);
 
   const onSubmit = React.useMemo(() => handleSubmit(createUser), [createUser, handleSubmit]);
 

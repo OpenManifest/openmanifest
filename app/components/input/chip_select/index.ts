@@ -1,7 +1,12 @@
 import ChipSelect, { ChipSelectField } from './ChipSelect';
 import MembershipChipSelect, { MembershipChipSelectField } from './MembershipChipSelect';
 import ActivityTypeChipSelect, { ActivityTypeChipSelectField } from './ActivityTypeChipSelect';
-import LicenseChipSelect, { LicenseChipSelectField } from './LicenseChipSelect';
+import CertificationLevelChipSelect, {
+  CertificationLevelChipSelectField,
+} from './CertificationLevelChipSelect';
+import CertificationBodyChipSelect, {
+  CertificationBodyChipSelectField,
+} from './CertificationBodyChipSelect';
 import VehicleChipSelect, { VehicleChipSelectField } from './VehicleChipSelect';
 import TicketTypeChipSelect, { TicketTypeChipSelectField } from './TicketTypeChipSelect';
 
@@ -9,7 +14,8 @@ export {
   ChipSelect,
   MembershipChipSelect,
   ActivityTypeChipSelect,
-  LicenseChipSelect,
+  CertificationBodyChipSelect,
+  CertificationLevelChipSelect,
   VehicleChipSelect,
   TicketTypeChipSelect,
 };
@@ -18,7 +24,8 @@ export {
   ChipSelectField,
   MembershipChipSelectField,
   ActivityTypeChipSelectField,
-  LicenseChipSelectField,
+  CertificationBodyChipSelectField,
+  CertificationLevelChipSelectField,
   VehicleChipSelectField,
   TicketTypeChipSelectField,
 };

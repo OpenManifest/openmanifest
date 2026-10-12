@@ -11,7 +11,7 @@ import useSelectOperator from 'app/hooks/useSelectOperator';
 import { StackActions, useNavigation } from '@react-navigation/native';
 import { useNotifications } from 'app/providers/notifications';
 import NameStep from './steps/Name';
-import FederationStep from './steps/Federation';
+import CertificationBodyStep from './steps/CertificationBody';
 import LocationStep from './steps/Location';
 import ThemingStep from './steps/Theming';
 import DoneStep from './steps/Done';
@@ -22,7 +22,7 @@ import { OperatorWizardFields, useOperatorWizardForm } from './useOperatorWizard
 /** The wizard step that shows each field, to take the user back to a field the server rejected */
 const STEP_OF_FIELD: Partial<Record<keyof OperatorWizardFields, number>> = {
   name: 0,
-  federation: 1,
+  certificationBodies: 1,
   lat: 2,
   lng: 2,
   primaryColor: 3,
@@ -81,7 +81,10 @@ function OperatorSetupScreen() {
     [trigger]
   );
   const onNameNext = React.useMemo(() => requireValid('name'), [requireValid]);
-  const onFederationNext = React.useMemo(() => requireValid('name', 'federation'), [requireValid]);
+  const onCertificationBodyNext = React.useMemo(
+    () => requireValid('name', 'certificationBodies'),
+    [requireValid]
+  );
 
   const onLogoNext = React.useCallback(async () => {
     if (!(await trigger())) {
@@ -94,7 +97,7 @@ function OperatorSetupScreen() {
           // Until the wizard asks for an industry (P7.23) every new operator is a skydiving one, in the device's zone
           industry: Industry.Skydiving,
           timeZone: resolveTimeZone(),
-          federation: Number(values.federation?.id),
+          certificationBodyIds: values.certificationBodies.map(({ id }) => Number(id)),
           name: values.name,
           banner: values.banner,
           primaryColor: values.primaryColor,
@@ -104,7 +107,7 @@ function OperatorSetupScreen() {
         })
       : await mutationUpdateOperator.mutate({
           id: Number(values.id),
-          federation: Number(values.federation?.id),
+          certificationBodyIds: values.certificationBodies.map(({ id }) => Number(id)),
           name: values.name,
           primaryColor: values.primaryColor,
           secondaryColor: values.secondaryColor,
@@ -138,8 +141,8 @@ function OperatorSetupScreen() {
         steps={[
           { onNext: onNameNext, component: NameStep },
           {
-            onNext: onFederationNext,
-            component: FederationStep,
+            onNext: onCertificationBodyNext,
+            component: CertificationBodyStep,
           },
           { component: LocationStep },
           { component: ThemingStep, onNext: noop },

@@ -1,6 +1,6 @@
 export enum OperatorWizardStep {
   Name = 0,
-  Federation = 1,
+  CertificationBody = 1,
   Location = 2,
   Branding = 3,
   Vehicle = 4,

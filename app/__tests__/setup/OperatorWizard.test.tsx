@@ -4,7 +4,7 @@ import { CreateOperatorDocument } from 'app/api/reflection';
 import { resolveTimeZone } from 'app/utils/operatorTime';
 import { COLOR_PRESETS } from '../../components/input/colorpicker/ColorPicker';
 import { act, fireEvent, render, waitFor } from '../../__mocks__/render';
-import MOCK_QUERY_FEDERATIONS from '../manifest/__mocks__/QueryFederations.mock';
+import MOCK_QUERY_CERTIFICATION_BODIES from '../manifest/__mocks__/QueryCertificationBodies.mock';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 import { textInputs } from 'app/test-utils/hosts';
 
@@ -53,10 +53,15 @@ jest.mock('@react-navigation/native', () => ({
   }),
 }));
 
-// The affiliation step selects the only federation by itself, so give it none to choose from
-const NO_FEDERATIONS = { ...MOCK_QUERY_FEDERATIONS(), result: { data: { federations: [] } } };
+// The affiliation step selects the only certificationBody by itself, so give it none to choose from
+const NO_CERTIFICATION_BODIES = {
+  ...MOCK_QUERY_CERTIFICATION_BODIES(),
+  result: { data: { certificationBodies: [] } },
+};
 
-function renderWizard(graphql: Parameters<typeof render>[1]['graphql'] = [NO_FEDERATIONS]) {
+function renderWizard(
+  graphql: Parameters<typeof render>[1]['graphql'] = [NO_CERTIFICATION_BODIES]
+) {
   return render(<OperatorWizard />, {
     session: authenticatedSession,
     graphql,
@@ -89,7 +94,7 @@ describe('<OperatorWizard />', () => {
     await fireEvent.press(screen.getAllByText('Next')[1]);
 
     await waitFor(() =>
-      expect(screen.getByText('Your dropzone must have an associated organization')).toBeTruthy()
+      expect(screen.getByText('Your dropzone must accept at least one organization')).toBeTruthy()
     );
   });
 
@@ -105,7 +110,7 @@ describe('<OperatorWizard />', () => {
       },
     }));
     const screen = await renderWizard([
-      MOCK_QUERY_FEDERATIONS(),
+      MOCK_QUERY_CERTIFICATION_BODIES(),
       {
         request: {
           query: CreateOperatorDocument,
@@ -115,7 +120,7 @@ describe('<OperatorWizard />', () => {
             timeZone: resolveTimeZone(),
             name: 'Skydive Alpha',
             banner: '',
-            federation: 1,
+            certificationBodyIds: [1],
             lat: null,
             lng: null,
             primaryColor: COLOR_PRESETS[0],
@@ -136,7 +141,7 @@ describe('<OperatorWizard />', () => {
 
     await fireEvent.changeText(textInputs(screen.container)[0], 'Skydive Alpha');
     await next(); // name
-    // The affiliation step selects the only federation once the list has loaded
+    // The affiliation step selects the only certificationBody once the list has loaded
     await waitFor(() => expect(screen.getAllByText('APF').length).toBeGreaterThan(0));
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 150));

@@ -29,7 +29,7 @@ export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
     allowNegativeCredits: false,
     requireCredits: false,
     requireEquipment: false,
-    requireLicense: false,
+    requireCertification: false,
     requireMembership: false,
     requireReserveInDate: false,
     requireRigInspection: false,
@@ -37,12 +37,17 @@ export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
     allowSelfManifest: true,
   },
   createdAt: new Date().toISOString(),
-  federation: {
-    __typename: 'Federation',
-    id: '1',
-    name: 'apf',
-    slug: 'apf',
-  },
+  certificationBodies: [
+    {
+      __typename: 'CertificationBody',
+      id: '1',
+      name: 'apf',
+      slug: 'apf',
+      industry: 'skydiving',
+      verificationProvider: 'apf',
+    },
+  ],
+  requiredQualifications: [],
   currentConditions: {
     __typename: 'WeatherCondition',
     id: '1',

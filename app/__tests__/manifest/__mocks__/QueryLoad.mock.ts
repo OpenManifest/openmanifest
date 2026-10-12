@@ -40,8 +40,8 @@ const membershipEssentials: MembershipEssentialsFragment = {
   hasCredits: true,
   hasBodyMassKg: true,
   hasMembership: true,
-  hasLicense: false,
-  license: null,
+  hasCertificationLevel: false,
+  certificationLevel: null,
   role: {
     id: '1',
     name: 'jest',
@@ -70,8 +70,8 @@ const membershipDetails: MembershipDetailsFragment = merge({}, membershipEssenti
     name: 'Amy Hops',
     bodyMassKg: '100',
   },
-  license: {
-    __typename: 'License',
+  certificationLevel: {
+    __typename: 'CertificationLevel',
     id: '21',
     name: 'Certificate A',
   },
@@ -174,7 +174,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
               name: 'Ali Falls',
               bodyMassKg: '100',
             },
-            license: {
+            certificationLevel: {
               id: '21',
               name: 'Certificate A',
             },
@@ -219,7 +219,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
               name: 'John Stumble',
               bodyMassKg: '100',
             },
-            license: {
+            certificationLevel: {
               id: '3',
               name: 'Certificate C',
             },

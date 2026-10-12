@@ -96,7 +96,7 @@ export default function UserRigCard(props: IUserRigCard) {
             {membership?.role?.name}
           </Chip>
           <Chip small icon="ticket-account" mode="outlined" disabled>
-            {membership?.license?.name}
+            {membership?.certificationLevel?.name}
           </Chip>
         </ScrollView>
         {!isTandem ? null : (

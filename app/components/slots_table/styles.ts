@@ -4,7 +4,7 @@ export default StyleSheet.create({
   avatarCell: {
     flex: 1,
   },
-  licenseCell: {
+  certificationLevelCell: {
     flex: 1,
   },
   rigCell: {

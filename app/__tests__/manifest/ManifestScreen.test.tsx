@@ -7,9 +7,9 @@ import { render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_OPERATOR from './__mocks__/QueryOperator.mock';
 import MOCK_QUERY_ALLOWED_TICKET_TYPES from './__mocks__/QueryAllowedTicketTypes.mock';
 import { MOCK_QUERY_ALLOWED_ACTIVITY_TYPES } from './__mocks__/QueryAllowedActivityTypes.mock';
-import MOCK_QUERY_FEDERATIONS from './__mocks__/QueryFederations.mock';
+import MOCK_QUERY_CERTIFICATION_BODIES from './__mocks__/QueryCertificationBodies.mock';
 import MOCK_QUERY_ROLES from './__mocks__/QueryRoles.mock';
-import MOCK_QUERY_LICENSES from './__mocks__/QueryLicenses.mock';
+import MOCK_QUERY_CERTIFICATION_LEVELS from './__mocks__/QueryCertificationLevels.mock';
 import MOCK_QUERY_LOADS from './__mocks__/QueryLoads.mock';
 import MOCK_QUERY_VEHICLES from './__mocks__/QueryVehicle.mock';
 import MOCK_QUERY_MEMBERSHIPS from './__mocks__/QueryMemberships.mock';
@@ -25,9 +25,9 @@ describe('<ManifestScreen />', () => {
         MOCK_QUERY_OPERATOR(),
         MOCK_QUERY_ALLOWED_TICKET_TYPES(),
         MOCK_QUERY_ALLOWED_ACTIVITY_TYPES(),
-        MOCK_QUERY_FEDERATIONS(),
+        MOCK_QUERY_CERTIFICATION_BODIES(),
         MOCK_QUERY_ROLES(),
-        MOCK_QUERY_LICENSES(),
+        MOCK_QUERY_CERTIFICATION_LEVELS(),
         MOCK_QUERY_LOADS(),
         MOCK_QUERY_VEHICLES(),
         MOCK_QUERY_ALLOWED_ACTIVITY_TYPES(),
@@ -55,9 +55,9 @@ describe('<ManifestScreen />', () => {
         MOCK_QUERY_OPERATOR(),
         MOCK_QUERY_ALLOWED_TICKET_TYPES(),
         MOCK_QUERY_ALLOWED_ACTIVITY_TYPES(),
-        MOCK_QUERY_FEDERATIONS(),
+        MOCK_QUERY_CERTIFICATION_BODIES(),
         MOCK_QUERY_ROLES(),
-        MOCK_QUERY_LICENSES(),
+        MOCK_QUERY_CERTIFICATION_LEVELS(),
         set(cloneDeep(MOCK_QUERY_LOADS()), 'result.data.loads.edges', []),
         MOCK_QUERY_VEHICLES(),
         MOCK_QUERY_ALLOWED_ACTIVITY_TYPES(),
@@ -95,9 +95,9 @@ describe('<ManifestScreen />', () => {
           MOCK_QUERY_OPERATOR(),
           MOCK_QUERY_ALLOWED_TICKET_TYPES(),
           MOCK_QUERY_ALLOWED_ACTIVITY_TYPES(),
-          MOCK_QUERY_FEDERATIONS(),
+          MOCK_QUERY_CERTIFICATION_BODIES(),
           MOCK_QUERY_ROLES(),
-          MOCK_QUERY_LICENSES(),
+          MOCK_QUERY_CERTIFICATION_LEVELS(),
           MOCK_QUERY_LOADS({ date }),
           MOCK_QUERY_VEHICLES(),
           MOCK_QUERY_ALLOWED_ACTIVITY_TYPES(),

@@ -85,7 +85,7 @@ function ProfileScreenContent(props: {
     [currentUser?.expiresAt, onClickAccessAndMembership]
   );
 
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'terms']);
   React.useEffect(() => navigation.setOptions({ title: t('screens.user') }), [navigation, t]);
   React.useEffect(() => {
     if (isFocused) {
@@ -164,8 +164,8 @@ function ProfileScreenContent(props: {
                           },
                         },
                         {
-                          title: 'License',
-                          value: `${membership?.license?.name || '-'}`,
+                          title: t('terms:certification', { count: 1 }),
+                          value: `${membership?.certificationLevel?.name || '-'}`,
                           onPress: () => {
                             openWizard(5);
                           },

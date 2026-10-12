@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { ValidationError } from 'yup';
 
 const schema = yup.object().shape({
-  hasLicense: yup.boolean().isTrue('You need to select a license on your user profile'),
+  hasCertificationLevel: yup.boolean().isTrue('You need to select a license on your user profile'),
   hasMembership: yup.boolean().isTrue('Your membership is out of date'),
   hasRigInspection: yup.boolean().isTrue('Your rig needs to be inspected before you can manifest'),
   hasReserveInDate: yup.boolean().isTrue('Your rig needs a reserve repack'),
@@ -21,7 +21,8 @@ export default function useManifestValidator() {
       try {
         await schema.validate(
           {
-            hasLicense: currentUser?.hasLicense || !operator?.settings?.requireLicense,
+            hasCertificationLevel:
+              currentUser?.hasCertificationLevel || !operator?.settings?.requireCertification,
             hasMembership: currentUser?.hasMembership || !operator?.settings?.requireMembership,
             hasRigInspection:
               currentUser?.hasRigInspection || !operator?.settings?.requireRigInspection,
@@ -41,8 +42,8 @@ export default function useManifestValidator() {
     [
       currentUser?.hasMembership,
       currentUser?.hasRigInspection,
-      currentUser?.hasLicense,
-      operator?.settings?.requireLicense,
+      currentUser?.hasCertificationLevel,
+      operator?.settings?.requireCertification,
       operator?.settings?.requireMembership,
       operator?.settings?.requireRigInspection,
       currentUser?.hasReserveInDate,

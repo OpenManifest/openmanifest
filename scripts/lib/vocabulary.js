@@ -74,6 +74,7 @@ function firstMatch(words, index, list) {
 
 function pluralize(word, suffix) {
   if (!suffix) return word;
+  if (/[^aeiou]y$/.test(word)) return `${word.slice(0, -1)}ies`;
   return /(s|x|ch|sh)$/.test(word) ? `${word}es` : `${word}s`;
 }
 

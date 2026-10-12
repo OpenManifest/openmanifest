@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { useAuthenticated } from 'app/state';
 import {
+  AddUserQualificationMutationVariables,
   CreateOrderMutationVariables,
   MembershipEssentialsFragment,
   MembershipProfileFragment,
@@ -12,21 +13,23 @@ import {
   UpdateMembershipMutationVariables,
   UpdateUserMutationVariables,
   UserEssentialsFragment,
-  UserFederationEssentialsFragment,
+  UserCertificationEssentialsFragment,
+  UserQualificationEssentialsFragment,
 } from '../operations';
 import {
   MembershipProfileDocument,
   MembershipProfileFragmentDoc,
   MembershipsDocument,
   useCreateGhostMutation,
+  useAddUserQualificationMutation,
   useCreateOrderMutation,
   useMembershipProfileLazyQuery,
   useGrantPermissionMutation,
-  useJoinFederationMutation,
+  useJoinCertificationBodyMutation,
   useRevokePermissionMutation,
   useUpdateUserMutation,
 } from '../reflection';
-import { GhostInput, JoinFederationInput, Permission } from '../schema.d';
+import { GhostInput, JoinCertificationBodyInput, Permission } from '../schema.d';
 import createCRUDContext, { TMutationResponse, uninitializedHandler } from './factory';
 import { useUserUpdated } from './subscriptions/useUserUpdated';
 import { toCents } from 'app/utils/money';
@@ -38,7 +41,8 @@ function useUserProfile(variables?: Partial<MembershipQueryVariables>) {
   const [getProfile, query] = useMembershipProfileLazyQuery();
   const [mutationCreateOrder] = useCreateOrderMutation();
   const [mutationCreateGhost] = useCreateGhostMutation();
-  const [updateFederation] = useJoinFederationMutation();
+  const [updateCertificationBody] = useJoinCertificationBodyMutation();
+  const [mutationAddQualification] = useAddUserQualificationMutation();
   const {
     operator: { operator },
   } = useOperatorContext();
@@ -107,24 +111,47 @@ function useUserProfile(variables?: Partial<MembershipQueryVariables>) {
     [query?.data?.membership?.id, updateMutation]
   );
 
-  const joinFederation = React.useCallback(
-    async function JoinFederation(
-      attributes: JoinFederationInput['attributes']
-    ): Promise<TMutationResponse<{ userFederation: UserFederationEssentialsFragment }>> {
-      const { data } = await updateFederation({
+  const joinCertificationBody = React.useCallback(
+    async function JoinCertificationBody(
+      attributes: JoinCertificationBodyInput['attributes']
+    ): Promise<TMutationResponse<{ userCertification: UserCertificationEssentialsFragment }>> {
+      const { data } = await updateCertificationBody({
         variables: attributes,
       });
 
-      if (data?.joinFederation?.userFederation?.id) {
-        return { userFederation: data?.joinFederation?.userFederation };
+      if (data?.joinCertificationBody?.userCertification?.id) {
+        return { userCertification: data?.joinCertificationBody?.userCertification };
       }
 
       return {
-        error: data?.joinFederation?.errors?.[0],
-        fieldErrors: data?.joinFederation?.fieldErrors || undefined,
+        error: data?.joinCertificationBody?.errors?.[0],
+        fieldErrors: data?.joinCertificationBody?.fieldErrors || undefined,
       };
     },
-    [updateFederation]
+    [updateCertificationBody]
+  );
+
+  const addQualification = React.useCallback(
+    async function AddQualification(
+      attributes: AddUserQualificationMutationVariables
+    ): Promise<TMutationResponse<{ userQualification: UserQualificationEssentialsFragment }>> {
+      const { data } = await mutationAddQualification({
+        variables: attributes,
+        refetchQueries: query?.variables?.id
+          ? [{ query: MembershipProfileDocument, variables: { id: query.variables.id } }]
+          : [],
+      });
+
+      if (data?.addUserQualification?.userQualification?.id) {
+        return { userQualification: data.addUserQualification.userQualification };
+      }
+
+      return {
+        error: data?.addUserQualification?.errors?.[0],
+        fieldErrors: data?.addUserQualification?.fieldErrors || undefined,
+      };
+    },
+    [mutationAddQualification, query?.variables?.id]
   );
 
   const createOrder = React.useCallback(
@@ -306,14 +333,16 @@ function useUserProfile(variables?: Partial<MembershipQueryVariables>) {
       update,
       addCredits,
       grantPermission,
-      joinFederation,
+      joinCertificationBody,
+      addQualification,
       revokePermission,
       withdrawCredits,
     }),
     [
       addCredits,
       grantPermission,
-      joinFederation,
+      joinCertificationBody,
+      addQualification,
       query?.refetch,
       create,
       query?.data?.membership,
@@ -330,7 +359,8 @@ const { Provider: UserProfileProvider, useContext: useUserProfileContext } = cre
   {
     loading: false,
     membership: null,
-    joinFederation: uninitializedHandler as never,
+    joinCertificationBody: uninitializedHandler as never,
+    addQualification: uninitializedHandler as never,
     refetch: uninitializedHandler as never,
     update: uninitializedHandler as never,
     create: uninitializedHandler as never,

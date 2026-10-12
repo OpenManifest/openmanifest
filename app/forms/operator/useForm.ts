@@ -8,18 +8,21 @@ import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { isEqual } from 'lodash';
 import { OperatorInput, Permission } from 'app/api/schema.d';
 import { useNotifications } from 'app/providers/notifications';
-import { OperatorEssentialsFragment, FederationEssentialsFragment } from 'app/api/operations';
-import { useFederationsQuery } from 'app/api/reflection';
+import {
+  OperatorEssentialsFragment,
+  CertificationBodyEssentialsFragment,
+} from 'app/api/operations';
 import useRestriction from 'app/hooks/useRestriction';
 import i18n from 'app/i18n';
 import { formatCallSchedule, parseCallSchedule } from 'app/utils/callSchedule';
 import { UnitSystem, unitOf } from 'app/i18n/units';
 
 export type OperatorFields = Required<
-  Omit<OperatorInput, 'settings' | 'federation' | 'id'> &
+  Omit<OperatorInput, 'settings' | 'certificationBodyIds' | 'id'> &
     Omit<NonNullable<OperatorInput['settings']>, 'callScheduleMinutes'> & {
       id: number;
-      federation: FederationEssentialsFragment | null;
+      /** The certification bodies the operator accepts */
+      certificationBodies: CertificationBodyEssentialsFragment[];
       /** The minutes of the boarding calls as the person types them: "20, 15, 10" */
       callSchedule: string;
       /** The units shown, one per quantity an operator chooses */
@@ -34,12 +37,16 @@ export type OperatorFields = Required<
 
 export const operatorValidation = yup.object({
   name: yup.string().nullable().default(null),
-  federation: yup.object().required(() => i18n.t('forms.operator.yourDropzoneMustBePartOf')),
+  certificationBodies: yup
+    .array()
+    .of(yup.object())
+    .min(1, () => i18n.t('forms.operator.yourDropzoneMustBePartOf'))
+    .required(() => i18n.t('forms.operator.yourDropzoneMustBePartOf')),
   lat: yup.number().nullable(),
   lng: yup.number().nullable(),
   primaryColor: yup.string(),
   requireRigInspection: yup.boolean(),
-  requireLicense: yup.boolean(),
+  requireCertification: yup.boolean(),
   requireCredits: yup.boolean(),
   requireMembership: yup.boolean(),
   allowNegativeCredits: yup.boolean(),
@@ -64,7 +71,7 @@ export const operatorValidation = yup.object({
 
 export const EMPTY_FORM_VALUES: Partial<OperatorFields> = {
   id: undefined,
-  federation: null,
+  certificationBodies: [],
   lat: null,
   lng: null,
   primaryColor: null,
@@ -74,7 +81,7 @@ export const EMPTY_FORM_VALUES: Partial<OperatorFields> = {
   allowManifestBypass: false,
   allowSelfManifest: true,
   requireCredits: true,
-  requireLicense: true,
+  requireCertification: true,
   callSchedule: '',
   unitAltitude: 'ft',
   unitDistance: 'km',
@@ -92,7 +99,6 @@ export interface IUseManifestFormOpts {
 export default function useOperatorForm(opts: IUseManifestFormOpts) {
   const { initial, onSuccess } = opts;
   const notify = useNotifications();
-  const { data } = useFederationsQuery();
   const {
     operator: { operator },
   } = useOperatorContext();
@@ -102,7 +108,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
       id: operator?.id ? Number(operator?.id) : undefined,
       lat: operator?.lat || undefined,
       lng: operator?.lng || undefined,
-      federation: operator?.federation || data?.federations?.[0] || undefined,
+      certificationBodies: operator?.certificationBodies ?? [],
       name: operator?.name || undefined,
       primaryColor: operator?.primaryColor || undefined,
       secondaryColor: operator?.secondaryColor || undefined,
@@ -111,7 +117,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
       allowDoubleManifesting: operator?.settings?.allowDoubleManifesting,
       allowSelfManifest: operator?.settings?.allowSelfManifest ?? true,
       requireCredits: operator?.settings?.requireCredits,
-      requireLicense: operator?.settings?.requireLicense,
+      requireCertification: operator?.settings?.requireCertification,
       requireMembership: operator?.settings?.requireMembership,
       requireRigInspection: operator?.settings?.requireRigInspection,
       isCreditSystemEnabled: operator?.isCreditSystemEnabled,
@@ -128,7 +134,6 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
     [
       initial,
       operator?.name,
-      data?.federations,
       operator?.primaryColor,
       operator?.secondaryColor,
       operator?.settings?.allowManifestBypass,
@@ -136,14 +141,14 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
       operator?.settings?.allowDoubleManifesting,
       operator?.settings?.allowSelfManifest,
       operator?.settings?.requireCredits,
-      operator?.settings?.requireLicense,
+      operator?.settings?.requireCertification,
       operator?.settings?.requireMembership,
       operator?.settings?.requireRigInspection,
       operator?.isCreditSystemEnabled,
       operator?.id,
       operator?.lat,
       operator?.lng,
-      operator?.federation,
+      operator?.certificationBodies,
       operator?.settings?.requireEquipment,
       operator?.callScheduleMinutes,
       operator?.units,
@@ -187,7 +192,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
           id,
           banner,
           isCreditSystemEnabled,
-          federation,
+          certificationBodies,
           primaryColor,
           lat,
           lng,
@@ -207,7 +212,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
 
         const response = await update({
           banner,
-          federation: federation?.id ? Number(federation?.id) : undefined,
+          certificationBodyIds: certificationBodies?.map(({ id }) => Number(id)),
           primaryColor,
           lat,
           lng,

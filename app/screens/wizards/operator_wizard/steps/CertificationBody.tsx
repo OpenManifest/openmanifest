@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { useController } from 'react-hook-form';
 import { HelperText } from 'react-native-paper';
-import FederationCardSelect from 'app/components/input/card_select/FederationCardSelect';
+import CertificationBodyChipSelect from 'app/components/input/chip_select/CertificationBodyChipSelect';
 import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
 import { useOperatorWizardFields } from '../useOperatorWizardForm';
 
-function Federation(props: IWizardStepProps) {
+function CertificationBody(props: IWizardStepProps) {
   const { control, setField } = useOperatorWizardFields();
-  const { field, fieldState } = useController({ name: 'federation', control });
+  const { field, fieldState } = useController({ name: 'certificationBodies', control });
 
   return (
     <Step {...props} title="Affiliation">
       <Fields>
-        <FederationCardSelect
+        <CertificationBodyChipSelect
           value={field.value}
-          onSelect={(value) => setField('federation', value)}
+          onChange={(bodies) => setField('certificationBodies', bodies)}
         />
         <HelperText type={fieldState.error?.message ? 'error' : 'info'}>
           {fieldState.error?.message || ''}
@@ -23,4 +23,4 @@ function Federation(props: IWizardStepProps) {
     </Step>
   );
 }
-export default Federation;
+export default CertificationBody;

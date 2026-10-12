@@ -7,10 +7,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import type {
   MembershipDetailsFragment,
-  FederationEssentialsFragment,
-  LicenseDetailsFragment,
+  CertificationBodyEssentialsFragment,
+  CertificationLevelDetailsFragment,
 } from 'app/api/operations';
-import { MembershipProfileDocument, useJoinFederationMutation } from 'app/api/reflection';
+import { MembershipProfileDocument, useJoinCertificationBodyMutation } from 'app/api/reflection';
 import useMutationUpdateUser from 'app/api/hooks/useMutationUpdateUser';
 import { useNotifications } from 'app/providers/notifications';
 import i18n from 'app/i18n';
@@ -21,8 +21,8 @@ export type UserFields = {
   email: string;
   phone: string;
   bodyMassKg: number;
-  federation: FederationEssentialsFragment | null;
-  license: LicenseDetailsFragment | null;
+  certificationBody: CertificationBodyEssentialsFragment | null;
+  certificationLevel: CertificationLevelDetailsFragment | null;
   apfNumber: string;
 };
 
@@ -43,8 +43,8 @@ export const userValidation = yup.object({
     .typeError(() => i18n.t('forms.user.exitWeightMustBeAValid'))
     .required(() => i18n.t('forms.user.exitWeightIsRequired'))
     .moreThan(30, () => i18n.t('forms.user.exitWeightSeemsTooLow')),
-  federation: yup.object().nullable().default(null),
-  license: yup.object().nullable().default(null),
+  certificationBody: yup.object().nullable().default(null),
+  certificationLevel: yup.object().nullable().default(null),
   apfNumber: yup.string().default(''),
 });
 
@@ -54,8 +54,8 @@ export const EMPTY_FORM_VALUES: UserFields = {
   email: '',
   phone: '',
   bodyMassKg: 60,
-  federation: null,
-  license: null,
+  certificationBody: null,
+  certificationLevel: null,
   apfNumber: '',
 };
 
@@ -64,9 +64,9 @@ export function toFormValues(membership?: MembershipDetailsFragment | null): Use
   if (!membership) {
     return EMPTY_FORM_VALUES;
   }
-  const { user, license } = membership;
-  const userFederation = user?.userFederations?.find(
-    ({ federation }) => federation.id === license?.federation?.id
+  const { user, certificationLevel } = membership;
+  const userCertification = user?.userCertifications?.find(
+    ({ certificationBody }) => certificationBody.id === certificationLevel?.certificationBody?.id
   );
 
   return {
@@ -75,9 +75,9 @@ export function toFormValues(membership?: MembershipDetailsFragment | null): Use
     email: user?.email || '',
     phone: user?.phone || '',
     bodyMassKg: Number(user?.bodyMassKg) || EMPTY_FORM_VALUES.bodyMassKg,
-    federation: license?.federation || null,
-    license: license || null,
-    apfNumber: userFederation?.uid || '',
+    certificationBody: certificationLevel?.certificationBody || null,
+    certificationLevel: certificationLevel || null,
+    apfNumber: userCertification?.uid || '',
   };
 }
 
@@ -108,7 +108,7 @@ export default function useUserForm(opts: IUseUserFormOpts) {
     reset(defaultValues);
   }, [defaultValues, reset]);
 
-  const [joinFederation] = useJoinFederationMutation();
+  const [joinCertificationBody] = useJoinCertificationBodyMutation();
   const mutationUpdateUser = useMutationUpdateUser({
     onSuccess: () => null,
     onFieldError: (field, message) => {
@@ -131,7 +131,9 @@ export default function useUserForm(opts: IUseUserFormOpts) {
       const result = await mutate({
         membership: membership?.id,
         name: fields.name,
-        license: !fields.license?.id ? null : Number(fields.license.id),
+        certificationLevel: !fields.certificationLevel?.id
+          ? null
+          : Number(fields.certificationLevel.id),
         phone: fields.phone,
         bodyMassKg: fields.bodyMassKg,
         email: fields.email,
@@ -140,27 +142,32 @@ export default function useUserForm(opts: IUseUserFormOpts) {
         return;
       }
 
-      // TODO: Set APF number from userFederation belonging to currentOperator.federation
+      // TODO: Set APF number from userCertification belonging to currentOperator.certificationBody
       // and compare against that
-      const selectedLicenseFederation = membership?.user?.userFederations?.find(
-        ({ federation }) => federation.slug === fields.license?.federation?.slug
-      );
+      const selectedCertificationLevelCertificationBody =
+        membership?.user?.userCertifications?.find(
+          ({ certificationBody }) =>
+            certificationBody.slug === fields.certificationLevel?.certificationBody?.slug
+        );
       if (
-        (fields.license?.id && selectedLicenseFederation?.license?.id !== fields.license.id) ||
-        (fields.apfNumber && fields.apfNumber !== selectedLicenseFederation?.uid)
+        (fields.certificationLevel?.id &&
+          selectedCertificationLevelCertificationBody?.certificationLevel?.id !==
+            fields.certificationLevel.id) ||
+        (fields.apfNumber && fields.apfNumber !== selectedCertificationLevelCertificationBody?.uid)
       ) {
-        await joinFederation({
+        await joinCertificationBody({
           variables: {
-            federation: fields.license?.federation?.id?.toString() as string,
+            certificationBody:
+              fields.certificationLevel?.certificationBody?.id?.toString() as string,
             uid: fields.apfNumber,
-            license: fields.license?.id,
+            certificationLevel: fields.certificationLevel?.id,
           },
         });
       }
       notify.success(i18n.t('forms.user.profileHasBeenUpdated'));
       onSuccess?.();
     },
-    [membership, joinFederation, mutate, notify, onSuccess]
+    [membership, joinCertificationBody, mutate, notify, onSuccess]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onSave), [handleSubmit, onSave]);

@@ -4,7 +4,7 @@ import { OperatorWizardStep } from 'app/screens/wizards/operator_wizard/Operator
 export default function checkOperatorSetupComplete(operator: OperatorDetailedFragment) {
   const completed = {
     [OperatorWizardStep.Name]: false,
-    [OperatorWizardStep.Federation]: false,
+    [OperatorWizardStep.CertificationBody]: false,
     [OperatorWizardStep.Location]: false,
     [OperatorWizardStep.Vehicle]: false,
     [OperatorWizardStep.Tickets]: false,
@@ -24,10 +24,10 @@ export default function checkOperatorSetupComplete(operator: OperatorDetailedFra
     currentIndex = OperatorWizardStep.Location;
   }
 
-  if (operator.federation?.id) {
-    completed[OperatorWizardStep.Federation] = true;
+  if (operator.certificationBodies?.length) {
+    completed[OperatorWizardStep.CertificationBody] = true;
   } else {
-    currentIndex = OperatorWizardStep.Federation;
+    currentIndex = OperatorWizardStep.CertificationBody;
   }
 
   if (operator.name) {

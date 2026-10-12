@@ -9,7 +9,7 @@ export default createMutation<
     timeZone: string;
     name: string;
     banner?: string | null;
-    federation: number;
+    certificationBodyIds: number[];
     primaryColor: string | null;
     secondaryColor?: string | null;
     lat: number | null;
@@ -19,7 +19,7 @@ export default createMutation<
 >(CreateOperatorDocument, {
   getPayload: (result) => result.createOperator,
   fieldErrorMap: {
-    federation: 'federation',
+    certificationBodyIds: 'certificationBodies',
   },
   validates: {
     name: [isRequired('Name is required')],

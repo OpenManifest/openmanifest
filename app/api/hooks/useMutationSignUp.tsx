@@ -11,7 +11,7 @@ export const MUTATION_USER_SIGNUP = gql`
     $phone: String!
     $pushToken: String
     $bodyMassKg: Float!
-    $licenseId: Int
+    $certificationLevelId: Int
   ) {
     userSignUp(
       email: $email
@@ -21,7 +21,7 @@ export const MUTATION_USER_SIGNUP = gql`
       name: $name
       phone: $phone
       pushToken: $pushToken
-      licenseId: $licenseId
+      certificationLevelId: $certificationLevelId
       confirmSuccessUrl: "https://openmanifest.org/confirm/"
     ) {
       authenticatable {
@@ -45,7 +45,7 @@ export const MUTATION_USER_SIGNUP = gql`
 export default createMutation<MutationUserRegisterArgs, SignUpPayload>(MUTATION_USER_SIGNUP, {
   getPayload: (result) => result.userRegister,
   fieldErrorMap: {
-    licenseId: 'license',
+    certificationLevelId: 'certificationLevel',
   },
   validates: {
     name: [isRequired('Name is required')],

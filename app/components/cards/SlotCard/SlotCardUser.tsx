@@ -87,7 +87,7 @@ export default function SlotCard(props: ISlotCardProps) {
             mode="outlined"
             disabled
           >
-            {slot?.membership?.license?.name}
+            {slot?.membership?.certificationLevel?.name}
           </Chip>
           <Chip
             style={styles.infoChip}

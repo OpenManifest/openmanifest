@@ -5,8 +5,11 @@ import { FormTextField } from 'app/components/input/text/TextField';
 import { Control, useWatch } from 'react-hook-form';
 import { FormNumberField } from 'app/components/input/number_input';
 import { NumberFieldType } from 'app/components/input/number_input/NumberField';
-import { FederationSelectField, RoleSelectField } from 'app/components/input/dropdown_select';
-import { LicenseChipSelectField } from 'app/components/input/chip_select';
+import {
+  CertificationBodySelectField,
+  RoleSelectField,
+} from 'app/components/input/dropdown_select';
+import { CertificationLevelChipSelectField } from 'app/components/input/chip_select';
 
 import { UserFields } from './useForm';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +22,7 @@ export default function GhostForm(props: IGhostFormProps) {
   const { t } = useTranslation('common');
   const { control } = props;
 
-  const { federation, license } = useWatch({ control });
+  const { certificationBody, certificationLevel } = useWatch({ control });
 
   return (
     <Stack gap="md">
@@ -45,10 +48,10 @@ export default function GhostForm(props: IGhostFormProps) {
       <Divider />
 
       <View style={{ width: '100%' }}>
-        <FederationSelectField {...{ control }} name="federation" />
+        <CertificationBodySelectField {...{ control }} name="certificationBody" />
 
-        {(license?.federation?.id || federation?.id) && (
-          <LicenseChipSelectField name="license" {...{ control }} />
+        {(certificationLevel?.certificationBody?.id || certificationBody?.id) && (
+          <CertificationLevelChipSelectField name="certificationLevel" {...{ control }} />
         )}
       </View>
       <RoleSelectField name="role" {...{ control }} />
