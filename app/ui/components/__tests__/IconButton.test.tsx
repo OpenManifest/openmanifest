@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { fireEvent } from '@testing-library/react-native';
 import IconButton from '../IconButton';
-import { flat, onPlatform, renderThemed } from './render';
+import { flat, onPlatform, renderThemed } from '../testing';
 
 describe('IconButton', () => {
   it('is a button named by its aria-label', async () => {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Text } from 'react-native';
 import { fireEvent } from '@testing-library/react-native';
 import ListRow from '../ListRow';
-import { colours, flat, renderThemed, SCHEMES } from './render';
+import { colours, flat, renderThemed, SCHEMES } from '../testing';
 
 describe('ListRow', () => {
   it('shows the title, the supporting text, the leading and the trailing content', async () => {

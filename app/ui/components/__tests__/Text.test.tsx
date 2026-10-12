@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type } from '../../tokens';
 import Text from '../Text';
-import { colours, flat, renderThemed, SCHEMES } from './render';
+import { colours, flat, renderThemed, SCHEMES } from '../testing';
 
 describe('Text', () => {
   it('takes size, weight and line height from the type token', async () => {

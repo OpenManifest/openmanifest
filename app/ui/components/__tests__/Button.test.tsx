@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { fireEvent } from '@testing-library/react-native';
 import Button from '../Button';
-import { colours, flat, onPlatform, renderThemed, SCHEMES } from './render';
+import { colours, flat, onPlatform, renderThemed, SCHEMES } from '../testing';
 
 // The touch that starts a press, as the responder system sends it
 const GRANT = {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { render } from '@testing-library/react-native';
-import { ThemeProvider } from '../../theme';
-import { colour, type Density, type Scheme } from '../../tokens';
+import { ThemeProvider } from '../theme';
+import { colour, type Density, type Scheme } from '../tokens';
 
 /** Renders `ui` inside the theme of a scheme and density */
 export function renderThemed(

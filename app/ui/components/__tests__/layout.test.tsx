@@ -4,7 +4,7 @@ import { space } from '../../tokens';
 import Card from '../Card';
 import Divider from '../Divider';
 import { Row, Stack } from '../Stack';
-import { colours, flat, renderThemed, SCHEMES } from './render';
+import { colours, flat, renderThemed, SCHEMES } from '../testing';
 
 describe('Stack and Row', () => {
   it('lay out in a column and in a row with a gap from the scale', async () => {
