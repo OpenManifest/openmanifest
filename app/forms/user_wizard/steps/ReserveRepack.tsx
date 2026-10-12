@@ -24,16 +24,16 @@ type StepFields = {
 };
 
 export function useStep(): WizardFormStep<StepFields> {
-  const { dropzoneUser } = useUserProfileContext();
+  const { membership } = useUserProfileContext();
 
   return useMemo(
     () => ({
       defaultValues: {
-        repackExpiresAt: dropzoneUser?.user?.rigs?.[0]?.repackExpiresAt || undefined,
+        repackExpiresAt: membership?.user?.rigs?.[0]?.repackExpiresAt || undefined,
       },
       validation,
     }),
-    [dropzoneUser?.user?.rigs]
+    [membership?.user?.rigs]
   );
 }
 

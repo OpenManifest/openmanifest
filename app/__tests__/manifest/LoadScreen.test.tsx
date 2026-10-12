@@ -3,7 +3,7 @@ import { Permission } from 'app/api/schema.d';
 import { LoadUpdatedDocument } from 'app/api/reflection';
 import { render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
-import LoadScreen from '../../screens/authenticated/dropzone/load/LoadScreen';
+import LoadScreen from '../../screens/authenticated/manifest/load/LoadScreen';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.mock('@react-navigation/native', () => ({

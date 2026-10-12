@@ -6,11 +6,11 @@ import { Text, View } from 'app/components/Themed';
 import usePalette from 'app/hooks/usePalette';
 
 interface IGetStartedProps {
-  hasPlanes: boolean;
+  hasVehicles: boolean;
   hasTicketTypes: boolean;
   isPublic: boolean;
 }
-export default function GetStarted({ hasPlanes, hasTicketTypes, isPublic }: IGetStartedProps) {
+export default function GetStarted({ hasVehicles, hasTicketTypes, isPublic }: IGetStartedProps) {
   const palette = usePalette();
 
   return (
@@ -24,7 +24,7 @@ export default function GetStarted({ hasPlanes, hasTicketTypes, isPublic }: IGet
       <List.Item
         title="Add a plane"
         left={() =>
-          !hasPlanes ? (
+          !hasVehicles ? (
             <List.Icon color={palette.error} icon="close" />
           ) : (
             <List.Icon color={palette.success} icon="check" />

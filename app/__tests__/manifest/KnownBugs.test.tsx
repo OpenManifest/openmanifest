@@ -3,17 +3,17 @@ import { RefreshControl, Text } from 'react-native';
 import { Permission } from 'app/api/schema.d';
 import { useManifestContext } from 'app/providers';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
-import MOCK_QUERY_DROPZONE from './__mocks__/QueryDropzone.mock';
+import MOCK_QUERY_OPERATOR from './__mocks__/QueryOperator.mock';
 import MOCK_QUERY_ALLOWED_TICKET_TYPES from './__mocks__/QueryAllowedTicketTypes.mock';
-import { MOCK_QUERY_ALLOWED_JUMP_TYPES } from './__mocks__/QueryAllowedJumpTypes.mock';
+import { MOCK_QUERY_ALLOWED_ACTIVITY_TYPES } from './__mocks__/QueryAllowedActivityTypes.mock';
 import MOCK_QUERY_FEDERATIONS from './__mocks__/QueryFederations.mock';
 import MOCK_QUERY_ROLES from './__mocks__/QueryRoles.mock';
 import MOCK_QUERY_LICENSES from './__mocks__/QueryLicenses.mock';
 import MOCK_QUERY_LOADS from './__mocks__/QueryLoads.mock';
-import MOCK_QUERY_PLANES from './__mocks__/QueryPlane.mock';
-import MOCK_QUERY_DROPZONE_USERS from './__mocks__/QueryDropzoneUsers.mock';
+import MOCK_QUERY_VEHICLES from './__mocks__/QueryVehicle.mock';
+import MOCK_QUERY_MEMBERSHIPS from './__mocks__/QueryMemberships.mock';
 import mockSubscriptionLoadCreated from './__mocks__/SubscriptionLoadCreated.mock';
-import ManifestScreen from '../../screens/authenticated/dropzone/manifest/ManifestScreen';
+import ManifestScreen from '../../screens/authenticated/manifest/manifest/ManifestScreen';
 import ManifestGroupDialog from '../../forms/manifest_group';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
@@ -24,16 +24,16 @@ jest.setTimeout(30000);
 
 function boardMocks(loads = MOCK_QUERY_LOADS()) {
   return [
-    MOCK_QUERY_DROPZONE(),
+    MOCK_QUERY_OPERATOR(),
     MOCK_QUERY_ALLOWED_TICKET_TYPES(),
-    MOCK_QUERY_ALLOWED_JUMP_TYPES(),
+    MOCK_QUERY_ALLOWED_ACTIVITY_TYPES(),
     MOCK_QUERY_FEDERATIONS(),
     MOCK_QUERY_ROLES(),
     MOCK_QUERY_LICENSES(),
     loads,
-    MOCK_QUERY_PLANES(),
-    MOCK_QUERY_DROPZONE_USERS({ permissions: [Permission.ActAsGca] }),
-    MOCK_QUERY_DROPZONE_USERS({ permissions: [Permission.ActAsPilot] }),
+    MOCK_QUERY_VEHICLES(),
+    MOCK_QUERY_MEMBERSHIPS({ permissions: [Permission.ActAsGca] }),
+    MOCK_QUERY_MEMBERSHIPS({ permissions: [Permission.ActAsPilot] }),
     mockSubscriptionLoadCreated(),
   ];
 }

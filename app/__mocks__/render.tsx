@@ -14,15 +14,15 @@ import { Operation } from '@apollo/client';
 // Import your own reducer
 import { AppThemeProvider } from 'app/theme';
 import { WeatherFormProvider } from 'app/forms/weather';
-import { DropzoneContextProvider, ManifestContextProvider } from 'app/providers';
-import mockQueryDropzone from '../__tests__/manifest/__mocks__/QueryDropzone.mock';
+import { OperatorContextProvider, ManifestContextProvider } from 'app/providers';
+import mockQueryOperator from '../__tests__/manifest/__mocks__/QueryOperator.mock';
 import { initialSession, SessionState, useSession } from '../state/session';
 import createMockPermissions from '../__tests__/manifest/__mocks__/QueryPermissions.mock';
 
 type RenderOptions = NonNullable<Parameters<typeof rtlRender>[1]>;
 
 interface IRenderer extends RenderOptions {
-  /** Session store values (credentials, current dropzone, ...); logged out when omitted */
+  /** Session store values (credentials, current operator, ...); logged out when omitted */
   session?: Partial<SessionState>;
   permissions?: Permission[];
   graphql: MockedResponse<Record<string, unknown>>[];
@@ -99,11 +99,11 @@ function render(
             addTypename
             mocks={[
               ...(graphql || []),
-              mockQueryDropzone(),
+              mockQueryOperator(),
               createMockPermissions(
                 {},
                 {
-                  dropzone: {
+                  operator: {
                     currentUser: {
                       permissions: permissions || [],
                     },
@@ -112,13 +112,13 @@ function render(
               ),
             ]}
           >
-            <DropzoneContextProvider dropzoneId={session?.currentDropzoneId?.toString()}>
-              <ManifestContextProvider dropzone={session?.currentDropzoneId?.toString()}>
+            <OperatorContextProvider operatorId={session?.currentOperatorId?.toString()}>
+              <ManifestContextProvider operator={session?.currentOperatorId?.toString()}>
                 <AppThemeProvider>
                   <WeatherFormProvider>{children}</WeatherFormProvider>
                 </AppThemeProvider>
               </ManifestContextProvider>
-            </DropzoneContextProvider>
+            </OperatorContextProvider>
           </Apollo>
         </BottomSheetModalProvider>
       </SafeAreaProvider>

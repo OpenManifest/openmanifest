@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { PaperProvider } from 'react-native-paper';
+import { ThemeProvider } from 'app/ui/theme';
 import { AppThemeContext, useCreateAppTheme } from './useAppTheme';
 
 export default function AppThemeProvider(props: { children: React.ReactNode }) {
@@ -7,7 +8,9 @@ export default function AppThemeProvider(props: { children: React.ReactNode }) {
 
   return (
     <AppThemeContext.Provider value={state}>
-      <PaperProvider theme={state.theme}>{props.children}</PaperProvider>
+      <ThemeProvider scheme={state.isDark ? 'dark' : 'light'} brand={state.brand}>
+        <PaperProvider theme={state.theme}>{props.children}</PaperProvider>
+      </ThemeProvider>
     </AppThemeContext.Provider>
   );
 }
