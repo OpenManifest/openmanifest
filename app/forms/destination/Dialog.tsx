@@ -4,6 +4,8 @@ import { DestinationEssentialsFragment } from 'app/api/operations';
 import { DestinationKind } from 'app/api/schema.d';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import useTerms from 'app/i18n/useTerms';
+import { activeUnits } from 'app/i18n/operatorFormat';
+import { fromSi, unitOf } from 'app/i18n/units';
 import DestinationForm from './DestinationForm';
 import useForm from './useForm';
 
@@ -29,7 +31,10 @@ export default function DestinationDialog({
       id: original?.id,
       name: original?.name,
       kind: original?.kind ?? kinds[0],
-      altitudeFt: original?.altitudeFt,
+      altitude:
+        original?.altitudeM == null
+          ? undefined
+          : Math.round(fromSi('altitude', original.altitudeM, unitOf('altitude', activeUnits()))),
     }),
     [original, kinds]
   );

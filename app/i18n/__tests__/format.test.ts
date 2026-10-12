@@ -6,13 +6,16 @@ import {
   formatCall,
   formatDate,
   formatDateTime,
-  formatAltitudeShort,
+  compactAltitude,
+  parseQuantity,
   formatDestination,
   formatMoney,
   formatQuantity,
   formatRelative,
   formatTime,
 } from '../format';
+import { formatCents } from 'app/utils/money';
+import { setOperatorFormat } from '../operatorFormat';
 
 // 2027-10-08 23:30 in Brisbane (UTC+10) is 2027-10-08 13:30 UTC; in Los Angeles (UTC-7) it is the morning of the 8th
 const instant = '2027-10-08T13:30:00Z';
@@ -99,29 +102,82 @@ describe('formatCall', () => {
 });
 
 describe('destinations', () => {
+  const ft = { altitude: 'ft' };
+  const m = { altitude: 'm' };
+
   it('formatDestination shows the name of a site, route or section', () => {
-    expect(formatDestination({ name: 'Rottnest Island', kind: 'site' })).toBe('Rottnest Island');
+    expect(formatDestination({ name: 'Rottnest Island', kind: 'site' }, ft)).toBe(
+      'Rottnest Island'
+    );
     expect(formatDestination({ name: 'Airport run' })).toBe('Airport run');
     expect(formatDestination(null)).toBe('');
   });
 
-  it('formatDestination shows an altitude as thousands of feet', () => {
-    expect(formatDestination({ name: 'Full altitude', kind: 'altitude', altitudeM: 4267.2 })).toBe(
-      '14k'
-    );
-    expect(formatDestination({ name: 'Hop n Pop', kind: 'altitude', altitudeM: 1219.2 })).toBe(
+  it('formatDestination shows an altitude as thousands of feet for an operator in feet', () => {
+    expect(
+      formatDestination({ name: 'Full altitude', kind: 'altitude', altitudeM: 4267.2 }, ft)
+    ).toBe('14k');
+    expect(formatDestination({ name: 'Hop n Pop', kind: 'altitude', altitudeM: 1219.2 }, ft)).toBe(
       '4k'
     );
-    expect(formatAltitudeShort(3810)).toBe('12.5k');
-    expect(formatAltitudeShort(null)).toBe('');
+  });
+
+  it('compactAltitude writes 12.5k in feet and whole metres in metres', () => {
+    expect(compactAltitude(3810, ft)).toBe('12.5k');
+    expect(compactAltitude(4267.2, m)).toBe('4267 m');
+    expect(compactAltitude(null, ft)).toBe('');
+  });
+
+  it('compactAltitude follows the units of the operator the app shows', () => {
+    setOperatorFormat({ units: ft });
+    expect(compactAltitude(4267.2)).toBe('14k');
+    setOperatorFormat({ units: m });
+    expect(compactAltitude(4267.2)).toBe('4267 m');
+    setOperatorFormat({ units: {} });
   });
 });
 
-describe('stubs completed by later tasks', () => {
-  it('formatQuantity shows a number with its unit', () => {
-    expect(formatQuantity(240, 'kg')).toBe('240 kg');
-    expect(formatQuantity(12.34, 'km')).toBe('12.3 km');
-    expect(formatQuantity(1200, null)).toBe('1,200');
-    expect(formatQuantity(null, 'kg')).toBe('');
+describe('quantities', () => {
+  afterEach(() => setOperatorFormat({ units: {}, currency: 'AUD' }));
+
+  it('formatQuantity shows an SI quantity in the unit of the operator', () => {
+    expect(formatQuantity(80, 'mass', { mass: 'kg' })).toBe('80 kg');
+    expect(formatQuantity(80, 'mass', { mass: 'lb' })).toBe('176.4 lb');
+    expect(formatQuantity(5.14444, 'speed', { speed: 'kn' })).toBe('10 kn');
+    expect(formatQuantity(5.14444, 'speed', { speed: 'kmh' })).toBe('19 km/h');
+    expect(formatQuantity(4267.2, 'altitude', { altitude: 'ft' })).toBe('14,000 ft');
+    expect(formatQuantity(1500, 'distance', { distance: 'km' })).toBe('1.5 km');
+    expect(formatQuantity(1609.344, 'distance', { distance: 'mi' })).toBe('1 mi');
+    expect(formatQuantity(21, 'temperature', { temperature: 'c' })).toBe('21°C');
+    expect(formatQuantity(21, 'temperature', { temperature: 'f' })).toBe('70°F');
+  });
+
+  it('formatQuantity shows metric when the operator names no unit', () => {
+    expect(formatQuantity(80, 'mass')).toBe('80 kg');
+    expect(formatQuantity(1500, 'distance', {})).toBe('1.5 km');
+    expect(formatQuantity(null, 'mass')).toBe('');
+  });
+
+  it('formatQuantity follows the units the app was given', () => {
+    setOperatorFormat({ units: { mass: 'lb' } });
+
+    expect(formatQuantity(100, 'mass')).toBe('220.5 lb');
+  });
+
+  it('parseQuantity reads what was typed in the unit of the operator as SI', () => {
+    expect(parseQuantity('176.4', 'mass', { mass: 'lb' })).toBeCloseTo(80.01, 1);
+    expect(parseQuantity('176,4 lb', 'mass', { mass: 'lb' })).toBeCloseTo(80.01, 1);
+    expect(parseQuantity('14000', 'altitude', { altitude: 'ft' })).toBeCloseTo(4267.2, 5);
+    expect(parseQuantity('70', 'temperature', { temperature: 'f' })).toBeCloseTo(21.11, 2);
+    expect(parseQuantity('', 'mass')).toBeNull();
+    expect(parseQuantity('abc', 'mass')).toBeNull();
+  });
+
+  it('formatMoney and formatCents use the currency of the operator', () => {
+    expect(formatCents(1250)).toBe('$12.50');
+    setOperatorFormat({ currency: 'NZD' });
+    expect(formatCents(1250)).toContain('12.50');
+    expect(formatCents(1250)).not.toBe('$12.50');
+    expect(formatMoney(-1250, 'AUD')).toBe('-$12.50');
   });
 });

@@ -155,7 +155,7 @@
       "preRegisterUser": "Pre-register user",
       "optional": "Optional",
       "phoneNumber": "Phone number",
-      "exitWeightKg": "Exit weight (kg)",
+      "exitWeightKg": "Exit weight",
       "nameIsRequired": "Name is required",
       "emailIsRequiredToInviteThe": "Email is required to invite the user",
       "exitWeightIsRequired": "Exit weight is required",
@@ -253,7 +253,14 @@
       "location": "Location",
       "callSchedule": "Boarding calls (minutes before departure)",
       "callScheduleHelp": "Longest first, up to six, for example 20, 15, 10. Leave empty to depart without a call.",
-      "callScheduleInvalid": "Use whole minutes, longest first, up to six: 20, 15, 10"
+      "callScheduleInvalid": "Use whole minutes, longest first, up to six: 20, 15, 10",
+      "unitsAndMoney": "Units and money",
+      "unitAltitude": "Heights",
+      "unitDistance": "Distances",
+      "unitMass": "Weights",
+      "unitSpeed": "Wind speeds",
+      "unitTemperature": "Temperatures",
+      "currency": "Currency"
     },
     "rig": {
       "youCanGiveYourEquipment": "You can give your equipment a nickname",
@@ -327,7 +334,7 @@
     "user": {
       "updateInformation": "Update information",
       "phone": "Phone",
-      "exitWeightKg": "Exit weight (kg)",
+      "exitWeightKg": "Exit weight",
       "nameIsRequired": "Name is required",
       "notAValidEmail": "Not a valid email",
       "emailIsRequired": "Email is required",
@@ -352,7 +359,7 @@
       "wingLoading": "Wing Loading",
       "yourWingloading": "Your wingloading",
       "yourExitWeight": "Your exit weight",
-      "yourWeightInKgS": "Your weight in kg's with all equipment on",
+      "yourWeightInKgS": "Your weight with all equipment on",
       "canopySize": "Canopy Size",
       "sizeOfYourMainCanopy": "Size of your main canopy in square feet",
       "pleaseEnterYourFullNameIncluding": "Please enter your full name, including surname",
@@ -412,7 +419,6 @@
         "route": "Route",
         "section": "Section"
       },
-      "altitudeFt": "Height (ft)",
       "nameIsRequired": "Name is required",
       "altitudeIsRequired": "Height is required",
       "saved": "{{name}} saved",
@@ -420,7 +426,22 @@
       "archive": "Archive {{name}}",
       "empty": "No {{destinations}} yet",
       "emptyBody": "Add the places your loads go to.",
-      "none": "None"
+      "none": "None",
+      "altitude": "Height"
     }
+  },
+  "units": {
+    "ft": "Feet (ft)",
+    "m": "Metres (m)",
+    "km": "Kilometres (km)",
+    "nmi": "Nautical miles (nmi)",
+    "mi": "Miles (mi)",
+    "kg": "Kilograms (kg)",
+    "lb": "Pounds (lb)",
+    "kn": "Knots (kn)",
+    "kmh": "Kilometres per hour (km/h)",
+    "mph": "Miles per hour (mph)",
+    "c": "Celsius (°C)",
+    "f": "Fahrenheit (°F)"
   }
 }

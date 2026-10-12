@@ -14,6 +14,9 @@ import {
 } from '../operations';
 import { TMutationResponse, uninitializedHandler } from './factory';
 import { OperatorInput } from '../schema';
+import { DEFAULT_CURRENCY } from 'app/i18n/format';
+import { setOperatorFormat } from 'app/i18n/operatorFormat';
+import type { UnitSystem } from 'app/i18n/units';
 
 export function useOperator(vars: Partial<OperatorQueryVariables>) {
   const authenticated = useAuthenticated();
@@ -91,6 +94,18 @@ export function useOperator(vars: Partial<OperatorQueryVariables>) {
   ]);
 
   const { loading, fetchMore, data, called, variables: queryVariables } = query;
+
+  // The formatters outside of components (money, quantities) show the units and the currency of this operator
+  const operatorUnits = data?.operator?.units;
+  const operatorCurrency = data?.operator?.currency;
+  React.useEffect(() => {
+    if (operatorCurrency || operatorUnits) {
+      setOperatorFormat({
+        units: (operatorUnits ?? {}) as UnitSystem,
+        currency: operatorCurrency ?? DEFAULT_CURRENCY,
+      });
+    }
+  }, [operatorUnits, operatorCurrency]);
 
   const refetch = React.useCallback(() => {
     if (variables?.operatorId) {

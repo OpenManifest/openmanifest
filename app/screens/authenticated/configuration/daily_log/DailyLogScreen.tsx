@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { formatQuantity } from 'app/i18n/format';
 import { Button, Card, DataTable, IconButton, List, Paragraph } from 'react-native-paper';
 import { Linking, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -144,7 +145,9 @@ export default function OperatorDailyLogScreen() {
                   <DataTable.Row>
                     <DataTable.Cell>{slot?.name}</DataTable.Cell>
                     <DataTable.Cell>{slot.activityType}</DataTable.Cell>
-                    <DataTable.Cell numeric>{slot?.altitude}</DataTable.Cell>
+                    <DataTable.Cell numeric>
+                      {formatQuantity(slot?.altitudeM, 'altitude')}
+                    </DataTable.Cell>
                   </DataTable.Row>
                 ))}
               </DataTable>

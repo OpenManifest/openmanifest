@@ -2,7 +2,18 @@ import * as React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Control, Controller, useWatch } from 'react-hook-form';
-import { COLOUR_PRESETS, Card, Skeleton, Stack, Subheader, Tappable, Text, useTheme } from 'app/ui';
+import {
+  COLOUR_PRESETS,
+  Card,
+  FormSelect,
+  Skeleton,
+  Stack,
+  Subheader,
+  Tappable,
+  Text,
+  useTheme,
+} from 'app/ui';
+import { UNIT_CHOICES, type Quantity } from 'app/i18n/units';
 import { useThemeOverrides } from 'app/theme';
 import LottieView from 'app/components/LottieView';
 import useImagePicker from 'app/hooks/useImagePicker';
@@ -19,6 +30,21 @@ import { SwitchField } from 'app/components/input/switch/Switch';
 const BANNER = 175;
 const MAP_HEIGHT = 400;
 const BLACK = COLOUR_PRESETS[0];
+
+/** The money an operator can sell in; ISO 4217 */
+const CURRENCIES = ['AUD', 'NZD', 'USD', 'CAD', 'GBP', 'EUR', 'CHF', 'ZAR', 'AED', 'THB', 'JPY'];
+
+/** The units fields of the form, by quantity */
+const UNIT_FIELDS: [
+  Quantity,
+  'unitAltitude' | 'unitDistance' | 'unitMass' | 'unitSpeed' | 'unitTemperature',
+][] = [
+  ['altitude', 'unitAltitude'],
+  ['distance', 'unitDistance'],
+  ['mass', 'unitMass'],
+  ['speed', 'unitSpeed'],
+  ['temperature', 'unitTemperature'],
+];
 
 interface IOperatorForm {
   loading: boolean;
@@ -180,6 +206,33 @@ export default function OperatorForm(props: IOperatorForm) {
             />
           )}
         />
+      )}
+
+      {loading ? (
+        <Skeleton height={300} />
+      ) : (
+        <Card>
+          <Stack gap="md">
+            <Subheader>{t('forms.operator.unitsAndMoney')}</Subheader>
+            {UNIT_FIELDS.map(([quantity, name]) => (
+              <FormSelect
+                key={name}
+                {...{ control, name }}
+                label={t(`forms.operator.${name}`)}
+                options={UNIT_CHOICES[quantity].map((unit) => ({
+                  value: unit,
+                  label: t(`units.${unit}`),
+                }))}
+              />
+            ))}
+            <FormSelect
+              {...{ control }}
+              name="currency"
+              label={t('forms.operator.currency')}
+              options={CURRENCIES.map((code) => ({ value: code, label: code }))}
+            />
+          </Stack>
+        </Card>
       )}
 
       {loading ? (

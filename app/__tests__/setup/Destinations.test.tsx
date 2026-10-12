@@ -45,8 +45,8 @@ describe('<DestinationsScreen />', () => {
     });
 
     await waitFor(() => expect(screen.getByText('Full altitude')).toBeTruthy());
-    expect(screen.getByText('14k · 14000 ft')).toBeTruthy();
-    expect(screen.getByText('4k · 4000 ft')).toBeTruthy();
+    expect(screen.getByText('14k · 14,000 ft')).toBeTruthy();
+    expect(screen.getByText('4k · 4,000 ft')).toBeTruthy();
     expect(screen.getByText('Reef')).toBeTruthy();
     expect(screen.getByText('Site')).toBeTruthy();
   });
@@ -81,7 +81,7 @@ describe('<DestinationsScreen />', () => {
           __typename: 'CreateDestinationPayload',
           errors: null,
           fieldErrors: null,
-          destination: { ...fullAltitude, id: '9', name: 'Wingsuit', altitudeFt: 12000 },
+          destination: { ...fullAltitude, id: '9', name: 'Wingsuit', altitudeM: 3657.6 },
         },
       },
     }));
@@ -95,7 +95,7 @@ describe('<DestinationsScreen />', () => {
           request: {
             query: CreateDestinationDocument,
             variables: {
-              attributes: { name: 'Wingsuit', kind: 'altitude', altitudeFt: 12000, operatorId: 1 },
+              attributes: { name: 'Wingsuit', kind: 'altitude', altitudeM: 3657.6, operatorId: 1 },
             },
           },
           result: created,

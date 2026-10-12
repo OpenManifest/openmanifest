@@ -5,6 +5,8 @@ import { DestinationKind } from 'app/api/schema.d';
 import { FormTextField } from 'app/components/input/text/TextField';
 import { FormNumberField } from 'app/components/input/number_input';
 import { FormSegmented, Stack } from 'app/ui';
+import { useOperatorFormat } from 'app/i18n/operatorFormat';
+import { UNIT_SYMBOLS, unitOf } from 'app/i18n/units';
 import { DestinationFields } from './useForm';
 
 export interface IDestinationFormProps {
@@ -16,6 +18,7 @@ export interface IDestinationFormProps {
 export default function DestinationForm({ control, kinds }: IDestinationFormProps) {
   const { t } = useTranslation('common');
   const kind = useWatch({ control, name: 'kind' });
+  const units = useOperatorFormat((state) => state.units);
 
   return (
     <Stack gap="md">
@@ -31,9 +34,9 @@ export default function DestinationForm({ control, kinds }: IDestinationFormProp
       {kind === DestinationKind.Altitude ? (
         <FormNumberField
           {...{ control }}
-          name="altitudeFt"
-          label={t('forms.destination.altitudeFt')}
-          unit="ft"
+          name="altitude"
+          label={t('forms.destination.altitude')}
+          unit={UNIT_SYMBOLS[unitOf('altitude', units)]}
           step={500}
           min={0}
         />

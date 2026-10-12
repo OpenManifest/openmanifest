@@ -21,6 +21,8 @@ export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
   industry: Industry.Skydiving,
   modules: {},
   callScheduleMinutes: [20, 15, 10],
+  currency: 'AUD',
+  units: { altitude: 'ft', depth: 'm', distance: 'km', mass: 'kg', speed: 'kn', temperature: 'c' },
   settings: {
     __typename: 'Settings',
     allowManifestBypass: false,
@@ -45,11 +47,11 @@ export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
     __typename: 'WeatherCondition',
     id: '1',
     jumpRun: 90,
-    temperature: -1,
+    temperatureC: -1,
     offsetDirection: null,
-    offsetMiles: null,
+    offsetM: null,
     createdAt: new Date().toISOString(),
-    exitSpotMiles: null,
+    exitSpotM: null,
     winds: [],
   },
 

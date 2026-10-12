@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { fireEvent, render } from '@testing-library/react-native';
 import { PaperProvider } from 'react-native-paper';
+import { setOperatorFormat } from 'app/i18n/operatorFormat';
 import NumberField, { NumberFieldType } from '../../components/input/number_input/NumberField';
 
 function Harness(
@@ -72,5 +73,32 @@ describe('<NumberField />', () => {
     const screen = await render(<Harness helperText="Without gear" error="Too heavy" />);
     expect(screen.getByText('Too heavy')).toBeTruthy();
     expect(screen.queryByText('Without gear')).toBeNull();
+  });
+
+  describe('for an operator that shows pounds', () => {
+    beforeEach(() => setOperatorFormat({ units: { mass: 'lb' } }));
+    afterEach(() => setOperatorFormat({ units: {} }));
+
+    it('shows the weight in pounds and reports kilograms', async () => {
+      const onValue = jest.fn();
+      const screen = await render(<Harness variant={NumberFieldType.Weight} onValue={onValue} />);
+
+      expect(screen.getByDisplayValue('176.4')).toBeTruthy();
+      expect(screen.getByText('lb')).toBeTruthy();
+      await fireEvent.changeText(screen.getByDisplayValue('176.4'), '200');
+
+      expect(onValue).toHaveBeenLastCalledWith(90.72);
+    });
+  });
+
+  describe('for an operator that sells in another currency', () => {
+    afterEach(() => setOperatorFormat({ currency: 'AUD' }));
+
+    it('puts the sign of the currency before a price', async () => {
+      setOperatorFormat({ currency: 'EUR' });
+      const screen = await render(<Harness variant={NumberFieldType.Cash} />);
+
+      expect(screen.getByText('€')).toBeTruthy();
+    });
   });
 });

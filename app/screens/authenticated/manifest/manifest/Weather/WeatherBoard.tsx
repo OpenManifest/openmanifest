@@ -24,6 +24,8 @@ import parseISO from 'date-fns/parseISO';
 import nightBackground from '../../../../../../assets/images/night.png';
 import weatherBackground from '../../../../../../assets/images/weather.png';
 import JumpRunMap from './JumpRun';
+import { formatQuantity } from 'app/i18n/format';
+import { useOperatorFormat } from 'app/i18n/operatorFormat';
 
 export default function WeatherBoard() {
   const {
@@ -42,7 +44,8 @@ export default function WeatherBoard() {
     ? parseISO(operator.currentConditions.createdAt)
     : new Date();
   const jumpRun = operator?.currentConditions?.jumpRun || 0;
-  const temperature = operator?.currentConditions?.temperature || 0;
+  const temperatureC = operator?.currentConditions?.temperatureC;
+  const units = useOperatorFormat((state) => state.units);
   const canUpdate = useRestriction(Permission.UpdateWeatherConditions);
 
   const hasWeatherConditions = conditions?.id && conditions?.winds?.length && conditions?.jumpRun;
@@ -150,8 +153,9 @@ export default function WeatherBoard() {
                         marginRight: 8,
                       }}
                     />
-                    <Text style={styles.temperature}>{temperature || '?'}</Text>
-                    <MaterialCommunityIcons name="temperature-celsius" color="#ffffff" size={20} />
+                    <Text style={styles.temperature}>
+                      {temperatureC ? formatQuantity(temperatureC, 'temperature', units) : '?'}
+                    </Text>
                   </View>
                 </View>
                 <View style={styles.bottom}>
@@ -188,17 +192,21 @@ export default function WeatherBoard() {
                     </View>
                     {orderBy(
                       operator?.currentConditions?.winds || [],
-                      (item) => Number(item.altitude),
+                      (item) => Number(item.altitudeM),
                       'desc'
-                    ).map(({ speed: wind, direction, altitude }) => (
-                      <React.Fragment key={`wind-at-${altitude}`}>
+                    ).map(({ speedMps, direction, altitudeM }) => (
+                      <React.Fragment key={`wind-at-${altitudeM}`}>
                         <Divider style={{ width: '100%', backgroundColor: 'white' }} />
                         <View style={styles.row}>
                           <View style={styles.cell}>
-                            <Text style={styles.value}>{altitude}</Text>
+                            <Text style={styles.value}>
+                              {formatQuantity(altitudeM, 'altitude', units)}
+                            </Text>
                           </View>
                           <View style={styles.cell}>
-                            <Text style={styles.value}>{wind}</Text>
+                            <Text style={styles.value}>
+                              {formatQuantity(speedMps, 'speed', units)}
+                            </Text>
                           </View>
                           <View style={[styles.cell, { justifyContent: 'center' }]}>
                             <Text style={styles.value}>{direction}</Text>
@@ -206,7 +214,7 @@ export default function WeatherBoard() {
                               name="long-arrow-down"
                               size={14}
                               style={
-                                direction && /\d+/.test(direction) && Number(direction) < 361
+                                direction !== null && direction !== undefined && direction < 361
                                   ? {
                                       transform: [
                                         {

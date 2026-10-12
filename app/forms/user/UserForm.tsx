@@ -4,6 +4,7 @@ import { Control, useController, useWatch } from 'react-hook-form';
 
 import { FormTextField } from 'app/components/input/text/TextField';
 import { FormNumberField } from 'app/components/input/number_input';
+import { NumberFieldType } from 'app/components/input/number_input/NumberField';
 import { LicenseChipSelectField } from 'app/components/input/chip_select/LicenseChipSelect';
 import FederationSelect from 'app/components/input/dropdown_select/FederationSelect';
 import { UserFields } from './useForm';
@@ -30,7 +31,12 @@ export default function UserForm(props: IUserFormProps) {
       <FormTextField {...{ control }} name="nickname" label={t('forms.fields.nickname')} />
       <FormTextField {...{ control }} name="email" label={t('forms.fields.email')} />
       <FormTextField {...{ control }} name="phone" label={t('forms.user.phone')} />
-      <FormNumberField {...{ control }} name="bodyMassKg" label={t('forms.user.exitWeightKg')} />
+      <FormNumberField
+        {...{ control }}
+        name="bodyMassKg"
+        variant={NumberFieldType.Weight}
+        label={t('forms.user.exitWeightKg')}
+      />
 
       <Divider />
 

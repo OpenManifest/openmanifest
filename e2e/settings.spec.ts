@@ -40,9 +40,9 @@ test.describe('settings @setup', () => {
 
     await expect(list).toBeVisible();
     await expect(list.getByText('Full altitude')).toBeVisible();
-    await expect(list.getByText('14k · 14000 ft')).toBeVisible();
+    await expect(list.getByText('14k · 14,000 ft')).toBeVisible();
     await expect(list.getByText('Hop n Pop')).toBeVisible();
-    await expect(list.getByText('4k · 4000 ft')).toBeVisible();
+    await expect(list.getByText('4k · 4,000 ft')).toBeVisible();
   });
 
   test('the ticket types show where they go', async ({ page }) => {

@@ -7,7 +7,7 @@ import { useDestinations } from 'app/api/crud';
 import DestinationDialog from 'app/forms/destination/Dialog';
 import useRestriction from 'app/hooks/useRestriction';
 import useTerms from 'app/i18n/useTerms';
-import { formatDestination } from 'app/i18n/format';
+import { formatDestination, formatQuantity } from 'app/i18n/format';
 import { useNotifications } from 'app/providers/notifications';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { destinationsModule } from 'app/utils/destinations';
@@ -90,7 +90,7 @@ export default function DestinationsScreen() {
                   title={destination.name}
                   supporting={
                     destination.kind === DestinationKind.Altitude
-                      ? `${formatDestination(destination)} · ${destination.altitudeFt} ft`
+                      ? `${formatDestination(destination)} · ${formatQuantity(destination.altitudeM, 'altitude')}`
                       : t(`forms.destination.kinds.${destination.kind}`)
                   }
                   onPress={canEdit ? () => setEditing({ original: destination }) : undefined}

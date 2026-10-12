@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import type { DestinationKind } from 'app/api/schema.d';
 import { useDestinations } from 'app/api/crud';
 import useTerms from 'app/i18n/useTerms';
-import { formatAltitudeShort } from 'app/i18n/format';
+import { compactAltitude } from 'app/i18n/format';
+import { useOperatorFormat } from 'app/i18n/operatorFormat';
 import Select from '../select/Select';
 import { withHookForm } from '../withHookForm';
 
@@ -40,6 +41,7 @@ function DestinationSelect({
   const { t } = useTranslation('common');
   const term = useTerms();
   const { destinations } = useDestinations();
+  const units = useOperatorFormat((state) => state.units);
 
   const options = React.useMemo(() => {
     const list = destinations
@@ -48,7 +50,7 @@ function DestinationSelect({
       .map((destination) => ({
         label:
           destination.kind === 'altitude' && destination.altitudeM != null
-            ? `${destination.name} (${formatAltitudeShort(destination.altitudeM)})`
+            ? `${destination.name} (${compactAltitude(destination.altitudeM, units)})`
             : destination.name,
         value: destination.id,
         icon: destination.kind === 'altitude' ? ('airplane-takeoff' as const) : undefined,
@@ -56,7 +58,7 @@ function DestinationSelect({
     return allowNone
       ? [{ label: t('forms.destination.none'), value: NONE, icon: undefined }, ...list]
       : list;
-  }, [destinations, kinds, exclude, allowNone, t]);
+  }, [destinations, kinds, exclude, allowNone, t, units]);
 
   return (
     <Select<string>

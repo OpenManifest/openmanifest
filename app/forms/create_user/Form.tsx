@@ -4,6 +4,7 @@ import { FormTextField } from 'app/components/input/text/TextField';
 
 import { Control, useWatch } from 'react-hook-form';
 import { FormNumberField } from 'app/components/input/number_input';
+import { NumberFieldType } from 'app/components/input/number_input/NumberField';
 import { FederationSelectField, RoleSelectField } from 'app/components/input/dropdown_select';
 import { LicenseChipSelectField } from 'app/components/input/chip_select';
 
@@ -37,6 +38,7 @@ export default function GhostForm(props: IGhostFormProps) {
       <FormNumberField
         label={t('forms.create_user.exitWeightKg')}
         name="bodyMassKg"
+        variant={NumberFieldType.Weight}
         {...{ control }}
       />
 

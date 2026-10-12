@@ -7,7 +7,6 @@ export const fullAltitude: DestinationEssentialsFragment = {
   kind: DestinationKind.Altitude,
   name: 'Full altitude',
   altitudeM: 4267.2,
-  altitudeFt: 14000,
   location: {},
   stops: [],
   minCertificationRank: null,
@@ -19,7 +18,6 @@ export const hopNPop: DestinationEssentialsFragment = {
   id: '2',
   name: 'Hop n Pop',
   altitudeM: 1219.2,
-  altitudeFt: 4000,
 };
 
 export const reef: DestinationEssentialsFragment = {
@@ -28,6 +26,5 @@ export const reef: DestinationEssentialsFragment = {
   kind: DestinationKind.Site,
   name: 'Reef',
   altitudeM: null,
-  altitudeFt: null,
   location: { lat: -16.9, lng: 145.8, max_depth_m: 18 },
 };

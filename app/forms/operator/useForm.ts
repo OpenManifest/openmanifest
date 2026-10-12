@@ -13,6 +13,7 @@ import { useFederationsQuery } from 'app/api/reflection';
 import useRestriction from 'app/hooks/useRestriction';
 import i18n from 'app/i18n';
 import { formatCallSchedule, parseCallSchedule } from 'app/utils/callSchedule';
+import { UnitSystem, unitOf } from 'app/i18n/units';
 
 export type OperatorFields = Required<
   Omit<OperatorInput, 'settings' | 'federation' | 'id'> &
@@ -21,6 +22,13 @@ export type OperatorFields = Required<
       federation: FederationEssentialsFragment | null;
       /** The minutes of the boarding calls as the person types them: "20, 15, 10" */
       callSchedule: string;
+      /** The units shown, one per quantity an operator chooses */
+      unitAltitude: string;
+      unitDistance: string;
+      unitMass: string;
+      unitSpeed: string;
+      unitTemperature: string;
+      currency: string;
     }
 >;
 
@@ -38,6 +46,12 @@ export const operatorValidation = yup.object({
   allowManifestBypass: yup.boolean(),
   allowDoubleManifesting: yup.boolean(),
   allowSelfManifest: yup.boolean(),
+  unitAltitude: yup.string(),
+  unitDistance: yup.string(),
+  unitMass: yup.string(),
+  unitSpeed: yup.string(),
+  unitTemperature: yup.string(),
+  currency: yup.string(),
   callSchedule: yup
     .string()
     .default('')
@@ -62,6 +76,12 @@ export const EMPTY_FORM_VALUES: Partial<OperatorFields> = {
   requireCredits: true,
   requireLicense: true,
   callSchedule: '',
+  unitAltitude: 'ft',
+  unitDistance: 'km',
+  unitMass: 'kg',
+  unitSpeed: 'kn',
+  unitTemperature: 'c',
+  currency: 'AUD',
 };
 
 export interface IUseManifestFormOpts {
@@ -97,6 +117,12 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
       isCreditSystemEnabled: operator?.isCreditSystemEnabled,
       requireEquipment: operator?.settings?.requireEquipment,
       callSchedule: formatCallSchedule(operator?.callScheduleMinutes),
+      unitAltitude: unitOf('altitude', operator?.units as UnitSystem),
+      unitDistance: unitOf('distance', operator?.units as UnitSystem),
+      unitMass: unitOf('mass', operator?.units as UnitSystem),
+      unitSpeed: unitOf('speed', operator?.units as UnitSystem),
+      unitTemperature: unitOf('temperature', operator?.units as UnitSystem),
+      currency: operator?.currency ?? 'AUD',
       ...initial,
     }),
     [
@@ -120,6 +146,8 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
       operator?.federation,
       operator?.settings?.requireEquipment,
       operator?.callScheduleMinutes,
+      operator?.units,
+      operator?.currency,
     ]
   );
 
@@ -168,6 +196,12 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
           secondaryColor,
           isPublic,
           callSchedule,
+          unitAltitude,
+          unitDistance,
+          unitMass,
+          unitSpeed,
+          unitTemperature,
+          currency,
           ...settings
         } = fields;
 
@@ -181,7 +215,19 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
           requestPublication,
           isCreditSystemEnabled,
           isPublic,
-          settings: { ...settings, callScheduleMinutes: parseCallSchedule(callSchedule) ?? [] },
+          currency,
+          settings: {
+            ...settings,
+            callScheduleMinutes: parseCallSchedule(callSchedule) ?? [],
+            units: {
+              ...(operator?.units as UnitSystem),
+              altitude: unitAltitude,
+              distance: unitDistance,
+              mass: unitMass,
+              speed: unitSpeed,
+              temperature: unitTemperature,
+            },
+          },
         });
 
         if ('fieldErrors' in response) {

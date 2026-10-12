@@ -82,6 +82,8 @@ export const OperatorEssentialsFragmentDoc = gql`
   industry
   modules
   callScheduleMinutes
+  currency
+  units
   settings {
     allowManifestBypass
     allowNegativeCredits
@@ -120,7 +122,6 @@ export const DestinationEssentialsFragmentDoc = gql`
   kind
   name
   altitudeM
-  altitudeFt
   location
   stops
   minCertificationRank
@@ -275,7 +276,7 @@ export const DailyLogVehicleFragmentDoc = gql`
 export const DailyLogSlotFragmentDoc = gql`
     fragment dailyLogSlot on DailyLogSlot {
   id
-  altitude
+  altitudeM
   activityType
   name
 }
@@ -623,15 +624,15 @@ export const WeatherConditionEssentialsFragmentDoc = gql`
     fragment weatherConditionEssentials on WeatherCondition {
   id
   jumpRun
-  temperature
+  temperatureC
   offsetDirection
-  offsetMiles
+  offsetM
   createdAt
-  exitSpotMiles
+  exitSpotM
   winds {
-    temperature
-    altitude
-    speed
+    temperatureC
+    altitudeM
+    speedMps
     direction
   }
 }
@@ -2084,24 +2085,12 @@ export const ReloadWeatherDocument = gql`
       message
     }
     weatherCondition {
-      createdAt
-      exitSpotMiles
-      id
-      jumpRun
-      offsetDirection
-      offsetMiles
-      temperature
+      ...weatherConditionEssentials
       updatedAt
-      winds {
-        altitude
-        direction
-        speed
-        temperature
-      }
     }
   }
 }
-    `;
+    ${WeatherConditionEssentialsFragmentDoc}`;
 export type ReloadWeatherMutationFn = Apollo.MutationFunction<Operation.ReloadWeatherMutation, Operation.ReloadWeatherMutationVariables>;
 
 /**

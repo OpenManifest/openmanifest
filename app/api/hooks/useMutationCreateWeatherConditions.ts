@@ -7,10 +7,10 @@ export const MUTATION_CREATE_WEATHER_CONDITION = gql`
     $id: Int!
     $operatorId: Int!
     $winds: String
-    $temperature: Int
+    $temperatureC: Float
     $jumpRun: Int
-    $exitSpotMiles: Int
-    $offsetMiles: Int
+    $exitSpotM: Float
+    $offsetM: Float
     $offsetDirection: String
   ) {
     createWeatherCondition(
@@ -19,10 +19,10 @@ export const MUTATION_CREATE_WEATHER_CONDITION = gql`
         attributes: {
           operatorId: $operatorId
           winds: $winds
-          temperature: $temperature
+          temperatureC: $temperatureC
           jumpRun: $jumpRun
-          exitSpotMiles: $exitSpotMiles
-          offsetMiles: $offsetMiles
+          exitSpotM: $exitSpotM
+          offsetM: $offsetM
           offsetDirection: $offsetDirection
         }
       }
@@ -34,15 +34,16 @@ export const MUTATION_CREATE_WEATHER_CONDITION = gql`
       }
       weatherCondition {
         id
-        temperature
+        temperatureC
         winds {
-          speed
-          altitude
+          speedMps
+          altitudeM
           direction
+          temperatureC
         }
         jumpRun
-        exitSpotMiles
-        offsetMiles
+        exitSpotM
+        offsetM
         offsetDirection
         createdAt
       }

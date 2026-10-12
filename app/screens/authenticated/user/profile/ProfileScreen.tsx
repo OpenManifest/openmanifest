@@ -22,6 +22,7 @@ import { ProfileDialogsProvider, useProfileDialogs } from './ProfileDialogs';
 import TabBar, { ProfileTab } from './tabs';
 import { useAppTheme } from 'app/theme';
 import { formatCents } from 'app/utils/money';
+import { formatQuantity } from 'app/i18n/format';
 
 export type ProfileRoute = {
   ProfileScreen: {
@@ -174,7 +175,9 @@ function ProfileScreenContent(props: {
                           onPress: () => {
                             openWizard(9);
                           },
-                          value: Math.round(Number(membership?.user?.bodyMassKg)).toString() || '-',
+                          value: membership?.user?.bodyMassKg
+                            ? formatQuantity(Number(membership.user.bodyMassKg), 'mass')
+                            : '-',
                         },
                       ]}
                     />

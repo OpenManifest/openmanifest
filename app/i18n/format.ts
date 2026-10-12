@@ -2,8 +2,10 @@ import { DateTime } from 'luxon';
 import i18n from './index';
 import { fromCents } from 'app/utils/money';
 import { resolveTimeZone } from 'app/utils/operatorTime';
+import { Quantity, UnitSystem, UNIT_SYMBOLS, fromSi, toSi, unitOf } from './units';
+import { activeCurrency, activeUnits } from './operatorFormat';
 
-/** What the currency is until the operator has one (P7.12) */
+/** The currency of an operator that has not said (the server's default) */
 export const DEFAULT_CURRENCY = 'AUD';
 const NUMBER_LOCALE = 'en-AU';
 
@@ -19,7 +21,7 @@ export function inZone(value: Instant, timeZone?: string | null): DateTime {
 }
 
 /** "$12.50", "-$12.50" (cents in, the operator's currency out; AUD until the operator has one) */
-export function formatMoney(cents?: number | null, currency: string = DEFAULT_CURRENCY): string {
+export function formatMoney(cents?: number | null, currency: string = activeCurrency()): string {
   return new Intl.NumberFormat(NUMBER_LOCALE, { style: 'currency', currency }).format(
     fromCents(cents)
   );
@@ -67,29 +69,68 @@ export function formatCall(minutes: number): string {
   return i18n.t('common:call.minutes', { minutes, call });
 }
 
-const METRES_PER_FOOT = 0.3048;
-
-/** "14k", "4k", "12.5k": a height in metres as skydivers say it, in thousands of feet (P7.12 replaces this with units) */
-export function formatAltitudeShort(altitudeM?: number | null): string {
+/**
+ * "14k" for a height in feet (thousands, one decimal at most), "4267 m" in metres: an altitude as skydivers say it. The
+ * height is SI (metres); the unit is the operator's.
+ */
+export function compactAltitude(altitudeM?: number | null, units?: UnitSystem | null): string {
   if (altitudeM === null || altitudeM === undefined || Number.isNaN(altitudeM)) return '';
-  const thousands = Math.round(altitudeM / METRES_PER_FOOT / 100) / 10;
-  return `${thousands}k`;
+  const unit = unitOf('altitude', units ?? activeUnits());
+  if (unit === 'ft') return `${Math.round(fromSi('altitude', altitudeM, 'ft') / 100) / 10}k`;
+  return `${Math.round(fromSi('altitude', altitudeM, unit))} ${UNIT_SYMBOLS[unit]}`;
 }
 
-/** A destination as a short label: "14k" for an altitude, the name for a site, route or section; '' for none */
+/** A destination as a short label: the height for an altitude ("14k"), the name for a site, route or section; '' for none */
 export function formatDestination(
-  destination?: { name?: string | null; kind?: string | null; altitudeM?: number | null } | null
+  destination?: { name?: string | null; kind?: string | null; altitudeM?: number | null } | null,
+  units?: UnitSystem | null
 ): string {
   if (!destination) return '';
   if (destination.kind === 'altitude' && typeof destination.altitudeM === 'number') {
-    return formatAltitudeShort(destination.altitudeM);
+    return compactAltitude(destination.altitudeM, units);
   }
   return destination.name ?? '';
 }
 
-/** "240 kg": a quantity with its unit symbol; P7.12 adds unit conversion and the operator's units */
-export function formatQuantity(value?: number | null, unit?: string | null): string {
-  if (value === null || value === undefined || Number.isNaN(value)) return '';
-  const text = new Intl.NumberFormat(NUMBER_LOCALE, { maximumFractionDigits: 1 }).format(value);
-  return unit ? `${text} ${unit}` : text;
+const DIGITS: Record<Quantity, number> = {
+  altitude: 0,
+  depth: 1,
+  distance: 2,
+  mass: 1,
+  area: 1,
+  speed: 0,
+  temperature: 0,
+};
+
+/**
+ * "176.4 lb": an SI quantity in the operator's unit, with the digits the quantity needs. The operator's units are the
+ * ones the app was given for it (`setOperatorFormat`), or the ones passed.
+ */
+export function formatQuantity(
+  si: number | null | undefined,
+  quantity: Quantity,
+  units?: UnitSystem | null,
+  options: { digits?: number } = {}
+): string {
+  if (si === null || si === undefined || Number.isNaN(si)) return '';
+  const unit = unitOf(quantity, units ?? activeUnits());
+  const text = new Intl.NumberFormat(NUMBER_LOCALE, {
+    maximumFractionDigits: options.digits ?? DIGITS[quantity],
+  }).format(fromSi(quantity, si, unit));
+  return quantity === 'temperature'
+    ? `${text}${UNIT_SYMBOLS[unit]}`
+    : `${text} ${UNIT_SYMBOLS[unit]}`;
+}
+
+/** What a person typed in the operator's unit as SI: "176 lb" or "176" → 79.8; null when it is not a number */
+export function parseQuantity(
+  text: string | null | undefined,
+  quantity: Quantity,
+  units?: UnitSystem | null
+): number | null {
+  const unit = unitOf(quantity, units ?? activeUnits());
+  const cleaned = (text ?? '').replace(',', '.').replace(/[^\d.+-]/g, '');
+  const number = /\d/.test(cleaned) ? Number(cleaned) : NaN;
+  if (Number.isNaN(number)) return null;
+  return toSi(quantity, number, unit);
 }

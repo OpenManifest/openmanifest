@@ -10,21 +10,23 @@ import { useDestinations } from 'app/api/crud';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { useNotifications } from 'app/providers/notifications';
 import withDefaults from 'app/forms/initialValues';
+import { activeUnits } from 'app/i18n/operatorFormat';
+import { toSi, unitOf } from 'app/i18n/units';
 import i18n from 'app/i18n';
 
 export type DestinationFields = {
   id?: string;
   name: string;
   kind: DestinationKind;
-  /** The height of an altitude, in feet until units arrive (P7.12) */
-  altitudeFt?: number | null;
+  /** The height of an altitude, in the operator's altitude unit (the API takes metres) */
+  altitude?: number | null;
 };
 
 export const destinationValidation = yup.object({
   id: yup.string().nullable().default(null),
   name: yup.string().required(() => i18n.t('forms.destination.nameIsRequired')),
   kind: yup.mixed<DestinationKind>().oneOf(Object.values(DestinationKind)).required(),
-  altitudeFt: yup
+  altitude: yup
     .number()
     .nullable()
     .when('kind', {
@@ -39,7 +41,7 @@ export const destinationValidation = yup.object({
 export const EMPTY_FORM_VALUES: Partial<DestinationFields> = {
   name: '',
   kind: DestinationKind.Altitude,
-  altitudeFt: null,
+  altitude: null,
 };
 
 export interface IUseDestinationFormOpts {
@@ -87,7 +89,11 @@ export default function useDestinationForm(opts: IUseDestinationFormOpts) {
       const attributes = {
         name: validated.name,
         kind: validated.kind,
-        altitudeFt: isAltitude ? Math.round(Number(validated.altitudeFt)) : undefined,
+        altitudeM: isAltitude
+          ? Math.round(
+              toSi('altitude', Number(validated.altitude), unitOf('altitude', activeUnits())) * 100
+            ) / 100
+          : undefined,
       };
       try {
         const response = fields.id

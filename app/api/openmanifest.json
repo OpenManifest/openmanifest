@@ -3102,12 +3102,12 @@
             "deprecationReason": null
           },
           {
-            "name": "altitude",
-            "description": null,
+            "name": "altitudeM",
+            "description": "Metres",
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "Float",
               "ofType": null
             },
             "isDeprecated": false,
@@ -4086,18 +4086,6 @@
         "isOneOf": null,
         "fields": [
           {
-            "name": "altitudeFt",
-            "description": "The height in whole feet, until units arrive with P7.12",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "altitudeM",
             "description": "The height in metres (altitude destinations)",
             "args": [],
@@ -4296,18 +4284,6 @@
         "isOneOf": false,
         "fields": null,
         "inputFields": [
-          {
-            "name": "altitudeFt",
-            "description": "Same as altitudeM, in feet; altitudeM wins when both are given",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
           {
             "name": "altitudeM",
             "description": null,
@@ -11102,6 +11078,22 @@
             "deprecationReason": null
           },
           {
+            "name": "currency",
+            "description": "ISO 4217 code of the money the operator sells in",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "currentConditions",
             "description": null,
             "args": [],
@@ -12029,6 +12021,18 @@
           {
             "name": "banner",
             "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "currency",
+            "description": "ISO 4217 code, for example AUD",
             "type": {
               "kind": "SCALAR",
               "name": "String",
@@ -15620,6 +15624,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "units",
+            "description": "The units shown: { altitude: \"ft\" | \"m\", depth, distance: \"km\" | \"nmi\" | \"mi\"\n| \"m\", mass: \"kg\" | \"lb\", speed: \"kn\" | \"kmh\" | \"mph\", temperature: \"c\" | \"f\" }",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
               "ofType": null
             },
             "defaultValue": null,
@@ -21393,8 +21409,8 @@
             "deprecationReason": null
           },
           {
-            "name": "exitSpotMiles",
-            "description": null,
+            "name": "exitSpotM",
+            "description": "Metres",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -21445,8 +21461,8 @@
             "deprecationReason": null
           },
           {
-            "name": "offsetMiles",
-            "description": null,
+            "name": "offsetM",
+            "description": "Metres",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -21457,12 +21473,12 @@
             "deprecationReason": null
           },
           {
-            "name": "temperature",
-            "description": null,
+            "name": "temperatureC",
+            "description": "Degrees Celsius",
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "Float",
               "ofType": null
             },
             "isDeprecated": false,
@@ -21518,7 +21534,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "exitSpotMiles",
+            "name": "exitSpotM",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -21554,7 +21570,7 @@
             "deprecationReason": null
           },
           {
-            "name": "offsetMiles",
+            "name": "offsetM",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -21582,11 +21598,11 @@
             "deprecationReason": null
           },
           {
-            "name": "temperature",
+            "name": "temperatureC",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "Float",
               "ofType": null
             },
             "defaultValue": null,
@@ -21595,7 +21611,7 @@
           },
           {
             "name": "winds",
-            "description": null,
+            "description": "JSON: [{ altitude_m, speed_mps, direction, temperature_c }]",
             "type": {
               "kind": "SCALAR",
               "name": "String",
@@ -21617,12 +21633,12 @@
         "isOneOf": null,
         "fields": [
           {
-            "name": "altitude",
-            "description": null,
+            "name": "altitudeM",
+            "description": "Height above the ground, metres",
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Float",
               "ofType": null
             },
             "isDeprecated": false,
@@ -21634,31 +21650,31 @@
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Int",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "speed",
-            "description": null,
+            "name": "speedMps",
+            "description": "Metres per second",
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Float",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "temperature",
-            "description": null,
+            "name": "temperatureC",
+            "description": "Degrees Celsius",
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Float",
               "ofType": null
             },
             "isDeprecated": false,

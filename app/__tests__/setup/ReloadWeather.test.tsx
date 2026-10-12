@@ -14,7 +14,7 @@ function Reload({ id }: { id: number }) {
   return (
     <>
       <Text onPress={() => reload({ variables: { id } })}>Reload</Text>
-      <Text testID="exit-spot">{String(payload?.weatherCondition?.exitSpotMiles ?? '')}</Text>
+      <Text testID="exit-spot">{String(payload?.weatherCondition?.exitSpotM ?? '')}</Text>
       <Text testID="errors">{(payload?.errors || []).join(',')}</Text>
     </>
   );
@@ -26,11 +26,13 @@ const condition = {
   createdAt: '2026-10-09T00:00:00Z',
   updatedAt: '2026-10-09T01:00:00Z',
   jumpRun: 270,
-  temperature: 12,
+  temperatureC: 12,
   offsetDirection: null,
-  offsetMiles: 0,
-  exitSpotMiles: 0.55,
-  winds: [{ __typename: 'Wind', altitude: '3000', speed: '8', direction: '270', temperature: 12 }],
+  offsetM: 0,
+  exitSpotM: 885.14,
+  winds: [
+    { __typename: 'Wind', altitudeM: 914.4, speedMps: 4.12, direction: 270, temperatureC: 12 },
+  ],
 };
 
 async function renderReload(result: FetchResult<Record<string, unknown>>) {
@@ -62,7 +64,7 @@ describe('reloading the weather', () => {
 
     await fireEvent.press(screen.getByText('Reload'));
 
-    await waitFor(() => expect(screen.getByTestId('exit-spot').props.children).toBe('0.55'), {
+    await waitFor(() => expect(screen.getByTestId('exit-spot').props.children).toBe('885.14'), {
       timeout: 10000,
     });
     expect(request).toHaveBeenCalledTimes(1);
