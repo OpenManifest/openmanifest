@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { Text, View } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { useOperatorContext } from 'app/providers/operator/context';
 import useOpenUser from './useOpenUser';
-import { Tappable, useStyles, useTheme } from 'app/ui';
-
-const ICON_SIZE = 24;
+import { IconButton, Text, useStyles } from 'app/ui';
 
 /** What the signed-in member still has to do before they can manifest at this operator, if anything */
 export function useSetupNotice(): {
@@ -59,7 +56,6 @@ export default function SetupBanner() {
   const { t } = useTranslation(['common', 'terms']);
   const navigation = useNavigation();
   const openUser = useOpenUser();
-  const theme = useTheme();
   const {
     operator: { currentUser },
   } = useOperatorContext();
@@ -73,12 +69,7 @@ export default function SetupBanner() {
       paddingVertical: tokens.space.sm,
       backgroundColor: tokens.colour.status.warning.bg,
     },
-    text: {
-      ...tokens.type.bodyCompact,
-      color: tokens.colour.status.warning.fg,
-      flexGrow: 1,
-      flexShrink: 1,
-    },
+    text: { flexGrow: 1, flexShrink: 1 },
   }));
 
   if (!notice) return null;
@@ -98,15 +89,13 @@ export default function SetupBanner() {
 
   return (
     <View role="status" style={styles.banner} testID="setup-banner">
-      <Text style={styles.text}>{text}</Text>
+      <View style={styles.text}>
+        <Text variant="bodyCompact" tone="warning">
+          {text}
+        </Text>
+      </View>
       {wizard || notice.toEquipment ? (
-        <Tappable role="button" aria-label={t('setup.open')} onPress={open}>
-          <MaterialCommunityIcons
-            name="open-in-new"
-            size={ICON_SIZE}
-            color={theme.colour.status.warning.fg}
-          />
-        </Tappable>
+        <IconButton icon="open-in-new" tone="warning" aria-label={t('setup.open')} onPress={open} />
       ) : null}
     </View>
   );

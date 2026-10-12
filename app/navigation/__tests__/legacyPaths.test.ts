@@ -1,4 +1,3 @@
-
 import { options } from '../linking';
 import { redirectLegacyPath } from '../legacyPaths';
 

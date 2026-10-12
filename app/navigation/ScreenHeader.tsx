@@ -1,15 +1,11 @@
 import * as React from 'react';
-import { Platform, Text, TextInput, View } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Platform, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useIsFocused } from '@react-navigation/native';
 import type { StackHeaderProps } from '@react-navigation/stack';
-import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 import { useOperatorContext } from 'app/providers/operator/context';
-import { Tappable, useStyles, useTheme } from 'app/ui';
+import { IconButton, Text, useStyles, useTheme } from 'app/ui';
 import SetupBanner from './SetupBanner';
-
-const ICON_SIZE = 24;
 
 /** A search box in the header (the list of people): the text, the setter and whether the box is open */
 export type HeaderSearch = {
@@ -56,8 +52,7 @@ export default function ScreenHeader({
       borderBottomWidth: 1,
       borderBottomColor: tokens.colour.border,
     },
-    title: { ...tokens.type.title, color: tokens.colour.text, flexGrow: 1, flexShrink: 1 },
-    icon: { alignItems: 'center', justifyContent: 'center' },
+    title: { flexGrow: 1, flexShrink: 1 },
     input: {
       ...tokens.type.body,
       flexGrow: 1,
@@ -77,15 +72,12 @@ export default function ScreenHeader({
     <View role="banner" testID="screen-header">
       <View style={styles.bar}>
         {back ? (
-          <Tappable
-            role="button"
+          <IconButton
+            icon="arrow-left"
             aria-label={back.title ? t('header.backTo', { title: back.title }) : t('header.back')}
             testID="header-back"
             onPress={navigation.goBack}
-            style={styles.icon}
-          >
-            <MaterialCommunityIcons name="arrow-left" size={ICON_SIZE} color={theme.colour.text} />
-          </Tappable>
+          />
         ) : null}
         {searching ? (
           <TextInput
@@ -99,33 +91,22 @@ export default function ScreenHeader({
             style={styles.input}
           />
         ) : (
-          <Text
-            role="heading"
-            aria-level={1}
-            numberOfLines={1}
-            maxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
-            style={styles.title}
-          >
-            {title}
-          </Text>
+          <View style={styles.title}>
+            <Text variant="title" chrome role="heading" aria-level={1} numberOfLines={1}>
+              {title}
+            </Text>
+          </View>
         )}
         {options.headerRight && !searching
           ? options.headerRight({ tintColor: theme.colour.text })
           : null}
         {search ? (
-          <Tappable
-            role="button"
+          <IconButton
+            icon={searching ? 'close' : 'magnify'}
             aria-label={searching ? t('header.closeSearch') : search.placeholder}
             testID="header-search"
             onPress={() => search.setVisible(!searching)}
-            style={styles.icon}
-          >
-            <MaterialCommunityIcons
-              name={searching ? 'close' : 'magnify'}
-              size={ICON_SIZE}
-              color={theme.colour.text}
-            />
-          </Tappable>
+          />
         ) : null}
       </View>
       {hideWarnings ? null : <SetupBanner />}
