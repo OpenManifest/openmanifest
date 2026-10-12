@@ -16,16 +16,16 @@ type StepFields = {
 };
 
 export function useStep(): WizardFormStep<StepFields> {
-  const { dropzoneUser } = useUserProfileContext();
+  const { membership } = useUserProfileContext();
 
   return useMemo(
     () => ({
       defaultValues: {
-        hasRig: !!dropzoneUser?.user?.rigs?.length,
+        hasRig: !!membership?.user?.rigs?.length,
       },
       validation,
     }),
-    [dropzoneUser?.user?.rigs?.length]
+    [membership?.user?.rigs?.length]
   );
 }
 

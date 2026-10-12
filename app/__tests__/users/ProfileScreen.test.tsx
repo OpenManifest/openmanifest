@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, waitFor } from '../../__mocks__/render';
-import MOCK_QUERY_PROFILE from './__mocks__/QueryDropzoneUserProfile.mock';
+import MOCK_QUERY_PROFILE from './__mocks__/QueryMembershipProfile.mock';
 import ProfileScreen from '../../screens/authenticated/user/profile/ProfileScreen';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 

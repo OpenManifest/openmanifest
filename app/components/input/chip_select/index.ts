@@ -1,24 +1,24 @@
 import ChipSelect, { ChipSelectField } from './ChipSelect';
-import DropzoneUserChipSelect, { DropzoneUserChipSelectField } from './DropzoneUserChipSelect';
-import JumpTypeChipSelect, { JumpTypeChipSelectField } from './JumpTypeChipSelect';
+import MembershipChipSelect, { MembershipChipSelectField } from './MembershipChipSelect';
+import ActivityTypeChipSelect, { ActivityTypeChipSelectField } from './ActivityTypeChipSelect';
 import LicenseChipSelect, { LicenseChipSelectField } from './LicenseChipSelect';
-import PlaneChipSelect, { PlaneChipSelectField } from './PlaneChipSelect';
+import VehicleChipSelect, { VehicleChipSelectField } from './VehicleChipSelect';
 import TicketTypeChipSelect, { TicketTypeChipSelectField } from './TicketTypeChipSelect';
 
 export {
   ChipSelect,
-  DropzoneUserChipSelect,
-  JumpTypeChipSelect,
+  MembershipChipSelect,
+  ActivityTypeChipSelect,
   LicenseChipSelect,
-  PlaneChipSelect,
+  VehicleChipSelect,
   TicketTypeChipSelect,
 };
 
 export {
   ChipSelectField,
-  DropzoneUserChipSelectField,
-  JumpTypeChipSelectField,
+  MembershipChipSelectField,
+  ActivityTypeChipSelectField,
   LicenseChipSelectField,
-  PlaneChipSelectField,
+  VehicleChipSelectField,
   TicketTypeChipSelectField,
 };

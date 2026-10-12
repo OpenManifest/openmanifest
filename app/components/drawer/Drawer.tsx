@@ -5,13 +5,13 @@ import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import capitalize from 'lodash/capitalize';
 import SkeletonContent from 'app/components/Skeleton';
-import InfoGrid from 'app/screens/authenticated/dropzone/load/InfoGrid';
+import InfoGrid from 'app/screens/authenticated/manifest/load/InfoGrid';
 import useRestriction from 'app/hooks/useRestriction';
 import { ModerationRole, Permission } from 'app/api/schema.d';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
-import { useDropzonesContext } from 'app/api/crud';
+import { useOperatorContext } from 'app/providers/operator/context';
+import { useOperatorsContext } from 'app/api/crud';
 import { useLogout } from 'app/api/hooks/useLogout';
-import useSelectDropzone from 'app/hooks/useSelectDropzone';
+import useSelectOperator from 'app/hooks/useSelectOperator';
 import { useSession } from '../../state';
 import { useAppTheme } from 'app/theme';
 import { formatCents } from 'app/utils/money';
@@ -19,21 +19,21 @@ import { formatCents } from 'app/utils/money';
 export default function DrawerMenu() {
   const { theme } = useAppTheme();
   const routeName = useSession((session) => session.currentRouteName);
-  const selectDropzone = useSelectDropzone();
+  const selectOperator = useSelectOperator();
   const {
-    dropzone: { currentUser, dropzone, loading },
-  } = useDropzoneContext();
-  const { dropzones } = useDropzonesContext();
+    operator: { currentUser, operator, loading },
+  } = useOperatorContext();
+  const { operators } = useOperatorsContext();
 
   const navigation = useNavigation();
 
-  const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
-  const canUpdatePlane = useRestriction(Permission.UpdatePlane);
+  const canUpdateOperator = useRestriction(Permission.UpdateOperator);
+  const canUpdateVehicle = useRestriction(Permission.UpdateVehicle);
   const canUpdateTicketTypes = useRestriction(Permission.UpdateTicketType);
   const canUpdateExtras = useRestriction(Permission.UpdateExtra);
   const canUpdatePermissions = useRestriction(Permission.GrantPermission);
-  const canUpdateDzRigs = useRestriction(Permission.UpdateDropzoneRig);
-  const canUpdateRigInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
+  const canUpdateDzRigs = useRestriction(Permission.UpdateOperatorRig);
+  const canUpdateEquipmentInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
   const logout = useLogout();
   const onLogout = React.useCallback(() => {
     navigation.dispatch(DrawerActions.closeDrawer());
@@ -41,13 +41,13 @@ export default function DrawerMenu() {
   }, [logout, navigation]);
 
   const shouldShowSettings =
-    canUpdateDropzone ||
-    canUpdatePlane ||
+    canUpdateOperator ||
+    canUpdateVehicle ||
     canUpdateTicketTypes ||
     canUpdateExtras ||
     canUpdatePermissions ||
     canUpdateDzRigs ||
-    canUpdateRigInspectionTemplate;
+    canUpdateEquipmentInspectionTemplate;
 
   return (
     <View style={{ flex: 1, paddingTop: 100 }}>
@@ -79,7 +79,7 @@ export default function DrawerMenu() {
             )
           }
           title={currentUser?.user?.name}
-          description={`@ ${dropzone?.name}`}
+          description={`@ ${operator?.name}`}
           titleStyle={styles.profileAvatarTitle}
           descriptionStyle={styles.profileAvatarSubtitle}
           style={styles.profileAvatar}
@@ -118,7 +118,7 @@ export default function DrawerMenu() {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <Drawer.Section title="Dropzone">
-          {dropzone?.currentUser?.user?.moderationRole !== ModerationRole.User ? (
+          {operator?.currentUser?.user?.moderationRole !== ModerationRole.User ? (
             <Drawer.Item
               label="Admin"
               active={/Overview/.test(routeName || '')}
@@ -170,7 +170,7 @@ export default function DrawerMenu() {
           />
           <Drawer.Item
             label="Order Activity"
-            active={routeName === 'DropzoneTransactionsScreen'}
+            active={routeName === 'OperatorTransactionsScreen'}
             icon="cash"
             onPress={() => {
               navigation.navigate('Authenticated', {
@@ -288,7 +288,7 @@ export default function DrawerMenu() {
         </Drawer.Section>
 
         <Drawer.Section title="Switch dropzone">
-          {dropzones?.map((item) => (
+          {operators?.map((item) => (
             <Drawer.Item
               key={`${item?.id}-dz`}
               label={item?.name || ''}
@@ -299,9 +299,9 @@ export default function DrawerMenu() {
                     )
                   : 'map-marker'
               }
-              active={dropzone?.id === item?.id}
+              active={operator?.id === item?.id}
               onPress={async () => {
-                if (item && (await selectDropzone(item))) {
+                if (item && (await selectOperator(item))) {
                   navigation.navigate('Authenticated', {
                     screen: 'LeftDrawer',
                     params: {
@@ -319,7 +319,7 @@ export default function DrawerMenu() {
             label="Create new"
             icon="plus"
             onPress={() => {
-              navigation.navigate('Wizards', { screen: 'DropzoneWizardScreen' });
+              navigation.navigate('Wizards', { screen: 'OperatorWizardScreen' });
             }}
           />
         </Drawer.Section>

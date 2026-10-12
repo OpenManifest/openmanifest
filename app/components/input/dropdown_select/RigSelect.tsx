@@ -8,7 +8,7 @@ import Select, { ISelectOption } from '../select/Select';
 import { withHookForm } from '../withHookForm';
 
 interface IRigSelect {
-  dropzoneUserId?: number;
+  membershipId?: number;
   loadId?: number;
   value?: UserRigDetailedFragment | null;
   tandem?: boolean;
@@ -24,7 +24,7 @@ interface IRigSelect {
 
 function RigSelect(props: IRigSelect) {
   const {
-    dropzoneUserId,
+    membershipId,
     label,
     variant,
     value,
@@ -37,7 +37,7 @@ function RigSelect(props: IRigSelect) {
     tandem,
     error,
   } = props;
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
   const theme = useTheme();
   const color = assignedColor || theme.colors.onSurface;
   const [fetchRigs, { data }] = useAvailableRigsLazyQuery({
@@ -45,16 +45,16 @@ function RigSelect(props: IRigSelect) {
   });
 
   React.useEffect(() => {
-    if (dropzoneUserId) {
+    if (membershipId) {
       fetchRigs({
         variables: {
-          dropzoneUserId,
+          membershipId,
           loadId,
           isTandem: tandem || undefined,
         },
       });
     }
-  }, [fetchRigs, currentDropzoneId, tandem, dropzoneUserId, loadId]);
+  }, [fetchRigs, currentOperatorId, tandem, membershipId, loadId]);
 
   React.useEffect(() => {
     if (!value && autoSelectFirst && data?.availableRigs?.length) {

@@ -3,10 +3,10 @@ import { Divider, List, SegmentedButtons, Switch } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
 import useRestriction from 'app/hooks/useRestriction';
-import { DropzoneState, DropzoneStateEvent, Permission } from 'app/api/schema.d';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { OperatorState, OperatorStateEvent, Permission } from 'app/api/schema.d';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
-import { useDropzonesContext } from 'app/api/crud/useDropzones';
+import { useOperatorsContext } from 'app/api/crud/useOperators';
 import { useNotifications } from 'app/providers/notifications';
 import { ColorSchemePreference, usePreferences } from 'app/state/preferences';
 import { useAppTheme } from 'app/theme';
@@ -15,40 +15,40 @@ export default function SettingsScreen() {
   const navigation = useNavigation();
   const notify = useNotifications();
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
 
   const { theme } = useAppTheme();
   const colorScheme = usePreferences((preferences) => preferences.colorScheme);
   const setColorScheme = usePreferences((preferences) => preferences.setColorScheme);
 
-  const canUpdateDropzone = useRestriction(Permission.UpdateDropzone);
-  const canUpdateRigInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
+  const canUpdateOperator = useRestriction(Permission.UpdateOperator);
+  const canUpdateEquipmentInspectionTemplate = useRestriction(Permission.UpdateFormTemplate);
 
-  const { updateVisibility } = useDropzonesContext();
+  const { updateVisibility } = useOperatorsContext();
   const onChangeVisibility = React.useCallback(
-    async (event: DropzoneStateEvent) => {
-      if (!dropzone?.id) {
+    async (event: OperatorStateEvent) => {
+      if (!operator?.id) {
         return;
       }
-      const result = await updateVisibility(dropzone.id, event);
+      const result = await updateVisibility(operator.id, event);
 
       if ('error' in result && result.error) {
         notify.error(result.error);
       }
     },
-    [dropzone?.id, notify, updateVisibility]
+    [operator?.id, notify, updateVisibility]
   );
 
   return (
     <ScrollableScreen contentContainerStyle={{ backgroundColor: theme.colors.surface }}>
       <List.Section title="Dropzone" style={{ width: '100%' }}>
-        {!canUpdateDropzone ? null : (
+        {!canUpdateOperator ? null : (
           <List.Item
             title="Configuration"
             right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
             onPress={() =>
-              !dropzone
+              !operator
                 ? null
                 : navigation.navigate('Authenticated', {
                     screen: 'LeftDrawer',
@@ -57,7 +57,7 @@ export default function SettingsScreen() {
                       params: {
                         screen: 'Configuration',
                         params: {
-                          screen: 'DropzoneSettingsScreen',
+                          screen: 'OperatorSettingsScreen',
                         },
                       },
                     },
@@ -101,7 +101,7 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'AircraftsScreen',
+                    screen: 'VehiclesScreen',
                   },
                 },
               },
@@ -122,7 +122,7 @@ export default function SettingsScreen() {
                 params: {
                   screen: 'Configuration',
                   params: {
-                    screen: 'DropzoneRigsScreen',
+                    screen: 'OperatorRigsScreen',
                   },
                 },
               },
@@ -131,7 +131,7 @@ export default function SettingsScreen() {
         />
         <Divider />
         <List.Item
-          disabled={!canUpdateRigInspectionTemplate}
+          disabled={!canUpdateEquipmentInspectionTemplate}
           title="Rig Inspection Template"
           right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
           left={() => <List.Icon color={theme.colors.text} icon="check" />}
@@ -150,7 +150,7 @@ export default function SettingsScreen() {
             })
           }
         />
-        {!canUpdateDropzone ? null : (
+        {!canUpdateOperator ? null : (
           <>
             <Divider />
             <List.Item
@@ -166,7 +166,7 @@ export default function SettingsScreen() {
                     params: {
                       screen: 'Configuration',
                       params: {
-                        screen: 'MasterLogScreen',
+                        screen: 'DailyLogScreen',
                       },
                     },
                   },
@@ -176,65 +176,65 @@ export default function SettingsScreen() {
           </>
         )}
         <Divider />
-        {!canUpdateDropzone ? null : (
+        {!canUpdateOperator ? null : (
           <List.Item
             title={
               {
-                [DropzoneState.Archived]: 'Re-open dropzone',
-                [DropzoneState.Public]: 'Go offline',
-                [DropzoneState.Private]: 'Go live',
-                [DropzoneState.InReview]: 'Awaiting review',
-              }[dropzone?.status || DropzoneState.Private]
+                [OperatorState.Archived]: 'Re-open dropzone',
+                [OperatorState.Public]: 'Go offline',
+                [OperatorState.Private]: 'Go live',
+                [OperatorState.InReview]: 'Awaiting review',
+              }[operator?.status || OperatorState.Private]
             }
             left={() => (
               <List.Icon
                 color={theme.colors.text}
                 icon={
                   {
-                    [DropzoneState.Archived]: 'archive',
-                    [DropzoneState.Public]: 'check',
-                    [DropzoneState.Private]: 'upload',
-                    [DropzoneState.InReview]: 'progress-upload',
-                  }[dropzone?.status || DropzoneState.Private] as IconSource
+                    [OperatorState.Archived]: 'archive',
+                    [OperatorState.Public]: 'check',
+                    [OperatorState.Private]: 'upload',
+                    [OperatorState.InReview]: 'progress-upload',
+                  }[operator?.status || OperatorState.Private] as IconSource
                 }
               />
             )}
             right={() => (
               <Switch
-                value={[DropzoneState.Public, DropzoneState.InReview].includes(
-                  dropzone?.status || DropzoneState.Private
+                value={[OperatorState.Public, OperatorState.InReview].includes(
+                  operator?.status || OperatorState.Private
                 )}
-                disabled={dropzone?.status === DropzoneState.InReview}
+                disabled={operator?.status === OperatorState.InReview}
                 onValueChange={(value) => {
                   onChangeVisibility(
-                    value ? DropzoneStateEvent.RequestPublication : DropzoneStateEvent.Unpublish
+                    value ? OperatorStateEvent.RequestPublication : OperatorStateEvent.Unpublish
                   );
                 }}
               />
             )}
             onPress={() => {
-              switch (dropzone?.status) {
-                case DropzoneState.Archived:
-                  return onChangeVisibility(DropzoneStateEvent.Publish);
-                case DropzoneState.Private:
-                  return onChangeVisibility(DropzoneStateEvent.RequestPublication);
-                case DropzoneState.Public:
-                case DropzoneState.InReview:
-                  return onChangeVisibility(DropzoneStateEvent.Unpublish);
+              switch (operator?.status) {
+                case OperatorState.Archived:
+                  return onChangeVisibility(OperatorStateEvent.Publish);
+                case OperatorState.Private:
+                  return onChangeVisibility(OperatorStateEvent.RequestPublication);
+                case OperatorState.Public:
+                case OperatorState.InReview:
+                  return onChangeVisibility(OperatorStateEvent.Unpublish);
                 default:
                   return null;
               }
             }}
             description={
               {
-                [DropzoneState.Archived]:
+                [OperatorState.Archived]:
                   'Your dropzone has been archived and is not visible to users',
-                [DropzoneState.Public]: 'Your dropzone is available to the public',
-                [DropzoneState.Private]:
+                [OperatorState.Public]: 'Your dropzone is available to the public',
+                [OperatorState.Private]:
                   'Request a review to make your dropzone available to all users',
-                [DropzoneState.InReview]:
+                [OperatorState.InReview]:
                   'You may be contacted to verify the legitimacy of your dropzone.',
-              }[dropzone?.status || DropzoneState.Private]
+              }[operator?.status || OperatorState.Private]
             }
             descriptionNumberOfLines={4}
           />
