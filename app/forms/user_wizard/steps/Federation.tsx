@@ -8,7 +8,7 @@ import { useUserProfileContext } from 'app/api/crud';
 import { WizardFormStep } from 'app/hooks/forms/useWizard';
 import { useMemo } from 'app/hooks/react';
 import * as yup from 'yup';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 
 const federation = yup.object() as yup.SchemaOf<FederationEssentialsFragment>;
 
@@ -21,19 +21,19 @@ type StepFields = {
 };
 
 export function useStep(): WizardFormStep<StepFields> {
-  const { dropzoneUser } = useUserProfileContext();
+  const { membership } = useUserProfileContext();
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
 
   return useMemo(
     () => ({
       defaultValues: {
-        federation: dropzoneUser?.license?.federation || dropzone?.federation,
+        federation: membership?.license?.federation || operator?.federation,
       },
       validation,
     }),
-    [dropzone?.federation, dropzoneUser?.license?.federation]
+    [operator?.federation, membership?.license?.federation]
   );
 }
 

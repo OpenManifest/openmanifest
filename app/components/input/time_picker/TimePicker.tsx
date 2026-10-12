@@ -2,14 +2,14 @@ import * as React from 'react';
 import { List, Modal } from 'react-native-paper';
 import { TimePickerModal } from 'react-native-paper-dates';
 import { DateTime } from 'luxon';
-import { clockInZone, resolveTimeZone, timeTodayInZone } from 'app/utils/dropzoneTime';
+import { clockInZone, resolveTimeZone, timeTodayInZone } from 'app/utils/operatorTime';
 
 interface ITimePickerProps {
   label?: string;
   timestamp?: number;
   disabled?: boolean;
   color?: string;
-  /** The zone the time of day is in: the dropzone's (default: this device's) */
+  /** The zone the time of day is in: the operator's (default: this device's) */
   timeZone?: string;
   onChange(timestamp: number): void;
 }

@@ -10,7 +10,7 @@ import ScreenContainer from 'app/components/layout/ScreenContainer';
 import SwipeActions from 'app/components/layout/SwipeActions';
 import useRestriction from 'app/hooks/useRestriction';
 import { useTickets } from 'app/api/crud';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { TicketTypeEssentialsFragment } from 'app/api/operations';
 import { useNotifications } from 'app/providers/notifications';
 import { useAppTheme } from 'app/theme';
@@ -21,11 +21,11 @@ export default function TicketTypesScreen() {
   const { theme } = useAppTheme();
   const notify = useNotifications();
   const {
-    dropzone: { dropzone },
+    operator: { operator },
     dialogs,
-  } = useDropzoneContext();
+  } = useOperatorContext();
   const { ticketTypes, loading, refetch, archiveTicketType, updateTicketType } = useTickets({
-    dropzone: dropzone?.id,
+    operator: operator?.id,
   });
 
   const canCreateTicketTypes = useRestriction(Permission.CreateTicketType);

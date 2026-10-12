@@ -3,17 +3,17 @@ import * as React from 'react';
 import { UserWizardScreen } from 'app/forms/user_wizard';
 import { NavigationProp, NavigatorScreenParams, useNavigation } from '@react-navigation/native';
 
-import DropzoneWizardScreen from './dropzone_wizard/DropzoneWizard';
+import OperatorWizardScreen from './operator_wizard/OperatorWizard';
 import RecoverPasswordScreen from './recover_password/RecoverPasswordScreen';
 import ConfirmUserScreen from './confirm_user/ConfirmUserScreen';
 import ChangePasswordScreen from './change_password/ChangePasswordScreen';
 import User, { UserRoutes } from '../authenticated/user/routes';
 
 export type WizardRoutes = {
-  DropzoneWizardScreen: undefined;
+  OperatorWizardScreen: undefined;
   UserWizardScreen: {
     index?: number;
-    dropzoneUserId: string;
+    membershipId: string;
   };
   ConfirmUserScreen: undefined;
   RecoverPasswordScreen: undefined;
@@ -36,7 +36,7 @@ export default function Routes() {
         cardStyle: { flex: 1 },
       }}
     >
-      <Wizards.Screen name="DropzoneWizardScreen" component={DropzoneWizardScreen} />
+      <Wizards.Screen name="OperatorWizardScreen" component={OperatorWizardScreen} />
       <Wizards.Screen name="UserWizardScreen" component={UserWizardScreen} />
       <Wizards.Screen name="RecoverPasswordScreen" component={RecoverPasswordScreen} />
       <Wizards.Screen name="ConfirmUserScreen" component={ConfirmUserScreen} />
