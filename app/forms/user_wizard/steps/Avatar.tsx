@@ -18,16 +18,16 @@ type StepFields = {
 };
 
 export function useStep(): WizardFormStep<StepFields> {
-  const { dropzoneUser } = useUserProfileContext();
+  const { membership } = useUserProfileContext();
 
   return useMemo(
     () => ({
       defaultValues: {
-        avatar: dropzoneUser?.user?.image,
+        avatar: membership?.user?.image,
       },
       validation,
     }),
-    [dropzoneUser?.user?.image]
+    [membership?.user?.image]
   );
 }
 
@@ -53,9 +53,7 @@ function AvatarStep(props: IWizardStepProps) {
                       // Upload image
                       onChange(`data:image/jpeg;base64,${base64}`);
                     }
-                  } catch (e) {
-                    console.log(e);
-                  }
+                  } catch {}
                 }}
               >
                 {!value ? (

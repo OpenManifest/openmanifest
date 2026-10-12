@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { FormTextField } from 'app/components/input/text/TextField';
 import { List } from 'react-native-paper';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import {
   TicketTypeEssentialsFragment,
   TicketTypeExtraEssentialsFragment,
@@ -21,9 +21,9 @@ interface ITicketTypeAddonFormProps {
 export default function TicketTypeForm(props: ITicketTypeAddonFormProps) {
   const { control } = props;
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
-  const { ticketTypes } = useTickets({ dropzone: dropzone?.id });
+    operator: { operator },
+  } = useOperatorContext();
+  const { ticketTypes } = useTickets({ operator: operator?.id });
 
   const { ticketTypes: selectedTicketTypes } = useWatch({ control });
   return (

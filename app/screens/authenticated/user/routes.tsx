@@ -1,6 +1,6 @@
 import { createStackNavigator, StackHeaderProps } from '@react-navigation/stack';
 import * as React from 'react';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 
 import { AppSignalBoundary } from 'app/components/app_signal';
 import UsersScreen, { UserListRoute } from './user_list/UsersScreen';
@@ -37,8 +37,8 @@ function UserListHeader(props: StackHeaderProps) {
 
 export default function Routes() {
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
 
   return (
     <UserSearchProvider>

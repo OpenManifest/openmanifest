@@ -3,7 +3,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { FormTextField } from 'app/components/input/text/TextField';
 import { List, Divider } from 'react-native-paper';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { TicketTypeExtraEssentialsFragment } from 'app/api/operations';
 import { Control, useWatch } from 'react-hook-form';
 import { AltitudeSelectField } from 'app/components/input/dropdown_select';
@@ -20,20 +20,19 @@ interface ITicketTypeFormProps {
 export default function TicketTypeForm(props: ITicketTypeFormProps) {
   const { control } = props;
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const { altitude } = useWatch({ control });
   const [getTicketAddons, query] = useTicketTypeExtrasLazyQuery();
   const { data } = query;
 
   React.useEffect(() => {
-    if (dropzone?.id) {
-      getTicketAddons({ variables: { dropzoneId: dropzone?.id } });
+    if (operator?.id) {
+      getTicketAddons({ variables: { operatorId: operator?.id } });
     }
-  }, [dropzone?.id, getTicketAddons]);
+  }, [operator?.id, getTicketAddons]);
 
   const { extras: selectedAddons } = useWatch({ control });
-  console.debug({ altitude });
   return (
     <>
       <FormTextField

@@ -30,7 +30,7 @@ function ConfirmUserScreen() {
         .then(({ data, errors }) => {
           if (data?.userConfirmRegistrationWithToken?.credentials?.accessToken) {
             setCredentials(data.userConfirmRegistrationWithToken.credentials);
-            navigation.navigate('Limbo', { screen: 'DropzoneSelectScreen' });
+            navigation.navigate('Limbo', { screen: 'OperatorSelectScreen' });
           } else {
             setError(true);
           }
