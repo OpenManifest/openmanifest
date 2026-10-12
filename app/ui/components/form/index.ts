@@ -1,5 +1,7 @@
 export { default as Chip } from './Chip';
 export type { ChipProps, FilterChipProps, InputChipProps } from './Chip';
+export { default as FieldError } from './FieldError';
+export type { FieldErrorProps } from './FieldError';
 export { default as NumberField, FormNumberField, parseNumber } from './NumberField';
 export type { NumberFieldProps } from './NumberField';
 export { default as Segmented, FormSegmented } from './Segmented';

@@ -10,6 +10,7 @@ import { camelCase, isEqual } from 'lodash';
 import { useVehicles } from 'app/api/crud/useVehicles';
 import { useNotifications } from 'app/providers/notifications';
 import withDefaults from 'app/forms/initialValues';
+import i18n from 'app/i18n';
 
 export type VehicleFields = {
   id?: string;
@@ -27,15 +28,25 @@ export type VehicleFields = {
 export const vehicleValidation = yup.object({
   id: yup.string().nullable().default(null),
   name: yup.string().nullable().default(null),
-  registration: yup.string().required('Registration is required'),
-  minCapacity: yup.number().integer().default(1).min(1, 'Minimum slots must be greater than 0'),
+  registration: yup.string().required(() => i18n.t('forms.vehicle.registrationIsRequired')),
+  minCapacity: yup
+    .number()
+    .integer()
+    .default(1)
+    .min(1, () => i18n.t('forms.vehicle.minimumSlotsMustBeGreaterThan')),
   capacity: yup
     .number()
     .integer()
-    .required('Maximum slots is required')
-    .min(1, 'Maximum slots must be greater than 0'),
-  basicEmptyWeight: yup.number().default(0).min(0, 'Basic empty weight must be greater than 0'),
-  maxDepartWeight: yup.number().default(0).min(0, 'Maximum take off weight must be greater than 0'),
+    .required(() => i18n.t('forms.vehicle.maximumSlotsIsRequired'))
+    .min(1, () => i18n.t('forms.vehicle.maximumSlotsMustBeGreaterThan')),
+  basicEmptyWeight: yup
+    .number()
+    .default(0)
+    .min(0, () => i18n.t('forms.vehicle.basicEmptyWeightMustBeGreater')),
+  maxDepartWeight: yup
+    .number()
+    .default(0)
+    .min(0, () => i18n.t('forms.vehicle.maximumTakeOffWeightMustBe')),
   fuelType: yup.string().nullable().default(null),
 });
 
@@ -126,7 +137,7 @@ export default function useVehicleForm(opts: IUseVehicleFormOpts) {
             });
           }
           if ('vehicle' in response && response.vehicle) {
-            notify.success('Aircraft saved');
+            notify.success(i18n.t('forms.vehicle.aircraftSaved'));
             onSuccess?.(response.vehicle);
           }
         }

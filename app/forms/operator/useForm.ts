@@ -11,6 +11,7 @@ import { useNotifications } from 'app/providers/notifications';
 import { OperatorEssentialsFragment, FederationEssentialsFragment } from 'app/api/operations';
 import { useFederationsQuery } from 'app/api/reflection';
 import useRestriction from 'app/hooks/useRestriction';
+import i18n from 'app/i18n';
 
 export type OperatorFields = Required<
   Omit<OperatorInput, 'settings' | 'federation' | 'id'> &
@@ -19,7 +20,7 @@ export type OperatorFields = Required<
 
 export const operatorValidation = yup.object({
   name: yup.string().nullable().default(null),
-  federation: yup.object().required('Your dropzone must be part of a federation'),
+  federation: yup.object().required(() => i18n.t('forms.operator.yourDropzoneMustBePartOf')),
   lat: yup.number().nullable(),
   lng: yup.number().nullable(),
   primaryColor: yup.string(),
@@ -171,7 +172,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
           });
         }
         if ('operator' in response) {
-          notify.success('Your changes have been saved');
+          notify.success(i18n.t('forms.operator.yourChangesHaveBeenSaved'));
           onSuccess?.(response.operator);
         }
       } catch (error) {

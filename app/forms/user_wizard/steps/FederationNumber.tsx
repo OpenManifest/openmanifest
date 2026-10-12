@@ -46,13 +46,7 @@ function FederationWizardSceen(props: IWizardStepProps) {
   return (
     <Step {...props} title={`${federation?.name?.toUpperCase()} Number`}>
       <Fields>
-        <FormTextField
-          {...{ control }}
-          name="apfNumber"
-          mode="flat"
-          style={{ backgroundColor: 'transparent', fontSize: 32, minHeight: 70 }}
-          label={`${federation?.name} ID`}
-        />
+        <FormTextField {...{ control }} name="apfNumber" label={`${federation?.name} ID`} />
       </Fields>
     </Step>
   );

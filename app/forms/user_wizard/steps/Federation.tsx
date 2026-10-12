@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HelperText } from 'react-native-paper';
+
 import FederationCardSelect from 'app/components/input/card_select/FederationCardSelect';
 import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
 import { FederationEssentialsFragment } from 'app/api/operations';
@@ -9,6 +9,8 @@ import { WizardFormStep } from 'app/hooks/forms/useWizard';
 import { useMemo } from 'app/hooks/react';
 import * as yup from 'yup';
 import { useOperatorContext } from 'app/providers/operator/context';
+import { useTranslation } from 'react-i18next';
+import { FieldError } from 'app/ui';
 
 const federation = yup.object() as yup.SchemaOf<FederationEssentialsFragment>;
 
@@ -42,10 +44,11 @@ export interface IFederationStepProps extends IWizardStepProps {
 }
 
 function FederationWizardSceen(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   const { control } = useFormContext<StepFields>();
 
   return (
-    <Step {...props} title="Affiliation">
+    <Step {...props} title={t('forms.user_wizard.affiliation')}>
       <Fields>
         <Controller
           {...{ control }}
@@ -53,9 +56,7 @@ function FederationWizardSceen(props: IWizardStepProps) {
           render={({ field: { value, onChange: onSelect }, fieldState }) => (
             <>
               <FederationCardSelect {...{ value, onSelect }} />
-              <HelperText type={fieldState?.error ? 'error' : 'info'}>
-                {fieldState?.error?.message || ''}
-              </HelperText>
+              <FieldError>{fieldState?.error?.message || ''}</FieldError>
             </>
           )}
         />

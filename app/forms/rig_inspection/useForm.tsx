@@ -14,6 +14,7 @@ import {
 import type { Query } from 'app/api/schema.d';
 import { useNotifications } from 'app/providers/notifications';
 import { FieldItem } from '../rig_inspection_template/fieldItem';
+import i18n from 'app/i18n';
 
 export type RigInspectionFields = {
   /** The template's fields with the inspector's answers in `value` */
@@ -35,20 +36,26 @@ export function buildRigInspectionValidation(template: FieldItem[]) {
     fields: yup
       .array()
       .default([])
-      .test('required-fields', 'Fill in the required fields', function validateRequired(value) {
-        if (!this.parent.ok) {
-          return true;
+      .test(
+        'required-fields',
+        i18n.t('forms.rig_inspection.fillInTheRequiredFields'),
+        function validateRequired(value) {
+          if (!this.parent.ok) {
+            return true;
+          }
+          const missing = ((value as FieldItem[] | undefined) ?? template).findIndex(
+            (field) => field.isRequired && field.valueType !== 'boolean' && isBlank(field.value)
+          );
+          return missing === -1
+            ? true
+            : this.createError({
+                path: `fields.${missing}.value`,
+                message: i18n.t('forms.rig_inspection.fieldIsRequired', {
+                  field: template[missing]?.label || i18n.t('forms.rig_inspection.thisField'),
+                }),
+              });
         }
-        const missing = ((value as FieldItem[] | undefined) ?? template).findIndex(
-          (field) => field.isRequired && field.valueType !== 'boolean' && isBlank(field.value)
-        );
-        return missing === -1
-          ? true
-          : this.createError({
-              path: `fields.${missing}.value`,
-              message: `${template[missing]?.label || 'This field'} is required`,
-            });
-      }),
+      ),
   });
 }
 
@@ -166,7 +173,7 @@ export default function useRigInspectionForm(opts: IUseRigInspectionFormOpts) {
           },
         });
 
-        notify.success('Rig inspection saved');
+        notify.success(i18n.t('forms.rig_inspection.rigInspectionSaved'));
         onSuccess?.();
       } catch (error) {
         if (error instanceof Error) {

@@ -14,6 +14,7 @@ import { useTickets } from 'app/api/crud';
 import { useNotifications } from 'app/providers/notifications';
 import { toCents } from 'app/utils/money';
 import withDefaults from 'app/forms/initialValues';
+import i18n from 'app/i18n';
 
 export type TicketTypeAddonFields = {
   id?: string;
@@ -24,8 +25,11 @@ export type TicketTypeAddonFields = {
 
 export const ticketAddonValidation = yup.object({
   id: yup.string().nullable().default(null),
-  name: yup.string().required('Name is required'),
-  cost: yup.number().required('Cost is required').min(0, 'Cost must be greater than 0'),
+  name: yup.string().required(() => i18n.t('forms.ticket_type_addon.nameIsRequired')),
+  cost: yup
+    .number()
+    .required(() => i18n.t('forms.ticket_type_addon.costIsRequired'))
+    .min(0, () => i18n.t('forms.ticket_type_addon.costMustBeGreaterThan0')),
   allowManifestingSelf: yup.boolean().default(false),
   altitude: yup.number().required().default(14000),
   ticketTypes: yup.array().of(yup.object()),
@@ -110,7 +114,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
             });
           }
           if ('ticketTypeAddon' in response && response.ticketTypeAddon) {
-            notify.success('Ticket addon saved');
+            notify.success(i18n.t('forms.ticket_type_addon.ticketAddonSaved'));
             onSuccess?.(response.ticketTypeAddon);
           }
         }

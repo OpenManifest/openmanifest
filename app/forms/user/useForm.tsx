@@ -13,6 +13,7 @@ import type {
 import { MembershipProfileDocument, useJoinFederationMutation } from 'app/api/reflection';
 import useMutationUpdateUser from 'app/api/hooks/useMutationUpdateUser';
 import { useNotifications } from 'app/providers/notifications';
+import i18n from 'app/i18n';
 
 export type UserFields = {
   name: string;
@@ -26,15 +27,22 @@ export type UserFields = {
 };
 
 export const userValidation = yup.object({
-  name: yup.string().trim().required('Name is required'),
+  name: yup
+    .string()
+    .trim()
+    .required(() => i18n.t('forms.user.nameIsRequired')),
   nickname: yup.string().default(''),
-  email: yup.string().trim().email('Not a valid email').required('Email is required'),
+  email: yup
+    .string()
+    .trim()
+    .email(() => i18n.t('forms.user.notAValidEmail'))
+    .required(() => i18n.t('forms.user.emailIsRequired')),
   phone: yup.string().default(''),
   bodyMassKg: yup
     .number()
-    .typeError('Exit weight must be a valid number')
-    .required('Exit weight is required')
-    .moreThan(30, 'Exit weight seems too low?'),
+    .typeError(() => i18n.t('forms.user.exitWeightMustBeAValid'))
+    .required(() => i18n.t('forms.user.exitWeightIsRequired'))
+    .moreThan(30, () => i18n.t('forms.user.exitWeightSeemsTooLow')),
   federation: yup.object().nullable().default(null),
   license: yup.object().nullable().default(null),
   apfNumber: yup.string().default(''),
@@ -149,7 +157,7 @@ export default function useUserForm(opts: IUseUserFormOpts) {
           },
         });
       }
-      notify.success('Profile has been updated');
+      notify.success(i18n.t('forms.user.profileHasBeenUpdated'));
       onSuccess?.();
     },
     [membership, joinFederation, mutate, notify, onSuccess]

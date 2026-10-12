@@ -1,18 +1,21 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { Control, useController, useWatch } from 'react-hook-form';
-import { HelperText, Divider } from 'react-native-paper';
+
 import { FormTextField } from 'app/components/input/text/TextField';
 import { FormNumberField } from 'app/components/input/number_input';
 import { LicenseChipSelectField } from 'app/components/input/chip_select/LicenseChipSelect';
 import FederationSelect from 'app/components/input/dropdown_select/FederationSelect';
 import { UserFields } from './useForm';
+import { useTranslation } from 'react-i18next';
+import { Divider, FieldError, Stack } from 'app/ui';
 
 export interface IUserFormProps {
   control: Control<UserFields>;
 }
 
 export default function UserForm(props: IUserFormProps) {
+  const { t } = useTranslation('common');
   const { control } = props;
   const { field: federation, fieldState: federationState } = useController({
     name: 'federation',
@@ -22,12 +25,12 @@ export default function UserForm(props: IUserFormProps) {
   const federationId = license?.federation?.id || federation.value?.id;
 
   return (
-    <>
-      <FormTextField {...{ control }} style={styles.field} name="name" label="Name" />
-      <FormTextField {...{ control }} style={styles.field} name="nickname" label="Nickname" />
-      <FormTextField {...{ control }} style={styles.field} name="email" label="Email" />
-      <FormTextField {...{ control }} style={styles.field} name="phone" label="Phone" />
-      <FormNumberField {...{ control }} name="bodyMassKg" label="Exit weight (kg)" />
+    <Stack gap="md">
+      <FormTextField {...{ control }} name="name" label={t('forms.fields.name')} />
+      <FormTextField {...{ control }} name="nickname" label={t('forms.fields.nickname')} />
+      <FormTextField {...{ control }} name="email" label={t('forms.fields.email')} />
+      <FormTextField {...{ control }} name="phone" label={t('forms.user.phone')} />
+      <FormNumberField {...{ control }} name="bodyMassKg" label={t('forms.user.exitWeightKg')} />
 
       <Divider />
 
@@ -37,9 +40,7 @@ export default function UserForm(props: IUserFormProps) {
           onChange={federation.onChange}
         />
 
-        <HelperText type={federationState.error ? 'error' : 'info'}>
-          {federationState.error?.message || ''}
-        </HelperText>
+        <FieldError>{federationState.error?.message || ''}</FieldError>
 
         {federationId && (
           <LicenseChipSelectField
@@ -49,13 +50,6 @@ export default function UserForm(props: IUserFormProps) {
           />
         )}
       </View>
-    </>
+    </Stack>
   );
 }
-
-const styles = StyleSheet.create({
-  field: {
-    marginBottom: 8,
-    width: '100%',
-  },
-});

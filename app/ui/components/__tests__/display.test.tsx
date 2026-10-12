@@ -2,6 +2,9 @@ import * as React from 'react';
 import { Text as NativeText } from 'react-native';
 import { act, fireEvent } from '@testing-library/react-native';
 import Avatar, { initialsOf } from '../display/Avatar';
+import Icon from '../Icon';
+import FieldError from '../form/FieldError';
+import Subheader from '../display/Subheader';
 import Countdown from '../display/Countdown';
 import { announcedMinutes, formatCountdown, secondsLeft } from '../display/countdown';
 import EmptyState from '../display/EmptyState';
@@ -429,5 +432,41 @@ describe('ProgressMeter', () => {
     );
 
     expect(screen.queryByText('50%')).toBeNull();
+  });
+});
+
+describe('Subheader', () => {
+  it('is a level 3 heading', async () => {
+    const screen = await renderThemed(<Subheader>Ticket</Subheader>);
+
+    expect(screen.getByRole('heading', { name: 'Ticket' })).toBeTruthy();
+  });
+});
+
+describe('Icon', () => {
+  it('is hidden from screen readers', async () => {
+    const screen = await renderThemed(<Icon name="calendar" />);
+
+    expect(screen.queryByRole('img')).toBeNull();
+  });
+});
+
+describe('FieldError', () => {
+  it('announces its message as an alert in the blocked colour', async () => {
+    const screen = await renderThemed(<FieldError>Required</FieldError>);
+
+    expect(screen.getByText('Required').props.role).toBe('alert');
+    expect(flat(screen.getByText('Required')).color).toBe(colours.light.status.blocked.fg);
+  });
+
+  it('shows nothing without a message', async () => {
+    const screen = await renderThemed(
+      <>
+        <FieldError>{''}</FieldError>
+        <FieldError>{null}</FieldError>
+      </>
+    );
+
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 });

@@ -15,6 +15,7 @@ import { useEquipment } from 'app/api/crud/useEquipment';
 import { useWizardForm } from 'app/hooks/forms';
 import { useMemo } from 'app/hooks/react';
 import { camelCase, isEqual } from 'lodash';
+import i18n from 'app/i18n';
 export interface IUserWizardFormOpts {
   startIndex: number;
   onSuccess?(): void;
@@ -83,14 +84,17 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               if (stepIndex === 4 && !apfNumber) return true;
               if (!federation?.id) {
                 setError('federation', {
-                  message: 'You must select a federation',
+                  message: i18n.t('forms.user_wizard.youMustSelectAFederation'),
                   type: 'required',
                 });
                 return false;
               }
 
               if (!license?.id && stepIndex === 5) {
-                setError('license', { message: 'You must select a license', type: 'required' });
+                setError('license', {
+                  message: i18n.t('forms.user_wizard.youMustSelectALicense'),
+                  type: 'required',
+                });
                 return false;
               }
 

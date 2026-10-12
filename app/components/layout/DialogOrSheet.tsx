@@ -37,6 +37,7 @@ export default function DialogOrSheet({
       onClose={onClose}
       title={title ?? buttonLabel ?? ''}
       showTitle={!!title}
+      testID="form-dialog"
       handle={handle}
       disablePadding={disablePadding}
       footer={

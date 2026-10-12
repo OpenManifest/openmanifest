@@ -7,6 +7,7 @@ import useAsyncFn from 'react-use/lib/useAsyncFn';
 import type { MembershipEssentialsFragment, RoleEssentialsFragment } from 'app/api/operations';
 import { useUpdateMembershipMutation } from 'app/api/reflection';
 import { useNotifications } from 'app/providers/notifications';
+import i18n from 'app/i18n';
 
 export type MembershipFields = {
   role: RoleEssentialsFragment | null;
@@ -15,8 +16,14 @@ export type MembershipFields = {
 };
 
 export const membershipValidation = yup.object({
-  role: yup.object().nullable().required('User must have an access level'),
-  expiresAt: yup.number().nullable().required('Membership expiry must be set'),
+  role: yup
+    .object()
+    .nullable()
+    .required(() => i18n.t('forms.membership.userMustHaveAnAccessLevel')),
+  expiresAt: yup
+    .number()
+    .nullable()
+    .required(() => i18n.t('forms.membership.membershipExpiryMustBeSet')),
 });
 
 export const EMPTY_FORM_VALUES: MembershipFields = { role: null, expiresAt: null };

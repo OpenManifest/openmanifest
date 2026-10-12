@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { Surface } from 'react-native-paper';
+import { Stack } from 'app/ui';
 import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
 import Select from 'app/components/input/select/Select';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -10,14 +9,17 @@ import { useUserProfileContext } from 'app/api/crud';
 import { WizardFormStep } from 'app/hooks/forms/useWizard';
 import { useMemo } from 'app/hooks/react';
 import * as yup from 'yup';
+import { useTranslation } from 'react-i18next';
+import i18n from 'app/i18n';
 
 export const validation = yup.object({
   rigId: yup.string().nullable().default(null),
-  make: yup.string().required('Please select a manufacturer').default('Icon'),
-  model: yup.string().required('Please enter the model of your container'),
-  serial: yup
+  make: yup
     .string()
-    .required('Serial number makes it faster to identify and inspect your container'),
+    .required(() => i18n.t('forms.user_wizard.pleaseSelectAManufacturer'))
+    .default('Icon'),
+  model: yup.string().required(() => i18n.t('forms.user_wizard.pleaseEnterTheModelOfYour')),
+  serial: yup.string().required(() => i18n.t('forms.user_wizard.serialNumberMakesItFasterTo')),
 });
 
 type StepFields = {
@@ -42,11 +44,12 @@ export function useStep(): WizardFormStep<StepFields> {
 }
 
 function RigWizardScreen(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   const { control } = useFormContext<StepFields>();
   const [isOtherMake, setIsOtherMake] = React.useState(false);
 
   return (
-    <Step {...props} title="Your rig">
+    <Step {...props} title={t('forms.user_wizard.yourRig')}>
       <Fields>
         <Controller
           {...{ control }}
@@ -54,7 +57,7 @@ function RigWizardScreen(props: IWizardStepProps) {
           render={({ field: { value, onChange }, fieldState }) => (
             <>
               <Select<string>
-                label="Manufacturer"
+                label={t('forms.user_wizard.manufacturer')}
                 onChange={(value) => {
                   setIsOtherMake(value === 'other');
                   onChange(value);
@@ -72,69 +75,35 @@ function RigWizardScreen(props: IWizardStepProps) {
                   'Racer',
                 ]
                   .map((label) => ({ label, value: label }))
-                  .concat([{ label: 'Other', value: 'other' }])}
+                  .concat([{ label: t('forms.user_wizard.other'), value: 'other' }])}
               />
             </>
           )}
         />
 
         {!isOtherMake ? null : (
-          <Surface style={styles.card}>
+          <Stack gap="sm">
             <FormTextField
               {...{ control }}
               name="make"
-              style={{ backgroundColor: 'transparent' }}
-              mode="flat"
-              label="Other manufacturer"
+              label={t('forms.user_wizard.otherManufacturer')}
             />
-          </Surface>
+          </Stack>
         )}
 
-        <Surface style={styles.card}>
-          <FormTextField
-            {...{ control }}
-            name="model"
-            style={{ backgroundColor: 'transparent' }}
-            mode="flat"
-            label="Model"
-          />
-        </Surface>
-        <Surface style={styles.card}>
+        <Stack gap="sm">
+          <FormTextField {...{ control }} name="model" label={t('forms.fields.model')} />
+        </Stack>
+        <Stack gap="sm">
           <FormTextField
             {...{ control }}
             name="serial"
-            style={{ backgroundColor: 'transparent' }}
-            mode="flat"
-            label="Serial number"
+            label={t('forms.user_wizard.serialNumber')}
           />
-        </Surface>
+        </Stack>
       </Fields>
     </Step>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 48,
-    alignItems: 'center',
-  },
-  field: {
-    marginBottom: 8,
-    backgroundColor: 'transparent',
-    marginVertical: 16,
-  },
-  content: {
-    width: '100%',
-    justifyContent: 'space-around',
-    flexDirection: 'column',
-  },
-  card: { marginVertical: 8 },
-  title: {
-    color: 'white',
-    marginBottom: 16,
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-});
 
 export default RigWizardScreen;

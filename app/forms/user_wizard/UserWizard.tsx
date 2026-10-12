@@ -18,6 +18,7 @@ import { useUserWizardForm } from './useForm';
 import { UserProfileProvider, useUserProfileContext } from 'app/api/crud';
 import { useOperatorContext } from 'app/providers';
 import { FormProvider, useWatch } from 'react-hook-form';
+import i18n from 'app/i18n';
 
 const steps = [
   RealNameStep,
@@ -45,7 +46,7 @@ export function UserWizard() {
     startIndex: params.index || 0,
     onSuccess: () => {
       navigation.goBack();
-      notify.success('Profile updated');
+      notify.success(i18n.t('forms.user_wizard.profileUpdated'));
     },
     onClose: () => {
       navigation.goBack();

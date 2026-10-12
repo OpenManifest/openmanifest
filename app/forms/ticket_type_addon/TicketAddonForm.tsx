@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Stack, Subheader } from 'app/ui';
 import { View } from 'react-native';
 import { FormTextField } from 'app/components/input/text/TextField';
-import { List } from 'react-native-paper';
 import { useOperatorContext } from 'app/providers/operator/context';
 import {
   TicketTypeEssentialsFragment,
@@ -13,12 +13,14 @@ import { ChipSelectField } from 'app/components/input/chip_select';
 import { FormNumberField } from 'app/components/input/number_input';
 import type { TicketTypeAddonFields } from './useForm';
 import { formatCents } from 'app/utils/money';
+import { useTranslation } from 'react-i18next';
 
 interface ITicketTypeAddonFormProps {
   control: Control<TicketTypeAddonFields>;
 }
 
 export default function TicketTypeForm(props: ITicketTypeAddonFormProps) {
+  const { t } = useTranslation('common');
   const { control } = props;
   const {
     operator: { operator },
@@ -27,22 +29,22 @@ export default function TicketTypeForm(props: ITicketTypeAddonFormProps) {
 
   const { ticketTypes: selectedTicketTypes } = useWatch({ control });
   return (
-    <>
+    <Stack gap="md">
       <FormTextField
         {...{ control }}
-        label="Name"
+        label={t('forms.fields.name')}
         name="name"
-        helperText="Name of the ticket users will see"
+        helperText={t('forms.ticket_type_addon.nameOfTheTicketUsers')}
       />
 
       <FormNumberField
         {...{ control }}
-        label="Price"
+        label={t('forms.ticket_type_addon.price')}
         name="cost"
-        helperText="Cost to add this addon to a ticket"
+        helperText={t('forms.ticket_type_addon.costToAddThisAddon')}
       />
       <View style={{ width: '100%' }}>
-        <List.Subheader>Compatible tickets</List.Subheader>
+        <Subheader>{t('forms.ticket_type_addon.compatibleTickets')}</Subheader>
         <ChipSelectField<TicketTypeAddonFields, 'ticketTypes'>
           {...{ control }}
           allowEmpty
@@ -59,6 +61,6 @@ export default function TicketTypeForm(props: ITicketTypeAddonFormProps) {
           name="ticketTypes"
         />
       </View>
-    </>
+    </Stack>
   );
 }

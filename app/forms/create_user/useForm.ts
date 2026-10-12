@@ -14,6 +14,7 @@ import { camelCase, isEqual } from 'lodash';
 import { useUserProfile } from 'app/api/crud';
 import { useNotifications } from 'app/providers/notifications';
 import withDefaults from 'app/forms/initialValues';
+import i18n from 'app/i18n';
 
 export type UserFields = {
   id?: string | null;
@@ -30,19 +31,19 @@ export type UserFields = {
 
 export const ghostValidation = yup.object({
   id: yup.string().nullable().default(null),
-  name: yup.string().required('Name is required'),
+  name: yup.string().required(() => i18n.t('forms.create_user.nameIsRequired')),
   nickname: yup.string().optional().nullable(),
-  email: yup.string().required('Email is required to invite the user'),
+  email: yup.string().required(() => i18n.t('forms.create_user.emailIsRequiredToInviteThe')),
   phone: yup.string().optional().nullable(),
   federationUid: yup.string().optional().nullable(),
   bodyMassKg: yup
     .number()
-    .required('Exit weight is required')
-    .min(40, 'Exit weight must be more than 40kg')
+    .required(() => i18n.t('forms.create_user.exitWeightIsRequired'))
+    .min(40, () => i18n.t('forms.create_user.exitWeightMustBeMoreThan'))
     .default(50),
-  federation: yup.object().required('Federation must be selected'),
-  license: yup.object().required('All jumpers must have a license'),
-  role: yup.object().required('You must select a role'),
+  federation: yup.object().required(() => i18n.t('forms.create_user.federationMustBeSelected')),
+  license: yup.object().required(() => i18n.t('forms.create_user.allJumpersMustHaveALicense')),
+  role: yup.object().required(() => i18n.t('forms.create_user.youMustSelectARole')),
 });
 
 export const EMPTY_FORM_VALUES: Partial<UserFields> = {

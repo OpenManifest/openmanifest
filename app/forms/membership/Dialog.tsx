@@ -1,12 +1,11 @@
 import { useApolloClient } from '@apollo/client';
 import * as React from 'react';
-import { Button, Dialog, List } from 'react-native-paper';
-import ProgressBar from 'app/components/ProgressBar';
+import { useTranslation } from 'react-i18next';
+import { Button, Overlay, Row, Stack, Subheader } from 'app/ui';
 import PermissionBadges from 'app/screens/authenticated/user/profile/UserInfo/PermissionBadges';
 import { Membership, Permission } from 'app/api/schema.d';
 import type { MembershipEssentialsFragment, MembershipProfileFragment } from 'app/api/operations';
 import { MembershipProfileFragmentDoc } from 'app/api/reflection';
-import { useAppTheme } from 'app/theme';
 import MembershipForm from './MembershipForm';
 import useMembershipForm from './useForm';
 
@@ -20,7 +19,7 @@ export interface IMembershipDialogProps {
 
 export default function MembershipDialog(props: IMembershipDialogProps) {
   const { open, membership, onClose, onSuccess } = props;
-  const { theme } = useAppTheme();
+  const { t } = useTranslation('common');
   const client = useApolloClient();
   const { control, loading, onSubmit } = useMembershipForm({
     membership,
@@ -39,14 +38,23 @@ export default function MembershipDialog(props: IMembershipDialogProps) {
     : null;
 
   return (
-    <Dialog visible={!!open} onDismiss={onClose}>
-      <ProgressBar indeterminate visible={loading} color={theme.colors.primary} />
-      <Dialog.Title>{`${membership?.id ? 'Edit' : 'New'} dropzone user`}</Dialog.Title>
-      <Dialog.Content>
+    <Overlay
+      open={!!open}
+      onClose={onClose}
+      presentation="dialog"
+      title={membership?.id ? t('forms.membership.edit') : t('forms.membership.new')}
+      footer={
+        <Row gap="sm" justify="end">
+          <Button label={t('forms.cancel')} variant="tertiary" onPress={onClose} />
+          <Button label={t('forms.save')} loading={loading} onPress={onSubmit} />
+        </Row>
+      }
+    >
+      <Stack gap="md">
         <MembershipForm {...{ control }} />
         {cachedUser ? (
           <>
-            <List.Subheader style={{ paddingLeft: 0 }}>Acting permissions</List.Subheader>
+            <Subheader>{t('forms.membership.actingPermissions')}</Subheader>
             <PermissionBadges
               membership={cachedUser as Membership}
               permissions={
@@ -57,11 +65,7 @@ export default function MembershipDialog(props: IMembershipDialogProps) {
             />
           </>
         ) : null}
-      </Dialog.Content>
-      <Dialog.Actions style={{ justifyContent: 'flex-end' }}>
-        <Button onPress={onClose}>Cancel</Button>
-        <Button onPress={onSubmit}>Save</Button>
-      </Dialog.Actions>
-    </Dialog>
+      </Stack>
+    </Overlay>
   );
 }

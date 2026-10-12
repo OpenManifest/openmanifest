@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { Control, useController } from 'react-hook-form';
-import { HelperText } from 'react-native-paper';
+
 import TextInput, { FormTextField } from 'app/components/input/text/TextField';
 import DatePicker from 'app/components/input/date_picker';
 import ChipSelect from 'app/components/input/chip_select/ChipSelect';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
 import { RigFields } from './useForm';
+import { useTranslation } from 'react-i18next';
+import { FieldError, Stack } from 'app/ui';
 
 export interface IRigFormProps {
   control: Control<RigFields>;
@@ -15,6 +17,7 @@ export interface IRigFormProps {
 }
 
 export default function RigForm(props: IRigFormProps) {
+  const { t } = useTranslation('common');
   const { control, showTypeSelect } = props;
   const canCreateEquipments = useRestriction(Permission.CreateEquipment);
   const { field: canopySize, fieldState: canopySizeState } = useController({
@@ -28,37 +31,33 @@ export default function RigForm(props: IRigFormProps) {
   });
 
   return (
-    <View>
+    <Stack gap="md">
       <FormTextField
         {...{ control }}
-        style={styles.field}
         name="name"
-        label="Name"
-        helperText="You can give your equipment a nickname"
+        label={t('forms.fields.name')}
+        helperText={t('forms.rig.youCanGiveYourEquipment')}
       />
       <FormTextField
         {...{ control }}
-        style={styles.field}
         name="make"
-        label="Make"
-        helperText="e.g Javelin, Mirage"
+        label={t('forms.rig.make')}
+        helperText={t('forms.rig.eGJavelinMirage')}
       />
       <FormTextField
         {...{ control }}
-        style={styles.field}
         name="model"
-        label="Model"
-        helperText="e.g G4.1"
+        label={t('forms.fields.model')}
+        helperText={t('forms.rig.eGG41')}
       />
-      <FormTextField {...{ control }} style={styles.field} name="serial" label="Serial" />
+      <FormTextField {...{ control }} name="serial" label={t('forms.rig.serial')} />
 
       <TextInput
-        style={styles.field}
-        label="Current canopy size"
+        label={t('forms.rig.currentCanopySize')}
         error={canopySizeState.error?.message}
         value={canopySize.value?.toString() || ''}
         keyboardType="number-pad"
-        helperText="Size of canopy in container"
+        helperText={t('forms.rig.sizeOfCanopyInContainer')}
         onChangeText={(newValue) => canopySize.onChange(newValue === '' ? null : Number(newValue))}
       />
 
@@ -74,17 +73,9 @@ export default function RigForm(props: IRigFormProps) {
       <DatePicker
         value={repackExpiresAt.value || new Date().getTime() / 1000}
         onChange={repackExpiresAt.onChange}
-        label="Reserve repack expiry date"
+        label={t('forms.rig.reserveRepackExpiryDate')}
       />
-      <HelperText type={repackState.error ? 'error' : 'info'}>
-        {repackState.error?.message || ''}
-      </HelperText>
-    </View>
+      <FieldError>{repackState.error?.message || ''}</FieldError>
+    </Stack>
   );
 }
-
-const styles = StyleSheet.create({
-  field: {
-    marginBottom: 8,
-  },
-});

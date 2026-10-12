@@ -3,6 +3,7 @@ import type { RigEssentialsFragment } from 'app/api/operations';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import RigForm from './RigForm';
 import useRigForm from './useForm';
+import { useTranslation } from 'react-i18next';
 
 export interface IRigDialogProps {
   open?: boolean;
@@ -15,6 +16,7 @@ export interface IRigDialogProps {
 }
 
 export default function RigDialog(props: IRigDialogProps) {
+  const { t } = useTranslation('common');
   const { open, rig, operatorId, userId, onClose, onSuccess } = props;
   const { control, loading, onSubmit } = useRigForm({
     rig,
@@ -28,11 +30,11 @@ export default function RigDialog(props: IRigDialogProps) {
 
   return (
     <DialogOrSheet
-      title={rig?.id ? 'Edit rig' : 'New rig'}
+      title={rig?.id ? t('forms.rig.editRig') : t('forms.rig.newRig')}
       open={open}
       onClose={onClose}
       buttonAction={onSubmit}
-      buttonLabel="Save"
+      buttonLabel={t('forms.save')}
       loading={loading}
     >
       <RigForm {...{ control }} showTypeSelect={!!operatorId} />

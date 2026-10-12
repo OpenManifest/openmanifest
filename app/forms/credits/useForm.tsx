@@ -10,6 +10,7 @@ import { TransactionType } from 'app/api/schema.d';
 import { useUserProfile } from 'app/api/crud';
 import { useNotifications } from 'app/providers/notifications';
 import withDefaults from 'app/forms/initialValues';
+import i18n from 'app/i18n';
 
 export type CreditFields = {
   amount: number;
@@ -19,12 +20,16 @@ export type CreditFields = {
 };
 
 export const orderValidation = yup.object({
-  amount: yup.number().integer().default(0).min(1, 'Amount must be greater than 0'),
+  amount: yup
+    .number()
+    .integer()
+    .default(0)
+    .min(1, () => i18n.t('forms.credits.amountMustBeGreaterThan0')),
   message: yup.string().nullable().default(null),
   type: yup
     .string()
     .oneOf(Object.values(TransactionType))
-    .required('No transaction type selected')
+    .required(() => i18n.t('forms.credits.noTransactionTypeSelected'))
     .default(TransactionType.Withdrawal),
 });
 
@@ -73,7 +78,7 @@ export default function useCreditsForm(opts: IUseManifestFormOpts) {
   const [{ loading }, onCreateOrder] = useAsyncFn(
     async (fields: CreditFields) => {
       if (!membership) {
-        setError('amount', { message: 'No user selected' });
+        setError('amount', { message: i18n.t('forms.credits.noUserSelected') });
         return;
       }
       try {

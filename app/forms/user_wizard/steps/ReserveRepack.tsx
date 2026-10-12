@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { Card, List } from 'react-native-paper';
+import { Card, Subheader } from 'app/ui';
 import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
 import { DatePickerField } from 'app/components/input/date_picker';
 import { useFormContext } from 'react-hook-form';
@@ -8,11 +7,13 @@ import { useUserProfileContext } from 'app/api/crud';
 import { WizardFormStep } from 'app/hooks/forms/useWizard';
 import { useMemo } from 'app/hooks/react';
 import * as yup from 'yup';
+import { useTranslation } from 'react-i18next';
+import i18n from 'app/i18n';
 
 export const validation = yup.object({
   repackExpiresAt: yup
     .number()
-    .required('Please enter the date of your next repack')
+    .required(() => i18n.t('forms.user_wizard.pleaseEnterTheDateOfYour'))
     .transform((value) => {
       return value ? Number(value) : undefined;
     }),
@@ -37,45 +38,23 @@ export function useStep(): WizardFormStep<StepFields> {
 }
 
 function ReserveRepackStep(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   const { control } = useFormContext<StepFields>();
 
   return (
-    <Step {...props} title="Next reserve repack?">
+    <Step {...props} title={t('forms.user_wizard.nextReserveRepack')}>
       <Fields>
-        <Card style={styles.card}>
-          <List.Subheader>Due date</List.Subheader>
+        <Card>
+          <Subheader>{t('forms.user_wizard.dueDate')}</Subheader>
           <DatePickerField
             {...{ control }}
             name="repackExpiresAt"
-            label="Reserve repack due date"
+            label={t('forms.user_wizard.reserveRepackDueDate')}
           />
         </Card>
       </Fields>
     </Step>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 48,
-    alignItems: 'center',
-  },
-  field: {
-    marginBottom: 8,
-  },
-  content: {
-    width: '100%',
-    justifyContent: 'space-around',
-    flexDirection: 'column',
-  },
-  card: { padding: 8, marginVertical: 16 },
-  title: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 80,
-    textAlign: 'center',
-  },
-});
 
 export default ReserveRepackStep;

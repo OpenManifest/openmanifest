@@ -3,6 +3,7 @@ import { VehicleEssentialsFragment } from 'app/api/operations';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import VehicleForm from './VehicleForm';
 import useVehicleForm, { VehicleFields } from './useForm';
+import { useTranslation } from 'react-i18next';
 
 export interface IVehicleDialogProps {
   open: boolean;
@@ -12,6 +13,7 @@ export interface IVehicleDialogProps {
 }
 
 export default function VehicleDialog(props: IVehicleDialogProps) {
+  const { t } = useTranslation('common');
   const { open, onClose, initial, original } = props;
   const { control, loading, onSubmit } = useVehicleForm({
     initial: {
@@ -27,9 +29,9 @@ export default function VehicleDialog(props: IVehicleDialogProps) {
   return (
     <DialogOrSheet
       {...{ open, loading, onClose }}
-      title={original?.id ? 'Edit aircraft' : 'New aircraft'}
+      title={original?.id ? t('forms.vehicle.editAircraft') : t('forms.vehicle.newAircraft')}
       open={open}
-      buttonLabel="Save"
+      buttonLabel={t('forms.save')}
       buttonAction={onSubmit}
     >
       <VehicleForm {...{ control }} />

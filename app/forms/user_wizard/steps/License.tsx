@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HelperText } from 'react-native-paper';
+
 import LicenseCardSelect from 'app/components/input/card_select/LicenseCardSelect';
 import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
@@ -8,6 +8,8 @@ import { useUserProfileContext } from 'app/api/crud';
 import { WizardFormStep } from 'app/hooks/forms/useWizard';
 import { useMemo } from 'app/hooks/react';
 import * as yup from 'yup';
+import { useTranslation } from 'react-i18next';
+import { FieldError } from 'app/ui';
 
 const federation = yup.object() as yup.SchemaOf<FederationEssentialsFragment>;
 const license = yup.object() as yup.SchemaOf<LicenseEssentialsFragment>;
@@ -36,12 +38,13 @@ export function useStep(): WizardFormStep<StepFields> {
 }
 
 function LicenseStep(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   const { control } = useFormContext<StepFields & { federation?: FederationEssentialsFragment }>();
 
   const { federation } = useWatch({ control });
 
   return (
-    <Step {...props} title="License">
+    <Step {...props} title={t('forms.user_wizard.license')}>
       <Fields>
         {federation?.id && (
           <Controller
@@ -50,9 +53,7 @@ function LicenseStep(props: IWizardStepProps) {
             render={({ field: { value, onChange: onSelect }, fieldState }) => (
               <>
                 <LicenseCardSelect {...{ value, onSelect }} federationId={Number(federation?.id)} />
-                <HelperText type={fieldState.error ? 'error' : 'info'}>
-                  {fieldState.error?.message || ''}
-                </HelperText>
+                <FieldError>{fieldState.error?.message || ''}</FieldError>
               </>
             )}
           />

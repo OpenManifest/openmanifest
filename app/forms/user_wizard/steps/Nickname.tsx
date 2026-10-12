@@ -6,6 +6,7 @@ import { useUserProfileContext } from 'app/api/crud';
 import { WizardFormStep } from 'app/hooks/forms/useWizard';
 import { useMemo } from 'app/hooks/react';
 import * as yup from 'yup';
+import { useTranslation } from 'react-i18next';
 
 export const validation = yup.object({
   nickname: yup.string().nullable().default(null),
@@ -33,17 +34,12 @@ export interface INicknameStepProps extends IWizardStepProps {
 }
 
 function NicknameStep(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   const { control } = useFormContext<StepFields>();
   return (
-    <Step {...props} title="Nickname">
+    <Step {...props} title={t('forms.fields.nickname')}>
       <Fields>
-        <FormTextField
-          {...{ control }}
-          name="nickname"
-          mode="flat"
-          label="Nickname"
-          style={{ backgroundColor: 'transparent', fontSize: 32, minHeight: 70 }}
-        />
+        <FormTextField {...{ control }} name="nickname" label={t('forms.fields.nickname')} />
       </Fields>
     </Step>
   );

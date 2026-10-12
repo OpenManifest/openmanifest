@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import { useUserProfileContext } from 'app/api/crud';
 import { WizardFormStep } from 'app/hooks/forms/useWizard';
 import { useMemo } from 'app/hooks/react';
+import { useTranslation } from 'react-i18next';
 
 export const validation = yup.object({
   hasRig: yup.boolean().default(false),
@@ -30,9 +31,10 @@ export function useStep(): WizardFormStep<StepFields> {
 }
 
 function AskForRigStep(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   const { control } = useFormContext<StepFields>();
   return (
-    <Step {...props} title="Got a rig?">
+    <Step {...props} title={t('forms.user_wizard.gotARig')}>
       <Fields>
         <Controller
           {...{ control }}
@@ -40,16 +42,16 @@ function AskForRigStep(props: IWizardStepProps) {
           render={({ field: { onChange, value } }) => (
             <CardSelect
               items={[
-                { value: true, label: 'I have my own rig' },
-                { value: false, label: 'I dont have my own rig' },
+                { value: true, label: t('forms.user_wizard.iHaveMyOwnRig') },
+                { value: false, label: t('forms.user_wizard.iDontHaveMyOwnRig') },
               ]}
               renderItemLabel={({ label }) => label}
               onChangeSelected={(options) => onChange(options?.[0].value)}
               isSelected={({ value: selected }) => value === selected}
               selected={[
                 value === false
-                  ? { value: false, label: 'I dont have my own rig' }
-                  : { value: true, label: 'I have my own rig' },
+                  ? { value: false, label: t('forms.user_wizard.iDontHaveMyOwnRig') }
+                  : { value: true, label: t('forms.user_wizard.iHaveMyOwnRig') },
               ]}
             />
           )}

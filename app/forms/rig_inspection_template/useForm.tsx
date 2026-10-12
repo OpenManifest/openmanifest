@@ -7,6 +7,7 @@ import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { useUpdateEquipmentInspectionTemplateMutation } from 'app/api/reflection';
 import { useNotifications } from 'app/providers/notifications';
 import { FieldItem, parseFields } from './fieldItem';
+import i18n from 'app/i18n';
 
 export type RigInspectionTemplateFields = {
   fields: FieldItem[];
@@ -19,7 +20,10 @@ export const rigInspectionTemplateValidation = yup.object({
     .array()
     .of(
       yup.object({
-        label: yup.string().trim().required('Every field needs a name'),
+        label: yup
+          .string()
+          .trim()
+          .required(() => i18n.t('forms.rig_inspection_template.everyFieldNeedsAName')),
         description: yup.string().nullable(),
         isRequired: yup.boolean(),
         valueType: yup
@@ -75,7 +79,7 @@ export default function useRigInspectionTemplateForm(opts: IUseRigInspectionTemp
             definition: JSON.stringify(fields),
           },
         });
-        notify.success('Template saved');
+        notify.success(i18n.t('forms.rig_inspection_template.templateSaved'));
         onSuccess?.();
       } catch (error) {
         if (error instanceof Error) {

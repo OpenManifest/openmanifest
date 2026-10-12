@@ -7,6 +7,7 @@ import { useUserSignUpMutation } from 'app/api/reflection';
 import { useSession } from 'app/state';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { camelCase } from 'lodash';
+import i18n from 'app/i18n';
 
 export interface SignUpFields {
   step: number;
@@ -21,7 +22,11 @@ export const signUpValidation = yup.object().shape({
   name: yup.string().default(''),
   email: yup.string().when('step', {
     is: (step: number) => step >= 0,
-    then: yup.string().required('Email is required').min(3).email('Please enter a valid email'),
+    then: yup
+      .string()
+      .required(() => i18n.t('forms.sign_up.emailIsRequired'))
+      .min(3)
+      .email(() => i18n.t('forms.sign_up.pleaseEnterAValidEmail')),
   }),
   password: yup
     .string()
@@ -30,10 +35,10 @@ export const signUpValidation = yup.object().shape({
       is: (step: number) => step >= 1,
       then: yup
         .string()
-        .required('Password is required')
+        .required(() => i18n.t('forms.sign_up.passwordIsRequired'))
         .test({
           test: (value) => checkPasswordComplexity(value || '') >= PasswordStrength.Acceptable,
-          message: 'Password is too weak',
+          message: i18n.t('forms.sign_up.passwordIsTooWeak'),
           name: 'password-complexity',
         }),
     }),
@@ -44,8 +49,8 @@ export const signUpValidation = yup.object().shape({
       is: (step: number) => step >= 2,
       then: yup
         .string()
-        .required('Password confirmation is required')
-        .oneOf([yup.ref('password'), null], 'Passwords must match'),
+        .required(() => i18n.t('forms.sign_up.passwordConfirmationIsRequired'))
+        .oneOf([yup.ref('password'), null], () => i18n.t('forms.sign_up.passwordsMustMatch')),
     }),
 });
 

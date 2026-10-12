@@ -9,6 +9,7 @@ import type { RigEssentialsFragment } from 'app/api/operations';
 import useMutationCreateEquipment from 'app/api/hooks/useMutationCreateEquipment';
 import useMutationUpdateEquipment from 'app/api/hooks/useMutationUpdateEquipment';
 import { useNotifications } from 'app/providers/notifications';
+import i18n from 'app/i18n';
 
 export type RigFields = {
   name: string;
@@ -28,9 +29,9 @@ export const rigValidation = yup.object({
   serial: yup.string().default(''),
   canopySize: yup
     .number()
-    .typeError('Canopy size must be a valid number')
+    .typeError(() => i18n.t('forms.rig.canopySizeMustBeAValid'))
     .nullable()
-    .min(0, 'Canopy size must be a valid number')
+    .min(0, () => i18n.t('forms.rig.canopySizeMustBeAValid'))
     .default(null),
   rigType: yup.string().default('sport'),
   repackExpiresAt: yup.number().nullable().default(null),
