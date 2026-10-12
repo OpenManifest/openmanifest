@@ -1,0 +1,107 @@
+{
+  "tabs": {
+    "overview": "Overview",
+    "manifest": "Manifest",
+    "notifications": "Notifications",
+    "users": "Users"
+  },
+  "call": {
+    "minutes": "{{minutes}} minute {{call}}"
+  },
+  "time": {
+    "now": "now"
+  },
+  "destinations": {
+    "today": "Today",
+    "board": "Board",
+    "people": "People",
+    "inbox": "Inbox",
+    "wallet": "Wallet",
+    "money": "Money",
+    "reports": "Reports",
+    "setup": "Setup",
+    "platform": "Platform",
+    "account": "Account",
+    "more": "More"
+  },
+  "noAccess": {
+    "title": "You don't have access to this",
+    "body": "Ask the people who run this place to give you access."
+  },
+  "notAvailable": {
+    "title": "Not available",
+    "body": "This isn't available for this operator."
+  },
+  "navigation": {
+    "main": "Main",
+    "skip": "Skip to content",
+    "switchOperator": "Switch operator",
+    "account": "Account menu"
+  },
+  "loading": "Loading",
+  "account": {
+    "title": "Account",
+    "profile": "Profile",
+    "equipment": "Equipment",
+    "transactions": "Transactions",
+    "appearance": "Appearance",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "density": "Density",
+    "auto": "Auto",
+    "compact": "Compact",
+    "regular": "Regular",
+    "comfortable": "Comfortable",
+    "switchOperator": "Switch operator",
+    "createOperator": "Create new",
+    "logout": "Log out",
+    "role": "Role",
+    "funds": "Funds"
+  },
+  "more": {
+    "title": "More"
+  },
+  "header": {
+    "back": "Back",
+    "backTo": "Back to {{title}}",
+    "closeSearch": "Close search",
+    "searchPeople": "Search people"
+  },
+  "setup": {
+    "profileBoth": "Add your exit weight and your {{equipment}} to your profile",
+    "profileMass": "Add your exit weight to your profile",
+    "profileEquipment": "Add your {{equipment}} to your profile",
+    "membership": "Your membership seems to be out of date",
+    "inspection": "Your {{equipment}} must be inspected before you can manifest here",
+    "repack": "Your reserve repack is due. You can update the repack date on your profile",
+    "credits": "You need to top up your credits before you can manifest",
+    "open": "Fix this"
+  },
+  "loadNumber": "{{load}} #{{number}}",
+  "screens": {
+    "dashboard": "Dashboard",
+    "overview": "Overview",
+    "windsAloft": "Winds aloft",
+    "jumpRun": "Jump run",
+    "settings": "Settings",
+    "basicSettings": "Basic settings",
+    "ticketTypes": "Ticket types",
+    "ticketAddOns": "Ticket add-ons",
+    "rigInspectionForm": "Inspection form",
+    "rigs": "Rigs",
+    "transactions": "Transactions",
+    "permissions": "Permissions",
+    "masterLog": "Master log",
+    "inbox": "Inbox",
+    "people": "People",
+    "user": "Profile",
+    "inspection": "Inspection",
+    "equipment": "Equipment",
+    "order": "Order",
+    "yourTransactions": "Your transactions",
+    "transactionsOf": "{{name}}'s transactions",
+    "yourEquipment": "Your {{equipment}}",
+    "equipmentOf": "{{name}}'s {{equipment}}"
+  }
+}

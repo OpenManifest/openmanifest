@@ -8,23 +8,23 @@ import {
   useRigInspectionTemplateForm,
 } from 'app/forms/rig_inspection_template';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { useWindowDimensions, View } from 'react-native';
 
 export default function RigInspectionTemplateScreen() {
-  const { dropzone: currentDropzone } = useDropzoneContext();
+  const { operator: currentOperator } = useOperatorContext();
   const { data } = useRigInspectionTemplateQuery({
     variables: {
-      dropzoneId: currentDropzone?.dropzone?.id?.toString() as string,
+      operatorId: currentOperator?.operator?.id?.toString() as string,
     },
   });
 
   const canEdit = useRestriction(Permission.UpdateFormTemplate);
   const { control, loading, onSubmit } = useRigInspectionTemplateForm({
-    template: data?.dropzone?.rigInspectionTemplate,
-    dropzoneId: data?.dropzone?.id,
+    template: data?.operator?.rigInspectionTemplate,
+    operatorId: data?.operator?.id,
   });
 
   const { width } = useWindowDimensions();

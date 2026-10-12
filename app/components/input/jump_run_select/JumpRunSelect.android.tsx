@@ -17,7 +17,7 @@ interface IJumpRunSelectorProps {
 
 export default function JumpRunSelector(props: IJumpRunSelectorProps) {
   const { latitude, longitude, value, onChange } = props;
-  const { guide, isDragging, jumpRun, layout, plane, rotation } = useJumpRunRotation(value);
+  const { guide, isDragging, jumpRun, layout, vehicle, rotation } = useJumpRunRotation(value);
   const { height: MAP_HEIGHT, width: MAP_WIDTH } = layout.dimensions;
   const CENTER_Y = layout.dimensions.height / 2;
   const CENTER_X = layout.dimensions.width / 2;
@@ -25,7 +25,6 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
 
   React.useEffect(() => {
     if (!isDragging && jumpRun !== value) {
-      console.debug('Updating jumprun to', jumpRun);
       onChange?.(jumpRun);
     }
   }, [jumpRun, isDragging, onChange, value]);
@@ -60,7 +59,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
               height: hypothenuse,
               width: isDragging ? 2 : 10,
               backgroundColor: '#FF1414',
-              opacity: plane.opacity.interpolate({
+              opacity: vehicle.opacity.interpolate({
                 inputRange: [0, 1],
                 outputRange: [0.6, 1],
               }),
@@ -84,7 +83,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  opacity: plane.position.interpolate({
+                  opacity: vehicle.position.interpolate({
                     inputRange: [-hypothenuse / 2, 0, hypothenuse / 2],
                     outputRange: [0.0, 1.0, 0.0],
                   }),
@@ -96,7 +95,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
                       }),
                     },
                     {
-                      translateY: plane.position,
+                      translateY: vehicle.position,
                     },
                   ],
                 },
@@ -109,7 +108,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
             style={[
               styles.degreeLabel,
               {
-                opacity: plane.opacity,
+                opacity: vehicle.opacity,
                 top: CENTER_Y - 75,
                 left: CENTER_X - 100,
               },
@@ -123,7 +122,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
           style={[
             styles.bottomDegreeLabel,
             {
-              opacity: plane.opacity.interpolate({
+              opacity: vehicle.opacity.interpolate({
                 inputRange: [0, 1],
                 outputRange: [1, 0],
               }),

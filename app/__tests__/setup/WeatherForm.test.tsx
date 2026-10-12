@@ -40,8 +40,8 @@ function Harness() {
   );
 }
 
-function renderForm(graphql: Parameters<typeof render>[1]['graphql'] = []) {
-  const screen = render(<Harness />, {
+async function renderForm(graphql: Parameters<typeof render>[1]['graphql'] = []) {
+  const screen = await render(<Harness />, {
     session: authenticatedSession,
     graphql,
   });
@@ -50,7 +50,7 @@ function renderForm(graphql: Parameters<typeof render>[1]['graphql'] = []) {
 
 describe('weather conditions form', () => {
   it('starts with the conditions being edited', async () => {
-    const form = renderForm();
+    const form = await renderForm();
 
     await waitFor(() => expect(form.getByDisplayValue('12')).toBeTruthy());
     expect(form.getByDisplayValue('90')).toBeTruthy();
@@ -70,14 +70,14 @@ describe('weather conditions form', () => {
         },
       },
     }));
-    const form = renderForm([
+    const form = await renderForm([
       {
         request: {
           query: MUTATION_CREATE_WEATHER_CONDITION,
           operationName: 'CreateWeatherConditions',
           variables: {
             id: 3,
-            dropzoneId: 1,
+            operatorId: 1,
             winds: JSON.stringify([{ altitude: '3000', direction: '270', speed: '8' }]),
             jumpRun: 120,
             temperature: 12,
@@ -89,9 +89,9 @@ describe('weather conditions form', () => {
 
     await waitFor(() => expect(form.getByDisplayValue('90')).toBeTruthy());
     const jumpRun = form.getByDisplayValue('90');
-    fireEvent.changeText(jumpRun, '120');
-    fireEvent(jumpRun, 'blur');
-    fireEvent.press(form.getByText('Save conditions'));
+    await fireEvent.changeText(jumpRun, '120');
+    await fireEvent(jumpRun, 'blur');
+    await fireEvent.press(form.getByText('Save conditions'));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
     await waitFor(() => expect(form.getByTestId('result').props.children).toBe('saved'));
@@ -99,7 +99,7 @@ describe('weather conditions form', () => {
 
   it('does not save a jump run outside 0 to 360', async () => {
     const mutationResult = jest.fn();
-    const form = renderForm([
+    const form = await renderForm([
       {
         request: {
           query: MUTATION_CREATE_WEATHER_CONDITION,
@@ -112,9 +112,9 @@ describe('weather conditions form', () => {
 
     await waitFor(() => expect(form.getByDisplayValue('90')).toBeTruthy());
     const jumpRun = form.getByDisplayValue('90');
-    fireEvent.changeText(jumpRun, '400');
-    fireEvent(jumpRun, 'blur');
-    fireEvent.press(form.getByText('Save conditions'));
+    await fireEvent.changeText(jumpRun, '400');
+    await fireEvent(jumpRun, 'blur');
+    await fireEvent.press(form.getByText('Save conditions'));
 
     await waitFor(() => expect(form.getByTestId('result').props.children).toBe('not saved'));
     expect(mutationResult).not.toHaveBeenCalled();
