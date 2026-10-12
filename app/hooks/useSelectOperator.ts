@@ -12,8 +12,8 @@ type SelectableOperator = {
 };
 
 /**
- * Makes a operator the current one: the session store keeps its id (persisted); everything else about it (details,
- * permissions, theme colours) comes from Apollo. A operator the user is not a member of (`currentUser: null`) is joined
+ * Makes an operator the current one: the session store keeps its id (persisted); everything else about it (details,
+ * permissions, theme colours) comes from Apollo. An operator the user is not a member of (`currentUser: null`) is joined
  * first, and is not selected if that fails (e.g. a private operator). Resolves to whether the operator was selected.
  */
 export default function useSelectOperator() {

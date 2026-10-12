@@ -51,7 +51,7 @@ export const EMPTY_FORM_VALUES: UserFields = {
   apfNumber: '',
 };
 
-/** The form values for editing a operator user: the user's details, plus the licence they hold at this operator. */
+/** The form values for editing an operator user: the user's details, plus the licence they hold at this operator. */
 export function toFormValues(membership?: MembershipDetailsFragment | null): UserFields {
   if (!membership) {
     return EMPTY_FORM_VALUES;

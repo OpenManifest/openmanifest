@@ -48,7 +48,7 @@ test.describe('login @login', () => {
     await expect(page.getByText('Jo Jumper').first()).toBeVisible();
   });
 
-  // Selecting a operator the user has not joined joins them (P6.4)
+  // Selecting an operator the user has not joined joins them (P6.4)
   test('a brand new user joins the dropzone and reaches the board', async ({ page }) => {
     const email = await registerNewUser();
     await loginViaUi(page, email);

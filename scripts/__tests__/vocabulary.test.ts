@@ -118,7 +118,7 @@ describe('vocabulary.rewriteKeepingProse', () => {
         '',
         'a.md'
       )
-    ).toBe('Select a operator');
+    ).toBe('Select an operator');
   });
 });
 

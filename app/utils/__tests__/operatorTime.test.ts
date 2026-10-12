@@ -8,7 +8,7 @@ import {
   todayInZone,
 } from '../operatorTime';
 
-// A device in UTC, a operator in Brisbane (UTC+10, no daylight saving): at 23:00 UTC on 8 October it is already
+// A device in UTC, an operator in Brisbane (UTC+10, no daylight saving): at 23:00 UTC on 8 October it is already
 // 09:00 on 9 October at the operator
 const NOW = DateTime.fromISO('2026-10-08T23:00:00Z');
 

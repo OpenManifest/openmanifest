@@ -1,10 +1,10 @@
 import { DateTime, IANAZone } from 'luxon';
 
-/** What the server uses for a operator without a time zone */
+/** What the server uses for an operator without a time zone */
 export const DEFAULT_TIME_ZONE = 'Australia/Brisbane';
 
 /**
- * The zone a operator's days and times are in. Before the operator has loaded (or for a name the device does not know)
+ * The zone an operator's days and times are in. Before the operator has loaded (or for a name the device does not know)
  * the device's zone, which is right for anybody at the operator and a harmless guess for a moment otherwise.
  */
 export function resolveTimeZone(timeZone?: string | null): string {
