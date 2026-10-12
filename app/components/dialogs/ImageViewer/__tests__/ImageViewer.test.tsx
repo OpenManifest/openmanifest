@@ -23,8 +23,8 @@ function Controls() {
 }
 
 describe('ImageViewerProvider', () => {
-  it('shows the image that was opened until it is closed', () => {
-    const screen = render(
+  it('shows the image that was opened until it is closed', async () => {
+    const screen = await render(
       <ImageViewerProvider>
         <Controls />
       </ImageViewerProvider>
@@ -32,11 +32,11 @@ describe('ImageViewerProvider', () => {
 
     expect(screen.queryByTestId('viewer')).toBeNull();
 
-    fireEvent.press(screen.getByText('open'));
+    await fireEvent.press(screen.getByText('open'));
     expect(screen.getByTestId('viewer').props.children).toBe('https://example.com/card.png');
 
-    fireEvent.press(screen.getByText('close'));
+    await fireEvent.press(screen.getByText('close'));
     expect(screen.queryByTestId('viewer')).toBeNull();
-    screen.unmount();
+    await screen.unmount();
   });
 });

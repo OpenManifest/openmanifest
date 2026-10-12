@@ -20,19 +20,19 @@ type StepFields = {
 };
 
 export function useStep(): WizardFormStep<StepFields> {
-  const { dropzoneUser } = useUserProfile();
+  const { membership } = useUserProfile();
 
   return useMemo(
     () => ({
       defaultValues: {
         apfNumber:
-          dropzoneUser?.user?.userFederations?.find(
-            (f) => f.federation?.id === dropzoneUser?.license?.federation?.id
+          membership?.user?.userFederations?.find(
+            (f) => f.federation?.id === membership?.license?.federation?.id
           )?.uid || '',
       },
       validation,
     }),
-    [dropzoneUser?.license?.federation?.id, dropzoneUser?.user?.userFederations]
+    [membership?.license?.federation?.id, membership?.user?.userFederations]
   );
 }
 
@@ -46,13 +46,7 @@ function FederationWizardSceen(props: IWizardStepProps) {
   return (
     <Step {...props} title={`${federation?.name?.toUpperCase()} Number`}>
       <Fields>
-        <FormTextField
-          {...{ control }}
-          name="apfNumber"
-          mode="flat"
-          style={{ backgroundColor: 'transparent', fontSize: 32, minHeight: 70 }}
-          label={`${federation?.name} ID`}
-        />
+        <FormTextField {...{ control }} name="apfNumber" label={`${federation?.name} ID`} />
       </Fields>
     </Step>
   );

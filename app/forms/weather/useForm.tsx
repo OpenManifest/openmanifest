@@ -7,6 +7,7 @@ import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateW
 import type { WeatherConditionEssentialsFragment } from 'app/api/operations';
 import { useNotifications } from 'app/providers/notifications';
 import { useSession } from 'app/state';
+import i18n from 'app/i18n';
 
 export type WindFields = {
   altitude?: string | null;
@@ -35,16 +36,20 @@ export const weatherValidation = yup.object({
         speed: yup.string().nullable(),
       })
     )
-    .max(MAX_WINDS, `At most ${MAX_WINDS} altitudes`)
+    .max(MAX_WINDS, i18n.t('forms.weather.atMostAltitudes', { count: MAX_WINDS }))
     .default([]),
   jumpRun: yup
     .number()
-    .typeError('Jump run must be a number')
+    .typeError(() => i18n.t('forms.weather.jumpRunMustBeANumber'))
     .integer()
-    .min(0, 'Jump run must be between 0 and 360')
-    .max(360, 'Jump run must be between 0 and 360')
+    .min(0, () => i18n.t('forms.weather.jumpRunMustBeBetween0'))
+    .max(360, () => i18n.t('forms.weather.jumpRunMustBeBetween0'))
     .default(0),
-  temperature: yup.number().typeError('Temperature must be a number').integer().default(0),
+  temperature: yup
+    .number()
+    .typeError(() => i18n.t('forms.weather.temperatureMustBeANumber'))
+    .integer()
+    .default(0),
 });
 
 export const EMPTY_FORM_VALUES: WeatherFields = {
@@ -92,7 +97,7 @@ export function WeatherFormProvider(props: React.PropsWithChildren<object>) {
   });
   const { reset, getValues, setError, trigger } = methods;
   const notify = useNotifications();
-  const dropzoneId = useSession((session) => session.currentDropzoneId);
+  const operatorId = useSession((session) => session.currentOperatorId);
 
   const mutation = useMutationCreateWeatherConditions({
     onSuccess: () => null,
@@ -118,14 +123,14 @@ export function WeatherFormProvider(props: React.PropsWithChildren<object>) {
     const values = getValues();
     const result = await mutate({
       id: Number(values.id),
-      dropzoneId: Number(dropzoneId),
+      operatorId: Number(operatorId),
       winds: JSON.stringify(values.winds),
       jumpRun: values.jumpRun,
       temperature: values.temperature,
     });
 
     return !!result && !result.errors?.length && !result.fieldErrors?.length;
-  }, [dropzoneId, getValues, mutate, trigger]);
+  }, [operatorId, getValues, mutate, trigger]);
 
   const api = React.useMemo(
     () => ({ open, save, saving: mutation.loading }),

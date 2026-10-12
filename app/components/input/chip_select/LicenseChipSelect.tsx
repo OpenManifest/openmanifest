@@ -1,7 +1,8 @@
 import { LicenseEssentialsFragment } from 'app/api/operations';
 import { useLicensesQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { List } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
+import { Subheader } from 'app/ui';
 import { withHookForm } from '../withHookForm';
 import ChipSelect from './ChipSelect';
 
@@ -13,6 +14,7 @@ interface ILicenseSelect {
 }
 
 function LicenseChipSelect(props: ILicenseSelect) {
+  const { t } = useTranslation(['common', 'terms']);
   const { federationId, onChange, value, error } = props;
   const { data } = useLicensesQuery({
     variables: {
@@ -21,7 +23,7 @@ function LicenseChipSelect(props: ILicenseSelect) {
   });
   return (
     <>
-      <List.Subheader>License</List.Subheader>
+      <Subheader>{t('common:fields.license')}</Subheader>
       <ChipSelect<LicenseEssentialsFragment>
         {...{ error }}
         autoSelectFirst

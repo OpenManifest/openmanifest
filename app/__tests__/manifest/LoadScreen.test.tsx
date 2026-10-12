@@ -3,12 +3,13 @@ import { Permission } from 'app/api/schema.d';
 import { LoadUpdatedDocument } from 'app/api/reflection';
 import { render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
-import LoadScreen from '../../screens/authenticated/dropzone/load/LoadScreen';
+import LoadScreen from '../../screens/authenticated/manifest/load/LoadScreen';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
+const mockNavigation = Object.assign(jest.fn(), { setOptions: jest.fn() });
 jest.mock('@react-navigation/native', () => ({
   ...jest.requireActual('@react-navigation/native'),
-  useNavigation: () => jest.fn(),
+  useNavigation: () => mockNavigation,
   useRoute: () => ({ params: { loadId: '1' } }),
   useIsFocused: () => false,
 }));
@@ -25,7 +26,7 @@ describe('<LoadScreen />', () => {
       mock.result as { data: { load: { slots: unknown[]; maxSlots: number } } }
     ).data.load;
 
-    const screen = render(<LoadScreen />, {
+    const screen = await render(<LoadScreen />, {
       graphql: [mock, loadUpdatedMock],
       permissions: [Permission.ReadLoad],
       session: authenticatedSession,
@@ -46,7 +47,7 @@ describe('<LoadScreen />', () => {
 
   it('shows the load status, slot count and weight', async () => {
     const mock = MOCK_QUERY_LOAD();
-    const screen = render(<LoadScreen />, {
+    const screen = await render(<LoadScreen />, {
       graphql: [mock, loadUpdatedMock],
       permissions: [Permission.ReadLoad],
       session: authenticatedSession,
@@ -55,5 +56,17 @@ describe('<LoadScreen />', () => {
     await waitFor(() => expect(screen.getByText('Open')).toBeTruthy(), { timeout: 10000 });
     expect(screen.getByText('3/10')).toBeTruthy();
     expect(screen.getByText('100kg')).toBeTruthy();
+  });
+
+  it('names the screen "Load #n" in the header', async () => {
+    const mock = MOCK_QUERY_LOAD();
+    const screen = await render(<LoadScreen />, {
+      graphql: [mock, loadUpdatedMock],
+      permissions: [Permission.ReadLoad],
+      session: authenticatedSession,
+    });
+
+    await waitFor(() => expect(screen.getByText('Open')).toBeTruthy(), { timeout: 10000 });
+    expect(mockNavigation.setOptions).toHaveBeenCalledWith({ title: 'Load #1' });
   });
 });
