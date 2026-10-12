@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Text, TextInput, View } from 'react-native';
 import { CreateOrderDocument } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/providers';
+import { useOperatorContext } from 'app/providers';
 import { useUserProfile } from 'app/api/crud';
 import { Button } from 'react-native-paper';
-import { dropzoneExtensive } from 'app/__fixtures__/dropzone.fixture';
+import { operatorExtensive } from 'app/__fixtures__/operator.fixture';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import CreditSheet from '../../forms/credits/Credits';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
@@ -12,27 +12,27 @@ import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 jest.setTimeout(30000);
 
 const MEMBER = {
-  __typename: 'DropzoneUser',
+  __typename: 'Membership',
   id: '77',
   walletId: 'member-wallet',
   creditsCents: 2000,
   user: { __typename: 'User', id: '77', name: 'Member Jumper' },
 };
 
-// The form refuses to submit until the dropzone has loaded
-function DropzoneReady() {
+// The form refuses to submit until the operator has loaded
+function OperatorReady() {
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
-  return dropzone?.id ? <Text>dropzone ready</Text> : null;
+    operator: { operator },
+  } = useOperatorContext();
+  return operator?.id ? <Text>dropzone ready</Text> : null;
 }
 
 function renderSheet(mutationResult: jest.Mock, variables: Record<string, unknown>) {
   return render(
     <View testID="under-test">
-      <DropzoneReady />
+      <OperatorReady />
       {/* @ts-expect-error Only the fields used by the sheet are provided */}
-      <CreditSheet open dropzoneUser={MEMBER} onClose={jest.fn()} />
+      <CreditSheet open membership={MEMBER} onClose={jest.fn()} />
     </View>,
     {
       session: authenticatedSession,
@@ -65,8 +65,8 @@ describe('<CreditSheet />', () => {
       amountCents: 5000,
       title: 'Added funds',
       seller: MEMBER.walletId,
-      buyer: dropzoneExtensive.walletId,
-      dropzone: dropzoneExtensive.id,
+      buyer: operatorExtensive.walletId,
+      operator: operatorExtensive.id,
     });
 
     // The manifest provider mounts its own closed copy of this sheet, so scope to ours
@@ -93,7 +93,7 @@ describe('<CreditSheet />', () => {
     }
     const screen = render(
       <View testID="under-test">
-        <DropzoneReady />
+        <OperatorReady />
         <Withdraw />
       </View>,
       {
@@ -107,8 +107,8 @@ describe('<CreditSheet />', () => {
                 amountCents: 1500,
                 title: 'Withdrew funds',
                 buyer: MEMBER.walletId,
-                seller: dropzoneExtensive.walletId,
-                dropzone: dropzoneExtensive.id,
+                seller: operatorExtensive.walletId,
+                operator: operatorExtensive.id,
               },
             },
             result: mutationResult,

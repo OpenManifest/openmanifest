@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Text, TextInput, View } from 'react-native';
 import { CreateGhostDocument } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/providers';
+import { useOperatorContext } from 'app/providers';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import MOCK_QUERY_FEDERATIONS from '../manifest/__mocks__/QueryFederations.mock';
 import MOCK_QUERY_LICENSES from '../manifest/__mocks__/QueryLicenses.mock';
@@ -11,19 +11,19 @@ import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
-// The form refuses to submit until the dropzone has loaded
-function DropzoneReady() {
+// The form refuses to submit until the operator has loaded
+function OperatorReady() {
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
-  return dropzone?.id ? <Text>dropzone ready</Text> : null;
+    operator: { operator },
+  } = useOperatorContext();
+  return operator?.id ? <Text>dropzone ready</Text> : null;
 }
 
 // Name and email filled in; the federation and licence are picked automatically (single option), the access level is not.
 async function renderFilledDialog(createGhost: jest.Mock) {
   const screen = render(
     <View testID="under-test">
-      <DropzoneReady />
+      <OperatorReady />
       <CreateGhostDialog open onClose={jest.fn()} />
     </View>,
     {

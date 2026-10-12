@@ -8,9 +8,9 @@ import { ModerationRole, Permission } from 'app/api/schema.d';
 import { useTheme } from 'react-native-paper';
 
 import { NavigatorScreenParams } from '@react-navigation/native';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { AppSignalBoundary } from 'app/components/app_signal';
-import ManifestTab, { DropzoneRoutes } from './dropzone/routes';
+import ManifestTab, { OperatorRoutes } from './manifest/routes';
 import UsersTab, { UserRoutes } from './user/routes';
 import NotificationsTab, { NotificationRoutes } from './notifications/routes';
 import OverviewTab, { OverviewRoutes } from './overview/routes';
@@ -20,7 +20,7 @@ import { useAppTheme } from 'app/theme';
 import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 export type AuthenticatedRoutes = {
-  Manifest: NavigatorScreenParams<DropzoneRoutes>;
+  Manifest: NavigatorScreenParams<OperatorRoutes>;
   Overview: NavigatorScreenParams<OverviewRoutes>;
   Users: NavigatorScreenParams<UserRoutes>;
   Notifications: NavigatorScreenParams<NotificationRoutes>;
@@ -30,8 +30,8 @@ export default function AuthenticatedTabBar() {
   const { palette } = useAppTheme();
 
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
   const isAdmin = currentUser?.user?.moderationRole !== ModerationRole.User;
   const canViewUsers = useRestriction(Permission.ReadUser);
   const canViewDashboard = useRestriction(Permission.ViewStatistics);

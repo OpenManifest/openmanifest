@@ -7,7 +7,7 @@ import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
-// The server finds the dropzone of the weather condition itself (BUG-040): the app sends the id and nothing else
+// The server finds the operator of the weather condition itself (BUG-040): the app sends the id and nothing else
 function Reload({ id }: { id: number }) {
   const [reload, { data }] = useReloadWeatherMutation();
   const payload = data?.reloadWeatherCondition;

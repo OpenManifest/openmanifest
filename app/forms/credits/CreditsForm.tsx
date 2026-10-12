@@ -5,23 +5,23 @@ import { Divider, DataTable } from 'react-native-paper';
 import { TransactionType } from 'app/api/schema.d';
 import { Control, useWatch } from 'react-hook-form';
 import { FormNumberField } from 'app/components/input/number_input';
-import { DropzoneUserDetailsFragment } from 'app/api/operations';
+import { MembershipDetailsFragment } from 'app/api/operations';
 import { NumberFieldType } from '../../components/input/number_input/NumberField';
 import { CreditFields } from './useForm';
 import { formatCents, fromCents } from 'app/utils/money';
 
 interface ICreditsFormProps {
   control: Control<CreditFields>;
-  dropzoneUser?: DropzoneUserDetailsFragment;
+  membership?: MembershipDetailsFragment;
 }
 export default function CreditsForm(props: ICreditsFormProps) {
-  const { control, dropzoneUser } = props;
+  const { control, membership } = props;
   const { amount = 0, type } = useWatch({ control });
 
   const subtotal =
     type === TransactionType.Deposit
-      ? fromCents(dropzoneUser?.creditsCents) + amount
-      : fromCents(dropzoneUser?.creditsCents) - amount;
+      ? fromCents(membership?.creditsCents) + amount
+      : fromCents(membership?.creditsCents) - amount;
   return (
     <>
       <FormTextField
@@ -42,7 +42,7 @@ export default function CreditsForm(props: ICreditsFormProps) {
         <DataTable>
           <DataTable.Row>
             <DataTable.Title>Current balance</DataTable.Title>
-            <DataTable.Cell numeric>{formatCents(dropzoneUser?.creditsCents)}</DataTable.Cell>
+            <DataTable.Cell numeric>{formatCents(membership?.creditsCents)}</DataTable.Cell>
           </DataTable.Row>
           <DataTable.Row>
             <DataTable.Title>

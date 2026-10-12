@@ -18,7 +18,7 @@ export default function SlotCard(props: ISlot) {
         <Card.Content style={styles.transactionContent}>
           <List.Item
             description={`on Load #${slot.load.loadNumber}`}
-            title={slot.jumpType?.name}
+            title={slot.activityType?.name}
             style={{ width: '100%' }}
             titleStyle={styles.transactionTitle}
             descriptionStyle={styles.transactionDescription}
@@ -33,7 +33,7 @@ export default function SlotCard(props: ISlot) {
               >
                 <Text
                   style={[
-                    styles.jumpType,
+                    styles.activityType,
                     {
                       color: theme.colors.onSurface,
                     },
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     flexGrow: 1,
   },
-  jumpType: {
+  activityType: {
     fontSize: 16,
     fontFamily: 'Roboto_400Regular',
     fontWeight: '400',

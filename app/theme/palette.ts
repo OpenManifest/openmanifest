@@ -25,7 +25,7 @@ export type AppPalette = Omit<AppTheme['colors'], 'primary' | 'accent'> & {
 };
 
 export type ThemeColors = {
-  /** Dropzone brand colours; the defaults apply when absent */
+  /** Operator brand colours; the defaults apply when absent */
   primary?: string | null;
   accent?: string | null;
 };

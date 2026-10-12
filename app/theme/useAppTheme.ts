@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useDropzoneQuery } from 'app/api/reflection';
+import { useOperatorQuery } from 'app/api/reflection';
 import useColorScheme from 'app/hooks/useColorScheme';
 import { usePreferences } from 'app/state/preferences';
 import { useSession } from 'app/state/session';
@@ -21,7 +21,7 @@ export const AppThemeContext = React.createContext<AppThemeState>({
 });
 
 /**
- * Derives the theme from the colour scheme preference (or the device), the current dropzone's brand colours (Apollo)
+ * Derives the theme from the colour scheme preference (or the device), the current operator's brand colours (Apollo)
  * and any preview overrides. Called once, by `AppThemeProvider`; components read the result with `useAppTheme()`.
  */
 export function useCreateAppTheme(): AppThemeState {
@@ -29,25 +29,25 @@ export function useCreateAppTheme(): AppThemeState {
   const deviceScheme = useColorScheme();
   const isDark = preference === 'system' ? deviceScheme === 'dark' : preference === 'dark';
 
-  const dropzoneId = useSession((session) => session.currentDropzoneId);
+  const operatorId = useSession((session) => session.currentOperatorId);
   const loggedIn = useSession((session) => !!session.credentials);
-  const { data, previousData } = useDropzoneQuery({
-    variables: { dropzoneId: dropzoneId || '' },
-    skip: !dropzoneId || !loggedIn,
+  const { data, previousData } = useOperatorQuery({
+    variables: { operatorId: operatorId || '' },
+    skip: !operatorId || !loggedIn,
   });
-  // Keep the previous dropzone's colours while the next one loads rather than flashing the defaults
-  const dropzone = (data ?? previousData)?.dropzone;
+  // Keep the previous operator's colours while the next one loads rather than flashing the defaults
+  const operator = (data ?? previousData)?.operator;
   const overridePrimary = useThemeOverrides((overrides) => overrides.primary);
 
   // The preview has been saved once Apollo holds the same colour
   React.useEffect(() => {
-    if (overridePrimary && overridePrimary === dropzone?.primaryColor) {
+    if (overridePrimary && overridePrimary === operator?.primaryColor) {
       useThemeOverrides.getState().setPrimary(null);
     }
-  }, [overridePrimary, dropzone?.primaryColor]);
+  }, [overridePrimary, operator?.primaryColor]);
 
-  const primary = overridePrimary || dropzone?.primaryColor;
-  const accent = dropzone?.secondaryColor;
+  const primary = overridePrimary || operator?.primaryColor;
+  const accent = operator?.secondaryColor;
 
   return React.useMemo(() => {
     const theme = createAppTheme(isDark, { primary, accent });

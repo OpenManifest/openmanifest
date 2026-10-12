@@ -77,7 +77,7 @@ describe('weather conditions form', () => {
           operationName: 'CreateWeatherConditions',
           variables: {
             id: 3,
-            dropzoneId: 1,
+            operatorId: 1,
             winds: JSON.stringify([{ altitude: '3000', direction: '270', speed: '8' }]),
             jumpRun: 120,
             temperature: 12,
