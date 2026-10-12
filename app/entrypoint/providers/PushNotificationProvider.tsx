@@ -3,9 +3,8 @@ import * as Notifications from 'expo-notifications';
 import { Linking, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
-import URI from 'urijs';
 import { useUpdateUserMutation } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { useSession } from 'app/state';
 import { useNotifications } from 'app/providers/notifications';
 
@@ -49,8 +48,8 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
   const setPushToken = useSession((session) => session.setPushToken);
   const notify = useNotifications();
   const {
-    dropzone: { currentUser, loading, called },
-  } = useDropzoneContext();
+    operator: { currentUser, loading, called },
+  } = useOperatorContext();
   const notificationListener =
     React.useRef<ReturnType<typeof Notifications.addNotificationReceivedListener>>(undefined);
   const responseListener =
@@ -58,11 +57,8 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       undefined
     );
 
-  const onOutsideLink = React.useCallback((link: { url: string }) => {
-    const uri = URI(link.url);
-    const intendedRoute = uri.path();
-    console.log(intendedRoute);
-  }, []);
+  // Links that open the app are routed by React Navigation's linking config
+  const onOutsideLink = React.useCallback(() => undefined, []);
 
   const [updateUser] = useUpdateUserMutation();
   React.useEffect(() => {
@@ -86,9 +82,9 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
     // This listener is fired whenever a user taps on or
     // interacts with a notification (works when app is foregrounded,
     // backgrounded, or killed)
-    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-      // console.log({ notification: response });
-    });
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(
+      () => undefined
+    );
 
     const subscription = Linking.addEventListener('url', onOutsideLink);
 
@@ -113,7 +109,7 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       if (pushToken && pushToken !== remoteToken) {
         updateUser({
           variables: {
-            dropzoneUser: currentUser.id,
+            membership: currentUser.id,
             pushToken,
           },
         });

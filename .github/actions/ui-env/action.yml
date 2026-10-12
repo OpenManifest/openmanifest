@@ -1,0 +1,61 @@
+name: UI test environment
+description: >-
+  Boots the OpenManifest API (backend staging, offline dev seed) and serves a local web export of this client, as the
+  Playwright suite in e2e/ expects. The calling job declares the Postgres service, checks out this repo, installs Node
+  and runs `yarn install` first.
+inputs:
+  backend-ref:
+    description: Branch, tag or SHA of OpenManifest/openmanifest-server to run against
+    default: staging
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: OpenManifest/openmanifest-server
+        ref: ${{ inputs.backend-ref }}
+        path: backend
+    - run: sudo apt-get update -qq && sudo apt-get install -y -qq libpq-dev libvips42
+      shell: bash
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: .ruby-version
+        bundler-cache: true
+        working-directory: backend
+    - name: Seed the database and start the API on port 5000
+      shell: bash
+      working-directory: backend
+      env:
+        RAILS_ENV: development
+        PGHOST: 127.0.0.1
+        PGUSER: postgres
+        PGPASSWORD: postgres
+        BACKEND_URL: http://local.openmanifest.org:5000/
+        CORS_ORIGINS: http://localhost:19006
+        DISABLE_SPRING: "1"
+        WEB_CONCURRENCY: "0"
+        # The suites sign in dozens of times as the seed users; the default limit of 10 devices evicts the stored session
+        MAX_DEVICES_PER_USER: "1000"
+      run: |
+        echo "127.0.0.1 local.openmanifest.org" | sudo tee -a /etc/hosts
+        export SECRET_KEY_BASE="$(openssl rand -hex 64)"
+        bin/rails db:create db:schema:load db:seed db:seed:dev_baseline
+        nohup bin/rails s -b 0.0.0.0 -p 5000 > "$RUNNER_TEMP/rails.log" 2>&1 &
+    - name: Export and serve the web app on port 19006
+      shell: bash
+      env:
+        EXPO_ENV: local
+        NODE_OPTIONS: --max_old_space_size=6144
+      run: |
+        npx expo export --platform web
+        nohup python3 scripts/serve-web-build.py dist 19006 > "$RUNNER_TEMP/web.log" 2>&1 &
+    - name: Wait for the API and the web app
+      shell: bash
+      run: |
+        for url in http://local.openmanifest.org:5000/graphql http://localhost:19006/login; do
+          for _ in $(seq 1 60); do
+            curl -sf -o /dev/null "$url" && continue 2
+            sleep 2
+          done
+          echo "::error::$url did not come up"; tail -n 40 "$RUNNER_TEMP/rails.log" || true; exit 1
+        done

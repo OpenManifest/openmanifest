@@ -2,8 +2,13 @@ import * as React from 'react';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Title, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
+import {
+  BottomSheetBackdrop,
+  BottomSheetFooter,
+  BottomSheetModal,
+  BottomSheetScrollView,
+} from '@gorhom/bottom-sheet';
+import type { BottomSheetBackdropProps, BottomSheetFooterProps } from '@gorhom/bottom-sheet';
 import { SheetContext } from './SheetContext';
 
 export interface ISheetProps {
@@ -17,6 +22,8 @@ export interface ISheetProps {
   disablePadding?: boolean;
   /** Rendered at the top of the scrolling content */
   header?: React.ReactNode;
+  /** Pinned to the bottom of the sheet, above the keyboard and the gesture bar, while the content scrolls */
+  footer?: React.ReactNode;
   name?: string;
   testID?: string;
   children?: React.ReactNode;
@@ -42,7 +49,9 @@ function Backdrop(props: BottomSheetBackdropProps) {
  * the app's `TextField` and `NumberField` are while inside a `Sheet`.
  */
 export default function Sheet(props: ISheetProps) {
-  const { open, onClose, title, handle, disablePadding, header, name, testID, children } = props;
+  const { open, onClose, title, handle, disablePadding, header, footer, name, testID, children } =
+    props;
+  const [footerHeight, setFooterHeight] = React.useState(0);
   const sheetRef = React.useRef<BottomSheetModal>(null);
   const theme = useTheme();
   const insets = useSafeAreaInsets();
@@ -81,6 +90,25 @@ export default function Sheet(props: ISheetProps) {
     [handle, theme.colors.onSurface, theme.colors.surface, title]
   );
 
+  const FooterComponent = React.useCallback(
+    (footerProps: BottomSheetFooterProps) => (
+      <BottomSheetFooter {...footerProps} bottomInset={0}>
+        <View
+          onLayout={(event) => setFooterHeight(event.nativeEvent.layout.height)}
+          style={{
+            backgroundColor: theme.colors.surface,
+            paddingHorizontal: 16,
+            paddingTop: 8,
+            paddingBottom: insets.bottom + 8,
+          }}
+        >
+          {footer}
+        </View>
+      </BottomSheetFooter>
+    ),
+    [footer, insets.bottom, theme.colors.surface]
+  );
+
   return (
     <BottomSheetModal
       ref={sheetRef}
@@ -93,6 +121,7 @@ export default function Sheet(props: ISheetProps) {
       android_keyboardInputMode="adjustResize"
       backdropComponent={Backdrop}
       handleComponent={HandleComponent}
+      footerComponent={footer ? FooterComponent : undefined}
       onDismiss={onDismiss}
     >
       <SheetContext.Provider value>
@@ -102,7 +131,10 @@ export default function Sheet(props: ISheetProps) {
           contentContainerStyle={[
             styles.content,
             disablePadding ? styles.noPadding : null,
-            { backgroundColor: theme.colors.surface, paddingBottom: insets.bottom + 24 },
+            {
+              backgroundColor: theme.colors.surface,
+              paddingBottom: footer ? footerHeight + 8 : insets.bottom + 24,
+            },
           ]}
         >
           {header}

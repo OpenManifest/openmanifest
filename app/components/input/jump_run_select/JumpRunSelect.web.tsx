@@ -54,10 +54,10 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
   }, [isDragging, value]);
 
   /** ANIMATIONS * */
-  const planePosition = React.useRef(new Animated.Value(0));
-  const planeAnimation = React.useRef(
+  const vehiclePosition = React.useRef(new Animated.Value(0));
+  const vehicleAnimation = React.useRef(
     Animated.loop(
-      Animated.timing(planePosition.current, {
+      Animated.timing(vehiclePosition.current, {
         duration: 3000,
         toValue: -400,
         useNativeDriver: true,
@@ -70,12 +70,12 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
 
   const onGestureEvent = React.useCallback(
     (e: GestureEvent<PanGestureHandlerEventPayload>) => {
-      // Stop plane animation
-      planePosition.current.setValue(0);
-      planeAnimation.current.stop();
+      // Stop vehicle animation
+      vehiclePosition.current.setValue(0);
+      vehicleAnimation.current.stop();
 
       // Reset coordinates
-      planeAnimation.current.reset();
+      vehicleAnimation.current.reset();
       const { nativeEvent } = e;
       const { x, y } = nativeEvent;
 
@@ -106,7 +106,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
     [rootLayout.height, rootLayout.width]
   );
 
-  const planeStartPosition = getPointOnCircle({
+  const vehicleStartPosition = getPointOnCircle({
     x: origin.originX,
     y: origin.originY,
     degrees: jumpRun,
@@ -132,7 +132,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
           toValue: 0,
           useNativeDriver: true,
         }).start();
-        planeAnimation.current.start();
+        vehicleAnimation.current.start();
         requestAnimationFrame(() => onChange?.(jumpRun));
       }}
       {...{ onGestureEvent }}
@@ -223,10 +223,10 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
                   position: 'absolute',
                   width: 40,
                   height: 40,
-                  top: planeStartPosition.y,
-                  left: planeStartPosition.x,
+                  top: vehicleStartPosition.y,
+                  left: vehicleStartPosition.x,
                   zIndex: 100,
-                  opacity: planePosition.current.interpolate({
+                  opacity: vehiclePosition.current.interpolate({
                     inputRange: [-400, -200, 400],
                     outputRange: [0.0, 1.0, 0.0],
                   }),
@@ -238,7 +238,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
                       }),
                     },
                     {
-                      translateY: planePosition.current,
+                      translateY: vehiclePosition.current,
                     },
                   ],
                 },
