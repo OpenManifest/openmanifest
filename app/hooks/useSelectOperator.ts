@@ -29,7 +29,7 @@ export default function useSelectOperator() {
         // What was loaded belongs to the previous operator
         getApolloClient()
           ?.resetStore()
-          .catch((error) => console.debug('[Session::dropzone]: Could not reset the store', error));
+          .catch((error) => console.error('[Session::operator]: Could not reset the store', error));
         return true;
       };
 

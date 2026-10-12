@@ -38,15 +38,13 @@ export function resetSession({ reason }: { reason: ResetSessionReason }) {
 let resetting: Promise<void> | null = null;
 
 async function performReset(reason: ResetSessionReason) {
-  console.debug(`[Session::reset]: Resetting the session (${reason})`);
   const client = getApolloClient();
 
   if (reason === 'logout') {
     try {
       await clearPushToken();
-    } catch (error) {
+    } catch {
       // Offline, or the server refused: logging out has to work anyway
-      console.debug('[Session::reset]: Could not clear the push token', error);
     }
   }
 

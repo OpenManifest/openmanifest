@@ -31,9 +31,7 @@ function LocationWizardStep(props: IWizardStepProps) {
         lat: location.coords.latitude,
         lng: location.coords.longitude,
       });
-    } catch (error) {
-      console.log(error);
-    }
+    } catch {}
   }, [setField]);
 
   // Start at user location

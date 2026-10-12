@@ -36,7 +36,6 @@ export function useTickets(vars?: Partial<TicketTypesQueryVariables>) {
   const [getTickets, query] = useTicketTypesLazyQuery();
   React.useEffect(() => {
     if (authenticated && variables?.operator && !sameVariables(variables, query.variables)) {
-      console.debug('[Context::Tickets] Fetching tickets', variables);
       getTickets({ variables });
     }
   }, [authenticated, getTickets, query.variables, variables]);

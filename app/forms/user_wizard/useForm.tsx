@@ -78,8 +78,6 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               rigId,
               serial,
             } = fields;
-            console.debug(`== SUBMITTING STEP ${stepIndex} ==`);
-            console.debug(fields);
 
             if ([3, 4, 5].includes(stepIndex)) {
               if (stepIndex === 4 && !apfNumber) return true;
@@ -110,7 +108,6 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               });
 
               if ('error' in federationResponse) {
-                console.log('Federation error??');
                 return setError('federation', {
                   message: federationResponse.error,
                   type: 'required',
@@ -121,7 +118,6 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                 'userFederation' in federationResponse &&
                 federationResponse.userFederation.license
               ) {
-                console.debug('Setting license', federationResponse.userFederation.license);
                 setValue('license', federationResponse.userFederation.license);
               }
               return true;

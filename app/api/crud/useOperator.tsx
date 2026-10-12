@@ -68,7 +68,6 @@ export function useOperator(vars: Partial<OperatorQueryVariables>) {
   );
   React.useEffect(() => {
     if (authenticated && variables?.operatorId && !sameVariables(variables, query.variables)) {
-      console.debug('[Context::Dropzone] Fetching dropzone', variables);
       getOperator({ variables });
     }
   }, [authenticated, getOperator, query.variables, variables]);
@@ -79,7 +78,6 @@ export function useOperator(vars: Partial<OperatorQueryVariables>) {
       permissionsVariables?.operatorId &&
       !sameVariables(permissionsVariables, permissions.variables)
     ) {
-      console.debug('[Context::Dropzone] Fetching user permissions', permissionsVariables);
       getPermissions({ variables: permissionsVariables as CurrentUserPermissionsQueryVariables });
     }
   }, [

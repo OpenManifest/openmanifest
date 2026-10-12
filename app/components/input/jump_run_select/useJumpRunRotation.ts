@@ -60,7 +60,6 @@ export default function useJumpRunRotation(value: number) {
 
   React.useEffect(() => {
     if (!isDragging && jumpRun !== value) {
-      console.debug('Setting jump run from initial value ', value, ', was ', jumpRun);
     }
   }, [isDragging, jumpRun, value]);
 
@@ -73,14 +72,9 @@ export default function useJumpRunRotation(value: number) {
     (e: GestureEvent<RotationGestureHandlerEventPayload>) => {
       // @ts-ignore
       if (e.nativeEvent.oldState === State.ACTIVE) {
-        console.debug({ lastRotation: lastRotation.current, rotation: e.nativeEvent.rotation });
         lastRotation.current += e.nativeEvent.rotation;
         rotation.current.setOffset(lastRotation.current);
         rotation.current.setValue(0);
-        console.debug({
-          lastRotation: lastRotation.current,
-          lastRotationDegrees: radiansToDegrees(lastRotation.current),
-        });
       }
     },
     []

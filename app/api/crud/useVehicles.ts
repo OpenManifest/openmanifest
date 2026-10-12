@@ -37,7 +37,6 @@ export function useVehicles(vars?: Partial<VehiclesQueryVariables>) {
 
   React.useEffect(() => {
     if (authenticated && variables?.operatorId && !sameVariables(variables, query.variables)) {
-      console.debug('[Context::Aircrafts] Fetching aircrafts', variables);
       getVehicles({ variables });
     }
   }, [authenticated, getVehicles, query?.variables, variables]);

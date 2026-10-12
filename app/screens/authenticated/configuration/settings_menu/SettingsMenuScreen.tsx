@@ -134,7 +134,7 @@ export default function SettingsScreen() {
           disabled={!canUpdateEquipmentInspectionTemplate}
           title="Rig Inspection Template"
           right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
-          left={() => <List.Icon color={theme.colors.text} icon="check" />}
+          left={() => <List.Icon color={theme.colors.text} icon="clipboard-check-outline" />}
           onPress={() =>
             navigation.navigate('Authenticated', {
               screen: 'LeftDrawer',
@@ -157,7 +157,7 @@ export default function SettingsScreen() {
               title="Master Log"
               left={() => <List.Icon color={theme.colors.text} icon="parachute" />}
               right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
-              description="View historic data for daily operations. Temporarily disabled"
+              description="View historic data for daily operations"
               onPress={() =>
                 navigation.navigate('Authenticated', {
                   screen: 'LeftDrawer',

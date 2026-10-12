@@ -15,7 +15,6 @@ export const validation = yup.object({
     .test({
       name: 'fullName',
       test: (value) => {
-        console.debug('VALIDATING NAME', value);
         return /\w+\s\w+/.test(value || '');
       },
       message: 'Please enter your full name, including surname',

@@ -41,9 +41,7 @@ export default function JumpRunScreen() {
       const position = await Location.getCurrentPositionAsync({});
 
       setLocation(position.coords);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch {}
   }, []);
 
   React.useEffect(() => {

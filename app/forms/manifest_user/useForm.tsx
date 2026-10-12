@@ -112,7 +112,6 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
 
         if ('fieldErrors' in response) {
           response.fieldErrors?.forEach(({ field, message }) => {
-            console.debug('Error in field', field, message);
             setError(camelCase(field) as keyof ManifestUserFields, { type: 'custom', message });
           });
         }

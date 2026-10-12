@@ -52,7 +52,6 @@ export default function RigCard(props: IRigCardProps) {
       notify.success('Image uploaded');
     },
     onError: (err) => {
-      console.log(err);
       setUploading(false);
       notify.error('Upload failed');
     },
@@ -69,9 +68,7 @@ export default function RigCard(props: IRigCardProps) {
         id: Number(rig?.id),
         packingCard: `data:image/jpeg;base64,${result}`,
       });
-    } catch (e) {
-      console.log(e);
-    }
+    } catch {}
   }, [pickImage, rig?.id, updateEquipment]);
 
   const canManageOperatorRigs = useRestriction(Permission.UpdateOperatorRig);

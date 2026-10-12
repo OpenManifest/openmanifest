@@ -111,7 +111,6 @@ function App() {
   const preferencesHydrated = usePreferences((preferences) => preferences.hydrated);
 
   if (!isLoadingComplete || !sessionHydrated || !preferencesHydrated) {
-    console.debug('[App] Loading resources and rendering nothing');
     return null;
   }
   return <Content />;

@@ -3,7 +3,6 @@ import * as Notifications from 'expo-notifications';
 import { Linking, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
-import URI from 'urijs';
 import { useUpdateUserMutation } from 'app/api/reflection';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { useSession } from 'app/state';
@@ -58,11 +57,8 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       undefined
     );
 
-  const onOutsideLink = React.useCallback((link: { url: string }) => {
-    const uri = URI(link.url);
-    const intendedRoute = uri.path();
-    console.log(intendedRoute);
-  }, []);
+  // Links that open the app are routed by React Navigation's linking config
+  const onOutsideLink = React.useCallback(() => undefined, []);
 
   const [updateUser] = useUpdateUserMutation();
   React.useEffect(() => {
@@ -86,9 +82,9 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
     // This listener is fired whenever a user taps on or
     // interacts with a notification (works when app is foregrounded,
     // backgrounded, or killed)
-    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-      // console.log({ notification: response });
-    });
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(
+      () => undefined
+    );
 
     const subscription = Linking.addEventListener('url', onOutsideLink);
 

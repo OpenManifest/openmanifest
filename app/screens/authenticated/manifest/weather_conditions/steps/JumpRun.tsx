@@ -25,9 +25,7 @@ function WindsWizardScreen(props: IWizardScreenProps) {
       const position = await Location.getCurrentPositionAsync({});
 
       setLocation(position.coords);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch {}
   }, []);
 
   React.useEffect(() => {

@@ -81,7 +81,6 @@ function AppBar(props: IAppBarProps) {
           }
           isRigSetUp={!operator?.settings?.requireEquipment || !!currentUser?.user?.rigs?.length}
           onSetupWizard={() => {
-            console.log('opening setup wizard');
             if (currentUser) {
               navigation.navigate('Wizards', {
                 screen: 'UserWizardScreen',

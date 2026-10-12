@@ -135,8 +135,8 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
         if (!canUpdateOperator) {
           return { error: "You don't have permission to update this dropzone" };
         }
-        const validatedFields = operatorValidation.validateSync(fields);
-        console.debug({ validatedFields });
+        // Throws when the fields are invalid
+        operatorValidation.validateSync(fields);
         const {
           id,
           banner,

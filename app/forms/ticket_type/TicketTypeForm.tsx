@@ -33,7 +33,6 @@ export default function TicketTypeForm(props: ITicketTypeFormProps) {
   }, [operator?.id, getTicketAddons]);
 
   const { extras: selectedAddons } = useWatch({ control });
-  console.debug({ altitude });
   return (
     <>
       <FormTextField

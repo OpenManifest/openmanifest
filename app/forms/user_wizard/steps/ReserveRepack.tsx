@@ -14,7 +14,6 @@ export const validation = yup.object({
     .number()
     .required('Please enter the date of your next repack')
     .transform((value) => {
-      console.debug('Transforming repackExpiresAt', value, Number(value));
       return value ? Number(value) : undefined;
     }),
 });

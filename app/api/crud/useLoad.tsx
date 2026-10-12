@@ -31,7 +31,6 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
 
   React.useEffect(() => {
     if (authenticated && variables?.id && !sameVariables(variables, query.variables)) {
-      console.debug('[Context::Load] Fetching load', variables);
       getLoad({ variables: variables as LoadQueryVariables });
     }
   }, [authenticated, getLoad, query.variables, variables]);
@@ -54,7 +53,6 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
       attributes: Partial<UpdateLoadMutationVariables['attributes']>
     ): Promise<TMutationResponse<{ load: LoadDetailsFragment }>> {
       try {
-        console.debug('[Context::Load] Updating load', load?.id, attributes);
         if (!load?.id) {
           return { error: 'Load cannot be updated' };
         }
@@ -78,8 +76,6 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
             },
           },
         });
-
-        console.debug({ response });
 
         if (response?.updateLoad?.load?.id) {
           notify.success(`Load #${load?.loadNumber} updated`);

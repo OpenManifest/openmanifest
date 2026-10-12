@@ -25,7 +25,6 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
 
   React.useEffect(() => {
     if (!isDragging && jumpRun !== value) {
-      console.debug('Updating jumprun to', jumpRun);
       onChange?.(jumpRun);
     }
   }, [jumpRun, isDragging, onChange, value]);

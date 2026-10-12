@@ -41,7 +41,6 @@ export default function UserHeader(props: IUserHeader) {
     membership?.permissions?.filter((name) => /^actAs/.test(name)) || []
   ).map((str) => badgesInitials[str as keyof typeof badgesInitials]);
 
-  console.log('image', membership?.user?.image);
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       <View style={styles.avatarContainer}>

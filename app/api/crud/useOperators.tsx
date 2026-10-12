@@ -24,7 +24,6 @@ export default function useOperators(vars: Partial<OperatorsQueryVariables>) {
 
   React.useEffect(() => {
     if (authenticated && (!sameVariables(variables, query.variables) || !query.called)) {
-      console.debug('[Context::Dropzones] Fetching dropzones', variables);
       getOperators({ variables });
     }
   }, [authenticated, getOperators, query.called, query.variables, variables]);

@@ -107,9 +107,7 @@ function ProfileScreenContent(props: {
           },
         });
       }
-    } catch (e) {
-      console.log(e);
-    }
+    } catch {}
   }, [membership?.id, mutationUpdateUser, pickImage]);
 
   const { dialogs } = useManifestContext();

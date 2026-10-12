@@ -76,7 +76,6 @@ function useUserProfile(variables?: Partial<MembershipQueryVariables>) {
           fieldErrors: response?.data?.createGhost?.fieldErrors || undefined,
         };
       } catch (error) {
-        console.debug('CreateGhost failed', error);
         if (error instanceof Error) {
           appSignal?.sendError(error);
         }

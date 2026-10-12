@@ -10,11 +10,6 @@ export function useLoadCreated(variables: Partial<LoadsQueryVariables>, timeZone
     ({ client, data: { data: result } }: OnDataOptions<LoadCreatedSubscription>) => {
       if (result?.loadCreated?.load?.id) {
         const { load } = result.loadCreated;
-        console.debug(
-          '[Subscription::LoadCreated] Adding new load to the board...',
-          variables,
-          load
-        );
         client.cache.updateQuery<LoadsQuery>(
           {
             query: LoadsDocument,
@@ -38,13 +33,7 @@ export function useLoadCreated(variables: Partial<LoadsQueryVariables>, timeZone
             },
           })
         );
-
-        console.debug('[Subscription::LoadCreated] Added new load to the board', load);
       } else {
-        console.debug(
-          '[Subscription::LoadCreated] Received subscription data without load id',
-          result
-        );
       }
     },
     [variables, timeZone]

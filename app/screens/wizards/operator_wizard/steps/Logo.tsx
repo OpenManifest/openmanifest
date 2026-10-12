@@ -19,11 +19,8 @@ function Logo(props: IWizardStepProps) {
         // Upload image
         setField('banner', `data:image/jpeg;base64,${base64}`);
       } else {
-        console.log({ base64 });
       }
-    } catch (e) {
-      console.log(e);
-    }
+    } catch {}
   }, [pickImage, setField]);
   const theme = useTheme();
 

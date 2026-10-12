@@ -52,7 +52,6 @@ export default function NotificationScreen() {
   }, [isFocused, fetchNotifications]);
 
   // const [mutationMarkAsSeen, mutation] = useMutation<Mutation>(MUTATION_MARK_AS_SEEN);
-  console.debug('Notifications', data?.operator?.currentUser?.notifications?.edges);
 
   return (
     <View style={StyleSheet.absoluteFill}>
@@ -71,12 +70,10 @@ export default function NotificationScreen() {
         keyExtractor={(edge) => `notification-${edge?.node?.id}`}
         style={StyleSheet.absoluteFill}
         renderItem={({ item: edge }) => {
-          console.debug('Rendering notification ', edge?.node?.notificationType);
           switch (edge?.node?.notificationType) {
             case NotificationType.Boarding:
               return <BoardingNotification key={edge.node.id} notification={edge.node as never} />;
             case NotificationType.UserManifested:
-              console.debug('Renderign manifest card');
               return <ManifestedCard key={edge.node.id} notification={edge.node as never} />;
             case NotificationType.CreditsUpdated:
               return <FundsNotification key={edge.node.id} notification={edge.node as never} />;

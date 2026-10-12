@@ -44,7 +44,7 @@ Root (stack)
 ├── Limbo (stack)                DropzoneSelectScreen /select-dropzone
 ├── Authenticated
 │   └── LeftDrawer (drawer: UserDrawer — dropzone switcher, profile, logout)
-│       └── Tabs (material bottom tabs; TabBar.web.tsx on web)
+│       └── Tabs (bottom tabs on every platform; TabBar.web.tsx is a copy of TabBar.tsx)
 │           ├── Overview      DashboardScreen /dropzone/dashboard · OverviewScreen /overview
 │           │                 (visible with viewStatistics permission or moderator)
 │           ├── Manifest      ManifestScreen /dropzone/manifest · LoadScreen /dropzone/load/:loadId
@@ -181,7 +181,7 @@ Metro/webpack pick `*.web.tsx`, `*.android.tsx`, `*.ios.tsx` over the base file.
 | `app/components/input/jump_run_select/JumpRunSelect.{android,web}.tsx` | Android, web | circular slider variants |
 | `app/components/slots_table/AvailableRow.web.tsx`, `DragAndDrop/*.web.tsx` | web | drag-and-drop between loads (`@dnd-kit/core`) |
 | `app/hooks/useColorScheme.web.ts` | web | |
-| `app/screens/authenticated/TabBar.web.tsx` | web | top tab bar on wide screens |
+| `app/screens/authenticated/TabBar.web.tsx` | web | identical to `TabBar.tsx` (a bottom tab navigator); there is no top tab bar on wide screens |
 | `app/screens/authenticated/dropzone/manifest/LoadCard/CountdownTimer.web.ts` | web | |
 | `app/screens/authenticated/overview/statistics/LoadsByDay.web.tsx` | web | chart library differs |
 | `app/screens/unauthenticated/login/form/AppleButton.{android,web}.tsx` | Android, web | Apple sign-in only on iOS (stubs) |

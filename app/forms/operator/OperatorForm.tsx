@@ -67,9 +67,7 @@ export default function OperatorForm(props: IOperatorForm) {
                       if (base64) {
                         onChange(`data:image/jpeg;base64,${base64}`);
                       }
-                    } catch (e) {
-                      console.log(e);
-                    }
+                    } catch {}
                   }}
                   style={{ width: 185 }}
                 >

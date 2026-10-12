@@ -115,9 +115,7 @@ export default function UserActionsButton(props: IUserActionsButtonProps) {
               }
 
               navigation.goBack();
-            } catch (e) {
-              console.log(e);
-            }
+            } catch {}
           },
         },
       ]

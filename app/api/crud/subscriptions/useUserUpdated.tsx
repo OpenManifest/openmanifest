@@ -7,7 +7,6 @@ export function useUserUpdated(membershipId?: string) {
   const onData = React.useCallback(
     ({ client, data: { data: result } }: OnDataOptions<UserUpdatedSubscription>) => {
       if (result?.userUpdated?.membership) {
-        console.debug('[Apollo::Subscription::UpdateUser]: Received update', result?.userUpdated);
         const { membership } = result.userUpdated;
         client.cache.updateFragment<MembershipDetailsFragment>(
           {

@@ -31,9 +31,7 @@ function LocationWizardStep(props: IWizardStepProps) {
         longitudeDelta: calculateLatLngDelta(location.coords.latitude),
       });
       map.current?.animateCamera({ center: location.coords });
-    } catch (error) {
-      console.log(error);
-    }
+    } catch {}
   }, [setField]);
 
   const region = React.useMemo(

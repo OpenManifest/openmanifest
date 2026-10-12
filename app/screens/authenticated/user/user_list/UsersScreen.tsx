@@ -113,7 +113,6 @@ export default function UsersScreen() {
   const numColumns = Math.floor(width / cardWidth) || 1;
 
   const users = React.useMemo(() => data?.memberships?.edges || [], [data?.memberships?.edges]);
-  console.debug({ users, numColumns });
   const initialLoading = !users?.length && loading;
   const currentOperatorId = useSession((session) => session.currentOperatorId);
 

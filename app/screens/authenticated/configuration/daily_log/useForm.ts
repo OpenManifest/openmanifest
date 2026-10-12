@@ -66,7 +66,6 @@ export default function useDailyLogForm(opts: IUseDailyLogFormOpts) {
     async (fields: DailyLogFields) => {
       try {
         const validatedFields = dailyLogValidation.validateSync(fields);
-        console.debug({ validatedFields, operator });
         if (!operator?.id) {
           return;
         }

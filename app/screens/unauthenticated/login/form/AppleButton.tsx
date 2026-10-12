@@ -43,7 +43,6 @@ export function useLoginWithApple(
       }
     } catch (e) {
       if (e instanceof Error) {
-        console.log(e);
         notify.error(e.message);
       }
     }

@@ -72,7 +72,6 @@ export default function useCreditsForm(opts: IUseManifestFormOpts) {
 
   const [{ loading }, onCreateOrder] = useAsyncFn(
     async (fields: CreditFields) => {
-      console.debug({ fields });
       if (!membership) {
         setError('amount', { message: 'No user selected' });
         return;
