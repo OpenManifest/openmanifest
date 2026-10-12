@@ -24,48 +24,52 @@ function Harness(
 }
 
 describe('<NumberField />', () => {
-  it('shows the label, the value and the unit of the variant', () => {
-    const screen = render(<Harness variant={NumberFieldType.Weight} />);
+  it('shows the label, the value and the unit of the variant', async () => {
+    const screen = await render(<Harness variant={NumberFieldType.Weight} />);
     expect(screen.getByText('Exit weight')).toBeTruthy();
     expect(screen.getByDisplayValue('80')).toBeTruthy();
     expect(screen.getByText('kg')).toBeTruthy();
   });
 
-  it('steps with the plus and minus buttons', () => {
+  it('steps with the plus and minus buttons', async () => {
     const onValue = jest.fn();
-    const screen = render(<Harness onValue={onValue} step={2.5} />);
-    fireEvent.press(screen.getByLabelText('Increase'));
+    const screen = await render(<Harness onValue={onValue} step={2.5} />);
+    await fireEvent.press(screen.getByLabelText('Increase Exit weight'));
     expect(onValue).toHaveBeenLastCalledWith(82.5);
     expect(screen.getByDisplayValue('82.5')).toBeTruthy();
-    fireEvent.press(screen.getByLabelText('Decrease'));
-    fireEvent.press(screen.getByLabelText('Decrease'));
+    await fireEvent.press(screen.getByLabelText('Decrease Exit weight'));
+    await fireEvent.press(screen.getByLabelText('Decrease Exit weight'));
     expect(onValue).toHaveBeenLastCalledWith(77.5);
   });
 
-  it('reports typed numbers and ignores text that is not a number', () => {
+  it('reports typed numbers and ignores text that is not a number', async () => {
     const onValue = jest.fn();
-    const screen = render(<Harness onValue={onValue} />);
+    const screen = await render(<Harness onValue={onValue} />);
     const input = screen.getByDisplayValue('80');
-    fireEvent.changeText(input, '91,5');
+    await fireEvent.changeText(input, '91,5');
     expect(onValue).toHaveBeenLastCalledWith(91.5);
     onValue.mockClear();
-    fireEvent.changeText(input, 'abc');
-    fireEvent.changeText(input, '');
+    await fireEvent.changeText(input, 'abc');
+    await fireEvent.changeText(input, '');
     expect(onValue).not.toHaveBeenCalled();
   });
 
-  it('stops at min and max and disables the button at the limit', () => {
+  it('stops at min and max and disables the button at the limit', async () => {
     const onValue = jest.fn();
-    const screen = render(<Harness onValue={onValue} value={41} step={5} min={40} max={45} />);
-    fireEvent.press(screen.getByLabelText('Decrease'));
+    const screen = await render(
+      <Harness onValue={onValue} value={41} step={5} min={40} max={45} />
+    );
+    await fireEvent.press(screen.getByLabelText('Decrease Exit weight'));
     expect(onValue).toHaveBeenLastCalledWith(40);
-    expect(screen.getByLabelText('Decrease').props.accessibilityState?.disabled).toBe(true);
-    fireEvent.changeText(screen.getByDisplayValue('40'), '99');
+    expect(screen.getByLabelText('Decrease Exit weight').props.accessibilityState?.disabled).toBe(
+      true
+    );
+    await fireEvent.changeText(screen.getByDisplayValue('40'), '99');
     expect(onValue).toHaveBeenLastCalledWith(45);
   });
 
-  it('shows the error instead of the helper text', () => {
-    const screen = render(<Harness helperText="Without gear" error="Too heavy" />);
+  it('shows the error instead of the helper text', async () => {
+    const screen = await render(<Harness helperText="Without gear" error="Too heavy" />);
     expect(screen.getByText('Too heavy')).toBeTruthy();
     expect(screen.queryByText('Without gear')).toBeNull();
   });

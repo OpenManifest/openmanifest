@@ -16,8 +16,9 @@ import DoneStep from './steps/Done';
 import AvatarStep from './steps/Avatar';
 import { useUserWizardForm } from './useForm';
 import { UserProfileProvider, useUserProfileContext } from 'app/api/crud';
-import { useDropzoneContext } from 'app/providers';
+import { useOperatorContext } from 'app/providers';
 import { FormProvider, useWatch } from 'react-hook-form';
+import i18n from 'app/i18n';
 
 const steps = [
   RealNameStep,
@@ -38,14 +39,14 @@ export function UserWizard() {
   const { params } = useRoute<{
     key: string;
     name: string;
-    params: { index: number; dropzoneUserId: string };
+    params: { index: number; membershipId: string };
   }>();
   const notify = useNotifications();
   const methods = useUserWizardForm({
     startIndex: params.index || 0,
     onSuccess: () => {
       navigation.goBack();
-      notify.success('Profile updated');
+      notify.success(i18n.t('forms.user_wizard.profileUpdated'));
     },
     onClose: () => {
       navigation.goBack();
@@ -59,12 +60,12 @@ export function UserWizardScreen() {
   const { params } = useRoute<{
     key: string;
     name: string;
-    params: { index: number; dropzoneUserId: string };
+    params: { index: number; membershipId: string };
   }>();
-  const { dropzoneUserId } = params;
+  const { membershipId } = params;
 
   return (
-    <UserProfileProvider id={dropzoneUserId}>
+    <UserProfileProvider id={membershipId}>
       <UserWizard />
     </UserProfileProvider>
   );

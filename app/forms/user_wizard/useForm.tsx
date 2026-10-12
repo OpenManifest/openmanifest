@@ -15,6 +15,7 @@ import { useEquipment } from 'app/api/crud/useEquipment';
 import { useWizardForm } from 'app/hooks/forms';
 import { useMemo } from 'app/hooks/react';
 import { camelCase, isEqual } from 'lodash';
+import i18n from 'app/i18n';
 export interface IUserWizardFormOpts {
   startIndex: number;
   onSuccess?(): void;
@@ -41,7 +42,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
     [step1, step10, step2, step3, step4, step5, step6, step7, step8, step9]
   );
 
-  const { update, dropzoneUser, joinFederation } = useUserProfileContext();
+  const { update, membership, joinFederation } = useUserProfileContext();
   const equipment = useEquipment();
 
   const methods = useWizardForm({
@@ -58,7 +59,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
         onSuccess,
         onSubmit: async (fields, initial) => {
           try {
-            if (!dropzoneUser?.id) return;
+            if (!membership?.id) return;
             setLoading(true);
             const {
               stepIndex = 0,
@@ -66,7 +67,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               apfNumber,
               avatar,
               canopySize,
-              exitWeight,
+              bodyMassKg,
               federation,
               hasRig,
               license,
@@ -78,21 +79,22 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               rigId,
               serial,
             } = fields;
-            console.debug(`== SUBMITTING STEP ${stepIndex} ==`);
-            console.debug(fields);
 
             if ([3, 4, 5].includes(stepIndex)) {
               if (stepIndex === 4 && !apfNumber) return true;
               if (!federation?.id) {
                 setError('federation', {
-                  message: 'You must select a federation',
+                  message: i18n.t('forms.user_wizard.youMustSelectAFederation'),
                   type: 'required',
                 });
                 return false;
               }
 
               if (!license?.id && stepIndex === 5) {
-                setError('license', { message: 'You must select a license', type: 'required' });
+                setError('license', {
+                  message: i18n.t('forms.user_wizard.youMustSelectALicense'),
+                  type: 'required',
+                });
                 return false;
               }
 
@@ -110,7 +112,6 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               });
 
               if ('error' in federationResponse) {
-                console.log('Federation error??');
                 return setError('federation', {
                   message: federationResponse.error,
                   type: 'required',
@@ -121,7 +122,6 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                 'userFederation' in federationResponse &&
                 federationResponse.userFederation.license
               ) {
-                console.debug('Setting license', federationResponse.userFederation.license);
                 setValue('license', federationResponse.userFederation.license);
               }
               return true;
@@ -148,7 +148,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                 return true;
               }
               const rigResponse = await equipment.add({
-                userId: Number(dropzoneUser.user.id),
+                userId: Number(membership.user.id),
                 repackExpiresAt,
                 make,
                 model,
@@ -188,7 +188,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
 
             if (stepIndex === lastStepIndex) {
               const result = await update({
-                exitWeight,
+                bodyMassKg,
                 image: avatar || undefined,
                 license: license?.id ? Number(license.id) : null,
                 nickname,
@@ -204,8 +204,8 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                     return setError('nickname', { message, type: 'required' });
                   if (camelizedField === 'license')
                     return setError('license', { message, type: 'required' });
-                  if (camelizedField === 'exitWeight')
-                    return setError('exitWeight', { message, type: 'required' });
+                  if (camelizedField === 'bodyMassKg')
+                    return setError('bodyMassKg', { message, type: 'required' });
                   if (camelizedField in fields)
                     return setError(camelizedField as keyof typeof fields, { message });
                 });
@@ -236,8 +236,8 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       restore,
       getStepIndexByFieldName,
       createHandlers,
-      dropzoneUser?.id,
-      dropzoneUser?.user.id,
+      membership?.id,
+      membership?.user.id,
       equipment,
       joinFederation,
       setError,

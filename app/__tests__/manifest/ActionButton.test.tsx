@@ -2,14 +2,14 @@ import * as React from 'react';
 import type { FetchResult } from '@apollo/client';
 import { GraphQLError } from 'graphql';
 import { DateTime, Settings } from 'luxon';
-import { FAB } from 'react-native-paper';
 import { LoadState, Permission } from 'app/api/schema.d';
 import { FinalizeLoadDocument, LoadUpdatedDocument, UpdateLoadDocument } from 'app/api/reflection';
 import { NotificationContext } from 'app/providers/notifications/context';
 import { LoadContextProvider, useLoadContext } from 'app/providers';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
-import ActionButton from '../../screens/authenticated/dropzone/load/ActionButton';
+import MOCK_QUERY_OPERATOR from './__mocks__/QueryOperator.mock';
+import ActionButton from '../../screens/authenticated/manifest/load/ActionButton';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
@@ -48,7 +48,7 @@ describe('<ActionButton />', () => {
       },
     }));
 
-    const screen = render(
+    const screen = await render(
       <LoadContextProvider id="1">
         <LoadActions />
       </LoadContextProvider>,
@@ -70,7 +70,7 @@ describe('<ActionButton />', () => {
                 attributes: {
                   lockVersion: 0,
                   dispatchAt: DateTime.fromMillis(NOW).plus({ minutes: 10 }).toISO(),
-                  state: LoadState.BoardingCall,
+                  state: LoadState.Boarding,
                 },
               },
             },
@@ -81,22 +81,23 @@ describe('<ActionButton />', () => {
     );
 
     // Open the speed dial once the load has loaded
-    await waitFor(() => expect(screen.UNSAFE_getAllByType(FAB.Group).length).toBeGreaterThan(0), {
-      timeout: 10000,
-    });
-    const fabs = screen.UNSAFE_getAllByType(FAB);
-    fireEvent.press(fabs[fabs.length - 1]);
+    const primary = await screen.findByTestId(
+      'load-actions-primary-action',
+      {},
+      { timeout: 10000 }
+    );
+    await fireEvent.press(primary);
 
     const call = await waitFor(() => screen.getByText('10 minute call'), { timeout: 10000 });
-    fireEvent.press(call);
+    await fireEvent.press(call);
 
     await waitFor(() => expect(updateResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });
 
   describe('finalizing a load', () => {
-    const renderBoardingCall = (finalizeResult: unknown) => {
+    const renderBoarding = async (finalizeResult: unknown) => {
       const notifications = { success: jest.fn(), error: jest.fn(), info: jest.fn() };
-      const screen = render(
+      const screen = await render(
         <NotificationContext.Provider value={notifications}>
           <LoadContextProvider id="1">
             <LoadActions />
@@ -106,7 +107,7 @@ describe('<ActionButton />', () => {
           session: authenticatedSession,
           permissions: [Permission.UpdateLoad],
           graphql: [
-            MOCK_QUERY_LOAD({}, { load: { state: LoadState.BoardingCall } }),
+            MOCK_QUERY_LOAD({}, { load: { state: LoadState.Boarding } }),
             {
               request: { query: LoadUpdatedDocument, variables: { id: '1' } },
               result: { data: { loadUpdated: { __typename: 'LoadUpdatedPayload', load: null } } },
@@ -114,7 +115,7 @@ describe('<ActionButton />', () => {
             {
               request: {
                 query: FinalizeLoadDocument,
-                variables: { id: 1, state: LoadState.Landed },
+                variables: { id: 1, state: LoadState.Completed },
               },
               ...(finalizeResult as object),
             },
@@ -124,17 +125,20 @@ describe('<ActionButton />', () => {
       return { screen, notifications };
     };
 
-    const pressMarkAsLanded = async (screen: ReturnType<typeof render>) => {
-      await waitFor(() => expect(screen.UNSAFE_getAllByType(FAB.Group).length).toBeGreaterThan(0), {
-        timeout: 10000,
-      });
-      const fabs = screen.UNSAFE_getAllByType(FAB);
-      fireEvent.press(fabs[fabs.length - 1]);
-      fireEvent.press(await waitFor(() => screen.getByText('Mark as Landed'), { timeout: 10000 }));
+    const pressComplete = async (screen: Awaited<ReturnType<typeof render>>) => {
+      const primary = await screen.findByTestId(
+        'load-actions-primary-action',
+        {},
+        { timeout: 10000 }
+      );
+      await fireEvent.press(primary);
+      await fireEvent.press(
+        await waitFor(() => screen.getByText('Mark as Landed'), { timeout: 10000 })
+      );
     };
 
     it('shows the error the server gives for landing', async () => {
-      const { screen, notifications } = renderBoardingCall({
+      const { screen, notifications } = await renderBoarding({
         result: {
           data: {
             finalizeLoad: {
@@ -147,7 +151,7 @@ describe('<ActionButton />', () => {
         },
       });
 
-      await pressMarkAsLanded(screen);
+      await pressComplete(screen);
 
       await waitFor(
         () => expect(notifications.error).toHaveBeenCalledWith("Load #1 can't land, it is landed"),
@@ -156,9 +160,9 @@ describe('<ActionButton />', () => {
     });
 
     it('shows an error when the request fails', async () => {
-      const { screen, notifications } = renderBoardingCall({ error: new Error('Network down') });
+      const { screen, notifications } = await renderBoarding({ error: new Error('Network down') });
 
-      await pressMarkAsLanded(screen);
+      await pressComplete(screen);
 
       await waitFor(() => expect(notifications.error).toHaveBeenCalledWith('Network down'), {
         timeout: 10000,
@@ -168,11 +172,11 @@ describe('<ActionButton />', () => {
 
   describe('the day of the load, at the dropzone (a Brisbane dropzone, a device in UTC)', () => {
     // 23:00 UTC on 8 October is 09:00 on 9 October in Brisbane
-    const renderLoadCreatedAt = (createdAt: string) => {
+    const renderLoadCreatedAt = async (createdAt: string) => {
       Settings.now = () => new Date('2026-10-08T23:00:00Z').valueOf();
       const originalZone = Settings.defaultZone;
       Settings.defaultZone = 'UTC';
-      const screen = render(
+      const screen = await render(
         <LoadContextProvider id="1">
           <LoadActions />
         </LoadContextProvider>,
@@ -191,17 +195,18 @@ describe('<ActionButton />', () => {
       return { screen, restore: () => (Settings.defaultZone = originalZone) };
     };
 
-    const openActions = async (screen: ReturnType<typeof render>) => {
-      await waitFor(() => expect(screen.UNSAFE_getAllByType(FAB.Group).length).toBeGreaterThan(0), {
-        timeout: 10000,
-      });
-      const fabs = screen.UNSAFE_getAllByType(FAB);
-      fireEvent.press(fabs[fabs.length - 1]);
+    const openActions = async (screen: Awaited<ReturnType<typeof render>>) => {
+      const primary = await screen.findByTestId(
+        'load-actions-primary-action',
+        {},
+        { timeout: 10000 }
+      );
+      await fireEvent.press(primary);
     };
 
     it('offers a call for a load created on the dropzone day, though the device is still a day behind', async () => {
       // 02:00 on 9 October in Brisbane, 16:00 on 8 October in UTC
-      const { screen, restore } = renderLoadCreatedAt('2026-10-08T16:00:00Z');
+      const { screen, restore } = await renderLoadCreatedAt('2026-10-08T16:00:00Z');
 
       await openActions(screen);
       expect(
@@ -211,8 +216,8 @@ describe('<ActionButton />', () => {
     });
 
     it('offers no call for a load of the dropzone day before, though the device date matches', async () => {
-      // 19:00 on 8 October in Brisbane, 09:00 on 8 October in UTC: the same day on the device, yesterday at the dropzone
-      const { screen, restore } = renderLoadCreatedAt('2026-10-08T09:00:00Z');
+      // 19:00 on 8 October in Brisbane, 09:00 on 8 October in UTC: the same day on the device, yesterday at the operator
+      const { screen, restore } = await renderLoadCreatedAt('2026-10-08T09:00:00Z');
 
       await openActions(screen);
       // The load itself has loaded (an open load can be cancelled), but the day is over: no call
@@ -222,10 +227,60 @@ describe('<ActionButton />', () => {
     });
   });
 
+  describe('the call schedule of the operator', () => {
+    const renderWithSchedule = async (callScheduleMinutes: number[]) => {
+      Settings.now = () => NOW;
+      const screen = await render(
+        <LoadContextProvider id="1">
+          <LoadActions />
+        </LoadContextProvider>,
+        {
+          session: authenticatedSession,
+          permissions: [Permission.UpdateLoad],
+          graphql: [
+            MOCK_QUERY_OPERATOR({}, { operator: { callScheduleMinutes } } as never),
+            MOCK_QUERY_LOAD(
+              {},
+              { load: { createdAt: new Date(NOW).toISOString() as never, state: LoadState.Open } }
+            ),
+            {
+              request: { query: LoadUpdatedDocument, variables: { id: '1' } },
+              result: { data: { loadUpdated: { __typename: 'LoadUpdatedPayload', load: null } } },
+            },
+          ],
+        }
+      );
+      await fireEvent.press(
+        await screen.findByTestId('load-actions-primary-action', {}, { timeout: 10000 })
+      );
+      return screen;
+    };
+
+    it('offers the calls it sets, not the usual ones', async () => {
+      const screen = await renderWithSchedule([30, 5]);
+
+      await waitFor(() => screen.getByText('30 minute call'), { timeout: 10000 });
+      expect(screen.getByText('5 minute call')).toBeTruthy();
+      expect(screen.queryByText('20 minute call')).toBeNull();
+      expect(screen.queryByText('10 minute call')).toBeNull();
+    });
+
+    it('offers to depart directly when it sets none', async () => {
+      const screen = await renderWithSchedule([]);
+
+      await waitFor(() => screen.getByText('Depart now'), { timeout: 10000 });
+      expect(screen.queryByText('Custom call')).toBeNull();
+      expect(screen.queryByText(/minute call/)).toBeNull();
+    });
+  });
+
   describe('changing a load somebody else changed (optimistic locking)', () => {
     it('refetches the load and says so when the server answers CONFLICT', async () => {
       const notifications = { success: jest.fn(), error: jest.fn(), info: jest.fn() };
-      const loadMock = MOCK_QUERY_LOAD({}, { load: { lockVersion: 4 } });
+      const loadMock = MOCK_QUERY_LOAD(
+        {},
+        { load: { lockVersion: 4, createdAt: new Date(NOW).toISOString() as never } }
+      );
       const loadResult = jest.fn(() => loadMock.result as FetchResult<Record<string, unknown>>);
       const updateRequest = jest.fn(() => ({
         errors: [
@@ -235,7 +290,7 @@ describe('<ActionButton />', () => {
         ],
       }));
       const loadRequest = loadMock.request;
-      const screen = render(
+      const screen = await render(
         <NotificationContext.Provider value={notifications}>
           <LoadContextProvider id="1">
             <LoadActions />
@@ -260,7 +315,7 @@ describe('<ActionButton />', () => {
                   attributes: {
                     lockVersion: 4,
                     dispatchAt: DateTime.fromMillis(NOW).plus({ minutes: 10 }).toISO(),
-                    state: LoadState.BoardingCall,
+                    state: LoadState.Boarding,
                   },
                 },
               },
@@ -270,12 +325,15 @@ describe('<ActionButton />', () => {
         }
       );
 
-      await waitFor(() => expect(screen.UNSAFE_getAllByType(FAB.Group).length).toBeGreaterThan(0), {
-        timeout: 10000,
-      });
-      const fabs = screen.UNSAFE_getAllByType(FAB);
-      fireEvent.press(fabs[fabs.length - 1]);
-      fireEvent.press(await waitFor(() => screen.getByText('10 minute call'), { timeout: 10000 }));
+      const primary = await screen.findByTestId(
+        'load-actions-primary-action',
+        {},
+        { timeout: 10000 }
+      );
+      await fireEvent.press(primary);
+      await fireEvent.press(
+        await waitFor(() => screen.getByText('10 minute call'), { timeout: 10000 })
+      );
 
       // The change is sent with the version the screen has seen ...
       await waitFor(() => expect(updateRequest).toHaveBeenCalledTimes(1), { timeout: 10000 });
