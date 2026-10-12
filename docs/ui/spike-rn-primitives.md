@@ -1,5 +1,8 @@
 # Spike: `@rn-primitives` for overlays on the web (U0.8)
 
+> Update (U2.3): the spike route and its spec are gone. The primitives are used by `app/ui/components/overlay` (Overlay, Popover, Tooltip)
+> and `form/Select.web.tsx`; the dev pages `/__overlays` and `/__forms` and the `@overlay` and `@forms` specs replace it.
+
 **Decision: go**, for dialog, select, tabs, popover and tooltip on the web, with two rules for the select (below). Native is
 not decided here: it is checked with TalkBack and VoiceOver in the Checkpoint U2.8 owner list.
 

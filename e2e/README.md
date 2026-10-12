@@ -9,7 +9,7 @@ Browser tests of the web build against the real API and the offline seed. They r
 | `full-<w>x<h>-light-text200` | 390×844, 1440×900                    | light          | `yarn test:ui:full`; text scaled to 200 %              |
 | `full-390x844-light-generic` | 390×844                              | light          | skipped until U0.6 adds `?industry=generic`            |
 
-Specs carry area tags in their titles: `@login`, `@manifest`, `@nav`, `@profile`, `@setup`, `@spike`, `@visual`, `@account`, `@forms`. Run one area with
+Specs carry area tags in their titles: `@login`, `@manifest`, `@nav`, `@profile`, `@setup`, `@visual`, `@account`, `@forms`, `@overlay`. Run one area with
 `yarn test:ui:smoke --grep @manifest`.
 
 ## Run locally

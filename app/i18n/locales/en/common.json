@@ -111,5 +111,11 @@
     "remove": "Remove {{label}}",
     "optional": "Optional",
     "selected": "Selected"
+  },
+  "overlay": {
+    "close": "Close"
+  },
+  "toast": {
+    "dismiss": "Dismiss"
   }
 }

@@ -89,7 +89,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
           OperatorWizardScreen: '/setup',
         },
       },
-      ...(SPIKE_ENABLED ? { Spike: '/__spike', Forms: '/__forms' } : {}),
+      ...(SPIKE_ENABLED ? { Overlays: '/__overlays', Forms: '/__forms' } : {}),
       // FIXME: Remove in release
       // NotFound: '*',
     },

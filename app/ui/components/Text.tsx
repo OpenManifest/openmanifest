@@ -5,7 +5,8 @@ import { useTheme } from '../theme';
 import type { StatusKey, TypeKey } from '../tokens';
 
 /** A semantic colour: text on the surface, quieter text, brand text, text on a brand fill, or a status foreground */
-export type TextTone = 'default' | 'muted' | 'brand' | 'onBrand' | 'onBrandSoft' | StatusKey;
+export type TextTone =
+  'default' | 'muted' | 'brand' | 'onBrand' | 'onBrandSoft' | 'inverse' | StatusKey;
 
 export type TextProps = Omit<NativeTextProps, 'style'> & {
   /** A type token (default `body`) */
@@ -43,6 +44,8 @@ export function useTone(tone: TextTone = 'default'): string {
       return colour.onBrand;
     case 'onBrandSoft':
       return colour.onBrandSoft;
+    case 'inverse':
+      return colour.surface;
     default:
       return colour.text;
   }

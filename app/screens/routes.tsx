@@ -9,7 +9,7 @@ import Limbo, { LimboRoutes } from './limbo/routes';
 import Unauthenticated, { UnauthenticatedRoutes } from './unauthenticated/routes';
 import Wizards, { WizardRoutes } from './wizards/routes';
 import Authenticated, { AuthenticatedRoutes } from './authenticated/routes';
-import SpikeScreen from './dev/SpikeScreen';
+import OverlaysScreen from './dev/OverlaysScreen';
 import FormsScreen from './dev/FormsScreen';
 import { options, SPIKE_ENABLED } from '../navigation/linking';
 
@@ -21,7 +21,7 @@ export type Routes = {
   Limbo: NavigatorScreenParams<LimboRoutes>;
   Wizards: NavigatorScreenParams<WizardRoutes>;
   NotFound: undefined;
-  Spike: undefined;
+  Overlays: undefined;
   Forms: undefined;
 };
 
@@ -56,7 +56,7 @@ export default function RootNavigator() {
         <Stack.Screen name="Unauthenticated" component={Unauthenticated} />
       )}
       <Stack.Screen name="Wizards" component={Wizards} />
-      {SPIKE_ENABLED ? <Stack.Screen name="Spike" component={SpikeScreen} /> : null}
+      {SPIKE_ENABLED ? <Stack.Screen name="Overlays" component={OverlaysScreen} /> : null}
       {SPIKE_ENABLED ? <Stack.Screen name="Forms" component={FormsScreen} /> : null}
 
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />

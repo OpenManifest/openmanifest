@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { useOperatorContext } from 'app/providers/operator/context';
 import useOpenUser from './useOpenUser';
-import { IconButton, Text, useStyles } from 'app/ui';
+import { Banner } from 'app/ui';
 
 /** What the signed-in member still has to do before they can manifest at this operator, if anything */
 export function useSetupNotice(): {
@@ -51,7 +50,7 @@ export function useSetupNotice(): {
   return null;
 }
 
-/** The notice, in brand colours, under the header; it links to the profile or the equipment when that helps */
+/** The notice, in the warning colours, under the header; it links to the profile or the equipment when that helps */
 export default function SetupBanner() {
   const { t } = useTranslation(['common', 'terms']);
   const navigation = useNavigation();
@@ -60,18 +59,6 @@ export default function SetupBanner() {
     operator: { currentUser },
   } = useOperatorContext();
   const notice = useSetupNotice();
-  const styles = useStyles((tokens) => ({
-    banner: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: tokens.space.sm,
-      paddingHorizontal: tokens.space.lg,
-      paddingVertical: tokens.space.sm,
-      backgroundColor: tokens.colour.status.warning.bg,
-    },
-    text: { flexGrow: 1, flexShrink: 1 },
-  }));
-
   if (!notice) return null;
   const wizard = notice.key.startsWith('setup.profile');
   const open = () => {
@@ -88,15 +75,11 @@ export default function SetupBanner() {
   const text = t(notice.key, { equipment: t('terms:equipment', { count: 1 }).toLowerCase() });
 
   return (
-    <View role="status" style={styles.banner} testID="setup-banner">
-      <View style={styles.text}>
-        <Text variant="bodyCompact" tone="warning">
-          {text}
-        </Text>
-      </View>
-      {wizard || notice.toEquipment ? (
-        <IconButton icon="open-in-new" tone="warning" aria-label={t('setup.open')} onPress={open} />
-      ) : null}
-    </View>
+    <Banner
+      tone="warning"
+      message={text}
+      action={wizard || notice.toEquipment ? { label: t('setup.open'), onPress: open } : undefined}
+      testID="setup-banner"
+    />
   );
 }

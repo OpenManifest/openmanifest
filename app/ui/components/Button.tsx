@@ -12,6 +12,8 @@ export type ButtonProps = Omit<TappableProps, 'role' | 'aria-label' | 'children'
   label: string;
   'aria-label'?: string;
   variant?: ButtonVariant;
+  /** The colour of a tertiary button's text when it sits on a coloured surface (a banner), instead of the brand */
+  tone?: TextTone;
   /** A leading icon (a MaterialCommunityIcons name) */
   icon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
   /** Shows a spinner in place of the icon, keeps the label and ignores presses */
@@ -22,7 +24,10 @@ export type ButtonProps = Omit<TappableProps, 'role' | 'aria-label' | 'children'
 };
 
 /** Background, border and text of a variant, from the semantic tokens */
-function useVariant(variant: ButtonVariant): {
+function useVariant(
+  variant: ButtonVariant,
+  toneOverride?: TextTone
+): {
   bg: string;
   fg: string;
   border: string;
@@ -38,7 +43,12 @@ function useVariant(variant: ButtonVariant): {
         tone: 'onBrandSoft',
       };
     case 'tertiary':
-      return { bg: 'transparent', fg: colour.brandText, border: 'transparent', tone: 'brand' };
+      return {
+        bg: 'transparent',
+        fg: colour.brandText,
+        border: 'transparent',
+        tone: toneOverride ?? 'brand',
+      };
     case 'destructive':
       return {
         bg: colour.status.blocked.bg,
@@ -61,6 +71,7 @@ const ICON_SIZE = 20;
 export default function Button({
   label,
   variant = 'primary',
+  tone: toneOverride,
   icon,
   loading = false,
   disabled = false,
@@ -69,7 +80,7 @@ export default function Button({
   ...rest
 }: ButtonProps) {
   const theme = useTheme();
-  const { bg, fg, border, tone } = useVariant(variant);
+  const { bg, fg, border, tone } = useVariant(variant, toneOverride);
   const inactive = disabled || loading;
   const height = Math.max(theme.density.touchTarget, theme.density.row);
 
