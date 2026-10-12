@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { DropzoneUserEssentialsFragment } from 'app/api/operations';
+import { MembershipEssentialsFragment } from 'app/api/operations';
 
 import { Permission } from 'app/api/schema.d';
 
@@ -12,10 +12,10 @@ import { useNotifications } from 'app/providers/notifications';
 
 interface IPermissionBadgesProps {
   permissions: Permission[];
-  dropzoneUser: DropzoneUserEssentialsFragment;
+  membership: MembershipEssentialsFragment;
 }
 export default function PermissionBadges(props: IPermissionBadgesProps) {
-  const { permissions, dropzoneUser } = props;
+  const { permissions, membership } = props;
   const { revokePermission, grantPermission } = useUserProfile();
   const notify = useNotifications();
 
@@ -33,22 +33,22 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
 
   const grant = React.useCallback(
     async function GrantPermission(permissionName: Permission) {
-      const response = await grantPermission(dropzoneUser.id, permissionName);
+      const response = await grantPermission(membership.id, permissionName);
       if ('error' in response && response.error) {
         notify.error(response.error);
       }
     },
-    [dropzoneUser?.id, grantPermission, notify]
+    [membership?.id, grantPermission, notify]
   );
 
   const revoke = React.useCallback(
     async function GrantPermission(permissionName: Permission) {
-      const response = await revokePermission(dropzoneUser.id, permissionName);
+      const response = await revokePermission(membership.id, permissionName);
       if ('error' in response && response.error) {
         notify.error(response.error);
       }
     },
-    [notify, dropzoneUser?.id, revokePermission]
+    [notify, membership?.id, revokePermission]
   );
   return (
     <ScrollView
@@ -59,9 +59,9 @@ export default function PermissionBadges(props: IPermissionBadgesProps) {
     >
       {[
         Permission.ActAsPilot,
-        Permission.ActAsDzso,
+        Permission.ActAsDutyOfficer,
         Permission.ActAsGca,
-        Permission.ActAsRigInspector,
+        Permission.ActAsEquipmentInspector,
         Permission.ActAsLoadMaster,
       ].map((permission) =>
         !shouldShowBadge(permission) ? null : (

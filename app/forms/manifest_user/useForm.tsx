@@ -8,32 +8,32 @@ import useAsyncFn from 'react-use/lib/useAsyncFn';
 import useManifestValidator from 'app/hooks/useManifestValidator';
 import isEqual from 'lodash/isEqual';
 import { useNotifications } from 'app/providers/notifications';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import camelCase from 'lodash/camelCase';
 import withDefaults from 'app/forms/initialValues';
 
 export type ManifestUserFields = Pick<
   SlotExhaustiveFragment,
-  | 'jumpType'
+  | 'activityType'
   // | 'load'
   | 'rig'
-  | 'dropzoneUser'
-  | 'exitWeight'
+  | 'membership'
+  | 'bodyMassKg'
   | 'extras'
   | 'groupNumber'
-  | 'passengerExitWeight'
-  | 'passengerName'
+  | 'guestBodyMassKg'
+  | 'guestName'
 > & { id?: string; load?: { id: string }; ticketType: TicketTypeDetailsFragment | null };
 
 export const EMPTY_FORM_VALUES: ManifestUserFields = {
   id: undefined,
   load: undefined,
-  exitWeight: 50,
+  bodyMassKg: 50,
   rig: null,
   ticketType: null,
-  jumpType: null,
-  passengerExitWeight: null,
-  passengerName: null,
+  activityType: null,
+  guestBodyMassKg: null,
+  guestName: null,
   extras: null,
   groupNumber: 0,
 };
@@ -50,20 +50,20 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
 
   const notify = useNotifications();
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const manifestUserValidation = yup.object().shape({
     load: yup.object().required(),
-    exitWeight: yup.number().required('Please specify exit weight').min(0).max(300),
+    bodyMassKg: yup.number().required('Please specify exit weight').min(0).max(300),
     rig: yup
       .object()
       .nullable()
       .when({
-        is: () => !!dropzone?.settings?.requireEquipment,
+        is: () => !!operator?.settings?.requireEquipment,
         then: yup.object().required('You cant manifest without a rig').nullable(),
         otherwise: yup.object().nullable(),
       }),
-    jumpType: yup.object().required('Jump type is required').nullable(),
+    activityType: yup.object().required('Jump type is required').nullable(),
     ticketType: yup.object().required('Ticket is required to manifest').nullable(),
     original: yup.object().nullable(),
     extras: yup.array().of(yup.object()).nullable(),
@@ -95,24 +95,23 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
         // await canManifest();
 
         const response = await manifestUser({
-          jumpType: fields.jumpType?.id,
+          activityType: fields.activityType?.id,
           extras: fields.extras?.map(({ id }) => id),
           load: fields?.load?.id,
           rig: !fields.rig?.id ? undefined : fields.rig?.id,
           ticketType: fields.ticketType?.id,
-          dropzoneUser: fields.dropzoneUser?.id,
-          exitWeight: fields.exitWeight,
+          membership: fields.membership?.id,
+          bodyMassKg: fields.bodyMassKg,
           ...(!fields.ticketType?.isTandem
             ? {}
             : {
-                passengerName: fields.passengerName,
-                passengerExitWeight: fields.passengerExitWeight,
+                guestName: fields.guestName,
+                guestBodyMassKg: fields.guestBodyMassKg,
               }),
         });
 
         if ('fieldErrors' in response) {
           response.fieldErrors?.forEach(({ field, message }) => {
-            console.debug('Error in field', field, message);
             setError(camelCase(field) as keyof ManifestUserFields, { type: 'custom', message });
           });
         }
@@ -120,7 +119,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           notify.error(response.error);
         }
         if ('slot' in response) {
-          notify.success(`${fields.dropzoneUser?.user?.name} has been added to the load`);
+          notify.success(`${fields.membership?.user?.name} has been added to the load`);
           onSuccess?.();
         }
       } catch (error) {

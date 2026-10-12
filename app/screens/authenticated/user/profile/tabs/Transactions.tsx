@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native-animatable';
 import { List } from 'react-native-paper';
 
-import { DropzoneUserProfileFragment, OrderEssentialsFragment } from 'app/api/operations';
+import { MembershipProfileFragment, OrderEssentialsFragment } from 'app/api/operations';
 
 import { groupBy, map } from 'lodash';
 import { DateTime, Duration } from 'luxon';
@@ -10,17 +10,17 @@ import OrderCard from '../../../../../components/orders/OrderCard';
 import { useUserNavigation } from '../../useUserNavigation';
 
 export interface IJumpHistoryTab {
-  dropzoneUser?: DropzoneUserProfileFragment | null;
+  membership?: MembershipProfileFragment | null;
   tabIndex: number;
   currentTabIndex: number;
 }
 export default function TransactionsTab(props: IJumpHistoryTab) {
-  const { dropzoneUser, tabIndex, currentTabIndex } = props;
+  const { membership, tabIndex, currentTabIndex } = props;
   const navigation = useUserNavigation();
   const sections = React.useMemo(
     () =>
       map(
-        groupBy(dropzoneUser?.orders?.edges, (e) =>
+        groupBy(membership?.orders?.edges, (e) =>
           DateTime.fromISO(e?.node?.createdAt).startOf('day').toISO()
         ),
         (d, t) => {
@@ -35,7 +35,7 @@ export default function TransactionsTab(props: IJumpHistoryTab) {
           };
         }
       ),
-    [dropzoneUser?.orders?.edges]
+    [membership?.orders?.edges]
   );
   return (
     <View
@@ -52,14 +52,14 @@ export default function TransactionsTab(props: IJumpHistoryTab) {
                 showAvatar
                 onPress={() =>
                   item?.node?.id &&
-                  dropzoneUser &&
+                  membership &&
                   navigation.navigate('OrderReceiptScreen', {
                     orderId: item?.node?.id,
-                    userId: dropzoneUser?.id,
+                    userId: membership?.id,
                   })
                 }
                 order={item?.node as OrderEssentialsFragment}
-                {...{ dropzoneUser }}
+                {...{ membership }}
               />
             )
           )}

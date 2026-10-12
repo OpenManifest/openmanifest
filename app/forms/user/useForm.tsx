@@ -6,35 +6,43 @@ import isEqual from 'lodash/isEqual';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import type {
-  DropzoneUserDetailsFragment,
+  MembershipDetailsFragment,
   FederationEssentialsFragment,
   LicenseDetailsFragment,
 } from 'app/api/operations';
-import { DropzoneUserProfileDocument, useJoinFederationMutation } from 'app/api/reflection';
+import { MembershipProfileDocument, useJoinFederationMutation } from 'app/api/reflection';
 import useMutationUpdateUser from 'app/api/hooks/useMutationUpdateUser';
 import { useNotifications } from 'app/providers/notifications';
+import i18n from 'app/i18n';
 
 export type UserFields = {
   name: string;
   nickname: string;
   email: string;
   phone: string;
-  exitWeight: number;
+  bodyMassKg: number;
   federation: FederationEssentialsFragment | null;
   license: LicenseDetailsFragment | null;
   apfNumber: string;
 };
 
 export const userValidation = yup.object({
-  name: yup.string().trim().required('Name is required'),
+  name: yup
+    .string()
+    .trim()
+    .required(() => i18n.t('forms.user.nameIsRequired')),
   nickname: yup.string().default(''),
-  email: yup.string().trim().email('Not a valid email').required('Email is required'),
+  email: yup
+    .string()
+    .trim()
+    .email(() => i18n.t('forms.user.notAValidEmail'))
+    .required(() => i18n.t('forms.user.emailIsRequired')),
   phone: yup.string().default(''),
-  exitWeight: yup
+  bodyMassKg: yup
     .number()
-    .typeError('Exit weight must be a valid number')
-    .required('Exit weight is required')
-    .moreThan(30, 'Exit weight seems too low?'),
+    .typeError(() => i18n.t('forms.user.exitWeightMustBeAValid'))
+    .required(() => i18n.t('forms.user.exitWeightIsRequired'))
+    .moreThan(30, () => i18n.t('forms.user.exitWeightSeemsTooLow')),
   federation: yup.object().nullable().default(null),
   license: yup.object().nullable().default(null),
   apfNumber: yup.string().default(''),
@@ -45,18 +53,18 @@ export const EMPTY_FORM_VALUES: UserFields = {
   nickname: '',
   email: '',
   phone: '',
-  exitWeight: 60,
+  bodyMassKg: 60,
   federation: null,
   license: null,
   apfNumber: '',
 };
 
-/** The form values for editing a dropzone user: the user's details, plus the licence they hold at this dropzone. */
-export function toFormValues(dropzoneUser?: DropzoneUserDetailsFragment | null): UserFields {
-  if (!dropzoneUser) {
+/** The form values for editing an operator user: the user's details, plus the licence they hold at this operator. */
+export function toFormValues(membership?: MembershipDetailsFragment | null): UserFields {
+  if (!membership) {
     return EMPTY_FORM_VALUES;
   }
-  const { user, license } = dropzoneUser;
+  const { user, license } = membership;
   const userFederation = user?.userFederations?.find(
     ({ federation }) => federation.id === license?.federation?.id
   );
@@ -66,7 +74,7 @@ export function toFormValues(dropzoneUser?: DropzoneUserDetailsFragment | null):
     nickname: user?.nickname || '',
     email: user?.email || '',
     phone: user?.phone || '',
-    exitWeight: Number(user?.exitWeight) || EMPTY_FORM_VALUES.exitWeight,
+    bodyMassKg: Number(user?.bodyMassKg) || EMPTY_FORM_VALUES.bodyMassKg,
     federation: license?.federation || null,
     license: license || null,
     apfNumber: userFederation?.uid || '',
@@ -74,14 +82,14 @@ export function toFormValues(dropzoneUser?: DropzoneUserDetailsFragment | null):
 }
 
 export interface IUseUserFormOpts {
-  dropzoneUser?: DropzoneUserDetailsFragment | null;
+  membership?: MembershipDetailsFragment | null;
   onSuccess?(): void;
 }
 
 export default function useUserForm(opts: IUseUserFormOpts) {
-  const { dropzoneUser, onSuccess } = opts;
+  const { membership, onSuccess } = opts;
   const notify = useNotifications();
-  const initialValues = React.useMemo(() => toFormValues(dropzoneUser), [dropzoneUser]);
+  const initialValues = React.useMemo(() => toFormValues(membership), [membership]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
 
   const methods = useForm<UserFields>({
@@ -111,8 +119,8 @@ export default function useUserForm(opts: IUseUserFormOpts) {
     },
     onError: (error) => notify.error(error),
     mutation: {
-      refetchQueries: dropzoneUser?.id
-        ? [{ query: DropzoneUserProfileDocument, variables: { dropzoneUserId: dropzoneUser.id } }]
+      refetchQueries: membership?.id
+        ? [{ query: MembershipProfileDocument, variables: { membershipId: membership.id } }]
         : [],
     },
   });
@@ -121,20 +129,20 @@ export default function useUserForm(opts: IUseUserFormOpts) {
   const [{ loading }, onSave] = useAsyncFn(
     async (fields: UserFields) => {
       const result = await mutate({
-        dropzoneUser: dropzoneUser?.id,
+        membership: membership?.id,
         name: fields.name,
         license: !fields.license?.id ? null : Number(fields.license.id),
         phone: fields.phone,
-        exitWeight: fields.exitWeight,
+        bodyMassKg: fields.bodyMassKg,
         email: fields.email,
       });
       if (!result || result.errors?.length || result.fieldErrors?.length) {
         return;
       }
 
-      // TODO: Set APF number from userFederation belonging to currentDropzone.federation
+      // TODO: Set APF number from userFederation belonging to currentOperator.federation
       // and compare against that
-      const selectedLicenseFederation = dropzoneUser?.user?.userFederations?.find(
+      const selectedLicenseFederation = membership?.user?.userFederations?.find(
         ({ federation }) => federation.slug === fields.license?.federation?.slug
       );
       if (
@@ -149,10 +157,10 @@ export default function useUserForm(opts: IUseUserFormOpts) {
           },
         });
       }
-      notify.success('Profile has been updated');
+      notify.success(i18n.t('forms.user.profileHasBeenUpdated'));
       onSuccess?.();
     },
-    [dropzoneUser, joinFederation, mutate, notify, onSuccess]
+    [membership, joinFederation, mutate, notify, onSuccess]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onSave), [handleSubmit, onSave]);

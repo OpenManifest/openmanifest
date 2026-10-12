@@ -1,7 +1,7 @@
 import { AppBar, Fade, LinearProgress, Toolbar } from '@mui/material';
-import { DropzoneUserProfileFragment } from 'app/api/operations';
-import { useDropzoneUserProfileLazyQuery } from 'app/api/reflection';
-import DropzoneUserAutocomplete from 'app/components/autocomplete/DropzoneUserAutocomplete.web';
+import { MembershipProfileFragment } from 'app/api/operations';
+import { useMembershipProfileLazyQuery } from 'app/api/reflection';
+import MembershipAutocomplete from 'app/components/autocomplete/MembershipAutocomplete.web';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import * as React from 'react';
 import { FormProvider } from 'react-hook-form';
@@ -29,9 +29,9 @@ export default function ManifestGroupDialog(props: IManifestGroupDialogProps) {
   });
   const { getValues, setValue, loading: saving, onSubmit } = methods;
 
-  const [fetchProfile, { loading }] = useDropzoneUserProfileLazyQuery();
+  const [fetchProfile, { loading }] = useMembershipProfileLazyQuery();
   const onSelectUser = React.useCallback(
-    (profile: DropzoneUserProfileFragment) => {
+    (profile: MembershipProfileFragment) => {
       setValue('users', toggleSlotUsers(getValues('users'), [profile]), { shouldDirty: true });
     },
     [getValues, setValue]
@@ -51,7 +51,7 @@ export default function ManifestGroupDialog(props: IManifestGroupDialogProps) {
         <View style={styles.wrapper} testID="manifest-group-sheet">
           <AppBar position="static">
             <Toolbar>
-              <DropzoneUserAutocomplete
+              <MembershipAutocomplete
                 color="white"
                 placeholder="Search skydivers..."
                 onChange={(user) => {
@@ -60,8 +60,8 @@ export default function ManifestGroupDialog(props: IManifestGroupDialogProps) {
                       id: user.id,
                     },
                   }).then((result) => {
-                    if (result.data?.dropzoneUser) {
-                      onSelectUser(result.data?.dropzoneUser);
+                    if (result.data?.membership) {
+                      onSelectUser(result.data?.membership);
                     }
                   });
                 }}
