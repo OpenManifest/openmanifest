@@ -5,13 +5,15 @@ import { FormTextField } from 'app/components/input/text/TextField';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { TicketTypeExtraEssentialsFragment } from 'app/api/operations';
 import { Control, useWatch } from 'react-hook-form';
-import { AltitudeSelectField } from 'app/components/input/dropdown_select';
+import { DestinationSelectField } from 'app/components/input/destination_select';
 import { FormNumberField } from 'app/components/input/number_input';
 import { SwitchField } from 'app/components/input/switch/Switch';
 import { ChipSelectField } from 'app/components/input/chip_select';
 import { TicketTypeFields } from './useForm';
 import { formatCents } from 'app/utils/money';
 import { useTranslation } from 'react-i18next';
+import useTerms from 'app/i18n/useTerms';
+import { destinationsModule } from 'app/utils/destinations';
 import { Divider, Stack, Subheader } from 'app/ui';
 
 interface ITicketTypeFormProps {
@@ -24,7 +26,8 @@ export default function TicketTypeForm(props: ITicketTypeFormProps) {
   const {
     operator: { operator },
   } = useOperatorContext();
-  const { altitude } = useWatch({ control });
+  const term = useTerms();
+  const destinations = destinationsModule(operator?.modules as Record<string, unknown>);
   const [getTicketAddons, query] = useTicketTypeExtrasLazyQuery();
   const { data } = query;
 
@@ -51,15 +54,16 @@ export default function TicketTypeForm(props: ITicketTypeFormProps) {
         helperText={t('forms.ticket_type.baseCostWithoutExtraTicket')}
       />
       <View style={{ width: '100%' }}>
-        <AltitudeSelectField {...{ control }} name="altitude" />
-
-        {(!altitude || ![4000, 14000].includes(altitude)) && (
-          <FormNumberField
+        {destinations ? (
+          <DestinationSelectField
             {...{ control }}
-            label={t('forms.ticket_type.customAltitude')}
-            name="altitude"
+            name="defaultDestinationId"
+            label={t('forms.ticket_type.defaultDestination', {
+              destination: term('destination').toLowerCase(),
+            })}
+            allowNone
           />
-        )}
+        ) : null}
 
         <SwitchField
           {...{ control }}

@@ -16,6 +16,7 @@ import OperatorPermissionScreen from './permissions/PermissionsScreen';
 import OperatorDailyLogScreen from './daily_log/DailyLogScreen';
 import OperatorTransactionsScreen from './transactions/OperatorTransactionsScreen';
 import ExtrasScreen from './extras/ExtrasScreen';
+import DestinationsScreen from './destinations/DestinationsScreen';
 
 export type ConfigurationRoutes = {
   OperatorSettingsScreen: undefined;
@@ -23,6 +24,7 @@ export type ConfigurationRoutes = {
   TicketTypesScreen: undefined;
   VehiclesScreen: undefined;
   VehicleScreen: undefined;
+  DestinationsScreen: undefined;
   ExtrasScreen: undefined;
   RigInspectionTemplateScreen: undefined;
   OperatorRigsScreen: undefined;
@@ -63,6 +65,11 @@ export default function SettingsTab() {
           name="VehiclesScreen"
           component={VehiclesScreen}
           options={{ title: t('terms:vehicle', { count: 2 }) }}
+        />
+        <Configuration.Screen
+          name="DestinationsScreen"
+          component={DestinationsScreen}
+          options={{ title: t('terms:destination', { count: 2 }) }}
         />
         <Configuration.Screen
           name="TicketTypesScreen"

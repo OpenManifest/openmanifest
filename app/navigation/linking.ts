@@ -35,6 +35,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                   DailyLogScreen: '/daily-log',
                   SettingsMenuScreen: '/configuration',
                   VehiclesScreen: '/configuration/vehicles',
+                  DestinationsScreen: '/configuration/destinations',
                   OperatorSettingsScreen: '/configuration/basic',
                   PermissionScreen: '/configuration/permissions',
                   RigInspectionTemplateScreen: '/configuration/rig-inspection',

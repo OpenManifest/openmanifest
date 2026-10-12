@@ -6,6 +6,7 @@ import {
   formatCall,
   formatDate,
   formatDateTime,
+  formatAltitudeShort,
   formatDestination,
   formatMoney,
   formatQuantity,
@@ -97,12 +98,26 @@ describe('formatCall', () => {
   });
 });
 
-describe('stubs completed by later tasks', () => {
-  it('formatDestination shows the name', () => {
-    expect(formatDestination({ name: 'Rottnest Island' })).toBe('Rottnest Island');
+describe('destinations', () => {
+  it('formatDestination shows the name of a site, route or section', () => {
+    expect(formatDestination({ name: 'Rottnest Island', kind: 'site' })).toBe('Rottnest Island');
+    expect(formatDestination({ name: 'Airport run' })).toBe('Airport run');
     expect(formatDestination(null)).toBe('');
   });
 
+  it('formatDestination shows an altitude as thousands of feet', () => {
+    expect(formatDestination({ name: 'Full altitude', kind: 'altitude', altitudeM: 4267.2 })).toBe(
+      '14k'
+    );
+    expect(formatDestination({ name: 'Hop n Pop', kind: 'altitude', altitudeM: 1219.2 })).toBe(
+      '4k'
+    );
+    expect(formatAltitudeShort(3810)).toBe('12.5k');
+    expect(formatAltitudeShort(null)).toBe('');
+  });
+});
+
+describe('stubs completed by later tasks', () => {
   it('formatQuantity shows a number with its unit', () => {
     expect(formatQuantity(240, 'kg')).toBe('240 kg');
     expect(formatQuantity(12.34, 'km')).toBe('12.3 km');

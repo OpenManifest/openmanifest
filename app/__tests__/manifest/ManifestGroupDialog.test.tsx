@@ -8,6 +8,7 @@ import { MOCK_QUERY_ALLOWED_ACTIVITY_TYPES } from './__mocks__/QueryAllowedActiv
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
 import ManifestGroupDialog from '../../forms/manifest_group';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
+import { fullAltitude } from 'app/__fixtures__/destination.fixture';
 
 jest.setTimeout(30000);
 
@@ -22,7 +23,7 @@ const ticketType = {
   name: 'Height',
   costCents: 4500,
   isTandem: false,
-  altitude: 14000,
+  defaultDestination: fullAltitude,
   allowManifestingSelf: true,
   extras: [],
 };

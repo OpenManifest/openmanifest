@@ -113,16 +113,31 @@ export const LoadEssentialsFragmentDoc = gql`
   occupiedSlots
 }
     `;
+export const DestinationEssentialsFragmentDoc = gql`
+    fragment destinationEssentials on Destination {
+  id
+  kind
+  name
+  altitudeM
+  altitudeFt
+  location
+  stops
+  minCertificationRank
+  discardedAt
+}
+    `;
 export const TicketTypeEssentialsFragmentDoc = gql`
     fragment ticketTypeEssentials on TicketType {
   id
   name
-  altitude
+  defaultDestination {
+    ...destinationEssentials
+  }
   costCents
   isTandem
   allowManifestingSelf
 }
-    `;
+    ${DestinationEssentialsFragmentDoc}`;
 export const TicketTypeAddonEssentialsFragmentDoc = gql`
     fragment ticketTypeAddonEssentials on Extra {
   id
@@ -159,6 +174,9 @@ export const SlotEssentialsFragmentDoc = gql`
   ticketType {
     ...ticketTypeDetails
   }
+  destination {
+    ...destinationEssentials
+  }
   activityType {
     ...activityTypeEssentials
   }
@@ -168,6 +186,7 @@ export const SlotEssentialsFragmentDoc = gql`
   }
 }
     ${TicketTypeDetailsFragmentDoc}
+${DestinationEssentialsFragmentDoc}
 ${ActivityTypeEssentialsFragmentDoc}`;
 export const RigEssentialsFragmentDoc = gql`
     fragment rigEssentials on Rig {
@@ -739,6 +758,9 @@ export const LoadDetailsFragmentDoc = gql`
   loadMaster {
     ...membershipEssentials
   }
+  destinations {
+    ...destinationEssentials
+  }
   slots {
     ...slotDetails
   }
@@ -746,6 +768,7 @@ export const LoadDetailsFragmentDoc = gql`
     ${LoadEssentialsFragmentDoc}
 ${VehicleEssentialsFragmentDoc}
 ${MembershipEssentialsFragmentDoc}
+${DestinationEssentialsFragmentDoc}
 ${SlotDetailsFragmentDoc}`;
 export const SlotExhaustiveFragmentDoc = gql`
     fragment slotExhaustive on Slot {
@@ -773,6 +796,46 @@ export const TicketTypeAddonDetailsFragmentDoc = gql`
 }
     ${TicketTypeAddonEssentialsFragmentDoc}
 ${TicketTypeEssentialsFragmentDoc}`;
+export const ArchiveDestinationDocument = gql`
+    mutation ArchiveDestination($id: Int!) {
+  archiveDestination(input: {id: $id}) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    destination {
+      ...destinationEssentials
+    }
+  }
+}
+    ${DestinationEssentialsFragmentDoc}`;
+export type ArchiveDestinationMutationFn = Apollo.MutationFunction<Operation.ArchiveDestinationMutation, Operation.ArchiveDestinationMutationVariables>;
+
+/**
+ * __useArchiveDestinationMutation__
+ *
+ * To run a mutation, you first call `useArchiveDestinationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useArchiveDestinationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [archiveDestinationMutation, { data, loading, error }] = useArchiveDestinationMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useArchiveDestinationMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ArchiveDestinationMutation, Operation.ArchiveDestinationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.ArchiveDestinationMutation, Operation.ArchiveDestinationMutationVariables>(ArchiveDestinationDocument, options);
+      }
+export type ArchiveDestinationMutationHookResult = ReturnType<typeof useArchiveDestinationMutation>;
+export type ArchiveDestinationMutationResult = Apollo.MutationResult<Operation.ArchiveDestinationMutation>;
+export type ArchiveDestinationMutationOptions = Apollo.BaseMutationOptions<Operation.ArchiveDestinationMutation, Operation.ArchiveDestinationMutationVariables>;
 export const ArchiveRigDocument = gql`
     mutation ArchiveRig($id: Int!) {
   archiveRig(input: {id: $id}) {
@@ -979,6 +1042,46 @@ export function useConfirmUserMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ConfirmUserMutationHookResult = ReturnType<typeof useConfirmUserMutation>;
 export type ConfirmUserMutationResult = Apollo.MutationResult<Operation.ConfirmUserMutation>;
 export type ConfirmUserMutationOptions = Apollo.BaseMutationOptions<Operation.ConfirmUserMutation, Operation.ConfirmUserMutationVariables>;
+export const CreateDestinationDocument = gql`
+    mutation CreateDestination($attributes: DestinationInput!) {
+  createDestination(input: {attributes: $attributes}) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    destination {
+      ...destinationEssentials
+    }
+  }
+}
+    ${DestinationEssentialsFragmentDoc}`;
+export type CreateDestinationMutationFn = Apollo.MutationFunction<Operation.CreateDestinationMutation, Operation.CreateDestinationMutationVariables>;
+
+/**
+ * __useCreateDestinationMutation__
+ *
+ * To run a mutation, you first call `useCreateDestinationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDestinationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDestinationMutation, { data, loading, error }] = useCreateDestinationMutation({
+ *   variables: {
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useCreateDestinationMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateDestinationMutation, Operation.CreateDestinationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.CreateDestinationMutation, Operation.CreateDestinationMutationVariables>(CreateDestinationDocument, options);
+      }
+export type CreateDestinationMutationHookResult = ReturnType<typeof useCreateDestinationMutation>;
+export type CreateDestinationMutationResult = Apollo.MutationResult<Operation.CreateDestinationMutation>;
+export type CreateDestinationMutationOptions = Apollo.BaseMutationOptions<Operation.CreateDestinationMutation, Operation.CreateDestinationMutationVariables>;
 export const CreateEquipmentDocument = gql`
     mutation CreateEquipment($make: String, $name: String, $model: String, $serial: String, $rigType: String, $canopySize: Int, $repackExpiresAt: Int, $userId: Int, $operatorId: Int) {
   createEquipment(
@@ -1075,9 +1178,9 @@ export type CreateEquipmentInspectionMutationHookResult = ReturnType<typeof useC
 export type CreateEquipmentInspectionMutationResult = Apollo.MutationResult<Operation.CreateEquipmentInspectionMutation>;
 export type CreateEquipmentInspectionMutationOptions = Apollo.BaseMutationOptions<Operation.CreateEquipmentInspectionMutation, Operation.CreateEquipmentInspectionMutationVariables>;
 export const CreateLoadDocument = gql`
-    mutation CreateLoad($name: String, $pilot: ID, $gca: ID, $maxSlots: Int, $vehicle: ID, $state: LoadState) {
+    mutation CreateLoad($name: String, $pilot: ID, $gca: ID, $maxSlots: Int, $vehicle: ID, $state: LoadState, $destinationIds: [Int!]) {
   createLoad(
-    input: {attributes: {name: $name, pilot: $pilot, gca: $gca, maxSlots: $maxSlots, vehicle: $vehicle, state: $state}}
+    input: {attributes: {name: $name, pilot: $pilot, gca: $gca, maxSlots: $maxSlots, vehicle: $vehicle, state: $state, destinationIds: $destinationIds}}
   ) {
     load {
       ...loadDetails
@@ -1111,6 +1214,7 @@ export type CreateLoadMutationFn = Apollo.MutationFunction<Operation.CreateLoadM
  *      maxSlots: // value for 'maxSlots'
  *      vehicle: // value for 'vehicle'
  *      state: // value for 'state'
+ *      destinationIds: // value for 'destinationIds'
  *   },
  * });
  */
@@ -1274,7 +1378,9 @@ export const CreateTicketTypeDocument = gql`
     ticketType {
       id
       name
-      altitude
+      defaultDestination {
+        ...destinationEssentials
+      }
       costCents
       allowManifestingSelf
       extras {
@@ -1287,7 +1393,9 @@ export const CreateTicketTypeDocument = gql`
         ticketTypes {
           id
           name
-          altitude
+          defaultDestination {
+            ...destinationEssentials
+          }
           costCents
           allowManifestingSelf
           extras {
@@ -1300,7 +1408,7 @@ export const CreateTicketTypeDocument = gql`
     }
   }
 }
-    `;
+    ${DestinationEssentialsFragmentDoc}`;
 export type CreateTicketTypeMutationFn = Apollo.MutationFunction<Operation.CreateTicketTypeMutation, Operation.CreateTicketTypeMutationVariables>;
 
 /**
@@ -2058,6 +2166,47 @@ export function useUpdateDailyLogMutation(baseOptions?: Apollo.MutationHookOptio
 export type UpdateDailyLogMutationHookResult = ReturnType<typeof useUpdateDailyLogMutation>;
 export type UpdateDailyLogMutationResult = Apollo.MutationResult<Operation.UpdateDailyLogMutation>;
 export type UpdateDailyLogMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateDailyLogMutation, Operation.UpdateDailyLogMutationVariables>;
+export const UpdateDestinationDocument = gql`
+    mutation UpdateDestination($id: Int!, $attributes: DestinationInput!) {
+  updateDestination(input: {id: $id, attributes: $attributes}) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    destination {
+      ...destinationEssentials
+    }
+  }
+}
+    ${DestinationEssentialsFragmentDoc}`;
+export type UpdateDestinationMutationFn = Apollo.MutationFunction<Operation.UpdateDestinationMutation, Operation.UpdateDestinationMutationVariables>;
+
+/**
+ * __useUpdateDestinationMutation__
+ *
+ * To run a mutation, you first call `useUpdateDestinationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateDestinationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateDestinationMutation, { data, loading, error }] = useUpdateDestinationMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useUpdateDestinationMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateDestinationMutation, Operation.UpdateDestinationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateDestinationMutation, Operation.UpdateDestinationMutationVariables>(UpdateDestinationDocument, options);
+      }
+export type UpdateDestinationMutationHookResult = ReturnType<typeof useUpdateDestinationMutation>;
+export type UpdateDestinationMutationResult = Apollo.MutationResult<Operation.UpdateDestinationMutation>;
+export type UpdateDestinationMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateDestinationMutation, Operation.UpdateDestinationMutationVariables>;
 export const UpdateEquipmentDocument = gql`
     mutation UpdateEquipment($id: Int!, $name: String, $make: String, $model: String, $serial: String, $isPublic: Boolean, $rigType: String, $canopySize: Int, $packingCard: String, $repackExpiresAt: Int, $userId: Int, $operatorId: Int) {
   updateEquipment(
@@ -2425,7 +2574,9 @@ export const UpdateTicketTypeDocument = gql`
       ...ticketTypeEssentials
       id
       name
-      altitude
+      defaultDestination {
+        ...destinationEssentials
+      }
       costCents
       allowManifestingSelf
       extras {
@@ -2443,6 +2594,7 @@ export const UpdateTicketTypeDocument = gql`
   }
 }
     ${TicketTypeEssentialsFragmentDoc}
+${DestinationEssentialsFragmentDoc}
 ${OperatorEssentialsFragmentDoc}`;
 export type UpdateTicketTypeMutationFn = Apollo.MutationFunction<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>;
 
@@ -2992,6 +3144,52 @@ export type DailyLogQueryHookResult = ReturnType<typeof useDailyLogQuery>;
 export type DailyLogLazyQueryHookResult = ReturnType<typeof useDailyLogLazyQuery>;
 export type DailyLogSuspenseQueryHookResult = ReturnType<typeof useDailyLogSuspenseQuery>;
 export type DailyLogQueryResult = Apollo.QueryResult<Operation.DailyLogQuery, Operation.DailyLogQueryVariables>;
+export const DestinationsDocument = gql`
+    query Destinations($operatorId: ID!) {
+  operator(id: $operatorId) {
+    id
+    destinations {
+      ...destinationEssentials
+    }
+  }
+}
+    ${DestinationEssentialsFragmentDoc}`;
+
+/**
+ * __useDestinationsQuery__
+ *
+ * To run a query within a React component, call `useDestinationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDestinationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDestinationsQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *   },
+ * });
+ */
+export function useDestinationsQuery(baseOptions: Apollo.QueryHookOptions<Operation.DestinationsQuery, Operation.DestinationsQueryVariables> & ({ variables: Operation.DestinationsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.DestinationsQuery, Operation.DestinationsQueryVariables>(DestinationsDocument, options);
+      }
+export function useDestinationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.DestinationsQuery, Operation.DestinationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.DestinationsQuery, Operation.DestinationsQueryVariables>(DestinationsDocument, options);
+        }
+// @ts-ignore
+export function useDestinationsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.DestinationsQuery, Operation.DestinationsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DestinationsQuery, Operation.DestinationsQueryVariables>;
+export function useDestinationsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DestinationsQuery, Operation.DestinationsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.DestinationsQuery | undefined, Operation.DestinationsQueryVariables>;
+export function useDestinationsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.DestinationsQuery, Operation.DestinationsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.DestinationsQuery, Operation.DestinationsQueryVariables>(DestinationsDocument, options);
+        }
+export type DestinationsQueryHookResult = ReturnType<typeof useDestinationsQuery>;
+export type DestinationsLazyQueryHookResult = ReturnType<typeof useDestinationsLazyQuery>;
+export type DestinationsSuspenseQueryHookResult = ReturnType<typeof useDestinationsSuspenseQuery>;
+export type DestinationsQueryResult = Apollo.QueryResult<Operation.DestinationsQuery, Operation.DestinationsQueryVariables>;
 export const TicketTypeExtrasDocument = gql`
     query TicketTypeExtras($operatorId: ID!) {
   extras(operator: $operatorId) {

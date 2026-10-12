@@ -9,6 +9,7 @@ module.exports = {
     'app/forms/**/*.{ts,tsx}',
     'app/navigation/**/*.{ts,tsx}',
     'app/screens/authenticated/account/**/*.{ts,tsx}',
+    'app/screens/authenticated/configuration/destinations/**/*.{ts,tsx}',
   ],
   // Tokens are where the literal values live; tests and fixtures may use any value
   exempt: [

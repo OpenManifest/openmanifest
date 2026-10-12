@@ -6,6 +6,7 @@ import { expect, gotoRoute, test } from './support/test';
 const CONFIGURATION_ROUTES = [
   '/configuration',
   '/configuration/vehicles',
+  '/configuration/destinations',
   '/configuration/ticket-types',
   '/ticket-types/extra',
   '/configuration/rigs',
@@ -30,6 +31,26 @@ test.describe('settings @setup', () => {
       await expectAccessible(page, route);
     });
   }
+
+  test('the destinations are listed, and an altitude reads as thousands of feet', async ({
+    page,
+  }) => {
+    await gotoRoute(page, '/configuration/destinations');
+    const list = page.getByTestId('destinations-list');
+
+    await expect(list).toBeVisible();
+    await expect(list.getByText('Full altitude')).toBeVisible();
+    await expect(list.getByText('14k · 14000 ft')).toBeVisible();
+    await expect(list.getByText('Hop n Pop')).toBeVisible();
+    await expect(list.getByText('4k · 4000 ft')).toBeVisible();
+  });
+
+  test('the ticket types show where they go', async ({ page }) => {
+    await gotoRoute(page, '/configuration/ticket-types');
+
+    await expect(page.getByText('Altitude', { exact: true })).toBeVisible();
+    await expect(page.getByText('14k').first()).toBeVisible();
+  });
 
   test('ticket types follow the dark theme', async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'dark' });

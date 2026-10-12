@@ -198,7 +198,13 @@
       "everyLoadNeedsAPilot": "Every load needs a pilot",
       "youCantCreateALoadWithout": "You cant create a load without an aircraft",
       "youMustSpecifyMaxSlots": "You must specify max slots",
-      "addedToTheBoard": "Load #{{number}} added to the board"
+      "addedToTheBoard": "Load #{{number}} added to the board",
+      "destinations": "{{destinations}}",
+      "addDestination": "Add {{destination}}",
+      "noDestinations": "No {{destinations}} yet. Add one before the load is called.",
+      "moveUp": "Move {{name}} up",
+      "moveDown": "Move {{name}} down",
+      "removeDestination": "Remove {{name}}"
     },
     "membership": {
       "membershipExpires": "Membership expires",
@@ -282,7 +288,6 @@
       "nameOfTheTicketUsers": "Name of the ticket users will see",
       "price": "Price",
       "baseCostWithoutExtraTicket": "Base cost without extra ticket addons",
-      "customAltitude": "Custom altitude",
       "tandem": "Tandem",
       "allowAlsoManifestingAPassenger": "Allow also manifesting a passenger when using this ticket type",
       "publicManifesting": "Public manifesting",
@@ -293,7 +298,8 @@
       "ticketSaved": "Ticket saved",
       "enabledTicketAddOns": "Enabled ticket add-ons",
       "editTicket": "Edit ticket",
-      "newTicket": "New ticket"
+      "newTicket": "New ticket",
+      "defaultDestination": "Default {{destination}}"
     },
     "ticket_type_addon": {
       "nameOfTheTicketUsers": "Name of the ticket users will see",
@@ -383,6 +389,27 @@
       "atMostAltitudes_one": "At most {{count}} altitude",
       "atMostAltitudes_other": "At most {{count}} altitudes"
     },
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "destination": {
+      "newDestination": "New {{destination}}",
+      "editDestination": "Edit {{destination}}",
+      "name": "Name",
+      "kind": "Kind",
+      "kinds": {
+        "altitude": "Altitude",
+        "site": "Site",
+        "route": "Route",
+        "section": "Section"
+      },
+      "altitudeFt": "Height (ft)",
+      "nameIsRequired": "Name is required",
+      "altitudeIsRequired": "Height is required",
+      "saved": "{{name}} saved",
+      "archived": "{{name}} archived",
+      "archive": "Archive {{name}}",
+      "empty": "No {{destinations}} yet",
+      "emptyBody": "Add the places your loads go to.",
+      "none": "None"
+    }
   }
 }

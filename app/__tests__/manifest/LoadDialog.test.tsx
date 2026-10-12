@@ -1,6 +1,9 @@
 import * as React from 'react';
+import { View } from 'react-native';
+import { scoped } from 'app/test-utils/hosts';
 import { Permission } from 'app/api/schema.d';
-import { CreateLoadDocument } from 'app/api/reflection';
+import { CreateLoadDocument, DestinationsDocument } from 'app/api/reflection';
+import { fullAltitude, reef } from 'app/__fixtures__/destination.fixture';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_VEHICLES from './__mocks__/QueryVehicle.mock';
 import MOCK_QUERY_MEMBERSHIPS from './__mocks__/QueryMemberships.mock';
@@ -107,6 +110,91 @@ describe('<LoadDialog />', () => {
     for (const button of screen.getAllByText('Create')) {
       await fireEvent.press(button);
     }
+
+    await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
+  });
+
+  it('sends the places in order when the operator’s loads go to places', async () => {
+    const mutationResult = jest.fn(() => ({
+      data: {
+        createLoad: {
+          __typename: 'CreateLoadPayload',
+          load: null,
+          errors: null,
+          fieldErrors: null,
+        },
+      },
+    }));
+
+    // The manifest provider mounts its own closed copy of the dialog, so queries are scoped to ours
+    const screen = await render(
+      <View testID="under-test">
+        <LoadDialog open onClose={jest.fn()} onSuccess={jest.fn()} />
+      </View>,
+      {
+        session: authenticatedSession,
+        graphql: [
+          MOCK_QUERY_OPERATOR({}, {
+            operator: { modules: { destinations: { kinds: ['site'], scope: 'per_load' } } },
+          } as never),
+          {
+            request: { query: DestinationsDocument, variables: { operatorId: '1' } },
+            result: {
+              data: {
+                operator: {
+                  __typename: 'Operator',
+                  id: '1',
+                  destinations: [fullAltitude, reef],
+                },
+              },
+            },
+            maxUsageCount: 10,
+          },
+          MOCK_QUERY_VEHICLES(),
+          usersWithPermission(Permission.ActAsGca, membership('31', 'Gina GCA')),
+          usersWithPermission(Permission.ActAsPilot, membership('32', 'Pete Pilot')),
+          {
+            request: {
+              query: CreateLoadDocument,
+              operationName: 'CreateLoad',
+              variables: {
+                gca: '31',
+                pilot: '32',
+                vehicle: '1',
+                maxSlots: 10,
+                state: 'open',
+                name: null,
+                destinationIds: [3, 1],
+              },
+            },
+            result: mutationResult,
+          },
+        ],
+      }
+    );
+
+    await waitFor(() => expect(screen.getAllByText('Gina GCA').length).toBeGreaterThan(0), {
+      timeout: 10000,
+    });
+    await waitFor(() => expect(screen.getAllByText('Pete Pilot').length).toBeGreaterThan(0), {
+      timeout: 10000,
+    });
+    await waitFor(() => expect(screen.getAllByText('Beaver').length).toBeGreaterThan(0), {
+      timeout: 10000,
+    });
+    const form = scoped(screen.getByTestId('under-test'));
+    await waitFor(() => expect(form.getByTestId('load-destinations')).toBeTruthy(), {
+      timeout: 10000,
+    });
+
+    // One at a time: the list leaves out what is already in it
+    for (const name of ['Reef', 'Full altitude (14k)']) {
+      await fireEvent.press(form.getByRole('combobox', { name: 'Add destination' }));
+      await fireEvent.press(screen.getByRole('option', { name }));
+    }
+    await waitFor(() => expect(form.getByText('2. Full altitude')).toBeTruthy());
+
+    await fireEvent.press(form.getByText('Create'));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });

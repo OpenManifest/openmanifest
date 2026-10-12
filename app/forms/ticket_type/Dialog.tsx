@@ -21,7 +21,8 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
       name: original?.name || initial?.name,
       cost: original?.costCents != null ? fromCents(original.costCents) : initial?.cost,
       allowManifestingSelf: original?.allowManifestingSelf || initial?.allowManifestingSelf,
-      altitude: original?.altitude || initial?.altitude || 14000,
+      defaultDestinationId:
+        original?.defaultDestination?.id ?? initial?.defaultDestinationId ?? null,
       extras: original?.extras || initial?.extras,
       id: original?.id || initial?.id || undefined,
       isTandem: original?.isTandem || initial?.isTandem,

@@ -14,7 +14,11 @@ import i18n from 'app/i18n';
 export type LoadFields = Required<
   Pick<LoadDetailsFragment, 'gca' | 'pilot' | 'maxSlots' | 'vehicle' | 'isOpen'>
 > &
-  Pick<LoadDetailsFragment, 'name'> & { id?: string | null };
+  Pick<LoadDetailsFragment, 'name'> & {
+    id?: string | null;
+    /** The places the load visits, in order (operators with per-load destinations) */
+    destinationIds: string[];
+  };
 
 export const loadValidation = yup.object({
   name: yup.string().nullable().default(null),
@@ -28,6 +32,7 @@ export const loadValidation = yup.object({
     .default(0),
   id: yup.string().nullable(),
   isOpen: yup.boolean().default(true),
+  destinationIds: yup.array().of(yup.string().required()).default([]),
 });
 
 export const EMPTY_FORM_VALUES: Partial<LoadFields> = {
@@ -37,6 +42,7 @@ export const EMPTY_FORM_VALUES: Partial<LoadFields> = {
   vehicle: undefined,
   maxSlots: 0,
   name: null,
+  destinationIds: [],
 };
 
 export interface IUseManifestFormOpts {
@@ -91,6 +97,9 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           vehicle: validatedFields.vehicle?.id,
           maxSlots: Number(validatedFields.maxSlots),
           name: validatedFields.name,
+          destinationIds: validatedFields.destinationIds?.length
+            ? validatedFields.destinationIds.map(Number)
+            : undefined,
         });
 
         if ('error' in response && response.error) {

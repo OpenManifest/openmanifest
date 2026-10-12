@@ -67,9 +67,24 @@ export function formatCall(minutes: number): string {
   return i18n.t('common:call.minutes', { minutes, call });
 }
 
-/** The destination's name; P7.8 adds kinds, coordinates and the per-load scope */
-export function formatDestination(destination?: { name?: string | null } | null): string {
-  return destination?.name ?? '';
+const METRES_PER_FOOT = 0.3048;
+
+/** "14k", "4k", "12.5k": a height in metres as skydivers say it, in thousands of feet (P7.12 replaces this with units) */
+export function formatAltitudeShort(altitudeM?: number | null): string {
+  if (altitudeM === null || altitudeM === undefined || Number.isNaN(altitudeM)) return '';
+  const thousands = Math.round(altitudeM / METRES_PER_FOOT / 100) / 10;
+  return `${thousands}k`;
+}
+
+/** A destination as a short label: "14k" for an altitude, the name for a site, route or section; '' for none */
+export function formatDestination(
+  destination?: { name?: string | null; kind?: string | null; altitudeM?: number | null } | null
+): string {
+  if (!destination) return '';
+  if (destination.kind === 'altitude' && typeof destination.altitudeM === 'number') {
+    return formatAltitudeShort(destination.altitudeM);
+  }
+  return destination.name ?? '';
 }
 
 /** "240 kg": a quantity with its unit symbol; P7.12 adds unit conversion and the operator's units */

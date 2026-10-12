@@ -113,6 +113,7 @@ export const DESTINATIONS: Destination[] = [
       'SettingsMenuScreen',
       'OperatorSettingsScreen',
       'VehiclesScreen',
+      'DestinationsScreen',
       'TicketTypesScreen',
       'ExtrasScreen',
       'OperatorRigsScreen',

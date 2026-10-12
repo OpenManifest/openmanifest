@@ -7,6 +7,7 @@ import React from 'react';
 import { Avatar, Caption, DataTable, Paragraph } from 'react-native-paper';
 import { generateColor } from 'app/utils/generateColor';
 import { isNumber } from 'lodash';
+import { formatDestination } from 'app/i18n/format';
 import SwipeActions from '../layout/SwipeActions';
 import UserAvatar from '../UserAvatar';
 import DraggableWrapper from './DragAndDrop/DraggableRow';
@@ -152,7 +153,7 @@ export default function UserRow(props: ISlotUserRowProps) {
                 {!fields || fields.includes(SlotFields.Altitude) ? (
                   <DataTable.Cell numeric style={styles.altitudeCell}>
                     <Paragraph style={styles.slotText}>
-                      {(slot?.ticketType?.altitude || 14000) / 1000}k
+                      {formatDestination(slot?.destination ?? slot?.ticketType?.defaultDestination)}
                     </Paragraph>
                   </DataTable.Cell>
                 ) : null}
@@ -184,7 +185,7 @@ export default function UserRow(props: ISlotUserRowProps) {
                   </DataTable.Cell>
                   <DataTable.Cell numeric style={styles.altitudeCell}>
                     <Paragraph style={styles.slotText}>
-                      {(slot?.ticketType?.altitude || 14000) / 1000}k
+                      {formatDestination(slot?.destination ?? slot?.ticketType?.defaultDestination)}
                     </Paragraph>
                   </DataTable.Cell>
                 </DataTable.Row>

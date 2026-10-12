@@ -43,6 +43,7 @@ const loadingFragment: LoadDetailsFragment = {
   loadNumber: 0,
   maxSlots: 0,
   occupiedSlots: 0,
+  destinations: [],
   vehicle: {
     id: '__LOADING__',
     capacity: 0,

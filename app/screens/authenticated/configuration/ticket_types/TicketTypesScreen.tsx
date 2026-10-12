@@ -16,8 +16,11 @@ import { useNotifications } from 'app/providers/notifications';
 import { useAppTheme } from 'app/theme';
 import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 import { formatCents } from 'app/utils/money';
+import useTerms from 'app/i18n/useTerms';
+import { formatDestination } from 'app/i18n/format';
 
 export default function TicketTypesScreen() {
+  const term = useTerms();
   const { theme } = useAppTheme();
   const notify = useNotifications();
   const {
@@ -74,7 +77,7 @@ export default function TicketTypesScreen() {
           <DataTable.Header>
             <DataTable.Title>Name</DataTable.Title>
             <DataTable.Title numeric>Cost</DataTable.Title>
-            <DataTable.Title numeric>Altitude</DataTable.Title>
+            <DataTable.Title numeric>{term('destination')}</DataTable.Title>
             <DataTable.Title numeric>Public</DataTable.Title>
           </DataTable.Header>
 
@@ -95,7 +98,9 @@ export default function TicketTypesScreen() {
                 >
                   <DataTable.Cell>{ticketType.name}</DataTable.Cell>
                   <DataTable.Cell numeric>{formatCents(ticketType.costCents)}</DataTable.Cell>
-                  <DataTable.Cell numeric>{ticketType.altitude}</DataTable.Cell>
+                  <DataTable.Cell numeric>
+                    {formatDestination(ticketType.defaultDestination)}
+                  </DataTable.Cell>
                   <DataTable.Cell numeric>
                     <View pointerEvents="box-none">
                       <Switch

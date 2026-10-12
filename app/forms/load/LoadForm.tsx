@@ -12,6 +12,9 @@ import { FormNumberField } from 'app/components/input/number_input';
 import { LoadFields } from './useForm';
 import { useTranslation } from 'react-i18next';
 import { Divider, Stack } from 'app/ui';
+import { useOperatorContext } from 'app/providers/operator/context';
+import { DestinationListField } from 'app/components/input/destination_select';
+import { destinationsModule } from 'app/utils/destinations';
 
 interface ILoadFormProps {
   control: Control<LoadFields>;
@@ -19,6 +22,11 @@ interface ILoadFormProps {
 export default function LoadForm(props: ILoadFormProps) {
   const { t } = useTranslation('common');
   const { control } = props;
+  const {
+    operator: { operator },
+  } = useOperatorContext();
+  const perLoadDestinations =
+    destinationsModule(operator?.modules as Record<string, unknown>)?.scope === 'per_load';
 
   return (
     <Stack gap="md">
@@ -46,6 +54,9 @@ export default function LoadForm(props: ILoadFormProps) {
           {...{ control }}
           requiredPermissions={[Permission.ActAsPilot]}
         />
+        {perLoadDestinations ? (
+          <DestinationListField {...{ control }} name="destinationIds" />
+        ) : null}
         <Divider spacing="sm" />
       </View>
     </Stack>

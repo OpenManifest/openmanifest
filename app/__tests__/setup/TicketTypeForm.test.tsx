@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Text, View } from 'react-native';
-import { CreateTicketTypeDocument } from 'app/api/reflection';
+import { CreateTicketTypeDocument, DestinationsDocument } from 'app/api/reflection';
+import { fullAltitude, hopNPop } from 'app/__fixtures__/destination.fixture';
+import mockQueryOperator from '../manifest/__mocks__/QueryOperator.mock';
 import { useOperatorContext } from 'app/providers';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import TicketTypeDialog from '../../forms/ticket_type/Dialog';
@@ -47,7 +49,7 @@ describe('<TicketTypeDialog />', () => {
                   name: 'Hop n Pop',
                   costCents: 4500,
                   allowManifestingSelf: true,
-                  altitude: 14000,
+                  defaultDestinationId: null,
                   extraIds: [],
                   isTandem: false,
                   operatorId: 1,
@@ -68,6 +70,78 @@ describe('<TicketTypeDialog />', () => {
     const [name, cost] = textInputs(dialog.container);
     await fireEvent.changeText(name, 'Hop n Pop');
     await fireEvent.changeText(cost, '45');
+    await fireEvent.press(dialog.getByText('Save'));
+
+    await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
+  });
+
+  it('sends the default destination chosen from the operator’s destinations', async () => {
+    const mutationResult = jest.fn(() => ({
+      data: {
+        createTicketType: {
+          __typename: 'CreateTicketTypePayload',
+          ticketType: null,
+          errors: null,
+          fieldErrors: null,
+        },
+      },
+    }));
+
+    const screen = await render(
+      <View testID="under-test">
+        <OperatorReady />
+        <TicketTypeDialog open onClose={jest.fn()} />
+      </View>,
+      {
+        session: authenticatedSession,
+        graphql: [
+          mockQueryOperator({}, {
+            operator: { modules: { destinations: { kinds: ['altitude'], scope: 'per_slot' } } },
+          } as never),
+          {
+            request: { query: DestinationsDocument, variables: { operatorId: '1' } },
+            result: {
+              data: {
+                operator: {
+                  __typename: 'Operator',
+                  id: '1',
+                  destinations: [fullAltitude, hopNPop],
+                },
+              },
+            },
+            maxUsageCount: 10,
+          },
+          {
+            request: {
+              query: CreateTicketTypeDocument,
+              operationName: 'CreateTicketType',
+              variables: {
+                attributes: {
+                  name: 'Hop n Pop',
+                  costCents: 4500,
+                  allowManifestingSelf: true,
+                  defaultDestinationId: 2,
+                  extraIds: [],
+                  isTandem: false,
+                  operatorId: 1,
+                },
+              },
+            },
+            result: mutationResult,
+          },
+        ],
+      }
+    );
+
+    const dialog = scoped(screen.getByTestId('under-test'));
+    await waitFor(() => expect(dialog.getByText('dropzone ready')).toBeTruthy(), {
+      timeout: 10000,
+    });
+    const [name, cost] = textInputs(dialog.container);
+    await fireEvent.changeText(name, 'Hop n Pop');
+    await fireEvent.changeText(cost, '45');
+    await fireEvent.press(await dialog.findByRole('combobox', { name: 'Default destination' }));
+    await fireEvent.press(await screen.findByRole('option', { name: 'Hop n Pop (4k)' }));
     await fireEvent.press(dialog.getByText('Save'));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });

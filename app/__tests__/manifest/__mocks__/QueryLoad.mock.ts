@@ -1,3 +1,4 @@
+import { fullAltitude, hopNPop } from 'app/__fixtures__/destination.fixture';
 import { merge } from 'lodash';
 import { LoadState } from '../../../api/schema.d';
 import {
@@ -81,6 +82,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
   {
     load: {
       ...loadEssentials,
+      destinations: [],
       vehicle: {
         __typename: 'Vehicle',
         minCapacity: 0,
@@ -125,7 +127,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
             id: '1',
             costCents: 1000,
             name: 'Height',
-            altitude: 14000,
+            defaultDestination: fullAltitude,
             isTandem: false,
 
             extras: [],
@@ -168,7 +170,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
             allowManifestingSelf: true,
             costCents: 1000,
             name: 'Hop n Pop',
-            altitude: 4000,
+            defaultDestination: hopNPop,
             isTandem: false,
 
             extras: [],
@@ -213,7 +215,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
             costCents: 1000,
             allowManifestingSelf: true,
             name: 'Height',
-            altitude: 14000,
+            defaultDestination: fullAltitude,
             isTandem: false,
             extras: [{ id: '1', name: 'Outside camera', costCents: 12000 }],
           },

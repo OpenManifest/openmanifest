@@ -10,8 +10,11 @@ import { useOperatorsContext } from 'app/api/crud/useOperators';
 import { useNotifications } from 'app/providers/notifications';
 import { ColorSchemePreference, usePreferences } from 'app/state/preferences';
 import { useAppTheme } from 'app/theme';
+import useTerms from 'app/i18n/useTerms';
+import { destinationsModule } from 'app/utils/destinations';
 
 export default function SettingsScreen() {
+  const term = useTerms();
   const navigation = useNavigation();
   const notify = useNotifications();
   const {
@@ -98,6 +101,24 @@ export default function SettingsScreen() {
           }
           left={() => <List.Icon color={theme.colors.text} icon="airplane" />}
         />
+        {!destinationsModule(operator?.modules as Record<string, unknown>) ? null : (
+          <List.Item
+            title={term('destination', 2)}
+            right={() => <List.Icon color={theme.colors.text} icon="chevron-right" />}
+            onPress={() =>
+              navigation.navigate('Authenticated', {
+                screen: 'Manifest',
+                params: {
+                  screen: 'Configuration',
+                  params: {
+                    screen: 'DestinationsScreen',
+                  },
+                },
+              })
+            }
+            left={() => <List.Icon color={theme.colors.text} icon="map-marker-path" />}
+          />
+        )}
         <List.Item
           title="Rigs"
           left={() => <List.Icon color={theme.colors.text} icon="parachute" />}
