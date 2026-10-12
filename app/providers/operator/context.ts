@@ -21,6 +21,7 @@ interface IOperatorContext {
 export const INITIAL_CONTEXT: IOperatorContext = {
   operator: {
     permissions: [],
+    permissionsLoaded: false,
     update: uninitializedHandler as never,
     called: false,
     loading: false,

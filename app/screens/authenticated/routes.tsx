@@ -3,13 +3,14 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, Text } from 'react-native';
 
-import useRestriction from 'app/hooks/useRestriction';
-import { ModerationRole, Permission } from 'app/api/schema.d';
+import { Permission } from 'app/api/schema.d';
+import guarded from 'app/navigation/AccessGuard';
+import { decide, type AccessRule } from 'app/navigation/destinations';
+import { useAccess } from 'app/navigation/useDestinations';
 
 import { useTheme } from 'react-native-paper';
 
 import { NavigatorScreenParams } from '@react-navigation/native';
-import { useOperatorContext } from 'app/providers/operator/context';
 import { AppSignalBoundary } from 'app/components/app_signal';
 import ManifestTab, { OperatorRoutes } from './manifest/routes';
 import UsersTab, { UserRoutes } from './user/routes';
@@ -27,16 +28,26 @@ export type AuthenticatedRoutes = {
   Notifications: NavigatorScreenParams<NotificationRoutes>;
 };
 
+// A tab the user may not use stays registered but has no button in the bar
+const hiddenTabButton = () => null;
+
+const USERS_RULE: AccessRule = { permission: Permission.ReadUser };
+// The dashboard is for those who may see the statistics, and the platform overview for moderators
+const OVERVIEW_RULE: AccessRule = {
+  any: [{ permission: Permission.ViewStatistics }, { moderator: true }],
+};
+const GuardedOverview = guarded(OverviewTab, OVERVIEW_RULE);
+const GuardedUsers = guarded(UsersTab, USERS_RULE);
+
 export default function AuthenticatedTabBar() {
   const { t } = useTranslation('common');
   const { palette } = useAppTheme();
 
-  const {
-    operator: { currentUser },
-  } = useOperatorContext();
-  const isAdmin = currentUser?.user?.moderationRole !== ModerationRole.User;
-  const canViewUsers = useRestriction(Permission.ReadUser);
-  const canViewDashboard = useRestriction(Permission.ViewStatistics);
+  // Every tab is registered whatever the permissions are (a link to /users must find its route on a cold load); the
+  // ones the user may not use are hidden from the bar and their screens say so
+  const { ready, access } = useAccess();
+  const showsOverview = ready && decide(OVERVIEW_RULE, access) === 'allowed';
+  const showsUsers = ready && decide(USERS_RULE, access) === 'allowed';
 
   const theme = useTheme();
 
@@ -75,22 +86,21 @@ export default function AuthenticatedTabBar() {
   return (
     <AppSignalBoundary>
       <BottomTab.Navigator initialRouteName="Manifest" {...{ screenOptions }}>
-        {(canViewDashboard || isAdmin) && (
-          <BottomTab.Screen
-            name="Overview"
-            component={OverviewTab}
-            options={{
-              title: t('tabs.overview'),
-              tabBarIcon: ({ focused, color, size }) => (
-                <MaterialCommunityIcons
-                  name="view-dashboard-outline"
-                  {...{ size, color }}
-                  style={[styles.icon, focused ? styles.iconActive : undefined]}
-                />
-              ),
-            }}
-          />
-        )}
+        <BottomTab.Screen
+          name="Overview"
+          component={GuardedOverview}
+          options={{
+            title: t('tabs.overview'),
+            tabBarButton: showsOverview ? undefined : hiddenTabButton,
+            tabBarIcon: ({ focused, color, size }) => (
+              <MaterialCommunityIcons
+                name="view-dashboard-outline"
+                {...{ size, color }}
+                style={[styles.icon, focused ? styles.iconActive : undefined]}
+              />
+            ),
+          }}
+        />
         <BottomTab.Screen
           name="Manifest"
           component={ManifestTab}
@@ -120,23 +130,22 @@ export default function AuthenticatedTabBar() {
             popToTopOnBlur: true,
           }}
         />
-        {canViewUsers && (
-          <BottomTab.Screen
-            name="Users"
-            component={UsersTab}
-            options={{
-              title: t('tabs.users'),
-              tabBarIcon: ({ size, color, focused }) => (
-                <MaterialCommunityIcons
-                  {...{ size, color }}
-                  name="account-group-outline"
-                  style={[styles.icon, focused ? styles.iconActive : undefined]}
-                />
-              ),
-              popToTopOnBlur: true,
-            }}
-          />
-        )}
+        <BottomTab.Screen
+          name="Users"
+          component={GuardedUsers}
+          options={{
+            title: t('tabs.users'),
+            tabBarButton: showsUsers ? undefined : hiddenTabButton,
+            tabBarIcon: ({ size, color, focused }) => (
+              <MaterialCommunityIcons
+                {...{ size, color }}
+                name="account-group-outline"
+                style={[styles.icon, focused ? styles.iconActive : undefined]}
+              />
+            ),
+            popToTopOnBlur: true,
+          }}
+        />
       </BottomTab.Navigator>
     </AppSignalBoundary>
   );

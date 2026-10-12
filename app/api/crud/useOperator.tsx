@@ -103,6 +103,8 @@ export function useOperator(vars: Partial<OperatorQueryVariables>) {
       loading,
       called,
       permissions: permissions?.data?.operator?.currentUser?.permissions || [],
+      // False until the permissions of the current user have arrived (an empty list is not "none")
+      permissionsLoaded: !!permissions?.data?.operator?.currentUser,
       update,
       refetch: queryVariables?.operatorId ? refetch : noop,
       fetchMore: queryVariables?.operatorId ? () => fetchMore({ variables }) : uninitializedHandler,
@@ -114,7 +116,7 @@ export function useOperator(vars: Partial<OperatorQueryVariables>) {
       loading,
       called,
       update,
-      permissions?.data?.operator?.currentUser?.permissions,
+      permissions?.data?.operator?.currentUser,
       refetch,
       queryVariables?.operatorId,
       fetchMore,

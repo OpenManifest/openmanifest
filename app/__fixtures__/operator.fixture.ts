@@ -1,5 +1,5 @@
 import { OperatorExtensiveFragment } from 'app/api/operations';
-import { OperatorState, LoadState } from 'app/api/schema.d';
+import { Industry, OperatorState, LoadState } from 'app/api/schema.d';
 import { currentUserDetailed } from './currentUser.fixture';
 import { loadEssentials } from './load.fixture';
 
@@ -18,6 +18,8 @@ export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
   isCreditSystemEnabled: true,
   timeZone: 'Australia/Brisbane',
   terminology: {},
+  industry: Industry.Skydiving,
+  modules: {},
   settings: {
     __typename: 'Settings',
     allowManifestBypass: false,

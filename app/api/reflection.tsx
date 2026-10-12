@@ -79,6 +79,8 @@ export const OperatorEssentialsFragmentDoc = gql`
   createdAt
   timeZone
   terminology
+  industry
+  modules
   settings {
     allowManifestBypass
     allowNegativeCredits
