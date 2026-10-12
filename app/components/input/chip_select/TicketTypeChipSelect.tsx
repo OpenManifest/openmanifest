@@ -18,11 +18,11 @@ interface ITicketTypeSelect {
 
 function TicketTypeChipSelect(props: ITicketTypeSelect) {
   const { value, onLoadingStateChanged, onChange, onlyPublicTickets, error } = props;
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
 
   const { data, loading } = useAllowedTicketTypesQuery({
     variables: {
-      dropzone: currentDropzoneId?.toString() as string,
+      operator: currentOperatorId?.toString() as string,
       onlyPublicTickets: onlyPublicTickets || null,
     },
     onError: console.error,

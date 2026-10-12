@@ -9,10 +9,10 @@ describe('sameVariables', () => {
 
   it('is equal for the same values and different for changed or extra values', () => {
     expect(
-      sameVariables({ dropzone: '1', date: '2026-10-08' }, { date: '2026-10-08', dropzone: '1' })
+      sameVariables({ operator: '1', date: '2026-10-08' }, { date: '2026-10-08', operator: '1' })
     ).toBe(true);
-    expect(sameVariables({ dropzone: '1' }, { dropzone: '2' })).toBe(false);
-    expect(sameVariables({ dropzone: '1' }, {})).toBe(false);
+    expect(sameVariables({ operator: '1' }, { operator: '2' })).toBe(false);
+    expect(sameVariables({ operator: '1' }, {})).toBe(false);
     expect(sameVariables({ state: null }, {})).toBe(false);
   });
 });

@@ -13,18 +13,22 @@ import { Operation } from '@apollo/client';
 
 // Import your own reducer
 import { AppThemeProvider } from 'app/theme';
+import I18nProvider from 'app/i18n/I18nProvider';
+import { FIXTURES } from 'app/i18n/useOperatorTerms';
 import { WeatherFormProvider } from 'app/forms/weather';
-import { DropzoneContextProvider, ManifestContextProvider } from 'app/providers';
-import mockQueryDropzone from '../__tests__/manifest/__mocks__/QueryDropzone.mock';
+import { OperatorContextProvider, ManifestContextProvider } from 'app/providers';
+import mockQueryOperator from '../__tests__/manifest/__mocks__/QueryOperator.mock';
 import { initialSession, SessionState, useSession } from '../state/session';
 import createMockPermissions from '../__tests__/manifest/__mocks__/QueryPermissions.mock';
 
 type RenderOptions = NonNullable<Parameters<typeof rtlRender>[1]>;
 
 interface IRenderer extends RenderOptions {
-  /** Session store values (credentials, current dropzone, ...); logged out when omitted */
+  /** Session store values (credentials, current operator, ...); logged out when omitted */
   session?: Partial<SessionState>;
   permissions?: Permission[];
+  /** Template whose words the screen shows (a fixture of app/i18n/fixtures); the operator's own when omitted */
+  industry?: keyof typeof FIXTURES;
   graphql: MockedResponse<Record<string, unknown>>[];
 }
 
@@ -83,7 +87,7 @@ function Apollo(props: MockedProviderProps) {
 
 function render(
   ui: React.ReactElement<unknown>,
-  { session, graphql, permissions, ...renderOptions }: IRenderer
+  { session, graphql, permissions, industry, ...renderOptions }: IRenderer
 ) {
   useSession.setState({ ...initialSession, hydrated: true, ...(session || {}) });
   function Wrapper({ children }: { children: React.ReactNode }) {
@@ -99,11 +103,11 @@ function render(
             addTypename
             mocks={[
               ...(graphql || []),
-              mockQueryDropzone(),
+              mockQueryOperator(),
               createMockPermissions(
                 {},
                 {
-                  dropzone: {
+                  operator: {
                     currentUser: {
                       permissions: permissions || [],
                     },
@@ -112,13 +116,15 @@ function render(
               ),
             ]}
           >
-            <DropzoneContextProvider dropzoneId={session?.currentDropzoneId?.toString()}>
-              <ManifestContextProvider dropzone={session?.currentDropzoneId?.toString()}>
+            <OperatorContextProvider operatorId={session?.currentOperatorId?.toString()}>
+              <ManifestContextProvider operator={session?.currentOperatorId?.toString()}>
                 <AppThemeProvider>
-                  <WeatherFormProvider>{children}</WeatherFormProvider>
+                  <I18nProvider terms={industry ? FIXTURES[industry] : undefined}>
+                    <WeatherFormProvider>{children}</WeatherFormProvider>
+                  </I18nProvider>
                 </AppThemeProvider>
               </ManifestContextProvider>
-            </DropzoneContextProvider>
+            </OperatorContextProvider>
           </Apollo>
         </BottomSheetModalProvider>
       </SafeAreaProvider>

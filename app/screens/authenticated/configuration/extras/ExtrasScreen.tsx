@@ -8,7 +8,7 @@ import NoResults from 'app/components/NoResults';
 import FloatingActionArea from 'app/components/layout/FloatingActionArea';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
 import ScrollableScreen from 'app/components/layout/ScrollableScreen';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { TicketTypeAddonDetailsFragment } from 'app/api/operations';
 import { useAppTheme } from 'app/theme';
@@ -16,11 +16,11 @@ import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale
 import { formatCents } from 'app/utils/money';
 
 export default function ExtrasScreen() {
-  const { dropzone: currentDropzone, dialogs } = useDropzoneContext();
+  const { operator: currentOperator, dialogs } = useOperatorContext();
   const { theme } = useAppTheme();
   const { data, loading } = useTicketTypeExtrasQuery({
     variables: {
-      dropzoneId: currentDropzone?.dropzone?.id as string,
+      operatorId: currentOperator?.operator?.id as string,
     },
   });
   const createEditHandler = React.useCallback(

@@ -27,7 +27,7 @@ export default function UserForm(props: IUserFormProps) {
       <FormTextField {...{ control }} style={styles.field} name="nickname" label="Nickname" />
       <FormTextField {...{ control }} style={styles.field} name="email" label="Email" />
       <FormTextField {...{ control }} style={styles.field} name="phone" label="Phone" />
-      <FormNumberField {...{ control }} name="exitWeight" label="Exit weight (kg)" />
+      <FormNumberField {...{ control }} name="bodyMassKg" label="Exit weight (kg)" />
 
       <Divider />
 

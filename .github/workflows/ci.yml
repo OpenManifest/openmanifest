@@ -21,6 +21,10 @@ jobs:
       - run: yarn check:linting
       - run: yarn check:testing
       - run: yarn check:graphql
+      - name: Vocabulary check (report only until P7.20)
+        run: node scripts/check-vocabulary.mjs --markdown >> "$GITHUB_STEP_SUMMARY"
+      - name: UI debt (report only)
+        run: node scripts/ui-debt.mjs --markdown >> "$GITHUB_STEP_SUMMARY"
   web-export:
     runs-on: ubuntu-24.04
     steps:
@@ -30,3 +34,49 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: npx expo export --platform web
         env: { EXPO_ENV: staging, NODE_OPTIONS: --max_old_space_size=6144 }
+  web-ui-smoke:
+    needs: checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: postgres, POSTGRES_PASSWORD: postgres }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            ui:
+              - 'app/**'
+              - 'e2e/**'
+              - 'package.json'
+              - 'yarn.lock'
+              - 'playwright.config.ts'
+              - '.github/actions/ui-env/**'
+              - '.github/workflows/ci.yml'
+      - if: steps.changes.outputs.ui == 'true'
+        uses: actions/setup-node@v4
+        with: { node-version-file: .nvmrc, cache: yarn }
+      - if: steps.changes.outputs.ui == 'true'
+        run: yarn install --frozen-lockfile
+      - if: steps.changes.outputs.ui == 'true'
+        run: npx playwright install --with-deps chromium
+      - if: steps.changes.outputs.ui == 'true'
+        uses: ./.github/actions/ui-env
+      - if: steps.changes.outputs.ui == 'true'
+        run: yarn test:ui:smoke
+        env: { CI: "1" }
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-smoke-report
+          path: |
+            e2e/.report
+            e2e/.results
+          if-no-files-found: ignore
+          retention-days: 7

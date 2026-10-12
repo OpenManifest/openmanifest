@@ -1,4 +1,4 @@
-import { DropzoneUserEssentialsFragment, SlotDetailsFragment } from 'app/api/operations';
+import { MembershipEssentialsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { truncate } from 'lodash';
 import * as React from 'react';
 import { View } from 'react-native';
@@ -27,20 +27,20 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
   const options = React.useMemo(
     () =>
       slots?.map((slot) => ({
-        label: slot?.dropzoneUser?.user?.name || '',
-        value: slot?.dropzoneUser as DropzoneUserEssentialsFragment,
-        avatar: slot?.dropzoneUser?.user?.image,
+        label: slot?.membership?.user?.name || '',
+        value: slot?.membership as MembershipEssentialsFragment,
+        avatar: slot?.membership?.user?.image,
       })) || [],
     [slots]
   );
 
   const selected = React.useMemo(
-    () => slots?.map((slot) => slot?.dropzoneUser)?.find((node) => node?.id === value?.id),
+    () => slots?.map((slot) => slot?.membership)?.find((node) => node?.id === value?.id),
     [slots, value?.id]
   );
 
   const renderAnchor: React.FC<{
-    item?: ISelectOption<DropzoneUserEssentialsFragment>;
+    item?: ISelectOption<MembershipEssentialsFragment>;
     openMenu(): void;
   }> = React.useCallback(
     ({ item, openMenu }) => (
@@ -58,7 +58,7 @@ export default function LoadMasterChip(props: ILoadMasterChipSelect) {
           {value?.user?.name || 'No LM'}
         </Chip>
       ) : (
-        <Select<DropzoneUserEssentialsFragment>
+        <Select<MembershipEssentialsFragment>
           value={selected}
           options={options}
           renderAnchor={renderAnchor}
