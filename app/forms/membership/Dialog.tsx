@@ -41,7 +41,7 @@ export default function MembershipDialog(props: IMembershipDialogProps) {
   return (
     <Dialog visible={!!open} onDismiss={onClose}>
       <ProgressBar indeterminate visible={loading} color={theme.colors.primary} />
-      <Dialog.Title>{`${membership?.id ? 'Edit' : 'New'} operator user`}</Dialog.Title>
+      <Dialog.Title>{`${membership?.id ? 'Edit' : 'New'} dropzone user`}</Dialog.Title>
       <Dialog.Content>
         <MembershipForm {...{ control }} />
         {cachedUser ? (

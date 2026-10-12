@@ -170,7 +170,7 @@ function AdminOverviewPage() {
           title="Accounts"
           columns={Platform.OS === 'web' ? undefined : 3}
           data={[
-            { label: 'Operators', value: data?.operators.edges?.length || 0 },
+            { label: 'Dropzones', value: data?.operators.edges?.length || 0 },
             { label: 'Users', value: summedStatistics?.totalUserCount || 0 },
             {
               label: 'Active',

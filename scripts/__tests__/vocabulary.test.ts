@@ -95,6 +95,15 @@ describe('vocabulary.rewriteKeepingProse', () => {
     );
   });
 
+  it('keeps the text of template literals but renames their expressions', () => {
+    expect(keep('notify.success(`Archived dropzone ${dropzone.name} for ${user}`)')).toBe(
+      'notify.success(`Archived dropzone ${operator.name} for ${user}`)'
+    );
+    expect(keep('const key = `dropzone-${dropzone.id}`;')).toBe(
+      'const key = `operator-${operator.id}`;'
+    );
+  });
+
   it('keeps the text a test looks for', () => {
     expect(keep("expect(screen.getByText('Dropzone')).toBeTruthy(); dropzone.id;")).toBe(
       "expect(screen.getByText('Dropzone')).toBeTruthy(); operator.id;"

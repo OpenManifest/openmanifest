@@ -157,7 +157,14 @@ const PROSE_PATTERNS = [
 function rewriteKeepingProse(text, list, singleWordSep = '', file = '') {
   if (!CODE_FILE.test(file)) return rewrite(text, list, singleWordSep);
   const kept = [];
-  let masked = text;
+  // Template literals: the text around `${...}` is prose when it has two words, the expressions are code
+  let masked = text.replace(/`(?:\\.|[^`\\])*`/g, (literal) =>
+    literal.replace(/(\$\{[^}]*\})|([^$]+|\$)/g, (part, expression, staticText) => {
+      if (expression || !/[A-Za-z]+[ \t]+[A-Za-z]+/.test(staticText)) return part;
+      kept.push(staticText);
+      return `\uE000${kept.length - 1}\uE001`;
+    })
+  );
   for (const pattern of PROSE_PATTERNS) {
     masked = masked.replace(pattern, (match, ...groups) => {
       const quoteOrText = groups[0];
