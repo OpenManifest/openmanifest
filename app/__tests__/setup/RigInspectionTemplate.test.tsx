@@ -29,8 +29,8 @@ function Harness() {
   );
 }
 
-function renderForm(graphql: Parameters<typeof render>[1]['graphql'] = []) {
-  const screen = render(<Harness />, {
+async function renderForm(graphql: Parameters<typeof render>[1]['graphql'] = []) {
+  const screen = await render(<Harness />, {
     session: authenticatedSession,
     graphql,
   });
@@ -39,7 +39,7 @@ function renderForm(graphql: Parameters<typeof render>[1]['graphql'] = []) {
 
 describe('rig inspection template form', () => {
   it('lists the fields of the template', async () => {
-    const form = renderForm();
+    const form = await renderForm();
 
     await waitFor(() => expect(form.queryAllByText('Reserve date').length).toBeGreaterThan(0));
     expect(form.getByText('Pin check')).toBeTruthy();
@@ -56,7 +56,7 @@ describe('rig inspection template form', () => {
         },
       },
     }));
-    const form = renderForm([
+    const form = await renderForm([
       {
         request: {
           query: UpdateEquipmentInspectionTemplateDocument,
@@ -72,9 +72,9 @@ describe('rig inspection template form', () => {
     ]);
 
     await waitFor(() => expect(form.queryAllByText('Reserve date').length).toBeGreaterThan(0));
-    fireEvent.press(form.getByLabelText('Remove Reserve date'));
+    await fireEvent.press(form.getByLabelText('Remove Reserve date'));
     await waitFor(() => expect(form.queryAllByText('Reserve date')).toHaveLength(0));
-    fireEvent.press(form.getByText('Save template'));
+    await fireEvent.press(form.getByText('Save template'));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });

@@ -23,29 +23,29 @@ function Probe() {
 afterEach(() => act(() => applyTerms(null)));
 
 describe('useOperatorTerms', () => {
-  it('shows the generic words when logged out', () => {
-    const screen = render(<Probe />, { graphql: [] });
+  it('shows the generic words when logged out', async () => {
+    const screen = await render(<Probe />, { graphql: [] });
 
     expect(screen.getByTestId('operator').props.children).toBe('Operator');
     expect(screen.getByTestId('members').props.children).toBe('Customers');
-    screen.unmount();
+    await screen.unmount();
   });
 
-  it('shows the words of a template fixture passed to render', () => {
-    const screen = render(<Probe />, { graphql: [], industry: 'skydiving' });
+  it('shows the words of a template fixture passed to render', async () => {
+    const screen = await render(<Probe />, { graphql: [], industry: 'skydiving' });
 
     expect(screen.getByTestId('operator').props.children).toBe('Dropzone');
     expect(screen.getByTestId('members').props.children).toBe('Jumpers');
-    screen.unmount();
+    await screen.unmount();
   });
 
   it('takes the terms from the current operator', async () => {
     const operator = MOCK_QUERY_OPERATOR({}, { operator: { terminology: skydiving as never } });
-    const screen = render(<Probe />, { graphql: [operator], session: authenticatedSession });
+    const screen = await render(<Probe />, { graphql: [operator], session: authenticatedSession });
 
     await waitFor(() => expect(screen.getByTestId('operator').props.children).toBe('Dropzone'));
     expect(screen.getByTestId('members').props.children).toBe('Jumpers');
-    screen.unmount();
+    await screen.unmount();
   });
 });
 

@@ -40,21 +40,21 @@ function renderTab(membership: never, permissions: Permission[]) {
 // UB.2: staff run a member's equipment from the office
 describe('<EquipmentTab />', () => {
   it('offers staff with UpdateUser to add a rig to another member', async () => {
-    const screen = renderTab(OTHER_MEMBER, [Permission.UpdateUser]);
+    const screen = await renderTab(OTHER_MEMBER, [Permission.UpdateUser]);
 
     expect(await screen.findByTestId('profile-add-rig')).toBeTruthy();
     expect(screen.getByText('Primary')).toBeTruthy();
   });
 
   it('does not offer another member to add a rig for someone else', async () => {
-    const screen = renderTab(OTHER_MEMBER, [Permission.CreateEquipment]);
+    const screen = await renderTab(OTHER_MEMBER, [Permission.CreateEquipment]);
 
     await screen.findByTestId('loaded');
     expect(screen.queryByTestId('profile-add-rig')).toBeNull();
   });
 
   it('lets members add a rig to their own profile', async () => {
-    const screen = renderTab(SELF, [Permission.CreateEquipment]);
+    const screen = await renderTab(SELF, [Permission.CreateEquipment]);
 
     expect(await screen.findByTestId('profile-add-rig')).toBeTruthy();
   });

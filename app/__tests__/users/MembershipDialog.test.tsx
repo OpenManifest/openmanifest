@@ -13,11 +13,11 @@ const role = { __typename: 'UserRole', id: '1', name: 'fun_jumper', operatorId: 
 const member = (overrides: Partial<MembershipEssentialsFragment> = {}) =>
   ({ __typename: 'Membership', id: '5', expiresAt: 1800000000, role, ...overrides }) as never;
 
-function renderDialog(
+async function renderDialog(
   membership: MembershipEssentialsFragment,
   graphql: Parameters<typeof render>[1]['graphql'] = []
 ) {
-  const screen = render(
+  const screen = await render(
     <View testID="under-test">
       <MembershipDialog open membership={membership} onClose={jest.fn()} />
     </View>,
@@ -31,9 +31,9 @@ function renderDialog(
 
 describe('<MembershipDialog />', () => {
   it('asks for an access level and a membership expiry', async () => {
-    const dialog = renderDialog(member({ role: null, expiresAt: null }));
+    const dialog = await renderDialog(member({ role: null, expiresAt: null }));
 
-    fireEvent.press(dialog.getByText('Save'));
+    await fireEvent.press(dialog.getByText('Save'));
 
     await waitFor(() => expect(dialog.getByText('User must have an access level')).toBeTruthy());
     expect(dialog.getByText('Membership expiry must be set')).toBeTruthy();
@@ -50,7 +50,7 @@ describe('<MembershipDialog />', () => {
         },
       },
     }));
-    const dialog = renderDialog(member(), [
+    const dialog = await renderDialog(member(), [
       {
         request: {
           query: UpdateMembershipDocument,
@@ -64,7 +64,7 @@ describe('<MembershipDialog />', () => {
       },
     ]);
 
-    fireEvent.press(dialog.getByText('Save'));
+    await fireEvent.press(dialog.getByText('Save'));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });

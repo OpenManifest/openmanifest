@@ -20,7 +20,7 @@ import ManifestScreen from '../../screens/authenticated/manifest/manifest/Manife
 
 describe('<ManifestScreen />', () => {
   it('should show LoadCards for every load', async () => {
-    const screen = render(<ManifestScreen />, {
+    const screen = await render(<ManifestScreen />, {
       graphql: [
         MOCK_QUERY_OPERATOR(),
         MOCK_QUERY_ALLOWED_TICKET_TYPES(),
@@ -50,7 +50,7 @@ describe('<ManifestScreen />', () => {
   });
 
   it('should show an empty message when no loads are available', async () => {
-    const screen = render(<ManifestScreen />, {
+    const screen = await render(<ManifestScreen />, {
       graphql: [
         MOCK_QUERY_OPERATOR(),
         MOCK_QUERY_ALLOWED_TICKET_TYPES(),
@@ -114,7 +114,7 @@ describe('<ManifestScreen />', () => {
       Settings.defaultZone = 'UTC';
       Settings.now = () => new Date('2026-10-08T23:00:00Z').valueOf();
 
-      const screen = renderBoard('2026-10-09');
+      const screen = await renderBoard('2026-10-09');
 
       await waitFor(() => expect(screen.queryAllByTestId('load-card').length).toBe(2), {
         timeout: 10000,

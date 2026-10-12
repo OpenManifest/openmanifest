@@ -64,8 +64,8 @@ function Probe() {
 }
 
 describe('ThemeProvider', () => {
-  it('provides the theme of the scheme and brand', () => {
-    const screen = render(
+  it('provides the theme of the scheme and brand', async () => {
+    const screen = await render(
       <ThemeProvider scheme="dark" brand="#336699">
         <Probe />
       </ThemeProvider>
@@ -77,20 +77,20 @@ describe('ThemeProvider', () => {
     expect(screen.getByTestId('padding').props.children).toBe('16');
   });
 
-  it('falls back to the light default theme outside a provider', () => {
-    const screen = render(<Probe />);
+  it('falls back to the light default theme outside a provider', async () => {
+    const screen = await render(<Probe />);
 
     expect(screen.getByTestId('scheme').props.children).toBe('light');
     expect(screen.getByTestId('brand').props.children).toBe(DEFAULT_BRAND);
   });
 
-  it('reports a coarse pointer on native', () => {
-    const screen = render(<Probe />);
+  it('reports a coarse pointer on native', async () => {
+    const screen = await render(<Probe />);
 
     expect(screen.getByTestId('pointer').props.children).toBe('coarse');
   });
 
-  it('keeps styles stable until the theme changes', () => {
+  it('keeps styles stable until the theme changes', async () => {
     const seen: unknown[] = [];
     function Capture() {
       seen.push(useStyles((t) => ({ box: { padding: t.space.sm } })));
@@ -101,9 +101,9 @@ describe('ThemeProvider', () => {
         <Capture />
       </ThemeProvider>
     );
-    const screen = render(tree('light'));
-    screen.rerender(tree('light'));
-    screen.rerender(tree('dark'));
+    const screen = await render(tree('light'));
+    await screen.rerender(tree('light'));
+    await screen.rerender(tree('dark'));
 
     expect(seen[1]).toBe(seen[0]);
     expect(seen[2]).not.toBe(seen[0]);

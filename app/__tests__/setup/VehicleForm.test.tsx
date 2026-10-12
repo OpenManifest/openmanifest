@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { CreateVehicleDocument } from 'app/api/reflection';
 import { useOperatorContext } from 'app/providers';
-import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
+import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import VehicleDialog from '../../forms/vehicle/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
+import { scoped, textInputs } from 'app/test-utils/hosts';
 
 jest.setTimeout(30000);
 
@@ -29,7 +30,7 @@ describe('<VehicleDialog />', () => {
       },
     }));
 
-    const screen = render(
+    const screen = await render(
       <View testID="under-test">
         <OperatorReady />
         <VehicleDialog open onClose={jest.fn()} />
@@ -58,30 +59,30 @@ describe('<VehicleDialog />', () => {
     );
 
     // The operator provider mounts its own closed copy of this dialog, so scope to ours
-    const dialog = within(screen.getByTestId('under-test'));
+    const dialog = scoped(screen.getByTestId('under-test'));
     await waitFor(() => expect(dialog.getByText('dropzone ready')).toBeTruthy(), {
       timeout: 10000,
     });
-    const [name, registration, , maxSlots] = dialog.UNSAFE_getAllByType(TextInput);
-    fireEvent.changeText(name, 'Beaver');
-    fireEvent.changeText(registration, 'VH-JST');
-    fireEvent.changeText(maxSlots, '8');
+    const [name, registration, , maxSlots] = textInputs(dialog.container);
+    await fireEvent.changeText(name, 'Beaver');
+    await fireEvent.changeText(registration, 'VH-JST');
+    await fireEvent.changeText(maxSlots, '8');
     await waitFor(() => expect(dialog.queryByText('Maximum slots is required')).toBeNull());
-    fireEvent.press(dialog.getByText('Save'));
+    await fireEvent.press(dialog.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });
 
   it('asks for the registration when it is missing', async () => {
-    const screen = render(
+    const screen = await render(
       <View testID="under-test">
         <VehicleDialog open onClose={jest.fn()} />
       </View>,
       { session: authenticatedSession, graphql: [] }
     );
 
-    const dialog = within(screen.getByTestId('under-test'));
-    fireEvent.press(dialog.getByText('Save'));
+    const dialog = scoped(screen.getByTestId('under-test'));
+    await fireEvent.press(dialog.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(dialog.getByText('Registration is required')).toBeTruthy());
   });
@@ -89,15 +90,15 @@ describe('<VehicleDialog />', () => {
   // The dialog builds `initial` from the (absent) original vehicle, so `capacity: undefined` overrides the
   // form's default of 4 and a new vehicle cannot be saved until max slots is typed in.
   it('BUG-096: a new aircraft starts with the default max slots', async () => {
-    const screen = render(
+    const screen = await render(
       <View testID="under-test">
         <VehicleDialog open onClose={jest.fn()} />
       </View>,
       { session: authenticatedSession, graphql: [] }
     );
 
-    const dialog = within(screen.getByTestId('under-test'));
-    fireEvent.press(dialog.getByText('Save'));
+    const dialog = scoped(screen.getByTestId('under-test'));
+    await fireEvent.press(dialog.getByRole('button', { name: 'Save' }));
 
     // Validation has run once the (legitimately missing) registration is reported
     await waitFor(() => expect(dialog.getByText('Registration is required')).toBeTruthy());

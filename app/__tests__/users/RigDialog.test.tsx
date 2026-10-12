@@ -9,11 +9,11 @@ import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
-function renderDialog(
+async function renderDialog(
   props: Partial<React.ComponentProps<typeof RigDialog>>,
   graphql: Parameters<typeof render>[1]['graphql'] = []
 ) {
-  const screen = render(
+  const screen = await render(
     <View testID="under-test">
       <RigDialog open userId={1} onClose={jest.fn()} {...props} />
     </View>,
@@ -24,7 +24,7 @@ function renderDialog(
 
 describe('<RigDialog />', () => {
   it('starts with the rig being edited', async () => {
-    const dialog = renderDialog({ rig: currentUserEssentials });
+    const dialog = await renderDialog({ rig: currentUserEssentials });
 
     await waitFor(() => expect(dialog.getByDisplayValue('Pond')).toBeTruthy());
     expect(dialog.getByDisplayValue('Mirage')).toBeTruthy();
@@ -33,9 +33,9 @@ describe('<RigDialog />', () => {
   });
 
   it('asks for the details a new rig needs', async () => {
-    const dialog = renderDialog({});
+    const dialog = await renderDialog({});
 
-    fireEvent.press(dialog.getByText('Save'));
+    await fireEvent.press(dialog.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(dialog.getByText('Make is required')).toBeTruthy());
     expect(dialog.getByText('Model is required')).toBeTruthy();
@@ -55,7 +55,7 @@ describe('<RigDialog />', () => {
         },
       },
     }));
-    const dialog = renderDialog({ rig: currentUserEssentials }, [
+    const dialog = await renderDialog({ rig: currentUserEssentials }, [
       {
         request: {
           query: UpdateEquipmentDocument,
@@ -78,8 +78,8 @@ describe('<RigDialog />', () => {
     ]);
 
     await waitFor(() => expect(dialog.getByDisplayValue('34567')).toBeTruthy());
-    fireEvent.changeText(dialog.getByDisplayValue('34567'), '99999');
-    fireEvent.press(dialog.getByText('Save'));
+    await fireEvent.changeText(dialog.getByDisplayValue('34567'), '99999');
+    await fireEvent.press(dialog.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });
@@ -95,29 +95,32 @@ describe('<RigDialog />', () => {
         },
       },
     }));
-    const dialog = renderDialog({ rig: { ...currentUserEssentials, id: undefined } as never }, [
-      {
-        request: {
-          query: MUTATION_CREATE_EQUIPMENT,
-          operationName: 'CreateEquipment',
-          variables: {
-            name: 'Pond',
-            make: 'Mirage',
-            model: 'G4.1',
-            serial: '34567',
-            canopySize: 170,
-            rigType: 'sport',
-            repackExpiresAt: currentUserEssentials.repackExpiresAt,
-            userId: 1,
-            operatorId: null,
+    const dialog = await renderDialog(
+      { rig: { ...currentUserEssentials, id: undefined } as never },
+      [
+        {
+          request: {
+            query: MUTATION_CREATE_EQUIPMENT,
+            operationName: 'CreateEquipment',
+            variables: {
+              name: 'Pond',
+              make: 'Mirage',
+              model: 'G4.1',
+              serial: '34567',
+              canopySize: 170,
+              rigType: 'sport',
+              repackExpiresAt: currentUserEssentials.repackExpiresAt,
+              userId: 1,
+              operatorId: null,
+            },
           },
+          result: mutationResult,
         },
-        result: mutationResult,
-      },
-    ]);
+      ]
+    );
 
     await waitFor(() => expect(dialog.getByDisplayValue('34567')).toBeTruthy());
-    fireEvent.press(dialog.getByText('Save'));
+    await fireEvent.press(dialog.getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });

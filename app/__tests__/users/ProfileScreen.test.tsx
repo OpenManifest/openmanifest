@@ -15,7 +15,7 @@ jest.mock('@react-navigation/native', () => ({
 
 describe('<ProfileScreen />', () => {
   it('shows the name, role, funds and licence of the jumper', async () => {
-    const screen = render(<ProfileScreen />, {
+    const screen = await render(<ProfileScreen />, {
       session: authenticatedSession,
       graphql: [MOCK_QUERY_PROFILE()],
     });
@@ -30,7 +30,7 @@ describe('<ProfileScreen />', () => {
   });
 
   it('offers the funds, jumps and equipment tabs and lists the jump history by default', async () => {
-    const screen = render(<ProfileScreen />, {
+    const screen = await render(<ProfileScreen />, {
       session: authenticatedSession,
       graphql: [MOCK_QUERY_PROFILE()],
     });

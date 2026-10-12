@@ -27,11 +27,11 @@ const ticketType = {
   extras: [],
 };
 
-function renderDialog(
+async function renderDialog(
   ticketTypes: object[],
   extraGraphql: Parameters<typeof render>[1]['graphql'] = []
 ) {
-  const screen = render(
+  const screen = await render(
     <View testID="under-test">
       <ManifestGroupDialog open load={load} slots={slots} onClose={jest.fn()} />
     </View>,
@@ -53,11 +53,11 @@ function renderDialog(
 
 describe('<ManifestGroupDialog />', () => {
   it('asks for a ticket before manifesting the group', async () => {
-    const screen = renderDialog([]);
+    const screen = await renderDialog([]);
 
-    fireEvent.press(screen.getAllByText('Next')[0]);
+    await fireEvent.press(screen.getAllByText('Next')[0]);
     await waitFor(() => expect(screen.getAllByText('Jump type').length).toBeGreaterThan(0));
-    fireEvent.press(screen.getByText('Manifest'));
+    await fireEvent.press(screen.getByText('Manifest'));
 
     await waitFor(() =>
       expect(screen.getByText('You must select a ticket type to manifest')).toBeTruthy()
@@ -75,7 +75,7 @@ describe('<ManifestGroupDialog />', () => {
         },
       },
     }));
-    const screen = renderDialog(
+    const screen = await renderDialog(
       [ticketType],
       [
         {
@@ -102,12 +102,12 @@ describe('<ManifestGroupDialog />', () => {
       ]
     );
 
-    fireEvent.press(screen.getAllByText('Next')[0]);
+    await fireEvent.press(screen.getAllByText('Next')[0]);
     await waitFor(() => expect(screen.getAllByText('Jump type').length).toBeGreaterThan(0));
     await waitFor(() => expect(screen.getAllByText('Height').length).toBeGreaterThan(0));
     // Let the jump type and ticket be selected by themselves
     await new Promise((resolve) => setTimeout(resolve, 300));
-    fireEvent.press(screen.getByText('Manifest'));
+    await fireEvent.press(screen.getByText('Manifest'));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });

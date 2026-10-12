@@ -26,8 +26,8 @@ const membership = {
   },
 } as unknown as MembershipDetailsFragment;
 
-function renderDialog(graphql: Parameters<typeof render>[1]['graphql'] = []) {
-  const screen = render(
+async function renderDialog(graphql: Parameters<typeof render>[1]['graphql'] = []) {
+  const screen = await render(
     <View testID="under-test">
       <UserDialog open membership={membership} onClose={jest.fn()} />
     </View>,
@@ -41,7 +41,7 @@ function renderDialog(graphql: Parameters<typeof render>[1]['graphql'] = []) {
 
 describe('<UserDialog />', () => {
   it('starts with the details of the member being edited', async () => {
-    const dialog = renderDialog();
+    const dialog = await renderDialog();
 
     await waitFor(() => expect(dialog.getByDisplayValue('Court Jester')).toBeTruthy());
     expect(dialog.getByDisplayValue('cj@example.com')).toBeTruthy();
@@ -50,7 +50,7 @@ describe('<UserDialog />', () => {
 
   it('reports an invalid email and does not save', async () => {
     const mutationResult = jest.fn();
-    const dialog = renderDialog([
+    const dialog = await renderDialog([
       {
         request: { query: UpdateUserDocument, operationName: 'UpdateUser', variables: {} },
         result: mutationResult,
@@ -58,8 +58,8 @@ describe('<UserDialog />', () => {
     ]);
 
     await waitFor(() => expect(dialog.getByDisplayValue('cj@example.com')).toBeTruthy());
-    fireEvent.changeText(dialog.getByDisplayValue('cj@example.com'), 'not-an-email');
-    fireEvent.press(dialog.getByText('Save'));
+    await fireEvent.changeText(dialog.getByDisplayValue('cj@example.com'), 'not-an-email');
+    await fireEvent.press(dialog.getByText('Save'));
 
     await waitFor(() => expect(dialog.getByText('Not a valid email')).toBeTruthy());
     expect(mutationResult).not.toHaveBeenCalled();
@@ -76,7 +76,7 @@ describe('<UserDialog />', () => {
         },
       },
     }));
-    const dialog = renderDialog([
+    const dialog = await renderDialog([
       {
         request: {
           query: UpdateUserDocument,
@@ -95,9 +95,9 @@ describe('<UserDialog />', () => {
     ]);
 
     await waitFor(() => expect(dialog.getByDisplayValue('Court Jester')).toBeTruthy());
-    fireEvent.changeText(dialog.getByDisplayValue('Court Jester'), 'Court J. Jester');
-    fireEvent.changeText(dialog.getByDisplayValue('0400 000 000'), '0411 111 111');
-    fireEvent.press(dialog.getByText('Save'));
+    await fireEvent.changeText(dialog.getByDisplayValue('Court Jester'), 'Court J. Jester');
+    await fireEvent.changeText(dialog.getByDisplayValue('0400 000 000'), '0411 111 111');
+    await fireEvent.press(dialog.getByText('Save'));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });

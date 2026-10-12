@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { TextInput } from 'react-native';
 import OperatorWizard from '../../screens/wizards/operator_wizard/OperatorWizard';
 import { CreateOperatorDocument } from 'app/api/reflection';
 import { resolveTimeZone } from 'app/utils/operatorTime';
@@ -7,6 +6,7 @@ import { COLOR_PRESETS } from '../../components/input/colorpicker/ColorPicker';
 import { act, fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_FEDERATIONS from '../manifest/__mocks__/QueryFederations.mock';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
+import { textInputs } from 'app/test-utils/hosts';
 
 jest.setTimeout(30000);
 
@@ -66,27 +66,27 @@ function renderWizard(graphql: Parameters<typeof render>[1]['graphql'] = [NO_FED
 describe('<OperatorWizard />', () => {
   // Every step is mounted at once, so the buttons are found by step: Next buttons come in step order
   it('asks for a name before leaving the first step', async () => {
-    const screen = renderWizard();
+    const screen = await renderWizard();
 
-    fireEvent.press(screen.getAllByText('Next')[0]);
+    await fireEvent.press(screen.getAllByText('Next')[0]);
 
     await waitFor(() => expect(screen.getByText('Your dropzone must have a name')).toBeTruthy());
   });
 
   it('clears the error as the name is typed, then asks for an organization on the next step', async () => {
-    const screen = renderWizard();
+    const screen = await renderWizard();
 
-    fireEvent.press(screen.getAllByText('Next')[0]);
+    await fireEvent.press(screen.getAllByText('Next')[0]);
     await waitFor(() => expect(screen.getByText('Your dropzone must have a name')).toBeTruthy());
 
-    fireEvent.changeText(screen.UNSAFE_getAllByType(TextInput)[0], 'Skydive Alpha');
+    await fireEvent.changeText(textInputs(screen.container)[0], 'Skydive Alpha');
     await waitFor(() => expect(screen.queryByText('Your dropzone must have a name')).toBeNull());
     expect(screen.getByDisplayValue('Skydive Alpha')).toBeTruthy();
 
     // Next on the name step, then Next on the affiliation step
-    fireEvent.press(screen.getAllByText('Next')[0]);
+    await fireEvent.press(screen.getAllByText('Next')[0]);
     await waitFor(() => expect(screen.getAllByText('Next').length).toBeGreaterThan(1));
-    fireEvent.press(screen.getAllByText('Next')[1]);
+    await fireEvent.press(screen.getAllByText('Next')[1]);
 
     await waitFor(() =>
       expect(screen.getByText('Your dropzone must have an associated organization')).toBeTruthy()
@@ -104,7 +104,7 @@ describe('<OperatorWizard />', () => {
         },
       },
     }));
-    const screen = renderWizard([
+    const screen = await renderWizard([
       MOCK_QUERY_FEDERATIONS(),
       {
         request: {
@@ -128,13 +128,13 @@ describe('<OperatorWizard />', () => {
 
     // Every step has the same Next button, which acts on the current step; let each press settle
     const next = async () => {
-      fireEvent.press(screen.getAllByText('Next')[0]);
+      await fireEvent.press(screen.getAllByText('Next')[0]);
       await act(async () => {
         await new Promise((resolve) => setTimeout(resolve, 150));
       });
     };
 
-    fireEvent.changeText(screen.UNSAFE_getAllByType(TextInput)[0], 'Skydive Alpha');
+    await fireEvent.changeText(textInputs(screen.container)[0], 'Skydive Alpha');
     await next(); // name
     // The affiliation step selects the only federation once the list has loaded
     await waitFor(() => expect(screen.getAllByText('APF').length).toBeGreaterThan(0));
@@ -143,7 +143,7 @@ describe('<OperatorWizard />', () => {
     });
     await next(); // affiliation
     await next(); // location
-    fireEvent.press(screen.getByLabelText(`Color ${COLOR_PRESETS[0]}`));
+    await fireEvent.press(screen.getByLabelText(`Color ${COLOR_PRESETS[0]}`));
     await next(); // branding
     await next(); // banner: creates the operator
 

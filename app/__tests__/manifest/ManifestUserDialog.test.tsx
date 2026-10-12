@@ -24,7 +24,7 @@ describe('<ManifestUserDialog />', () => {
       },
     }));
 
-    const screen = render(
+    const screen = await render(
       <ManifestUserDialog
         open
         load={LOAD}
@@ -65,7 +65,10 @@ describe('<ManifestUserDialog />', () => {
 
     // ManifestContextProvider mounts its own (closed) copy of this dialog, which cannot submit
     // because it has no load or user, so pressing every "Manifest" button only submits ours.
-    screen.getAllByText('Manifest').forEach((button) => fireEvent.press(button));
+    // One press at a time: overlapping act() calls break React's act queue
+    for (const button of screen.getAllByText('Manifest')) {
+      await fireEvent.press(button);
+    }
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });

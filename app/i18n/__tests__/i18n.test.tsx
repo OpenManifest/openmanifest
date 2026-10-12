@@ -80,11 +80,11 @@ function Probe() {
 }
 
 describe('components', () => {
-  it('re-render when the terms change', () => {
-    const screen = render(<Probe />);
+  it('re-render when the terms change', async () => {
+    const screen = await render(<Probe />);
     expect(screen.getByTestId('load').props.children).toBe('Loads');
 
-    act(() => applyTerms({ load: { one: 'Trip', other: 'Trips' } }));
+    await act(() => applyTerms({ load: { one: 'Trip', other: 'Trips' } }));
 
     expect(screen.getByTestId('load').props.children).toBe('Trips');
     expect(screen.getByTestId('tab').props.children).toBe('Manifest');

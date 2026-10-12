@@ -25,7 +25,7 @@ describe('<LoadScreen />', () => {
       mock.result as { data: { load: { slots: unknown[]; maxSlots: number } } }
     ).data.load;
 
-    const screen = render(<LoadScreen />, {
+    const screen = await render(<LoadScreen />, {
       graphql: [mock, loadUpdatedMock],
       permissions: [Permission.ReadLoad],
       session: authenticatedSession,
@@ -46,7 +46,7 @@ describe('<LoadScreen />', () => {
 
   it('shows the load status, slot count and weight', async () => {
     const mock = MOCK_QUERY_LOAD();
-    const screen = render(<LoadScreen />, {
+    const screen = await render(<LoadScreen />, {
       graphql: [mock, loadUpdatedMock],
       permissions: [Permission.ReadLoad],
       session: authenticatedSession,

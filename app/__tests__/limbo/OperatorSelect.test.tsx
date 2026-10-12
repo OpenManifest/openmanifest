@@ -38,7 +38,7 @@ function renderScreen(nodes: OperatorNode[], extraMocks: unknown[] = []) {
 
 describe('<OperatorsScreen />', () => {
   it('lists the dropzones returned by the Dropzones query', async () => {
-    const screen = renderScreen([
+    const screen = await renderScreen([
       { ...operatorExtensive, id: '1', name: 'Skydive Jest' },
       { ...operatorExtensive, id: '2', name: 'Alpha' },
     ]);
@@ -50,10 +50,10 @@ describe('<OperatorsScreen />', () => {
   });
 
   it('stores the dropzone when a card is pressed', async () => {
-    const screen = renderScreen([{ ...operatorExtensive, id: '7', name: 'Alpha' }]);
+    const screen = await renderScreen([{ ...operatorExtensive, id: '7', name: 'Alpha' }]);
 
     const card = await waitFor(() => screen.getByText('Alpha'));
-    fireEvent.press(card);
+    await fireEvent.press(card);
 
     expect(useSession.getState().currentOperatorId).toBe('7');
   });
@@ -83,19 +83,19 @@ describe('<OperatorsScreen />', () => {
           },
         },
       }));
-      const screen = renderScreen(
+      const screen = await renderScreen(
         [{ ...operatorExtensive, id: '8', name: 'Newcomer', currentUser: null }],
         [joinMock(joined)]
       );
 
-      fireEvent.press(await waitFor(() => screen.getByText('Newcomer')));
+      await fireEvent.press(await waitFor(() => screen.getByText('Newcomer')));
 
       await waitFor(() => expect(useSession.getState().currentOperatorId).toBe('8'));
       expect(joined).toHaveBeenCalledTimes(1);
     });
 
     it('is not selected when joining is refused', async () => {
-      const screen = renderScreen(
+      const screen = await renderScreen(
         [{ ...operatorExtensive, id: '8', name: 'Newcomer', currentUser: null }],
         [
           joinMock({
@@ -107,7 +107,7 @@ describe('<OperatorsScreen />', () => {
         ]
       );
 
-      fireEvent.press(await waitFor(() => screen.getByText('Newcomer')));
+      await fireEvent.press(await waitFor(() => screen.getByText('Newcomer')));
 
       await waitFor(() => expect(screen.getByText('Newcomer')).toBeTruthy());
       // Give the mutation time to answer before checking that nothing was selected
@@ -117,7 +117,7 @@ describe('<OperatorsScreen />', () => {
   });
 
   it('shows an empty state when there are no dropzones', async () => {
-    const screen = renderScreen([]);
+    const screen = await renderScreen([]);
 
     await waitFor(() => {
       expect(screen.getByText('No dropzones?')).toBeTruthy();

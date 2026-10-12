@@ -42,21 +42,21 @@ function renderNote(allowSelfManifest: boolean, permissions: Permission[]) {
 
 describe('<ManifestDeskNote />', () => {
   it('tells a member who cannot manifest that bookings are made at the desk when self-manifesting is off', async () => {
-    const screen = renderNote(false, []);
+    const screen = await renderNote(false, []);
 
     expect(await screen.findByTestId('manifest-desk-note')).toBeTruthy();
     expect(screen.getByText('Bookings are made at the manifest desk')).toBeTruthy();
   });
 
   it('shows nothing when self-manifesting is allowed', async () => {
-    const screen = renderNote(true, []);
+    const screen = await renderNote(true, []);
 
     expect(await screen.findByText('allowSelfManifest=true')).toBeTruthy();
     expect(screen.queryByTestId('manifest-desk-note')).toBeNull();
   });
 
   it('shows nothing to staff who can manifest other people', async () => {
-    const screen = renderNote(false, [Permission.CreateUserSlot, Permission.CreateSlot]);
+    const screen = await renderNote(false, [Permission.CreateUserSlot, Permission.CreateSlot]);
 
     expect(await screen.findByText('allowSelfManifest=false')).toBeTruthy();
     expect(screen.queryByTestId('manifest-desk-note')).toBeNull();

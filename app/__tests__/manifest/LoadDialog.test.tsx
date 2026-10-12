@@ -37,7 +37,7 @@ const membership = (id: string, name: string) => ({
 });
 
 // Builds the mock without touching the shared fixture (the helper merges overrides in place).
-function usersWithPermission(permission: Permission, user: ReturnType<typeof membership>) {
+function usersWithPermission(permission: Permission, user: Awaited<ReturnType<typeof membership>>) {
   const mock = MOCK_QUERY_MEMBERSHIPS({ permissions: [permission] });
   return {
     ...mock,
@@ -66,7 +66,7 @@ describe('<LoadDialog />', () => {
       },
     }));
 
-    const screen = render(<LoadDialog open onClose={jest.fn()} onSuccess={jest.fn()} />, {
+    const screen = await render(<LoadDialog open onClose={jest.fn()} onSuccess={jest.fn()} />, {
       session: authenticatedSession,
       graphql: [
         MOCK_QUERY_VEHICLES(),
@@ -103,7 +103,10 @@ describe('<LoadDialog />', () => {
 
     // ManifestContextProvider mounts its own (closed) copy of this dialog, which is never filled in,
     // so pressing every "Create" button only submits ours.
-    screen.getAllByText('Create').forEach((button) => fireEvent.press(button));
+    // One press at a time: overlapping act() calls break React's act queue
+    for (const button of screen.getAllByText('Create')) {
+      await fireEvent.press(button);
+    }
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });
@@ -127,11 +130,11 @@ describe('<LoadDialog />', () => {
       },
     };
 
-    function renderDialog(
+    async function renderDialog(
       createLoadResult: jest.Mock,
       notifications = { success: jest.fn(), error: jest.fn(), info: jest.fn() }
     ) {
-      const screen = render(
+      const screen = await render(
         <NotificationContext.Provider value={notifications}>
           <LoadDialog open onClose={jest.fn()} onSuccess={jest.fn()} />
         </NotificationContext.Provider>,
@@ -163,7 +166,7 @@ describe('<LoadDialog />', () => {
       return screen;
     }
 
-    async function submit(screen: ReturnType<typeof renderDialog>) {
+    async function submit(screen: Awaited<ReturnType<typeof renderDialog>>) {
       await waitFor(() => expect(screen.getAllByText('Pete Pilot').length).toBeGreaterThan(0), {
         timeout: 10000,
       });
@@ -173,7 +176,10 @@ describe('<LoadDialog />', () => {
       await waitFor(() => expect(screen.getAllByText('Beaver').length).toBeGreaterThan(0), {
         timeout: 10000,
       });
-      screen.getAllByText('Create').forEach((button) => fireEvent.press(button));
+      // One press at a time: overlapping act() calls break React's act queue
+      for (const button of screen.getAllByText('Create')) {
+        await fireEvent.press(button);
+      }
     }
 
     it('still creates the load', async () => {
@@ -188,7 +194,7 @@ describe('<LoadDialog />', () => {
         },
       }));
 
-      await submit(renderDialog(createLoadResult));
+      await submit(await renderDialog(createLoadResult));
 
       await waitFor(() => expect(createLoadResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
     });
@@ -206,7 +212,7 @@ describe('<LoadDialog />', () => {
         },
       }));
 
-      await submit(renderDialog(createLoadResult, notifications));
+      await submit(await renderDialog(createLoadResult, notifications));
 
       await waitFor(
         () => expect(notifications.error).toHaveBeenCalledWith('Every load must have a GCA'),

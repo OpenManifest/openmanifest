@@ -89,8 +89,8 @@ describe('formatCall', () => {
     expect(formatCall(10)).toBe('10 minute call');
   });
 
-  it('uses the template word for a call', () => {
-    act(() => applyTerms(skydiving));
+  it('uses the template word for a call', async () => {
+    await act(() => applyTerms(skydiving));
 
     expect(formatCall(10)).toBe('10 minute boarding call');
     expect(formatCall(20)).toBe('20 minute boarding call');

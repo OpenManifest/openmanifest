@@ -26,45 +26,45 @@ describe('useAppTheme', () => {
     useThemeOverrides.setState({ primary: null });
   });
 
-  it('uses the default colour when logged out', () => {
-    const screen = render(<Probe />, { graphql: [] });
+  it('uses the default colour when logged out', async () => {
+    const screen = await render(<Probe />, { graphql: [] });
 
     expect(screen.getByTestId('primary').props.children).toBe(primaryColor);
     expect(screen.getByTestId('dark').props.children).toBe('false');
-    screen.unmount();
+    await screen.unmount();
   });
 
   it('follows the colour scheme preference', async () => {
     usePreferences.setState({ colorScheme: 'dark' });
-    const screen = render(<Probe />, { graphql: [] });
+    const screen = await render(<Probe />, { graphql: [] });
 
     expect(screen.getByTestId('dark').props.children).toBe('true');
 
     await act(async () => usePreferences.getState().setColorScheme('light'));
     await waitFor(() => expect(screen.getByTestId('dark').props.children).toBe('false'));
-    screen.unmount();
+    await screen.unmount();
   });
 
   it('takes the primary colour from the current dropzone', async () => {
     const operator = MOCK_QUERY_OPERATOR();
-    const screen = render(<Probe />, { graphql: [operator], session: authenticatedSession });
+    const screen = await render(<Probe />, { graphql: [operator], session: authenticatedSession });
     const expected = (operator.result as { data: { operator: { primaryColor: string } } }).data
       .operator.primaryColor;
 
     expect(expected).toBeTruthy();
     await waitFor(() => expect(screen.getByTestId('primary').props.children).toBe(expected));
     expect(screen.getByTestId('palette-primary').props.children).toBe(expected);
-    screen.unmount();
+    await screen.unmount();
   });
 
   it('lets a preview colour win until it is cleared', async () => {
-    const screen = render(<Probe />, { graphql: [] });
+    const screen = await render(<Probe />, { graphql: [] });
 
     await act(async () => useThemeOverrides.getState().setPrimary('#123456'));
     await waitFor(() => expect(screen.getByTestId('primary').props.children).toBe('#123456'));
 
     await act(async () => useThemeOverrides.getState().setPrimary(null));
     await waitFor(() => expect(screen.getByTestId('primary').props.children).toBe(primaryColor));
-    screen.unmount();
+    await screen.unmount();
   });
 });

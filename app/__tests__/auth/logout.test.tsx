@@ -84,7 +84,7 @@ describe('logging out and in again without a reload', () => {
       credentials: credentialsOf('a'),
       hydrated: true,
     });
-    const screen = rtlRender(
+    const screen = await rtlRender(
       <Apollo>
         <Text>app</Text>
       </Apollo>
@@ -111,14 +111,14 @@ describe('logging out and in again without a reload', () => {
     expect(client.cache.extract()).toEqual({});
 
     // User B logs in, in the same app session
-    act(() => useSession.getState().setCredentials(credentialsOf('b')));
+    await act(() => useSession.getState().setCredentials(credentialsOf('b')));
     await waitFor(async () => {
       const second = await client.query({ query: WHOAMI, fetchPolicy: 'network-only' });
       expect(second.data.currentUser.name).toBe('User b');
     });
     expect(requests.filter((r) => r.operationName === 'Whoami').pop()?.token).toBe('b');
     expect(JSON.stringify(client.cache.extract())).not.toContain('User a');
-    screen.unmount();
+    await screen.unmount();
   });
 
   it('does not wait for a server that cannot be reached', async () => {
