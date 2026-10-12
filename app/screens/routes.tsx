@@ -2,6 +2,7 @@ import { LinkingOptions, NavigatorScreenParams } from '@react-navigation/native'
 import * as Linking from 'expo-linking';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
+import { Platform } from 'react-native';
 
 import NotFoundScreen from './NotFoundScreen';
 import { useSession } from '../state';
@@ -10,6 +11,11 @@ import Limbo, { LimboRoutes } from './limbo/routes';
 import Unauthenticated, { UnauthenticatedRoutes } from './unauthenticated/routes';
 import Wizards, { WizardRoutes } from './wizards/routes';
 import LeftDrawer, { LeftDrawerRoutes } from './drawers/UserDrawer';
+import SpikeScreen from './dev/SpikeScreen';
+import environment from '../constants/environment';
+
+// The primitives spike (U0.8) exists on the web outside production only
+const SPIKE_ENABLED = Platform.OS === 'web' && environment !== 'production';
 
 export const options: LinkingOptions<ReactNavigation.RootParamList> = {
   prefixes: [
@@ -112,6 +118,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
           },
         },
       },
+      ...(SPIKE_ENABLED ? { Spike: '/__spike' } : {}),
       // FIXME: Remove in release
       // NotFound: '*',
     },
@@ -124,6 +131,7 @@ export type Routes = {
   Limbo: NavigatorScreenParams<LimboRoutes>;
   Wizards: NavigatorScreenParams<WizardRoutes>;
   NotFound: undefined;
+  Spike: undefined;
 };
 
 const Stack = createStackNavigator<Routes>();
@@ -157,6 +165,7 @@ export default function RootNavigator() {
         <Stack.Screen name="Unauthenticated" component={Unauthenticated} />
       )}
       <Stack.Screen name="Wizards" component={Wizards} />
+      {SPIKE_ENABLED ? <Stack.Screen name="Spike" component={SpikeScreen} /> : null}
 
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
