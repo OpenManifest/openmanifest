@@ -6,7 +6,8 @@ type Options = { role: Role };
 
 /**
  * `test` with a logged-in user: `test.use({ role: 'manager' })` picks the seed user (default `owner`). Page errors fail
- * the test; the `generic` project is skipped until U0.6 implements `?industry=generic`.
+ * the test; the `generic` project runs the gallery (with `?industry=generic`) and skips the specs of the skydiving screens,
+ * whose texts and seed are the skydiving template's.
  */
 export const test = base.extend<Options & { pageErrors: string[]; cleanup: void }>({
   role: ['owner', { option: true }],
@@ -24,8 +25,9 @@ export const test = base.extend<Options & { pageErrors: string[]; cleanup: void 
   pageErrors: [
     async ({ page }, use, testInfo) => {
       testInfo.skip(
-        testInfo.project.metadata.variant === 'generic',
-        'needs U0.6 (?industry=generic)'
+        testInfo.project.metadata.variant === 'generic' &&
+          !testInfo.titlePath.some((title) => title.includes('@gallery')),
+        'the generic project runs the gallery only'
       );
       const errors: string[] = [];
       page.on('pageerror', (e) => errors.push(e.message.slice(0, 200)));

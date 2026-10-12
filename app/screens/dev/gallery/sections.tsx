@@ -208,13 +208,23 @@ function CountdownSection() {
     <Section id="countdown" title="Countdown">
       <Row gap="xl" wrap>
         <State label="10 minutes">
-          <Countdown end={end} label="Boarding call" timeZone="Australia/Sydney" />
+          <Countdown
+            end={end}
+            label="Boarding call"
+            timeZone="Australia/Sydney"
+            testID="gallery-clock-10"
+          />
         </State>
         <State label="Under five minutes">
-          <Countdown end={soon} label="Last call" timeZone="Australia/Sydney" />
+          <Countdown
+            end={soon}
+            label="Last call"
+            timeZone="Australia/Sydney"
+            testID="gallery-clock-3"
+          />
         </State>
         <State label="Elapsed">
-          <Countdown end={past} label="Departed" />
+          <Countdown end={past} label="Departed" testID="gallery-clock-0" />
         </State>
       </Row>
     </Section>
@@ -245,9 +255,9 @@ function SkeletonSection() {
   return (
     <Section id="skeleton" title="Skeleton">
       <Row gap="md" align="center">
-        <Skeleton circle height={40} />
+        <Skeleton circle height={40} testID="gallery-skeleton-circle" />
         <View style={{ flex: 1 }}>
-          <Skeleton lines={3} />
+          <Skeleton lines={3} testID="gallery-skeleton-lines" />
         </View>
       </Row>
     </Section>

@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { IconButton, useTheme } from 'app/ui';
 
-/** The round button over a map that centres it on where the person is */
+/** The round button over a map that centres it on where the person is (bottom left: the map's own camera controls sit bottom right) */
 export default function MyLocationButton({ onPress }: { onPress(): void }) {
   const { t } = useTranslation('common');
   const theme = useTheme();
@@ -13,7 +13,7 @@ export default function MyLocationButton({ onPress }: { onPress(): void }) {
       style={{
         position: 'absolute',
         bottom: theme.space.xxl,
-        right: theme.space.xxl,
+        left: theme.space.xxl,
         borderRadius: theme.radius.pill,
         backgroundColor: theme.colour.surface,
         ...theme.elevation.raised,

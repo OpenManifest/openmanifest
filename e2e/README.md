@@ -7,7 +7,7 @@ Browser tests of the web build against the real API and the offline seed. They r
 | `smoke-<w>x<h>-light`        | 390×844, 1440×900                    | light          | `yarn test:ui:smoke` (tier 2; every pull request)      |
 | `full-<w>x<h>-<light\|dark>` | 360×640, 390×844, 820×1180, 1440×900 | light and dark | `yarn test:ui:full` (tier 3; checkpoint tasks, weekly) |
 | `full-<w>x<h>-light-text200` | 390×844, 1440×900                    | light          | `yarn test:ui:full`; text scaled to 200 %              |
-| `full-390x844-light-generic` | 390×844                              | light          | skipped until U0.6 adds `?industry=generic`            |
+| `full-390x844-light-generic` | 390×844                              | light          | the gallery only (`?industry=generic`)                 |
 
 Specs carry area tags in their titles: `@login`, `@manifest`, `@nav`, `@profile`, `@setup`, `@visual`, `@account`, `@forms`, `@overlay`, `@gallery`. Run one area with
 `yarn test:ui:smoke --grep @manifest`.
