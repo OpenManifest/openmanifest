@@ -1,8 +1,8 @@
 import { merge } from 'lodash';
 import { LoadState } from '../../../api/schema.d';
 import {
-  DropzoneUserDetailsFragment,
-  DropzoneUserEssentialsFragment,
+  MembershipDetailsFragment,
+  MembershipEssentialsFragment,
   LoadEssentialsFragment,
   LoadQuery,
   LoadQueryVariables,
@@ -17,7 +17,7 @@ export const loadEssentials: LoadEssentialsFragment = {
   name: 'Test Load',
   createdAt: new Date().toISOString(),
   dispatchAt: null,
-  hasLanded: false,
+  hasCompleted: false,
   loadNumber: 1,
   isFull: false,
   state: LoadState.Open,
@@ -28,8 +28,8 @@ export const loadEssentials: LoadEssentialsFragment = {
   occupiedSlots: 3,
 };
 
-const dropzoneUserEssentials: DropzoneUserEssentialsFragment = {
-  __typename: 'DropzoneUser',
+const membershipEssentials: MembershipEssentialsFragment = {
+  __typename: 'Membership',
   id: '1',
   walletId: '1',
   user: {
@@ -37,24 +37,24 @@ const dropzoneUserEssentials: DropzoneUserEssentialsFragment = {
     name: 'jest',
   },
   hasCredits: true,
-  hasExitWeight: true,
+  hasBodyMassKg: true,
   hasMembership: true,
   hasLicense: false,
   license: null,
   role: {
     id: '1',
     name: 'jest',
-    dropzoneId: 1,
+    operatorId: 1,
   },
   expiresAt: null,
 };
 
-const dropzoneUserDetails: DropzoneUserDetailsFragment = merge({}, dropzoneUserEssentials, {
-  __typename: 'DropzoneUser',
+const membershipDetails: MembershipDetailsFragment = merge({}, membershipEssentials, {
+  __typename: 'Membership',
   id: '21',
   role: {
     id: '1',
-    dropzoneId: 1,
+    operatorId: 1,
     name: 'fun_jumper',
   },
   user: {
@@ -67,7 +67,7 @@ const dropzoneUserDetails: DropzoneUserDetailsFragment = merge({}, dropzoneUserE
     phone: null,
     id: '21',
     name: 'Amy Hops',
-    exitWeight: '100',
+    bodyMassKg: '100',
   },
   license: {
     __typename: 'License',
@@ -81,23 +81,23 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
   {
     load: {
       ...loadEssentials,
-      plane: {
-        __typename: 'Plane',
-        minSlots: 0,
+      vehicle: {
+        __typename: 'Vehicle',
+        minCapacity: 0,
         registration: 'ABC123',
         id: '1',
-        maxSlots: 10,
+        capacity: 10,
         name: 'Beaver',
       },
-      // Distinct ids: the Apollo cache normalises DropzoneUser by id, so sharing one with a slot would overwrite it.
-      gca: merge({}, dropzoneUserEssentials, {
+      // Distinct ids: the Apollo cache normalises Membership by id, so sharing one with a slot would overwrite it.
+      gca: merge({}, membershipEssentials, {
         id: '11',
         user: {
           id: '11',
           name: 'jest',
         },
       }),
-      pilot: merge({}, dropzoneUserEssentials, {
+      pilot: merge({}, membershipEssentials, {
         id: '12',
         user: {
           id: '12',
@@ -113,12 +113,12 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           id: '1',
           costCents: 10000,
           createdAt: new Date().toISOString(),
-          exitWeight: 100,
-          passengerName: null,
-          passengerExitWeight: null,
+          bodyMassKg: 100,
+          guestName: null,
+          guestBodyMassKg: null,
           wingLoading: 1.3,
           groupNumber: 0,
-          dropzoneUser: dropzoneUserDetails,
+          membership: membershipDetails,
           ticketType: {
             allowManifestingSelf: true,
             __typename: 'TicketType',
@@ -131,8 +131,8 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
             extras: [],
           },
 
-          jumpType: {
-            __typename: 'JumpType',
+          activityType: {
+            __typename: 'ActivityType',
             id: '1',
             name: 'Freefly',
           },
@@ -145,17 +145,17 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           id: '2',
           costCents: 10000,
           createdAt: new Date().toISOString(),
-          exitWeight: 70,
-          passengerName: null,
-          passengerExitWeight: null,
+          bodyMassKg: 70,
+          guestName: null,
+          guestBodyMassKg: null,
           wingLoading: 1.3,
           groupNumber: 0,
-          dropzoneUser: merge({}, dropzoneUserDetails, {
+          membership: merge({}, membershipDetails, {
             id: '2',
             user: {
               id: '2',
               name: 'Ali Falls',
-              exitWeight: '100',
+              bodyMassKg: '100',
             },
             license: {
               id: '21',
@@ -174,8 +174,8 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
             extras: [],
           },
 
-          jumpType: {
-            __typename: 'JumpType',
+          activityType: {
+            __typename: 'ActivityType',
             id: '2',
             name: 'Hop n Pop',
           },
@@ -189,18 +189,18 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           id: '3',
           groupNumber: 0,
           createdAt: new Date().toISOString(),
-          exitWeight: 100,
-          passengerName: null,
-          passengerExitWeight: null,
+          bodyMassKg: 100,
+          guestName: null,
+          guestBodyMassKg: null,
 
           wingLoading: 1.3,
-          dropzoneUser: merge({}, dropzoneUserDetails, {
+          membership: merge({}, membershipDetails, {
             id: '3',
             user: {
               __typename: 'User',
               id: '3',
               name: 'John Stumble',
-              exitWeight: '100',
+              bodyMassKg: '100',
             },
             license: {
               id: '3',
@@ -218,7 +218,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
             extras: [{ id: '1', name: 'Outside camera', costCents: 12000 }],
           },
 
-          jumpType: {
+          activityType: {
             id: '3',
 
             name: 'Tandem',

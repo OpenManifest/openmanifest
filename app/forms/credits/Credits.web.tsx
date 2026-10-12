@@ -3,22 +3,22 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
 import { TransactionType } from 'app/api/schema.d';
-import { DropzoneUserEssentialsFragment } from 'app/api/operations';
+import { MembershipEssentialsFragment } from 'app/api/operations';
 import CreditsForm from './CreditsForm';
 import useCreditsForm from './useForm';
 
-interface IDropzoneUserDialog {
+interface IMembershipDialog {
   open?: boolean;
-  dropzoneUser?: DropzoneUserEssentialsFragment;
+  membership?: MembershipEssentialsFragment;
   onClose(): void;
   onSuccess(): void;
 }
 
-export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
-  const { open, onClose, dropzoneUser, onSuccess } = props;
+export default function MembershipDialog(props: IMembershipDialog) {
+  const { open, onClose, membership, onSuccess } = props;
   const { onSubmit, control, setValue, loading } = useCreditsForm({
     onSuccess,
-    dropzoneUser,
+    membership,
   });
 
   return (
@@ -47,7 +47,7 @@ export default function DropzoneUserDialog(props: IDropzoneUserDialog) {
         </TabsProvider>
       </View>
       <View style={styles.form}>
-        <CreditsForm {...{ control, dropzoneUser }} />
+        <CreditsForm {...{ control, membership }} />
       </View>
     </DialogOrSheet>
   );

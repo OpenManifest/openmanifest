@@ -15,20 +15,20 @@ interface IRoleSelect {
 
 function RoleSelect(props: IRoleSelect) {
   const { onChange, value, error } = props;
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
   const { data } = useRolesQuery({
     variables: {
-      dropzoneId: currentDropzoneId?.toString() as string,
+      operatorId: currentOperatorId?.toString() as string,
     },
   });
 
   const options = React.useMemo(
     () =>
-      data?.dropzone?.roles?.map(({ permissions, ...node }) => ({
+      data?.operator?.roles?.map(({ permissions, ...node }) => ({
         label: startCase(node?.name || ''),
         value: node,
       })) || [],
-    [data?.dropzone?.roles]
+    [data?.operator?.roles]
   );
 
   return (

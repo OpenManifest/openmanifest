@@ -3,31 +3,30 @@ import { Card, List, useTheme } from 'react-native-paper';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
-  DropzoneEssentialsFragment,
-  DropzoneUserEssentialsFragment,
+  OperatorEssentialsFragment,
+  MembershipEssentialsFragment,
   OrderEssentialsFragment,
 } from 'app/api/operations';
-import { DropzoneUser } from 'app/api/schema.d';
+import { Membership } from 'app/api/schema.d';
 import { successColor } from 'app/constants/Colors';
 import UserAvatar from 'app/components/UserAvatar';
 import { formatCents } from 'app/utils/money';
 
 interface IOrder {
   order: OrderEssentialsFragment;
-  dropzoneUser?: DropzoneUserEssentialsFragment | null;
+  membership?: MembershipEssentialsFragment | null;
   showAvatar?: boolean;
   onPress?(): void;
 }
 
 export default function OrderCard(props: IOrder) {
-  const { order, dropzoneUser, showAvatar, onPress } = props;
+  const { order, membership, showAvatar, onPress } = props;
   const theme = useTheme();
   const isSelfBuyer =
-    order.buyer?.__typename === 'DropzoneUser' &&
-    (order.buyer as DropzoneUser)?.id === dropzoneUser?.id;
+    order.buyer?.__typename === 'Membership' && (order.buyer as Membership)?.id === membership?.id;
   const icon =
     // @ts-ignore
-    isSelfBuyer === dropzoneUser?.id ? 'cash-minus' : 'cash-plus';
+    isSelfBuyer === membership?.id ? 'cash-minus' : 'cash-plus';
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -35,8 +34,8 @@ export default function OrderCard(props: IOrder) {
         <Card.Content style={styles.orderContent}>
           <List.Item
             title={
-              (order?.seller as DropzoneUser)?.user?.name ||
-              (order?.seller as DropzoneEssentialsFragment)?.name
+              (order?.seller as Membership)?.user?.name ||
+              (order?.seller as OperatorEssentialsFragment)?.name
             }
             style={{ width: '100%' }}
             titleStyle={styles.orderTitle}
@@ -63,13 +62,13 @@ export default function OrderCard(props: IOrder) {
                     style={{ alignSelf: 'center', marginHorizontal: 12 }}
                     size={60}
                     name={
-                      (order?.seller as DropzoneUserEssentialsFragment)?.user?.name ||
-                      (order?.seller as DropzoneEssentialsFragment).name ||
+                      (order?.seller as MembershipEssentialsFragment)?.user?.name ||
+                      (order?.seller as OperatorEssentialsFragment).name ||
                       ''
                     }
                     image={
-                      (order?.seller as DropzoneUserEssentialsFragment).user?.image ||
-                      (order?.seller as DropzoneEssentialsFragment).banner ||
+                      (order?.seller as MembershipEssentialsFragment).user?.image ||
+                      (order?.seller as OperatorEssentialsFragment).banner ||
                       undefined
                     }
                   />
@@ -79,8 +78,8 @@ export default function OrderCard(props: IOrder) {
                       order.buyer &&
                       '__typename' in order.buyer &&
                       // @ts-ignore
-                      order.buyer.__typename === 'DropzoneUser' &&
-                      (order.buyer as DropzoneUserEssentialsFragment)?.id === dropzoneUser?.id
+                      order.buyer.__typename === 'Membership' &&
+                      (order.buyer as MembershipEssentialsFragment)?.id === membership?.id
                         ? '#FF1414'
                         : successColor
                     }

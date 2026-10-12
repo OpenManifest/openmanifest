@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Text, TextInput, View } from 'react-native';
 import { useController } from 'react-hook-form';
-import { CreateRigInspectionDocument } from 'app/api/reflection';
+import { CreateEquipmentInspectionDocument } from 'app/api/reflection';
 import { RigInspectionForm, useRigInspectionForm } from 'app/forms/rig_inspection';
 import type { FieldItem } from 'app/forms/rig_inspection_template';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
@@ -19,7 +19,7 @@ function Harness(props: { onSuccess?(): void }) {
   const { control, setValue, onSubmit } = useRigInspectionForm({
     fields: template,
     rigId: '2',
-    dropzoneId: '1',
+    operatorId: '1',
     onSuccess: props.onSuccess,
   });
   const { field: ok } = useController({ name: 'ok', control });
@@ -39,7 +39,7 @@ function Harness(props: { onSuccess?(): void }) {
 function renderForm(graphql: Parameters<typeof render>[1]['graphql'] = [], onSuccess?: () => void) {
   const screen = render(<Harness {...{ onSuccess }} />, {
     session: authenticatedSession,
-    permissions: [Permission.ActAsRigInspector],
+    permissions: [Permission.ActAsEquipmentInspector],
     graphql,
   });
   return within(screen.getByTestId('under-test'));
@@ -58,8 +58,8 @@ describe('rig inspection form', () => {
     const form = renderForm([
       {
         request: {
-          query: CreateRigInspectionDocument,
-          operationName: 'CreateRigInspection',
+          query: CreateEquipmentInspectionDocument,
+          operationName: 'CreateEquipmentInspection',
           variables: {},
         },
         result: mutationResult,
@@ -77,8 +77,8 @@ describe('rig inspection form', () => {
     const onSuccess = jest.fn();
     const mutationResult = jest.fn(() => ({
       data: {
-        createRigInspection: {
-          __typename: 'CreateRigInspectionPayload',
+        createEquipmentInspection: {
+          __typename: 'CreateEquipmentInspectionPayload',
           rigInspection: null,
           errors: null,
           fieldErrors: null,
@@ -89,10 +89,10 @@ describe('rig inspection form', () => {
       [
         {
           request: {
-            query: CreateRigInspectionDocument,
-            operationName: 'CreateRigInspection',
+            query: CreateEquipmentInspectionDocument,
+            operationName: 'CreateEquipmentInspection',
             variables: {
-              dropzone: '1',
+              operator: '1',
               rig: '2',
               isOk: true,
               definition: JSON.stringify([

@@ -36,12 +36,12 @@ export default function useJumpRunRotation(value: number) {
   const opacity = React.useRef(new Animated.Value(0));
 
   /** ANIMATIONS * */
-  const planePosition = React.useRef(new Animated.Value(hypothenuse || 0));
-  const planeAnimation = React.useRef<Animated.CompositeAnimation>(undefined);
+  const vehiclePosition = React.useRef(new Animated.Value(hypothenuse || 0));
+  const vehicleAnimation = React.useRef<Animated.CompositeAnimation>(undefined);
 
   React.useEffect(() => {
-    planeAnimation.current = Animated.loop(
-      Animated.timing(planePosition.current, {
+    vehicleAnimation.current = Animated.loop(
+      Animated.timing(vehiclePosition.current, {
         duration: 6000,
         toValue: -hypothenuse / 2,
         useNativeDriver: true,
@@ -88,7 +88,7 @@ export default function useJumpRunRotation(value: number) {
 
   const onBegan = React.useCallback(() => {
     setDragging(true);
-    planePosition.current.setValue(hypothenuse / 2);
+    vehiclePosition.current.setValue(hypothenuse / 2);
     Animated.timing(opacity.current, {
       duration: 350,
       toValue: 1,
@@ -102,8 +102,8 @@ export default function useJumpRunRotation(value: number) {
       toValue: 0,
       useNativeDriver: true,
     }).start();
-    planePosition.current.setValue(hypothenuse / 2);
-    planeAnimation.current?.start();
+    vehiclePosition.current.setValue(hypothenuse / 2);
+    vehicleAnimation.current?.start();
   }, [hypothenuse]);
 
   const onLayout = React.useCallback((e: LayoutChangeEvent) => {
@@ -123,10 +123,10 @@ export default function useJumpRunRotation(value: number) {
       hypothenuse,
       rotation: rotation.current,
     },
-    plane: {
-      position: planePosition.current,
+    vehicle: {
+      position: vehiclePosition.current,
       opacity: opacity.current,
-      animation: planeAnimation.current,
+      animation: vehicleAnimation.current,
     },
     isDragging,
   };
