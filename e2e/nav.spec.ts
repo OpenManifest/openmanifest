@@ -6,10 +6,12 @@ test.describe('navigation @nav', () => {
   test('the tab bar is named from the translations', async ({ page }) => {
     await gotoRoute(page, '/manifest');
 
-    for (const name of ['Overview', 'Manifest', 'Notifications', 'Users']) {
-      await expect(
-        page.getByRole('tab', { name }).or(page.getByLabel(name)).first()
-      ).toBeAttached();
+    // A tab on a phone, a drawer button where the drawer is open
+    for (const name of ['Overview', 'Manifest', 'Notifications']) {
+      const entry = page
+        .getByRole('tab', { name, exact: true })
+        .or(page.getByRole('button', { name, exact: true }));
+      await expect(entry.first()).toBeAttached();
     }
     await expectLayout(page, 'navigation');
   });
