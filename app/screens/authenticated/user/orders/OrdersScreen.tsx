@@ -1,5 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SectionList, StyleSheet, View } from 'react-native';
 import { List } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
@@ -30,14 +31,15 @@ export default function OrdersScreen() {
   });
 
   const navigation = useUserNavigation();
+  const { t } = useTranslation('common');
   React.useEffect(() => {
     if (membership?.user?.name && membership?.id !== currentUser?.id) {
       const [firstName] = membership.user?.name?.split(/\s/) || [];
-      navigation.setOptions({ title: `${firstName}'s Transactions` });
+      navigation.setOptions({ title: t('screens.transactionsOf', { name: firstName }) });
     } else {
-      navigation.setOptions({ title: 'Your Transactions' });
+      navigation.setOptions({ title: t('screens.yourTransactions') });
     }
-  }, [currentUser?.id, membership?.id, membership?.user?.name, navigation]);
+  }, [currentUser?.id, membership?.id, membership?.user?.name, navigation, t]);
 
   return (
     <View style={{ flexGrow: 1, backgroundColor: theme.colors.surface }}>

@@ -13,9 +13,10 @@ import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
+const mockNavigation = Object.assign(jest.fn(), { setOptions: jest.fn() });
 jest.mock('@react-navigation/native', () => ({
   ...jest.requireActual('@react-navigation/native'),
-  useNavigation: () => jest.fn(),
+  useNavigation: () => mockNavigation,
   useRoute: () => ({ params: { loadId: '1' } }),
   useIsFocused: () => false,
 }));

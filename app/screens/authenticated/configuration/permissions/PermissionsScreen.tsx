@@ -1,5 +1,6 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { Card, List } from 'react-native-paper';
 import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
@@ -97,12 +98,13 @@ export default function OperatorPermissionScreen() {
   const isFocused = useIsFocused();
 
   const navigation = useNavigation();
+  const { t } = useTranslation('common');
   React.useEffect(() => {
     if (isFocused) {
-      navigation.setOptions({ title: 'Permissions' });
+      navigation.setOptions({ title: t('screens.permissions') });
       refetch();
     }
-  }, [isFocused, navigation, refetch]);
+  }, [isFocused, navigation, refetch, t]);
 
   return loading || !data?.operator?.roles?.length ? (
     <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>

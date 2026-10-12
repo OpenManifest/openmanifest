@@ -3,7 +3,8 @@ import * as React from 'react';
 
 import { OperatorEssentialsFragment } from 'app/api/operations';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import AppBar from 'app/components/appbar/AppBar';
+import ScreenHeader from 'app/navigation/ScreenHeader';
+import { useTranslation } from 'react-i18next';
 import { AppSignalBoundary } from 'app/components/app_signal';
 import SettingsMenuScreen from './settings_menu/SettingsMenuScreen';
 import TicketTypeSettingsScreen from './ticket_types/TicketTypesScreen';
@@ -36,12 +37,13 @@ export function useConfigurationNavigation() {
   return useNavigation<NavigationProp<ConfigurationRoutes>>();
 }
 export default function SettingsTab() {
+  const { t } = useTranslation(['common', 'terms']);
   return (
     <AppSignalBoundary>
       <Configuration.Navigator
         screenOptions={{
           headerShown: true,
-          header: (props) => <AppBar {...props} />,
+          header: (props) => <ScreenHeader {...props} />,
           cardStyle: {
             flex: 1,
           },
@@ -50,52 +52,52 @@ export default function SettingsTab() {
         <Configuration.Screen
           name="SettingsMenuScreen"
           component={SettingsMenuScreen}
-          options={{ title: 'Settings' }}
+          options={{ title: t('common:screens.settings') }}
         />
         <Configuration.Screen
           name="OperatorSettingsScreen"
           component={OperatorSettingsScreen}
-          options={{ title: 'Basic settings' }}
+          options={{ title: t('common:screens.basicSettings') }}
         />
         <Configuration.Screen
           name="VehiclesScreen"
           component={VehiclesScreen}
-          options={{ title: 'Planes' }}
+          options={{ title: t('terms:vehicle', { count: 2 }) }}
         />
         <Configuration.Screen
           name="TicketTypesScreen"
           component={TicketTypeSettingsScreen}
-          options={{ title: 'Ticket types' }}
+          options={{ title: t('common:screens.ticketTypes') }}
         />
         <Configuration.Screen
           name="ExtrasScreen"
           component={ExtrasScreen}
-          options={{ title: 'Ticket add-ons' }}
+          options={{ title: t('common:screens.ticketAddOns') }}
         />
         <Configuration.Screen
           name="RigInspectionTemplateScreen"
           component={RigInspectionTemplateScreen}
-          options={{ title: 'Rig Inspection Form' }}
+          options={{ title: t('common:screens.rigInspectionForm') }}
         />
         <Configuration.Screen
           name="OperatorRigsScreen"
           component={OperatorRigsScreen}
-          options={{ title: 'Dropzone rigs' }}
+          options={{ title: t('common:screens.rigs') }}
         />
         <Configuration.Screen
           name="TransactionsScreen"
           component={OperatorTransactionsScreen}
-          options={{ title: 'Transactions' }}
+          options={{ title: t('common:screens.transactions') }}
         />
         <Configuration.Screen
           name="PermissionScreen"
           component={OperatorPermissionScreen}
-          options={{ title: 'Permissions' }}
+          options={{ title: t('common:screens.permissions') }}
         />
         <Configuration.Screen
           name="DailyLogScreen"
           component={OperatorDailyLogScreen}
-          options={{ title: 'Master log' }}
+          options={{ title: t('common:screens.masterLog') }}
         />
       </Configuration.Navigator>
     </AppSignalBoundary>

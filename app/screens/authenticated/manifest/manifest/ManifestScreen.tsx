@@ -66,14 +66,6 @@ export default function ManifestScreen() {
   const isFocused = useIsFocused();
 
   React.useEffect(() => {
-    if (isFocused && operator?.name) {
-      navigation.setOptions({
-        title: operator.name,
-      });
-    }
-  }, [isFocused, operator?.name, navigation]);
-
-  React.useEffect(() => {
     if (isFocused) {
       refetch();
     }

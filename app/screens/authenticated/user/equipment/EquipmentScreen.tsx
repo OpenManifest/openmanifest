@@ -1,5 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 
@@ -37,14 +38,24 @@ export default function EquipmentScreen() {
     id: (route?.params?.userId || currentUser?.id) as string,
   });
 
+  const { t } = useTranslation(['common', 'terms']);
   React.useEffect(() => {
     if (membership?.user?.name && membership?.id !== currentUser?.id) {
       const [firstName] = membership.user?.name.split(/\s/) || [];
-      navigation.setOptions({ title: `${firstName}'s Equipment` });
+      navigation.setOptions({
+        title: t('common:screens.equipmentOf', {
+          name: firstName,
+          equipment: t('terms:equipment', { count: 1 }).toLowerCase(),
+        }),
+      });
     } else {
-      navigation.setOptions({ title: 'Your Equipment' });
+      navigation.setOptions({
+        title: t('common:screens.yourEquipment', {
+          equipment: t('terms:equipment', { count: 1 }).toLowerCase(),
+        }),
+      });
     }
-  }, [currentUser?.id, membership?.id, membership?.user?.name, navigation]);
+  }, [currentUser?.id, membership?.id, membership?.user?.name, navigation, t]);
   const canUpdateUser = useRestriction(Permission.UpdateUser);
   return (
     <>

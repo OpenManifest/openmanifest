@@ -43,9 +43,8 @@ function ThemedNavigationContainer(
 
   return (
     <NavigationContainer
-      documentTitle={{
-        formatter: () => 'OpenManifest',
-      }}
+      // The screen headers write the title of the tab on the web: "<screen> · <operator>"
+      documentTitle={{ enabled: false }}
       onStateChange={props.onStateChange}
       linking={LinkingConfiguration}
       theme={theme}

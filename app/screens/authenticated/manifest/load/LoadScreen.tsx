@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { FlatList, Platform } from 'react-native';
 
-import { RouteProp, useIsFocused, useRoute } from '@react-navigation/native';
+import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { SlotDetailsFragment } from 'app/api/operations';
 import {
   LoadContextProvider,
@@ -49,6 +50,20 @@ function LoadScreen() {
     load: { load, loading, refetch, updateGCA, updateLoadMaster, updatePilot, updateVehicle },
   } = useLoadContext();
   const isFocused = useIsFocused();
+  const navigation = useNavigation();
+  const { t } = useTranslation(['common', 'terms']);
+
+  // The header reads "Load #12" once the number is known
+  React.useEffect(() => {
+    if (load?.loadNumber) {
+      navigation.setOptions({
+        title: t('common:loadNumber', {
+          load: t('terms:load', { count: 1 }),
+          number: load.loadNumber,
+        }),
+      });
+    }
+  }, [load?.loadNumber, navigation, t]);
 
   React.useEffect(() => {
     if (load?.maxSlots && load?.maxSlots < 5 && !isExpanded) {

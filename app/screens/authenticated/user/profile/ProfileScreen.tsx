@@ -1,5 +1,6 @@
 import { RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { Chip, Divider } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
@@ -83,7 +84,8 @@ function ProfileScreenContent(props: {
     [currentUser?.expiresAt, onClickAccessAndMembership]
   );
 
-  React.useEffect(() => navigation.setOptions({ title: 'Profile' }), [navigation]);
+  const { t } = useTranslation('common');
+  React.useEffect(() => navigation.setOptions({ title: t('screens.user') }), [navigation, t]);
   React.useEffect(() => {
     if (isFocused) {
       navigation.setOptions({
