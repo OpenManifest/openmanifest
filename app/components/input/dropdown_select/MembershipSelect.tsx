@@ -1,7 +1,7 @@
 import { MembershipEssentialsFragment } from 'app/api/operations';
 import { useMembershipsQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { Title } from 'react-native-paper';
+import { Text } from 'app/ui';
 import { Membership, Permission } from '../../../api/schema.d';
 import { useSession } from '../../../state';
 import Select from '../select/Select';
@@ -44,7 +44,7 @@ function MembershipSelect(props: IMembershipSelect) {
 
   return (
     <>
-      <Title>{label}</Title>
+      <Text variant="title">{label}</Text>
       <Select<MembershipEssentialsFragment>
         value={selected}
         compare={(a, b) => a?.id === b?.id}

@@ -26,8 +26,11 @@ export default function Overlay({
   open,
   onClose,
   title,
+  showTitle = true,
   presentation = 'auto',
   footer,
+  handle,
+  disablePadding = false,
   testID,
   children,
 }: OverlayProps) {
@@ -107,7 +110,13 @@ export default function Overlay({
               paddingVertical: theme.space.xs,
             }}
           >
-            <View style={{ flexShrink: 1 }}>
+            <View
+              style={
+                showTitle
+                  ? { flexShrink: 1 }
+                  : { position: 'absolute', width: 1, height: 1, overflow: 'hidden' }
+              }
+            >
               <Dialog.Title asChild>
                 <Text variant="title" role="heading" aria-level={2} numberOfLines={2}>
                   {title}
@@ -118,9 +127,10 @@ export default function Overlay({
               <IconButton icon="close" aria-label={t('overlay.close')} />
             </Dialog.Close>
           </View>
+          {handle}
           <ScrollView
             style={{ flexShrink: 1 }}
-            contentContainerStyle={{ padding: theme.space.lg }}
+            contentContainerStyle={{ padding: disablePadding ? 0 : theme.space.lg }}
             keyboardShouldPersistTaps="handled"
           >
             {children}

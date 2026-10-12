@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Card, DataTable, IconButton, List, Paragraph } from 'react-native-paper';
 import { Linking, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Screen } from 'app/components/layout';
+import FormColumn, { FORM_COLUMN_WIDE_MAX_WIDTH } from 'app/components/layout/FormColumn';
 import DatePicker from 'app/components/input/date_picker/DatePicker';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { useDailyLogQuery } from 'app/api/reflection';
@@ -63,7 +63,7 @@ export default function OperatorDailyLogScreen() {
   });
 
   return (
-    <Screen scrollable fullWidth={false}>
+    <FormColumn maxWidth={FORM_COLUMN_WIDE_MAX_WIDTH}>
       <View style={{ width: '100%', paddingTop: 48 }}>
         <Card>
           <Card.Title
@@ -152,6 +152,6 @@ export default function OperatorDailyLogScreen() {
           </Card>
         ))}
       </View>
-    </Screen>
+    </FormColumn>
   );
 }

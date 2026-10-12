@@ -7,7 +7,10 @@ import useOpenState from './useOpenState';
 
 export type PopoverProps = {
   /** The pressable that opens it (a `Button`, an `IconButton`): it gets `onPress` and, on the web, its ARIA state */
-  trigger: React.ReactElement<{ onPress?: () => void }>;
+  trigger?: React.ReactElement<{ onPress?: () => void }>;
+  /** Instead of `trigger`, something that is already a control and opens the popover itself (through `open`): the popover
+   * only lines up with it, so a button is never inside a button */
+  anchor?: React.ReactNode;
   /** Names the popover for screen readers */
   label: string;
   children: React.ReactNode | ((close: () => void) => React.ReactNode);
@@ -27,6 +30,7 @@ export type PopoverProps = {
  */
 export default function Popover({
   trigger,
+  anchor,
   label,
   children,
   open,
@@ -41,7 +45,8 @@ export default function Popover({
 
   return (
     <>
-      {React.cloneElement(trigger, { onPress: () => setVisible(true) })}
+      {anchor ??
+        (trigger ? React.cloneElement(trigger, { onPress: () => setVisible(true) }) : null)}
       <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Tappable

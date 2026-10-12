@@ -1,5 +1,5 @@
 import { useOperatorStatisticsQuery } from 'app/api/reflection';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import FormColumn, { FORM_COLUMN_WIDE_MAX_WIDTH } from 'app/components/layout/FormColumn';
 import * as React from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 import { successColor, warningColor } from 'app/constants/Colors';
@@ -77,7 +77,7 @@ export default function DashboardPage() {
     []
   );
   return (
-    <ScrollableScreen stickyHeaderIndices={[0]}>
+    <FormColumn maxWidth={FORM_COLUMN_WIDE_MAX_WIDTH} stickyHeaderIndices={[0]}>
       <Card style={styles.controls}>
         <Card.Content style={{ flexDirection: 'row' }}>
           <Chip
@@ -195,7 +195,7 @@ export default function DashboardPage() {
           operator={operator?.id}
         />
       </View>
-    </ScrollableScreen>
+    </FormColumn>
   );
 }
 

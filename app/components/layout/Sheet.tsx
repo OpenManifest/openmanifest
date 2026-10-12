@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
-import { Title, useTheme } from 'react-native-paper';
+import { useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   BottomSheetBackdrop,
@@ -9,6 +8,7 @@ import {
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
 import type { BottomSheetBackdropProps, BottomSheetFooterProps } from '@gorhom/bottom-sheet';
+import { Text, useTheme } from 'app/ui';
 import { SheetContext } from './SheetContext';
 
 export interface ISheetProps {
@@ -74,20 +74,39 @@ export default function Sheet(props: ISheetProps) {
   const HandleComponent = React.useCallback(
     () => (
       <View
-        style={[
-          title ? styles.headerWithTitle : styles.header,
-          {
-            overflow: handle ? 'hidden' : undefined,
-            shadowColor: theme.colors.onSurface,
-            backgroundColor: theme.colors.surface,
-          },
-        ]}
+        style={{
+          zIndex: 10000,
+          borderTopLeftRadius: theme.radius.lg,
+          borderTopRightRadius: theme.radius.lg,
+          minHeight: title ? theme.density.touchTarget + theme.space.sm : theme.space.xxxl,
+          paddingTop: theme.space.xs,
+          paddingLeft: title ? theme.space.lg : 0,
+          overflow: handle ? 'hidden' : undefined,
+          backgroundColor: theme.colour.surface,
+          ...theme.elevation.raised,
+        }}
       >
-        {handle ?? <View style={styles.handle} />}
-        {title ? <Title style={styles.title}>{title}</Title> : null}
+        {handle ?? (
+          <View
+            style={{
+              width: theme.space.xxl,
+              height: theme.space.xs,
+              borderRadius: theme.radius.sm,
+              backgroundColor: theme.colour.border,
+              alignSelf: 'center',
+            }}
+          />
+        )}
+        {title ? (
+          <View style={{ paddingTop: theme.space.sm }}>
+            <Text variant="title" role="heading" aria-level={2}>
+              {title}
+            </Text>
+          </View>
+        ) : null}
       </View>
     ),
-    [handle, theme.colors.onSurface, theme.colors.surface, title]
+    [handle, theme, title]
   );
 
   const FooterComponent = React.useCallback(
@@ -96,17 +115,17 @@ export default function Sheet(props: ISheetProps) {
         <View
           onLayout={(event) => setFooterHeight(event.nativeEvent.layout.height)}
           style={{
-            backgroundColor: theme.colors.surface,
-            paddingHorizontal: 16,
-            paddingTop: 8,
-            paddingBottom: insets.bottom + 8,
+            backgroundColor: theme.colour.surface,
+            paddingHorizontal: theme.space.lg,
+            paddingTop: theme.space.sm,
+            paddingBottom: insets.bottom + theme.space.sm,
           }}
         >
           {footer}
         </View>
       </BottomSheetFooter>
     ),
-    [footer, insets.bottom, theme.colors.surface]
+    [footer, insets.bottom, theme]
   );
 
   return (
@@ -122,20 +141,19 @@ export default function Sheet(props: ISheetProps) {
       backdropComponent={Backdrop}
       handleComponent={HandleComponent}
       footerComponent={footer ? FooterComponent : undefined}
+      backgroundStyle={{ backgroundColor: theme.colour.surface }}
       onDismiss={onDismiss}
     >
       <SheetContext.Provider value>
         <BottomSheetScrollView
           testID={testID}
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={[
-            styles.content,
-            disablePadding ? styles.noPadding : null,
-            {
-              backgroundColor: theme.colors.surface,
-              paddingBottom: footer ? footerHeight + 8 : insets.bottom + 24,
-            },
-          ]}
+          contentContainerStyle={{
+            paddingHorizontal: disablePadding ? 0 : theme.space.lg,
+            paddingTop: disablePadding ? 0 : theme.space.sm,
+            backgroundColor: theme.colour.surface,
+            paddingBottom: footer ? footerHeight + theme.space.sm : insets.bottom + theme.space.xl,
+          }}
         >
           {header}
           {children}
@@ -144,44 +162,3 @@ export default function Sheet(props: ISheetProps) {
     </BottomSheetModal>
   );
 }
-
-const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-  },
-  noPadding: { paddingHorizontal: 0, paddingTop: 0 },
-  handle: {
-    width: 32,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#AAAAAA',
-    alignSelf: 'center',
-  },
-  header: {
-    zIndex: 10000,
-    elevation: 2,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    minHeight: 40,
-    paddingTop: 4,
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-  },
-  headerWithTitle: {
-    zIndex: 10000,
-    elevation: 2,
-    borderTopLeftRadius: 14,
-    borderTopRightRadius: 14,
-    minHeight: 56,
-    paddingLeft: 16,
-    paddingTop: 4,
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-  },
-  title: {
-    marginTop: 8,
-  },
-});

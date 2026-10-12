@@ -4,6 +4,8 @@ export { default as Card } from './Card';
 export type { CardProps } from './Card';
 export { default as Divider } from './Divider';
 export type { DividerProps } from './Divider';
+export { default as Icon } from './Icon';
+export type { IconProps } from './Icon';
 export { default as IconButton } from './IconButton';
 export type { IconButtonProps, IconName } from './IconButton';
 export { default as ListRow } from './ListRow';

@@ -1,7 +1,7 @@
 import { UserRigDetailedFragment } from 'app/api/operations';
 import { useAvailableRigsLazyQuery } from 'app/api/reflection';
 import * as React from 'react';
-import { useTheme } from 'react-native-paper';
+import { useTheme } from 'app/ui';
 import { useSession } from 'app/state';
 import Chip from 'app/components/chips/Chip';
 import Select, { ISelectOption } from '../select/Select';
@@ -39,7 +39,7 @@ function RigSelect(props: IRigSelect) {
   } = props;
   const currentOperatorId = useSession((session) => session.currentOperatorId);
   const theme = useTheme();
-  const color = assignedColor || theme.colors.onSurface;
+  const color = assignedColor || theme.colour.text;
   const [fetchRigs, { data }] = useAvailableRigsLazyQuery({
     fetchPolicy: 'cache-and-network',
   });

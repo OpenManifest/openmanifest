@@ -125,5 +125,29 @@
   },
   "avatar": {
     "photoOf": "Photo of {{name}}"
+  },
+  "fields": {
+    "license": "License",
+    "unknown": "Unknown"
+  },
+  "password": {
+    "strength": "Password strength",
+    "tooWeak": "Too weak",
+    "weak": "Weak",
+    "acceptable": "Acceptable",
+    "strong": "Strong"
+  },
+  "picker": {
+    "noDate": "No date selected",
+    "noTime": "No time selected"
+  },
+  "location": {
+    "search": "Search for an address",
+    "useMine": "Use my location"
+  },
+  "colour": {
+    "custom": "Custom color (hex)",
+    "invalid": "Use a hex color such as #1D3557",
+    "swatch": "Color {{colour}}"
   }
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { Button, Card, IconButton, Paragraph, Text } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
@@ -17,7 +17,6 @@ import PilotChip from 'app/components/chips/PilotChip';
 import VehicleChip from 'app/components/chips/VehicleChip';
 import Menu, { MenuItem } from 'app/components/popover/Menu';
 
-import { View } from 'app/components/Themed';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { useAuthenticatedNavigation } from 'app/screens/authenticated/useAuthenticatedNavigation';

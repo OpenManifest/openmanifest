@@ -10,6 +10,8 @@ import { calculateAngle } from '../../../utils/calculateAngle';
 import { mapDegreesToDirections } from '../../../utils/mapDegreesToDirection';
 import { getPointOnCircle } from '../../../utils/calculateCoordinatesByAngle';
 import MapView from '../../map/Map';
+import { useTheme } from 'app/ui';
+import useJumpRunStyles from './useJumpRunStyles';
 
 interface IJumpRunSelectorProps {
   value: number;
@@ -21,6 +23,8 @@ interface IJumpRunSelectorProps {
 
 const MAP_SIZE_PERCENTAGE = 1.0;
 export default function JumpRunSelector(props: IJumpRunSelectorProps) {
+  const theme = useTheme();
+  const styles = useJumpRunStyles('web');
   const [rootLayout, setRootLayout] = React.useState<LayoutRectangle>({
     x: 0,
     y: 0,
@@ -142,7 +146,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
           width: '100%',
           height: '100%',
           alignItems: 'center',
-          marginTop: 50,
+          marginTop: theme.space.xxxl,
         }}
         onLayout={(layout) => setRootLayout(layout.nativeEvent.layout)}
       >
@@ -151,7 +155,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
             style={[
               styles.title,
               {
-                marginBottom: 4,
+                marginBottom: theme.space.xs,
                 opacity: opacity.current.interpolate({
                   inputRange: [0, 1],
                   outputRange: [1, 0],
@@ -185,8 +189,13 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
           <Animated.View
             onLayout={onMountRotatableView}
             style={[
-              styles.iconContainer,
               {
+                borderWidth: theme.space.sm,
+                borderStyle: 'solid',
+                borderColor: theme.colour.text,
+                alignSelf: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
                 width: MAP_SIZE,
                 height: MAP_SIZE,
                 borderRadius: MAP_SIZE / 2,
@@ -200,7 +209,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
                   inputRange: [0, 1],
                   outputRange: [10, 2],
                 }),
-                backgroundColor: '#FF1414',
+                backgroundColor: theme.colour.map.guide,
                 opacity: opacity.current.interpolate({
                   inputRange: [0, 1],
                   outputRange: [0.6, 1],
@@ -244,7 +253,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
                 },
               ]}
             >
-              <MaterialCommunityIcons name="airplane" size={40} color="#ffffff" />
+              <MaterialCommunityIcons name="airplane" size={40} color={theme.colour.map.text} />
             </Animated.View>
           )}
           <Animated.Text
@@ -272,78 +281,9 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
             },
           ]}
         >
-          {Math.round(jumpRun)}&deg; ({mapDegreesToDirections(jumpRun)})
+          {`${Math.round(jumpRun)}° (${mapDegreesToDirections(jumpRun)})`}
         </Animated.Text>
       </View>
     </PanGestureHandler>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 0,
-    alignItems: 'center',
-    paddingLeft: 0,
-    paddingRight: 0,
-  },
-  title: {
-    fontSize: 50,
-    fontWeight: 'bold',
-    color: 'white',
-    left: 0,
-    width: '100%',
-    paddingBottom: 40,
-    textAlign: 'center',
-    textShadowColor: 'rgba(15, 15, 15, 0.5)',
-    textShadowRadius: 10,
-    textShadowOffset: {
-      width: 2,
-      height: 2,
-    },
-  },
-  degreeLabel: {
-    width: 200,
-    height: 120,
-    textAlign: 'center',
-    textShadowColor: 'rgba(15, 15, 15, 0.5)',
-    textShadowRadius: 10,
-    textShadowOffset: {
-      width: 2,
-      height: 2,
-    },
-    fontSize: 100,
-    color: 'white',
-    position: 'absolute',
-  },
-  bottomDegreeLabel: {
-    fontSize: 50,
-    paddingBottom: 16,
-    fontWeight: 'bold',
-    color: 'white',
-    position: 'absolute',
-    bottom: 50,
-    left: 0,
-    top: 48,
-    width: '100%',
-    textAlign: 'center',
-    textShadowColor: 'rgba(15, 15, 15, 0.5)',
-    textShadowRadius: 10,
-    textShadowOffset: {
-      width: 2,
-      height: 2,
-    },
-  },
-
-  content: {
-    width: '100%',
-    flexDirection: 'column',
-  },
-  iconContainer: {
-    borderWidth: 10,
-    borderStyle: 'solid',
-    borderColor: '#222222',
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

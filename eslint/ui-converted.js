@@ -4,6 +4,8 @@
 module.exports = {
   converted: [
     'app/ui/**/*.{ts,tsx}',
+    'app/components/input/**/*.{ts,tsx}',
+    'app/components/layout/**/*.{ts,tsx}',
     'app/navigation/**/*.{ts,tsx}',
     'app/screens/authenticated/account/**/*.{ts,tsx}',
   ],
@@ -14,5 +16,7 @@ module.exports = {
     'app/ui/**/*.test.{ts,tsx}',
     'app/navigation/**/__tests__/**',
     'app/navigation/**/*.test.{ts,tsx}',
+    'app/components/input/**/__tests__/**',
+    'app/components/layout/**/__tests__/**',
   ],
 };

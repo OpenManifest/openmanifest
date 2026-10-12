@@ -3,7 +3,8 @@ import { useAllowedActivityTypesQuery } from 'app/api/reflection';
 import { uniqBy } from 'lodash';
 import * as React from 'react';
 import { useSession } from 'app/state';
-import { List } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
+import { Subheader } from 'app/ui';
 import { ActivityType } from '../../../api/schema.d';
 import { withHookForm } from '../withHookForm';
 import ChipSelect from './ChipSelect';
@@ -18,6 +19,7 @@ interface IActivityTypeSelect {
 }
 
 function ActivityTypeChipSelect(props: IActivityTypeSelect) {
+  const { t } = useTranslation(['common', 'terms']);
   const { onLoadingStateChanged, userId, value, onChange, error } = props;
   const currentOperatorId = useSession((session) => session.currentOperatorId);
   const { data, loading } = useAllowedActivityTypesQuery({
@@ -36,7 +38,7 @@ function ActivityTypeChipSelect(props: IActivityTypeSelect) {
     <ChipSelectSkeleton />
   ) : (
     <>
-      <List.Subheader>Jump type</List.Subheader>
+      <Subheader>{t('terms:activity', { count: 1 })}</Subheader>
       <ChipSelect<ActivityTypeEssentialsFragment>
         {...{ error }}
         autoSelectFirst

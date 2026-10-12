@@ -14,10 +14,16 @@ export type OverlayProps = {
   onClose(): void;
   /** Names the overlay for screen readers and heads it */
   title: string;
+  /** Show the title (default); `false` keeps it as the name only, for a form whose button says it all */
+  showTitle?: boolean;
   /** `auto` picks a bottom sheet on a native phone, a side panel on a wide window, a dialog elsewhere */
   presentation?: Presentation;
   /** Pinned below the content, which scrolls: the buttons of a form */
   footer?: React.ReactNode;
+  /** Under the title, above the scrolling content and pinned with the title: tabs, a step header. On a sheet it takes the place of the drag handle */
+  handle?: React.ReactNode;
+  /** The content runs to the edges (a list of rows, a map) */
+  disablePadding?: boolean;
   testID?: string;
   children?: React.ReactNode;
 };
@@ -34,8 +40,11 @@ export default function Overlay({
   open,
   onClose,
   title,
+  showTitle = true,
   presentation = 'auto',
   footer,
+  handle,
+  disablePadding = false,
   testID,
   children,
 }: OverlayProps) {
@@ -48,7 +57,15 @@ export default function Overlay({
 
   if (kind === 'sheet') {
     return (
-      <Sheet open={open} onClose={onClose} title={title} footer={footer} testID={testID}>
+      <Sheet
+        open={open}
+        onClose={onClose}
+        title={showTitle ? title : undefined}
+        footer={footer}
+        handle={handle}
+        disablePadding={disablePadding}
+        testID={testID}
+      >
         {children}
       </Sheet>
     );
@@ -110,15 +127,18 @@ export default function Overlay({
             }}
           >
             <View style={{ flexShrink: 1 }}>
-              <Text variant="title" role="heading" aria-level={2} numberOfLines={2}>
-                {title}
-              </Text>
+              {showTitle ? (
+                <Text variant="title" role="heading" aria-level={2} numberOfLines={2}>
+                  {title}
+                </Text>
+              ) : null}
             </View>
             <IconButton icon="close" aria-label={t('overlay.close')} onPress={onClose} />
           </View>
+          {handle}
           <ScrollView
             style={{ flexShrink: 1 }}
-            contentContainerStyle={{ padding: theme.space.lg }}
+            contentContainerStyle={{ padding: disablePadding ? 0 : theme.space.lg }}
             keyboardShouldPersistTaps="handled"
           >
             {children}

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { View } from 'react-native';
 import * as Primitive from '@rn-primitives/popover';
 import { useTheme } from '../../theme';
 import type { PopoverProps } from './Popover';
@@ -15,6 +16,7 @@ function Content({ close, children }: { close(): void; children: PopoverProps['c
 /** On the web: Radix positions it next to the trigger, closes it on Escape or a click outside, returns focus */
 export default function Popover({
   trigger,
+  anchor,
   label,
   children,
   open,
@@ -37,9 +39,23 @@ export default function Popover({
 
   return (
     <Primitive.Root onOpenChange={onOpenChange}>
-      <Primitive.Trigger asChild ref={triggerRef}>
-        {trigger}
-      </Primitive.Trigger>
+      {anchor ? (
+        <View>
+          {anchor}
+          {/* Lines the popover up with the anchor; not a control (the anchor is) */}
+          <Primitive.Trigger asChild ref={triggerRef}>
+            <View
+              aria-hidden
+              tabIndex={-1}
+              style={{ position: 'absolute', bottom: 0, left: 0, width: 1, height: 1 }}
+            />
+          </Primitive.Trigger>
+        </View>
+      ) : (
+        <Primitive.Trigger asChild ref={triggerRef}>
+          {trigger}
+        </Primitive.Trigger>
+      )}
       <Primitive.Portal>
         <Primitive.Content
           align={align}

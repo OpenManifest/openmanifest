@@ -2,7 +2,8 @@ import { TicketTypeEssentialsFragment } from 'app/api/operations';
 import { useAllowedTicketTypesQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { useSession } from 'app/state';
-import { List } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
+import { Subheader } from 'app/ui';
 import { withHookForm } from '../withHookForm';
 import ChipSelect from './ChipSelect';
 import ChipSelectSkeleton from './ChipSelectSkeleton';
@@ -17,6 +18,7 @@ interface ITicketTypeSelect {
 }
 
 function TicketTypeChipSelect(props: ITicketTypeSelect) {
+  const { t } = useTranslation(['common', 'terms']);
   const { value, onLoadingStateChanged, onChange, onlyPublicTickets, error } = props;
   const currentOperatorId = useSession((session) => session.currentOperatorId);
 
@@ -36,7 +38,7 @@ function TicketTypeChipSelect(props: ITicketTypeSelect) {
     <ChipSelectSkeleton />
   ) : (
     <>
-      <List.Subheader>Ticket</List.Subheader>
+      <Subheader>{t('terms:ticket', { count: 1 })}</Subheader>
       <ChipSelect<TicketTypeEssentialsFragment>
         {...{ error }}
         autoSelectFirst

@@ -6,7 +6,7 @@ import color from 'color';
 import { successColor } from 'app/constants/Colors';
 import LottieView from 'app/components/LottieView';
 import { Operator, Membership } from 'app/api/schema.d';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import FormColumn from 'app/components/layout/FormColumn';
 import UserAvatar from 'app/components/UserAvatar';
 import lottieTicketAnimation from 'app/../assets/images/ticket.json';
 import { OperatorEssentialsFragment } from 'app/api/operations';
@@ -44,7 +44,7 @@ export default function OrderScreen() {
     [theme.colors.primary]
   );
   return (
-    <ScrollableScreen>
+    <FormColumn>
       <Card style={{ marginTop: 32, width: '100%', maxWidth: 600 }}>
         <Card.Content style={{ paddingBottom: 16 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
@@ -150,6 +150,6 @@ export default function OrderScreen() {
       {order?.receipts?.map((receipt, index) => {
         return <ReceiptCard {...{ receipt, order, index }} />;
       })}
-    </ScrollableScreen>
+    </FormColumn>
   );
 }

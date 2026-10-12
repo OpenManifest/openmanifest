@@ -13,3 +13,5 @@ export { default as StatusBadge } from './StatusBadge';
 export type { StatusBadgeProps } from './StatusBadge';
 export { default as Tabs } from './Tabs';
 export type { TabItem, TabsProps } from './Tabs';
+export { default as Subheader } from './Subheader';
+export type { SubheaderProps } from './Subheader';

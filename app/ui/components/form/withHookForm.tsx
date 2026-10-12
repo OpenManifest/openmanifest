@@ -8,13 +8,13 @@ import { Controller, type ControllerProps, type FieldValues, type Path } from 'r
 export function withHookForm<Props extends object>(Component: React.ComponentType<Props>) {
   return function WithHookForm<Fields extends FieldValues, TName extends Path<Fields>>(
     props: Omit<Props, 'value' | 'onChange' | 'onBlur' | 'error'> &
-      Pick<ControllerProps<Fields, TName>, 'control' | 'name' | 'rules'>
+      Pick<ControllerProps<Fields, TName>, 'control' | 'name' | 'rules' | 'defaultValue'>
   ) {
-    const { control, name, rules, ...rest } = props;
+    const { control, name, rules, defaultValue, ...rest } = props;
 
     return (
       <Controller
-        {...{ control, name, rules }}
+        {...{ control, name, rules, defaultValue }}
         render={({ field: { onChange, onBlur, value }, fieldState }) => (
           <Component
             {...(rest as unknown as Props)}

@@ -5,7 +5,9 @@ import { RotationGestureHandler } from 'react-native-gesture-handler';
 import MapView from 'react-native-maps';
 import { mapDegreesToDirections } from '../../../utils/mapDegreesToDirection';
 import { calculateLatLngDelta } from '../../../utils/calculateLatLngDelta';
+import { useTheme } from 'app/ui';
 import useJumpRunRotation from './useJumpRunRotation';
+import useJumpRunStyles from './useJumpRunStyles';
 
 interface IJumpRunSelectorProps {
   title?: string;
@@ -16,6 +18,8 @@ interface IJumpRunSelectorProps {
 }
 
 export default function JumpRunSelector(props: IJumpRunSelectorProps) {
+  const theme = useTheme();
+  const styles = useJumpRunStyles('native');
   const { latitude, longitude, value, onChange, title } = props;
   const { guide, isDragging, jumpRun, layout, vehicle, rotation } = useJumpRunRotation(value);
   const { height: MAP_HEIGHT, width: MAP_WIDTH } = layout.dimensions;
@@ -37,7 +41,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
             style={[
               styles.title,
               {
-                marginBottom: 4,
+                marginBottom: theme.space.xs,
                 opacity: vehicle.opacity.interpolate({
                   inputRange: [0, 1],
                   outputRange: [1, 0],
@@ -71,7 +75,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
               style={{
                 height: hypothenuse,
                 width: isDragging ? 2 : 10,
-                backgroundColor: '#FF1414',
+                backgroundColor: theme.colour.map.guide,
                 opacity: vehicle.opacity.interpolate({
                   inputRange: [-100, 100],
                   outputRange: [0.6, 1],
@@ -118,7 +122,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
                   style={{ transform: [{ rotate: '-45deg' }] }}
                   name="airplane"
                   size={40}
-                  color="#ffffff"
+                  color={theme.colour.map.text}
                 />
               </Animated.View>
             )}
@@ -147,71 +151,10 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
               },
             ]}
           >
-            {Math.round(jumpRun)}&deg; ({mapDegreesToDirections(jumpRun)})
+            {`${Math.round(jumpRun)}° (${mapDegreesToDirections(jumpRun)})`}
           </Animated.Text>
         </MapView>
       </View>
     </RotationGestureHandler>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 0,
-    alignItems: 'center',
-    paddingLeft: 0,
-    paddingRight: 0,
-  },
-  title: {
-    fontSize: 50,
-    fontWeight: 'bold',
-    color: 'white',
-    left: 0,
-    width: '100%',
-    paddingBottom: 40,
-    textAlign: 'center',
-    textShadowColor: 'rgba(15, 15, 15, 0.5)',
-    textShadowRadius: 10,
-    textShadowOffset: {
-      width: 2,
-      height: 2,
-    },
-  },
-  degreeLabel: {
-    width: 200,
-    height: 120,
-    left: 0,
-    top: '50%',
-    textAlign: 'center',
-    textShadowColor: 'rgba(15, 15, 15, 0.5)',
-    textShadowRadius: 10,
-    textShadowOffset: {
-      width: 2,
-      height: 2,
-    },
-    fontSize: 100,
-    color: 'white',
-    position: 'absolute',
-  },
-  bottomDegreeLabel: {
-    fontSize: 50,
-    fontWeight: 'bold',
-    color: 'white',
-    position: 'absolute',
-    top: 100,
-    left: 0,
-    width: '100%',
-    textAlign: 'center',
-    textShadowColor: 'rgba(15, 15, 15, 0.5)',
-    textShadowRadius: 10,
-    textShadowOffset: {
-      width: 2,
-      height: 2,
-    },
-  },
-
-  content: {
-    width: '100%',
-    flexDirection: 'column',
-  },
-});

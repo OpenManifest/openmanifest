@@ -96,9 +96,9 @@ function TextField({
       <View style={box}>
         <Input
           {...input}
-          {...fieldAria(ids, { helperText, error })}
+          {...fieldAria(ids, { helperText, error, label })}
           testID={testID}
-          aria-label={label}
+          aria-label={label || placeholder}
           value={value ?? ''}
           onChangeText={onChange}
           onFocus={() => setFocused(true)}

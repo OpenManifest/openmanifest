@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { List, Modal } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 import { TimePickerModal } from 'react-native-paper-dates';
+import { Icon, ListRow } from 'app/ui';
 import { DateTime } from 'luxon';
 import { clockInZone, resolveTimeZone, timeTodayInZone } from 'app/utils/operatorTime';
 
@@ -8,13 +9,15 @@ interface ITimePickerProps {
   label?: string;
   timestamp?: number;
   disabled?: boolean;
+  /** Ignored: the icon has the colour of the theme */
   color?: string;
   /** The zone the time of day is in: the operator's (default: this device's) */
   timeZone?: string;
   onChange(timestamp: number): void;
 }
 export default function TimePicker(props: ITimePickerProps) {
-  const { disabled, label, timestamp, onChange, color, timeZone } = props;
+  const { disabled, label, timestamp, onChange, timeZone } = props;
+  const { t } = useTranslation('common');
   const zone = resolveTimeZone(timeZone);
   const [open, setOpen] = React.useState(false);
 
@@ -30,20 +33,21 @@ export default function TimePicker(props: ITimePickerProps) {
     [setOpen, onChange, zone]
   );
 
-  const timestampLabel = timestamp ? clockInZone(timestamp, zone) : 'No time selected';
+  const timestampLabel = timestamp ? clockInZone(timestamp, zone) : t('picker.noTime');
   const shown = DateTime.fromSeconds(timestamp || DateTime.local().toSeconds(), { zone });
 
   return (
     <>
-      <List.Item
+      <ListRow
         title={label || timestampLabel}
+        supporting={label ? timestampLabel : undefined}
         disabled={!!disabled}
-        description={!label ? null : timestampLabel}
-        left={() => <List.Icon color={color} icon="calendar" />}
+        leading={<Icon name="clock-outline" tone="muted" />}
         onPress={() => setOpen(true)}
       />
 
-      <Modal visible={open}>
+      {/* Not mounted while closed: the modal needs the Paper theme only when it shows */}
+      {open ? (
         <TimePickerModal
           hours={shown.hour}
           minutes={shown.minute}
@@ -53,7 +57,7 @@ export default function TimePicker(props: ITimePickerProps) {
           onConfirm={(time) => onConfirm(time.hours, time.minutes)}
           label={label}
         />
-      </Modal>
+      ) : null}
     </>
   );
 }

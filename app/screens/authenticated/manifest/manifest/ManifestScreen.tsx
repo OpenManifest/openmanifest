@@ -1,7 +1,13 @@
 import ManifestDeskNote from 'app/components/ManifestDeskNote';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
-import { ImageBackground, RefreshControl, StyleSheet, useWindowDimensions } from 'react-native';
+import {
+  ImageBackground,
+  RefreshControl,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { FAB, IconButton } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
@@ -9,7 +15,6 @@ import ProgressBar from 'app/components/ProgressBar';
 import NoResults from 'app/components/NoResults';
 import FloatingActionArea from 'app/components/layout/FloatingActionArea';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
-import { View } from 'app/components/Themed';
 import { LoadState, Permission } from 'app/api/schema.d';
 import { useAppTheme } from 'app/theme';
 import { useOperatorContext, useManifestContext } from 'app/providers';

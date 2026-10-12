@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Badge, Card, Chip } from 'react-native-paper';
 import { isBefore } from 'date-fns';
 
 import PilotChip from 'app/components/chips/PilotChip';
 import VehicleChip from 'app/components/chips/VehicleChip';
 
-import { View } from 'app/components/Themed';
 import { LoadState } from 'app/api/schema.d';
 import { errorColor, warningColor } from 'app/constants/Colors';
 import { useLoadContext, withLoadContext } from 'app/providers/load';

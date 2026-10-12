@@ -19,10 +19,11 @@ export function useFieldIds() {
 /** What a screen reader needs on the input of a field: the name, the description and the invalid state */
 export function fieldAria(
   { labelId, messageId }: ReturnType<typeof useFieldIds>,
-  { helperText, error }: FieldMessages
+  { helperText, error, label }: FieldMessages & { label?: string }
 ) {
   return {
-    'aria-labelledby': labelId,
+    // A field without a visible label has no element to point at (its name is an `aria-label` of its own)
+    'aria-labelledby': label ? labelId : undefined,
     'aria-describedby': error || helperText ? messageId : undefined,
     'aria-invalid': !!error,
   } as const;
@@ -42,9 +43,11 @@ export default function Field({ label, ids, helperText, error, children }: Field
 
   return (
     <View style={{ gap: space.xs }}>
-      <Text variant="label" tone="muted" nativeID={ids.labelId}>
-        {label}
-      </Text>
+      {label ? (
+        <Text variant="label" tone="muted" nativeID={ids.labelId}>
+          {label}
+        </Text>
+      ) : null}
       {children}
       {message ? (
         <Text

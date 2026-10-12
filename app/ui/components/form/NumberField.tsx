@@ -18,8 +18,10 @@ export type NumberFieldProps = FieldMessages & {
   max?: number;
   /** What the buttons and the arrow keys add or take away (default 1) */
   step?: number;
-  /** A unit after the number: "kg", "ft", "$" */
+  /** A unit after the number: "kg", "ft" */
   unit?: string;
+  /** A symbol before it: "$" */
+  prefix?: string;
   placeholder?: string;
   disabled?: boolean;
   /** Without the minus and plus buttons */
@@ -55,6 +57,7 @@ function NumberField({
   max,
   step = 1,
   unit,
+  prefix,
   placeholder,
   disabled = false,
   hideSteppers = false,
@@ -89,8 +92,13 @@ function NumberField({
     <Field label={label} ids={ids} helperText={helperText} error={error}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.space.sm }}>
         <View style={[box, { flexGrow: 1, flexShrink: 1 }]}>
+          {prefix ? (
+            <Text variant="bodyCompact" tone="muted">
+              {prefix}
+            </Text>
+          ) : null}
           <TextInput
-            {...fieldAria(ids, { helperText, error })}
+            {...fieldAria(ids, { helperText, error, label })}
             testID={testID}
             role="spinbutton"
             aria-label={label}

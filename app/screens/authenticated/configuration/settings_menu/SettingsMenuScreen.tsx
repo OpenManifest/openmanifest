@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Divider, List, Switch } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import FormColumn from 'app/components/layout/FormColumn';
 import useRestriction from 'app/hooks/useRestriction';
 import { OperatorState, OperatorStateEvent, Permission } from 'app/api/schema.d';
 import { useOperatorContext } from 'app/providers/operator/context';
@@ -39,7 +39,7 @@ export default function SettingsScreen() {
   );
 
   return (
-    <ScrollableScreen contentContainerStyle={{ backgroundColor: theme.colors.surface }}>
+    <FormColumn contentContainerStyle={{ backgroundColor: theme.colors.surface }}>
       <List.Section title="Dropzone" style={{ width: '100%' }}>
         {!canUpdateOperator ? null : (
           <List.Item
@@ -258,6 +258,6 @@ export default function SettingsScreen() {
           description="Supplementary tickets like coach, camera, night jumpi"
         />
       </List.Section>
-    </ScrollableScreen>
+    </FormColumn>
   );
 }

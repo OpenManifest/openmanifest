@@ -3,7 +3,8 @@ import { useVehiclesQuery } from 'app/api/reflection';
 import { uniqBy } from 'lodash';
 import * as React from 'react';
 import { useSession } from 'app/state';
-import { List } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
+import { Subheader } from 'app/ui';
 import { withHookForm } from '../withHookForm';
 import ChipSelect from './ChipSelect';
 import ChipSelectSkeleton from './ChipSelectSkeleton';
@@ -16,6 +17,7 @@ interface IVehicleSelect {
 }
 
 function VehicleChipSelect(props: IVehicleSelect) {
+  const { t } = useTranslation(['common', 'terms']);
   const { value, onChange, onLoadingStateChanged, error } = props;
   const currentOperatorId = useSession((session) => session.currentOperatorId);
 
@@ -33,7 +35,7 @@ function VehicleChipSelect(props: IVehicleSelect) {
     <ChipSelectSkeleton />
   ) : (
     <>
-      <List.Subheader>Aircraft</List.Subheader>
+      <Subheader>{t('terms:vehicle', { count: 1 })}</Subheader>
       <ChipSelect<VehicleEssentialsFragment>
         autoSelectFirst
         {...{ error }}

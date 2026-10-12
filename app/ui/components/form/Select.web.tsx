@@ -52,8 +52,8 @@ function Select<Value extends string = string>({
         <Primitive.Trigger asChild>
           <Tappable
             role="combobox"
-            {...fieldAria(ids, { helperText, error })}
-            aria-label={label}
+            {...fieldAria(ids, { helperText, error, label })}
+            aria-label={label || placeholder || chosen?.label || ''}
             aria-disabled={disabled}
             testID={testID}
             minTarget={false}

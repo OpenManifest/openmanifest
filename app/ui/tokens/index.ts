@@ -18,6 +18,7 @@ export { motion } from './motion';
 export type { MotionKey } from './motion';
 export { radius } from './radius';
 export type { RadiusKey } from './radius';
+export { COLOUR_PRESETS } from './presets';
 export { space } from './space';
 export type { SpaceKey } from './space';
 export { type } from './type';

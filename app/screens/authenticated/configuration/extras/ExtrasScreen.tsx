@@ -7,7 +7,7 @@ import { Permission } from 'app/api/schema.d';
 import NoResults from 'app/components/NoResults';
 import FloatingActionArea from 'app/components/layout/FloatingActionArea';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import FormColumn from 'app/components/layout/FormColumn';
 import { useOperatorContext } from 'app/providers/operator/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { TicketTypeAddonDetailsFragment } from 'app/api/operations';
@@ -33,7 +33,7 @@ export default function ExtrasScreen() {
   return (
     <ScreenContainer edges={['bottom']}>
       <ProgressBar visible={loading} indeterminate color={theme.colors.primary} />
-      <ScrollableScreen hasFab contentContainerStyle={{ backgroundColor: theme.colors.surface }}>
+      <FormColumn hasFab contentContainerStyle={{ backgroundColor: theme.colors.surface }}>
         <DataTable>
           <DataTable.Header>
             <DataTable.Title>Name</DataTable.Title>
@@ -57,7 +57,7 @@ export default function ExtrasScreen() {
             subtitle="You can add multiple addons to assign to tickets, e.g outside camera, or coach"
           />
         )}
-      </ScrollableScreen>
+      </FormColumn>
       <FloatingActionArea>
         <FAB
           labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}

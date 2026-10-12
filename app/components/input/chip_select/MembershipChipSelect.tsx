@@ -1,6 +1,6 @@
 import { uniqBy } from 'lodash';
 import * as React from 'react';
-import { List } from 'react-native-paper';
+import { Subheader } from 'app/ui';
 import { Permission } from 'app/api/schema.d';
 import { useSession } from 'app/state';
 import { useMembershipsQuery } from 'app/api/reflection';
@@ -65,7 +65,7 @@ function MembershipChipSelect(props: IMembershipChipSelect) {
     <ChipSelectSkeleton />
   ) : (
     <>
-      <List.Subheader>{label}</List.Subheader>
+      {label ? <Subheader>{label}</Subheader> : null}
       <ChipSelect<MembershipEssentialsFragment>
         {...{ error, variant }}
         autoSelectFirst

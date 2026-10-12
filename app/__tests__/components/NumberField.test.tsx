@@ -34,11 +34,11 @@ describe('<NumberField />', () => {
   it('steps with the plus and minus buttons', async () => {
     const onValue = jest.fn();
     const screen = await render(<Harness onValue={onValue} step={2.5} />);
-    await fireEvent.press(screen.getByLabelText('Increase'));
+    await fireEvent.press(screen.getByLabelText('Increase Exit weight'));
     expect(onValue).toHaveBeenLastCalledWith(82.5);
     expect(screen.getByDisplayValue('82.5')).toBeTruthy();
-    await fireEvent.press(screen.getByLabelText('Decrease'));
-    await fireEvent.press(screen.getByLabelText('Decrease'));
+    await fireEvent.press(screen.getByLabelText('Decrease Exit weight'));
+    await fireEvent.press(screen.getByLabelText('Decrease Exit weight'));
     expect(onValue).toHaveBeenLastCalledWith(77.5);
   });
 
@@ -59,9 +59,11 @@ describe('<NumberField />', () => {
     const screen = await render(
       <Harness onValue={onValue} value={41} step={5} min={40} max={45} />
     );
-    await fireEvent.press(screen.getByLabelText('Decrease'));
+    await fireEvent.press(screen.getByLabelText('Decrease Exit weight'));
     expect(onValue).toHaveBeenLastCalledWith(40);
-    expect(screen.getByLabelText('Decrease').props.accessibilityState?.disabled).toBe(true);
+    expect(screen.getByLabelText('Decrease Exit weight').props.accessibilityState?.disabled).toBe(
+      true
+    );
     await fireEvent.changeText(screen.getByDisplayValue('40'), '99');
     expect(onValue).toHaveBeenLastCalledWith(45);
   });

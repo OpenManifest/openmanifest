@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Avatar, Badge, Card, Chip } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { ViewProps } from 'app/components/Themed';
+import type { ViewProps } from 'react-native';
 import { SlotDetailsFragment } from 'app/api/operations';
 import useOpenUser from 'app/navigation/useOpenUser';
 import { useAppTheme } from 'app/theme';

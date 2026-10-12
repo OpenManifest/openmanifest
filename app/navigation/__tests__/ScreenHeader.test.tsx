@@ -49,7 +49,7 @@ describe('ScreenHeader', () => {
   it('has no back button on a root screen', async () => {
     const screen = await renderWithProviders(header().element);
 
-    await waitFor(() => expect(screen.getByRole('heading')).toBeTruthy());
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Board' })).toBeTruthy());
     expect(screen.queryByRole('button', { name: /^Back/ })).toBeNull();
   });
 
@@ -77,7 +77,7 @@ describe('ScreenHeader', () => {
     });
     const screen = await renderWithProviders(element);
 
-    await waitFor(() => expect(screen.getByRole('heading')).toBeTruthy());
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Board' })).toBeTruthy());
   });
 
   const search = {
@@ -120,7 +120,7 @@ describe('ScreenHeader', () => {
     mockOperatorContext.operator.currentUser.user.bodyMassKg = 0;
     const screen = await renderWithProviders(header({ hideWarnings: true }).element);
 
-    await waitFor(() => expect(screen.getByRole('heading')).toBeTruthy());
+    await waitFor(() => expect(screen.getByRole('heading', { name: 'Board' })).toBeTruthy());
     expect(screen.queryByTestId('setup-banner')).toBeNull();
   });
 

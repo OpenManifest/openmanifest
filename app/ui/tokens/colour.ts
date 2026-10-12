@@ -23,6 +23,8 @@ export type ColourTokens = {
   brandSoft: string;
   onBrandSoft: string;
   status: Record<StatusKey, Pair>;
+  /** Over satellite imagery, whatever the scheme: text and icons, the halo behind them, and the guide line of a jump run */
+  map: { text: string; halo: string; guide: string };
 };
 
 /** Brand used when an operator has not chosen a colour (D-UI3). */
@@ -52,6 +54,7 @@ const light: ColourTokens = {
     ok: { bg: '#DDF2E3', fg: '#17592F' },
     info: { bg: '#E1EEFB', fg: '#0A4F96' },
   },
+  map: { text: '#FFFFFF', halo: 'rgba(15, 15, 15, 0.5)', guide: '#FF1414' },
 };
 
 const dark: ColourTokens = {
@@ -78,6 +81,7 @@ const dark: ColourTokens = {
     ok: { bg: '#12351F', fg: '#8FE3AE' },
     info: { bg: '#10304F', fg: '#9CCBFF' },
   },
+  map: { text: '#FFFFFF', halo: 'rgba(15, 15, 15, 0.5)', guide: '#FF1414' },
 };
 
 export const colour: Record<Scheme, ColourTokens> = { light, dark };

@@ -7,7 +7,7 @@ import { Permission } from 'app/api/schema.d';
 
 import { useSession } from 'app/state';
 import NoResults from 'app/components/NoResults';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import FormColumn from 'app/components/layout/FormColumn';
 import FloatingActionArea from 'app/components/layout/FloatingActionArea';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
 import useRestriction from 'app/hooks/useRestriction';
@@ -65,7 +65,7 @@ export default function VehiclesScreen() {
   );
   return (
     <ScreenContainer edges={['bottom']}>
-      <ScrollableScreen
+      <FormColumn
         hasFab
         contentContainerStyle={{ backgroundColor: theme.colors.surface }}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={refetch} />}
@@ -107,7 +107,7 @@ export default function VehiclesScreen() {
             ))}
           </DataTable>
         )}
-      </ScrollableScreen>
+      </FormColumn>
       <FloatingActionArea>
         <FAB
           labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}

@@ -4,7 +4,9 @@ import Tappable, { type TappableProps } from '../Tappable';
 import { useTheme } from '../theme';
 import { useTone, type TextTone } from './Text';
 
-export type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+import type { IconName } from './Icon';
+
+export type { IconName };
 
 export type IconButtonProps = Omit<TappableProps, 'role' | 'children' | 'style'> & {
   /** What it does: an icon alone says nothing to a screen reader, so the type requires a name */

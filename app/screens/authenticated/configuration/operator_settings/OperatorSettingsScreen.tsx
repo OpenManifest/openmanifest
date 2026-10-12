@@ -5,7 +5,7 @@ import ProgressBar from 'app/components/ProgressBar';
 import { Permission } from 'app/api/schema.d';
 import OperatorForm from 'app/forms/operator/OperatorForm';
 import useRestriction from 'app/hooks/useRestriction';
-import { Screen } from 'app/components/layout';
+import FormColumn from 'app/components/layout/FormColumn';
 import FloatingActionArea from 'app/components/layout/FloatingActionArea';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
 import { useNotifications } from 'app/providers/notifications';
@@ -28,9 +28,9 @@ export default function UpdateOperatorScreen() {
   return (
     <ScreenContainer edges={['bottom']}>
       <ProgressBar indeterminate color={theme.colors.primary} visible={loading} />
-      <Screen fullWidth={false}>
+      <FormColumn>
         <OperatorForm {...{ loading, control }} />
-      </Screen>
+      </FormColumn>
       <FloatingActionArea>
         <FAB
           labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}

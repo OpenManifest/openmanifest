@@ -16,7 +16,7 @@ import { Permission } from 'app/api/schema.d';
 import { useSession } from 'app/state';
 import createUseDialog from 'app/providers/hooks/useDialog';
 import type { RigEssentialsFragment } from 'app/api/operations';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import FormColumn from 'app/components/layout/FormColumn';
 import FloatingActionArea from 'app/components/layout/FloatingActionArea';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
 import RigDialog from 'app/forms/rig';
@@ -50,7 +50,7 @@ export default function OperatorRigsScreen() {
 
   return (
     <ScreenContainer edges={['bottom']}>
-      <ScrollableScreen
+      <FormColumn
         hasFab
         style={styles.container}
         contentContainerStyle={[styles.content, { backgroundColor: theme.colors.surface }]}
@@ -109,7 +109,7 @@ export default function OperatorRigsScreen() {
           open={rigDialog.visible}
           rig={rigDialog.state?.rig}
         />
-      </ScrollableScreen>
+      </FormColumn>
       <FloatingActionArea>
         <FAB
           labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}

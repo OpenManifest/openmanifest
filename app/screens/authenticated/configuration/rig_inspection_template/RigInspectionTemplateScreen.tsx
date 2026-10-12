@@ -7,7 +7,7 @@ import {
   RigInspectionTemplateForm,
   useRigInspectionTemplateForm,
 } from 'app/forms/rig_inspection_template';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import FormColumn from 'app/components/layout/FormColumn';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
@@ -30,7 +30,7 @@ export default function RigInspectionTemplateScreen() {
   const { width } = useWindowDimensions();
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <ScrollableScreen style={{ marginTop: 16, width: width > 550 ? 550 : '100%' }}>
+      <FormColumn style={{ marginTop: 16, width: width > 550 ? 550 : '100%' }}>
         <Card style={{ width: '100%' }}>
           <Card.Title title="Rig Inspection Form Template" />
 
@@ -47,7 +47,7 @@ export default function RigInspectionTemplateScreen() {
         >
           Save template
         </Button>
-      </ScrollableScreen>
+      </FormColumn>
     </View>
   );
 }

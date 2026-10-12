@@ -1,6 +1,8 @@
 import { cleanup, configure } from '@testing-library/react-native';
 
 import '@testing-library/jest-dom';
+// The app always runs with i18next initialised: components that call useTranslation show their words in tests too
+import 'app/i18n';
 import 'react-native-gesture-handler/jestSetup';
 import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/async-storage-mock';
 

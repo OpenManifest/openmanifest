@@ -9,7 +9,7 @@ import { capitalize } from 'lodash';
 import SkeletonContent from 'app/components/Skeleton';
 import { useRolesQuery } from 'app/api/reflection';
 import { useSession } from 'app/state';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import FormColumn, { FORM_COLUMN_WIDE_MAX_WIDTH } from 'app/components/layout/FormColumn';
 import PermissionListItem from 'app/components/permissions/PermissionListItem';
 import { useAppTheme } from 'app/theme';
 
@@ -150,7 +150,8 @@ export default function OperatorPermissionScreen() {
             label={capitalize(role.name?.replace('_', ' '))}
             key={`permission-tab-role-${role.id}`}
           >
-            <ScrollableScreen
+            <FormColumn
+              maxWidth={FORM_COLUMN_WIDE_MAX_WIDTH}
               contentContainerStyle={{
                 maxWidth: 500,
                 width: '100%',
@@ -406,7 +407,7 @@ export default function OperatorPermissionScreen() {
                   </List.Accordion>
                 </List.Section>
               </Card>
-            </ScrollableScreen>
+            </FormColumn>
           </TabScreen>
         ))}
       </Tabs>

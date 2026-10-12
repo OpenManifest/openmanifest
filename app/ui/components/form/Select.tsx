@@ -59,8 +59,8 @@ function Select<Value extends string = string>({
     <Field label={label} ids={ids} helperText={helperText} error={error}>
       <Tappable
         role="combobox"
-        {...fieldAria(ids, { helperText, error })}
-        aria-label={label}
+        {...fieldAria(ids, { helperText, error, label })}
+        aria-label={label || placeholder || chosen?.label || ''}
         aria-expanded={open}
         aria-disabled={disabled}
         disabled={disabled}

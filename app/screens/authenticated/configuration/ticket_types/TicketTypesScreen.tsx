@@ -4,7 +4,7 @@ import { FAB, DataTable, Switch } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 import { Permission } from 'app/api/schema.d';
 
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import FormColumn from 'app/components/layout/FormColumn';
 import FloatingActionArea from 'app/components/layout/FloatingActionArea';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
 import SwipeActions from 'app/components/layout/SwipeActions';
@@ -63,7 +63,7 @@ export default function TicketTypesScreen() {
   );
   return (
     <ScreenContainer edges={['bottom']}>
-      <ScrollableScreen
+      <FormColumn
         hasFab
         style={styles.container}
         contentContainerStyle={[styles.content, { backgroundColor: theme.colors.surface }]}
@@ -109,7 +109,7 @@ export default function TicketTypesScreen() {
             </View>
           ))}
         </DataTable>
-      </ScrollableScreen>
+      </FormColumn>
       <FloatingActionArea>
         <FAB
           labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}

@@ -12,6 +12,10 @@ export type MenuItem = {
   label: string;
   icon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
   onPress(): void;
+  /** Before the label, instead of an icon: an avatar */
+  leading?: React.ReactNode;
+  /** The current choice of a list of options: marked with a check and `aria-current` */
+  selected?: boolean;
   disabled?: boolean;
   /** Shown in the blocked colour: deleting, leaving */
   destructive?: boolean;
@@ -24,6 +28,11 @@ export type MenuProps = {
   items: MenuItem[];
   /** A pressable of your own; by default an icon button with three dots */
   trigger?: React.ReactElement<{ onPress?: () => void }>;
+  /** A control of your own that opens the menu through `open`, instead of `trigger` (see `Popover`) */
+  anchor?: React.ReactNode;
+  /** Controlled open state; the menu keeps its own when absent */
+  open?: boolean;
+  onOpenChange?(open: boolean): void;
   testID?: string;
 };
 
@@ -60,9 +69,17 @@ function moveBetweenItems(event: MenuKeyEvent) {
  * A list of actions behind a button: `role="menu"` of `menuitem`s inside a popover, so it opens with Enter, closes on
  * Escape, returns focus to the trigger and, on the web, moves with the arrow keys. Choosing an item closes it.
  */
-export default function Menu({ label, items, trigger, testID }: MenuProps) {
+export default function Menu({
+  label,
+  items,
+  trigger,
+  anchor,
+  open: openProp,
+  onOpenChange,
+  testID,
+}: MenuProps) {
   const theme = useTheme();
-  const [open, setOpen] = useOpenState();
+  const [open, setOpen] = useOpenState(openProp, onOpenChange);
   const keys = Platform.OS === 'web' ? ({ onKeyDown: moveBetweenItems } as unknown as object) : {};
 
   return (
@@ -73,7 +90,10 @@ export default function Menu({ label, items, trigger, testID }: MenuProps) {
       align="end"
       flush
       testID={testID}
-      trigger={trigger ?? <IconButton icon="dots-vertical" aria-label={label} />}
+      anchor={anchor}
+      trigger={
+        anchor ? undefined : (trigger ?? <IconButton icon="dots-vertical" aria-label={label} />)
+      }
     >
       <View role="menu" aria-label={label} {...keys}>
         {items.map((item) => (
@@ -82,6 +102,7 @@ export default function Menu({ label, items, trigger, testID }: MenuProps) {
             role="menuitem"
             aria-label={item.label}
             aria-disabled={item.disabled}
+            aria-current={item.selected ? true : undefined}
             disabled={item.disabled}
             testID={item.testID}
             minTarget={false}
@@ -95,18 +116,25 @@ export default function Menu({ label, items, trigger, testID }: MenuProps) {
               gap: theme.space.md,
               minHeight: Math.max(theme.density.row, theme.density.touchTarget),
               paddingHorizontal: theme.space.lg,
-              backgroundColor: pressed || hovered || focused ? theme.colour.raised : 'transparent',
+              backgroundColor: item.selected
+                ? theme.colour.brandSoft
+                : pressed || hovered || focused
+                  ? theme.colour.raised
+                  : 'transparent',
               opacity: item.disabled ? 0.4 : 1,
             })}
           >
-            {item.icon ? (
+            {item.leading ?? null}
+            {!item.leading && item.icon ? (
               <MaterialCommunityIcons
                 name={item.icon}
                 size={20}
                 color={item.destructive ? theme.colour.status.blocked.fg : theme.colour.text}
               />
             ) : null}
-            <Text tone={item.destructive ? 'blocked' : 'default'}>{item.label}</Text>
+            <Text tone={item.destructive ? 'blocked' : item.selected ? 'onBrandSoft' : 'default'}>
+              {item.label}
+            </Text>
           </Tappable>
         ))}
       </View>

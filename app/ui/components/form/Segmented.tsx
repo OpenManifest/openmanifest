@@ -59,7 +59,7 @@ function Segmented<Value extends string = string>({
     <Field label={label} ids={ids} helperText={helperText} error={error}>
       <View
         role="radiogroup"
-        {...fieldAria(ids, { helperText, error })}
+        {...fieldAria(ids, { helperText, error, label })}
         testID={testID}
         style={{
           flexDirection: 'row',
