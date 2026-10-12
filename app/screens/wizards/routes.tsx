@@ -1,13 +1,12 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { UserWizardScreen } from 'app/forms/user_wizard';
-import { NavigationProp, NavigatorScreenParams, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 import OperatorWizardScreen from './operator_wizard/OperatorWizard';
 import RecoverPasswordScreen from './recover_password/RecoverPasswordScreen';
 import ConfirmUserScreen from './confirm_user/ConfirmUserScreen';
 import ChangePasswordScreen from './change_password/ChangePasswordScreen';
-import User, { UserRoutes } from '../authenticated/user/routes';
 
 export type WizardRoutes = {
   OperatorWizardScreen: undefined;
@@ -18,7 +17,6 @@ export type WizardRoutes = {
   ConfirmUserScreen: undefined;
   RecoverPasswordScreen: undefined;
   ChangePasswordScreen: undefined;
-  User: NavigatorScreenParams<UserRoutes>;
 };
 
 const Wizards = createStackNavigator<WizardRoutes>();
@@ -41,7 +39,6 @@ export default function Routes() {
       <Wizards.Screen name="RecoverPasswordScreen" component={RecoverPasswordScreen} />
       <Wizards.Screen name="ConfirmUserScreen" component={ConfirmUserScreen} />
       <Wizards.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
-      <Wizards.Screen name="User" component={User} />
     </Wizards.Navigator>
   );
 }

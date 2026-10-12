@@ -1,4 +1,5 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
+import useOpenUser from 'app/navigation/useOpenUser';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import ProgressBar from 'app/components/ProgressBar';
@@ -24,7 +25,7 @@ export default function TransactionsScreen() {
     id: route?.params?.userId || currentUser?.id,
   });
 
-  const navigation = useNavigation();
+  const openUser = useOpenUser();
 
   React.useEffect(() => {
     if (currentOperatorId) {
@@ -50,18 +51,9 @@ export default function TransactionsScreen() {
               onPress={() =>
                 !item?.node?.id
                   ? null
-                  : navigation.navigate('Authenticated', {
-                      screen: 'Manifest',
-                      params: {
-                        screen: 'User',
-                        params: {
-                          screen: 'OrderReceiptScreen',
-                          params: {
-                            orderId: item?.node?.id as string,
-                            userId: item?.node?.buyer?.id as string,
-                          },
-                        },
-                      },
+                  : openUser('OrderReceiptScreen', {
+                      orderId: item?.node?.id as string,
+                      userId: item?.node?.buyer?.id as string,
                     })
               }
               order={item?.node}

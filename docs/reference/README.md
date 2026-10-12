@@ -50,24 +50,24 @@ Root (stack)
 │           ├── Manifest      ManifestScreen /dropzone/manifest · LoadScreen /dropzone/load/:loadId
 │           │                 WeatherConditionsScreen /dropzone/weather · WindScreen /dropzone/weather/winds
 │           │                 JumpRunScreen /dropzone/weather/jumprun
-│           │                 User (stack, see below, under /dropzone/manifest/users/…)
 │           │                 Configuration (stack): SettingsMenuScreen /dropzone/configuration ·
 │           │                   DropzoneSettingsScreen /basic · AircraftsScreen /aircrafts · TicketTypesScreen /ticket-types ·
 │           │                   ExtrasScreen /dropzone/ticket-types/extra · RigInspectionTemplateScreen /rig-inspection ·
 │           │                   DropzoneRigsScreen /rigs · TransactionsScreen /dropzone/transactions ·
 │           │                   PermissionScreen /permissions · MasterLogScreen /dropzone/master-log
-│           ├── Notifications NotificationsScreen /notifications · User stack
-│           └── Users         UserListScreen /users · ProfileScreen /user/:userId · EquipmentScreen ·
+│           ├── Notifications NotificationsScreen /notifications
+│           └── Users         User stack (below): UserListScreen /users · ProfileScreen /user/:userId · EquipmentScreen ·
 │                             OrdersScreen · OrderReceiptScreen · RigInspectionScreen   (visible with readUser)
 ├── Wizards (stack, modal)       DropzoneWizardScreen /setup · UserWizardScreen · RecoverPasswordScreen /recover-password ·
-│                                ConfirmUserScreen /confirm · ChangePasswordScreen /change-password · User stack (/modal/user/…)
+│                                ConfirmUserScreen /confirm · ChangePasswordScreen /change-password
 └── NotFound
 ```
 
-User stack (reused in Manifest, Notifications, Users and Wizards): `UserListScreen`, `ProfileScreen` (tabs: jumps,
+User stack (registered once, under Users/People; `/manifest/users/…` and `/modal/user/…` redirect to `/user/…`, see
+`app/navigation/legacyPaths.ts`; screens open it with `useOpenUser`): `UserListScreen`, `ProfileScreen` (tabs: jumps,
 equipment, transactions), `EquipmentScreen`, `OrdersScreen`, `OrderReceiptScreen`, `RigInspectionScreen`.
 
-Deep-link config: `app/screens/routes.tsx` `options` (prefixes `openmanifest://`, `https://www.openmanifest.org`,
+Deep-link config: `app/navigation/linking.ts` `options` (prefixes `openmanifest://`, `https://www.openmanifest.org`,
 `https://staging.openmanifest.org`, `http://localhost:19006`). It references three screens that are not registered
 (`Manifest/DashboardScreen`, `Configuration/AircraftScreen`, `Unauthenticated/SignUpWizard`) — BUG-083.
 

@@ -15,7 +15,6 @@ import { WeatherFormProvider } from 'app/forms/weather';
 
 import ManifestScreen from './manifest/ManifestScreen';
 
-import User, { UserRoutes } from '../user/routes';
 import Configuration, { ConfigurationRoutes } from '../configuration/routes';
 
 export type OperatorRoutes = {
@@ -24,7 +23,6 @@ export type OperatorRoutes = {
   ManifestScreen: undefined;
   JumpRunScreen: undefined;
   DashboardScreen: undefined;
-  User: NavigatorScreenParams<UserRoutes>;
   Configuration: NavigatorScreenParams<ConfigurationRoutes>;
 } & LoadScreenRoute;
 
@@ -73,12 +71,6 @@ export default function ManifestTab() {
             name="LoadScreen"
             component={LoadScreen}
             options={{ title: t('terms:load', { count: 1 }) }}
-          />
-
-          <Manifest.Screen
-            name="User"
-            component={User}
-            options={{ headerShown: false, presentation: 'modal' }}
           />
 
           <Manifest.Screen

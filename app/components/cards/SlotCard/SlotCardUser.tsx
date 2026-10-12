@@ -4,7 +4,7 @@ import { Avatar, Badge, Card, Chip } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ViewProps } from 'app/components/Themed';
 import { SlotDetailsFragment } from 'app/api/operations';
-import { useOperatorNavigation } from 'app/screens/authenticated/manifest/useOperatorNavigation';
+import useOpenUser from 'app/navigation/useOpenUser';
 import { useAppTheme } from 'app/theme';
 
 export interface ISlotCardProps {
@@ -21,16 +21,12 @@ export default function SlotCard(props: ISlotCardProps) {
   const { theme } = useAppTheme();
 
   const hasGuest = !!slot?.guestName;
-  const navigation = useOperatorNavigation();
+  const openUser = useOpenUser();
   return (
     <>
       <Card
         onPress={() =>
-          slot.membership?.id &&
-          navigation.navigate('User', {
-            screen: 'ProfileScreen',
-            params: { userId: slot.membership?.id },
-          })
+          slot.membership?.id && openUser('ProfileScreen', { userId: slot.membership?.id })
         }
         onLongPress={() => onPress?.(slot)}
         elevation={3}

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { renderHook } from '@testing-library/react-native';
 import { useSetupNotice } from '../SetupBanner';
 

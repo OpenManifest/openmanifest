@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { useOperatorContext } from 'app/providers/operator/context';
+import useOpenUser from './useOpenUser';
 import { Tappable, useStyles, useTheme } from 'app/ui';
 
 const ICON_SIZE = 24;
@@ -57,6 +58,7 @@ export function useSetupNotice(): {
 export default function SetupBanner() {
   const { t } = useTranslation(['common', 'terms']);
   const navigation = useNavigation();
+  const openUser = useOpenUser();
   const theme = useTheme();
   const {
     operator: { currentUser },
@@ -89,13 +91,7 @@ export default function SetupBanner() {
         params: { membershipId: currentUser.id },
       } as never);
     else if (notice.toEquipment) {
-      navigation.navigate('Authenticated', {
-        screen: 'Manifest',
-        params: {
-          screen: 'User',
-          params: { screen: 'EquipmentScreen', params: { userId: currentUser.id } },
-        },
-      } as never);
+      openUser('EquipmentScreen', { userId: currentUser.id });
     }
   };
   const text = t(notice.key, { equipment: t('terms:equipment', { count: 1 }).toLowerCase() });
