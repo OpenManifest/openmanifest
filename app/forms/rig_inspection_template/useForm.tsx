@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import isEqual from 'lodash/isEqual';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
-import { useUpdateRigInspectionTemplateMutation } from 'app/api/reflection';
+import { useUpdateEquipmentInspectionTemplateMutation } from 'app/api/reflection';
 import { useNotifications } from 'app/providers/notifications';
 import { FieldItem, parseFields } from './fieldItem';
 
@@ -34,12 +34,12 @@ export const rigInspectionTemplateValidation = yup.object({
 
 export interface IUseRigInspectionTemplateFormOpts {
   template?: { id: string; definition?: string | null } | null;
-  dropzoneId?: string | null;
+  operatorId?: string | null;
   onSuccess?(): void;
 }
 
 export default function useRigInspectionTemplateForm(opts: IUseRigInspectionTemplateFormOpts) {
-  const { template, dropzoneId, onSuccess } = opts;
+  const { template, operatorId, onSuccess } = opts;
   const notify = useNotifications();
   const initialValues = React.useMemo<RigInspectionTemplateFields>(
     () => ({ fields: parseFields(template?.definition) }),
@@ -63,7 +63,7 @@ export default function useRigInspectionTemplateForm(opts: IUseRigInspectionTemp
     reset(defaultValues);
   }, [defaultValues, reset]);
 
-  const [mutationUpdateForm, { loading }] = useUpdateRigInspectionTemplateMutation();
+  const [mutationUpdateForm, { loading }] = useUpdateEquipmentInspectionTemplateMutation();
 
   const [, onSave] = useAsyncFn(
     async ({ fields }: RigInspectionTemplateFields) => {
@@ -71,7 +71,7 @@ export default function useRigInspectionTemplateForm(opts: IUseRigInspectionTemp
         await mutationUpdateForm({
           variables: {
             formId: Number(template?.id),
-            dropzoneId: Number(dropzoneId),
+            operatorId: Number(operatorId),
             definition: JSON.stringify(fields),
           },
         });
@@ -83,7 +83,7 @@ export default function useRigInspectionTemplateForm(opts: IUseRigInspectionTemp
         }
       }
     },
-    [dropzoneId, mutationUpdateForm, notify, onSuccess, template?.id]
+    [operatorId, mutationUpdateForm, notify, onSuccess, template?.id]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onSave), [handleSubmit, onSave]);

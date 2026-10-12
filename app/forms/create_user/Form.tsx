@@ -26,7 +26,7 @@ export default function GhostForm(props: IGhostFormProps) {
       <FormTextField label="Email" name="email" {...{ control }} />
       <FormTextField label="Phone number" name="phone" {...{ control }} />
 
-      <FormNumberField label="Exit weight (kg)" name="exitWeight" {...{ control }} />
+      <FormNumberField label="Exit weight (kg)" name="bodyMassKg" {...{ control }} />
 
       <Divider />
 

@@ -32,9 +32,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
       });
 
       map.current?.animateCamera({ center: location.coords });
-    } catch (error) {
-      console.log(error);
-    }
+    } catch {}
   }, [onChange]);
 
   // Start at user location
