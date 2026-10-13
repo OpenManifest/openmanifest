@@ -2,8 +2,10 @@ import { OperatorExtensiveFragment } from 'app/api/operations';
 import { Industry, OperatorState, LoadState } from 'app/api/schema.d';
 import { currentUserDetailed } from './currentUser.fixture';
 import { loadEssentials } from './load.fixture';
+import { rigKind } from './equipmentKind.fixture';
 
 type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]> } : T;
+
 export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
   __typename: 'Operator',
   id: '1',
@@ -22,7 +24,15 @@ export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
   modules: {},
   callScheduleMinutes: [20, 15, 10],
   currency: 'AUD',
-  units: { altitude: 'ft', depth: 'm', distance: 'km', mass: 'kg', speed: 'kn', temperature: 'c' },
+  units: {
+    altitude: 'ft',
+    area: 'ft2',
+    depth: 'm',
+    distance: 'km',
+    mass: 'kg',
+    speed: 'kn',
+    temperature: 'c',
+  },
   settings: {
     __typename: 'Settings',
     allowManifestBypass: false,
@@ -31,8 +41,8 @@ export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
     requireEquipment: false,
     requireCertification: false,
     requireMembership: false,
-    requireReserveInDate: false,
-    requireRigInspection: false,
+    requireEquipmentInService: false,
+    requireEquipmentInspection: false,
     allowDoubleManifesting: false,
     allowSelfManifest: true,
   },
@@ -48,6 +58,7 @@ export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
     },
   ],
   requiredQualifications: [],
+  equipmentKinds: [rigKind],
   currentConditions: {
     __typename: 'WeatherCondition',
     id: '1',

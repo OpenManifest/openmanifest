@@ -29,6 +29,7 @@ export type OperatorFields = Required<
       unitAltitude: string;
       unitDistance: string;
       unitMass: string;
+      unitArea: string;
       unitSpeed: string;
       unitTemperature: string;
       currency: string;
@@ -45,7 +46,7 @@ export const operatorValidation = yup.object({
   lat: yup.number().nullable(),
   lng: yup.number().nullable(),
   primaryColor: yup.string(),
-  requireRigInspection: yup.boolean(),
+  requireEquipmentInspection: yup.boolean(),
   requireCertification: yup.boolean(),
   requireCredits: yup.boolean(),
   requireMembership: yup.boolean(),
@@ -56,6 +57,7 @@ export const operatorValidation = yup.object({
   unitAltitude: yup.string(),
   unitDistance: yup.string(),
   unitMass: yup.string(),
+  unitArea: yup.string(),
   unitSpeed: yup.string(),
   unitTemperature: yup.string(),
   currency: yup.string(),
@@ -75,7 +77,7 @@ export const EMPTY_FORM_VALUES: Partial<OperatorFields> = {
   lat: null,
   lng: null,
   primaryColor: null,
-  requireRigInspection: true,
+  requireEquipmentInspection: true,
   requireMembership: true,
   allowNegativeCredits: false,
   allowManifestBypass: false,
@@ -86,6 +88,7 @@ export const EMPTY_FORM_VALUES: Partial<OperatorFields> = {
   unitAltitude: 'ft',
   unitDistance: 'km',
   unitMass: 'kg',
+  unitArea: 'm2',
   unitSpeed: 'kn',
   unitTemperature: 'c',
   currency: 'AUD',
@@ -119,13 +122,14 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
       requireCredits: operator?.settings?.requireCredits,
       requireCertification: operator?.settings?.requireCertification,
       requireMembership: operator?.settings?.requireMembership,
-      requireRigInspection: operator?.settings?.requireRigInspection,
+      requireEquipmentInspection: operator?.settings?.requireEquipmentInspection,
       isCreditSystemEnabled: operator?.isCreditSystemEnabled,
       requireEquipment: operator?.settings?.requireEquipment,
       callSchedule: formatCallSchedule(operator?.callScheduleMinutes),
       unitAltitude: unitOf('altitude', operator?.units as UnitSystem),
       unitDistance: unitOf('distance', operator?.units as UnitSystem),
       unitMass: unitOf('mass', operator?.units as UnitSystem),
+      unitArea: unitOf('area', operator?.units as UnitSystem),
       unitSpeed: unitOf('speed', operator?.units as UnitSystem),
       unitTemperature: unitOf('temperature', operator?.units as UnitSystem),
       currency: operator?.currency ?? 'AUD',
@@ -143,7 +147,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
       operator?.settings?.requireCredits,
       operator?.settings?.requireCertification,
       operator?.settings?.requireMembership,
-      operator?.settings?.requireRigInspection,
+      operator?.settings?.requireEquipmentInspection,
       operator?.isCreditSystemEnabled,
       operator?.id,
       operator?.lat,
@@ -204,6 +208,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
           unitAltitude,
           unitDistance,
           unitMass,
+          unitArea,
           unitSpeed,
           unitTemperature,
           currency,
@@ -229,6 +234,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
               altitude: unitAltitude,
               distance: unitDistance,
               mass: unitMass,
+              area: unitArea,
               speed: unitSpeed,
               temperature: unitTemperature,
             },

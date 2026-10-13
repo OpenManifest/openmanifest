@@ -26,7 +26,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       activityType: slot?.activityType,
       guestBodyMassKg: slot?.guestBodyMassKg,
       guestName: slot?.guestName,
-      rig: slot?.rig,
+      equipment: slot?.equipment,
       ticketType: slot?.ticketType || undefined,
     },
     onSuccess,

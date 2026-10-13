@@ -7,7 +7,7 @@ export default StyleSheet.create({
   certificationLevelCell: {
     flex: 1,
   },
-  rigCell: {
+  equipmentCell: {
     flex: 2,
   },
   wingLoadingCell: {

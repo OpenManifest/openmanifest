@@ -33,7 +33,7 @@ export default function LoadTableView(props: ITableViewProps) {
           numFields > 2 ? SlotFields.CertificationLevel : null,
           numFields > 3 ? SlotFields.TicketType : null,
           numFields > 4 ? SlotFields.WingLoading : null,
-          numFields > 5 ? SlotFields.Rig : null,
+          numFields > 5 ? SlotFields.Equipment : null,
         ].filter(Boolean) as SlotFields[]
       }
       {...{

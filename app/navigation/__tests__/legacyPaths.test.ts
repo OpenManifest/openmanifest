@@ -10,13 +10,16 @@ describe('redirectLegacyPath', () => {
     ['/manifest/users/12/equipment/', '/user/12/equipment'],
     ['/manifest/users/12/orders', '/user/12/transactions'],
     ['/manifest/users/12/orders/7/receipts', '/user/12/transactions/7/receipt'],
-    ['/manifest/users/12/rig/5/inspection', '/user/12/rig-inspection/5'],
+    ['/manifest/users/12/rig/5/inspection', '/user/12/equipment-inspection/5'],
+    ['/configuration/rigs', '/configuration/equipment'],
+    ['/configuration/rig-inspection', '/configuration/equipment-inspection'],
+    ['/user/12/rig-inspection/5', '/user/12/equipment-inspection/5'],
     ['/modal/users', '/users'],
     ['/modal/user/12', '/user/12'],
     ['/modal/user/12/equipment', '/user/12/equipment'],
     ['/modal/user/12/transactions', '/user/12/transactions'],
     ['/modal/user/12/transactions/7/receipt', '/user/12/transactions/7/receipt'],
-    ['/modal/user/12/rig-inspection/5', '/user/12/rig-inspection/5'],
+    ['/modal/user/12/rig-inspection/5', '/user/12/equipment-inspection/5'],
     ['/manifest/users/12?tab=gear', '/user/12?tab=gear'],
   ])('sends %s to %s', (legacy, canonical) => {
     expect(redirectLegacyPath(legacy)).toBe(canonical);
@@ -28,7 +31,7 @@ describe('redirectLegacyPath', () => {
     '/user/12',
     '/user/12/equipment',
     '/loads/3',
-    '/configuration/rigs',
+    '/configuration/equipment',
   ])('leaves %s alone', (path) => {
     expect(redirectLegacyPath(path)).toBe(path);
   });
@@ -64,10 +67,10 @@ describe('the linking configuration', () => {
     }
   );
 
-  it('gives the rig inspection its rig', () => {
+  it('gives the equipment inspection its equipment', () => {
     expect(leaf('/manifest/users/12/rig/5/inspection')).toEqual({
-      names: ['Authenticated', 'Users', 'RigInspectionScreen'],
-      params: { membershipId: '12', rigId: '5' },
+      names: ['Authenticated', 'Users', 'EquipmentInspectionScreen'],
+      params: { membershipId: '12', equipmentId: '5' },
     });
   });
 

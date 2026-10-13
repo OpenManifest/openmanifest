@@ -8,23 +8,23 @@ import {
 import {
   UpdateEquipmentMutationVariables,
   CreateEquipmentMutationVariables,
-  RigEssentialsFragment,
+  EquipmentEssentialsFragment,
 } from '../operations';
 import { TMutationResponse } from './factory';
 
 export function useEquipment() {
   const [createEquipment] = useCreateEquipmentMutation();
   const [updateEquipment] = useUpdateEquipmentMutation();
-  const [inspectRig] = useCreateEquipmentInspectionMutation();
+  const [inspectEquipment] = useCreateEquipmentInspectionMutation();
 
   const create = React.useCallback(
     async function CreateEquipment(
       variables: CreateEquipmentMutationVariables
-    ): Promise<TMutationResponse<{ rig: RigEssentialsFragment }>> {
+    ): Promise<TMutationResponse<{ equipment: EquipmentEssentialsFragment }>> {
       const response = await createEquipment({ variables });
 
-      if (response?.data?.createEquipment?.rig?.id) {
-        return { rig: response?.data?.createEquipment?.rig };
+      if (response?.data?.createEquipment?.equipment?.id) {
+        return { equipment: response?.data?.createEquipment?.equipment };
       }
       return {
         error: response?.data?.createEquipment?.errors?.[0],
@@ -37,11 +37,11 @@ export function useEquipment() {
   const update = React.useCallback(
     async function UpdateEquipment(
       attributes: UpdateEquipmentMutationVariables
-    ): Promise<TMutationResponse<{ rig: RigEssentialsFragment }>> {
+    ): Promise<TMutationResponse<{ equipment: EquipmentEssentialsFragment }>> {
       const response = await updateEquipment({ variables: attributes });
 
-      if (response?.data?.updateEquipment?.rig?.id) {
-        return { rig: response?.data?.updateEquipment?.rig };
+      if (response?.data?.updateEquipment?.equipment?.id) {
+        return { equipment: response?.data?.updateEquipment?.equipment };
       }
       return {
         error: response?.data?.updateEquipment?.errors?.[0],

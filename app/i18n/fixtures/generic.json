@@ -59,6 +59,10 @@
     "one": "Inspection",
     "other": "Inspections"
   },
+  "service_due": {
+    "one": "Service due",
+    "other": "Service due"
+  },
   "daily_log": {
     "one": "Daily log",
     "other": "Daily logs"

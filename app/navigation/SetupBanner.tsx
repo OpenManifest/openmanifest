@@ -17,11 +17,11 @@ export function useSetupNotice(): {
 
   if (loading || !currentUser) return null;
   const settings = operator?.settings;
-  const rigs = currentUser.user?.rigs ?? [];
+  const equipment = currentUser.user?.equipment ?? [];
   const equipmentRequired = !!settings?.requireEquipment;
 
   const hasBodyMass = !!currentUser.user?.bodyMassKg;
-  const hasEquipment = !equipmentRequired || rigs.length > 0;
+  const hasEquipment = !equipmentRequired || equipment.length > 0;
   if (!hasBodyMass || !hasEquipment) {
     return {
       key:
@@ -37,12 +37,16 @@ export function useSetupNotice(): {
     (!!currentUser.expiresAt && currentUser.expiresAt > new Date().getTime() / 1000);
   if (!membershipInDate) return { key: 'setup.membership' };
 
-  if (equipmentRequired && settings?.requireRigInspection && !currentUser.rigInspections?.length) {
+  if (
+    equipmentRequired &&
+    settings?.requireEquipmentInspection &&
+    !currentUser.equipmentInspections?.length
+  ) {
     return { key: 'setup.inspection' };
   }
   const reserveInDate =
     !equipmentRequired ||
-    rigs.some((rig) => (rig.repackExpiresAt || 0) > new Date().getTime() / 1000);
+    equipment.some((equipment) => (equipment.serviceDueAt || 0) > new Date().getTime() / 1000);
   if (!reserveInDate) return { key: 'setup.repack', toEquipment: true };
 
   const credits = (currentUser.creditsCents ?? 0) / 100;

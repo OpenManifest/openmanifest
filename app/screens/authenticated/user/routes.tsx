@@ -7,7 +7,9 @@ import UsersScreen, { UserListRoute } from './user_list/UsersScreen';
 import { useTranslation } from 'react-i18next';
 import ScreenHeader from 'app/navigation/ScreenHeader';
 import { UserSearchProvider, useUserSearch } from './user_list/search';
-import RigInspectionScreen, { RigInspectionRoute } from './rig_inspection/RigInspectionScreen';
+import EquipmentInspectionScreen, {
+  EquipmentInspectionRoute,
+} from './equipment_inspection/EquipmentInspectionScreen';
 import ProfileScreen, { ProfileRoute } from './profile/ProfileScreen';
 import OrdersScreen, { OrdersRoute } from './orders/OrdersScreen';
 import EquipmentScreen, { EquipmentRoute } from './equipment/EquipmentScreen';
@@ -15,7 +17,7 @@ import OrderReceiptScreen, { OrderReceiptRoute } from './order_receipt/OrderScre
 
 export type UserRoutes = EquipmentRoute &
   OrderReceiptRoute &
-  RigInspectionRoute &
+  EquipmentInspectionRoute &
   ProfileRoute &
   UserListRoute &
   OrdersRoute;
@@ -77,8 +79,8 @@ export default function Routes() {
             }}
           />
           <Users.Screen
-            name="RigInspectionScreen"
-            component={RigInspectionScreen}
+            name="EquipmentInspectionScreen"
+            component={EquipmentInspectionScreen}
             options={{ title: t('screens.inspection') }}
           />
           <Users.Screen

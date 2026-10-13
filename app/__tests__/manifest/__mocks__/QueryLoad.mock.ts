@@ -124,7 +124,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
       loadMaster: null,
       slots: [
         {
-          rig: null,
+          equipment: [],
           __typename: 'Slot',
           lockVersion: 0,
           id: '1',
@@ -156,7 +156,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           extras: null,
         },
         {
-          rig: null,
+          equipment: [],
           __typename: 'Slot',
           lockVersion: 0,
           id: '2',
@@ -199,7 +199,7 @@ export default createMockedQuery<LoadQueryVariables, LoadQuery>(
           extras: null,
         },
         {
-          rig: null,
+          equipment: [],
           costCents: 10000,
           __typename: 'Slot',
           lockVersion: 0,

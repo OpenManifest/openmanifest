@@ -283,7 +283,7 @@ describe('<LoadDialog />', () => {
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });
 
-  // BUG-067: creating a load used to run the staff member's own jumper prerequisites (membership, licence, rig
+  // BUG-067: creating a load used to run the staff member's own jumper prerequisites (membership, licence, equipment
   // inspection, reserve), so manifest staff without a valid membership could not create loads
   describe('as staff without a valid membership of their own', () => {
     const operator = MOCK_QUERY_OPERATOR();

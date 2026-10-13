@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { Image, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import useTerms from 'app/i18n/useTerms';
 import { Control, Controller, useWatch } from 'react-hook-form';
 import {
   COLOUR_PRESETS,
@@ -38,11 +39,12 @@ const CURRENCIES = ['AUD', 'NZD', 'USD', 'CAD', 'GBP', 'EUR', 'CHF', 'ZAR', 'AED
 /** The units fields of the form, by quantity */
 const UNIT_FIELDS: [
   Quantity,
-  'unitAltitude' | 'unitDistance' | 'unitMass' | 'unitSpeed' | 'unitTemperature',
+  'unitAltitude' | 'unitArea' | 'unitDistance' | 'unitMass' | 'unitSpeed' | 'unitTemperature',
 ][] = [
   ['altitude', 'unitAltitude'],
   ['distance', 'unitDistance'],
   ['mass', 'unitMass'],
+  ['area', 'unitArea'],
   ['speed', 'unitSpeed'],
   ['temperature', 'unitTemperature'],
 ];
@@ -53,6 +55,7 @@ interface IOperatorForm {
 }
 export default function OperatorForm(props: IOperatorForm) {
   const { t } = useTranslation('common');
+  const term = useTerms();
   const { loading, control } = props;
   const theme = useTheme();
   const pickImage = useImagePicker();
@@ -288,13 +291,19 @@ export default function OperatorForm(props: IOperatorForm) {
               {...{ control }}
               label={t('forms.operator.requireEquipment')}
               name="requireEquipment"
-              helperText={t('forms.operator.usersCannotManifestWithoutSelecting')}
+              helperText={t('forms.operator.usersCannotManifestWithoutSelecting', {
+                equipment: term('equipment').toLowerCase(),
+              })}
             />
             <SwitchField
               {...{ control }}
-              label={t('forms.operator.requireRigInspection')}
-              name="requireRigInspection"
-              helperText={t('forms.operator.usersCannotManifestBeforeTheir')}
+              label={t('forms.operator.requireEquipmentInspection', {
+                equipment: term('equipment').toLowerCase(),
+              })}
+              name="requireEquipmentInspection"
+              helperText={t('forms.operator.usersCannotManifestBeforeTheir', {
+                equipment: term('equipment').toLowerCase(),
+              })}
             />
             <SwitchField
               {...{ control }}

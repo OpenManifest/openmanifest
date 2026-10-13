@@ -1,8 +1,8 @@
 import { createMutation } from '../createMutation';
-import { RigInput, UpdateEquipmentPayload } from '../schema.d';
+import { EquipmentInput, UpdateEquipmentPayload } from '../schema.d';
 import { UpdateEquipmentDocument } from '../reflection';
 
-export default createMutation<{ id: number } & RigInput, UpdateEquipmentPayload>(
+export default createMutation<{ id: number } & EquipmentInput, UpdateEquipmentPayload>(
   UpdateEquipmentDocument,
   {
     getPayload: (result) => result.updateEquipment,

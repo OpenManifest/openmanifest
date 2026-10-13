@@ -130,7 +130,7 @@ export default function SettingsScreen() {
               params: {
                 screen: 'Configuration',
                 params: {
-                  screen: 'OperatorRigsScreen',
+                  screen: 'OperatorEquipmentScreen',
                 },
               },
             })
@@ -148,7 +148,7 @@ export default function SettingsScreen() {
               params: {
                 screen: 'Configuration',
                 params: {
-                  screen: 'RigInspectionTemplateScreen',
+                  screen: 'EquipmentInspectionTemplateScreen',
                 },
               },
             })

@@ -93,9 +93,9 @@ export const OperatorEssentialsFragmentDoc = gql`
     requireCredits
     requireCertification
     requireMembership
-    requireRigInspection
+    requireEquipmentInspection
     requireEquipment
-    requireReserveInDate
+    requireEquipmentInService
   }
 }
     `;
@@ -209,20 +209,25 @@ export const SlotEssentialsFragmentDoc = gql`
     ${TicketTypeDetailsFragmentDoc}
 ${DestinationEssentialsFragmentDoc}
 ${ActivityTypeEssentialsFragmentDoc}`;
-export const RigEssentialsFragmentDoc = gql`
-    fragment rigEssentials on Rig {
+export const EquipmentEssentialsFragmentDoc = gql`
+    fragment equipmentEssentials on Equipment {
   id
   name
   make
   model
   serial
-  canopySize
-  repackExpiresAt
-  packValue
+  ownership
+  attributes
+  serviceDueAt
   maintainedAt
-  rigType
+  inService
   packingCard
   isPublic
+  equipmentKind: kind {
+    id
+    key
+    name
+  }
   owner {
     id
     name
@@ -258,8 +263,8 @@ export const ActivityDetailsFragmentDoc = gql`
     ... on Slot {
       ...slotEssentials
     }
-    ... on Rig {
-      ...rigEssentials
+    ... on Equipment {
+      ...equipmentEssentials
     }
     ... on Vehicle {
       ...vehicleEssentials
@@ -271,7 +276,7 @@ ${OperatorEssentialsFragmentDoc}
 ${MembershipEssentialsFragmentDoc}
 ${LoadEssentialsFragmentDoc}
 ${SlotEssentialsFragmentDoc}
-${RigEssentialsFragmentDoc}
+${EquipmentEssentialsFragmentDoc}
 ${VehicleEssentialsFragmentDoc}`;
 export const DailyLogUserFragmentDoc = gql`
     fragment dailyLogUser on DailyLogUser {
@@ -348,6 +353,57 @@ export const DailyLogEntryFragmentDoc = gql`
     ${DailyLogUserFragmentDoc}
 ${DailyLogLoadFragmentDoc}
 ${LocationFragmentDoc}`;
+export const EquipmentInspectionEssentialsFragmentDoc = gql`
+    fragment equipmentInspectionEssentials on EquipmentInspection {
+  id
+  isOk
+  definition
+  inspectedBy {
+    ...membershipEssentials
+  }
+  equipment {
+    ...equipmentEssentials
+  }
+}
+    ${MembershipEssentialsFragmentDoc}
+${EquipmentEssentialsFragmentDoc}`;
+export const UserEquipmentDetailedFragmentDoc = gql`
+    fragment userEquipmentDetailed on Equipment {
+  ...equipmentEssentials
+  owner {
+    id
+    equipment {
+      ...equipmentEssentials
+    }
+  }
+}
+    ${EquipmentEssentialsFragmentDoc}`;
+export const EquipmentInspectionDetailedFragmentDoc = gql`
+    fragment equipmentInspectionDetailed on EquipmentInspection {
+  ...equipmentInspectionEssentials
+  equipment {
+    ...userEquipmentDetailed
+  }
+}
+    ${EquipmentInspectionEssentialsFragmentDoc}
+${UserEquipmentDetailedFragmentDoc}`;
+export const EquipmentInspectionMutationEssentialsFragmentDoc = gql`
+    fragment equipmentInspectionMutationEssentials on EquipmentInspection {
+  ...equipmentInspectionDetailed
+  formTemplate {
+    id
+    definition
+  }
+  membership {
+    ...membershipEssentials
+    equipmentInspections {
+      ...equipmentInspectionEssentials
+    }
+  }
+}
+    ${EquipmentInspectionDetailedFragmentDoc}
+${MembershipEssentialsFragmentDoc}
+${EquipmentInspectionEssentialsFragmentDoc}`;
 export const TicketTypeExtraEssentialsFragmentDoc = gql`
     fragment ticketTypeExtraEssentials on Extra {
   id
@@ -418,30 +474,19 @@ export const UserCertificationEssentialsFragmentDoc = gql`
     ${CertificationBodyEssentialsFragmentDoc}
 ${CertificationLevelEssentialsFragmentDoc}
 ${UserQualificationEssentialsFragmentDoc}`;
-export const UserRigDetailedFragmentDoc = gql`
-    fragment userRigDetailed on Rig {
-  ...rigEssentials
-  owner {
-    id
-    rigs {
-      ...rigEssentials
-    }
-  }
-}
-    ${RigEssentialsFragmentDoc}`;
 export const UserDetailedFragmentDoc = gql`
     fragment userDetailed on User {
   ...userEssentials
   userCertifications {
     ...userCertificationEssentials
   }
-  rigs {
-    ...userRigDetailed
+  equipment {
+    ...userEquipmentDetailed
   }
 }
     ${UserEssentialsFragmentDoc}
 ${UserCertificationEssentialsFragmentDoc}
-${UserRigDetailedFragmentDoc}`;
+${UserEquipmentDetailedFragmentDoc}`;
 export const MembershipDetailsFragmentDoc = gql`
     fragment membershipDetails on Membership {
   ...membershipEssentials
@@ -452,28 +497,14 @@ export const MembershipDetailsFragmentDoc = gql`
   user {
     ...userDetailed
   }
-  availableRigs {
-    ...rigEssentials
+  availableEquipment {
+    ...equipmentEssentials
   }
 }
     ${MembershipEssentialsFragmentDoc}
 ${CertificationLevelDetailsFragmentDoc}
 ${UserDetailedFragmentDoc}
-${RigEssentialsFragmentDoc}`;
-export const RigInspectionEssentialsFragmentDoc = gql`
-    fragment rigInspectionEssentials on RigInspection {
-  id
-  isOk
-  definition
-  inspectedBy {
-    ...membershipEssentials
-  }
-  rig {
-    ...rigEssentials
-  }
-}
-    ${MembershipEssentialsFragmentDoc}
-${RigEssentialsFragmentDoc}`;
+${EquipmentEssentialsFragmentDoc}`;
 export const TransactionEssentialsFragmentDoc = gql`
     fragment transactionEssentials on Transaction {
   id
@@ -581,15 +612,15 @@ ${ReceiptEssentialsFragmentDoc}`;
 export const SlotDetailsFragmentDoc = gql`
     fragment slotDetails on Slot {
   ...slotEssentials
-  rig {
-    ...rigEssentials
+  equipment {
+    ...equipmentEssentials
   }
   membership {
     ...membershipEssentials
   }
 }
     ${SlotEssentialsFragmentDoc}
-${RigEssentialsFragmentDoc}
+${EquipmentEssentialsFragmentDoc}
 ${MembershipEssentialsFragmentDoc}`;
 export const UserSlotDetailsFragmentDoc = gql`
     fragment userSlotDetails on Slot {
@@ -604,8 +635,8 @@ export const MembershipProfileFragmentDoc = gql`
     fragment membershipProfile on Membership {
   ...membershipDetails
   permissions
-  rigInspections {
-    ...rigInspectionEssentials
+  equipmentInspections {
+    ...equipmentInspectionEssentials
   }
   orders {
     edges {
@@ -623,7 +654,7 @@ export const MembershipProfileFragmentDoc = gql`
   }
 }
     ${MembershipDetailsFragmentDoc}
-${RigInspectionEssentialsFragmentDoc}
+${EquipmentInspectionEssentialsFragmentDoc}
 ${OrderEssentialsFragmentDoc}
 ${UserSlotDetailsFragmentDoc}`;
 export const OperatorStatisticsEssentialsFragmentDoc = gql`
@@ -648,7 +679,7 @@ export const OperatorStatisticsEssentialsFragmentDoc = gql`
     count
   }
   revenueCentsCount(timeRange: $timeRange)
-  rigInspectorCount
+  equipmentInspectorCount
 }
     `;
 export const OperatorStatisticsFragmentDoc = gql`
@@ -660,6 +691,23 @@ export const OperatorStatisticsFragmentDoc = gql`
 }
     ${OperatorEssentialsFragmentDoc}
 ${OperatorStatisticsEssentialsFragmentDoc}`;
+export const EquipmentKindEssentialsFragmentDoc = gql`
+    fragment equipmentKindEssentials on EquipmentKind {
+  id
+  key
+  name
+  attributeSchema
+  serviceIntervalDays
+  inspectionValidDays
+  requiredBy
+  position
+  inspectionFormTemplate {
+    id
+    name
+    definition
+  }
+}
+    `;
 export const WeatherConditionEssentialsFragmentDoc = gql`
     fragment weatherConditionEssentials on WeatherCondition {
   id
@@ -686,6 +734,9 @@ export const OperatorDetailedFragmentDoc = gql`
   requiredQualifications {
     ...qualificationEssentials
   }
+  equipmentKinds {
+    ...equipmentKindEssentials
+  }
   currentConditions {
     ...weatherConditionEssentials
   }
@@ -693,6 +744,7 @@ export const OperatorDetailedFragmentDoc = gql`
     ${OperatorEssentialsFragmentDoc}
 ${CertificationBodyEssentialsFragmentDoc}
 ${QualificationEssentialsFragmentDoc}
+${EquipmentKindEssentialsFragmentDoc}
 ${WeatherConditionEssentialsFragmentDoc}`;
 export const CurrentUserEssentialsFragmentDoc = gql`
     fragment currentUserEssentials on Membership {
@@ -702,8 +754,8 @@ export const CurrentUserEssentialsFragmentDoc = gql`
   hasCredits
   hasBodyMassKg
   hasMembership
-  hasReserveInDate
-  hasRigInspection
+  hasEquipmentInService
+  hasEquipmentInspection
   hasCertificationLevel
   permissions
   expiresAt
@@ -725,8 +777,8 @@ ${MembershipDetailsFragmentDoc}`;
 export const CurrentUserDetailedFragmentDoc = gql`
     fragment currentUserDetailed on Membership {
   ...currentUserEssentials
-  rigInspections {
-    ...rigInspectionEssentials
+  equipmentInspections {
+    ...equipmentInspectionEssentials
   }
   orders {
     edges {
@@ -735,8 +787,8 @@ export const CurrentUserDetailedFragmentDoc = gql`
       }
     }
   }
-  availableRigs {
-    ...rigEssentials
+  availableEquipment {
+    ...equipmentEssentials
   }
   certificationLevel {
     ...certificationLevelDetails
@@ -746,9 +798,9 @@ export const CurrentUserDetailedFragmentDoc = gql`
   }
 }
     ${CurrentUserEssentialsFragmentDoc}
-${RigInspectionEssentialsFragmentDoc}
+${EquipmentInspectionEssentialsFragmentDoc}
 ${OrderEssentialsFragmentDoc}
-${RigEssentialsFragmentDoc}
+${EquipmentEssentialsFragmentDoc}
 ${CertificationLevelDetailsFragmentDoc}
 ${CurrentUserFragmentDoc}`;
 export const OperatorExtensiveFragmentDoc = gql`
@@ -760,32 +812,6 @@ export const OperatorExtensiveFragmentDoc = gql`
 }
     ${OperatorDetailedFragmentDoc}
 ${CurrentUserDetailedFragmentDoc}`;
-export const RigInspectionDetailedFragmentDoc = gql`
-    fragment rigInspectionDetailed on RigInspection {
-  ...rigInspectionEssentials
-  rig {
-    ...userRigDetailed
-  }
-}
-    ${RigInspectionEssentialsFragmentDoc}
-${UserRigDetailedFragmentDoc}`;
-export const RigInspectionMutationEssentialsFragmentDoc = gql`
-    fragment rigInspectionMutationEssentials on RigInspection {
-  ...rigInspectionDetailed
-  formTemplate {
-    id
-    definition
-  }
-  membership {
-    ...membershipEssentials
-    rigInspections {
-      ...rigInspectionEssentials
-    }
-  }
-}
-    ${RigInspectionDetailedFragmentDoc}
-${MembershipEssentialsFragmentDoc}
-${RigInspectionEssentialsFragmentDoc}`;
 export const RoleDetailedFragmentDoc = gql`
     fragment roleDetailed on UserRole {
   ...roleEssentials
@@ -876,14 +902,14 @@ export const SlotExhaustiveFragmentDoc = gql`
   load {
     ...loadDetails
   }
-  rig {
-    ...rigEssentials
+  equipment {
+    ...equipmentEssentials
   }
 }
     ${SlotDetailsFragmentDoc}
 ${MembershipDetailsFragmentDoc}
 ${LoadDetailsFragmentDoc}
-${RigEssentialsFragmentDoc}`;
+${EquipmentEssentialsFragmentDoc}`;
 export const TicketTypeAddonDetailsFragmentDoc = gql`
     fragment ticketTypeAddonDetails on Extra {
   ...ticketTypeAddonEssentials
@@ -977,46 +1003,46 @@ export function useArchiveDestinationMutation(baseOptions?: Apollo.MutationHookO
 export type ArchiveDestinationMutationHookResult = ReturnType<typeof useArchiveDestinationMutation>;
 export type ArchiveDestinationMutationResult = Apollo.MutationResult<Operation.ArchiveDestinationMutation>;
 export type ArchiveDestinationMutationOptions = Apollo.BaseMutationOptions<Operation.ArchiveDestinationMutation, Operation.ArchiveDestinationMutationVariables>;
-export const ArchiveRigDocument = gql`
-    mutation ArchiveRig($id: Int!) {
-  archiveRig(input: {id: $id}) {
+export const ArchiveEquipmentDocument = gql`
+    mutation ArchiveEquipment($id: Int!) {
+  archiveEquipment(input: {id: $id}) {
     fieldErrors {
       field
       message
     }
     errors
-    rig {
-      ...rigEssentials
+    equipment {
+      ...equipmentEssentials
     }
   }
 }
-    ${RigEssentialsFragmentDoc}`;
-export type ArchiveRigMutationFn = Apollo.MutationFunction<Operation.ArchiveRigMutation, Operation.ArchiveRigMutationVariables>;
+    ${EquipmentEssentialsFragmentDoc}`;
+export type ArchiveEquipmentMutationFn = Apollo.MutationFunction<Operation.ArchiveEquipmentMutation, Operation.ArchiveEquipmentMutationVariables>;
 
 /**
- * __useArchiveRigMutation__
+ * __useArchiveEquipmentMutation__
  *
- * To run a mutation, you first call `useArchiveRigMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useArchiveRigMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useArchiveEquipmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useArchiveEquipmentMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [archiveRigMutation, { data, loading, error }] = useArchiveRigMutation({
+ * const [archiveEquipmentMutation, { data, loading, error }] = useArchiveEquipmentMutation({
  *   variables: {
  *      id: // value for 'id'
  *   },
  * });
  */
-export function useArchiveRigMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ArchiveRigMutation, Operation.ArchiveRigMutationVariables>) {
+export function useArchiveEquipmentMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ArchiveEquipmentMutation, Operation.ArchiveEquipmentMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<Operation.ArchiveRigMutation, Operation.ArchiveRigMutationVariables>(ArchiveRigDocument, options);
+        return Apollo.useMutation<Operation.ArchiveEquipmentMutation, Operation.ArchiveEquipmentMutationVariables>(ArchiveEquipmentDocument, options);
       }
-export type ArchiveRigMutationHookResult = ReturnType<typeof useArchiveRigMutation>;
-export type ArchiveRigMutationResult = Apollo.MutationResult<Operation.ArchiveRigMutation>;
-export type ArchiveRigMutationOptions = Apollo.BaseMutationOptions<Operation.ArchiveRigMutation, Operation.ArchiveRigMutationVariables>;
+export type ArchiveEquipmentMutationHookResult = ReturnType<typeof useArchiveEquipmentMutation>;
+export type ArchiveEquipmentMutationResult = Apollo.MutationResult<Operation.ArchiveEquipmentMutation>;
+export type ArchiveEquipmentMutationOptions = Apollo.BaseMutationOptions<Operation.ArchiveEquipmentMutation, Operation.ArchiveEquipmentMutationVariables>;
 export const ArchiveTicketTypeDocument = gql`
     mutation ArchiveTicketType($id: Int!) {
   archiveTicketType(input: {id: $id}) {
@@ -1223,21 +1249,21 @@ export type CreateDestinationMutationHookResult = ReturnType<typeof useCreateDes
 export type CreateDestinationMutationResult = Apollo.MutationResult<Operation.CreateDestinationMutation>;
 export type CreateDestinationMutationOptions = Apollo.BaseMutationOptions<Operation.CreateDestinationMutation, Operation.CreateDestinationMutationVariables>;
 export const CreateEquipmentDocument = gql`
-    mutation CreateEquipment($make: String, $name: String, $model: String, $serial: String, $rigType: String, $canopySize: Int, $repackExpiresAt: Int, $userId: Int, $operatorId: Int) {
+    mutation CreateEquipment($make: String, $name: String, $model: String, $serial: String, $kindId: ID, $attributes: JSON, $maintainedAt: Int, $serviceDueAt: Int, $userId: Int, $operatorId: Int) {
   createEquipment(
-    input: {attributes: {name: $name, make: $make, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, operatorId: $operatorId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
+    input: {attributes: {name: $name, make: $make, model: $model, serial: $serial, serviceDueAt: $serviceDueAt, operatorId: $operatorId, userId: $userId, kindId: $kindId, attributes: $attributes, maintainedAt: $maintainedAt}}
   ) {
     errors
     fieldErrors {
       field
       message
     }
-    rig {
-      ...userRigDetailed
+    equipment {
+      ...userEquipmentDetailed
     }
   }
 }
-    ${UserRigDetailedFragmentDoc}`;
+    ${UserEquipmentDetailedFragmentDoc}`;
 export type CreateEquipmentMutationFn = Apollo.MutationFunction<Operation.CreateEquipmentMutation, Operation.CreateEquipmentMutationVariables>;
 
 /**
@@ -1257,9 +1283,10 @@ export type CreateEquipmentMutationFn = Apollo.MutationFunction<Operation.Create
  *      name: // value for 'name'
  *      model: // value for 'model'
  *      serial: // value for 'serial'
- *      rigType: // value for 'rigType'
- *      canopySize: // value for 'canopySize'
- *      repackExpiresAt: // value for 'repackExpiresAt'
+ *      kindId: // value for 'kindId'
+ *      attributes: // value for 'attributes'
+ *      maintainedAt: // value for 'maintainedAt'
+ *      serviceDueAt: // value for 'serviceDueAt'
  *      userId: // value for 'userId'
  *      operatorId: // value for 'operatorId'
  *   },
@@ -1273,12 +1300,12 @@ export type CreateEquipmentMutationHookResult = ReturnType<typeof useCreateEquip
 export type CreateEquipmentMutationResult = Apollo.MutationResult<Operation.CreateEquipmentMutation>;
 export type CreateEquipmentMutationOptions = Apollo.BaseMutationOptions<Operation.CreateEquipmentMutation, Operation.CreateEquipmentMutationVariables>;
 export const CreateEquipmentInspectionDocument = gql`
-    mutation CreateEquipmentInspection($operator: ID, $rig: ID, $isOk: Boolean, $definition: String) {
+    mutation CreateEquipmentInspection($operator: ID, $equipment: ID, $isOk: Boolean, $definition: String) {
   createEquipmentInspection(
-    input: {attributes: {operator: $operator, rig: $rig, isOk: $isOk, definition: $definition}}
+    input: {attributes: {operator: $operator, equipment: $equipment, isOk: $isOk, definition: $definition}}
   ) {
-    rigInspection {
-      ...rigInspectionMutationEssentials
+    equipmentInspection {
+      ...equipmentInspectionMutationEssentials
     }
     fieldErrors {
       field
@@ -1287,7 +1314,7 @@ export const CreateEquipmentInspectionDocument = gql`
     errors
   }
 }
-    ${RigInspectionMutationEssentialsFragmentDoc}`;
+    ${EquipmentInspectionMutationEssentialsFragmentDoc}`;
 export type CreateEquipmentInspectionMutationFn = Apollo.MutationFunction<Operation.CreateEquipmentInspectionMutation, Operation.CreateEquipmentInspectionMutationVariables>;
 
 /**
@@ -1304,7 +1331,7 @@ export type CreateEquipmentInspectionMutationFn = Apollo.MutationFunction<Operat
  * const [createEquipmentInspectionMutation, { data, loading, error }] = useCreateEquipmentInspectionMutation({
  *   variables: {
  *      operator: // value for 'operator'
- *      rig: // value for 'rig'
+ *      equipment: // value for 'equipment'
  *      isOk: // value for 'isOk'
  *      definition: // value for 'definition'
  *   },
@@ -2037,9 +2064,9 @@ export type ManifestGroupMutationHookResult = ReturnType<typeof useManifestGroup
 export type ManifestGroupMutationResult = Apollo.MutationResult<Operation.ManifestGroupMutation>;
 export type ManifestGroupMutationOptions = Apollo.BaseMutationOptions<Operation.ManifestGroupMutation, Operation.ManifestGroupMutationVariables>;
 export const ManifestUserDocument = gql`
-    mutation ManifestUser($activityType: ID, $extras: [ID!], $load: ID, $rig: ID, $ticketType: ID, $membership: ID, $bodyMassKg: Float, $guestName: String, $groupNumber: Int, $guestBodyMassKg: Float) {
+    mutation ManifestUser($activityType: ID, $extras: [ID!], $load: ID, $equipment: [ID!], $ticketType: ID, $membership: ID, $bodyMassKg: Float, $guestName: String, $groupNumber: Int, $guestBodyMassKg: Float) {
   createSlot(
-    input: {attributes: {activityType: $activityType, extras: $extras, load: $load, rig: $rig, groupNumber: $groupNumber, ticketType: $ticketType, membership: $membership, bodyMassKg: $bodyMassKg, guestBodyMassKg: $guestBodyMassKg, guestName: $guestName}}
+    input: {attributes: {activityType: $activityType, extras: $extras, load: $load, equipment: $equipment, groupNumber: $groupNumber, ticketType: $ticketType, membership: $membership, bodyMassKg: $bodyMassKg, guestBodyMassKg: $guestBodyMassKg, guestName: $guestName}}
   ) {
     errors
     fieldErrors {
@@ -2070,7 +2097,7 @@ export type ManifestUserMutationFn = Apollo.MutationFunction<Operation.ManifestU
  *      activityType: // value for 'activityType'
  *      extras: // value for 'extras'
  *      load: // value for 'load'
- *      rig: // value for 'rig'
+ *      equipment: // value for 'equipment'
  *      ticketType: // value for 'ticketType'
  *      membership: // value for 'membership'
  *      bodyMassKg: // value for 'bodyMassKg'
@@ -2341,21 +2368,21 @@ export type UpdateDestinationMutationHookResult = ReturnType<typeof useUpdateDes
 export type UpdateDestinationMutationResult = Apollo.MutationResult<Operation.UpdateDestinationMutation>;
 export type UpdateDestinationMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateDestinationMutation, Operation.UpdateDestinationMutationVariables>;
 export const UpdateEquipmentDocument = gql`
-    mutation UpdateEquipment($id: Int!, $name: String, $make: String, $model: String, $serial: String, $isPublic: Boolean, $rigType: String, $canopySize: Int, $packingCard: String, $repackExpiresAt: Int, $userId: Int, $operatorId: Int) {
+    mutation UpdateEquipment($id: Int!, $name: String, $make: String, $model: String, $serial: String, $isPublic: Boolean, $kindId: ID, $attributes: JSON, $maintainedAt: Int, $packingCard: String, $serviceDueAt: Int, $userId: Int, $operatorId: Int) {
   updateEquipment(
-    input: {id: $id, attributes: {name: $name, make: $make, packingCard: $packingCard, isPublic: $isPublic, model: $model, serial: $serial, repackExpiresAt: $repackExpiresAt, operatorId: $operatorId, userId: $userId, canopySize: $canopySize, rigType: $rigType}}
+    input: {id: $id, attributes: {name: $name, make: $make, packingCard: $packingCard, isPublic: $isPublic, model: $model, serial: $serial, serviceDueAt: $serviceDueAt, operatorId: $operatorId, userId: $userId, kindId: $kindId, attributes: $attributes, maintainedAt: $maintainedAt}}
   ) {
     errors
     fieldErrors {
       field
       message
     }
-    rig {
-      ...userRigDetailed
+    equipment {
+      ...userEquipmentDetailed
     }
   }
 }
-    ${UserRigDetailedFragmentDoc}`;
+    ${UserEquipmentDetailedFragmentDoc}`;
 export type UpdateEquipmentMutationFn = Apollo.MutationFunction<Operation.UpdateEquipmentMutation, Operation.UpdateEquipmentMutationVariables>;
 
 /**
@@ -2377,10 +2404,11 @@ export type UpdateEquipmentMutationFn = Apollo.MutationFunction<Operation.Update
  *      model: // value for 'model'
  *      serial: // value for 'serial'
  *      isPublic: // value for 'isPublic'
- *      rigType: // value for 'rigType'
- *      canopySize: // value for 'canopySize'
+ *      kindId: // value for 'kindId'
+ *      attributes: // value for 'attributes'
+ *      maintainedAt: // value for 'maintainedAt'
  *      packingCard: // value for 'packingCard'
- *      repackExpiresAt: // value for 'repackExpiresAt'
+ *      serviceDueAt: // value for 'serviceDueAt'
  *      userId: // value for 'userId'
  *      operatorId: // value for 'operatorId'
  *   },
@@ -3455,6 +3483,103 @@ export type DestinationsQueryHookResult = ReturnType<typeof useDestinationsQuery
 export type DestinationsLazyQueryHookResult = ReturnType<typeof useDestinationsLazyQuery>;
 export type DestinationsSuspenseQueryHookResult = ReturnType<typeof useDestinationsSuspenseQuery>;
 export type DestinationsQueryResult = Apollo.QueryResult<Operation.DestinationsQuery, Operation.DestinationsQueryVariables>;
+export const AvailableEquipmentDocument = gql`
+    query AvailableEquipment($membershipId: Int!, $isTandem: Boolean, $loadId: Int, $kind: String) {
+  availableEquipment(
+    membership: $membershipId
+    isTandem: $isTandem
+    loadId: $loadId
+    kind: $kind
+  ) {
+    ...userEquipmentDetailed
+  }
+}
+    ${UserEquipmentDetailedFragmentDoc}`;
+
+/**
+ * __useAvailableEquipmentQuery__
+ *
+ * To run a query within a React component, call `useAvailableEquipmentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAvailableEquipmentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAvailableEquipmentQuery({
+ *   variables: {
+ *      membershipId: // value for 'membershipId'
+ *      isTandem: // value for 'isTandem'
+ *      loadId: // value for 'loadId'
+ *      kind: // value for 'kind'
+ *   },
+ * });
+ */
+export function useAvailableEquipmentQuery(baseOptions: Apollo.QueryHookOptions<Operation.AvailableEquipmentQuery, Operation.AvailableEquipmentQueryVariables> & ({ variables: Operation.AvailableEquipmentQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.AvailableEquipmentQuery, Operation.AvailableEquipmentQueryVariables>(AvailableEquipmentDocument, options);
+      }
+export function useAvailableEquipmentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.AvailableEquipmentQuery, Operation.AvailableEquipmentQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.AvailableEquipmentQuery, Operation.AvailableEquipmentQueryVariables>(AvailableEquipmentDocument, options);
+        }
+// @ts-ignore
+export function useAvailableEquipmentSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.AvailableEquipmentQuery, Operation.AvailableEquipmentQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.AvailableEquipmentQuery, Operation.AvailableEquipmentQueryVariables>;
+export function useAvailableEquipmentSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.AvailableEquipmentQuery, Operation.AvailableEquipmentQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.AvailableEquipmentQuery | undefined, Operation.AvailableEquipmentQueryVariables>;
+export function useAvailableEquipmentSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.AvailableEquipmentQuery, Operation.AvailableEquipmentQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.AvailableEquipmentQuery, Operation.AvailableEquipmentQueryVariables>(AvailableEquipmentDocument, options);
+        }
+export type AvailableEquipmentQueryHookResult = ReturnType<typeof useAvailableEquipmentQuery>;
+export type AvailableEquipmentLazyQueryHookResult = ReturnType<typeof useAvailableEquipmentLazyQuery>;
+export type AvailableEquipmentSuspenseQueryHookResult = ReturnType<typeof useAvailableEquipmentSuspenseQuery>;
+export type AvailableEquipmentQueryResult = Apollo.QueryResult<Operation.AvailableEquipmentQuery, Operation.AvailableEquipmentQueryVariables>;
+export const EquipmentInspectionTemplateDocument = gql`
+    query EquipmentInspectionTemplate($operatorId: ID!) {
+  operator(id: $operatorId) {
+    id
+    equipmentKinds {
+      ...equipmentKindEssentials
+    }
+  }
+}
+    ${EquipmentKindEssentialsFragmentDoc}`;
+
+/**
+ * __useEquipmentInspectionTemplateQuery__
+ *
+ * To run a query within a React component, call `useEquipmentInspectionTemplateQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEquipmentInspectionTemplateQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEquipmentInspectionTemplateQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *   },
+ * });
+ */
+export function useEquipmentInspectionTemplateQuery(baseOptions: Apollo.QueryHookOptions<Operation.EquipmentInspectionTemplateQuery, Operation.EquipmentInspectionTemplateQueryVariables> & ({ variables: Operation.EquipmentInspectionTemplateQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.EquipmentInspectionTemplateQuery, Operation.EquipmentInspectionTemplateQueryVariables>(EquipmentInspectionTemplateDocument, options);
+      }
+export function useEquipmentInspectionTemplateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.EquipmentInspectionTemplateQuery, Operation.EquipmentInspectionTemplateQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.EquipmentInspectionTemplateQuery, Operation.EquipmentInspectionTemplateQueryVariables>(EquipmentInspectionTemplateDocument, options);
+        }
+// @ts-ignore
+export function useEquipmentInspectionTemplateSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.EquipmentInspectionTemplateQuery, Operation.EquipmentInspectionTemplateQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.EquipmentInspectionTemplateQuery, Operation.EquipmentInspectionTemplateQueryVariables>;
+export function useEquipmentInspectionTemplateSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.EquipmentInspectionTemplateQuery, Operation.EquipmentInspectionTemplateQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.EquipmentInspectionTemplateQuery | undefined, Operation.EquipmentInspectionTemplateQueryVariables>;
+export function useEquipmentInspectionTemplateSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.EquipmentInspectionTemplateQuery, Operation.EquipmentInspectionTemplateQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.EquipmentInspectionTemplateQuery, Operation.EquipmentInspectionTemplateQueryVariables>(EquipmentInspectionTemplateDocument, options);
+        }
+export type EquipmentInspectionTemplateQueryHookResult = ReturnType<typeof useEquipmentInspectionTemplateQuery>;
+export type EquipmentInspectionTemplateLazyQueryHookResult = ReturnType<typeof useEquipmentInspectionTemplateLazyQuery>;
+export type EquipmentInspectionTemplateSuspenseQueryHookResult = ReturnType<typeof useEquipmentInspectionTemplateSuspenseQuery>;
+export type EquipmentInspectionTemplateQueryResult = Apollo.QueryResult<Operation.EquipmentInspectionTemplateQuery, Operation.EquipmentInspectionTemplateQueryVariables>;
 export const TicketTypeExtrasDocument = gql`
     query TicketTypeExtras($operatorId: ID!) {
   extras(operator: $operatorId) {
@@ -3917,9 +4042,9 @@ export const NotificationsDocument = gql`
               ... on Slot {
                 ...slotEssentials
               }
-              ... on Rig {
-                ...rigEssentials
-                rigInspections(operatorId: $operatorId) {
+              ... on Equipment {
+                ...equipmentEssentials
+                equipmentInspections(operatorId: $operatorId) {
                   id
                   createdAt
                   inspectedBy {
@@ -3931,8 +4056,8 @@ export const NotificationsDocument = gql`
                   }
                 }
               }
-              ... on RigInspection {
-                ...rigInspectionEssentials
+              ... on EquipmentInspection {
+                ...equipmentInspectionEssentials
               }
             }
           }
@@ -3943,8 +4068,8 @@ export const NotificationsDocument = gql`
 }
     ${LoadEssentialsFragmentDoc}
 ${SlotEssentialsFragmentDoc}
-${RigEssentialsFragmentDoc}
-${RigInspectionEssentialsFragmentDoc}`;
+${EquipmentEssentialsFragmentDoc}
+${EquipmentInspectionEssentialsFragmentDoc}`;
 
 /**
  * __useNotificationsQuery__
@@ -4122,52 +4247,52 @@ export type OperatorsStatisticsQueryHookResult = ReturnType<typeof useOperatorsS
 export type OperatorsStatisticsLazyQueryHookResult = ReturnType<typeof useOperatorsStatisticsLazyQuery>;
 export type OperatorsStatisticsSuspenseQueryHookResult = ReturnType<typeof useOperatorsStatisticsSuspenseQuery>;
 export type OperatorsStatisticsQueryResult = Apollo.QueryResult<Operation.OperatorsStatisticsQuery, Operation.OperatorsStatisticsQueryVariables>;
-export const OperatorRigsDocument = gql`
-    query OperatorRigs($operatorId: ID!) {
+export const OperatorEquipmentDocument = gql`
+    query OperatorEquipment($operatorId: ID!) {
   operator(id: $operatorId) {
     id
-    rigs {
-      ...rigEssentials
+    equipment {
+      ...equipmentEssentials
     }
   }
 }
-    ${RigEssentialsFragmentDoc}`;
+    ${EquipmentEssentialsFragmentDoc}`;
 
 /**
- * __useOperatorRigsQuery__
+ * __useOperatorEquipmentQuery__
  *
- * To run a query within a React component, call `useOperatorRigsQuery` and pass it any options that fit your needs.
- * When your component renders, `useOperatorRigsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useOperatorEquipmentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOperatorEquipmentQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useOperatorRigsQuery({
+ * const { data, loading, error } = useOperatorEquipmentQuery({
  *   variables: {
  *      operatorId: // value for 'operatorId'
  *   },
  * });
  */
-export function useOperatorRigsQuery(baseOptions: Apollo.QueryHookOptions<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables> & ({ variables: Operation.OperatorRigsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useOperatorEquipmentQuery(baseOptions: Apollo.QueryHookOptions<Operation.OperatorEquipmentQuery, Operation.OperatorEquipmentQueryVariables> & ({ variables: Operation.OperatorEquipmentQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>(OperatorRigsDocument, options);
+        return Apollo.useQuery<Operation.OperatorEquipmentQuery, Operation.OperatorEquipmentQueryVariables>(OperatorEquipmentDocument, options);
       }
-export function useOperatorRigsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>) {
+export function useOperatorEquipmentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.OperatorEquipmentQuery, Operation.OperatorEquipmentQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>(OperatorRigsDocument, options);
+          return Apollo.useLazyQuery<Operation.OperatorEquipmentQuery, Operation.OperatorEquipmentQueryVariables>(OperatorEquipmentDocument, options);
         }
 // @ts-ignore
-export function useOperatorRigsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>;
-export function useOperatorRigsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorRigsQuery | undefined, Operation.OperatorRigsQueryVariables>;
-export function useOperatorRigsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>) {
+export function useOperatorEquipmentSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.OperatorEquipmentQuery, Operation.OperatorEquipmentQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorEquipmentQuery, Operation.OperatorEquipmentQueryVariables>;
+export function useOperatorEquipmentSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorEquipmentQuery, Operation.OperatorEquipmentQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.OperatorEquipmentQuery | undefined, Operation.OperatorEquipmentQueryVariables>;
+export function useOperatorEquipmentSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.OperatorEquipmentQuery, Operation.OperatorEquipmentQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>(OperatorRigsDocument, options);
+          return Apollo.useSuspenseQuery<Operation.OperatorEquipmentQuery, Operation.OperatorEquipmentQueryVariables>(OperatorEquipmentDocument, options);
         }
-export type OperatorRigsQueryHookResult = ReturnType<typeof useOperatorRigsQuery>;
-export type OperatorRigsLazyQueryHookResult = ReturnType<typeof useOperatorRigsLazyQuery>;
-export type OperatorRigsSuspenseQueryHookResult = ReturnType<typeof useOperatorRigsSuspenseQuery>;
-export type OperatorRigsQueryResult = Apollo.QueryResult<Operation.OperatorRigsQuery, Operation.OperatorRigsQueryVariables>;
+export type OperatorEquipmentQueryHookResult = ReturnType<typeof useOperatorEquipmentQuery>;
+export type OperatorEquipmentLazyQueryHookResult = ReturnType<typeof useOperatorEquipmentLazyQuery>;
+export type OperatorEquipmentSuspenseQueryHookResult = ReturnType<typeof useOperatorEquipmentSuspenseQuery>;
+export type OperatorEquipmentQueryResult = Apollo.QueryResult<Operation.OperatorEquipmentQuery, Operation.OperatorEquipmentQueryVariables>;
 export const OperatorPermissionsDocument = gql`
     query OperatorPermissions($id: ID!) {
   operator(id: $id) {
@@ -4416,99 +4541,6 @@ export type CurrentUserPermissionsQueryHookResult = ReturnType<typeof useCurrent
 export type CurrentUserPermissionsLazyQueryHookResult = ReturnType<typeof useCurrentUserPermissionsLazyQuery>;
 export type CurrentUserPermissionsSuspenseQueryHookResult = ReturnType<typeof useCurrentUserPermissionsSuspenseQuery>;
 export type CurrentUserPermissionsQueryResult = Apollo.QueryResult<Operation.CurrentUserPermissionsQuery, Operation.CurrentUserPermissionsQueryVariables>;
-export const RigInspectionTemplateDocument = gql`
-    query RigInspectionTemplate($operatorId: ID!) {
-  operator(id: $operatorId) {
-    id
-    rigInspectionTemplate {
-      id
-      name
-      definition
-    }
-  }
-}
-    `;
-
-/**
- * __useRigInspectionTemplateQuery__
- *
- * To run a query within a React component, call `useRigInspectionTemplateQuery` and pass it any options that fit your needs.
- * When your component renders, `useRigInspectionTemplateQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRigInspectionTemplateQuery({
- *   variables: {
- *      operatorId: // value for 'operatorId'
- *   },
- * });
- */
-export function useRigInspectionTemplateQuery(baseOptions: Apollo.QueryHookOptions<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables> & ({ variables: Operation.RigInspectionTemplateQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>(RigInspectionTemplateDocument, options);
-      }
-export function useRigInspectionTemplateLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>(RigInspectionTemplateDocument, options);
-        }
-// @ts-ignore
-export function useRigInspectionTemplateSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>;
-export function useRigInspectionTemplateSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.RigInspectionTemplateQuery | undefined, Operation.RigInspectionTemplateQueryVariables>;
-export function useRigInspectionTemplateSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>(RigInspectionTemplateDocument, options);
-        }
-export type RigInspectionTemplateQueryHookResult = ReturnType<typeof useRigInspectionTemplateQuery>;
-export type RigInspectionTemplateLazyQueryHookResult = ReturnType<typeof useRigInspectionTemplateLazyQuery>;
-export type RigInspectionTemplateSuspenseQueryHookResult = ReturnType<typeof useRigInspectionTemplateSuspenseQuery>;
-export type RigInspectionTemplateQueryResult = Apollo.QueryResult<Operation.RigInspectionTemplateQuery, Operation.RigInspectionTemplateQueryVariables>;
-export const AvailableRigsDocument = gql`
-    query AvailableRigs($membershipId: Int!, $isTandem: Boolean, $loadId: Int) {
-  availableRigs(membership: $membershipId, isTandem: $isTandem, loadId: $loadId) {
-    ...userRigDetailed
-  }
-}
-    ${UserRigDetailedFragmentDoc}`;
-
-/**
- * __useAvailableRigsQuery__
- *
- * To run a query within a React component, call `useAvailableRigsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAvailableRigsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAvailableRigsQuery({
- *   variables: {
- *      membershipId: // value for 'membershipId'
- *      isTandem: // value for 'isTandem'
- *      loadId: // value for 'loadId'
- *   },
- * });
- */
-export function useAvailableRigsQuery(baseOptions: Apollo.QueryHookOptions<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables> & ({ variables: Operation.AvailableRigsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>(AvailableRigsDocument, options);
-      }
-export function useAvailableRigsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>(AvailableRigsDocument, options);
-        }
-// @ts-ignore
-export function useAvailableRigsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>;
-export function useAvailableRigsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.AvailableRigsQuery | undefined, Operation.AvailableRigsQueryVariables>;
-export function useAvailableRigsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>(AvailableRigsDocument, options);
-        }
-export type AvailableRigsQueryHookResult = ReturnType<typeof useAvailableRigsQuery>;
-export type AvailableRigsLazyQueryHookResult = ReturnType<typeof useAvailableRigsLazyQuery>;
-export type AvailableRigsSuspenseQueryHookResult = ReturnType<typeof useAvailableRigsSuspenseQuery>;
-export type AvailableRigsQueryResult = Apollo.QueryResult<Operation.AvailableRigsQuery, Operation.AvailableRigsQueryVariables>;
 export const RolesDocument = gql`
     query Roles($operatorId: ID!, $selectable: Boolean) {
   operator(id: $operatorId) {

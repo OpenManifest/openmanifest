@@ -5,7 +5,7 @@ import CertificationLevelSelect, {
   CertificationLevelSelectField,
 } from './CertificationLevelSelect';
 import VehicleSelect, { VehicleSelectField } from './VehicleSelect';
-import RigSelect, { RigSelectField } from './RigSelect';
+import EquipmentSelect, { EquipmentSelectField } from './EquipmentSelect';
 import RoleSelect, { RoleSelectField } from './RoleSelect';
 import TicketTypeSelect, { TicketTypeSelectField } from './TicketTypeSelect';
 
@@ -15,7 +15,7 @@ export {
   ActivityTypeSelect,
   CertificationLevelSelect,
   VehicleSelect,
-  RigSelect,
+  EquipmentSelect,
   RoleSelect,
   TicketTypeSelect,
 };
@@ -26,7 +26,7 @@ export {
   ActivityTypeSelectField,
   CertificationLevelSelectField,
   VehicleSelectField,
-  RigSelectField,
+  EquipmentSelectField,
   RoleSelectField,
   TicketTypeSelectField,
 };

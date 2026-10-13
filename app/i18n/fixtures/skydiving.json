@@ -73,6 +73,10 @@
     "one": "Rig inspection",
     "other": "Rig inspections"
   },
+  "service_due": {
+    "one": "Reserve repack due",
+    "other": "Reserve repack due"
+  },
   "daily_log": {
     "one": "Master log",
     "other": "Master logs"

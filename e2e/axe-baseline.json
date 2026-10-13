@@ -9,14 +9,14 @@
     "role-img-alt"
   ],
   "/configuration/permissions": ["color-contrast", "label", "role-img-alt"],
-  "/configuration/rig-inspection": [
+  "/configuration/equipment-inspection": [
     "aria-required-attr",
     "button-name",
     "label",
     "nested-interactive",
     "role-img-alt"
   ],
-  "/configuration/rigs": ["aria-progressbar-name", "role-img-alt"],
+  "/configuration/equipment": ["aria-progressbar-name", "role-img-alt"],
   "/configuration/ticket-types": ["aria-progressbar-name", "label", "role-img-alt"],
   "/manifest": ["aria-progressbar-name", "color-contrast", "role-img-alt"],
   "/daily-log": ["color-contrast", "role-img-alt"],

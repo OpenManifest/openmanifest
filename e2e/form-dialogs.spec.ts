@@ -27,8 +27,8 @@ test.describe('form dialogs @setup', () => {
   });
 
   test('the save button stays in view while the form scrolls', async ({ page }) => {
-    await gotoRoute(page, '/configuration/rigs');
-    await press(page, page.getByTestId('new-rig-primary-action'));
+    await gotoRoute(page, '/configuration/equipment');
+    await press(page, page.getByTestId('new-equipment-primary-action'));
 
     const card = page.getByTestId('form-dialog');
     await expect(card).toBeVisible();

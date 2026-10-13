@@ -8,12 +8,11 @@ import UiNumberField, {
 export enum NumberFieldType {
   Cash = 'cash',
   Weight = 'weight',
-  CanopySize = 'canopySize',
 }
 
 type INumberFieldProps = Omit<UiNumberFieldProps, 'label' | 'onChange' | 'unit' | 'prefix'> & {
   label?: string;
-  /** What the number is: a price (the currency sign before it), a weight (the operator's mass unit after it) or a canopy size (ft after it) */
+  /** What the number is: a price (the currency sign before it), a weight (the operator's mass unit after it) */
   variant?: NumberFieldType | null;
   unit?: string;
   /** Called with each number within min and max; text that is not a number, and an emptied field, call nothing */
@@ -24,7 +23,6 @@ type INumberFieldProps = Omit<UiNumberFieldProps, 'label' | 'onChange' | 'unit' 
 
 const UNIT: Partial<Record<NumberFieldType, string>> = {
   [NumberFieldType.Weight]: 'kg',
-  [NumberFieldType.CanopySize]: 'ft',
 };
 
 const round1 = (value: number) => Math.round(value * 10) / 10;

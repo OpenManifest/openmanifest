@@ -8,7 +8,7 @@ export const slotLoadingFragment: SlotDetailsFragment = {
   bodyMassKg: 0,
   groupNumber: 0,
   membership: null,
-  rig: null,
+  equipment: [],
   extras: null,
   activityType: null,
   guestBodyMassKg: null,

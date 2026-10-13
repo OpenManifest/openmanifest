@@ -45,7 +45,7 @@ describe('<ManifestUserDialog />', () => {
                 activityType: '1',
                 extras: undefined,
                 load: '7',
-                rig: undefined,
+                equipment: undefined,
                 ticketType: '1',
                 membership: '55',
                 bodyMassKg: 82,

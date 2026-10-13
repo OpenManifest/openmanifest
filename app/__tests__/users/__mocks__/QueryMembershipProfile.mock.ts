@@ -14,7 +14,7 @@ export const profileSlot = {
   guestBodyMassKg: null,
   wingLoading: 1.1,
   groupNumber: 0,
-  rig: null,
+  equipment: [],
   extras: null,
   membership: null,
   ticketType: null,

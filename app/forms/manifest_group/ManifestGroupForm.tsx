@@ -7,30 +7,32 @@ import { useAllowedActivityTypesQuery } from 'app/api/reflection';
 import { useSession } from 'app/state';
 import useRestriction from 'app/hooks/useRestriction';
 import { ActivityType, Permission } from 'app/api/schema.d';
-import type { RigEssentialsFragment } from 'app/api/operations';
+import type { EquipmentEssentialsFragment } from 'app/api/operations';
 import ChipSelect from 'app/components/input/chip_select/ChipSelect';
-import UserRigCard from './UserRigCard';
+import UserEquipmentCard from './UserEquipmentCard';
 import GroupPicker from './GroupPicker';
 import {
   ManifestGroupFields,
-  SlotUserWithRig,
+  SlotUserWithEquipment,
   TicketTypeExtraValue,
   TicketTypeValue,
 } from './useForm';
 import { formatCents } from 'app/utils/money';
 
 interface IUserCardProps {
-  slotUser: SlotUserWithRig;
+  slotUser: SlotUserWithEquipment;
 }
 
 function UserCard(props: IUserCardProps) {
   const { slotUser } = props;
   const { control, setValue, getValues } = useFormContext<ManifestGroupFields>();
-  const isTandem = !!useWatch({ control, name: 'ticketType' })?.isTandem;
+  const ticketType = useWatch({ control, name: 'ticketType' });
+  const activityType = useWatch({ control, name: 'activityType' });
+  const isTandem = !!ticketType?.isTandem;
 
   /** Changes this jumper, or removes them when `changes` is null */
   const update = React.useCallback(
-    (changes: Partial<SlotUserWithRig> | null) => {
+    (changes: Partial<SlotUserWithEquipment> | null) => {
       const users = getValues('users');
       setValue(
         'users',
@@ -48,8 +50,8 @@ function UserCard(props: IUserCardProps) {
     [update]
   );
   const onRemove = React.useCallback(() => update(null), [update]);
-  const onChangeRig = React.useCallback(
-    (newRig: RigEssentialsFragment) => update({ rigId: Number(newRig.id), rig: newRig }),
+  const onChangeEquipment = React.useCallback(
+    (equipment: EquipmentEssentialsFragment[]) => update({ equipment }),
     [update]
   );
   const onChangeGuestName = React.useCallback(
@@ -62,19 +64,21 @@ function UserCard(props: IUserCardProps) {
   );
 
   return (
-    <UserRigCard
-      key={`user-rig-card-${slotUser.id}`}
+    <UserEquipmentCard
+      key={`user-equipment-card-${slotUser.id}`}
       membershipId={slotUser.id?.toString()}
-      selectedRig={slotUser.rig || undefined}
+      selectedEquipment={slotUser.equipment}
       bodyMassKg={slotUser.bodyMassKg}
       {...{
         onChangeBodyMassKg,
         onRemove,
-        onChangeRig,
+        onChangeEquipment,
         onChangeGuestName,
         onChangeGuestWeight,
       }}
       {...{ isTandem }}
+      ticketTypeId={ticketType?.id}
+      activityTypeId={activityType?.id}
       guestName={slotUser.guestName}
       guestWeight={slotUser.guestBodyMassKg}
     />

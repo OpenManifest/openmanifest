@@ -121,8 +121,8 @@ function ColumnHeadings({ fields }: Pick<ISlotsTableProps, 'fields'>) {
           <Text style={styles.th}>License</Text>
         </DataTable.Title>
       )}
-      {fields?.includes(SlotFields.Rig) && (
-        <DataTable.Title numeric style={rowStyles.rigCell}>
+      {fields?.includes(SlotFields.Equipment) && (
+        <DataTable.Title numeric style={rowStyles.equipmentCell}>
           <Text style={styles.th}>Equipment</Text>
         </DataTable.Title>
       )}

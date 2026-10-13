@@ -12,8 +12,8 @@ const mockOperatorContext = {
       id: '5',
       creditsCents: 100,
       expiresAt: null,
-      rigInspections: [],
-      user: { bodyMassKg: 80, rigs: [] },
+      equipmentInspections: [],
+      user: { bodyMassKg: 80, equipment: [] },
     },
   },
 };

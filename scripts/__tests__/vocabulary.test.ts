@@ -26,6 +26,8 @@ describe('vocabulary.rewrite', () => {
     ['ExitWeight', 'BodyMassKg'],
     ['EXIT_WEIGHT', 'BODY_MASS_KG'],
     ['planes', 'vehicles'],
+    ['rigs', 'equipment'],
+    ['Rigs', 'Equipment'],
     ['federations', 'certificationBodies'],
     ['Federations', 'CertificationBodies'],
     ['federationId', 'certificationBodyId'],

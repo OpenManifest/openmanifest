@@ -9,16 +9,16 @@ import type {
   MembershipEssentialsFragment,
   MembershipProfileFragment,
   LoadDetailsFragment,
-  RigEssentialsFragment,
+  EquipmentEssentialsFragment,
   SlotDetailsFragment,
 } from 'app/api/operations';
 import { useManifestGroupMutation } from 'app/api/reflection';
 import type { ActivityType, SlotUser, TicketType, Extra } from 'app/api/schema.d';
 import { useNotifications } from 'app/providers/notifications';
 
-export type SlotUserWithRig = Omit<SlotUser, 'rig'> & {
-  rigId?: number | null;
-  rig?: RigEssentialsFragment | null;
+export type SlotUserWithEquipment = Omit<SlotUser, 'equipment'> & {
+  /** What the jumper uses: one item for each kind of equipment the slot needs */
+  equipment?: EquipmentEssentialsFragment[];
   avatar?: string | null;
   name?: string;
 };
@@ -39,7 +39,7 @@ export type ManifestGroupFields = {
   ticketType: TicketTypeValue | null;
   extras: TicketTypeExtraValue[];
   groupNumber: number | null;
-  users: SlotUserWithRig[];
+  users: SlotUserWithEquipment[];
 };
 
 export const manifestGroupValidation = yup.object({
@@ -53,7 +53,9 @@ export const manifestGroupValidation = yup.object({
     .min(1, 'Add at least one jumper to the group')
     .test('tandem-guests', 'You cant manifest tandems without passengers', function check(users) {
       const isTandem = !!(this.parent as ManifestGroupFields).ticketType?.isTandem;
-      return !isTandem || (users as SlotUserWithRig[]).every((slotUser) => !!slotUser.guestName);
+      return (
+        !isTandem || (users as SlotUserWithEquipment[]).every((slotUser) => !!slotUser.guestName)
+      );
     }),
 });
 
@@ -66,32 +68,31 @@ export const EMPTY_FORM_VALUES: ManifestGroupFields = {
   users: [],
 };
 
-/** Turns members into jumpers for the group, each with the first of their rigs (or the operator's) */
+/** Turns members into jumpers for the group, each with the first of their equipment (or the operator's); the select of each kind adds the others */
 export function toSlotUsers(
   memberships: (MembershipProfileFragment | MembershipEssentialsFragment)[]
-): SlotUserWithRig[] {
+): SlotUserWithEquipment[] {
   return memberships.map((dzUser) => {
     const profile = dzUser as MembershipProfileFragment;
-    const autoSelectedRig = profile?.user?.rigs?.length
-      ? first(profile.user.rigs)
-      : first(profile.availableRigs);
+    const autoSelectedEquipment = profile?.user?.equipment?.length
+      ? first(profile.user.equipment)
+      : first(profile.availableEquipment);
 
     return {
       id: Number(dzUser.id),
-      rigId: autoSelectedRig?.id ? Number(autoSelectedRig.id) : null,
-      rig: autoSelectedRig,
+      equipment: autoSelectedEquipment ? [autoSelectedEquipment] : [],
       name: dzUser.user.name,
       avatar: dzUser.user.image,
       bodyMassKg: Number(dzUser?.user?.bodyMassKg),
     };
-  }) as SlotUserWithRig[];
+  }) as SlotUserWithEquipment[];
 }
 
 /** Adds the members that are not in the group yet and removes the ones that are */
 export function toggleSlotUsers(
-  current: SlotUserWithRig[],
+  current: SlotUserWithEquipment[],
   memberships: (MembershipProfileFragment | MembershipEssentialsFragment)[]
-): SlotUserWithRig[] {
+): SlotUserWithEquipment[] {
   return xorBy(current, toSlotUsers(memberships), 'id');
 }
 
@@ -117,10 +118,9 @@ export function toFormValues(initial: IManifestGroupInitial): ManifestGroupField
       ? {
           users: slots.map((slot) => ({
             id: Number(slot.membership?.id),
-            rigId: slot.rig?.id ? Number(slot.rig.id) : null,
-            rig: slot.rig,
+            equipment: slot.equipment,
             bodyMassKg: Number(slot.bodyMassKg),
-          })) as SlotUserWithRig[],
+          })) as SlotUserWithEquipment[],
           activityType: (firstSlot?.activityType as ActivityTypeValue) ?? null,
           groupNumber: firstSlot?.groupNumber || null,
           extras: (firstSlot?.extras as TicketTypeExtraValue[]) || [],
@@ -183,9 +183,9 @@ export default function useManifestGroupForm(opts: IUseManifestGroupFormOpts) {
             extras: fields.extras?.map(({ id }) => id),
             load: fields.load?.id,
             userGroup: fields.users.map(
-              ({ id, bodyMassKg, rigId, rig, guestName, guestBodyMassKg }) => ({
+              ({ id, bodyMassKg, equipment, guestName, guestBodyMassKg }) => ({
                 id,
-                rig: rigId?.toString() || rig?.id || undefined,
+                equipment: equipment?.length ? equipment.map((item) => item.id) : undefined,
                 bodyMassKg,
                 guestName,
                 guestBodyMassKg,

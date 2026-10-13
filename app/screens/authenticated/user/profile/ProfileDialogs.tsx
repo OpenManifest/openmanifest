@@ -1,8 +1,8 @@
 import * as React from 'react';
 import noop from 'lodash/noop';
-import type { MembershipProfileFragment, RigEssentialsFragment } from 'app/api/operations';
+import type { MembershipProfileFragment, EquipmentEssentialsFragment } from 'app/api/operations';
 import MembershipDialog from 'app/forms/membership';
-import RigDialog from 'app/forms/rig';
+import EquipmentDialog from 'app/forms/equipment';
 import UserDialog from 'app/forms/user';
 import createUseDialog from 'app/providers/hooks/useDialog';
 
@@ -11,19 +11,19 @@ type ProfileDialogs = {
   editUser(): void;
   /** Edit the member's access level and membership expiry */
   editMembership(): void;
-  /** Edit a rig, or add one when none is given */
-  editRig(rig?: RigEssentialsFragment): void;
+  /** Edit a equipment, or add one when none is given */
+  editEquipment(equipment?: EquipmentEssentialsFragment): void;
 };
 
 const ProfileDialogsContext = React.createContext<ProfileDialogs>({
   editUser: noop,
   editMembership: noop,
-  editRig: noop,
+  editEquipment: noop,
 });
 
 const useUserDialog = createUseDialog<object>();
 const useMembershipDialog = createUseDialog<object>();
-const useRigDialog = createUseDialog<{ rig?: RigEssentialsFragment }>();
+const useEquipmentDialog = createUseDialog<{ equipment?: EquipmentEssentialsFragment }>();
 
 /** Mounts the sheets a profile can open once, so any part of the profile can open them. */
 export function ProfileDialogsProvider(
@@ -32,28 +32,28 @@ export function ProfileDialogsProvider(
   const { membership, children } = props;
   const userDialog = useUserDialog();
   const membershipDialog = useMembershipDialog();
-  const rigDialog = useRigDialog();
+  const equipmentDialog = useEquipmentDialog();
 
   const { open: openUserDialog } = userDialog;
   const { open: openMembershipDialog } = membershipDialog;
-  const { open: openRigDialog } = rigDialog;
+  const { open: openEquipmentDialog } = equipmentDialog;
   const dialogs = React.useMemo<ProfileDialogs>(
     () => ({
       editUser: () => openUserDialog({}),
       editMembership: () => openMembershipDialog({}),
-      editRig: (rig) => openRigDialog({ rig }),
+      editEquipment: (equipment) => openEquipmentDialog({ equipment }),
     }),
-    [openUserDialog, openMembershipDialog, openRigDialog]
+    [openUserDialog, openMembershipDialog, openEquipmentDialog]
   );
 
   return (
     <ProfileDialogsContext.Provider value={dialogs}>
       {children}
-      <RigDialog
-        open={rigDialog.visible}
-        rig={rigDialog.state?.rig}
+      <EquipmentDialog
+        open={equipmentDialog.visible}
+        equipment={equipmentDialog.state?.equipment}
         userId={Number(membership?.user?.id)}
-        onClose={rigDialog.close}
+        onClose={equipmentDialog.close}
       />
       <MembershipDialog
         open={membershipDialog.visible}

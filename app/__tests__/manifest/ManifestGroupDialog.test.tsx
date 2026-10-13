@@ -91,7 +91,7 @@ describe('<ManifestGroupDialog />', () => {
               load: '1',
               userGroup: slots.map((slot) => ({
                 id: Number(slot.membership?.id),
-                rig: undefined,
+                equipment: undefined,
                 bodyMassKg: Number(slot.bodyMassKg),
                 guestName: undefined,
                 guestBodyMassKg: undefined,

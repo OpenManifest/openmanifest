@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { useStep as useAskForRigStep } from './steps/AskForRig';
 import { useStep as useAvatarStep } from './steps/Avatar';
 import { useStep as useCertificationBodyStep } from './steps/CertificationBody';
 import { useStep as useCertificationBodyNumberStep } from './steps/CertificationBodyNumber';
@@ -11,9 +10,16 @@ import {
   useQualificationStepRequired,
 } from './steps/Qualifications';
 import { useStep as useRealNameStep } from './steps/RealName';
-import { useStep as useReserveRepackStep } from './steps/ReserveRepack';
-import { useStep as useRigStep } from './steps/Rig';
-import { useStep as useWingloadingStep } from './steps/Wingloading';
+import {
+  useAskForRigStep,
+  useReserveRepackStep,
+  useRigStep,
+  useRigStepsRequired,
+  useWingloadingStep,
+} from 'app/features/skydiving/wizard';
+import { RIG_KIND, canopySizeToSquareMetres, findRigKind } from 'app/features/skydiving/rig';
+import { useOperatorContext } from 'app/providers/operator/context';
+import { useOperatorFormat } from 'app/i18n/operatorFormat';
 import { useUserProfileContext } from 'app/api/crud';
 import { useEquipment } from 'app/api/crud/useEquipment';
 import { useWizardForm } from 'app/hooks/forms';
@@ -41,10 +47,16 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
   const step8 = useRigStep();
   const step9 = useReserveRepackStep();
   const step10 = useWingloadingStep();
-  // The qualification step follows the certification steps when the operator asks for qualifications; the steps after
-  // it move up by one
+  // The qualification step follows the certification steps when the operator asks for qualifications, then come the
+  // questions about a skydiver's rig when the operator has the rig kind; the steps after each move up
   const withQualifications = useQualificationStepRequired();
+  const withRigs = useRigStepsRequired();
   const shift = withQualifications ? 1 : 0;
+  const {
+    operator: { operator },
+  } = useOperatorContext();
+  const rigKind = findRigKind(operator?.equipmentKinds);
+  const units = useOperatorFormat((state) => state.units);
 
   const steps = useMemo(
     () => [
@@ -55,10 +67,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       step5,
       step6,
       ...(withQualifications ? [qualificationsStep] : []),
-      step7,
-      step8,
-      step9,
-      step10,
+      ...(withRigs ? [step7, step8, step9, step10] : []),
     ],
     [
       qualificationsStep,
@@ -73,6 +82,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       step8,
       step9,
       withQualifications,
+      withRigs,
     ]
   );
 
@@ -109,7 +119,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               model,
               name,
               nickname,
-              repackExpiresAt,
+              serviceDueAt,
               rigId,
               serial,
               qualifications,
@@ -193,17 +203,18 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               return true;
             }
 
-            if (stepIndex === 6 + shift && !hasRig) {
+            // The questions about the jumper's rig: skip them for a jumper without one, save the rig step by step
+            if (withRigs && stepIndex === 6 + shift && !hasRig) {
               setValue('stepIndex', lastStepIndex);
               return false;
             }
 
-            if (hasRig && stepIndex >= 7 + shift && stepIndex < lastStepIndex) {
+            if (withRigs && hasRig && stepIndex >= 7 + shift && stepIndex < lastStepIndex) {
               if (
                 isEqual(
-                  { repackExpiresAt, make, model, serial, canopySize },
+                  { serviceDueAt, make, model, serial, canopySize },
                   {
-                    repackExpiresAt: initial?.repackExpiresAt,
+                    serviceDueAt: initial?.serviceDueAt,
                     make: initial?.make,
                     model: initial?.model,
                     serial: initial?.serial,
@@ -213,21 +224,25 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               ) {
                 return true;
               }
-              const rigResponse = await equipment.add({
+              const equipmentResponse = await equipment.add({
                 userId: Number(membership.user.id),
-                repackExpiresAt,
+                kindId: rigKind?.id,
+                serviceDueAt,
                 make,
                 model,
                 serial,
-                canopySize,
+                // The rig's attributes: the canopy size typed in the operator's unit is stored in square metres
+                attributes: canopySize
+                  ? { canopy_size_m2: canopySizeToSquareMetres(Number(canopySize), units) }
+                  : undefined,
                 id: rigId || undefined,
               });
-              if ('error' in rigResponse) {
-                setError('serial', { message: rigResponse.error, type: 'required' });
+              if ('error' in equipmentResponse) {
+                setError('serial', { message: equipmentResponse.error, type: 'required' });
                 return false;
               }
-              if ('fieldErrors' in rigResponse) {
-                rigResponse.fieldErrors?.forEach(({ field, message }) => {
+              if ('fieldErrors' in equipmentResponse) {
+                equipmentResponse.fieldErrors?.forEach(({ field, message }) => {
                   const camelizedField = camelCase(field);
                   if (camelizedField === 'make')
                     return setError('make', { message, type: 'required' });
@@ -235,18 +250,18 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                     return setError('model', { message, type: 'required' });
                   if (camelizedField === 'serial')
                     return setError('serial', { message, type: 'required' });
-                  if (camelizedField === 'canopySize')
+                  if (camelizedField === 'properties')
                     return setError('canopySize', { message, type: 'required' });
                   if (camelizedField in fields)
                     return setError(camelizedField as keyof typeof fields, { message });
                 });
                 return false;
               }
-              if ('rig' in rigResponse) {
-                setValue('rigId', rigResponse.rig.id);
-                setValue('make', rigResponse.rig.make || '');
-                setValue('model', rigResponse.rig.model || '');
-                setValue('serial', rigResponse.rig.serial || '');
+              if ('equipment' in equipmentResponse) {
+                setValue('rigId', equipmentResponse.equipment.id);
+                setValue('make', equipmentResponse.equipment.make || '');
+                setValue('model', equipmentResponse.equipment.model || '');
+                setValue('serial', equipmentResponse.equipment.serial || '');
                 setValue('stepIndex', stepIndex + 1);
               }
               return false;
@@ -309,6 +324,9 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       addQualification,
       shift,
       withQualifications,
+      withRigs,
+      rigKind?.id,
+      units,
       setError,
       setValue,
       onClose,

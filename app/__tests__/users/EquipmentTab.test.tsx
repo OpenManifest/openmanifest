@@ -42,7 +42,7 @@ describe('<EquipmentTab />', () => {
   it('offers staff with UpdateUser to add a rig to another member', async () => {
     const screen = await renderTab(OTHER_MEMBER, [Permission.UpdateUser]);
 
-    expect(await screen.findByTestId('profile-add-rig')).toBeTruthy();
+    expect(await screen.findByTestId('profile-add-equipment')).toBeTruthy();
     expect(screen.getByText('Primary')).toBeTruthy();
   });
 
@@ -50,12 +50,12 @@ describe('<EquipmentTab />', () => {
     const screen = await renderTab(OTHER_MEMBER, [Permission.CreateEquipment]);
 
     await screen.findByTestId('loaded');
-    expect(screen.queryByTestId('profile-add-rig')).toBeNull();
+    expect(screen.queryByTestId('profile-add-equipment')).toBeNull();
   });
 
   it('lets members add a rig to their own profile', async () => {
     const screen = await renderTab(SELF, [Permission.CreateEquipment]);
 
-    expect(await screen.findByTestId('profile-add-rig')).toBeTruthy();
+    expect(await screen.findByTestId('profile-add-equipment')).toBeTruthy();
   });
 });

@@ -1,6 +1,7 @@
 import { ModerationRole } from 'app/api/schema.d';
 import { CurrentUserDetailedFragment } from 'app/api/operations';
 import { addDays, startOfDay } from 'date-fns';
+import { rigKindRef } from './equipmentKind.fixture';
 
 type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]> } : T;
 export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
@@ -26,8 +27,8 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
   hasCredits: true,
   hasBodyMassKg: true,
   hasMembership: true,
-  hasReserveInDate: true,
-  hasRigInspection: true,
+  hasEquipmentInService: true,
+  hasEquipmentInspection: true,
   hasCertificationLevel: true,
   permissions: [],
   expiresAt: null,
@@ -43,8 +44,8 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
     __typename: 'UserRole',
   },
 
-  rigInspections: [],
-  availableRigs: [],
+  equipmentInspections: [],
+  availableEquipment: [],
 
   user: {
     __typename: 'User',
@@ -60,9 +61,9 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
     image: null,
     memberships: [],
 
-    rigs: [
+    equipment: [
       {
-        __typename: 'Rig',
+        __typename: 'Equipment',
         id: '1',
         isPublic: true,
         name: 'Primary',
@@ -70,21 +71,22 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         make: 'Vector',
         model: 'V310',
         serial: '12345',
-        canopySize: 150,
+        ownership: 'personal',
+        attributes: { rig_type: 'sport', canopy_size_m2: 13.9355 },
+        equipmentKind: rigKindRef,
+        inService: true,
         operator: null,
         maintainedAt: null,
-        packValue: null,
-        rigType: 'sport',
-        repackExpiresAt: addDays(new Date(), 20).getTime() / 1000,
+        serviceDueAt: addDays(new Date(), 20).getTime() / 1000,
         owner: {
           id: '1',
           __typename: 'User',
           name: 'Court Jester',
-          rigs: null,
+          equipment: null,
         },
       },
       {
-        __typename: 'Rig',
+        __typename: 'Equipment',
         id: '2',
         name: 'Pond',
         make: 'Mirage',
@@ -92,17 +94,18 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         packingCard: null,
         model: 'G4.1',
         serial: '34567',
-        canopySize: 170,
+        ownership: 'personal',
+        attributes: { rig_type: 'sport', canopy_size_m2: 15.7935 },
+        equipmentKind: rigKindRef,
+        inService: true,
         operator: null,
         maintainedAt: null,
-        packValue: null,
-        rigType: 'sport',
-        repackExpiresAt: startOfDay(new Date()).getTime() / 1000,
+        serviceDueAt: startOfDay(new Date()).getTime() / 1000,
         owner: {
           id: '1',
           __typename: 'User',
           name: 'Court Jester',
-          rigs: null,
+          equipment: null,
         },
       },
     ],

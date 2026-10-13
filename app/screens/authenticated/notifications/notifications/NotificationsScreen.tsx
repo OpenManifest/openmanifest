@@ -14,7 +14,7 @@ import NoResults from '../../../../components/NoResults';
 import ManifestedCard from './Cards/Manifested';
 import BoardingNotification from './Cards/Boarding';
 import FundsNotification from './Cards/Funds';
-import RigInspectionNotification from './Cards/RigInspection';
+import EquipmentInspectionNotification from './Cards/EquipmentInspection';
 import PermissionNotification from './Cards/Permission';
 import PublicationRequestNotification from './Cards/PublicationRequest';
 import { useAppTheme } from 'app/theme';
@@ -77,10 +77,13 @@ export default function NotificationScreen() {
               return <ManifestedCard key={edge.node.id} notification={edge.node as never} />;
             case NotificationType.CreditsUpdated:
               return <FundsNotification key={edge.node.id} notification={edge.node as never} />;
-            case NotificationType.RigInspectionRequested:
-            case NotificationType.RigInspectionCompleted:
+            case NotificationType.EquipmentInspectionRequested:
+            case NotificationType.EquipmentInspectionCompleted:
               return (
-                <RigInspectionNotification key={edge.node.id} notification={edge.node as never} />
+                <EquipmentInspectionNotification
+                  key={edge.node.id}
+                  notification={edge.node as never}
+                />
               );
             case NotificationType.PermissionGranted:
             case NotificationType.PermissionRevoked:

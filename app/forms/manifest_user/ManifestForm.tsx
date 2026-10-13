@@ -11,7 +11,7 @@ import { Permission } from 'app/api/schema.d';
 import { ActivityTypeChipSelectField } from 'app/components/input/chip_select/ActivityTypeChipSelect';
 import { TicketTypeChipSelectField } from 'app/components/input/chip_select/TicketTypeChipSelect';
 import useRestriction from 'app/hooks/useRestriction';
-import { RigSelectField } from 'app/components/input/dropdown_select/RigSelect';
+import { EquipmentPickerField } from 'app/components/input/dropdown_select/EquipmentPicker';
 import { ManifestUserFields } from './useForm';
 import { formatCents } from 'app/utils/money';
 
@@ -21,7 +21,9 @@ interface IManifestFormProps {
 export default function ManifestForm(props: IManifestFormProps) {
   const { control } = props;
 
-  const { id, membership, ticketType, load } = useWatch<ManifestUserFields>({ control });
+  const { id, membership, ticketType, activityType, load } = useWatch<ManifestUserFields>({
+    control,
+  });
 
   const allowedToManifestOthers = useRestriction(
     id ? Permission.UpdateUserSlot : Permission.CreateUserSlot
@@ -60,12 +62,14 @@ export default function ManifestForm(props: IManifestFormProps) {
       />
       <Divider />
       {!membership ? null : (
-        <RigSelectField
+        <EquipmentPickerField
           {...{ control }}
           loadId={load?.id ? Number(load?.id) : undefined}
-          name="rig"
-          label="Equipment"
+          name="equipment"
           membershipId={Number(membership?.id)}
+          ticketTypeId={ticketType?.id}
+          activityTypeId={activityType?.id}
+          tandem={!!ticketType?.isTandem}
         />
       )}
       <FormNumberField

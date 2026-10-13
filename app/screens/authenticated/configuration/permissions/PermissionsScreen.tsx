@@ -56,9 +56,9 @@ import { useAppTheme } from 'app/theme';
     :deleteEquipment,
     :readEquipment,
 
-    :createOperatorRig,
-    :updateOperatorRig,
-    :deleteOperatorRig,
+    :createOperatorEquipment,
+    :updateOperatorEquipment,
+    :deleteOperatorEquipment,
 
     :readPermissions,
     :updatePermissions,
@@ -382,19 +382,19 @@ export default function OperatorPermissionScreen() {
                   <List.Accordion title="Rigs" style={{ backgroundColor: theme.colors.surface }}>
                     <PermissionListItem
                       role={role}
-                      permissionName="createOperatorRig"
+                      permissionName="createOperatorEquipment"
                       description="Create dropzone managed rigs, e.g tandem and student rigs"
                       title="Create Rig"
                     />
                     <PermissionListItem
                       role={role}
-                      permissionName="updateOperatorRig"
+                      permissionName="updateOperatorEquipment"
                       description="Make changes to existing student and tandem rigs"
                       title="Update Rigs"
                     />
                     <PermissionListItem
                       role={role}
-                      permissionName="deleteOperatorRig"
+                      permissionName="deleteOperatorEquipment"
                       description="Delete existing student and tandem rigs"
                       title="Remove Rigs"
                     />

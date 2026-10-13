@@ -10,8 +10,8 @@ import SettingsMenuScreen from './settings_menu/SettingsMenuScreen';
 import TicketTypeSettingsScreen from './ticket_types/TicketTypesScreen';
 import OperatorSettingsScreen from './operator_settings/OperatorSettingsScreen';
 import VehiclesScreen from './vehicles/VehiclesScreen';
-import RigInspectionTemplateScreen from './rig_inspection_template/RigInspectionTemplateScreen';
-import OperatorRigsScreen from './rigs/OperatorRigsScreen';
+import EquipmentInspectionTemplateScreen from './equipment_inspection_template/EquipmentInspectionTemplateScreen';
+import OperatorEquipmentScreen from './equipment/OperatorEquipmentScreen';
 import OperatorPermissionScreen from './permissions/PermissionsScreen';
 import OperatorDailyLogScreen from './daily_log/DailyLogScreen';
 import OperatorTransactionsScreen from './transactions/OperatorTransactionsScreen';
@@ -26,8 +26,8 @@ export type ConfigurationRoutes = {
   VehicleScreen: undefined;
   DestinationsScreen: undefined;
   ExtrasScreen: undefined;
-  RigInspectionTemplateScreen: undefined;
-  OperatorRigsScreen: undefined;
+  EquipmentInspectionTemplateScreen: undefined;
+  OperatorEquipmentScreen: undefined;
   TransactionsScreen: undefined;
   PermissionScreen: undefined;
   DailyLogScreen: undefined;
@@ -82,14 +82,14 @@ export default function SettingsTab() {
           options={{ title: t('common:screens.ticketAddOns') }}
         />
         <Configuration.Screen
-          name="RigInspectionTemplateScreen"
-          component={RigInspectionTemplateScreen}
-          options={{ title: t('common:screens.rigInspectionForm') }}
+          name="EquipmentInspectionTemplateScreen"
+          component={EquipmentInspectionTemplateScreen}
+          options={{ title: t('common:screens.equipmentInspectionForm') }}
         />
         <Configuration.Screen
-          name="OperatorRigsScreen"
-          component={OperatorRigsScreen}
-          options={{ title: t('common:screens.rigs') }}
+          name="OperatorEquipmentScreen"
+          component={OperatorEquipmentScreen}
+          options={{ title: t('common:screens.equipment') }}
         />
         <Configuration.Screen
           name="TransactionsScreen"

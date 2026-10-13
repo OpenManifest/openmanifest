@@ -8,6 +8,8 @@ import { Avatar, Caption, DataTable, Paragraph } from 'react-native-paper';
 import { generateColor } from 'app/utils/generateColor';
 import { isNumber } from 'lodash';
 import { formatDestination } from 'app/i18n/format';
+import { useOperatorFormat } from 'app/i18n/operatorFormat';
+import { canopySize } from 'app/features/skydiving/rig';
 import SwipeActions from '../layout/SwipeActions';
 import UserAvatar from '../UserAvatar';
 import DraggableWrapper from './DragAndDrop/DraggableRow';
@@ -18,7 +20,7 @@ export enum SlotFields {
   Group = 'groupNumber',
   WingLoading = 'wingloading',
   Altitude = 'altitude',
-  Rig = 'rig',
+  Equipment = 'equipment',
   TicketType = 'ticketType',
   ActivityType = 'activityType',
 }
@@ -39,6 +41,7 @@ export default function UserRow(props: ISlotUserRowProps) {
   const { fields, load, slot, index, onDeletePress, onSlotGroupPress, onSlotPress } = props;
 
   const { operator: currentOperator } = useOperatorContext();
+  const units = useOperatorFormat((state) => state.units);
   const { currentUser } = currentOperator;
   const canEditSelf = useRestriction(Permission.UpdateSlot);
   const canEditOthers = useRestriction(Permission.UpdateUserSlot);
@@ -126,12 +129,15 @@ export default function UserRow(props: ISlotUserRowProps) {
                     </Paragraph>
                   </DataTable.Cell>
                 ) : null}
-                {fields?.includes(SlotFields.Rig) ? (
-                  <DataTable.Cell numeric style={styles.rigCell}>
+                {fields?.includes(SlotFields.Equipment) ? (
+                  <DataTable.Cell numeric style={styles.equipmentCell}>
                     <Paragraph style={styles.slotText}>
-                      {slot?.rig
-                        ? `${slot.rig.make} ${slot.rig.model} w/ ${slot.rig.canopySize}`
-                        : null}
+                      {slot?.equipment
+                        ?.map((item) => {
+                          const size = canopySize(item, units);
+                          return `${item.make} ${item.model}${size ? ` w/ ${size}` : ''}`;
+                        })
+                        .join(', ') || null}
                     </Paragraph>
                   </DataTable.Cell>
                 ) : null}
@@ -213,7 +219,7 @@ export const styles = StyleSheet.create({
   certificationLevelCell: {
     flex: 3,
   },
-  rigCell: {
+  equipmentCell: {
     flex: 3,
   },
   wingLoadingCell: {

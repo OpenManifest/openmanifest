@@ -9,11 +9,8 @@ import RealNameStep from './steps/RealName';
 import NicknameStep from './steps/Nickname';
 import CertificationLevelStep from './steps/CertificationLevel';
 import QualificationsStep, { useQualificationStepRequired } from './steps/Qualifications';
-import RigStep from './steps/Rig';
-import ReserveRepackStep from './steps/ReserveRepack';
-import AskForRigStep from './steps/AskForRig';
-import WingloadingStep from './steps/Wingloading';
 import DoneStep from './steps/Done';
+import { RIG_STEPS, useRigStepsRequired } from 'app/features/skydiving/wizard';
 import AvatarStep from './steps/Avatar';
 import { useUserWizardForm } from './useForm';
 import { UserProfileProvider, useUserProfileContext } from 'app/api/crud';
@@ -29,23 +26,20 @@ const stepsBeforeQualifications = [
   CertificationBodyNumberStep,
   CertificationLevelStep,
 ];
-const stepsAfterQualifications = [
-  AskForRigStep,
-  RigStep,
-  ReserveRepackStep,
-  WingloadingStep,
-  DoneStep,
-];
+const stepsAfter = [DoneStep];
 export function UserWizard() {
   const wizard = React.useRef<WizardRef>(null);
+  // Steps that only some operators have: qualifications, and the questions about a skydiver's rig
   const withQualifications = useQualificationStepRequired();
+  const withRigs = useRigStepsRequired();
   const steps = React.useMemo(
     () => [
       ...stepsBeforeQualifications,
       ...(withQualifications ? [QualificationsStep] : []),
-      ...stepsAfterQualifications,
+      ...(withRigs ? RIG_STEPS : []),
+      ...stepsAfter,
     ],
-    [withQualifications]
+    [withQualifications, withRigs]
   );
   const navigation = useNavigation();
   const { params } = useRoute<{

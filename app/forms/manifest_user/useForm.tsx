@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { SlotExhaustiveFragment, TicketTypeDetailsFragment } from 'app/api/operations';
+import {
+  EquipmentEssentialsFragment,
+  SlotExhaustiveFragment,
+  TicketTypeDetailsFragment,
+} from 'app/api/operations';
+import i18n from 'app/i18n';
+import { requiredKinds } from 'app/components/input/dropdown_select/EquipmentPicker';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useManifestContext } from 'app/providers/manifest/context';
@@ -16,7 +22,7 @@ export type ManifestUserFields = Pick<
   SlotExhaustiveFragment,
   | 'activityType'
   // | 'load'
-  | 'rig'
+  | 'equipment'
   | 'membership'
   | 'bodyMassKg'
   | 'extras'
@@ -29,7 +35,7 @@ export const EMPTY_FORM_VALUES: ManifestUserFields = {
   id: undefined,
   load: undefined,
   bodyMassKg: 50,
-  rig: null,
+  equipment: [],
   ticketType: null,
   activityType: null,
   guestBodyMassKg: null,
@@ -55,14 +61,31 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
   const manifestUserValidation = yup.object().shape({
     load: yup.object().required(),
     bodyMassKg: yup.number().required('Please specify exit weight').min(0).max(300),
-    rig: yup
-      .object()
-      .nullable()
-      .when({
-        is: () => !!operator?.settings?.requireEquipment,
-        then: yup.object().required('You cant manifest without a rig').nullable(),
-        otherwise: yup.object().nullable(),
-      }),
+    // One item for each kind of equipment the slot needs, when the operator asks for equipment
+    equipment: yup
+      .array()
+      .of(yup.object())
+      .default([])
+      .test(
+        'equipment-required',
+        () =>
+          i18n.t('forms.equipment.youCantManifestWithout', {
+            equipment: i18n.t('terms:equipment', { count: 1 }).toLowerCase(),
+          }),
+        function check(this: yup.TestContext, items) {
+          if (!operator?.settings?.requireEquipment) return true;
+          const { ticketType, activityType } = this.parent as ManifestUserFields;
+          const needed = requiredKinds(operator?.equipmentKinds, {
+            ticketTypeId: ticketType?.id,
+            activityTypeId: activityType?.id,
+          });
+          return needed.every((kind) =>
+            (items ?? []).some(
+              (item) => (item as EquipmentEssentialsFragment).equipmentKind?.key === kind.key
+            )
+          );
+        }
+      ),
     activityType: yup.object().required('Jump type is required').nullable(),
     ticketType: yup.object().required('Ticket is required to manifest').nullable(),
     original: yup.object().nullable(),
@@ -98,7 +121,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           activityType: fields.activityType?.id,
           extras: fields.extras?.map(({ id }) => id),
           load: fields?.load?.id,
-          rig: !fields.rig?.id ? undefined : fields.rig?.id,
+          equipment: fields.equipment?.length ? fields.equipment.map(({ id }) => id) : undefined,
           ticketType: fields.ticketType?.id,
           membership: fields.membership?.id,
           bodyMassKg: fields.bodyMassKg,

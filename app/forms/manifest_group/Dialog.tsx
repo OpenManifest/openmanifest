@@ -9,7 +9,7 @@ import ManifestGroupForm from './ManifestGroupForm';
 import UserListSelect from './UserListSelect';
 import useManifestGroupForm, {
   IManifestGroupInitial,
-  SlotUserWithRig,
+  SlotUserWithEquipment,
   toggleSlotUsers,
 } from './useForm';
 
@@ -108,7 +108,7 @@ export default function ManifestGroupDialog(props: IManifestGroupDialogProps) {
             <UserListSelect
               hideButton
               scrollable={false}
-              {...{ onSelect, value: users as SlotUserWithRig[] }}
+              {...{ onSelect, value: users as SlotUserWithEquipment[] }}
             />
           </View>
         ) : (

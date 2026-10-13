@@ -6,14 +6,14 @@ import { FAB } from 'react-native-paper';
 
 import { FlatList } from 'react-native-gesture-handler';
 import createUseDialog from 'app/providers/hooks/useDialog';
-import type { RigEssentialsFragment } from 'app/api/operations';
+import type { EquipmentEssentialsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
-import RigDialog from 'app/forms/rig';
+import EquipmentDialog from 'app/forms/equipment';
 
 import { useOperatorContext } from 'app/providers/operator/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { useUserProfile } from 'app/api/crud';
-import RigCard from './RigCard';
+import EquipmentCard from './EquipmentCard';
 import { useAppTheme } from 'app/theme';
 import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
@@ -22,11 +22,11 @@ export type EquipmentRoute = {
     userId: string;
   };
 };
-const useRigDialog = createUseDialog<{ rig?: RigEssentialsFragment }>();
+const useEquipmentDialog = createUseDialog<{ equipment?: EquipmentEssentialsFragment }>();
 
 export default function EquipmentScreen() {
   const { theme } = useAppTheme();
-  const rigDialog = useRigDialog();
+  const equipmentDialog = useEquipmentDialog();
   const {
     operator: { currentUser },
   } = useOperatorContext();
@@ -60,22 +60,22 @@ export default function EquipmentScreen() {
   return (
     <>
       <FlatList
-        data={membership?.user?.rigs || []}
+        data={membership?.user?.equipment || []}
         numColumns={1}
         style={{ flex: 1 }}
         refreshing={loading}
-        keyExtractor={(item) => `rig-${item?.id}`}
+        keyExtractor={(item) => `equipment-${item?.id}`}
         contentContainerStyle={{ padding: 16 }}
         renderItem={({ item }) => (
-          <RigCard
+          <EquipmentCard
             {...{ membership }}
             // onSuccessfulImageUpload={refetch}
-            rig={item}
-            rigInspection={membership?.rigInspections?.find(
-              (insp) => insp.rig?.id === item.id && insp.isOk
+            equipment={item}
+            equipmentInspection={membership?.equipmentInspections?.find(
+              (insp) => insp.equipment?.id === item.id && insp.isOk
             )}
             onPress={() => {
-              rigDialog.open({ rig: item });
+              equipmentDialog.open({ equipment: item });
             }}
           />
         )}
@@ -87,14 +87,14 @@ export default function EquipmentScreen() {
         style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         visible={canUpdateUser}
         icon="plus"
-        onPress={() => rigDialog.open({})}
+        onPress={() => equipmentDialog.open({})}
         label="Add rig"
       />
 
-      <RigDialog
-        onClose={rigDialog.close}
-        open={rigDialog.visible}
-        rig={rigDialog.state?.rig}
+      <EquipmentDialog
+        onClose={equipmentDialog.close}
+        open={equipmentDialog.visible}
+        equipment={equipmentDialog.state?.equipment}
         userId={Number(membership?.user?.id)}
       />
     </>

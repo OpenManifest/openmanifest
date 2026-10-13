@@ -88,8 +88,8 @@
     "basicSettings": "Basic settings",
     "ticketTypes": "Ticket types",
     "ticketAddOns": "Ticket add-ons",
-    "rigInspectionForm": "Inspection form",
-    "rigs": "Rigs",
+    "equipmentInspectionForm": "Inspection form",
+    "equipment": "Equipment",
     "transactions": "Transactions",
     "permissions": "Permissions",
     "masterLog": "Master log",
@@ -97,7 +97,6 @@
     "people": "People",
     "user": "Profile",
     "inspection": "Inspection",
-    "equipment": "Equipment",
     "order": "Order",
     "yourTransactions": "Your transactions",
     "transactionsOf": "{{name}}'s transactions",
@@ -240,9 +239,9 @@
       "requireInDateMembership": "Require in-date membership",
       "requireMembershipToBeIn": "Require membership to be in-date",
       "requireEquipment": "Require Equipment",
-      "usersCannotManifestWithoutSelecting": "Users cannot manifest without selecting a rig",
-      "requireRigInspection": "Require Rig Inspection",
-      "usersCannotManifestBeforeTheir": "Users cannot manifest before their rig is inspected",
+      "usersCannotManifestWithoutSelecting": "Users cannot manifest without selecting {{equipment}}",
+      "requireEquipmentInspection": "Require {{equipment}} inspection",
+      "usersCannotManifestBeforeTheir": "Users cannot manifest before their {{equipment}} is inspected",
       "allowDoubleManifesting": "Allow double manifesting",
       "usersAreAllowedToManifest": "Users are allowed to manifest on multiple loads",
       "yourDropzoneMustBePartOf": "Your dropzone must accept at least one certification body",
@@ -258,24 +257,26 @@
       "unitAltitude": "Heights",
       "unitDistance": "Distances",
       "unitMass": "Weights",
+      "unitArea": "Areas (canopy sizes)",
       "unitSpeed": "Wind speeds",
       "unitTemperature": "Temperatures",
       "currency": "Currency"
     },
-    "rig": {
-      "youCanGiveYourEquipment": "You can give your equipment a nickname",
+    "equipment": {
+      "youCanGiveYourEquipment": "You can give your {{equipment}} a nickname",
       "make": "Make",
       "eGJavelinMirage": "e.g Javelin, Mirage",
       "eGG41": "e.g G4.1",
       "serial": "Serial",
-      "currentCanopySize": "Current canopy size",
-      "sizeOfCanopyInContainer": "Size of canopy in container",
-      "reserveRepackExpiryDate": "Reserve repack expiry date",
-      "canopySizeMustBeAValid": "Canopy size must be a valid number",
-      "editRig": "Edit rig",
-      "newRig": "New rig"
+      "editEquipment": "Edit {{equipment}}",
+      "newEquipment": "New {{equipment}}",
+      "details": "Details",
+      "public": "Rentable",
+      "youCantManifestWithout": "You can't manifest without {{equipment}}",
+      "needsInspection": "Your {{equipment}} needs to be inspected before you can manifest",
+      "needsService": "Your {{equipment}} is out of service"
     },
-    "rig_inspection_template": {
+    "equipment_inspection_template": {
       "optional": "optional",
       "thisIsARequiredField": "This is a required field",
       "everyFieldNeedsAName": "Every field needs a name",
@@ -344,7 +345,7 @@
       "profileHasBeenUpdated": "Profile has been updated"
     },
     "user_wizard": {
-      "gotARig": "Got a rig?",
+      "gotAEquipment": "Do you have your own {{equipment}}?",
       "avatar": "Avatar",
       "profileUpdated": "Profile updated",
       "affiliation": "Affiliation",
@@ -352,7 +353,7 @@
       "realName": "Real name",
       "nextReserveRepack": "Next reserve repack?",
       "reserveRepackDueDate": "Reserve repack due date",
-      "yourRig": "Your rig",
+      "yourEquipment": "Your {{equipment}}",
       "manufacturer": "Manufacturer",
       "otherManufacturer": "Other manufacturer",
       "serialNumber": "Serial number",
@@ -376,8 +377,8 @@
       "dueDate": "Due date",
       "other": "Other",
       "wingLoadingIs": "Your wingloading is an indicator of your descent rate under canopy",
-      "iHaveMyOwnRig": "I have my own rig",
-      "iDontHaveMyOwnRig": "I don't have my own rig",
+      "iHaveMyOwnEquipment": "I have my own {{equipment}}",
+      "iDontHaveMyOwnEquipment": "I don't have my own {{equipment}}",
       "qualifications": "Qualifications",
       "qualificationNumber": "Number",
       "qualificationExpires": "Expires"
@@ -397,8 +398,8 @@
       "editAircraft": "Edit aircraft",
       "newAircraft": "New aircraft"
     },
-    "rig_inspection": {
-      "rigInspectionSaved": "Rig inspection saved",
+    "equipment_inspection": {
+      "equipmentInspectionSaved": "Equipment inspection saved",
       "fillInTheRequiredFields": "Fill in the required fields",
       "fieldIsRequired": "{{field}} is required",
       "thisField": "This field"

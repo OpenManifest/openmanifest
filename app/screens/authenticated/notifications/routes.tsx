@@ -9,7 +9,7 @@ import NotificationsScreen from './notifications/NotificationsScreen';
 
 export type NotificationRoutes = {
   NotificationsScreen: undefined;
-  RigInspectionScreen: undefined;
+  EquipmentInspectionScreen: undefined;
 };
 
 const Notification = createStackNavigator<NotificationRoutes>();

@@ -6,7 +6,7 @@ import { MembershipProfileFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { useOperatorContext } from 'app/providers/operator/context';
-import RigCard from '../../equipment/RigCard';
+import EquipmentCard from '../../equipment/EquipmentCard';
 import { useProfileDialogs } from '../ProfileDialogs';
 
 export interface IJumpHistoryTab {
@@ -16,14 +16,14 @@ export interface IJumpHistoryTab {
 }
 export default function EquipmentTab(props: IJumpHistoryTab) {
   const { membership, tabIndex, currentTabIndex } = props;
-  const { editRig } = useProfileDialogs();
+  const { editEquipment } = useProfileDialogs();
   const {
     operator: { currentUser },
   } = useOperatorContext();
   const canCreateEquipment = useRestriction(Permission.CreateEquipment);
   const canUpdateUser = useRestriction(Permission.UpdateUser);
 
-  // Members manage their own rigs; staff with UpdateUser run a member's rigs from the office (UB.2)
+  // Members manage their own equipment; staff with UpdateUser run a member's equipment from the office (UB.2)
   const isSelf = !!currentUser?.id && currentUser.id === membership?.id;
   const canManage = (isSelf && canCreateEquipment) || canUpdateUser;
 
@@ -36,28 +36,28 @@ export default function EquipmentTab(props: IJumpHistoryTab) {
     >
       {canManage ? (
         <Button
-          testID="profile-add-rig"
+          testID="profile-add-equipment"
           icon="plus"
           mode="outlined"
           style={{ alignSelf: 'flex-start', marginVertical: 8 }}
-          onPress={() => editRig()}
+          onPress={() => editEquipment()}
         >
-          Add rig
+          Add equipment
         </Button>
       ) : null}
-      {membership?.user?.rigs?.map((item) => (
-        <RigCard
+      {membership?.user?.equipment?.map((item) => (
+        <EquipmentCard
           key={item.id}
           {...{ membership }}
           onSuccessfulImageUpload={() => null}
-          rig={item}
-          rigInspection={membership?.rigInspections?.find(
-            (insp) => insp.rig?.id === item.id && insp.isOk
+          equipment={item}
+          equipmentInspection={membership?.equipmentInspections?.find(
+            (insp) => insp.equipment?.id === item.id && insp.isOk
           )}
           onPress={
             canManage
               ? () => {
-                  editRig(item);
+                  editEquipment(item);
                 }
               : undefined
           }

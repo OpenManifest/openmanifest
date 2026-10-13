@@ -72,8 +72,11 @@ function firstMatch(words, index, list) {
   return null;
 }
 
+// Words that have no plural: the plural of `equipment` is `equipment`
+const UNCOUNTABLE = ['equipment'];
+
 function pluralize(word, suffix) {
-  if (!suffix) return word;
+  if (!suffix || UNCOUNTABLE.includes(word)) return word;
   if (/[^aeiou]y$/.test(word)) return `${word.slice(0, -1)}ies`;
   return /(s|x|ch|sh)$/.test(word) ? `${word}es` : `${word}s`;
 }

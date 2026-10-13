@@ -30,7 +30,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
               Configuration: {
                 screens: {
                   TicketTypesScreen: '/configuration/ticket-types',
-                  OperatorRigsScreen: '/configuration/rigs',
+                  OperatorEquipmentScreen: '/configuration/equipment',
                   ExtrasScreen: '/ticket-types/extra',
                   DailyLogScreen: '/daily-log',
                   SettingsMenuScreen: '/configuration',
@@ -38,7 +38,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                   DestinationsScreen: '/configuration/destinations',
                   OperatorSettingsScreen: '/configuration/basic',
                   PermissionScreen: '/configuration/permissions',
-                  RigInspectionTemplateScreen: '/configuration/rig-inspection',
+                  EquipmentInspectionTemplateScreen: '/configuration/equipment-inspection',
                   TransactionsScreen: '/transactions',
                 },
               },
@@ -55,7 +55,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
               EquipmentScreen: '/user/:userId/equipment',
               OrdersScreen: '/user/:userId/transactions',
               OrderReceiptScreen: '/user/:userId/transactions/:orderId/receipt',
-              RigInspectionScreen: '/user/:membershipId/rig-inspection/:rigId',
+              EquipmentInspectionScreen: '/user/:membershipId/equipment-inspection/:equipmentId',
             },
           },
           Notifications: {

@@ -23,7 +23,7 @@ interface IUserHeader {
 const badgesInitials = {
   [Permission.ActAsLoadMaster]: 'LM',
   [Permission.ActAsPilot]: 'Pilot',
-  [Permission.ActAsEquipmentInspector]: 'Rig.Insp',
+  [Permission.ActAsEquipmentInspector]: 'Equipment.Insp',
   [Permission.ActAsGca]: 'GCA',
   [Permission.ActAsDutyOfficer]: 'DutyOfficer',
 };

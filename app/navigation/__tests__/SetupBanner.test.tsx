@@ -4,8 +4,8 @@ import { useSetupNotice } from '../SetupBanner';
 type Member = {
   creditsCents: number;
   expiresAt: number | null;
-  rigInspections: unknown[];
-  user: { bodyMassKg: number; rigs: { repackExpiresAt: number }[] };
+  equipmentInspections: unknown[];
+  user: { bodyMassKg: number; equipment: { serviceDueAt: number }[] };
 };
 const day = 24 * 3600;
 const now = () => Math.floor(Date.now() / 1000);
@@ -28,8 +28,8 @@ jest.mock('app/providers/operator/context', () => ({
 const member = (over: Partial<Member> = {}): Member => ({
   creditsCents: 5000,
   expiresAt: now() + day,
-  rigInspections: [{}],
-  user: { bodyMassKg: 80, rigs: [{ repackExpiresAt: now() + day }] },
+  equipmentInspections: [{}],
+  user: { bodyMassKg: 80, equipment: [{ serviceDueAt: now() + day }] },
   ...over,
 });
 const notice = async () => (await renderHook(() => useSetupNotice())).result.current?.key ?? null;
@@ -45,7 +45,7 @@ describe('useSetupNotice', () => {
     mockState.settings = {
       requireEquipment: true,
       requireMembership: true,
-      requireRigInspection: true,
+      requireEquipmentInspection: true,
       requireCredits: true,
     };
     expect(await notice()).toBeNull();
@@ -53,7 +53,7 @@ describe('useSetupNotice', () => {
 
   it('is silent while loading or without a membership', async () => {
     mockState.loading = true;
-    mockState.currentUser = member({ user: { bodyMassKg: 0, rigs: [] } });
+    mockState.currentUser = member({ user: { bodyMassKg: 0, equipment: [] } });
     expect(await notice()).toBeNull();
     mockState.loading = false;
     mockState.currentUser = null;
@@ -61,15 +61,15 @@ describe('useSetupNotice', () => {
   });
 
   it('asks for the exit weight', async () => {
-    mockState.currentUser = member({ user: { bodyMassKg: 0, rigs: [] } });
+    mockState.currentUser = member({ user: { bodyMassKg: 0, equipment: [] } });
     expect(await notice()).toBe('setup.profileMass');
   });
 
   it('asks for the equipment when the operator requires it', async () => {
     mockState.settings = { requireEquipment: true };
-    mockState.currentUser = member({ user: { bodyMassKg: 80, rigs: [] } });
+    mockState.currentUser = member({ user: { bodyMassKg: 80, equipment: [] } });
     expect(await notice()).toBe('setup.profileEquipment');
-    mockState.currentUser = member({ user: { bodyMassKg: 0, rigs: [] } });
+    mockState.currentUser = member({ user: { bodyMassKg: 0, equipment: [] } });
     expect(await notice()).toBe('setup.profileBoth');
   });
 
@@ -82,14 +82,14 @@ describe('useSetupNotice', () => {
   it('reports a missing inspection, an overdue repack and missing credits, in that order', async () => {
     mockState.settings = {
       requireEquipment: true,
-      requireRigInspection: true,
+      requireEquipmentInspection: true,
       requireCredits: true,
     };
-    mockState.currentUser = member({ rigInspections: [], creditsCents: 0 });
+    mockState.currentUser = member({ equipmentInspections: [], creditsCents: 0 });
     expect(await notice()).toBe('setup.inspection');
     mockState.currentUser = member({
       creditsCents: 0,
-      user: { bodyMassKg: 80, rigs: [{ repackExpiresAt: now() - day }] },
+      user: { bodyMassKg: 80, equipment: [{ serviceDueAt: now() - day }] },
     });
     expect(await notice()).toBe('setup.repack');
     mockState.currentUser = member({ creditsCents: 0 });
