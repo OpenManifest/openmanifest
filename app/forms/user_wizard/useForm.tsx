@@ -1,20 +1,31 @@
 import * as React from 'react';
 
-import { useStep as useAskForRigStep } from './steps/AskForRig';
 import { useStep as useAvatarStep } from './steps/Avatar';
-import { useStep as useFederationStep } from './steps/Federation';
-import { useStep as useFederationNumberStep } from './steps/FederationNumber';
-import { useStep as useLicenseStep } from './steps/License';
+import { useStep as useCertificationBodyStep } from './steps/CertificationBody';
+import { useStep as useCertificationBodyNumberStep } from './steps/CertificationBodyNumber';
+import { useStep as useCertificationLevelStep } from './steps/CertificationLevel';
 import { useStep as useNicknameStep } from './steps/Nickname';
+import {
+  useStep as useQualificationsStep,
+  useQualificationStepRequired,
+} from './steps/Qualifications';
 import { useStep as useRealNameStep } from './steps/RealName';
-import { useStep as useReserveRepackStep } from './steps/ReserveRepack';
-import { useStep as useRigStep } from './steps/Rig';
-import { useStep as useWingloadingStep } from './steps/Wingloading';
+import {
+  useAskForRigStep,
+  useReserveRepackStep,
+  useRigStep,
+  useRigStepsRequired,
+  useWingloadingStep,
+} from 'app/features/skydiving/wizard';
+import { RIG_KIND, canopySizeToSquareMetres, findRigKind } from 'app/features/skydiving/rig';
+import { useOperatorContext } from 'app/providers/operator/context';
+import { useOperatorFormat } from 'app/i18n/operatorFormat';
 import { useUserProfileContext } from 'app/api/crud';
 import { useEquipment } from 'app/api/crud/useEquipment';
 import { useWizardForm } from 'app/hooks/forms';
 import { useMemo } from 'app/hooks/react';
 import { camelCase, isEqual } from 'lodash';
+import i18n from 'app/i18n';
 export interface IUserWizardFormOpts {
   startIndex: number;
   onSuccess?(): void;
@@ -28,20 +39,54 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
   const step1 = useRealNameStep();
   const step2 = useNicknameStep();
   const step3 = useAvatarStep();
-  const step4 = useFederationStep();
-  const step5 = useFederationNumberStep();
-  const step6 = useLicenseStep();
+  const step4 = useCertificationBodyStep();
+  const step5 = useCertificationBodyNumberStep();
+  const step6 = useCertificationLevelStep();
+  const qualificationsStep = useQualificationsStep();
   const step7 = useAskForRigStep();
   const step8 = useRigStep();
   const step9 = useReserveRepackStep();
   const step10 = useWingloadingStep();
+  // The qualification step follows the certification steps when the operator asks for qualifications, then come the
+  // questions about a skydiver's rig when the operator has the rig kind; the steps after each move up
+  const withQualifications = useQualificationStepRequired();
+  const withRigs = useRigStepsRequired();
+  const shift = withQualifications ? 1 : 0;
+  const {
+    operator: { operator },
+  } = useOperatorContext();
+  const rigKind = findRigKind(operator?.equipmentKinds);
+  const units = useOperatorFormat((state) => state.units);
 
   const steps = useMemo(
-    () => [step1, step2, step3, step4, step5, step6, step7, step8, step9, step10],
-    [step1, step10, step2, step3, step4, step5, step6, step7, step8, step9]
+    () => [
+      step1,
+      step2,
+      step3,
+      step4,
+      step5,
+      step6,
+      ...(withQualifications ? [qualificationsStep] : []),
+      ...(withRigs ? [step7, step8, step9, step10] : []),
+    ],
+    [
+      qualificationsStep,
+      step1,
+      step10,
+      step2,
+      step3,
+      step4,
+      step5,
+      step6,
+      step7,
+      step8,
+      step9,
+      withQualifications,
+      withRigs,
+    ]
   );
 
-  const { update, dropzoneUser, joinFederation } = useUserProfileContext();
+  const { update, membership, joinCertificationBody, addQualification } = useUserProfileContext();
   const equipment = useEquipment();
 
   const methods = useWizardForm({
@@ -58,7 +103,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
         onSuccess,
         onSubmit: async (fields, initial) => {
           try {
-            if (!dropzoneUser?.id) return;
+            if (!membership?.id) return;
             setLoading(true);
             const {
               stepIndex = 0,
@@ -66,78 +111,110 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               apfNumber,
               avatar,
               canopySize,
-              exitWeight,
-              federation,
+              bodyMassKg,
+              certificationBody,
               hasRig,
-              license,
+              certificationLevel,
               make,
               model,
               name,
               nickname,
-              repackExpiresAt,
+              serviceDueAt,
               rigId,
               serial,
+              qualifications,
             } = fields;
-            console.debug(`== SUBMITTING STEP ${stepIndex} ==`);
-            console.debug(fields);
 
             if ([3, 4, 5].includes(stepIndex)) {
               if (stepIndex === 4 && !apfNumber) return true;
-              if (!federation?.id) {
-                setError('federation', {
-                  message: 'You must select a federation',
+              if (!certificationBody?.id) {
+                setError('certificationBody', {
+                  message: i18n.t('forms.user_wizard.youMustSelectACertificationBody'),
                   type: 'required',
                 });
                 return false;
               }
 
-              if (!license?.id && stepIndex === 5) {
-                setError('license', { message: 'You must select a license', type: 'required' });
+              if (!certificationLevel?.id && stepIndex === 5) {
+                setError('certificationLevel', {
+                  message: i18n.t('forms.user_wizard.youMustSelectACertificationLevel'),
+                  type: 'required',
+                });
                 return false;
               }
 
               if (
-                initial?.federation?.id === federation?.id &&
-                initial?.license?.id === license?.id &&
+                initial?.certificationBody?.id === certificationBody?.id &&
+                initial?.certificationLevel?.id === certificationLevel?.id &&
                 initial?.apfNumber === apfNumber
               )
                 return true;
 
-              const federationResponse = await joinFederation({
-                federation: federation.id,
-                license: license?.id,
+              const certificationBodyResponse = await joinCertificationBody({
+                certificationBody: certificationBody.id,
+                certificationLevel: certificationLevel?.id,
                 uid: apfNumber,
               });
 
-              if ('error' in federationResponse) {
-                console.log('Federation error??');
-                return setError('federation', {
-                  message: federationResponse.error,
+              if ('error' in certificationBodyResponse) {
+                return setError('certificationBody', {
+                  message: certificationBodyResponse.error,
                   type: 'required',
                 });
               }
 
               if (
-                'userFederation' in federationResponse &&
-                federationResponse.userFederation.license
+                'userCertification' in certificationBodyResponse &&
+                certificationBodyResponse.userCertification.certificationLevel
               ) {
-                console.debug('Setting license', federationResponse.userFederation.license);
-                setValue('license', federationResponse.userFederation.license);
+                setValue(
+                  'certificationLevel',
+                  certificationBodyResponse.userCertification.certificationLevel
+                );
               }
               return true;
             }
 
-            if (stepIndex === 6 && !hasRig) {
+            if (withQualifications && stepIndex === 6) {
+              // Only what changed is saved; a qualification needs its number
+              for (const [index, entry] of (qualifications ?? []).entries()) {
+                const before = initial?.qualifications?.[index];
+                if (
+                  !entry?.number ||
+                  (before?.number === entry.number && before?.expiresAt === entry.expiresAt)
+                ) {
+                  continue;
+                }
+                const response = await addQualification({
+                  qualificationId: entry.qualificationId,
+                  number: entry.number,
+                  expiresAt: entry.expiresAt
+                    ? new Date(entry.expiresAt * 1000).toISOString()
+                    : undefined,
+                });
+                if ('error' in response) {
+                  setError(`qualifications.${index}.number`, {
+                    message: response.error,
+                    type: 'required',
+                  });
+                  return false;
+                }
+              }
+              return true;
+            }
+
+            // The questions about the jumper's rig: skip them for a jumper without one, save the rig step by step
+            if (withRigs && stepIndex === 6 + shift && !hasRig) {
               setValue('stepIndex', lastStepIndex);
               return false;
             }
 
-            if (hasRig && stepIndex >= 7 && stepIndex < lastStepIndex) {
+            if (withRigs && hasRig && stepIndex >= 7 + shift && stepIndex < lastStepIndex) {
               if (
                 isEqual(
-                  { repackExpiresAt, make, model, serial, canopySize },
+                  { serviceDueAt, make, model, serial, canopySize },
                   {
-                    repackExpiresAt: initial?.repackExpiresAt,
+                    serviceDueAt: initial?.serviceDueAt,
                     make: initial?.make,
                     model: initial?.model,
                     serial: initial?.serial,
@@ -147,21 +224,25 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               ) {
                 return true;
               }
-              const rigResponse = await equipment.add({
-                userId: Number(dropzoneUser.user.id),
-                repackExpiresAt,
+              const equipmentResponse = await equipment.add({
+                userId: Number(membership.user.id),
+                kindId: rigKind?.id,
+                serviceDueAt,
                 make,
                 model,
                 serial,
-                canopySize,
+                // The rig's attributes: the canopy size typed in the operator's unit is stored in square metres
+                attributes: canopySize
+                  ? { canopy_size_m2: canopySizeToSquareMetres(Number(canopySize), units) }
+                  : undefined,
                 id: rigId || undefined,
               });
-              if ('error' in rigResponse) {
-                setError('serial', { message: rigResponse.error, type: 'required' });
+              if ('error' in equipmentResponse) {
+                setError('serial', { message: equipmentResponse.error, type: 'required' });
                 return false;
               }
-              if ('fieldErrors' in rigResponse) {
-                rigResponse.fieldErrors?.forEach(({ field, message }) => {
+              if ('fieldErrors' in equipmentResponse) {
+                equipmentResponse.fieldErrors?.forEach(({ field, message }) => {
                   const camelizedField = camelCase(field);
                   if (camelizedField === 'make')
                     return setError('make', { message, type: 'required' });
@@ -169,18 +250,18 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                     return setError('model', { message, type: 'required' });
                   if (camelizedField === 'serial')
                     return setError('serial', { message, type: 'required' });
-                  if (camelizedField === 'canopySize')
+                  if (camelizedField === 'properties')
                     return setError('canopySize', { message, type: 'required' });
                   if (camelizedField in fields)
                     return setError(camelizedField as keyof typeof fields, { message });
                 });
                 return false;
               }
-              if ('rig' in rigResponse) {
-                setValue('rigId', rigResponse.rig.id);
-                setValue('make', rigResponse.rig.make || '');
-                setValue('model', rigResponse.rig.model || '');
-                setValue('serial', rigResponse.rig.serial || '');
+              if ('equipment' in equipmentResponse) {
+                setValue('rigId', equipmentResponse.equipment.id);
+                setValue('make', equipmentResponse.equipment.make || '');
+                setValue('model', equipmentResponse.equipment.model || '');
+                setValue('serial', equipmentResponse.equipment.serial || '');
                 setValue('stepIndex', stepIndex + 1);
               }
               return false;
@@ -188,9 +269,9 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
 
             if (stepIndex === lastStepIndex) {
               const result = await update({
-                exitWeight,
+                bodyMassKg,
                 image: avatar || undefined,
-                license: license?.id ? Number(license.id) : null,
+                certificationLevel: certificationLevel?.id ? Number(certificationLevel.id) : null,
                 nickname,
                 name,
               });
@@ -202,10 +283,10 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                     return setError('name', { message, type: 'required' });
                   if (camelizedField === 'nickname')
                     return setError('nickname', { message, type: 'required' });
-                  if (camelizedField === 'license')
-                    return setError('license', { message, type: 'required' });
-                  if (camelizedField === 'exitWeight')
-                    return setError('exitWeight', { message, type: 'required' });
+                  if (camelizedField === 'certificationLevel')
+                    return setError('certificationLevel', { message, type: 'required' });
+                  if (camelizedField === 'bodyMassKg')
+                    return setError('bodyMassKg', { message, type: 'required' });
                   if (camelizedField in fields)
                     return setError(camelizedField as keyof typeof fields, { message });
                 });
@@ -236,10 +317,16 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       restore,
       getStepIndexByFieldName,
       createHandlers,
-      dropzoneUser?.id,
-      dropzoneUser?.user.id,
+      membership?.id,
+      membership?.user.id,
       equipment,
-      joinFederation,
+      joinCertificationBody,
+      addQualification,
+      shift,
+      withQualifications,
+      withRigs,
+      rigKind?.id,
+      units,
       setError,
       setValue,
       onClose,

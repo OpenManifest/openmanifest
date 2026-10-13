@@ -20,14 +20,14 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     initial: {
       id: slot?.id,
       load,
-      exitWeight: slot?.exitWeight || Number(slot?.dropzoneUser?.user?.exitWeight || 70),
-      dropzoneUser: slot?.dropzoneUser,
+      bodyMassKg: slot?.bodyMassKg || Number(slot?.membership?.user?.bodyMassKg || 70),
+      membership: slot?.membership,
       extras: slot?.extras || null,
       groupNumber: slot?.groupNumber,
-      jumpType: slot?.jumpType,
-      passengerExitWeight: slot?.passengerExitWeight,
-      passengerName: slot?.passengerName,
-      rig: slot?.rig,
+      activityType: slot?.activityType,
+      guestBodyMassKg: slot?.guestBodyMassKg,
+      guestName: slot?.guestName,
+      equipment: slot?.equipment,
       ticketType: slot?.ticketType || undefined,
     },
     onSuccess,
@@ -43,7 +43,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
 
   return (
     <DialogOrSheet
-      title={`Manifest ${slot?.dropzoneUser?.user?.name} on ${load?.name || `Load #${load?.loadNumber || 1}`}`}
+      title={`Manifest ${slot?.membership?.user?.name} on ${load?.name || `Load #${load?.loadNumber || 1}`}`}
       {...{ open, onClose, loading }}
       buttonLabel="Manifest"
       buttonAction={onSubmit}

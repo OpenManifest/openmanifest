@@ -17,5 +17,5 @@ export const loadEssentials: DeepRequired<LoadEssentialsFragment> = {
   occupiedSlots: 3,
   weight: 123,
   dispatchAt: null,
-  hasLanded: false,
+  hasCompleted: false,
 };

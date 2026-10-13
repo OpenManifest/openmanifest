@@ -1,24 +1,22 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { UserWizardScreen } from 'app/forms/user_wizard';
-import { NavigationProp, NavigatorScreenParams, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
-import DropzoneWizardScreen from './dropzone_wizard/DropzoneWizard';
+import OperatorWizardScreen from './operator_wizard/OperatorWizard';
 import RecoverPasswordScreen from './recover_password/RecoverPasswordScreen';
 import ConfirmUserScreen from './confirm_user/ConfirmUserScreen';
 import ChangePasswordScreen from './change_password/ChangePasswordScreen';
-import User, { UserRoutes } from '../authenticated/user/routes';
 
 export type WizardRoutes = {
-  DropzoneWizardScreen: undefined;
+  OperatorWizardScreen: undefined;
   UserWizardScreen: {
     index?: number;
-    dropzoneUserId: string;
+    membershipId: string;
   };
   ConfirmUserScreen: undefined;
   RecoverPasswordScreen: undefined;
   ChangePasswordScreen: undefined;
-  User: NavigatorScreenParams<UserRoutes>;
 };
 
 const Wizards = createStackNavigator<WizardRoutes>();
@@ -36,12 +34,11 @@ export default function Routes() {
         cardStyle: { flex: 1 },
       }}
     >
-      <Wizards.Screen name="DropzoneWizardScreen" component={DropzoneWizardScreen} />
+      <Wizards.Screen name="OperatorWizardScreen" component={OperatorWizardScreen} />
       <Wizards.Screen name="UserWizardScreen" component={UserWizardScreen} />
       <Wizards.Screen name="RecoverPasswordScreen" component={RecoverPasswordScreen} />
       <Wizards.Screen name="ConfirmUserScreen" component={ConfirmUserScreen} />
       <Wizards.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} />
-      <Wizards.Screen name="User" component={User} />
     </Wizards.Navigator>
   );
 }
