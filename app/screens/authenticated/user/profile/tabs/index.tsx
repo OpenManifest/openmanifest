@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DropzoneUserProfileFragment } from 'app/api/operations';
+import { MembershipProfileFragment } from 'app/api/operations';
 import { View } from 'react-native';
 import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
 import JumpHistoryTab from './JumpHistory';
@@ -19,26 +19,19 @@ export enum ProfileTabs {
   Equipment = 2,
 }
 
-export function ProfileTab(props: {
-  active: ProfileTabs;
-  dropzoneUser: DropzoneUserProfileFragment;
-}) {
-  const { active, dropzoneUser } = props;
+export function ProfileTab(props: { active: ProfileTabs; membership: MembershipProfileFragment }) {
+  const { active, membership } = props;
   if (active === ProfileTabs.Funds) {
-    return <FundTab {...{ dropzoneUser }} tabIndex={ProfileTabs.Funds} currentTabIndex={active} />;
+    return <FundTab {...{ membership }} tabIndex={ProfileTabs.Funds} currentTabIndex={active} />;
   }
   if (active === ProfileTabs.Equipment) {
     return (
-      <EquipmentTab
-        {...{ dropzoneUser }}
-        tabIndex={ProfileTabs.Equipment}
-        currentTabIndex={active}
-      />
+      <EquipmentTab {...{ membership }} tabIndex={ProfileTabs.Equipment} currentTabIndex={active} />
     );
   }
   if (active === ProfileTabs.Jumps) {
     return (
-      <JumpHistoryTab {...{ dropzoneUser }} tabIndex={ProfileTabs.Jumps} currentTabIndex={active} />
+      <JumpHistoryTab {...{ membership }} tabIndex={ProfileTabs.Jumps} currentTabIndex={active} />
     );
   }
   return null;

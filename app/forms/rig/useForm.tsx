@@ -6,9 +6,10 @@ import isEqual from 'lodash/isEqual';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import type { RigEssentialsFragment } from 'app/api/operations';
-import useMutationCreateRig from 'app/api/hooks/useMutationCreateRig';
-import useMutationUpdateRig from 'app/api/hooks/useMutationUpdateRig';
+import useMutationCreateEquipment from 'app/api/hooks/useMutationCreateEquipment';
+import useMutationUpdateEquipment from 'app/api/hooks/useMutationUpdateEquipment';
 import { useNotifications } from 'app/providers/notifications';
+import i18n from 'app/i18n';
 
 export type RigFields = {
   name: string;
@@ -28,9 +29,9 @@ export const rigValidation = yup.object({
   serial: yup.string().default(''),
   canopySize: yup
     .number()
-    .typeError('Canopy size must be a valid number')
+    .typeError(() => i18n.t('forms.rig.canopySizeMustBeAValid'))
     .nullable()
-    .min(0, 'Canopy size must be a valid number')
+    .min(0, () => i18n.t('forms.rig.canopySizeMustBeAValid'))
     .default(null),
   rigType: yup.string().default('sport'),
   repackExpiresAt: yup.number().nullable().default(null),
@@ -65,12 +66,12 @@ export interface IUseRigFormOpts {
   /** The rig being edited; a new rig when absent */
   rig?: RigEssentialsFragment | null;
   userId?: number;
-  dropzoneId?: number;
+  operatorId?: number;
   onSuccess?(): void;
 }
 
 export default function useRigForm(opts: IUseRigFormOpts) {
-  const { rig, userId, dropzoneId, onSuccess } = opts;
+  const { rig, userId, operatorId, onSuccess } = opts;
   const notify = useNotifications();
   const initialValues = React.useMemo(() => toFormValues(rig), [rig]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
@@ -101,25 +102,25 @@ export default function useRigForm(opts: IUseRigFormOpts) {
     },
     onError: (message: string) => notify.error(message),
   };
-  const updateRig = useMutationUpdateRig(handlers);
-  const createRig = useMutationCreateRig(handlers);
+  const updateEquipment = useMutationUpdateEquipment(handlers);
+  const createEquipment = useMutationCreateEquipment(handlers);
 
   const [{ loading }, onSave] = useAsyncFn(
     async (fields: RigFields) => {
       const attributes = {
         ...fields,
         userId: userId ? Number(userId) : null,
-        dropzoneId: dropzoneId ? Number(dropzoneId) : null,
+        operatorId: operatorId ? Number(operatorId) : null,
       };
       const result = rig?.id
-        ? await updateRig.mutate({ id: Number(rig.id), ...attributes })
-        : await createRig.mutate(attributes);
+        ? await updateEquipment.mutate({ id: Number(rig.id), ...attributes })
+        : await createEquipment.mutate(attributes);
 
       if (result && !result.errors?.length && !result.fieldErrors?.length) {
         onSuccess?.();
       }
     },
-    [rig?.id, userId, dropzoneId, updateRig.mutate, createRig.mutate, onSuccess]
+    [rig?.id, userId, operatorId, updateEquipment.mutate, createEquipment.mutate, onSuccess]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onSave), [handleSubmit, onSave]);

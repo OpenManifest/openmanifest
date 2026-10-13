@@ -1,121 +1,85 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { HelperText, IconButton, List, TextInput } from 'react-native-paper';
-import useSheetInputRender from '../useSheetInputRender';
+import { useOperatorFormat } from 'app/i18n/operatorFormat';
+import { UNIT_SYMBOLS, fromSi, toSi, unitOf } from 'app/i18n/units';
+import UiNumberField, {
+  type NumberFieldProps as UiNumberFieldProps,
+} from 'app/ui/components/form/NumberField';
 
 export enum NumberFieldType {
   Cash = 'cash',
   Weight = 'weight',
   CanopySize = 'canopySize',
 }
-interface INumberFieldProps {
-  error?: string | null;
+
+type INumberFieldProps = Omit<UiNumberFieldProps, 'label' | 'onChange' | 'unit' | 'prefix'> & {
   label?: string;
-  helperText?: string;
-  disabled?: boolean;
-  value?: number | null;
-  mode?: 'outlined' | 'flat';
+  /** What the number is: a price (the currency sign before it), a weight (the operator's mass unit after it) or a canopy size (ft after it) */
   variant?: NumberFieldType | null;
-  step?: number;
-  min?: number;
-  max?: number;
+  unit?: string;
+  /** Called with each number within min and max; text that is not a number, and an emptied field, call nothing */
   onChange(newValue: number): void;
-}
+  /** Ignored: kept so existing call sites compile */
+  mode?: 'flat' | 'outlined';
+};
 
-const clamp = (n: number, min?: number, max?: number) =>
-  Math.min(max ?? Number.POSITIVE_INFINITY, Math.max(min ?? Number.NEGATIVE_INFINITY, n));
+const UNIT: Partial<Record<NumberFieldType, string>> = {
+  [NumberFieldType.Weight]: 'kg',
+  [NumberFieldType.CanopySize]: 'ft',
+};
 
-// Avoid 0.1 + 0.2 style noise when stepping by fractions
-const round = (n: number) => Math.round(n * 1000) / 1000;
+const round1 = (value: number) => Math.round(value * 10) / 10;
 
-export default function NumberField(props: INumberFieldProps) {
-  const { onChange, label, mode, disabled, variant, step = 0.5, min, max, ...rest } = props;
-  const { value, helperText, error } = rest;
-  const render = useSheetInputRender();
-
-  const current = value || 0;
-  const [text, setText] = React.useState(String(current));
-
-  // Follow the value when it changes from outside (the buttons, a form reset)
-  React.useEffect(() => {
-    setText((previous) => (Number(previous) === current ? previous : String(current)));
-  }, [current]);
-
-  const update = (next: number) => {
-    const clamped = round(clamp(next, min, max));
-    setText(String(clamped));
-    onChange(clamped);
-  };
-
-  const unit =
-    variant === NumberFieldType.Weight
-      ? 'kg'
-      : variant === NumberFieldType.CanopySize
-        ? 'ft'
-        : undefined;
+/** "$", "NZ$", "€": what goes before a price in the currency of the operator */
+function currencySymbol(currency: string) {
   return (
-    <>
-      {label && <List.Subheader>{label}</List.Subheader>}
-      <View style={styles.row}>
-        <IconButton
-          icon="minus"
-          accessibilityLabel="Decrease"
-          disabled={disabled || (min !== undefined && current <= min)}
-          onPress={() => update(current - step)}
-        />
-        <TextInput
-          dense
-          render={render}
-          mode={mode || 'outlined'}
-          style={styles.input}
-          keyboardType="decimal-pad"
-          inputMode="decimal"
-          disabled={disabled}
-          error={!!error}
-          value={text}
-          left={variant === NumberFieldType.Cash ? <TextInput.Affix text="$" /> : undefined}
-          right={unit ? <TextInput.Affix text={unit} /> : undefined}
-          onChangeText={(newText) => {
-            setText(newText);
-            const parsed = Number(newText.replace(',', '.'));
-            if (newText.trim() !== '' && Number.isFinite(parsed)) {
-              onChange(round(clamp(parsed, min, max)));
-            }
-          }}
-          onBlur={() =>
-            update(
-              Number.isFinite(Number(text.replace(',', '.')))
-                ? Number(text.replace(',', '.'))
-                : current
-            )
-          }
-        />
-        <IconButton
-          icon="plus"
-          accessibilityLabel="Increase"
-          disabled={disabled || (max !== undefined && current >= max)}
-          onPress={() => update(current + step)}
-        />
-      </View>
-      {helperText || error ? (
-        <HelperText style={styles.helperText} type={error ? 'error' : 'info'}>
-          {error || helperText}
-        </HelperText>
-      ) : null}
-    </>
+    new Intl.NumberFormat('en-AU', { style: 'currency', currency, currencyDisplay: 'narrowSymbol' })
+      .formatToParts(0)
+      .find((part) => part.type === 'currency')?.value ?? currency
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  input: {
-    flex: 1,
-    textAlign: 'center',
-  },
-  helperText: {
-    marginBottom: 16,
-  },
-});
+/**
+ * The number field of the design system under the props this one has always had. A weight is a number of kilograms to the
+ * form and the API, and is shown and typed in the operator's mass unit; a price has the symbol of the operator's currency.
+ */
+export default function NumberField({
+  label,
+  variant,
+  unit,
+  onChange,
+  mode: _mode,
+  step = 0.5,
+  value,
+  ...rest
+}: INumberFieldProps) {
+  const units = useOperatorFormat((state) => state.units);
+  const currency = useOperatorFormat((state) => state.currency);
+  const massUnit = unitOf('mass', units);
+  const isWeight = variant === NumberFieldType.Weight;
+  const toShown = (kg: number) => (isWeight ? round1(fromSi('mass', kg, massUnit)) : kg);
+  const fromShown = (shown: number) =>
+    isWeight ? Math.round(toSi('mass', shown, massUnit) * 100) / 100 : shown;
+  const shownUnit = isWeight ? UNIT_SYMBOLS[massUnit] : variant ? UNIT[variant] : undefined;
+
+  return (
+    <UiNumberField
+      {...rest}
+      value={value == null ? value : toShown(value)}
+      min={rest.min == null ? undefined : toShown(rest.min)}
+      max={rest.max == null ? undefined : toShown(rest.max)}
+      step={step}
+      label={label ?? ''}
+      unit={unit ?? shownUnit}
+      prefix={variant === NumberFieldType.Cash ? currencySymbol(currency) : undefined}
+      onChange={(next) => {
+        if (next == null) return;
+        onChange(
+          Math.min(
+            rest.max ?? Number.POSITIVE_INFINITY,
+            Math.max(rest.min ?? Number.NEGATIVE_INFINITY, fromShown(next))
+          )
+        );
+      }}
+    />
+  );
+}

@@ -1,0 +1,57 @@
+import * as React from 'react';
+import { FormTextField } from 'app/components/input/text/TextField';
+import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
+import { Control, useFormContext, useWatch } from 'react-hook-form';
+import { CertificationBodyEssentialsFragment } from 'app/api/operations';
+
+import { useUserProfile } from 'app/api/crud';
+import { WizardFormStep } from 'app/hooks/forms/useWizard';
+import { useMemo } from 'app/hooks/react';
+import * as yup from 'yup';
+
+const certificationBody = yup.object() as yup.SchemaOf<CertificationBodyEssentialsFragment>;
+
+export const validation = yup.object({
+  apfNumber: yup.string().nullable().default(''),
+});
+
+type StepFields = {
+  [K in keyof yup.InferType<typeof validation>]: yup.InferType<typeof validation>[K];
+};
+
+export function useStep(): WizardFormStep<StepFields> {
+  const { membership } = useUserProfile();
+
+  return useMemo(
+    () => ({
+      defaultValues: {
+        apfNumber:
+          membership?.user?.userCertifications?.find(
+            (f) => f.certificationBody?.id === membership?.certificationLevel?.certificationBody?.id
+          )?.uid || '',
+      },
+      validation,
+    }),
+    [membership?.certificationLevel?.certificationBody?.id, membership?.user?.userCertifications]
+  );
+}
+
+export interface ICertificationBodyNumberStepProps extends IWizardStepProps {
+  control: Control<StepFields>;
+}
+function CertificationBodyWizardSceen(props: IWizardStepProps) {
+  const { control } = useFormContext<
+    StepFields & { certificationBody: CertificationBodyEssentialsFragment }
+  >();
+  const { apfNumber, certificationBody } = useWatch({ control });
+
+  return (
+    <Step {...props} title={`${certificationBody?.name?.toUpperCase()} Number`}>
+      <Fields>
+        <FormTextField {...{ control }} name="apfNumber" label={`${certificationBody?.name} ID`} />
+      </Fields>
+    </Step>
+  );
+}
+
+export default CertificationBodyWizardSceen;

@@ -4,7 +4,7 @@ export default StyleSheet.create({
   avatarCell: {
     flex: 1,
   },
-  licenseCell: {
+  certificationLevelCell: {
     flex: 1,
   },
   rigCell: {
@@ -13,7 +13,7 @@ export default StyleSheet.create({
   wingLoadingCell: {
     flex: 2,
   },
-  jumpTypeCell: {
+  activityTypeCell: {
     flex: 2,
   },
   altitudeCell: {

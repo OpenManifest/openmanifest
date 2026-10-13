@@ -3,11 +3,12 @@ import Wizard from 'app/components/carousel_wizard/HookFormWizard';
 import { IWizardStepDefinition, WizardRef } from 'app/components/carousel_wizard/Wizard';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useNotifications } from 'app/providers/notifications';
-import FederationStep from './steps/Federation';
-import FederationNumberStep from './steps/FederationNumber';
+import CertificationBodyStep from './steps/CertificationBody';
+import CertificationBodyNumberStep from './steps/CertificationBodyNumber';
 import RealNameStep from './steps/RealName';
 import NicknameStep from './steps/Nickname';
-import LicenseStep from './steps/License';
+import CertificationLevelStep from './steps/CertificationLevel';
+import QualificationsStep, { useQualificationStepRequired } from './steps/Qualifications';
 import RigStep from './steps/Rig';
 import ReserveRepackStep from './steps/ReserveRepack';
 import AskForRigStep from './steps/AskForRig';
@@ -16,16 +17,19 @@ import DoneStep from './steps/Done';
 import AvatarStep from './steps/Avatar';
 import { useUserWizardForm } from './useForm';
 import { UserProfileProvider, useUserProfileContext } from 'app/api/crud';
-import { useDropzoneContext } from 'app/providers';
+import { useOperatorContext } from 'app/providers';
 import { FormProvider, useWatch } from 'react-hook-form';
+import i18n from 'app/i18n';
 
-const steps = [
+const stepsBeforeQualifications = [
   RealNameStep,
   NicknameStep,
   AvatarStep,
-  FederationStep,
-  FederationNumberStep,
-  LicenseStep,
+  CertificationBodyStep,
+  CertificationBodyNumberStep,
+  CertificationLevelStep,
+];
+const stepsAfterQualifications = [
   AskForRigStep,
   RigStep,
   ReserveRepackStep,
@@ -34,18 +38,27 @@ const steps = [
 ];
 export function UserWizard() {
   const wizard = React.useRef<WizardRef>(null);
+  const withQualifications = useQualificationStepRequired();
+  const steps = React.useMemo(
+    () => [
+      ...stepsBeforeQualifications,
+      ...(withQualifications ? [QualificationsStep] : []),
+      ...stepsAfterQualifications,
+    ],
+    [withQualifications]
+  );
   const navigation = useNavigation();
   const { params } = useRoute<{
     key: string;
     name: string;
-    params: { index: number; dropzoneUserId: string };
+    params: { index: number; membershipId: string };
   }>();
   const notify = useNotifications();
   const methods = useUserWizardForm({
     startIndex: params.index || 0,
     onSuccess: () => {
       navigation.goBack();
-      notify.success('Profile updated');
+      notify.success(i18n.t('forms.user_wizard.profileUpdated'));
     },
     onClose: () => {
       navigation.goBack();
@@ -59,12 +72,12 @@ export function UserWizardScreen() {
   const { params } = useRoute<{
     key: string;
     name: string;
-    params: { index: number; dropzoneUserId: string };
+    params: { index: number; membershipId: string };
   }>();
-  const { dropzoneUserId } = params;
+  const { membershipId } = params;
 
   return (
-    <UserProfileProvider id={dropzoneUserId}>
+    <UserProfileProvider id={membershipId}>
       <UserWizard />
     </UserProfileProvider>
   );

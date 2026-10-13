@@ -1,0 +1,50 @@
+import * as React from 'react';
+import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
+import { SlotsList, ISlotsListProps } from 'app/components/slots_table/Table';
+import { SlotFields } from 'app/components/slots_table/UserRow';
+import { useWindowDimensions } from 'react-native';
+
+interface ITableViewProps extends Omit<ISlotsListProps, 'load'> {
+  load?: LoadDetailsFragment | null;
+  loading: boolean;
+  refetch(): void;
+  onSlotPress(slot: SlotDetailsFragment): void;
+}
+
+export default function LoadTableView(props: ITableViewProps) {
+  const {
+    load,
+    loading,
+    ListHeaderComponent,
+    onAvailableSlotPress,
+    onDeletePress,
+    onSlotGroupPress,
+    onSlotPress,
+  } = props;
+  const { width } = useWindowDimensions();
+  const numFields = Math.floor(width / 200);
+
+  return (
+    <SlotsList
+      fields={
+        [
+          SlotFields.Altitude,
+          SlotFields.ActivityType,
+          numFields > 2 ? SlotFields.CertificationLevel : null,
+          numFields > 3 ? SlotFields.TicketType : null,
+          numFields > 4 ? SlotFields.WingLoading : null,
+          numFields > 5 ? SlotFields.Rig : null,
+        ].filter(Boolean) as SlotFields[]
+      }
+      {...{
+        load,
+        loading,
+        ListHeaderComponent,
+        onAvailableSlotPress,
+        onDeletePress,
+        onSlotGroupPress,
+        onSlotPress,
+      }}
+    />
+  );
+}

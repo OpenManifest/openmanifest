@@ -10,30 +10,30 @@ export interface IBadgeProps {
   selected?: boolean;
   onPress?(): void;
   type:
-    | Permission.ActAsDzso
+    | Permission.ActAsDutyOfficer
     | Permission.ActAsGca
     | Permission.ActAsLoadMaster
     | Permission.ActAsPilot
-    | Permission.ActAsRigInspector;
+    | Permission.ActAsEquipmentInspector;
 }
 
 function Badge(props: IBadgeProps) {
   const { type, selected, disabled, onPress } = props;
   const { palette } = useAppTheme();
   const iconName = {
-    [Permission.ActAsDzso]: 'shield-cross',
+    [Permission.ActAsDutyOfficer]: 'shield-cross',
     [Permission.ActAsGca]: 'radio-handheld',
     [Permission.ActAsLoadMaster]: 'shield-account',
     [Permission.ActAsPilot]: 'account-tie-hat',
-    [Permission.ActAsRigInspector]: 'shield-search',
+    [Permission.ActAsEquipmentInspector]: 'shield-search',
   }[type];
 
   const label = {
-    [Permission.ActAsDzso]: 'DZSO',
+    [Permission.ActAsDutyOfficer]: 'DutyOfficer',
     [Permission.ActAsGca]: 'GCA',
     [Permission.ActAsLoadMaster]: 'Load Master',
     [Permission.ActAsPilot]: 'Pilot',
-    [Permission.ActAsRigInspector]: 'Rig Inspector',
+    [Permission.ActAsEquipmentInspector]: 'Rig Inspector',
   }[type];
 
   return (

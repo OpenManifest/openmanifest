@@ -4,27 +4,31 @@ import { addDays, startOfDay } from 'date-fns';
 
 type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]> } : T;
 export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
-  __typename: 'DropzoneUser',
+  __typename: 'Membership',
   id: '123',
   walletId: '123',
-  license: {
+  certificationLevel: {
     id: '1',
     name: 'Certifiate D',
-    federation: {
-      __typename: 'Federation',
+    rank: 50,
+    equivalenceKey: 'd',
+    certificationBody: {
+      __typename: 'CertificationBody',
       id: '1',
       name: 'APF',
       slug: 'apf',
+      industry: 'skydiving',
+      verificationProvider: 'apf',
     },
-    __typename: 'License',
+    __typename: 'CertificationLevel',
   },
   creditsCents: 10000,
   hasCredits: true,
-  hasExitWeight: true,
+  hasBodyMassKg: true,
   hasMembership: true,
   hasReserveInDate: true,
   hasRigInspection: true,
-  hasLicense: true,
+  hasCertificationLevel: true,
   permissions: [],
   expiresAt: null,
   orders: {
@@ -34,7 +38,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
 
   role: {
     id: '1',
-    dropzoneId: 1,
+    operatorId: 1,
     name: 'fun_jumper',
     __typename: 'UserRole',
   },
@@ -44,18 +48,17 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
 
   user: {
     __typename: 'User',
-    apfNumber: null,
     moderationRole: ModerationRole.User,
     nickname: 'Jex',
-    userFederations: [],
+    userCertifications: [],
     id: '234',
     name: 'Court Jester',
-    exitWeight: '100',
+    bodyMassKg: '100',
     email: 'jest@test.com',
     phone: '123456789',
     pushToken: null,
     image: null,
-    dropzoneUsers: [],
+    memberships: [],
 
     rigs: [
       {
@@ -68,7 +71,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         model: 'V310',
         serial: '12345',
         canopySize: 150,
-        dropzone: null,
+        operator: null,
         maintainedAt: null,
         packValue: null,
         rigType: 'sport',
@@ -90,7 +93,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         model: 'G4.1',
         serial: '34567',
         canopySize: 170,
-        dropzone: null,
+        operator: null,
         maintainedAt: null,
         packValue: null,
         rigType: 'sport',
