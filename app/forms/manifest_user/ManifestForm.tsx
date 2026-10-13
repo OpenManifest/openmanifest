@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { FormTextField } from 'app/components/input/text/TextField';
 import { Divider, List } from 'react-native-paper';
 import { NumberFieldType } from 'app/components/input/number_input/NumberField';
-import { Control, useWatch } from 'react-hook-form';
+import { Control, useController, useWatch } from 'react-hook-form';
 import { TicketTypeExtraEssentialsFragment } from 'app/api/operations';
 import { ChipSelectField } from 'app/components/input/chip_select';
 import { FormNumberField } from 'app/components/input/number_input';
@@ -14,6 +13,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import { EquipmentPickerField } from 'app/components/input/dropdown_select/EquipmentPicker';
 import { ManifestUserFields } from './useForm';
 import { formatCents } from 'app/utils/money';
+import GuestsInput from './GuestsInput';
 
 interface IManifestFormProps {
   control: Control<ManifestUserFields>;
@@ -29,6 +29,7 @@ export default function ManifestForm(props: IManifestFormProps) {
     id ? Permission.UpdateUserSlot : Permission.CreateUserSlot
   );
   const { extras: selectedAddons } = useWatch({ control });
+  const guests = useController({ control, name: 'guests' });
 
   return (
     <>
@@ -69,7 +70,7 @@ export default function ManifestForm(props: IManifestFormProps) {
           membershipId={Number(membership?.id)}
           ticketTypeId={ticketType?.id}
           activityTypeId={activityType?.id}
-          tandem={!!ticketType?.isTandem}
+          tandem={!!ticketType?.requiresEscort}
         />
       )}
       <FormNumberField
@@ -79,13 +80,13 @@ export default function ManifestForm(props: IManifestFormProps) {
         name="bodyMassKg"
       />
 
-      {!ticketType?.isTandem ? null : (
-        <>
-          <List.Subheader>Passenger</List.Subheader>
-          <FormTextField {...{ control }} label="Passenger name" name="guestName" />
-
-          <FormNumberField {...{ control }} label="Passenger exit weight" name="guestBodyMassKg" />
-        </>
+      {!ticketType?.requiresEscort ? null : (
+        <GuestsInput
+          value={guests.field.value}
+          capacity={ticketType.escortCapacity ?? 1}
+          error={guests.fieldState.error?.message}
+          onChange={guests.field.onChange}
+        />
       )}
     </>
   );

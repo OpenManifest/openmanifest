@@ -37,7 +37,7 @@ export default function TicketTypeForm(props: ITicketTypeFormProps) {
     }
   }, [operator?.id, getTicketAddons]);
 
-  const { extras: selectedAddons } = useWatch({ control });
+  const { extras: selectedAddons, requiresEscort } = useWatch({ control });
   return (
     <Stack gap="md">
       <FormTextField
@@ -67,10 +67,23 @@ export default function TicketTypeForm(props: ITicketTypeFormProps) {
 
         <SwitchField
           {...{ control }}
-          name="isTandem"
-          label={t('forms.ticket_type.tandem')}
-          helperText={t('forms.ticket_type.allowAlsoManifestingAPassenger')}
+          name="requiresEscort"
+          label={t('forms.ticket_type.requiresEscort', { escort: term('escort').toLowerCase() })}
+          helperText={t('forms.ticket_type.allowAlsoManifestingGuests', {
+            guests: term('guest', 2).toLowerCase(),
+            escort: term('escort').toLowerCase(),
+          })}
         />
+        {requiresEscort ? (
+          <FormNumberField
+            {...{ control }}
+            label={t('forms.ticket_type.escortCapacity', {
+              guests: term('guest', 2).toLowerCase(),
+              escort: term('escort').toLowerCase(),
+            })}
+            name="escortCapacity"
+          />
+        ) : null}
 
         <SwitchField
           {...{ control }}

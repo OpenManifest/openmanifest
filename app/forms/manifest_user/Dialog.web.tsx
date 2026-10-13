@@ -4,6 +4,7 @@ import { usePortal } from '@gorhom/portal';
 import { LoadEssentialsFragment, SlotDetailsFragment } from 'app/api/operations';
 import SlotForm from './ManifestForm';
 import useForm from './useForm';
+import { guestValuesOf } from './guests';
 
 interface IManifestUserDialog {
   open?: boolean;
@@ -25,8 +26,7 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
       extras: slot?.extras || null,
       groupNumber: slot?.groupNumber,
       activityType: slot?.activityType,
-      guestBodyMassKg: slot?.guestBodyMassKg,
-      guestName: slot?.guestName,
+      guests: guestValuesOf(slot?.guestSlots),
       equipment: slot?.equipment,
       ticketType: slot?.ticketType || undefined,
     },

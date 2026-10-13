@@ -117,6 +117,17 @@ export const LoadEssentialsFragmentDoc = gql`
   occupiedSlots
 }
     `;
+export const GuestEssentialsFragmentDoc = gql`
+    fragment guestEssentials on Guest {
+  id
+  name
+  bodyMassKg
+  email
+  phone
+  dateOfBirth
+  emergencyContact
+}
+    `;
 export const DestinationEssentialsFragmentDoc = gql`
     fragment destinationEssentials on Destination {
   id
@@ -144,7 +155,16 @@ export const TicketTypeEssentialsFragmentDoc = gql`
     ...destinationEssentials
   }
   costCents
-  isTandem
+  requiresEscort
+  escortCapacity
+  escortQualification {
+    ...qualificationEssentials
+  }
+  escortCrewRole {
+    id
+    key
+    name
+  }
   allowManifestingSelf
   minCertificationRank
   requiredQualification {
@@ -184,8 +204,13 @@ export const SlotEssentialsFragmentDoc = gql`
   lockVersion
   createdAt
   bodyMassKg
-  guestName
-  guestBodyMassKg
+  guestSlots {
+    id
+    bodyMassKg
+    guest {
+      ...guestEssentials
+    }
+  }
   wingLoading
   groupNumber
   costCents
@@ -206,7 +231,8 @@ export const SlotEssentialsFragmentDoc = gql`
     name
   }
 }
-    ${TicketTypeDetailsFragmentDoc}
+    ${GuestEssentialsFragmentDoc}
+${TicketTypeDetailsFragmentDoc}
 ${DestinationEssentialsFragmentDoc}
 ${ActivityTypeEssentialsFragmentDoc}`;
 export const EquipmentEssentialsFragmentDoc = gql`
@@ -2064,9 +2090,9 @@ export type ManifestGroupMutationHookResult = ReturnType<typeof useManifestGroup
 export type ManifestGroupMutationResult = Apollo.MutationResult<Operation.ManifestGroupMutation>;
 export type ManifestGroupMutationOptions = Apollo.BaseMutationOptions<Operation.ManifestGroupMutation, Operation.ManifestGroupMutationVariables>;
 export const ManifestUserDocument = gql`
-    mutation ManifestUser($activityType: ID, $extras: [ID!], $load: ID, $equipment: [ID!], $ticketType: ID, $membership: ID, $bodyMassKg: Float, $guestName: String, $groupNumber: Int, $guestBodyMassKg: Float) {
+    mutation ManifestUser($activityType: ID, $extras: [ID!], $load: ID, $equipment: [ID!], $ticketType: ID, $membership: ID, $bodyMassKg: Float, $guests: [GuestInput!], $groupNumber: Int) {
   createSlot(
-    input: {attributes: {activityType: $activityType, extras: $extras, load: $load, equipment: $equipment, groupNumber: $groupNumber, ticketType: $ticketType, membership: $membership, bodyMassKg: $bodyMassKg, guestBodyMassKg: $guestBodyMassKg, guestName: $guestName}}
+    input: {attributes: {activityType: $activityType, extras: $extras, load: $load, equipment: $equipment, groupNumber: $groupNumber, ticketType: $ticketType, membership: $membership, bodyMassKg: $bodyMassKg, guests: $guests}}
   ) {
     errors
     fieldErrors {
@@ -2101,9 +2127,8 @@ export type ManifestUserMutationFn = Apollo.MutationFunction<Operation.ManifestU
  *      ticketType: // value for 'ticketType'
  *      membership: // value for 'membership'
  *      bodyMassKg: // value for 'bodyMassKg'
- *      guestName: // value for 'guestName'
+ *      guests: // value for 'guests'
  *      groupNumber: // value for 'groupNumber'
- *      guestBodyMassKg: // value for 'guestBodyMassKg'
  *   },
  * });
  */

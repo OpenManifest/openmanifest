@@ -25,7 +25,8 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
         original?.defaultDestination?.id ?? initial?.defaultDestinationId ?? null,
       extras: original?.extras || initial?.extras,
       id: original?.id || initial?.id || undefined,
-      isTandem: original?.isTandem || initial?.isTandem,
+      requiresEscort: original?.requiresEscort || initial?.requiresEscort,
+      escortCapacity: original?.escortCapacity ?? initial?.escortCapacity,
     },
     onSuccess: onClose,
   });

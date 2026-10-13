@@ -17,6 +17,7 @@ import { useNotifications } from 'app/providers/notifications';
 import { useOperatorContext } from 'app/providers/operator/context';
 import camelCase from 'lodash/camelCase';
 import withDefaults from 'app/forms/initialValues';
+import { GuestValue, guestInputsOf, guestsError } from './guests';
 
 export type ManifestUserFields = Pick<
   SlotExhaustiveFragment,
@@ -27,9 +28,13 @@ export type ManifestUserFields = Pick<
   | 'bodyMassKg'
   | 'extras'
   | 'groupNumber'
-  | 'guestBodyMassKg'
-  | 'guestName'
-> & { id?: string; load?: { id: string }; ticketType: TicketTypeDetailsFragment | null };
+> & {
+  id?: string;
+  load?: { id: string };
+  ticketType: TicketTypeDetailsFragment | null;
+  /** Who rides with the member, on a ticket type that requires an escort */
+  guests: GuestValue[];
+};
 
 export const EMPTY_FORM_VALUES: ManifestUserFields = {
   id: undefined,
@@ -38,8 +43,7 @@ export const EMPTY_FORM_VALUES: ManifestUserFields = {
   equipment: [],
   ticketType: null,
   activityType: null,
-  guestBodyMassKg: null,
-  guestName: null,
+  guests: [],
   extras: null,
   groupNumber: 0,
 };
@@ -86,6 +90,15 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           );
         }
       ),
+    guests: yup
+      .array()
+      .default([])
+      .test('guests', function check(this: yup.TestContext, guests) {
+        const { ticketType } = this.parent as ManifestUserFields;
+        if (!ticketType?.requiresEscort) return true;
+        const message = guestsError(guests as GuestValue[], ticketType.escortCapacity ?? 1);
+        return message ? this.createError({ message }) : true;
+      }),
     activityType: yup.object().required('Jump type is required').nullable(),
     ticketType: yup.object().required('Ticket is required to manifest').nullable(),
     original: yup.object().nullable(),
@@ -125,12 +138,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           ticketType: fields.ticketType?.id,
           membership: fields.membership?.id,
           bodyMassKg: fields.bodyMassKg,
-          ...(!fields.ticketType?.isTandem
-            ? {}
-            : {
-                guestName: fields.guestName,
-                guestBodyMassKg: fields.guestBodyMassKg,
-              }),
+          ...(!fields.ticketType?.requiresEscort ? {} : { guests: guestInputsOf(fields.guests) }),
         });
 
         if ('fieldErrors' in response) {

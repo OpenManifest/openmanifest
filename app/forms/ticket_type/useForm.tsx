@@ -22,7 +22,10 @@ export type TicketTypeFields = {
   /** The id of the destination slots of this ticket go to by default */
   defaultDestinationId: string | null;
   allowManifestingSelf: boolean;
-  isTandem: boolean;
+  /** A slot takes guests who ride with its member, the escort */
+  requiresEscort: boolean;
+  /** The most guests for each escort */
+  escortCapacity: number;
   extras: TicketTypeAddonEssentialsFragment[];
 };
 
@@ -36,7 +39,8 @@ export const ticketTypeValidation = yup.object({
   allowManifestingSelf: yup.boolean().default(false),
   defaultDestinationId: yup.string().nullable().default(null),
   extras: yup.array().of(yup.object()),
-  isTandem: yup.boolean().default(false),
+  requiresEscort: yup.boolean().default(false),
+  escortCapacity: yup.number().integer().min(1).default(1),
 });
 
 export const EMPTY_FORM_VALUES: Partial<TicketTypeFields> = {
@@ -46,7 +50,8 @@ export const EMPTY_FORM_VALUES: Partial<TicketTypeFields> = {
   defaultDestinationId: null,
   extras: [],
   id: undefined,
-  isTandem: false,
+  requiresEscort: false,
+  escortCapacity: 1,
 };
 
 /** The API takes the id as a number; no destination is `null`, which clears it on update */
@@ -107,7 +112,8 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
               extraIds: (validated.extras as unknown as TicketTypeAddonEssentialsFragment[]).map(
                 (e) => Number(e.id)
               ),
-              isTandem: validated.isTandem,
+              requiresEscort: validated.requiresEscort,
+              escortCapacity: validated.requiresEscort ? validated.escortCapacity : 1,
             })
           : await createTicketType({
               name: validated.name,
@@ -117,7 +123,8 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
               extraIds: (validated.extras as unknown as TicketTypeAddonEssentialsFragment[])?.map(
                 (e) => Number(e.id)
               ),
-              isTandem: validated.isTandem,
+              requiresEscort: validated.requiresEscort,
+              escortCapacity: validated.requiresEscort ? validated.escortCapacity : 1,
             });
 
         if (response) {

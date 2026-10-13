@@ -11,9 +11,8 @@ export const slotLoadingFragment: SlotDetailsFragment = {
   equipment: [],
   extras: null,
   activityType: null,
-  guestBodyMassKg: null,
+  guestSlots: [],
   __typename: 'Slot',
-  guestName: null,
   ticketType: null,
   wingLoading: null,
 };

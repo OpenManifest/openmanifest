@@ -8,7 +8,10 @@ export const ticketTypeEssentials: Required<TicketTypeEssentialsFragment> = {
   costCents: 12300,
   allowManifestingSelf: true,
   defaultDestination: fullAltitude,
-  isTandem: false,
+  requiresEscort: false,
+  escortCapacity: 1,
+  escortQualification: null,
+  escortCrewRole: null,
   minCertificationRank: null,
   requiredQualification: null,
 };

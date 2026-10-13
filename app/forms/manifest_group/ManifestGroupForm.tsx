@@ -18,6 +18,7 @@ import {
   TicketTypeValue,
 } from './useForm';
 import { formatCents } from 'app/utils/money';
+import type { GuestValue } from 'app/forms/manifest_user/guests';
 
 interface IUserCardProps {
   slotUser: SlotUserWithEquipment;
@@ -28,7 +29,7 @@ function UserCard(props: IUserCardProps) {
   const { control, setValue, getValues } = useFormContext<ManifestGroupFields>();
   const ticketType = useWatch({ control, name: 'ticketType' });
   const activityType = useWatch({ control, name: 'activityType' });
-  const isTandem = !!ticketType?.isTandem;
+  const requiresEscort = !!ticketType?.requiresEscort;
 
   /** Changes this jumper, or removes them when `changes` is null */
   const update = React.useCallback(
@@ -54,14 +55,7 @@ function UserCard(props: IUserCardProps) {
     (equipment: EquipmentEssentialsFragment[]) => update({ equipment }),
     [update]
   );
-  const onChangeGuestName = React.useCallback(
-    (guestName: string) => update({ guestName }),
-    [update]
-  );
-  const onChangeGuestWeight = React.useCallback(
-    (guestBodyMassKg: number) => update({ guestBodyMassKg }),
-    [update]
-  );
+  const onChangeGuests = React.useCallback((guests: GuestValue[]) => update({ guests }), [update]);
 
   return (
     <UserEquipmentCard
@@ -73,14 +67,12 @@ function UserCard(props: IUserCardProps) {
         onChangeBodyMassKg,
         onRemove,
         onChangeEquipment,
-        onChangeGuestName,
-        onChangeGuestWeight,
+        onChangeGuests,
       }}
-      {...{ isTandem }}
+      escortCapacity={requiresEscort ? (ticketType?.escortCapacity ?? 1) : 0}
       ticketTypeId={ticketType?.id}
       activityTypeId={activityType?.id}
-      guestName={slotUser.guestName}
-      guestWeight={slotUser.guestBodyMassKg}
+      guests={slotUser.guests}
     />
   );
 }

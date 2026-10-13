@@ -15,8 +15,11 @@ import type {
 import { useManifestGroupMutation } from 'app/api/reflection';
 import type { ActivityType, SlotUser, TicketType, Extra } from 'app/api/schema.d';
 import { useNotifications } from 'app/providers/notifications';
+import { GuestValue, guestInputsOf, guestsError } from 'app/forms/manifest_user/guests';
 
-export type SlotUserWithEquipment = Omit<SlotUser, 'equipment'> & {
+export type SlotUserWithEquipment = Omit<SlotUser, 'equipment' | 'guests'> & {
+  /** Who rides with the jumper, on a ticket type that requires an escort */
+  guests?: GuestValue[];
   /** What the jumper uses: one item for each kind of equipment the slot needs */
   equipment?: EquipmentEssentialsFragment[];
   avatar?: string | null;
@@ -29,7 +32,10 @@ export type LoadValue = Pick<LoadDetailsFragment, 'id'> & {
 };
 export type ActivityTypeValue = Pick<ActivityType, 'id' | 'name'>;
 export type TicketTypeExtraValue = Pick<Extra, 'id' | 'name' | 'costCents'>;
-export type TicketTypeValue = Pick<TicketType, 'id' | 'name' | 'isTandem'> & {
+export type TicketTypeValue = Pick<
+  TicketType,
+  'id' | 'name' | 'requiresEscort' | 'escortCapacity'
+> & {
   extras?: TicketTypeExtraValue[] | null;
 };
 
@@ -51,11 +57,17 @@ export const manifestGroupValidation = yup.object({
   users: yup
     .array()
     .min(1, 'Add at least one jumper to the group')
-    .test('tandem-guests', 'You cant manifest tandems without passengers', function check(users) {
-      const isTandem = !!(this.parent as ManifestGroupFields).ticketType?.isTandem;
-      return (
-        !isTandem || (users as SlotUserWithEquipment[]).every((slotUser) => !!slotUser.guestName)
-      );
+    .test('escort-guests', function check(users) {
+      const ticketType = (this.parent as ManifestGroupFields).ticketType;
+      if (!ticketType?.requiresEscort) return true;
+      for (const slotUser of users as SlotUserWithEquipment[]) {
+        if (!slotUser.guests?.length) {
+          return this.createError({ message: 'Every escort needs at least one guest' });
+        }
+        const message = guestsError(slotUser.guests, ticketType.escortCapacity ?? 1);
+        if (message) return this.createError({ message });
+      }
+      return true;
     }),
 });
 
@@ -182,15 +194,12 @@ export default function useManifestGroupForm(opts: IUseManifestGroupFormOpts) {
             groupNumber: fields.groupNumber || null,
             extras: fields.extras?.map(({ id }) => id),
             load: fields.load?.id,
-            userGroup: fields.users.map(
-              ({ id, bodyMassKg, equipment, guestName, guestBodyMassKg }) => ({
-                id,
-                equipment: equipment?.length ? equipment.map((item) => item.id) : undefined,
-                bodyMassKg,
-                guestName,
-                guestBodyMassKg,
-              })
-            ),
+            userGroup: fields.users.map(({ id, bodyMassKg, equipment, guests }) => ({
+              id,
+              equipment: equipment?.length ? equipment.map((item) => item.id) : undefined,
+              bodyMassKg,
+              guests: fields.ticketType?.requiresEscort ? guestInputsOf(guests) : undefined,
+            })),
           },
         });
         const payload = result.data?.createSlots;

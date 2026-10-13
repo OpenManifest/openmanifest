@@ -6,6 +6,7 @@ import type { ViewProps } from 'react-native';
 import { SlotDetailsFragment } from 'app/api/operations';
 import useOpenUser from 'app/navigation/useOpenUser';
 import { useAppTheme } from 'app/theme';
+import useTerms from 'app/i18n/useTerms';
 
 export interface ISlotCardProps {
   slot: SlotDetailsFragment;
@@ -20,7 +21,9 @@ export default function SlotCard(props: ISlotCardProps) {
   const { slot, onPress, onDelete, style } = props;
   const { theme } = useAppTheme();
 
-  const hasGuest = !!slot?.guestName;
+  const guestSlots = slot?.guestSlots ?? [];
+  const hasGuest = guestSlots.length > 0;
+  const term = useTerms();
   const openUser = useOpenUser();
   return (
     <>
@@ -33,7 +36,7 @@ export default function SlotCard(props: ISlotCardProps) {
         style={StyleSheet.flatten([styles.card, { marginBottom: hasGuest ? -4 : 12 }, style])}
       >
         <Card.Title
-          title={slot?.membership?.user.name || slot?.guestName}
+          title={slot?.membership?.user.name}
           left={() =>
             slot?.membership?.user?.image ? (
               <Avatar.Image
@@ -138,8 +141,8 @@ export default function SlotCard(props: ISlotCardProps) {
           )}
         </Card.Content>
       </Card>
-      {!slot?.guestName ? null : (
-        <>
+      {guestSlots.map((guestSlot) => (
+        <React.Fragment key={`guest-${guestSlot.id}`}>
           <View
             style={{
               width: '100%',
@@ -163,7 +166,7 @@ export default function SlotCard(props: ISlotCardProps) {
             elevation={3}
           >
             <Card.Title
-              title={slot?.guestName}
+              title={guestSlot.guest?.name}
               left={() => (
                 <Avatar.Icon
                   icon={(iconProps) => (
@@ -176,11 +179,13 @@ export default function SlotCard(props: ISlotCardProps) {
               )}
             />
             <Card.Content>
-              <Text style={styles.guestTitle}>P A S S E N G E R</Text>
+              <Text style={styles.guestTitle}>
+                {term('guest').toUpperCase().split('').join(' ')}
+              </Text>
             </Card.Content>
           </Card>
-        </>
-      )}
+        </React.Fragment>
+      ))}
     </>
   );
 }

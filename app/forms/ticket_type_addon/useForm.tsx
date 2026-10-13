@@ -33,7 +33,6 @@ export const ticketAddonValidation = yup.object({
   allowManifestingSelf: yup.boolean().default(false),
   altitude: yup.number().required().default(14000),
   ticketTypes: yup.array().of(yup.object()),
-  isTandem: yup.boolean().default(false),
 });
 
 export const EMPTY_FORM_VALUES: Partial<TicketTypeAddonFields> = {

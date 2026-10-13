@@ -9,6 +9,7 @@ import { generateColor } from 'app/utils/generateColor';
 import { isNumber } from 'lodash';
 import { formatDestination } from 'app/i18n/format';
 import { useOperatorFormat } from 'app/i18n/operatorFormat';
+import useTerms from 'app/i18n/useTerms';
 import { canopySize } from 'app/features/skydiving/rig';
 import SwipeActions from '../layout/SwipeActions';
 import UserAvatar from '../UserAvatar';
@@ -42,6 +43,7 @@ export default function UserRow(props: ISlotUserRowProps) {
 
   const { operator: currentOperator } = useOperatorContext();
   const units = useOperatorFormat((state) => state.units);
+  const term = useTerms();
   const { currentUser } = currentOperator;
   const canEditSelf = useRestriction(Permission.UpdateSlot);
   const canEditOthers = useRestriction(Permission.UpdateUserSlot);
@@ -167,8 +169,9 @@ export default function UserRow(props: ISlotUserRowProps) {
                 ) : null}
               </DataTable.Row>
 
-              {slot?.ticketType?.isTandem && (
+              {(slot?.guestSlots ?? []).map((guestSlot) => (
                 <DataTable.Row
+                  key={`guest-${guestSlot.id}`}
                   testID="slot-row"
                   disabled={!!load?.hasCompleted}
                   pointerEvents="none"
@@ -187,8 +190,8 @@ export default function UserRow(props: ISlotUserRowProps) {
                   </DataTable.Cell>
                   <DataTable.Cell style={styles.tandemGuestNameCell}>
                     <Paragraph style={styles.slotText}>
-                      <Text style={{ fontWeight: 'bold' }}>Tandem Passenger:</Text>{' '}
-                      {slot?.guestName}
+                      <Text style={{ fontWeight: 'bold' }}>{term('guest')}:</Text>{' '}
+                      {guestSlot.guest?.name}
                     </Paragraph>
                   </DataTable.Cell>
                   <DataTable.Cell numeric style={styles.altitudeCell}>
@@ -197,7 +200,7 @@ export default function UserRow(props: ISlotUserRowProps) {
                     </Paragraph>
                   </DataTable.Cell>
                 </DataTable.Row>
-              )}
+              ))}
             </SwipeActions>
           </View>
         )}

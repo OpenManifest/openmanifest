@@ -11,22 +11,23 @@ import { EquipmentEssentialsFragment } from 'app/api/operations';
 import { useUserProfile } from 'app/api/crud';
 import EquipmentPicker from 'app/components/input/dropdown_select/EquipmentPicker';
 import NumberField, { NumberFieldType } from 'app/components/input/number_input/NumberField';
+import GuestsInput from 'app/forms/manifest_user/GuestsInput';
+import type { GuestValue } from 'app/forms/manifest_user/guests';
 
 interface IUserEquipmentCard {
   membershipId: string;
   bodyMassKg?: number;
-  isTandem?: boolean;
+  /** The most guests that ride with the member, as the ticket type allows; 0: the ticket takes none */
+  escortCapacity?: number;
   selectedEquipment?: EquipmentEssentialsFragment[];
   ticketTypeId?: string | null;
   activityTypeId?: string | null;
 
-  guestName?: string | null;
-  guestWeight?: number | null;
+  guests?: GuestValue[];
   onRemove?(): void;
   onChangeBodyMassKg(weight: number): void;
   onChangeEquipment(equipment: EquipmentEssentialsFragment[]): void;
-  onChangeGuestName?(name: string): void;
-  onChangeGuestWeight?(weight: number): void;
+  onChangeGuests?(guests: GuestValue[]): void;
 }
 
 export default function UserEquipmentCard(props: IUserEquipmentCard) {
@@ -37,13 +38,11 @@ export default function UserEquipmentCard(props: IUserEquipmentCard) {
     selectedEquipment,
     ticketTypeId,
     activityTypeId,
-    isTandem,
-    guestName,
-    guestWeight,
+    escortCapacity = 0,
+    guests,
     onRemove,
     onChangeBodyMassKg,
-    onChangeGuestName,
-    onChangeGuestWeight,
+    onChangeGuests,
   } = props;
   const { theme } = useAppTheme();
   // Skydiving: the wing loading under the rig
@@ -94,7 +93,7 @@ export default function UserEquipmentCard(props: IUserEquipmentCard) {
               value={selectedEquipment}
               ticketTypeId={ticketTypeId}
               activityTypeId={activityTypeId}
-              tandem={isTandem}
+              tandem={escortCapacity > 0}
               autoSelectFirst
             />
           </View>
@@ -110,27 +109,14 @@ export default function UserEquipmentCard(props: IUserEquipmentCard) {
             {membership?.certificationLevel?.name}
           </Chip>
         </ScrollView>
-        {!isTandem ? null : (
+        {escortCapacity < 1 ? null : (
           <>
             <Divider />
-            <List.Subheader>Passenger</List.Subheader>
-            <View style={styles.row}>
-              <View style={styles.rowFirst}>
-                <TextInput
-                  mode="flat"
-                  value={guestName || ''}
-                  onChangeText={(text: string) => onChangeGuestName?.(text)}
-                  label="Passenger name"
-                />
-              </View>
-              <View style={styles.rowLast}>
-                <NumberField
-                  value={!guestWeight ? 0 : guestWeight}
-                  onChange={(num) => onChangeGuestWeight?.(num)}
-                  variant={NumberFieldType.Weight}
-                />
-              </View>
-            </View>
+            <GuestsInput
+              value={guests}
+              capacity={escortCapacity}
+              onChange={(next) => onChangeGuests?.(next)}
+            />
           </>
         )}
       </Card.Content>

@@ -910,6 +910,26 @@ export type GrantPermissionPayload = {
   membership?: Maybe<Membership>;
 };
 
+export type Guest = {
+  __typename?: 'Guest';
+  bodyMassKg?: Maybe<Scalars['Float']['output']>;
+  dateOfBirth?: Maybe<Scalars['ISO8601Date']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  emergencyContact?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+};
+
+export type GuestInput = {
+  bodyMassKg?: InputMaybe<Scalars['Float']['input']>;
+  dateOfBirth?: InputMaybe<Scalars['ISO8601Date']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  emergencyContact?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** The industry of an operator: chosen when it is created, never changed */
 export enum Industry {
   /** Any operator that manifests people onto loads; switch on what you need */
@@ -2324,10 +2344,14 @@ export type Slot = AnyResource & SellableItem & {
   destination?: Maybe<Destination>;
   /** The items the slot uses */
   equipment: Array<Equipment>;
+  /** The slot of the escort, when this is a guest's */
+  escortSlot?: Maybe<Slot>;
   extras?: Maybe<Array<Extra>>;
   groupNumber: Scalars['Int']['output'];
-  guestBodyMassKg?: Maybe<Scalars['Float']['output']>;
-  guestName?: Maybe<Scalars['String']['output']>;
+  /** Who rides in this slot, when it is a guest's */
+  guest?: Maybe<Guest>;
+  /** The slots of the guests who ride with this slot's member, the escort */
+  guestSlots: Array<Slot>;
   guid: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
   load: Load;
@@ -2370,8 +2394,8 @@ export type SlotInput = {
   equipment?: InputMaybe<Array<Scalars['ID']['input']>>;
   extras?: InputMaybe<Array<Scalars['ID']['input']>>;
   groupNumber?: InputMaybe<Scalars['Int']['input']>;
-  guestBodyMassKg?: InputMaybe<Scalars['Float']['input']>;
-  guestName?: InputMaybe<Scalars['String']['input']>;
+  /** The guests who ride with the member, on a ticket type that requires an escort */
+  guests?: InputMaybe<Array<GuestInput>>;
   load?: InputMaybe<Scalars['ID']['input']>;
   /** The vehicle of the load this slot rides in (loads with several vehicles that carry) */
   loadVehicle?: InputMaybe<Scalars['ID']['input']>;
@@ -2385,8 +2409,7 @@ export type SlotInput = {
 export type SlotUser = {
   bodyMassKg: Scalars['Float']['input'];
   equipment?: InputMaybe<Array<Scalars['ID']['input']>>;
-  guestBodyMassKg?: InputMaybe<Scalars['Float']['input']>;
-  guestName?: InputMaybe<Scalars['String']['input']>;
+  guests?: InputMaybe<Array<GuestInput>>;
   id: Scalars['Int']['input'];
 };
 
@@ -2487,15 +2510,20 @@ export type TicketType = AnyResource & SellableItem & {
   createdAt: Scalars['ISO8601DateTime']['output'];
   currency?: Maybe<Scalars['String']['output']>;
   defaultDestination?: Maybe<Destination>;
+  /** The most guests for each escort */
+  escortCapacity: Scalars['Int']['output'];
+  escortCrewRole?: Maybe<CrewRole>;
+  escortQualification?: Maybe<Qualification>;
   extras: Array<Extra>;
   guid: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
-  isTandem?: Maybe<Scalars['Boolean']['output']>;
   /** The lowest rank of certification level that may buy this ticket */
   minCertificationRank?: Maybe<Scalars['Int']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   operator?: Maybe<Operator>;
   requiredQualification?: Maybe<Qualification>;
+  /** A slot takes guests who ride with its member, the escort (skydiving: tandem) */
+  requiresEscort?: Maybe<Scalars['Boolean']['output']>;
   title?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['ISO8601DateTime']['output'];
 };
@@ -2506,12 +2534,19 @@ export type TicketTypeInput = {
   costCents?: InputMaybe<Scalars['Int']['input']>;
   currency?: InputMaybe<Scalars['String']['input']>;
   defaultDestinationId?: InputMaybe<Scalars['Int']['input']>;
+  /** The most guests for each escort */
+  escortCapacity?: InputMaybe<Scalars['Int']['input']>;
+  /** The crew role whose permission the escort must have */
+  escortCrewRoleId?: InputMaybe<Scalars['Int']['input']>;
+  /** The qualification the escort must hold */
+  escortQualificationId?: InputMaybe<Scalars['Int']['input']>;
   extraIds?: InputMaybe<Array<Scalars['Int']['input']>>;
-  isTandem?: InputMaybe<Scalars['Boolean']['input']>;
   minCertificationRank?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   operatorId?: InputMaybe<Scalars['Int']['input']>;
   requiredQualificationId?: InputMaybe<Scalars['Int']['input']>;
+  /** A slot takes guests who ride with its member, the escort (skydiving: tandem) */
+  requiresEscort?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type TimeRangeInput = {
