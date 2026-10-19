@@ -1,32 +1,41 @@
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import * as React from 'react';
 import * as yup from 'yup';
 import { ValidationError } from 'yup';
+import i18n from 'app/i18n';
+
+const equipment = () => i18n.t('terms:equipment', { count: 1 }).toLowerCase();
 
 const schema = yup.object().shape({
-  hasLicense: yup.boolean().isTrue('You need to select a license on your user profile'),
+  hasCertificationLevel: yup.boolean().isTrue('You need to select a license on your user profile'),
   hasMembership: yup.boolean().isTrue('Your membership is out of date'),
-  hasRigInspection: yup.boolean().isTrue('Your rig needs to be inspected before you can manifest'),
-  hasReserveInDate: yup.boolean().isTrue('Your rig needs a reserve repack'),
-  hasExitWeight: yup.boolean().isTrue('You need to set your exit weight on your profile'),
+  hasEquipmentInspection: yup
+    .boolean()
+    .isTrue(() => i18n.t('forms.equipment.needsInspection', { equipment: equipment() })),
+  hasEquipmentInService: yup
+    .boolean()
+    .isTrue(() => i18n.t('forms.equipment.needsService', { equipment: equipment() })),
+  hasBodyMassKg: yup.boolean().isTrue('You need to set your exit weight on your profile'),
 });
 
 export default function useManifestValidator() {
   const {
-    dropzone: { currentUser, dropzone },
-  } = useDropzoneContext();
+    operator: { currentUser, operator },
+  } = useOperatorContext();
 
   const canManifest = React.useCallback(
     async function CheckManifestRequirements() {
       try {
         await schema.validate(
           {
-            hasLicense: currentUser?.hasLicense || !dropzone?.settings?.requireLicense,
-            hasMembership: currentUser?.hasMembership || !dropzone?.settings?.requireMembership,
-            hasRigInspection:
-              currentUser?.hasRigInspection || !dropzone?.settings?.requireRigInspection,
-            hasReserveInDate:
-              currentUser?.hasReserveInDate || !dropzone?.settings?.requireReserveInDate,
+            hasCertificationLevel:
+              currentUser?.hasCertificationLevel || !operator?.settings?.requireCertification,
+            hasMembership: currentUser?.hasMembership || !operator?.settings?.requireMembership,
+            hasEquipmentInspection:
+              currentUser?.hasEquipmentInspection ||
+              !operator?.settings?.requireEquipmentInspection,
+            hasEquipmentInService:
+              currentUser?.hasEquipmentInService || !operator?.settings?.requireEquipmentInService,
           },
           { abortEarly: true }
         );
@@ -40,13 +49,13 @@ export default function useManifestValidator() {
     },
     [
       currentUser?.hasMembership,
-      currentUser?.hasRigInspection,
-      currentUser?.hasLicense,
-      dropzone?.settings?.requireLicense,
-      dropzone?.settings?.requireMembership,
-      dropzone?.settings?.requireRigInspection,
-      currentUser?.hasReserveInDate,
-      dropzone?.settings?.requireReserveInDate,
+      currentUser?.hasEquipmentInspection,
+      currentUser?.hasCertificationLevel,
+      operator?.settings?.requireCertification,
+      operator?.settings?.requireMembership,
+      operator?.settings?.requireEquipmentInspection,
+      currentUser?.hasEquipmentInService,
+      operator?.settings?.requireEquipmentInService,
     ]
   );
 

@@ -6,43 +6,58 @@ import {
 } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { camelCase, isEqual } from 'lodash';
 import { useTickets } from 'app/api/crud';
 import { useNotifications } from 'app/providers/notifications';
 import { toCents } from 'app/utils/money';
 import withDefaults from 'app/forms/initialValues';
+import i18n from 'app/i18n';
 
 export type TicketTypeFields = {
   id?: string;
   name: string;
   cost: number;
-  altitude: number;
+  /** The id of the destination slots of this ticket go to by default */
+  defaultDestinationId: string | null;
   allowManifestingSelf: boolean;
-  isTandem: boolean;
+  /** A slot takes guests who ride with its member, the escort */
+  requiresEscort: boolean;
+  /** The most guests for each escort */
+  escortCapacity: number;
   extras: TicketTypeAddonEssentialsFragment[];
 };
 
 export const ticketTypeValidation = yup.object({
   id: yup.string().nullable().default(null),
-  name: yup.string().required('Name is required'),
-  cost: yup.number().required('Cost is required').min(0, 'Cost must be greater than 0'),
+  name: yup.string().required(() => i18n.t('forms.ticket_type.nameIsRequired')),
+  cost: yup
+    .number()
+    .required(() => i18n.t('forms.ticket_type.costIsRequired'))
+    .min(0, () => i18n.t('forms.ticket_type.costMustBeGreaterThan0')),
   allowManifestingSelf: yup.boolean().default(false),
-  altitude: yup.number().default(14000).required().default(14000),
+  defaultDestinationId: yup.string().nullable().default(null),
   extras: yup.array().of(yup.object()),
-  isTandem: yup.boolean().default(false),
+  requiresEscort: yup.boolean().default(false),
+  escortCapacity: yup.number().integer().min(1).default(1),
 });
 
 export const EMPTY_FORM_VALUES: Partial<TicketTypeFields> = {
   name: '',
   cost: 30,
   allowManifestingSelf: true,
-  altitude: 14000,
+  defaultDestinationId: null,
   extras: [],
   id: undefined,
-  isTandem: false,
+  requiresEscort: false,
+  escortCapacity: 1,
 };
+
+/** The API takes the id as a number; no destination is `null`, which clears it on update */
+function toDestinationId(id?: string | null) {
+  return id ? Number(id) : null;
+}
 
 export interface IUseTicketTypeFormOpts {
   initial?: Partial<TicketTypeFields>;
@@ -67,7 +82,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
   const { reset, register } = methods;
   React.useEffect(() => {
     register('id');
-    register('altitude');
+    register('defaultDestinationId');
   }, [register]);
 
   React.useEffect(() => {
@@ -76,14 +91,14 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
 
   const { handleSubmit, setError } = methods;
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const { createTicketType, updateTicketType } = useTickets();
   const notify = useNotifications();
 
   const [{ loading }, onCreateOrder] = useAsyncFn(
     async (fields: TicketTypeFields) => {
-      if (!dropzone?.id) {
+      if (!operator?.id) {
         return;
       }
       const validated = await ticketTypeValidation.validate(fields, { abortEarly: false });
@@ -93,21 +108,23 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
               name: validated.name,
               costCents: toCents(validated.cost),
               allowManifestingSelf: validated.allowManifestingSelf,
-              altitude: validated.altitude,
+              defaultDestinationId: toDestinationId(validated.defaultDestinationId),
               extraIds: (validated.extras as unknown as TicketTypeAddonEssentialsFragment[]).map(
                 (e) => Number(e.id)
               ),
-              isTandem: validated.isTandem,
+              requiresEscort: validated.requiresEscort,
+              escortCapacity: validated.requiresEscort ? validated.escortCapacity : 1,
             })
           : await createTicketType({
               name: validated.name,
               costCents: toCents(validated.cost),
               allowManifestingSelf: validated.allowManifestingSelf,
-              altitude: validated.altitude,
+              defaultDestinationId: toDestinationId(validated.defaultDestinationId),
               extraIds: (validated.extras as unknown as TicketTypeAddonEssentialsFragment[])?.map(
                 (e) => Number(e.id)
               ),
-              isTandem: validated.isTandem,
+              requiresEscort: validated.requiresEscort,
+              escortCapacity: validated.requiresEscort ? validated.escortCapacity : 1,
             });
 
         if (response) {
@@ -120,7 +137,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
             });
           }
           if ('ticketType' in response && response.ticketType) {
-            notify.success('Ticket saved');
+            notify.success(i18n.t('forms.ticket_type.ticketSaved'));
             onSuccess?.(response.ticketType);
           }
         }
@@ -130,7 +147,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
         }
       }
     },
-    [dropzone?.id, setError, notify, onSuccess, createTicketType, updateTicketType, defaultValues]
+    [operator?.id, setError, notify, onSuccess, createTicketType, updateTicketType, defaultValues]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onCreateOrder), [handleSubmit, onCreateOrder]);

@@ -1,30 +1,35 @@
 import { ModerationRole } from 'app/api/schema.d';
 import { CurrentUserDetailedFragment } from 'app/api/operations';
 import { addDays, startOfDay } from 'date-fns';
+import { rigKindRef } from './equipmentKind.fixture';
 
 type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]> } : T;
 export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
-  __typename: 'DropzoneUser',
+  __typename: 'Membership',
   id: '123',
   walletId: '123',
-  license: {
+  certificationLevel: {
     id: '1',
     name: 'Certifiate D',
-    federation: {
-      __typename: 'Federation',
+    rank: 50,
+    equivalenceKey: 'd',
+    certificationBody: {
+      __typename: 'CertificationBody',
       id: '1',
       name: 'APF',
       slug: 'apf',
+      industry: 'skydiving',
+      verificationProvider: 'apf',
     },
-    __typename: 'License',
+    __typename: 'CertificationLevel',
   },
   creditsCents: 10000,
   hasCredits: true,
-  hasExitWeight: true,
+  hasBodyMassKg: true,
   hasMembership: true,
-  hasReserveInDate: true,
-  hasRigInspection: true,
-  hasLicense: true,
+  hasEquipmentInService: true,
+  hasEquipmentInspection: true,
+  hasCertificationLevel: true,
   permissions: [],
   expiresAt: null,
   orders: {
@@ -34,32 +39,31 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
 
   role: {
     id: '1',
-    dropzoneId: 1,
+    operatorId: 1,
     name: 'fun_jumper',
     __typename: 'UserRole',
   },
 
-  rigInspections: [],
-  availableRigs: [],
+  equipmentInspections: [],
+  availableEquipment: [],
 
   user: {
     __typename: 'User',
-    apfNumber: null,
     moderationRole: ModerationRole.User,
     nickname: 'Jex',
-    userFederations: [],
+    userCertifications: [],
     id: '234',
     name: 'Court Jester',
-    exitWeight: '100',
+    bodyMassKg: '100',
     email: 'jest@test.com',
     phone: '123456789',
     pushToken: null,
     image: null,
-    dropzoneUsers: [],
+    memberships: [],
 
-    rigs: [
+    equipment: [
       {
-        __typename: 'Rig',
+        __typename: 'Equipment',
         id: '1',
         isPublic: true,
         name: 'Primary',
@@ -67,21 +71,22 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         make: 'Vector',
         model: 'V310',
         serial: '12345',
-        canopySize: 150,
-        dropzone: null,
+        ownership: 'personal',
+        attributes: { rig_type: 'sport', canopy_size_m2: 13.9355 },
+        equipmentKind: rigKindRef,
+        inService: true,
+        operator: null,
         maintainedAt: null,
-        packValue: null,
-        rigType: 'sport',
-        repackExpiresAt: addDays(new Date(), 20).getTime() / 1000,
+        serviceDueAt: addDays(new Date(), 20).getTime() / 1000,
         owner: {
           id: '1',
           __typename: 'User',
           name: 'Court Jester',
-          rigs: null,
+          equipment: null,
         },
       },
       {
-        __typename: 'Rig',
+        __typename: 'Equipment',
         id: '2',
         name: 'Pond',
         make: 'Mirage',
@@ -89,17 +94,18 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         packingCard: null,
         model: 'G4.1',
         serial: '34567',
-        canopySize: 170,
-        dropzone: null,
+        ownership: 'personal',
+        attributes: { rig_type: 'sport', canopy_size_m2: 15.7935 },
+        equipmentKind: rigKindRef,
+        inService: true,
+        operator: null,
         maintainedAt: null,
-        packValue: null,
-        rigType: 'sport',
-        repackExpiresAt: startOfDay(new Date()).getTime() / 1000,
+        serviceDueAt: startOfDay(new Date()).getTime() / 1000,
         owner: {
           id: '1',
           __typename: 'User',
           name: 'Court Jester',
-          rigs: null,
+          equipment: null,
         },
       },
     ],

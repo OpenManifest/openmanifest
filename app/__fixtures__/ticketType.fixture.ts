@@ -1,4 +1,5 @@
 import { TicketTypeEssentialsFragment } from 'app/api/operations';
+import { fullAltitude } from './destination.fixture';
 
 export const ticketTypeEssentials: Required<TicketTypeEssentialsFragment> = {
   __typename: 'TicketType',
@@ -6,6 +7,11 @@ export const ticketTypeEssentials: Required<TicketTypeEssentialsFragment> = {
   name: 'Height',
   costCents: 12300,
   allowManifestingSelf: true,
-  altitude: 14000,
-  isTandem: false,
+  defaultDestination: fullAltitude,
+  requiresEscort: false,
+  escortCapacity: 1,
+  escortQualification: null,
+  escortCrewRole: null,
+  minCertificationRank: null,
+  requiredQualification: null,
 };
