@@ -2,24 +2,28 @@ import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
 import { StyleSheet, Text, View } from 'react-native';
 import useRestriction from 'app/hooks/useRestriction';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import React from 'react';
 import { Avatar, Caption, DataTable, Paragraph } from 'react-native-paper';
 import { generateColor } from 'app/utils/generateColor';
 import { isNumber } from 'lodash';
+import { formatDestination } from 'app/i18n/format';
+import { useOperatorFormat } from 'app/i18n/operatorFormat';
+import useTerms from 'app/i18n/useTerms';
+import { canopySize } from 'app/features/skydiving/rig';
 import SwipeActions from '../layout/SwipeActions';
 import UserAvatar from '../UserAvatar';
 import DraggableWrapper from './DragAndDrop/DraggableRow';
 import DroppableSlot from './DragAndDrop/DroppableSlot';
 
 export enum SlotFields {
-  License = 'license',
+  CertificationLevel = 'certificationLevel',
   Group = 'groupNumber',
   WingLoading = 'wingloading',
   Altitude = 'altitude',
-  Rig = 'rig',
+  Equipment = 'equipment',
   TicketType = 'ticketType',
-  JumpType = 'jumpType',
+  ActivityType = 'activityType',
 }
 
 export interface ISlotUserRowProps {
@@ -37,8 +41,10 @@ export const GROUP_COLORS = Array.from({ length: 20 }).map(() => generateColor()
 export default function UserRow(props: ISlotUserRowProps) {
   const { fields, load, slot, index, onDeletePress, onSlotGroupPress, onSlotPress } = props;
 
-  const { dropzone: currentDropzone } = useDropzoneContext();
-  const { currentUser } = currentDropzone;
+  const { operator: currentOperator } = useOperatorContext();
+  const units = useOperatorFormat((state) => state.units);
+  const term = useTerms();
+  const { currentUser } = currentOperator;
   const canEditSelf = useRestriction(Permission.UpdateSlot);
   const canEditOthers = useRestriction(Permission.UpdateUserSlot);
 
@@ -48,7 +54,7 @@ export default function UserRow(props: ISlotUserRowProps) {
   const slotGroup: Required<(typeof load)['slots']> = load?.slots?.filter(
     ({ groupNumber }) => groupNumber && groupNumber === slot.groupNumber
   ) as Required<(typeof load)['slots']>;
-  const isCurrentUser = slot?.dropzoneUser?.id === currentUser?.id;
+  const isCurrentUser = slot?.membership?.id === currentUser?.id;
 
   return (
     <DroppableSlot loadId={load.id} slotId={slot?.id} rowIndex={index}>
@@ -79,9 +85,9 @@ export default function UserRow(props: ISlotUserRowProps) {
                       }
                     : undefined
                 }
-                disabled={!!load?.hasLanded}
+                disabled={!!load?.hasCompleted}
                 onPress={() => {
-                  if (slot.dropzoneUser?.id === currentUser?.id) {
+                  if (slot.membership?.id === currentUser?.id) {
                     if (canEditSelf) {
                       if (slotGroup?.length) {
                         onSlotGroupPress(slotGroup);
@@ -102,37 +108,38 @@ export default function UserRow(props: ISlotUserRowProps) {
                 <DataTable.Cell style={styles.avatarCell}>
                   <UserAvatar
                     size={20}
-                    name={
-                      slot?.dropzoneUser?.user?.nickname || slot?.dropzoneUser?.user?.name || ''
-                    }
-                    image={slot?.dropzoneUser?.user?.image}
+                    name={slot?.membership?.user?.nickname || slot?.membership?.user?.name || ''}
+                    image={slot?.membership?.user?.image}
                     style={{ marginLeft: -12 }}
                   />
                 </DataTable.Cell>
                 <DataTable.Cell style={styles.nameCell}>
                   <Paragraph style={styles.slotText}>
-                    {slot?.dropzoneUser?.user?.nickname
-                      ? slot?.dropzoneUser?.user?.nickname
-                      : slot?.dropzoneUser?.user?.name}
+                    {slot?.membership?.user?.nickname
+                      ? slot?.membership?.user?.nickname
+                      : slot?.membership?.user?.name}
                   </Paragraph>
 
-                  {slot?.dropzoneUser?.user?.nickname ? (
-                    <Caption>{`(${slot?.dropzoneUser?.user?.name})`}</Caption>
+                  {slot?.membership?.user?.nickname ? (
+                    <Caption>{`(${slot?.membership?.user?.name})`}</Caption>
                   ) : null}
                 </DataTable.Cell>
-                {fields?.includes(SlotFields.License) ? (
-                  <DataTable.Cell numeric style={styles.licenseCell}>
+                {fields?.includes(SlotFields.CertificationLevel) ? (
+                  <DataTable.Cell numeric style={styles.certificationLevelCell}>
                     <Paragraph style={styles.slotText}>
-                      {slot?.dropzoneUser?.license?.name}
+                      {slot?.membership?.certificationLevel?.name}
                     </Paragraph>
                   </DataTable.Cell>
                 ) : null}
-                {fields?.includes(SlotFields.Rig) ? (
-                  <DataTable.Cell numeric style={styles.rigCell}>
+                {fields?.includes(SlotFields.Equipment) ? (
+                  <DataTable.Cell numeric style={styles.equipmentCell}>
                     <Paragraph style={styles.slotText}>
-                      {slot?.rig
-                        ? `${slot.rig.make} ${slot.rig.model} w/ ${slot.rig.canopySize}`
-                        : null}
+                      {slot?.equipment
+                        ?.map((item) => {
+                          const size = canopySize(item, units);
+                          return `${item.make} ${item.model}${size ? ` w/ ${size}` : ''}`;
+                        })
+                        .join(', ') || null}
                     </Paragraph>
                   </DataTable.Cell>
                 ) : null}
@@ -143,9 +150,9 @@ export default function UserRow(props: ISlotUserRowProps) {
                     </Paragraph>
                   </DataTable.Cell>
                 ) : null}
-                {!fields || fields.includes(SlotFields.JumpType) ? (
-                  <DataTable.Cell numeric style={styles.jumpTypeCell}>
-                    <Paragraph style={styles.slotText}>{slot?.jumpType?.name}</Paragraph>
+                {!fields || fields.includes(SlotFields.ActivityType) ? (
+                  <DataTable.Cell numeric style={styles.activityTypeCell}>
+                    <Paragraph style={styles.slotText}>{slot?.activityType?.name}</Paragraph>
                   </DataTable.Cell>
                 ) : null}
                 {fields?.includes(SlotFields.TicketType) ? (
@@ -156,16 +163,17 @@ export default function UserRow(props: ISlotUserRowProps) {
                 {!fields || fields.includes(SlotFields.Altitude) ? (
                   <DataTable.Cell numeric style={styles.altitudeCell}>
                     <Paragraph style={styles.slotText}>
-                      {(slot?.ticketType?.altitude || 14000) / 1000}k
+                      {formatDestination(slot?.destination ?? slot?.ticketType?.defaultDestination)}
                     </Paragraph>
                   </DataTable.Cell>
                 ) : null}
               </DataTable.Row>
 
-              {slot?.ticketType?.isTandem && (
+              {(slot?.guestSlots ?? []).map((guestSlot) => (
                 <DataTable.Row
+                  key={`guest-${guestSlot.id}`}
                   testID="slot-row"
-                  disabled={!!load?.hasLanded}
+                  disabled={!!load?.hasCompleted}
                   pointerEvents="none"
                   style={
                     isNumber(slot?.groupNumber)
@@ -180,19 +188,19 @@ export default function UserRow(props: ISlotUserRowProps) {
                   <DataTable.Cell style={styles.avatarCell}>
                     <Avatar.Icon icon="parachute" size={20} />
                   </DataTable.Cell>
-                  <DataTable.Cell style={styles.tandemPassengerNameCell}>
+                  <DataTable.Cell style={styles.tandemGuestNameCell}>
                     <Paragraph style={styles.slotText}>
-                      <Text style={{ fontWeight: 'bold' }}>Tandem Passenger:</Text>{' '}
-                      {slot?.passengerName}
+                      <Text style={{ fontWeight: 'bold' }}>{term('guest')}:</Text>{' '}
+                      {guestSlot.guest?.name}
                     </Paragraph>
                   </DataTable.Cell>
                   <DataTable.Cell numeric style={styles.altitudeCell}>
                     <Paragraph style={styles.slotText}>
-                      {(slot?.ticketType?.altitude || 14000) / 1000}k
+                      {formatDestination(slot?.destination ?? slot?.ticketType?.defaultDestination)}
                     </Paragraph>
                   </DataTable.Cell>
                 </DataTable.Row>
-              )}
+              ))}
             </SwipeActions>
           </View>
         )}
@@ -211,16 +219,16 @@ export const styles = StyleSheet.create({
   avatarCell: {
     flex: 1,
   },
-  licenseCell: {
+  certificationLevelCell: {
     flex: 3,
   },
-  rigCell: {
+  equipmentCell: {
     flex: 3,
   },
   wingLoadingCell: {
     flex: 3,
   },
-  jumpTypeCell: {
+  activityTypeCell: {
     flex: 3,
   },
   altitudeCell: {
@@ -229,7 +237,7 @@ export const styles = StyleSheet.create({
   nameCell: {
     flex: 6,
   },
-  tandemPassengerNameCell: {
+  tandemGuestNameCell: {
     flexGrow: 20,
   },
   tandemInfoCell: {
