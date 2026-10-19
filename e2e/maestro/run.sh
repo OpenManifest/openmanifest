@@ -10,12 +10,15 @@ mkdir -p "$out"
 # What the app logged when a flow failed: kept as an artifact, and the crash printed here
 report() {
   adb logcat -d > "$out/logcat.txt" || true
+  # What was on the screen when the flow gave up
+  maestro hierarchy > "$out/hierarchy.json" 2>/dev/null || true
+  echo "--- texts and ids on the screen ---"
+  grep -oE '"(text|resource-id|accessibilityText)" ?: ?"[^"]+"' "$out/hierarchy.json" | sort -u | head -60 || true
   echo "--- app crash (logcat) ---"
   grep -n -A 25 "FATAL EXCEPTION" "$out/logcat.txt" | head -60 || true
   echo "--- app log (ReactNativeJS, last 40) ---"
   grep "ReactNativeJS" "$out/logcat.txt" | tail -40 || true
 }
-trap 'report' ERR
 
 adb install -r "$apk"
 adb shell pm list packages | grep -q com.dangertechnologies.openmanifest || { echo "the app is not installed"; exit 1; }
@@ -25,7 +28,7 @@ run() {
   local name="$1" scale="$2"
   adb shell settings put system font_scale "$scale"
   mkdir -p "$out/$name"
-  maestro test --format junit --output "$out/$name.xml" --test-output-dir "$out/$name" e2e/maestro
+  maestro test --format junit --output "$out/$name.xml" --test-output-dir "$out/$name" e2e/maestro || { report; exit 1; }
 }
 
 run pixel7-font1 1.0
