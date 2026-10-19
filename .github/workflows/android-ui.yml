@@ -45,7 +45,7 @@ jobs:
       - run: yarn install --frozen-lockfile
       - uses: ./.github/actions/ui-env
         with:
-          backend-ref: ${{ inputs.backend-ref || 'staging' }}
+          backend-ref: ${{ inputs.backend-ref || (github.event_name == 'pull_request' && 'modernise/ub-3-last-slot-call-time' || 'staging') }}
           web-export: "false"
       - name: Build the release APK (debug keystore)
         env:
