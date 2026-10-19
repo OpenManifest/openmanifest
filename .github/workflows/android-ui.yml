@@ -14,17 +14,17 @@ on:
       - .github/actions/ui-env/**
       - e2e/maestro/**
   schedule:
-    - cron: '0 18 * * 0' # Monday 04:00 Australia/Brisbane (UTC+10, no daylight saving)
+    - cron: "0 18 * * 0" # Monday 04:00 Australia/Brisbane (UTC+10, no daylight saving)
 concurrency:
   group: android-ui-${{ github.ref }}
   cancel-in-progress: true
 env:
-  EXPO_NO_TELEMETRY: '1'
-  CI: '1'
+  EXPO_NO_TELEMETRY: "1"
+  CI: "1"
   # The build talks to the API of the job at 10.0.2.2 (build/constants.ts) and allows cleartext HTTP (app.config.ts)
   EXPO_ENV: android-ci
   # The Maestro CLI version in use; change it here when upgrading
-  MAESTRO_VERSION: '2.5.1'
+  MAESTRO_VERSION: "2.5.1"
 jobs:
   android-ui:
     runs-on: ubuntu-24.04
@@ -33,7 +33,7 @@ jobs:
       postgres:
         image: postgres:16
         env: { POSTGRES_USER: postgres, POSTGRES_PASSWORD: postgres }
-        ports: ['5432:5432']
+        ports: ["5432:5432"]
         options: >-
           --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
@@ -41,12 +41,12 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version-file: .nvmrc, cache: yarn }
       - uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: '17' }
+        with: { distribution: temurin, java-version: "17" }
       - run: yarn install --frozen-lockfile
       - uses: ./.github/actions/ui-env
         with:
           backend-ref: ${{ inputs.backend-ref || 'staging' }}
-          web-export: 'false'
+          web-export: "false"
       - name: Build the release APK (debug keystore)
         env:
           NODE_OPTIONS: --max_old_space_size=6144

@@ -9,20 +9,20 @@ on:
         default: staging
       grep:
         description: Playwright --grep filter (for example @manifest); empty runs everything
-        default: ''
+        default: ""
   # Changes to this workflow or the environment action run a reduced suite (@login) so they are proven before merge
   pull_request:
     paths:
       - .github/workflows/ui-full.yml
       - .github/actions/ui-env/**
   schedule:
-    - cron: '0 17 * * 0' # Monday 03:00 Australia/Brisbane (UTC+10, no daylight saving)
+    - cron: "0 17 * * 0" # Monday 03:00 Australia/Brisbane (UTC+10, no daylight saving)
 concurrency:
   group: ui-full-${{ github.ref }}
   cancel-in-progress: true
 env:
-  EXPO_NO_TELEMETRY: '1'
-  CI: '1'
+  EXPO_NO_TELEMETRY: "1"
+  CI: "1"
 jobs:
   ui-full:
     runs-on: ubuntu-24.04
@@ -31,7 +31,7 @@ jobs:
       postgres:
         image: postgres:16
         env: { POSTGRES_USER: postgres, POSTGRES_PASSWORD: postgres }
-        ports: ['5432:5432']
+        ports: ["5432:5432"]
         options: >-
           --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
