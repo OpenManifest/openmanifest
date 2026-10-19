@@ -24,7 +24,7 @@ import {
 } from '../operations';
 import { TMutationResponse } from './factory';
 import { Permission } from '../schema.d';
-import { useOperatorTimeZone } from 'app/hooks/useOperatorToday';
+import { useOperatorTimeZone, useOperatorToday } from 'app/hooks/useOperatorToday';
 import { useLoadCreated } from './subscriptions/useLoadCreatedSubscription';
 
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
@@ -87,6 +87,7 @@ export default function useManifest({ operator, date }: UseManifestOptions) {
   const [manifestUserMutation] = useManifestUserMutation();
   const [createLoadMutation] = useCreateLoadMutation();
   const timeZone = useOperatorTimeZone();
+  const today = useOperatorToday(timeZone);
   useLoadCreated(variables as LoadsQueryVariables, timeZone);
 
   const { loading, fetchMore, refetch, data, called, updateQuery, networkStatus } = query;
@@ -211,7 +212,13 @@ export default function useManifest({ operator, date }: UseManifestOptions) {
     async function CreateLoad(
       mutationVariables: CreateLoadMutationVariables
     ): Promise<TMutationResponse<{ load: LoadDetailsFragment }>> {
-      const result = await createLoadMutation({ variables: mutationVariables });
+      // A board on another day makes loads for that day
+      const result = await createLoadMutation({
+        variables: {
+          loadDate: date && date !== today ? date : undefined,
+          ...mutationVariables,
+        },
+      });
 
       if (
         result?.data?.createLoad?.fieldErrors?.length ||
@@ -245,7 +252,7 @@ export default function useManifest({ operator, date }: UseManifestOptions) {
         fieldErrors: undefined,
       };
     },
-    [createLoadMutation, updateQuery]
+    [createLoadMutation, updateQuery, date, today]
   );
 
   return React.useMemo(

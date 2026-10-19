@@ -6,6 +6,7 @@ export const slotLoadingFragment: SlotDetailsFragment = {
   costCents: 0,
   createdAt: new Date().toISOString(),
   bodyMassKg: 0,
+  prepaid: false,
   groupNumber: 0,
   membership: null,
   equipment: [],

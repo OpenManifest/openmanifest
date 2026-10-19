@@ -7403,6 +7403,34 @@
       },
       {
         "kind": "OBJECT",
+        "name": "IndustryBooking",
+        "description": "What an industry template says about bookings (the booking plan builds on it)",
+        "isOneOf": null,
+        "fields": [
+          {
+            "name": "manifestLink",
+            "description": "How a booking reaches the manifest: CHECKIN (put on a load when the person\narrives) or LOAD (made for a load scheduled ahead)",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "ManifestLink",
+                "kind": "ENUM",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "IndustryTemplate",
         "description": "What an operator of an industry starts with: modules, terms, and the presets copied into it",
         "isOneOf": null,
@@ -7415,6 +7443,22 @@
               "kind": "SCALAR",
               "name": "String",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "booking",
+            "description": "How bookings reach the manifest",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "IndustryBooking",
+                "kind": "OBJECT",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -7818,6 +7862,18 @@
             "deprecationReason": null
           },
           {
+            "name": "completedAt",
+            "description": "When the load landed; cleared when it is reopened",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "ISO8601DateTime",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "createdAt",
             "description": null,
             "args": [],
@@ -7853,6 +7909,18 @@
                   }
                 }
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "departedAt",
+            "description": "When the load left",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "ISO8601DateTime",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -7990,6 +8058,22 @@
               "name": null,
               "ofType": {
                 "name": "Boolean",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "loadDate",
+            "description": "The day the load is for, in the operator's time zone; a load can be scheduled ahead",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "ISO8601Date",
                 "kind": "SCALAR",
                 "ofType": null
               }
@@ -8575,6 +8659,18 @@
             "deprecationReason": null
           },
           {
+            "name": "loadDate",
+            "description": "The day the load is for (create only); today by default, and not a day that has gone",
+            "type": {
+              "kind": "SCALAR",
+              "name": "ISO8601Date",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "loadMaster",
             "description": null,
             "type": {
@@ -8953,6 +9049,30 @@
           {
             "name": "support",
             "description": "Supports the load (a tug, a chase vehicle, a shuttle); has no participants",
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "ManifestLink",
+        "description": null,
+        "isOneOf": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "CHECKIN",
+            "description": "A booking becomes a slot when the person checks in",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "LOAD",
+            "description": "A booking is for a load that is scheduled ahead",
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -14490,6 +14610,12 @@
             "deprecationReason": null
           },
           {
+            "name": "createPrepaidSlot",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "createSlot",
             "description": null,
             "isDeprecated": false,
@@ -15570,6 +15696,18 @@
                 "deprecationReason": null
               },
               {
+                "name": "from",
+                "description": "Loads for this day and the days after it",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ISO8601Date",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "last",
                 "description": "Returns the last _n_ elements from the list.",
                 "type": {
@@ -15592,6 +15730,18 @@
                     "kind": "SCALAR",
                     "ofType": null
                   }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "to",
+                "description": "Loads for this day and the days before it",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ISO8601Date",
+                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -17293,6 +17443,22 @@
             "deprecationReason": null
           },
           {
+            "name": "prepaid",
+            "description": "Paid for already: nothing is taken from the member's wallet",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "ticketType",
             "description": null,
             "args": [],
@@ -17618,6 +17784,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "prepaid",
+            "description": "Paid for already (needs createPrepaidSlot); left out, a ticket that requires an escort is prepaid and the others are not",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
               "ofType": null
             },
             "defaultValue": null,

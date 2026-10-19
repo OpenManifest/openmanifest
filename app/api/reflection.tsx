@@ -107,6 +107,9 @@ export const LoadEssentialsFragmentDoc = gql`
   name
   createdAt
   dispatchAt
+  loadDate
+  departedAt
+  completedAt
   hasCompleted
   loadNumber
   isFull
@@ -207,6 +210,7 @@ export const SlotEssentialsFragmentDoc = gql`
   lockVersion
   createdAt
   bodyMassKg
+  prepaid
   guestSlots {
     id
     bodyMassKg
@@ -1387,9 +1391,9 @@ export type CreateEquipmentInspectionMutationHookResult = ReturnType<typeof useC
 export type CreateEquipmentInspectionMutationResult = Apollo.MutationResult<Operation.CreateEquipmentInspectionMutation>;
 export type CreateEquipmentInspectionMutationOptions = Apollo.BaseMutationOptions<Operation.CreateEquipmentInspectionMutation, Operation.CreateEquipmentInspectionMutationVariables>;
 export const CreateLoadDocument = gql`
-    mutation CreateLoad($name: String, $pilot: ID, $gca: ID, $maxSlots: Int, $vehicle: ID, $vehicles: [LoadVehicleInput!], $crew: [LoadCrewInput!], $state: LoadState, $destinationIds: [Int!]) {
+    mutation CreateLoad($name: String, $pilot: ID, $gca: ID, $maxSlots: Int, $vehicle: ID, $vehicles: [LoadVehicleInput!], $crew: [LoadCrewInput!], $state: LoadState, $destinationIds: [Int!], $loadDate: ISO8601Date) {
   createLoad(
-    input: {attributes: {name: $name, pilot: $pilot, gca: $gca, maxSlots: $maxSlots, vehicle: $vehicle, vehicles: $vehicles, crew: $crew, state: $state, destinationIds: $destinationIds}}
+    input: {attributes: {name: $name, pilot: $pilot, gca: $gca, maxSlots: $maxSlots, vehicle: $vehicle, vehicles: $vehicles, crew: $crew, state: $state, destinationIds: $destinationIds, loadDate: $loadDate}}
   ) {
     load {
       ...loadDetails
@@ -1426,6 +1430,7 @@ export type CreateLoadMutationFn = Apollo.MutationFunction<Operation.CreateLoadM
  *      crew: // value for 'crew'
  *      state: // value for 'state'
  *      destinationIds: // value for 'destinationIds'
+ *      loadDate: // value for 'loadDate'
  *   },
  * });
  */
@@ -3755,8 +3760,8 @@ export type LoadLazyQueryHookResult = ReturnType<typeof useLoadLazyQuery>;
 export type LoadSuspenseQueryHookResult = ReturnType<typeof useLoadSuspenseQuery>;
 export type LoadQueryResult = Apollo.QueryResult<Operation.LoadQuery, Operation.LoadQueryVariables>;
 export const LoadsDocument = gql`
-    query Loads($date: ISO8601Date, $operator: ID!) {
-  loads(date: $date, operator: $operator) {
+    query Loads($date: ISO8601Date, $from: ISO8601Date, $to: ISO8601Date, $operator: ID!) {
+  loads(date: $date, from: $from, to: $to, operator: $operator) {
     edges {
       node {
         ...loadEssentials
@@ -3779,6 +3784,8 @@ export const LoadsDocument = gql`
  * const { data, loading, error } = useLoadsQuery({
  *   variables: {
  *      date: // value for 'date'
+ *      from: // value for 'from'
+ *      to: // value for 'to'
  *      operator: // value for 'operator'
  *   },
  * });

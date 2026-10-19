@@ -73,7 +73,10 @@ const useManifestGroupDialog = createUseDialog<IManifestGroupInitial>();
 export function ManifestContextProvider(props: React.PropsWithChildren<UseManifestOptions>) {
   // The board shows the operator's day, and moves on to the next one when it starts there
   const today = useOperatorToday();
-  const { operator, date = today, children } = props;
+  const { operator, date: initialDate, children } = props;
+  // Another day than today, picked on the board (a load can be scheduled ahead)
+  const [pickedDate, setDate] = React.useState<string | null>(null);
+  const date = pickedDate ?? initialDate ?? today;
   const manifestUserDialog = useManifestUserDialog();
   const loadDialog = useLoadDialog();
   const creditsDialog = useCreditsDialog();
@@ -84,7 +87,11 @@ export function ManifestContextProvider(props: React.PropsWithChildren<UseManife
   const canManifestGroup = useRestriction(Permission.CreateUserSlot);
   const canManifestGroupWithSelfOnly = useRestriction(Permission.CreateUserSlotWithSelf);
 
-  const manifest = useManifest({ operator, date });
+  const manifestOfDay = useManifest({ operator, date });
+  const manifest = React.useMemo(
+    () => ({ ...manifestOfDay, date, today, isToday: date === today, setDate }),
+    [manifestOfDay, date, today]
+  );
 
   const { permissions } = manifest;
 

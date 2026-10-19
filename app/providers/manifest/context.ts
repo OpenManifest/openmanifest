@@ -9,7 +9,13 @@ import type { IManifestGroupDialogProps } from 'app/forms/manifest_group';
 import type { IDialogContextSubstate } from '../hooks/useDialog';
 
 interface IManifestContext {
-  manifest: ReturnType<typeof useManifest>;
+  manifest: ReturnType<typeof useManifest> & {
+    /** The day the board shows, `YYYY-MM-DD` in the operator's time zone */
+    date: string;
+    today: string;
+    isToday: boolean;
+    setDate(date: string): void;
+  };
   dialogs: {
     manifestUser: IDialogContextSubstate<
       Omit<IManifestUserDialog, 'open' | 'onClose' | 'onSuccess'>
@@ -36,6 +42,10 @@ export const INITIAL_CONTEXT: IManifestContext = {
     manifestGroup: uninitializedHandler as never,
     moveSlot: uninitializedHandler as never,
     createLoad: uninitializedHandler as never,
+    date: '',
+    today: '',
+    isToday: true,
+    setDate: noop,
     permissions: {
       canAddTransaction: false,
       canCreateLoad: false,

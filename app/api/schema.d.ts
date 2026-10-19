@@ -960,11 +960,23 @@ export enum Industry {
   Skydiving = 'SKYDIVING'
 }
 
+/** What an industry template says about bookings (the booking plan builds on it) */
+export type IndustryBooking = {
+  __typename?: 'IndustryBooking';
+  /**
+   * How a booking reaches the manifest: CHECKIN (put on a load when the person
+   * arrives) or LOAD (made for a load scheduled ahead)
+   */
+  manifestLink: ManifestLink;
+};
+
 /** What an operator of an industry starts with: modules, terms, and the presets copied into it */
 export type IndustryTemplate = {
   __typename?: 'IndustryTemplate';
   /** The family (the abstract base the template extends): _aviation, _water, _ground */
   base?: Maybe<Scalars['String']['output']>;
+  /** How bookings reach the manifest */
+  booking: IndustryBooking;
   description: Scalars['String']['output'];
   /** A MaterialCommunityIcons glyph */
   icon: Scalars['String']['output'];
@@ -1014,9 +1026,13 @@ export type JoinOperatorPayload = {
 export type Load = AnyResource & {
   __typename?: 'Load';
   availableSlots: Scalars['Int']['output'];
+  /** When the load landed; cleared when it is reopened */
+  completedAt?: Maybe<Scalars['ISO8601DateTime']['output']>;
   createdAt: Scalars['ISO8601DateTime']['output'];
   /** Who fills the crew roles of the load */
   crew: Array<LoadCrewAssignment>;
+  /** When the load left */
+  departedAt?: Maybe<Scalars['ISO8601DateTime']['output']>;
   /** The places the load visits, in order */
   destinations: Array<Destination>;
   dispatchAt?: Maybe<Scalars['Int']['output']>;
@@ -1028,6 +1044,8 @@ export type Load = AnyResource & {
   isFull: Scalars['Boolean']['output'];
   isOpen: Scalars['Boolean']['output'];
   isReady: Scalars['Boolean']['output'];
+  /** The day the load is for, in the operator's time zone; a load can be scheduled ahead */
+  loadDate: Scalars['ISO8601Date']['output'];
   /** Who fills the crew role with the key load_master */
   loadMaster?: Maybe<Membership>;
   loadNumber: Scalars['Int']['output'];
@@ -1098,6 +1116,8 @@ export type LoadInput = {
   destinationIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   dispatchAt?: InputMaybe<Scalars['ISO8601DateTime']['input']>;
   gca?: InputMaybe<Scalars['ID']['input']>;
+  /** The day the load is for (create only); today by default, and not a day that has gone */
+  loadDate?: InputMaybe<Scalars['ISO8601Date']['input']>;
   loadMaster?: InputMaybe<Scalars['ID']['input']>;
   /** The lockVersion of the load as the client last saw it; an older one is refused with CONFLICT */
   lockVersion?: InputMaybe<Scalars['Int']['input']>;
@@ -1153,6 +1173,13 @@ export enum LoadVehicleRole {
   Carrying = 'carrying',
   /** Supports the load (a tug, a chase vehicle, a shuttle); has no participants */
   Support = 'support'
+}
+
+export enum ManifestLink {
+  /** A booking becomes a slot when the person checks in */
+  Checkin = 'CHECKIN',
+  /** A booking is for a load that is scheduled ahead */
+  Load = 'LOAD'
 }
 
 export type Membership = AnyResource & Wallet & {
@@ -2021,6 +2048,7 @@ export enum Permission {
   CreateLoad = 'createLoad',
   CreateOperatorEquipment = 'createOperatorEquipment',
   CreatePackjob = 'createPackjob',
+  CreatePrepaidSlot = 'createPrepaidSlot',
   CreateSlot = 'createSlot',
   CreateStudentSlot = 'createStudentSlot',
   CreateTicketType = 'createTicketType',
@@ -2203,8 +2231,10 @@ export type QueryLoadsArgs = {
   before?: InputMaybe<Scalars['String']['input']>;
   date?: InputMaybe<Scalars['ISO8601Date']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
+  from?: InputMaybe<Scalars['ISO8601Date']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   operator: Scalars['ID']['input'];
+  to?: InputMaybe<Scalars['ISO8601Date']['input']>;
 };
 
 
@@ -2413,6 +2443,8 @@ export type Slot = AnyResource & SellableItem & {
   lockVersion: Scalars['Int']['output'];
   membership?: Maybe<Membership>;
   order?: Maybe<Order>;
+  /** Paid for already: nothing is taken from the member's wallet */
+  prepaid: Scalars['Boolean']['output'];
   ticketType?: Maybe<TicketType>;
   title?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['ISO8601DateTime']['output'];
@@ -2456,6 +2488,8 @@ export type SlotInput = {
   /** The lockVersion of the slot as the client last saw it; an older one is refused with CONFLICT */
   lockVersion?: InputMaybe<Scalars['Int']['input']>;
   membership?: InputMaybe<Scalars['ID']['input']>;
+  /** Paid for already (needs createPrepaidSlot); left out, a ticket that requires an escort is prepaid and the others are not */
+  prepaid?: InputMaybe<Scalars['Boolean']['input']>;
   ticketType?: InputMaybe<Scalars['ID']['input']>;
   userGroup?: InputMaybe<Array<SlotUser>>;
 };

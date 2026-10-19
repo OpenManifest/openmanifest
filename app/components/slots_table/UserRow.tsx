@@ -123,6 +123,7 @@ export default function UserRow(props: ISlotUserRowProps) {
                   {slot?.membership?.user?.nickname ? (
                     <Caption>{`(${slot?.membership?.user?.name})`}</Caption>
                   ) : null}
+                  {slot?.prepaid ? <Caption testID="slot-prepaid"> · prepaid</Caption> : null}
                 </DataTable.Cell>
                 {fields?.includes(SlotFields.CertificationLevel) ? (
                   <DataTable.Cell numeric style={styles.certificationLevelCell}>

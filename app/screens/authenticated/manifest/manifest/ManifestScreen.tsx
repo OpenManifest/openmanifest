@@ -30,12 +30,14 @@ import WeatherConditions from './Weather/WeatherBoard';
 import LoadingCardLarge from './LoadCard/Large/Loading';
 import LoadingCardSmall from './LoadCard/Small/Loading';
 import SetupProfileCard from './SetupProfileCard';
+import DateBar from './DateBar';
 import { SetupStepCard } from './FinishSetupSteps';
 import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 const loadingFragment: LoadDetailsFragment = {
   id: '__LOADING__',
   lockVersion: 0,
+  loadDate: '',
   availableSlots: 0,
   createdAt: '',
   isFull: false,
@@ -227,6 +229,7 @@ export default function ManifestScreen() {
           <FlatList<LoadDetailsFragment>
             ListHeaderComponent={() => (
               <>
+                <DateBar />
                 <WeatherConditions />
                 <ManifestDeskNote />
               </>
@@ -234,8 +237,10 @@ export default function ManifestScreen() {
             ListEmptyComponent={() => (
               <NoResults
                 style={{ marginTop: 156 }}
-                title="No loads so far today"
-                subtitle="How's the weather?"
+                title={manifest.isToday ? 'No loads so far today' : 'No loads on this day'}
+                subtitle={
+                  manifest.isToday ? "How's the weather?" : 'Create a load to schedule it ahead'
+                }
               />
             )}
             style={styles.list}

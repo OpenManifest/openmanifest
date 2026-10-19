@@ -77,6 +77,18 @@ export default function SlotCard(props: ISlotCardProps) {
           >
             {slot?.membership?.role?.name}
           </Chip>
+          {slot?.prepaid ? (
+            <Chip
+              style={styles.infoChip}
+              textStyle={styles.chipText}
+              icon={(iconProps) => <MaterialCommunityIcons name="cash-check" {...iconProps} />}
+              mode="outlined"
+              testID="slot-prepaid"
+              disabled
+            >
+              Prepaid
+            </Chip>
+          ) : null}
           <Chip
             style={styles.infoChip}
             textStyle={styles.chipText}
