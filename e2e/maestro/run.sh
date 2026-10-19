@@ -6,7 +6,20 @@ set -euo pipefail
 apk="$1"
 out="e2e/.maestro"
 mkdir -p "$out"
+
+# What the app logged when a flow failed: kept as an artifact, and the crash printed here
+report() {
+  adb logcat -d > "$out/logcat.txt" || true
+  echo "--- app crash (logcat) ---"
+  grep -n -A 25 "FATAL EXCEPTION" "$out/logcat.txt" | head -60 || true
+  echo "--- app log (ReactNativeJS, last 40) ---"
+  grep "ReactNativeJS" "$out/logcat.txt" | tail -40 || true
+}
+trap 'report' ERR
+
 adb install -r "$apk"
+adb shell pm list packages | grep -q com.dangertechnologies.openmanifest || { echo "the app is not installed"; exit 1; }
+adb logcat -c
 
 run() {
   local name="$1" scale="$2"
