@@ -10,6 +10,7 @@ import {
   useQualificationStepRequired,
 } from './steps/Qualifications';
 import { useStep as useRealNameStep } from './steps/RealName';
+import { useStep as useDateOfBirthStep, useDateOfBirthStepRequired } from './steps/DateOfBirth';
 import {
   useAskForRigStep,
   useReserveRepackStep,
@@ -43,6 +44,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
   const step5 = useCertificationBodyNumberStep();
   const step6 = useCertificationLevelStep();
   const qualificationsStep = useQualificationsStep();
+  const dateOfBirthStep = useDateOfBirthStep();
   const step7 = useAskForRigStep();
   const step8 = useRigStep();
   const step9 = useReserveRepackStep();
@@ -51,7 +53,9 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
   // questions about a skydiver's rig when the operator has the rig kind; the steps after each move up
   const withQualifications = useQualificationStepRequired();
   const withRigs = useRigStepsRequired();
-  const shift = withQualifications ? 1 : 0;
+  const withDateOfBirth = useDateOfBirthStepRequired();
+  // Steps that sit before the rig steps move them down
+  const shift = (withQualifications ? 1 : 0) + (withDateOfBirth ? 1 : 0);
   const {
     operator: { operator },
   } = useOperatorContext();
@@ -67,10 +71,12 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       step5,
       step6,
       ...(withQualifications ? [qualificationsStep] : []),
+      ...(withDateOfBirth ? [dateOfBirthStep] : []),
       ...(withRigs ? [step7, step8, step9, step10] : []),
     ],
     [
       qualificationsStep,
+      dateOfBirthStep,
       step1,
       step10,
       step2,
@@ -82,6 +88,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       step8,
       step9,
       withQualifications,
+      withDateOfBirth,
       withRigs,
     ]
   );
@@ -119,6 +126,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               model,
               name,
               nickname,
+              dateOfBirth,
               serviceDueAt,
               rigId,
               serial,
@@ -274,6 +282,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                 certificationLevel: certificationLevel?.id ? Number(certificationLevel.id) : null,
                 nickname,
                 name,
+                dateOfBirth: dateOfBirth || undefined,
               });
 
               if ('fieldErrors' in result) {

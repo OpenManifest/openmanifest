@@ -12,10 +12,14 @@ import { useUserProfile } from 'app/api/crud';
 import EquipmentPicker from 'app/components/input/dropdown_select/EquipmentPicker';
 import NumberField, { NumberFieldType } from 'app/components/input/number_input/NumberField';
 import GuestsInput from 'app/forms/manifest_user/GuestsInput';
-import type { GuestValue } from 'app/forms/manifest_user/guests';
+import useManifestValidator from 'app/hooks/useManifestValidator';
+import EligibilityMessages from 'app/components/EligibilityMessages';
+import { GuestValue, guestInputsOf } from 'app/forms/manifest_user/guests';
 
 interface IUserEquipmentCard {
   membershipId: string;
+  loadId?: string | null;
+  groupNumber?: number | null;
   bodyMassKg?: number;
   /** The most guests that ride with the member, as the ticket type allows; 0: the ticket takes none */
   escortCapacity?: number;
@@ -33,6 +37,8 @@ interface IUserEquipmentCard {
 export default function UserEquipmentCard(props: IUserEquipmentCard) {
   const {
     membershipId,
+    loadId,
+    groupNumber,
     onChangeEquipment,
     bodyMassKg,
     selectedEquipment,
@@ -45,6 +51,16 @@ export default function UserEquipmentCard(props: IUserEquipmentCard) {
     onChangeGuests,
   } = props;
   const { theme } = useAppTheme();
+  const validation = useManifestValidator({
+    loadId,
+    membershipId,
+    ticketTypeId,
+    activityTypeId,
+    equipmentIds: selectedEquipment?.map((item) => item.id),
+    groupNumber,
+    bodyMassKg,
+    guests: escortCapacity > 0 ? guestInputsOf(guests) : undefined,
+  });
   // Skydiving: the wing loading under the rig
   const wingLoading = wingLoadingOf(
     selectedEquipment?.find((item) => item.equipmentKind?.key === RIG_KIND),
@@ -119,6 +135,7 @@ export default function UserEquipmentCard(props: IUserEquipmentCard) {
             />
           </>
         )}
+        <EligibilityMessages failures={validation.failures} expiring={validation.expiring} />
       </Card.Content>
       <Card.Actions style={styles.actions}>
         <Button mode="text" onPress={() => onRemove?.()}>

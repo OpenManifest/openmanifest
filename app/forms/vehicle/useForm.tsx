@@ -18,6 +18,8 @@ export type VehicleFields = {
   registration: string;
   minCapacity?: number;
   capacity: number;
+  /** What the vehicle may carry, in kilograms; 0: no limit set */
+  maxPayloadKg?: number;
   basicEmptyWeight?: number;
   maxDepartWeight?: number;
 
@@ -39,6 +41,10 @@ export const vehicleValidation = yup.object({
     .integer()
     .required(() => i18n.t('forms.vehicle.maximumSlotsIsRequired'))
     .min(1, () => i18n.t('forms.vehicle.maximumSlotsMustBeGreaterThan')),
+  maxPayloadKg: yup
+    .number()
+    .default(0)
+    .min(0, () => i18n.t('forms.vehicle.maxPayloadMustBeGreater')),
   basicEmptyWeight: yup
     .number()
     .default(0)
@@ -55,6 +61,7 @@ export const EMPTY_FORM_VALUES: Partial<VehicleFields> = {
   registration: '',
   minCapacity: 1,
   capacity: 4,
+  maxPayloadKg: 0,
   basicEmptyWeight: 0,
   maxDepartWeight: 0,
   fuelType: undefined,
@@ -111,6 +118,7 @@ export default function useVehicleForm(opts: IUseVehicleFormOpts) {
               capacity: validated.capacity,
               minCapacity: validated.minCapacity,
               registration: validated.registration,
+              maxPayloadKg: validated.maxPayloadKg || null,
             })
           : await create({
               name: validated.name,
@@ -118,6 +126,7 @@ export default function useVehicleForm(opts: IUseVehicleFormOpts) {
               capacity: validated.capacity,
               minCapacity: validated.minCapacity,
               registration: validated.registration,
+              maxPayloadKg: validated.maxPayloadKg || null,
             });
 
         if (response) {

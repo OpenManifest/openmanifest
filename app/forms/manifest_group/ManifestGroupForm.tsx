@@ -29,6 +29,8 @@ function UserCard(props: IUserCardProps) {
   const { control, setValue, getValues } = useFormContext<ManifestGroupFields>();
   const ticketType = useWatch({ control, name: 'ticketType' });
   const activityType = useWatch({ control, name: 'activityType' });
+  const load = useWatch({ control, name: 'load' });
+  const groupNumber = useWatch({ control, name: 'groupNumber' });
   const requiresEscort = !!ticketType?.requiresEscort;
 
   /** Changes this jumper, or removes them when `changes` is null */
@@ -61,6 +63,8 @@ function UserCard(props: IUserCardProps) {
     <UserEquipmentCard
       key={`user-equipment-card-${slotUser.id}`}
       membershipId={slotUser.id?.toString()}
+      loadId={load?.id}
+      groupNumber={groupNumber}
       selectedEquipment={slotUser.equipment}
       bodyMassKg={slotUser.bodyMassKg}
       {...{

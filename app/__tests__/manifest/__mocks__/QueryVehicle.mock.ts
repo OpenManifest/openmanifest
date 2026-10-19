@@ -12,6 +12,7 @@ export default createMockedQuery<VehiclesQueryVariables, DeepRequired<VehiclesQu
       {
         __typename: 'Vehicle',
         registration: 'ABC123',
+        maxPayloadKg: null,
         id: '1',
         minCapacity: 0,
         capacity: 10,

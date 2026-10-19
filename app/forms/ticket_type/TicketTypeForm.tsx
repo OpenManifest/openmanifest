@@ -14,6 +14,7 @@ import { formatCents } from 'app/utils/money';
 import { useTranslation } from 'react-i18next';
 import useTerms from 'app/i18n/useTerms';
 import { destinationsModule } from 'app/utils/destinations';
+import { limitsModule } from 'app/utils/limits';
 import { Divider, Stack, Subheader } from 'app/ui';
 
 interface ITicketTypeFormProps {
@@ -28,6 +29,7 @@ export default function TicketTypeForm(props: ITicketTypeFormProps) {
   } = useOperatorContext();
   const term = useTerms();
   const destinations = destinationsModule(operator?.modules as Record<string, unknown>);
+  const limits = limitsModule(operator?.modules as Record<string, unknown>);
   const [getTicketAddons, query] = useTicketTypeExtrasLazyQuery();
   const { data } = query;
 
@@ -83,6 +85,27 @@ export default function TicketTypeForm(props: ITicketTypeFormProps) {
             })}
             name="escortCapacity"
           />
+        ) : null}
+
+        {limits?.age ? (
+          <>
+            <FormTextField {...{ control }} label={t('forms.ticket_type.minAge')} name="minAge" />
+            <FormTextField {...{ control }} label={t('forms.ticket_type.maxAge')} name="maxAge" />
+          </>
+        ) : null}
+        {limits?.mass ? (
+          <>
+            <FormTextField
+              {...{ control }}
+              label={t('forms.ticket_type.minBodyMassKg')}
+              name="minBodyMassKg"
+            />
+            <FormTextField
+              {...{ control }}
+              label={t('forms.ticket_type.maxBodyMassKg')}
+              name="maxBodyMassKg"
+            />
+          </>
         ) : null}
 
         <SwitchField

@@ -49,6 +49,7 @@ describe('<VehicleDialog />', () => {
                   capacity: 8,
                   minCapacity: 1,
                   registration: 'VH-JST',
+                  maxPayloadKg: null,
                 },
               },
             },

@@ -14,6 +14,9 @@ import { EquipmentPickerField } from 'app/components/input/dropdown_select/Equip
 import { ManifestUserFields } from './useForm';
 import { formatCents } from 'app/utils/money';
 import GuestsInput from './GuestsInput';
+import { GuestValue, guestInputsOf } from './guests';
+import useManifestValidator from 'app/hooks/useManifestValidator';
+import EligibilityMessages from 'app/components/EligibilityMessages';
 
 interface IManifestFormProps {
   control: Control<ManifestUserFields>;
@@ -28,8 +31,25 @@ export default function ManifestForm(props: IManifestFormProps) {
   const allowedToManifestOthers = useRestriction(
     id ? Permission.UpdateUserSlot : Permission.CreateUserSlot
   );
-  const { extras: selectedAddons } = useWatch({ control });
+  const {
+    extras: selectedAddons,
+    equipment,
+    bodyMassKg,
+    groupNumber,
+    guests: bookedGuests,
+  } = useWatch({ control });
   const guests = useController({ control, name: 'guests' });
+  const validation = useManifestValidator({
+    loadId: load?.id,
+    membershipId: membership?.id,
+    ticketTypeId: ticketType?.id,
+    activityTypeId: activityType?.id,
+    extraIds: selectedAddons?.map((addon) => addon?.id as string),
+    equipmentIds: equipment?.map((item) => item?.id as string),
+    groupNumber,
+    bodyMassKg,
+    guests: ticketType?.requiresEscort ? guestInputsOf(bookedGuests as GuestValue[]) : undefined,
+  });
 
   return (
     <>
@@ -88,6 +108,7 @@ export default function ManifestForm(props: IManifestFormProps) {
           onChange={guests.field.onChange}
         />
       )}
+      <EligibilityMessages failures={validation.failures} expiring={validation.expiring} />
     </>
   );
 }

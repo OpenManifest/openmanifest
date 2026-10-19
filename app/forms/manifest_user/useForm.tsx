@@ -11,7 +11,6 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useManifestContext } from 'app/providers/manifest/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
-import useManifestValidator from 'app/hooks/useManifestValidator';
 import isEqual from 'lodash/isEqual';
 import { useNotifications } from 'app/providers/notifications';
 import { useOperatorContext } from 'app/providers/operator/context';
@@ -123,13 +122,10 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
   const {
     manifest: { manifestUser },
   } = useManifestContext();
-  const { canManifest } = useManifestValidator();
 
   const [{ loading }, onManifest] = useAsyncFn(
     async (fields: ManifestUserFields) => {
       try {
-        // await canManifest();
-
         const response = await manifestUser({
           activityType: fields.activityType?.id,
           extras: fields.extras?.map(({ id }) => id),

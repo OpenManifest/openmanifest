@@ -12,6 +12,7 @@ import QualificationsStep, { useQualificationStepRequired } from './steps/Qualif
 import DoneStep from './steps/Done';
 import { RIG_STEPS, useRigStepsRequired } from 'app/features/skydiving/wizard';
 import AvatarStep from './steps/Avatar';
+import DateOfBirthStep, { useDateOfBirthStepRequired } from './steps/DateOfBirth';
 import { useUserWizardForm } from './useForm';
 import { UserProfileProvider, useUserProfileContext } from 'app/api/crud';
 import { useOperatorContext } from 'app/providers';
@@ -32,14 +33,16 @@ export function UserWizard() {
   // Steps that only some operators have: qualifications, and the questions about a skydiver's rig
   const withQualifications = useQualificationStepRequired();
   const withRigs = useRigStepsRequired();
+  const withDateOfBirth = useDateOfBirthStepRequired();
   const steps = React.useMemo(
     () => [
       ...stepsBeforeQualifications,
       ...(withQualifications ? [QualificationsStep] : []),
+      ...(withDateOfBirth ? [DateOfBirthStep] : []),
       ...(withRigs ? RIG_STEPS : []),
       ...stepsAfter,
     ],
-    [withQualifications, withRigs]
+    [withQualifications, withDateOfBirth, withRigs]
   );
   const navigation = useNavigation();
   const { params } = useRoute<{

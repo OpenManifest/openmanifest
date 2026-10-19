@@ -22,6 +22,7 @@ export default function VehicleDialog(props: IVehicleDialogProps) {
       registration: original?.registration || original?.registration || undefined,
       minCapacity: original?.minCapacity || original?.minCapacity || undefined,
       capacity: original?.capacity || original?.capacity,
+      maxPayloadKg: original?.maxPayloadKg ?? initial?.maxPayloadKg ?? 0,
     },
     onSuccess: onClose,
   });

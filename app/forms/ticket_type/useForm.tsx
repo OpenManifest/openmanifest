@@ -24,10 +24,18 @@ export type TicketTypeFields = {
   allowManifestingSelf: boolean;
   /** A slot takes guests who ride with its member, the escort */
   requiresEscort: boolean;
+  /** Who the ticket takes, as typed: whole numbers, or nothing for no limit */
+  minAge: string;
+  maxAge: string;
+  minBodyMassKg: string;
+  maxBodyMassKg: string;
   /** The most guests for each escort */
   escortCapacity: number;
   extras: TicketTypeAddonEssentialsFragment[];
 };
+
+const LIMIT = /^(\d+(\.\d+)?)?$/;
+const NUMBER_MESSAGE = () => i18n.t('forms.ticket_type.limitMustBeANumber');
 
 export const ticketTypeValidation = yup.object({
   id: yup.string().nullable().default(null),
@@ -40,6 +48,10 @@ export const ticketTypeValidation = yup.object({
   defaultDestinationId: yup.string().nullable().default(null),
   extras: yup.array().of(yup.object()),
   requiresEscort: yup.boolean().default(false),
+  minAge: yup.string().default('').matches(LIMIT, NUMBER_MESSAGE),
+  maxAge: yup.string().default('').matches(LIMIT, NUMBER_MESSAGE),
+  minBodyMassKg: yup.string().default('').matches(LIMIT, NUMBER_MESSAGE),
+  maxBodyMassKg: yup.string().default('').matches(LIMIT, NUMBER_MESSAGE),
   escortCapacity: yup.number().integer().min(1).default(1),
 });
 
@@ -52,7 +64,31 @@ export const EMPTY_FORM_VALUES: Partial<TicketTypeFields> = {
   id: undefined,
   requiresEscort: false,
   escortCapacity: 1,
+  minAge: '',
+  maxAge: '',
+  minBodyMassKg: '',
+  maxBodyMassKg: '',
 };
+
+/** The limits typed in, as the API takes them: only those that were filled in */
+function toParticipantLimits(fields: {
+  minAge?: string;
+  maxAge?: string;
+  minBodyMassKg?: string;
+  maxBodyMassKg?: string;
+}) {
+  const entries = {
+    min_age: fields.minAge,
+    max_age: fields.maxAge,
+    min_body_mass_kg: fields.minBodyMassKg,
+    max_body_mass_kg: fields.maxBodyMassKg,
+  };
+  return Object.fromEntries(
+    Object.entries(entries)
+      .filter(([, value]) => value !== '' && value != null)
+      .map(([key, value]) => [key, Number(value)])
+  );
+}
 
 /** The API takes the id as a number; no destination is `null`, which clears it on update */
 function toDestinationId(id?: string | null) {
@@ -113,6 +149,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
                 (e) => Number(e.id)
               ),
               requiresEscort: validated.requiresEscort,
+              participantLimits: toParticipantLimits(validated),
               escortCapacity: validated.requiresEscort ? validated.escortCapacity : 1,
             })
           : await createTicketType({
@@ -124,6 +161,7 @@ export default function useTicketTypeForm(opts: IUseTicketTypeFormOpts) {
                 (e) => Number(e.id)
               ),
               requiresEscort: validated.requiresEscort,
+              participantLimits: toParticipantLimits(validated),
               escortCapacity: validated.requiresEscort ? validated.escortCapacity : 1,
             });
 

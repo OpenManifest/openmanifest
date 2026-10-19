@@ -645,6 +645,28 @@ export enum DestinationKind {
   Site = 'site'
 }
 
+/** What one eligibility rule says */
+export type EligibilityResult = {
+  __typename?: 'EligibilityResult';
+  amountCents?: Maybe<Scalars['Int']['output']>;
+  /** A failure the manifester may let through (they hold the permission and the operator allows it) */
+  bypassed: Scalars['Boolean']['output'];
+  /**
+   * The rule: capacity, membership, credits, double_manifest, activity,
+   * certification, equipment, equipment_inspection, equipment_service, age,
+   * body_mass, group, payload, escort
+   */
+  code: Scalars['String']['output'];
+  expiresAt?: Maybe<Scalars['Int']['output']>;
+  /** Why it fails */
+  message?: Maybe<Scalars['String']['output']>;
+  ok: Scalars['Boolean']['output'];
+  /** A more precise code when it fails, e.g. date_of_birth_missing, escort_capacity */
+  problem?: Maybe<Scalars['String']['output']>;
+  /** PASS, EXPIRING (within 14 days), FAIL or NOT_REQUIRED */
+  status: Scalars['String']['output'];
+};
+
 export type Equipment = AnyResource & {
   __typename?: 'Equipment';
   /** The values of the kind's attributes; canopy size is in square metres */
@@ -1142,6 +1164,8 @@ export type Membership = AnyResource & Wallet & {
   createdAt: Scalars['ISO8601DateTime']['output'];
   /** The member's credits in cents */
   creditsCents?: Maybe<Scalars['Int']['output']>;
+  /** Whether the member is ready to manifest, rule by rule (membership, credits, certification, body mass, equipment, …) */
+  eligibility: MembershipEligibility;
   equipmentInspections?: Maybe<Array<EquipmentInspection>>;
   expiresAt?: Maybe<Scalars['Int']['output']>;
   guid: Scalars['ID']['output'];
@@ -1173,6 +1197,11 @@ export type MembershipAvailableEquipmentArgs = {
   isTandem?: InputMaybe<Scalars['Boolean']['input']>;
   kind?: InputMaybe<Scalars['String']['input']>;
   loadId?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type MembershipEligibilityArgs = {
+  loadId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
@@ -1234,6 +1263,14 @@ export type MembershipEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge. */
   node?: Maybe<Membership>;
+};
+
+/** Whether a member is ready to manifest, rule by rule */
+export type MembershipEligibility = {
+  __typename?: 'MembershipEligibility';
+  /** Every rule that applies passes */
+  ready: Scalars['Boolean']['output'];
+  rules: Array<EligibilityResult>;
 };
 
 export type MembershipInput = {
@@ -2093,6 +2130,8 @@ export type Query = {
   operators: OperatorConnection;
   /** Get all qualifications of a certification body */
   qualifications: Array<Qualification>;
+  /** The result of every eligibility rule for a slot that is about to be manifested */
+  slotEligibility: Array<EligibilityResult>;
   /** Get ticket types for an operator */
   ticketTypes?: Maybe<Array<TicketType>>;
   /** Get Vehicles for an operator */
@@ -2202,6 +2241,21 @@ export type QueryOperatorsArgs = {
 
 export type QueryQualificationsArgs = {
   certificationBodyId?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QuerySlotEligibilityArgs = {
+  activityTypeId?: InputMaybe<Scalars['ID']['input']>;
+  bodyMassKg?: InputMaybe<Scalars['Float']['input']>;
+  equipmentIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  extraIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  groupNumber?: InputMaybe<Scalars['Int']['input']>;
+  guest?: InputMaybe<GuestInput>;
+  guests?: InputMaybe<Array<GuestInput>>;
+  loadId: Scalars['ID']['input'];
+  loadVehicleId?: InputMaybe<Scalars['ID']['input']>;
+  membershipId?: InputMaybe<Scalars['ID']['input']>;
+  ticketTypeId: Scalars['ID']['input'];
 };
 
 
@@ -2515,12 +2569,16 @@ export type TicketType = AnyResource & SellableItem & {
   escortCrewRole?: Maybe<CrewRole>;
   escortQualification?: Maybe<Qualification>;
   extras: Array<Extra>;
+  /** A flight group of the ticket: max_group_body_mass_kg, max_group_size */
+  groupLimits: Scalars['JSON']['output'];
   guid: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
   /** The lowest rank of certification level that may buy this ticket */
   minCertificationRank?: Maybe<Scalars['Int']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   operator?: Maybe<Operator>;
+  /** Who the ticket takes: min_age, max_age, min_body_mass_kg, max_body_mass_kg */
+  participantLimits: Scalars['JSON']['output'];
   requiredQualification?: Maybe<Qualification>;
   /** A slot takes guests who ride with its member, the escort (skydiving: tandem) */
   requiresEscort?: Maybe<Scalars['Boolean']['output']>;
@@ -2541,9 +2599,13 @@ export type TicketTypeInput = {
   /** The qualification the escort must hold */
   escortQualificationId?: InputMaybe<Scalars['Int']['input']>;
   extraIds?: InputMaybe<Array<Scalars['Int']['input']>>;
+  /** max_group_body_mass_kg, max_group_size */
+  groupLimits?: InputMaybe<Scalars['JSON']['input']>;
   minCertificationRank?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   operatorId?: InputMaybe<Scalars['Int']['input']>;
+  /** min_age, max_age, min_body_mass_kg, max_body_mass_kg */
+  participantLimits?: InputMaybe<Scalars['JSON']['input']>;
   requiredQualificationId?: InputMaybe<Scalars['Int']['input']>;
   /** A slot takes guests who ride with its member, the escort (skydiving: tandem) */
   requiresEscort?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2897,6 +2959,8 @@ export type User = AnyResource & {
   bodyMassKg?: Maybe<Scalars['String']['output']>;
   certificationLevels?: Maybe<Array<CertificationLevel>>;
   createdAt: Scalars['ISO8601DateTime']['output'];
+  /** Needed where a ticket or an activity has an age limit */
+  dateOfBirth?: Maybe<Scalars['ISO8601Date']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   equipment?: Maybe<Array<Equipment>>;
   guid: Scalars['ID']['output'];
@@ -2949,6 +3013,7 @@ export type UserInput = {
   bodyMassKg?: InputMaybe<Scalars['Float']['input']>;
   certificationBodyNumber?: InputMaybe<Scalars['String']['input']>;
   certificationLevel?: InputMaybe<Scalars['Int']['input']>;
+  dateOfBirth?: InputMaybe<Scalars['ISO8601Date']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   image?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -3030,6 +3095,8 @@ export type Vehicle = AnyResource & {
   id: Scalars['ID']['output'];
   /** aircraft, raft, bus, ...: what crew roles per vehicle apply to */
   kind?: Maybe<Scalars['String']['output']>;
+  /** What the vehicle may carry (the limits module) */
+  maxPayloadKg?: Maybe<Scalars['Float']['output']>;
   minCapacity?: Maybe<Scalars['Int']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   nextMaintenanceHours?: Maybe<Scalars['Int']['output']>;
@@ -3041,6 +3108,7 @@ export type Vehicle = AnyResource & {
 export type VehicleInput = {
   capacity?: InputMaybe<Scalars['Int']['input']>;
   hours?: InputMaybe<Scalars['Int']['input']>;
+  maxPayloadKg?: InputMaybe<Scalars['Float']['input']>;
   minCapacity?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   nextMaintenanceHours?: InputMaybe<Scalars['Int']['input']>;

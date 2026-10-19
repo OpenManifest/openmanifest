@@ -26,6 +26,7 @@ export const UserEssentialsFragmentDoc = gql`
   phone
   email
   bodyMassKg
+  dateOfBirth
   moderationRole
   image
 }
@@ -166,6 +167,8 @@ export const TicketTypeEssentialsFragmentDoc = gql`
     name
   }
   allowManifestingSelf
+  participantLimits
+  groupLimits
   minCertificationRank
   requiredQualification {
     ...qualificationEssentials
@@ -270,6 +273,7 @@ export const VehicleEssentialsFragmentDoc = gql`
   capacity
   name
   registration
+  maxPayloadKg
   kind
 }
     `;
@@ -379,6 +383,18 @@ export const DailyLogEntryFragmentDoc = gql`
     ${DailyLogUserFragmentDoc}
 ${DailyLogLoadFragmentDoc}
 ${LocationFragmentDoc}`;
+export const EligibilityResultEssentialsFragmentDoc = gql`
+    fragment eligibilityResultEssentials on EligibilityResult {
+  code
+  ok
+  status
+  message
+  problem
+  bypassed
+  expiresAt
+  amountCents
+}
+    `;
 export const EquipmentInspectionEssentialsFragmentDoc = gql`
     fragment equipmentInspectionEssentials on EquipmentInspection {
   id
@@ -2810,9 +2826,9 @@ export type UpdateTicketTypeMutationHookResult = ReturnType<typeof useUpdateTick
 export type UpdateTicketTypeMutationResult = Apollo.MutationResult<Operation.UpdateTicketTypeMutation>;
 export type UpdateTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>;
 export const UpdateUserDocument = gql`
-    mutation UpdateUser($membership: ID, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $certificationLevel: Int, $bodyMassKg: Float) {
+    mutation UpdateUser($membership: ID, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $certificationLevel: Int, $bodyMassKg: Float, $dateOfBirth: ISO8601Date) {
   updateUser(
-    input: {membership: $membership, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, certificationLevel: $certificationLevel, bodyMassKg: $bodyMassKg}}
+    input: {membership: $membership, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, certificationLevel: $certificationLevel, bodyMassKg: $bodyMassKg, dateOfBirth: $dateOfBirth}}
   ) {
     errors
     fieldErrors {
@@ -2849,6 +2865,7 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<Operation.UpdateUserM
  *      nickname: // value for 'nickname'
  *      certificationLevel: // value for 'certificationLevel'
  *      bodyMassKg: // value for 'bodyMassKg'
+ *      dateOfBirth: // value for 'dateOfBirth'
  *   },
  * });
  */
@@ -4613,6 +4630,71 @@ export type RolesQueryHookResult = ReturnType<typeof useRolesQuery>;
 export type RolesLazyQueryHookResult = ReturnType<typeof useRolesLazyQuery>;
 export type RolesSuspenseQueryHookResult = ReturnType<typeof useRolesSuspenseQuery>;
 export type RolesQueryResult = Apollo.QueryResult<Operation.RolesQuery, Operation.RolesQueryVariables>;
+export const SlotEligibilityDocument = gql`
+    query SlotEligibility($loadId: ID!, $membershipId: ID, $guest: GuestInput, $ticketTypeId: ID!, $activityTypeId: ID, $extraIds: [ID!], $equipmentIds: [ID!], $loadVehicleId: ID, $groupNumber: Int, $bodyMassKg: Float, $guests: [GuestInput!]) {
+  slotEligibility(
+    loadId: $loadId
+    membershipId: $membershipId
+    guest: $guest
+    ticketTypeId: $ticketTypeId
+    activityTypeId: $activityTypeId
+    extraIds: $extraIds
+    equipmentIds: $equipmentIds
+    loadVehicleId: $loadVehicleId
+    groupNumber: $groupNumber
+    bodyMassKg: $bodyMassKg
+    guests: $guests
+  ) {
+    ...eligibilityResultEssentials
+  }
+}
+    ${EligibilityResultEssentialsFragmentDoc}`;
+
+/**
+ * __useSlotEligibilityQuery__
+ *
+ * To run a query within a React component, call `useSlotEligibilityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSlotEligibilityQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSlotEligibilityQuery({
+ *   variables: {
+ *      loadId: // value for 'loadId'
+ *      membershipId: // value for 'membershipId'
+ *      guest: // value for 'guest'
+ *      ticketTypeId: // value for 'ticketTypeId'
+ *      activityTypeId: // value for 'activityTypeId'
+ *      extraIds: // value for 'extraIds'
+ *      equipmentIds: // value for 'equipmentIds'
+ *      loadVehicleId: // value for 'loadVehicleId'
+ *      groupNumber: // value for 'groupNumber'
+ *      bodyMassKg: // value for 'bodyMassKg'
+ *      guests: // value for 'guests'
+ *   },
+ * });
+ */
+export function useSlotEligibilityQuery(baseOptions: Apollo.QueryHookOptions<Operation.SlotEligibilityQuery, Operation.SlotEligibilityQueryVariables> & ({ variables: Operation.SlotEligibilityQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.SlotEligibilityQuery, Operation.SlotEligibilityQueryVariables>(SlotEligibilityDocument, options);
+      }
+export function useSlotEligibilityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.SlotEligibilityQuery, Operation.SlotEligibilityQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.SlotEligibilityQuery, Operation.SlotEligibilityQueryVariables>(SlotEligibilityDocument, options);
+        }
+// @ts-ignore
+export function useSlotEligibilitySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.SlotEligibilityQuery, Operation.SlotEligibilityQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.SlotEligibilityQuery, Operation.SlotEligibilityQueryVariables>;
+export function useSlotEligibilitySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.SlotEligibilityQuery, Operation.SlotEligibilityQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.SlotEligibilityQuery | undefined, Operation.SlotEligibilityQueryVariables>;
+export function useSlotEligibilitySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.SlotEligibilityQuery, Operation.SlotEligibilityQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.SlotEligibilityQuery, Operation.SlotEligibilityQueryVariables>(SlotEligibilityDocument, options);
+        }
+export type SlotEligibilityQueryHookResult = ReturnType<typeof useSlotEligibilityQuery>;
+export type SlotEligibilityLazyQueryHookResult = ReturnType<typeof useSlotEligibilityLazyQuery>;
+export type SlotEligibilitySuspenseQueryHookResult = ReturnType<typeof useSlotEligibilitySuspenseQuery>;
+export type SlotEligibilityQueryResult = Apollo.QueryResult<Operation.SlotEligibilityQuery, Operation.SlotEligibilityQueryVariables>;
 export const AllowedTicketTypesDocument = gql`
     query AllowedTicketTypes($operator: ID!, $onlyPublicTickets: Boolean) {
   ticketTypes(operator: $operator, allowManifestingSelf: $onlyPublicTickets) {

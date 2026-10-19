@@ -5,6 +5,8 @@ import { FormNumberField } from 'app/components/input/number_input';
 import { VehicleFields } from './useForm';
 import { useTranslation } from 'react-i18next';
 import { Stack } from 'app/ui';
+import { useOperatorContext } from 'app/providers/operator/context';
+import { limitsModule } from 'app/utils/limits';
 
 export interface IVehicleFormProps {
   control: Control<VehicleFields>;
@@ -12,6 +14,10 @@ export interface IVehicleFormProps {
 export default function VehicleForm(props: IVehicleFormProps) {
   const { t } = useTranslation('common');
   const { control } = props;
+  const {
+    operator: { operator },
+  } = useOperatorContext();
+  const limits = limitsModule(operator?.modules as Record<string, unknown>);
   return (
     <Stack gap="md">
       <FormTextField {...{ control }} name="name" mode="outlined" label={t('forms.fields.name')} />
@@ -25,6 +31,14 @@ export default function VehicleForm(props: IVehicleFormProps) {
         label={t('forms.vehicle.maxSlots')}
         helperText={t('forms.vehicle.maximumAmountOfJumpersWho')}
       />
+      {limits?.payload ? (
+        <FormNumberField
+          {...{ control }}
+          name="maxPayloadKg"
+          label={t('forms.vehicle.maxPayload')}
+          helperText={t('forms.vehicle.maxPayloadHelper')}
+        />
+      ) : null}
     </Stack>
   );
 }
