@@ -4,17 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       binary:
-        description: "Build new binary"
+        description: 'Build new binary'
         type: boolean
         default: false
         required: false
       minor:
-        description: "Increment minor version"
+        description: 'Increment minor version'
         type: boolean
         default: false
         required: false
       environment:
-        description: "Target Environment"
+        description: 'Target Environment'
         required: false
         type: choice
         options:
@@ -49,7 +49,7 @@ jobs:
       - name: set EXPO_ENV environment
         id: environment
         env:
-          VERSION_CACHE_KEY: "${{ steps.version-environment-cache.outputs.VERSION_CACHE_KEY }}"
+          VERSION_CACHE_KEY: '${{ steps.version-environment-cache.outputs.VERSION_CACHE_KEY }}'
         run: |
           # If a custom environment was selected using inputs, use that.
           EXPO_ENV=staging
@@ -122,7 +122,7 @@ jobs:
       - name: set EXPO_ENV environment
         id: environment
         env:
-          VERSION_CACHE_KEY: "${{ steps.version-environment-cache.outputs.VERSION_CACHE_KEY }}"
+          VERSION_CACHE_KEY: '${{ steps.version-environment-cache.outputs.VERSION_CACHE_KEY }}'
         run: |
           # If a custom environment was selected using inputs, use that.
           EXPO_ENV=staging

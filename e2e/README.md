@@ -76,3 +76,22 @@ a directory adds it to that list and puts the new total in its pull request body
 | Date              | Paper imports | Colour literals | Raw touchables | Numeric font sizes | Literal JSX strings |
 | ----------------- | ------------: | --------------: | -------------: | -----------------: | ------------------: |
 | 2026-10-12 (U0.5) |           161 |             262 |             21 |                 93 |                 474 |
+
+## Android flows (Maestro)
+
+`e2e/maestro/*.yaml` are Maestro flows for the Android app: `login.yaml` signs in as the seeded owner and reaches the board,
+`board.yaml` opens a load and goes back. They use text and `testID`s (`loads`, `load-card`, `manifest-date-bar`), and run in
+GitHub Actions, not in the cloud VM (it has no emulator).
+
+`.github/workflows/android-ui.yml` (by hand, weekly on staging, and on pull requests that change it or the flows):
+
+1. the API and the dev seed of `openmanifest-server` (the `ui-env` action with `web-export: "false"`);
+2. `EXPO_ENV=android-ci npx expo prebuild --platform android --clean` and `./gradlew assembleRelease` (debug keystore). The
+   `android-ci` environment in `build/constants.ts` points the app at `http://10.0.2.2:5000/graphql` (the emulator's name for
+   the host), and only that build allows cleartext HTTP (`expo-build-properties`, `app.config.ts`): release builds block it;
+3. an API 35 `pixel_7` emulator and the Maestro CLI (the version is `MAESTRO_VERSION` in the workflow); `run.sh` runs the flows at
+   font scale 1.0 and 2.0, and again at 2.0 on the screen of a 360×640 dp phone (`wm size 1080x1920`, `wm density 480`);
+4. the screenshots and JUnit files are uploaded as the `android-ui-report` artifact.
+
+To try a flow on your own emulator: `yarn expo prebuild --platform android`, build and install the APK, start the API, then
+`maestro test e2e/maestro/login.yaml` (use `EXPO_ENV=android-ci` for the build, or `local` with an `adb reverse tcp:5000 tcp:5000`).

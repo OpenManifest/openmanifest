@@ -5,7 +5,8 @@ import { APP_NAME, APP_VERSION, ENDPOINTS, getEndpoint } from './build/constants
 const EAS_PROJECT_ID = '1d8fa34d-2ff8-4095-ab49-29a426117a8c';
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  const environment = process.env.EXPO_ENV as 'development' | 'staging' | 'production' | undefined;
+  const environment = process.env.EXPO_ENV as
+    'development' | 'staging' | 'production' | 'android-ci' | undefined;
 
   const appSignalApiKey = {
     development: process.env.APPSIGNAL_DEVELOPMENT_API_KEY,
@@ -86,6 +87,20 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       output: 'single',
     },
 
+    plugins: [
+      ...(config.plugins ?? []),
+      // Release builds block cleartext HTTP; the emulator reaches the CI backend at http://10.0.2.2:5000, so that build
+      // and no other allows it
+      ...(environment === 'android-ci'
+        ? [
+            ['expo-build-properties', { android: { usesCleartextTraffic: true } }] as [
+              string,
+              object,
+            ],
+          ]
+        : []),
+    ],
+
     // All values in extra will be passed to your app.
     extra: {
       url: getEndpoint(),
@@ -97,7 +112,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       eas: {
         projectId: EAS_PROJECT_ID,
       },
-      appSignalApiKey: environment ? appSignalApiKey[environment] : undefined,
+      appSignalApiKey:
+        environment && environment in appSignalApiKey
+          ? appSignalApiKey[environment as keyof typeof appSignalApiKey]
+          : undefined,
     },
   };
 };

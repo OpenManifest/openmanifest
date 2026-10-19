@@ -7,6 +7,9 @@ inputs:
   backend-ref:
     description: Branch, tag or SHA of OpenManifest/openmanifest-server to run against
     default: staging
+  web-export:
+    description: Also export and serve the web app on port 19006 (the Playwright suites); "false" for the Android flows
+    default: 'true'
 runs:
   using: composite
   steps:
@@ -32,16 +35,17 @@ runs:
         PGPASSWORD: postgres
         BACKEND_URL: http://local.openmanifest.org:5000/
         CORS_ORIGINS: http://localhost:19006
-        DISABLE_SPRING: "1"
-        WEB_CONCURRENCY: "0"
+        DISABLE_SPRING: '1'
+        WEB_CONCURRENCY: '0'
         # The suites sign in dozens of times as the seed users; the default limit of 10 devices evicts the stored session
-        MAX_DEVICES_PER_USER: "1000"
+        MAX_DEVICES_PER_USER: '1000'
       run: |
         echo "127.0.0.1 local.openmanifest.org" | sudo tee -a /etc/hosts
         export SECRET_KEY_BASE="$(openssl rand -hex 64)"
         bin/rails db:create db:schema:load db:seed db:seed:dev_baseline
         nohup bin/rails s -b 0.0.0.0 -p 5000 > "$RUNNER_TEMP/rails.log" 2>&1 &
     - name: Export and serve the web app on port 19006
+      if: inputs.web-export == 'true'
       shell: bash
       env:
         EXPO_ENV: local
@@ -51,8 +55,12 @@ runs:
         nohup python3 scripts/serve-web-build.py dist 19006 > "$RUNNER_TEMP/web.log" 2>&1 &
     - name: Wait for the API and the web app
       shell: bash
+      env:
+        WEB_EXPORT: ${{ inputs.web-export }}
       run: |
-        for url in http://local.openmanifest.org:5000/graphql http://localhost:19006/login; do
+        urls="http://local.openmanifest.org:5000/graphql"
+        if [ "$WEB_EXPORT" = "true" ]; then urls="$urls http://localhost:19006/login"; fi
+        for url in $urls; do
           for _ in $(seq 1 60); do
             curl -sf -o /dev/null "$url" && continue 2
             sleep 2

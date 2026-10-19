@@ -68,6 +68,9 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 
+# expo prebuild output (the Android CI build makes it)
+/android/
+
 # Expo
 .expo/
 web-build/

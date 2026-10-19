@@ -7,8 +7,8 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 env:
-  EXPO_NO_TELEMETRY: "1"
-  CI: "1"
+  EXPO_NO_TELEMETRY: '1'
+  CI: '1'
 jobs:
   checks:
     runs-on: ubuntu-24.04
@@ -34,7 +34,8 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: npx expo export --platform web
         # The gallery is part of the CI export, so its routes are proven to build (constants/gallery.ts)
-        env: { EXPO_ENV: staging, EXPO_PUBLIC_GALLERY: "1", NODE_OPTIONS: --max_old_space_size=6144 }
+        env:
+          { EXPO_ENV: staging, EXPO_PUBLIC_GALLERY: '1', NODE_OPTIONS: --max_old_space_size=6144 }
   web-ui-smoke:
     needs: checks
     runs-on: ubuntu-24.04
@@ -43,7 +44,7 @@ jobs:
       postgres:
         image: postgres:16
         env: { POSTGRES_USER: postgres, POSTGRES_PASSWORD: postgres }
-        ports: ["5432:5432"]
+        ports: ['5432:5432']
         options: >-
           --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
@@ -71,7 +72,7 @@ jobs:
         uses: ./.github/actions/ui-env
       - if: steps.changes.outputs.ui == 'true'
         run: yarn test:ui:smoke
-        env: { CI: "1" }
+        env: { CI: '1' }
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
