@@ -45,8 +45,14 @@ probe() {
   echo "--- probe: the views of the app ---"
   adb shell dumpsys activity top | sed -n '/View Hierarchy/,$p' | grep -E "React|openmanifest" | cut -c1-170 | head -70 || true
   adb exec-out screencap -p > "$out/probe.png" || true
-  echo "--- probe: the screen ---"
-  ascii "$out/probe.png"
+  echo "--- probe: uiautomator sees ---"
+  adb shell uiautomator dump /sdcard/ui.xml > /dev/null 2>&1 || true
+  adb shell cat /sdcard/ui.xml 2>/dev/null | grep -oE '(text|resource-id|content-desc)="[^"]+"' | sort -u | head -40 || true
+  echo "--- probe: maestro sees ---"
+  maestro hierarchy 2>/dev/null | grep -oE '"(text|resource-id|accessibilityText)" ?: ?"[^"]+"' | sort -u | head -40 || true
+  echo "--- probe: accessibility ---"
+  adb shell settings get secure enabled_accessibility_services || true
+  adb shell getprop ro.build.version.sdk || true
   adb shell am force-stop com.dangertechnologies.openmanifest || true
 }
 
