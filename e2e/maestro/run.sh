@@ -45,6 +45,10 @@ probe() {
   echo "--- probe: the views of the app ---"
   adb shell dumpsys activity top | sed -n '/View Hierarchy/,$p' | grep -E "React|openmanifest" | cut -c1-170 | head -70 || true
   adb exec-out screencap -p > "$out/probe.png" || true
+  echo "--- probe: the screen as text ---"
+  python3 e2e/maestro/png-ascii.py "$out/probe.png" || true
+  echo "--- probe: windows ---"
+  adb shell dumpsys window windows | grep -E "Window #|isVisible=|mHasSurface=" | cut -c1-160 | head -30 || true
   echo "--- probe: uiautomator sees ---"
   adb shell uiautomator dump /sdcard/ui.xml > /dev/null 2>&1 || true
   adb shell cat /sdcard/ui.xml 2>/dev/null | grep -oE '(text|resource-id|content-desc)="[^"]+"' | sort -u | head -40 || true
