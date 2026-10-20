@@ -111,6 +111,16 @@ function App() {
   const sessionHydrated = useSession((session) => session.hydrated);
   const preferencesHydrated = usePreferences((preferences) => preferences.hydrated);
 
+  // TEMPORARY (U3.1): why does the Android CI build stay blank?
+  React.useEffect(() => {
+    const log = () =>
+      // eslint-disable-next-line no-console
+      console.log('BOOT', JSON.stringify({ isLoadingComplete, sessionHydrated, preferencesHydrated }));
+    log();
+    const timer = setInterval(log, 5000);
+    return () => clearInterval(timer);
+  }, [isLoadingComplete, sessionHydrated, preferencesHydrated]);
+
   if (!isLoadingComplete || !sessionHydrated || !preferencesHydrated) {
     return null;
   }
