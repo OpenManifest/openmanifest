@@ -12,3 +12,25 @@ export async function press(page: Page, locator: Locator | null, at?: { x: numbe
   await page.waitForTimeout(150);
   await page.mouse.up();
 }
+
+/**
+ * Presses until what the press does shows: a press that lands while the screen is still settling (the data arrives and
+ * rebuilds the row under the pointer) is lost, as it would be for a person, who then presses again. `done` throws until
+ * it holds.
+ */
+export async function pressUntil(
+  page: Page,
+  locator: Locator,
+  done: () => Promise<unknown>,
+  attempts = 4
+) {
+  for (let attempt = 1; ; attempt++) {
+    await press(page, locator);
+    try {
+      await done();
+      return;
+    } catch (error) {
+      if (attempt >= attempts) throw error;
+    }
+  }
+}

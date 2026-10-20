@@ -7,7 +7,7 @@ import {
   expectNoClippedRows,
   scaleText,
 } from './support/layout';
-import { press } from './support/press';
+import { press, pressUntil } from './support/press';
 import { expect, gotoRoute, test } from './support/test';
 
 const BOARD = '/manifest';
@@ -41,9 +41,9 @@ test.describe('manifest board @manifest', () => {
     const state = page.getByTestId('load-header-state');
 
     await expect(primary).toBeVisible({ timeout: 20_000 });
-    await press(page, primary);
-    await page.waitForTimeout(500);
-    await press(page, page.getByRole('radio', { name: /10 minute/i }));
+    const ten = page.getByRole('radio', { name: /10 minute/i });
+    await pressUntil(page, primary, () => expect(ten).toBeVisible({ timeout: 4000 }));
+    await press(page, ten);
     await expect(state).toContainText(/boarding/i, { timeout: 15_000 });
 
     await press(page, primary);

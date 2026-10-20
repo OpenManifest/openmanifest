@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 import { callLoadViaApi, createLoadViaApi, manifestMemberViaApi } from './support/api';
 import { claim } from './support/claims';
-import { press } from './support/press';
+import { press, pressUntil } from './support/press';
 import { expect, gotoRoute, test } from './support/test';
 
 const WIDE = 1024;
@@ -32,8 +32,11 @@ test.describe('moving a place @move', () => {
     const row = page.getByTestId('slot-row').filter({ hasText: 'Pat Pilot' });
     await expect(row).toBeVisible({ timeout: 20_000 });
 
-    await press(page, row.getByRole('button', { name: 'Actions for Pat Pilot' }));
-    await page.getByRole('menuitem', { name: 'Move to…' }).click();
+    const moveItem = page.getByRole('menuitem', { name: 'Move to…' });
+    await pressUntil(page, row.getByRole('button', { name: 'Actions for Pat Pilot' }), () =>
+      expect(moveItem).toBeVisible({ timeout: 4000 })
+    );
+    await moveItem.click();
     const target = page.getByTestId(`move-to-${to}-`);
     await expect(target).toBeVisible();
     await expect(target).toContainText('free places');
