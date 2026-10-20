@@ -511,5 +511,36 @@
         "complete": "{{load}} #{{number}} has not departed. Land it anyway?"
       }
     }
+  },
+  "load": {
+    "edit": "Edit",
+    "takeOff": "Take off",
+    "prepaid": "Prepaid",
+    "placeMenu": "Actions for {{name}}",
+    "freePlaces_one": "{{count}} free place",
+    "freePlaces_other": "{{count}} free places",
+    "fillRole": "Choose {{role}}",
+    "calledAt": "{{call}} made at {{time}}",
+    "departedAt": "Left at {{time}}",
+    "notReady": "Not ready: {{rule}}",
+    "expiring": "{{rule}} runs out soon",
+    "notFound": "This load is gone",
+    "takenOff": "{{name}} has been taken off {{load}} #{{number}}",
+    "rule": {
+      "membership": "membership",
+      "credits": "credits",
+      "certification": "certification",
+      "equipment": "equipment",
+      "equipment_inspection": "equipment inspection",
+      "equipment_service": "equipment service",
+      "age": "age",
+      "body_mass": "body mass",
+      "group": "group",
+      "payload": "payload",
+      "escort": "escort",
+      "activity": "activity",
+      "capacity": "places",
+      "double_manifest": "already manifested"
+    }
   }
 }

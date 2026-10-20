@@ -31,27 +31,25 @@ test.describe('manifest board @manifest', () => {
     await expect.poll(() => loads.count(), { timeout: 15_000 }).toBeGreaterThan(before);
   });
 
-  // Load states (P6.12): a boarding call, then landing, through the speed dial
+  // Load states (P6.12, U3.4): a boarding call, then departing and landing, from the actions of the load screen
   test('a boarding call and landing show the next actions', async ({ page }) => {
     const id = await createLoadViaApi();
     expect(id, 'could not create a load through the API').toBeTruthy();
     await gotoRoute(page, `/loads/${id}`);
+    const primary = page.getByTestId('load-actions-primary');
+    const state = page.getByTestId('load-header-state');
 
-    const openActions = async () => {
-      // A confirmation snackbar covers the button on a phone until it goes away
-      await page.waitForTimeout(7000);
-      await press(page, page.getByTestId('load-actions-primary-action'));
-      await page.waitForTimeout(1000);
-    };
-    await openActions();
-    await page.getByText('10 minute boarding call', { exact: true }).last().click({ force: true });
-    await page.waitForTimeout(3000);
-    await openActions();
-    await expect(page.getByText('Mark as Landed', { exact: true }).last()).toBeVisible();
-    await page.getByText('Mark as Landed', { exact: true }).last().click({ force: true });
-    await page.waitForTimeout(3000);
-    await openActions();
-    await expect(page.getByText('Re-open load', { exact: true }).last()).toBeVisible();
+    await expect(primary).toBeVisible({ timeout: 20_000 });
+    await press(page, primary);
+    await page.waitForTimeout(500);
+    await press(page, page.getByRole('radio', { name: /10 minute/i }));
+    await expect(state).toContainText(/boarding/i, { timeout: 15_000 });
+
+    await press(page, primary);
+    await expect(state).toContainText(/in flight|departed/i, { timeout: 15_000 });
+    await press(page, primary);
+    await expect(state).toContainText(/landed|completed/i, { timeout: 15_000 });
+    await expect(primary).toHaveText(/re-open/i);
   });
 
   test('a load opens, lays out and shows its last slot', async ({ page }) => {
@@ -67,7 +65,7 @@ test.describe('manifest board @manifest', () => {
     await expectAccessible(page, 'load');
   });
 
-  // The manifest context mounts the group sheet once: open it from the load's actions (the speed dial)
+  // The manifest context mounts the group sheet once: open it from the free places of the load
   test('the group sheet opens from the load screen', async ({ page }) => {
     await gotoRoute(page, BOARD);
     await page
@@ -76,9 +74,7 @@ test.describe('manifest board @manifest', () => {
       .click({ force: true });
     await page.waitForURL(/\/loads\/\d+/);
     await page.waitForTimeout(3000);
-    await press(page, page.getByTestId('load-actions-primary-action'));
-    await page.waitForTimeout(1000);
-    await page.getByText('Manifest group', { exact: true }).last().click({ force: true });
+    await press(page, page.getByTestId('free-places').first());
     await expect(page.getByTestId('manifest-group-sheet')).toBeVisible();
   });
 

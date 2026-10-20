@@ -65,3 +65,27 @@ export const makeLoad = (overrides: Record<string, unknown> = {}) =>
     slots: [],
     ...overrides,
   }) as any;
+
+export const slotOf = (id: string, name: string, overrides: Record<string, unknown> = {}) =>
+  ({
+    id,
+    lockVersion: 0,
+    createdAt: '2026-10-19T00:00:00Z',
+    bodyMassKg: 80,
+    prepaid: false,
+    guestSlots: [],
+    wingLoading: null,
+    groupNumber: 0,
+    costCents: 0,
+    ticketType: { id: 't1', name: 'Fun jump' },
+    destination: null,
+    loadVehicle: null,
+    activityType: { id: 'a1', name: 'Freefly' },
+    extras: [],
+    equipment: [],
+    membership: {
+      ...membership(name),
+      certificationLevel: { id: 'c1', name: 'License A' },
+    },
+    ...overrides,
+  }) as any;

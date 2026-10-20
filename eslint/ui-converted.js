@@ -7,6 +7,7 @@ module.exports = {
     'app/components/input/**/*.{ts,tsx}',
     'app/components/layout/**/*.{ts,tsx}',
     'app/features/board/**/*.{ts,tsx}',
+    'app/features/load/**/*.{ts,tsx}',
     'app/forms/**/*.{ts,tsx}',
     'app/navigation/**/*.{ts,tsx}',
     'app/screens/authenticated/account/**/*.{ts,tsx}',
@@ -22,6 +23,7 @@ module.exports = {
     'app/components/input/**/__tests__/**',
     'app/components/layout/**/__tests__/**',
     'app/features/board/**/__tests__/**',
+    'app/features/load/**/__tests__/**',
     'app/forms/**/__tests__/**',
     // Rebuilt in U3.7 (the manifest forms)
     'app/forms/manifest_group/**',

@@ -6,6 +6,8 @@ export type CrewSlot = {
   role: CrewRoleEssentialsFragment;
   /** "Guide · Raft 2" when the role is filled once for each of several vehicles */
   label?: string;
+  /** The vehicle of the load the role is filled for; null for a role of the whole load */
+  loadVehicleId: string | null;
   member?: NonNullable<LoadDetailsFragment['crew']>[number]['membership'] | null;
 };
 
@@ -26,7 +28,7 @@ export function crewSlots(
         const assignment = load.crew?.find(
           ({ crewRole, loadVehicle }) => crewRole.id === role.id && !loadVehicle
         );
-        return [{ key: role.id, role, member: assignment?.membership }];
+        return [{ key: role.id, role, loadVehicleId: null, member: assignment?.membership }];
       }
       return carrying
         .filter(
@@ -36,6 +38,7 @@ export function crewSlots(
         .map((loadVehicle) => ({
           key: `${role.id}-${loadVehicle.id}`,
           role,
+          loadVehicleId: loadVehicle.id,
           label: carrying.length > 1 ? `${role.name} · ${loadVehicle.vehicle.name}` : undefined,
           member: load.crew?.find(
             ({ crewRole, loadVehicle: assigned }) =>

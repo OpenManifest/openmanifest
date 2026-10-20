@@ -59,6 +59,29 @@ export async function createLoadViaApi(name = `Live ${Date.now()}`): Promise<str
   return id;
 }
 
+/**
+ * Creates a load that carries in two vehicles, which only an operator with the multi-vehicle module has: a generic
+ * operator is made for it (owned by the seed's owner), with two vehicles and no crew roles. Returns the load's id.
+ */
+export async function createTwoVehicleLoadViaApi(name = `Two vehicles ${Date.now()}`) {
+  const operator = await ownerCall(
+    `mutation { createOperator(input: { industry: GENERIC, attributes: { name: "Generic ${Date.now()}", timeZone: "Australia/Brisbane" } }) { operator { id } errors } }`
+  );
+  const operatorId = Number(operator.json?.data?.createOperator?.operator?.id);
+  if (!operatorId) return undefined;
+  const vehicles = await ownerCall(
+    `mutation { a: createVehicle(input: { attributes: { operatorId: ${operatorId}, name: "Raft 1", registration: "R1", capacity: 6 } }) { vehicle { id } } b: createVehicle(input: { attributes: { operatorId: ${operatorId}, name: "Raft 2", registration: "R2", capacity: 8 } }) { vehicle { id } } }`
+  );
+  const { a, b } = vehicles.json?.data ?? {};
+  if (!a?.vehicle?.id || !b?.vehicle?.id) return undefined;
+  const created = await ownerCall(
+    `mutation { createLoad(input: { attributes: { name: "${name}", vehicles: [{ vehicleId: "${a.vehicle.id}", role: carrying }, { vehicleId: "${b.vehicle.id}", role: carrying }] } }) { load { id } errors } }`
+  );
+  const id = created.json?.data?.createLoad?.load?.id;
+  if (id) createdLoads.push(id);
+  return id as string | undefined;
+}
+
 /** Puts a load on call, `minutes` from now, the way the boarding call does. Returns whether the API accepted it. */
 export async function callLoadViaApi(id: string, minutes = 10): Promise<boolean> {
   const at = new Date(Date.now() + minutes * 60_000).toISOString();

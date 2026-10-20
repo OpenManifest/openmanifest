@@ -142,7 +142,11 @@ orders them (open → boarding → departed → completed/cancelled, then load n
 (cache write: `applyLoadUpdate`). The new board (U3.3, behind `newBoard`): `BoardScreen` shows `LoadCard`s (state, call countdown as the largest numeral,
 vehicles with `VehicleIcon`, `DestinationLabel`, `PlacesMeter` from the carrying vehicles less seated crew, one `CrewChip` per
 crew role) in one column on a phone, the list beside the selected load on a tablet, and a column for each load with a strip
-for the finished ones on a wide window; `ConditionsStrip` appears with the `winds_aloft` module. `LoadActions` (U3.4) is the card's next action: `planActions` picks the primary button and the menu by state (open → call from the operator's schedule or a custom time, or depart without a schedule; on call → depart, cancel the call, land; departed → land; over → re-open today), `useLoadActions` runs them with `updateLoad` / `finalizeLoad`, cancelling a load and landing one that never departed ask first, and a load leaves only with its required crew roles filled. `useBoardScreens()` (`screens.ts`) picks the new or the classic board and load screens
+for the finished ones on a wide window; `ConditionsStrip` appears with the `winds_aloft` module. `LoadActions` (U3.4) is the card's next action: `planActions` picks the primary button and the menu by state (open → call from the operator's schedule or a custom time, or depart without a schedule; on call → depart, cancel the call, land; departed → land; over → re-open today), `useLoadActions` runs them with `updateLoad` / `finalizeLoad`, cancelling a load and landing one that never departed ask first, and a load leaves only with its required crew roles filled. The new load screen (U3.5, `app/features/load/`): `LoadHeader` is the call card (countdown, when it was called or left,
+destinations, `PlacesMeter`, one `CrewRoleMenu` per crew role), `buildSections` turns `load.slots` into rows (one heading per
+vehicle of a load with several, groups bracketed, free places as one row), `PlaceRow` / `EscortGroup` show a person or an
+escort with their guests (readiness from the `LoadEligibility` query, prepaid badge, a menu to edit or take off, swipe to take
+off on native), the actions are `LoadActions` (sticky at the bottom on a phone). `useBoardScreens()` (`screens.ts`) picks the new or the classic board and load screens
 from the `newBoard` preference.
 
 Operations: 76 named operations (41 mutations, 32 queries, 3 subscriptions: `loadCreated`, `loadUpdated`, `userUpdated`).
