@@ -463,5 +463,32 @@
     "mph": "Miles per hour (mph)",
     "c": "Celsius (°C)",
     "f": "Fahrenheit (°F)"
+  },
+  "board": {
+    "placesLabel": "{{slots}} filled",
+    "places": "{{filled}} of {{capacity}} {{slots}}",
+    "noVehicle": "No {{vehicle}} yet",
+    "crew": {
+      "filled": "{{role}}: {{name}}",
+      "needed": "{{role}} needed",
+      "none": "No {{role}}"
+    },
+    "conditions": {
+      "wind": "Wind {{speed}} from {{direction}}° at {{altitude}}",
+      "heading": "Heading {{heading}}°",
+      "ground": "Ground {{temperature}}",
+      "none": "No conditions yet",
+      "update": "Update"
+    },
+    "empty": {
+      "today": "No {{loads}} yet today",
+      "todayBody": "Create one to start the day.",
+      "day": "No {{loads}} on this day",
+      "dayBody": "Create one to schedule it ahead."
+    },
+    "create": "Create {{load}}",
+    "completedStrip": "Finished ({{count}})",
+    "selectLoad": "Select a {{load}} to see who is on it",
+    "list": "{{loads}} of the day"
   }
 }
