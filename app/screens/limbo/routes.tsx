@@ -2,10 +2,10 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
-import DropzonesScreen from './dropzone_select/DropzonesScreen';
+import OperatorsScreen from './operator_select/OperatorsScreen';
 
 export type LimboRoutes = {
-  DropzoneSelectScreen: undefined;
+  OperatorSelectScreen: undefined;
 };
 const Stack = createStackNavigator<LimboRoutes>();
 
@@ -22,9 +22,9 @@ export default function Limbo() {
           flex: 1,
         },
       }}
-      initialRouteName="DropzoneSelectScreen"
+      initialRouteName="OperatorSelectScreen"
     >
-      <Stack.Screen name="DropzoneSelectScreen" component={DropzonesScreen} />
+      <Stack.Screen name="OperatorSelectScreen" component={OperatorsScreen} />
     </Stack.Navigator>
   );
 }

@@ -3,6 +3,7 @@ import { LoadEssentialsFragment, SlotDetailsFragment } from 'app/api/operations'
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import ManifestForm from './ManifestForm';
 import useForm from './useForm';
+import { guestValuesOf } from './guests';
 
 export interface IManifestUserDialog {
   open?: boolean;
@@ -19,14 +20,13 @@ export default function ManifestUserDialog(props: IManifestUserDialog) {
     initial: {
       id: slot?.id,
       load,
-      exitWeight: slot?.exitWeight || Number(slot?.dropzoneUser?.user?.exitWeight || 70),
-      dropzoneUser: slot?.dropzoneUser,
+      bodyMassKg: slot?.bodyMassKg || Number(slot?.membership?.user?.bodyMassKg || 70),
+      membership: slot?.membership,
       extras: slot?.extras || null,
       groupNumber: slot?.groupNumber,
-      jumpType: slot?.jumpType,
-      passengerExitWeight: slot?.passengerExitWeight,
-      passengerName: slot?.passengerName,
-      rig: slot?.rig,
+      activityType: slot?.activityType,
+      guests: guestValuesOf(slot?.guestSlots),
+      equipment: slot?.equipment,
       ticketType: slot?.ticketType || undefined,
     },
     onSuccess,

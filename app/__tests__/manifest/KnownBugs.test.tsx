@@ -1,39 +1,51 @@
 import * as React from 'react';
-import { RefreshControl, Text } from 'react-native';
+import { Text } from 'react-native';
 import { Permission } from 'app/api/schema.d';
 import { useManifestContext } from 'app/providers';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
-import MOCK_QUERY_DROPZONE from './__mocks__/QueryDropzone.mock';
+import MOCK_QUERY_OPERATOR from './__mocks__/QueryOperator.mock';
 import MOCK_QUERY_ALLOWED_TICKET_TYPES from './__mocks__/QueryAllowedTicketTypes.mock';
-import { MOCK_QUERY_ALLOWED_JUMP_TYPES } from './__mocks__/QueryAllowedJumpTypes.mock';
-import MOCK_QUERY_FEDERATIONS from './__mocks__/QueryFederations.mock';
+import { MOCK_QUERY_ALLOWED_ACTIVITY_TYPES } from './__mocks__/QueryAllowedActivityTypes.mock';
+import MOCK_QUERY_CERTIFICATION_BODIES from './__mocks__/QueryCertificationBodies.mock';
 import MOCK_QUERY_ROLES from './__mocks__/QueryRoles.mock';
-import MOCK_QUERY_LICENSES from './__mocks__/QueryLicenses.mock';
+import MOCK_QUERY_CERTIFICATION_LEVELS from './__mocks__/QueryCertificationLevels.mock';
 import MOCK_QUERY_LOADS from './__mocks__/QueryLoads.mock';
-import MOCK_QUERY_PLANES from './__mocks__/QueryPlane.mock';
-import MOCK_QUERY_DROPZONE_USERS from './__mocks__/QueryDropzoneUsers.mock';
+import MOCK_QUERY_VEHICLES from './__mocks__/QueryVehicle.mock';
+import MOCK_QUERY_MEMBERSHIPS from './__mocks__/QueryMemberships.mock';
 import mockSubscriptionLoadCreated from './__mocks__/SubscriptionLoadCreated.mock';
-import ManifestScreen from '../../screens/authenticated/dropzone/manifest/ManifestScreen';
-import ManifestGroupDialog from '../../forms/manifest_group';
+import ManifestScreen from '../../screens/authenticated/manifest/manifest/ManifestScreen';
+import { hostsWhere } from 'app/test-utils/hosts';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
+
+// The group dialog is replaced by a host that shows whether it is open: its own content is not under test here
+jest.mock('../../forms/manifest_group', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { View: MockView } = require('react-native');
+  return {
+    __esModule: true,
+    default: (props: { open?: boolean }) => (
+      <MockView testID="mock-manifest-group-dialog" data-open={!!props.open} />
+    ),
+  };
+});
 
 // These tests describe the *expected* behaviour of known client bugs (see the backend repo's
 // docs/reference/BUGS.md). A bug's test is skipped until it is fixed; unskip it in the fixing PR.
 
 function boardMocks(loads = MOCK_QUERY_LOADS()) {
   return [
-    MOCK_QUERY_DROPZONE(),
+    MOCK_QUERY_OPERATOR(),
     MOCK_QUERY_ALLOWED_TICKET_TYPES(),
-    MOCK_QUERY_ALLOWED_JUMP_TYPES(),
-    MOCK_QUERY_FEDERATIONS(),
+    MOCK_QUERY_ALLOWED_ACTIVITY_TYPES(),
+    MOCK_QUERY_CERTIFICATION_BODIES(),
     MOCK_QUERY_ROLES(),
-    MOCK_QUERY_LICENSES(),
+    MOCK_QUERY_CERTIFICATION_LEVELS(),
     loads,
-    MOCK_QUERY_PLANES(),
-    MOCK_QUERY_DROPZONE_USERS({ permissions: [Permission.ActAsGca] }),
-    MOCK_QUERY_DROPZONE_USERS({ permissions: [Permission.ActAsPilot] }),
+    MOCK_QUERY_VEHICLES(),
+    MOCK_QUERY_MEMBERSHIPS({ permissions: [Permission.ActAsGca] }),
+    MOCK_QUERY_MEMBERSHIPS({ permissions: [Permission.ActAsPilot] }),
     mockSubscriptionLoadCreated(),
   ];
 }
@@ -45,7 +57,7 @@ describe('known manifest bugs', () => {
     const second = MOCK_QUERY_LOADS();
     const loadsRefetch = jest.fn(() => second.result as never);
 
-    const screen = render(<ManifestScreen />, {
+    const screen = await render(<ManifestScreen />, {
       session: authenticatedSession,
       permissions: [Permission.ReadLoad],
       graphql: boardMocks({ ...first, result: loadsRequests } as never).concat([
@@ -56,7 +68,11 @@ describe('known manifest bugs', () => {
     await waitFor(() => expect(screen.queryAllByTestId('load-card').length).toBe(2), {
       timeout: 10000,
     });
-    screen.UNSAFE_getByType(RefreshControl).props.onRefresh();
+    // The scroll view of the board holds the refresh control as a prop
+    hostsWhere(
+      screen.container,
+      (node) => !!node.props.refreshControl
+    )[0].props.refreshControl.props.onRefresh();
 
     await waitFor(() => expect(loadsRefetch).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });
@@ -75,7 +91,7 @@ describe('known manifest bugs', () => {
         </Text>
       );
     }
-    const screen = render(
+    const screen = await render(
       <>
         <ManifestScreen />
         <OpenGroupSheet />
@@ -90,11 +106,14 @@ describe('known manifest bugs', () => {
       timeout: 10000,
     });
 
-    fireEvent.press(screen.getByText('open group sheet'));
+    await fireEvent.press(screen.getByText('open group sheet'));
 
     await waitFor(() => {
-      const sheets = screen.UNSAFE_queryAllByType(ManifestGroupDialog);
-      expect(sheets.some((sheet) => sheet.props.open)).toBe(true);
+      const sheets = hostsWhere(
+        screen.container,
+        (node) => node.props.testID === 'mock-manifest-group-dialog'
+      );
+      expect(sheets.some((sheet) => sheet.props['data-open'] === true)).toBe(true);
     });
   });
 });

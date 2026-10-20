@@ -1,4 +1,5 @@
 import { primaryColor } from 'app/constants/Colors';
+import { colour } from 'app/ui/tokens';
 import { createAppTheme, createPalette } from '../palette';
 
 describe('createAppTheme', () => {
@@ -13,7 +14,7 @@ describe('createAppTheme', () => {
     const theme = createAppTheme(true);
 
     expect(theme.dark).toBe(true);
-    expect(theme.colors.primary).toBe(primaryColor);
+    expect(theme.colors.primary).toBe(colour.dark.brand);
     expect(theme.colors.background).not.toBe(createAppTheme(false).colors.background);
   });
 
@@ -39,6 +40,37 @@ describe('createAppTheme', () => {
 
     expect(createAppTheme(false).colors.primary).toBe(primaryColor);
     expect(themed.colors).not.toBe(createAppTheme(false).colors);
+  });
+});
+
+describe('createAppTheme from tokens', () => {
+  it('takes the surfaces and text from the tokens of the scheme', () => {
+    for (const scheme of ['light', 'dark'] as const) {
+      const theme = createAppTheme(scheme === 'dark');
+
+      expect(theme.colors.background).toBe(colour[scheme].app);
+      expect(theme.colors.surface).toBe(colour[scheme].surface);
+      expect(theme.colors.card).toBe(colour[scheme].surface);
+      expect(theme.colors.text).toBe(colour[scheme].text);
+      expect(theme.colors.border).toBe(colour[scheme].border);
+    }
+  });
+
+  it('defaults the light brand to the navy of the design plan', () => {
+    expect(primaryColor).toBe('#1D3557');
+    expect(createAppTheme(false).colors.primary).toBe('#1D3557');
+  });
+
+  it('uses system fonts, not Roboto', () => {
+    for (const isDark of [false, true]) {
+      const { fonts } = createAppTheme(isDark);
+
+      for (const font of Object.values(fonts)) {
+        expect(font.fontFamily).not.toMatch(/roboto_/i);
+      }
+      expect(fonts.regular.fontWeight).toBe('400');
+      expect(fonts.bold.fontWeight).toBe('700');
+    }
   });
 });
 
