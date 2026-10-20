@@ -44,30 +44,30 @@ Root (stack)
 ├── Limbo (stack)                DropzoneSelectScreen /select-dropzone
 ├── Authenticated
 │   └── LeftDrawer (drawer: UserDrawer — dropzone switcher, profile, logout)
-│       └── Tabs (material bottom tabs; TabBar.web.tsx on web)
+│       └── Tabs (bottom tabs on every platform; TabBar.web.tsx is a copy of TabBar.tsx)
 │           ├── Overview      DashboardScreen /dropzone/dashboard · OverviewScreen /overview
 │           │                 (visible with viewStatistics permission or moderator)
 │           ├── Manifest      ManifestScreen /dropzone/manifest · LoadScreen /dropzone/load/:loadId
 │           │                 WeatherConditionsScreen /dropzone/weather · WindScreen /dropzone/weather/winds
 │           │                 JumpRunScreen /dropzone/weather/jumprun
-│           │                 User (stack, see below, under /dropzone/manifest/users/…)
 │           │                 Configuration (stack): SettingsMenuScreen /dropzone/configuration ·
 │           │                   DropzoneSettingsScreen /basic · AircraftsScreen /aircrafts · TicketTypesScreen /ticket-types ·
 │           │                   ExtrasScreen /dropzone/ticket-types/extra · RigInspectionTemplateScreen /rig-inspection ·
 │           │                   DropzoneRigsScreen /rigs · TransactionsScreen /dropzone/transactions ·
 │           │                   PermissionScreen /permissions · MasterLogScreen /dropzone/master-log
-│           ├── Notifications NotificationsScreen /notifications · User stack
-│           └── Users         UserListScreen /users · ProfileScreen /user/:userId · EquipmentScreen ·
+│           ├── Notifications NotificationsScreen /notifications
+│           └── Users         User stack (below): UserListScreen /users · ProfileScreen /user/:userId · EquipmentScreen ·
 │                             OrdersScreen · OrderReceiptScreen · RigInspectionScreen   (visible with readUser)
 ├── Wizards (stack, modal)       DropzoneWizardScreen /setup · UserWizardScreen · RecoverPasswordScreen /recover-password ·
-│                                ConfirmUserScreen /confirm · ChangePasswordScreen /change-password · User stack (/modal/user/…)
+│                                ConfirmUserScreen /confirm · ChangePasswordScreen /change-password
 └── NotFound
 ```
 
-User stack (reused in Manifest, Notifications, Users and Wizards): `UserListScreen`, `ProfileScreen` (tabs: jumps,
+User stack (registered once, under Users/People; `/manifest/users/…` and `/modal/user/…` redirect to `/user/…`, see
+`app/navigation/legacyPaths.ts`; screens open it with `useOpenUser`): `UserListScreen`, `ProfileScreen` (tabs: jumps,
 equipment, transactions), `EquipmentScreen`, `OrdersScreen`, `OrderReceiptScreen`, `RigInspectionScreen`.
 
-Deep-link config: `app/screens/routes.tsx` `options` (prefixes `openmanifest://`, `https://www.openmanifest.org`,
+Deep-link config: `app/navigation/linking.ts` `options` (prefixes `openmanifest://`, `https://www.openmanifest.org`,
 `https://staging.openmanifest.org`, `http://localhost:19006`). It references three screens that are not registered
 (`Manifest/DashboardScreen`, `Configuration/AircraftScreen`, `Unauthenticated/SignUpWizard`) — BUG-083.
 
@@ -75,7 +75,7 @@ Main flows:
 
 | Flow | Screens / components |
 |---|---|
-| Login | `LoginScreen` → `login/form/LoginForm.tsx` (`userLogin`), `AppleButton*.tsx`, `FacebookButton*.tsx` → Limbo |
+| Login | `LoginScreen` → `login/form/LoginForm.tsx` (`userLogin`), `AppleButton*.tsx` → Limbo |
 | Sign up | `SignUpScreen` (wizard) → confirmation email → `ConfirmUserScreen` |
 | Select dropzone | `DropzoneSelectScreen` (list of dropzones, create → `DropzoneWizardScreen`) |
 | Manifest board | `ManifestScreen` (load cards, `app/providers/manifest/provider.tsx` for date/filters), FAB: new load, manifest me |
@@ -108,7 +108,7 @@ store or component state.
 | Store | Fields | Persisted | Notes |
 |---|---|---|---|
 | `useSession` (`app/state/session.ts`) | `credentials` (`accessToken`, `client`, `uid`, `expiry`, `tokenType`), `currentDropzoneId`, `expoPushToken`, `currentRouteName`, `hydrated` | yes: `openmanifest.session.v1` (AsyncStorage / `localStorage`); `credentials` go to `expo-secure-store` (`openmanifest.credentials`) on native and `localStorage` on web (`app/state/storage.ts`) | `useAuthenticated()` = an access token exists. `reset()` logs out but keeps the device push token. `Entrypoint` renders nothing until `hydrated`. Migrated once from the old redux-persist blob (`migrateFromReduxPersist.ts`), which is then deleted. |
-| `usePreferences` (`app/state/preferences.ts`) | `colorScheme`: `system` / `light` / `dark`, `hydrated` | yes: `openmanifest.preferences.v1` | device level, survives logout |
+| `usePreferences` (`app/state/preferences.ts`) | `colorScheme`: `system` / `light` / `dark`, `density`, `newBoard` (on for a new install, off for stored v1 preferences; picks the new or the classic board and load screens), `hydrated` | yes: `openmanifest.preferences.v1` | device level, survives logout |
 | `useThemeOverrides` (`app/theme/overrides.ts`) | `primary` | no | colour preview in the dropzone form, dropped once Apollo holds the saved colour |
 
 Derived, not stored: the theme and palette (`useAppTheme()` in `app/theme`: colour scheme preference or device, the current
@@ -136,6 +136,12 @@ Three generations coexist in `app/api/`:
 | 2. Generated hooks | `app/api/{queries,mutations,fragments,subscriptions}/*.gql` (24 queries, 41 mutation documents) → `reflection.tsx` (`useXQuery`, `useXMutation`), `operations.ts` | graphql-codegen | 68 importers |
 | 3. CRUD hooks | `app/api/crud/*` (`useLoad`, `useManifest`, `useDropzone`, `useUserProfile`, `useTickets`, `useAircrafts`, `useEquipment`, `useDropzones`, `factory.tsx`) | wrap generated hooks; return `{ data, loading, create, update, … }`, normalise `fieldErrors` | 42 importers |
 
+`app/features/board/useBoard.ts` (U3.2) is the board's data layer: `useBoard(date?)` reads the manifest's loads for the day,
+orders them (open → boarding → departed → completed/cancelled, then load number; `order.ts`), flags a changed row for
+600 ms, holds the order between `freeze()` and `unfreeze()`, and keeps one `loadUpdated` subscription per load of the day
+(cache write: `applyLoadUpdate`). `useBoardScreens()` (`screens.ts`) picks the new or the classic board and load screens
+from the `newBoard` preference.
+
 Operations: 76 named operations (41 mutations, 32 queries, 3 subscriptions: `loadCreated`, `loadUpdated`, `userUpdated`).
 Pass 1 validated all of them against the live server schema: 0 validation errors, and the committed
 `app/api/openmanifest.graphql` matches the server's introspection (0 differences).
@@ -153,8 +159,8 @@ Scripts: `yarn sync:schema` (download schema), `yarn ts:graphql` (codegen), `yar
 ## 5. Authentication and session
 
 1. `userLogin(email, password)` (graphql_devise) returns `credentials`; `LoginForm` stores them with
-   `useSession().setCredentials`. Apple: `loginWithApple(token)`; Facebook: `loginWithFacebook(token)` via `expo-facebook`
-   (cannot be built on current SDKs, BUG-084).
+   `useSession().setCredentials`. Apple: `loginWithApple(token)`. Facebook login was removed in P3.3 (D4; the server field `loginWithFacebook` is
+   deprecated and goes in P8.7).
 2. Every request carries `access-token`, `client`, `uid` (authentication link, from `useSession`).
 3. Subscriptions: the cable URL carries `access-token`, `client` and `uid` (browsers cannot set WebSocket headers); the
    server rejects connections without a valid token (P6.9, BUG-011/060). The cable reconnects on login and logout.
@@ -181,11 +187,10 @@ Metro/webpack pick `*.web.tsx`, `*.android.tsx`, `*.ios.tsx` over the base file.
 | `app/components/input/jump_run_select/JumpRunSelect.{android,web}.tsx` | Android, web | circular slider variants |
 | `app/components/slots_table/AvailableRow.web.tsx`, `DragAndDrop/*.web.tsx` | web | drag-and-drop between loads (`@dnd-kit/core`) |
 | `app/hooks/useColorScheme.web.ts` | web | |
-| `app/screens/authenticated/TabBar.web.tsx` | web | top tab bar on wide screens |
+| `app/screens/authenticated/TabBar.web.tsx` | web | identical to `TabBar.tsx` (a bottom tab navigator); there is no top tab bar on wide screens |
 | `app/screens/authenticated/dropzone/manifest/LoadCard/CountdownTimer.web.ts` | web | |
 | `app/screens/authenticated/overview/statistics/LoadsByDay.web.tsx` | web | chart library differs |
 | `app/screens/unauthenticated/login/form/AppleButton.{android,web}.tsx` | Android, web | Apple sign-in only on iOS (stubs) |
-| `app/screens/unauthenticated/login/form/FacebookButton.web.tsx` | web | `react-facebook-login` |
 
 `Platform.OS`/`Platform.select` branches are also used inline (`grep -rn "Platform\.\(OS\|select\)" app`); several omit
 Android (BUG-078). Android layout root causes are listed in BUGS.md ("Android / mobile layout").
@@ -198,7 +203,7 @@ Android (BUG-078). Android layout root causes are listed in BUGS.md ("Android / 
   project id above.
 - `.github/workflows/publish.yml`: on push to `staging`/`main`, EAS Update and web deploy to GitHub Pages repos
   `OpenManifest/openmanifest-web-staging` / `openmanifest-web` (BUG-057; disabled in plan P0.1).
-- Google Maps keys (`GOOGLE_MAPS_*`), AppSignal key and Facebook app id come from environment variables at build time
+- Google Maps keys (`GOOGLE_MAPS_*`), and AppSignal key come from environment variables at build time
   (`app.config.ts` `extra`).
 
 ## 8. Local setup notes (pass 1, cloud VM)
@@ -299,7 +304,6 @@ Full table:
 | `expo-constants` | dep | `~57.0.21` (P3.18)| 57.0.21 | 57.0.21 | `~57.0.21` |  |
 | `expo-device` | dep | `~57.0.2` (P3.18)| 57.0.2 | 57.0.2 | `~57.0.2` |  |
 | `expo-dev-client` | dep | `~57.0.19` (P3.21) | 57.0.19 | 57.0.19 | `~57.0.19` | development builds (`eas.json` `development` profile) |
-| `expo-facebook` | dep | `12.2.0` | 12.2.0 | 12.2.0 |  |  |
 | `expo-font` | dep | `~57.0.4` (P3.18)| 57.0.4 | 57.0.4 | `~57.0.4` |  |
 | `expo-image-picker` | dep | `~57.0.20` (P3.18)| 57.0.20 | 57.0.20 | `~57.0.20` |  |
 | `expo-linear-gradient` | dep | `~57.0.2` (P3.18)| 57.0.2 | 57.0.2 | `~57.0.2` |  |
@@ -323,7 +327,6 @@ Full table:
 | `react-countdown-circle-timer` | dep | `3.2.1` (P3.13) | 3.2.1 | 3.2.1 |  | last publish 2023-03-15 |
 | `react-day-picker` | dep | `^7.4.10` | 7.4.10 | 10.0.2 |  |  |
 | `react-dom` | dep | `19.2.3` (P3.17)| 19.2.3 | 19.3.0 | `19.2.3` |  |
-| `react-facebook-login` | dep | `^4.1.1` | 4.1.1 | 4.1.1 |  | last publish 2022-06-25 |
 | `react-hook-form` | dep | `7.42.1` | 7.42.1 | 7.89.0 |  |  |
 | `react-image-lightbox` | dep | `^5.1.4` | 5.1.4 | 5.1.4 |  | **deprecated on npm**; last publish 2023-01-19 |
 | `react-native` | dep | `0.86.3` (P3.18)| 0.86.3 | 0.87.1 | `0.86.3` |  |
@@ -368,7 +371,6 @@ Full table:
 | `@testing-library/react-native` | dev | `^13` (P3.14) | 13.3.3 | 14.1.0 |  |  |
 | `@types/base-64` | dev | `1.0.0` | 1.0.0 | 1.0.2 |  |  |
 | `@types/color` | dev | `3.0.3` | 3.0.3 | 4.2.1 |  |  |
-| `@types/facebook-js-sdk` | dev | `3.3.6` | 3.3.6 | 3.3.13 |  |  |
 | `@types/gh-pages` | dev | `3.2.1` | 3.2.1 | 6.1.0 |  |  |
 | `@types/isomorphic-fetch` | dev | `0.0.36` | 0.0.36 | 0.0.39 |  |  |
 | `@types/jest` | dev | `^29.5.0` (P3.14) | 29.5.14 | 30.0.0 |  |  |
@@ -377,7 +379,6 @@ Full table:
 | `@types/rails__actioncable` | dev | `^6.1.6` (P3.14) | 6.1.11 | 8.0.3 |  |  |
 | `@types/react` | dev | `~19.2.2` (P3.16)| 19.2.18 | 19.3.0 |  |  |
 | `@types/react-calendar-heatmap` | dev | `^1.6.3` (P3.14) | 1.9.0 | 1.9.0 |  |  |
-| `@types/react-facebook-login` | dev | `4.1.5` | 4.1.5 | 4.1.11 |  |  |
 | `@types/urijs` | dev | `1.19.19` | 1.19.19 | 1.19.26 |  |  |
 | `babel-plugin-module-resolver` | dev | `5.0.0` | 5.0.0 | 5.0.3 |  |  |
 | `base-64` | dev | `1.0.0` | 1.0.0 | 1.0.0 |  | last publish 2024-04-02 |

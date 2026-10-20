@@ -15,19 +15,19 @@ interface IActivityFeedContainerProps extends ActivityQueryVariables {
 }
 
 export default function ActivityFeedContainer(props: IActivityFeedContainerProps) {
-  const { dropzone, accessLevels, levels, timeRange, onChange } = props;
+  const { operator, accessLevels, levels, timeRange, onChange } = props;
   const canViewAdminActivity = useRestriction(Permission.ViewAdminActivity);
   const canViewSystemActivity = useRestriction(Permission.ViewSystemActivity);
   const canViewUserActivity = useRestriction(Permission.ViewUserActivity);
 
   const variables: ActivityQueryVariables = React.useMemo(
     () => ({
-      dropzone,
+      operator,
       levels,
       accessLevels,
       timeRange,
     }),
-    [accessLevels, dropzone, levels, timeRange]
+    [accessLevels, operator, levels, timeRange]
   );
 
   const [getActivity, query] = useActivityDetailsLazyQuery();
@@ -79,8 +79,6 @@ export default function ActivityFeedContainer(props: IActivityFeedContainerProps
     },
     [onChange]
   );
-
-  console.debug({ accessLevels, timeRange, levels });
 
   return (
     <Card style={{ width: '100%' }}>
