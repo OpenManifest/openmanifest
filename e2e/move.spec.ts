@@ -40,9 +40,12 @@ test.describe('moving a place @move', () => {
     const target = page.getByTestId(`move-to-${to}-`);
     await expect(target).toBeVisible();
     await expect(target).toContainText('free places');
-    await press(page, target);
-
-    await expect(page.getByTestId('move-to')).toBeHidden({ timeout: 15_000 });
+    // The sheet lists every load of the day: this one can be below the fold of its list
+    await target.scrollIntoViewIfNeeded();
+    // A press that lands while the sheet is still opening is lost, as for a person, who presses again
+    await pressUntil(page, target, () =>
+      expect(page.getByTestId('move-to')).toBeHidden({ timeout: 6000 })
+    );
     await expect(page.getByTestId('slot-row').filter({ hasText: 'Pat Pilot' })).toHaveCount(0, {
       timeout: 15_000,
     });
