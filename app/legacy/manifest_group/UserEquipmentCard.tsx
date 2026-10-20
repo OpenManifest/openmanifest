@@ -11,10 +11,10 @@ import { EquipmentEssentialsFragment } from 'app/api/operations';
 import { useUserProfile } from 'app/api/crud';
 import EquipmentPicker from 'app/components/input/dropdown_select/EquipmentPicker';
 import NumberField, { NumberFieldType } from 'app/components/input/number_input/NumberField';
-import GuestsInput from 'app/forms/manifest_user/GuestsInput';
+import GuestsInput from 'app/legacy/manifest_user/GuestsInput';
 import useManifestValidator from 'app/hooks/useManifestValidator';
 import EligibilityMessages from 'app/components/EligibilityMessages';
-import { GuestValue, guestInputsOf } from 'app/forms/manifest_user/guests';
+import { GuestValue, guestInputsOf } from 'app/legacy/manifest_user/guests';
 
 interface IUserEquipmentCard {
   membershipId: string;

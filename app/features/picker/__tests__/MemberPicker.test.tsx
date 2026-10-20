@@ -2,7 +2,12 @@ import * as React from 'react';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 import MOCK_QUERY_LOADS from 'app/__tests__/manifest/__mocks__/QueryLoads.mock';
 import createMockedQuery from 'app/__tests__/manifest/__mocks__/createMockedQuery.mock';
-import { MemberPickerDocument, SlotEligibilityDocument } from 'app/api/reflection';
+import {
+  ActivityTypesDocument,
+  MemberPickerDocument,
+  SlotEligibilityDocument,
+  TicketTypesDocument,
+} from 'app/api/reflection';
 import { Permission } from 'app/api/schema.d';
 import { makeLoad } from 'app/__fixtures__/board.fixture';
 import { fireEvent, render, waitFor } from '../../../__mocks__/render';
@@ -102,6 +107,36 @@ const picker = createMockedQuery(
   } as never
 );
 
+const ticketType = (id: string, name: string, extra: Record<string, unknown> = {}) => ({
+  __typename: 'TicketType',
+  id,
+  name,
+  defaultDestination: null,
+  costCents: 2500,
+  requiresEscort: false,
+  escortCapacity: 1,
+  escortQualification: null,
+  escortCrewRole: null,
+  allowManifestingSelf: true,
+  participantLimits: {},
+  groupLimits: {},
+  minCertificationRank: null,
+  requiredQualification: null,
+  extras: [],
+  ...extra,
+});
+
+const tickets = createMockedQuery(TicketTypesDocument, { operator: '1' }, {
+  ticketTypes: [ticketType('t1', 'Fun jump'), ticketType('t2', 'Tandem', { requiresEscort: true })],
+} as never);
+
+const activities = createMockedQuery(ActivityTypesDocument, { allowedForMembershipIds: [1] }, {
+  activityTypes: [
+    { __typename: 'ActivityType', id: 'a1', name: 'Freefly' },
+    { __typename: 'ActivityType', id: 'a2', name: 'Flat' },
+  ],
+} as never);
+
 const slotEligibility = (failures: Record<string, unknown>[] = []) => ({
   request: {
     query: SlotEligibilityDocument,
@@ -125,7 +160,7 @@ async function renderPicker(onClose = jest.fn()) {
   const screen = await render(<MemberPicker load={load} open onClose={onClose} />, {
     session: authenticatedSession,
     permissions: [Permission.CreateUserSlot],
-    graphql: [picker(), slotEligibility(), MOCK_QUERY_LOADS()],
+    graphql: [picker(), tickets(), activities(), slotEligibility(), MOCK_QUERY_LOADS()],
   });
   return { screen, onClose };
 }
@@ -137,7 +172,7 @@ describe('<MemberPicker />', () => {
     const screen = await render(<MemberPicker load={load} open={false} onClose={jest.fn()} />, {
       session: authenticatedSession,
       permissions: [Permission.CreateUserSlot],
-      graphql: [picker(), slotEligibility(), MOCK_QUERY_LOADS()],
+      graphql: [picker(), tickets(), activities(), slotEligibility(), MOCK_QUERY_LOADS()],
     });
 
     expect(screen.queryByTestId('member-picker')).toBeNull();
@@ -164,9 +199,9 @@ describe('<MemberPicker />', () => {
 
     await fireEvent.press(screen.getByLabelText('Ann Ready'));
 
-    await waitFor(() => expect(screen.getByTestId('picker-defaults-ticket')).toBeTruthy());
-    expect(screen.getByText('Fun jump')).toBeTruthy();
-    expect(screen.getByText('Freefly')).toBeTruthy();
+    await waitFor(() => expect(screen.getByTestId('picker-choice-ticket')).toBeTruthy());
+    expect(screen.getAllByText(/Fun jump/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Freefly/).length).toBeGreaterThan(0);
     expect(screen.getByTestId('member-picker-credit').props.children).toMatch(
       /\$25\.00 comes off Ann Ready/
     );
@@ -187,7 +222,7 @@ describe('<MemberPicker />', () => {
 
     await fireEvent.press(screen.getByLabelText('Cy New'));
 
-    await waitFor(() => expect(screen.getByTestId('picker-defaults-none')).toBeTruthy());
+    await waitFor(() => expect(screen.getByTestId('picker-choice-ticket')).toBeTruthy());
     expect(screen.getByTestId('member-picker-add').props.accessibilityState?.disabled).toBe(true);
     expect(screen.getByTestId('picker-defaults-change')).toBeTruthy();
   });

@@ -68,8 +68,8 @@ flowchart TD
   Wizards --> ChangePw["ChangePasswordScreen"]
 ```
 
-Overlays mounted inside screens (not routes): manifest-user sheet (`app/forms/manifest_user`), manifest-group sheet
-(`app/forms/manifest_group`, mounted once by `ManifestContextProvider`), credits sheet (`app/forms/credits`),
+Overlays mounted inside screens (not routes): manifest-user sheet (`app/legacy/manifest_user`), manifest-group sheet
+(`app/legacy/manifest_group`, mounted once by `ManifestContextProvider`), credits sheet (`app/forms/credits`),
 image viewer, setup form sheets.
 
 ## 2. State and data flow (zustand + Apollo)

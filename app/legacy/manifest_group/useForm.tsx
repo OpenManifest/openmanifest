@@ -15,7 +15,7 @@ import type {
 import { useManifestGroupMutation } from 'app/api/reflection';
 import type { ActivityType, SlotUser, TicketType, Extra } from 'app/api/schema.d';
 import { useNotifications } from 'app/providers/notifications';
-import { GuestValue, guestInputsOf, guestsError } from 'app/forms/manifest_user/guests';
+import { GuestValue, guestInputsOf, guestsError } from 'app/legacy/manifest_user/guests';
 
 export type SlotUserWithEquipment = Omit<SlotUser, 'equipment' | 'guests'> & {
   /** Who rides with the jumper, on a ticket type that requires an escort */

@@ -27,7 +27,7 @@ const loadUpdatedMock = {
 };
 
 // The dialogs are replaced by hosts that show whether they are open: their own content is not under test here
-jest.mock('../../forms/manifest_group', () => {
+jest.mock('../../legacy/manifest_group', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { View } = require('react-native');
   return {
@@ -37,7 +37,7 @@ jest.mock('../../forms/manifest_group', () => {
     ),
   };
 });
-jest.mock('../../forms/manifest_user/Dialog', () => {
+jest.mock('../../legacy/manifest_user/Dialog', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { View } = require('react-native');
   return {

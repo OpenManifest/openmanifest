@@ -127,21 +127,21 @@ export async function registerNewUser(name = 'New Jumper'): Promise<string> {
 }
 
 /**
- * Makes sure the seed's "Max Manifest" has flown before, so the member picker has a last slot to fill in: a load on which
- * they had a place, landed. Does nothing when they already have one. Returns whether they have a last slot.
+ * Makes sure a member of the seed has flown before, so the member picker has a last slot to fill in: a load on which they
+ * had a place, landed. Does nothing when they already have one. Returns whether they have a last slot.
  */
-export async function giveMaxALastSlotViaApi(): Promise<boolean> {
+export async function giveLastSlotViaApi(name: string): Promise<boolean> {
   const found = await ownerCall('{ operators { edges { node { id } } } }');
   const operatorId = Number(found.json.data.operators.edges[0].node.id);
   const members = await ownerCall(
-    `{ memberships(operator: ${operatorId}, first: 5, search: "Max Manifest") { edges { node { id lastSlot { id } } } } }`
+    `{ memberships(operator: ${operatorId}, first: 5, search: "${name}") { edges { node { id lastSlot { id } } } } }`
   );
-  const max = members.json.data.memberships.edges[0]?.node;
-  if (!max) return false;
-  if (max.lastSlot) return true;
+  const member = members.json.data.memberships.edges[0]?.node;
+  if (!member) return false;
+  if (member.lastSlot) return true;
 
   const options = await ownerCall(
-    `{ ticketTypes(operator: ${operatorId}) { id } activityTypes(memberships: [${max.id}]) { id } vehicles(operator: ${operatorId}) { id } }`
+    `{ ticketTypes(operator: ${operatorId}) { id } activityTypes(memberships: [${member.id}]) { id } vehicles(operator: ${operatorId}) { id } }`
   );
   const { ticketTypes, activityTypes, vehicles } = options.json.data;
   const owner = await ownerCall('{ operators { edges { node { currentUser { id } } } } }');
@@ -152,13 +152,37 @@ export async function giveMaxALastSlotViaApi(): Promise<boolean> {
   const loadId = load.json?.data?.createLoad?.load?.id;
   if (!loadId) return false;
   const slot = await ownerCall(
-    `mutation { createSlot(input: { attributes: { load: ${loadId}, membership: ${max.id}, ticketType: ${ticketTypes[0].id}, activityType: ${activityTypes[0].id}, bodyMassKg: 80 } }) { slot { id } } }`
+    `mutation { createSlot(input: { attributes: { load: ${loadId}, membership: ${member.id}, ticketType: ${ticketTypes[0].id}, activityType: ${activityTypes[0].id}, bodyMassKg: 80 } }) { slot { id } } }`
   );
   if (!slot.json?.data?.createSlot?.slot?.id) return false;
   const landed = await ownerCall(
     `mutation { finalizeLoad(input: { id: ${Number(loadId)}, state: completed }) { load { id } } }`
   );
   return !!landed.json?.data?.finalizeLoad?.load?.id;
+}
+
+/** Max Manifest, the seed member the returning-member specs use */
+export const giveMaxALastSlotViaApi = () => giveLastSlotViaApi('Max Manifest');
+
+/**
+ * A ticket that takes guests along (a try dive: up to `capacity` guests for each escort), by name. Creates it when the
+ * operator has none of that name; returns its name.
+ */
+export async function escortTicketViaApi(name: string, capacity: number): Promise<string> {
+  const found = await ownerCall('{ operators { edges { node { id } } } }');
+  const operatorId = Number(found.json.data.operators.edges[0].node.id);
+  const existing = await ownerCall(`{ ticketTypes(operator: ${operatorId}) { name } }`);
+  if (existing.json.data.ticketTypes.some((ticket: { name: string }) => ticket.name === name))
+    return name;
+  const created = await ownerCall(
+    `mutation { createTicketType(input: { attributes: { operatorId: ${operatorId}, name: "${name}", costCents: 6000, currency: "AUD", requiresEscort: true, escortCapacity: ${capacity}, allowManifestingSelf: false } }) { ticketType { id } errors } }`
+  );
+  if (!created.json?.data?.createTicketType?.ticketType?.id) {
+    throw new Error(
+      `could not create the ticket ${name}: ${JSON.stringify(created.json).slice(0, 200)}`
+    );
+  }
+  return name;
 }
 
 /** A member of the seeded operator who is not ready to fly (no credit, no certification). Returns the name they go by. */

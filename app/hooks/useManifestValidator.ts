@@ -43,6 +43,8 @@ export default function useManifestValidator(
   const [settled, setSettled] = React.useState(input);
   const key = JSON.stringify(input);
   useDebounce(() => setSettled(input), delay, [key]);
+  // Until the debounce has passed, the answer on screen is for an earlier slot: it counts as loading
+  const pending = JSON.stringify(settled) !== key;
 
   const { data, loading } = useSlotEligibilityQuery({
     variables: {
@@ -66,12 +68,12 @@ export default function useManifestValidator(
     const failures = results.filter((result) => !result.ok);
     const blocking = failures.filter((result) => !result.bypassed);
     return {
-      loading,
+      loading: loading || pending,
       results,
       failures,
       blocking,
       expiring: results.filter((result) => result.status === 'EXPIRING'),
       canManifest: blocking.length === 0,
     };
-  }, [data, loading]);
+  }, [data, loading, pending]);
 }

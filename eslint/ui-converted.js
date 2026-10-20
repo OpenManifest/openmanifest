@@ -27,8 +27,7 @@ module.exports = {
     'app/features/load/**/__tests__/**',
     'app/features/picker/**/__tests__/**',
     'app/forms/**/__tests__/**',
-    // Rebuilt in U3.7 (the manifest forms)
-    'app/forms/manifest_group/**',
-    'app/forms/manifest_user/**',
+    // The manifest forms of the classic board: replaced by the picker (U3.7, U3.8), removed in U6.4
+    'app/legacy/**',
   ],
 };

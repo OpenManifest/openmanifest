@@ -157,6 +157,33 @@
     "free": "Nothing to pay",
     "nobody": "Nobody found",
     "more": "Show more people",
+    "destination": "Destination",
+    "destinationNone": "Choose where it goes",
+    "addGroup_one": "Add {{count}} person to {{load}}",
+    "addGroup_other": "Add {{count}} people to {{load}}",
+    "groupAdded_one": "{{count}} person has been added to {{load}}",
+    "groupAdded_other": "{{count}} people have been added to {{load}}",
+    "group": {
+      "switch": "Add a group",
+      "title_one": "A group of {{count}}",
+      "title_other": "A group of {{count}}",
+      "mass": "{{name}}'s exit weight",
+      "remove": "Take {{name}} out of the group",
+      "escort": "Tickets that take guests along are booked one escort at a time"
+    },
+    "guests": {
+      "title": "Guests of {{name}} ({{count}} of {{capacity}})",
+      "name": "Guest {{number}}: name",
+      "mass": "Guest {{number}}: exit weight",
+      "dateOfBirth": "Guest {{number}}: date of birth",
+      "add": "Add a guest",
+      "remove": "Take guest {{number}} off",
+      "problem": {
+        "name": "Every guest needs a name",
+        "mass": "Every guest needs an exit weight",
+        "dob": "Every guest needs a date of birth (YYYY-MM-DD)"
+      }
+    },
     "filter": {
       "label": "Show",
       "everyone": "Everyone",

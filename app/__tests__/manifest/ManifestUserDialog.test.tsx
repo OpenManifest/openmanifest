@@ -3,7 +3,7 @@ import { ManifestUserDocument } from 'app/api/reflection';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import MOCK_QUERY_ALLOWED_TICKET_TYPES from './__mocks__/QueryAllowedTicketTypes.mock';
 import { MOCK_QUERY_ALLOWED_ACTIVITY_TYPES } from './__mocks__/QueryAllowedActivityTypes.mock';
-import ManifestUserDialog from '../../forms/manifest_user/Dialog';
+import ManifestUserDialog from '../../legacy/manifest_user/Dialog';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);

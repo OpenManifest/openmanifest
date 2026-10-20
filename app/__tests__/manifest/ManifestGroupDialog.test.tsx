@@ -6,7 +6,7 @@ import { Permission } from 'app/api/schema.d';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import { MOCK_QUERY_ALLOWED_ACTIVITY_TYPES } from './__mocks__/QueryAllowedActivityTypes.mock';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
-import ManifestGroupDialog from '../../forms/manifest_group';
+import ManifestGroupDialog from '../../legacy/manifest_group';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 import { fullAltitude } from 'app/__fixtures__/destination.fixture';
 

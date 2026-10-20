@@ -80,7 +80,7 @@ Main flows:
 | Select dropzone | `DropzoneSelectScreen` (list of dropzones, create → `DropzoneWizardScreen`) |
 | Manifest board | `ManifestScreen` (load cards, `app/providers/manifest/provider.tsx` for date/filters), FAB: new load, manifest me |
 | Load | `LoadScreen` (slots table `app/components/slots_table/`, `ActionButton.tsx` for calls/land/cancel, drag-and-drop on web) |
-| Manifest a jumper / group | `app/forms/manifest_user/*` sheet, `app/components/dialogs/ManifestGroup/*` |
+| Manifest a jumper / group | `app/legacy/manifest_user/*` sheet (classic board; the new board uses `app/features/picker`), `app/components/dialogs/ManifestGroup/*` |
 | Credits | `app/forms/credits/*` (`createOrder`) from profile and transactions |
 | Weather | `WeatherConditionsScreen`, `WindScreen`, `JumpRunScreen` (form state in `app/forms/weather`, `WeatherFormProvider` above the dropzone stack) |
 | Setup | Configuration stack screens; forms in `app/forms/*` |
@@ -147,7 +147,7 @@ destinations, `PlacesMeter`, one `CrewRoleMenu` per crew role), `buildSections` 
 vehicle of a load with several, groups bracketed, free places as one row), `PlaceRow` / `EscortGroup` show a person or an
 escort with their guests (readiness from the `LoadEligibility` query, prepaid badge, a menu to edit or take off, swipe to take
 off on native), the actions are `LoadActions` (sticky at the bottom on a phone). `useBoardScreens()` (`screens.ts`) picks the new or the classic board and load screens
-from the `newBoard` preference. The member picker (U3.7, `app/features/picker/`): the free places of the load screen open `MemberPicker` (an `Overlay`), whose `MemberPicker` query lists the operator's memberships with `eligibility(loadId)` and `lastSlot`; `filterMembers` / `sortReadyFirst` (`members.ts`) apply the filters (Everyone, Ready, Flew today) with ready members first, selecting a row opens `DefaultsCard` (ticket, activity, destination, equipment, body mass and price from `lastSlot`, `defaultsOf`), `useManifestValidator` checks that combination with `slotEligibility`, and the footer button adds the member with `ManifestUser` (a blocked member shows the reason and a Fix action to their profile and cannot be added). "Change…" opens the classic manifest form.
+from the `newBoard` preference. The member picker (U3.7, `app/features/picker/`): the free places of the load screen open `MemberPicker` (an `Overlay`), whose `MemberPicker` query lists the operator's memberships with `eligibility(loadId)` and `lastSlot`; `filterMembers` / `sortReadyFirst` (`members.ts`) apply the filters (Everyone, Ready, Flew today) with ready members first, selecting a row opens `DefaultsCard` (ticket, activity, destination, equipment, body mass and price from `lastSlot`, `defaultsOf`), `useManifestValidator` checks that combination with `slotEligibility`, and the footer button adds the member with `ManifestUser` (a blocked member shows the reason and a Fix action to their profile and cannot be added). The ticket, the type of jump and (with the destinations module) the destination are picked in place (`ChoiceFields`, `resolveDefaults` in `choices.ts`); a ticket that `requiresEscort` asks for its guests (`GuestsEditor`, `guests.ts`: at least one, at most `escortCapacity`, a date of birth when the ticket has an age limit) and they go to `createSlot` with the escort. "Add a group" (the switch in the picker) selects several people for one ticket and type of jump (`GroupCard`: an exit weight each, `slotEligibility` for each with the shared ticket, one group number from `nextGroupNumber`) and books them with `createSlots`; escort tickets are booked one escort at a time. "Change…" opens the classic manifest form, which with the classic group form lives in `app/legacy/` (removed in U6.4).
 
 Operations: 76 named operations (41 mutations, 32 queries, 3 subscriptions: `loadCreated`, `loadUpdated`, `userUpdated`).
 Pass 1 validated all of them against the live server schema: 0 validation errors, and the committed
@@ -188,7 +188,7 @@ Metro/webpack pick `*.web.tsx`, `*.android.tsx`, `*.ios.tsx` over the base file.
 | `app/components/activity/{ActivityFeed,Feed}.web.tsx` | web | table layout |
 | `app/components/autocomplete/DropzoneUserAutocomplete.web.tsx` | web | |
 | `app/components/dialogs/ImageViewer/ImageViewer.web.tsx` | web | uses `react-image-lightbox` (deprecated) |
-| `app/components/dialogs/ManifestGroup/ManifestGroup.web.tsx`, `app/forms/manifest_user/Dialog.web.tsx`, `app/forms/credits/Credits.web.tsx`, `app/components/layout/DialogOrSheet.web.tsx` | web | dialogs instead of bottom sheets |
+| `app/components/dialogs/ManifestGroup/ManifestGroup.web.tsx`, `app/legacy/manifest_user/Dialog.web.tsx`, `app/forms/credits/Credits.web.tsx`, `app/components/layout/DialogOrSheet.web.tsx` | web | dialogs instead of bottom sheets |
 | `app/components/input/LocationPicker.web.tsx`, `app/components/map/Map.web.tsx`, `app/screens/wizards/dropzone_wizard/steps/Location.web.tsx` | web | Google Maps JS instead of `react-native-maps` (maps issue client#127, BUG-085) |
 | `app/components/input/date_picker/DatePicker.web.tsx`, `number_input/NumberField.web.tsx`, `select/Select.web.tsx`, `popover/Menu.web.tsx` | web | |
 | `app/components/input/jump_run_select/JumpRunSelect.{android,web}.tsx` | Android, web | circular slider variants |

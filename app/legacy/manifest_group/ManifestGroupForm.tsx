@@ -18,7 +18,7 @@ import {
   TicketTypeValue,
 } from './useForm';
 import { formatCents } from 'app/utils/money';
-import type { GuestValue } from 'app/forms/manifest_user/guests';
+import type { GuestValue } from 'app/legacy/manifest_user/guests';
 
 interface IUserCardProps {
   slotUser: SlotUserWithEquipment;

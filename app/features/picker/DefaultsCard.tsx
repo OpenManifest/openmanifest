@@ -11,6 +11,10 @@ export type DefaultsCardProps = {
   member: PickerMember;
   defaults: SlotDefaults;
   validation: ManifestValidation;
+  /** The ticket and activity to pick from, in place of the last slot's two lines */
+  choices?: React.ReactNode;
+  /** The ticket is not the one the member last flew: its destination is the ticket's own, not shown here */
+  ticketChanged?: boolean;
   /** Opens the full form for what the defaults do not cover */
   onChange?(): void;
   testID?: string;
@@ -24,6 +28,8 @@ export default function DefaultsCard({
   member,
   defaults,
   validation,
+  choices,
+  ticketChanged = false,
   onChange,
   testID = 'picker-defaults',
 }: DefaultsCardProps) {
@@ -32,12 +38,23 @@ export default function DefaultsCard({
   const units = useOperatorFormat((state) => state.units);
   const last = member.lastSlot;
   const lines = [
-    { key: 'ticket', icon: 'ticket-outline' as const, text: last?.ticketType?.name },
-    { key: 'activity', icon: 'tag-outline' as const, text: last?.activityType?.name },
+    {
+      key: 'ticket',
+      icon: 'ticket-outline' as const,
+      text: choices ? null : last?.ticketType?.name,
+    },
+    {
+      key: 'activity',
+      icon: 'tag-outline' as const,
+      text: choices ? null : last?.activityType?.name,
+    },
     {
       key: 'destination',
       icon: 'map-marker-outline' as const,
-      text: last?.destination ? formatDestination(last.destination, units) : null,
+      text:
+        last?.destination && !ticketChanged && !choices
+          ? formatDestination(last.destination, units)
+          : null,
     },
     {
       key: 'equipment',
@@ -63,6 +80,7 @@ export default function DefaultsCard({
         borderTopColor: theme.colour.border,
       }}
     >
+      {choices}
       {known ? (
         <View style={{ gap: theme.space.xs }}>
           {lines.map(({ key, icon, text }) => (
@@ -74,7 +92,7 @@ export default function DefaultsCard({
             </Row>
           ))}
         </View>
-      ) : (
+      ) : choices ? null : (
         <Text tone="muted" testID={`${testID}-none`}>
           {t('common:picker.noDefaults', { name: member.user.name })}
         </Text>

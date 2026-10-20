@@ -20,7 +20,7 @@ import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 jest.setTimeout(30000);
 
 // The group dialog is replaced by a host that shows whether it is open: its own content is not under test here
-jest.mock('../../forms/manifest_group', () => {
+jest.mock('../../legacy/manifest_group', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { View: MockView } = require('react-native');
   return {
