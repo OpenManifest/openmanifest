@@ -1,45 +1,39 @@
 import * as React from 'react';
-import { StyleSheet, ViewProps } from 'react-native';
-import { Paragraph, Title, useTheme } from 'react-native-paper';
-import { View } from './Themed';
+import { View, type ViewProps } from 'react-native';
+import { Text, useTheme } from 'app/ui';
 
 interface INoResults extends ViewProps {
   title: string;
   subtitle: string;
-  color?: string;
 }
-export default function NoResults({ title, color, subtitle, ...rest }: INoResults) {
-  const theme = useTheme();
+
+/** What a list shows when it is empty: a heading and a line under it, centred in the space of the list */
+export default function NoResults({ title, subtitle, style, ...rest }: INoResults) {
+  const { space } = useTheme();
+
   return (
-    <View {...rest} style={StyleSheet.flatten([styles.empty, rest?.style])}>
-      <Title style={{ color: color || theme.colors.onSurface }}>{title}</Title>
-      <Paragraph style={{ color: color || theme.colors.onSurface, textAlign: 'center' }}>
-        {subtitle}
-      </Paragraph>
+    <View
+      {...rest}
+      style={[
+        {
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          gap: space.xs,
+          padding: space.lg,
+        },
+        style,
+      ]}
+    >
+      <Text variant="title" role="heading" aria-level={2} align="center">
+        {title}
+      </Text>
+      {subtitle ? (
+        <Text tone="muted" align="center">
+          {subtitle}
+        </Text>
+      ) : null}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 8,
-    display: 'flex',
-    backgroundColor: 'transparent',
-  },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-  },
-  empty: {
-    flex: 1,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    backgroundColor: 'transparent',
-    height: '100%',
-  },
-});
