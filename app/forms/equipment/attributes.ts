@@ -1,7 +1,7 @@
-import { format } from 'date-fns';
 import type { Quantity } from 'app/i18n/units';
 import { fromSi, unitOf, UNIT_SYMBOLS, type UnitSystem } from 'app/i18n/units';
-import { parseQuantity } from 'app/i18n/format';
+import { DateTime } from 'luxon';
+import { formatDate, parseQuantity } from 'app/i18n/format';
 
 /**
  * What an item of a kind of equipment records is described by the kind's attribute schema (EquipmentKind.attributeSchema,
@@ -86,7 +86,7 @@ export function fromInputText(
   }
 }
 
-/** The value as it is shown in a list: "190 ft²", "Sport", "2026-03-04" */
+/** The value as it is shown in a list: "190 ft²", "Sport", "4 Mar 2026" (a date is never all digits) */
 export function formatAttribute(
   spec: AttributeSpec,
   value: AttributeValues[string],
@@ -100,8 +100,8 @@ export function formatAttribute(
   }
   if (spec.type === 'enum') return humanize(String(value));
   if (spec.type === 'date') {
-    const date = new Date(String(value));
-    return Number.isNaN(date.getTime()) ? String(value) : format(date, 'yyyy/MM/dd');
+    // A day as written (yyyy-MM-dd), read on the operator's calendar so it does not move a day across zones
+    return DateTime.fromISO(String(value)).isValid ? formatDate(String(value)) : String(value);
   }
   return String(value);
 }

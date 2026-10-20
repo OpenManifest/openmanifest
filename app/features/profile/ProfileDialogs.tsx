@@ -1,17 +1,18 @@
 import * as React from 'react';
 import noop from 'lodash/noop';
-import type { MembershipProfileFragment, EquipmentEssentialsFragment } from 'app/api/operations';
+import type { EquipmentEssentialsFragment, MembershipDetailsFragment } from 'app/api/operations';
+import type { Permission } from 'app/api/schema.d';
 import MembershipDialog from 'app/forms/membership';
 import EquipmentDialog from 'app/forms/equipment';
 import UserDialog from 'app/forms/user';
 import createUseDialog from 'app/providers/hooks/useDialog';
 
 type ProfileDialogs = {
-  /** Edit the member's name, contact details and licence */
+  /** Edit the member's name, contact details, body mass and certification level */
   editUser(): void;
-  /** Edit the member's access level and membership expiry */
+  /** Edit the member's role, membership expiry and acting permissions */
   editMembership(): void;
-  /** Edit a equipment, or add one when none is given */
+  /** Edit an item of equipment, or add one when none is given */
   editEquipment(equipment?: EquipmentEssentialsFragment): void;
 };
 
@@ -25,11 +26,18 @@ const useUserDialog = createUseDialog<object>();
 const useMembershipDialog = createUseDialog<object>();
 const useEquipmentDialog = createUseDialog<{ equipment?: EquipmentEssentialsFragment }>();
 
-/** Mounts the sheets a profile can open once, so any part of the profile can open them. */
-export function ProfileDialogsProvider(
-  props: React.PropsWithChildren<{ membership?: MembershipProfileFragment | null }>
-) {
-  const { membership, children } = props;
+export type ProfileDialogsProviderProps = React.PropsWithChildren<{
+  membership?: (MembershipDetailsFragment & { permissions?: Permission[] | null }) | null;
+  /** Something was saved: the profile asks again for what the server works out (eligibility) */
+  onChanged?(): void;
+}>;
+
+/** Mounts the forms a profile can open once, so any section of the profile can open them */
+export function ProfileDialogsProvider({
+  membership,
+  onChanged,
+  children,
+}: ProfileDialogsProviderProps) {
   const userDialog = useUserDialog();
   const membershipDialog = useMembershipDialog();
   const equipmentDialog = useEquipmentDialog();
@@ -54,13 +62,21 @@ export function ProfileDialogsProvider(
         equipment={equipmentDialog.state?.equipment}
         userId={Number(membership?.user?.id)}
         onClose={equipmentDialog.close}
+        onSuccess={onChanged}
       />
       <MembershipDialog
         open={membershipDialog.visible}
         membership={membership}
+        permissions={membership?.permissions}
         onClose={membershipDialog.close}
+        onSuccess={() => onChanged?.()}
       />
-      <UserDialog open={userDialog.visible} membership={membership} onClose={userDialog.close} />
+      <UserDialog
+        open={userDialog.visible}
+        membership={membership}
+        onClose={userDialog.close}
+        onSuccess={onChanged}
+      />
     </ProfileDialogsContext.Provider>
   );
 }

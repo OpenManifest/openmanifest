@@ -269,6 +269,129 @@
       "clear": "Clear the filters"
     }
   },
+  "profile": {
+    "photo": "Change photo",
+    "photoFailed": "The photo could not be saved",
+    "nickname": "Goes by {{nickname}}",
+    "bodyMass": "Body mass {{mass}}",
+    "ready": {
+      "self": "Ready to fly?",
+      "other": "Is {{name}} ready?"
+    },
+    "action": {
+      "edit": "Edit details",
+      "more": "More actions for {{name}}",
+      "membership": "Membership and access",
+      "wizard": "Guided profile setup",
+      "remove": "Remove from the operator"
+    },
+    "loads": {
+      "empty": "No {{loads}} yet",
+      "emptySelf": "Book a place on a {{load}} from the board and it shows here.",
+      "emptyOther": "Their {{loads}} show here once they fly.",
+      "board": "Go to the board",
+      "more": "Show older"
+    },
+    "funds": {
+      "title": "Funds",
+      "credit": "Credit",
+      "add": "Add credit",
+      "wallet": "Open wallet",
+      "transactions": "Transactions"
+    },
+    "certifications": {
+      "title": "{{certifications}} and qualifications",
+      "update": "Update",
+      "updateLabel": "Update {{certifications}} and qualifications",
+      "empty": "No {{certifications}} yet",
+      "emptyBody": "Add the certification body and level with the guided setup.",
+      "number": "No. {{number}}",
+      "verified": "Verified {{date}}",
+      "notVerified": "Not verified",
+      "here": "Counts here",
+      "noExpiry": "Does not expire",
+      "expires": {
+        "current": "Expires {{date}}",
+        "expiring": "Expires {{date}}",
+        "expired": "Expired {{date}}"
+      },
+      "state": {
+        "current": "Current",
+        "expiring": "Expiring",
+        "expired": "Expired"
+      }
+    },
+    "equipment": {
+      "add": "Add {{equipment}}",
+      "empty": "No {{equipment}} yet",
+      "emptyAdd": "Add it here so the manifest can check it before a jump.",
+      "edit": "Edit",
+      "editLabel": "Edit {{name}}",
+      "inspect": "Inspect",
+      "inspectLabel": "Inspect {{name}}",
+      "viewInspection": "Inspection",
+      "viewInspectionLabel": "Inspection of {{name}}",
+      "inspected": "Inspected",
+      "uninspected": "Not inspected",
+      "inspectedBy": "By {{name}}",
+      "notInspected": "Nobody yet",
+      "unknown": "Not set",
+      "overdue": "Overdue",
+      "noPackingCard": "No packing card yet",
+      "packingCard": "Packing card",
+      "uploadCard": "Upload packing card",
+      "cardUploaded": "Packing card uploaded",
+      "cardFailed": "The packing card could not be uploaded"
+    },
+    "membership": {
+      "title": "Membership",
+      "edit": "Edit",
+      "editLabel": "Edit membership and access",
+      "role": "Role",
+      "noRole": "No role",
+      "acting": "Can act as",
+      "never": "Not a member",
+      "expiresLabel": {
+        "none": "Membership",
+        "active": "Runs until",
+        "expiring": "Runs out",
+        "expired": "Ran out"
+      },
+      "state": {
+        "none": "None",
+        "active": "Active",
+        "expiring": "Expiring",
+        "expired": "Expired"
+      }
+    },
+    "acting": {
+      "title": "Acting permissions",
+      "none": "Nothing else",
+      "actAsPilot": "Pilot",
+      "actAsLoadMaster": "Load master",
+      "actAsGCA": "Ground control",
+      "actAsDutyOfficer": "Duty officer",
+      "actAsEquipmentInspector": "{{equipment}} inspector"
+    },
+    "missing": {
+      "title": "This member is not here",
+      "body": "They may have left the operator, or the link is wrong."
+    },
+    "remove": {
+      "title": "Remove {{name}}?",
+      "body": "{{name}} leaves the operator: they are no longer listed and cannot be manifested. Their history stays.",
+      "keep": "Keep",
+      "confirm": "Remove",
+      "done": "{{name}} has been removed"
+    },
+    "inspection": {
+      "missing": "This {{equipment}} is not here",
+      "readOnly": "Only an inspector can fill in this {{inspection}}; you can read it.",
+      "noForm": "The operator has no inspection form for this kind of equipment.",
+      "ok": "This {{equipment}} is fine to use",
+      "save": "Mark as inspected"
+    }
+  },
   "wallet": {
     "balance": "Your balance",
     "held": "Held for booked jumps",

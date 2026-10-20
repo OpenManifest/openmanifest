@@ -4921,6 +4921,90 @@ export type PeopleQueryHookResult = ReturnType<typeof usePeopleQuery>;
 export type PeopleLazyQueryHookResult = ReturnType<typeof usePeopleLazyQuery>;
 export type PeopleSuspenseQueryHookResult = ReturnType<typeof usePeopleSuspenseQuery>;
 export type PeopleQueryResult = Apollo.QueryResult<Operation.PeopleQuery, Operation.PeopleQueryVariables>;
+export const ProfileDocument = gql`
+    query Profile($id: ID!, $slots: Int) {
+  membership(id: $id) {
+    ...membershipDetails
+    permissions
+    eligibility {
+      ready
+      rules {
+        ...eligibilityResultEssentials
+      }
+    }
+    userCertification {
+      id
+    }
+    equipmentInspections {
+      ...equipmentInspectionEssentials
+    }
+    slots(first: $slots) {
+      edges {
+        node {
+          id
+          costCents
+          load {
+            id
+            loadNumber
+            loadDate
+            state
+          }
+          activityType {
+            id
+            name
+          }
+          ticketType {
+            id
+            name
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+      }
+    }
+  }
+}
+    ${MembershipDetailsFragmentDoc}
+${EligibilityResultEssentialsFragmentDoc}
+${EquipmentInspectionEssentialsFragmentDoc}`;
+
+/**
+ * __useProfileQuery__
+ *
+ * To run a query within a React component, call `useProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProfileQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      slots: // value for 'slots'
+ *   },
+ * });
+ */
+export function useProfileQuery(baseOptions: Apollo.QueryHookOptions<Operation.ProfileQuery, Operation.ProfileQueryVariables> & ({ variables: Operation.ProfileQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.ProfileQuery, Operation.ProfileQueryVariables>(ProfileDocument, options);
+      }
+export function useProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.ProfileQuery, Operation.ProfileQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.ProfileQuery, Operation.ProfileQueryVariables>(ProfileDocument, options);
+        }
+// @ts-ignore
+export function useProfileSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.ProfileQuery, Operation.ProfileQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.ProfileQuery, Operation.ProfileQueryVariables>;
+export function useProfileSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.ProfileQuery, Operation.ProfileQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.ProfileQuery | undefined, Operation.ProfileQueryVariables>;
+export function useProfileSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.ProfileQuery, Operation.ProfileQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.ProfileQuery, Operation.ProfileQueryVariables>(ProfileDocument, options);
+        }
+export type ProfileQueryHookResult = ReturnType<typeof useProfileQuery>;
+export type ProfileLazyQueryHookResult = ReturnType<typeof useProfileLazyQuery>;
+export type ProfileSuspenseQueryHookResult = ReturnType<typeof useProfileSuspenseQuery>;
+export type ProfileQueryResult = Apollo.QueryResult<Operation.ProfileQuery, Operation.ProfileQueryVariables>;
 export const QualificationsDocument = gql`
     query Qualifications($certificationBodyId: Int) {
   qualifications(certificationBodyId: $certificationBodyId) {

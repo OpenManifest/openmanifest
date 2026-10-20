@@ -1,11 +1,9 @@
-import { useApolloClient } from '@apollo/client';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Overlay, Row, Stack, Subheader } from 'app/ui';
-import PermissionBadges from 'app/screens/authenticated/user/profile/UserInfo/PermissionBadges';
-import { Membership, Permission } from 'app/api/schema.d';
-import type { MembershipEssentialsFragment, MembershipProfileFragment } from 'app/api/operations';
-import { MembershipProfileFragmentDoc } from 'app/api/reflection';
+import type { Permission } from 'app/api/schema.d';
+import type { MembershipEssentialsFragment } from 'app/api/operations';
+import ActingPermissions from 'app/features/profile/ActingPermissions';
 import MembershipForm from './MembershipForm';
 import useMembershipForm from './useForm';
 
@@ -13,14 +11,15 @@ export interface IMembershipDialogProps {
   open?: boolean;
   /** The member being edited */
   membership?: MembershipEssentialsFragment | null;
+  /** The permissions the member holds: with them, the acting permissions (pilot, load master, …) are switched here */
+  permissions?: readonly (Permission | string)[] | null;
   onClose(): void;
   onSuccess?(user: MembershipEssentialsFragment): void;
 }
 
 export default function MembershipDialog(props: IMembershipDialogProps) {
-  const { open, membership, onClose, onSuccess } = props;
+  const { open, membership, permissions, onClose, onSuccess } = props;
   const { t } = useTranslation('common');
-  const client = useApolloClient();
   const { control, loading, onSubmit } = useMembershipForm({
     membership,
     onSuccess: (user) => {
@@ -28,14 +27,6 @@ export default function MembershipDialog(props: IMembershipDialogProps) {
       onClose();
     },
   });
-
-  const cachedUser = membership
-    ? client.readFragment<MembershipProfileFragment>({
-        fragment: MembershipProfileFragmentDoc,
-        fragmentName: 'membershipProfile',
-        id: client.cache.identify(membership),
-      })
-    : null;
 
   return (
     <Overlay
@@ -52,16 +43,13 @@ export default function MembershipDialog(props: IMembershipDialogProps) {
     >
       <Stack gap="md">
         <MembershipForm {...{ control }} />
-        {cachedUser ? (
+        {membership?.id && permissions ? (
           <>
             <Subheader>{t('forms.membership.actingPermissions')}</Subheader>
-            <PermissionBadges
-              membership={cachedUser as Membership}
-              permissions={
-                (cachedUser as Membership).permissions?.filter((name) =>
-                  /^actAs/.test(name)
-                ) as Permission[]
-              }
+            <ActingPermissions
+              membershipId={membership.id}
+              permissions={permissions}
+              testID="membership-acting"
             />
           </>
         ) : null}

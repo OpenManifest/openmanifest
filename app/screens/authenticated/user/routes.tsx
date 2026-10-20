@@ -9,11 +9,11 @@ import ScreenHeader from 'app/navigation/ScreenHeader';
 import guarded, { guardedUnlessOwn } from 'app/navigation/AccessGuard';
 import { Permission } from 'app/api/schema.d';
 import EquipmentInspectionScreen, {
-  EquipmentInspectionRoute,
-} from './equipment_inspection/EquipmentInspectionScreen';
-import ProfileScreen, { ProfileRoute } from './profile/ProfileScreen';
+  type EquipmentInspectionRoute,
+} from 'app/features/profile/InspectionScreen';
+import ProfileScreen, { type ProfileRoute } from 'app/features/profile/ProfileScreen';
+import EquipmentScreen, { type EquipmentRoute } from 'app/features/profile/EquipmentScreen';
 import OrdersScreen, { OrdersRoute } from './orders/OrdersScreen';
-import EquipmentScreen, { EquipmentRoute } from './equipment/EquipmentScreen';
 import OrderReceiptScreen, { OrderReceiptRoute } from './order_receipt/OrderScreen';
 
 export type UserRoutes = EquipmentRoute &

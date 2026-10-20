@@ -28,6 +28,5 @@
   "/login": ["color-contrast", "label"],
   "/setup": ["color-contrast", "label"],
   "/signup": ["color-contrast", "label"],
-  "load": ["button-name", "nested-interactive", "role-img-alt"],
-  "profile": ["button-name", "nested-interactive", "role-img-alt"]
+  "load": ["button-name", "nested-interactive", "role-img-alt"]
 }

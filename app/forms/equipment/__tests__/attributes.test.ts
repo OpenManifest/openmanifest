@@ -66,7 +66,7 @@ describe('equipment attributes', () => {
     it('writes a quantity in the operator’s unit, an enum and a date readable', () => {
       expect(formatAttribute(schema.canopy_size_m2, 15.7935, { area: 'ft2' })).toBe('170 ft²');
       expect(formatAttribute(schema.rig_type, 'tandem')).toBe('Tandem');
-      expect(formatAttribute(schema.bought_on, '2026-03-04')).toBe('2026/03/04');
+      expect(formatAttribute(schema.bought_on, '2026-03-04')).toBe('4 Mar 2026');
       expect(formatAttribute(schema.colour, null)).toBe('-');
     });
 

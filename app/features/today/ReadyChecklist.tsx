@@ -9,6 +9,10 @@ export type ReadyChecklistProps = {
   rules: readonly EligibilityResultEssentialsFragment[];
   /** Puts the rule right (opens where it can be done); a row with something wrong or running out offers it */
   onFix?(rule: EligibilityResultEssentialsFragment): void;
+  /** Whether a rule has a fix for the person looking (default: every rule has); a rule without one shows no button */
+  canFix?(rule: EligibilityResultEssentialsFragment): boolean;
+  /** The heading (default "Ready to fly?") */
+  title?: string;
   testID?: string;
 };
 
@@ -19,6 +23,8 @@ export type ReadyChecklistProps = {
 export default function ReadyChecklist({
   rules,
   onFix,
+  canFix,
+  title,
   testID = 'today-ready',
 }: ReadyChecklistProps) {
   const { t } = useTranslation('common');
@@ -40,7 +46,7 @@ export default function ReadyChecklist({
     >
       <Row justify="between" align="center" gap="md">
         <Text variant="title" role="heading" aria-level={2}>
-          {t('today.ready.title')}
+          {title ?? t('today.ready.title')}
         </Text>
         <StatusBadge
           status={blocked ? 'blocked' : 'ok'}
@@ -75,7 +81,7 @@ export default function ReadyChecklist({
                 </Text>
               ) : null}
             </View>
-            {status !== 'ok' && onFix ? (
+            {status !== 'ok' && onFix && (canFix?.(rule) ?? true) ? (
               <Button
                 variant="secondary"
                 label={t('today.ready.fix')}
