@@ -29,8 +29,31 @@ report() {
   adb exec-out screencap -p > "$out/screen.png" || true
 }
 
+# The screen as text: the screenshot shrunk to 40 x 80 and drawn in ten shades, darkest as @
+ascii() {
+  { convert "$1" -resize 40x80! -colorspace Gray -depth 8 -compress none pgm:- 2>/dev/null ||
+    magick "$1" -resize 40x80! -colorspace Gray -depth 8 -compress none pgm:- 2>/dev/null; } |
+    tr '\n' ' ' | awk '{ w = $2; chars = " .:-=+*#%@"
+      for (i = 5; i <= NF; i++) { c = substr(chars, int((255 - $i) * 9 / 255) + 1, 1); line = line c
+        if ((i - 4) % w == 0) { print "|" line "|"; line = "" } } }' || true
+}
+
+# Starts the app once and says what is on its screen, before any flow touches it
+probe() {
+  adb shell am start -W -n com.dangertechnologies.openmanifest/.MainActivity > /dev/null || true
+  sleep 25
+  echo "--- probe: the views of the app ---"
+  adb shell dumpsys activity top | sed -n '/View Hierarchy/,$p' | grep -E "React|openmanifest" | cut -c1-170 | head -70 || true
+  adb exec-out screencap -p > "$out/probe.png" || true
+  echo "--- probe: the screen ---"
+  ascii "$out/probe.png"
+  adb shell am force-stop com.dangertechnologies.openmanifest || true
+}
+
 adb install -r "$apk"
 adb shell pm list packages | grep -q com.dangertechnologies.openmanifest || { echo "the app is not installed"; exit 1; }
+adb logcat -c
+probe
 adb logcat -c
 
 run() {
