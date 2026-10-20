@@ -7,18 +7,19 @@ import { useUserProfileContext } from 'app/api/crud';
 import { WizardFormStep } from 'app/hooks/forms/useWizard';
 import { useMemo } from 'app/hooks/react';
 import * as yup from 'yup';
+import { useTranslation } from 'react-i18next';
+import i18n from 'app/i18n';
 
 export const validation = yup.object({
   name: yup
     .string()
-    .required('Please enter your full name, including surname')
+    .required(() => i18n.t('forms.user_wizard.pleaseEnterYourFullNameIncluding'))
     .test({
       name: 'fullName',
       test: (value) => {
-        console.debug('VALIDATING NAME', value);
         return /\w+\s\w+/.test(value || '');
       },
-      message: 'Please enter your full name, including surname',
+      message: i18n.t('forms.user_wizard.pleaseEnterYourFullNameIncluding'),
     }),
 });
 
@@ -27,16 +28,16 @@ type StepFields = {
 };
 
 export function useStep(): WizardFormStep<StepFields> {
-  const { dropzoneUser } = useUserProfileContext();
+  const { membership } = useUserProfileContext();
 
   return useMemo(
     () => ({
       defaultValues: {
-        name: dropzoneUser?.user?.name || '',
+        name: membership?.user?.name || '',
       },
       validation,
     }),
-    [dropzoneUser?.user?.name]
+    [membership?.user?.name]
   );
 }
 export interface IRealNameStepProps extends IWizardStepProps {
@@ -44,18 +45,17 @@ export interface IRealNameStepProps extends IWizardStepProps {
 }
 
 function RealName(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   const { control } = useFormContext<StepFields>();
 
   return (
-    <Step {...props} title="Real name">
+    <Step {...props} title={t('forms.user_wizard.realName')}>
       <Fields>
         <FormTextField
           {...{ control }}
           defaultValue=""
           name="name"
-          mode="flat"
-          label="Name"
-          style={{ backgroundColor: 'transparent', fontSize: 32, minHeight: 70 }}
+          label={t('forms.fields.name')}
         />
       </Fields>
     </Step>
