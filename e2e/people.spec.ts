@@ -24,12 +24,17 @@ async function searchFor(page: Page, name: string) {
   await expect(rowOf(page, name)).toHaveCount(1, { timeout: 15_000 });
 }
 
-/** Chooses an option of a select (the web one is a listbox in a portal) */
+/**
+ * Chooses an option of a select with the keyboard, as the other specs do (the web one is a listbox in a portal, which a
+ * pointer cannot reach under an open dialog): Enter opens it, typing the option's words moves to it, Enter chooses it
+ */
 async function choose(page: Page, select: Locator, option: string) {
   await select.focus();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('listbox')).toBeVisible();
-  await page.getByRole('option', { name: option, exact: true }).click();
+  await page.keyboard.type(option);
+  await expect(page.getByRole('option', { name: option, exact: true })).toBeFocused();
+  await page.keyboard.press('Enter');
   await expect(page.getByRole('listbox')).toBeHidden();
   await expect(select).toContainText(option);
 }
@@ -97,11 +102,11 @@ test.describe('people as the manifest desk @people', () => {
     await searchFor(page, blocked as string);
     const row = rowOf(page, blocked as string);
     await expect(row).toContainText('Blocked');
-    await press(page, page.getByRole('radio', { name: 'Ready' }));
+    await page.getByRole('radio', { name: 'Ready', exact: true }).click();
     await expect(page.getByTestId('people-empty')).toBeVisible();
-    await press(page, page.getByRole('radio', { name: 'Blocked' }));
+    await page.getByRole('radio', { name: 'Blocked', exact: true }).click();
     await expect(row).toBeVisible();
-    await press(page, page.getByRole('radio', { name: 'All' }));
+    await page.getByRole('radio', { name: 'All', exact: true }).click();
 
     // One role at a time
     await searchFor(page, 'Stu Student');
@@ -218,8 +223,10 @@ test.describe('people as the owner @people', () => {
       expect(dialog).toBeVisible({ timeout: 5000 })
     );
     await expect(page.getByRole('dialog', { name: 'Pre-register user' })).toHaveCount(1);
-    await dialog.getByRole('textbox', { name: 'Name' }).fill(name);
-    await dialog.getByRole('textbox', { name: 'Email' }).fill(`walkin+${stamp}@example.com`);
+    await dialog.getByRole('textbox', { name: 'Name', exact: true }).fill(name);
+    await dialog
+      .getByRole('textbox', { name: 'Email', exact: true })
+      .fill(`walkin+${stamp}@example.com`);
     // The certification body is chosen for you when there is one; the first level of it is picked
     const body = dialog.getByRole('combobox').first();
     if (!(await body.innerText()).includes('APF')) await choose(page, body, 'APF');
