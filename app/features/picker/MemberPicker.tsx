@@ -46,12 +46,12 @@ const PAGE = 50;
  * Adds a member to a load in three steps: search, pick (their last slot is filled in), confirm. Whether each member can
  * be added shows before the tap, with the reason and a way to fix it. "Change…" opens the full form.
  */
-export default function MemberPicker({
-  load,
-  open,
-  onClose,
-  testID = 'member-picker',
-}: MemberPickerProps) {
+export default function MemberPicker({ open, ...props }: MemberPickerProps) {
+  // Closed, it asks for nothing: the members are fetched when the picker opens
+  return open ? <OpenPicker {...props} /> : null;
+}
+
+function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPickerProps, 'open'>) {
   const { t } = useTranslation(['common', 'terms']);
   const theme = useTheme();
   const notify = useNotifications();

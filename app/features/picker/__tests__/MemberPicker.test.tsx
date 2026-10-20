@@ -133,6 +133,16 @@ async function renderPicker(onClose = jest.fn()) {
 describe('<MemberPicker />', () => {
   afterEach(() => jest.restoreAllMocks());
 
+  it('shows nothing while it is closed', async () => {
+    const screen = await render(<MemberPicker load={load} open={false} onClose={jest.fn()} />, {
+      session: authenticatedSession,
+      permissions: [Permission.CreateUserSlot],
+      graphql: [picker(), slotEligibility(), MOCK_QUERY_LOADS()],
+    });
+
+    expect(screen.queryByTestId('member-picker')).toBeNull();
+  });
+
   it('lists the members, the ones who can be added first, with the reason for the others', async () => {
     const { screen } = await renderPicker();
 
