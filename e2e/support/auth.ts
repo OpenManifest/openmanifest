@@ -16,7 +16,8 @@ export async function selectOperator(page: Page) {
   const row = page.getByText('Dropzone', { exact: true }).first();
   await row.waitFor({ timeout: 30_000 });
   await press(page, row);
-  await page.waitForURL(/\/manifest$/, { timeout: 30_000 });
+  // The manifest desk lands on the board, everybody else on their day
+  await page.waitForURL(/\/(manifest|today)$/, { timeout: 30_000 });
 }
 
 /** Logs in through the UI from the login screen and opens the operator's manifest board */

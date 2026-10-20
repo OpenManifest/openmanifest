@@ -7,6 +7,7 @@ import {
   joinBlockedMemberViaApi,
 } from './support/api';
 import { expectAccessible } from './support/a11y';
+import { claim } from './support/claims';
 import { press } from './support/press';
 import { expect, gotoRoute, test } from './support/test';
 
@@ -58,6 +59,7 @@ async function openPicker(page: Page, name: string) {
 // The member picker (U3.7): the free places of a load open it; the `newBoard` preference is on for every spec's browser
 test.describe('the member picker @picker', () => {
   test('adds a returning member in three interactions', async ({ page }) => {
+    await claim('Max Manifest');
     expect(await giveMaxALastSlotViaApi(), 'could not give Max a last slot').toBe(true);
     const free = await openPicker(page, `Picker ${test.info().project.name} ${Date.now()}`);
     await expect(free).toBeVisible({ timeout: 20_000 });
@@ -102,6 +104,7 @@ test.describe('the member picker @picker', () => {
 
   test('adds a group of four in six interactions', async ({ page }) => {
     const names = ['Pat Pilot', 'Stu Student', 'Olive Owner', 'Max Manifest'];
+    await claim(...names);
     for (const name of names)
       expect(await giveLastSlotViaApi(name), `${name} has no last slot`).toBe(true);
     const free = await openPicker(page, `Group ${test.info().project.name} ${Date.now()}`);
@@ -148,6 +151,7 @@ test.describe('the member picker @picker', () => {
     },
   ]) {
     test(title, async ({ page }) => {
+      await claim(escort);
       await escortTicketViaApi('Try dive', 3);
       expect(await giveLastSlotViaApi(escort), `${escort} has no last slot`).toBe(true);
       const free = await openPicker(page, `Escort ${test.info().project.name} ${Date.now()}`);

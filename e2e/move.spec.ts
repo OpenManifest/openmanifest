@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { callLoadViaApi, createLoadViaApi, manifestMemberViaApi } from './support/api';
+import { claim } from './support/claims';
 import { press } from './support/press';
 import { expect, gotoRoute, test } from './support/test';
 
@@ -8,6 +9,7 @@ const widthOf = (page: Page) => page.viewportSize()?.width ?? 0;
 
 /** Two loads of the day, with Pat Pilot on the first */
 async function twoLoads(name: string) {
+  await claim('Pat Pilot');
   const from = await createLoadViaApi(`${name} from ${Date.now()}`);
   const to = await createLoadViaApi(`${name} to ${Date.now()}`);
   expect(from && to, 'could not create the loads through the API').toBeTruthy();

@@ -21,7 +21,7 @@ async function loginAsOwner() {
 }
 
 /** Two workers signing in as the owner at the same moment can invalidate each other's token: ask again after a pause */
-async function ownerCall(query: string, variables?: object) {
+export async function ownerCall(query: string, variables?: object) {
   for (let attempt = 0; ; attempt++) {
     const auth = await loginAsOwner();
     const result = await call(query, auth, variables);

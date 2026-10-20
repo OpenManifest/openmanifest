@@ -1,5 +1,6 @@
 import { expect, test as base } from '@playwright/test';
 import { deleteCreatedLoads } from './api';
+import { releaseClaims } from './claims';
 import { authFile, type Role } from './roles';
 
 type Options = { role: Role };
@@ -18,7 +19,12 @@ export const test = base.extend<Options & { pageErrors: string[]; cleanup: void 
   cleanup: [
     async ({}, use) => {
       await use();
-      await deleteCreatedLoads();
+      // The members a spec claimed are free again once its loads (and so their places) are gone
+      try {
+        await deleteCreatedLoads();
+      } finally {
+        releaseClaims();
+      }
     },
     { auto: true },
   ],
