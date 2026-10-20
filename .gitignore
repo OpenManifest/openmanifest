@@ -83,3 +83,4 @@ dist/
 /e2e/.results/
 /e2e/.report/
 /ui-debt.json
+/e2e/maestro-report/

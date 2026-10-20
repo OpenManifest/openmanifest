@@ -4,7 +4,7 @@
 set -euo pipefail
 
 apk="$1"
-out="e2e/.maestro"
+out="e2e/maestro-report"
 mkdir -p "$out"
 
 # What the app logged when a flow failed: kept as an artifact, and the crash printed here

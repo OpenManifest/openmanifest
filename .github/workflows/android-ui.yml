@@ -76,6 +76,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android-ui-report
-          path: e2e/.maestro
+          path: e2e/maestro-report
           if-no-files-found: ignore
           retention-days: 14
