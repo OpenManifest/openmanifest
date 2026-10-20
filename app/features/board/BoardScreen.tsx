@@ -15,6 +15,7 @@ import { useManifestContext, useOperatorContext } from 'app/providers';
 import useRestriction from 'app/hooks/useRestriction';
 import { moduleEnabled } from 'app/utils/modules';
 import ConditionsStrip from './ConditionsStrip';
+import LoadActions from './LoadActions';
 import LoadCard from './LoadCard';
 import { COLUMN_WIDTH, MAX_CONTENT_WIDTH, layoutOf, splitLoads } from './layout';
 import { useBoard } from './useBoard';
@@ -84,6 +85,7 @@ export default function BoardScreen() {
       highlighted={board.isChanged(load.id)}
       selected={layout === 'split' && selected?.id === load.id}
       onPress={onPress}
+      action={<LoadActions load={load} crewRoles={crewRoles} />}
     />
   );
 

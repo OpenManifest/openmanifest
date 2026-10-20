@@ -489,6 +489,27 @@
     "create": "Create {{load}}",
     "completedStrip": "Finished ({{count}})",
     "selectLoad": "Select a {{load}} to see who is on it",
-    "list": "{{loads}} of the day"
+    "list": "{{loads}} of the day",
+    "actions": {
+      "call": "Make a {{call}}",
+      "depart": "Depart",
+      "complete": "Land",
+      "cancelCall": "Cancel the {{call}}",
+      "cancelLoad": "Cancel {{load}}",
+      "reopen": "Re-open {{load}}",
+      "more": "More actions",
+      "callIn": "{{call}} in",
+      "custom": "Custom…",
+      "minutes": "Minutes from now",
+      "minutesUnit": "min",
+      "keep": "Keep it",
+      "crewMissing": "Needs {{roles}} before it can leave",
+      "conflict": "This load was changed by someone else",
+      "failed": "Something went wrong",
+      "confirm": {
+        "cancelLoad": "Cancel {{load}} #{{number}}? Its places are released.",
+        "complete": "{{load}} #{{number}} has not departed. Land it anyway?"
+      }
+    }
   }
 }

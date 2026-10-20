@@ -46,13 +46,13 @@ export async function deleteCreatedLoads() {
 }
 
 /** Creates a load through the API as the seed's owner, the way a second device would. Returns its id. */
-export async function createLoadViaApi(): Promise<string | undefined> {
+export async function createLoadViaApi(name = `Live ${Date.now()}`): Promise<string | undefined> {
   const operators = await ownerCall('{ operators { edges { node { id currentUser { id } } } } }');
   const operator = operators.json.data.operators.edges[0].node;
   const vehicles = await ownerCall(`{ vehicles(operator: ${operator.id}) { id } }`);
   const member = operator.currentUser.id;
   const created = await ownerCall(
-    `mutation { createLoad(input: { attributes: { name: "Live ${Date.now()}", vehicle: ${vehicles.json.data.vehicles[0].id}, maxSlots: 10, pilot: ${member}, gca: ${member} } }) { load { id } errors } }`
+    `mutation { createLoad(input: { attributes: { name: "${name}", vehicle: ${vehicles.json.data.vehicles[0].id}, maxSlots: 10, pilot: ${member}, gca: ${member} } }) { load { id } errors } }`
   );
   const id = created.json?.data?.createLoad?.load?.id;
   if (id) createdLoads.push(id);
