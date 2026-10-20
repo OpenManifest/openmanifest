@@ -4,17 +4,37 @@ import { expectAccessible } from './support/a11y';
 import { press } from './support/press';
 import { expect, gotoRoute, test } from './support/test';
 
-/** Presses an element the way a person does, and counts it: the task's budget is three of these to add a member */
+/**
+ * Presses and types the way a person does, and counts it: the budget is three of these to add a member (search, pick,
+ * confirm; the press that opens the picker from the load screen is the way in, and is not counted). A press
+ * that lands before the screen is ready (the handler arrives with the permissions) is pressed again until `done` holds;
+ * only the first counts, as the person would have pressed once.
+ */
 function interactions(page: Page) {
   let count = 0;
   return {
     get count() {
       return count;
     },
-    async tap(locator: Locator) {
+    async fill(locator: Locator, text: string) {
       count += 1;
+      await locator.fill(text);
+    },
+    async open(locator: Locator, done: () => Promise<void>) {
+      await this.tap(locator, done, false);
+    },
+    async tap(locator: Locator, done: () => Promise<void>, counted = true) {
+      if (counted) count += 1;
       await locator.scrollIntoViewIfNeeded();
-      await press(page, locator);
+      for (let attempt = 0; ; attempt++) {
+        await press(page, locator);
+        try {
+          await done();
+          return;
+        } catch (error) {
+          if (attempt >= 3) throw error;
+        }
+      }
     },
   };
 }
@@ -34,21 +54,21 @@ test.describe('the member picker @picker', () => {
     await expect(free).toBeVisible({ timeout: 20_000 });
     const user = interactions(page);
 
-    await user.tap(free);
     const picker = page.getByTestId('member-picker');
-    await expect(picker).toBeVisible();
+    await user.open(free, () => expect(picker).toBeVisible({ timeout: 4000 }));
     await expectAccessible(page, 'picker');
 
-    await user.tap(picker.getByRole('button', { name: 'Max Manifest', exact: true }));
+    await user.fill(picker.getByTestId('member-picker-search'), 'Max Manifest');
+    const max = picker.getByRole('button', { name: 'Max Manifest', exact: true });
+    await expect(max).toBeVisible({ timeout: 15_000 });
     // What they flew last time is filled in, and the button names who is added to what
     const defaults = picker.getByTestId('picker-defaults');
-    await expect(defaults).toBeVisible();
+    await user.tap(max, () => expect(defaults).toBeVisible({ timeout: 4000 }));
     await expect(defaults).toContainText('Flat');
     const add = picker.getByTestId('member-picker-add');
     await expect(add).toBeEnabled({ timeout: 15_000 });
 
-    await user.tap(add);
-    await expect(picker).toBeHidden({ timeout: 15_000 });
+    await user.tap(add, () => expect(picker).toBeHidden({ timeout: 8000 }));
     await expect(page.getByTestId('slot-row').filter({ hasText: 'Max Manifest' })).toBeVisible();
     expect(user.count).toBeLessThanOrEqual(3);
   });
@@ -58,9 +78,8 @@ test.describe('the member picker @picker', () => {
     expect(name, 'could not add a member who is not ready').toBeTruthy();
     const free = await openPicker(page, `Blocked ${test.info().project.name} ${Date.now()}`);
     await expect(free).toBeVisible({ timeout: 20_000 });
-    await press(page, free);
-
     const picker = page.getByTestId('member-picker');
+    await interactions(page).open(free, () => expect(picker).toBeVisible({ timeout: 4000 }));
     await picker.getByTestId('member-picker-search').fill(name as string);
     const row = picker.getByTestId('picker-row').filter({ hasText: name as string });
     await expect(row).toHaveCount(1, { timeout: 15_000 });

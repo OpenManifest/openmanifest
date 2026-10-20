@@ -34,7 +34,7 @@ export default function FloatingActionArea(props: IFloatingActionAreaProps) {
       ]}
     >
       {/* The keyboard height includes the bottom inset, which the padding above already accounts for */}
-      <KeyboardStickyView offset={{ closed: 0, opened: bottomInset }}>
+      <KeyboardStickyView offset={{ closed: 0, opened: bottomInset }} style={styles.sticky}>
         {children}
       </KeyboardStickyView>
     </View>
@@ -42,6 +42,7 @@ export default function FloatingActionArea(props: IFloatingActionAreaProps) {
 }
 
 const styles = StyleSheet.create({
+  sticky: { maxWidth: '100%' },
   container: {
     position: 'absolute',
     // Both sides, so a wide button (large text) is held inside the window; the area passes touches through

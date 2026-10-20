@@ -69,6 +69,7 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
   const [term, setTerm] = React.useState('');
   const [filter, setFilter] = React.useState<PickerFilter>('everyone');
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
+  const [size, setSize] = React.useState(PAGE);
   const [adding, setAdding] = React.useState(false);
   useDebounce(() => setTerm(search.trim()), 250, [search]);
 
@@ -77,7 +78,7 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
       operatorId: operator?.id as string,
       loadId: load.id,
       search: term || undefined,
-      first: PAGE,
+      first: size,
     },
     skip: !operator?.id,
     fetchPolicy: 'cache-and-network',
@@ -237,6 +238,14 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
           ) : (
             <EmptyState icon="account-search-outline" title={t('common:picker.nobody')} />
           )}
+          {data?.memberships?.pageInfo?.hasNextPage ? (
+            <Button
+              variant="tertiary"
+              testID={`${testID}-more`}
+              label={t('common:picker.more')}
+              onPress={() => setSize((current) => current + PAGE)}
+            />
+          ) : null}
         </ScrollView>
       </View>
     </Overlay>

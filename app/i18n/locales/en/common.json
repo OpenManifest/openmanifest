@@ -156,6 +156,7 @@
     "creditShort": "{{price}} comes off {{name}}'s credit, which is {{left}} short",
     "free": "Nothing to pay",
     "nobody": "Nobody found",
+    "more": "Show more people",
     "filter": {
       "label": "Show",
       "everyone": "Everyone",

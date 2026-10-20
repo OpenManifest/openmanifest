@@ -94,7 +94,8 @@ test.describe('manifest board @manifest', () => {
     for (const route of [BOARD, loadPath]) {
       await gotoRoute(page, route);
       await page.waitForTimeout(3500);
-      await scaleText(page, 2);
+      // The text200 projects scale the text in `expectLayout`: once is 200%, twice would be 400%
+      if (test.info().project.metadata.variant !== 'text200') await scaleText(page, 2);
       await page.waitForTimeout(500);
       await expectLayout(page, `${route} at 200% text`);
       await expectNoClippedRows(page, `${route} at 200% text`);
