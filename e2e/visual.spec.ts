@@ -1,3 +1,4 @@
+import { openFirstLoad } from './support/board';
 import type { Page } from '@playwright/test';
 import { openAccount } from './support/account';
 import { expect, gotoRoute, test } from './support/test';
@@ -43,11 +44,7 @@ test.describe('visual baselines @visual', () => {
 
   test('load', async ({ page }) => {
     await gotoRoute(page, '/manifest');
-    await page
-      .getByText(/Load #1\b/)
-      .first()
-      .click({ force: true });
-    await page.waitForURL(/\/loads\/\d+/);
+    await openFirstLoad(page);
     await page.waitForTimeout(3000);
     await expect(page).toHaveScreenshot('load.png', { ...OPTIONS, mask: dynamicText(page) });
   });

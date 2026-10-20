@@ -7,11 +7,11 @@ import ScreenContainer from 'app/components/layout/ScreenContainer';
 import FloatingActionArea from 'app/components/layout/FloatingActionArea';
 import useBreakpoint from 'app/components/layout/useBreakpoint';
 import DateBar from 'app/screens/authenticated/manifest/manifest/DateBar';
-import LoadCardLarge from 'app/screens/authenticated/manifest/manifest/LoadCard/Large/Card';
+import { LoadView } from 'app/features/load/LoadScreen';
 import { useCrewRolesQuery } from 'app/api/reflection';
 import type { LoadDetailsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
-import { useManifestContext, useOperatorContext } from 'app/providers';
+import { LoadContextProvider, useManifestContext, useOperatorContext } from 'app/providers';
 import useRestriction from 'app/hooks/useRestriction';
 import { moduleEnabled } from 'app/utils/modules';
 import ConditionsStrip from './ConditionsStrip';
@@ -34,7 +34,7 @@ export default function BoardScreen() {
   const layout = layoutOf(useBreakpoint());
   const board = useBoard();
   const {
-    operator: { operator, currentUser, called, refetch: refetchOperator },
+    operator: { operator, called, refetch: refetchOperator },
   } = useOperatorContext();
   const isFocused = useIsFocused();
   const { dialogs } = useManifestContext();
@@ -171,29 +171,28 @@ export default function BoardScreen() {
             <RefreshControl refreshing={board.refreshing} onRefresh={() => board.refetch()} />
           }
         />
-        <ScrollView style={{ flex: 1 }} testID="board-selected">
+        <View style={{ flex: 1 }} testID="board-selected">
           {selected ? (
-            <LoadCardLarge
-              controlsVisible={false}
-              id={selected.id}
-              onSlotPress={(slot) =>
-                dialogs.manifestUser.open({
-                  load: selected,
-                  slot: { ...(slot || {}), membership: slot ? slot.membership : currentUser },
-                })
-              }
-              onSlotGroupPress={(slots) => dialogs.manifestGroup.open({ load: selected, slots })}
-              onManifest={() =>
-                dialogs.manifestUser.open({ load: selected, slot: { membership: currentUser } })
-              }
-              onManifestGroup={() => dialogs.manifestGroup.open({ load: selected })}
-            />
+            <View style={{ alignItems: 'flex-end', paddingBottom: theme.space.sm }}>
+              <Button
+                variant="tertiary"
+                icon="open-in-new"
+                testID="board-open-load"
+                label={t('common:board.openLoad', { load: loadTerm.toLowerCase() })}
+                onPress={() => openLoad(selected)}
+              />
+            </View>
+          ) : null}
+          {selected ? (
+            <LoadContextProvider key={selected.id} id={selected.id}>
+              <LoadView embedded />
+            </LoadContextProvider>
           ) : (
             <Text tone="muted">
               {t('common:board.selectLoad', { load: loadTerm.toLowerCase() })}
             </Text>
           )}
-        </ScrollView>
+        </View>
       </View>
     );
   } else {

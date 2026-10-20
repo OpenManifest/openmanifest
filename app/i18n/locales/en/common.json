@@ -510,7 +510,8 @@
         "cancelLoad": "Cancel {{load}} #{{number}}? Its places are released.",
         "complete": "{{load}} #{{number}} has not departed. Land it anyway?"
       }
-    }
+    },
+    "openLoad": "Open {{load}}"
   },
   "load": {
     "edit": "Edit",

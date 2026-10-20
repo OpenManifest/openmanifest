@@ -37,6 +37,7 @@ export default function CrewChip({ role, label, member, testID }: CrewChipProps)
     <View
       testID={testID}
       accessible
+      role="group"
       aria-label={spoken}
       style={{
         flexDirection: 'row',

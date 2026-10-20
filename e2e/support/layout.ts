@@ -29,7 +29,8 @@ export async function expectLastSlotRowReachable(page: Page) {
   const rows = page.locator('[data-testid="slot-row"]');
   expect(await rows.count(), 'no slot rows').toBeGreaterThan(0);
   await page.evaluate(() => {
-    const list = document.querySelector('[data-testid="slots"]');
+    // The last one: on a tablet the board stays mounted below the load screen with a list of its own
+    const list = [...document.querySelectorAll('[data-testid="slots"]')].pop();
     if (list) list.scrollTop = list.scrollHeight;
   });
   await page.waitForTimeout(1000);

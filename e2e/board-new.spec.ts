@@ -74,7 +74,7 @@ test.describe('the new board @board', () => {
     await gotoRoute(page, `${BOARD}?industry=generic`);
     await expect(page.getByTestId('load-card').first()).toBeVisible();
 
-    const text = (await page.getByTestId('board').innerText()).toLowerCase();
+    const text = (await page.getByTestId('loads').innerText()).toLowerCase();
     for (const word of ['jump', 'skydiv', 'canopy']) {
       expect(text, `the generic board says "${word}"`).not.toContain(word);
     }

@@ -36,8 +36,13 @@ export async function expectAccessible(page: Page, name: string) {
 
   const known = readBaseline()[name] ?? [];
   const fresh = blocking.filter((id) => !known.includes(id));
+  // Where each new one is, so a failure says which element to look at
+  const where = violations
+    .filter((v) => fresh.includes(v.id))
+    .map((v) => `${v.id}: ${v.nodes.map((node) => node.html.slice(0, 200)).join(' | ')}`)
+    .join('\n');
   expect(
     fresh,
-    `${name}: new serious or critical accessibility violations (baseline: ${known.join(', ') || 'none'})`
+    `${name}: new serious or critical accessibility violations (baseline: ${known.join(', ') || 'none'})\n${where}`
   ).toEqual([]);
 }

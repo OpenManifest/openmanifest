@@ -27,14 +27,22 @@ import PlaceRow from './PlaceRow';
 import VehicleHeader from './VehicleHeader';
 import { buildSections, type SectionItem } from './sections';
 
+const EmbeddedContainer = ({ children }: React.PropsWithChildren<{ edges?: string[] }>) => (
+  <View style={{ flex: 1 }}>{children}</View>
+);
+
 export type LoadScreenRoute = { LoadScreen: { loadId: string } };
 
-function Content() {
+/**
+ * The load: its call card, crew, places and actions. `embedded` is for the pane of the board on a tablet: it does not name
+ * the screen, and its actions stay in the card.
+ */
+export function LoadView({ embedded = false }: { embedded?: boolean }) {
   const { t } = useTranslation(['common', 'terms']);
   const theme = useTheme();
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const compact = useBreakpoint() === 'compact';
+  const compact = useBreakpoint() === 'compact' && !embedded;
   const notify = useNotifications();
   const openUser = useOpenUser();
   const {
@@ -77,7 +85,7 @@ function Content() {
   );
 
   React.useEffect(() => {
-    if (load?.loadNumber) {
+    if (!embedded && load?.loadNumber) {
       navigation.setOptions({
         title: t('common:loadNumber', {
           load: t('terms:load', { count: 1 }),
@@ -85,7 +93,7 @@ function Content() {
         }),
       });
     }
-  }, [load?.loadNumber, navigation, t]);
+  }, [embedded, load?.loadNumber, navigation, t]);
 
   const loadTerm = String(t('terms:load', { count: 1 })).toLowerCase();
   const items = React.useMemo(
@@ -174,12 +182,14 @@ function Content() {
     }
   };
 
+  const Container = embedded ? EmbeddedContainer : ScreenContainer;
+
   if (!load && !loading) {
     return <EmptyState icon="alert-circle-outline" title={t('common:load.notFound')} />;
   }
 
   return (
-    <ScreenContainer edges={['bottom']}>
+    <Container edges={['bottom']}>
       {load ? (
         <FlatList
           testID="slots"
@@ -226,7 +236,7 @@ function Content() {
           {actions}
         </View>
       ) : null}
-    </ScreenContainer>
+    </Container>
   );
 }
 
@@ -234,7 +244,7 @@ export default function LoadScreen() {
   const route = useRoute<RouteProp<LoadScreenRoute>>();
   return (
     <LoadContextProvider id={route?.params?.loadId}>
-      <Content />
+      <LoadView />
     </LoadContextProvider>
   );
 }

@@ -1,3 +1,4 @@
+import { openFirstLoad } from './support/board';
 import { createLoadViaApi } from './support/api';
 import { expectAccessible } from './support/a11y';
 import {
@@ -54,11 +55,7 @@ test.describe('manifest board @manifest', () => {
 
   test('a load opens, lays out and shows its last slot', async ({ page }) => {
     await gotoRoute(page, BOARD);
-    await page
-      .getByText(/Load #1\b/)
-      .first()
-      .click({ force: true });
-    await page.waitForURL(/\/loads\/\d+/);
+    await openFirstLoad(page);
     await page.waitForTimeout(3000);
     await expectLayout(page, 'load');
     await expectLastSlotRowReachable(page);
@@ -68,13 +65,11 @@ test.describe('manifest board @manifest', () => {
   // The manifest context mounts the group sheet once: open it from the free places of the load
   test('the group sheet opens from the load screen', async ({ page }) => {
     await gotoRoute(page, BOARD);
-    await page
-      .getByText(/Load #1\b/)
-      .first()
-      .click({ force: true });
-    await page.waitForURL(/\/loads\/\d+/);
+    await openFirstLoad(page);
     await page.waitForTimeout(3000);
-    await press(page, page.getByTestId('free-places').first());
+    const free = page.getByTestId('free-places').last();
+    await free.scrollIntoViewIfNeeded();
+    await press(page, free);
     await expect(page.getByTestId('manifest-group-sheet')).toBeVisible();
   });
 
@@ -82,11 +77,7 @@ test.describe('manifest board @manifest', () => {
   test('deep links open the board and a load', async ({ page }) => {
     await gotoRoute(page, BOARD);
     await expect(page.getByText(/Load #1\b/).first()).toBeVisible();
-    await page
-      .getByText(/Load #1\b/)
-      .first()
-      .click({ force: true });
-    await page.waitForURL(/\/loads\/\d+/);
+    await openFirstLoad(page);
     const loadPath = new URL(page.url()).pathname;
 
     await gotoRoute(page, loadPath);
@@ -97,11 +88,7 @@ test.describe('manifest board @manifest', () => {
   // A large font size: the board and a load still lay out, and no row clips its text
   test('board and load at 200% text', async ({ page }) => {
     await gotoRoute(page, BOARD);
-    await page
-      .getByText(/Load #1\b/)
-      .first()
-      .click({ force: true });
-    await page.waitForURL(/\/loads\/\d+/);
+    await openFirstLoad(page);
     const loadPath = new URL(page.url()).pathname;
 
     for (const route of [BOARD, loadPath]) {

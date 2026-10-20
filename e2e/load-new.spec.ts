@@ -1,4 +1,6 @@
+import { openFirstLoad } from './support/board';
 import { createLoadViaApi, createTwoVehicleLoadViaApi } from './support/api';
+import { loginViaUi } from './support/auth';
 import { expectAccessible } from './support/a11y';
 import { expectLayout } from './support/layout';
 import { expect, gotoRoute, test } from './support/test';
@@ -7,12 +9,13 @@ import { expect, gotoRoute, test } from './support/test';
 test.describe('the new load screen @load', () => {
   test('shows the call card and the first places without scrolling', async ({ page }) => {
     await gotoRoute(page, '/manifest');
-    await page.getByTestId('load-card-open').first().click({ force: true });
-    await page.waitForURL(/\/loads\/\d+/);
-    await expect(page.getByTestId('load-header')).toBeVisible({ timeout: 20_000 });
+    await openFirstLoad(page);
+    // On a tablet the board stays mounted under the load screen with its own pane: the screen on top is the last
+    const header = page.getByTestId('load-header').last();
+    await expect(header).toBeVisible({ timeout: 20_000 });
 
-    await expect(page.getByTestId('load-header')).toBeInViewport();
-    await expect(page.getByTestId('slot-row').first()).toBeInViewport();
+    await expect(header).toBeInViewport();
+    await expect(page.getByTestId('slot-row').last()).toBeInViewport();
     await expectLayout(page, 'load');
     await expectAccessible(page, 'load');
   });
@@ -28,16 +31,21 @@ test.describe('the new load screen @load', () => {
     else await expect(page.getByTestId('load-sticky-actions')).toHaveCount(0);
   });
 
-  test('a load with two vehicles has a heading and its own free places for each', async ({
-    page,
-  }) => {
-    const id = await createTwoVehicleLoadViaApi(`Two ${test.info().project.name} ${Date.now()}`);
-    expect(id, 'could not create a load with two vehicles').toBeTruthy();
-    await gotoRoute(page, `/loads/${id}?industry=generic`);
+  test.describe('as the user of a generic operator', () => {
+    test.use({ storageState: { cookies: [], origins: [] } });
 
-    await expect(page.getByTestId('vehicle-header')).toHaveCount(2, { timeout: 20_000 });
-    await expect(page.getByTestId('free-places')).toHaveCount(2);
-    await expectLayout(page, 'load');
-    await expectAccessible(page, 'load');
+    test('a load with two vehicles has a heading and its own free places for each', async ({
+      page,
+    }) => {
+      const made = await createTwoVehicleLoadViaApi(`Two ${test.info().project.name}`);
+      expect(made, 'could not create a generic operator with a load of two vehicles').toBeTruthy();
+      await loginViaUi(page, made?.email as string);
+      await gotoRoute(page, `/loads/${made?.id}?industry=generic`);
+
+      await expect(page.getByTestId('vehicle-header')).toHaveCount(2, { timeout: 20_000 });
+      await expect(page.getByTestId('free-places')).toHaveCount(2);
+      await expectLayout(page, 'load');
+      await expectAccessible(page, 'load');
+    });
   });
 });

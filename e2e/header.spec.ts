@@ -1,3 +1,4 @@
+import { openFirstLoad } from './support/board';
 import { expectAccessible } from './support/a11y';
 import { expect, gotoRoute, test } from './support/test';
 
@@ -9,11 +10,7 @@ test.describe('screen header @nav @manifest', () => {
     await expect(page.getByRole('heading', { name: 'Board', level: 1 })).toBeVisible();
     await expect(page).toHaveTitle(/^Board · Demo Dropzone$/);
 
-    await page
-      .getByText(/Load #1\b/)
-      .first()
-      .click({ force: true });
-    await page.waitForURL(/\/loads\/\d+/);
+    await openFirstLoad(page);
 
     await expect(page.getByRole('heading', { name: /^Load #\d+$/, level: 1 })).toBeVisible();
     await expect(page).toHaveTitle(/^Load #\d+ · Demo Dropzone$/);
