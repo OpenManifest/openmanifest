@@ -4,28 +4,31 @@ import { FAB, DataTable, Switch } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 import { Permission } from 'app/api/schema.d';
 
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import FormColumn from 'app/components/layout/FormColumn';
 import FloatingActionArea from 'app/components/layout/FloatingActionArea';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
 import SwipeActions from 'app/components/layout/SwipeActions';
 import useRestriction from 'app/hooks/useRestriction';
 import { useTickets } from 'app/api/crud';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { TicketTypeEssentialsFragment } from 'app/api/operations';
 import { useNotifications } from 'app/providers/notifications';
 import { useAppTheme } from 'app/theme';
 import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 import { formatCents } from 'app/utils/money';
+import useTerms from 'app/i18n/useTerms';
+import { formatDestination } from 'app/i18n/format';
 
 export default function TicketTypesScreen() {
+  const term = useTerms();
   const { theme } = useAppTheme();
   const notify = useNotifications();
   const {
-    dropzone: { dropzone },
+    operator: { operator },
     dialogs,
-  } = useDropzoneContext();
+  } = useOperatorContext();
   const { ticketTypes, loading, refetch, archiveTicketType, updateTicketType } = useTickets({
-    dropzone: dropzone?.id,
+    operator: operator?.id,
   });
 
   const canCreateTicketTypes = useRestriction(Permission.CreateTicketType);
@@ -63,7 +66,7 @@ export default function TicketTypesScreen() {
   );
   return (
     <ScreenContainer edges={['bottom']}>
-      <ScrollableScreen
+      <FormColumn
         hasFab
         style={styles.container}
         contentContainerStyle={[styles.content, { backgroundColor: theme.colors.surface }]}
@@ -74,7 +77,7 @@ export default function TicketTypesScreen() {
           <DataTable.Header>
             <DataTable.Title>Name</DataTable.Title>
             <DataTable.Title numeric>Cost</DataTable.Title>
-            <DataTable.Title numeric>Altitude</DataTable.Title>
+            <DataTable.Title numeric>{term('destination')}</DataTable.Title>
             <DataTable.Title numeric>Public</DataTable.Title>
           </DataTable.Header>
 
@@ -95,7 +98,9 @@ export default function TicketTypesScreen() {
                 >
                   <DataTable.Cell>{ticketType.name}</DataTable.Cell>
                   <DataTable.Cell numeric>{formatCents(ticketType.costCents)}</DataTable.Cell>
-                  <DataTable.Cell numeric>{ticketType.altitude}</DataTable.Cell>
+                  <DataTable.Cell numeric>
+                    {formatDestination(ticketType.defaultDestination)}
+                  </DataTable.Cell>
                   <DataTable.Cell numeric>
                     <View pointerEvents="box-none">
                       <Switch
@@ -109,7 +114,7 @@ export default function TicketTypesScreen() {
             </View>
           ))}
         </DataTable>
-      </ScrollableScreen>
+      </FormColumn>
       <FloatingActionArea>
         <FAB
           labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}

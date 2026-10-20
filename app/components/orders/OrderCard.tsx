@@ -3,11 +3,11 @@ import { Caption, Card, List, useTheme } from 'react-native-paper';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
-  DropzoneEssentialsFragment,
-  DropzoneUserEssentialsFragment,
+  OperatorEssentialsFragment,
+  MembershipEssentialsFragment,
   OrderEssentialsFragment,
 } from 'app/api/operations';
-import { DropzoneUser } from 'app/api/schema.d';
+import { Membership } from 'app/api/schema.d';
 import { successColor } from 'app/constants/Colors';
 import UserAvatar from 'app/components/UserAvatar';
 import { DateTime } from 'luxon';
@@ -15,27 +15,25 @@ import { formatCents } from 'app/utils/money';
 
 interface IOrder {
   order: OrderEssentialsFragment;
-  dropzoneUser?: DropzoneUserEssentialsFragment | null;
+  membership?: MembershipEssentialsFragment | null;
   showAvatar?: boolean;
   onPress?(): void;
 }
 
 export default function OrderCard(props: IOrder) {
-  const { order, dropzoneUser, showAvatar, onPress } = props;
+  const { order, membership, showAvatar, onPress } = props;
   const theme = useTheme();
   const isSelfBuyer =
-    order.buyer?.__typename === 'DropzoneUser' &&
-    (order.buyer as DropzoneUser)?.id === dropzoneUser?.id;
+    order.buyer?.__typename === 'Membership' && (order.buyer as Membership)?.id === membership?.id;
   const icon =
     // @ts-ignore
-    isSelfBuyer === dropzoneUser?.id ? 'cash-minus' : 'cash-plus';
+    isSelfBuyer === membership?.id ? 'cash-minus' : 'cash-plus';
 
   const right = React.useCallback(
     () => (
       <Text
         style={{
           fontSize: 16,
-          fontFamily: 'Roboto_400Regular',
           fontWeight: '400',
           textAlign: 'center',
           alignSelf: 'center',
@@ -56,13 +54,13 @@ export default function OrderCard(props: IOrder) {
             style={{ alignSelf: 'center', marginHorizontal: 12 }}
             size={60}
             name={
-              (order?.buyer as DropzoneUserEssentialsFragment)?.user?.name ||
-              (order?.buyer as DropzoneEssentialsFragment).name ||
+              (order?.buyer as MembershipEssentialsFragment)?.user?.name ||
+              (order?.buyer as OperatorEssentialsFragment).name ||
               ''
             }
             image={
-              (order?.buyer as DropzoneUserEssentialsFragment).user?.image ||
-              (order?.buyer as DropzoneEssentialsFragment).banner ||
+              (order?.buyer as MembershipEssentialsFragment).user?.image ||
+              (order?.buyer as OperatorEssentialsFragment).banner ||
               undefined
             }
           />
@@ -72,8 +70,8 @@ export default function OrderCard(props: IOrder) {
               order.buyer &&
               '__typename' in order.buyer &&
               // @ts-ignore
-              order.buyer.__typename === 'DropzoneUser' &&
-              (order.buyer as DropzoneUserEssentialsFragment)?.id === dropzoneUser?.id
+              order.buyer.__typename === 'Membership' &&
+              (order.buyer as MembershipEssentialsFragment)?.id === membership?.id
                 ? '#FF1414'
                 : successColor
             }
@@ -84,7 +82,7 @@ export default function OrderCard(props: IOrder) {
         )}
       </View>
     ),
-    [dropzoneUser?.id, icon, order.buyer, showAvatar]
+    [membership?.id, icon, order.buyer, showAvatar]
   );
   return (
     <TouchableOpacity onPress={onPress}>
@@ -95,6 +93,9 @@ export default function OrderCard(props: IOrder) {
             paddingRight: 4,
             paddingTop: 2,
             marginBottom: 0,
+            // Paper's caption is the text colour at 54 %: too pale on the card (WCAG 1.4.3)
+            color: theme.colors.onSurface,
+            opacity: 0.8,
           }}
         >
           {DateTime.fromISO(order?.createdAt).toLocaleString(DateTime.DATETIME_SHORT)}
@@ -102,13 +103,13 @@ export default function OrderCard(props: IOrder) {
         <Card.Content style={styles.orderContent}>
           <List.Item
             title={
-              (order?.buyer as DropzoneUser)?.user?.name ||
-              (order?.buyer as DropzoneEssentialsFragment)?.name
+              (order?.buyer as Membership)?.user?.name ||
+              (order?.buyer as OperatorEssentialsFragment)?.name
             }
             style={{ width: '100%' }}
             titleStyle={styles.orderTitle}
             description={order.title || null}
-            descriptionStyle={styles.orderDescription}
+            descriptionStyle={[styles.orderDescription, { color: theme.colors.onSurface }]}
             {...{ right, left }}
           />
         </Card.Content>

@@ -1,54 +1,79 @@
-import { useDropzoneContext } from 'app/providers/dropzone/context';
 import * as React from 'react';
-import * as yup from 'yup';
-import { ValidationError } from 'yup';
+import useDebounce from 'react-use/lib/useDebounce';
+import { useSlotEligibilityQuery } from 'app/api/reflection';
+import type { EligibilityResultEssentialsFragment } from 'app/api/operations';
+import type { GuestInput } from 'app/api/schema.d';
 
-const schema = yup.object().shape({
-  hasLicense: yup.boolean().isTrue('You need to select a license on your user profile'),
-  hasMembership: yup.boolean().isTrue('Your membership is out of date'),
-  hasRigInspection: yup.boolean().isTrue('Your rig needs to be inspected before you can manifest'),
-  hasReserveInDate: yup.boolean().isTrue('Your rig needs a reserve repack'),
-  hasExitWeight: yup.boolean().isTrue('You need to set your exit weight on your profile'),
-});
+/** What the server needs to say whether somebody can be manifested: the same arguments as `slotEligibility` */
+export interface ManifestValidatorInput {
+  loadId?: string | null;
+  membershipId?: string | null;
+  ticketTypeId?: string | null;
+  activityTypeId?: string | null;
+  extraIds?: string[];
+  equipmentIds?: string[];
+  loadVehicleId?: string | null;
+  groupNumber?: number | null;
+  bodyMassKg?: number | null;
+  guests?: GuestInput[];
+}
 
-export default function useManifestValidator() {
-  const {
-    dropzone: { currentUser, dropzone },
-  } = useDropzoneContext();
+export interface ManifestValidation {
+  loading: boolean;
+  results: EligibilityResultEssentialsFragment[];
+  /** Rules that fail */
+  failures: EligibilityResultEssentialsFragment[];
+  /** Failures nobody may let through: the slot cannot be manifested until they are fixed */
+  blocking: EligibilityResultEssentialsFragment[];
+  /** Rules that pass but run out within 14 days */
+  expiring: EligibilityResultEssentialsFragment[];
+  canManifest: boolean;
+}
 
-  const canManifest = React.useCallback(
-    async function CheckManifestRequirements() {
-      try {
-        await schema.validate(
-          {
-            hasLicense: currentUser?.hasLicense || !dropzone?.settings?.requireLicense,
-            hasMembership: currentUser?.hasMembership || !dropzone?.settings?.requireMembership,
-            hasRigInspection:
-              currentUser?.hasRigInspection || !dropzone?.settings?.requireRigInspection,
-            hasReserveInDate:
-              currentUser?.hasReserveInDate || !dropzone?.settings?.requireReserveInDate,
-          },
-          { abortEarly: true }
-        );
-        return true;
-      } catch (err) {
-        if (err instanceof ValidationError) {
-          throw err;
-        }
-        return false;
-      }
+const NONE: EligibilityResultEssentialsFragment[] = [];
+
+/**
+ * Asks the server (the only place the rules live) whether the slot being put together could be manifested, a moment
+ * after the last change. Nothing is asked until there is a load, a member and a ticket.
+ */
+export default function useManifestValidator(
+  input: ManifestValidatorInput,
+  delay = 400
+): ManifestValidation {
+  const [settled, setSettled] = React.useState(input);
+  const key = JSON.stringify(input);
+  useDebounce(() => setSettled(input), delay, [key]);
+  // Until the debounce has passed, the answer on screen is for an earlier slot: it counts as loading
+  const pending = JSON.stringify(settled) !== key;
+
+  const { data, loading } = useSlotEligibilityQuery({
+    variables: {
+      loadId: settled.loadId as string,
+      membershipId: settled.membershipId,
+      ticketTypeId: settled.ticketTypeId as string,
+      activityTypeId: settled.activityTypeId,
+      extraIds: settled.extraIds,
+      equipmentIds: settled.equipmentIds,
+      loadVehicleId: settled.loadVehicleId,
+      groupNumber: settled.groupNumber,
+      bodyMassKg: settled.bodyMassKg,
+      guests: settled.guests,
     },
-    [
-      currentUser?.hasMembership,
-      currentUser?.hasRigInspection,
-      currentUser?.hasLicense,
-      dropzone?.settings?.requireLicense,
-      dropzone?.settings?.requireMembership,
-      dropzone?.settings?.requireRigInspection,
-      currentUser?.hasReserveInDate,
-      dropzone?.settings?.requireReserveInDate,
-    ]
-  );
+    skip: !settled.loadId || !settled.membershipId || !settled.ticketTypeId,
+    fetchPolicy: 'network-only',
+  });
 
-  return { canManifest };
+  return React.useMemo(() => {
+    const results = data?.slotEligibility ?? NONE;
+    const failures = results.filter((result) => !result.ok);
+    const blocking = failures.filter((result) => !result.bypassed);
+    return {
+      loading: loading || pending,
+      results,
+      failures,
+      blocking,
+      expiring: results.filter((result) => result.status === 'EXPIRING'),
+      canManifest: blocking.length === 0,
+    };
+  }, [data, loading, pending]);
 }
