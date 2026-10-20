@@ -5,12 +5,13 @@ import { Text, View } from 'react-native';
 import color from 'color';
 import { successColor } from 'app/constants/Colors';
 import LottieView from 'app/components/LottieView';
-import { Dropzone, DropzoneUser } from 'app/api/schema.d';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import { Operator, Membership } from 'app/api/schema.d';
+import FormColumn from 'app/components/layout/FormColumn';
 import UserAvatar from 'app/components/UserAvatar';
 import lottieTicketAnimation from 'app/../assets/images/ticket.json';
-import { DropzoneEssentialsFragment } from 'app/api/operations';
+import { OperatorEssentialsFragment } from 'app/api/operations';
 import { useUserProfile } from 'app/api/crud';
+import useWalletRedirect from 'app/features/wallet/useWalletRedirect';
 import ReceiptCard from './ReceiptCard';
 
 export type OrderReceiptRoute = {
@@ -23,11 +24,11 @@ export default function OrderScreen() {
   const route = useRoute<RouteProp<OrderReceiptRoute, 'OrderReceiptScreen'>>();
   const theme = useTheme();
   const { orderId, userId } = route.params;
-  const { dropzoneUser } = useUserProfile({ id: userId });
+  const toWallet = useWalletRedirect(userId, orderId);
+  const { membership } = useUserProfile({ id: userId });
   const order = React.useMemo(
-    () =>
-      dropzoneUser?.orders?.edges?.map((edge) => edge?.node).find((node) => node?.id === orderId),
-    [dropzoneUser?.orders?.edges, orderId]
+    () => membership?.orders?.edges?.map((edge) => edge?.node).find((node) => node?.id === orderId),
+    [membership?.orders?.edges, orderId]
   );
 
   const animation = React.useMemo(
@@ -44,8 +45,10 @@ export default function OrderScreen() {
       ),
     [theme.colors.primary]
   );
+  if (toWallet) return null;
+
   return (
-    <ScrollableScreen>
+    <FormColumn>
       <Card style={{ marginTop: 32, width: '100%', maxWidth: 600 }}>
         <Card.Content style={{ paddingBottom: 16 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
@@ -98,17 +101,17 @@ export default function OrderScreen() {
           title={
             <List.Item
               description="Buyer"
-              title={(order?.buyer as DropzoneUser)?.user?.name || (order?.buyer as Dropzone)?.name}
+              title={(order?.buyer as Membership)?.user?.name || (order?.buyer as Operator)?.name}
               left={(props) => (
                 <UserAvatar
                   name={
-                    (order?.buyer as DropzoneUser)?.user?.name ||
-                    (order?.buyer as Dropzone)?.name ||
+                    (order?.buyer as Membership)?.user?.name ||
+                    (order?.buyer as Operator)?.name ||
                     ''
                   }
                   image={
-                    (order?.buyer as DropzoneUser)?.user?.image ||
-                    (order?.buyer as Dropzone)?.banner ||
+                    (order?.buyer as Membership)?.user?.image ||
+                    (order?.buyer as Operator)?.banner ||
                     ''
                   }
                   style={{ alignSelf: 'center' }}
@@ -125,13 +128,13 @@ export default function OrderScreen() {
               right={(props) => (
                 <UserAvatar
                   name={
-                    (order?.seller as DropzoneUser)?.user?.name ||
-                    (order?.seller as DropzoneEssentialsFragment)?.name ||
+                    (order?.seller as Membership)?.user?.name ||
+                    (order?.seller as OperatorEssentialsFragment)?.name ||
                     ''
                   }
                   image={
-                    (order?.buyer as DropzoneUser)?.user?.image ||
-                    (order?.buyer as Dropzone)?.banner ||
+                    (order?.buyer as Membership)?.user?.image ||
+                    (order?.buyer as Operator)?.banner ||
                     ''
                   }
                   style={{ alignSelf: 'center', marginLeft: 8 }}
@@ -141,8 +144,8 @@ export default function OrderScreen() {
               titleStyle={{ textAlign: 'right', fontSize: 14 }}
               descriptionStyle={{ textAlign: 'right', fontSize: 10 }}
               title={
-                (order?.seller as DropzoneUser)?.user?.name ||
-                (order?.seller as DropzoneEssentialsFragment)?.name
+                (order?.seller as Membership)?.user?.name ||
+                (order?.seller as OperatorEssentialsFragment)?.name
               }
             />
           )}
@@ -151,6 +154,6 @@ export default function OrderScreen() {
       {order?.receipts?.map((receipt, index) => {
         return <ReceiptCard {...{ receipt, order, index }} />;
       })}
-    </ScrollableScreen>
+    </FormColumn>
   );
 }

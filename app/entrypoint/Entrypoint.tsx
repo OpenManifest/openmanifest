@@ -15,7 +15,7 @@ import Wrapper from './EntrypointWrapper';
 
 import {
   ExpoUpdatesProvider,
-  DropzonesProvider,
+  OperatorsProvider,
   PushNotificationsProvider,
   ThemeProvider,
 } from './providers';
@@ -23,6 +23,7 @@ import {
 import { useRouteChange, useCachedResources } from './hooks';
 
 import { primaryColor } from '../constants/Colors';
+import useOrientationLock from 'app/navigation/useOrientationLock';
 import { useAppTheme } from '../theme';
 import { useSession } from '../state/session';
 import { usePreferences } from '../state/preferences';
@@ -42,9 +43,8 @@ function ThemedNavigationContainer(
 
   return (
     <NavigationContainer
-      documentTitle={{
-        formatter: () => 'OpenManifest',
-      }}
+      // The screen headers write the title of the tab on the web: "<screen> · <operator>"
+      documentTitle={{ enabled: false }}
       onStateChange={props.onStateChange}
       linking={LinkingConfiguration}
       theme={theme}
@@ -78,13 +78,13 @@ function Content() {
                           <NotificationsProvider>
                             <ThemedNavigationContainer onStateChange={onRouteChange}>
                               <Wrapper>
-                                <DropzonesProvider>
+                                <OperatorsProvider>
                                   <AppSignalSessionTagger>
                                     <PushNotificationsProvider>
                                       <RootNavigator />
                                     </PushNotificationsProvider>
                                   </AppSignalSessionTagger>
-                                </DropzonesProvider>
+                                </OperatorsProvider>
                               </Wrapper>
                             </ThemedNavigationContainer>
 
@@ -105,13 +105,13 @@ function Content() {
 }
 function App() {
   const isLoadingComplete = useCachedResources();
-  // The session (credentials, current dropzone) is restored asynchronously: rendering before that would show the login
+  useOrientationLock();
+  // The session (credentials, current operator) is restored asynchronously: rendering before that would show the login
   // screen and send the first queries without credentials.
   const sessionHydrated = useSession((session) => session.hydrated);
   const preferencesHydrated = usePreferences((preferences) => preferences.hydrated);
 
   if (!isLoadingComplete || !sessionHydrated || !preferencesHydrated) {
-    console.debug('[App] Loading resources and rendering nothing');
     return null;
   }
   return <Content />;

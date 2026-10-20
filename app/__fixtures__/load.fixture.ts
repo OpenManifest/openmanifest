@@ -6,6 +6,9 @@ export const loadEssentials: DeepRequired<LoadEssentialsFragment> = {
   __typename: 'Load',
   id: '1',
   lockVersion: 0,
+  loadDate: '2026-10-09',
+  departedAt: null,
+  completedAt: null,
   name: null,
   state: LoadState.Open,
   loadNumber: 1,
@@ -17,5 +20,6 @@ export const loadEssentials: DeepRequired<LoadEssentialsFragment> = {
   occupiedSlots: 3,
   weight: 123,
   dispatchAt: null,
-  hasLanded: false,
+  calledAt: null,
+  hasCompleted: false,
 };
