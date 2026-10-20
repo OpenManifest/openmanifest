@@ -70,3 +70,17 @@ test.describe('wallet as the manifest desk @wallet', () => {
     await expect(nav.getByRole('button', { name: 'Wallet' })).toHaveCount(0);
   });
 });
+
+test.describe('wallet as a student @wallet', () => {
+  test.use({ role: 'student' });
+
+  test('has their balance and what they paid, though they may not read the people', async ({
+    page,
+  }) => {
+    await gotoRoute(page, '/wallet');
+
+    await expect(page.getByTestId('wallet-balance')).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId('wallet-balance-amount')).toContainText('$');
+    await expect(page.getByTestId('no-access')).toHaveCount(0);
+  });
+});

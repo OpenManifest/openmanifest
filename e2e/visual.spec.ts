@@ -74,6 +74,47 @@ test.describe('visual baselines @visual', () => {
     });
   });
 
+  // The member's screens (U4): compared above their lists, which grow with every spec; counts, money and times are masked
+  test.describe('as a fun jumper', () => {
+    test.use({ role: 'jumper' });
+
+    test('today', async ({ page }) => {
+      await gotoRoute(page, '/today');
+      await expect(page.getByTestId('today-next-load')).toBeVisible({ timeout: 20_000 });
+      await page.waitForTimeout(1500);
+      const { width } = page.viewportSize() ?? { width: 390 };
+      await expect(page).toHaveScreenshot('today.png', {
+        ...OPTIONS,
+        clip: { x: 0, y: 0, width, height: 420 },
+        mask: [...dynamicText(page), ...money(page), page.getByText(/places taken/)],
+      });
+    });
+
+    test('wallet', async ({ page }) => {
+      await gotoRoute(page, '/wallet');
+      await expect(page.getByTestId('wallet-balance')).toBeVisible({ timeout: 20_000 });
+      await page.waitForTimeout(1500);
+      const { width } = page.viewportSize() ?? { width: 390 };
+      await expect(page).toHaveScreenshot('wallet.png', {
+        ...OPTIONS,
+        clip: { x: 0, y: 0, width, height: 420 },
+        mask: [...dynamicText(page), ...money(page), page.getByText(/^(Held|Nothing is held)/)],
+      });
+    });
+
+    test('inbox', async ({ page }) => {
+      await gotoRoute(page, '/notifications');
+      await expect(page.getByTestId('inbox')).toBeVisible({ timeout: 20_000 });
+      await page.waitForTimeout(1500);
+      const { width } = page.viewportSize() ?? { width: 390 };
+      await expect(page).toHaveScreenshot('inbox.png', {
+        ...OPTIONS,
+        clip: { x: 0, y: 0, width, height: 200 },
+        mask: [...dynamicText(page), page.getByText(/\d+ unread/)],
+      });
+    });
+  });
+
   test('profile', async ({ page }) => {
     await gotoRoute(page, '/manifest');
     await openAccount(page);

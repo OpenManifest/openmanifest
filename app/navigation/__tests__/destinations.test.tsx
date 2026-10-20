@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import { waitFor } from '@testing-library/react-native';
 import { ModerationRole, Permission } from 'app/api/schema.d';
 import { ROLE_PERMISSIONS, renderWithProviders } from 'app/test-utils/render';
-import guarded from '../AccessGuard';
+import guarded, { guardedUnlessOwn, subjectOf } from '../AccessGuard';
 import { decide, destinationsFor, type Access, type Destination } from '../destinations';
 
 const SKYDIVING = {
@@ -145,5 +145,49 @@ describe('guarded screens', () => {
 
     expect(screen.queryByText('secret screen')).toBeNull();
     expect(screen.queryByTestId('no-access')).toBeNull();
+  });
+});
+
+const CURRENT_USER_ID = '123';
+let mockParams: Record<string, unknown> | undefined;
+jest.mock('@react-navigation/native', () => ({
+  ...jest.requireActual('@react-navigation/native'),
+  useRoute: () => ({ params: mockParams }),
+}));
+
+describe('screens a member has of their own', () => {
+  const Profile = guardedUnlessOwn(() => <Text>the profile</Text>, {
+    permission: Permission.ReadUser,
+  });
+
+  it('read the member a route is about from userId or membershipId', () => {
+    expect(subjectOf({ userId: '4' })).toBe('4');
+    expect(subjectOf({ membershipId: 7 })).toBe('7');
+    expect(subjectOf({})).toBeUndefined();
+    expect(subjectOf(undefined)).toBeUndefined();
+  });
+
+  it('open for the member themselves, whatever their permissions', async () => {
+    mockParams = { userId: CURRENT_USER_ID };
+
+    const screen = await renderWithProviders(<Profile />, { role: 'student' });
+
+    await waitFor(() => expect(screen.getByText('the profile')).toBeTruthy());
+  });
+
+  it('say no access for somebody else to those who may not read people', async () => {
+    mockParams = { userId: 'somebody-else' };
+
+    const screen = await renderWithProviders(<Profile />, { role: 'student' });
+
+    await waitFor(() => expect(screen.getByTestId('no-access')).toBeTruthy());
+  });
+
+  it('open for somebody else to those who may read people', async () => {
+    mockParams = { userId: 'somebody-else' };
+
+    const screen = await renderWithProviders(<Profile />, { role: 'manifest' });
+
+    await waitFor(() => expect(screen.getByText('the profile')).toBeTruthy());
   });
 });

@@ -1,3 +1,4 @@
+import { ownerCall } from './support/api';
 import { openAccount } from './support/account';
 import { expect, gotoRoute, test } from './support/test';
 
@@ -27,5 +28,28 @@ test.describe('one path for a member @nav @profile', () => {
 
     await gotoRoute(page, '/manifest/users');
     await expect(page).toHaveURL(/\/users$/);
+  });
+});
+
+// A member's own profile is theirs even when they may not read the people of the operator (Today's fixes lead there)
+test.describe('a member without the right to read people @nav @profile', () => {
+  test.use({ role: 'student' });
+
+  test('opens their own profile and not anybody else’s', async ({ page }) => {
+    const found = await ownerCall('{ operators { edges { node { id } } } }');
+    const operatorId = Number(found.json.data.operators.edges[0].node.id);
+    const idOf = async (name: string) =>
+      (
+        await ownerCall(
+          `{ memberships(operator: ${operatorId}, first: 5, search: "${name}") { edges { node { id } } } }`
+        )
+      ).json.data.memberships.edges[0].node.id;
+
+    await gotoRoute(page, `/user/${await idOf('Stu Student')}`);
+    await expect(page.getByText('Stu Student').first()).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId('no-access')).toHaveCount(0);
+
+    await gotoRoute(page, `/user/${await idOf('Jo Jumper')}`);
+    await expect(page.getByTestId('no-access')).toBeVisible({ timeout: 20_000 });
   });
 });

@@ -50,7 +50,10 @@ export default function ReadyChecklist({
       </Row>
       {checks.map((rule) => {
         const status = checkOf(rule);
-        const name = t(`load.rule.${rule.code}`, { defaultValue: rule.code.replace(/_/g, ' ') });
+        const fallback = rule.code.replace(/_/g, ' ');
+        const name = t(`today.ready.rule.${rule.code}`, {
+          defaultValue: fallback.charAt(0).toUpperCase() + fallback.slice(1),
+        });
         return (
           <Row key={rule.code} gap="md" align="center" testID={`${testID}-${rule.code}`}>
             <Icon

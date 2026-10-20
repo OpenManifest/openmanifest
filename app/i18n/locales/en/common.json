@@ -156,7 +156,23 @@
       "blocked_one": "{{count}} thing to fix",
       "blocked_other": "{{count}} things to fix",
       "fix": "Fix",
-      "fixFor": "Fix {{rule}}"
+      "fixFor": "Fix {{rule}}",
+      "rule": {
+        "membership": "Membership",
+        "credits": "Credits",
+        "certification": "Certification",
+        "equipment": "Equipment",
+        "equipment_inspection": "Equipment inspection",
+        "equipment_service": "Equipment service",
+        "age": "Age",
+        "body_mass": "Body mass",
+        "group": "Group",
+        "payload": "Payload",
+        "escort": "Escort",
+        "activity": "Activity",
+        "capacity": "Capacity",
+        "double_manifest": "Double manifest"
+      }
     },
     "book": {
       "title": "Fly today",

@@ -33,7 +33,6 @@ export type AuthenticatedRoutes = {
   Account: undefined;
 };
 
-const USERS_RULE: AccessRule = { permission: Permission.ReadUser };
 // The dashboard is for those who may see the statistics, and the platform overview for moderators
 const OVERVIEW_RULE: AccessRule = {
   any: [{ permission: Permission.ViewStatistics }, { moderator: true }],
@@ -71,7 +70,7 @@ function inMain<Props extends object>(
 // Every tab is registered whatever the permissions are (a link to /users must find its route on a cold load): the bar is
 // made from the destinations the user may use, and the screens of the others say so
 const OverviewScreen = inMain(guarded(OverviewTab, OVERVIEW_RULE));
-const UsersScreen = inMain(guarded(UsersTab, USERS_RULE));
+const UsersScreen = inMain(UsersTab);
 const TodayScreen = inMain(TodayTab);
 const WalletScreen = inMain(WalletTab);
 const ManifestScreen = inMain(ManifestTab);
