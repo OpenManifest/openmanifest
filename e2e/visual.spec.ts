@@ -1,6 +1,7 @@
 import { openFirstLoad } from './support/board';
 import type { Page } from '@playwright/test';
 import { openAccount } from './support/account';
+import { press } from './support/press';
 import { expect, gotoRoute, test } from './support/test';
 
 // Visual baselines (checkpoint tasks only: tier 3). They are created and updated with `--update-snapshots` in checkpoint
@@ -12,6 +13,9 @@ import { expect, gotoRoute, test } from './support/test';
 const OPTIONS = { animations: 'disabled', maxDiffPixelRatio: 0.05, caret: 'hide' } as const;
 
 const dynamicText = (page: Page) => [page.getByText(/\b\d{1,2}:\d{2}\b|\b20\d{2}\b|\bLive \d+/)];
+
+// Money changes with every booking the specs make and take back
+const money = (page: Page) => [page.getByText(/\$[\d,]+\.\d{2}/)];
 
 test.beforeEach(async ({}, testInfo) => {
   const { group, variant } = testInfo.project.metadata;
@@ -47,6 +51,27 @@ test.describe('visual baselines @visual', () => {
     await openFirstLoad(page);
     await page.waitForTimeout(3000);
     await expect(page).toHaveScreenshot('load.png', { ...OPTIONS, mask: dynamicText(page) });
+  });
+
+  test('picker', async ({ page }) => {
+    await gotoRoute(page, '/manifest');
+    await openFirstLoad(page);
+    const free = page.getByTestId('free-places').last();
+    await expect(free).toHaveAttribute('role', 'button', { timeout: 20_000 });
+    await free.scrollIntoViewIfNeeded();
+    const picker = page.getByTestId('member-picker');
+    for (let attempt = 0; attempt < 4 && !(await picker.isVisible()); attempt++) {
+      await press(page, free);
+      await picker.waitFor({ timeout: 5000 }).catch(() => undefined);
+    }
+    // One person, so the list does not change with the people the other specs add
+    await picker.getByTestId('member-picker-search').fill('Pat Pilot');
+    await expect(picker.getByTestId('picker-row')).toHaveCount(1, { timeout: 15_000 });
+    await page.waitForTimeout(500);
+    await expect(picker).toHaveScreenshot('picker.png', {
+      ...OPTIONS,
+      mask: [...dynamicText(page), ...money(page)],
+    });
   });
 
   test('profile', async ({ page }) => {
