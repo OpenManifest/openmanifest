@@ -41,6 +41,11 @@ export async function deleteCreatedLoads() {
   if (!ids.length) return;
   const auth = await loginAsOwner();
   for (const id of ids) {
+    // Taking everyone off first gives back what their places cost: deleting the load does not
+    const places = await call(`{ load(id: ${Number(id)}) { slots { id } } }`, auth);
+    for (const slot of places.json?.data?.load?.slots ?? []) {
+      await call(`mutation { deleteSlot(input: { id: ${Number(slot.id)} }) { errors } }`, auth);
+    }
     await call(`mutation { deleteLoad(input: { id: ${Number(id)} }) { errors } }`, auth);
   }
 }

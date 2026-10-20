@@ -97,6 +97,8 @@ export default function Button({
       style={({ pressed, hovered }) => ({
         minHeight: height,
         minWidth: theme.density.touchTarget,
+        // A label at large text shrinks (with an ellipsis) rather than push the button out of the window
+        maxWidth: '100%',
         alignSelf: fullWidth ? 'stretch' : 'flex-start',
         alignItems: 'center',
         justifyContent: 'center',
@@ -108,7 +110,14 @@ export default function Button({
         opacity: disabled ? 0.4 : pressed ? 0.75 : hovered ? 0.9 : 1,
       })}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.space.sm }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: theme.space.sm,
+          maxWidth: '100%',
+        }}
+      >
         {loading ? (
           <ActivityIndicator
             size="small"
@@ -120,9 +129,11 @@ export default function Button({
         ) : icon ? (
           <MaterialCommunityIcons name={icon} size={ICON_SIZE} color={fg} />
         ) : null}
-        <Text variant="label" tone={tone} chrome numberOfLines={1}>
-          {label}
-        </Text>
+        <View style={{ flexShrink: 1, minWidth: 0 }}>
+          <Text variant="label" tone={tone} chrome numberOfLines={1}>
+            {label}
+          </Text>
+        </View>
       </View>
     </Tappable>
   );
