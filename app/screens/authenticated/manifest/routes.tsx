@@ -6,14 +6,13 @@ import ScreenHeader from 'app/navigation/ScreenHeader';
 import { useTranslation } from 'react-i18next';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { AppSignalBoundary } from 'app/components/app_signal';
-import LoadScreen, { LoadScreenRoute } from './load/LoadScreen';
+import { LoadScreenRoute } from './load/LoadScreen';
+import { useBoardScreens } from 'app/features/board/screens';
 
 import WeatherConditionsScreen from './weather_conditions/WeatherConditionsScreen';
 import JumpRunScreen from './weather_conditions/JumpRunScreen';
 import WindScreen from './weather_conditions/WindScreen';
 import { WeatherFormProvider } from 'app/forms/weather';
-
-import ManifestScreen from './manifest/ManifestScreen';
 
 import Configuration, { ConfigurationRoutes } from '../configuration/routes';
 
@@ -32,6 +31,7 @@ export default function ManifestTab() {
   const { t } = useTranslation(['common', 'terms']);
   const credentials = useSession((session) => session.credentials);
   const currentOperatorId = useSession((session) => session.currentOperatorId);
+  const { Board, Load } = useBoardScreens();
 
   return (
     <AppSignalBoundary>
@@ -48,7 +48,7 @@ export default function ManifestTab() {
         >
           <Manifest.Screen
             name="ManifestScreen"
-            component={ManifestScreen}
+            component={Board}
             options={{ title: t('common:destinations.board') }}
           />
 
@@ -69,7 +69,7 @@ export default function ManifestTab() {
           />
           <Manifest.Screen
             name="LoadScreen"
-            component={LoadScreen}
+            component={Load}
             options={{ title: t('terms:load', { count: 1 }) }}
           />
 

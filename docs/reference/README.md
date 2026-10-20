@@ -108,7 +108,7 @@ store or component state.
 | Store | Fields | Persisted | Notes |
 |---|---|---|---|
 | `useSession` (`app/state/session.ts`) | `credentials` (`accessToken`, `client`, `uid`, `expiry`, `tokenType`), `currentDropzoneId`, `expoPushToken`, `currentRouteName`, `hydrated` | yes: `openmanifest.session.v1` (AsyncStorage / `localStorage`); `credentials` go to `expo-secure-store` (`openmanifest.credentials`) on native and `localStorage` on web (`app/state/storage.ts`) | `useAuthenticated()` = an access token exists. `reset()` logs out but keeps the device push token. `Entrypoint` renders nothing until `hydrated`. Migrated once from the old redux-persist blob (`migrateFromReduxPersist.ts`), which is then deleted. |
-| `usePreferences` (`app/state/preferences.ts`) | `colorScheme`: `system` / `light` / `dark`, `hydrated` | yes: `openmanifest.preferences.v1` | device level, survives logout |
+| `usePreferences` (`app/state/preferences.ts`) | `colorScheme`: `system` / `light` / `dark`, `density`, `newBoard` (on for a new install, off for stored v1 preferences; picks the new or the classic board and load screens), `hydrated` | yes: `openmanifest.preferences.v1` | device level, survives logout |
 | `useThemeOverrides` (`app/theme/overrides.ts`) | `primary` | no | colour preview in the dropzone form, dropped once Apollo holds the saved colour |
 
 Derived, not stored: the theme and palette (`useAppTheme()` in `app/theme`: colour scheme preference or device, the current
@@ -135,6 +135,12 @@ Three generations coexist in `app/api/`:
 | 1. Hand-written mutation hooks | `app/api/hooks/useMutation*.ts(x)` (16 files), `createMutation.tsx`, `createQuery.tsx` | inline `gql` documents, types from `schema.d.ts`, client-side validators | 7 importers |
 | 2. Generated hooks | `app/api/{queries,mutations,fragments,subscriptions}/*.gql` (24 queries, 41 mutation documents) → `reflection.tsx` (`useXQuery`, `useXMutation`), `operations.ts` | graphql-codegen | 68 importers |
 | 3. CRUD hooks | `app/api/crud/*` (`useLoad`, `useManifest`, `useDropzone`, `useUserProfile`, `useTickets`, `useAircrafts`, `useEquipment`, `useDropzones`, `factory.tsx`) | wrap generated hooks; return `{ data, loading, create, update, … }`, normalise `fieldErrors` | 42 importers |
+
+`app/features/board/useBoard.ts` (U3.2) is the board's data layer: `useBoard(date?)` reads the manifest's loads for the day,
+orders them (open → boarding → departed → completed/cancelled, then load number; `order.ts`), flags a changed row for
+600 ms, holds the order between `freeze()` and `unfreeze()`, and keeps one `loadUpdated` subscription per load of the day
+(cache write: `applyLoadUpdate`). `useBoardScreens()` (`screens.ts`) picks the new or the classic board and load screens
+from the `newBoard` preference.
 
 Operations: 76 named operations (41 mutations, 32 queries, 3 subscriptions: `loadCreated`, `loadUpdated`, `userUpdated`).
 Pass 1 validated all of them against the live server schema: 0 validation errors, and the committed

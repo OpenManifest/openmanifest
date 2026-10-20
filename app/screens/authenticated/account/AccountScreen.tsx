@@ -34,6 +34,8 @@ export default function AccountScreen() {
   const setColorScheme = usePreferences((preferences) => preferences.setColorScheme);
   const density = usePreferences((preferences) => preferences.density);
   const setDensity = usePreferences((preferences) => preferences.setDensity);
+  const newBoard = usePreferences((preferences) => preferences.newBoard);
+  const setNewBoard = usePreferences((preferences) => preferences.setNewBoard);
   const styles = useStyles((theme) => ({
     content: { paddingVertical: theme.space.lg, gap: theme.space.lg },
     person: { paddingHorizontal: theme.space.lg, gap: theme.space.xs },
@@ -105,6 +107,19 @@ export default function AccountScreen() {
             label={t(`account.${option}`)}
             selected={density === option}
             onPress={() => setDensity(option)}
+          />
+        ))}
+      </Section>
+
+      <Section title={t('account.board')}>
+        {[true, false].map((option) => (
+          <Row
+            key={String(option)}
+            role="radio"
+            testID={option ? 'board-new' : 'board-classic'}
+            label={t(option ? 'account.newBoard' : 'account.classicBoard')}
+            selected={newBoard === option}
+            onPress={() => setNewBoard(option)}
           />
         ))}
       </Section>
