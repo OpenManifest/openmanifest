@@ -20,6 +20,8 @@ report() {
   grep "ReactNativeJS" "$out/logcat.txt" | tail -40 || true
   echo "--- errors and warnings of the app and its runtime (last 60) ---"
   grep -E "^[0-9-]+ [0-9:.]+ +[0-9]+ +[0-9]+ [EW] " "$out/logcat.txt" | grep -Ei "openmanifest|expo|ReactNative|hermes|okhttp|chromium|AndroidRuntime|System.err" | tail -60 || true
+  echo "--- views (dumpsys activity top) ---"
+  adb shell dumpsys activity top | sed -n '/View Hierarchy/,$p' | head -120 || true
   echo "--- focused window ---"
   adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" | head -3 || true
   echo "--- the API as the emulator reaches it ---"

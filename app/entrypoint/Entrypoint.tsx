@@ -43,6 +43,8 @@ function ThemedNavigationContainer(
 
   return (
     <NavigationContainer
+      onReady={() => console.log('BOOT navigation ready')} // eslint-disable-line no-console
+      onUnhandledAction={(action) => console.log('BOOT unhandled', JSON.stringify(action))} // eslint-disable-line no-console
       // The screen headers write the title of the tab on the web: "<screen> · <operator>"
       documentTitle={{ enabled: false }}
       onStateChange={props.onStateChange}
@@ -56,6 +58,11 @@ function ThemedNavigationContainer(
 
 function Content() {
   const onRouteChange = useRouteChange();
+  // TEMPORARY (U3.1)
+  React.useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log('BOOT content mounted');
+  }, []);
 
   return (
     <AppSignalProvider>
