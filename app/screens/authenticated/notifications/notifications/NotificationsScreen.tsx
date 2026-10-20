@@ -8,13 +8,13 @@ import { FlatList } from 'react-native-gesture-handler';
 import { NotificationType } from 'app/api/schema.d';
 import { useNotificationsLazyQuery } from 'app/api/reflection';
 import { NotificationsQueryVariables } from 'app/api/operations';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import NoResults from '../../../../components/NoResults';
 
 import ManifestedCard from './Cards/Manifested';
-import BoardingCallNotification from './Cards/BoardingCall';
+import BoardingNotification from './Cards/Boarding';
 import FundsNotification from './Cards/Funds';
-import RigInspectionNotification from './Cards/RigInspection';
+import EquipmentInspectionNotification from './Cards/EquipmentInspection';
 import PermissionNotification from './Cards/Permission';
 import PublicationRequestNotification from './Cards/PublicationRequest';
 import { useAppTheme } from 'app/theme';
@@ -22,26 +22,26 @@ import { useAppTheme } from 'app/theme';
 export default function NotificationScreen() {
   const { theme } = useAppTheme();
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const [getNotifications, query] = useNotificationsLazyQuery();
   const { data, loading } = query;
   const variables: NotificationsQueryVariables | undefined = React.useMemo(
-    () => (!dropzone?.id ? undefined : { dropzoneId: dropzone?.id }),
-    [dropzone?.id]
+    () => (!operator?.id ? undefined : { operatorId: operator?.id }),
+    [operator?.id]
   );
 
   const fetchNotifications = React.useCallback(() => {
-    if (variables?.dropzoneId) {
+    if (variables?.operatorId) {
       getNotifications({ variables, fetchPolicy: 'cache-and-network' });
     }
   }, [getNotifications, variables]);
 
   React.useEffect(() => {
-    if (!loading && query?.variables?.dropzoneId !== variables?.dropzoneId) {
+    if (!loading && query?.variables?.operatorId !== variables?.operatorId) {
       getNotifications({ variables });
     }
-  }, [getNotifications, loading, query?.variables?.dropzoneId, variables]);
+  }, [getNotifications, loading, query?.variables?.operatorId, variables]);
 
   const isFocused = useIsFocused();
 
@@ -52,7 +52,6 @@ export default function NotificationScreen() {
   }, [isFocused, fetchNotifications]);
 
   // const [mutationMarkAsSeen, mutation] = useMutation<Mutation>(MUTATION_MARK_AS_SEEN);
-  console.debug('Notifications', data?.dropzone?.currentUser?.notifications?.edges);
 
   return (
     <View style={StyleSheet.absoluteFill}>
@@ -65,27 +64,26 @@ export default function NotificationScreen() {
         )}
         contentContainerStyle={styles.content}
         onRefresh={fetchNotifications}
-        data={data?.dropzone?.currentUser?.notifications?.edges}
+        data={data?.operator?.currentUser?.notifications?.edges}
         refreshing={loading}
         numColumns={1}
         keyExtractor={(edge) => `notification-${edge?.node?.id}`}
         style={StyleSheet.absoluteFill}
         renderItem={({ item: edge }) => {
-          console.debug('Rendering notification ', edge?.node?.notificationType);
           switch (edge?.node?.notificationType) {
-            case NotificationType.BoardingCall:
-              return (
-                <BoardingCallNotification key={edge.node.id} notification={edge.node as never} />
-              );
+            case NotificationType.Boarding:
+              return <BoardingNotification key={edge.node.id} notification={edge.node as never} />;
             case NotificationType.UserManifested:
-              console.debug('Renderign manifest card');
               return <ManifestedCard key={edge.node.id} notification={edge.node as never} />;
             case NotificationType.CreditsUpdated:
               return <FundsNotification key={edge.node.id} notification={edge.node as never} />;
-            case NotificationType.RigInspectionRequested:
-            case NotificationType.RigInspectionCompleted:
+            case NotificationType.EquipmentInspectionRequested:
+            case NotificationType.EquipmentInspectionCompleted:
               return (
-                <RigInspectionNotification key={edge.node.id} notification={edge.node as never} />
+                <EquipmentInspectionNotification
+                  key={edge.node.id}
+                  notification={edge.node as never}
+                />
               );
             case NotificationType.PermissionGranted:
             case NotificationType.PermissionRevoked:

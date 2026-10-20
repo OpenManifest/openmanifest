@@ -9,7 +9,7 @@ export default createMutation<LoadInput, CreateLoadPayload>(CreateLoadDocument, 
       isRequired('Please specify amount of allowed jumpers'),
       isNumeric('Please enter a valid number'),
     ],
-    plane: [isRequired('What plane is flying this load?')],
+    vehicle: [isRequired('What plane is flying this load?')],
     gca: [isRequired('You must have a GCA for this load')],
   },
 });

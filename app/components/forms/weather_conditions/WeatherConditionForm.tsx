@@ -6,6 +6,8 @@ import { Card, Divider, List, useTheme } from 'react-native-paper';
 import WindRow from './WindRow';
 import { useWatch } from 'react-hook-form';
 import { MAX_WINDS, useWeatherForm } from '../../../forms/weather/useForm';
+import { UNIT_SYMBOLS, unitOf } from 'app/i18n/units';
+import { useOperatorFormat } from 'app/i18n/operatorFormat';
 
 interface IWeatherConditionFormProps {
   variant?: 'dark' | 'light';
@@ -19,6 +21,8 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
     name: ['winds', 'jumpRun', 'temperature'],
   });
   const theme = useTheme();
+  const units = useOperatorFormat((state) => state.units);
+  const temperatureUnit = UNIT_SYMBOLS[unitOf('temperature', units)];
 
   // While a text field is being edited it shows what was typed; the form gets the number on blur
   const [typedTemperature, setTypedTemperature] = React.useState<number | null>(null);
@@ -32,7 +36,7 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
         <Text
           style={[styles.headerTemperature, { color: variant === 'light' ? 'white' : 'black' }]}
         >
-          Temperature
+          {`Temperature (${temperatureUnit})`}
         </Text>
         <Text style={[styles.headerJumprun, { color: variant === 'light' ? 'white' : 'black' }]}>
           Jump run
@@ -89,10 +93,10 @@ export default function WeatherConditionForm(props: IWeatherConditionFormProps) 
       </View>
       <View style={styles.row}>
         <Text style={[styles.headerAltitude, { color: variant === 'light' ? 'white' : 'black' }]}>
-          Altitude
+          {`Altitude (${UNIT_SYMBOLS[unitOf('altitude', units)]})`}
         </Text>
         <Text style={[styles.headerSpeed, { color: variant === 'light' ? 'white' : 'black' }]}>
-          Speed
+          {`Speed (${UNIT_SYMBOLS[unitOf('speed', units)]})`}
         </Text>
         <Text style={[styles.headerDirection, { color: variant === 'light' ? 'white' : 'black' }]}>
           Direction

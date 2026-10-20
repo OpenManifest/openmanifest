@@ -1,52 +1,56 @@
 import { useAppSignal } from 'app/components/app_signal';
 import useRestriction from 'app/hooks/useRestriction';
 import * as React from 'react';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { useAuthenticated } from 'app/state';
 import {
+  AddUserQualificationMutationVariables,
   CreateOrderMutationVariables,
-  DropzoneUserEssentialsFragment,
-  DropzoneUserProfileFragment,
-  DropzoneUserQueryVariables,
+  MembershipEssentialsFragment,
+  MembershipProfileFragment,
+  MembershipQueryVariables,
   OrderEssentialsFragment,
-  UpdateDropzoneUserMutationVariables,
+  UpdateMembershipMutationVariables,
   UpdateUserMutationVariables,
   UserEssentialsFragment,
-  UserFederationEssentialsFragment,
+  UserCertificationEssentialsFragment,
+  UserQualificationEssentialsFragment,
 } from '../operations';
 import {
-  DropzoneUserProfileDocument,
-  DropzoneUserProfileFragmentDoc,
-  DropzoneUsersDocument,
+  MembershipProfileDocument,
+  MembershipProfileFragmentDoc,
+  MembershipsDocument,
   useCreateGhostMutation,
+  useAddUserQualificationMutation,
   useCreateOrderMutation,
-  useDropzoneUserProfileLazyQuery,
+  useMembershipProfileLazyQuery,
   useGrantPermissionMutation,
-  useJoinFederationMutation,
+  useJoinCertificationBodyMutation,
   useRevokePermissionMutation,
   useUpdateUserMutation,
 } from '../reflection';
-import { GhostInput, JoinFederationInput, Permission } from '../schema.d';
+import { GhostInput, JoinCertificationBodyInput, Permission } from '../schema.d';
 import createCRUDContext, { TMutationResponse, uninitializedHandler } from './factory';
 import { useUserUpdated } from './subscriptions/useUserUpdated';
 import { toCents } from 'app/utils/money';
 
-function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
+function useUserProfile(variables?: Partial<MembershipQueryVariables>) {
   const authenticated = useAuthenticated();
   const { id } = variables || {};
   const [updateMutation] = useUpdateUserMutation();
-  const [getProfile, query] = useDropzoneUserProfileLazyQuery();
+  const [getProfile, query] = useMembershipProfileLazyQuery();
   const [mutationCreateOrder] = useCreateOrderMutation();
   const [mutationCreateGhost] = useCreateGhostMutation();
-  const [updateFederation] = useJoinFederationMutation();
+  const [updateCertificationBody] = useJoinCertificationBodyMutation();
+  const [mutationAddQualification] = useAddUserQualificationMutation();
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const { appSignal } = useAppSignal();
   const canGrantPermission = useRestriction(Permission.GrantPermission);
   const canRevokePermission = useRestriction(Permission.RevokePermission);
 
-  const profile = React.useMemo(() => query?.data?.dropzoneUser, [query?.data?.dropzoneUser]);
+  const profile = React.useMemo(() => query?.data?.membership, [query?.data?.membership]);
   useUserUpdated(profile?.id);
 
   React.useEffect(() => {
@@ -63,8 +67,8 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
         const response = await mutationCreateGhost({
           variables: attributes,
           refetchQueries: [
-            DropzoneUsersDocument,
-            { query: DropzoneUsersDocument, variables: { dropzoneId: dropzone?.id } },
+            MembershipsDocument,
+            { query: MembershipsDocument, variables: { operatorId: operator?.id } },
           ],
         });
 
@@ -76,28 +80,27 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
           fieldErrors: response?.data?.createGhost?.fieldErrors || undefined,
         };
       } catch (error) {
-        console.debug('CreateGhost failed', error);
         if (error instanceof Error) {
           appSignal?.sendError(error);
         }
         return { error: 'Oh no, something went wrong' };
       }
     },
-    [appSignal, dropzone?.id, mutationCreateGhost]
+    [appSignal, operator?.id, mutationCreateGhost]
   );
   const update = React.useCallback(
     async function UpdateUser(
       attributes: UpdateUserMutationVariables
-    ): Promise<TMutationResponse<{ dropzoneUser: DropzoneUserProfileFragment }>> {
+    ): Promise<TMutationResponse<{ membership: MembershipProfileFragment }>> {
       const { data } = await updateMutation({
         variables: {
-          dropzoneUser: query?.data?.dropzoneUser?.id,
+          membership: query?.data?.membership?.id,
           ...attributes,
         },
       });
 
-      if (data?.updateUser?.dropzoneUser?.id) {
-        return { dropzoneUser: data?.updateUser?.dropzoneUser };
+      if (data?.updateUser?.membership?.id) {
+        return { membership: data?.updateUser?.membership };
       }
 
       return {
@@ -105,27 +108,50 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
         fieldErrors: data?.updateUser?.fieldErrors || undefined,
       };
     },
-    [query?.data?.dropzoneUser?.id, updateMutation]
+    [query?.data?.membership?.id, updateMutation]
   );
 
-  const joinFederation = React.useCallback(
-    async function JoinFederation(
-      attributes: JoinFederationInput['attributes']
-    ): Promise<TMutationResponse<{ userFederation: UserFederationEssentialsFragment }>> {
-      const { data } = await updateFederation({
+  const joinCertificationBody = React.useCallback(
+    async function JoinCertificationBody(
+      attributes: JoinCertificationBodyInput['attributes']
+    ): Promise<TMutationResponse<{ userCertification: UserCertificationEssentialsFragment }>> {
+      const { data } = await updateCertificationBody({
         variables: attributes,
       });
 
-      if (data?.joinFederation?.userFederation?.id) {
-        return { userFederation: data?.joinFederation?.userFederation };
+      if (data?.joinCertificationBody?.userCertification?.id) {
+        return { userCertification: data?.joinCertificationBody?.userCertification };
       }
 
       return {
-        error: data?.joinFederation?.errors?.[0],
-        fieldErrors: data?.joinFederation?.fieldErrors || undefined,
+        error: data?.joinCertificationBody?.errors?.[0],
+        fieldErrors: data?.joinCertificationBody?.fieldErrors || undefined,
       };
     },
-    [updateFederation]
+    [updateCertificationBody]
+  );
+
+  const addQualification = React.useCallback(
+    async function AddQualification(
+      attributes: AddUserQualificationMutationVariables
+    ): Promise<TMutationResponse<{ userQualification: UserQualificationEssentialsFragment }>> {
+      const { data } = await mutationAddQualification({
+        variables: attributes,
+        refetchQueries: query?.variables?.id
+          ? [{ query: MembershipProfileDocument, variables: { id: query.variables.id } }]
+          : [],
+      });
+
+      if (data?.addUserQualification?.userQualification?.id) {
+        return { userQualification: data.addUserQualification.userQualification };
+      }
+
+      return {
+        error: data?.addUserQualification?.errors?.[0],
+        fieldErrors: data?.addUserQualification?.fieldErrors || undefined,
+      };
+    },
+    [mutationAddQualification, query?.variables?.id]
   );
 
   const createOrder = React.useCallback(
@@ -141,19 +167,19 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
             if (mutationResult?.createOrder?.order?.id) {
               const { order } = mutationResult.createOrder;
 
-              if (order?.buyer?.__typename === 'DropzoneUser') {
+              if (order?.buyer?.__typename === 'Membership') {
                 // Deduct credits
                 cache.writeFragment({
-                  fragment: DropzoneUserProfileFragmentDoc,
-                  fragmentName: 'dropzoneUserProfile',
+                  fragment: MembershipProfileFragmentDoc,
+                  fragmentName: 'membershipProfile',
                   id: cache.identify(order.buyer),
                   data: order.buyer,
                 });
-              } else if (order?.seller?.__typename === 'DropzoneUser') {
+              } else if (order?.seller?.__typename === 'Membership') {
                 // Add credits
                 cache.writeFragment({
-                  fragment: DropzoneUserProfileFragmentDoc,
-                  fragmentName: 'dropzoneUserProfile',
+                  fragment: MembershipProfileFragmentDoc,
+                  fragmentName: 'membershipProfile',
                   id: cache.identify(order.seller),
                   data: order.seller,
                 });
@@ -179,40 +205,40 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
 
   const addCredits = React.useCallback(
     async function AddCredits(
-      dropzoneUser: DropzoneUserEssentialsFragment,
+      membership: MembershipEssentialsFragment,
       { amount, message }: { amount: number; message?: string | null }
     ): ReturnType<typeof createOrder> {
-      if (!dropzone) {
+      if (!operator) {
         return { error: 'No dropzone selected' };
       }
       return createOrder({
         amountCents: toCents(amount),
         title: message || 'Added funds',
-        seller: dropzoneUser.walletId,
-        buyer: dropzone.walletId,
-        dropzone: dropzone.id,
+        seller: membership.walletId,
+        buyer: operator.walletId,
+        operator: operator.id,
       });
     },
-    [createOrder, dropzone]
+    [createOrder, operator]
   );
 
   const withdrawCredits = React.useCallback(
     async function DeductCredits(
-      dropzoneUser: DropzoneUserEssentialsFragment,
+      membership: MembershipEssentialsFragment,
       { amount, message }: { amount: number; message?: string | null }
     ): ReturnType<typeof createOrder> {
-      if (!dropzone) {
+      if (!operator) {
         return { error: 'No dropzone selected' };
       }
       return createOrder({
         amountCents: toCents(amount),
         title: message || 'Withdrew funds',
-        buyer: dropzoneUser.walletId,
-        seller: dropzone.walletId,
-        dropzone: dropzone.id,
+        buyer: membership.walletId,
+        seller: operator.walletId,
+        operator: operator.id,
       });
     },
-    [createOrder, dropzone]
+    [createOrder, operator]
   );
 
   const [revoke] = useRevokePermissionMutation();
@@ -220,34 +246,34 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
 
   const grantPermission = React.useCallback(
     async function GrantPermission(
-      dropzoneUserId: string,
+      membershipId: string,
       permissionName: Permission
-    ): Promise<TMutationResponse<{ dropzoneUser: DropzoneUserProfileFragment }>> {
+    ): Promise<TMutationResponse<{ membership: MembershipProfileFragment }>> {
       if (!canGrantPermission) {
         return { error: 'You cannot grant permissions' };
       }
       const { data } = await grant({
         variables: {
-          dropzoneUserId,
+          membershipId,
           permissionName,
         },
         refetchQueries: [
           {
-            query: DropzoneUsersDocument,
-            variables: { dropzoneId: dropzone?.id, permissions: [permissionName] },
+            query: MembershipsDocument,
+            variables: { operatorId: operator?.id, permissions: [permissionName] },
           },
           {
-            query: DropzoneUserProfileDocument,
+            query: MembershipProfileDocument,
             variables: {
-              dropzoneUserId,
+              membershipId,
             },
           },
         ],
       });
 
-      if (data?.grantPermission?.dropzoneUser?.id) {
+      if (data?.grantPermission?.membership?.id) {
         return {
-          dropzoneUser: data?.grantPermission?.dropzoneUser,
+          membership: data?.grantPermission?.membership,
         };
       }
       return {
@@ -255,39 +281,39 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
         fieldErrors: data?.grantPermission?.fieldErrors || undefined,
       };
     },
-    [canGrantPermission, dropzone?.id, grant]
+    [canGrantPermission, operator?.id, grant]
   );
 
   const revokePermission = React.useCallback(
     async function RevokePermission(
-      dropzoneUserId: string,
+      membershipId: string,
       permissionName: Permission
-    ): Promise<TMutationResponse<{ dropzoneUser: DropzoneUserProfileFragment }>> {
+    ): Promise<TMutationResponse<{ membership: MembershipProfileFragment }>> {
       if (!canRevokePermission) {
         return { error: 'You cannot revoke permissions' };
       }
       const { data } = await revoke({
         variables: {
-          dropzoneUserId,
+          membershipId,
           permissionName,
         },
         refetchQueries: [
           {
-            query: DropzoneUsersDocument,
-            variables: { dropzoneId: dropzone?.id, permissions: [permissionName] },
+            query: MembershipsDocument,
+            variables: { operatorId: operator?.id, permissions: [permissionName] },
           },
           {
-            query: DropzoneUserProfileDocument,
+            query: MembershipProfileDocument,
             variables: {
-              dropzoneUserId,
+              membershipId,
             },
           },
         ],
       });
 
-      if (data?.revokePermission?.dropzoneUser?.id) {
+      if (data?.revokePermission?.membership?.id) {
         return {
-          dropzoneUser: data?.revokePermission?.dropzoneUser,
+          membership: data?.revokePermission?.membership,
         };
       }
       return {
@@ -295,29 +321,31 @@ function useUserProfile(variables?: Partial<DropzoneUserQueryVariables>) {
         fieldErrors: data?.revokePermission?.fieldErrors || undefined,
       };
     },
-    [canRevokePermission, dropzone?.id, revoke]
+    [canRevokePermission, operator?.id, revoke]
   );
 
   return React.useMemo(
     () => ({
       loading: query?.loading,
-      dropzoneUser: query?.data?.dropzoneUser,
+      membership: query?.data?.membership,
       refetch: query?.refetch,
       create,
       update,
       addCredits,
       grantPermission,
-      joinFederation,
+      joinCertificationBody,
+      addQualification,
       revokePermission,
       withdrawCredits,
     }),
     [
       addCredits,
       grantPermission,
-      joinFederation,
+      joinCertificationBody,
+      addQualification,
       query?.refetch,
       create,
-      query?.data?.dropzoneUser,
+      query?.data?.membership,
       query?.loading,
       revokePermission,
       update,
@@ -330,8 +358,9 @@ const { Provider: UserProfileProvider, useContext: useUserProfileContext } = cre
   useUserProfile,
   {
     loading: false,
-    dropzoneUser: null,
-    joinFederation: uninitializedHandler as never,
+    membership: null,
+    joinCertificationBody: uninitializedHandler as never,
+    addQualification: uninitializedHandler as never,
     refetch: uninitializedHandler as never,
     update: uninitializedHandler as never,
     create: uninitializedHandler as never,
