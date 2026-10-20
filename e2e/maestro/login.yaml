@@ -5,14 +5,14 @@ name: login
 - launchApp:
     clearState: true
 - extendedWaitUntil:
-    visible: 'LOG IN'
+    visible: "(?i)log ?in"
     timeout: 60000
-- tapOn: 'Email'
+- tapOn: "(?i)email"
 - inputText: 'owner@example.com'
-- tapOn: 'Password'
+- tapOn: "(?i)password"
 - inputText: 'Password1!'
 - hideKeyboard
-- tapOn: 'LOG IN'
+- tapOn: "(?i)log ?in"
 # The seeded owner has one operator to pick
 - extendedWaitUntil:
     visible: 'Dropzone'
