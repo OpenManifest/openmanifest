@@ -39,14 +39,14 @@ const createdLoads: string[] = [];
 export async function deleteCreatedLoads() {
   const ids = createdLoads.splice(0);
   if (!ids.length) return;
-  const auth = await loginAsOwner();
   for (const id of ids) {
-    // Taking everyone off first gives back what their places cost: deleting the load does not
-    const places = await call(`{ load(id: ${Number(id)}) { slots { id } } }`, auth);
+    // Taking everyone off first gives back what their places cost: deleting the load does not. Each call signs in again
+    // and asks again when two workers invalidated each other's token: a place left behind fails the specs that follow
+    const places = await ownerCall(`{ load(id: ${Number(id)}) { slots { id } } }`);
     for (const slot of places.json?.data?.load?.slots ?? []) {
-      await call(`mutation { deleteSlot(input: { id: ${Number(slot.id)} }) { errors } }`, auth);
+      await ownerCall(`mutation { deleteSlot(input: { id: ${Number(slot.id)} }) { errors } }`);
     }
-    await call(`mutation { deleteLoad(input: { id: ${Number(id)} }) { errors } }`, auth);
+    await ownerCall(`mutation { deleteLoad(input: { id: ${Number(id)} }) { errors } }`);
   }
 }
 
