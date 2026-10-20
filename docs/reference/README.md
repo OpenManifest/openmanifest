@@ -147,7 +147,7 @@ destinations, `PlacesMeter`, one `CrewRoleMenu` per crew role), `buildSections` 
 vehicle of a load with several, groups bracketed, free places as one row), `PlaceRow` / `EscortGroup` show a person or an
 escort with their guests (readiness from the `LoadEligibility` query, prepaid badge, a menu to edit or take off, swipe to take
 off on native), the actions are `LoadActions` (sticky at the bottom on a phone). `useBoardScreens()` (`screens.ts`) picks the new or the classic board and load screens
-from the `newBoard` preference.
+from the `newBoard` preference. The member picker (U3.7, `app/features/picker/`): the free places of the load screen open `MemberPicker` (an `Overlay`), whose `MemberPicker` query lists the operator's memberships with `eligibility(loadId)` and `lastSlot`; `filterMembers` / `sortReadyFirst` (`members.ts`) apply the filters (Everyone, Ready, Flew today) with ready members first, selecting a row opens `DefaultsCard` (ticket, activity, destination, equipment, body mass and price from `lastSlot`, `defaultsOf`), `useManifestValidator` checks that combination with `slotEligibility`, and the footer button adds the member with `ManifestUser` (a blocked member shows the reason and a Fix action to their profile and cannot be added). "Change…" opens the classic manifest form.
 
 Operations: 76 named operations (41 mutations, 32 queries, 3 subscriptions: `loadCreated`, `loadUpdated`, `userUpdated`).
 Pass 1 validated all of them against the live server schema: 0 validation errors, and the committed

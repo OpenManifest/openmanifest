@@ -20,6 +20,7 @@ import useOpenUser from 'app/navigation/useOpenUser';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
 import { moduleEnabled } from 'app/utils/modules';
+import MemberPicker from 'app/features/picker/MemberPicker';
 import EscortGroup from './EscortGroup';
 import FreePlaces from './FreePlaces';
 import LoadHeader from './LoadHeader';
@@ -137,9 +138,8 @@ export function LoadView({ embedded = false }: { embedded?: boolean }) {
     },
     [deleteSlot, load?.loadNumber, loadTerm, notify, t]
   );
-  const manifest = React.useCallback(() => {
-    if (load) dialogs.manifestGroup.open({ load });
-  }, [dialogs.manifestGroup, load]);
+  const [picking, setPicking] = React.useState(false);
+  const manifest = React.useCallback(() => setPicking(true), []);
   const canManifest = permissions.canManifestSelf || permissions.canManifestOthers;
 
   const actions = load ? (
@@ -236,6 +236,7 @@ export function LoadView({ embedded = false }: { embedded?: boolean }) {
           {actions}
         </View>
       ) : null}
+      {load ? <MemberPicker load={load} open={picking} onClose={() => setPicking(false)} /> : null}
     </Container>
   );
 }

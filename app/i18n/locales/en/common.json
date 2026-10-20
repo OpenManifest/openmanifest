@@ -140,8 +140,28 @@
     "strong": "Strong"
   },
   "picker": {
-    "noDate": "No date selected",
-    "noTime": "No time selected"
+    "title": "Add to {{load}}",
+    "search": "Search",
+    "searchHint": "Name",
+    "member": "member",
+    "add": "Add {{name}} to {{load}}",
+    "added": "{{name}} has been added to {{load}}",
+    "fix": "Fix",
+    "fixFor": "Fix {{name}}",
+    "change": "Change…",
+    "choose": "Choose…",
+    "noDefaults": "{{name}} has no last slot to start from: choose what they fly.",
+    "mayLetThrough": "(you may let this through)",
+    "creditLeft": "{{price}} comes off {{name}}'s credit, {{left}} left",
+    "creditShort": "{{price}} comes off {{name}}'s credit, which is {{left}} short",
+    "free": "Nothing to pay",
+    "nobody": "Nobody found",
+    "filter": {
+      "label": "Show",
+      "everyone": "Everyone",
+      "ready": "Ready",
+      "today": "Flew today"
+    }
   },
   "location": {
     "search": "Search for an address",

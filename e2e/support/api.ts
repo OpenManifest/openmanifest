@@ -108,15 +108,70 @@ export async function callLoadViaApi(id: string, minutes = 10): Promise<boolean>
 }
 
 /** Registers a brand new user who has not joined the operator. Returns the email. */
-export async function registerNewUser(): Promise<string> {
+export async function registerNewUser(name = 'New Jumper'): Promise<string> {
   const email = `newjumper+${Date.now()}@example.com`;
   const { json } = await call(
-    `mutation($email: String!) { userRegister(email: $email, password: "${PASSWORD}", passwordConfirmation: "${PASSWORD}", name: "New Jumper", phone: "0400111222", bodyMassKg: 80, confirmUrl: "https://openmanifest.org/confirm/") { authenticatable { id } errors } }`,
+    `mutation($email: String!, $name: String!) { userRegister(email: $email, password: "${PASSWORD}", passwordConfirmation: "${PASSWORD}", name: $name, phone: "0400111222", bodyMassKg: 80, confirmUrl: "https://openmanifest.org/confirm/") { authenticatable { id } errors } }`,
     {},
-    { email }
+    { email, name }
   );
   if (!json?.data?.userRegister?.authenticatable?.id) {
     throw new Error(`could not register a new user: ${JSON.stringify(json).slice(0, 200)}`);
   }
   return email;
+}
+
+/**
+ * Makes sure the seed's "Max Manifest" has flown before, so the member picker has a last slot to fill in: a load on which
+ * they had a place, landed. Does nothing when they already have one. Returns whether they have a last slot.
+ */
+export async function giveMaxALastSlotViaApi(): Promise<boolean> {
+  const found = await ownerCall('{ operators { edges { node { id } } } }');
+  const operatorId = Number(found.json.data.operators.edges[0].node.id);
+  const members = await ownerCall(
+    `{ memberships(operator: ${operatorId}, first: 5, search: "Max Manifest") { edges { node { id lastSlot { id } } } } }`
+  );
+  const max = members.json.data.memberships.edges[0]?.node;
+  if (!max) return false;
+  if (max.lastSlot) return true;
+
+  const options = await ownerCall(
+    `{ ticketTypes(operator: ${operatorId}) { id } activityTypes(memberships: [${max.id}]) { id } vehicles(operator: ${operatorId}) { id } }`
+  );
+  const { ticketTypes, activityTypes, vehicles } = options.json.data;
+  const owner = await ownerCall('{ operators { edges { node { currentUser { id } } } } }');
+  const crew = owner.json.data.operators.edges[0].node.currentUser.id;
+  const load = await ownerCall(
+    `mutation { createLoad(input: { attributes: { name: "Earlier", vehicle: ${vehicles[0].id}, maxSlots: 10, pilot: ${crew}, gca: ${crew} } }) { load { id } } }`
+  );
+  const loadId = load.json?.data?.createLoad?.load?.id;
+  if (!loadId) return false;
+  const slot = await ownerCall(
+    `mutation { createSlot(input: { attributes: { load: ${loadId}, membership: ${max.id}, ticketType: ${ticketTypes[0].id}, activityType: ${activityTypes[0].id}, bodyMassKg: 80 } }) { slot { id } } }`
+  );
+  if (!slot.json?.data?.createSlot?.slot?.id) return false;
+  const landed = await ownerCall(
+    `mutation { finalizeLoad(input: { id: ${Number(loadId)}, state: completed }) { load { id } } }`
+  );
+  return !!landed.json?.data?.finalizeLoad?.load?.id;
+}
+
+/** A member of the seeded operator who is not ready to fly (no credit, no certification). Returns the name they go by. */
+export async function joinBlockedMemberViaApi(name = `Blocked ${Date.now()}`) {
+  const email = await registerNewUser(name);
+  const login = await call(
+    `mutation { userLogin(email: "${email}", password: "${PASSWORD}") { authenticatable { id } } }`
+  );
+  const auth = {
+    'access-token': login.headers.get('access-token') ?? '',
+    client: login.headers.get('client') ?? '',
+    uid: login.headers.get('uid') ?? '',
+  };
+  const operators = await ownerCall('{ operators { edges { node { id } } } }');
+  const operatorId = operators.json.data.operators.edges[0].node.id;
+  const joined = await call(
+    `mutation { joinOperator(input: { operator: ${operatorId} }) { membership { id } errors } }`,
+    auth
+  );
+  return joined.json?.data?.joinOperator?.membership?.id ? name : undefined;
 }

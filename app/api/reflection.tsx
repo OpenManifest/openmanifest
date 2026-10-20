@@ -2133,9 +2133,9 @@ export type ManifestGroupMutationHookResult = ReturnType<typeof useManifestGroup
 export type ManifestGroupMutationResult = Apollo.MutationResult<Operation.ManifestGroupMutation>;
 export type ManifestGroupMutationOptions = Apollo.BaseMutationOptions<Operation.ManifestGroupMutation, Operation.ManifestGroupMutationVariables>;
 export const ManifestUserDocument = gql`
-    mutation ManifestUser($activityType: ID, $extras: [ID!], $load: ID, $equipment: [ID!], $ticketType: ID, $membership: ID, $bodyMassKg: Float, $guests: [GuestInput!], $groupNumber: Int) {
+    mutation ManifestUser($activityType: ID, $extras: [ID!], $load: ID, $equipment: [ID!], $ticketType: ID, $membership: ID, $bodyMassKg: Float, $guests: [GuestInput!], $groupNumber: Int, $destination: ID) {
   createSlot(
-    input: {attributes: {activityType: $activityType, extras: $extras, load: $load, equipment: $equipment, groupNumber: $groupNumber, ticketType: $ticketType, membership: $membership, bodyMassKg: $bodyMassKg, guests: $guests}}
+    input: {attributes: {activityType: $activityType, extras: $extras, load: $load, equipment: $equipment, groupNumber: $groupNumber, destination: $destination, ticketType: $ticketType, membership: $membership, bodyMassKg: $bodyMassKg, guests: $guests}}
   ) {
     errors
     fieldErrors {
@@ -2172,6 +2172,7 @@ export type ManifestUserMutationFn = Apollo.MutationFunction<Operation.ManifestU
  *      bodyMassKg: // value for 'bodyMassKg'
  *      guests: // value for 'guests'
  *      groupNumber: // value for 'groupNumber'
+ *      destination: // value for 'destination'
  *   },
  * });
  */
@@ -3886,6 +3887,84 @@ export type LoadsQueryHookResult = ReturnType<typeof useLoadsQuery>;
 export type LoadsLazyQueryHookResult = ReturnType<typeof useLoadsLazyQuery>;
 export type LoadsSuspenseQueryHookResult = ReturnType<typeof useLoadsSuspenseQuery>;
 export type LoadsQueryResult = Apollo.QueryResult<Operation.LoadsQuery, Operation.LoadsQueryVariables>;
+export const MemberPickerDocument = gql`
+    query MemberPicker($operatorId: ID!, $loadId: ID!, $search: String, $first: Int, $after: String) {
+  memberships(
+    operator: $operatorId
+    licensed: false
+    search: $search
+    first: $first
+    after: $after
+  ) {
+    edges {
+      cursor
+      node {
+        ...membershipEssentials
+        creditsCents
+        eligibility(loadId: $loadId) {
+          ready
+          rules {
+            ...eligibilityResultEssentials
+          }
+        }
+        lastSlot {
+          ...slotDetails
+          load {
+            id
+            loadDate
+          }
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+    ${MembershipEssentialsFragmentDoc}
+${EligibilityResultEssentialsFragmentDoc}
+${SlotDetailsFragmentDoc}`;
+
+/**
+ * __useMemberPickerQuery__
+ *
+ * To run a query within a React component, call `useMemberPickerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMemberPickerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMemberPickerQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *      loadId: // value for 'loadId'
+ *      search: // value for 'search'
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function useMemberPickerQuery(baseOptions: Apollo.QueryHookOptions<Operation.MemberPickerQuery, Operation.MemberPickerQueryVariables> & ({ variables: Operation.MemberPickerQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.MemberPickerQuery, Operation.MemberPickerQueryVariables>(MemberPickerDocument, options);
+      }
+export function useMemberPickerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.MemberPickerQuery, Operation.MemberPickerQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.MemberPickerQuery, Operation.MemberPickerQueryVariables>(MemberPickerDocument, options);
+        }
+// @ts-ignore
+export function useMemberPickerSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.MemberPickerQuery, Operation.MemberPickerQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MemberPickerQuery, Operation.MemberPickerQueryVariables>;
+export function useMemberPickerSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MemberPickerQuery, Operation.MemberPickerQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.MemberPickerQuery | undefined, Operation.MemberPickerQueryVariables>;
+export function useMemberPickerSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.MemberPickerQuery, Operation.MemberPickerQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.MemberPickerQuery, Operation.MemberPickerQueryVariables>(MemberPickerDocument, options);
+        }
+export type MemberPickerQueryHookResult = ReturnType<typeof useMemberPickerQuery>;
+export type MemberPickerLazyQueryHookResult = ReturnType<typeof useMemberPickerLazyQuery>;
+export type MemberPickerSuspenseQueryHookResult = ReturnType<typeof useMemberPickerSuspenseQuery>;
+export type MemberPickerQueryResult = Apollo.QueryResult<Operation.MemberPickerQuery, Operation.MemberPickerQueryVariables>;
 export const MembershipsDocument = gql`
     query Memberships($operatorId: ID!, $search: String, $permissions: [Permission!], $first: Int, $after: String, $licensed: Boolean) {
   memberships(
