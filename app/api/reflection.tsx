@@ -2239,6 +2239,43 @@ export function useManifestUserMutation(baseOptions?: Apollo.MutationHookOptions
 export type ManifestUserMutationHookResult = ReturnType<typeof useManifestUserMutation>;
 export type ManifestUserMutationResult = Apollo.MutationResult<Operation.ManifestUserMutation>;
 export type ManifestUserMutationOptions = Apollo.BaseMutationOptions<Operation.ManifestUserMutation, Operation.ManifestUserMutationVariables>;
+export const MarkNotificationSeenDocument = gql`
+    mutation MarkNotificationSeen($id: Int!) {
+  updateNotification(input: {id: $id, attributes: {isSeen: true}}) {
+    errors
+    notification {
+      id
+      isSeen
+    }
+  }
+}
+    `;
+export type MarkNotificationSeenMutationFn = Apollo.MutationFunction<Operation.MarkNotificationSeenMutation, Operation.MarkNotificationSeenMutationVariables>;
+
+/**
+ * __useMarkNotificationSeenMutation__
+ *
+ * To run a mutation, you first call `useMarkNotificationSeenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkNotificationSeenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markNotificationSeenMutation, { data, loading, error }] = useMarkNotificationSeenMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useMarkNotificationSeenMutation(baseOptions?: Apollo.MutationHookOptions<Operation.MarkNotificationSeenMutation, Operation.MarkNotificationSeenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.MarkNotificationSeenMutation, Operation.MarkNotificationSeenMutationVariables>(MarkNotificationSeenDocument, options);
+      }
+export type MarkNotificationSeenMutationHookResult = ReturnType<typeof useMarkNotificationSeenMutation>;
+export type MarkNotificationSeenMutationResult = Apollo.MutationResult<Operation.MarkNotificationSeenMutation>;
+export type MarkNotificationSeenMutationOptions = Apollo.BaseMutationOptions<Operation.MarkNotificationSeenMutation, Operation.MarkNotificationSeenMutationVariables>;
 export const MoveSlotDocument = gql`
     mutation MoveSlot($sourceSlot: Int!, $targetSlot: Int, $targetLoad: Int!, $targetLoadVehicle: Int) {
   moveSlot(
@@ -3796,6 +3833,111 @@ export type AddressToLocationQueryHookResult = ReturnType<typeof useAddressToLoc
 export type AddressToLocationLazyQueryHookResult = ReturnType<typeof useAddressToLocationLazyQuery>;
 export type AddressToLocationSuspenseQueryHookResult = ReturnType<typeof useAddressToLocationSuspenseQuery>;
 export type AddressToLocationQueryResult = Apollo.QueryResult<Operation.AddressToLocationQuery, Operation.AddressToLocationQueryVariables>;
+export const InboxDocument = gql`
+    query Inbox($operatorId: ID!, $first: Int) {
+  operator(id: $operatorId) {
+    id
+    currentUser {
+      id
+      unseenNotifications
+      notifications(first: $first) {
+        edges {
+          node {
+            id
+            message
+            notificationType
+            isSeen
+            createdAt
+            sentBy {
+              id
+              user {
+                id
+                name
+              }
+            }
+            resource {
+              __typename
+              ... on Load {
+                id
+                loadNumber
+              }
+              ... on Slot {
+                id
+                load {
+                  id
+                  loadNumber
+                }
+              }
+              ... on Equipment {
+                id
+                name
+                owner {
+                  id
+                }
+              }
+              ... on EquipmentInspection {
+                id
+                equipment {
+                  id
+                  name
+                  owner {
+                    id
+                  }
+                }
+              }
+              ... on Transaction {
+                id
+                amountCents
+              }
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useInboxQuery__
+ *
+ * To run a query within a React component, call `useInboxQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInboxQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useInboxQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *      first: // value for 'first'
+ *   },
+ * });
+ */
+export function useInboxQuery(baseOptions: Apollo.QueryHookOptions<Operation.InboxQuery, Operation.InboxQueryVariables> & ({ variables: Operation.InboxQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.InboxQuery, Operation.InboxQueryVariables>(InboxDocument, options);
+      }
+export function useInboxLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.InboxQuery, Operation.InboxQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.InboxQuery, Operation.InboxQueryVariables>(InboxDocument, options);
+        }
+// @ts-ignore
+export function useInboxSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.InboxQuery, Operation.InboxQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.InboxQuery, Operation.InboxQueryVariables>;
+export function useInboxSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.InboxQuery, Operation.InboxQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.InboxQuery | undefined, Operation.InboxQueryVariables>;
+export function useInboxSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.InboxQuery, Operation.InboxQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.InboxQuery, Operation.InboxQueryVariables>(InboxDocument, options);
+        }
+export type InboxQueryHookResult = ReturnType<typeof useInboxQuery>;
+export type InboxLazyQueryHookResult = ReturnType<typeof useInboxLazyQuery>;
+export type InboxSuspenseQueryHookResult = ReturnType<typeof useInboxSuspenseQuery>;
+export type InboxQueryResult = Apollo.QueryResult<Operation.InboxQuery, Operation.InboxQueryVariables>;
 export const LoadDocument = gql`
     query Load($id: ID!) {
   load(id: $id) {
@@ -5128,6 +5270,53 @@ export type TodayQueryHookResult = ReturnType<typeof useTodayQuery>;
 export type TodayLazyQueryHookResult = ReturnType<typeof useTodayLazyQuery>;
 export type TodaySuspenseQueryHookResult = ReturnType<typeof useTodaySuspenseQuery>;
 export type TodayQueryResult = Apollo.QueryResult<Operation.TodayQuery, Operation.TodayQueryVariables>;
+export const UnseenNotificationsDocument = gql`
+    query UnseenNotifications($operatorId: ID!) {
+  operator(id: $operatorId) {
+    id
+    currentUser {
+      id
+      unseenNotifications
+    }
+  }
+}
+    `;
+
+/**
+ * __useUnseenNotificationsQuery__
+ *
+ * To run a query within a React component, call `useUnseenNotificationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUnseenNotificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUnseenNotificationsQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *   },
+ * });
+ */
+export function useUnseenNotificationsQuery(baseOptions: Apollo.QueryHookOptions<Operation.UnseenNotificationsQuery, Operation.UnseenNotificationsQueryVariables> & ({ variables: Operation.UnseenNotificationsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.UnseenNotificationsQuery, Operation.UnseenNotificationsQueryVariables>(UnseenNotificationsDocument, options);
+      }
+export function useUnseenNotificationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.UnseenNotificationsQuery, Operation.UnseenNotificationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.UnseenNotificationsQuery, Operation.UnseenNotificationsQueryVariables>(UnseenNotificationsDocument, options);
+        }
+// @ts-ignore
+export function useUnseenNotificationsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.UnseenNotificationsQuery, Operation.UnseenNotificationsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.UnseenNotificationsQuery, Operation.UnseenNotificationsQueryVariables>;
+export function useUnseenNotificationsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.UnseenNotificationsQuery, Operation.UnseenNotificationsQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.UnseenNotificationsQuery | undefined, Operation.UnseenNotificationsQueryVariables>;
+export function useUnseenNotificationsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.UnseenNotificationsQuery, Operation.UnseenNotificationsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.UnseenNotificationsQuery, Operation.UnseenNotificationsQueryVariables>(UnseenNotificationsDocument, options);
+        }
+export type UnseenNotificationsQueryHookResult = ReturnType<typeof useUnseenNotificationsQuery>;
+export type UnseenNotificationsLazyQueryHookResult = ReturnType<typeof useUnseenNotificationsLazyQuery>;
+export type UnseenNotificationsSuspenseQueryHookResult = ReturnType<typeof useUnseenNotificationsSuspenseQuery>;
+export type UnseenNotificationsQueryResult = Apollo.QueryResult<Operation.UnseenNotificationsQuery, Operation.UnseenNotificationsQueryVariables>;
 export const VehiclesDocument = gql`
     query Vehicles($operatorId: ID!) {
   vehicles(operator: $operatorId) {

@@ -36,7 +36,9 @@
     "main": "Main",
     "skip": "Skip to content",
     "switchOperator": "Switch operator",
-    "account": "Account menu"
+    "account": "Account menu",
+    "unread_one": "{{label}}, {{count}} unread",
+    "unread_other": "{{label}}, {{count}} unread"
   },
   "loading": "Loading",
   "account": {
@@ -168,6 +170,31 @@
     "empty": {
       "title": "No loads yet today",
       "body": "When the first load is made it shows here."
+    }
+  },
+  "inbox": {
+    "unread_one": "{{count}} unread",
+    "unread_other": "{{count}} unread",
+    "allRead": "You are up to date",
+    "readAll": "Mark all as read",
+    "new": "Unread",
+    "more": "Show older",
+    "empty": {
+      "title": "No notifications",
+      "body": "Calls, changes to your bookings and money added to your balance show up here."
+    },
+    "type": {
+      "boarding": "Boarding call",
+      "boarding_canceled": "Boarding call cancelled",
+      "user_manifested": "Booked on a load",
+      "credits_updated": "Your balance changed",
+      "equipment_inspection_requested": "Rig inspection needed",
+      "equipment_inspection_completed": "Rig inspected",
+      "permission_granted": "Access granted",
+      "permission_revoked": "Access removed",
+      "membership_updated": "Your membership changed",
+      "publication_requested": "Publication requested",
+      "other": "Notification"
     }
   },
   "wallet": {

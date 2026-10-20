@@ -3,7 +3,14 @@ import * as Notifications from 'expo-notifications';
 import { Linking, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
-import { useUpdateUserMutation } from 'app/api/reflection';
+import { NavigationContainerRefContext } from '@react-navigation/native';
+import { useApolloClient } from '@apollo/client';
+import {
+  UnseenNotificationsDocument,
+  useMarkNotificationSeenMutation,
+  useUpdateUserMutation,
+} from 'app/api/reflection';
+import { openPush } from 'app/features/inbox/openTarget';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { useSession } from 'app/state';
 import { useNotifications } from 'app/providers/notifications';
@@ -50,6 +57,12 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
   const {
     operator: { currentUser, loading, called },
   } = useOperatorContext();
+  const container = React.useContext(NavigationContainerRefContext);
+  const client = useApolloClient();
+  const [markSeen] = useMarkNotificationSeenMutation();
+  // The tap on a push, held until the member is signed in and the navigator is up (the app may have been started by it)
+  const [tapped, setTapped] = React.useState<Notifications.NotificationResponse | null>(null);
+  const opened = React.useRef<string | null>(null);
   const notificationListener =
     React.useRef<ReturnType<typeof Notifications.addNotificationReceivedListener>>(undefined);
   const responseListener =
@@ -77,14 +90,18 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       if (notification.request.content.body) {
         notify.info(notification.request.content.body);
       }
+      // The badge of the inbox follows
+      client.refetchQueries({ include: [UnseenNotificationsDocument] });
     });
 
     // This listener is fired whenever a user taps on or
     // interacts with a notification (works when app is foregrounded,
     // backgrounded, or killed)
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(
-      () => undefined
-    );
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(setTapped);
+    // The push that started the app
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (response) setTapped(response);
+    });
 
     const subscription = Linking.addEventListener('url', onOutsideLink);
 
@@ -97,7 +114,28 @@ export default function PushNotifications(props: React.PropsWithChildren<object>
       }
       subscription.remove();
     };
-  }, [notify, onOutsideLink, setPushToken]);
+  }, [client, notify, onOutsideLink, setPushToken]);
+
+  // A tap on a push opens the screen of its type: Today for calls and changes of the manifest, the Wallet for money, the
+  // Inbox for the rest; the notification is read by then
+  React.useEffect(() => {
+    if (!tapped || !currentUser?.id || !container?.isReady()) return;
+    // The same tap is not opened twice (the app can hand it over again)
+    const key = `${tapped.notification.request.identifier}:${tapped.actionIdentifier}`;
+    if (opened.current === key) return;
+    opened.current = key;
+    const push = openPush(
+      (name, params) =>
+        (container.navigate as unknown as (screen: string, options: object) => void)(name, params),
+      tapped.notification.request.content.data
+    );
+    if (push?.notificationId) {
+      markSeen({
+        variables: { id: Number(push.notificationId) },
+        refetchQueries: [UnseenNotificationsDocument],
+      });
+    }
+  }, [container, currentUser?.id, markSeen, tapped]);
 
   // Update remote push token if we have a local token, but no
   // token saved on the server. This is done so that the server

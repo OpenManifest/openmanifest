@@ -5,7 +5,7 @@ import ScreenHeader from 'app/navigation/ScreenHeader';
 import { useTranslation } from 'react-i18next';
 
 import { AppSignalBoundary } from 'app/components/app_signal';
-import NotificationsScreen from './notifications/NotificationsScreen';
+import InboxScreen from 'app/features/inbox/InboxScreen';
 
 export type NotificationRoutes = {
   NotificationsScreen: undefined;
@@ -30,7 +30,7 @@ export default function Notifications() {
       >
         <Notification.Screen
           name="NotificationsScreen"
-          component={NotificationsScreen}
+          component={InboxScreen}
           options={{ title: t('screens.inbox') }}
         />
       </Notification.Navigator>

@@ -9,6 +9,7 @@ import { useSession } from 'app/state';
 import { Tappable, useDevice, useStyles } from 'app/ui';
 import type { Destination } from './destinations';
 import NavItem from './NavItem';
+import useUnseenCount from 'app/features/inbox/useUnseenCount';
 import useDestinations from './useDestinations';
 
 export const RAIL_WIDTH = 80;
@@ -64,6 +65,7 @@ export default function AppNavigation({ state, navigation }: BottomTabBarProps) 
   const variant =
     breakpoint === 'compact' ? 'bottom' : breakpoint === 'medium' ? 'rail' : 'sidebar';
   const items = barItems(destinations, variant === 'bottom');
+  const unseen = useUnseenCount();
   const current = activeKey(items, focused, leaf);
 
   const styles = useStyles((theme) => ({
@@ -135,6 +137,12 @@ export default function AppNavigation({ state, navigation }: BottomTabBarProps) 
       icon={destination.icon}
       active={destination.key === current}
       variant={variant}
+      badge={destination.key === 'inbox' ? unseen : 0}
+      accessibilityLabel={
+        destination.key === 'inbox' && unseen
+          ? t('navigation.unread', { label: t(destination.labelKey), count: unseen })
+          : undefined
+      }
       onPress={() => open(destination)}
     />
   ));

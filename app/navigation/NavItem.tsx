@@ -13,11 +13,24 @@ export type NavItemProps = {
   /** `bottom`: a column in a row; `rail`: a column at the side; `sidebar`: icon and label in a row */
   variant: 'bottom' | 'rail' | 'sidebar';
   onPress: () => void;
+  /** How many things wait for the person here (unread notifications): shown on the icon, spoken with the label */
+  badge?: number;
+  /** The accessible name when it says more than the label ("Inbox, 3 unread") */
+  accessibilityLabel?: string;
   testID?: string;
 };
 
 /** One destination in the tab bar, the rail or the sidebar. Active is brandSoft with brandText, which keeps its contrast in both schemes. */
-export default function NavItem({ label, icon, active, variant, onPress, testID }: NavItemProps) {
+export default function NavItem({
+  label,
+  icon,
+  active,
+  variant,
+  onPress,
+  badge = 0,
+  accessibilityLabel,
+  testID,
+}: NavItemProps) {
   const styles = useStyles((t) => ({
     item: {
       alignItems: 'center',
@@ -34,6 +47,21 @@ export default function NavItem({ label, icon, active, variant, onPress, testID 
     label: { ...t.type.label, color: t.colour.textMuted },
     labelActive: { color: t.colour.onBrandSoft },
     labelRow: { flexShrink: 1 },
+    badge: {
+      position: 'absolute',
+      top: -t.space.xs,
+      right: -t.space.md,
+      minWidth: 18,
+      height: 18,
+      paddingHorizontal: t.space.xs,
+      borderRadius: 9,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: t.colour.status.blocked.bg,
+      borderWidth: 1,
+      borderColor: t.colour.status.blocked.fg,
+    },
+    badgeText: { ...t.type.caption, color: t.colour.status.blocked.fg, fontWeight: '700' },
   }));
   const theme = useTheme();
   const isRow = variant === 'sidebar';
@@ -41,7 +69,7 @@ export default function NavItem({ label, icon, active, variant, onPress, testID 
   return (
     <Tappable
       role="button"
-      aria-label={label}
+      aria-label={accessibilityLabel ?? label}
       aria-current={active ? 'page' : undefined}
       testID={testID}
       onPress={onPress}
@@ -57,6 +85,13 @@ export default function NavItem({ label, icon, active, variant, onPress, testID 
           size={ICON_SIZE}
           color={active ? theme.colour.brandText : theme.colour.textMuted}
         />
+        {badge > 0 ? (
+          <View style={styles.badge} testID={testID ? `${testID}-badge` : undefined}>
+            <Text maxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER} style={styles.badgeText}>
+              {badge > 99 ? '99+' : badge}
+            </Text>
+          </View>
+        ) : null}
       </View>
       <Text
         numberOfLines={1}
