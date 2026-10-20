@@ -470,6 +470,67 @@ export const TicketTypeExtraDetailedFragmentDoc = gql`
 }
     ${TicketTypeExtraEssentialsFragmentDoc}
 ${TicketTypeEssentialsFragmentDoc}`;
+export const LoadVehicleEssentialsFragmentDoc = gql`
+    fragment loadVehicleEssentials on LoadVehicle {
+  id
+  role
+  position
+  capacity
+  slotsCount
+  vehicle {
+    ...vehicleEssentials
+  }
+}
+    ${VehicleEssentialsFragmentDoc}`;
+export const CrewRoleEssentialsFragmentDoc = gql`
+    fragment crewRoleEssentials on CrewRole {
+  id
+  key
+  name
+  scope
+  required
+  occupiesSlot
+  permission
+  vehicleKinds
+  position
+}
+    `;
+export const LoadCrewEssentialsFragmentDoc = gql`
+    fragment loadCrewEssentials on LoadCrewAssignment {
+  id
+  crewRole {
+    ...crewRoleEssentials
+  }
+  membership {
+    ...membershipEssentials
+  }
+  loadVehicle {
+    id
+  }
+}
+    ${CrewRoleEssentialsFragmentDoc}
+${MembershipEssentialsFragmentDoc}`;
+export const LoadCardFragmentDoc = gql`
+    fragment loadCard on Load {
+  ...loadEssentials
+  vehicle {
+    ...vehicleEssentials
+  }
+  vehicles {
+    ...loadVehicleEssentials
+  }
+  crew {
+    ...loadCrewEssentials
+  }
+  destinations {
+    ...destinationEssentials
+  }
+}
+    ${LoadEssentialsFragmentDoc}
+${VehicleEssentialsFragmentDoc}
+${LoadVehicleEssentialsFragmentDoc}
+${LoadCrewEssentialsFragmentDoc}
+${DestinationEssentialsFragmentDoc}`;
 export const CertificationBodyEssentialsFragmentDoc = gql`
     fragment certificationBodyEssentials on CertificationBody {
   id
@@ -864,46 +925,6 @@ export const RoleDetailedFragmentDoc = gql`
   permissions
 }
     ${RoleEssentialsFragmentDoc}`;
-export const LoadVehicleEssentialsFragmentDoc = gql`
-    fragment loadVehicleEssentials on LoadVehicle {
-  id
-  role
-  position
-  capacity
-  slotsCount
-  vehicle {
-    ...vehicleEssentials
-  }
-}
-    ${VehicleEssentialsFragmentDoc}`;
-export const CrewRoleEssentialsFragmentDoc = gql`
-    fragment crewRoleEssentials on CrewRole {
-  id
-  key
-  name
-  scope
-  required
-  occupiesSlot
-  permission
-  vehicleKinds
-  position
-}
-    `;
-export const LoadCrewEssentialsFragmentDoc = gql`
-    fragment loadCrewEssentials on LoadCrewAssignment {
-  id
-  crewRole {
-    ...crewRoleEssentials
-  }
-  membership {
-    ...membershipEssentials
-  }
-  loadVehicle {
-    id
-  }
-}
-    ${CrewRoleEssentialsFragmentDoc}
-${MembershipEssentialsFragmentDoc}`;
 export const LoadDetailsFragmentDoc = gql`
     fragment loadDetails on Load {
   ...loadEssentials
@@ -3764,12 +3785,12 @@ export const LoadsDocument = gql`
   loads(date: $date, from: $from, to: $to, operator: $operator) {
     edges {
       node {
-        ...loadEssentials
+        ...loadCard
       }
     }
   }
 }
-    ${LoadEssentialsFragmentDoc}`;
+    ${LoadCardFragmentDoc}`;
 
 /**
  * __useLoadsQuery__

@@ -77,7 +77,7 @@ const membershipDetails: MembershipDetailsFragment = merge({}, membershipEssenti
     name: 'Certificate A',
   },
 });
-const beaver = {
+export const beaver = {
   __typename: 'Vehicle' as const,
   minCapacity: 0,
   registration: 'ABC123',
@@ -85,6 +85,24 @@ const beaver = {
   capacity: 10,
   name: 'Beaver',
   kind: 'aircraft',
+};
+
+/** What a card of the board has besides the essentials: the vehicle that carries, the crew and the destinations */
+export const cardParts = {
+  destinations: [],
+  crew: [],
+  vehicle: beaver,
+  vehicles: [
+    {
+      __typename: 'LoadVehicle' as const,
+      id: '1',
+      role: LoadVehicleRole.Carrying,
+      position: 0,
+      capacity: 10,
+      slotsCount: 0,
+      vehicle: beaver,
+    },
+  ],
 };
 
 export default createMockedQuery<LoadQueryVariables, LoadQuery>(
