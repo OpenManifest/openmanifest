@@ -18,6 +18,8 @@ export type TextFieldProps = FieldMessages & {
   multiline?: boolean;
   /** A unit or hint inside the box, after the text */
   suffix?: string;
+  /** The input itself, to focus it from a shortcut (People's "/") */
+  inputRef?: React.Ref<TextInput>;
   testID?: string;
 } & Pick<
     TextInputProps,
@@ -81,6 +83,7 @@ function TextField({
   suffix,
   helperText,
   error,
+  inputRef,
   testID,
   ...input
 }: TextFieldProps) {
@@ -97,6 +100,7 @@ function TextField({
         <Input
           {...input}
           {...fieldAria(ids, { helperText, error, label })}
+          ref={inputRef}
           testID={testID}
           aria-label={label || placeholder}
           value={value ?? ''}

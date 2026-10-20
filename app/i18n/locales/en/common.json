@@ -213,6 +213,62 @@
       "other": "Notification"
     }
   },
+  "people": {
+    "table": "People",
+    "search": "Search people",
+    "searchHint": "Name",
+    "searchHintWeb": "Name (press / to search)",
+    "add": "Add member",
+    "count_one": "{{count}} person",
+    "count_other": "{{count}} people",
+    "more": "Show more",
+    "role": { "label": "Role", "all": "All roles" },
+    "status": {
+      "label": "Status",
+      "all": "All",
+      "ready": "Ready",
+      "expiring": "Expiring",
+      "blocked": "Blocked"
+    },
+    "sort": {
+      "label": "Sort",
+      "by": "Sort: {{sort}}",
+      "name": "Name",
+      "status": "Needs attention first",
+      "credit": "Least credit first",
+      "lastLoad": "Flew last first"
+    },
+    "column": {
+      "name": "Name",
+      "role": "Role",
+      "status": "Status",
+      "credit": "Credit",
+      "lastLoad": "Last {{load}}",
+      "actions": "Actions"
+    },
+    "last": "Last {{load}}: {{date}}",
+    "today": "Today",
+    "never": "Never",
+    "none": "None",
+    "menu": "Actions for {{name}}",
+    "action": {
+      "profile": "Open profile",
+      "manifest": "Manifest on…",
+      "credit": "Add credit"
+    },
+    "manifestOn": {
+      "title": "Manifest {{name}} on…",
+      "nowhere": "There is nowhere open to put them",
+      "nowhereBody": "The open loads of the day show here.",
+      "board": "Go to the board",
+      "full": "Full"
+    },
+    "empty": {
+      "title": "Nobody here",
+      "body": "Nobody matches the search and the filters.",
+      "clear": "Clear the filters"
+    }
+  },
   "wallet": {
     "balance": "Your balance",
     "held": "Held for booked jumps",

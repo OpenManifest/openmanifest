@@ -20,6 +20,7 @@ import {
   MembershipProfileDocument,
   MembershipProfileFragmentDoc,
   MembershipsDocument,
+  PeopleDocument,
   useCreateGhostMutation,
   useAddUserQualificationMutation,
   useCreateOrderMutation,
@@ -69,6 +70,8 @@ function useUserProfile(variables?: Partial<MembershipQueryVariables>) {
           refetchQueries: [
             MembershipsDocument,
             { query: MembershipsDocument, variables: { operatorId: operator?.id } },
+            // People's list, so the walk-in member shows in it
+            PeopleDocument,
           ],
         });
 

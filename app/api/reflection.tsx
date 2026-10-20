@@ -4845,6 +4845,82 @@ export type OperatorsQueryHookResult = ReturnType<typeof useOperatorsQuery>;
 export type OperatorsLazyQueryHookResult = ReturnType<typeof useOperatorsLazyQuery>;
 export type OperatorsSuspenseQueryHookResult = ReturnType<typeof useOperatorsSuspenseQuery>;
 export type OperatorsQueryResult = Apollo.QueryResult<Operation.OperatorsQuery, Operation.OperatorsQueryVariables>;
+export const PeopleDocument = gql`
+    query People($operatorId: ID!, $search: String, $first: Int, $after: String) {
+  memberships(
+    operator: $operatorId
+    licensed: false
+    search: $search
+    first: $first
+    after: $after
+  ) {
+    edges {
+      cursor
+      node {
+        ...membershipEssentials
+        creditsCents
+        eligibility {
+          ready
+          rules {
+            ...eligibilityResultEssentials
+          }
+        }
+        lastSlot {
+          id
+          load {
+            id
+            loadDate
+          }
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+    ${MembershipEssentialsFragmentDoc}
+${EligibilityResultEssentialsFragmentDoc}`;
+
+/**
+ * __usePeopleQuery__
+ *
+ * To run a query within a React component, call `usePeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePeopleQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *      search: // value for 'search'
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function usePeopleQuery(baseOptions: Apollo.QueryHookOptions<Operation.PeopleQuery, Operation.PeopleQueryVariables> & ({ variables: Operation.PeopleQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.PeopleQuery, Operation.PeopleQueryVariables>(PeopleDocument, options);
+      }
+export function usePeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.PeopleQuery, Operation.PeopleQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.PeopleQuery, Operation.PeopleQueryVariables>(PeopleDocument, options);
+        }
+// @ts-ignore
+export function usePeopleSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.PeopleQuery, Operation.PeopleQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.PeopleQuery, Operation.PeopleQueryVariables>;
+export function usePeopleSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.PeopleQuery, Operation.PeopleQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.PeopleQuery | undefined, Operation.PeopleQueryVariables>;
+export function usePeopleSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.PeopleQuery, Operation.PeopleQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.PeopleQuery, Operation.PeopleQueryVariables>(PeopleDocument, options);
+        }
+export type PeopleQueryHookResult = ReturnType<typeof usePeopleQuery>;
+export type PeopleLazyQueryHookResult = ReturnType<typeof usePeopleLazyQuery>;
+export type PeopleSuspenseQueryHookResult = ReturnType<typeof usePeopleSuspenseQuery>;
+export type PeopleQueryResult = Apollo.QueryResult<Operation.PeopleQuery, Operation.PeopleQueryVariables>;
 export const QualificationsDocument = gql`
     query Qualifications($certificationBodyId: Int) {
   qualifications(certificationBodyId: $certificationBodyId) {

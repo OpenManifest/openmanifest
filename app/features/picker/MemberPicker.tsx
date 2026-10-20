@@ -49,6 +49,8 @@ export type MemberPickerProps = {
   load: LoadDetailsFragment;
   /** `desk` picks anyone of the dropzone; `self` is a member booking themselves: no search, their own defaults, confirm */
   mode?: 'desk' | 'self';
+  /** Starts with this member searched for and picked (People's "Manifest on…") */
+  member?: { id: string; name: string } | null;
   open: boolean;
   onClose(): void;
   testID?: string;
@@ -81,6 +83,7 @@ export default function MemberPicker({ open, ...props }: MemberPickerProps) {
 function OpenPicker({
   load,
   mode = 'desk',
+  member: initial,
   onClose,
   testID = 'member-picker',
 }: Omit<MemberPickerProps, 'open'>) {
@@ -98,10 +101,10 @@ function OpenPicker({
     dialogs,
   } = useManifestContext();
 
-  const [search, setSearch] = React.useState('');
-  const [term, setTerm] = React.useState('');
+  const [search, setSearch] = React.useState(initial?.name ?? '');
+  const [term, setTerm] = React.useState(initial?.name.trim() ?? '');
   const [filter, setFilter] = React.useState<PickerFilter>('everyone');
-  const [selectedId, setSelectedId] = React.useState<string | null>(null);
+  const [selectedId, setSelectedId] = React.useState<string | null>(initial?.id ?? null);
   const [size, setSize] = React.useState(PAGE);
   const [adding, setAdding] = React.useState(false);
   // What the person changed from the last slot, the guests of an escort, and the people of a group

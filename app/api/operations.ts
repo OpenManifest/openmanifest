@@ -818,6 +818,16 @@ export type OperatorsQueryVariables = Types.Exact<{
 
 export type OperatorsQuery = { __typename?: 'Query', operators: { __typename?: 'OperatorConnection', edges?: Array<{ __typename?: 'OperatorEdge', node?: { __typename?: 'Operator', id: string, walletId: string, lat?: number | null, lng?: number | null, name?: string | null, primaryColor?: string | null, secondaryColor?: string | null, banner?: string | null, isCreditSystemEnabled: boolean, createdAt: any, timeZone: string, terminology: any, industry: Types.Industry, modules: any, callScheduleMinutes: Array<number>, currency: string, units: any, status: Types.OperatorState, currentUser?: { __typename?: 'Membership', id: string } | null, settings?: { __typename?: 'Settings', allowManifestBypass?: boolean | null, allowNegativeCredits?: boolean | null, allowDoubleManifesting?: boolean | null, allowSelfManifest?: boolean | null, requireCredits?: boolean | null, requireCertification?: boolean | null, requireMembership?: boolean | null, requireEquipmentInspection?: boolean | null, requireEquipment?: boolean | null, requireEquipmentInService?: boolean | null } | null } | null } | null> | null } };
 
+export type PeopleQueryVariables = Types.Exact<{
+  operatorId: Types.Scalars['ID']['input'];
+  search?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  first?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  after?: Types.InputMaybe<Types.Scalars['String']['input']>;
+}>;
+
+
+export type PeopleQuery = { __typename?: 'Query', memberships?: { __typename?: 'MembershipConnection', edges?: Array<{ __typename?: 'MembershipEdge', cursor: string, node?: { __typename?: 'Membership', creditsCents?: number | null, id: string, walletId: string, expiresAt?: number | null, hasCredits: boolean, hasMembership: boolean, hasCertificationLevel: boolean, hasBodyMassKg: boolean, eligibility: { __typename?: 'MembershipEligibility', ready: boolean, rules: Array<{ __typename?: 'EligibilityResult', code: string, ok: boolean, status: string, message?: string | null, problem?: string | null, bypassed: boolean, expiresAt?: number | null, amountCents?: number | null }> }, lastSlot?: { __typename?: 'Slot', id: string, load: { __typename?: 'Load', id: string, loadDate: any } } | null, role?: { __typename?: 'UserRole', id: string, name?: string | null, operatorId: number } | null, certificationLevel?: { __typename?: 'CertificationLevel', id: string, name?: string | null, rank: number, equivalenceKey?: string | null } | null, user: { __typename?: 'User', id: string, name?: string | null, nickname?: string | null, phone?: string | null, email?: string | null, bodyMassKg?: string | null, dateOfBirth?: any | null, moderationRole?: Types.ModerationRole | null, image?: string | null } } | null } | null> | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } | null };
+
 export type QualificationsQueryVariables = Types.Exact<{
   certificationBodyId?: Types.InputMaybe<Types.Scalars['Int']['input']>;
 }>;
