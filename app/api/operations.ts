@@ -371,6 +371,7 @@ export type MoveSlotMutationVariables = Types.Exact<{
   sourceSlot: Types.Scalars['Int']['input'];
   targetSlot?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   targetLoad: Types.Scalars['Int']['input'];
+  targetLoadVehicle?: Types.InputMaybe<Types.Scalars['Int']['input']>;
 }>;
 
 

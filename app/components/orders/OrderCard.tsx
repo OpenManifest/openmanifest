@@ -93,6 +93,9 @@ export default function OrderCard(props: IOrder) {
             paddingRight: 4,
             paddingTop: 2,
             marginBottom: 0,
+            // Paper's caption is the text colour at 54 %: too pale on the card (WCAG 1.4.3)
+            color: theme.colors.onSurface,
+            opacity: 0.8,
           }}
         >
           {DateTime.fromISO(order?.createdAt).toLocaleString(DateTime.DATETIME_SHORT)}
@@ -106,7 +109,7 @@ export default function OrderCard(props: IOrder) {
             style={{ width: '100%' }}
             titleStyle={styles.orderTitle}
             description={order.title || null}
-            descriptionStyle={styles.orderDescription}
+            descriptionStyle={[styles.orderDescription, { color: theme.colors.onSurface }]}
             {...{ right, left }}
           />
         </Card.Content>

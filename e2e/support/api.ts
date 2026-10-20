@@ -161,6 +161,31 @@ export async function giveLastSlotViaApi(name: string): Promise<boolean> {
   return !!landed.json?.data?.finalizeLoad?.load?.id;
 }
 
+/**
+ * Puts a member of the seed on a load, the way the manifest desk would (their first ticket, an activity they may do).
+ * Returns the id of the slot.
+ */
+export async function manifestMemberViaApi(
+  loadId: string,
+  name: string
+): Promise<string | undefined> {
+  const found = await ownerCall('{ operators { edges { node { id } } } }');
+  const operatorId = Number(found.json.data.operators.edges[0].node.id);
+  const members = await ownerCall(
+    `{ memberships(operator: ${operatorId}, first: 5, search: "${name}") { edges { node { id } } } }`
+  );
+  const member = members.json.data.memberships.edges[0]?.node;
+  if (!member) return undefined;
+  const options = await ownerCall(
+    `{ ticketTypes(operator: ${operatorId}) { id } activityTypes(memberships: [${member.id}]) { id } }`
+  );
+  const { ticketTypes, activityTypes } = options.json.data;
+  const slot = await ownerCall(
+    `mutation { createSlot(input: { attributes: { load: ${Number(loadId)}, membership: ${member.id}, ticketType: ${ticketTypes[0].id}, activityType: ${activityTypes[0].id}, bodyMassKg: 80 } }) { slot { id } errors } }`
+  );
+  return slot.json?.data?.createSlot?.slot?.id;
+}
+
 /** Max Manifest, the seed member the returning-member specs use */
 export const giveMaxALastSlotViaApi = () => giveLastSlotViaApi('Max Manifest');
 

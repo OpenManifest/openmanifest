@@ -62,15 +62,15 @@ test.describe('manifest board @manifest', () => {
     await expectAccessible(page, 'load');
   });
 
-  // The manifest context mounts the group sheet once: open it from the free places of the load
-  test('the group sheet opens from the load screen', async ({ page }) => {
+  // The free places of the load open the member picker (U3.7)
+  test('the member picker opens from the load screen', async ({ page }) => {
     await gotoRoute(page, BOARD);
     await openFirstLoad(page);
-    await page.waitForTimeout(3000);
     const free = page.getByTestId('free-places').last();
+    await expect(free).toHaveAttribute('role', 'button', { timeout: 20_000 });
     await free.scrollIntoViewIfNeeded();
     await press(page, free);
-    await expect(page.getByTestId('manifest-group-sheet')).toBeVisible();
+    await expect(page.getByTestId('member-picker')).toBeVisible();
   });
 
   // A full page load of each URL must open the right screen (needs the persisted login)

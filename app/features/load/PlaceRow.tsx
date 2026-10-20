@@ -20,12 +20,15 @@ export type PlaceRowProps = {
   /** May change this place (their own, or anyone's) */
   canEdit?: boolean;
   canTakeOff?: boolean;
+  /** May move this place to another load or vehicle */
+  canMove?: boolean;
   /** Whether the destination of the place is worth showing: when it can differ from the load's */
   showDestination?: boolean;
   /** The guests of an escort are shown under the row, so this row is joined to them */
   joined?: boolean;
   onEdit?(slot: SlotDetailsFragment): void;
   onTakeOff?(slot: SlotDetailsFragment): void;
+  onMove?(slot: SlotDetailsFragment): void;
   onOpenPerson?(slot: SlotDetailsFragment): void;
   testID?: string;
 };
@@ -41,10 +44,12 @@ export default function PlaceRow({
   group,
   canEdit = false,
   canTakeOff = false,
+  canMove = false,
   showDestination = false,
   joined = false,
   onEdit,
   onTakeOff,
+  onMove,
   onOpenPerson,
   testID = 'slot-row',
 }: PlaceRowProps) {
@@ -72,6 +77,14 @@ export default function PlaceRow({
           icon: 'pencil-outline' as const,
           testID: `${testID}-edit`,
           onPress: () => onEdit(slot),
+        }
+      : null,
+    canMove && onMove
+      ? {
+          label: t('common:move.item'),
+          icon: 'swap-horizontal' as const,
+          testID: `${testID}-move`,
+          onPress: () => onMove(slot),
         }
       : null,
     canTakeOff && onTakeOff

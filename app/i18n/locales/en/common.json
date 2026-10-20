@@ -139,6 +139,22 @@
     "acceptable": "Acceptable",
     "strong": "Strong"
   },
+  "move": {
+    "title": "Move {{name}}",
+    "loadVehicle": "{{load}} #{{number}} · {{vehicle}}",
+    "free_one": "{{count}} free place",
+    "free_other": "{{count}} free places",
+    "blocked": { "closed": "Has left", "full": "Full" },
+    "moved": "{{name}} has been moved to {{target}}",
+    "nowhere": "There is nowhere to move them to",
+    "item": "Move to…",
+    "picked": "Picked up {{name}} from {{load}}",
+    "over": "{{name}} is over {{load}}",
+    "dropped": "{{name}} was moved to {{load}}",
+    "cancelled": "{{name}} was put back",
+    "draggable": "{{name}}",
+    "instructions": "Press Space to pick up a place. Use the left and right arrow keys to choose a load, and Space to drop it. Escape puts it back."
+  },
   "picker": {
     "title": "Add to {{load}}",
     "search": "Search",
@@ -513,6 +529,8 @@
     "f": "Fahrenheit (°F)"
   },
   "board": {
+    "guests_one": "{{count}} guest",
+    "guests_other": "{{count}} guests",
     "placesLabel": "{{slots}} filled",
     "places": "{{filled}} of {{capacity}} {{slots}}",
     "noVehicle": "No {{vehicle}} yet",

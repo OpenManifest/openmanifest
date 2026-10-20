@@ -14,10 +14,12 @@ import { Permission } from 'app/api/schema.d';
 import { LoadContextProvider, useManifestContext, useOperatorContext } from 'app/providers';
 import useRestriction from 'app/hooks/useRestriction';
 import { moduleEnabled } from 'app/utils/modules';
+import ColumnPlaces from './ColumnPlaces';
 import ConditionsStrip from './ConditionsStrip';
 import LoadActions from './LoadActions';
 import LoadCard from './LoadCard';
 import { COLUMN_WIDTH, MAX_CONTENT_WIDTH, layoutOf, splitLoads } from './layout';
+import { BoardDndProvider, DroppableLoad } from './dnd/BoardDnd';
 import { useBoard } from './useBoard';
 
 /** The module whose operators see the conditions of the day on the board */
@@ -135,27 +137,42 @@ export default function BoardScreen() {
     body = empty;
   } else if (layout === 'columns') {
     body = (
-      <ScrollView horizontal testID="loads" showsHorizontalScrollIndicator>
-        <View style={{ flexDirection: 'row', gap: theme.space.lg, alignItems: 'flex-start' }}>
-          {active.map((load) => (
-            <View key={load.id} style={{ width: COLUMN_WIDTH }}>
-              {card(load, () => openLoad(load))}
-            </View>
-          ))}
-          {over.length ? (
-            <View
-              testID="board-finished"
-              style={{ width: COLUMN_WIDTH * 0.75, gap: theme.space.md }}
-              accessibilityLabel={t('common:board.completedStrip', { count: over.length })}
-            >
-              <Text variant="label" tone="muted" role="heading" aria-level={2}>
-                {t('common:board.completedStrip', { count: over.length })}
-              </Text>
-              {over.map((load) => card(load, () => openLoad(load)))}
-            </View>
-          ) : null}
-        </View>
-      </ScrollView>
+      <BoardDndProvider onFreeze={board.freeze} onUnfreeze={board.unfreeze}>
+        <ScrollView horizontal testID="loads" showsHorizontalScrollIndicator>
+          <View style={{ flexDirection: 'row', gap: theme.space.lg, alignItems: 'flex-start' }}>
+            {active.map((load) => {
+              const loadLabel = t('common:loadNumber', { load: loadTerm, number: load.loadNumber });
+              return (
+                <DroppableLoad
+                  key={load.id}
+                  loadId={load.id}
+                  loadLabel={loadLabel}
+                  testID={`board-column-${load.id}`}
+                >
+                  <View style={{ width: COLUMN_WIDTH, gap: theme.space.sm }}>
+                    {card(load, () => openLoad(load))}
+                    <LoadContextProvider id={load.id}>
+                      <ColumnPlaces loadLabel={loadLabel} />
+                    </LoadContextProvider>
+                  </View>
+                </DroppableLoad>
+              );
+            })}
+            {over.length ? (
+              <View
+                testID="board-finished"
+                style={{ width: COLUMN_WIDTH * 0.75, gap: theme.space.md }}
+                accessibilityLabel={t('common:board.completedStrip', { count: over.length })}
+              >
+                <Text variant="label" tone="muted" role="heading" aria-level={2}>
+                  {t('common:board.completedStrip', { count: over.length })}
+                </Text>
+                {over.map((load) => card(load, () => openLoad(load)))}
+              </View>
+            ) : null}
+          </View>
+        </ScrollView>
+      </BoardDndProvider>
     );
   } else if (layout === 'split') {
     body = (

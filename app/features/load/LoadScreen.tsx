@@ -21,6 +21,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
 import { moduleEnabled } from 'app/utils/modules';
 import MemberPicker from 'app/features/picker/MemberPicker';
+import MoveToSheet from 'app/features/move/MoveToSheet';
 import EscortGroup from './EscortGroup';
 import FreePlaces from './FreePlaces';
 import LoadHeader from './LoadHeader';
@@ -139,6 +140,7 @@ export function LoadView({ embedded = false }: { embedded?: boolean }) {
     [deleteSlot, load?.loadNumber, loadTerm, notify, t]
   );
   const [picking, setPicking] = React.useState(false);
+  const [moving, setMoving] = React.useState<SlotDetailsFragment | null>(null);
   const manifest = React.useCallback(() => setPicking(true), []);
   const canManifest = permissions.canManifestSelf || permissions.canManifestOthers;
 
@@ -167,6 +169,8 @@ export function LoadView({ embedded = false }: { embedded?: boolean }) {
           rules: item.slot.membership ? rulesByMember.get(item.slot.membership.id) : null,
           canEdit: canEdit(item.slot),
           canTakeOff: canTakeOff(item.slot),
+          canMove: canEdit(item.slot),
+          onMove: setMoving,
           showDestination,
           onEdit: edit,
           onTakeOff: takeOff,
@@ -237,6 +241,9 @@ export function LoadView({ embedded = false }: { embedded?: boolean }) {
         </View>
       ) : null}
       {load ? <MemberPicker load={load} open={picking} onClose={() => setPicking(false)} /> : null}
+      {load && moving ? (
+        <MoveToSheet slot={moving} loadId={load.id} open onClose={() => setMoving(null)} />
+      ) : null}
     </Container>
   );
 }

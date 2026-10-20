@@ -2184,9 +2184,9 @@ export type ManifestUserMutationHookResult = ReturnType<typeof useManifestUserMu
 export type ManifestUserMutationResult = Apollo.MutationResult<Operation.ManifestUserMutation>;
 export type ManifestUserMutationOptions = Apollo.BaseMutationOptions<Operation.ManifestUserMutation, Operation.ManifestUserMutationVariables>;
 export const MoveSlotDocument = gql`
-    mutation MoveSlot($sourceSlot: Int!, $targetSlot: Int, $targetLoad: Int!) {
+    mutation MoveSlot($sourceSlot: Int!, $targetSlot: Int, $targetLoad: Int!, $targetLoadVehicle: Int) {
   moveSlot(
-    input: {sourceSlot: $sourceSlot, targetSlot: $targetSlot, targetLoad: $targetLoad}
+    input: {sourceSlot: $sourceSlot, targetSlot: $targetSlot, targetLoad: $targetLoad, targetLoadVehicle: $targetLoadVehicle}
   ) {
     loads {
       ...loadDetails
@@ -2217,6 +2217,7 @@ export type MoveSlotMutationFn = Apollo.MutationFunction<Operation.MoveSlotMutat
  *      sourceSlot: // value for 'sourceSlot'
  *      targetSlot: // value for 'targetSlot'
  *      targetLoad: // value for 'targetLoad'
+ *      targetLoadVehicle: // value for 'targetLoadVehicle'
  *   },
  * });
  */
