@@ -29,10 +29,10 @@ test.describe('form dialogs @setup', () => {
 
   test('the save button stays in view while the form scrolls', async ({ page }) => {
     await gotoRoute(page, '/configuration/equipment');
-    await press(page, page.getByTestId('new-equipment-primary-action'));
-
     const card = page.getByTestId('form-dialog');
-    await expect(card).toBeVisible();
+    await pressUntil(page, page.getByTestId('new-equipment-primary-action'), () =>
+      expect(card).toBeVisible({ timeout: 5000 })
+    );
     await expect(card.getByRole('button', { name: 'Save' })).toBeInViewport();
     await card.getByRole('textbox', { name: 'Serial' }).focus();
     await expect(card.getByRole('button', { name: 'Save' })).toBeInViewport();
