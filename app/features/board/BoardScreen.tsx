@@ -8,6 +8,7 @@ import FloatingActionArea from 'app/components/layout/FloatingActionArea';
 import useBreakpoint from 'app/components/layout/useBreakpoint';
 import DateBar from 'app/screens/authenticated/manifest/manifest/DateBar';
 import { LoadView } from 'app/features/load/LoadScreen';
+import BookJump from 'app/features/picker/BookJump';
 import { useCrewRolesQuery } from 'app/api/reflection';
 import type { LoadDetailsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
@@ -39,7 +40,10 @@ export default function BoardScreen() {
     operator: { operator, called, refetch: refetchOperator },
   } = useOperatorContext();
   const isFocused = useIsFocused();
-  const { dialogs } = useManifestContext();
+  const {
+    dialogs,
+    manifest: { permissions },
+  } = useManifestContext();
   const canCreateLoad = useRestriction(Permission.CreateLoad);
   const canUpdateWeather = useRestriction(Permission.UpdateWeatherConditions);
   const { data: crew } = useCrewRolesQuery({
@@ -78,6 +82,9 @@ export default function BoardScreen() {
     [navigation]
   );
 
+  const loadName = (load: LoadDetailsFragment) =>
+    t('common:loadNumber', { load: loadTerm, number: load.loadNumber });
+
   const card = (load: LoadDetailsFragment, onPress: () => void) => (
     <LoadCard
       key={load.id}
@@ -87,7 +94,20 @@ export default function BoardScreen() {
       highlighted={board.isChanged(load.id)}
       selected={layout === 'split' && selected?.id === load.id}
       onPress={onPress}
-      action={<LoadActions load={load} crewRoles={crewRoles} />}
+      action={
+        <View style={{ gap: theme.space.sm }}>
+          <LoadActions load={load} crewRoles={crewRoles} />
+          {/* The desk books people from the load; a member books themselves from its card */}
+          {permissions.canManifestOthers ? null : (
+            <BookJump
+              load={load}
+              variant="secondary"
+              label={t('common:picker.self.add', { load: loadName(load) })}
+              testID={`book-jump-${load.id}`}
+            />
+          )}
+        </View>
+      }
     />
   );
 

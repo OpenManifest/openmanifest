@@ -17,6 +17,7 @@ import {
   useActivityTypesQuery,
   useDestinationsQuery,
   useMemberPickerQuery,
+  useSelfBookingQuery,
   useTicketTypesQuery,
 } from 'app/api/reflection';
 import type { LoadDetailsFragment } from 'app/api/operations';
@@ -46,26 +47,44 @@ import {
 
 export type MemberPickerProps = {
   load: LoadDetailsFragment;
+  /** `desk` picks anyone of the dropzone; `self` is a member booking themselves: no search, their own defaults, confirm */
+  mode?: 'desk' | 'self';
   open: boolean;
   onClose(): void;
   testID?: string;
 };
 
 const FILTERS: PickerFilter[] = ['everyone', 'ready', 'today'];
+
+const creditKey = (self: boolean, short: boolean) =>
+  self
+    ? short
+      ? ('common:picker.self.creditShort' as const)
+      : ('common:picker.self.creditLeft' as const)
+    : short
+      ? ('common:picker.creditShort' as const)
+      : ('common:picker.creditLeft' as const);
+
 const PAGE = 50;
 
 /**
  * Adds a member to a load in three steps: search, pick (their last slot is filled in), confirm. Whether each member can
  * be added shows before the tap, with the reason and a way to fix it. The ticket and the type of jump can be changed in
  * place; a ticket that takes guests along asks for them. "A group" picks several people for one ticket and one group
- * number. "Change…" opens the full form.
+ * number. "Change…" opens the full form. In `self` mode the member sees only themselves, already picked.
  */
 export default function MemberPicker({ open, ...props }: MemberPickerProps) {
   // Closed, it asks for nothing: the members are fetched when the picker opens
   return open ? <OpenPicker {...props} /> : null;
 }
 
-function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPickerProps, 'open'>) {
+function OpenPicker({
+  load,
+  mode = 'desk',
+  onClose,
+  testID = 'member-picker',
+}: Omit<MemberPickerProps, 'open'>) {
+  const self = mode === 'self';
   const { t } = useTranslation(['common', 'terms']);
   const theme = useTheme();
   const notify = useNotifications();
@@ -101,7 +120,12 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
       search: term || undefined,
       first: size,
     },
-    skip: !operator?.id,
+    skip: !operator?.id || self,
+    fetchPolicy: 'cache-and-network',
+  });
+  const { data: selfData, loading: loadingSelf } = useSelfBookingQuery({
+    variables: { operatorId: operator?.id as string, loadId: load.id },
+    skip: !operator?.id || !self,
     fetchPolicy: 'cache-and-network',
   });
   const { data: ticketData } = useTicketTypesQuery({
@@ -121,7 +145,9 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
   });
   const destinations = destinationData?.operator?.destinations ?? [];
 
+  const me = (selfData?.operator?.currentUser ?? null) as PickerMember | null;
   const members = React.useMemo(() => {
+    if (self) return me ? [me] : [];
     const all = (data?.memberships?.edges ?? [])
       .map((edge) => edge?.node)
       .filter((node): node is PickerMember => !!node)
@@ -129,10 +155,18 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
       .filter((node) => permissions.canManifestOthers || node.id === currentUser?.id);
     const filtered = filterMembers(all, filter, today);
     return filter === 'everyone' ? sortReadyFirst(filtered) : filtered;
-  }, [currentUser?.id, data?.memberships?.edges, filter, permissions.canManifestOthers, today]);
+  }, [
+    currentUser?.id,
+    data?.memberships?.edges,
+    filter,
+    me,
+    permissions.canManifestOthers,
+    self,
+    today,
+  ]);
 
   // One person: their last slot, and what was changed over it
-  const selected = members.find(({ id }) => id === selectedId) ?? null;
+  const selected = members.find(({ id }) => id === (self ? me?.id : selectedId)) ?? null;
   // A group: the first person's last slot is where the group starts from
   const lead = group ? (people[0] ?? null) : selected;
   const defaults = React.useMemo(
@@ -248,7 +282,11 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
         guests: escorts ? guestInputs(guests) : undefined,
       });
       if ('slot' in response) {
-        notify.success(t('common:picker.added', { name, load: loadName }));
+        notify.success(
+          self
+            ? t('common:picker.self.added', { load: loadName })
+            : t('common:picker.added', { name, load: loadName })
+        );
         onClose();
       } else fail(response);
     } finally {
@@ -298,7 +336,7 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
     <Overlay
       open
       onClose={onClose}
-      title={t('common:picker.title', { load: loadName })}
+      title={t(self ? 'common:picker.self.title' : 'common:picker.title', { load: loadName })}
       testID={testID}
       footer={
         <View style={{ gap: theme.space.sm }}>
@@ -314,10 +352,14 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
           ) : (
             <Button
               testID={`${testID}-add`}
-              label={t('common:picker.add', {
-                name: name || t('common:picker.member'),
-                load: loadName,
-              })}
+              label={
+                self
+                  ? t('common:picker.self.add', { load: loadName })
+                  : t('common:picker.add', {
+                      name: name || t('common:picker.member'),
+                      load: loadName,
+                    })
+              }
               disabled={!ready}
               loading={adding}
               fullWidth
@@ -332,7 +374,7 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
               testID={`${testID}-credit`}
             >
               {defaults.costCents
-                ? t(credit.negative ? 'common:picker.creditShort' : 'common:picker.creditLeft', {
+                ? t(creditKey(self, credit.negative), {
                     name,
                     price: formatMoney(credit.price),
                     left: formatMoney(Math.abs(credit.left)),
@@ -349,30 +391,37 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
       }
     >
       <View style={{ gap: theme.space.md }}>
-        <TextField
-          label={t('common:picker.search')}
-          testID={`${testID}-search`}
-          value={search}
-          onChange={setSearch}
-          placeholder={t('common:picker.searchHint')}
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-        <Segmented<PickerFilter>
-          label={t('common:picker.filter.label')}
-          testID={`${testID}-filter`}
-          value={filter}
-          onChange={setFilter}
-          options={FILTERS.map((value) => ({ value, label: t(`common:picker.filter.${value}`) }))}
-        />
-        {permissions.canManifestOthers ? (
-          <Switch
-            label={t('common:picker.group.switch')}
-            value={group}
-            onChange={toggleGroup}
-            testID={`${testID}-group`}
-          />
-        ) : null}
+        {self ? null : (
+          <>
+            <TextField
+              label={t('common:picker.search')}
+              testID={`${testID}-search`}
+              value={search}
+              onChange={setSearch}
+              placeholder={t('common:picker.searchHint')}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <Segmented<PickerFilter>
+              label={t('common:picker.filter.label')}
+              testID={`${testID}-filter`}
+              value={filter}
+              onChange={setFilter}
+              options={FILTERS.map((value) => ({
+                value,
+                label: t(`common:picker.filter.${value}`),
+              }))}
+            />
+            {permissions.canManifestOthers ? (
+              <Switch
+                label={t('common:picker.group.switch')}
+                value={group}
+                onChange={toggleGroup}
+                testID={`${testID}-group`}
+              />
+            ) : null}
+          </>
+        )}
         {group && people.length ? (
           <GroupCard
             loadId={load.id}
@@ -392,7 +441,7 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
           contentContainerStyle={{ gap: theme.space.sm }}
           testID={`${testID}-list`}
         >
-          {loading && !members.length ? (
+          {(self ? loadingSelf : loading) && !members.length ? (
             <Skeleton lines={4} />
           ) : members.length ? (
             members.map((member) => (
@@ -400,15 +449,16 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
                 <MemberPickerRow
                   member={member}
                   selected={
-                    group ? people.some(({ id }) => id === member.id) : member.id === selectedId
+                    self ||
+                    (group ? people.some(({ id }) => id === member.id) : member.id === selectedId)
                   }
-                  onSelect={select}
+                  onSelect={self ? () => undefined : select}
                   onFix={(picked) => {
                     onClose();
                     openUser('ProfileScreen', { userId: picked.id });
                   }}
                 />
-                {!group && member.id === selectedId ? (
+                {!group && member.id === (self ? me?.id : selectedId) ? (
                   <>
                     <DefaultsCard
                       member={member}
@@ -434,7 +484,7 @@ function OpenPicker({ load, onClose, testID = 'member-picker' }: Omit<MemberPick
           ) : (
             <EmptyState icon="account-search-outline" title={t('common:picker.nobody')} />
           )}
-          {data?.memberships?.pageInfo?.hasNextPage ? (
+          {!self && data?.memberships?.pageInfo?.hasNextPage ? (
             <Button
               variant="tertiary"
               testID={`${testID}-more`}

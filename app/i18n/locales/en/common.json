@@ -156,6 +156,12 @@
       "fix": "Fix",
       "fixFor": "Fix {{rule}}"
     },
+    "book": {
+      "title": "Fly today",
+      "body_one": "{{load}} has {{count}} free place",
+      "body_other": "{{load}} has {{count}} free places",
+      "action": "Book a jump"
+    },
     "credit": { "title": "Your credit" },
     "loads": { "title": "Today's loads", "yours": "you are on it" },
     "duties": { "title": "Your duties today", "row": "{{role}} on {{load}}" },
@@ -204,6 +210,13 @@
     "addGroup_other": "Add {{count}} people to {{load}}",
     "groupAdded_one": "{{count}} person has been added to {{load}}",
     "groupAdded_other": "{{count}} people have been added to {{load}}",
+    "self": {
+      "title": "Book {{load}}",
+      "add": "Book {{load}}",
+      "added": "You are on {{load}}",
+      "creditLeft": "{{price}} comes off your credit, {{left}} left",
+      "creditShort": "{{price}} comes off your credit, which is {{left}} short"
+    },
     "group": {
       "switch": "Add a group",
       "title_one": "A group of {{count}}",

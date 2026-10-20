@@ -4794,6 +4794,69 @@ export type RolesQueryHookResult = ReturnType<typeof useRolesQuery>;
 export type RolesLazyQueryHookResult = ReturnType<typeof useRolesLazyQuery>;
 export type RolesSuspenseQueryHookResult = ReturnType<typeof useRolesSuspenseQuery>;
 export type RolesQueryResult = Apollo.QueryResult<Operation.RolesQuery, Operation.RolesQueryVariables>;
+export const SelfBookingDocument = gql`
+    query SelfBooking($operatorId: ID!, $loadId: ID!) {
+  operator(id: $operatorId) {
+    id
+    currentUser {
+      ...membershipEssentials
+      creditsCents
+      eligibility(loadId: $loadId) {
+        ready
+        rules {
+          ...eligibilityResultEssentials
+        }
+      }
+      lastSlot {
+        ...slotDetails
+        load {
+          id
+          loadDate
+        }
+      }
+    }
+  }
+}
+    ${MembershipEssentialsFragmentDoc}
+${EligibilityResultEssentialsFragmentDoc}
+${SlotDetailsFragmentDoc}`;
+
+/**
+ * __useSelfBookingQuery__
+ *
+ * To run a query within a React component, call `useSelfBookingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSelfBookingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSelfBookingQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *      loadId: // value for 'loadId'
+ *   },
+ * });
+ */
+export function useSelfBookingQuery(baseOptions: Apollo.QueryHookOptions<Operation.SelfBookingQuery, Operation.SelfBookingQueryVariables> & ({ variables: Operation.SelfBookingQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.SelfBookingQuery, Operation.SelfBookingQueryVariables>(SelfBookingDocument, options);
+      }
+export function useSelfBookingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.SelfBookingQuery, Operation.SelfBookingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.SelfBookingQuery, Operation.SelfBookingQueryVariables>(SelfBookingDocument, options);
+        }
+// @ts-ignore
+export function useSelfBookingSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.SelfBookingQuery, Operation.SelfBookingQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.SelfBookingQuery, Operation.SelfBookingQueryVariables>;
+export function useSelfBookingSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.SelfBookingQuery, Operation.SelfBookingQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.SelfBookingQuery | undefined, Operation.SelfBookingQueryVariables>;
+export function useSelfBookingSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.SelfBookingQuery, Operation.SelfBookingQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.SelfBookingQuery, Operation.SelfBookingQueryVariables>(SelfBookingDocument, options);
+        }
+export type SelfBookingQueryHookResult = ReturnType<typeof useSelfBookingQuery>;
+export type SelfBookingLazyQueryHookResult = ReturnType<typeof useSelfBookingLazyQuery>;
+export type SelfBookingSuspenseQueryHookResult = ReturnType<typeof useSelfBookingSuspenseQuery>;
+export type SelfBookingQueryResult = Apollo.QueryResult<Operation.SelfBookingQuery, Operation.SelfBookingQueryVariables>;
 export const SlotEligibilityDocument = gql`
     query SlotEligibility($loadId: ID!, $membershipId: ID, $guest: GuestInput, $ticketTypeId: ID!, $activityTypeId: ID, $extraIds: [ID!], $equipmentIds: [ID!], $loadVehicleId: ID, $groupNumber: Int, $bodyMassKg: Float, $guests: [GuestInput!]) {
   slotEligibility(

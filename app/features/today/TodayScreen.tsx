@@ -11,6 +11,8 @@ import { useManifestContext, useOperatorContext } from 'app/providers';
 import { useNotifications } from 'app/providers/notifications';
 import { useOperatorToday } from 'app/hooks/useOperatorToday';
 import useOpenUser from 'app/navigation/useOpenUser';
+import { firstBookable } from 'app/features/picker/booking';
+import BookCard from './BookCard';
 import CreditCard from './CreditCard';
 import DutiesCard from './DutiesCard';
 import NextLoadCard from './NextLoadCard';
@@ -60,6 +62,7 @@ export default function TodayScreen() {
     [data?.loads?.edges]
   );
   const next = React.useMemo(() => nextLoadOf(loads, memberId), [loads, memberId]);
+  const bookable = React.useMemo(() => firstBookable(loads, memberId), [loads, memberId]);
   const duties = React.useMemo(() => dutiesOf(loads, memberId), [loads, memberId]);
   const mine = React.useMemo(
     () => new Set(loads.filter((load) => placeOn(load, memberId)).map(({ id }) => id)),
@@ -111,6 +114,8 @@ export default function TodayScreen() {
           onTakeOff={takeOff}
           onOpen={() => openLoad(next.load)}
         />
+      ) : bookable && permissions.canManifestSelf ? (
+        <BookCard load={bookable} onClose={() => refetch()} />
       ) : null}
       {me?.eligibility ? (
         <ReadyChecklist

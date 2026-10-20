@@ -240,7 +240,14 @@ export function LoadView({ embedded = false }: { embedded?: boolean }) {
           {actions}
         </View>
       ) : null}
-      {load ? <MemberPicker load={load} open={picking} onClose={() => setPicking(false)} /> : null}
+      {load ? (
+        <MemberPicker
+          load={load}
+          mode={permissions.canManifestOthers ? 'desk' : 'self'}
+          open={picking}
+          onClose={() => setPicking(false)}
+        />
+      ) : null}
       {load && moving ? (
         <MoveToSheet slot={moving} loadId={load.id} open onClose={() => setMoving(null)} />
       ) : null}

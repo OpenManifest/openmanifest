@@ -5,6 +5,7 @@ import createMockedQuery from 'app/__tests__/manifest/__mocks__/createMockedQuer
 import {
   ActivityTypesDocument,
   MemberPickerDocument,
+  SelfBookingDocument,
   SlotEligibilityDocument,
   TicketTypesDocument,
 } from 'app/api/reflection';
@@ -225,6 +226,51 @@ describe('<MemberPicker />', () => {
     await waitFor(() => expect(screen.getByTestId('picker-choice-ticket')).toBeTruthy());
     expect(screen.getByTestId('member-picker-add').props.accessibilityState?.disabled).toBe(true);
     expect(screen.getByTestId('picker-defaults-change')).toBeTruthy();
+  });
+});
+
+describe('<MemberPicker mode="self" />', () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  const self = createMockedQuery(SelfBookingDocument, { operatorId: '1', loadId: '10' }, {
+    operator: { __typename: 'Operator', id: '1', currentUser: READY },
+  } as never);
+
+  async function renderSelf() {
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    return render(<MemberPicker mode="self" load={load} open onClose={jest.fn()} />, {
+      session: authenticatedSession,
+      permissions: [Permission.CreateSlot],
+      graphql: [self(), tickets(), activities(), slotEligibility(), MOCK_QUERY_LOADS()],
+    });
+  }
+
+  it('shows the member themselves with their last slot filled in, and nobody to search', async () => {
+    const screen = await renderSelf();
+
+    await waitFor(() => expect(screen.getByTestId('picker-choice-ticket')).toBeTruthy(), {
+      timeout: 10000,
+    });
+    expect(screen.getAllByTestId('picker-row')).toHaveLength(1);
+    expect(screen.queryByTestId('member-picker-search')).toBeNull();
+    expect(screen.queryByTestId('member-picker-filter')).toBeNull();
+    expect(screen.queryByTestId('member-picker-group')).toBeNull();
+    expect(screen.getByTestId('member-picker-credit').props.children).toMatch(
+      /\$25\.00 comes off your credit/
+    );
+  });
+
+  it('books with one press when the member is ready', async () => {
+    const screen = await renderSelf();
+
+    await waitFor(
+      () =>
+        expect(
+          screen.getByTestId('member-picker-add').props.accessibilityState?.disabled
+        ).toBeFalsy(),
+      { timeout: 10000 }
+    );
+    expect(screen.getByTestId('member-picker-add').props.accessibilityLabel).toBe('Book Load #3');
   });
 });
 

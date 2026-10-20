@@ -229,3 +229,42 @@ export async function joinBlockedMemberViaApi(name = `Blocked ${Date.now()}`) {
   );
   return joined.json?.data?.joinOperator?.membership?.id ? name : undefined;
 }
+
+/**
+ * Switches the seeded operator's self-manifesting on or off. The operator's settings are one column that an update
+ * replaces, so the ones the seed has are sent again. It is the operator of every spec: keep the time it is off short, and
+ * switch it back in a `finally`. Returns whether the API accepted it.
+ */
+export async function setSelfManifestViaApi(allow: boolean): Promise<boolean> {
+  const found = await ownerCall(
+    '{ operators { edges { node { id name settings { requireEquipmentInspection requireCertification requireCredits requireMembership allowNegativeCredits allowManifestBypass allowDoubleManifesting requireEquipmentInService requireEquipment } } } } }'
+  );
+  const operator = found.json.data.operators.edges[0].node;
+  const settings = Object.entries({ ...operator.settings, allowSelfManifest: allow })
+    .filter(([key, value]) => key !== '__typename' && value !== null)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join(', ');
+  const updated = await ownerCall(
+    `mutation { updateOperator(input: { id: ${Number(operator.id)}, attributes: { name: ${JSON.stringify(operator.name)}, settings: { ${settings} } } }) { operator { id } errors } }`
+  );
+  return !!updated.json?.data?.updateOperator?.operator?.id;
+}
+
+/** Takes a member of the seeded operator off every load of the day they are on (the seed has them on the first load) */
+export async function takeMemberOffViaApi(name: string) {
+  const found = await ownerCall('{ operators { edges { node { id timeZone } } } }');
+  const operatorId = Number(found.json.data.operators.edges[0].node.id);
+  const loads = await ownerCall(
+    `{ loads(operator: ${operatorId}, first: 20) { edges { node { id slots { id membership { user { name } } } } } } }`
+  );
+  const slots = (loads.json?.data?.loads?.edges ?? []).flatMap(
+    (edge: { node: { slots: { id: string; membership?: { user: { name: string } } }[] } }) =>
+      edge.node.slots
+  );
+  for (const slot of slots.filter(
+    (candidate: { membership?: { user: { name: string } } }) =>
+      candidate.membership?.user?.name === name
+  )) {
+    await ownerCall(`mutation { deleteSlot(input: { id: ${Number(slot.id)} }) { errors } }`);
+  }
+}
