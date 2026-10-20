@@ -4,34 +4,38 @@ import { ManifestGroupDocument } from 'app/api/reflection';
 import type { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
-import { MOCK_QUERY_ALLOWED_JUMP_TYPES } from './__mocks__/QueryAllowedJumpTypes.mock';
+import { MOCK_QUERY_ALLOWED_ACTIVITY_TYPES } from './__mocks__/QueryAllowedActivityTypes.mock';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
 import ManifestGroupDialog from '../../forms/manifest_group';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
+import { fullAltitude } from 'app/__fixtures__/destination.fixture';
 
 jest.setTimeout(30000);
 
 const load = (MOCK_QUERY_LOAD().result as { data: { load: LoadDetailsFragment } }).data.load;
 // The group being edited: the first two slots of the load
 const slots = (load.slots as SlotDetailsFragment[]).slice(0, 2);
-const userIds = slots.map((slot) => Number(slot.dropzoneUser?.id));
+const userIds = slots.map((slot) => Number(slot.membership?.id));
 
 const ticketType = {
   __typename: 'TicketType',
   id: '1',
   name: 'Height',
   costCents: 4500,
-  isTandem: false,
-  altitude: 14000,
+  requiresEscort: false,
+  escortCapacity: 1,
+  escortQualification: null,
+  escortCrewRole: null,
+  defaultDestination: fullAltitude,
   allowManifestingSelf: true,
   extras: [],
 };
 
-function renderDialog(
+async function renderDialog(
   ticketTypes: object[],
   extraGraphql: Parameters<typeof render>[1]['graphql'] = []
 ) {
-  const screen = render(
+  const screen = await render(
     <View testID="under-test">
       <ManifestGroupDialog open load={load} slots={slots} onClose={jest.fn()} />
     </View>,
@@ -39,9 +43,9 @@ function renderDialog(
       session: authenticatedSession,
       permissions: [Permission.CreateUserSlot],
       graphql: [
-        MOCK_QUERY_ALLOWED_JUMP_TYPES(
-          { allowedForDropzoneUserIds: userIds, isPublic: null as never },
-          { dropzone: { ticketTypes } } as never
+        MOCK_QUERY_ALLOWED_ACTIVITY_TYPES(
+          { allowedForMembershipIds: userIds, isPublic: null as never },
+          { operator: { ticketTypes } } as never
         ),
         ...extraGraphql,
       ],
@@ -53,11 +57,11 @@ function renderDialog(
 
 describe('<ManifestGroupDialog />', () => {
   it('asks for a ticket before manifesting the group', async () => {
-    const screen = renderDialog([]);
+    const screen = await renderDialog([]);
 
-    fireEvent.press(screen.getAllByText('Next')[0]);
+    await fireEvent.press(screen.getAllByText('Next')[0]);
     await waitFor(() => expect(screen.getAllByText('Jump type').length).toBeGreaterThan(0));
-    fireEvent.press(screen.getByText('Manifest'));
+    await fireEvent.press(screen.getByText('Manifest'));
 
     await waitFor(() =>
       expect(screen.getByText('You must select a ticket type to manifest')).toBeTruthy()
@@ -75,7 +79,7 @@ describe('<ManifestGroupDialog />', () => {
         },
       },
     }));
-    const screen = renderDialog(
+    const screen = await renderDialog(
       [ticketType],
       [
         {
@@ -83,17 +87,16 @@ describe('<ManifestGroupDialog />', () => {
             query: ManifestGroupDocument,
             operationName: 'ManifestGroup',
             variables: {
-              jumpType: '1',
+              activityType: '1',
               ticketType: '1',
               groupNumber: null,
               extras: [],
               load: '1',
               userGroup: slots.map((slot) => ({
-                id: Number(slot.dropzoneUser?.id),
-                rig: undefined,
-                exitWeight: Number(slot.exitWeight),
-                passengerName: undefined,
-                passengerExitWeight: undefined,
+                id: Number(slot.membership?.id),
+                equipment: undefined,
+                bodyMassKg: Number(slot.bodyMassKg),
+                guests: undefined,
               })),
             },
           },
@@ -102,12 +105,12 @@ describe('<ManifestGroupDialog />', () => {
       ]
     );
 
-    fireEvent.press(screen.getAllByText('Next')[0]);
+    await fireEvent.press(screen.getAllByText('Next')[0]);
     await waitFor(() => expect(screen.getAllByText('Jump type').length).toBeGreaterThan(0));
     await waitFor(() => expect(screen.getAllByText('Height').length).toBeGreaterThan(0));
     // Let the jump type and ticket be selected by themselves
     await new Promise((resolve) => setTimeout(resolve, 300));
-    fireEvent.press(screen.getByText('Manifest'));
+    await fireEvent.press(screen.getByText('Manifest'));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });
