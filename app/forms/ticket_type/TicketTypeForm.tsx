@@ -2,75 +2,120 @@ import { useTicketTypeExtrasLazyQuery } from 'app/api/reflection';
 import * as React from 'react';
 import { View } from 'react-native';
 import { FormTextField } from 'app/components/input/text/TextField';
-import { List, Divider } from 'react-native-paper';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { TicketTypeExtraEssentialsFragment } from 'app/api/operations';
 import { Control, useWatch } from 'react-hook-form';
-import { AltitudeSelectField } from 'app/components/input/dropdown_select';
+import { DestinationSelectField } from 'app/components/input/destination_select';
 import { FormNumberField } from 'app/components/input/number_input';
 import { SwitchField } from 'app/components/input/switch/Switch';
 import { ChipSelectField } from 'app/components/input/chip_select';
 import { TicketTypeFields } from './useForm';
 import { formatCents } from 'app/utils/money';
+import { useTranslation } from 'react-i18next';
+import useTerms from 'app/i18n/useTerms';
+import { destinationsModule } from 'app/utils/destinations';
+import { limitsModule } from 'app/utils/limits';
+import { Divider, Stack, Subheader } from 'app/ui';
 
 interface ITicketTypeFormProps {
   control: Control<TicketTypeFields>;
 }
 
 export default function TicketTypeForm(props: ITicketTypeFormProps) {
+  const { t } = useTranslation('common');
   const { control } = props;
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
-  const { altitude } = useWatch({ control });
+    operator: { operator },
+  } = useOperatorContext();
+  const term = useTerms();
+  const destinations = destinationsModule(operator?.modules as Record<string, unknown>);
+  const limits = limitsModule(operator?.modules as Record<string, unknown>);
   const [getTicketAddons, query] = useTicketTypeExtrasLazyQuery();
   const { data } = query;
 
   React.useEffect(() => {
-    if (dropzone?.id) {
-      getTicketAddons({ variables: { dropzoneId: dropzone?.id } });
+    if (operator?.id) {
+      getTicketAddons({ variables: { operatorId: operator?.id } });
     }
-  }, [dropzone?.id, getTicketAddons]);
+  }, [operator?.id, getTicketAddons]);
 
-  const { extras: selectedAddons } = useWatch({ control });
-  console.debug({ altitude });
+  const { extras: selectedAddons, requiresEscort } = useWatch({ control });
   return (
-    <>
+    <Stack gap="md">
       <FormTextField
         {...{ control }}
-        label="Name"
+        label={t('forms.fields.name')}
         name="name"
-        helperText="Name of the ticket users will see"
+        helperText={t('forms.ticket_type.nameOfTheTicketUsers')}
       />
 
       <FormNumberField
         {...{ control }}
-        label="Price"
+        label={t('forms.ticket_type.price')}
         name="cost"
-        helperText="Base cost without extra ticket addons"
+        helperText={t('forms.ticket_type.baseCostWithoutExtraTicket')}
       />
       <View style={{ width: '100%' }}>
-        <AltitudeSelectField {...{ control }} name="altitude" />
-
-        {(!altitude || ![4000, 14000].includes(altitude)) && (
-          <FormNumberField {...{ control }} label="Custom altitude" name="altitude" />
-        )}
+        {destinations ? (
+          <DestinationSelectField
+            {...{ control }}
+            name="defaultDestinationId"
+            label={t('forms.ticket_type.defaultDestination', {
+              destination: term('destination').toLowerCase(),
+            })}
+            allowNone
+          />
+        ) : null}
 
         <SwitchField
           {...{ control }}
-          name="isTandem"
-          label="Tandem"
-          helperText="Allow also manifesting a passenger when using this ticket type"
+          name="requiresEscort"
+          label={t('forms.ticket_type.requiresEscort', { escort: term('escort').toLowerCase() })}
+          helperText={t('forms.ticket_type.allowAlsoManifestingGuests', {
+            guests: term('guest', 2).toLowerCase(),
+            escort: term('escort').toLowerCase(),
+          })}
         />
+        {requiresEscort ? (
+          <FormNumberField
+            {...{ control }}
+            label={t('forms.ticket_type.escortCapacity', {
+              guests: term('guest', 2).toLowerCase(),
+              escort: term('escort').toLowerCase(),
+            })}
+            name="escortCapacity"
+          />
+        ) : null}
+
+        {limits?.age ? (
+          <>
+            <FormTextField {...{ control }} label={t('forms.ticket_type.minAge')} name="minAge" />
+            <FormTextField {...{ control }} label={t('forms.ticket_type.maxAge')} name="maxAge" />
+          </>
+        ) : null}
+        {limits?.mass ? (
+          <>
+            <FormTextField
+              {...{ control }}
+              label={t('forms.ticket_type.minBodyMassKg')}
+              name="minBodyMassKg"
+            />
+            <FormTextField
+              {...{ control }}
+              label={t('forms.ticket_type.maxBodyMassKg')}
+              name="maxBodyMassKg"
+            />
+          </>
+        ) : null}
 
         <SwitchField
           {...{ control }}
           name="allowManifestingSelf"
-          label="Public manifesting"
-          helperText="Allow this ticket to be used for public manifesting, e.g not tandems"
+          label={t('forms.ticket_type.publicManifesting')}
+          helperText={t('forms.ticket_type.allowThisTicketToBe')}
         />
         <Divider />
-        <List.Subheader>Enabled ticket add-ons</List.Subheader>
+        <Subheader>{t('forms.ticket_type.enabledTicketAddOns')}</Subheader>
         <ChipSelectField<TicketTypeFields, 'extras'>
           {...{ control }}
           allowEmpty
@@ -87,6 +132,6 @@ export default function TicketTypeForm(props: ITicketTypeFormProps) {
           name="extras"
         />
       </View>
-    </>
+    </Stack>
   );
 }

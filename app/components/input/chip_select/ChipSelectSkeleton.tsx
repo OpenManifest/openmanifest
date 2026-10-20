@@ -1,51 +1,22 @@
 import * as React from 'react';
-import SkeletonContent from 'app/components/Skeleton';
+import { Row, Skeleton, Stack } from 'app/ui';
 
 interface IChipSelectSkeletonLoadingProps {
   rows?: number;
 }
-export default function ChipSelectSkeleton(props: IChipSelectSkeletonLoadingProps) {
-  const { rows } = props;
+
+/** What a list of chips looks like while it loads: a caption and `rows` rows of three chips */
+export default function ChipSelectSkeleton({ rows = 1 }: IChipSelectSkeletonLoadingProps) {
   return (
-    <SkeletonContent
-      isLoading
-      containerStyle={{
-        height: 15 + 13 + 13 + (rows || 1) * 32,
-        width: '100%',
-        justifyContent: 'center',
-        marginBottom: 16,
-      }}
-      layout={[
-        {
-          key: 'header',
-          width: 70,
-          height: 15,
-          borderRadius: 8,
-          marginVertical: 13,
-          marginHorizontal: 8,
-        },
-        {
-          key: 'chips',
-          flexDirection: 'row',
-          children: [
-            {
-              key: 'chip1',
-              width: 96,
-              height: 32,
-              borderRadius: 16,
-              marginRight: 4,
-            },
-            {
-              key: 'chip2',
-              width: 96,
-              height: 32,
-              borderRadius: 16,
-              marginRight: 4,
-            },
-            { key: 'chip3', width: 96, height: 32, borderRadius: 16 },
-          ],
-        },
-      ]}
-    />
+    <Stack gap="sm">
+      <Skeleton width={70} height={15} />
+      {Array.from({ length: rows }, (_, row) => (
+        <Row key={row} gap="sm">
+          <Skeleton width={96} height={32} />
+          <Skeleton width={96} height={32} />
+          <Skeleton width={96} height={32} />
+        </Row>
+      ))}
+    </Stack>
   );
 }

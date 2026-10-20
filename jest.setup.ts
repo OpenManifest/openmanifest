@@ -1,6 +1,8 @@
 import { cleanup, configure } from '@testing-library/react-native';
 
 import '@testing-library/jest-dom';
+// The app always runs with i18next initialised: components that call useTranslation show their words in tests too
+import 'app/i18n';
 import 'react-native-gesture-handler/jestSetup';
 import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/async-storage-mock';
 
@@ -70,17 +72,18 @@ jest.mock('@react-navigation/native', () => ({
   ...jest.requireActual('@react-navigation/native'),
   useNavigation: () => jest.fn(),
   useIsFocused: jest.fn().mockReturnValue(false),
+  useLinkTo: () => jest.fn(),
 }));
 
 // The stock mock exports React Native's own `TextInput` as `BottomSheetTextInput`, which makes the two impossible to
-// tell apart in a test. A thin wrapper keeps it identifiable.
+// tell apart in a test. A thin wrapper keeps it identifiable: its host element has `data-bottom-sheet-input`.
 jest.mock('@gorhom/bottom-sheet', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const React = require('react');
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { TextInput } = require('react-native');
   const BottomSheetTextInput = React.forwardRef((props: Record<string, unknown>, ref: unknown) =>
-    React.createElement(TextInput, { ...props, ref })
+    React.createElement(TextInput, { ...props, 'data-bottom-sheet-input': true, ref })
   );
   BottomSheetTextInput.displayName = 'BottomSheetTextInput';
   return { ...require('@gorhom/bottom-sheet/mock'), BottomSheetTextInput };

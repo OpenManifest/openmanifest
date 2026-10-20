@@ -1,39 +1,48 @@
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { SlotExhaustiveFragment, TicketTypeDetailsFragment } from 'app/api/operations';
+import {
+  EquipmentEssentialsFragment,
+  SlotExhaustiveFragment,
+  TicketTypeDetailsFragment,
+} from 'app/api/operations';
+import i18n from 'app/i18n';
+import { requiredKinds } from 'app/components/input/dropdown_select/EquipmentPicker';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useManifestContext } from 'app/providers/manifest/context';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
-import useManifestValidator from 'app/hooks/useManifestValidator';
 import isEqual from 'lodash/isEqual';
 import { useNotifications } from 'app/providers/notifications';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import camelCase from 'lodash/camelCase';
 import withDefaults from 'app/forms/initialValues';
+import { GuestValue, guestInputsOf, guestsError } from './guests';
 
 export type ManifestUserFields = Pick<
   SlotExhaustiveFragment,
-  | 'jumpType'
+  | 'activityType'
   // | 'load'
-  | 'rig'
-  | 'dropzoneUser'
-  | 'exitWeight'
+  | 'equipment'
+  | 'membership'
+  | 'bodyMassKg'
   | 'extras'
   | 'groupNumber'
-  | 'passengerExitWeight'
-  | 'passengerName'
-> & { id?: string; load?: { id: string }; ticketType: TicketTypeDetailsFragment | null };
+> & {
+  id?: string;
+  load?: { id: string };
+  ticketType: TicketTypeDetailsFragment | null;
+  /** Who rides with the member, on a ticket type that requires an escort */
+  guests: GuestValue[];
+};
 
 export const EMPTY_FORM_VALUES: ManifestUserFields = {
   id: undefined,
   load: undefined,
-  exitWeight: 50,
-  rig: null,
+  bodyMassKg: 50,
+  equipment: [],
   ticketType: null,
-  jumpType: null,
-  passengerExitWeight: null,
-  passengerName: null,
+  activityType: null,
+  guests: [],
   extras: null,
   groupNumber: 0,
 };
@@ -50,20 +59,46 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
 
   const notify = useNotifications();
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
+    operator: { operator },
+  } = useOperatorContext();
   const manifestUserValidation = yup.object().shape({
     load: yup.object().required(),
-    exitWeight: yup.number().required('Please specify exit weight').min(0).max(300),
-    rig: yup
-      .object()
-      .nullable()
-      .when({
-        is: () => !!dropzone?.settings?.requireEquipment,
-        then: yup.object().required('You cant manifest without a rig').nullable(),
-        otherwise: yup.object().nullable(),
+    bodyMassKg: yup.number().required('Please specify exit weight').min(0).max(300),
+    // One item for each kind of equipment the slot needs, when the operator asks for equipment
+    equipment: yup
+      .array()
+      .of(yup.object())
+      .default([])
+      .test(
+        'equipment-required',
+        () =>
+          i18n.t('forms.equipment.youCantManifestWithout', {
+            equipment: i18n.t('terms:equipment', { count: 1 }).toLowerCase(),
+          }),
+        function check(this: yup.TestContext, items) {
+          if (!operator?.settings?.requireEquipment) return true;
+          const { ticketType, activityType } = this.parent as ManifestUserFields;
+          const needed = requiredKinds(operator?.equipmentKinds, {
+            ticketTypeId: ticketType?.id,
+            activityTypeId: activityType?.id,
+          });
+          return needed.every((kind) =>
+            (items ?? []).some(
+              (item) => (item as EquipmentEssentialsFragment).equipmentKind?.key === kind.key
+            )
+          );
+        }
+      ),
+    guests: yup
+      .array()
+      .default([])
+      .test('guests', function check(this: yup.TestContext, guests) {
+        const { ticketType } = this.parent as ManifestUserFields;
+        if (!ticketType?.requiresEscort) return true;
+        const message = guestsError(guests as GuestValue[], ticketType.escortCapacity ?? 1);
+        return message ? this.createError({ message }) : true;
       }),
-    jumpType: yup.object().required('Jump type is required').nullable(),
+    activityType: yup.object().required('Jump type is required').nullable(),
     ticketType: yup.object().required('Ticket is required to manifest').nullable(),
     original: yup.object().nullable(),
     extras: yup.array().of(yup.object()).nullable(),
@@ -87,32 +122,23 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
   const {
     manifest: { manifestUser },
   } = useManifestContext();
-  const { canManifest } = useManifestValidator();
 
   const [{ loading }, onManifest] = useAsyncFn(
     async (fields: ManifestUserFields) => {
       try {
-        // await canManifest();
-
         const response = await manifestUser({
-          jumpType: fields.jumpType?.id,
+          activityType: fields.activityType?.id,
           extras: fields.extras?.map(({ id }) => id),
           load: fields?.load?.id,
-          rig: !fields.rig?.id ? undefined : fields.rig?.id,
+          equipment: fields.equipment?.length ? fields.equipment.map(({ id }) => id) : undefined,
           ticketType: fields.ticketType?.id,
-          dropzoneUser: fields.dropzoneUser?.id,
-          exitWeight: fields.exitWeight,
-          ...(!fields.ticketType?.isTandem
-            ? {}
-            : {
-                passengerName: fields.passengerName,
-                passengerExitWeight: fields.passengerExitWeight,
-              }),
+          membership: fields.membership?.id,
+          bodyMassKg: fields.bodyMassKg,
+          ...(!fields.ticketType?.requiresEscort ? {} : { guests: guestInputsOf(fields.guests) }),
         });
 
         if ('fieldErrors' in response) {
           response.fieldErrors?.forEach(({ field, message }) => {
-            console.debug('Error in field', field, message);
             setError(camelCase(field) as keyof ManifestUserFields, { type: 'custom', message });
           });
         }
@@ -120,7 +146,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
           notify.error(response.error);
         }
         if ('slot' in response) {
-          notify.success(`${fields.dropzoneUser?.user?.name} has been added to the load`);
+          notify.success(`${fields.membership?.user?.name} has been added to the load`);
           onSuccess?.();
         }
       } catch (error) {

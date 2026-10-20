@@ -5,24 +5,24 @@ import { CreateWeatherConditionPayload, WeatherConditionInput } from '../schema.
 export const MUTATION_CREATE_WEATHER_CONDITION = gql`
   mutation CreateWeatherConditions(
     $id: Int!
-    $dropzoneId: Int!
+    $operatorId: Int!
     $winds: String
-    $temperature: Int
+    $temperatureC: Float
     $jumpRun: Int
-    $exitSpotMiles: Int
-    $offsetMiles: Int
+    $exitSpotM: Float
+    $offsetM: Float
     $offsetDirection: String
   ) {
     createWeatherCondition(
       input: {
         id: $id
         attributes: {
-          dropzoneId: $dropzoneId
+          operatorId: $operatorId
           winds: $winds
-          temperature: $temperature
+          temperatureC: $temperatureC
           jumpRun: $jumpRun
-          exitSpotMiles: $exitSpotMiles
-          offsetMiles: $offsetMiles
+          exitSpotM: $exitSpotM
+          offsetM: $offsetM
           offsetDirection: $offsetDirection
         }
       }
@@ -34,15 +34,16 @@ export const MUTATION_CREATE_WEATHER_CONDITION = gql`
       }
       weatherCondition {
         id
-        temperature
+        temperatureC
         winds {
-          speed
-          altitude
+          speedMps
+          altitudeM
           direction
+          temperatureC
         }
         jumpRun
-        exitSpotMiles
-        offsetMiles
+        exitSpotM
+        offsetM
         offsetDirection
         createdAt
       }
@@ -51,7 +52,7 @@ export const MUTATION_CREATE_WEATHER_CONDITION = gql`
 `;
 
 export default createMutation<
-  { id: number; dropzoneId: number } & WeatherConditionInput,
+  { id: number; operatorId: number } & WeatherConditionInput,
   CreateWeatherConditionPayload
 >(MUTATION_CREATE_WEATHER_CONDITION, {
   getPayload: (result) => result.createWeatherCondition,

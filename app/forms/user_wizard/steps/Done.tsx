@@ -3,10 +3,12 @@ import { View } from 'react-native';
 import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
 import LottieView from 'app/components/LottieView';
 import lottieDoneAnimation from '../../../../assets/images/finished-2.json';
+import { useTranslation } from 'react-i18next';
 
 function Done(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   return (
-    <Step {...props} title="Profile updated">
+    <Step {...props} title={t('forms.user_wizard.profileUpdated')}>
       <Fields>
         <View style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
           <LottieView
