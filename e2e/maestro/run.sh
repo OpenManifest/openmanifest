@@ -18,6 +18,13 @@ report() {
   grep -n -A 25 "FATAL EXCEPTION" "$out/logcat.txt" | head -60 || true
   echo "--- app log (ReactNativeJS, last 40) ---"
   grep "ReactNativeJS" "$out/logcat.txt" | tail -40 || true
+  echo "--- errors and warnings of the app and its runtime (last 60) ---"
+  grep -E "^[0-9-]+ [0-9:.]+ +[0-9]+ +[0-9]+ [EW] " "$out/logcat.txt" | grep -Ei "openmanifest|expo|ReactNative|hermes|okhttp|chromium|AndroidRuntime|System.err" | tail -60 || true
+  echo "--- focused window ---"
+  adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" | head -3 || true
+  echo "--- the API as the emulator reaches it ---"
+  curl -si -m 10 -H "Host: 10.0.2.2:5000" -H "content-type: application/json" -d '{"query":"{ __typename }"}' http://localhost:5000/graphql | head -8 || true
+  adb exec-out screencap -p > "$out/screen.png" || true
 }
 
 adb install -r "$apk"
