@@ -44,6 +44,8 @@ export default function FloatingActionArea(props: IFloatingActionAreaProps) {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
+    // Both sides, so a wide button (large text) is held inside the window; the area passes touches through
+    left: 0,
     right: 0,
     bottom: 0,
     alignItems: 'flex-end',
