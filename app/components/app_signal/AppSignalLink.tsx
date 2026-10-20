@@ -90,9 +90,7 @@ function createAppSignalErrorLink(
 
         try {
           client?.sendError(new Error(filteredErrors.map((err) => err.message).join(', ')));
-        } catch (e) {
-          console.debug('Error', e);
-        }
+        } catch (e) {}
       } else {
         // @ts-ignore
         response.errors = null;

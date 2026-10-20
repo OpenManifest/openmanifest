@@ -16,7 +16,6 @@ export default function useApolloClient() {
   // Install the link while rendering, not in an effect: effects of the children run before this component's, so queries
   // started by the first render after a reload would otherwise go out through the unauthenticated default link.
   React.useMemo(() => {
-    console.debug('[Apollo::Link]: Replacing Apollo Client Link');
     client.setLink(link);
   }, [link]);
 

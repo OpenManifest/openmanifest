@@ -7,7 +7,11 @@ import useMutationCreateWeatherConditions from 'app/api/hooks/useMutationCreateW
 import type { WeatherConditionEssentialsFragment } from 'app/api/operations';
 import { useNotifications } from 'app/providers/notifications';
 import { useSession } from 'app/state';
+import i18n from 'app/i18n';
+import { activeUnits } from 'app/i18n/operatorFormat';
+import { Quantity, UnitSystem, fromSi, toSi, unitOf } from 'app/i18n/units';
 
+/** The fields hold what the person sees: heights, speeds and temperatures in the operator's units (the API takes SI) */
 export type WindFields = {
   altitude?: string | null;
   direction?: string | null;
@@ -35,16 +39,20 @@ export const weatherValidation = yup.object({
         speed: yup.string().nullable(),
       })
     )
-    .max(MAX_WINDS, `At most ${MAX_WINDS} altitudes`)
+    .max(MAX_WINDS, i18n.t('forms.weather.atMostAltitudes', { count: MAX_WINDS }))
     .default([]),
   jumpRun: yup
     .number()
-    .typeError('Jump run must be a number')
+    .typeError(() => i18n.t('forms.weather.jumpRunMustBeANumber'))
     .integer()
-    .min(0, 'Jump run must be between 0 and 360')
-    .max(360, 'Jump run must be between 0 and 360')
+    .min(0, () => i18n.t('forms.weather.jumpRunMustBeBetween0'))
+    .max(360, () => i18n.t('forms.weather.jumpRunMustBeBetween0'))
     .default(0),
-  temperature: yup.number().typeError('Temperature must be a number').integer().default(0),
+  temperature: yup
+    .number()
+    .typeError(() => i18n.t('forms.weather.temperatureMustBeANumber'))
+    .integer()
+    .default(0),
 });
 
 export const EMPTY_FORM_VALUES: WeatherFields = {
@@ -54,21 +62,38 @@ export const EMPTY_FORM_VALUES: WeatherFields = {
   temperature: 0,
 };
 
-export function toFormValues(record?: WeatherConditionEssentialsFragment | null): WeatherFields {
+const shown = (quantity: Quantity, si: number | null | undefined, units?: UnitSystem) =>
+  String(Math.round(fromSi(quantity, si ?? 0, unitOf(quantity, units))));
+
+export function toFormValues(
+  record?: WeatherConditionEssentialsFragment | null,
+  units: UnitSystem = activeUnits()
+): WeatherFields {
   if (!record) {
     return EMPTY_FORM_VALUES;
   }
   return {
     id: record.id,
-    winds: (record.winds || []).map(({ altitude, direction, speed }) => ({
-      altitude,
-      direction,
-      speed,
+    winds: (record.winds || []).map(({ altitudeM, direction, speedMps }) => ({
+      altitude: shown('altitude', altitudeM, units),
+      direction: direction === null || direction === undefined ? direction : String(direction),
+      speed: shown('speed', speedMps, units),
     })),
     jumpRun: record.jumpRun ?? 0,
-    temperature: record.temperature ?? 0,
+    temperature: Number(shown('temperature', record.temperatureC, units)),
   };
 }
+
+/** What the person typed, as the API takes it: SI */
+export function toSiWinds(winds: WindFields[], units: UnitSystem = activeUnits()) {
+  return winds.map(({ altitude, direction, speed }) => ({
+    altitude_m: round2(toSi('altitude', Number(altitude) || 0, unitOf('altitude', units))),
+    speed_mps: round2(toSi('speed', Number(speed) || 0, unitOf('speed', units))),
+    direction: Number(direction) || 0,
+  }));
+}
+
+const round2 = (value: number) => Math.round(value * 100) / 100;
 
 type WeatherFormApi = {
   /** Starts editing the given conditions (or empty ones) */
@@ -92,7 +117,7 @@ export function WeatherFormProvider(props: React.PropsWithChildren<object>) {
   });
   const { reset, getValues, setError, trigger } = methods;
   const notify = useNotifications();
-  const dropzoneId = useSession((session) => session.currentDropzoneId);
+  const operatorId = useSession((session) => session.currentOperatorId);
 
   const mutation = useMutationCreateWeatherConditions({
     onSuccess: () => null,
@@ -107,7 +132,8 @@ export function WeatherFormProvider(props: React.PropsWithChildren<object>) {
   const { mutate } = mutation;
 
   const open = React.useCallback(
-    (record?: WeatherConditionEssentialsFragment | null) => reset(toFormValues(record)),
+    (record?: WeatherConditionEssentialsFragment | null) =>
+      reset(toFormValues(record, activeUnits())),
     [reset]
   );
 
@@ -118,14 +144,16 @@ export function WeatherFormProvider(props: React.PropsWithChildren<object>) {
     const values = getValues();
     const result = await mutate({
       id: Number(values.id),
-      dropzoneId: Number(dropzoneId),
-      winds: JSON.stringify(values.winds),
+      operatorId: Number(operatorId),
+      winds: JSON.stringify(toSiWinds(values.winds)),
       jumpRun: values.jumpRun,
-      temperature: values.temperature,
+      temperatureC: round2(
+        toSi('temperature', values.temperature, unitOf('temperature', activeUnits()))
+      ),
     });
 
     return !!result && !result.errors?.length && !result.fieldErrors?.length;
-  }, [dropzoneId, getValues, mutate, trigger]);
+  }, [operatorId, getValues, mutate, trigger]);
 
   const api = React.useMemo(
     () => ({ open, save, saving: mutation.loading }),
