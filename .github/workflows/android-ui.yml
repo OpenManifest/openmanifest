@@ -1,0 +1,78 @@
+name: Android UI
+# Maestro flows on an Android emulator against a release APK and the API of this job. Run by hand (workflow_dispatch) for now:
+# the flows do not pass yet, because Maestro and uiautomator see no views of the app on the emulator although the app runs
+# (plan task U3.1 is blocked on this). When the flows pass, add back `pull_request` for the paths of this workflow, the flows
+# and the environment action, and the weekly `schedule` (Monday 04:00 Australia/Brisbane, UTC+10: "0 18 * * 0").
+on:
+  workflow_dispatch:
+    inputs:
+      backend-ref:
+        description: Branch, tag or SHA of openmanifest-server to run against
+        default: staging
+concurrency:
+  group: android-ui-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  EXPO_NO_TELEMETRY: '1'
+  CI: '1'
+  # The build talks to the API of the job at 10.0.2.2 (build/constants.ts) and allows cleartext HTTP (app.config.ts)
+  EXPO_ENV: android-ci
+  # The Maestro CLI version in use; change it here when upgrading
+  MAESTRO_VERSION: '2.5.1'
+jobs:
+  android-ui:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: postgres, POSTGRES_PASSWORD: postgres }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version-file: .nvmrc, cache: yarn }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - run: yarn install --frozen-lockfile
+      - uses: ./.github/actions/ui-env
+        with:
+          backend-ref: ${{ inputs.backend-ref || 'staging' }}
+          web-export: 'false'
+      - name: Build the release APK (debug keystore)
+        env:
+          NODE_OPTIONS: --max_old_space_size=6144
+        run: |
+          npx expo prebuild --platform android --clean
+          cd android
+          ./gradlew assembleRelease --no-daemon -Dorg.gradle.jvmargs="-Xmx4g" -PreactNativeArchitectures=x86_64
+      - name: Let the emulator use KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      - name: Run the flows on an emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          disable-animations: true
+          cores: 4
+          ram-size: 4096M
+          heap-size: 1024M
+          script: ./e2e/maestro/run.sh android/app/build/outputs/apk/release/app-release.apk
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-ui-report
+          path: e2e/maestro-report
+          if-no-files-found: ignore
+          retention-days: 14
