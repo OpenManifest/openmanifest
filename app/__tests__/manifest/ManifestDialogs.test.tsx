@@ -1,23 +1,22 @@
 import * as React from 'react';
 import { Text } from 'react-native';
-import { DataTable } from 'react-native-paper';
-import { act } from '@testing-library/react-native';
+import { act, fireEvent } from '@testing-library/react-native';
+import { hostsWhere } from 'app/test-utils/hosts';
 import { LoadUpdatedDocument } from 'app/api/reflection';
 import { Permission } from 'app/api/schema.d';
 import type { LoadDetailsFragment } from 'app/api/operations';
 import { useManifestContext } from 'app/providers';
 import { render, waitFor, within } from '../../__mocks__/render';
 import MOCK_QUERY_LOAD from './__mocks__/QueryLoad.mock';
-import LoadScreen from '../../screens/authenticated/dropzone/load/LoadScreen';
-import ManifestGroupDialog from '../../forms/manifest_group';
-import ManifestUserDialog from '../../forms/manifest_user/Dialog';
+import LoadScreen from '../../screens/authenticated/manifest/load/LoadScreen';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
+const mockNavigation = Object.assign(jest.fn(), { setOptions: jest.fn() });
 jest.mock('@react-navigation/native', () => ({
   ...jest.requireActual('@react-navigation/native'),
-  useNavigation: () => jest.fn(),
+  useNavigation: () => mockNavigation,
   useRoute: () => ({ params: { loadId: '1' } }),
   useIsFocused: () => false,
 }));
@@ -27,18 +26,41 @@ const loadUpdatedMock = {
   result: { data: { loadUpdated: { __typename: 'LoadUpdatedPayload', load: null } } },
 };
 
-const openDialogs = (screen: ReturnType<typeof render>) => ({
-  group: screen
-    .UNSAFE_queryAllByType(ManifestGroupDialog)
-    .some((dialog) => dialog.props.open === true),
-  user: screen
-    .UNSAFE_queryAllByType(ManifestUserDialog)
-    .some((dialog) => dialog.props.open === true),
+// The dialogs are replaced by hosts that show whether they are open: their own content is not under test here
+jest.mock('../../legacy/manifest_group', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { View } = require('react-native');
+  return {
+    __esModule: true,
+    default: (props: { open?: boolean }) => (
+      <View testID="mock-manifest-group-dialog" data-open={!!props.open} />
+    ),
+  };
+});
+jest.mock('../../legacy/manifest_user/Dialog', () => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { View } = require('react-native');
+  return {
+    __esModule: true,
+    default: (props: { open?: boolean }) => (
+      <View testID="mock-manifest-user-dialog" data-open={!!props.open} />
+    ),
+  };
+});
+
+const isOpen = (screen: Awaited<ReturnType<typeof render>>, testID: string) =>
+  hostsWhere(screen.container, (node) => node.props.testID === testID).some(
+    (node) => node.props['data-open'] === true
+  );
+
+const openDialogs = (screen: Awaited<ReturnType<typeof render>>) => ({
+  group: isOpen(screen, 'mock-manifest-group-dialog'),
+  user: isOpen(screen, 'mock-manifest-user-dialog'),
 });
 
 async function renderLoadScreen(permissions: Permission[]) {
   const mock = MOCK_QUERY_LOAD();
-  const screen = render(<LoadScreen />, {
+  const screen = await render(<LoadScreen />, {
     graphql: [mock, loadUpdatedMock],
     permissions,
     session: authenticatedSession,
@@ -48,12 +70,12 @@ async function renderLoadScreen(permissions: Permission[]) {
 }
 
 /** The rows of the slots table are pressed through their handler: they sit under `pointerEvents="none"` */
-const pressSlotRow = (screen: ReturnType<typeof render>, text: string) => {
+const pressSlotRow = async (screen: Awaited<ReturnType<typeof render>>, text: string) => {
   const index = screen
     .getAllByTestId('slot-row')
     .findIndex((row) => within(row).queryAllByText(text).length > 0);
   expect(index).toBeGreaterThan(-1);
-  act(() => screen.UNSAFE_getAllByType(DataTable.Row)[index].props.onPress());
+  await fireEvent.press(screen.getAllByTestId('slot-row')[index]);
 };
 
 describe('manifest dialogs in the manifest context', () => {
@@ -64,14 +86,14 @@ describe('manifest dialogs in the manifest context', () => {
       const { dialogs } = useManifestContext();
       return <Text>opener</Text>;
     }
-    const screen = render(<Opener />, {
+    const screen = await render(<Opener />, {
       graphql: [],
       permissions: [Permission.CreateUserSlot],
       session: authenticatedSession,
     });
 
     expect(openDialogs(screen).group).toBe(false);
-    act(() => open?.({ id: '1' }));
+    await act(() => open?.({ id: '1' }));
 
     await waitFor(() => expect(openDialogs(screen).group).toBe(true));
   });
@@ -80,7 +102,7 @@ describe('manifest dialogs in the manifest context', () => {
     it('lets staff with only updateUserSlot open someone else’s slot (BUG-079)', async () => {
       const screen = await renderLoadScreen([Permission.ReadLoad, Permission.UpdateUserSlot]);
 
-      pressSlotRow(screen, 'Amy Hops');
+      await pressSlotRow(screen, 'Amy Hops');
 
       await waitFor(() => expect(openDialogs(screen).user).toBe(true));
     });
@@ -88,7 +110,7 @@ describe('manifest dialogs in the manifest context', () => {
     it('does not open someone else’s slot for a member who can only update their own', async () => {
       const screen = await renderLoadScreen([Permission.ReadLoad, Permission.UpdateSlot]);
 
-      pressSlotRow(screen, 'Amy Hops');
+      await pressSlotRow(screen, 'Amy Hops');
 
       await act(async () => {
         await new Promise((resolve) => setTimeout(resolve, 200));
@@ -104,7 +126,7 @@ describe('manifest dialogs in the manifest context', () => {
       Permission.UpdateUserSlot,
     ]);
 
-    pressSlotRow(screen, '- Available -');
+    await pressSlotRow(screen, '- Available -');
 
     await waitFor(() => expect(openDialogs(screen).group).toBe(true));
   });

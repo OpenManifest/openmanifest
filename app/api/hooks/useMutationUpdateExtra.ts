@@ -8,7 +8,7 @@ const MUTATION_UPDATE_EXTRA = gql`
     $name: String
     $ticketTypeIds: [Int!]
     $costCents: Int
-    $dropzoneId: Int
+    $operatorId: Int
   ) {
     updateExtra(
       input: {
@@ -17,14 +17,14 @@ const MUTATION_UPDATE_EXTRA = gql`
           name: $name
           ticketTypeIds: $ticketTypeIds
           costCents: $costCents
-          dropzoneId: $dropzoneId
+          operatorId: $operatorId
         }
       }
     ) {
       extra {
         ...extra
 
-        dropzone {
+        operator {
           id
           extras {
             ...extra
