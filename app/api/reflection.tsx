@@ -987,6 +987,62 @@ export const TicketTypeAddonDetailsFragmentDoc = gql`
 }
     ${TicketTypeAddonEssentialsFragmentDoc}
 ${TicketTypeEssentialsFragmentDoc}`;
+export const WalletOrderFragmentDoc = gql`
+    fragment walletOrder on Order {
+  id
+  state
+  amountCents
+  title
+  orderNumber
+  createdAt
+  buyer {
+    __typename
+    ... on Membership {
+      id
+    }
+    ... on Operator {
+      id
+      name
+    }
+  }
+  seller {
+    __typename
+    ... on Membership {
+      id
+      user {
+        id
+        name
+      }
+    }
+    ... on Operator {
+      id
+      name
+    }
+  }
+  receipts {
+    id
+    amountCents
+    createdAt
+    transactions {
+      id
+      transactionType
+      amountCents
+      status
+      createdAt
+      message
+      receiver {
+        __typename
+        ... on Membership {
+          id
+        }
+        ... on Operator {
+          id
+        }
+      }
+    }
+  }
+}
+    `;
 export const AddUserQualificationDocument = gql`
     mutation AddUserQualification($qualificationId: ID!, $number: String, $expiresAt: ISO8601DateTime) {
   addUserQualification(
@@ -5115,6 +5171,62 @@ export type VehiclesQueryHookResult = ReturnType<typeof useVehiclesQuery>;
 export type VehiclesLazyQueryHookResult = ReturnType<typeof useVehiclesLazyQuery>;
 export type VehiclesSuspenseQueryHookResult = ReturnType<typeof useVehiclesSuspenseQuery>;
 export type VehiclesQueryResult = Apollo.QueryResult<Operation.VehiclesQuery, Operation.VehiclesQueryVariables>;
+export const WalletDocument = gql`
+    query Wallet($membershipId: ID!, $first: Int) {
+  membership(id: $membershipId) {
+    id
+    creditsCents
+    orders(first: $first) {
+      edges {
+        node {
+          ...walletOrder
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+    ${WalletOrderFragmentDoc}`;
+
+/**
+ * __useWalletQuery__
+ *
+ * To run a query within a React component, call `useWalletQuery` and pass it any options that fit your needs.
+ * When your component renders, `useWalletQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useWalletQuery({
+ *   variables: {
+ *      membershipId: // value for 'membershipId'
+ *      first: // value for 'first'
+ *   },
+ * });
+ */
+export function useWalletQuery(baseOptions: Apollo.QueryHookOptions<Operation.WalletQuery, Operation.WalletQueryVariables> & ({ variables: Operation.WalletQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.WalletQuery, Operation.WalletQueryVariables>(WalletDocument, options);
+      }
+export function useWalletLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.WalletQuery, Operation.WalletQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.WalletQuery, Operation.WalletQueryVariables>(WalletDocument, options);
+        }
+// @ts-ignore
+export function useWalletSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.WalletQuery, Operation.WalletQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.WalletQuery, Operation.WalletQueryVariables>;
+export function useWalletSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.WalletQuery, Operation.WalletQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.WalletQuery | undefined, Operation.WalletQueryVariables>;
+export function useWalletSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.WalletQuery, Operation.WalletQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.WalletQuery, Operation.WalletQueryVariables>(WalletDocument, options);
+        }
+export type WalletQueryHookResult = ReturnType<typeof useWalletQuery>;
+export type WalletLazyQueryHookResult = ReturnType<typeof useWalletLazyQuery>;
+export type WalletSuspenseQueryHookResult = ReturnType<typeof useWalletSuspenseQuery>;
+export type WalletQueryResult = Apollo.QueryResult<Operation.WalletQuery, Operation.WalletQueryVariables>;
 export const LoadCreatedDocument = gql`
     subscription LoadCreated($operatorId: ID!) {
   loadCreated(operatorId: $operatorId) {

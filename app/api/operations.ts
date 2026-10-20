@@ -119,6 +119,8 @@ export type CurrentUserFragment = { __typename?: 'User', pushToken?: string | nu
 
 export type VehicleEssentialsFragment = { __typename?: 'Vehicle', id: string, minCapacity?: number | null, capacity: number, name?: string | null, registration?: string | null, maxPayloadKg?: number | null, kind?: string | null };
 
+export type WalletOrderFragment = { __typename?: 'Order', id: string, state: Types.OrderState, amountCents: number, title?: string | null, orderNumber: number, createdAt: any, buyer?: { __typename: 'Membership', id: string } | { __typename: 'Operator', id: string, name?: string | null } | null, seller?: { __typename: 'Membership', id: string, user: { __typename?: 'User', id: string, name?: string | null } } | { __typename: 'Operator', id: string, name?: string | null } | null, receipts?: Array<{ __typename?: 'Receipt', id: string, amountCents?: number | null, createdAt: any, transactions: Array<{ __typename?: 'Transaction', id: string, transactionType: Types.TransactionType, amountCents: number, status: Types.TransactionStatus, createdAt: any, message?: string | null, receiver?: { __typename: 'Membership', id: string } | { __typename: 'Operator', id: string } | null }> }> | null };
+
 export type WeatherConditionEssentialsFragment = { __typename?: 'WeatherCondition', id: string, jumpRun?: number | null, temperatureC?: number | null, offsetDirection?: number | null, offsetM?: number | null, createdAt: any, exitSpotM?: number | null, winds?: Array<{ __typename?: 'Wind', temperatureC?: number | null, altitudeM?: number | null, speedMps?: number | null, direction?: number | null }> | null };
 
 export type AddUserQualificationMutationVariables = Types.Exact<{
@@ -878,6 +880,14 @@ export type VehiclesQueryVariables = Types.Exact<{
 
 
 export type VehiclesQuery = { __typename?: 'Query', vehicles?: Array<{ __typename?: 'Vehicle', id: string, minCapacity?: number | null, capacity: number, name?: string | null, registration?: string | null, maxPayloadKg?: number | null, kind?: string | null }> | null };
+
+export type WalletQueryVariables = Types.Exact<{
+  membershipId: Types.Scalars['ID']['input'];
+  first?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+}>;
+
+
+export type WalletQuery = { __typename?: 'Query', membership?: { __typename?: 'Membership', id: string, creditsCents?: number | null, orders?: { __typename?: 'OrderConnection', edges?: Array<{ __typename?: 'OrderEdge', node?: { __typename?: 'Order', id: string, state: Types.OrderState, amountCents: number, title?: string | null, orderNumber: number, createdAt: any, buyer?: { __typename: 'Membership', id: string } | { __typename: 'Operator', id: string, name?: string | null } | null, seller?: { __typename: 'Membership', id: string, user: { __typename?: 'User', id: string, name?: string | null } } | { __typename: 'Operator', id: string, name?: string | null } | null, receipts?: Array<{ __typename?: 'Receipt', id: string, amountCents?: number | null, createdAt: any, transactions: Array<{ __typename?: 'Transaction', id: string, transactionType: Types.TransactionType, amountCents: number, status: Types.TransactionStatus, createdAt: any, message?: string | null, receiver?: { __typename: 'Membership', id: string } | { __typename: 'Operator', id: string } | null }> }> | null } | null } | null> | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } | null } | null };
 
 export type LoadCreatedSubscriptionVariables = Types.Exact<{
   operatorId: Types.Scalars['ID']['input'];

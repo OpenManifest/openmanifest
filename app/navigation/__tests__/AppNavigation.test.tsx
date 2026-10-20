@@ -93,8 +93,8 @@ describe('AppNavigation', () => {
     expect(names(await tabs('owner'))).toEqual(['Today', 'Board', 'People', 'Inbox', 'More']);
   });
 
-  it('shows a student today, the board and the inbox', async () => {
-    expect(names(await tabs('student'))).toEqual(['Today', 'Board', 'Inbox', 'More']);
+  it('shows a student today, the board, the inbox and the wallet', async () => {
+    expect(names(await tabs('student'))).toEqual(['Today', 'Board', 'Inbox', 'Wallet', 'More']);
   });
 
   it('marks the focused tab as current and names the landmark', async () => {

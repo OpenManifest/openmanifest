@@ -19,7 +19,8 @@ export type DestinationKey =
 
 /** Which tab of the authenticated navigator holds the destination, and its web path */
 export type DestinationRoute = {
-  tab: 'Today' | 'Overview' | 'Manifest' | 'Users' | 'Notifications' | 'More' | 'Account';
+  tab:
+    'Today' | 'Overview' | 'Manifest' | 'Users' | 'Notifications' | 'Wallet' | 'More' | 'Account';
   path: string;
 };
 
@@ -91,6 +92,7 @@ export const DESTINATIONS: Destination[] = [
     icon: 'wallet-outline',
     labelKey: 'destinations.wallet',
     withoutPermission: Permission.ReadUserTransactions,
+    route: { tab: 'Wallet', path: '/wallet' },
   },
   {
     key: 'money',

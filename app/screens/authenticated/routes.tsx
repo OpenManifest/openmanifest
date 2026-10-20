@@ -16,6 +16,7 @@ import UsersTab, { UserRoutes } from './user/routes';
 import NotificationsTab, { NotificationRoutes } from './notifications/routes';
 import OverviewTab, { OverviewRoutes } from './overview/routes';
 import TodayTab, { TodayRoutes } from './today/routes';
+import WalletTab, { WalletRoutes } from './wallet/routes';
 import AccountScreen from './account/AccountScreen';
 import MoreScreen from './account/MoreScreen';
 
@@ -23,6 +24,7 @@ import BottomTab from './TabBar';
 
 export type AuthenticatedRoutes = {
   Today: NavigatorScreenParams<TodayRoutes>;
+  Wallet: NavigatorScreenParams<WalletRoutes>;
   Manifest: NavigatorScreenParams<OperatorRoutes>;
   Overview: NavigatorScreenParams<OverviewRoutes>;
   Users: NavigatorScreenParams<UserRoutes>;
@@ -71,6 +73,7 @@ function inMain<Props extends object>(
 const OverviewScreen = inMain(guarded(OverviewTab, OVERVIEW_RULE));
 const UsersScreen = inMain(guarded(UsersTab, USERS_RULE));
 const TodayScreen = inMain(TodayTab);
+const WalletScreen = inMain(WalletTab);
 const ManifestScreen = inMain(ManifestTab);
 const NotificationsScreen = inMain(NotificationsTab);
 const MoreTab = inMain(MoreScreen);
@@ -119,6 +122,11 @@ export default function AuthenticatedTabBar() {
           name="Notifications"
           component={NotificationsScreen}
           options={{ title: t('destinations.inbox'), popToTopOnBlur: true }}
+        />
+        <BottomTab.Screen
+          name="Wallet"
+          component={WalletScreen}
+          options={{ title: t('destinations.wallet'), popToTopOnBlur: true }}
         />
         <BottomTab.Screen
           name="Users"

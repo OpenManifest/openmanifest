@@ -170,6 +170,42 @@
       "body": "When the first load is made it shows here."
     }
   },
+  "wallet": {
+    "balance": "Your balance",
+    "held": "Held for booked jumps",
+    "heldNote": "Already taken off your balance; it comes back if you come off the load.",
+    "nothingHeld": "Nothing is held: you have no jump booked that costs money.",
+    "topUp": "Top up at the manifest desk",
+    "history": "What you paid",
+    "more": "Show older",
+    "order": "Order #{{number}}",
+    "empty": {
+      "title": "Nothing yet",
+      "body": "What you pay for, and what is added to your balance, shows here."
+    },
+    "state": {
+      "pending": "Held",
+      "completed": "Paid",
+      "refunded": "Refunded",
+      "cancelled": "Cancelled"
+    },
+    "transaction": {
+      "purchase": "Payment",
+      "sale": "Sale",
+      "deposit": "Added to your balance",
+      "withdrawal": "Taken out",
+      "refund": "Refund"
+    },
+    "receipt": {
+      "title": "Receipt",
+      "missing": "That receipt is not here",
+      "paid": "You paid",
+      "given": "Added to your balance",
+      "seller": "Paid to",
+      "date": "Date",
+      "number": "Receipt {{number}}"
+    }
+  },
   "move": {
     "title": "Move {{name}}",
     "loadVehicle": "{{load}} #{{number}} · {{vehicle}}",

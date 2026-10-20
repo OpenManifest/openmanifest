@@ -106,13 +106,14 @@ test.describe('navigation @nav', () => {
 test.describe('navigation as a student @nav', () => {
   test.use({ role: 'student' });
 
-  test('the bar has today, the board and the inbox only', async ({ page }) => {
+  test('the bar has today, the board, the inbox and the wallet only', async ({ page }) => {
     await gotoRoute(page, '/manifest');
     const nav = page.getByRole('navigation', { name: 'Main' });
 
     await expect(nav.getByRole('button', { name: 'Today' })).toBeVisible();
     await expect(nav.getByRole('button', { name: 'Board' })).toBeVisible();
     await expect(nav.getByRole('button', { name: 'Inbox' })).toBeVisible();
+    await expect(nav.getByRole('button', { name: 'Wallet' })).toBeVisible();
     await expect(nav.getByRole('button', { name: 'People' })).toHaveCount(0);
   });
 

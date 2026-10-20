@@ -14,6 +14,7 @@ import { useUserProfile } from 'app/api/crud';
 import OrderCard from '../../../../components/orders/OrderCard';
 import { useUserNavigation } from '../useUserNavigation';
 import { useAppTheme } from 'app/theme';
+import useWalletRedirect from 'app/features/wallet/useWalletRedirect';
 
 export type OrdersRoute = {
   OrdersScreen: {
@@ -32,6 +33,7 @@ export default function OrdersScreen() {
 
   const navigation = useUserNavigation();
   const { t } = useTranslation('common');
+  const toWallet = useWalletRedirect(route?.params?.userId || currentUser?.id);
   React.useEffect(() => {
     if (membership?.user?.name && membership?.id !== currentUser?.id) {
       const [firstName] = membership.user?.name?.split(/\s/) || [];
@@ -40,6 +42,8 @@ export default function OrdersScreen() {
       navigation.setOptions({ title: t('screens.yourTransactions') });
     }
   }, [currentUser?.id, membership?.id, membership?.user?.name, navigation, t]);
+
+  if (toWallet) return null;
 
   return (
     <View style={{ flexGrow: 1, backgroundColor: theme.colors.surface }}>

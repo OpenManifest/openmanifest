@@ -11,6 +11,7 @@ import UserAvatar from 'app/components/UserAvatar';
 import lottieTicketAnimation from 'app/../assets/images/ticket.json';
 import { OperatorEssentialsFragment } from 'app/api/operations';
 import { useUserProfile } from 'app/api/crud';
+import useWalletRedirect from 'app/features/wallet/useWalletRedirect';
 import ReceiptCard from './ReceiptCard';
 
 export type OrderReceiptRoute = {
@@ -23,6 +24,7 @@ export default function OrderScreen() {
   const route = useRoute<RouteProp<OrderReceiptRoute, 'OrderReceiptScreen'>>();
   const theme = useTheme();
   const { orderId, userId } = route.params;
+  const toWallet = useWalletRedirect(userId, orderId);
   const { membership } = useUserProfile({ id: userId });
   const order = React.useMemo(
     () => membership?.orders?.edges?.map((edge) => edge?.node).find((node) => node?.id === orderId),
@@ -43,6 +45,8 @@ export default function OrderScreen() {
       ),
     [theme.colors.primary]
   );
+  if (toWallet) return null;
+
   return (
     <FormColumn>
       <Card style={{ marginTop: 32, width: '100%', maxWidth: 600 }}>

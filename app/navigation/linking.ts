@@ -68,6 +68,12 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
               NotificationsScreen: '/notifications',
             },
           },
+          Wallet: {
+            screens: {
+              WalletScreen: '/wallet',
+              WalletReceiptScreen: '/wallet/:orderId',
+            },
+          },
           More: '/more',
           Account: '/account',
         },
