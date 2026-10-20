@@ -54,6 +54,12 @@ probe() {
   adb shell cat /sdcard/ui.xml 2>/dev/null | grep -oE '(text|resource-id|content-desc)="[^"]+"' | sort -u | head -40 || true
   echo "--- probe: maestro sees ---"
   maestro hierarchy 2>/dev/null | grep -oE '"(text|resource-id|accessibilityText)" ?: ?"[^"]+"' | sort -u | head -40 || true
+  echo "--- probe: the Settings app, as a control ---"
+  adb shell am start -W -a android.settings.SETTINGS > /dev/null || true
+  sleep 8
+  maestro hierarchy 2>/dev/null | grep -oE '"text" ?: ?"[^"]+"' | sort -u | head -12 || true
+  echo "--- probe: accessibility service state ---"
+  adb shell dumpsys accessibility | head -40 || true
   echo "--- probe: accessibility ---"
   adb shell settings get secure enabled_accessibility_services || true
   adb shell getprop ro.build.version.sdk || true
