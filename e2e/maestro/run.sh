@@ -56,6 +56,13 @@ probe() {
   adb shell am force-stop com.dangertechnologies.openmanifest || true
 }
 
+# A slow emulator makes system apps stop responding, and the "isn't responding" dialog covers the app: Maestro only sees the
+# window on top. Hide those dialogs, and let the launcher settle
+adb shell settings put global hide_error_dialogs 1 || true
+adb shell settings put global heads_up_notifications_enabled 0 || true
+adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS > /dev/null || true
+sleep 20
+
 adb install -r "$apk"
 adb shell pm list packages | grep -q com.dangertechnologies.openmanifest || { echo "the app is not installed"; exit 1; }
 adb logcat -c
