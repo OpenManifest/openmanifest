@@ -1044,6 +1044,9 @@ type JoinOperatorPayload {
 type Load implements AnyResource {
   availableSlots: Int!
 
+  """When the load was called; cleared when the call is cancelled"""
+  calledAt: ISO8601DateTime
+
   """When the load landed; cleared when it is reopened"""
   completedAt: ISO8601DateTime
   createdAt: ISO8601DateTime!
@@ -1273,6 +1276,11 @@ type Membership implements AnyResource & Wallet {
   hasEquipmentInspection: Boolean!
   hasMembership: Boolean!
   id: ID!
+
+  """
+  The slot the member last flew at this operator: their most recent one on a load that has left or landed
+  """
+  lastSlot: Slot
   notifications(
     """Returns the elements in the list that come after the specified cursor."""
     after: String

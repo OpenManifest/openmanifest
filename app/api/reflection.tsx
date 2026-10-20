@@ -107,6 +107,7 @@ export const LoadEssentialsFragmentDoc = gql`
   name
   createdAt
   dispatchAt
+  calledAt
   loadDate
   departedAt
   completedAt
@@ -3780,6 +3781,61 @@ export type LoadQueryHookResult = ReturnType<typeof useLoadQuery>;
 export type LoadLazyQueryHookResult = ReturnType<typeof useLoadLazyQuery>;
 export type LoadSuspenseQueryHookResult = ReturnType<typeof useLoadSuspenseQuery>;
 export type LoadQueryResult = Apollo.QueryResult<Operation.LoadQuery, Operation.LoadQueryVariables>;
+export const LoadEligibilityDocument = gql`
+    query LoadEligibility($id: ID!) {
+  load(id: $id) {
+    id
+    slots {
+      id
+      membership {
+        id
+        eligibility {
+          ready
+          rules {
+            ...eligibilityResultEssentials
+          }
+        }
+      }
+    }
+  }
+}
+    ${EligibilityResultEssentialsFragmentDoc}`;
+
+/**
+ * __useLoadEligibilityQuery__
+ *
+ * To run a query within a React component, call `useLoadEligibilityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLoadEligibilityQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLoadEligibilityQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLoadEligibilityQuery(baseOptions: Apollo.QueryHookOptions<Operation.LoadEligibilityQuery, Operation.LoadEligibilityQueryVariables> & ({ variables: Operation.LoadEligibilityQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.LoadEligibilityQuery, Operation.LoadEligibilityQueryVariables>(LoadEligibilityDocument, options);
+      }
+export function useLoadEligibilityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.LoadEligibilityQuery, Operation.LoadEligibilityQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.LoadEligibilityQuery, Operation.LoadEligibilityQueryVariables>(LoadEligibilityDocument, options);
+        }
+// @ts-ignore
+export function useLoadEligibilitySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.LoadEligibilityQuery, Operation.LoadEligibilityQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.LoadEligibilityQuery, Operation.LoadEligibilityQueryVariables>;
+export function useLoadEligibilitySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.LoadEligibilityQuery, Operation.LoadEligibilityQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.LoadEligibilityQuery | undefined, Operation.LoadEligibilityQueryVariables>;
+export function useLoadEligibilitySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.LoadEligibilityQuery, Operation.LoadEligibilityQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.LoadEligibilityQuery, Operation.LoadEligibilityQueryVariables>(LoadEligibilityDocument, options);
+        }
+export type LoadEligibilityQueryHookResult = ReturnType<typeof useLoadEligibilityQuery>;
+export type LoadEligibilityLazyQueryHookResult = ReturnType<typeof useLoadEligibilityLazyQuery>;
+export type LoadEligibilitySuspenseQueryHookResult = ReturnType<typeof useLoadEligibilitySuspenseQuery>;
+export type LoadEligibilityQueryResult = Apollo.QueryResult<Operation.LoadEligibilityQuery, Operation.LoadEligibilityQueryVariables>;
 export const LoadsDocument = gql`
     query Loads($date: ISO8601Date, $from: ISO8601Date, $to: ISO8601Date, $operator: ID!) {
   loads(date: $date, from: $from, to: $to, operator: $operator) {

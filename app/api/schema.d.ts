@@ -1026,6 +1026,8 @@ export type JoinOperatorPayload = {
 export type Load = AnyResource & {
   __typename?: 'Load';
   availableSlots: Scalars['Int']['output'];
+  /** When the load was called; cleared when the call is cancelled */
+  calledAt?: Maybe<Scalars['ISO8601DateTime']['output']>;
   /** When the load landed; cleared when it is reopened */
   completedAt?: Maybe<Scalars['ISO8601DateTime']['output']>;
   createdAt: Scalars['ISO8601DateTime']['output'];
@@ -1203,6 +1205,8 @@ export type Membership = AnyResource & Wallet & {
   hasEquipmentInspection: Scalars['Boolean']['output'];
   hasMembership: Scalars['Boolean']['output'];
   id: Scalars['ID']['output'];
+  /** The slot the member last flew at this operator: their most recent one on a load that has left or landed */
+  lastSlot?: Maybe<Slot>;
   notifications?: Maybe<NotificationConnection>;
   operator: Operator;
   orders?: Maybe<OrderConnection>;

@@ -7862,6 +7862,18 @@
             "deprecationReason": null
           },
           {
+            "name": "calledAt",
+            "description": "When the load was called; cleared when the call is cancelled",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "ISO8601DateTime",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "completedAt",
             "description": "When the load landed; cleared when it is reopened",
             "args": [],
@@ -9387,6 +9399,18 @@
                 "kind": "SCALAR",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "lastSlot",
+            "description": "The slot the member last flew at this operator: their most recent one on a load that has left or landed",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Slot",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
