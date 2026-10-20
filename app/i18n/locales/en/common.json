@@ -139,6 +139,31 @@
     "acceptable": "Acceptable",
     "strong": "Strong"
   },
+  "today": {
+    "title": "Today",
+    "next": {
+      "title": "Your next load",
+      "places": "{{filled}} of {{capacity}} places taken",
+      "takeOff": "Take me off this load",
+      "desk": "Ask the manifest desk to change your booking",
+      "tookOff": "You are off {{load}}"
+    },
+    "ready": {
+      "title": "Ready to fly?",
+      "ok": "Ready",
+      "blocked_one": "{{count}} thing to fix",
+      "blocked_other": "{{count}} things to fix",
+      "fix": "Fix",
+      "fixFor": "Fix {{rule}}"
+    },
+    "credit": { "title": "Your credit" },
+    "loads": { "title": "Today's loads", "yours": "you are on it" },
+    "duties": { "title": "Your duties today", "row": "{{role}} on {{load}}" },
+    "empty": {
+      "title": "No loads yet today",
+      "body": "When the first load is made it shows here."
+    }
+  },
   "move": {
     "title": "Move {{name}}",
     "loadVehicle": "{{load}} #{{number}} · {{vehicle}}",

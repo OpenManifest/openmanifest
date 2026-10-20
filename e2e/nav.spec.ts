@@ -50,10 +50,13 @@ test.describe('navigation @nav', () => {
 
   test('the keyboard reaches every item, in order, and opens one with Enter', async ({ page }) => {
     await gotoRoute(page, '/manifest');
+    // Two workers drive two windows: focus goes to the one in front
+    await page.bringToFront();
     const nav = page.getByRole('navigation', { name: 'Main' });
     const tabs = nav.locator('[data-testid^="nav-"]');
+    // The items arrive with the permissions: wait for them before counting
+    await expect.poll(() => tabs.count()).toBeGreaterThanOrEqual(3);
     const count = await tabs.count();
-    expect(count).toBeGreaterThanOrEqual(3);
 
     // Tab from the skip link (wide windows) or the first item through the list
     await tabs.first().focus();
@@ -103,10 +106,11 @@ test.describe('navigation @nav', () => {
 test.describe('navigation as a student @nav', () => {
   test.use({ role: 'student' });
 
-  test('the bar has the board and the inbox only', async ({ page }) => {
+  test('the bar has today, the board and the inbox only', async ({ page }) => {
     await gotoRoute(page, '/manifest');
     const nav = page.getByRole('navigation', { name: 'Main' });
 
+    await expect(nav.getByRole('button', { name: 'Today' })).toBeVisible();
     await expect(nav.getByRole('button', { name: 'Board' })).toBeVisible();
     await expect(nav.getByRole('button', { name: 'Inbox' })).toBeVisible();
     await expect(nav.getByRole('button', { name: 'People' })).toHaveCount(0);

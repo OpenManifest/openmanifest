@@ -18,6 +18,11 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
     screens: {
       Authenticated: {
         screens: {
+          Today: {
+            screens: {
+              TodayScreen: '/today',
+            },
+          },
           Overview: {
             screens: {
               DashboardScreen: '/dashboard',

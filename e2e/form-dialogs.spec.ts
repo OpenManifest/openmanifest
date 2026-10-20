@@ -1,5 +1,5 @@
 import { expectAccessible } from './support/a11y';
-import { press } from './support/press';
+import { press, pressUntil } from './support/press';
 import { expect, gotoRoute, test } from './support/test';
 
 // The forms of the setup screens open in an overlay (a dialog or a side panel on the web) with the save button pinned
@@ -8,9 +8,10 @@ test.describe('form dialogs @setup', () => {
     page,
   }) => {
     await gotoRoute(page, '/configuration/vehicles');
-    await press(page, page.getByTestId('new-vehicle-primary-action'));
-
     const card = page.getByTestId('form-dialog');
+    await pressUntil(page, page.getByTestId('new-vehicle-primary-action'), () =>
+      expect(card).toBeVisible({ timeout: 5000 })
+    );
     await expect(page.getByRole('dialog', { name: 'New aircraft' })).toHaveCount(1);
     await expect(card).toBeVisible();
     await expect(card.getByRole('textbox', { name: 'Name' })).toBeVisible();

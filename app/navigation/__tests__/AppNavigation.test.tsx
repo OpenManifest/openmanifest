@@ -42,6 +42,7 @@ describe('barItems', () => {
     });
 
     expect(barItems(everything).map((item) => item.key)).toEqual([
+      'today',
       'board',
       'people',
       'inbox',
@@ -65,6 +66,7 @@ describe('barItems on a phone', () => {
     });
 
     expect(barItems(everything, true).map((item) => item.key)).toEqual([
+      'today',
       'board',
       'people',
       'inbox',
@@ -87,12 +89,12 @@ describe('AppNavigation', () => {
       .getAllByRole('button')
       .map((tab) => tab.props['aria-label'] ?? tab.props.accessibilityLabel);
 
-  it('shows an owner the board, the inbox and people, in the order of the table', async () => {
-    expect(names(await tabs('owner'))).toEqual(['Board', 'People', 'Inbox', 'More']);
+  it('shows an owner today, the board, the inbox and people, in the order of the table', async () => {
+    expect(names(await tabs('owner'))).toEqual(['Today', 'Board', 'People', 'Inbox', 'More']);
   });
 
-  it('shows a student the board and the inbox', async () => {
-    expect(names(await tabs('student'))).toEqual(['Board', 'Inbox', 'More']);
+  it('shows a student today, the board and the inbox', async () => {
+    expect(names(await tabs('student'))).toEqual(['Today', 'Board', 'Inbox', 'More']);
   });
 
   it('marks the focused tab as current and names the landmark', async () => {

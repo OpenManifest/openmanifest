@@ -4947,6 +4947,68 @@ export type TicketTypesQueryHookResult = ReturnType<typeof useTicketTypesQuery>;
 export type TicketTypesLazyQueryHookResult = ReturnType<typeof useTicketTypesLazyQuery>;
 export type TicketTypesSuspenseQueryHookResult = ReturnType<typeof useTicketTypesSuspenseQuery>;
 export type TicketTypesQueryResult = Apollo.QueryResult<Operation.TicketTypesQuery, Operation.TicketTypesQueryVariables>;
+export const TodayDocument = gql`
+    query Today($operatorId: ID!, $date: ISO8601Date!) {
+  operator(id: $operatorId) {
+    id
+    currentUser {
+      id
+      creditsCents
+      eligibility {
+        ready
+        rules {
+          ...eligibilityResultEssentials
+        }
+      }
+    }
+  }
+  loads(operator: $operatorId, date: $date) {
+    edges {
+      node {
+        ...loadDetails
+      }
+    }
+  }
+}
+    ${EligibilityResultEssentialsFragmentDoc}
+${LoadDetailsFragmentDoc}`;
+
+/**
+ * __useTodayQuery__
+ *
+ * To run a query within a React component, call `useTodayQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTodayQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTodayQuery({
+ *   variables: {
+ *      operatorId: // value for 'operatorId'
+ *      date: // value for 'date'
+ *   },
+ * });
+ */
+export function useTodayQuery(baseOptions: Apollo.QueryHookOptions<Operation.TodayQuery, Operation.TodayQueryVariables> & ({ variables: Operation.TodayQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.TodayQuery, Operation.TodayQueryVariables>(TodayDocument, options);
+      }
+export function useTodayLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.TodayQuery, Operation.TodayQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.TodayQuery, Operation.TodayQueryVariables>(TodayDocument, options);
+        }
+// @ts-ignore
+export function useTodaySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.TodayQuery, Operation.TodayQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.TodayQuery, Operation.TodayQueryVariables>;
+export function useTodaySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.TodayQuery, Operation.TodayQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.TodayQuery | undefined, Operation.TodayQueryVariables>;
+export function useTodaySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.TodayQuery, Operation.TodayQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.TodayQuery, Operation.TodayQueryVariables>(TodayDocument, options);
+        }
+export type TodayQueryHookResult = ReturnType<typeof useTodayQuery>;
+export type TodayLazyQueryHookResult = ReturnType<typeof useTodayLazyQuery>;
+export type TodaySuspenseQueryHookResult = ReturnType<typeof useTodaySuspenseQuery>;
+export type TodayQueryResult = Apollo.QueryResult<Operation.TodayQuery, Operation.TodayQueryVariables>;
 export const VehiclesDocument = gql`
     query Vehicles($operatorId: ID!) {
   vehicles(operator: $operatorId) {

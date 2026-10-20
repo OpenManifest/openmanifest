@@ -9,6 +9,8 @@ module.exports = {
     'app/features/board/**/*.{ts,tsx}',
     'app/features/load/**/*.{ts,tsx}',
     'app/features/picker/**/*.{ts,tsx}',
+    'app/features/move/**/*.{ts,tsx}',
+    'app/features/today/**/*.{ts,tsx}',
     'app/forms/**/*.{ts,tsx}',
     'app/navigation/**/*.{ts,tsx}',
     'app/screens/authenticated/account/**/*.{ts,tsx}',
@@ -26,6 +28,8 @@ module.exports = {
     'app/features/board/**/__tests__/**',
     'app/features/load/**/__tests__/**',
     'app/features/picker/**/__tests__/**',
+    'app/features/move/**/__tests__/**',
+    'app/features/today/**/__tests__/**',
     'app/forms/**/__tests__/**',
     // The manifest forms of the classic board: replaced by the picker (U3.7, U3.8), removed in U6.4
     'app/legacy/**',

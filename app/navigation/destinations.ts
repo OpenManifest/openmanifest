@@ -19,7 +19,7 @@ export type DestinationKey =
 
 /** Which tab of the authenticated navigator holds the destination, and its web path */
 export type DestinationRoute = {
-  tab: 'Overview' | 'Manifest' | 'Users' | 'Notifications' | 'More' | 'Account';
+  tab: 'Today' | 'Overview' | 'Manifest' | 'Users' | 'Notifications' | 'More' | 'Account';
   path: string;
 };
 
@@ -55,7 +55,13 @@ const asList = <T>(value: T | T[] | undefined): T[] =>
   value === undefined ? [] : ([value].flat() as T[]);
 
 export const DESTINATIONS: Destination[] = [
-  { key: 'today', group: 'primary', icon: 'home-outline', labelKey: 'destinations.today' },
+  {
+    key: 'today',
+    group: 'primary',
+    icon: 'home-outline',
+    labelKey: 'destinations.today',
+    route: { tab: 'Today', path: '/today' },
+  },
   {
     key: 'board',
     group: 'primary',

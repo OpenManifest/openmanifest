@@ -49,9 +49,10 @@ test.describe('login @login', () => {
   });
 
   // Selecting an operator the user has not joined joins them (P6.4)
-  test('a brand new user joins the dropzone and reaches the board', async ({ page }) => {
+  test('a brand new user joins the dropzone and reaches their day', async ({ page }) => {
     const email = await registerNewUser();
     await loginViaUi(page, email);
-    await expect(page).toHaveURL(/\/manifest$/);
+    // Someone who may not manifest others lands on Today, not on the board
+    await expect(page).toHaveURL(/\/today$/);
   });
 });

@@ -8,18 +8,21 @@ import { AppSignalBoundary } from 'app/components/app_signal';
 import AppNavigation, { tabBarPositionFor } from 'app/navigation/AppNavigation';
 import SkipLink from 'app/navigation/SkipLink';
 import guarded from 'app/navigation/AccessGuard';
+import useRestriction from 'app/hooks/useRestriction';
 import type { AccessRule } from 'app/navigation/destinations';
 import { useDevice } from 'app/ui';
 import ManifestTab, { OperatorRoutes } from './manifest/routes';
 import UsersTab, { UserRoutes } from './user/routes';
 import NotificationsTab, { NotificationRoutes } from './notifications/routes';
 import OverviewTab, { OverviewRoutes } from './overview/routes';
+import TodayTab, { TodayRoutes } from './today/routes';
 import AccountScreen from './account/AccountScreen';
 import MoreScreen from './account/MoreScreen';
 
 import BottomTab from './TabBar';
 
 export type AuthenticatedRoutes = {
+  Today: NavigatorScreenParams<TodayRoutes>;
   Manifest: NavigatorScreenParams<OperatorRoutes>;
   Overview: NavigatorScreenParams<OverviewRoutes>;
   Users: NavigatorScreenParams<UserRoutes>;
@@ -67,6 +70,7 @@ function inMain<Props extends object>(
 // made from the destinations the user may use, and the screens of the others say so
 const OverviewScreen = inMain(guarded(OverviewTab, OVERVIEW_RULE));
 const UsersScreen = inMain(guarded(UsersTab, USERS_RULE));
+const TodayScreen = inMain(TodayTab);
 const ManifestScreen = inMain(ManifestTab);
 const NotificationsScreen = inMain(NotificationsTab);
 const MoreTab = inMain(MoreScreen);
@@ -75,6 +79,8 @@ const AccountTab = inMain(AccountScreen);
 export default function AuthenticatedTabBar() {
   const { t } = useTranslation('common');
   const { breakpoint } = useDevice();
+  // Those who do not manifest other people land on their day; the manifest desk lands on the board
+  const landsOnToday = !useRestriction(Permission.CreateUserSlot);
 
   const screenOptions = React.useMemo(
     () => ({ headerShown: false, tabBarPosition: tabBarPositionFor(breakpoint) }),
@@ -90,10 +96,15 @@ export default function AuthenticatedTabBar() {
       {/* The first stop of the keyboard, before the bar and the screen */}
       {Platform.OS === 'web' ? <SkipLink /> : null}
       <BottomTab.Navigator
-        initialRouteName="Manifest"
+        initialRouteName={landsOnToday ? 'Today' : 'Manifest'}
         screenOptions={screenOptions}
         tabBar={tabBar}
       >
+        <BottomTab.Screen
+          name="Today"
+          component={TodayScreen}
+          options={{ title: t('destinations.today') }}
+        />
         <BottomTab.Screen
           name="Overview"
           component={OverviewScreen}
