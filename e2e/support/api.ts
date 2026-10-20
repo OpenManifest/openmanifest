@@ -20,6 +20,16 @@ async function loginAsOwner() {
   };
 }
 
+/** Two workers signing in as the owner at the same moment can invalidate each other's token: ask again after a pause */
+async function ownerCall(query: string, variables?: object) {
+  for (let attempt = 0; ; attempt++) {
+    const auth = await loginAsOwner();
+    const result = await call(query, auth, variables);
+    if ((result.json?.data && !result.json?.errors) || attempt >= 3) return { ...result, auth };
+    await new Promise((resolve) => setTimeout(resolve, 500 + Math.random() * 1000));
+  }
+}
+
 const createdLoads: string[] = [];
 
 /**
@@ -37,21 +47,29 @@ export async function deleteCreatedLoads() {
 
 /** Creates a load through the API as the seed's owner, the way a second device would. Returns its id. */
 export async function createLoadViaApi(): Promise<string | undefined> {
-  const auth = await loginAsOwner();
-  const { json: operators } = await call(
-    '{ operators { edges { node { id currentUser { id } } } } }',
-    auth
-  );
-  const operator = operators.data.operators.edges[0].node;
-  const { json: vehicles } = await call(`{ vehicles(operator: ${operator.id}) { id } }`, auth);
+  const operators = await ownerCall('{ operators { edges { node { id currentUser { id } } } } }');
+  const operator = operators.json.data.operators.edges[0].node;
+  const vehicles = await ownerCall(`{ vehicles(operator: ${operator.id}) { id } }`);
   const member = operator.currentUser.id;
-  const { json: created } = await call(
-    `mutation { createLoad(input: { attributes: { name: "Live ${Date.now()}", vehicle: ${vehicles.data.vehicles[0].id}, maxSlots: 10, pilot: ${member}, gca: ${member} } }) { load { id } errors } }`,
-    auth
+  const created = await ownerCall(
+    `mutation { createLoad(input: { attributes: { name: "Live ${Date.now()}", vehicle: ${vehicles.json.data.vehicles[0].id}, maxSlots: 10, pilot: ${member}, gca: ${member} } }) { load { id } errors } }`
   );
-  const id = created?.data?.createLoad?.load?.id;
+  const id = created.json?.data?.createLoad?.load?.id;
   if (id) createdLoads.push(id);
   return id;
+}
+
+/** Puts a load on call, `minutes` from now, the way the boarding call does. Returns whether the API accepted it. */
+export async function callLoadViaApi(id: string, minutes = 10): Promise<boolean> {
+  const at = new Date(Date.now() + minutes * 60_000).toISOString();
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const { json } = await ownerCall(
+      `mutation { updateLoad(input: { id: ${Number(id)}, attributes: { dispatchAt: "${at}", state: boarding } }) { load { id state } errors } }`
+    );
+    if (json?.data?.updateLoad?.load?.state === 'boarding') return true;
+    await new Promise((resolve) => setTimeout(resolve, 500 + Math.random() * 1000));
+  }
+  return false;
 }
 
 /** Registers a brand new user who has not joined the operator. Returns the email. */

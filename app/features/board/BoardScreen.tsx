@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Button, EmptyState, Skeleton, Text, useTheme } from 'app/ui';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
@@ -33,8 +33,9 @@ export default function BoardScreen() {
   const layout = layoutOf(useBreakpoint());
   const board = useBoard();
   const {
-    operator: { operator, currentUser, called },
+    operator: { operator, currentUser, called, refetch: refetchOperator },
   } = useOperatorContext();
+  const isFocused = useIsFocused();
   const { dialogs } = useManifestContext();
   const canCreateLoad = useRestriction(Permission.CreateLoad);
   const canUpdateWeather = useRestriction(Permission.UpdateWeatherConditions);
@@ -49,6 +50,11 @@ export default function BoardScreen() {
   const { active, over } = React.useMemo(() => splitLoads(board.loads), [board.loads]);
   const [selectedId, select] = React.useState<string | null>(null);
   const selected = board.loads.find(({ id }) => id === selectedId) ?? active[0] ?? board.loads[0];
+  // Whatever the operator or the user's standing at it (credits, permissions) became while the board was away
+  React.useEffect(() => {
+    if (isFocused) refetchOperator();
+  }, [isFocused, refetchOperator]);
+
   const loadTerm = t('terms:load', { count: 1 });
   const loadsTerm = t('terms:load', { count: 2 }).toLowerCase();
 

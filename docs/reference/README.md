@@ -139,7 +139,10 @@ Three generations coexist in `app/api/`:
 `app/features/board/useBoard.ts` (U3.2) is the board's data layer: `useBoard(date?)` reads the manifest's loads for the day,
 orders them (open → boarding → departed → completed/cancelled, then load number; `order.ts`), flags a changed row for
 600 ms, holds the order between `freeze()` and `unfreeze()`, and keeps one `loadUpdated` subscription per load of the day
-(cache write: `applyLoadUpdate`). `useBoardScreens()` (`screens.ts`) picks the new or the classic board and load screens
+(cache write: `applyLoadUpdate`). The new board (U3.3, behind `newBoard`): `BoardScreen` shows `LoadCard`s (state, call countdown as the largest numeral,
+vehicles with `VehicleIcon`, `DestinationLabel`, `PlacesMeter` from the carrying vehicles less seated crew, one `CrewChip` per
+crew role) in one column on a phone, the list beside the selected load on a tablet, and a column for each load with a strip
+for the finished ones on a wide window; `ConditionsStrip` appears with the `winds_aloft` module. `useBoardScreens()` (`screens.ts`) picks the new or the classic board and load screens
 from the `newBoard` preference.
 
 Operations: 76 named operations (41 mutations, 32 queries, 3 subscriptions: `loadCreated`, `loadUpdated`, `userUpdated`).
