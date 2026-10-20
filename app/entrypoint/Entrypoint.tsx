@@ -43,8 +43,6 @@ function ThemedNavigationContainer(
 
   return (
     <NavigationContainer
-      onReady={() => console.log('BOOT navigation ready')} // eslint-disable-line no-console
-      onUnhandledAction={(action) => console.log('BOOT unhandled', JSON.stringify(action))} // eslint-disable-line no-console
       // The screen headers write the title of the tab on the web: "<screen> · <operator>"
       documentTitle={{ enabled: false }}
       onStateChange={props.onStateChange}
@@ -58,11 +56,6 @@ function ThemedNavigationContainer(
 
 function Content() {
   const onRouteChange = useRouteChange();
-  // TEMPORARY (U3.1)
-  React.useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log('BOOT content mounted');
-  }, []);
 
   return (
     <AppSignalProvider>
@@ -117,16 +110,6 @@ function App() {
   // screen and send the first queries without credentials.
   const sessionHydrated = useSession((session) => session.hydrated);
   const preferencesHydrated = usePreferences((preferences) => preferences.hydrated);
-
-  // TEMPORARY (U3.1): why does the Android CI build stay blank?
-  React.useEffect(() => {
-    const log = () =>
-      // eslint-disable-next-line no-console
-      console.log('BOOT', JSON.stringify({ isLoadingComplete, sessionHydrated, preferencesHydrated }));
-    log();
-    const timer = setInterval(log, 5000);
-    return () => clearInterval(timer);
-  }, [isLoadingComplete, sessionHydrated, preferencesHydrated]);
 
   if (!isLoadingComplete || !sessionHydrated || !preferencesHydrated) {
     return null;

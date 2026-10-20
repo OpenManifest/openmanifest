@@ -35,7 +35,7 @@ export default function useCachedResources() {
         setLoadingComplete(true);
       } catch (e) {
         // We might want to provide this error information to an error reporting service
-        console.warn('FONTS', e);
+        console.warn(e);
       } finally {
         SplashScreen.hideAsync();
       }
