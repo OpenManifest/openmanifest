@@ -1,47 +1,58 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
-import { DropzoneEssentialsFragment } from 'app/api/operations';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import AppBar from 'app/components/appbar/AppBar';
+import ScreenHeader from 'app/navigation/ScreenHeader';
+import { useTranslation } from 'react-i18next';
 import { AppSignalBoundary } from 'app/components/app_signal';
-import SettingsMenuScreen from './settings_menu/SettingsMenuScreen';
+import SetupScreen, { SetupLayout } from 'app/features/setup/SetupScreen';
+import RulesScreen from 'app/features/setup/RulesScreen';
+import guarded from 'app/navigation/AccessGuard';
+import { Permission } from 'app/api/schema.d';
 import TicketTypeSettingsScreen from './ticket_types/TicketTypesScreen';
-import DropzoneSettingsScreen from './dropzone_settings/DropzoneSettingsScreen';
-import PlanesScreen from './aircrafts/AircraftsScreen';
-import RigInspectionTemplateScreen from './rig_inspection_template/RigInspectionTemplateScreen';
-import DropzoneRigsScreen from './rigs/DropzoneRigsScreen';
-import DropzonePermissionScreen from './permissions/PermissionsScreen';
-import DropzoneMasterLogScreen from './master_log/MasterLogScreen';
-import DropzoneTransactionsScreen from './transactions/DropzoneTransactionsScreen';
+import BrandingScreen from 'app/features/setup/BrandingScreen';
+import VehiclesScreen from './vehicles/VehiclesScreen';
+import EquipmentInspectionTemplateScreen from './equipment_inspection_template/EquipmentInspectionTemplateScreen';
+import OperatorEquipmentScreen from './equipment/OperatorEquipmentScreen';
+import OperatorPermissionScreen from './permissions/PermissionsScreen';
+import OperatorDailyLogScreen from './daily_log/DailyLogScreen';
+import OperatorTransactionsScreen from './transactions/OperatorTransactionsScreen';
 import ExtrasScreen from './extras/ExtrasScreen';
+import DestinationsScreen from './destinations/DestinationsScreen';
 
 export type ConfigurationRoutes = {
-  DropzoneSettingsScreen: undefined;
+  OperatorSettingsScreen: undefined;
   SettingsMenuScreen: undefined;
+  RulesScreen: undefined;
   TicketTypesScreen: undefined;
-  AircraftsScreen: undefined;
-  AircraftScreen: undefined;
+  VehiclesScreen: undefined;
+  VehicleScreen: undefined;
+  DestinationsScreen: undefined;
   ExtrasScreen: undefined;
-  RigInspectionTemplateScreen: undefined;
-  DropzoneRigsScreen: undefined;
+  EquipmentInspectionTemplateScreen: undefined;
+  OperatorEquipmentScreen: undefined;
   TransactionsScreen: undefined;
   PermissionScreen: undefined;
-  MasterLogScreen: undefined;
+  DailyLogScreen: undefined;
 };
 
 const Configuration = createStackNavigator<ConfigurationRoutes>();
+
+// Only those who may change the operator see its rules (a link to /configuration/rules says so to the others)
+const GuardedRulesScreen = guarded(RulesScreen, { permission: Permission.UpdateOperator });
 
 export function useConfigurationNavigation() {
   return useNavigation<NavigationProp<ConfigurationRoutes>>();
 }
 export default function SettingsTab() {
+  const { t } = useTranslation(['common', 'terms']);
   return (
     <AppSignalBoundary>
       <Configuration.Navigator
+        screenLayout={(props) => <SetupLayout {...props} />}
         screenOptions={{
           headerShown: true,
-          header: (props) => <AppBar {...props} />,
+          header: (props) => <ScreenHeader {...props} />,
           cardStyle: {
             flex: 1,
           },
@@ -49,53 +60,63 @@ export default function SettingsTab() {
       >
         <Configuration.Screen
           name="SettingsMenuScreen"
-          component={SettingsMenuScreen}
-          options={{ title: 'Settings' }}
+          component={SetupScreen}
+          options={{ title: t('common:destinations.setup') }}
         />
         <Configuration.Screen
-          name="DropzoneSettingsScreen"
-          component={DropzoneSettingsScreen}
-          options={{ title: 'Basic settings' }}
+          name="OperatorSettingsScreen"
+          component={BrandingScreen}
+          options={{ title: t('common:setupMenu.brandingTitle') }}
         />
         <Configuration.Screen
-          name="AircraftsScreen"
-          component={PlanesScreen}
-          options={{ title: 'Planes' }}
+          name="RulesScreen"
+          component={GuardedRulesScreen}
+          options={{ title: t('common:setupMenu.rulesTitle') }}
+        />
+        <Configuration.Screen
+          name="VehiclesScreen"
+          component={VehiclesScreen}
+          options={{ title: t('terms:vehicle', { count: 2 }) }}
+        />
+        <Configuration.Screen
+          name="DestinationsScreen"
+          component={DestinationsScreen}
+          options={{ title: t('terms:destination', { count: 2 }) }}
         />
         <Configuration.Screen
           name="TicketTypesScreen"
           component={TicketTypeSettingsScreen}
-          options={{ title: 'Ticket types' }}
+          options={{ title: t('common:screens.ticketTypes') }}
         />
         <Configuration.Screen
           name="ExtrasScreen"
           component={ExtrasScreen}
-          options={{ title: 'Ticket add-ons' }}
+          options={{ title: t('common:screens.ticketAddOns') }}
         />
         <Configuration.Screen
-          name="RigInspectionTemplateScreen"
-          component={RigInspectionTemplateScreen}
-          options={{ title: 'Rig Inspection Form' }}
+          name="EquipmentInspectionTemplateScreen"
+          component={EquipmentInspectionTemplateScreen}
+          options={{ title: t('common:screens.equipmentInspectionForm') }}
         />
         <Configuration.Screen
-          name="DropzoneRigsScreen"
-          component={DropzoneRigsScreen}
-          options={{ title: 'Dropzone rigs' }}
+          name="OperatorEquipmentScreen"
+          component={OperatorEquipmentScreen}
+          options={{ title: t('common:screens.equipment') }}
         />
         <Configuration.Screen
           name="TransactionsScreen"
-          component={DropzoneTransactionsScreen}
-          options={{ title: 'Transactions' }}
+          component={OperatorTransactionsScreen}
+          options={{ title: t('common:screens.transactions') }}
         />
         <Configuration.Screen
           name="PermissionScreen"
-          component={DropzonePermissionScreen}
-          options={{ title: 'Permissions' }}
+          component={OperatorPermissionScreen}
+          options={{ title: t('common:screens.permissions') }}
         />
         <Configuration.Screen
-          name="MasterLogScreen"
-          component={DropzoneMasterLogScreen}
-          options={{ title: 'Master log' }}
+          name="DailyLogScreen"
+          component={OperatorDailyLogScreen}
+          options={{ title: t('common:screens.masterLog') }}
         />
       </Configuration.Navigator>
     </AppSignalBoundary>

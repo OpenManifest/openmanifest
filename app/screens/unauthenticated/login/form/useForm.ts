@@ -6,7 +6,6 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { useLoginWithApple } from './AppleButton';
-import { useLoginWithFacebook } from './FacebookButton';
 
 export interface LoginFields {
   email: string;
@@ -33,7 +32,6 @@ export default function useLoginForm() {
   const { handleSubmit } = methods;
   const [loading, setLoading] = React.useState(false);
   const [mutationLogin, data] = useLoginMutation();
-  const [loginWithFacebook, loginWithFacebookMutation] = useLoginWithFacebook();
   const [loginWithApple, loginWithAppleMutation] = useLoginWithApple();
 
   const notify = useNotifications();
@@ -63,19 +61,9 @@ export default function useLoginForm() {
     () => ({
       ...methods,
       onSubmit,
-      loginWithFacebook,
       loginWithApple,
-      loading:
-        loginWithFacebookMutation?.loading || data?.loading || loginWithAppleMutation?.loading,
+      loading: data?.loading || loginWithAppleMutation?.loading,
     }),
-    [
-      data?.loading,
-      loginWithApple,
-      loginWithAppleMutation?.loading,
-      loginWithFacebook,
-      loginWithFacebookMutation?.loading,
-      methods,
-      onSubmit,
-    ]
+    [data?.loading, loginWithApple, loginWithAppleMutation?.loading, methods, onSubmit]
   );
 }

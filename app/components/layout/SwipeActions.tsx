@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Animated } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Tappable, useTheme } from 'app/ui';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 export interface ISwipeAction {
@@ -17,6 +17,7 @@ export interface ISwipeActions {
 
 export default function SwipeActions(props: ISwipeActions) {
   const { children, rightAction, disabled } = props;
+  const theme = useTheme();
 
   const ref = React.useRef<Swipeable | null>(null);
   const rightActions = (
@@ -34,7 +35,10 @@ export default function SwipeActions(props: ISwipeActions) {
     });
 
     return (
-      <TouchableOpacity
+      <Tappable
+        role="button"
+        aria-label={rightAction?.label ?? ''}
+        minTarget={false}
         onPress={() => {
           rightAction?.onPress();
           ref?.current?.close();
@@ -53,8 +57,8 @@ export default function SwipeActions(props: ISwipeActions) {
         >
           <Animated.Text
             style={{
-              color: 'white',
-              paddingHorizontal: 10,
+              color: theme.colour.map.text,
+              paddingHorizontal: theme.space.sm,
               fontWeight: '600',
               transform: [{ scale }],
             }}
@@ -62,7 +66,7 @@ export default function SwipeActions(props: ISwipeActions) {
             {rightAction?.label}
           </Animated.Text>
         </Animated.View>
-      </TouchableOpacity>
+      </Tappable>
     );
   };
   return (

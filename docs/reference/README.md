@@ -44,30 +44,31 @@ Root (stack)
 ├── Limbo (stack)                DropzoneSelectScreen /select-dropzone
 ├── Authenticated
 │   └── LeftDrawer (drawer: UserDrawer — dropzone switcher, profile, logout)
-│       └── Tabs (material bottom tabs; TabBar.web.tsx on web)
+│       └── Tabs (bottom tabs on every platform; TabBar.web.tsx is a copy of TabBar.tsx)
 │           ├── Overview      DashboardScreen /dropzone/dashboard · OverviewScreen /overview
 │           │                 (visible with viewStatistics permission or moderator)
 │           ├── Manifest      ManifestScreen /dropzone/manifest · LoadScreen /dropzone/load/:loadId
 │           │                 WeatherConditionsScreen /dropzone/weather · WindScreen /dropzone/weather/winds
 │           │                 JumpRunScreen /dropzone/weather/jumprun
-│           │                 User (stack, see below, under /dropzone/manifest/users/…)
-│           │                 Configuration (stack): SettingsMenuScreen /dropzone/configuration ·
-│           │                   DropzoneSettingsScreen /basic · AircraftsScreen /aircrafts · TicketTypesScreen /ticket-types ·
+│           │                 Configuration (stack): SettingsMenuScreen (Setup, U5.3) /configuration ·
+│           │                   OperatorSettingsScreen (Branding) /basic · RulesScreen /configuration/rules ·
+│           │                   AircraftsScreen /aircrafts · TicketTypesScreen /ticket-types ·
 │           │                   ExtrasScreen /dropzone/ticket-types/extra · RigInspectionTemplateScreen /rig-inspection ·
 │           │                   DropzoneRigsScreen /rigs · TransactionsScreen /dropzone/transactions ·
 │           │                   PermissionScreen /permissions · MasterLogScreen /dropzone/master-log
-│           ├── Notifications NotificationsScreen /notifications · User stack
-│           └── Users         UserListScreen /users · ProfileScreen /user/:userId · EquipmentScreen ·
-│                             OrdersScreen · OrderReceiptScreen · RigInspectionScreen   (visible with readUser)
+│           ├── Notifications NotificationsScreen /notifications
+│           └── Users         User stack (below): UserListScreen /users · ProfileScreen /user/:userId · EquipmentScreen ·
+│                             OrdersScreen · OrderReceiptScreen · EquipmentInspectionScreen (readUser, or their own)
 ├── Wizards (stack, modal)       DropzoneWizardScreen /setup · UserWizardScreen · RecoverPasswordScreen /recover-password ·
-│                                ConfirmUserScreen /confirm · ChangePasswordScreen /change-password · User stack (/modal/user/…)
+│                                ConfirmUserScreen /confirm · ChangePasswordScreen /change-password
 └── NotFound
 ```
 
-User stack (reused in Manifest, Notifications, Users and Wizards): `UserListScreen`, `ProfileScreen` (tabs: jumps,
-equipment, transactions), `EquipmentScreen`, `OrdersScreen`, `OrderReceiptScreen`, `RigInspectionScreen`.
+User stack (registered once, under Users/People; `/manifest/users/…` and `/modal/user/…` redirect to `/user/…`, see
+`app/navigation/legacyPaths.ts`; screens open it with `useOpenUser`): `UserListScreen` (People), `ProfileScreen`,
+`EquipmentScreen` and `EquipmentInspectionScreen` (`app/features/profile`, U5.2), `OrdersScreen`, `OrderReceiptScreen`.
 
-Deep-link config: `app/screens/routes.tsx` `options` (prefixes `openmanifest://`, `https://www.openmanifest.org`,
+Deep-link config: `app/navigation/linking.ts` `options` (prefixes `openmanifest://`, `https://www.openmanifest.org`,
 `https://staging.openmanifest.org`, `http://localhost:19006`). It references three screens that are not registered
 (`Manifest/DashboardScreen`, `Configuration/AircraftScreen`, `Unauthenticated/SignUpWizard`) — BUG-083.
 
@@ -75,15 +76,15 @@ Main flows:
 
 | Flow | Screens / components |
 |---|---|
-| Login | `LoginScreen` → `login/form/LoginForm.tsx` (`userLogin`), `AppleButton*.tsx`, `FacebookButton*.tsx` → Limbo |
+| Login | `LoginScreen` → `login/form/LoginForm.tsx` (`userLogin`), `AppleButton*.tsx` → Limbo |
 | Sign up | `SignUpScreen` (wizard) → confirmation email → `ConfirmUserScreen` |
 | Select dropzone | `DropzoneSelectScreen` (list of dropzones, create → `DropzoneWizardScreen`) |
 | Manifest board | `ManifestScreen` (load cards, `app/providers/manifest/provider.tsx` for date/filters), FAB: new load, manifest me |
 | Load | `LoadScreen` (slots table `app/components/slots_table/`, `ActionButton.tsx` for calls/land/cancel, drag-and-drop on web) |
-| Manifest a jumper / group | `app/forms/manifest_user/*` sheet, `app/components/dialogs/ManifestGroup/*` |
+| Manifest a jumper / group | `app/legacy/manifest_user/*` sheet (classic board; the new board uses `app/features/picker`), `app/components/dialogs/ManifestGroup/*` |
 | Credits | `app/forms/credits/*` (`createOrder`) from profile and transactions |
 | Weather | `WeatherConditionsScreen`, `WindScreen`, `JumpRunScreen` (form state in `app/forms/weather`, `WeatherFormProvider` above the dropzone stack) |
-| Setup | Configuration stack screens; forms in `app/forms/*` |
+| Setup | `app/features/setup` (Setup list, Rules, Branding) and the Configuration stack screens; forms in `app/forms/*` |
 
 ### Layout primitives (`app/components/layout/`, since Phase 5)
 
@@ -108,7 +109,7 @@ store or component state.
 | Store | Fields | Persisted | Notes |
 |---|---|---|---|
 | `useSession` (`app/state/session.ts`) | `credentials` (`accessToken`, `client`, `uid`, `expiry`, `tokenType`), `currentDropzoneId`, `expoPushToken`, `currentRouteName`, `hydrated` | yes: `openmanifest.session.v1` (AsyncStorage / `localStorage`); `credentials` go to `expo-secure-store` (`openmanifest.credentials`) on native and `localStorage` on web (`app/state/storage.ts`) | `useAuthenticated()` = an access token exists. `reset()` logs out but keeps the device push token. `Entrypoint` renders nothing until `hydrated`. Migrated once from the old redux-persist blob (`migrateFromReduxPersist.ts`), which is then deleted. |
-| `usePreferences` (`app/state/preferences.ts`) | `colorScheme`: `system` / `light` / `dark`, `hydrated` | yes: `openmanifest.preferences.v1` | device level, survives logout |
+| `usePreferences` (`app/state/preferences.ts`) | `colorScheme`: `system` / `light` / `dark`, `density`, `newBoard` (on for a new install, off for stored v1 preferences; picks the new or the classic board and load screens), `hydrated` | yes: `openmanifest.preferences.v1` | device level, survives logout |
 | `useThemeOverrides` (`app/theme/overrides.ts`) | `primary` | no | colour preview in the dropzone form, dropped once Apollo holds the saved colour |
 
 Derived, not stored: the theme and palette (`useAppTheme()` in `app/theme`: colour scheme preference or device, the current
@@ -116,7 +117,7 @@ dropzone's `primaryColor` / `secondaryColor` from Apollo, preview override), `au
 and permissions (Apollo, through `app/api/crud` and the dropzone / manifest context providers).
 
 Where the rest went (P4.4–P4.7): the manifest board's list/cards switch is `useState` in `ManifestScreen`; the user list's
-search is `UserSearchProvider`; the image viewer is `ImageViewerProvider`; the password wizards use `useFieldState`; every
+search is `useState` in `PeopleScreen` (U5.1); the image viewer is `ImageViewerProvider`; the password wizards use `useFieldState`; every
 form is react-hook-form (`app/forms/<name>`), opened with the record to edit as a prop or from a context (`dialogs` in
 `ManifestContext` and `ProfileDialogsProvider`, `WeatherFormProvider`).
 
@@ -136,6 +137,19 @@ Three generations coexist in `app/api/`:
 | 2. Generated hooks | `app/api/{queries,mutations,fragments,subscriptions}/*.gql` (24 queries, 41 mutation documents) → `reflection.tsx` (`useXQuery`, `useXMutation`), `operations.ts` | graphql-codegen | 68 importers |
 | 3. CRUD hooks | `app/api/crud/*` (`useLoad`, `useManifest`, `useDropzone`, `useUserProfile`, `useTickets`, `useAircrafts`, `useEquipment`, `useDropzones`, `factory.tsx`) | wrap generated hooks; return `{ data, loading, create, update, … }`, normalise `fieldErrors` | 42 importers |
 
+`app/features/board/useBoard.ts` (U3.2) is the board's data layer: `useBoard(date?)` reads the manifest's loads for the day,
+orders them (open → boarding → departed → completed/cancelled, then load number; `order.ts`), flags a changed row for
+600 ms, holds the order between `freeze()` and `unfreeze()`, and keeps one `loadUpdated` subscription per load of the day
+(cache write: `applyLoadUpdate`). The new board (U3.3, behind `newBoard`): `BoardScreen` shows `LoadCard`s (state, call countdown as the largest numeral,
+vehicles with `VehicleIcon`, `DestinationLabel`, `PlacesMeter` from the carrying vehicles less seated crew, one `CrewChip` per
+crew role) in one column on a phone, the list beside the selected load on a tablet, and a column for each load with a strip
+for the finished ones on a wide window; `ConditionsStrip` appears with the `winds_aloft` module. `LoadActions` (U3.4) is the card's next action: `planActions` picks the primary button and the menu by state (open → call from the operator's schedule or a custom time, or depart without a schedule; on call → depart, cancel the call, land; departed → land; over → re-open today), `useLoadActions` runs them with `updateLoad` / `finalizeLoad`, cancelling a load and landing one that never departed ask first, and a load leaves only with its required crew roles filled. The new load screen (U3.5, `app/features/load/`): `LoadHeader` is the call card (countdown, when it was called or left,
+destinations, `PlacesMeter`, one `CrewRoleMenu` per crew role), `buildSections` turns `load.slots` into rows (one heading per
+vehicle of a load with several, groups bracketed, free places as one row), `PlaceRow` / `EscortGroup` show a person or an
+escort with their guests (readiness from the `LoadEligibility` query, prepaid badge, a menu to edit or take off, swipe to take
+off on native), the actions are `LoadActions` (sticky at the bottom on a phone). `useBoardScreens()` (`screens.ts`) picks the new or the classic board and load screens
+from the `newBoard` preference. The member picker (U3.7, `app/features/picker/`): the free places of the load screen open `MemberPicker` (an `Overlay`), whose `MemberPicker` query lists the operator's memberships with `eligibility(loadId)` and `lastSlot`; `filterMembers` / `sortReadyFirst` (`members.ts`) apply the filters (Everyone, Ready, Flew today) with ready members first, selecting a row opens `DefaultsCard` (ticket, activity, destination, equipment, body mass and price from `lastSlot`, `defaultsOf`), `useManifestValidator` checks that combination with `slotEligibility`, and the footer button adds the member with `ManifestUser` (a blocked member shows the reason and a Fix action to their profile and cannot be added). The ticket, the type of jump and (with the destinations module) the destination are picked in place (`ChoiceFields`, `resolveDefaults` in `choices.ts`); a ticket that `requiresEscort` asks for its guests (`GuestsEditor`, `guests.ts`: at least one, at most `escortCapacity`, a date of birth when the ticket has an age limit) and they go to `createSlot` with the escort. "Add a group" (the switch in the picker) selects several people for one ticket and type of jump (`GroupCard`: an exit weight each, `slotEligibility` for each with the shared ticket, one group number from `nextGroupNumber`) and books them with `createSlots`; escort tickets are booked one escort at a time. "Change…" opens the classic manifest form, which with the classic group form lives in `app/legacy/` (removed in U6.4). Moving people (U3.9, `app/features/move/`, `app/features/board/dnd/`): every place has "Move to…" in its menu (`PlaceRow`), which opens `MoveToSheet`: `moveTargets` lists the other loads of the day, and the vehicles of a load that has several that carry, with their free places or why they cannot take the place (it has left, or it is full), and `moveSlot` (now with `targetLoadVehicle`) does the move. On the web, at the widest layout, each column of the board shows its people (`ColumnPlaces`) and a place can be dragged to another column (`BoardDnd.web.tsx` on `@dnd-kit/core`: the pointer after 8 px, or Space, the left and right arrows to choose the column and Space to drop, announced for screen readers); the board holds its order (`useBoard().freeze()`) while a place is held, so nothing moves under the pointer. `BoardDnd.tsx` is the pass-through for native. Today (U4.1, `app/features/today/`, tab `Today`, path `/today`): the first destination of those without `createUserSlot` (the navigator's `initialRouteName`), a tab for everyone. The `Today` query gives the member's credit and `eligibility` and the loads of the operator's day with their people and crew; `nextLoadOf` picks the load they fly next (on call, then open, then in the air), `NextLoadCard` shows it with take-me-off when they may (`deleteSlot`) or the manifest-desk note when they may not, `ReadyChecklist` one row for each eligibility rule with a Fix to the profile, `CreditCard`, `TodayLoads` and, for crew, `DutiesCard` (`dutiesOf`). Booking yourself (U4.2): `MemberPicker` takes `mode: 'self'`, which reads the member from the `SelfBooking` query (their `eligibility(loadId)` and `lastSlot`), hides the search, filters and group switch, and confirms with "Book Load #n". `BookJump` is the button and the picker together; it shows only with `permissions.canManifestSelf` (the API leaves it out when the dropzone switched self-manifesting off) and `canBook` (the load is open or on call, has a free place and the member is not on it). Its entry points are `BookCard` on Today (the first load of the day they can get on, when they have none), the board's load cards (members without `createUserSlot`) and the free places of the load screen (self mode for them). Wallet (U4.3, `app/features/wallet/`, tab `Wallet`, paths `/wallet` and `/wallet/:orderId`): the destination of those without `readUserTransactions` (those who run the money have Money instead). The `Wallet` query gives the membership's `creditsCents` and its orders (newest first, `first` grows with "Show older") with their receipts and transactions; `heldCents` is the pending orders the member paid for (the API takes the price off the credit when the jump is booked and gives it back if the slot is taken off), `effectCents` what an order did to the balance (none once refunded or cancelled). `BalanceCard` shows the balance, what is held and "Top up at the manifest desk" (online top-up comes with C2.5); `OrderHistory` groups the orders by day; `ReceiptScreen` shows one order and the transactions that moved the member's own account. `useWalletRedirect` sends a member who opens their own old `OrdersScreen` / `OrderReceiptScreen` to the wallet; Money keeps the old screens. Inbox (U4.4, `app/features/inbox/`, tab `Notifications`, path `/notifications`): `InboxScreen` lists the `Inbox` query's notifications (newest first, the unread marked) as `ListRow`s; `targetOf` maps a notification and what it is about to where it opens (`Target`: Today, Wallet, the load of a call or booking, the inspection a rig needs, the owner of an inspected rig, or the inbox), `openTarget` navigates there, a tap marks it read (`updateNotification`, optimistic) and "Mark all as read" reads the newest 200. The badge on the Inbox item of the bar is `Membership.unseenNotifications` (`useUnseenCount`, asked again every minute and after each push and read), spoken with the label ("Inbox, 3 unread"). A push carries `{ notificationId, type }`: `PushNotificationProvider` holds the tap (a push that started the app too) until the member is signed in, and `openPush` opens `pushTargetOf(type)` (Today for calls and changes of the manifest, the Wallet for money, the Inbox for the rest) and marks it read. People (U5.1, `app/features/people/`, tab `Users`, path `/users`): `PeopleScreen` is the `UserListScreen` of the User stack (guarded by `readUser`). The `People` query lists every membership of the operator (`licensed: false`) with its role, licence, `creditsCents`, `eligibility` (on no load) and `lastSlot`, searched by name on the server (debounced; "/" focuses the search box on the web, `useSearchShortcut`) and paged with `first` ("Show more"). `people.ts` holds the logic: `summaryOf` turns the rules into ready, expiring or blocked (with `checkOf` from Today) and the rule that says why, `filterPeople` keeps one role (`roleOptions`: the `Roles` query and the roles of the people loaded) and one status, `sortPeople` sorts by name, need (blocked first), least credit or last load. On an expanded window the people are a table (`PeopleTable`, `role="table"` with column headers), elsewhere rows (`PersonRow`); the menu of a row (`PersonMenu`) opens the profile and, by permission, "Manifest on…" (`createUserSlot`: `ManifestOnSheet` lists the open loads of the manifest's day, `manifestTargets`, and the chosen load opens `MemberPicker` with the person already picked through its `member` prop) and "Add credit" (`createUserTransaction`: the credits sheet of the manifest context). "Add member" (`createUser`) opens the walk-in form (`app/forms/create_user`, `createGhost`, which refetches `People`). Profile (U5.2, `app/features/profile/`, `ProfileScreen` at `/user/:userId`, `EquipmentScreen` at `/user/:userId/equipment`, `EquipmentInspectionScreen` at `/user/:membershipId/equipment-inspection/:equipmentId`; a member opens their own without `readUser`, `guardedUnlessOwn`): the `Profile` query gives the membership with its `eligibility` (on no load), `userCertification`, the user's certifications with their qualifications, equipment with `equipmentInspections`, `permissions` and the newest `slots` (20 more with "Show older"); `useProfile` asks again when the screen comes back into view and when the credit in the cache changes (the credits sheet). `abilitiesOf` (`profile.ts`) turns whose profile it is and the viewer's permissions into what they may do (details: self or `updateUser`; membership and acting permissions: `updateUser`; credit: `createUserTransaction`; Money's transactions: `readUserTransactions`; equipment: their own with `createEquipment`, staff with `updateUser` (UB.2); inspect: `actAsEquipmentInspector`; remove: `deleteUser`, never themselves). The sections: `ProfileSummary` (photo, name, role and level, ready / expiring / blocked, contact, body mass, "Edit details" and a menu with membership, the guided setup and remove), Today's `ReadyChecklist` with the rules the operator asks for (`profileRules`) and the fix the viewer has (`fixOf`: details, membership, credit sheet or wallet, guided setup, equipment), `LoadsSection` (with an empty state that leads to the board), `FundsSection` (credit; the wallet for a member, Money's transactions and "Add credit" for staff), `CertificationsSection`, `EquipmentSection` (`EquipmentItem`: attributes, service due, inspection, edit, inspect, packing card) and `MembershipSection` (role, expiry as `formatDate`, acting permissions); one column on a phone, two on an expanded window. The forms are the shared ones (`ProfileDialogs`: `app/forms/user`, `membership` with `ActingPermissions`, `equipment`); `InspectionScreen` fills in the operator's form for the kind of the item. Setup (U5.3, `app/features/setup/`, the Configuration stack's `SettingsMenuScreen` at `/configuration`; the other `/configuration/...` paths are unchanged): `SetupScreen` lists `SETUP_GROUPS` (`entries.ts`) in three groups, Operations (vehicles, destinations, tickets, add-ons, equipment, inspection form, conditions), People and access (roles and permissions) and Business (branding, rules, money, daily log, and `VisibilitySwitch`, which publishes or unpublishes the operator); `setupGroupsFor` keeps the entries the user has a permission for and the operator a module for (`decide` of the destinations table). On an expanded window the list stays at the side: the stack's `screenLayout` (`SetupLayout`) puts each setup screen beside it with its entry marked, and a row there replaces the screen shown (`openSetup`). `RulesScreen` (`/configuration/rules`, guarded by `updateOperator`) edits, with `useRules`, the rules of `operator.settings` (`RULES` in `rules.ts`: booking, `allowSelfManifest` and double manifesting; who can fly, the certification and equipment rules only with their modules), the call schedule (`CallScheduleEditor`: chips, longest first, at most six, may be empty), units and currency, and the template's modules (the `Industries` query gives the template's modules, `moduleSwitches` adds the ones the operator turned off; a `locked` module is shown disabled). Saving sends one `updateOperator` (`rulesInput`): every setting the operator has, with the changes, and only the modules that changed. `BrandingScreen` (`/configuration/basic`) is the operator form without the rules (name, certification bodies, location, banner, colours).
+
 Operations: 76 named operations (41 mutations, 32 queries, 3 subscriptions: `loadCreated`, `loadUpdated`, `userUpdated`).
 Pass 1 validated all of them against the live server schema: 0 validation errors, and the committed
 `app/api/openmanifest.graphql` matches the server's introspection (0 differences).
@@ -153,8 +167,8 @@ Scripts: `yarn sync:schema` (download schema), `yarn ts:graphql` (codegen), `yar
 ## 5. Authentication and session
 
 1. `userLogin(email, password)` (graphql_devise) returns `credentials`; `LoginForm` stores them with
-   `useSession().setCredentials`. Apple: `loginWithApple(token)`; Facebook: `loginWithFacebook(token)` via `expo-facebook`
-   (cannot be built on current SDKs, BUG-084).
+   `useSession().setCredentials`. Apple: `loginWithApple(token)`. Facebook login was removed in P3.3 (D4; the server field `loginWithFacebook` is
+   deprecated and goes in P8.7).
 2. Every request carries `access-token`, `client`, `uid` (authentication link, from `useSession`).
 3. Subscriptions: the cable URL carries `access-token`, `client` and `uid` (browsers cannot set WebSocket headers); the
    server rejects connections without a valid token (P6.9, BUG-011/060). The cable reconnects on login and logout.
@@ -175,17 +189,16 @@ Metro/webpack pick `*.web.tsx`, `*.android.tsx`, `*.ios.tsx` over the base file.
 | `app/components/activity/{ActivityFeed,Feed}.web.tsx` | web | table layout |
 | `app/components/autocomplete/DropzoneUserAutocomplete.web.tsx` | web | |
 | `app/components/dialogs/ImageViewer/ImageViewer.web.tsx` | web | uses `react-image-lightbox` (deprecated) |
-| `app/components/dialogs/ManifestGroup/ManifestGroup.web.tsx`, `app/forms/manifest_user/Dialog.web.tsx`, `app/forms/credits/Credits.web.tsx`, `app/components/layout/DialogOrSheet.web.tsx` | web | dialogs instead of bottom sheets |
+| `app/components/dialogs/ManifestGroup/ManifestGroup.web.tsx`, `app/legacy/manifest_user/Dialog.web.tsx`, `app/forms/credits/Credits.web.tsx`, `app/components/layout/DialogOrSheet.web.tsx` | web | dialogs instead of bottom sheets |
 | `app/components/input/LocationPicker.web.tsx`, `app/components/map/Map.web.tsx`, `app/screens/wizards/dropzone_wizard/steps/Location.web.tsx` | web | Google Maps JS instead of `react-native-maps` (maps issue client#127, BUG-085) |
 | `app/components/input/date_picker/DatePicker.web.tsx`, `number_input/NumberField.web.tsx`, `select/Select.web.tsx`, `popover/Menu.web.tsx` | web | |
 | `app/components/input/jump_run_select/JumpRunSelect.{android,web}.tsx` | Android, web | circular slider variants |
 | `app/components/slots_table/AvailableRow.web.tsx`, `DragAndDrop/*.web.tsx` | web | drag-and-drop between loads (`@dnd-kit/core`) |
 | `app/hooks/useColorScheme.web.ts` | web | |
-| `app/screens/authenticated/TabBar.web.tsx` | web | top tab bar on wide screens |
+| `app/screens/authenticated/TabBar.web.tsx` | web | identical to `TabBar.tsx` (a bottom tab navigator); there is no top tab bar on wide screens |
 | `app/screens/authenticated/dropzone/manifest/LoadCard/CountdownTimer.web.ts` | web | |
 | `app/screens/authenticated/overview/statistics/LoadsByDay.web.tsx` | web | chart library differs |
 | `app/screens/unauthenticated/login/form/AppleButton.{android,web}.tsx` | Android, web | Apple sign-in only on iOS (stubs) |
-| `app/screens/unauthenticated/login/form/FacebookButton.web.tsx` | web | `react-facebook-login` |
 
 `Platform.OS`/`Platform.select` branches are also used inline (`grep -rn "Platform\.\(OS\|select\)" app`); several omit
 Android (BUG-078). Android layout root causes are listed in BUGS.md ("Android / mobile layout").
@@ -198,7 +211,7 @@ Android (BUG-078). Android layout root causes are listed in BUGS.md ("Android / 
   project id above.
 - `.github/workflows/publish.yml`: on push to `staging`/`main`, EAS Update and web deploy to GitHub Pages repos
   `OpenManifest/openmanifest-web-staging` / `openmanifest-web` (BUG-057; disabled in plan P0.1).
-- Google Maps keys (`GOOGLE_MAPS_*`), AppSignal key and Facebook app id come from environment variables at build time
+- Google Maps keys (`GOOGLE_MAPS_*`), and AppSignal key come from environment variables at build time
   (`app.config.ts` `extra`).
 
 ## 8. Local setup notes (pass 1, cloud VM)
@@ -299,7 +312,6 @@ Full table:
 | `expo-constants` | dep | `~57.0.21` (P3.18)| 57.0.21 | 57.0.21 | `~57.0.21` |  |
 | `expo-device` | dep | `~57.0.2` (P3.18)| 57.0.2 | 57.0.2 | `~57.0.2` |  |
 | `expo-dev-client` | dep | `~57.0.19` (P3.21) | 57.0.19 | 57.0.19 | `~57.0.19` | development builds (`eas.json` `development` profile) |
-| `expo-facebook` | dep | `12.2.0` | 12.2.0 | 12.2.0 |  |  |
 | `expo-font` | dep | `~57.0.4` (P3.18)| 57.0.4 | 57.0.4 | `~57.0.4` |  |
 | `expo-image-picker` | dep | `~57.0.20` (P3.18)| 57.0.20 | 57.0.20 | `~57.0.20` |  |
 | `expo-linear-gradient` | dep | `~57.0.2` (P3.18)| 57.0.2 | 57.0.2 | `~57.0.2` |  |
@@ -323,7 +335,6 @@ Full table:
 | `react-countdown-circle-timer` | dep | `3.2.1` (P3.13) | 3.2.1 | 3.2.1 |  | last publish 2023-03-15 |
 | `react-day-picker` | dep | `^7.4.10` | 7.4.10 | 10.0.2 |  |  |
 | `react-dom` | dep | `19.2.3` (P3.17)| 19.2.3 | 19.3.0 | `19.2.3` |  |
-| `react-facebook-login` | dep | `^4.1.1` | 4.1.1 | 4.1.1 |  | last publish 2022-06-25 |
 | `react-hook-form` | dep | `7.42.1` | 7.42.1 | 7.89.0 |  |  |
 | `react-image-lightbox` | dep | `^5.1.4` | 5.1.4 | 5.1.4 |  | **deprecated on npm**; last publish 2023-01-19 |
 | `react-native` | dep | `0.86.3` (P3.18)| 0.86.3 | 0.87.1 | `0.86.3` |  |
@@ -368,7 +379,6 @@ Full table:
 | `@testing-library/react-native` | dev | `^13` (P3.14) | 13.3.3 | 14.1.0 |  |  |
 | `@types/base-64` | dev | `1.0.0` | 1.0.0 | 1.0.2 |  |  |
 | `@types/color` | dev | `3.0.3` | 3.0.3 | 4.2.1 |  |  |
-| `@types/facebook-js-sdk` | dev | `3.3.6` | 3.3.6 | 3.3.13 |  |  |
 | `@types/gh-pages` | dev | `3.2.1` | 3.2.1 | 6.1.0 |  |  |
 | `@types/isomorphic-fetch` | dev | `0.0.36` | 0.0.36 | 0.0.39 |  |  |
 | `@types/jest` | dev | `^29.5.0` (P3.14) | 29.5.14 | 30.0.0 |  |  |
@@ -377,7 +387,6 @@ Full table:
 | `@types/rails__actioncable` | dev | `^6.1.6` (P3.14) | 6.1.11 | 8.0.3 |  |  |
 | `@types/react` | dev | `~19.2.2` (P3.16)| 19.2.18 | 19.3.0 |  |  |
 | `@types/react-calendar-heatmap` | dev | `^1.6.3` (P3.14) | 1.9.0 | 1.9.0 |  |  |
-| `@types/react-facebook-login` | dev | `4.1.5` | 4.1.5 | 4.1.11 |  |  |
 | `@types/urijs` | dev | `1.19.19` | 1.19.19 | 1.19.26 |  |  |
 | `babel-plugin-module-resolver` | dev | `5.0.0` | 5.0.0 | 5.0.3 |  |  |
 | `base-64` | dev | `1.0.0` | 1.0.0 | 1.0.0 |  | last publish 2024-04-02 |

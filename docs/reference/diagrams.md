@@ -39,7 +39,6 @@ flowchart TD
   Manifest --> Wind["WindScreen /dropzone/weather/winds"]
   Manifest --> JumpRun["JumpRunScreen /dropzone/weather/jumprun"]
   Manifest --> Config["Configuration (stack)"]
-  Manifest --> UserStack1["User stack"]
 
   Config --> Settings["SettingsMenuScreen /dropzone/configuration"]
   Settings --> DzSettings["DropzoneSettingsScreen"]
@@ -53,30 +52,24 @@ flowchart TD
   Settings --> MasterLog["MasterLogScreen"]
 
   Notifications --> NotifS["NotificationsScreen /notifications"]
-  Notifications --> UserStack2["User stack"]
-  Users --> UserStack3["User stack"]
+  Users --> UL
 
-  subgraph UserStack["User stack (shared)"]
+  subgraph UserStack["User stack (once, under Users: /user/…)"]
     UL["UserListScreen"] --> Profile["ProfileScreen"]
     Profile --> Equip["EquipmentScreen"]
     Profile --> Orders["OrdersScreen"] --> Receipt["OrderReceiptScreen"]
     Equip --> RigInsp["RigInspectionScreen"]
   end
-  UserStack1 -.-> UL
-  UserStack2 -.-> UL
-  UserStack3 -.-> UL
 
   Wizards --> DzWizard["DropzoneWizardScreen /setup"]
   Wizards --> UserWizard["UserWizardScreen"]
   Wizards --> Recover["RecoverPasswordScreen"]
   Wizards --> Confirm["ConfirmUserScreen /confirm"]
   Wizards --> ChangePw["ChangePasswordScreen"]
-  Wizards --> UserStack4["User stack (/modal/user/…)"]
-  UserStack4 -.-> UL
 ```
 
-Overlays mounted inside screens (not routes): manifest-user sheet (`app/forms/manifest_user`), manifest-group sheet
-(`app/forms/manifest_group`, mounted once by `ManifestContextProvider`), credits sheet (`app/forms/credits`),
+Overlays mounted inside screens (not routes): manifest-user sheet (`app/legacy/manifest_user`), manifest-group sheet
+(`app/legacy/manifest_group`, mounted once by `ManifestContextProvider`), credits sheet (`app/forms/credits`),
 image viewer, setup form sheets.
 
 ## 2. State and data flow (zustand + Apollo)

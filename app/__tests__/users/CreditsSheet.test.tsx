@@ -1,38 +1,39 @@
 import * as React from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { CreateOrderDocument } from 'app/api/reflection';
-import { useDropzoneContext } from 'app/providers';
+import { useOperatorContext } from 'app/providers';
 import { useUserProfile } from 'app/api/crud';
 import { Button } from 'react-native-paper';
-import { dropzoneExtensive } from 'app/__fixtures__/dropzone.fixture';
-import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
+import { operatorExtensive } from 'app/__fixtures__/operator.fixture';
+import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import CreditSheet from '../../forms/credits/Credits';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
+import { scoped, textInputs } from 'app/test-utils/hosts';
 
 jest.setTimeout(30000);
 
 const MEMBER = {
-  __typename: 'DropzoneUser',
+  __typename: 'Membership',
   id: '77',
   walletId: 'member-wallet',
   creditsCents: 2000,
   user: { __typename: 'User', id: '77', name: 'Member Jumper' },
 };
 
-// The form refuses to submit until the dropzone has loaded
-function DropzoneReady() {
+// The form refuses to submit until the operator has loaded
+function OperatorReady() {
   const {
-    dropzone: { dropzone },
-  } = useDropzoneContext();
-  return dropzone?.id ? <Text>dropzone ready</Text> : null;
+    operator: { operator },
+  } = useOperatorContext();
+  return operator?.id ? <Text>dropzone ready</Text> : null;
 }
 
 function renderSheet(mutationResult: jest.Mock, variables: Record<string, unknown>) {
   return render(
     <View testID="under-test">
-      <DropzoneReady />
+      <OperatorReady />
       {/* @ts-expect-error Only the fields used by the sheet are provided */}
-      <CreditSheet open dropzoneUser={MEMBER} onClose={jest.fn()} />
+      <CreditSheet open membership={MEMBER} onClose={jest.fn()} />
     </View>,
     {
       session: authenticatedSession,
@@ -61,21 +62,21 @@ const orderResult = () =>
 describe('<CreditSheet />', () => {
   it('a deposit of 50 sells credits from the dropzone wallet to the member wallet', async () => {
     const mutationResult = orderResult();
-    const screen = renderSheet(mutationResult, {
+    const screen = await renderSheet(mutationResult, {
       amountCents: 5000,
       title: 'Added funds',
       seller: MEMBER.walletId,
-      buyer: dropzoneExtensive.walletId,
-      dropzone: dropzoneExtensive.id,
+      buyer: operatorExtensive.walletId,
+      operator: operatorExtensive.id,
     });
 
     // The manifest provider mounts its own closed copy of this sheet, so scope to ours
-    const sheet = within(screen.getByTestId('under-test'));
+    const sheet = scoped(screen.getByTestId('under-test'));
     await waitFor(() => expect(sheet.getByText('dropzone ready')).toBeTruthy(), { timeout: 10000 });
-    const [, amount] = sheet.UNSAFE_getAllByType(TextInput);
-    fireEvent.changeText(amount, '50');
+    const [, amount] = textInputs(sheet.container);
+    await fireEvent.changeText(amount, '50');
     await waitFor(() => expect(sheet.getByText('+$50')).toBeTruthy());
-    fireEvent.press(sheet.getByText('Save'));
+    await fireEvent.press(sheet.getByText('Save'));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });
@@ -91,9 +92,9 @@ describe('<CreditSheet />', () => {
         </Button>
       );
     }
-    const screen = render(
+    const screen = await render(
       <View testID="under-test">
-        <DropzoneReady />
+        <OperatorReady />
         <Withdraw />
       </View>,
       {
@@ -107,8 +108,8 @@ describe('<CreditSheet />', () => {
                 amountCents: 1500,
                 title: 'Withdrew funds',
                 buyer: MEMBER.walletId,
-                seller: dropzoneExtensive.walletId,
-                dropzone: dropzoneExtensive.id,
+                seller: operatorExtensive.walletId,
+                operator: operatorExtensive.id,
               },
             },
             result: mutationResult,
@@ -120,16 +121,16 @@ describe('<CreditSheet />', () => {
     await waitFor(() => expect(screen.getByText('dropzone ready')).toBeTruthy(), {
       timeout: 10000,
     });
-    fireEvent.press(screen.getByText('Withdraw 15'));
+    await fireEvent.press(screen.getByText('Withdraw 15'));
 
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });
 
   it('does not submit an amount of zero', async () => {
-    const screen = renderSheet(orderResult(), {});
+    const screen = await renderSheet(orderResult(), {});
 
-    const sheet = within(screen.getByTestId('under-test'));
-    fireEvent.press(sheet.getByText('Save'));
+    const sheet = scoped(screen.getByTestId('under-test'));
+    await fireEvent.press(sheet.getByText('Save'));
 
     await waitFor(() => expect(sheet.getByText('Amount must be greater than 0')).toBeTruthy());
   });
