@@ -6,9 +6,9 @@ type ThemeOverrides = {
 };
 
 /**
- * A primary colour that takes precedence over the current dropzone's, so the dropzone form can preview a colour before
- * it is saved. Not persisted. It is dropped as soon as the dropzone's own colour matches it (the save reached Apollo),
- * when another dropzone is selected and on logout.
+ * A primary colour that takes precedence over the current operator's, so the operator form can preview a colour before
+ * it is saved. Not persisted. It is dropped as soon as the operator's own colour matches it (the save reached Apollo),
+ * when another operator is selected and on logout.
  */
 export const useThemeOverrides = create<ThemeOverrides>((set) => ({
   primary: null,
