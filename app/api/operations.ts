@@ -679,6 +679,11 @@ export type InboxQueryVariables = Types.Exact<{
 
 export type InboxQuery = { __typename?: 'Query', operator?: { __typename?: 'Operator', id: string, currentUser?: { __typename?: 'Membership', id: string, unseenNotifications: number, notifications?: { __typename?: 'NotificationConnection', edges?: Array<{ __typename?: 'NotificationEdge', node?: { __typename?: 'Notification', id: string, message?: string | null, notificationType?: Types.NotificationType | null, isSeen: boolean, createdAt: any, sentBy?: { __typename?: 'Membership', id: string, user: { __typename?: 'User', id: string, name?: string | null } } | null, resource?: { __typename: 'CertificationLevel' } | { __typename: 'CrewRole' } | { __typename: 'Destination' } | { __typename: 'Equipment', id: string, name?: string | null, owner?: { __typename?: 'User', id: string } | null } | { __typename: 'EquipmentInspection', id: string, equipment?: { __typename?: 'Equipment', id: string, name?: string | null, owner?: { __typename?: 'User', id: string } | null } | null } | { __typename: 'EquipmentKind' } | { __typename: 'Extra' } | { __typename: 'Load', id: string, loadNumber: number } | { __typename: 'LoadCrewAssignment' } | { __typename: 'LoadVehicle' } | { __typename: 'Membership' } | { __typename: 'Operator' } | { __typename: 'Order' } | { __typename: 'Qualification' } | { __typename: 'Receipt' } | { __typename: 'Slot', id: string, load: { __typename?: 'Load', id: string, loadNumber: number } } | { __typename: 'TicketType' } | { __typename: 'Transaction', id: string, amountCents: number } | { __typename: 'User' } | { __typename: 'UserCertification' } | { __typename: 'UserQualification' } | { __typename: 'Vehicle' } | null } | null } | null> | null, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } | null } | null } | null };
 
+export type IndustriesQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type IndustriesQuery = { __typename?: 'Query', industries: Array<{ __typename?: 'IndustryTemplate', slug: Types.Industry, name: string, icon: string, modules: Array<string> }> };
+
 export type LoadQueryVariables = Types.Exact<{
   id: Types.Scalars['ID']['input'];
 }>;

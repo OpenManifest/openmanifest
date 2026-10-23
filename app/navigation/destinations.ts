@@ -120,6 +120,7 @@ export const DESTINATIONS: Destination[] = [
     routeNames: [
       'SettingsMenuScreen',
       'OperatorSettingsScreen',
+      'RulesScreen',
       'VehiclesScreen',
       'DestinationsScreen',
       'TicketTypesScreen',

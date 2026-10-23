@@ -2,20 +2,8 @@ import * as React from 'react';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { Image, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import useTerms from 'app/i18n/useTerms';
 import { Control, Controller, useWatch } from 'react-hook-form';
-import {
-  COLOUR_PRESETS,
-  Card,
-  FormSelect,
-  Skeleton,
-  Stack,
-  Subheader,
-  Tappable,
-  Text,
-  useTheme,
-} from 'app/ui';
-import { UNIT_CHOICES, type Quantity } from 'app/i18n/units';
+import { COLOUR_PRESETS, Card, Skeleton, Stack, Subheader, Tappable, Text, useTheme } from 'app/ui';
 import { useThemeOverrides } from 'app/theme';
 import LottieView from 'app/components/LottieView';
 import useImagePicker from 'app/hooks/useImagePicker';
@@ -27,27 +15,10 @@ import imagePickLight from 'assets/images/image-pick-light.json';
 import { CertificationBodyChipSelectField } from 'app/components/input/chip_select';
 import { OperatorFields } from './useForm';
 import { FormTextField } from 'app/components/input/text/TextField';
-import { SwitchField } from 'app/components/input/switch/Switch';
 
 const BANNER = 175;
 const MAP_HEIGHT = 400;
 const BLACK = COLOUR_PRESETS[0];
-
-/** The money an operator can sell in; ISO 4217 */
-const CURRENCIES = ['AUD', 'NZD', 'USD', 'CAD', 'GBP', 'EUR', 'CHF', 'ZAR', 'AED', 'THB', 'JPY'];
-
-/** The units fields of the form, by quantity */
-const UNIT_FIELDS: [
-  Quantity,
-  'unitAltitude' | 'unitArea' | 'unitDistance' | 'unitMass' | 'unitSpeed' | 'unitTemperature',
-][] = [
-  ['altitude', 'unitAltitude'],
-  ['distance', 'unitDistance'],
-  ['mass', 'unitMass'],
-  ['area', 'unitArea'],
-  ['speed', 'unitSpeed'],
-  ['temperature', 'unitTemperature'],
-];
 
 interface IOperatorForm {
   loading: boolean;
@@ -55,7 +26,6 @@ interface IOperatorForm {
 }
 export default function OperatorForm(props: IOperatorForm) {
   const { t } = useTranslation('common');
-  const term = useTerms();
   const { loading, control } = props;
   const theme = useTheme();
   const pickImage = useImagePicker();
@@ -217,109 +187,6 @@ export default function OperatorForm(props: IOperatorForm) {
             />
           )}
         />
-      )}
-
-      {loading ? (
-        <Skeleton height={300} />
-      ) : (
-        <Card>
-          <Stack gap="md">
-            <Subheader>{t('forms.operator.unitsAndMoney')}</Subheader>
-            {UNIT_FIELDS.map(([quantity, name]) => (
-              <FormSelect
-                key={name}
-                {...{ control, name }}
-                label={t(`forms.operator.${name}`)}
-                options={UNIT_CHOICES[quantity].map((unit) => ({
-                  value: unit,
-                  label: t(`units.${unit}`),
-                }))}
-              />
-            ))}
-            <FormSelect
-              {...{ control }}
-              name="currency"
-              label={t('forms.operator.currency')}
-              options={CURRENCIES.map((code) => ({ value: code, label: code }))}
-            />
-          </Stack>
-        </Card>
-      )}
-
-      {loading ? (
-        <Skeleton height={150} />
-      ) : (
-        <Card>
-          <Stack gap="sm">
-            <SwitchField
-              {...{ control }}
-              label={t('forms.operator.membersCanBookThemselvesOn')}
-              name="allowSelfManifest"
-              helperText={t('forms.operator.whenOffOnlyManifestStaff')}
-            />
-            <SwitchField
-              {...{ control }}
-              label={t('forms.operator.requireCredits')}
-              name="requireCredits"
-              helperText={t('forms.operator.usersCannotManifestWithoutCredits')}
-            />
-            <SwitchField
-              {...{ control }}
-              label={t('forms.operator.manifestCanIgnoreRules')}
-              name="allowManifestBypass"
-              helperText={t('forms.operator.manifestCanBypassAllRules')}
-            />
-            <SwitchField
-              {...{ control }}
-              label={t('forms.operator.allowNegativeCredits')}
-              name="allowNegativeCredits"
-              helperText={t('forms.operator.allowUsersToGoInto')}
-            />
-            <SwitchField
-              {...{ control }}
-              label={t('forms.operator.requireCertification')}
-              name="requireCertification"
-              helperText={t('forms.operator.requireUsersToHaveA')}
-            />
-            <SwitchField
-              {...{ control }}
-              label={t('forms.operator.requireInDateMembership')}
-              name="requireMembership"
-              helperText={t('forms.operator.requireMembershipToBeIn')}
-            />
-            <SwitchField
-              {...{ control }}
-              label={t('forms.operator.requireEquipment')}
-              name="requireEquipment"
-              helperText={t('forms.operator.usersCannotManifestWithoutSelecting', {
-                equipment: term('equipment').toLowerCase(),
-              })}
-            />
-            <SwitchField
-              {...{ control }}
-              label={t('forms.operator.requireEquipmentInspection', {
-                equipment: term('equipment').toLowerCase(),
-              })}
-              name="requireEquipmentInspection"
-              helperText={t('forms.operator.usersCannotManifestBeforeTheir', {
-                equipment: term('equipment').toLowerCase(),
-              })}
-            />
-            <SwitchField
-              {...{ control }}
-              label={t('forms.operator.allowDoubleManifesting')}
-              name="allowDoubleManifesting"
-              helperText={t('forms.operator.usersAreAllowedToManifest')}
-            />
-            <FormTextField
-              {...{ control }}
-              name="callSchedule"
-              label={t('forms.operator.callSchedule')}
-              helperText={t('forms.operator.callScheduleHelp')}
-              keyboardType="numbers-and-punctuation"
-            />
-          </Stack>
-        </Card>
       )}
     </Stack>
   );

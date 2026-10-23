@@ -1,4 +1,5 @@
-const MAX_CALLS = 6;
+/** The most boarding calls a schedule has (the API refuses more) */
+export const MAX_CALLS = 6;
 
 /** "20, 15, 10" → [20, 15, 10]; null when it is not whole minutes, longest first, up to six. Empty text: no calls. */
 export function parseCallSchedule(text?: string | null): number[] | null {

@@ -3938,6 +3938,51 @@ export type InboxQueryHookResult = ReturnType<typeof useInboxQuery>;
 export type InboxLazyQueryHookResult = ReturnType<typeof useInboxLazyQuery>;
 export type InboxSuspenseQueryHookResult = ReturnType<typeof useInboxSuspenseQuery>;
 export type InboxQueryResult = Apollo.QueryResult<Operation.InboxQuery, Operation.InboxQueryVariables>;
+export const IndustriesDocument = gql`
+    query Industries {
+  industries {
+    slug
+    name
+    icon
+    modules
+  }
+}
+    `;
+
+/**
+ * __useIndustriesQuery__
+ *
+ * To run a query within a React component, call `useIndustriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIndustriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIndustriesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useIndustriesQuery(baseOptions?: Apollo.QueryHookOptions<Operation.IndustriesQuery, Operation.IndustriesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Operation.IndustriesQuery, Operation.IndustriesQueryVariables>(IndustriesDocument, options);
+      }
+export function useIndustriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Operation.IndustriesQuery, Operation.IndustriesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Operation.IndustriesQuery, Operation.IndustriesQueryVariables>(IndustriesDocument, options);
+        }
+// @ts-ignore
+export function useIndustriesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<Operation.IndustriesQuery, Operation.IndustriesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.IndustriesQuery, Operation.IndustriesQueryVariables>;
+export function useIndustriesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.IndustriesQuery, Operation.IndustriesQueryVariables>): Apollo.UseSuspenseQueryResult<Operation.IndustriesQuery | undefined, Operation.IndustriesQueryVariables>;
+export function useIndustriesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<Operation.IndustriesQuery, Operation.IndustriesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<Operation.IndustriesQuery, Operation.IndustriesQueryVariables>(IndustriesDocument, options);
+        }
+export type IndustriesQueryHookResult = ReturnType<typeof useIndustriesQuery>;
+export type IndustriesLazyQueryHookResult = ReturnType<typeof useIndustriesLazyQuery>;
+export type IndustriesSuspenseQueryHookResult = ReturnType<typeof useIndustriesSuspenseQuery>;
+export type IndustriesQueryResult = Apollo.QueryResult<Operation.IndustriesQuery, Operation.IndustriesQueryVariables>;
 export const LoadDocument = gql`
     query Load($id: ID!) {
   load(id: $id) {

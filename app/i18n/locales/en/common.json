@@ -89,8 +89,6 @@
     "overview": "Overview",
     "windsAloft": "Winds aloft",
     "jumpRun": "Jump run",
-    "settings": "Settings",
-    "basicSettings": "Basic settings",
     "ticketTypes": "Ticket types",
     "ticketAddOns": "Ticket add-ons",
     "equipmentInspectionForm": "Inspection form",
@@ -589,41 +587,12 @@
       "branding": "Branding",
       "primaryColor": "Primary color",
       "primaryColorIsUsedFor": "Primary color is used for elements like the title bar and the tab bar",
-      "membersCanBookThemselvesOn": "Members can book themselves on loads",
-      "whenOffOnlyManifestStaff": "When off, only manifest staff can add, move or remove people",
-      "requireCredits": "Require Credits",
-      "usersCannotManifestWithoutCredits": "Users cannot manifest without credits on their account",
-      "manifestCanIgnoreRules": "Manifest can ignore rules",
-      "manifestCanBypassAllRules": "Manifest can bypass all rules",
-      "allowNegativeCredits": "Allow Negative Credits",
-      "allowUsersToGoInto": "Allow users to go into negative credits",
-      "requireCertification": "Require certification",
-      "requireUsersToHaveA": "Require users to have a valid certification to manifest",
-      "requireInDateMembership": "Require in-date membership",
-      "requireMembershipToBeIn": "Require membership to be in-date",
-      "requireEquipment": "Require Equipment",
-      "usersCannotManifestWithoutSelecting": "Users cannot manifest without selecting {{equipment}}",
-      "requireEquipmentInspection": "Require {{equipment}} inspection",
-      "usersCannotManifestBeforeTheir": "Users cannot manifest before their {{equipment}} is inspected",
-      "allowDoubleManifesting": "Allow double manifesting",
-      "usersAreAllowedToManifest": "Users are allowed to manifest on multiple loads",
       "yourDropzoneMustBePartOf": "Your dropzone must accept at least one certification body",
       "yourChangesHaveBeenSaved": "Your changes have been saved",
       "changeBanner": "Change the banner",
       "bannerHelp": "Your banner is displayed on the weather board and on the operator selection screen",
       "name": "Name",
-      "location": "Location",
-      "callSchedule": "Boarding calls (minutes before departure)",
-      "callScheduleHelp": "Longest first, up to six, for example 20, 15, 10. Leave empty to depart without a call.",
-      "callScheduleInvalid": "Use whole minutes, longest first, up to six: 20, 15, 10",
-      "unitsAndMoney": "Units and money",
-      "unitAltitude": "Heights",
-      "unitDistance": "Distances",
-      "unitMass": "Weights",
-      "unitArea": "Areas (canopy sizes)",
-      "unitSpeed": "Wind speeds",
-      "unitTemperature": "Temperatures",
-      "currency": "Currency"
+      "location": "Location"
     },
     "equipment": {
       "youCanGiveYourEquipment": "You can give your {{equipment}} a nickname",
@@ -822,7 +791,9 @@
     "kmh": "Kilometres per hour (km/h)",
     "mph": "Miles per hour (mph)",
     "c": "Celsius (°C)",
-    "f": "Fahrenheit (°F)"
+    "f": "Fahrenheit (°F)",
+    "ft2": "Square feet (ft²)",
+    "m2": "Square metres (m²)"
   },
   "board": {
     "guests_one": "{{count}} guest",
@@ -905,5 +876,182 @@
       "capacity": "places",
       "double_manifest": "already manifested"
     }
+  },
+  "setupMenu": {
+    "groups": {
+      "operations": "Operations",
+      "people": "People and access",
+      "business": "Business"
+    },
+    "vehicles": "The {{vehicles}} that carry your {{loads}}",
+    "destinations": "Where your {{loads}} go",
+    "tickets": "What a place on a {{load}} costs, and who may book it",
+    "extras": "What is sold with a ticket, such as a coach or a camera",
+    "equipment": "The {{equipment}} you own and hire out",
+    "inspection": "What an inspection of {{equipment}} checks",
+    "conditionsTitle": "Conditions",
+    "conditions": "The winds and conditions of the day",
+    "permissionsTitle": "Roles and permissions",
+    "permissions": "Who can do what",
+    "brandingTitle": "Branding",
+    "branding": "Name, location, banner and colours",
+    "rulesTitle": "Rules",
+    "rules": "Who may book, what they need, calls, units and modules",
+    "money": "Every payment and credit",
+    "dailyLog": "The record of each day of operations",
+    "chooseTitle": "Choose what to set up",
+    "chooseBody": "Pick an item from the list to change it here.",
+    "visibility": {
+      "public": {
+        "label": "Public",
+        "help": "Anyone can find you and join"
+      },
+      "in_review": {
+        "label": "Awaiting review",
+        "help": "A moderator checks your details before you go public; you may be contacted."
+      },
+      "private": {
+        "label": "Go public",
+        "help": "Request a review to make you visible to everyone"
+      },
+      "archived": {
+        "label": "Re-open",
+        "help": "You are archived and hidden from everyone"
+      },
+      "demo": {
+        "label": "Go public",
+        "help": "A demo is hidden from everyone"
+      }
+    }
+  },
+  "rules": {
+    "sections": {
+      "booking": "Booking",
+      "eligibility": "Who can fly",
+      "calls": "Boarding calls",
+      "units": "Units and money",
+      "modules": "Modules"
+    },
+    "rule": {
+      "allowSelfManifest": {
+        "label": "Members can book themselves on loads",
+        "help": "When off, only manifest staff can add, move or remove people"
+      },
+      "allowDoubleManifesting": {
+        "label": "Members can be on several {{loads}}",
+        "help": "When off, a person is on one {{load}} at a time until it leaves"
+      },
+      "requireCredits": {
+        "label": "Require credit",
+        "help": "A person needs credit on their account to be put on a {{load}}"
+      },
+      "allowNegativeCredits": {
+        "label": "Allow a negative balance",
+        "help": "A {{load}} may take a person's credit below zero"
+      },
+      "requireMembership": {
+        "label": "Require an in-date membership",
+        "help": "A person whose membership has expired cannot fly"
+      },
+      "requireCertification": {
+        "label": "Require a certification",
+        "help": "A person needs a valid certification to fly"
+      },
+      "requireEquipment": {
+        "label": "Require {{equipment}}",
+        "help": "A person must say which {{equipment}} they use"
+      },
+      "requireEquipmentInspection": {
+        "label": "Require inspected {{equipment}}",
+        "help": "Their {{equipment}} must have passed an inspection"
+      },
+      "requireEquipmentInService": {
+        "label": "Require {{equipment}} in service",
+        "help": "Their {{equipment}} must not be due for service"
+      },
+      "allowManifestBypass": {
+        "label": "Manifest staff can override these rules",
+        "help": "Staff can put on a {{load}} someone the rules would stop"
+      }
+    },
+    "eligibilityHelp": "What a person needs before they can be put on a {{load}}.",
+    "callsHelp": "The calls a {{load}} offers before it leaves, in minutes, longest first. With none, a {{load}} departs without a call.",
+    "callAt_one": "{{count}} minute",
+    "callAt_other": "{{count}} minutes",
+    "removeCall_one": "Remove the {{count}} minute call",
+    "removeCall_other": "Remove the {{count}} minute call",
+    "noCalls": "No calls: a departure needs none",
+    "callsFull_one": "That is the most: {{count}} call",
+    "callsFull_other": "That is the most: {{count}} calls",
+    "newCall": "New call",
+    "minutesUnit": "min",
+    "addCall": "Add call",
+    "callProblem": {
+      "notWhole": "Enter whole minutes, more than 0",
+      "taken": "There is a call at that time already",
+      "full": "There are as many calls as there can be"
+    },
+    "unit": {
+      "altitude": "Heights",
+      "distance": "Distances",
+      "mass": "Weights",
+      "area": "Areas (canopy sizes)",
+      "speed": "Wind speeds",
+      "temperature": "Temperatures"
+    },
+    "currency": "Currency",
+    "currencyHelp": "Prices, credit and payments are in this currency",
+    "modulesHelp": "Parts of the app your kind of operation uses. A module that is off is hidden everywhere.",
+    "moduleLocked": "Your kind of operation needs this module",
+    "module": {
+      "destinations": {
+        "label": "Destinations",
+        "help": "Where {{loads}} go: altitudes, sites or routes"
+      },
+      "activities": {
+        "label": "Activities",
+        "help": "The kind of activity each person does on a {{load}}"
+      },
+      "certifications": {
+        "label": "Certifications",
+        "help": "Licences and ratings, checked before a person flies"
+      },
+      "equipment": {
+        "label": "Equipment",
+        "help": "The {{equipment}} people bring or hire, with inspections"
+      },
+      "escorts": {
+        "label": "Escorts and guests",
+        "help": "Tickets where staff take guests along"
+      },
+      "limits": {
+        "label": "Limits",
+        "help": "Body mass, payload and age limits"
+      },
+      "crew": {
+        "label": "Crew",
+        "help": "The crew roles each {{load}} needs"
+      },
+      "multi_vehicle": {
+        "label": "Several {{vehicles}}",
+        "help": "A {{load}} can use more than one"
+      },
+      "flight_times": {
+        "label": "Flight times",
+        "help": "Record how long each trip took"
+      },
+      "conditions": {
+        "label": "Conditions",
+        "help": "Winds and conditions on the board"
+      },
+      "daily_log": {
+        "label": "Daily log",
+        "help": "A record of each day of operations"
+      }
+    },
+    "save": "Save changes",
+    "discard": "Discard",
+    "saved": "Your changes have been saved",
+    "saveFailed": "Your changes could not be saved"
   }
 }

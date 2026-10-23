@@ -268,3 +268,25 @@ export async function takeMemberOffViaApi(name: string) {
     await ownerCall(`mutation { deleteSlot(input: { id: ${Number(slot.id)} }) { errors } }`);
   }
 }
+
+/**
+ * Makes sure a member of the seed is on a load of the day, as the seed has them (on Load #1): puts them back there when
+ * another spec took them off. Returns whether they are on one.
+ */
+export async function keepOnFirstLoadViaApi(name: string): Promise<boolean> {
+  const found = await ownerCall('{ operators { edges { node { id } } } }');
+  const operatorId = Number(found.json.data.operators.edges[0].node.id);
+  const loads = await ownerCall(
+    `{ loads(operator: ${operatorId}, first: 20) { edges { node { id loadNumber slots { membership { user { name } } } } } } }`
+  );
+  const nodes: {
+    id: string;
+    loadNumber: number;
+    slots: { membership?: { user: { name: string } } }[];
+  }[] = (loads.json?.data?.loads?.edges ?? []).map((edge: { node: never }) => edge.node);
+  if (nodes.some((load) => load.slots.some((slot) => slot.membership?.user?.name === name))) {
+    return true;
+  }
+  const first = nodes.find((load) => load.loadNumber === 1);
+  return !!first && !!(await manifestMemberViaApi(first.id, name));
+}

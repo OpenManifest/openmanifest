@@ -1,14 +1,16 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
-import { OperatorEssentialsFragment } from 'app/api/operations';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import ScreenHeader from 'app/navigation/ScreenHeader';
 import { useTranslation } from 'react-i18next';
 import { AppSignalBoundary } from 'app/components/app_signal';
-import SettingsMenuScreen from './settings_menu/SettingsMenuScreen';
+import SetupScreen, { SetupLayout } from 'app/features/setup/SetupScreen';
+import RulesScreen from 'app/features/setup/RulesScreen';
+import guarded from 'app/navigation/AccessGuard';
+import { Permission } from 'app/api/schema.d';
 import TicketTypeSettingsScreen from './ticket_types/TicketTypesScreen';
-import OperatorSettingsScreen from './operator_settings/OperatorSettingsScreen';
+import BrandingScreen from 'app/features/setup/BrandingScreen';
 import VehiclesScreen from './vehicles/VehiclesScreen';
 import EquipmentInspectionTemplateScreen from './equipment_inspection_template/EquipmentInspectionTemplateScreen';
 import OperatorEquipmentScreen from './equipment/OperatorEquipmentScreen';
@@ -21,6 +23,7 @@ import DestinationsScreen from './destinations/DestinationsScreen';
 export type ConfigurationRoutes = {
   OperatorSettingsScreen: undefined;
   SettingsMenuScreen: undefined;
+  RulesScreen: undefined;
   TicketTypesScreen: undefined;
   VehiclesScreen: undefined;
   VehicleScreen: undefined;
@@ -35,6 +38,9 @@ export type ConfigurationRoutes = {
 
 const Configuration = createStackNavigator<ConfigurationRoutes>();
 
+// Only those who may change the operator see its rules (a link to /configuration/rules says so to the others)
+const GuardedRulesScreen = guarded(RulesScreen, { permission: Permission.UpdateOperator });
+
 export function useConfigurationNavigation() {
   return useNavigation<NavigationProp<ConfigurationRoutes>>();
 }
@@ -43,6 +49,7 @@ export default function SettingsTab() {
   return (
     <AppSignalBoundary>
       <Configuration.Navigator
+        screenLayout={(props) => <SetupLayout {...props} />}
         screenOptions={{
           headerShown: true,
           header: (props) => <ScreenHeader {...props} />,
@@ -53,13 +60,18 @@ export default function SettingsTab() {
       >
         <Configuration.Screen
           name="SettingsMenuScreen"
-          component={SettingsMenuScreen}
-          options={{ title: t('common:screens.settings') }}
+          component={SetupScreen}
+          options={{ title: t('common:destinations.setup') }}
         />
         <Configuration.Screen
           name="OperatorSettingsScreen"
-          component={OperatorSettingsScreen}
-          options={{ title: t('common:screens.basicSettings') }}
+          component={BrandingScreen}
+          options={{ title: t('common:setupMenu.brandingTitle') }}
+        />
+        <Configuration.Screen
+          name="RulesScreen"
+          component={GuardedRulesScreen}
+          options={{ title: t('common:setupMenu.rulesTitle') }}
         />
         <Configuration.Screen
           name="VehiclesScreen"
