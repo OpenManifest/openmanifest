@@ -42,9 +42,10 @@ async function choose(page: Page, select: Locator, option: string) {
 /** Opens the menu of a person's row and waits for the item */
 async function openRowMenu(page: Page, name: string, item: string) {
   const menuItem = page.getByRole('menuitem', { name: item });
-  await pressUntil(page, page.getByRole('button', { name: `Actions for ${name}` }), () =>
-    expect(menuItem).toBeVisible({ timeout: 4000 })
-  );
+  const actions = page.getByRole('button', { name: `Actions for ${name}` });
+  // On a short phone (360×640) the row can sit at the foot of the list, under the tab bar: bring it to the middle first
+  await actions.evaluate((element) => element.scrollIntoView({ block: 'center' }));
+  await pressUntil(page, actions, () => expect(menuItem).toBeVisible({ timeout: 4000 }));
   return menuItem;
 }
 

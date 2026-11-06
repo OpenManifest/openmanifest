@@ -119,13 +119,14 @@ test.describe('setup lists @setup', () => {
     // Add-ons cannot be archived, so the spec keeps one of its own and only adds it when it is missing
     const name = 'E2E add-on';
     await gotoRoute(page, '/ticket-types/extra');
-    const row = page.getByRole('button', { name, exact: true });
+    // Two workers can both find it missing and add it: then either of the two is the spec's own
+    const row = page.getByRole('button', { name, exact: true }).first();
+    const add = page.getByTestId('new-ticket-addon-primary-action');
+    await expect(add).toBeVisible({ timeout: 20_000 });
+    // The list is there once the add button is; give its rows a moment before deciding it is missing
+    await row.waitFor({ timeout: 3000 }).catch(() => undefined);
     if (!(await row.count())) {
-      const form = await openForm(
-        page,
-        page.getByTestId('new-ticket-addon-primary-action'),
-        'New add-on'
-      );
+      const form = await openForm(page, add, 'New add-on');
       await form.getByRole('textbox', { name: 'Name' }).fill(name);
       await form.getByRole('spinbutton', { name: 'Price' }).fill('15');
       await save(form);
@@ -133,7 +134,7 @@ test.describe('setup lists @setup', () => {
     await expect(row).toBeVisible();
 
     const price = (await row.getByText(/^\$\d+\.00$/).textContent()) === '$15.00' ? '16' : '15';
-    const form = await openRow(page, name, 'Edit add-on');
+    const form = await openForm(page, row, 'Edit add-on');
     await form.getByRole('spinbutton', { name: 'Price' }).fill(price);
     await save(form);
     await expect(row.getByText(`$${price}.00`)).toBeVisible();
