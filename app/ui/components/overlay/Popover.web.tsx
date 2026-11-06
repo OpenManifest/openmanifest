@@ -4,6 +4,20 @@ import * as Primitive from '@rn-primitives/popover';
 import { useTheme } from '../../theme';
 import type { PopoverProps } from './Popover';
 
+/**
+ * Radix positions a popover in a wrapper (with a transform, so a layer of its own) that copies the content's z-index
+ * when it mounts, before React Native Web has applied the style: it stays at `auto`, and a popover opened in an overlay
+ * (a menu in a form's panel) would sit under the overlay. One rule puts every such wrapper above the overlays.
+ */
+function liftPoppers() {
+  if (typeof document === 'undefined' || document.getElementById('ui-popper-layer')) return;
+  const style = document.createElement('style');
+  style.id = 'ui-popper-layer';
+  style.textContent = '[data-radix-popper-content-wrapper] { z-index: 1002 !important; }';
+  document.head.appendChild(style);
+}
+liftPoppers();
+
 export type { PopoverProps } from './Popover';
 
 type Controls = { open(): void; close(): void };
@@ -37,13 +51,6 @@ export default function Popover({
     else node?.close();
   }, [open]);
 
-  // Radix positions the content in a wrapper that copies the content's z-index when it mounts, before the style is
-  // applied on the web, so a popover opened in an overlay (a menu in a form) would sit under it: lift the wrapper too
-  const lift = React.useCallback((node: unknown) => {
-    const wrapper = (node as HTMLElement | null)?.parentElement;
-    if (wrapper?.hasAttribute?.('data-radix-popper-content-wrapper')) wrapper.style.zIndex = '1002';
-  }, []);
-
   return (
     <Primitive.Root onOpenChange={onOpenChange}>
       {anchor ? (
@@ -65,7 +72,6 @@ export default function Popover({
       )}
       <Primitive.Portal>
         <Primitive.Content
-          ref={lift}
           align={align}
           sideOffset={theme.space.xs}
           aria-label={label}
