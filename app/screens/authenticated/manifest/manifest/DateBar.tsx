@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Button, IconButton, Text } from 'react-native-paper';
+import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { DateTime } from 'luxon';
 import { useManifestContext } from 'app/providers';
+import { Button, IconButton, Text, useTheme } from 'app/ui';
 
 /** `2026-10-14` moved by this many days */
 export function shiftDay(date: string, days: number): string {
@@ -19,37 +20,47 @@ export function formatDay(date: string): string {
  * made for that day, so a load can be scheduled ahead.
  */
 export default function DateBar() {
+  const { t } = useTranslation('common');
+  const theme = useTheme();
   const {
     manifest: { date, isToday, setDate, today },
   } = useManifestContext();
   if (!date) return null;
 
   return (
-    <View style={styles.bar} testID="manifest-date-bar">
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: theme.space.xs,
+        paddingTop: theme.space.sm,
+      }}
+      testID="manifest-date-bar"
+    >
       <IconButton
         icon="chevron-left"
-        accessibilityLabel="Previous day"
+        aria-label={t('board.dateBar.previous')}
         testID="manifest-date-previous"
         onPress={() => setDate(shiftDay(date, -1))}
       />
-      <Text variant="titleSmall" testID="manifest-date">
-        {isToday ? `Today, ${formatDay(date)}` : formatDay(date)}
+      <Text variant="label" testID="manifest-date">
+        {isToday ? t('board.dateBar.today', { day: formatDay(date) }) : formatDay(date)}
       </Text>
       <IconButton
         icon="chevron-right"
-        accessibilityLabel="Next day"
+        aria-label={t('board.dateBar.next')}
         testID="manifest-date-next"
         onPress={() => setDate(shiftDay(date, 1))}
       />
       {isToday ? null : (
-        <Button compact mode="text" testID="manifest-date-today" onPress={() => setDate(today)}>
-          Today
-        </Button>
+        <Button
+          variant="tertiary"
+          label={t('board.dateBar.backToToday')}
+          testID="manifest-date-today"
+          onPress={() => setDate(today)}
+        />
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  bar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: 8 },
-});
