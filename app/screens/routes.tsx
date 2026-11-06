@@ -1,5 +1,4 @@
-import { LinkingOptions, NavigatorScreenParams } from '@react-navigation/native';
-import * as Linking from 'expo-linking';
+import { NavigatorScreenParams } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 
@@ -9,123 +8,24 @@ import { useSession } from '../state';
 import Limbo, { LimboRoutes } from './limbo/routes';
 import Unauthenticated, { UnauthenticatedRoutes } from './unauthenticated/routes';
 import Wizards, { WizardRoutes } from './wizards/routes';
-import LeftDrawer, { LeftDrawerRoutes } from './drawers/UserDrawer';
+import Authenticated, { AuthenticatedRoutes } from './authenticated/routes';
+import OverlaysScreen from './dev/OverlaysScreen';
+import FormsScreen from './dev/FormsScreen';
+import { GALLERY_ENABLED } from '../constants/gallery';
+import { options } from '../navigation/linking';
+import GalleryScreen from './dev/gallery/GalleryScreen';
 
-export const options: LinkingOptions<ReactNavigation.RootParamList> = {
-  prefixes: [
-    Linking.createURL('/'),
-    'https://www.openmanifest.org',
-    'https://staging.openmanifest.org',
-    'openmanifest://',
-    'http://localhost:19006',
-  ],
-  config: {
-    screens: {
-      Authenticated: {
-        screens: {
-          LeftDrawer: {
-            screens: {
-              Overview: {
-                screens: {
-                  DashboardScreen: '/dropzone/dashboard',
-                  OverviewScreen: '/overview',
-                },
-              },
-              Manifest: {
-                screens: {
-                  ManifestScreen: '/dropzone/manifest',
-                  User: {
-                    screens: {
-                      EquipmentScreen: '/dropzone/manifest/users/:userId/equipment/',
-                      OrderReceiptScreen:
-                        '/dropzone/manifest/users/:userId/orders/:orderId/receipts',
-                      ProfileScreen: '/dropzone/manifest/users/:userId',
-                      OrdersScreen: '/dropzone/manifest/users/:userId/orders',
-                      RigInspectionScreen:
-                        '/dropzone/manifest/users/:dropzoneUserId/rig/:rigId/inspection',
-                      UserListScreen: '/dropzone/manifest/users',
-                    },
-                  },
-                  Configuration: {
-                    screens: {
-                      TicketTypesScreen: '/dropzone/configuration/ticket-types',
-                      DropzoneRigsScreen: '/dropzone/configuration/rigs',
-                      ExtrasScreen: '/dropzone/ticket-types/extra',
-                      MasterLogScreen: '/dropzone/master-log',
-                      SettingsMenuScreen: '/dropzone/configuration',
-                      AircraftsScreen: '/dropzone/configuration/aircrafts',
-                      DropzoneSettingsScreen: '/dropzone/configuration/basic',
-                      PermissionScreen: '/dropzone/configuration/permissions',
-                      RigInspectionTemplateScreen: '/dropzone/configuration/rig-inspection',
-                      TransactionsScreen: '/dropzone/transactions',
-                    },
-                  },
-                  JumpRunScreen: '/dropzone/weather/jumprun',
-                  WeatherConditionsScreen: '/dropzone/weather',
-                  LoadScreen: '/dropzone/load/:loadId',
-                  WindScreen: '/dropzone/weather/winds',
-                },
-              },
-              Users: {
-                screens: {
-                  UserListScreen: '/users',
-                  ProfileScreen: '/user/:userId',
-                  EquipmentScreen: '/user/:userId/equipment',
-                  OrdersScreen: '/user/:userId/transactions',
-                  OrderReceiptScreen: '/user/:userId/transactions/:orderId/receipt',
-                  RigInspectionScreen: '/user/:dropzoneUserId/rig-inspection/:rig',
-                },
-              },
-              Notifications: {
-                screens: {
-                  NotificationsScreen: '/notifications',
-                },
-              },
-            },
-          },
-        },
-      },
-      Limbo: {
-        screens: {
-          DropzoneSelectScreen: '/select-dropzone',
-        },
-      },
-      Unauthenticated: {
-        screens: {
-          LoginScreen: '/login',
-          SignUpScreen: '/signup',
-        },
-      },
-      Wizards: {
-        screens: {
-          ConfirmUserScreen: '/confirm',
-          RecoverPasswordScreen: '/recover-password',
-          ChangePasswordScreen: '/change-password',
-          DropzoneWizardScreen: '/setup',
-          User: {
-            screens: {
-              UserListScreen: '/modal/users',
-              ProfileScreen: '/modal/user/:userId',
-              EquipmentScreen: '/modal/user/:userId/equipment',
-              OrdersScreen: '/modal/user/:userId/transactions',
-              OrderReceiptScreen: '/modal/user/:userId/transactions/:orderId/receipt',
-              RigInspectionScreen: '/modal/user/:dropzoneUserId/rig-inspection/:rig',
-            },
-          },
-        },
-      },
-      // FIXME: Remove in release
-      // NotFound: '*',
-    },
-  },
-};
+export { options };
 
 export type Routes = {
-  Authenticated: NavigatorScreenParams<LeftDrawerRoutes>;
+  Authenticated: NavigatorScreenParams<AuthenticatedRoutes>;
   Unauthenticated: NavigatorScreenParams<UnauthenticatedRoutes>;
   Limbo: NavigatorScreenParams<LimboRoutes>;
   Wizards: NavigatorScreenParams<WizardRoutes>;
   NotFound: undefined;
+  Gallery: undefined;
+  Overlays: undefined;
+  Forms: undefined;
 };
 
 const Stack = createStackNavigator<Routes>();
@@ -138,7 +38,7 @@ declare global {
 
 export default function RootNavigator() {
   const credentials = useSession((session) => session.credentials);
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
 
   return (
     <Stack.Navigator
@@ -150,8 +50,8 @@ export default function RootNavigator() {
       }}
     >
       {credentials ? (
-        currentDropzoneId ? (
-          <Stack.Screen name="Authenticated" component={LeftDrawer} />
+        currentOperatorId ? (
+          <Stack.Screen name="Authenticated" component={Authenticated} />
         ) : (
           <Stack.Screen name="Limbo" component={Limbo} />
         )
@@ -159,6 +59,9 @@ export default function RootNavigator() {
         <Stack.Screen name="Unauthenticated" component={Unauthenticated} />
       )}
       <Stack.Screen name="Wizards" component={Wizards} />
+      {GALLERY_ENABLED ? <Stack.Screen name="Gallery" component={GalleryScreen} /> : null}
+      {GALLERY_ENABLED ? <Stack.Screen name="Overlays" component={OverlaysScreen} /> : null}
+      {GALLERY_ENABLED ? <Stack.Screen name="Forms" component={FormsScreen} /> : null}
 
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>

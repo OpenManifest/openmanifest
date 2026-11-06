@@ -1,9 +1,5 @@
 import { MutationFunctionOptions, MutationResult } from '@apollo/client';
-import {
-  LoginWithAppleMutation,
-  LoginWithAppleMutationVariables,
-  LoginWithFacebookMutation,
-} from 'app/api/operations';
+import { LoginWithAppleMutation, LoginWithAppleMutationVariables } from 'app/api/operations';
 import { useLoginWithAppleMutation } from 'app/api/reflection';
 import { useNotifications } from 'app/providers/notifications';
 import { useSession } from 'app/state';
@@ -16,7 +12,7 @@ import {
   signInAsync,
 } from 'expo-apple-authentication';
 import * as React from 'react';
-import { useTheme } from 'react-native-paper';
+import { useTheme } from 'app/ui';
 
 export function useLoginWithApple(
   opts?: MutationFunctionOptions<LoginWithAppleMutation, LoginWithAppleMutationVariables>
@@ -47,12 +43,11 @@ export function useLoginWithApple(
       }
     } catch (e) {
       if (e instanceof Error) {
-        console.log(e);
         notify.error(e.message);
       }
     }
   }, [expoPushToken, notify, onLoginWithApple, setCredentials]);
-  return [onLogin, mutation] as [() => Promise<void>, MutationResult<LoginWithFacebookMutation>];
+  return [onLogin, mutation] as [() => Promise<void>, MutationResult<LoginWithAppleMutation>];
 }
 
 export default function AppleButton(
@@ -65,12 +60,16 @@ export default function AppleButton(
       {...props}
       buttonType={AppleAuthenticationButtonType.SIGN_IN}
       buttonStyle={
-        theme.dark
+        theme.isDark
           ? AppleAuthenticationButtonStyle.WHITE_OUTLINE
           : AppleAuthenticationButtonStyle.BLACK
       }
-      cornerRadius={4}
-      style={{ width: '100%', height: 36, borderRadius: 30, marginVertical: 8 }}
+      cornerRadius={theme.radius.md}
+      style={{
+        width: '100%',
+        height: Math.max(theme.density.row, theme.density.touchTarget),
+        ...(props.style as object),
+      }}
     />
   );
 }

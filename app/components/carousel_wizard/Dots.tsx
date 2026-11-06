@@ -1,38 +1,45 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { useAppTheme } from 'app/theme';
+import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from 'app/ui';
 
 interface IDotsProps {
   count: number;
   index: number;
 }
+
+const DOT = 6;
+const ACTIVE_DOT = 8;
+
+/** Where the wizard is: one dot per page, the current one larger and in the brand colour */
 export default function Dots(props: IDotsProps) {
   const { count, index } = props;
-  const { palette } = useAppTheme();
+  const { t } = useTranslation('common');
+  const theme = useTheme();
 
   return (
-    <View style={{ flexDirection: 'row' }}>
-      {Array.from({ length: count }).map((_, idx) => (
-        <View
-          key={`paginatiom-dot-${idx}`}
-          style={[
-            idx === index ? styles.activeDot : styles.inactiveDot,
-            { backgroundColor: idx === index ? palette.primary.main : palette.primary.light },
-          ]}
-        />
-      ))}
+    <View
+      role="progressbar"
+      aria-label={t('wizard.progress', { step: index + 1, count })}
+      aria-valuemin={1}
+      aria-valuemax={count}
+      aria-valuenow={index + 1}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: theme.space.xs }}
+    >
+      {Array.from({ length: count }).map((_, idx) => {
+        const size = idx === index ? ACTIVE_DOT : DOT;
+        return (
+          <View
+            key={`pagination-dot-${idx}`}
+            style={{
+              width: size,
+              height: size,
+              borderRadius: size / 2,
+              backgroundColor: idx === index ? theme.colour.brand : theme.colour.border,
+            }}
+          />
+        );
+      })}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  inactiveDot: {
-    width: 6,
-    height: 6,
-    marginTop: 1,
-    marginLeft: 2,
-    marginRight: 2,
-    borderRadius: 3,
-  },
-  activeDot: { width: 8, height: 8, marginLeft: 2, marginRight: 2, borderRadius: 4 },
-});

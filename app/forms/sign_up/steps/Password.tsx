@@ -4,22 +4,22 @@ import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard/S
 import PasswordComplexityIndicator from 'app/components/input/PasswordComplexityIndicator';
 import checkPasswordComplexity from 'app/utils/checkPasswordComplexity';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 function PasswordStep(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   const { control } = useFormContext();
   const { password } = useWatch({ control });
   return (
-    <Step {...props} title="Password">
+    <Step {...props} title={t('forms.fields.password')}>
       <Fields>
         <FormTextField
           name="password"
           {...{ control }}
-          mode="flat"
-          label="Password"
+          label={t('forms.fields.password')}
           textContentType="password"
           secureTextEntry
           passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
-          style={{ width: '100%', backgroundColor: 'transparent', fontSize: 32, minHeight: 70 }}
         />
         <PasswordComplexityIndicator strength={checkPasswordComplexity(password)} />
       </Fields>

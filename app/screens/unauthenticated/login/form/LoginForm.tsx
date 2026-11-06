@@ -1,133 +1,73 @@
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Button, useTheme } from 'react-native-paper';
+import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
-import { TouchableOpacity } from 'react-native-gesture-handler';
-
-import { primaryColor } from 'app/constants/Colors';
-import Divider from 'app/components/Divider';
-
-import LottieView from 'app/components/LottieView';
+import { useTranslation } from 'react-i18next';
 import { FormTextField } from 'app/components/input/text/TextField';
-import FacebookButton from './FacebookButton';
+import { Button, Divider, Text, useTheme } from 'app/ui';
 import AppleButton from './AppleButton';
 import useLoginForm from './useForm';
 
+/** Email and password, "Forgot your password?", log in, Sign in with Apple (iOS) and sign up */
 export default function LoginForm() {
+  const { t } = useTranslation('common');
   const navigation = useNavigation();
   const theme = useTheme();
+  const { control, onSubmit, loading, loginWithApple } = useLoginForm();
 
-  const { control, onSubmit, loading, loginWithApple, loginWithFacebook } = useLoginForm();
   return (
-    <View>
-      {loading ? (
-        <View style={styles.animationContainer}>
-          <LottieView
-            autoPlay
-            loop
-            style={styles.loadingAnimation}
-            source={require('../../../../../assets/images/loading.json')}
-          />
-        </View>
-      ) : (
-        <>
-          <FormTextField
-            {...{ control }}
-            name="email"
-            label="Email"
-            mode="outlined"
-            disabled={loading}
-          />
-
-          <FormTextField
-            {...{ control }}
-            label="Password"
-            name="password"
-            mode="outlined"
-            disabled={loading}
-            secureTextEntry
-            onSubmitEditing={onSubmit}
-          />
-        </>
-      )}
-      {loading ? null : (
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Wizards', { screen: 'RecoverPasswordScreen' })}
-        >
-          <Text style={theme.dark ? styles.forgotPasswordDark : styles.forgotPassword}>
-            Forgot your password?
-          </Text>
-        </TouchableOpacity>
-      )}
+    <View style={{ gap: theme.space.md }}>
+      <FormTextField
+        {...{ control }}
+        name="email"
+        label={t('auth.email')}
+        disabled={!!loading}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoComplete="email"
+        textContentType="emailAddress"
+      />
+      <FormTextField
+        {...{ control }}
+        name="password"
+        label={t('auth.password')}
+        disabled={!!loading}
+        secureTextEntry
+        autoComplete="current-password"
+        textContentType="password"
+        onSubmitEditing={onSubmit}
+      />
+      <Button
+        label={t('auth.forgotPassword')}
+        variant="tertiary"
+        disabled={!!loading}
+        onPress={() => navigation.navigate('Wizards', { screen: 'RecoverPasswordScreen' })}
+      />
       <Button
         testID="login-primary-action"
-        mode="contained"
-        disabled={loading}
-        labelStyle={{ color: theme.colors.onSurface }}
-        style={[
-          styles.button,
-          { backgroundColor: theme.colors.surface, borderColor: theme.colors.surface },
-        ]}
+        label={t('auth.logIn')}
+        loading={!!loading}
         onPress={onSubmit}
-      >
-        {loading ? 'Authenticating...' : 'Log in'}
-      </Button>
-
-      <Divider>or</Divider>
-      <FacebookButton disabled={loading} style={{ marginTop: 8 }} onPress={loginWithFacebook} />
-
-      <AppleButton onPress={loginWithApple} style={{ width: '100%', flex: 1 }} />
-
+        fullWidth
+      />
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.space.md }}>
+        <View style={{ flex: 1 }}>
+          <Divider />
+        </View>
+        <Text variant="caption" tone="muted">
+          {t('auth.or')}
+        </Text>
+        <View style={{ flex: 1 }}>
+          <Divider />
+        </View>
+      </View>
+      <AppleButton onPress={loginWithApple} />
       <Button
         testID="signup-primary-action"
-        labelStyle={styles.textButtonLabel}
-        style={styles.textButton}
+        label={t('auth.signUp')}
+        variant="secondary"
         onPress={() => navigation.navigate('Unauthenticated', { screen: 'SignUpScreen' })}
-      >
-        Sign up
-      </Button>
+        fullWidth
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  animationContainer: {
-    width: '100%',
-    minHeight: 200,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadingAnimation: {
-    alignSelf: 'center',
-    marginTop: 24,
-    marginBottom: 32,
-    height: 156,
-    width: '100%',
-  },
-  forgotPassword: {
-    marginBottom: 16,
-    color: 'rgb(50, 50, 50)',
-  },
-  forgotPasswordDark: {
-    marginTop: 8,
-    color: 'rgb(180, 180, 180)',
-  },
-  button: {
-    marginVertical: 4,
-    backgroundColor: 'white',
-    borderColor: primaryColor,
-    borderWidth: 1,
-    width: '100%',
-  },
-  textButton: {
-    marginTop: 10,
-    minHeight: 56,
-    backgroundColor: 'transparent',
-    color: 'white',
-    width: '100%',
-  },
-  textButtonLabel: {
-    // color: '#FFFFFF',
-  },
-});
