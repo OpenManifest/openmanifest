@@ -138,7 +138,7 @@ export default function EquipmentForm(props: IEquipmentFormProps) {
       {kind?.serviceIntervalDays ? (
         <>
           <DatePicker
-            value={serviceDueAt.value || new Date().getTime() / 1000}
+            value={serviceDueAt.value ?? 0}
             onChange={serviceDueAt.onChange}
             label={term('service_due')}
           />

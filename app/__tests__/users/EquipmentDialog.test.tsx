@@ -46,6 +46,8 @@ describe('<EquipmentDialog />', () => {
 
   it('asks for the details a new rig needs', async () => {
     const dialog = await renderDialog({});
+    // No date shows until one is chosen (BUG-113: today's date showed, as if it were set)
+    await waitFor(() => expect(dialog.getByText('No date')).toBeTruthy());
 
     await fireEvent.press(dialog.getByRole('button', { name: 'Save' }));
 

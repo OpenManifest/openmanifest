@@ -1,4 +1,5 @@
 import * as React from 'react';
+import i18n from 'app/i18n';
 import { useForm, useWatch } from 'react-hook-form';
 import * as yup from 'yup';
 import camelCase from 'lodash/camelCase';
@@ -151,7 +152,10 @@ export default function useEquipmentForm(opts: IUseEquipmentFormOpts) {
         return;
       }
       if (kind?.serviceIntervalDays && !fields.serviceDueAt) {
-        setError('serviceDueAt', { type: 'validate', message: 'Set when the next service is due' });
+        setError('serviceDueAt', {
+          type: 'validate',
+          message: i18n.t('forms.equipment.serviceDueRequired'),
+        });
         return;
       }
 

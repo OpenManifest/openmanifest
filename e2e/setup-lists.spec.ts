@@ -170,6 +170,15 @@ test.describe('setup lists @setup', () => {
     await form.getByRole('textbox', { name: 'Make' }).fill('Sun Path');
     await form.getByRole('textbox', { name: 'Model' }).fill('Javelin');
     await form.getByRole('textbox', { name: 'Serial' }).fill(serial);
+    // A kind that is serviced needs the date of its next service: none shows until one is chosen (BUG-113)
+    const due = form.getByRole('button', { name: 'Reserve repack due' });
+    await expect(due).toContainText('No date');
+    await due.click();
+    await page
+      .locator('.DayPicker-Day:not(.DayPicker-Day--outside)', { hasText: /^28$/ })
+      .first()
+      .click();
+    await expect(due).not.toContainText('No date');
     await save(form);
     const name = `Sun Path Javelin #${serial}`;
     await expect(page.getByRole('button', { name, exact: true })).toBeVisible();

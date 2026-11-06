@@ -513,7 +513,8 @@
       "everyone": "Everyone",
       "ready": "Ready",
       "today": "Flew today"
-    }
+    },
+    "noDate": "No date"
   },
   "location": {
     "search": "Search for an address",
@@ -620,7 +621,8 @@
       "public": "Rentable",
       "youCantManifestWithout": "You can't manifest without {{equipment}}",
       "needsInspection": "Your {{equipment}} needs to be inspected before you can manifest",
-      "needsService": "Your {{equipment}} is out of service"
+      "needsService": "Your {{equipment}} is out of service",
+      "serviceDueRequired": "Set when the next service is due"
     },
     "equipment_inspection_template": {
       "optional": "optional",
