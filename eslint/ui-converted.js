@@ -25,6 +25,10 @@ module.exports = {
     'app/screens/authenticated/account/**/*.{ts,tsx}',
     'app/screens/authenticated/overview/**/*.{ts,tsx}',
     'app/screens/authenticated/configuration/**/*.{ts,tsx}',
+    'app/components/carousel_wizard/**/*.{ts,tsx}',
+    'app/screens/unauthenticated/**/*.{ts,tsx}',
+    'app/screens/limbo/**/*.{ts,tsx}',
+    'app/screens/wizards/**/*.{ts,tsx}',
   ],
   // Tokens are where the literal values live; tests and fixtures may use any value
   exempt: [
@@ -50,6 +54,8 @@ module.exports = {
     'app/features/money/**/__tests__/**',
     'app/features/dailylog/**/__tests__/**',
     'app/forms/**/__tests__/**',
+    'app/components/carousel_wizard/**/*.test.{ts,tsx}',
+    'app/screens/wizards/**/__tests__/**',
     // The manifest forms of the classic board: replaced by the picker (U3.7, U3.8), removed in U6.4
     'app/legacy/**',
   ],

@@ -1353,5 +1353,73 @@
     "gca": "Ground control",
     "noVehicle": "No {{vehicle}} chosen",
     "nobodyOn": "Nobody was on this {{load}}"
+  },
+  "wizard": {
+    "next": "Next",
+    "back": "Back",
+    "done": "Done",
+    "progress": "Step {{step}} of {{count}}"
+  },
+  "auth": {
+    "logo": "OpenManifest",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "logIn": "Log in",
+    "or": "or",
+    "signUp": "Sign up",
+    "emailRequired": "Email is required",
+    "emailInvalid": "This is not a valid email",
+    "passwordRequired": "Password is required",
+    "confirming": "Confirming your account…",
+    "confirmed": "All done!",
+    "confirmedBody": "Your account is confirmed. You can now log in.",
+    "confirmFailed": "Your account could not be confirmed",
+    "confirmFailedBody": "The link may have expired or been used already. Log in, or sign up again to get a new link.",
+    "recover": {
+      "title": "Reset your password",
+      "doneTitle": "Check your email",
+      "doneBody": "We have sent you a link to reset your password."
+    },
+    "change": {
+      "title": "New password",
+      "newPassword": "New password",
+      "repeatTitle": "Repeat password",
+      "repeatPassword": "New password again",
+      "doneTitle": "Password changed",
+      "doneBody": "Your password has been changed. You can now log in again.",
+      "mismatch": "The passwords are not the same. Type exactly the same password twice.",
+      "tokenMissing": "The reset link is incomplete. Open the link in the email again.",
+      "failed": "The password could not be changed",
+      "tooWeak": "Password too weak"
+    }
+  },
+  "operatorSelect": {
+    "title": "Choose your {{operator}}",
+    "empty": "No {{operators}} yet",
+    "emptyBody": "You can set up your own {{operator}}.",
+    "create": "Create {{operator}}"
+  },
+  "operatorWizard": {
+    "nameTitle": "Name",
+    "name": "Name",
+    "nameRequired": "Your {{operator}} must have a name",
+    "affiliationTitle": "Affiliation",
+    "affiliationRequired": "Your {{operator}} must accept at least one organization",
+    "locationTitle": "Location",
+    "myLocation": "Go to my location",
+    "brandingTitle": "Branding",
+    "brandColour": "Brand colour",
+    "brandColourHelp": "This colour is used for active elements and calls to action",
+    "colourRequired": "Please pick a brand colour",
+    "logoTitle": "Logo",
+    "logo": "Logo",
+    "pickLogo": "Pick a logo",
+    "logoHelp": "Your logo is shown as the avatar of your {{operator}} throughout the app.",
+    "selfManifestTitle": "Manifest",
+    "selfManifest": "Who can manifest themselves on {{loads}}?",
+    "manifestOthersTitle": "Manifest others",
+    "manifestOthers": "Who can manifest other people on {{loads}}?",
+    "doneTitle": "Setup complete"
   }
 }
