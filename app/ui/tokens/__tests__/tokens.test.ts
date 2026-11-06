@@ -128,10 +128,13 @@ describe('deriveBrand', () => {
   describe.each(SCHEMES)('%s', (scheme) => {
     it.each(colours)('%s meets every pair', (hex) => {
       const brand = deriveBrand(hex, scheme);
-      const { surface } = colour[scheme];
+      const { app, surface, raised } = colour[scheme];
 
       expect(contrastRatio(brand.onBrand, brand.brand)).toBeGreaterThanOrEqual(4.5);
       expect(contrastRatio(brand.brandText, surface)).toBeGreaterThanOrEqual(4.5);
+      // A tertiary button on the conditions strip of the board sits on `raised` (BUG-121)
+      expect(contrastRatio(brand.brandText, raised)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(brand.brandText, app)).toBeGreaterThanOrEqual(4.5);
       expect(contrastRatio(brand.brandText, brand.brandSoft)).toBeGreaterThanOrEqual(4.5);
       expect(contrastRatio(brand.onBrandSoft, brand.brandSoft)).toBeGreaterThanOrEqual(4.5);
     });

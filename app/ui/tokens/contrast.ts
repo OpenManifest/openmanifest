@@ -127,7 +127,7 @@ export type DerivedBrand = {
   brand: string;
   /** Text and icons on `brand`. */
   onBrand: string;
-  /** The brand as text or an icon on the scheme's surface and on `brandSoft`. */
+  /** The brand as text or an icon on the scheme's app background, surface, raised surface and `brandSoft`. */
   brandText: string;
   brandSoft: string;
   /** Body text on `brandSoft`. */
@@ -170,7 +170,13 @@ export function deriveBrand(hex: string, scheme: Scheme): DerivedBrand {
     h: origin.h,
   });
   const toward = scheme === 'light' ? 'dark' : 'light';
-  const brandText = ensureContrast(brand, [defaults.surface, brandSoft], 4.5, toward);
+  // A tertiary button sits on the raised colour too (the conditions strip of the board)
+  const brandText = ensureContrast(
+    brand,
+    [defaults.app, defaults.surface, defaults.raised, brandSoft],
+    4.5,
+    toward
+  );
   const onBrandSoft = ensureContrast(brand, [brandSoft], 7, toward);
 
   return { brand, onBrand, brandText, brandSoft, onBrandSoft };

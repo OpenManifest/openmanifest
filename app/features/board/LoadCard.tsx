@@ -56,8 +56,10 @@ export default function LoadCard({
     <View
       testID={testID}
       style={{
-        // A load that is over steps back on the raised colour; dimming it with opacity took its text below AA contrast
-        backgroundColor: isOver(load.state) ? theme.colour.raised : theme.colour.surface,
+        // A load that is over says so with its state badge and a dashed border; dimming it with opacity took its text below
+        // AA contrast, and the raised colour took the brand text of dark schemes below it too
+        backgroundColor: theme.colour.surface,
+        borderStyle: isOver(load.state) && !(selected || highlighted) ? 'dashed' : 'solid',
         borderRadius: theme.radius.lg,
         borderWidth: selected || highlighted ? 2 : 1,
         borderColor: selected || highlighted ? theme.colour.brand : theme.colour.border,
