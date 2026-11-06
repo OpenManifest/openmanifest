@@ -5,7 +5,6 @@ import { BlurView } from 'expo-blur';
 import { Button } from 'react-native-paper';
 import * as Device from 'expo-device';
 
-import * as fonts from '@expo-google-fonts/roboto';
 import LottieView from 'app/components/LottieView';
 import { useNotifications } from 'app/providers/notifications';
 
@@ -15,11 +14,6 @@ interface IAppUpdateProps {
 
 export default function AppUpdate(props: IAppUpdateProps) {
   const { children } = props;
-  const { useFonts, __metadata__, ...rest } = fonts;
-  const [fontsLoaded] = fonts.useFonts({
-    ...rest,
-  });
-
   const [overlay, setOverlay] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const animation = React.useRef<LottieView>(null);
@@ -53,9 +47,6 @@ export default function AppUpdate(props: IAppUpdateProps) {
     isUpdateAvailable();
   }, [isUpdateAvailable]);
 
-  if (!fontsLoaded) {
-    return null;
-  }
   return (
     <View style={{ flex: 1 }}>
       {children}

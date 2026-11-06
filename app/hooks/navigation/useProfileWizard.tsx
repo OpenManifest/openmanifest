@@ -1,12 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
 import * as React from 'react';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 
 export default function useProfileWizard() {
   const navigation = useNavigation();
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
 
   return React.useCallback(
     (index?: number) => {
@@ -14,7 +14,7 @@ export default function useProfileWizard() {
         navigation.navigate('Wizards', {
           screen: 'UserWizardScreen',
           params: {
-            dropzoneUserId: currentUser.id,
+            membershipId: currentUser.id,
             index,
           },
         });

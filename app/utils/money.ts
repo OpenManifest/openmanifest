@@ -2,6 +2,7 @@
  * Money is exchanged with the API as integer cents (`*Cents` fields). Forms still let people type whole or
  * fractional currency units, and these helpers convert at the edge.
  */
+import { activeCurrency } from 'app/i18n/operatorFormat';
 
 /** Cents for an amount typed in currency units, rounded to the cent (12.5 -> 1250) */
 export function toCents(units?: number | null): number {
@@ -16,11 +17,9 @@ export function fromCents(cents?: number | null): number {
   return (cents || 0) / 100;
 }
 
-/** "$12.50", or "-$12.50" for negative amounts */
+/** "$12.50", or "-$12.50" for negative amounts: in the currency of the operator the app shows (AUD until it has loaded) */
 export function formatCents(cents?: number | null): string {
-  const value = cents || 0;
-  const absolute = Math.abs(value);
-  const whole = Math.floor(absolute / 100);
-  const fraction = String(absolute % 100).padStart(2, '0');
-  return `${value < 0 ? '-' : ''}$${whole}.${fraction}`;
+  return new Intl.NumberFormat('en-AU', { style: 'currency', currency: activeCurrency() }).format(
+    fromCents(cents)
+  );
 }

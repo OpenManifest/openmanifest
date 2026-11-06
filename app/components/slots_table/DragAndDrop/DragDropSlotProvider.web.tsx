@@ -20,12 +20,6 @@ export default function DragDropWrapper(props: React.PropsWithChildren<object>) 
       const sourceSlot = event?.active?.data?.current?.slotId;
       const targetSlot = event?.over?.data?.current?.slotId;
 
-      console.debug(`Moving Slot ${sourceSlot} from Load ${sourceLoad} to Load ${targetLoad}`, {
-        targetLoad,
-        sourceLoad,
-        sourceSlot,
-      });
-
       if (sourceLoad !== targetLoad) {
         const response = await moveSlot(sourceLoad, {
           targetLoad: Number(targetLoad),
@@ -43,7 +37,6 @@ export default function DragDropWrapper(props: React.PropsWithChildren<object>) 
   return (
     <DndContext
       onDragStart={(event: DragStartEvent) => {
-        console.debug('Drag start', event, event?.active?.data?.current?.props);
         setDraggedItem(event?.active?.data?.current?.props);
       }}
       onDragEnd={onDragEnd}

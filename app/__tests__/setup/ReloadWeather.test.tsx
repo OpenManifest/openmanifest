@@ -7,14 +7,14 @@ import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 
 jest.setTimeout(30000);
 
-// The server finds the dropzone of the weather condition itself (BUG-040): the app sends the id and nothing else
+// The server finds the operator of the weather condition itself (BUG-040): the app sends the id and nothing else
 function Reload({ id }: { id: number }) {
   const [reload, { data }] = useReloadWeatherMutation();
   const payload = data?.reloadWeatherCondition;
   return (
     <>
       <Text onPress={() => reload({ variables: { id } })}>Reload</Text>
-      <Text testID="exit-spot">{String(payload?.weatherCondition?.exitSpotMiles ?? '')}</Text>
+      <Text testID="exit-spot">{String(payload?.weatherCondition?.exitSpotM ?? '')}</Text>
       <Text testID="errors">{(payload?.errors || []).join(',')}</Text>
     </>
   );
@@ -26,16 +26,18 @@ const condition = {
   createdAt: '2026-10-09T00:00:00Z',
   updatedAt: '2026-10-09T01:00:00Z',
   jumpRun: 270,
-  temperature: 12,
+  temperatureC: 12,
   offsetDirection: null,
-  offsetMiles: 0,
-  exitSpotMiles: 0.55,
-  winds: [{ __typename: 'Wind', altitude: '3000', speed: '8', direction: '270', temperature: 12 }],
+  offsetM: 0,
+  exitSpotM: 885.14,
+  winds: [
+    { __typename: 'Wind', altitudeM: 914.4, speedMps: 4.12, direction: 270, temperatureC: 12 },
+  ],
 };
 
-function renderReload(result: FetchResult<Record<string, unknown>>) {
+async function renderReload(result: FetchResult<Record<string, unknown>>) {
   const request = jest.fn(() => result);
-  const screen = render(<Reload id={7} />, {
+  const screen = await render(<Reload id={7} />, {
     session: authenticatedSession,
     graphql: [
       {
@@ -49,7 +51,7 @@ function renderReload(result: FetchResult<Record<string, unknown>>) {
 
 describe('reloading the weather', () => {
   it('sends the id of the weather condition and shows the reloaded drift with its decimals', async () => {
-    const { screen, request } = renderReload({
+    const { screen, request } = await renderReload({
       data: {
         reloadWeatherCondition: {
           __typename: 'ReloadWeatherConditionPayload',
@@ -60,16 +62,16 @@ describe('reloading the weather', () => {
       },
     });
 
-    fireEvent.press(screen.getByText('Reload'));
+    await fireEvent.press(screen.getByText('Reload'));
 
-    await waitFor(() => expect(screen.getByTestId('exit-spot').props.children).toBe('0.55'), {
+    await waitFor(() => expect(screen.getByTestId('exit-spot').props.children).toBe('885.14'), {
       timeout: 10000,
     });
     expect(request).toHaveBeenCalledTimes(1);
   });
 
   it('shows what the server says when the winds could not be fetched', async () => {
-    const { screen } = renderReload({
+    const { screen } = await renderReload({
       data: {
         reloadWeatherCondition: {
           __typename: 'ReloadWeatherConditionPayload',
@@ -80,7 +82,7 @@ describe('reloading the weather', () => {
       },
     });
 
-    fireEvent.press(screen.getByText('Reload'));
+    await fireEvent.press(screen.getByText('Reload'));
 
     await waitFor(
       () =>

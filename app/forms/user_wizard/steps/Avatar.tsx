@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Avatar, Paragraph, TouchableRipple, useTheme } from 'react-native-paper';
+import { Image, View } from 'react-native';
+import { Icon, Stack, Tappable, Text, useTheme } from 'app/ui';
 import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
 import useImagePicker from 'app/hooks/useImagePicker';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -8,6 +8,7 @@ import { useUserProfileContext } from 'app/api/crud';
 import { WizardFormStep } from 'app/hooks/forms/useWizard';
 import { useMemo } from 'app/hooks/react';
 import * as yup from 'yup';
+import { useTranslation } from 'react-i18next';
 
 export const validation = yup.object({
   avatar: yup.string().nullable().default(null),
@@ -18,33 +19,39 @@ type StepFields = {
 };
 
 export function useStep(): WizardFormStep<StepFields> {
-  const { dropzoneUser } = useUserProfileContext();
+  const { membership } = useUserProfileContext();
 
   return useMemo(
     () => ({
       defaultValues: {
-        avatar: dropzoneUser?.user?.image,
+        avatar: membership?.user?.image,
       },
       validation,
     }),
-    [dropzoneUser?.user?.image]
+    [membership?.user?.image]
   );
 }
 
+const PHOTO = 175;
+
 function AvatarStep(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   const { control } = useFormContext<StepFields>();
   const theme = useTheme();
   const pickImage = useImagePicker();
 
   return (
-    <Step {...props} title="Avatar">
+    <Step {...props} title={t('forms.user_wizard.avatar')}>
       <Fields>
-        <View style={styles.avatarContainer}>
+        <Stack align="center" gap="lg" padding="xxl">
           <Controller
             {...{ control }}
             name="avatar"
             render={({ field: { value, onChange } }) => (
-              <TouchableRipple
+              <Tappable
+                role="button"
+                aria-label={t('forms.user_wizard.uploadPhoto')}
+                minTarget={false}
                 onPress={async () => {
                   try {
                     const base64 = await pickImage();
@@ -53,35 +60,35 @@ function AvatarStep(props: IWizardStepProps) {
                       // Upload image
                       onChange(`data:image/jpeg;base64,${base64}`);
                     }
-                  } catch (e) {
-                    console.log(e);
-                  }
+                  } catch {}
+                }}
+                style={{
+                  width: PHOTO,
+                  height: PHOTO,
+                  borderRadius: theme.radius.pill,
+                  overflow: 'hidden',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: theme.colour.brandSoft,
                 }}
               >
                 {!value ? (
-                  <Avatar.Icon size={175} icon="camera" />
+                  <Icon name="camera" size={PHOTO / 2} tone="onBrandSoft" />
                 ) : (
-                  <Avatar.Image
-                    size={175}
+                  <Image
+                    accessible={false}
                     source={{ uri: value }}
-                    style={{
-                      backgroundColor: theme.colors.primary,
-                    }}
+                    style={{ width: PHOTO, height: PHOTO }}
                   />
                 )}
-              </TouchableRipple>
+              </Tappable>
             )}
           />
-          <Paragraph style={styles.paragraph}>Press to upload a photo</Paragraph>
-        </View>
+          <Text>{t('forms.user_wizard.pressToUpload')}</Text>
+        </Stack>
       </Fields>
     </Step>
   );
 }
-
-const styles = StyleSheet.create({
-  avatarContainer: { marginBottom: 100, alignItems: 'center', justifyContent: 'center' },
-  paragraph: { marginTop: 16 },
-});
 
 export default AvatarStep;

@@ -1,57 +1,19 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { HelperText, useTheme, Switch as SwitchComponent, List } from 'react-native-paper';
+import UiSwitch, { type SwitchProps as UiSwitchProps } from 'app/ui/components/form/Switch';
 import { withHookForm } from '../withHookForm';
 
-type Extract<T> = T extends React.ComponentType<infer U> ? U : never;
-interface ISwitchProps extends Omit<
-  Extract<typeof SwitchComponent>,
-  'onChange' | 'onChangeText' | 'error'
-> {
+/** The props this field took when it was a Paper `Switch` in a list item; the look is the design system's now */
+type ISwitchProps = Omit<UiSwitchProps, 'label' | 'onChange'> & {
   label?: string;
-  error?: string | null;
-  helperText?: string | null;
   onChange?(value: boolean): void;
-}
+  onValueChange?(value: boolean): void;
+  style?: unknown;
+};
 
-function Switch(props: ISwitchProps) {
-  const { error, label, helperText, onChange, style, ...rest } = props;
-  const theme = useTheme();
-  return (
-    <>
-      <List.Item
-        title={label}
-        right={() => (
-          <SwitchComponent
-            style={StyleSheet.flatten([
-              styles.field,
-              { backgroundColor: theme.colors.surface },
-              style,
-            ])}
-            {...rest}
-            onValueChange={onChange}
-          />
-        )}
-      />
-      <HelperText style={styles.helperText} type={error ? 'error' : 'info'}>
-        {error || helperText || ' '}
-      </HelperText>
-    </>
-  );
+function Switch({ label, onChange, onValueChange, style: _style, ...rest }: ISwitchProps) {
+  return <UiSwitch {...rest} label={label ?? ''} onChange={onChange ?? onValueChange} />;
 }
 
 export const SwitchField = withHookForm(Switch);
 
 export default Switch;
-
-const styles = StyleSheet.create({
-  fields: {
-    flex: 1,
-  },
-  field: {
-    marginBottom: 8,
-  },
-  helperText: {
-    marginBottom: 16,
-  },
-});
