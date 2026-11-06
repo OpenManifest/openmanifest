@@ -61,6 +61,7 @@ test.describe('the conditions of the day @conditions @board', () => {
       // The board with its strip lays out; the panel then covers it (and its button for a new load)
       await expect(page.getByTestId('board-conditions')).toBeVisible();
       await expectLayout(page, `${BOARD} conditions`);
+      await expectAccessible(page, BOARD);
       const panel = await openPanel(page);
 
       // The temperature, a heading in degrees (no dial) and a row for each height, in the operator's units
@@ -70,7 +71,7 @@ test.describe('the conditions of the day @conditions @board', () => {
       await expect(panel.getByRole('group', { name: 'Wind 1' })).toBeVisible();
       await expect(panel.getByTestId('conditions-panel-wind-0')).toContainText('ft');
       await expect(panel.getByTestId('conditions-panel-wind-0')).toContainText('kn');
-      await expectAccessible(page, `${BOARD} conditions`);
+      await expectAccessible(page, `${BOARD} conditions panel`, '[role="dialog"]');
 
       const rows = panel.locator('[data-testid^="conditions-panel-wind-"][role="group"]');
       const count = await rows.count();

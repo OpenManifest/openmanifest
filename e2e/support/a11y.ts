@@ -16,8 +16,10 @@ const readBaseline = (): Baseline =>
  * `name` in e2e/axe-baseline.json fail the test; the ones that are listed are attached to the report. Re-record the
  * baseline with `UPDATE_AXE_BASELINE=1 yarn test:ui:smoke --workers=1` (record only; never to hide a new finding).
  */
-export async function expectAccessible(page: Page, name: string) {
-  const { violations } = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+export async function expectAccessible(page: Page, name: string, include?: string) {
+  // `include` checks one part of the page: an overlay, without the page its scrim covers
+  const builder = new AxeBuilder({ page }).withTags(TAGS);
+  const { violations } = await (include ? builder.include(include) : builder).analyze();
   const blocking = [
     ...new Set(
       violations.filter((v) => ['serious', 'critical'].includes(v.impact ?? '')).map((v) => v.id)
