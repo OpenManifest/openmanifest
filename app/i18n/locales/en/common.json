@@ -1333,5 +1333,25 @@
     "out": "Paid out",
     "parties": "{{from}} → {{to}}",
     "more": "Show older"
+  },
+  "dailyLog": {
+    "day": "Day",
+    "download": "Download the day's log",
+    "edit": "Edit",
+    "dutyOfficer": "Duty officer",
+    "choose": "Choose",
+    "dutyOfficerRequired": "Choose the duty officer of the day",
+    "notes": "Notes",
+    "notesPlaceholder": "Anything to note about the day",
+    "noNotes": "No notes for this day",
+    "nobody": "Nobody",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "The daily log is saved",
+    "noLoads": "No {{loads}} on this day",
+    "pilot": "Pilot",
+    "gca": "Ground control",
+    "noVehicle": "No {{vehicle}} chosen",
+    "nobodyOn": "Nobody was on this {{load}}"
   }
 }

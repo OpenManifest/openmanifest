@@ -19,10 +19,12 @@ module.exports = {
     'app/features/skydiving/conditions/**/*.{ts,tsx}',
     'app/features/reports/**/*.{ts,tsx}',
     'app/features/money/**/*.{ts,tsx}',
+    'app/features/dailylog/**/*.{ts,tsx}',
     'app/forms/**/*.{ts,tsx}',
     'app/navigation/**/*.{ts,tsx}',
     'app/screens/authenticated/account/**/*.{ts,tsx}',
     'app/screens/authenticated/overview/**/*.{ts,tsx}',
+    'app/screens/authenticated/configuration/**/*.{ts,tsx}',
   ],
   // Tokens are where the literal values live; tests and fixtures may use any value
   exempt: [
@@ -46,6 +48,7 @@ module.exports = {
     'app/features/skydiving/conditions/**/__tests__/**',
     'app/features/reports/**/__tests__/**',
     'app/features/money/**/__tests__/**',
+    'app/features/dailylog/**/__tests__/**',
     'app/forms/**/__tests__/**',
     // The manifest forms of the classic board: replaced by the picker (U3.7, U3.8), removed in U6.4
     'app/legacy/**',

@@ -19,7 +19,7 @@ import InspectionFormsScreen from 'app/features/setup/InspectionFormsScreen';
 import CrewRolesScreen from 'app/features/setup/CrewRolesScreen';
 import CertificationBodiesScreen from 'app/features/setup/CertificationBodiesScreen';
 import PermissionsScreen from 'app/features/setup/PermissionsScreen';
-import OperatorDailyLogScreen from './daily_log/DailyLogScreen';
+import DailyLogScreen from 'app/features/dailylog/DailyLogScreen';
 import MoneyScreen from 'app/features/money/MoneyScreen';
 
 export type ConfigurationRoutes = {
@@ -142,8 +142,8 @@ export default function SettingsTab() {
         />
         <Configuration.Screen
           name="DailyLogScreen"
-          component={OperatorDailyLogScreen}
-          options={{ title: t('common:screens.masterLog') }}
+          component={DailyLogScreen}
+          options={{ title: t('terms:daily_log') }}
         />
       </Configuration.Navigator>
     </AppSignalBoundary>
