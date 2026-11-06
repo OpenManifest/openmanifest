@@ -14,7 +14,12 @@ export interface ICrewRoleDialogProps {
   onArchive?(): void;
 }
 
-export default function CrewRoleDialog({ open, original, onClose, onArchive }: ICrewRoleDialogProps) {
+export default function CrewRoleDialog({
+  open,
+  original,
+  onClose,
+  onArchive,
+}: ICrewRoleDialogProps) {
   const { t } = useTranslation('common');
   const initial = React.useMemo(
     () =>
@@ -40,9 +45,7 @@ export default function CrewRoleDialog({ open, original, onClose, onArchive }: I
     <ResourceForm
       {...{ open, loading, onClose, onArchive, onSubmit }}
       title={
-        original?.id
-          ? t('forms.crew_role.edit', { name: original.name })
-          : t('forms.crew_role.new')
+        original?.id ? t('forms.crew_role.edit', { name: original.name }) : t('forms.crew_role.new')
       }
     >
       <CrewRoleForm {...{ control }} />

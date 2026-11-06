@@ -42,7 +42,10 @@ export default function CertificationBodiesScreen() {
 
   const save = async (ids: string[], message: string) => {
     setSaving(true);
-    const response = await update({ name: operator?.name ?? '', certificationBodyIds: ids.map(Number) });
+    const response = await update({
+      name: operator?.name ?? '',
+      certificationBodyIds: ids.map(Number),
+    });
     setSaving(false);
     if ('error' in response && response.error) {
       notify.error(response.error);

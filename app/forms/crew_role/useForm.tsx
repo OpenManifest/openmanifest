@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
-import { camelCase, isEqual } from 'lodash';
+import { camelCase } from 'lodash';
 import { CrewRoleEssentialsFragment } from 'app/api/operations';
 import { CrewRoleScope } from 'app/api/schema.d';
 import { useCrewRoles } from 'app/api/crud';
@@ -52,24 +52,20 @@ const FIELDS = ['name', 'scope', 'required', 'occupiesSlot', 'permission'] as co
 export default function useCrewRoleForm({ initial, onSuccess }: IUseCrewRoleFormOpts) {
   const notify = useNotifications();
   const initialValues = React.useMemo(() => withDefaults(EMPTY_FORM_VALUES, initial), [initial]);
-  const [defaultValues, setDefaultValues] = React.useState(initialValues);
 
   const methods = useForm<CrewRoleFields>({
-    defaultValues,
+    defaultValues: initialValues,
     mode: 'all',
     resolver: yupResolver(crewRoleValidation) as never,
   });
-  React.useEffect(() => {
-    if (!isEqual(defaultValues, initialValues)) setDefaultValues(initialValues);
-  }, [defaultValues, initialValues]);
-
   const { reset, register, handleSubmit, setError } = methods;
   React.useEffect(() => {
     register('id');
   }, [register]);
+  // A form opened for another role (or a new one) starts from its values
   React.useEffect(() => {
-    reset(defaultValues);
-  }, [defaultValues, reset]);
+    reset(initialValues);
+  }, [initialValues, reset]);
 
   const { crewRoles, create, update } = useCrewRoles();
 

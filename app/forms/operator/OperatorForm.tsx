@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useOperatorContext } from 'app/providers/operator/context';
 import { Image, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Control, Controller, useWatch } from 'react-hook-form';
@@ -29,9 +28,6 @@ export default function OperatorForm(props: IOperatorForm) {
   const theme = useTheme();
   const pickImage = useImagePicker();
   const { name, banner, primaryColor } = useWatch({ control });
-  const {
-    operator: { operator },
-  } = useOperatorContext();
 
   return (
     <Stack gap="lg">

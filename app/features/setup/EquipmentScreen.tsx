@@ -62,7 +62,9 @@ export default function EquipmentScreen() {
         refetchQueries: [OperatorEquipmentDocument, AvailableEquipmentDocument],
       });
       const payload = response.data?.archiveEquipment;
-      return payload?.equipment ? { equipment: payload.equipment } : { error: payload?.errors?.[0] };
+      return payload?.equipment
+        ? { equipment: payload.equipment }
+        : { error: payload?.errors?.[0] };
     },
     [archiveEquipment]
   );
@@ -81,10 +83,14 @@ export default function EquipmentScreen() {
 
   const factsOf = (equipment: EquipmentEssentialsFragment): ResourceFact[] => {
     const kind = kinds.find((candidate) => candidate.id === equipment.equipmentKind?.id);
-    const details = summarize(schemaOf(kind?.attributeSchema), equipment.attributes as AttributeValues, {
-      operatorOwned: true,
-      units,
-    });
+    const details = summarize(
+      schemaOf(kind?.attributeSchema),
+      equipment.attributes as AttributeValues,
+      {
+        operatorOwned: true,
+        units,
+      }
+    );
     return [
       kind ? { label: t('resources.facts.kind'), value: kind.name } : null,
       equipment.serviceDueAt

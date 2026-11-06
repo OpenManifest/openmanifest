@@ -84,7 +84,7 @@ export default function ResourceForm({
             {save}
           </Row>
         ) : (
-          save ?? undefined
+          (save ?? undefined)
         )
       }
     >

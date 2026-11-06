@@ -104,15 +104,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
         }
         // Throws when the fields are invalid
         operatorValidation.validateSync(fields);
-        const {
-          banner,
-          primaryColor,
-          lat,
-          lng,
-          name,
-          requestPublication,
-          secondaryColor,
-        } = fields;
+        const { banner, primaryColor, lat, lng, name, requestPublication, secondaryColor } = fields;
 
         // The rules (the settings) are left as they are: the Rules page saves them
         const response = await update({

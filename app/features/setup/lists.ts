@@ -38,7 +38,11 @@ export function vehicleFacts(
 export function ticketFacts(
   ticket: {
     costCents?: number | null;
-    defaultDestination?: { name?: string | null; kind?: string | null; altitudeM?: number | null } | null;
+    defaultDestination?: {
+      name?: string | null;
+      kind?: string | null;
+      altitudeM?: number | null;
+    } | null;
     allowManifestingSelf?: boolean | null;
     requiresEscort?: boolean | null;
   },

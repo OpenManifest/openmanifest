@@ -70,7 +70,9 @@ export default function InspectionFormsScreen() {
   });
   useRefetchOnFocus(refetch, !operator?.id);
   const canEdit = useRestriction(Permission.UpdateFormTemplate);
-  const editor = useResourceEditor<EquipmentKindEssentialsFragment>({ nameOf: (kind) => kind.name });
+  const editor = useResourceEditor<EquipmentKindEssentialsFragment>({
+    nameOf: (kind) => kind.name,
+  });
 
   return (
     <ScreenContainer edges={['bottom']} testID="inspection-forms">
