@@ -18,7 +18,7 @@ import EquipmentScreen from 'app/features/setup/EquipmentScreen';
 import InspectionFormsScreen from 'app/features/setup/InspectionFormsScreen';
 import CrewRolesScreen from 'app/features/setup/CrewRolesScreen';
 import CertificationBodiesScreen from 'app/features/setup/CertificationBodiesScreen';
-import OperatorPermissionScreen from './permissions/PermissionsScreen';
+import PermissionsScreen from 'app/features/setup/PermissionsScreen';
 import OperatorDailyLogScreen from './daily_log/DailyLogScreen';
 import OperatorTransactionsScreen from './transactions/OperatorTransactionsScreen';
 
@@ -44,6 +44,16 @@ const Configuration = createStackNavigator<ConfigurationRoutes>();
 
 // Only those who may change the operator see its rules (a link to /configuration/rules says so to the others)
 const GuardedRulesScreen = guarded(RulesScreen, { permission: Permission.UpdateOperator });
+
+// The roles' permissions are shown to those who may read or change them
+const GuardedPermissionsScreen = guarded(PermissionsScreen, {
+  permission: [
+    Permission.ReadPermissions,
+    Permission.UpdatePermissions,
+    Permission.GrantPermission,
+    Permission.RevokePermission,
+  ],
+});
 
 export function useConfigurationNavigation() {
   return useNavigation<NavigationProp<ConfigurationRoutes>>();
@@ -124,8 +134,8 @@ export default function SettingsTab() {
         />
         <Configuration.Screen
           name="PermissionScreen"
-          component={OperatorPermissionScreen}
-          options={{ title: t('common:screens.permissions') }}
+          component={GuardedPermissionsScreen}
+          options={{ title: t('common:setupMenu.permissionsTitle') }}
         />
         <Configuration.Screen
           name="DailyLogScreen"

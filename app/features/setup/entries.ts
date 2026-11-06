@@ -213,7 +213,12 @@ export function entryOfRoute(
   return groups.flatMap((group) => group.entries).find((entry) => entry.route === route);
 }
 
+/** Setup screens that take the whole width on a wide window: the permission matrix needs a column for every role */
+export const SETUP_FULL_WIDTH_ROUTES: SetupRoute[] = ['PermissionScreen'];
+
 /** The screens of the Configuration stack that sit beside the Setup list on a wide window */
 export const SETUP_DETAIL_ROUTES: string[] = SETUP_GROUPS.flatMap((group) =>
   group.entries.map((entry) => entry.route)
-).filter((route) => route !== 'WeatherConditionsScreen');
+).filter(
+  (route) => route !== 'WeatherConditionsScreen' && !SETUP_FULL_WIDTH_ROUTES.includes(route)
+);

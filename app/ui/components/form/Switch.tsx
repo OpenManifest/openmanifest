@@ -12,6 +12,10 @@ const THUMB_INSET = 3;
 
 export type SwitchProps = FieldMessages & {
   label: string;
+  /** The name a screen reader gives the switch when the label alone says too little ("Pilot: Create loads") */
+  name?: string;
+  /** Shows only the track (a cell of a table whose row and column say what it is); `label` still names it */
+  hideLabel?: boolean;
   value?: boolean | null;
   onChange?(value: boolean): void;
   onBlur?(): void;
@@ -25,6 +29,8 @@ export type SwitchProps = FieldMessages & {
  */
 function Switch({
   label,
+  name,
+  hideLabel = false,
   value,
   onChange,
   onBlur,
@@ -42,7 +48,7 @@ function Switch({
     <View>
       <Tappable
         role="switch"
-        aria-label={label}
+        aria-label={name ?? label}
         aria-checked={on}
         aria-describedby={message ? messageId : undefined}
         aria-invalid={!!error}
@@ -55,7 +61,7 @@ function Switch({
         style={({ pressed, hovered }) => ({
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: hideLabel ? 'center' : 'space-between',
           gap: theme.space.md,
           minHeight: theme.density.row,
           paddingVertical: theme.space.sm,
@@ -63,9 +69,11 @@ function Switch({
           opacity: disabled ? 0.5 : 1,
         })}
       >
-        <View style={{ flexShrink: 1 }}>
-          <Text>{label}</Text>
-        </View>
+        {hideLabel ? null : (
+          <View style={{ flexShrink: 1 }}>
+            <Text>{label}</Text>
+          </View>
+        )}
         {/* The row is the control: the track and thumb are only its picture (no native input inside a control) */}
         <View
           aria-hidden
