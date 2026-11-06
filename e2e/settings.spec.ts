@@ -48,7 +48,8 @@ test.describe('settings @setup', () => {
   test('the ticket types show where they go', async ({ page }) => {
     await gotoRoute(page, '/configuration/ticket-types');
 
-    await expect(page.getByText('Altitude', { exact: true })).toBeVisible();
+    // Each row of the list labels where its ticket goes (U5.5; the old table had one column header)
+    await expect(page.getByText('Altitude', { exact: true }).first()).toBeVisible();
     await expect(page.getByText('14k').first()).toBeVisible();
   });
 
