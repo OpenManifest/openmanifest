@@ -1,7 +1,8 @@
 import { format } from 'date-fns';
 import * as React from 'react';
-import { List, Modal } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 import { DatePickerModal, DatePickerModalSingleProps } from 'react-native-paper-dates';
+import { Icon, ListRow } from 'app/ui';
 
 interface IDatepicker extends Omit<
   DatePickerModalSingleProps,
@@ -10,11 +11,15 @@ interface IDatepicker extends Omit<
   label?: string;
   value: number;
   disabled?: boolean;
+  /** Ignored: the icon has the colour of the theme */
   color?: string;
   onChange(timestamp: number): void;
 }
+
+/** A row that shows the date (or the label over it) and opens the date picker when pressed */
 export default function DatePicker(props: IDatepicker) {
-  const { disabled, label, value, onChange, color, ...datePickerProps } = props;
+  const { disabled, label, value, onChange, color: _color, ...datePickerProps } = props;
+  const { t } = useTranslation('common');
   const [open, setOpen] = React.useState(false);
 
   const onDismissSingle = React.useCallback(() => {
@@ -29,19 +34,20 @@ export default function DatePicker(props: IDatepicker) {
     [setOpen, onChange]
   );
 
-  const timestampLabel = value ? format(value * 1000, 'yyyy/MM/dd') : 'No date selected';
+  const timestampLabel = value ? format(value * 1000, 'yyyy/MM/dd') : t('picker.noDate');
 
   return (
     <>
-      <List.Item
+      <ListRow
         title={label || timestampLabel}
+        supporting={label ? timestampLabel : undefined}
         disabled={!!disabled}
-        description={!label ? null : timestampLabel}
-        left={() => <List.Icon color={color} icon="calendar" />}
+        leading={<Icon name="calendar" tone="muted" />}
         onPress={() => setOpen(true)}
       />
 
-      <Modal visible={open}>
+      {/* Not mounted while closed: the modal needs the Paper theme only when it shows */}
+      {open ? (
         <DatePickerModal
           locale="en"
           visible={open}
@@ -52,7 +58,7 @@ export default function DatePicker(props: IDatepicker) {
           label={label}
           {...datePickerProps}
         />
-      </Modal>
+      ) : null}
     </>
   );
 }

@@ -5,7 +5,9 @@ import { RotationGestureHandler } from 'react-native-gesture-handler';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { mapDegreesToDirections } from '../../../utils/mapDegreesToDirection';
 import { calculateLatLngDelta } from '../../../utils/calculateLatLngDelta';
+import { useTheme } from 'app/ui';
 import useJumpRunRotation from './useJumpRunRotation';
+import useJumpRunStyles from './useJumpRunStyles';
 
 interface IJumpRunSelectorProps {
   title?: string;
@@ -16,8 +18,10 @@ interface IJumpRunSelectorProps {
 }
 
 export default function JumpRunSelector(props: IJumpRunSelectorProps) {
+  const theme = useTheme();
+  const styles = useJumpRunStyles('native');
   const { latitude, longitude, value, onChange } = props;
-  const { guide, isDragging, jumpRun, layout, plane, rotation } = useJumpRunRotation(value);
+  const { guide, isDragging, jumpRun, layout, vehicle, rotation } = useJumpRunRotation(value);
   const { height: MAP_HEIGHT, width: MAP_WIDTH } = layout.dimensions;
   const CENTER_Y = layout.dimensions.height / 2;
   const CENTER_X = layout.dimensions.width / 2;
@@ -25,7 +29,6 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
 
   React.useEffect(() => {
     if (!isDragging && jumpRun !== value) {
-      console.debug('Updating jumprun to', jumpRun);
       onChange?.(jumpRun);
     }
   }, [jumpRun, isDragging, onChange, value]);
@@ -59,8 +62,8 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
             style={{
               height: hypothenuse,
               width: isDragging ? 2 : 10,
-              backgroundColor: '#FF1414',
-              opacity: plane.opacity.interpolate({
+              backgroundColor: theme.colour.map.guide,
+              opacity: vehicle.opacity.interpolate({
                 inputRange: [0, 1],
                 outputRange: [0.6, 1],
               }),
@@ -84,7 +87,7 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  opacity: plane.position.interpolate({
+                  opacity: vehicle.position.interpolate({
                     inputRange: [-hypothenuse / 2, 0, hypothenuse / 2],
                     outputRange: [0.0, 1.0, 0.0],
                   }),
@@ -96,20 +99,20 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
                       }),
                     },
                     {
-                      translateY: plane.position,
+                      translateY: vehicle.position,
                     },
                   ],
                 },
               ]}
             >
-              <MaterialCommunityIcons name="airplane" size={40} color="#ffffff" />
+              <MaterialCommunityIcons name="airplane" size={40} color={theme.colour.map.text} />
             </Animated.View>
           )}
           <Animated.Text
             style={[
               styles.degreeLabel,
               {
-                opacity: plane.opacity,
+                opacity: vehicle.opacity,
                 top: CENTER_Y - 75,
                 left: CENTER_X - 100,
               },
@@ -123,77 +126,16 @@ export default function JumpRunSelector(props: IJumpRunSelectorProps) {
           style={[
             styles.bottomDegreeLabel,
             {
-              opacity: plane.opacity.interpolate({
+              opacity: vehicle.opacity.interpolate({
                 inputRange: [0, 1],
                 outputRange: [1, 0],
               }),
             },
           ]}
         >
-          {Math.round(jumpRun)}&deg; ({mapDegreesToDirections(jumpRun)})
+          {`${Math.round(jumpRun)}° (${mapDegreesToDirections(jumpRun)})`}
         </Animated.Text>
       </View>
     </RotationGestureHandler>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 0,
-    alignItems: 'center',
-    paddingLeft: 0,
-    paddingRight: 0,
-  },
-  title: {
-    fontSize: 50,
-    fontWeight: 'bold',
-    color: 'white',
-    left: 0,
-    width: '100%',
-    paddingBottom: 40,
-    textAlign: 'center',
-    textShadowColor: 'rgba(15, 15, 15, 0.5)',
-    textShadowRadius: 10,
-    textShadowOffset: {
-      width: 2,
-      height: 2,
-    },
-  },
-  degreeLabel: {
-    width: 200,
-    height: 120,
-    left: 0,
-    top: '50%',
-    textAlign: 'center',
-    textShadowColor: 'rgba(15, 15, 15, 0.5)',
-    textShadowRadius: 10,
-    textShadowOffset: {
-      width: 2,
-      height: 2,
-    },
-    fontSize: 100,
-    color: 'white',
-    position: 'absolute',
-  },
-  bottomDegreeLabel: {
-    fontSize: 50,
-    fontWeight: 'bold',
-    color: 'white',
-    position: 'absolute',
-    top: 100,
-    left: 0,
-    width: '100%',
-    textAlign: 'center',
-    textShadowColor: 'rgba(15, 15, 15, 0.5)',
-    textShadowRadius: 10,
-    textShadowOffset: {
-      width: 2,
-      height: 2,
-    },
-  },
-
-  content: {
-    width: '100%',
-    flexDirection: 'column',
-  },
-});
