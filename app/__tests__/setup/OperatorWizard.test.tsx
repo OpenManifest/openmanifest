@@ -75,17 +75,17 @@ describe('<OperatorWizard />', () => {
 
     await fireEvent.press(screen.getAllByText('Next')[0]);
 
-    await waitFor(() => expect(screen.getByText('Your dropzone must have a name')).toBeTruthy());
+    await waitFor(() => expect(screen.getByText('Your operator must have a name')).toBeTruthy());
   });
 
   it('clears the error as the name is typed, then asks for an organization on the next step', async () => {
     const screen = await renderWizard();
 
     await fireEvent.press(screen.getAllByText('Next')[0]);
-    await waitFor(() => expect(screen.getByText('Your dropzone must have a name')).toBeTruthy());
+    await waitFor(() => expect(screen.getByText('Your operator must have a name')).toBeTruthy());
 
     await fireEvent.changeText(textInputs(screen.container)[0], 'Skydive Alpha');
-    await waitFor(() => expect(screen.queryByText('Your dropzone must have a name')).toBeNull());
+    await waitFor(() => expect(screen.queryByText('Your operator must have a name')).toBeNull());
     expect(screen.getByDisplayValue('Skydive Alpha')).toBeTruthy();
 
     // Next on the name step, then Next on the affiliation step
@@ -94,7 +94,7 @@ describe('<OperatorWizard />', () => {
     await fireEvent.press(screen.getAllByText('Next')[1]);
 
     await waitFor(() =>
-      expect(screen.getByText('Your dropzone must accept at least one organization')).toBeTruthy()
+      expect(screen.getByText('Your operator must accept at least one organization')).toBeTruthy()
     );
   });
 

@@ -46,7 +46,7 @@ describe('<OperatorsScreen />', () => {
     await waitFor(() => {
       expect(screen.getByText('Alpha')).toBeTruthy();
     });
-    expect(screen.getByText('Skydive')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Skydive Jest' })).toBeTruthy();
   });
 
   it('stores the dropzone when a card is pressed', async () => {
@@ -120,7 +120,7 @@ describe('<OperatorsScreen />', () => {
     const screen = await renderScreen([]);
 
     await waitFor(() => {
-      expect(screen.getByText('No dropzones?')).toBeTruthy();
+      expect(screen.getByText('No operators yet')).toBeTruthy();
     });
   });
 });

@@ -3,6 +3,7 @@ import { useForm, UseFormReturn, useFormContext } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import type { CertificationBodyEssentialsFragment } from 'app/api/operations';
+import i18n from 'app/i18n';
 
 export type OperatorWizardFields = {
   /** Set once the operator has been created, so going back and forward updates it instead */
@@ -28,17 +29,23 @@ export const EMPTY_WIZARD_VALUES: OperatorWizardFields = {
   banner: '',
 };
 
+/** "operator" in the words of the generic template (no operator is selected while one is set up) */
+const operatorTerm = () => i18n.t('terms:operator').toLowerCase();
+
 export const operatorWizardValidation = yup.object({
   id: yup.string().nullable().default(null),
-  name: yup.string().trim().required('Your dropzone must have a name'),
+  name: yup
+    .string()
+    .trim()
+    .required(() => i18n.t('operatorWizard.nameRequired', { operator: operatorTerm() })),
   certificationBodies: yup
     .array()
     .of(yup.object())
-    .min(1, 'Your dropzone must accept at least one organization')
-    .required('Your dropzone must accept at least one organization'),
+    .min(1, () => i18n.t('operatorWizard.affiliationRequired', { operator: operatorTerm() }))
+    .required(() => i18n.t('operatorWizard.affiliationRequired', { operator: operatorTerm() })),
   lat: yup.number().nullable().default(null),
   lng: yup.number().nullable().default(null),
-  primaryColor: yup.string().required('Please pick a primary color'),
+  primaryColor: yup.string().required(() => i18n.t('operatorWizard.colourRequired')),
   secondaryColor: yup.string().default(''),
   banner: yup.string().default(''),
 });

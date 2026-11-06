@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FormProvider } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { Wizard } from 'app/components/carousel_wizard';
 import type { WizardRef } from 'app/components/carousel_wizard/Wizard';
 import useMutationCreateOperator from 'app/api/hooks/useMutationCreateOperator';
@@ -30,7 +31,9 @@ const STEP_OF_FIELD: Partial<Record<keyof OperatorWizardFields, number>> = {
   banner: 4,
 };
 
+/** Sets up a new operator: name, affiliation, location, brand colour, logo, who may manifest, done */
 function OperatorSetupScreen() {
+  const { t } = useTranslation('common');
   const form = useOperatorWizardForm();
   const { getValues, setValue, setError, trigger } = form;
   const selectOperator = useSelectOperator();
@@ -155,8 +158,10 @@ function OperatorSetupScreen() {
               <PermissionStep
                 {...stepProps}
                 permission={Permission.CreateSlot}
-                title="Manifest"
-                description="Who can manifest themselves on loads?"
+                title={t('operatorWizard.selfManifestTitle')}
+                description={t('operatorWizard.selfManifest', {
+                  loads: t('terms:load', { count: 2 }).toLowerCase(),
+                })}
               />
             ),
           },
@@ -164,9 +169,11 @@ function OperatorSetupScreen() {
             component: (stepProps) => (
               <PermissionStep
                 {...stepProps}
-                description="Who can manifest other people on loads?"
+                description={t('operatorWizard.manifestOthers', {
+                  loads: t('terms:load', { count: 2 }).toLowerCase(),
+                })}
                 permission={Permission.CreateUserSlot}
-                title="Manifest others"
+                title={t('operatorWizard.manifestOthersTitle')}
               />
             ),
           },

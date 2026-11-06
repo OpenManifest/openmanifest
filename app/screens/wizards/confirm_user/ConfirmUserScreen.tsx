@@ -1,23 +1,27 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
-import { Avatar } from 'react-native-paper';
-import { successColor, warningColor } from '../../../constants/Colors';
-import LottieView from '../../../components/LottieView';
+import { ActivityIndicator, View } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import ScreenContainer from 'app/components/layout/ScreenContainer';
+import { Icon, Text, useTheme } from 'app/ui';
 import { useConfirmUserMutation } from '../../../api/reflection';
 import { useSession } from '../../../state';
 
+/** Opened from the link in the confirmation email: confirms the account with the link's token and signs the user in */
 function ConfirmUserScreen() {
+  const { t } = useTranslation('common');
+  const theme = useTheme();
   const route = useRoute<{
     key: string;
     name: string;
-
     params?: { token?: string };
   }>();
   const setCredentials = useSession((session) => session.setCredentials);
-  const [confirmUser, mutation] = useConfirmUserMutation();
-  const animation = React.useRef<LottieView>(null);
-  const [error, setError] = React.useState(false);
+  const [confirmUser] = useConfirmUserMutation();
+  // Without a token (the link was cut short) there is nothing to confirm
+  const [status, setStatus] = React.useState<'confirming' | 'confirmed' | 'failed'>(
+    route?.params?.token ? 'confirming' : 'failed'
+  );
   const navigation = useNavigation();
 
   React.useEffect(() => {
@@ -27,79 +31,72 @@ function ConfirmUserScreen() {
           token: route.params.token,
         },
       })
-        .then(({ data, errors }) => {
+        .then(({ data }) => {
           if (data?.userConfirmRegistrationWithToken?.credentials?.accessToken) {
             setCredentials(data.userConfirmRegistrationWithToken.credentials);
+            setStatus('confirmed');
             navigation.navigate('Limbo', { screen: 'OperatorSelectScreen' });
           } else {
-            setError(true);
+            setStatus('failed');
           }
         })
         .catch(() => {
-          setError(true);
+          setStatus('failed');
         });
     }
   }, [confirmUser, navigation, route.params?.token, setCredentials]);
 
-  if (mutation.loading) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>OpenManifest</Text>
-        <LottieView
-          autoPlay
-          loop
-          ref={animation}
-          style={{
-            width: 120,
-            height: 120,
-            marginTop: 24,
-            marginBottom: 32,
-          }}
-          source={require('../../../../assets/images/loading.json')}
-        />
-        <Text style={styles.subtitle}>Confirming...</Text>
-      </View>
+  let content: React.ReactNode;
+  if (status === 'confirming') {
+    content = (
+      <>
+        <ActivityIndicator color={theme.colour.brand} aria-label={t('auth.confirming')} />
+        <Text variant="title" role="heading" aria-level={1} align="center">
+          {t('auth.confirming')}
+        </Text>
+      </>
+    );
+  } else if (status === 'failed') {
+    content = (
+      <>
+        <Icon name="close-circle-outline" size={56} tone="blocked" />
+        <Text variant="title" role="heading" aria-level={1} align="center">
+          {t('auth.confirmFailed')}
+        </Text>
+        <Text tone="muted" align="center">
+          {t('auth.confirmFailedBody')}
+        </Text>
+      </>
+    );
+  } else {
+    content = (
+      <>
+        <Icon name="check-circle-outline" size={56} tone="ok" />
+        <Text variant="title" role="heading" aria-level={1} align="center">
+          {t('auth.confirmed')}
+        </Text>
+        <Text tone="muted" align="center">
+          {t('auth.confirmedBody')}
+        </Text>
+      </>
     );
   }
 
-  return !error ? (
-    <View style={styles.container}>
-      <Avatar.Icon icon="check" style={styles.icon} />
-      <Text style={styles.title}>All done!</Text>
-      <Text style={styles.subtitle}>You can now log in</Text>
-    </View>
-  ) : (
-    <View style={styles.container}>
-      <Avatar.Icon icon="close" style={styles.errorIcon} />
-      <Text style={styles.title}>Oops!</Text>
-      <Text style={styles.subtitle}>Something went wrong.</Text>
-    </View>
+  return (
+    <ScreenContainer>
+      <View
+        style={{
+          flexGrow: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: theme.space.md,
+          padding: theme.space.xl,
+        }}
+      >
+        {content}
+      </View>
+    </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: '#EFEFEF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  icon: {
-    backgroundColor: successColor,
-    marginBottom: 16,
-  },
-  errorIcon: {
-    backgroundColor: warningColor,
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 38,
-    marginBottom: 16,
-  },
-  subtitle: {
-    fontSize: 26,
-    textAlign: 'center',
-  },
-});
 
 export default ConfirmUserScreen;

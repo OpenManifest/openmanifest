@@ -1,17 +1,36 @@
 import * as React from 'react';
 import { useWatch } from 'react-hook-form';
-import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, StyleSheet } from 'react-native';
 import MapView, { Region, Marker, MapMarker } from 'react-native-maps';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-
 import * as Location from 'expo-location';
+import { useTranslation } from 'react-i18next';
 import { Step, IWizardStepProps } from 'app/components/carousel_wizard';
-import { useOperatorWizardFields } from '../useOperatorWizardForm';
 import { calculateLatLngDelta } from 'app/utils/calculateLatLngDelta';
+import { useOperatorWizardFields } from '../useOperatorWizardForm';
+import { CentreMarker, MapControls } from './MapOverlay';
 
+const FADE_MS = 100;
+
+/** Where the operator is: a satellite map with a pin, starting at the device's location */
 function LocationWizardStep(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   const { control, setField } = useOperatorWizardFields();
   const [name, lat, lng] = useWatch({ control, name: ['name', 'lat', 'lng'] });
+  const map = React.useRef<MapView>(null);
+
+  const region = React.useMemo(
+    () =>
+      lat && lng
+        ? {
+            latitude: lat,
+            longitude: lng,
+            latitudeDelta: calculateLatLngDelta(lat),
+            longitudeDelta: calculateLatLngDelta(lat),
+          }
+        : undefined,
+    [lat, lng]
+  );
+  const [internalRegion, setInternalRegion] = React.useState<Region | undefined>(region);
 
   const setUsersLocation = React.useCallback(async () => {
     try {
@@ -31,21 +50,10 @@ function LocationWizardStep(props: IWizardStepProps) {
         longitudeDelta: calculateLatLngDelta(location.coords.latitude),
       });
       map.current?.animateCamera({ center: location.coords });
-    } catch {}
+    } catch {
+      // No location: the map stays where it is
+    }
   }, [setField]);
-
-  const region = React.useMemo(
-    () =>
-      lat && lng
-        ? {
-            latitude: lat,
-            longitude: lng,
-            latitudeDelta: calculateLatLngDelta(lat),
-            longitudeDelta: calculateLatLngDelta(lat),
-          }
-        : undefined,
-    [lat, lng]
-  );
 
   // Start at user location
   React.useEffect(() => {
@@ -54,57 +62,47 @@ function LocationWizardStep(props: IWizardStepProps) {
     }
   }, [region, setUsersLocation]);
 
-  const opacity = React.useRef(new Animated.Value(0));
-
-  const map = React.useRef<MapView>(undefined);
-
+  const [opacity] = React.useState(() => new Animated.Value(0));
   const [isAnimating, setAnimating] = React.useState<boolean>(false);
-  const fadeOut = React.useRef(
-    Animated.timing(opacity.current, {
-      duration: 100,
-      toValue: 0.0,
-      useNativeDriver: true,
-    })
+  const fades = React.useMemo(
+    () => ({
+      in: Animated.timing(opacity, { duration: FADE_MS, toValue: 1.0, useNativeDriver: true }),
+      out: Animated.timing(opacity, { duration: FADE_MS, toValue: 0.0, useNativeDriver: true }),
+    }),
+    [opacity]
   );
-  const fadeIn = React.useRef(
-    Animated.timing(opacity.current, {
-      duration: 100,
-      toValue: 1.0,
-      useNativeDriver: true,
-    })
+  const setCoordinateFade = React.useCallback(
+    (visible: boolean) => {
+      setAnimating(true);
+      (visible ? fades.in : fades.out).start(() => setAnimating(false));
+    },
+    [fades]
   );
-  const setCoordinateFade = React.useCallback((visible: boolean) => {
-    setAnimating(true);
-    (visible ? fadeIn : fadeOut).current.start(() => setAnimating(false));
-  }, []);
 
   const markerRef = React.useRef<MapMarker>(null);
   const [isDragging, setDragging] = React.useState<boolean>(false);
-  const [internalRegion, setInternalRegion] = React.useState<Region | undefined>(region);
 
   return (
-    <Step {...props} title="Location">
+    <Step {...props} title={t('operatorWizard.locationTitle')}>
       <MapView
-        // @ts-ignore
         ref={map}
         style={StyleSheet.absoluteFill}
         initialRegion={region}
         onTouchStart={() => {
           markerRef.current?.hideCallout();
         }}
-        onRegionChange={(_region) => {
+        onRegionChange={(changed) => {
           if (!isAnimating) {
             setCoordinateFade(false);
             setDragging(true);
           }
-          setInternalRegion(_region);
+          setInternalRegion(changed);
         }}
         onRegionChangeComplete={(r) => {
-          fadeOut.current?.stop();
-          fadeIn.current?.stop();
+          fades.out.stop();
+          fades.in.stop();
           setDragging(false);
           setAnimating(false);
-          setCoordinateFade(true);
           setCoordinateFade(true);
           setField('lat', r.latitude);
           setField('lng', r.longitude);
@@ -116,123 +114,18 @@ function LocationWizardStep(props: IWizardStepProps) {
       >
         {!internalRegion ? null : (
           <Marker title={name || undefined} ref={markerRef} flat coordinate={internalRegion}>
-            <MaterialCommunityIcons
-              pointerEvents="none"
-              size={60}
-              style={{
-                color: '#ffffff',
-                textShadowColor: 'rgba(14,14,14,0.8)',
-                textShadowOffset: {
-                  width: 5,
-                  height: 5,
-                },
-                textShadowRadius: 10,
-                zIndex: 10,
-              }}
-              name={isDragging ? 'map-marker' : 'map-marker-check-outline'}
-            />
+            <CentreMarker dragging={isDragging} />
           </Marker>
         )}
       </MapView>
-      <TouchableOpacity
-        style={styles.myLocation}
-        onPress={() => {
-          setUsersLocation();
-        }}
-      >
-        <MaterialIcons name="my-location" size={30} />
-      </TouchableOpacity>
-
-      <View style={styles.titleContainer}>
-        {/* <AddressSearchBar
-          value={searchText}
-          onChange={setSearchText}
-          autocomplete
-          onSelect={(item) => {
-            setField('lat', item.latitude);
-            setField('lng', item.longitude);
-            map.current?.animateCamera({ center: item });
-          }}
-        /> */}
-        <Animated.Text
-          style={{
-            fontSize: 24,
-            marginTop: 20,
-            opacity: opacity.current,
-            textAlign: 'center',
-            color: '#ffffff',
-            textShadowColor: 'rgba(14,14,14,0.8)',
-            textShadowOffset: {
-              width: 3,
-              height: 3,
-            },
-            textShadowRadius: 10,
-          }}
-        >
-          {!region?.latitude || !region?.longitude ? null : (
-            <>
-              {region?.latitude?.toFixed(5)},{region?.longitude?.toFixed(5)}
-            </>
-          )}
-        </Animated.Text>
-      </View>
+      <MapControls
+        latitude={region?.latitude}
+        longitude={region?.longitude}
+        opacity={opacity}
+        onMyLocation={setUsersLocation}
+      />
     </Step>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 48,
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-  },
-  titleContainer: {
-    position: 'absolute',
-    top: 32,
-    left: 0,
-    width: '100%',
-    paddingHorizontal: 16,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'center',
-    textShadowColor: 'rgba(15, 15, 15, 0.5)',
-    textShadowRadius: 10,
-    textShadowOffset: {
-      width: 2,
-      height: 2,
-    },
-  },
-  markerFixed: {
-    ...StyleSheet.absoluteFill,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
-  content: {
-    width: '100%',
-    justifyContent: 'space-around',
-    flexDirection: 'column',
-  },
-  card: {
-    padding: 0,
-    paddingVertical: 16,
-    marginVertical: 16,
-    width: '100%',
-  },
-  myLocation: {
-    position: 'absolute',
-    bottom: '30%',
-    right: 30,
-    backgroundColor: 'white',
-    borderRadius: 50,
-    padding: 12,
-  },
-});
 
 export default LocationWizardStep;

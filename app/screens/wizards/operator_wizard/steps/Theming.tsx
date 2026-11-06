@@ -1,36 +1,43 @@
 import * as React from 'react';
 import { useController } from 'react-hook-form';
 import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Step, Fields, IWizardStepProps } from 'app/components/carousel_wizard';
-import { useOperatorWizardFields } from '../useOperatorWizardForm';
 import { PhonePreview, WebPreview } from 'app/components/theme_preview';
 import ColorPicker from 'app/components/input/colorpicker';
+import { DEFAULT_BRAND, useTheme } from 'app/ui';
+import { useOperatorWizardFields } from '../useOperatorWizardForm';
 
 function ThemingStep(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
+  const theme = useTheme();
   const { control, setField } = useOperatorWizardFields();
   const { field, fieldState } = useController({ name: 'primaryColor', control });
+  const colour = field.value || DEFAULT_BRAND;
 
   return (
-    <Step {...props} title="Branding">
+    <Step {...props} title={t('operatorWizard.brandingTitle')}>
       <Fields>
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'flex-end',
             justifyContent: 'space-evenly',
+            marginBottom: theme.space.lg,
           }}
+          aria-hidden
+          importantForAccessibility="no-hide-descendants"
         >
-          <PhonePreview primaryColor={field.value || '#000000'} />
-
-          <WebPreview primaryColor={field.value || '#000000'} />
+          <PhonePreview primaryColor={colour} />
+          <WebPreview primaryColor={colour} />
         </View>
 
         <ColorPicker
-          title="Brand color"
-          helperText="This color is used for active elements and calls to action"
+          title={t('operatorWizard.brandColour')}
+          helperText={t('operatorWizard.brandColourHelp')}
           error={fieldState.error?.message}
-          onChange={(color) => setField('primaryColor', color)}
-          value={field.value || '#000000'}
+          onChange={(value) => setField('primaryColor', value)}
+          value={field.value}
         />
       </Fields>
     </Step>

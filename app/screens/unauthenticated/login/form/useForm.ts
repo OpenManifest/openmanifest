@@ -5,6 +5,7 @@ import { useSession } from 'app/state';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
+import i18n from 'app/i18n';
 import { useLoginWithApple } from './AppleButton';
 
 export interface LoginFields {
@@ -13,8 +14,11 @@ export interface LoginFields {
 }
 
 export const validate = yup.object({
-  email: yup.string().required('Email is required').email('This is not a valid email'),
-  password: yup.string().required('Password is required'),
+  email: yup
+    .string()
+    .required(() => i18n.t('auth.emailRequired'))
+    .email(() => i18n.t('auth.emailInvalid')),
+  password: yup.string().required(() => i18n.t('auth.passwordRequired')),
 });
 
 const EMPTY_FORM_VALUES: LoginFields = {
@@ -30,7 +34,6 @@ export default function useLoginForm() {
     resolver: yupResolver(validate),
   });
   const { handleSubmit } = methods;
-  const [loading, setLoading] = React.useState(false);
   const [mutationLogin, data] = useLoginMutation();
   const [loginWithApple, loginWithAppleMutation] = useLoginWithApple();
 
