@@ -8,11 +8,15 @@ import { expect, gotoRoute, test } from './support/test';
 // item's form (a sheet on a phone, a side panel on a wide window); each spec creates an item, edits it and archives it
 // again, so the seed is left as it was.
 
-/** Opens a form with `trigger` and returns it, found by its title */
+/**
+ * Opens a form with `trigger` and returns it. The form is named by its title; its content (`form-dialog`) is what shows
+ * (the element with the dialog role on the web has no box of its own).
+ */
 async function openForm(page: Page, trigger: Locator, title: string | RegExp) {
-  const form = page.getByRole('dialog', { name: title });
+  const form = page.getByTestId('form-dialog');
   await trigger.scrollIntoViewIfNeeded();
   await pressUntil(page, trigger, () => expect(form).toBeVisible({ timeout: 5000 }));
+  await expect(page.getByRole('dialog', { name: title })).toHaveCount(1);
   return form;
 }
 
@@ -89,7 +93,11 @@ test.describe('setup lists @setup', () => {
   test('a ticket type is added, repriced and archived', async ({ page }) => {
     const name = `E2E Ticket ${stamp()}`;
     await gotoRoute(page, '/configuration/ticket-types');
-    let form = await openForm(page, page.getByTestId('new-ticket-type-primary-action'), 'New ticket');
+    let form = await openForm(
+      page,
+      page.getByTestId('new-ticket-type-primary-action'),
+      'New ticket'
+    );
     await form.getByRole('textbox', { name: 'Name' }).fill(name);
     await form.getByRole('spinbutton', { name: 'Price' }).fill('25');
     // Where the ticket goes is chosen from the operator's destinations
@@ -135,7 +143,11 @@ test.describe('setup lists @setup', () => {
     const name = `E2E Camera ${stamp()}`;
     await gotoRoute(page, '/configuration/crew-roles');
     await expect(page.getByTestId('crew-role-pilot')).toBeVisible();
-    let form = await openForm(page, page.getByTestId('new-crew-role-primary-action'), 'New crew role');
+    let form = await openForm(
+      page,
+      page.getByTestId('new-crew-role-primary-action'),
+      'New crew role'
+    );
     await form.getByRole('textbox', { name: 'Name' }).fill(name);
     await save(form);
     const row = page.getByRole('button', { name, exact: true });
@@ -178,7 +190,7 @@ test.describe('setup lists @setup', () => {
     let form = await openRow(page, 'Rig', 'Rig inspection form');
     await form.getByRole('button', { name: 'Add a field' }).click();
     await page.getByRole('menuitem', { name: 'Checkbox' }).click();
-    const field = page.getByRole('dialog', { name: 'New field' });
+    const field = page.getByTestId('field-dialog');
     await field.getByRole('textbox', { name: 'Name' }).fill(label);
     await field.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(field).toBeHidden();

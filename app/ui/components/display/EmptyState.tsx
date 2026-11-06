@@ -11,7 +11,7 @@ export type EmptyStateProps = {
   body?: string;
   icon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
   /** The next step */
-  action?: { label: string; onPress(): void };
+  action?: { label: string; onPress(): void; testID?: string };
   testID?: string;
 };
 
@@ -45,7 +45,7 @@ export default function EmptyState({ title, body, icon, action, testID }: EmptyS
       ) : null}
       {action ? (
         <View style={{ paddingTop: theme.space.md }}>
-          <Button label={action.label} onPress={action.onPress} />
+          <Button label={action.label} onPress={action.onPress} testID={action.testID} />
         </View>
       ) : null}
     </View>

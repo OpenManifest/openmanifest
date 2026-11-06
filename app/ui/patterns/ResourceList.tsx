@@ -117,7 +117,7 @@ export default function ResourceList<T>({
           icon={empty.icon}
           title={empty.title}
           body={empty.body}
-          action={create ? { label: create.label, onPress: create.onPress } : undefined}
+          action={create}
         />
       ) : null}
       {items.length ? (
