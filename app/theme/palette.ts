@@ -5,7 +5,8 @@ import {
 } from '@react-navigation/native';
 import { MD2DarkTheme, MD2LightTheme, MD2Theme } from 'react-native-paper';
 import color from 'color';
-import { primaryColor } from 'app/constants/Colors';
+import { Platform } from 'react-native';
+import { createTheme } from 'app/ui/theme/theme';
 
 /**
  * One theme object serves react-native-paper (Material Design 2, so visuals stay close to Paper 4) and
@@ -25,53 +26,57 @@ export type AppPalette = Omit<AppTheme['colors'], 'primary' | 'accent'> & {
 };
 
 export type ThemeColors = {
-  /** Dropzone brand colours; the defaults apply when absent */
+  /** Operator brand colours; the defaults apply when absent */
   primary?: string | null;
   accent?: string | null;
 };
 
+/** System fonts on every platform: nothing is downloaded, weights come from `fontWeight`. */
+const systemFamily = Platform.select({
+  web: 'system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+  ios: 'System',
+  default: 'sans-serif',
+});
+
 const fonts: AppTheme['fonts'] = {
-  light: { fontFamily: 'Roboto_300Light', fontWeight: '300' },
-  thin: { fontFamily: 'Roboto_100Thin', fontWeight: '100' },
-  medium: { fontFamily: 'Roboto_500Medium', fontWeight: '500' },
-  regular: { fontFamily: 'Roboto_400Regular', fontWeight: '400' },
-  bold: { fontFamily: 'Roboto_700Bold', fontWeight: '700' },
-  heavy: { fontFamily: 'Roboto_700Bold', fontWeight: '700' },
+  light: { fontFamily: systemFamily, fontWeight: '300' },
+  thin: { fontFamily: systemFamily, fontWeight: '100' },
+  medium: { fontFamily: systemFamily, fontWeight: '500' },
+  regular: { fontFamily: systemFamily, fontWeight: '400' },
+  bold: { fontFamily: systemFamily, fontWeight: '700' },
+  heavy: { fontFamily: systemFamily, fontWeight: '800' },
 };
 
-const lightTheme: AppTheme = {
-  ...MD2LightTheme,
-  ...NavigationDefaultTheme,
-  fonts,
-  colors: {
-    ...MD2LightTheme.colors,
-    ...NavigationDefaultTheme.colors,
-    primary: primaryColor,
-  },
-};
-
-const darkTheme: AppTheme = {
-  ...MD2DarkTheme,
-  ...NavigationDarkTheme,
-  fonts,
-  colors: {
-    ...MD2DarkTheme.colors,
-    ...NavigationDarkTheme.colors,
-    primary: primaryColor,
-  },
-};
-
-export function createAppTheme(isDark: boolean, colors: ThemeColors = {}): AppTheme {
-  const base = isDark ? darkTheme : lightTheme;
+/** The MD2 and Navigation themes of a scheme, with their colours taken from the design tokens */
+function themeFor(isDark: boolean, colors: ThemeColors): AppTheme {
+  const paper = isDark ? MD2DarkTheme : MD2LightTheme;
+  const navigation = isDark ? NavigationDarkTheme : NavigationDefaultTheme;
+  const { colour } = createTheme({ scheme: isDark ? 'dark' : 'light', brand: colors.primary });
 
   return {
-    ...base,
+    ...paper,
+    ...navigation,
+    fonts,
     colors: {
-      ...base.colors,
-      primary: colors.primary || base.colors.primary,
-      accent: colors.accent || base.colors.accent,
+      ...paper.colors,
+      ...navigation.colors,
+      primary: colour.brand,
+      accent: colors.accent || paper.colors.accent,
+      background: colour.app,
+      surface: colour.surface,
+      card: colour.surface,
+      border: colour.border,
+      text: colour.text,
+      onSurface: colour.text,
+      placeholder: colour.textMuted,
+      disabled: color(colour.text).alpha(0.38).rgb().string(),
+      error: colour.status.blocked.fg,
     },
   };
+}
+
+export function createAppTheme(isDark: boolean, colors: ThemeColors = {}): AppTheme {
+  return themeFor(isDark, colors);
 }
 
 function shades(main: string): Shades {

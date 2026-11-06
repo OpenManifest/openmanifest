@@ -1,51 +1,17 @@
 import * as React from 'react';
-import SkeletonContent from 'app/components/Skeleton';
+import { Skeleton, Stack } from 'app/ui';
 
-interface IChipSelectSkeletonLoadingProps {
+interface ICardSelectSkeletonLoadingProps {
   rows?: number;
 }
-export default function ChipSelectSkeleton(props: IChipSelectSkeletonLoadingProps) {
-  const { rows } = props;
+
+/** What a list of cards looks like while it loads: `rows` cards (three by default) */
+export default function CardSelectSkeleton({ rows = 3 }: ICardSelectSkeletonLoadingProps) {
   return (
-    <SkeletonContent
-      isLoading
-      containerStyle={{
-        height: 15 + 13 + 13 + (rows || 1) * 32,
-        width: 300,
-        justifyContent: 'center',
-        marginBottom: 16,
-      }}
-      layout={[
-        {
-          key: 'header',
-          width: 70,
-          height: 15,
-          borderRadius: 8,
-          marginVertical: 13,
-          marginHorizontal: 8,
-        },
-        {
-          key: 'chips',
-          flexDirection: 'row',
-          children: [
-            {
-              key: 'chip1',
-              width: 96,
-              height: 32,
-              borderRadius: 16,
-              marginRight: 4,
-            },
-            {
-              key: 'chip2',
-              width: 96,
-              height: 32,
-              borderRadius: 16,
-              marginRight: 4,
-            },
-            { key: 'chip3', width: 96, height: 32, borderRadius: 16 },
-          ],
-        },
-      ]}
-    />
+    <Stack gap="sm">
+      {Array.from({ length: rows }, (_, row) => (
+        <Skeleton key={row} height={56} />
+      ))}
+    </Stack>
   );
 }

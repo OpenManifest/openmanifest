@@ -15,18 +15,12 @@ export function useAuthenticationLink() {
     };
   }, [credentials]);
 
-  console.debug('[Apollo::Link::Authentication]: Current: ', { authHeaders, credentials });
   return React.useMemo(() => {
     if (isEmpty(authHeaders)) {
-      console.debug('[Apollo::Link::Authentication]: No headers to set', authHeaders);
       return undefined;
     }
 
     return setContext((_, { headers }) => {
-      console.debug('[Apollo::Link::Authentication]: Headers: ', {
-        ...headers,
-        ...authHeaders,
-      });
       return {
         authHeaders,
         headers: {
