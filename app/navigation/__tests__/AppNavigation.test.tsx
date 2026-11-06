@@ -58,6 +58,7 @@ describe('barItems', () => {
       'people',
       'inbox',
       'money',
+      'reports',
       'platform',
     ]);
   });

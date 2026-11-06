@@ -4,8 +4,8 @@ import * as React from 'react';
 import { useSession } from 'app/state';
 import ScreenHeader from 'app/navigation/ScreenHeader';
 import { useTranslation } from 'react-i18next';
-import OverviewScreen from './AdminOverview';
-import DashboardScreen from './OperatorOverview';
+import PlatformScreen from 'app/features/reports/PlatformScreen';
+import ReportsScreen from 'app/features/reports/ReportsScreen';
 
 export type OverviewRoutes = {
   OverviewScreen: undefined;
@@ -32,13 +32,13 @@ export default function OverviewTab() {
     >
       <Overview.Screen
         name="DashboardScreen"
-        component={DashboardScreen}
-        options={{ title: t('screens.dashboard') }}
+        component={ReportsScreen}
+        options={{ title: t('destinations.reports') }}
       />
       <Overview.Screen
         name="OverviewScreen"
-        component={OverviewScreen}
-        options={{ title: t('screens.overview') }}
+        component={PlatformScreen}
+        options={{ title: t('destinations.platform') }}
       />
     </Overview.Navigator>
   );

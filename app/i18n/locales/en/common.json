@@ -1262,5 +1262,64 @@
       "negative": "Not below zero",
       "tooMany": "Too many heights"
     }
+  },
+  "reports": {
+    "range": {
+      "label": "Period",
+      "all": "All time",
+      "3": "3 months",
+      "6": "6 months",
+      "12": "12 months"
+    },
+    "turnaround": "Turnaround",
+    "revenue": "Revenue",
+    "dispatched": "{{loads}} flown",
+    "cancelled": "Cancelled",
+    "active": "Active",
+    "inactive": "Inactive",
+    "roles": {
+      "title": "Crew",
+      "pilots": "Pilots",
+      "groundControl": "Ground control",
+      "dutyOfficers": "Duty officers"
+    },
+    "loadsByMonth": "{{loads}} by month",
+    "byActivity": "{{slots}} by {{activity}}",
+    "noLoads": "No {{loads}} in this period",
+    "noSlots": "No {{slots}} in this period",
+    "bar": "{{label}}: {{count}}",
+    "events": {
+      "title": "What happened",
+      "kind": "Kind",
+      "level": "Level",
+      "empty": "Nothing happened in this period",
+      "system": "System",
+      "more": "Show older",
+      "access": {
+        "admin": "Admin",
+        "user": "Member",
+        "system": "System"
+      },
+      "levels": {
+        "info": "Info",
+        "debug": "Debug",
+        "error": "Error"
+      }
+    }
+  },
+  "platform": {
+    "noOperators": "No operators yet",
+    "operatorFacts": "Since {{created}} · {{count}} {{loads}} · {{active}} active",
+    "state": "State of {{name}}",
+    "states": {
+      "public": "Public",
+      "private": "Private",
+      "in_review": "In review",
+      "archived": "Archived",
+      "demo": "Demo"
+    },
+    "counted": "Counted",
+    "countedOf": "{{counted}} of {{total}}",
+    "stateChanged": "{{name}} changed"
   }
 }

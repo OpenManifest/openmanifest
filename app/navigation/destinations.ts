@@ -109,6 +109,8 @@ export const DESTINATIONS: Destination[] = [
     icon: 'chart-box-outline',
     labelKey: 'destinations.reports',
     permission: Permission.ViewStatistics,
+    path: '/dashboard',
+    routeNames: ['DashboardScreen'],
   },
   {
     key: 'setup',
