@@ -12,7 +12,11 @@ import { expect, gotoRoute, test } from './support/test';
 // compared above its list of loads, and times and dates are masked.
 const OPTIONS = { animations: 'disabled', maxDiffPixelRatio: 0.05, caret: 'hide' } as const;
 
-const dynamicText = (page: Page) => [page.getByText(/\b\d{1,2}:\d{2}\b|\b20\d{2}\b|\bLive \d+/)];
+const dynamicText = (page: Page) => [
+  page.getByText(/\b\d{1,2}:\d{2}\b|\b20\d{2}\b|\bLive \d+/),
+  // The day of the board's date pager ("Today, Friday 23 October")
+  page.getByText(/^Today, \w+ \d{1,2} \w+$/),
+];
 
 // Money changes with every booking the specs make and take back
 const money = (page: Page) => [page.getByText(/\$[\d,]+\.\d{2}/)];
@@ -58,12 +62,15 @@ test.describe('visual baselines @visual', () => {
     await openFirstLoad(page);
     const free = page.getByTestId('free-places').last();
     await expect(free).toHaveAttribute('role', 'button', { timeout: 20_000 });
-    await free.scrollIntoViewIfNeeded();
     const picker = page.getByTestId('member-picker');
-    for (let attempt = 0; attempt < 4 && !(await picker.isVisible()); attempt++) {
-      await press(page, free);
-      await picker.waitFor({ timeout: 5000 }).catch(() => undefined);
-    }
+    // The load screen can render again under the pointer: press until the picker is open
+    await expect(async () => {
+      if (!(await picker.isVisible())) {
+        await free.scrollIntoViewIfNeeded({ timeout: 4000 });
+        await press(page, free);
+      }
+      await expect(picker).toBeVisible({ timeout: 5000 });
+    }).toPass({ timeout: 60_000 });
     // One person, so the list does not change with the people the other specs add
     await picker.getByTestId('member-picker-search').fill('Pat Pilot');
     await expect(picker.getByTestId('picker-row')).toHaveCount(1, { timeout: 15_000 });
@@ -127,5 +134,37 @@ test.describe('visual baselines @visual', () => {
     await gotoRoute(page, '/configuration');
     await page.waitForTimeout(2500);
     await expect(page).toHaveScreenshot('settings.png', OPTIONS);
+  });
+
+  // People and the Rules page (U5): the list grows with the walk-ins the specs add, so it is searched down to one person;
+  // the count, money, the last jump and the reason (dates relative to today) are masked
+  test('people', async ({ page }) => {
+    await gotoRoute(page, '/users');
+    const rows = page.getByTestId('people-row');
+    await expect(rows.first()).toBeVisible({ timeout: 20_000 });
+    await page.getByTestId('people-search').fill('Pat Pilot');
+    await expect(rows).toHaveCount(1, { timeout: 15_000 });
+    await page.waitForTimeout(1000);
+    await expect(page).toHaveScreenshot('people.png', {
+      ...OPTIONS,
+      mask: [
+        ...dynamicText(page),
+        ...money(page),
+        page.getByTestId('people-count'),
+        page.locator('[data-testid$="-last"]'),
+        page.locator('[data-testid$="-reason"]'),
+      ],
+    });
+  });
+
+  test('rules', async ({ page }) => {
+    await gotoRoute(page, '/configuration/rules');
+    await expect(page.getByTestId('rules-modules')).toBeVisible({ timeout: 20_000 });
+    await page.waitForTimeout(1500);
+    // The @setup spec switches self-manifesting off and back on while it runs
+    await expect(page).toHaveScreenshot('rules.png', {
+      ...OPTIONS,
+      mask: [page.getByRole('switch', { name: 'Members can book themselves on loads' })],
+    });
   });
 });

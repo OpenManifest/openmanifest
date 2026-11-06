@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useApolloClient } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { DateTime } from 'luxon';
 import { useFinalizeLoadMutation, useUpdateLoadMutation } from 'app/api/reflection';
@@ -28,6 +29,7 @@ export function useLoadActions(
 ) {
   const { t } = useTranslation(['common', 'terms']);
   const notify = useNotifications();
+  const client = useApolloClient();
   const [updateLoad] = useUpdateLoadMutation();
   const [finalizeLoad] = useFinalizeLoadMutation();
   const [busy, setBusy] = React.useState(false);
@@ -81,12 +83,14 @@ export function useLoadActions(
         if (!data?.updateLoad?.load) return fail(t('common:board.actions.failed'));
         return { ok: true };
       } catch (e) {
-        return fail(
-          isConflict(e) ? t('common:board.actions.conflict') : t('common:board.actions.failed')
-        );
+        if (!isConflict(e)) return fail(t('common:board.actions.failed'));
+        // The load on screen is older than the server's (somebody else changed it, or an answer that left before the
+        // last change arrived after it): ask again, so the next press is based on the current version
+        client.refetchQueries({ include: ['Load', 'Loads'] }).catch(() => undefined);
+        return fail(t('common:board.actions.conflict'));
       }
     },
-    [fail, load.id, load.lockVersion, t, updateLoad]
+    [client, fail, load.id, load.lockVersion, t, updateLoad]
   );
 
   const finalize = React.useCallback(

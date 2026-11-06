@@ -46,6 +46,20 @@ function interactions(page: Page) {
   };
 }
 
+/**
+ * Scrolls the picker's list until the row is rendered: the list renders its rows in batches, and with large text (the
+ * text200 projects) a row further down is not in the page until the list is scrolled to it
+ */
+async function reveal(page: Page, picker: Locator, row: Locator) {
+  for (let attempt = 0; attempt < 15 && !(await row.count()); attempt++) {
+    const box = await picker.getByTestId('picker-row').last().boundingBox();
+    if (box) await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.wheel(0, 400);
+    await page.waitForTimeout(300);
+  }
+  await row.scrollIntoViewIfNeeded();
+}
+
 async function openPicker(page: Page, name: string) {
   const id = await createLoadViaApi(name);
   expect(id, 'could not create a load through the API').toBeTruthy();
@@ -97,8 +111,13 @@ test.describe('the member picker @picker', () => {
     // The reason is in words, with a way to put it right
     await expect(row.getByTestId('picker-row-fix')).toBeVisible();
 
-    await press(page, row.getByTestId('picker-row-select'));
-    await expect(picker.getByTestId('member-picker-add')).toBeDisabled();
+    // The list can load again under the pointer (the row is rebuilt): bring the row up and press until it holds
+    await expect(async () => {
+      const select = row.getByTestId('picker-row-select');
+      await select.scrollIntoViewIfNeeded({ timeout: 4000 });
+      await press(page, select);
+      await expect(picker.getByTestId('member-picker-add')).toBeDisabled({ timeout: 4000 });
+    }).toPass({ timeout: 40_000 });
     await expect(page.getByTestId('slot-row').filter({ hasText: name as string })).toHaveCount(0);
   });
 
@@ -119,6 +138,7 @@ test.describe('the member picker @picker', () => {
     );
     for (const name of names) {
       const row = picker.getByRole('button', { name, exact: true });
+      await reveal(page, picker, row);
       await user.tap(row, () =>
         expect(row).toHaveAttribute('aria-pressed', 'true', { timeout: 4000 })
       );
@@ -134,18 +154,16 @@ test.describe('the member picker @picker', () => {
     expect(user.count).toBeLessThanOrEqual(6);
   });
 
-  for (const { title, ticket, steps, escort, guests } of [
+  for (const { title, ticket, escort, guests } of [
     {
       title: 'a tandem takes one guest with its escort',
       ticket: 'Tandem',
-      steps: 1,
       escort: 'Pat Pilot',
       guests: ['Gus Guest'],
     },
     {
       title: 'a try dive takes three guests with its escort',
       ticket: 'Try dive',
-      steps: 2,
       escort: 'Stu Student',
       guests: ['Gia Guest', 'Gil Guest', 'Gwen Guest'],
     },
@@ -160,14 +178,22 @@ test.describe('the member picker @picker', () => {
       await interactions(page).open(free, () => expect(picker).toBeVisible({ timeout: 10_000 }));
 
       const row = picker.getByRole('button', { name: escort, exact: true });
-      await press(page, row);
-      await expect(picker.getByTestId('picker-choice-ticket')).toBeVisible();
+      // On a short phone the row can sit under the bottom edge, and the list can load again under the pointer: bring
+      // the row up and press until the choices show
+      await expect(async () => {
+        await reveal(page, picker, row);
+        await press(page, row);
+        await expect(picker.getByTestId('picker-choice-ticket')).toBeVisible({ timeout: 4000 });
+      }).toPass({ timeout: 40_000 });
       // The ticket is the one the escort last flew; a tandem or a try dive is picked from the list
       await picker.getByTestId('picker-choice-ticket').focus();
       await page.keyboard.press('Enter');
-      // The options are Full altitude (chosen), Tandem and Try dive: arrow down to the one wanted
+      // The options are Full altitude (chosen), Tandem and Try dive: type the one wanted (an arrow press can be lost
+      // while the list opens), then Enter
       await expect(page.getByRole('listbox')).toBeVisible();
-      for (let step = 0; step < steps; step++) await page.keyboard.press('ArrowDown');
+      await page.keyboard.type(ticket);
+      // An option's name carries its price ("Try dive · $60.00")
+      await expect(page.getByRole('option', { name: new RegExp(`^${ticket}\\b`) })).toBeFocused();
       await page.keyboard.press('Enter');
       await expect(page.getByRole('listbox')).toBeHidden();
       await expect(picker.getByTestId('picker-choice-ticket')).toContainText(ticket);

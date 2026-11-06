@@ -16,6 +16,14 @@ import LoadActions from '../LoadActions';
 
 jest.setTimeout(30000);
 
+const mockRefetch = jest.fn(() => Promise.resolve([]));
+jest.mock('@apollo/client', () => {
+  const actual = jest.requireActual('@apollo/client');
+  return {
+    ...actual,
+    useApolloClient: () => ({ ...actual.useApolloClient(), refetchQueries: mockRefetch }),
+  };
+});
 const mockUpdate = jest.fn();
 const mockFinalize = jest.fn();
 const mockError = jest.fn();
@@ -195,6 +203,27 @@ describe('<LoadActions />', () => {
     await fireEvent.press(board.getByTestId('load-actions-primary'));
 
     await waitFor(() => expect(mockError).toHaveBeenCalledWith('Load is not in the air'));
+  });
+
+  it('asks for the load again when the server says it was changed, so the next tap is current', async () => {
+    const { ApolloError } = jest.requireActual('@apollo/client');
+    const onCall = await renderActions({
+      state: LoadState.Boarding,
+      dispatchAt: Math.floor(Date.now() / 1000) + 300,
+    });
+    mockUpdate.mockRejectedValue(
+      new ApolloError({
+        graphQLErrors: [{ message: 'changed', extensions: { code: 'CONFLICT' } }],
+      })
+    );
+    await waitFor(() => expect(onCall.getByText('Depart')).toBeTruthy());
+
+    await fireEvent.press(onCall.getByTestId('load-actions-primary'));
+
+    await waitFor(() =>
+      expect(mockError).toHaveBeenCalledWith('This load was changed by someone else')
+    );
+    expect(mockRefetch).toHaveBeenCalledWith({ include: ['Load', 'Loads'] });
   });
 
   it('offers nothing to someone who may not change loads', async () => {

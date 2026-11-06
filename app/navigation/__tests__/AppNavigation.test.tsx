@@ -1,21 +1,32 @@
 import * as React from 'react';
 import { fireEvent, waitFor, within } from '@testing-library/react-native';
 import { renderWithProviders, type TestRole } from 'app/test-utils/render';
-import AppNavigation, { barItems, tabBarPositionFor } from '../AppNavigation';
-import { destinationsFor } from '../destinations';
+import AppNavigation, {
+  activeKey,
+  barItems,
+  shownRouteName,
+  tabBarPositionFor,
+} from '../AppNavigation';
+import { DESTINATIONS, destinationsFor } from '../destinations';
 
 const routes = ['Overview', 'Manifest', 'Notifications', 'Users'].map((name) => ({
   name,
   key: `${name}-key`,
 }));
 
-function fakeProps(focused = 'Manifest') {
+function fakeProps(focused = 'Manifest', shown?: string) {
   const navigate = jest.fn();
   const emit = jest.fn(() => ({ defaultPrevented: false }));
   const dispatch = jest.fn();
+  // `shown`: the screen the focused tab's stack shows, on top of its first screen
+  const withShown = routes.map((route) =>
+    shown && route.name === focused
+      ? { ...route, state: { index: 1, routes: [{ name: 'Home' }, { name: shown }] } }
+      : route
+  );
   return {
     props: {
-      state: { routes, index: routes.findIndex((route) => route.name === focused) },
+      state: { routes: withShown, index: routes.findIndex((route) => route.name === focused) },
       navigation: { navigate, emit, dispatch },
       descriptors: {},
       insets: { top: 0, left: 0, right: 0, bottom: 0 },
@@ -74,12 +85,50 @@ describe('barItems on a phone', () => {
   });
 });
 
+describe('shownRouteName', () => {
+  it('follows the focused route of the nested navigators', () => {
+    expect(shownRouteName({ name: 'Manifest' })).toBe('Manifest');
+    expect(
+      shownRouteName({
+        name: 'Manifest',
+        state: {
+          index: 1,
+          routes: [
+            { name: 'ManifestScreen' },
+            { name: 'Setup', state: { routes: [{ name: 'RulesScreen' }] } },
+          ],
+        },
+      })
+    ).toBe('RulesScreen');
+    expect(shownRouteName(undefined)).toBeNull();
+  });
+});
+
+describe('activeKey', () => {
+  const owner = destinationsFor({
+    permissions: ['readLoad', 'readUser', 'updateOperator'] as never,
+    modules: {},
+  });
+
+  it('is the home of the shown screen, else the focused tab', () => {
+    expect(activeKey(barItems(owner), 'Manifest', 'RulesScreen')).toBe('setup');
+    expect(activeKey(barItems(owner), 'Manifest', 'LoadScreen')).toBe('board');
+  });
+
+  it('finds a home that is not a tab on a phone', () => {
+    const items = barItems(owner, true);
+    expect(activeKey(items, 'Manifest', 'SettingsMenuScreen')).toBe('board');
+    expect(activeKey(items, 'Manifest', 'SettingsMenuScreen', DESTINATIONS)).toBe('setup');
+  });
+});
+
 describe('AppNavigation', () => {
   const tabs = async (
     role: TestRole,
-    breakpoint: 'compact' | 'medium' | 'expanded' = 'compact'
+    breakpoint: 'compact' | 'medium' | 'expanded' = 'compact',
+    shown?: string
   ) => {
-    const { props } = fakeProps();
+    const { props } = fakeProps('Manifest', shown);
     const screen = await renderWithProviders(<AppNavigation {...props} />, { role, breakpoint });
     await waitFor(() => expect(screen.getByLabelText('Main')).toBeTruthy());
     return screen;
@@ -104,6 +153,18 @@ describe('AppNavigation', () => {
     const board = screen.getByRole('button', { name: 'Board' });
     expect(board.props['aria-current']).toBe('page');
     expect(screen.getByRole('button', { name: 'People' }).props['aria-current']).toBeUndefined();
+  });
+
+  it('marks Setup as current, not the tab that holds it', async () => {
+    const wide = await tabs('owner', 'expanded', 'RulesScreen');
+    expect(wide.getByRole('button', { name: 'Setup' }).props['aria-current']).toBe('page');
+    expect(wide.getByRole('button', { name: 'Board' }).props['aria-current']).toBeUndefined();
+    wide.unmount();
+
+    // On a phone Setup is under More
+    const phone = await tabs('owner', 'compact', 'SettingsMenuScreen');
+    expect(phone.getByRole('button', { name: 'More' }).props['aria-current']).toBe('page');
+    expect(phone.getByRole('button', { name: 'Board' }).props['aria-current']).toBeUndefined();
   });
 
   it('opens a tab when it is pressed', async () => {

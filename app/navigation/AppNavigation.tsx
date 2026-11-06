@@ -41,9 +41,29 @@ export function barItems(destinations: Destination[], compact = false): Destinat
   });
 }
 
-/** The current item: the destination that is the home of the shown screen, else the one of the focused tab */
-export function activeKey(items: Destination[], tab: string | undefined, leaf: string | null) {
-  const home = items.find((item) => leaf && item.routeNames?.includes(leaf));
+type ShownRoute = { name: string; state?: { index?: number; routes: ShownRoute[] } };
+
+/** The name of the screen a tab shows: the focused route of its nested navigators, down to the last one */
+export function shownRouteName(route: ShownRoute | undefined): string | null {
+  let current = route;
+  while (current?.state?.routes.length) {
+    const { index, routes } = current.state;
+    current = routes[index ?? routes.length - 1];
+  }
+  return current?.name ?? null;
+}
+
+/**
+ * The current destination: the one that is the home of the shown screen (looked up in `all`, so a destination under
+ * More on a phone still counts), else the item of the focused tab
+ */
+export function activeKey(
+  items: Destination[],
+  tab: string | undefined,
+  leaf: string | null,
+  all: Destination[] = items
+) {
+  const home = all.find((item) => leaf && item.routeNames?.includes(leaf));
   if (home) return home.key;
   return items.find((item) => item.route?.tab === tab && !item.routeNames)?.key;
 }
@@ -66,7 +86,10 @@ export default function AppNavigation({ state, navigation }: BottomTabBarProps) 
     breakpoint === 'compact' ? 'bottom' : breakpoint === 'medium' ? 'rail' : 'sidebar';
   const items = barItems(destinations, variant === 'bottom');
   const unseen = useUnseenCount();
-  const current = activeKey(items, focused, leaf);
+  const shown = shownRouteName(state.routes[state.index] as ShownRoute | undefined);
+  const current = activeKey(items, focused, shown ?? leaf, destinations);
+  // On a phone a destination that is not a tab (Setup, Money) lives under More
+  const underMore = !!current && !items.some((item) => item.key === current);
 
   const styles = useStyles((theme) => ({
     bottom: {
@@ -156,7 +179,7 @@ export default function AppNavigation({ state, navigation }: BottomTabBarProps) 
           testID="nav-more"
           label={t('destinations.more')}
           icon="dots-horizontal"
-          active={focused === 'More' || accountActive}
+          active={focused === 'More' || accountActive || underMore}
           variant="bottom"
           onPress={() => openTab('More')}
         />
