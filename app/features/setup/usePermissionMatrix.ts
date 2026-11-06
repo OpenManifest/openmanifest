@@ -22,7 +22,7 @@ export function usePermissionLabels() {
       tickets: lower('ticket', 2),
       extras: lower('extra', 2),
       vehicles: lower('vehicle', 2),
-      equipment: lower('equipment'),
+      equipments: lower('equipment', 2),
       members: lower('member', 2),
     };
   }, [term]);

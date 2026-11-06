@@ -368,6 +368,22 @@ describe('Switch', () => {
     expect(screen.getByRole('switch', { name: 'Sounds', checked: false })).toBeTruthy();
   });
 
+  it('can be named apart from its label, and show only its track', async () => {
+    const screen = await renderThemed(
+      <>
+        <Switch label="See loads" name="Student: See loads" value />
+        <Switch label="Create loads" name="Student: Create loads" hideLabel value={false} />
+      </>
+    );
+
+    expect(screen.getByRole('switch', { name: 'Student: See loads', checked: true })).toBeTruthy();
+    expect(screen.getByText('See loads')).toBeTruthy();
+    expect(
+      screen.getByRole('switch', { name: 'Student: Create loads', checked: false })
+    ).toBeTruthy();
+    expect(screen.queryByText('Create loads')).toBeNull();
+  });
+
   it('reports the opposite when pressed, unless disabled', async () => {
     const onChange = jest.fn();
     const screen = await renderThemed(

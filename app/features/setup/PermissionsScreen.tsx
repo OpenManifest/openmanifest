@@ -36,7 +36,8 @@ export default function PermissionsScreen() {
   const expanded = useBreakpoint() === 'expanded';
   const [width, setWidth] = React.useState(0);
   const roles = data?.operator?.roles ?? [];
-  const asMatrix = expanded && matrixFits(width - 2 * (theme.space.lg + theme.space.md), roles.length);
+  const asMatrix =
+    expanded && matrixFits(width - 2 * (theme.space.lg + theme.space.md), roles.length);
   const readOnly = canEdit ? '' : ` ${t('permissionMatrix.readOnly')}`;
 
   let content: React.ReactNode;

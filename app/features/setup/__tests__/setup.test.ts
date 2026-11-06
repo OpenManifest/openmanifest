@@ -60,6 +60,9 @@ describe('Setup groups', () => {
     expect(entryOfRoute('SettingsMenuScreen')).toBeUndefined();
     expect(SETUP_DETAIL_ROUTES).toContain('RulesScreen');
     expect(SETUP_DETAIL_ROUTES).not.toContain('WeatherConditionsScreen');
+    // The permission matrix takes the whole width
+    expect(SETUP_DETAIL_ROUTES).not.toContain('PermissionScreen');
+    expect(entryOfRoute('PermissionScreen')?.key).toBe('permissions');
   });
 });
 
