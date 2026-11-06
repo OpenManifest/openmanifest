@@ -1,61 +1,62 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { Control, useController, useWatch } from 'react-hook-form';
-import { HelperText, Divider } from 'react-native-paper';
+
 import { FormTextField } from 'app/components/input/text/TextField';
 import { FormNumberField } from 'app/components/input/number_input';
-import { LicenseChipSelectField } from 'app/components/input/chip_select/LicenseChipSelect';
-import FederationSelect from 'app/components/input/dropdown_select/FederationSelect';
+import { NumberFieldType } from 'app/components/input/number_input/NumberField';
+import { CertificationLevelChipSelectField } from 'app/components/input/chip_select/CertificationLevelChipSelect';
+import CertificationBodySelect from 'app/components/input/dropdown_select/CertificationBodySelect';
 import { UserFields } from './useForm';
+import { useTranslation } from 'react-i18next';
+import { Divider, FieldError, Stack } from 'app/ui';
 
 export interface IUserFormProps {
   control: Control<UserFields>;
 }
 
 export default function UserForm(props: IUserFormProps) {
+  const { t } = useTranslation('common');
   const { control } = props;
-  const { field: federation, fieldState: federationState } = useController({
-    name: 'federation',
+  const { field: certificationBody, fieldState: certificationBodyState } = useController({
+    name: 'certificationBody',
     control,
   });
-  const license = useWatch({ control, name: 'license' });
-  const federationId = license?.federation?.id || federation.value?.id;
+  const certificationLevel = useWatch({ control, name: 'certificationLevel' });
+  const certificationBodyId =
+    certificationLevel?.certificationBody?.id || certificationBody.value?.id;
 
   return (
-    <>
-      <FormTextField {...{ control }} style={styles.field} name="name" label="Name" />
-      <FormTextField {...{ control }} style={styles.field} name="nickname" label="Nickname" />
-      <FormTextField {...{ control }} style={styles.field} name="email" label="Email" />
-      <FormTextField {...{ control }} style={styles.field} name="phone" label="Phone" />
-      <FormNumberField {...{ control }} name="exitWeight" label="Exit weight (kg)" />
+    <Stack gap="md">
+      <FormTextField {...{ control }} name="name" label={t('forms.fields.name')} />
+      <FormTextField {...{ control }} name="nickname" label={t('forms.fields.nickname')} />
+      <FormTextField {...{ control }} name="email" label={t('forms.fields.email')} />
+      <FormTextField {...{ control }} name="phone" label={t('forms.user.phone')} />
+      <FormNumberField
+        {...{ control }}
+        name="bodyMassKg"
+        variant={NumberFieldType.Weight}
+        label={t('forms.user.exitWeightKg')}
+      />
 
       <Divider />
 
       <View style={{ width: '100%' }}>
-        <FederationSelect
-          value={license?.federation || federation.value}
-          onChange={federation.onChange}
+        <CertificationBodySelect
+          value={certificationLevel?.certificationBody || certificationBody.value}
+          onChange={certificationBody.onChange}
         />
 
-        <HelperText type={federationState.error ? 'error' : 'info'}>
-          {federationState.error?.message || ''}
-        </HelperText>
+        <FieldError>{certificationBodyState.error?.message || ''}</FieldError>
 
-        {federationId && (
-          <LicenseChipSelectField
+        {certificationBodyId && (
+          <CertificationLevelChipSelectField
             {...{ control }}
-            name="license"
-            federationId={Number(federationId)}
+            name="certificationLevel"
+            certificationBodyId={Number(certificationBodyId)}
           />
         )}
       </View>
-    </>
+    </Stack>
   );
 }
-
-const styles = StyleSheet.create({
-  field: {
-    marginBottom: 8,
-    width: '100%',
-  },
-});

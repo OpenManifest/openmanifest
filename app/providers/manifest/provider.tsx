@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { useDropzoneToday } from 'app/hooks/useDropzoneToday';
-import type { IManifestUserDialog } from 'app/forms/manifest_user/Dialog';
+import { useOperatorToday } from 'app/hooks/useOperatorToday';
+import type { IManifestUserDialog } from 'app/legacy/manifest_user/Dialog';
 import type { ILoadDialog } from 'app/forms/load/Dialog';
 import type { ICreditsSheet } from 'app/forms/credits/Credits';
 import noop from 'lodash/noop';
 import { LoadsQueryVariables } from 'app/api/operations';
 import { useManifest } from 'app/api/crud/useManifest';
-import ManifestUserDialog from 'app/forms/manifest_user/Dialog';
+import ManifestUserDialog from 'app/legacy/manifest_user/Dialog';
 import LoadDialog from 'app/forms/load/Dialog';
 import CreditSheet from 'app/forms/credits/Credits';
-import ManifestGroupDialog from 'app/forms/manifest_group';
-import type { IManifestGroupInitial } from 'app/forms/manifest_group';
-import { useDropzoneContext } from '../dropzone/context';
+import ManifestGroupDialog from 'app/legacy/manifest_group';
+import type { IManifestGroupInitial } from 'app/legacy/manifest_group';
+import { useOperatorContext } from '../operator/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
 import createUseDialog from '../hooks/useDialog';
@@ -67,24 +67,31 @@ function ManifestGroupDialogWrapper() {
 
 const useManifestUserDialog = createUseDialog<Pick<IManifestUserDialog, 'load' | 'slot'>>();
 const useLoadDialog = createUseDialog<Pick<ILoadDialog, 'load'>>();
-const useCreditsDialog = createUseDialog<Pick<ICreditsSheet, 'dropzoneUser'>>();
+const useCreditsDialog = createUseDialog<Pick<ICreditsSheet, 'membership'>>();
 const useManifestGroupDialog = createUseDialog<IManifestGroupInitial>();
 
 export function ManifestContextProvider(props: React.PropsWithChildren<UseManifestOptions>) {
-  // The board shows the dropzone's day, and moves on to the next one when it starts there
-  const today = useDropzoneToday();
-  const { dropzone, date = today, children } = props;
+  // The board shows the operator's day, and moves on to the next one when it starts there
+  const today = useOperatorToday();
+  const { operator, date: initialDate, children } = props;
+  // Another day than today, picked on the board (a load can be scheduled ahead)
+  const [pickedDate, setDate] = React.useState<string | null>(null);
+  const date = pickedDate ?? initialDate ?? today;
   const manifestUserDialog = useManifestUserDialog();
   const loadDialog = useLoadDialog();
   const creditsDialog = useCreditsDialog();
   const manifestGroupDialog = useManifestGroupDialog();
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
   const canManifestGroup = useRestriction(Permission.CreateUserSlot);
   const canManifestGroupWithSelfOnly = useRestriction(Permission.CreateUserSlotWithSelf);
 
-  const manifest = useManifest({ dropzone, date });
+  const manifestOfDay = useManifest({ operator, date });
+  const manifest = React.useMemo(
+    () => ({ ...manifestOfDay, date, today, isToday: date === today, setDate }),
+    [manifestOfDay, date, today]
+  );
 
   const { permissions } = manifest;
 
