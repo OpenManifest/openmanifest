@@ -1,7 +1,7 @@
 import { openFirstLoad } from './support/board';
 import type { Page } from '@playwright/test';
 import { openAccount } from './support/account';
-import { press } from './support/press';
+import { press, pressUntil } from './support/press';
 import { expect, gotoRoute, test } from './support/test';
 
 // Visual baselines (checkpoint tasks only: tier 3). They are created and updated with `--update-snapshots` in checkpoint
@@ -21,6 +21,15 @@ const dynamicText = (page: Page) => [
 // Money changes with every booking the specs make and take back
 const money = (page: Page) => [page.getByText(/\$[\d,]+\.\d{2}/)];
 
+// Counts and figures that grow with every run (loads, places, people)
+const figures = (page: Page) => [page.getByText(/^[\d,.]+\s*%?$/), page.getByText(/^\d+ \w+$/)];
+
+/** The top of the page (above a list that grows with the specs) */
+const top = (page: Page, height: number) => {
+  const { width } = page.viewportSize() ?? { width: 390 };
+  return { x: 0, y: 0, width, height };
+};
+
 test.beforeEach(async ({}, testInfo) => {
   const { group, variant } = testInfo.project.metadata;
   testInfo.skip(
@@ -36,6 +45,80 @@ test.describe('visual baselines @visual', () => {
     test('login', async ({ page }) => {
       await gotoRoute(page, '/login');
       await expect(page).toHaveScreenshot('login.png', OPTIONS);
+    });
+
+    // The wizard frame (U5.8b): the first page of the password reset
+    test('recover password', async ({ page }) => {
+      await gotoRoute(page, '/recover-password');
+      await expect(page.getByRole('heading', { name: 'Reset your password' })).toBeVisible();
+      await page.waitForTimeout(1000);
+      await expect(page).toHaveScreenshot('recover-password.png', OPTIONS);
+    });
+  });
+
+  // The operator setup wizard's first page (U5.8b)
+  test('setup wizard', async ({ page }) => {
+    await gotoRoute(page, '/setup');
+    await expect(page.getByRole('heading', { name: 'Name' })).toBeVisible({ timeout: 20_000 });
+    await page.waitForTimeout(1000);
+    await expect(page).toHaveScreenshot('setup-wizard.png', OPTIONS);
+  });
+
+  // The batch U5.5 to U5.8: compared above their lists and with the figures masked, which grow with every run
+  test('reports', async ({ page }) => {
+    await gotoRoute(page, '/dashboard');
+    await expect(page.getByRole('heading', { name: 'Turnaround', exact: true })).toBeVisible({
+      timeout: 20_000,
+    });
+    await page.waitForTimeout(1500);
+    await expect(page).toHaveScreenshot('reports.png', {
+      ...OPTIONS,
+      clip: top(page, 420),
+      mask: [...dynamicText(page), ...money(page), ...figures(page)],
+    });
+  });
+
+  test('money', async ({ page }) => {
+    await gotoRoute(page, '/transactions');
+    await expect(page.getByTestId('money-sums')).toBeVisible({ timeout: 20_000 });
+    await page.waitForTimeout(1500);
+    await expect(page).toHaveScreenshot('money.png', {
+      ...OPTIONS,
+      clip: top(page, 240),
+      mask: [...dynamicText(page), ...money(page), ...figures(page)],
+    });
+  });
+
+  test('vehicles', async ({ page }) => {
+    await gotoRoute(page, '/configuration/vehicles');
+    await expect(page.getByTestId('new-vehicle-primary-action')).toBeVisible({ timeout: 20_000 });
+    await page.waitForTimeout(1500);
+    await expect(page).toHaveScreenshot('vehicles.png', { ...OPTIONS, clip: top(page, 240) });
+  });
+
+  test('permissions', async ({ page }) => {
+    await gotoRoute(page, '/configuration/permissions');
+    const wide = (page.viewportSize()?.width ?? 0) >= 1024;
+    await expect(
+      page.getByTestId(wide ? 'permissions-matrix-mode' : 'permissions-list-mode')
+    ).toBeVisible({ timeout: 20_000 });
+    await page.waitForTimeout(1500);
+    await expect(page).toHaveScreenshot('permissions.png', { ...OPTIONS, clip: top(page, 480) });
+  });
+
+  test('conditions panel', async ({ page }) => {
+    await gotoRoute(page, '/manifest');
+    const strip = page.getByTestId('board-conditions');
+    await expect(strip).toBeVisible({ timeout: 20_000 });
+    const panel = page.getByTestId('conditions-panel');
+    await pressUntil(page, strip.getByRole('button', { name: 'Update' }), () =>
+      expect(panel).toBeVisible({ timeout: 3000 })
+    );
+    await page.waitForTimeout(1500);
+    // The @conditions spec changes the values and puts them back
+    await expect(panel).toHaveScreenshot('conditions-panel.png', {
+      ...OPTIONS,
+      mask: [panel.getByRole('spinbutton'), ...dynamicText(page)],
     });
   });
 
