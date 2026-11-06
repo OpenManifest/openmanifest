@@ -5,6 +5,16 @@ import { expectLayout } from './support/layout';
 import { press } from './support/press';
 import { expect, gotoRoute, test } from './support/test';
 
+/** The people of the seed, whose names are no word of the template */
+const SEED_NAMES = [
+  'Olive Owner',
+  'Max Manifest',
+  'Pat Pilot',
+  'Jo Jumper',
+  'Sam Skydiver',
+  'Stu Student',
+];
+
 const BOARD = '/manifest';
 
 // The new board (U3.3): the `newBoard` preference is on for a browser without stored preferences, which is every spec's
@@ -74,7 +84,9 @@ test.describe('the new board @board', () => {
     await gotoRoute(page, `${BOARD}?industry=generic`);
     await expect(page.getByTestId('load-card').first()).toBeVisible();
 
-    const text = (await page.getByTestId('loads').innerText()).toLowerCase();
+    // The vocabulary, not the people: the seed's members are called "Jo Jumper" and "Sam Skydiver" in any template
+    let text = (await page.getByTestId('loads').innerText()).toLowerCase();
+    for (const name of SEED_NAMES) text = text.split(name.toLowerCase()).join(' ');
     for (const word of ['jump', 'skydiv', 'canopy']) {
       expect(text, `the generic board says "${word}"`).not.toContain(word);
     }
