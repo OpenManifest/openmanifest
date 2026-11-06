@@ -143,13 +143,10 @@ test.describe('the next action of a load @board', () => {
     await choose(page, cancelCall);
     await expect(state).toContainText(/open/i, { timeout: 15_000 });
 
-    await tapUntil(page, primary, page.getByRole('radio', { name: /15 minute/i }));
-    await choose(page, page.getByRole('radio', { name: /15 minute/i }));
-    await expect(state).toContainText(/boarding/i, { timeout: 15_000 });
-
-    // On call → departed → landed: one tap each. A tap lost while the card settles is tapped again. Under two workers an
-    // answer of the board that left before the cancel can arrive after it and show the older load: the server then
-    // refuses the next change as a conflict and the card asks again (BUG-112), back to open; it is called again.
+    // Open → on call → departed → landed: the call in two taps, then one tap each. A tap lost while the card settles is
+    // tapped again. Under two workers an answer of the board that left before the cancel can arrive after it and show
+    // the older load: the server then refuses the next change as a conflict and the card asks again (BUG-112), and the
+    // step is done again.
     await expect(async () => {
       const now = await state.innerText();
       if (/open/i.test(now)) {
@@ -175,8 +172,14 @@ test.describe('the next action of a load @board', () => {
 
     const cancelLoad = page.getByRole('menuitem', { name: /cancel load/i });
     await tapUntil(page, card.getByRole('button', { name: 'More actions' }), cancelLoad);
-    await choose(page, cancelLoad);
-    await expect(page.getByText(/Its places are released/)).toBeVisible();
+    const question = page.getByText(/Its places are released/);
+    await expect(async () => {
+      if (await cancelLoad.isVisible()) await choose(page, cancelLoad);
+      else if (!(await question.isVisible())) {
+        await tap(page, card.getByRole('button', { name: 'More actions' }));
+      }
+      await expect(question).toBeVisible({ timeout: 4_000 });
+    }).toPass({ timeout: 30_000 });
     await choose(page, page.getByTestId('load-actions-confirm-yes'));
 
     await expect(card.getByTestId('load-card-state')).toContainText(/cancelled/i, {

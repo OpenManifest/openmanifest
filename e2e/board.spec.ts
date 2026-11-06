@@ -69,8 +69,9 @@ test.describe('manifest board @manifest', () => {
     const free = page.getByTestId('free-places').last();
     await expect(free).toHaveAttribute('role', 'button', { timeout: 20_000 });
     await free.scrollIntoViewIfNeeded();
-    await press(page, free);
-    await expect(page.getByTestId('member-picker')).toBeVisible();
+    await pressUntil(page, free, () =>
+      expect(page.getByTestId('member-picker')).toBeVisible({ timeout: 5000 })
+    );
   });
 
   // A full page load of each URL must open the right screen (needs the persisted login)

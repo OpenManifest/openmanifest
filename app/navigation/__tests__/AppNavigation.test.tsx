@@ -157,12 +157,14 @@ describe('AppNavigation', () => {
 
   it('marks Setup as current, not the tab that holds it', async () => {
     const wide = await tabs('owner', 'expanded', 'RulesScreen');
+
     expect(wide.getByRole('button', { name: 'Setup' }).props['aria-current']).toBe('page');
     expect(wide.getByRole('button', { name: 'Board' }).props['aria-current']).toBeUndefined();
-    wide.unmount();
+  });
 
-    // On a phone Setup is under More
+  it('marks More as current on a phone, where Setup is under More', async () => {
     const phone = await tabs('owner', 'compact', 'SettingsMenuScreen');
+
     expect(phone.getByRole('button', { name: 'More' }).props['aria-current']).toBe('page');
     expect(phone.getByRole('button', { name: 'Board' }).props['aria-current']).toBeUndefined();
   });
