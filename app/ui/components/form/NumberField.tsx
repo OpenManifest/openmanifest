@@ -130,6 +130,9 @@ function NumberField({
               ...theme.type.body,
               flexGrow: 1,
               flexShrink: 1,
+              // An input is as wide as its size attribute on the web: without these it pushes the unit out of a narrow box
+              flexBasis: 0,
+              minWidth: 0,
               color: disabled ? theme.colour.textMuted : theme.colour.text,
               paddingVertical: theme.space.sm,
             }}

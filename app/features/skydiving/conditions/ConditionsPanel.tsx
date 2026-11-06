@@ -148,8 +148,8 @@ export default function ConditionsPanel({
       }
     >
       <View style={{ gap: theme.space.lg }}>
-        <Row gap="md" wrap>
-          <View style={{ flexGrow: 1, flexBasis: 0, minWidth: theme.space.xxxl * 2 }}>
+        <Row gap="md">
+          <View style={{ flex: 1, minWidth: 0 }}>
             <NumberField
               label={t('conditions.temperature')}
               value={draft.temperature}
@@ -160,7 +160,7 @@ export default function ConditionsPanel({
               testID={`${testID}-temperature`}
             />
           </View>
-          <View style={{ flexGrow: 1, flexBasis: 0, minWidth: theme.space.xxxl * 2 }}>
+          <View style={{ flex: 1, minWidth: 0 }}>
             <NumberField
               label={t('conditions.jumpRun')}
               value={draft.jumpRun}
@@ -203,10 +203,9 @@ export default function ConditionsPanel({
                   borderTopColor: theme.colour.border,
                 }}
               >
-                <View
-                  style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: theme.space.sm }}
-                >
-                  <View style={{ flexGrow: 1, flexBasis: 0, minWidth: theme.space.xxxl * 2 }}>
+                <View style={{ flex: 1, flexDirection: 'row', gap: theme.space.sm }}>
+                  {/* A height has the most digits: it takes the larger share of a narrow row */}
+                  <View style={{ flex: 4, minWidth: 0 }}>
                     <NumberField
                       label={t('conditions.altitude', { number })}
                       value={wind.altitude}
@@ -218,7 +217,7 @@ export default function ConditionsPanel({
                       testID={`${testID}-wind-${index}-altitude`}
                     />
                   </View>
-                  <View style={{ flexGrow: 1, flexBasis: 0, minWidth: theme.space.xxxl * 2 }}>
+                  <View style={{ flex: 3, minWidth: 0 }}>
                     <NumberField
                       label={t('conditions.speed', { number })}
                       value={wind.speed}
@@ -230,7 +229,7 @@ export default function ConditionsPanel({
                       testID={`${testID}-wind-${index}-speed`}
                     />
                   </View>
-                  <View style={{ flexGrow: 1, flexBasis: 0, minWidth: theme.space.xxxl * 2 }}>
+                  <View style={{ flex: 3, minWidth: 0 }}>
                     <NumberField
                       label={t('conditions.direction', { number })}
                       value={wind.direction}

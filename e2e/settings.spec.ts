@@ -15,10 +15,7 @@ const CONFIGURATION_ROUTES = [
   '/configuration/basic',
   '/transactions',
   '/daily-log',
-  // Weather: the wizard, then its winds and jump run screens
-  '/weather',
-  '/weather/winds',
-  '/weather/jumprun',
+  // The weather screens became the board's conditions panel (U5.7): `conditions.spec.ts`
 ];
 
 test.describe('settings @setup', () => {
