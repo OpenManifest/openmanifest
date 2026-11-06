@@ -423,6 +423,17 @@ export type RevokePermissionMutationVariables = Types.Exact<{
 
 export type RevokePermissionMutation = { __typename?: 'Mutation', revokePermission?: { __typename?: 'RevokePermissionPayload', errors?: Array<string> | null, fieldErrors?: Array<{ __typename?: 'FieldError', message: string, field: string }> | null, membership?: { __typename?: 'Membership', permissions?: Array<Types.Permission> | null, id: string, walletId: string, expiresAt?: number | null, hasCredits: boolean, hasMembership: boolean, hasCertificationLevel: boolean, hasBodyMassKg: boolean, role?: { __typename?: 'UserRole', id: string, name?: string | null, operatorId: number } | null, certificationLevel?: { __typename?: 'CertificationLevel', id: string, name?: string | null, rank: number, equivalenceKey?: string | null } | null, user: { __typename?: 'User', id: string, name?: string | null, nickname?: string | null, phone?: string | null, email?: string | null, bodyMassKg?: string | null, dateOfBirth?: any | null, moderationRole?: Types.ModerationRole | null, image?: string | null } } | null } | null };
 
+export type SaveConditionsMutationVariables = Types.Exact<{
+  id: Types.Scalars['Int']['input'];
+  operatorId: Types.Scalars['Int']['input'];
+  winds?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  temperatureC?: Types.InputMaybe<Types.Scalars['Float']['input']>;
+  jumpRun?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+}>;
+
+
+export type SaveConditionsMutation = { __typename?: 'Mutation', createWeatherCondition?: { __typename?: 'CreateWeatherConditionPayload', errors?: Array<string> | null, fieldErrors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, weatherCondition?: { __typename?: 'WeatherCondition', updatedAt: any, id: string, jumpRun?: number | null, temperatureC?: number | null, offsetDirection?: number | null, offsetM?: number | null, createdAt: any, exitSpotM?: number | null, winds?: Array<{ __typename?: 'Wind', temperatureC?: number | null, altitudeM?: number | null, speedMps?: number | null, direction?: number | null }> | null } | null } | null };
+
 export type UpdateCrewRoleMutationVariables = Types.Exact<{
   id: Types.Scalars['Int']['input'];
   attributes: Types.CrewRoleInput;

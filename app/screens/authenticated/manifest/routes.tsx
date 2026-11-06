@@ -9,18 +9,11 @@ import { AppSignalBoundary } from 'app/components/app_signal';
 import { LoadScreenRoute } from './load/LoadScreen';
 import { useBoardScreens } from 'app/features/board/screens';
 
-import WeatherConditionsScreen from './weather_conditions/WeatherConditionsScreen';
-import JumpRunScreen from './weather_conditions/JumpRunScreen';
-import WindScreen from './weather_conditions/WindScreen';
-import { WeatherFormProvider } from 'app/forms/weather';
-
 import Configuration, { ConfigurationRoutes } from '../configuration/routes';
 
 export type OperatorRoutes = {
-  WeatherConditionsScreen: undefined;
-  WindScreen: undefined;
-  ManifestScreen: undefined;
-  JumpRunScreen: undefined;
+  /** `conditions: 'open'` opens the conditions panel (where the old weather screens lead) */
+  ManifestScreen: { conditions?: 'open' } | undefined;
   DashboardScreen: undefined;
   Configuration: NavigatorScreenParams<ConfigurationRoutes>;
 } & LoadScreenRoute;
@@ -35,51 +28,34 @@ export default function ManifestTab() {
 
   return (
     <AppSignalBoundary>
-      <WeatherFormProvider>
-        <Manifest.Navigator
-          screenOptions={{
-            headerShown: !!(credentials && currentOperatorId),
-            header: (props) => <ScreenHeader {...props} />,
-            headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
-            cardStyle: {
-              flex: 1,
-            },
-          }}
-        >
-          <Manifest.Screen
-            name="ManifestScreen"
-            component={Board}
-            options={{ title: t('common:destinations.board') }}
-          />
+      <Manifest.Navigator
+        screenOptions={{
+          headerShown: !!(credentials && currentOperatorId),
+          header: (props) => <ScreenHeader {...props} />,
+          headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
+          cardStyle: {
+            flex: 1,
+          },
+        }}
+      >
+        <Manifest.Screen
+          name="ManifestScreen"
+          component={Board}
+          options={{ title: t('common:destinations.board') }}
+        />
 
-          <Manifest.Screen
-            name="WeatherConditionsScreen"
-            component={WeatherConditionsScreen}
-            options={{ headerShown: false }}
-          />
-          <Manifest.Screen
-            name="WindScreen"
-            component={WindScreen}
-            options={{ title: t('common:screens.windsAloft') }}
-          />
-          <Manifest.Screen
-            name="JumpRunScreen"
-            component={JumpRunScreen}
-            options={{ title: t('common:screens.jumpRun') }}
-          />
-          <Manifest.Screen
-            name="LoadScreen"
-            component={Load}
-            options={{ title: t('terms:load', { count: 1 }) }}
-          />
+        <Manifest.Screen
+          name="LoadScreen"
+          component={Load}
+          options={{ title: t('terms:load', { count: 1 }) }}
+        />
 
-          <Manifest.Screen
-            name="Configuration"
-            component={Configuration}
-            options={{ headerShown: false }}
-          />
-        </Manifest.Navigator>
-      </WeatherFormProvider>
+        <Manifest.Screen
+          name="Configuration"
+          component={Configuration}
+          options={{ headerShown: false }}
+        />
+      </Manifest.Navigator>
     </AppSignalBoundary>
   );
 }

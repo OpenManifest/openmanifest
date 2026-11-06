@@ -2525,6 +2525,53 @@ export function useRevokePermissionMutation(baseOptions?: Apollo.MutationHookOpt
 export type RevokePermissionMutationHookResult = ReturnType<typeof useRevokePermissionMutation>;
 export type RevokePermissionMutationResult = Apollo.MutationResult<Operation.RevokePermissionMutation>;
 export type RevokePermissionMutationOptions = Apollo.BaseMutationOptions<Operation.RevokePermissionMutation, Operation.RevokePermissionMutationVariables>;
+export const SaveConditionsDocument = gql`
+    mutation SaveConditions($id: Int!, $operatorId: Int!, $winds: String, $temperatureC: Float, $jumpRun: Int) {
+  createWeatherCondition(
+    input: {id: $id, attributes: {operatorId: $operatorId, winds: $winds, temperatureC: $temperatureC, jumpRun: $jumpRun}}
+  ) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    weatherCondition {
+      ...weatherConditionEssentials
+      updatedAt
+    }
+  }
+}
+    ${WeatherConditionEssentialsFragmentDoc}`;
+export type SaveConditionsMutationFn = Apollo.MutationFunction<Operation.SaveConditionsMutation, Operation.SaveConditionsMutationVariables>;
+
+/**
+ * __useSaveConditionsMutation__
+ *
+ * To run a mutation, you first call `useSaveConditionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveConditionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveConditionsMutation, { data, loading, error }] = useSaveConditionsMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      operatorId: // value for 'operatorId'
+ *      winds: // value for 'winds'
+ *      temperatureC: // value for 'temperatureC'
+ *      jumpRun: // value for 'jumpRun'
+ *   },
+ * });
+ */
+export function useSaveConditionsMutation(baseOptions?: Apollo.MutationHookOptions<Operation.SaveConditionsMutation, Operation.SaveConditionsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.SaveConditionsMutation, Operation.SaveConditionsMutationVariables>(SaveConditionsDocument, options);
+      }
+export type SaveConditionsMutationHookResult = ReturnType<typeof useSaveConditionsMutation>;
+export type SaveConditionsMutationResult = Apollo.MutationResult<Operation.SaveConditionsMutation>;
+export type SaveConditionsMutationOptions = Apollo.BaseMutationOptions<Operation.SaveConditionsMutation, Operation.SaveConditionsMutationVariables>;
 export const UpdateCrewRoleDocument = gql`
     mutation UpdateCrewRole($id: Int!, $attributes: CrewRoleInput!) {
   updateCrewRole(input: {id: $id, attributes: $attributes}) {

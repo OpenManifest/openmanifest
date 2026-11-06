@@ -1235,5 +1235,32 @@
       "viewRevenue": "See revenue",
       "viewStatistics": "See statistics"
     }
+  },
+  "conditions": {
+    "title": "Conditions of the day",
+    "temperature": "Ground temperature",
+    "jumpRun": "Jump run heading",
+    "winds": "Winds aloft",
+    "noWinds": "No winds yet: add a height.",
+    "wind": "Wind {{number}}",
+    "altitude": "Altitude {{number}}",
+    "speed": "Speed {{number}}",
+    "direction": "Direction {{number}}",
+    "removeWind": "Remove wind {{number}}",
+    "addWind": "Add a height",
+    "windsFull": "At most {{count}} heights",
+    "feed": "Fetched winds come from Mark Schulze's winds aloft service.",
+    "fetch": "Fetch winds",
+    "fetched": "The winds of the day were fetched",
+    "notFetched": "The winds could not be fetched",
+    "save": "Save conditions",
+    "saved": "The conditions were saved",
+    "notSaved": "The conditions could not be saved",
+    "problem": {
+      "required": "Enter a number",
+      "heading": "A heading from 0 to {{max}}°",
+      "negative": "Not below zero",
+      "tooMany": "Too many heights"
+    }
   }
 }

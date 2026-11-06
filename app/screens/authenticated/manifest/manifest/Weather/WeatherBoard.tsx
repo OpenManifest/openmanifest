@@ -16,10 +16,10 @@ import format from 'date-fns/format';
 import { orderBy } from 'lodash';
 import SkeletonContent from 'app/components/Skeleton';
 import { useOperatorContext } from 'app/providers/operator/context';
-import { useWeatherForm } from 'app/forms/weather';
-import useRestriction from 'app/hooks/useRestriction';
-import { Permission } from 'app/api/schema.d';
-import { useNavigation } from '@react-navigation/native';
+import {
+  OperatorConditionsPanel,
+  useConditionsPanel,
+} from 'app/features/skydiving/conditions/WindsAloft';
 import parseISO from 'date-fns/parseISO';
 import nightBackground from '../../../../../../assets/images/night.png';
 import weatherBackground from '../../../../../../assets/images/weather.png';
@@ -31,8 +31,7 @@ export default function WeatherBoard() {
   const {
     operator: { operator, loading, called },
   } = useOperatorContext();
-  const { open: openWeatherForm } = useWeatherForm();
-  const navigation = useNavigation();
+  const panel = useConditionsPanel();
   const [isExpanded, setExpanded] = React.useState(false);
   const height = React.useRef(new Animated.Value(0));
 
@@ -46,7 +45,7 @@ export default function WeatherBoard() {
   const jumpRun = operator?.currentConditions?.jumpRun || 0;
   const temperatureC = operator?.currentConditions?.temperatureC;
   const units = useOperatorFormat((state) => state.units);
-  const canUpdate = useRestriction(Permission.UpdateWeatherConditions);
+  const canUpdate = panel.canUpdate;
 
   const hasWeatherConditions = conditions?.id && conditions?.winds?.length && conditions?.jumpRun;
 
@@ -70,25 +69,11 @@ export default function WeatherBoard() {
     }
   }, [isExpanded]);
 
+  // The winds and the jump run are changed in the conditions panel (U5.7)
   const onEditWindboard = React.useCallback(() => {
-    if (canUpdate && operator?.currentConditions) {
-      openWeatherForm(operator?.currentConditions);
-      navigation.navigate('Authenticated', {
-        screen: 'Manifest',
-        params: { screen: 'WindScreen' },
-      });
-    }
-  }, [canUpdate, openWeatherForm, operator?.currentConditions, navigation]);
-
-  const onEditJumprun = React.useCallback(() => {
-    if (operator?.currentConditions && canUpdate) {
-      openWeatherForm(operator.currentConditions);
-      navigation.navigate('Authenticated', {
-        screen: 'Manifest',
-        params: { screen: 'JumpRunScreen' },
-      });
-    }
-  }, [canUpdate, openWeatherForm, operator?.currentConditions, navigation]);
+    if (canUpdate) panel.show();
+  }, [canUpdate, panel]);
+  const onEditJumprun = onEditWindboard;
 
   const defaultBackground = theme.dark ? nightBackground : weatherBackground;
 
@@ -250,6 +235,7 @@ export default function WeatherBoard() {
           </Card.Content>
         </ImageBackground>
       </Card>
+      <OperatorConditionsPanel open={panel.open} onClose={panel.close} />
     </Animated.View>
   );
 }

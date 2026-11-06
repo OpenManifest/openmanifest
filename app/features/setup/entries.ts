@@ -2,7 +2,7 @@ import { Permission } from 'app/api/schema.d';
 import { decide, type Access, type AccessRule } from 'app/navigation/destinations';
 import type { IconName } from 'app/ui';
 
-/** The screens Setup opens: the Configuration stack's, and the conditions of the Manifest stack */
+/** The screens Setup opens: the Configuration stack's, and the board for its conditions panel (Manifest stack) */
 export type SetupRoute =
   | 'VehiclesScreen'
   | 'DestinationsScreen'
@@ -12,7 +12,7 @@ export type SetupRoute =
   | 'ExtrasScreen'
   | 'OperatorEquipmentScreen'
   | 'EquipmentInspectionTemplateScreen'
-  | 'WeatherConditionsScreen'
+  | 'ManifestScreen'
   | 'PermissionScreen'
   | 'OperatorSettingsScreen'
   | 'RulesScreen'
@@ -117,7 +117,7 @@ export const SETUP_GROUPS: SetupGroup[] = [
       },
       {
         key: 'conditions',
-        route: 'WeatherConditionsScreen',
+        route: 'ManifestScreen',
         icon: 'weather-windy',
         title: { key: 'setupMenu.conditionsTitle' },
         supportingKey: 'setupMenu.conditions',
@@ -219,6 +219,4 @@ export const SETUP_FULL_WIDTH_ROUTES: SetupRoute[] = ['PermissionScreen'];
 /** The screens of the Configuration stack that sit beside the Setup list on a wide window */
 export const SETUP_DETAIL_ROUTES: string[] = SETUP_GROUPS.flatMap((group) =>
   group.entries.map((entry) => entry.route)
-).filter(
-  (route) => route !== 'WeatherConditionsScreen' && !SETUP_FULL_WIDTH_ROUTES.includes(route)
-);
+).filter((route) => route !== 'ManifestScreen' && !SETUP_FULL_WIDTH_ROUTES.includes(route));

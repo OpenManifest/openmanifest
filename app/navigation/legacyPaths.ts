@@ -22,6 +22,8 @@ const LEGACY: [RegExp, (...match: string[]) => string][] = [
     /^\/user\/([^/]+)\/rig-inspection\/([^/]+)\/?$/,
     (membership, equipment) => `/user/${membership}/equipment-inspection/${equipment}`,
   ],
+  // The weather wizard and its winds and jump run screens became the board's conditions panel (U5.7)
+  [/^\/weather(\/(winds|jumprun))?\/?$/, () => '/manifest?conditions=open'],
   [/^\/manifest\/users\/([^/]+)\/?$/, (id) => `/user/${id}`],
   [/^\/modal\/users\/?$/, () => '/users'],
   [/^\/modal\/(user\/.*)$/, (rest) => `/${rest}`],

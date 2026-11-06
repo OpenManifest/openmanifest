@@ -59,7 +59,7 @@ describe('Setup groups', () => {
     expect(entryOfRoute('RulesScreen')?.key).toBe('rules');
     expect(entryOfRoute('SettingsMenuScreen')).toBeUndefined();
     expect(SETUP_DETAIL_ROUTES).toContain('RulesScreen');
-    expect(SETUP_DETAIL_ROUTES).not.toContain('WeatherConditionsScreen');
+    expect(SETUP_DETAIL_ROUTES).not.toContain('ManifestScreen');
     // The permission matrix takes the whole width
     expect(SETUP_DETAIL_ROUTES).not.toContain('PermissionScreen');
     expect(entryOfRoute('PermissionScreen')?.key).toBe('permissions');

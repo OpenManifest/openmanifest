@@ -16,6 +16,7 @@ module.exports = {
     'app/features/people/**/*.{ts,tsx}',
     'app/features/profile/**/*.{ts,tsx}',
     'app/features/setup/**/*.{ts,tsx}',
+    'app/features/skydiving/conditions/**/*.{ts,tsx}',
     'app/forms/**/*.{ts,tsx}',
     'app/navigation/**/*.{ts,tsx}',
     'app/screens/authenticated/account/**/*.{ts,tsx}',
@@ -39,6 +40,7 @@ module.exports = {
     'app/features/people/**/__tests__/**',
     'app/features/profile/**/__tests__/**',
     'app/features/setup/**/__tests__/**',
+    'app/features/skydiving/conditions/**/__tests__/**',
     'app/forms/**/__tests__/**',
     // The manifest forms of the classic board: replaced by the picker (U3.7, U3.8), removed in U6.4
     'app/legacy/**',

@@ -14,17 +14,13 @@ import type { LoadDetailsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
 import { LoadContextProvider, useManifestContext, useOperatorContext } from 'app/providers';
 import useRestriction from 'app/hooks/useRestriction';
-import { moduleEnabled } from 'app/utils/modules';
 import ColumnPlaces from './ColumnPlaces';
-import ConditionsStrip from './ConditionsStrip';
 import LoadActions from './LoadActions';
 import LoadCard from './LoadCard';
 import { COLUMN_WIDTH, MAX_CONTENT_WIDTH, layoutOf, splitLoads } from './layout';
 import { BoardDndProvider, DroppableLoad } from './dnd/BoardDnd';
 import { useBoard } from './useBoard';
-
-/** The module whose operators see the conditions of the day on the board */
-export const CONDITIONS_MODULE = 'winds_aloft';
+import WindsAloft from 'app/features/skydiving/conditions/WindsAloft';
 
 /**
  * The board of the day: a column of cards on a phone, the list beside the selected load on a tablet, and a column for
@@ -45,7 +41,6 @@ export default function BoardScreen() {
     manifest: { permissions },
   } = useManifestContext();
   const canCreateLoad = useRestriction(Permission.CreateLoad);
-  const canUpdateWeather = useRestriction(Permission.UpdateWeatherConditions);
   const { data: crew } = useCrewRolesQuery({
     variables: { operatorId: operator?.id as string },
     skip: !operator?.id,
@@ -70,14 +65,6 @@ export default function BoardScreen() {
       navigation.navigate('Authenticated', {
         screen: 'Manifest',
         params: { screen: 'LoadScreen', params: { loadId: load.id } },
-      }),
-    [navigation]
-  );
-  const openWeather = React.useCallback(
-    () =>
-      navigation.navigate('Authenticated', {
-        screen: 'Manifest',
-        params: { screen: 'WindScreen' },
       }),
     [navigation]
   );
@@ -114,13 +101,7 @@ export default function BoardScreen() {
   const header = (
     <View style={{ gap: theme.space.md, paddingBottom: theme.space.md }}>
       <DateBar />
-      {moduleEnabled(operator?.modules, CONDITIONS_MODULE) ? (
-        <ConditionsStrip
-          testID="board-conditions"
-          conditions={operator?.currentConditions}
-          onUpdate={canUpdateWeather ? openWeather : undefined}
-        />
-      ) : null}
+      <WindsAloft />
     </View>
   );
 

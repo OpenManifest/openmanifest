@@ -50,10 +50,7 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                   TransactionsScreen: '/transactions',
                 },
               },
-              JumpRunScreen: '/weather/jumprun',
-              WeatherConditionsScreen: '/weather',
               LoadScreen: '/loads/:loadId',
-              WindScreen: '/weather/winds',
             },
           },
           Users: {

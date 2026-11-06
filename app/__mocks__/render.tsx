@@ -15,7 +15,6 @@ import { Operation } from '@apollo/client';
 import { AppThemeProvider } from 'app/theme';
 import I18nProvider from 'app/i18n/I18nProvider';
 import { FIXTURES } from 'app/i18n/useOperatorTerms';
-import { WeatherFormProvider } from 'app/forms/weather';
 import { OperatorContextProvider, ManifestContextProvider } from 'app/providers';
 import mockQueryOperator from '../__tests__/manifest/__mocks__/QueryOperator.mock';
 import { initialSession, SessionState, useSession } from '../state/session';
@@ -120,7 +119,7 @@ function render(
               <ManifestContextProvider operator={session?.currentOperatorId?.toString()}>
                 <AppThemeProvider>
                   <I18nProvider terms={industry ? FIXTURES[industry] : undefined}>
-                    <WeatherFormProvider>{children}</WeatherFormProvider>
+                    {children}
                   </I18nProvider>
                 </AppThemeProvider>
               </ManifestContextProvider>

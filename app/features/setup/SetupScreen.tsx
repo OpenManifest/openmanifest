@@ -19,14 +19,14 @@ export const SETUP_LIST_WIDTH = 360;
 
 /**
  * Opens a setup screen. Beside the list (`replace`) the screen takes the place of the one shown, so Back returns to Setup;
- * the conditions live in the Manifest stack, where the navigation goes up to.
+ * the conditions are a panel of the board, in the Manifest stack, where the navigation goes up to.
  */
 export function openSetup(
   navigation: Pick<NavigationProp<ParamListBase>, 'navigate' | 'dispatch'>,
   route: SetupRoute,
   replace = false
 ) {
-  if (route === 'WeatherConditionsScreen') navigation.navigate(route);
+  if (route === 'ManifestScreen') navigation.navigate(route, { conditions: 'open' });
   else if (replace) navigation.dispatch(StackActions.replace(route));
   else navigation.navigate(route);
 }

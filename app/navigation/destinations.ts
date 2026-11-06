@@ -129,9 +129,6 @@ export const DESTINATIONS: Destination[] = [
       'EquipmentInspectionTemplateScreen',
       'PermissionScreen',
       'DailyLogScreen',
-      'WeatherConditionsScreen',
-      'JumpRunScreen',
-      'WindScreen',
     ],
   },
   {

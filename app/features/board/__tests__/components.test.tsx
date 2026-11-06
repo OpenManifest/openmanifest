@@ -3,7 +3,7 @@ import { Pressable, Text } from 'react-native';
 import { fireEvent } from '@testing-library/react-native';
 import { LoadState } from 'app/api/schema.d';
 import { renderThemed } from 'app/ui/components/testing';
-import ConditionsStrip from '../ConditionsStrip';
+import ConditionsStrip from 'app/features/skydiving/conditions/ConditionsStrip';
 import CrewChip from '../CrewChip';
 import DestinationLabel from '../DestinationLabel';
 import LoadCard from '../LoadCard';

@@ -65,7 +65,7 @@ describe('<SetupScreen />', () => {
 });
 
 describe('openSetup', () => {
-  it('replaces the screen beside the list, and goes up to the Manifest stack for the conditions', () => {
+  it('replaces the screen beside the list, and opens the conditions panel of the board in the Manifest stack', () => {
     const navigation = { navigate: jest.fn(), dispatch: jest.fn() };
 
     openSetup(navigation, 'RulesScreen');
@@ -74,7 +74,7 @@ describe('openSetup', () => {
     expect(navigation.dispatch).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'REPLACE', payload: { name: 'VehiclesScreen' } })
     );
-    openSetup(navigation, 'WeatherConditionsScreen', true);
-    expect(navigation.navigate).toHaveBeenLastCalledWith('WeatherConditionsScreen');
+    openSetup(navigation, 'ManifestScreen', true);
+    expect(navigation.navigate).toHaveBeenLastCalledWith('ManifestScreen', { conditions: 'open' });
   });
 });

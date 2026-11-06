@@ -21,6 +21,9 @@ describe('redirectLegacyPath', () => {
     ['/modal/user/12/transactions/7/receipt', '/user/12/transactions/7/receipt'],
     ['/modal/user/12/rig-inspection/5', '/user/12/equipment-inspection/5'],
     ['/manifest/users/12?tab=gear', '/user/12?tab=gear'],
+    ['/weather', '/manifest?conditions=open'],
+    ['/weather/winds', '/manifest?conditions=open'],
+    ['/weather/jumprun/', '/manifest?conditions=open'],
   ])('sends %s to %s', (legacy, canonical) => {
     expect(redirectLegacyPath(legacy)).toBe(canonical);
   });
@@ -82,4 +85,14 @@ describe('the linking configuration', () => {
     expect(leaf('/manifest/users/12/orders/7/receipts')).toEqual(receipt);
     expect(leaf('/modal/user/12/transactions/7/receipt')).toEqual(receipt);
   });
+
+  it.each(['/weather', '/weather/winds', '/weather/jumprun'])(
+    'opens the board with the conditions panel from the old weather path %s',
+    (path) => {
+      expect(leaf(path)).toEqual({
+        names: ['Authenticated', 'Manifest', 'ManifestScreen'],
+        params: { conditions: 'open' },
+      });
+    }
+  );
 });
