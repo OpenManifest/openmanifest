@@ -12,20 +12,20 @@ Client diagrams: [diagrams.md](diagrams.md).
 
 ## 1. Stack
 
-| Concern | Library (installed version) | Where |
-|---|---|---|
-| Runtime | Expo SDK 57.0.27 (P3.18; was 56.0.23), React Native 0.86.3, React 19.2.3 with the New Architecture, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before) | `package.json`, `app.json` |
-| Language | TypeScript 5.9.3 (`strict`), ESLint 9 (`eslint-config-expo`) + Prettier 3, no Rome, path alias `app/*` via `babel-plugin-module-resolver` | `tsconfig.json`, `babel.config.js` |
-| Server data | Apollo Client 3.14.1 (`BatchHttpLink`, ActionCable link for subscriptions) | `app/api/` |
-| Client state | zustand 5 stores: `useSession` (credentials, current dropzone, push token; credentials in `expo-secure-store` on native), `usePreferences` (colour scheme), `useThemeOverrides` (colour preview); no Redux (P4.8) | `app/state/`, `app/theme/` |
-| Navigation | React Navigation 7 (stack, drawer, bottom tabs) | `app/screens/**/routes.tsx` |
-| UI kit | react-native-paper 5.15.3 (MD2 theme, P3.11), react-native-reanimated 4.5.1 (with react-native-worklets 0.10.1), @gorhom/bottom-sheet 5.2.14 | |
-| Forms | react-hook-form 7 + yup, one `useForm` hook per form in `app/forms/<name>/` (P4.5–P4.7) | `app/forms/` |
-| Code generation | graphql-codegen (`codegen.yml`) → `app/api/schema.d.ts`, `operations.ts`, `reflection.tsx` | |
-| Web | `expo export --platform web` (Metro, `web.bundler: metro`, `output: single`; was webpack 4 before P3.7). Custom HTML, `404.html` and `.well-known/` live in `public/`, which Metro copies to `dist/` | `app.json`, `metro.config.js`, `public/` |
-| Builds | EAS Build / EAS Update (`eas.json`, project id `1d8fa34d-2ff8-4095-ab49-29a426117a8c`) | |
-| Monitoring | AppSignal JS (`@appsignal/javascript`, Apollo link), `sentry-expo` (installed, unused) | `app/api/client/links/appSignal.ts` |
-| Lint/format | ESLint (react-hooks rules only), Rome 11 nightly (lint + format), Prettier config | `.eslintrc.js`, `rome.json` |
+| Concern         | Library (installed version)                                                                                                                                                                                       | Where                                    |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| Runtime         | Expo SDK 57.0.27 (P3.18; was 56.0.23), React Native 0.86.3, React 19.2.3 with the New Architecture, Hermes on native (the SDK 48 default; no `jsEngine` set, JavaScriptCore before)                               | `package.json`, `app.json`               |
+| Language        | TypeScript 5.9.3 (`strict`), ESLint 9 (`eslint-config-expo`) + Prettier 3, no Rome, path alias `app/*` via `babel-plugin-module-resolver`                                                                         | `tsconfig.json`, `babel.config.js`       |
+| Server data     | Apollo Client 3.14.1 (`BatchHttpLink`, ActionCable link for subscriptions)                                                                                                                                        | `app/api/`                               |
+| Client state    | zustand 5 stores: `useSession` (credentials, current dropzone, push token; credentials in `expo-secure-store` on native), `usePreferences` (colour scheme), `useThemeOverrides` (colour preview); no Redux (P4.8) | `app/state/`, `app/theme/`               |
+| Navigation      | React Navigation 7 (stack, drawer, bottom tabs)                                                                                                                                                                   | `app/screens/**/routes.tsx`              |
+| UI kit          | react-native-paper 5.15.3 (MD2 theme, P3.11), react-native-reanimated 4.5.1 (with react-native-worklets 0.10.1), @gorhom/bottom-sheet 5.2.14                                                                      |                                          |
+| Forms           | react-hook-form 7 + yup, one `useForm` hook per form in `app/forms/<name>/` (P4.5–P4.7)                                                                                                                           | `app/forms/`                             |
+| Code generation | graphql-codegen (`codegen.yml`) → `app/api/schema.d.ts`, `operations.ts`, `reflection.tsx`                                                                                                                        |                                          |
+| Web             | `expo export --platform web` (Metro, `web.bundler: metro`, `output: single`; was webpack 4 before P3.7). Custom HTML, `404.html` and `.well-known/` live in `public/`, which Metro copies to `dist/`              | `app.json`, `metro.config.js`, `public/` |
+| Builds          | EAS Build / EAS Update (`eas.json`, project id `1d8fa34d-2ff8-4095-ab49-29a426117a8c`)                                                                                                                            |                                          |
+| Monitoring      | AppSignal JS (`@appsignal/javascript`, Apollo link), `sentry-expo` (installed, unused)                                                                                                                            | `app/api/client/links/appSignal.ts`      |
+| Lint/format     | ESLint (react-hooks rules only), Rome 11 nightly (lint + format), Prettier config                                                                                                                                 | `.eslintrc.js`, `rome.json`              |
 
 Environment selection: `EXPO_ENV` ∈ `local` | `staging` | `production` (default `local`) picks the API endpoint in
 `build/constants.ts` (`local` = `http://local.openmanifest.org:5000/graphql`, `staging` = `https://stg.openmanifest.org/graphql`,
@@ -74,29 +74,29 @@ Deep-link config: `app/navigation/linking.ts` `options` (prefixes `openmanifest:
 
 Main flows:
 
-| Flow | Screens / components |
-|---|---|
-| Login | `LoginScreen` → `login/form/LoginForm.tsx` (`userLogin`), `AppleButton*.tsx` → Limbo |
-| Sign up | `SignUpScreen` (wizard) → confirmation email → `ConfirmUserScreen` |
-| Select dropzone | `DropzoneSelectScreen` (list of dropzones, create → `DropzoneWizardScreen`) |
-| Manifest board | `ManifestScreen` (load cards, `app/providers/manifest/provider.tsx` for date/filters), FAB: new load, manifest me |
-| Load | `LoadScreen` (slots table `app/components/slots_table/`, `ActionButton.tsx` for calls/land/cancel, drag-and-drop on web) |
-| Manifest a jumper / group | `app/legacy/manifest_user/*` sheet (classic board; the new board uses `app/features/picker`), `app/components/dialogs/ManifestGroup/*` |
-| Credits | `app/forms/credits/*` (`createOrder`) from profile and transactions |
-| Weather | `WeatherConditionsScreen`, `WindScreen`, `JumpRunScreen` (form state in `app/forms/weather`, `WeatherFormProvider` above the dropzone stack) |
-| Setup | `app/features/setup` (Setup list, Rules, Branding) and the Configuration stack screens; forms in `app/forms/*` |
-| Reports, Platform | `app/features/reports` (`ReportsScreen` at `/dashboard`, `PlatformScreen` at `/overview`) in the Overview tab |
-| Money, daily log | `app/features/money` (`/transactions`), `app/features/dailylog` (`/daily-log`) in the Configuration stack |
+| Flow                      | Screens / components                                                                                                                         |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Login                     | `LoginScreen` → `login/form/LoginForm.tsx` (`userLogin`), `AppleButton*.tsx` → Limbo                                                         |
+| Sign up                   | `SignUpScreen` (wizard) → confirmation email → `ConfirmUserScreen`                                                                           |
+| Select dropzone           | `DropzoneSelectScreen` (list of dropzones, create → `DropzoneWizardScreen`)                                                                  |
+| Manifest board            | `ManifestScreen` (load cards, `app/providers/manifest/provider.tsx` for date/filters), FAB: new load, manifest me                            |
+| Load                      | `LoadScreen` (slots table `app/components/slots_table/`, `ActionButton.tsx` for calls/land/cancel, drag-and-drop on web)                     |
+| Manifest a jumper / group | `app/legacy/manifest_user/*` sheet (classic board; the new board uses `app/features/picker`), `app/components/dialogs/ManifestGroup/*`       |
+| Credits                   | `app/forms/credits/*` (`createOrder`) from profile and transactions                                                                          |
+| Weather                   | `WeatherConditionsScreen`, `WindScreen`, `JumpRunScreen` (form state in `app/forms/weather`, `WeatherFormProvider` above the dropzone stack) |
+| Setup                     | `app/features/setup` (Setup list, Rules, Branding) and the Configuration stack screens; forms in `app/forms/*`                               |
+| Reports, Platform         | `app/features/reports` (`ReportsScreen` at `/dashboard`, `PlatformScreen` at `/overview`) in the Overview tab                                |
+| Money, daily log          | `app/features/money` (`/transactions`), `app/features/dailylog` (`/daily-log`) in the Configuration stack                                    |
 
 ### Layout primitives (`app/components/layout/`, since Phase 5)
 
-| Primitive | Use |
-|---|---|
-| `ScreenContainer` | Root of every screen: safe-area `edges` (`['top','bottom']` headerless, `['bottom']` under a header), theme background, `flex: 1` |
-| `FormColumn` | Keyboard-aware scrolling column for forms (`KeyboardAwareScrollView`), full width up to 560 |
-| `FloatingActionArea` | Bottom-right area for FABs, outside scroll content; above the gesture bar, rises with the keyboard |
-| `useBreakpoint` | `compact` < 600 ≤ `medium` < 1024 ≤ `expanded` from the window width |
-| `Sheet` | The one bottom sheet (`DialogOrSheet` and `Credits` use it): dynamic height, interactive keyboard handling, bottom inset padding. `TextField`/`NumberField` render a `BottomSheetTextInput` inside a `Sheet` (`SheetContext`) |
+| Primitive            | Use                                                                                                                                                                                                                           |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ScreenContainer`    | Root of every screen: safe-area `edges` (`['top','bottom']` headerless, `['bottom']` under a header), theme background, `flex: 1`                                                                                             |
+| `FormColumn`         | Keyboard-aware scrolling column for forms (`KeyboardAwareScrollView`), full width up to 560                                                                                                                                   |
+| `FloatingActionArea` | Bottom-right area for FABs, outside scroll content; above the gesture bar, rises with the keyboard                                                                                                                            |
+| `useBreakpoint`      | `compact` < 600 ≤ `medium` < 1024 ≤ `expanded` from the window width                                                                                                                                                          |
+| `Sheet`              | The one bottom sheet (`DialogOrSheet` and `Credits` use it): dynamic height, interactive keyboard handling, bottom inset padding. `TextField`/`NumberField` render a `BottomSheetTextInput` inside a `Sheet` (`SheetContext`) |
 
 `KeyboardProvider` (react-native-keyboard-controller) sits inside `SafeAreaProvider` in `app/entrypoint/Entrypoint.tsx`;
 `android.softwareKeyboardLayoutMode` is `resize`. Web has no bottom sheets: `*.web.tsx` variants use drawers/dialogs.
@@ -108,11 +108,11 @@ calls under `app/`, except in `app/components/layout/`.
 There is no Redux (removed in P4.8). Server data lives in the Apollo `InMemoryCache`; everything else is a small zustand
 store or component state.
 
-| Store | Fields | Persisted | Notes |
-|---|---|---|---|
-| `useSession` (`app/state/session.ts`) | `credentials` (`accessToken`, `client`, `uid`, `expiry`, `tokenType`), `currentDropzoneId`, `expoPushToken`, `currentRouteName`, `hydrated` | yes: `openmanifest.session.v1` (AsyncStorage / `localStorage`); `credentials` go to `expo-secure-store` (`openmanifest.credentials`) on native and `localStorage` on web (`app/state/storage.ts`) | `useAuthenticated()` = an access token exists. `reset()` logs out but keeps the device push token. `Entrypoint` renders nothing until `hydrated`. Migrated once from the old redux-persist blob (`migrateFromReduxPersist.ts`), which is then deleted. |
-| `usePreferences` (`app/state/preferences.ts`) | `colorScheme`: `system` / `light` / `dark`, `density`, `newBoard` (on for a new install, off for stored v1 preferences; picks the new or the classic board and load screens), `hydrated` | yes: `openmanifest.preferences.v1` | device level, survives logout |
-| `useThemeOverrides` (`app/theme/overrides.ts`) | `primary` | no | colour preview in the dropzone form, dropped once Apollo holds the saved colour |
+| Store                                          | Fields                                                                                                                                                                                   | Persisted                                                                                                                                                                                         | Notes                                                                                                                                                                                                                                                  |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `useSession` (`app/state/session.ts`)          | `credentials` (`accessToken`, `client`, `uid`, `expiry`, `tokenType`), `currentDropzoneId`, `expoPushToken`, `currentRouteName`, `hydrated`                                              | yes: `openmanifest.session.v1` (AsyncStorage / `localStorage`); `credentials` go to `expo-secure-store` (`openmanifest.credentials`) on native and `localStorage` on web (`app/state/storage.ts`) | `useAuthenticated()` = an access token exists. `reset()` logs out but keeps the device push token. `Entrypoint` renders nothing until `hydrated`. Migrated once from the old redux-persist blob (`migrateFromReduxPersist.ts`), which is then deleted. |
+| `usePreferences` (`app/state/preferences.ts`)  | `colorScheme`: `system` / `light` / `dark`, `density`, `newBoard` (on for a new install, off for stored v1 preferences; picks the new or the classic board and load screens), `hydrated` | yes: `openmanifest.preferences.v1`                                                                                                                                                                | device level, survives logout                                                                                                                                                                                                                          |
+| `useThemeOverrides` (`app/theme/overrides.ts`) | `primary`                                                                                                                                                                                | no                                                                                                                                                                                                | colour preview in the dropzone form, dropped once Apollo holds the saved colour                                                                                                                                                                        |
 
 Derived, not stored: the theme and palette (`useAppTheme()` in `app/theme`: colour scheme preference or device, the current
 dropzone's `primaryColor` / `secondaryColor` from Apollo, preview override), `authenticated`, the current user, dropzone
@@ -133,11 +133,11 @@ calls it when the server says the session expired; switching dropzone calls `res
 
 Three generations coexist in `app/api/`:
 
-| Generation | Files | Pattern | Users |
-|---|---|---|---|
-| 1. Hand-written mutation hooks | `app/api/hooks/useMutation*.ts(x)` (16 files), `createMutation.tsx`, `createQuery.tsx` | inline `gql` documents, types from `schema.d.ts`, client-side validators | 7 importers |
-| 2. Generated hooks | `app/api/{queries,mutations,fragments,subscriptions}/*.gql` (24 queries, 41 mutation documents) → `reflection.tsx` (`useXQuery`, `useXMutation`), `operations.ts` | graphql-codegen | 68 importers |
-| 3. CRUD hooks | `app/api/crud/*` (`useLoad`, `useManifest`, `useDropzone`, `useUserProfile`, `useTickets`, `useAircrafts`, `useEquipment`, `useDropzones`, `factory.tsx`) | wrap generated hooks; return `{ data, loading, create, update, … }`, normalise `fieldErrors` | 42 importers |
+| Generation                     | Files                                                                                                                                                             | Pattern                                                                                      | Users        |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------ |
+| 1. Hand-written mutation hooks | `app/api/hooks/useMutation*.ts(x)` (16 files), `createMutation.tsx`, `createQuery.tsx`                                                                            | inline `gql` documents, types from `schema.d.ts`, client-side validators                     | 7 importers  |
+| 2. Generated hooks             | `app/api/{queries,mutations,fragments,subscriptions}/*.gql` (24 queries, 41 mutation documents) → `reflection.tsx` (`useXQuery`, `useXMutation`), `operations.ts` | graphql-codegen                                                                              | 68 importers |
+| 3. CRUD hooks                  | `app/api/crud/*` (`useLoad`, `useManifest`, `useDropzone`, `useUserProfile`, `useTickets`, `useAircrafts`, `useEquipment`, `useDropzones`, `factory.tsx`)         | wrap generated hooks; return `{ data, loading, create, update, … }`, normalise `fieldErrors` | 42 importers |
 
 `app/features/board/useBoard.ts` (U3.2) is the board's data layer: `useBoard(date?)` reads the manifest's loads for the day,
 orders them (open → boarding → departed → completed/cancelled, then load number; `order.ts`), flags a changed row for
@@ -179,28 +179,37 @@ Scripts: `yarn sync:schema` (download schema), `yarn ts:graphql` (codegen), `yar
 5. Push: `app/entrypoint/providers/PushNotificationProvider.tsx` registers an Expo push token and writes it to the user
    with `updateUser(pushToken)`; logging out clears it with `updateUser(pushToken: null)` (client part of BUG-018).
 6. Logout (`useLogout`) and an expired session (`errors.ts`) both call `resetSession` (see §3).
+7. The signed-out screens and the wizards are on `app/ui` (U5.8b): `LoginScreen` (logo and form on a raised `Card`;
+   `LoginForm` with email, password, "Forgot your password?", Log in, Sign in with Apple on iOS and Sign up), the
+   operator selection (`OperatorsScreen` at `/operators/select`: one `ListRow` per operator with its logo or initials,
+   "Create <operator>" opens the setup wizard), the password reset (`RecoverPasswordScreen` at `/recover-password`,
+   `ChangePasswordScreen` at `/change-password`), the account confirmation (`ConfirmUserScreen` at `/confirm`:
+   confirming, confirmed or failed, also without a token) and the operator setup wizard (`/setup`). They share the
+   wizard frame `app/components/carousel_wizard` (`WizardFrame` with `Dots`, a `progressbar` named "Step n of m";
+   `Step` with the page title as its heading; `Buttons`, the next button `wizard-next-primary-action` and back); the
+   map steps' pin, coordinates and "Go to my location" are in `MapOverlay.tsx`.
 
 ## 6. Platform-specific files
 
 Metro/webpack pick `*.web.tsx`, `*.android.tsx`, `*.ios.tsx` over the base file.
 
-| File | Platform | Why |
-|---|---|---|
-| `app/entrypoint/EntrypointWrapper.web.tsx`, `providers/ThemeProvider.web.tsx` | web | web-only providers/fonts |
-| `app/components/GradientText.web.tsx`, `LottieView.web.tsx`, `Skeleton.web.tsx` | web | native libs unavailable on web |
-| `app/components/activity/{ActivityFeed,Feed}.web.tsx` | web | table layout |
-| `app/components/autocomplete/DropzoneUserAutocomplete.web.tsx` | web | |
-| `app/components/dialogs/ImageViewer/ImageViewer.web.tsx` | web | uses `react-image-lightbox` (deprecated) |
-| `app/components/dialogs/ManifestGroup/ManifestGroup.web.tsx`, `app/legacy/manifest_user/Dialog.web.tsx`, `app/forms/credits/Credits.web.tsx`, `app/components/layout/DialogOrSheet.web.tsx` | web | dialogs instead of bottom sheets |
-| `app/components/input/LocationPicker.web.tsx`, `app/components/map/Map.web.tsx`, `app/screens/wizards/dropzone_wizard/steps/Location.web.tsx` | web | Google Maps JS instead of `react-native-maps` (maps issue client#127, BUG-085) |
-| `app/components/input/date_picker/DatePicker.web.tsx`, `number_input/NumberField.web.tsx`, `select/Select.web.tsx`, `popover/Menu.web.tsx` | web | |
-| `app/components/input/jump_run_select/JumpRunSelect.{android,web}.tsx` | Android, web | circular slider variants |
-| `app/components/slots_table/AvailableRow.web.tsx`, `DragAndDrop/*.web.tsx` | web | drag-and-drop between loads (`@dnd-kit/core`) |
-| `app/hooks/useColorScheme.web.ts` | web | |
-| `app/screens/authenticated/TabBar.web.tsx` | web | identical to `TabBar.tsx` (a bottom tab navigator); there is no top tab bar on wide screens |
-| `app/screens/authenticated/dropzone/manifest/LoadCard/CountdownTimer.web.ts` | web | |
-| `app/screens/authenticated/overview/statistics/LoadsByDay.web.tsx` | web | chart library differs |
-| `app/screens/unauthenticated/login/form/AppleButton.{android,web}.tsx` | Android, web | Apple sign-in only on iOS (stubs) |
+| File                                                                                                                                                                                        | Platform     | Why                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------- |
+| `app/entrypoint/EntrypointWrapper.web.tsx`, `providers/ThemeProvider.web.tsx`                                                                                                               | web          | web-only providers/fonts                                                                    |
+| `app/components/GradientText.web.tsx`, `LottieView.web.tsx`, `Skeleton.web.tsx`                                                                                                             | web          | native libs unavailable on web                                                              |
+| `app/components/activity/{ActivityFeed,Feed}.web.tsx`                                                                                                                                       | web          | table layout                                                                                |
+| `app/components/autocomplete/DropzoneUserAutocomplete.web.tsx`                                                                                                                              | web          |                                                                                             |
+| `app/components/dialogs/ImageViewer/ImageViewer.web.tsx`                                                                                                                                    | web          | uses `react-image-lightbox` (deprecated)                                                    |
+| `app/components/dialogs/ManifestGroup/ManifestGroup.web.tsx`, `app/legacy/manifest_user/Dialog.web.tsx`, `app/forms/credits/Credits.web.tsx`, `app/components/layout/DialogOrSheet.web.tsx` | web          | dialogs instead of bottom sheets                                                            |
+| `app/components/input/LocationPicker.web.tsx`, `app/components/map/Map.web.tsx`, `app/screens/wizards/dropzone_wizard/steps/Location.web.tsx`                                               | web          | Google Maps JS instead of `react-native-maps` (maps issue client#127, BUG-085)              |
+| `app/components/input/date_picker/DatePicker.web.tsx`, `number_input/NumberField.web.tsx`, `select/Select.web.tsx`, `popover/Menu.web.tsx`                                                  | web          |                                                                                             |
+| `app/components/input/jump_run_select/JumpRunSelect.{android,web}.tsx`                                                                                                                      | Android, web | circular slider variants                                                                    |
+| `app/components/slots_table/AvailableRow.web.tsx`, `DragAndDrop/*.web.tsx`                                                                                                                  | web          | drag-and-drop between loads (`@dnd-kit/core`)                                               |
+| `app/hooks/useColorScheme.web.ts`                                                                                                                                                           | web          |                                                                                             |
+| `app/screens/authenticated/TabBar.web.tsx`                                                                                                                                                  | web          | identical to `TabBar.tsx` (a bottom tab navigator); there is no top tab bar on wide screens |
+| `app/screens/authenticated/dropzone/manifest/LoadCard/CountdownTimer.web.ts`                                                                                                                | web          |                                                                                             |
+| `app/screens/authenticated/overview/statistics/LoadsByDay.web.tsx`                                                                                                                          | web          | chart library differs                                                                       |
+| `app/screens/unauthenticated/login/form/AppleButton.{android,web}.tsx`                                                                                                                      | Android, web | Apple sign-in only on iOS (stubs)                                                           |
 
 `Platform.OS`/`Platform.select` branches are also used inline (`grep -rn "Platform\.\(OS\|select\)" app`); several omit
 Android (BUG-078). Android layout root causes are listed in BUGS.md ("Android / mobile layout").
@@ -220,20 +229,20 @@ Android (BUG-078). Android layout root causes are listed in BUGS.md ("Android / 
 
 Nothing below was committed; the plan's Phase 0 makes it reproducible.
 
-| Step | What happened | Resolution |
-|---|---|---|
-| Node | `.nvmrc` is 24 since P3.15 (CI `ci.yml` and `publish.yml` read it; `publish.yml` used Node 16 before). `/opt/node24` in the VM; Node 20 works up to SDK 53 | `export PATH=/opt/node24/bin:$PATH` |
-| Yarn | Yarn 1 lockfile | `corepack` / `npm i -g yarn@1.22.22` |
-| Install | `yarn install --frozen-lockfile` failed: `@sentry/cli` postinstall download from `downloads.sentry-cdn.com` blocked (403) | `SENTRYCLI_SKIP_DOWNLOAD=1 yarn install --frozen-lockfile` (~2 min) |
-| Type check | `yarn check:types` (tsc) | passes |
-| Lint | ESLint and Rome | pass |
-| Tests | `check:testing` is `exit 0`. Running `npx jest` finds 1 suite / 8 tests (utility tests); `ManifestScreen` test is excluded and fails (react-test-renderer 17 vs React 18.1; after aligning, `BottomSheetModalInternalContext` null) — BUG-081, fix in plan P1.10 | |
-| Expo API | `api.expo.dev` blocked; `npx expo install --check` and `expo-doctor` cannot fetch version data | `EXPO_OFFLINE=1` |
-| Web export | `EXPO_ENV=local npx expo export --platform web` → `dist/` (~1 min; Metro, P3.7). `--output-dir` works too | |
-| Serving | the global `serve` package is broken in the VM | small Python SPA server (fallback to `index.html`); plan P0.8 adds `scripts/serve-web-build.py` |
-| Browser test | Playwright with pre-installed Chromium; `fill()` on Paper inputs timed out | click + `keyboard.type`; launch with `--proxy-bypass-list=local.openmanifest.org` so the websocket is not sent through the agent proxy |
-| Result | login → dropzone → manifest board → load screen works at 360×640 and 1280×800 against the local API. At 360×640 the login "Sign up" button is below the fold and the screen does not scroll (BUG-076) | |
-| Audit | `yarn audit --groups dependencies --summary`: 715 advisories (61 critical, 452 high, 161 moderate, 41 low) | BUG-016 |
+| Step         | What happened                                                                                                                                                                                                                                                    | Resolution                                                                                                                             |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Node         | `.nvmrc` is 24 since P3.15 (CI `ci.yml` and `publish.yml` read it; `publish.yml` used Node 16 before). `/opt/node24` in the VM; Node 20 works up to SDK 53                                                                                                       | `export PATH=/opt/node24/bin:$PATH`                                                                                                    |
+| Yarn         | Yarn 1 lockfile                                                                                                                                                                                                                                                  | `corepack` / `npm i -g yarn@1.22.22`                                                                                                   |
+| Install      | `yarn install --frozen-lockfile` failed: `@sentry/cli` postinstall download from `downloads.sentry-cdn.com` blocked (403)                                                                                                                                        | `SENTRYCLI_SKIP_DOWNLOAD=1 yarn install --frozen-lockfile` (~2 min)                                                                    |
+| Type check   | `yarn check:types` (tsc)                                                                                                                                                                                                                                         | passes                                                                                                                                 |
+| Lint         | ESLint and Rome                                                                                                                                                                                                                                                  | pass                                                                                                                                   |
+| Tests        | `check:testing` is `exit 0`. Running `npx jest` finds 1 suite / 8 tests (utility tests); `ManifestScreen` test is excluded and fails (react-test-renderer 17 vs React 18.1; after aligning, `BottomSheetModalInternalContext` null) — BUG-081, fix in plan P1.10 |                                                                                                                                        |
+| Expo API     | `api.expo.dev` blocked; `npx expo install --check` and `expo-doctor` cannot fetch version data                                                                                                                                                                   | `EXPO_OFFLINE=1`                                                                                                                       |
+| Web export   | `EXPO_ENV=local npx expo export --platform web` → `dist/` (~1 min; Metro, P3.7). `--output-dir` works too                                                                                                                                                        |                                                                                                                                        |
+| Serving      | the global `serve` package is broken in the VM                                                                                                                                                                                                                   | small Python SPA server (fallback to `index.html`); plan P0.8 adds `scripts/serve-web-build.py`                                        |
+| Browser test | Playwright with pre-installed Chromium; `fill()` on Paper inputs timed out                                                                                                                                                                                       | click + `keyboard.type`; launch with `--proxy-bypass-list=local.openmanifest.org` so the websocket is not sent through the agent proxy |
+| Result       | login → dropzone → manifest board → load screen works at 360×640 and 1280×800 against the local API. At 360×640 the login "Sign up" button is below the fold and the screen does not scroll (BUG-076)                                                            |                                                                                                                                        |
+| Audit        | `yarn audit --groups dependencies --summary`: 715 advisories (61 critical, 452 high, 161 moderate, 41 low)                                                                                                                                                       | BUG-016                                                                                                                                |
 
 ## 9. Known issues
 
@@ -254,154 +263,154 @@ Rows tagged with a task id (for example `(P3.14)`) had their `package.json` and 
 
 Headline:
 
-| Package | Installed | Latest | Target in plan |
-|---|---|---|---|
-| expo | 57.0.27 (P3.18) | 57.0.27 | 57.0.27 (P3.18) |
-| react-native | 0.86.3 (P3.18) | 0.87.1 (npm `latest`) | 0.86.x pinned by SDK 57 |
-| react | 19.2.3 (P3.17) | 19.3.0 (npm `latest`) | 19.2.x pinned by SDK 57 |
-| @apollo/client | 3.14.1 (P3.19) | 4.3.3 | 3.14.1; 4.x is backlog |
-| typescript | 5.9.3 (P3.9) | 7.0.2 | 5.9.3 (P3.20) |
-| Node (tooling) | 24.21.0 (P3.15; CI reads `.nvmrc`) | 24.21.0 LTS | 20 until P3.15, then 24 |
+| Package        | Installed                          | Latest                | Target in plan          |
+| -------------- | ---------------------------------- | --------------------- | ----------------------- |
+| expo           | 57.0.27 (P3.18)                    | 57.0.27               | 57.0.27 (P3.18)         |
+| react-native   | 0.86.3 (P3.18)                     | 0.87.1 (npm `latest`) | 0.86.x pinned by SDK 57 |
+| react          | 19.2.3 (P3.17)                     | 19.3.0 (npm `latest`) | 19.2.x pinned by SDK 57 |
+| @apollo/client | 3.14.1 (P3.19)                     | 4.3.3                 | 3.14.1; 4.x is backlog  |
+| typescript     | 5.9.3 (P3.9)                       | 7.0.2                 | 5.9.3 (P3.20)           |
+| Node (tooling) | 24.21.0 (P3.15; CI reads `.nvmrc`) | 24.21.0 LTS           | 20 until P3.15, then 24 |
 
 Full table:
 
-| Package | Group | package.json | Installed | Latest on npm | Expo SDK 57 pin | Notes |
-|---|---|---|---|---|---|---|
-| `@apollo/client` | dep | `3.14.1` (P3.19)| 3.14.1 | 4.3.3 |  |  |
-| `@appsignal/javascript` | dep | `1.3.26` | 1.3.26 | 1.6.1 |  |  |
-| `@appsignal/plugin-path-decorator` | dep | `^1.0.15` (P3.14) | 1.0.18 | 1.0.18 |  |  |
-| `@appsignal/plugin-window-events` | dep | `1.0.19` | 1.0.19 | 1.0.26 |  |  |
-| `@appsignal/react` | dep | `1.0.22` | 1.0.22 | 1.0.31 |  |  |
-| `@babel/plugin-proposal-logical-assignment-operators` | dep | `7.20.7` | 7.20.7 | 7.20.7 |  | **deprecated on npm**; last publish 2023-09-01 |
-| `@dnd-kit/core` | dep | `6.0.6` | 6.0.6 | 6.3.1 |  |  |
-| `@dnd-kit/utilities` | dep | `3.2.1` | 3.2.1 | 3.2.2 |  | last publish 2023-11-06 |
-| `@emotion/react` | dep | `11.10.6` | 11.10.6 | 11.14.0 |  |  |
-| `@emotion/styled` | dep | `11.10.6` | 11.10.6 | 11.14.1 |  |  |
-| `@expo-google-fonts/inter` | dep | `^0.2.2` (P3.14) | 0.2.3 | 0.4.2 |  |  |
-| `@expo-google-fonts/roboto` | dep | `^0.2.2` (P3.14) | 0.2.3 | 0.4.3 |  |  |
-| `@expo/vector-icons` | dep | `^15.0.2` (P3.16)| 15.1.1 | 15.1.1 | `^15.0.2` |  |
-| `@formatjs/intl-datetimeformat` | dep | `4.5.1` | 4.5.1 | 7.8.1 |  |  |
-| `@formatjs/intl-displaynames` | dep | `5.4.1` | 5.4.1 | 7.3.15 |  |  |
-| `@formatjs/intl-getcanonicallocales` | dep | `1.9.0` | 1.9.0 | 3.2.12 |  |  |
-| `@formatjs/intl-listformat` | dep | `6.5.1` | 6.5.1 | 8.3.15 |  |  |
-| `@formatjs/intl-locale` | dep | `2.4.44` | 2.4.44 | 5.3.12 |  |  |
-| `@formatjs/intl-numberformat` | dep | `7.4.1` | 7.4.1 | 9.4.3 |  |  |
-| `@formatjs/intl-pluralrules` | dep | `4.3.1` | 4.3.1 | 6.3.15 |  |  |
-| `@formatjs/intl-relativetimeformat` | dep | `9.5.1` | 9.5.1 | 12.3.15 |  |  |
-| `@gorhom/bottom-sheet` | dep | `5.2.14` (P3.15)| 5.2.14 | 5.2.14 |  |  |
-| `@gorhom/portal` | dep | `1.0.14` | 1.0.14 | 1.0.14 |  | last publish 2022-06-23 |
-| `@hookform/resolvers` | dep | `2.9.10` | 2.9.10 | 5.9.1 |  |  |
-| `@mui/material` | dep | `5.11.4` | 5.11.4 | 9.4.0 |  |  |
-| `@rails/actioncable` | dep | `7.0.4` | 7.0.4 | 8.1.400 |  |  |
-| `@react-google-maps/api` | dep | `2.18.1` | 2.18.1 | 2.20.8 |  |  |
-| `@react-native-async-storage/async-storage` | dep | `2.2.0` (P3.15)| 2.2.0 | 3.1.1 | `2.2.0` |  |
-| `@react-native-community/datetimepicker` | dep | `9.1.0` (P3.17)| 9.1.0 | 9.2.1 | `9.1.0` |  |
-| `@react-native-masked-view/masked-view` | dep | `0.3.2` (P3.14) | 0.3.2 | 0.3.2 | `0.3.2` |  |
-| `@react-navigation/bottom-tabs` | dep | `7.20.0` (P3.9) | 7.20.0 | 7.20.0 |  |  |
-| `@react-navigation/drawer` | dep | `7.14.3` (P3.9) | 7.14.3 | 7.14.3 |  |  |
-| `@react-navigation/native` | dep | `7.5.0` (P3.9) | 7.5.0 | 7.5.0 |  |  |
-| `@react-navigation/stack` | dep | `7.12.0` (P3.9) | 7.12.0 | 7.12.0 |  |  |
-| `check-password-strength` | dep | `2.0.7` | 2.0.7 | 3.0.0 |  |  |
-| `color` | dep | `4.2.3` | 4.2.3 | 5.0.3 |  |  |
-| `date-fns` | dep | `2.29.3` | 2.29.3 | 4.4.0 |  |  |
-| `deprecated-react-native-prop-types` | dep | `2.3.0` | 2.3.0 | 5.0.0 |  |  |
-| `dotenv` | dep | `14.3.2` | 14.3.2 | 18.0.6 |  |  |
-| `expo` | dep | `^57.0.27` (P3.18)| 57.0.27 | 57.0.27 |  |  |
-| `expo-apple-authentication` | dep | `~57.0.2` (P3.18)| 57.0.2 | 57.0.2 | `~57.0.2` |  |
-| `expo-application` | dep | `~57.0.3` (P3.18)| 57.0.3 | 57.0.3 | `~57.0.3` |  |
-| `expo-asset` | dep | `~57.0.19` (P3.18)| 57.0.19 | 57.0.19 | `~57.0.19` |  |
-| `expo-blur` | dep | `~57.0.3` (P3.18)| 57.0.3 | 57.0.3 | `~57.0.3` |  |
-| `expo-constants` | dep | `~57.0.21` (P3.18)| 57.0.21 | 57.0.21 | `~57.0.21` |  |
-| `expo-device` | dep | `~57.0.2` (P3.18)| 57.0.2 | 57.0.2 | `~57.0.2` |  |
-| `expo-dev-client` | dep | `~57.0.19` (P3.21) | 57.0.19 | 57.0.19 | `~57.0.19` | development builds (`eas.json` `development` profile) |
-| `expo-font` | dep | `~57.0.4` (P3.18)| 57.0.4 | 57.0.4 | `~57.0.4` |  |
-| `expo-image-picker` | dep | `~57.0.20` (P3.18)| 57.0.20 | 57.0.20 | `~57.0.20` |  |
-| `expo-linear-gradient` | dep | `~57.0.2` (P3.18)| 57.0.2 | 57.0.2 | `~57.0.2` |  |
-| `expo-linking` | dep | `~57.0.12` (P3.18)| 57.0.12 | 57.0.12 | `~57.0.12` |  |
-| `expo-localization` | dep | `~57.0.2` (P3.18)| 57.0.2 | 57.0.2 | `~57.0.2` |  |
-| `expo-location` | dep | `~57.0.20` (P3.18)| 57.0.20 | 57.0.20 | `~57.0.20` |  |
-| `expo-notifications` | dep | `~57.0.22` (P3.18)| 57.0.22 | 57.0.22 | `~57.0.22` |  |
-| `expo-secure-store` | dep | `~57.0.4` (P4.1) | 57.0.4 | 57.0.4 | `~57.0.4` | credentials on native (`app/state/storage.ts`) |
-| `expo-splash-screen` | dep | `~57.0.9` (P3.18)| 57.0.9 | 57.0.9 | `~57.0.9` |  |
-| `expo-status-bar` | dep | `~57.0.1` (P3.18)| 57.0.1 | 57.0.1 | `~57.0.1` |  |
-| `expo-updates` | dep | `~57.0.25` (P3.18)| 57.0.25 | 57.0.25 | `~57.0.25` |  |
-| `expo-web-browser` | dep | `~57.0.3` (P3.18)| 57.0.3 | 57.0.3 | `~57.0.3` |  |
-| `graphql` | dep | `^16` (P3.19)| 16.14.2 | 17.0.2 |  |  |
-| `graphql-tag` | dep | `2.12.6` | 2.12.6 | 2.12.7 |  |  |
-| `lodash` | dep | `^4.17.21` (P3.14) | 4.18.1 | 4.18.1 |  |  |
-| `lottie-react-native` | dep | `~7.3.8` (P3.18)| 7.3.8 | 7.5.0 | `~7.3.8` |  |
-| `luxon` | dep | `3.3.0` | 3.3.0 | 3.7.2 |  |  |
-| `postinstall-postinstall` | dep | `^2.1.0` | 2.1.0 | 2.1.0 |  | last publish 2022-05-13 |
-| `react` | dep | `19.2.3` (P3.17)| 19.2.3 | 19.3.0 | `19.2.3` |  |
-| `react-calendar-heatmap` | dep | `1.9.0` | 1.9.0 | 1.10.0 |  |  |
-| `react-countdown-circle-timer` | dep | `3.2.1` (P3.13) | 3.2.1 | 3.2.1 |  | last publish 2023-03-15 |
-| `react-day-picker` | dep | `^7.4.10` | 7.4.10 | 10.0.2 |  |  |
-| `react-dom` | dep | `19.2.3` (P3.17)| 19.2.3 | 19.3.0 | `19.2.3` |  |
-| `react-hook-form` | dep | `7.42.1` | 7.42.1 | 7.89.0 |  |  |
-| `react-image-lightbox` | dep | `^5.1.4` | 5.1.4 | 5.1.4 |  | **deprecated on npm**; last publish 2023-01-19 |
-| `react-native` | dep | `0.86.3` (P3.18)| 0.86.3 | 0.87.1 | `0.86.3` |  |
-| `react-native-animatable` | dep | `^1.3.3` (P3.14) | 1.4.0 | 1.4.0 |  | last publish 2023-10-26 |
-| `react-native-chart-kit` | dep | `6.12.0` | 6.12.0 | 7.0.4 |  |  |
-| `react-native-countdown-circle-timer` | dep | `3.2.1` (P3.13) | 3.2.1 | 3.2.1 |  | last publish 2023-03-15 |
-| `react-native-geocoding` | dep | `^0.5.0` | 0.5.0 | 0.5.0 |  | last publish 2022-06-26 |
-| `react-native-gesture-handler` | dep | `~2.32.0` (P3.18)| 2.32.0 | 3.3.0 | `~2.32.0` |  |
-| `react-native-image-viewing` | dep | `0.2.2` | 0.2.2 | 0.2.2 |  | last publish 2022-05-14 |
-| `react-native-maps` | dep | `1.27.2` (P3.16)| 1.27.2 | 1.29.11 | `1.27.2` |  |
-| `react-native-pager-view` | dep | `8.0.2` (P3.18)| 8.0.2 | 9.0.7 | `8.0.2` |  |
-| `react-native-paper` | dep | `5.15.3` (P3.11) | 5.15.3 | 5.15.3 |  |  |
-| `react-native-paper-dates` | dep | `0.24.0` (P3.11) | 0.24.0 | 0.24.0 |  |  |
-| `react-native-paper-tabs` | dep | `0.11.4` (P3.11) | 0.11.4 | 0.11.4 |  |  |
-| `react-native-reanimated` | dep | `4.5.1` (P3.18)| 4.5.1 | 4.7.1 | `4.5.1` |  |
-| `react-native-reanimated-carousel` | dep | `5.1.1` (P3.15)| 5.1.1 | 5.1.1 |  |  |
-| `react-native-safe-area-context` | dep | `~5.7.0` (P3.17)| 5.7.0 | 5.10.1 | `~5.7.0` |  |
-| `react-native-screens` | dep | `~4.26.0` (P3.17)| 4.26.2 | 4.28.0 | `~4.26.0` |  |
-| `react-native-svg` | dep | `15.15.4` (P3.17)| 15.15.4 | 15.15.5 | `15.15.4` |  |
-| `react-native-toast-message` | dep | `2.1.6` | 2.1.6 | 2.5.2 |  |  |
-| `react-native-web` | dep | `~0.21.0` (P3.15)| 0.21.4 | 0.21.4 | `~0.21.0` |  |
-| `react-use` | dep | `^17.4.0` (P3.14) | 17.6.1 | 17.6.1 |  |  |
-| `urijs` | dep | `1.19.11` | 1.19.11 | 1.19.11 |  | last publish 2022-06-28 |
-| `yup` | dep | `0.32.11` | 0.32.11 | 1.7.1 |  |  |
-| `zustand` | dep | `5.0.15` (P4.1) | 5.0.15 | 5.0.15 | | session store (`app/state/session.ts`) |
-| `@babel/core` | dev | `^7.28.0` (P3.14) | 7.29.7 | 8.0.7 |  |  |
-| `@babel/plugin-proposal-export-namespace-from` | dev | `7.18.9` | 7.18.9 | 7.18.9 |  | **deprecated on npm**; last publish 2023-09-01 |
-| `@babel/plugin-proposal-numeric-separator` | dev | `7.18.6` | 7.18.6 | 7.18.6 |  | **deprecated on npm**; last publish 2023-09-01 |
-| `@babel/plugin-proposal-optional-chaining` | dev | `7.21.0` | 7.21.0 | 7.21.0 |  | **deprecated on npm**; last publish 2023-09-01 |
-| `@babel/plugin-syntax-bigint` | dev | `^7.8.3` | 7.8.3 | 7.8.3 |  | last publish 2022-06-12 |
-| `@babel/preset-env` | dev | `^7.28.0` (P3.14) | 7.29.7 | 8.0.7 |  |  |
-| `@babel/runtime` | dev | `^7.28.0` (P3.14) | 7.29.10 | 8.0.7 |  |  |
-| `@graphql-codegen/add` | dev | `^5.0.3` (P3.19)| 5.0.3 | 7.1.1 |  |  |
-| `@graphql-codegen/cli` | dev | `^5.0.7` (P3.19)| 5.0.7 | 7.4.5 |  |  |
-| `@graphql-codegen/import-types-preset` | dev | `^3.0.1` (P3.19)| 3.0.1 | 4.0.1 |  |  |
-| `@graphql-codegen/introspection` | dev | `^4` (P3.19)| 4.0.3 | 6.1.0 |  |  |
-| `@graphql-codegen/schema-ast` | dev | `^4` (P3.19)| 4.1.0 | 6.1.1 |  |  |
-| `@graphql-codegen/typescript` | dev | `^4.1.6` (P3.19)| 4.1.6 | 6.1.1 |  |  |
-| `@graphql-codegen/typescript-operations` | dev | `^4.6.1` (P3.19)| 4.6.1 | 6.1.10 |  |  |
-| `@graphql-codegen/typescript-react-apollo` | dev | `^4.4.2` (P3.19)| 4.4.2 | 5.0.0 |  |  |
-| `@testing-library/jest-dom` | dev | `5.16.5` | 5.16.5 | 7.0.1 |  |  |
-| `@testing-library/react-native` | dev | `^13` (P3.14) | 13.3.3 | 14.1.0 |  |  |
-| `@types/base-64` | dev | `1.0.0` | 1.0.0 | 1.0.2 |  |  |
-| `@types/color` | dev | `3.0.3` | 3.0.3 | 4.2.1 |  |  |
-| `@types/gh-pages` | dev | `3.2.1` | 3.2.1 | 6.1.0 |  |  |
-| `@types/isomorphic-fetch` | dev | `0.0.36` | 0.0.36 | 0.0.39 |  |  |
-| `@types/jest` | dev | `^29.5.0` (P3.14) | 29.5.14 | 30.0.0 |  |  |
-| `@types/lodash` | dev | `4.14.192` | 4.14.192 | 4.17.25 |  |  |
-| `@types/luxon` | dev | `3.3.0` | 3.3.0 | 3.7.6 |  |  |
-| `@types/rails__actioncable` | dev | `^6.1.6` (P3.14) | 6.1.11 | 8.0.3 |  |  |
-| `@types/react` | dev | `~19.2.2` (P3.16)| 19.2.18 | 19.3.0 |  |  |
-| `@types/react-calendar-heatmap` | dev | `^1.6.3` (P3.14) | 1.9.0 | 1.9.0 |  |  |
-| `@types/urijs` | dev | `1.19.19` | 1.19.19 | 1.19.26 |  |  |
-| `babel-plugin-module-resolver` | dev | `5.0.0` | 5.0.0 | 5.0.3 |  |  |
-| `base-64` | dev | `1.0.0` | 1.0.0 | 1.0.0 |  | last publish 2024-04-02 |
-| `eslint` | dev | `^9` (P3.20)| 9.39.5 | 10.12.0 |  |  |
-| `gh-pages` | dev | `4.0.0` | 4.0.0 | 6.3.0 |  |  |
-| `glob` | dev | `9.3.2` | 9.3.2 | 13.0.6 |  |  |
-| `isomorphic-fetch` | dev | `3.0.0` | 3.0.0 | 3.0.0 |  | last publish 2023-10-23 |
-| `jest` | dev | `^29` (P3.14) | 29.7.0 | 30.5.2 |  |  |
-| `jest-expo` | dev | `~57.0.5` (P3.18)| 57.0.5 | 57.0.5 | `~57.0.5` | needs jest 29 |
-| `jest-junit` | dev | `13.0.0` | 13.0.0 | 17.0.0 |  |  |
-| `patch-package` | dev | `6.5.1` | 6.5.1 | 8.0.1 |  |  |
-| `prettier` | dev | `^3.9.9` (P3.20)| 3.9.9 | 3.9.9 |  |  |
-| `react-test-renderer` | dev | `19.2.3` (P3.17)| 19.2.3 | 19.3.0 |  |  |
-| `semver` | dev | `7.3.8` | 7.3.8 | 7.8.5 |  |  |
-| `ts-node` | dev | `^10.9.2` (P3.9) | 10.9.2 | 10.9.2 |  |  |
-| `typescript` | dev | `5.9.3` (P3.9) | 5.9.3 | 7.0.2 |  |  |
+| Package                                               | Group | package.json       | Installed | Latest on npm | Expo SDK 57 pin | Notes                                                 |
+| ----------------------------------------------------- | ----- | ------------------ | --------- | ------------- | --------------- | ----------------------------------------------------- |
+| `@apollo/client`                                      | dep   | `3.14.1` (P3.19)   | 3.14.1    | 4.3.3         |                 |                                                       |
+| `@appsignal/javascript`                               | dep   | `1.3.26`           | 1.3.26    | 1.6.1         |                 |                                                       |
+| `@appsignal/plugin-path-decorator`                    | dep   | `^1.0.15` (P3.14)  | 1.0.18    | 1.0.18        |                 |                                                       |
+| `@appsignal/plugin-window-events`                     | dep   | `1.0.19`           | 1.0.19    | 1.0.26        |                 |                                                       |
+| `@appsignal/react`                                    | dep   | `1.0.22`           | 1.0.22    | 1.0.31        |                 |                                                       |
+| `@babel/plugin-proposal-logical-assignment-operators` | dep   | `7.20.7`           | 7.20.7    | 7.20.7        |                 | **deprecated on npm**; last publish 2023-09-01        |
+| `@dnd-kit/core`                                       | dep   | `6.0.6`            | 6.0.6     | 6.3.1         |                 |                                                       |
+| `@dnd-kit/utilities`                                  | dep   | `3.2.1`            | 3.2.1     | 3.2.2         |                 | last publish 2023-11-06                               |
+| `@emotion/react`                                      | dep   | `11.10.6`          | 11.10.6   | 11.14.0       |                 |                                                       |
+| `@emotion/styled`                                     | dep   | `11.10.6`          | 11.10.6   | 11.14.1       |                 |                                                       |
+| `@expo-google-fonts/inter`                            | dep   | `^0.2.2` (P3.14)   | 0.2.3     | 0.4.2         |                 |                                                       |
+| `@expo-google-fonts/roboto`                           | dep   | `^0.2.2` (P3.14)   | 0.2.3     | 0.4.3         |                 |                                                       |
+| `@expo/vector-icons`                                  | dep   | `^15.0.2` (P3.16)  | 15.1.1    | 15.1.1        | `^15.0.2`       |                                                       |
+| `@formatjs/intl-datetimeformat`                       | dep   | `4.5.1`            | 4.5.1     | 7.8.1         |                 |                                                       |
+| `@formatjs/intl-displaynames`                         | dep   | `5.4.1`            | 5.4.1     | 7.3.15        |                 |                                                       |
+| `@formatjs/intl-getcanonicallocales`                  | dep   | `1.9.0`            | 1.9.0     | 3.2.12        |                 |                                                       |
+| `@formatjs/intl-listformat`                           | dep   | `6.5.1`            | 6.5.1     | 8.3.15        |                 |                                                       |
+| `@formatjs/intl-locale`                               | dep   | `2.4.44`           | 2.4.44    | 5.3.12        |                 |                                                       |
+| `@formatjs/intl-numberformat`                         | dep   | `7.4.1`            | 7.4.1     | 9.4.3         |                 |                                                       |
+| `@formatjs/intl-pluralrules`                          | dep   | `4.3.1`            | 4.3.1     | 6.3.15        |                 |                                                       |
+| `@formatjs/intl-relativetimeformat`                   | dep   | `9.5.1`            | 9.5.1     | 12.3.15       |                 |                                                       |
+| `@gorhom/bottom-sheet`                                | dep   | `5.2.14` (P3.15)   | 5.2.14    | 5.2.14        |                 |                                                       |
+| `@gorhom/portal`                                      | dep   | `1.0.14`           | 1.0.14    | 1.0.14        |                 | last publish 2022-06-23                               |
+| `@hookform/resolvers`                                 | dep   | `2.9.10`           | 2.9.10    | 5.9.1         |                 |                                                       |
+| `@mui/material`                                       | dep   | `5.11.4`           | 5.11.4    | 9.4.0         |                 |                                                       |
+| `@rails/actioncable`                                  | dep   | `7.0.4`            | 7.0.4     | 8.1.400       |                 |                                                       |
+| `@react-google-maps/api`                              | dep   | `2.18.1`           | 2.18.1    | 2.20.8        |                 |                                                       |
+| `@react-native-async-storage/async-storage`           | dep   | `2.2.0` (P3.15)    | 2.2.0     | 3.1.1         | `2.2.0`         |                                                       |
+| `@react-native-community/datetimepicker`              | dep   | `9.1.0` (P3.17)    | 9.1.0     | 9.2.1         | `9.1.0`         |                                                       |
+| `@react-native-masked-view/masked-view`               | dep   | `0.3.2` (P3.14)    | 0.3.2     | 0.3.2         | `0.3.2`         |                                                       |
+| `@react-navigation/bottom-tabs`                       | dep   | `7.20.0` (P3.9)    | 7.20.0    | 7.20.0        |                 |                                                       |
+| `@react-navigation/drawer`                            | dep   | `7.14.3` (P3.9)    | 7.14.3    | 7.14.3        |                 |                                                       |
+| `@react-navigation/native`                            | dep   | `7.5.0` (P3.9)     | 7.5.0     | 7.5.0         |                 |                                                       |
+| `@react-navigation/stack`                             | dep   | `7.12.0` (P3.9)    | 7.12.0    | 7.12.0        |                 |                                                       |
+| `check-password-strength`                             | dep   | `2.0.7`            | 2.0.7     | 3.0.0         |                 |                                                       |
+| `color`                                               | dep   | `4.2.3`            | 4.2.3     | 5.0.3         |                 |                                                       |
+| `date-fns`                                            | dep   | `2.29.3`           | 2.29.3    | 4.4.0         |                 |                                                       |
+| `deprecated-react-native-prop-types`                  | dep   | `2.3.0`            | 2.3.0     | 5.0.0         |                 |                                                       |
+| `dotenv`                                              | dep   | `14.3.2`           | 14.3.2    | 18.0.6        |                 |                                                       |
+| `expo`                                                | dep   | `^57.0.27` (P3.18) | 57.0.27   | 57.0.27       |                 |                                                       |
+| `expo-apple-authentication`                           | dep   | `~57.0.2` (P3.18)  | 57.0.2    | 57.0.2        | `~57.0.2`       |                                                       |
+| `expo-application`                                    | dep   | `~57.0.3` (P3.18)  | 57.0.3    | 57.0.3        | `~57.0.3`       |                                                       |
+| `expo-asset`                                          | dep   | `~57.0.19` (P3.18) | 57.0.19   | 57.0.19       | `~57.0.19`      |                                                       |
+| `expo-blur`                                           | dep   | `~57.0.3` (P3.18)  | 57.0.3    | 57.0.3        | `~57.0.3`       |                                                       |
+| `expo-constants`                                      | dep   | `~57.0.21` (P3.18) | 57.0.21   | 57.0.21       | `~57.0.21`      |                                                       |
+| `expo-device`                                         | dep   | `~57.0.2` (P3.18)  | 57.0.2    | 57.0.2        | `~57.0.2`       |                                                       |
+| `expo-dev-client`                                     | dep   | `~57.0.19` (P3.21) | 57.0.19   | 57.0.19       | `~57.0.19`      | development builds (`eas.json` `development` profile) |
+| `expo-font`                                           | dep   | `~57.0.4` (P3.18)  | 57.0.4    | 57.0.4        | `~57.0.4`       |                                                       |
+| `expo-image-picker`                                   | dep   | `~57.0.20` (P3.18) | 57.0.20   | 57.0.20       | `~57.0.20`      |                                                       |
+| `expo-linear-gradient`                                | dep   | `~57.0.2` (P3.18)  | 57.0.2    | 57.0.2        | `~57.0.2`       |                                                       |
+| `expo-linking`                                        | dep   | `~57.0.12` (P3.18) | 57.0.12   | 57.0.12       | `~57.0.12`      |                                                       |
+| `expo-localization`                                   | dep   | `~57.0.2` (P3.18)  | 57.0.2    | 57.0.2        | `~57.0.2`       |                                                       |
+| `expo-location`                                       | dep   | `~57.0.20` (P3.18) | 57.0.20   | 57.0.20       | `~57.0.20`      |                                                       |
+| `expo-notifications`                                  | dep   | `~57.0.22` (P3.18) | 57.0.22   | 57.0.22       | `~57.0.22`      |                                                       |
+| `expo-secure-store`                                   | dep   | `~57.0.4` (P4.1)   | 57.0.4    | 57.0.4        | `~57.0.4`       | credentials on native (`app/state/storage.ts`)        |
+| `expo-splash-screen`                                  | dep   | `~57.0.9` (P3.18)  | 57.0.9    | 57.0.9        | `~57.0.9`       |                                                       |
+| `expo-status-bar`                                     | dep   | `~57.0.1` (P3.18)  | 57.0.1    | 57.0.1        | `~57.0.1`       |                                                       |
+| `expo-updates`                                        | dep   | `~57.0.25` (P3.18) | 57.0.25   | 57.0.25       | `~57.0.25`      |                                                       |
+| `expo-web-browser`                                    | dep   | `~57.0.3` (P3.18)  | 57.0.3    | 57.0.3        | `~57.0.3`       |                                                       |
+| `graphql`                                             | dep   | `^16` (P3.19)      | 16.14.2   | 17.0.2        |                 |                                                       |
+| `graphql-tag`                                         | dep   | `2.12.6`           | 2.12.6    | 2.12.7        |                 |                                                       |
+| `lodash`                                              | dep   | `^4.17.21` (P3.14) | 4.18.1    | 4.18.1        |                 |                                                       |
+| `lottie-react-native`                                 | dep   | `~7.3.8` (P3.18)   | 7.3.8     | 7.5.0         | `~7.3.8`        |                                                       |
+| `luxon`                                               | dep   | `3.3.0`            | 3.3.0     | 3.7.2         |                 |                                                       |
+| `postinstall-postinstall`                             | dep   | `^2.1.0`           | 2.1.0     | 2.1.0         |                 | last publish 2022-05-13                               |
+| `react`                                               | dep   | `19.2.3` (P3.17)   | 19.2.3    | 19.3.0        | `19.2.3`        |                                                       |
+| `react-calendar-heatmap`                              | dep   | `1.9.0`            | 1.9.0     | 1.10.0        |                 |                                                       |
+| `react-countdown-circle-timer`                        | dep   | `3.2.1` (P3.13)    | 3.2.1     | 3.2.1         |                 | last publish 2023-03-15                               |
+| `react-day-picker`                                    | dep   | `^7.4.10`          | 7.4.10    | 10.0.2        |                 |                                                       |
+| `react-dom`                                           | dep   | `19.2.3` (P3.17)   | 19.2.3    | 19.3.0        | `19.2.3`        |                                                       |
+| `react-hook-form`                                     | dep   | `7.42.1`           | 7.42.1    | 7.89.0        |                 |                                                       |
+| `react-image-lightbox`                                | dep   | `^5.1.4`           | 5.1.4     | 5.1.4         |                 | **deprecated on npm**; last publish 2023-01-19        |
+| `react-native`                                        | dep   | `0.86.3` (P3.18)   | 0.86.3    | 0.87.1        | `0.86.3`        |                                                       |
+| `react-native-animatable`                             | dep   | `^1.3.3` (P3.14)   | 1.4.0     | 1.4.0         |                 | last publish 2023-10-26                               |
+| `react-native-chart-kit`                              | dep   | `6.12.0`           | 6.12.0    | 7.0.4         |                 |                                                       |
+| `react-native-countdown-circle-timer`                 | dep   | `3.2.1` (P3.13)    | 3.2.1     | 3.2.1         |                 | last publish 2023-03-15                               |
+| `react-native-geocoding`                              | dep   | `^0.5.0`           | 0.5.0     | 0.5.0         |                 | last publish 2022-06-26                               |
+| `react-native-gesture-handler`                        | dep   | `~2.32.0` (P3.18)  | 2.32.0    | 3.3.0         | `~2.32.0`       |                                                       |
+| `react-native-image-viewing`                          | dep   | `0.2.2`            | 0.2.2     | 0.2.2         |                 | last publish 2022-05-14                               |
+| `react-native-maps`                                   | dep   | `1.27.2` (P3.16)   | 1.27.2    | 1.29.11       | `1.27.2`        |                                                       |
+| `react-native-pager-view`                             | dep   | `8.0.2` (P3.18)    | 8.0.2     | 9.0.7         | `8.0.2`         |                                                       |
+| `react-native-paper`                                  | dep   | `5.15.3` (P3.11)   | 5.15.3    | 5.15.3        |                 |                                                       |
+| `react-native-paper-dates`                            | dep   | `0.24.0` (P3.11)   | 0.24.0    | 0.24.0        |                 |                                                       |
+| `react-native-paper-tabs`                             | dep   | `0.11.4` (P3.11)   | 0.11.4    | 0.11.4        |                 |                                                       |
+| `react-native-reanimated`                             | dep   | `4.5.1` (P3.18)    | 4.5.1     | 4.7.1         | `4.5.1`         |                                                       |
+| `react-native-reanimated-carousel`                    | dep   | `5.1.1` (P3.15)    | 5.1.1     | 5.1.1         |                 |                                                       |
+| `react-native-safe-area-context`                      | dep   | `~5.7.0` (P3.17)   | 5.7.0     | 5.10.1        | `~5.7.0`        |                                                       |
+| `react-native-screens`                                | dep   | `~4.26.0` (P3.17)  | 4.26.2    | 4.28.0        | `~4.26.0`       |                                                       |
+| `react-native-svg`                                    | dep   | `15.15.4` (P3.17)  | 15.15.4   | 15.15.5       | `15.15.4`       |                                                       |
+| `react-native-toast-message`                          | dep   | `2.1.6`            | 2.1.6     | 2.5.2         |                 |                                                       |
+| `react-native-web`                                    | dep   | `~0.21.0` (P3.15)  | 0.21.4    | 0.21.4        | `~0.21.0`       |                                                       |
+| `react-use`                                           | dep   | `^17.4.0` (P3.14)  | 17.6.1    | 17.6.1        |                 |                                                       |
+| `urijs`                                               | dep   | `1.19.11`          | 1.19.11   | 1.19.11       |                 | last publish 2022-06-28                               |
+| `yup`                                                 | dep   | `0.32.11`          | 0.32.11   | 1.7.1         |                 |                                                       |
+| `zustand`                                             | dep   | `5.0.15` (P4.1)    | 5.0.15    | 5.0.15        |                 | session store (`app/state/session.ts`)                |
+| `@babel/core`                                         | dev   | `^7.28.0` (P3.14)  | 7.29.7    | 8.0.7         |                 |                                                       |
+| `@babel/plugin-proposal-export-namespace-from`        | dev   | `7.18.9`           | 7.18.9    | 7.18.9        |                 | **deprecated on npm**; last publish 2023-09-01        |
+| `@babel/plugin-proposal-numeric-separator`            | dev   | `7.18.6`           | 7.18.6    | 7.18.6        |                 | **deprecated on npm**; last publish 2023-09-01        |
+| `@babel/plugin-proposal-optional-chaining`            | dev   | `7.21.0`           | 7.21.0    | 7.21.0        |                 | **deprecated on npm**; last publish 2023-09-01        |
+| `@babel/plugin-syntax-bigint`                         | dev   | `^7.8.3`           | 7.8.3     | 7.8.3         |                 | last publish 2022-06-12                               |
+| `@babel/preset-env`                                   | dev   | `^7.28.0` (P3.14)  | 7.29.7    | 8.0.7         |                 |                                                       |
+| `@babel/runtime`                                      | dev   | `^7.28.0` (P3.14)  | 7.29.10   | 8.0.7         |                 |                                                       |
+| `@graphql-codegen/add`                                | dev   | `^5.0.3` (P3.19)   | 5.0.3     | 7.1.1         |                 |                                                       |
+| `@graphql-codegen/cli`                                | dev   | `^5.0.7` (P3.19)   | 5.0.7     | 7.4.5         |                 |                                                       |
+| `@graphql-codegen/import-types-preset`                | dev   | `^3.0.1` (P3.19)   | 3.0.1     | 4.0.1         |                 |                                                       |
+| `@graphql-codegen/introspection`                      | dev   | `^4` (P3.19)       | 4.0.3     | 6.1.0         |                 |                                                       |
+| `@graphql-codegen/schema-ast`                         | dev   | `^4` (P3.19)       | 4.1.0     | 6.1.1         |                 |                                                       |
+| `@graphql-codegen/typescript`                         | dev   | `^4.1.6` (P3.19)   | 4.1.6     | 6.1.1         |                 |                                                       |
+| `@graphql-codegen/typescript-operations`              | dev   | `^4.6.1` (P3.19)   | 4.6.1     | 6.1.10        |                 |                                                       |
+| `@graphql-codegen/typescript-react-apollo`            | dev   | `^4.4.2` (P3.19)   | 4.4.2     | 5.0.0         |                 |                                                       |
+| `@testing-library/jest-dom`                           | dev   | `5.16.5`           | 5.16.5    | 7.0.1         |                 |                                                       |
+| `@testing-library/react-native`                       | dev   | `^13` (P3.14)      | 13.3.3    | 14.1.0        |                 |                                                       |
+| `@types/base-64`                                      | dev   | `1.0.0`            | 1.0.0     | 1.0.2         |                 |                                                       |
+| `@types/color`                                        | dev   | `3.0.3`            | 3.0.3     | 4.2.1         |                 |                                                       |
+| `@types/gh-pages`                                     | dev   | `3.2.1`            | 3.2.1     | 6.1.0         |                 |                                                       |
+| `@types/isomorphic-fetch`                             | dev   | `0.0.36`           | 0.0.36    | 0.0.39        |                 |                                                       |
+| `@types/jest`                                         | dev   | `^29.5.0` (P3.14)  | 29.5.14   | 30.0.0        |                 |                                                       |
+| `@types/lodash`                                       | dev   | `4.14.192`         | 4.14.192  | 4.17.25       |                 |                                                       |
+| `@types/luxon`                                        | dev   | `3.3.0`            | 3.3.0     | 3.7.6         |                 |                                                       |
+| `@types/rails__actioncable`                           | dev   | `^6.1.6` (P3.14)   | 6.1.11    | 8.0.3         |                 |                                                       |
+| `@types/react`                                        | dev   | `~19.2.2` (P3.16)  | 19.2.18   | 19.3.0        |                 |                                                       |
+| `@types/react-calendar-heatmap`                       | dev   | `^1.6.3` (P3.14)   | 1.9.0     | 1.9.0         |                 |                                                       |
+| `@types/urijs`                                        | dev   | `1.19.19`          | 1.19.19   | 1.19.26       |                 |                                                       |
+| `babel-plugin-module-resolver`                        | dev   | `5.0.0`            | 5.0.0     | 5.0.3         |                 |                                                       |
+| `base-64`                                             | dev   | `1.0.0`            | 1.0.0     | 1.0.0         |                 | last publish 2024-04-02                               |
+| `eslint`                                              | dev   | `^9` (P3.20)       | 9.39.5    | 10.12.0       |                 |                                                       |
+| `gh-pages`                                            | dev   | `4.0.0`            | 4.0.0     | 6.3.0         |                 |                                                       |
+| `glob`                                                | dev   | `9.3.2`            | 9.3.2     | 13.0.6        |                 |                                                       |
+| `isomorphic-fetch`                                    | dev   | `3.0.0`            | 3.0.0     | 3.0.0         |                 | last publish 2023-10-23                               |
+| `jest`                                                | dev   | `^29` (P3.14)      | 29.7.0    | 30.5.2        |                 |                                                       |
+| `jest-expo`                                           | dev   | `~57.0.5` (P3.18)  | 57.0.5    | 57.0.5        | `~57.0.5`       | needs jest 29                                         |
+| `jest-junit`                                          | dev   | `13.0.0`           | 13.0.0    | 17.0.0        |                 |                                                       |
+| `patch-package`                                       | dev   | `6.5.1`            | 6.5.1     | 8.0.1         |                 |                                                       |
+| `prettier`                                            | dev   | `^3.9.9` (P3.20)   | 3.9.9     | 3.9.9         |                 |                                                       |
+| `react-test-renderer`                                 | dev   | `19.2.3` (P3.17)   | 19.2.3    | 19.3.0        |                 |                                                       |
+| `semver`                                              | dev   | `7.3.8`            | 7.3.8     | 7.8.5         |                 |                                                       |
+| `ts-node`                                             | dev   | `^10.9.2` (P3.9)   | 10.9.2    | 10.9.2        |                 |                                                       |
+| `typescript`                                          | dev   | `5.9.3` (P3.9)     | 5.9.3     | 7.0.2         |                 |                                                       |

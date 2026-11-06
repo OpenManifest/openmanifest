@@ -22,8 +22,5 @@
   "/daily-log": ["color-contrast", "role-img-alt"],
   "/ticket-types/extra": ["aria-progressbar-name", "role-img-alt"],
   "/transactions": ["role-img-alt"],
-  "/login": ["color-contrast", "label"],
-  "/setup": ["color-contrast", "label"],
-  "/signup": ["color-contrast", "label"],
   "load": ["button-name", "nested-interactive", "role-img-alt"]
 }

@@ -1,9 +1,10 @@
-import { loginViaUi, selectOperator, submitLogin } from './support/auth';
+import { loginViaUi, operatorRow, selectOperator, submitLogin } from './support/auth';
 import { expectAccessible } from './support/a11y';
 import { expectLayout, expectReachable } from './support/layout';
 import { openAccount } from './support/account';
 import { registerNewUser } from './support/api';
 import { ROLES } from './support/roles';
+import { pressUntil } from './support/press';
 import { expect, gotoRoute, test } from './support/test';
 
 // These tests log in themselves: no stored session
@@ -27,10 +28,59 @@ test.describe('login @login', () => {
   test('owner logs in, picks the dropzone and reaches the board', async ({ page }) => {
     await gotoRoute(page, '/login');
     await submitLogin(page, ROLES.owner);
-    await page.getByText('Dropzone', { exact: true }).first().waitFor({ timeout: 30_000 });
+    await operatorRow(page).waitFor({ timeout: 30_000 });
     await expectLayout(page, 'dropzone selection');
+    await expectAccessible(page, 'dropzone selection');
     await selectOperator(page);
     await expectLayout(page, '/manifest');
+  });
+
+  test('password recovery asks for the email first', async ({ page }) => {
+    await gotoRoute(page, '/recover-password');
+    await expect(page.getByRole('heading', { name: 'Reset your password' })).toBeVisible();
+    await expectLayout(page, '/recover-password');
+    await expectAccessible(page, '/recover-password');
+    await pressUntil(page, page.getByTestId('wizard-next-primary-action'), () =>
+      expect(page.getByText('Email is required')).toBeVisible({ timeout: 3_000 })
+    );
+  });
+
+  test('a new password must be strong enough', async ({ page }) => {
+    await gotoRoute(page, '/change-password');
+    await expect(page.getByRole('heading', { name: 'New password' })).toBeVisible();
+    await expectLayout(page, '/change-password');
+    await expectAccessible(page, '/change-password');
+    await page.getByLabel('New password', { exact: true }).fill('abc');
+    await pressUntil(page, page.getByTestId('wizard-next-primary-action'), () =>
+      expect(page.getByText('Password too weak').first()).toBeVisible({ timeout: 3_000 })
+    );
+  });
+
+  test('a confirmation link without its token says so', async ({ page }) => {
+    await gotoRoute(page, '/confirm');
+    await expect(
+      page.getByRole('heading', { name: 'Your account could not be confirmed' })
+    ).toBeVisible();
+    await expectLayout(page, '/confirm');
+    await expectAccessible(page, '/confirm');
+  });
+
+  // The setup wizard from the operator selection: nothing is created, the name step refuses an empty name
+  test('a new user opens the setup wizard from the operator selection', async ({ page }) => {
+    const email = await registerNewUser();
+    await gotoRoute(page, '/login');
+    await submitLogin(page, email);
+    const create = page.getByTestId('create-operator-primary-action');
+    await create.waitFor({ timeout: 30_000 });
+    await pressUntil(page, create, () =>
+      expect(page.getByRole('heading', { name: 'Name' })).toBeVisible({ timeout: 5_000 })
+    );
+    await expect(page.getByRole('progressbar', { name: 'Step 1 of 8' })).toBeVisible();
+    await expectLayout(page, '/setup');
+    await expectAccessible(page, '/setup');
+    await pressUntil(page, page.getByTestId('wizard-next-primary-action'), () =>
+      expect(page.getByText('Your operator must have a name')).toBeVisible({ timeout: 3_000 })
+    );
   });
 
   // The requests of a second login must still go out (they used to be aborted for good after a logout) and nothing of

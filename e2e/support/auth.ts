@@ -11,9 +11,13 @@ export async function submitLogin(page: Page, email: string, password = PASSWORD
   await page.keyboard.press('Enter');
 }
 
+/** The operators on the operator selection screen named like the seeded one ("Demo Dropzone", or a test's "Dropzone") */
+export const operatorRow = (page: Page) =>
+  page.getByRole('button', { name: /^(Demo )?Dropzone$/ }).first();
+
 /** On the operator selection screen, opens the (only) operator; joins it when the user is not yet a member (P6.4) */
 export async function selectOperator(page: Page) {
-  const row = page.getByText('Dropzone', { exact: true }).first();
+  const row = operatorRow(page);
   await row.waitFor({ timeout: 30_000 });
   await press(page, row);
   // The manifest desk lands on the board, everybody else on their day
