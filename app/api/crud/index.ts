@@ -6,3 +6,4 @@ export { useManifest } from './useManifest';
 export { useTickets } from './useTickets';
 export { useVehicles } from './useVehicles';
 export { useDestinations } from './useDestinations';
+export { useCrewRoles } from './useCrewRoles';

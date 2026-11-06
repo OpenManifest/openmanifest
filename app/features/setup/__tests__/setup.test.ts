@@ -33,15 +33,15 @@ const shape = (permissions: Permission[], modules: Record<string, unknown> = SKY
 describe('Setup groups', () => {
   it('give an owner of a dropzone everything, in three groups', () => {
     expect(shape(ROLE_PERMISSIONS.owner)).toEqual([
-      'operations: vehicles destinations tickets extras equipment inspection conditions',
-      'people: permissions',
+      'operations: vehicles destinations crewRoles tickets extras equipment inspection conditions',
+      'people: permissions certificationBodies',
       'business: branding rules money dailyLog',
     ]);
   });
 
   it('leave out what the operator has no module for', () => {
     expect(shape(ROLE_PERMISSIONS.owner, GENERIC)).toEqual([
-      'operations: vehicles destinations tickets extras',
+      'operations: vehicles destinations crewRoles tickets extras',
       'people: permissions',
       'business: branding rules money',
     ]);

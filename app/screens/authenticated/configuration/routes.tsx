@@ -9,16 +9,18 @@ import SetupScreen, { SetupLayout } from 'app/features/setup/SetupScreen';
 import RulesScreen from 'app/features/setup/RulesScreen';
 import guarded from 'app/navigation/AccessGuard';
 import { Permission } from 'app/api/schema.d';
-import TicketTypeSettingsScreen from './ticket_types/TicketTypesScreen';
 import BrandingScreen from 'app/features/setup/BrandingScreen';
-import VehiclesScreen from './vehicles/VehiclesScreen';
-import EquipmentInspectionTemplateScreen from './equipment_inspection_template/EquipmentInspectionTemplateScreen';
-import OperatorEquipmentScreen from './equipment/OperatorEquipmentScreen';
+import VehiclesScreen from 'app/features/setup/VehiclesScreen';
+import DestinationsScreen from 'app/features/setup/DestinationsScreen';
+import TicketTypesScreen from 'app/features/setup/TicketTypesScreen';
+import ExtrasScreen from 'app/features/setup/ExtrasScreen';
+import EquipmentScreen from 'app/features/setup/EquipmentScreen';
+import InspectionFormsScreen from 'app/features/setup/InspectionFormsScreen';
+import CrewRolesScreen from 'app/features/setup/CrewRolesScreen';
+import CertificationBodiesScreen from 'app/features/setup/CertificationBodiesScreen';
 import OperatorPermissionScreen from './permissions/PermissionsScreen';
 import OperatorDailyLogScreen from './daily_log/DailyLogScreen';
 import OperatorTransactionsScreen from './transactions/OperatorTransactionsScreen';
-import ExtrasScreen from './extras/ExtrasScreen';
-import DestinationsScreen from './destinations/DestinationsScreen';
 
 export type ConfigurationRoutes = {
   OperatorSettingsScreen: undefined;
@@ -28,6 +30,8 @@ export type ConfigurationRoutes = {
   VehiclesScreen: undefined;
   VehicleScreen: undefined;
   DestinationsScreen: undefined;
+  CrewRolesScreen: undefined;
+  CertificationBodiesScreen: undefined;
   ExtrasScreen: undefined;
   EquipmentInspectionTemplateScreen: undefined;
   OperatorEquipmentScreen: undefined;
@@ -84,8 +88,18 @@ export default function SettingsTab() {
           options={{ title: t('terms:destination', { count: 2 }) }}
         />
         <Configuration.Screen
+          name="CrewRolesScreen"
+          component={CrewRolesScreen}
+          options={{ title: t('common:setupMenu.crewRolesTitle') }}
+        />
+        <Configuration.Screen
+          name="CertificationBodiesScreen"
+          component={CertificationBodiesScreen}
+          options={{ title: t('terms:certification_body', { count: 2 }) }}
+        />
+        <Configuration.Screen
           name="TicketTypesScreen"
-          component={TicketTypeSettingsScreen}
+          component={TicketTypesScreen}
           options={{ title: t('common:screens.ticketTypes') }}
         />
         <Configuration.Screen
@@ -95,12 +109,12 @@ export default function SettingsTab() {
         />
         <Configuration.Screen
           name="EquipmentInspectionTemplateScreen"
-          component={EquipmentInspectionTemplateScreen}
+          component={InspectionFormsScreen}
           options={{ title: t('common:screens.equipmentInspectionForm') }}
         />
         <Configuration.Screen
           name="OperatorEquipmentScreen"
-          component={OperatorEquipmentScreen}
+          component={EquipmentScreen}
           options={{ title: t('common:screens.equipment') }}
         />
         <Configuration.Screen

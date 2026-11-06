@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { DestinationEssentialsFragment } from 'app/api/operations';
 import { DestinationKind } from 'app/api/schema.d';
-import DialogOrSheet from 'app/components/layout/DialogOrSheet';
+import { ResourceForm } from 'app/ui';
 import useTerms from 'app/i18n/useTerms';
 import { activeUnits } from 'app/i18n/operatorFormat';
 import { fromSi, unitOf } from 'app/i18n/units';
@@ -16,6 +16,8 @@ export interface IDestinationDialogProps {
   /** The kinds the operator may create */
   kinds: DestinationKind[];
   onClose(): void;
+  /** Archives the item being edited (a setup list passes it; elsewhere the form only saves) */
+  onArchive?(): void;
 }
 
 export default function DestinationDialog({
@@ -23,6 +25,7 @@ export default function DestinationDialog({
   original,
   kinds,
   onClose,
+  onArchive,
 }: IDestinationDialogProps) {
   const { t } = useTranslation('common');
   const term = useTerms();
@@ -48,17 +51,17 @@ export default function DestinationDialog({
 
   const destination = term('destination').toLowerCase();
   return (
-    <DialogOrSheet
+    <ResourceForm
+      onArchive={onArchive}
       {...{ open, loading, onClose }}
       title={
         original?.id
           ? t('forms.destination.editDestination', { destination })
           : t('forms.destination.newDestination', { destination })
       }
-      buttonAction={onSubmit}
-      buttonLabel={t('forms.save')}
+      onSubmit={onSubmit}
     >
       <DestinationForm {...{ control, kinds }} />
-    </DialogOrSheet>
+    </ResourceForm>
   );
 }

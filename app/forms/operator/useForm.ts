@@ -8,32 +8,25 @@ import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { isEqual } from 'lodash';
 import { OperatorInput, Permission } from 'app/api/schema.d';
 import { useNotifications } from 'app/providers/notifications';
-import {
-  OperatorEssentialsFragment,
-  CertificationBodyEssentialsFragment,
-} from 'app/api/operations';
+import { OperatorEssentialsFragment } from 'app/api/operations';
 import useRestriction from 'app/hooks/useRestriction';
 import i18n from 'app/i18n';
 
-/** Who the operator is and how it looks (Setup → Branding); its rules have a page of their own (`app/features/setup`) */
+/**
+ * Who the operator is and how it looks (Setup → Branding); its rules and the certification bodies it accepts have pages
+ * of their own (`app/features/setup`)
+ */
 export type OperatorFields = Required<
   Pick<
     OperatorInput,
     'name' | 'banner' | 'lat' | 'lng' | 'primaryColor' | 'secondaryColor' | 'requestPublication'
   > & {
     id: number;
-    /** The certification bodies the operator accepts */
-    certificationBodies: CertificationBodyEssentialsFragment[];
   }
 >;
 
 export const operatorValidation = yup.object({
   name: yup.string().nullable().default(null),
-  certificationBodies: yup
-    .array()
-    .of(yup.object())
-    .min(1, () => i18n.t('forms.operator.yourDropzoneMustBePartOf'))
-    .required(() => i18n.t('forms.operator.yourDropzoneMustBePartOf')),
   lat: yup.number().nullable(),
   lng: yup.number().nullable(),
   primaryColor: yup.string(),
@@ -41,7 +34,6 @@ export const operatorValidation = yup.object({
 
 export const EMPTY_FORM_VALUES: Partial<OperatorFields> = {
   id: undefined,
-  certificationBodies: [],
   lat: null,
   lng: null,
   primaryColor: null,
@@ -64,7 +56,6 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
       id: operator?.id ? Number(operator?.id) : undefined,
       lat: operator?.lat || undefined,
       lng: operator?.lng || undefined,
-      certificationBodies: operator?.certificationBodies ?? [],
       name: operator?.name || undefined,
       primaryColor: operator?.primaryColor || undefined,
       secondaryColor: operator?.secondaryColor || undefined,
@@ -78,7 +69,6 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
       operator?.id,
       operator?.lat,
       operator?.lng,
-      operator?.certificationBodies,
     ]
   );
 
@@ -116,7 +106,6 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
         operatorValidation.validateSync(fields);
         const {
           banner,
-          certificationBodies,
           primaryColor,
           lat,
           lng,
@@ -128,7 +117,6 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
         // The rules (the settings) are left as they are: the Rules page saves them
         const response = await update({
           banner,
-          certificationBodyIds: certificationBodies?.map(({ id }) => Number(id)),
           primaryColor,
           lat,
           lng,

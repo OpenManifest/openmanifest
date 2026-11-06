@@ -178,9 +178,17 @@
       "body_other": "{{load}} has {{count}} free places",
       "action": "Book a jump"
     },
-    "credit": { "title": "Your credit" },
-    "loads": { "title": "Today's loads", "yours": "you are on it" },
-    "duties": { "title": "Your duties today", "row": "{{role}} on {{load}}" },
+    "credit": {
+      "title": "Your credit"
+    },
+    "loads": {
+      "title": "Today's loads",
+      "yours": "you are on it"
+    },
+    "duties": {
+      "title": "Your duties today",
+      "row": "{{role}} on {{load}}"
+    },
     "empty": {
       "title": "No loads yet today",
       "body": "When the first load is made it shows here."
@@ -220,7 +228,10 @@
     "count_one": "{{count}} person",
     "count_other": "{{count}} people",
     "more": "Show more",
-    "role": { "label": "Role", "all": "All roles" },
+    "role": {
+      "label": "Role",
+      "all": "All roles"
+    },
     "status": {
       "label": "Status",
       "all": "All",
@@ -431,7 +442,10 @@
     "loadVehicle": "{{load}} #{{number}} · {{vehicle}}",
     "free_one": "{{count}} free place",
     "free_other": "{{count}} free places",
-    "blocked": { "closed": "Has left", "full": "Full" },
+    "blocked": {
+      "closed": "Has left",
+      "full": "Full"
+    },
     "moved": "{{name}} has been moved to {{target}}",
     "nowhere": "There is nowhere to move them to",
     "item": "Move to…",
@@ -667,8 +681,8 @@
       "costMustBeGreaterThan0": "Cost must be greater than 0",
       "ticketAddonSaved": "Ticket addon saved",
       "compatibleTickets": "Compatible tickets",
-      "editTicket": "Edit ticket",
-      "newTicket": "New ticket"
+      "editTicket": "Edit add-on",
+      "newTicket": "New add-on"
     },
     "user": {
       "updateInformation": "Update information",
@@ -777,6 +791,24 @@
       "emptyBody": "Add the places your loads go to.",
       "none": "None",
       "altitude": "Height"
+    },
+    "crew_role": {
+      "new": "New crew role",
+      "edit": "Edit {{name}}",
+      "nameIsRequired": "Name is required",
+      "saved": "{{name}} saved",
+      "scope": "Filled",
+      "scopes": {
+        "load": "Once per {{load}}",
+        "vehicle": "Once per {{vehicle}}"
+      },
+      "required": "Required",
+      "requiredHelp": "A {{load}} cannot leave until the role is filled",
+      "occupiesSlot": "Takes a seat",
+      "occupiesSlotHelp": "Whoever fills it counts against the places of the {{vehicle}}",
+      "permission": "Who may fill it",
+      "permissionHelp": "Members need this permission; roles and permissions are set under People and access",
+      "anyone": "Any member"
     }
   },
   "units": {
@@ -885,6 +917,8 @@
     },
     "vehicles": "The {{vehicles}} that carry your {{loads}}",
     "destinations": "Where your {{loads}} go",
+    "crewRolesTitle": "Crew roles",
+    "crewRoles": "The jobs on a {{load}} and who may fill them",
     "tickets": "What a place on a {{load}} costs, and who may book it",
     "extras": "What is sold with a ticket, such as a coach or a camera",
     "equipment": "The {{equipment}} you own and hire out",
@@ -893,6 +927,7 @@
     "conditions": "The winds and conditions of the day",
     "permissionsTitle": "Roles and permissions",
     "permissions": "Who can do what",
+    "certificationBodies": "Whose levels and qualifications you accept",
     "brandingTitle": "Branding",
     "branding": "Name, location, banner and colours",
     "rulesTitle": "Rules",
@@ -1053,5 +1088,45 @@
     "discard": "Discard",
     "saved": "Your changes have been saved",
     "saveFailed": "Your changes could not be saved"
+  },
+  "resources": {
+    "archive": "Archive",
+    "archived": "{{name}} archived",
+    "empty": "No {{items}} yet",
+    "vehiclesEmpty": "Add a {{vehicle}} to start manifesting {{loads}}.",
+    "ticketsEmpty": "Add what a place on a {{load}} costs.",
+    "extrasEmpty": "Add what is sold with a ticket, such as a coach or a camera.",
+    "equipmentEmpty": "Add the {{equipment}} you own and hire out.",
+    "crewIntro": "The jobs on a {{load}}. Required roles must be filled before it leaves.",
+    "crewEmpty": "Add the jobs someone does on a {{load}}, such as a pilot.",
+    "inspectionIntro": "What an inspection of each kind of {{equipment}} checks.",
+    "inspectionFormOf": "{{kind}} inspection form",
+    "noInspectionForm": "This kind is not inspected.",
+    "bodiesIntro": "Members show a level or qualification of one of these {{bodies}}.",
+    "bodiesEmpty": "Accept the {{bodies}} whose levels your members hold.",
+    "addBody": "Accept a body",
+    "accept": "Accept",
+    "stopAccepting": "Stop accepting",
+    "bodyAccepted": "You accept the levels and qualifications of {{name}}.",
+    "keepsOneBody": "You need at least one of your {{bodies}}: accept another before you stop accepting this one.",
+    "bodyAdded": "{{name}} accepted",
+    "bodyRemoved": "{{name}} no longer accepted",
+    "facts": {
+      "seats": "Seats",
+      "payload": "Payload",
+      "tickets": "Tickets",
+      "public": "Public",
+      "yes": "Yes",
+      "no": "No",
+      "kind": "Kind",
+      "service": "Service every",
+      "checks": "Checks",
+      "inspectionValid": "Valid for",
+      "untilReplaced": "Until replaced",
+      "days_one": "{{count}} day",
+      "days_other": "{{count}} days",
+      "verification": "Checked",
+      "byStaff": "By staff"
+    }
   }
 }

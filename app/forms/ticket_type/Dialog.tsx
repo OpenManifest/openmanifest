@@ -1,5 +1,5 @@
 import * as React from 'react';
-import DialogOrSheet from 'app/components/layout/DialogOrSheet';
+import { ResourceForm } from 'app/ui';
 import { TicketTypeDetailsFragment } from 'app/api/operations';
 import TicketTypeForm from './TicketTypeForm';
 import useForm, { TicketTypeFields } from './useForm';
@@ -11,6 +11,8 @@ export interface ITicketTypeDialog {
   original?: TicketTypeDetailsFragment;
   initial?: Partial<TicketTypeFields>;
   onClose(): void;
+  /** Archives the item being edited (a setup list passes it; elsewhere the form only saves) */
+  onArchive?(): void;
 }
 
 /** A limit of the ticket as the form types it */
@@ -50,13 +52,13 @@ export default function TicketTypeDialog(props: ITicketTypeDialog) {
   }, [open, reset]);
 
   return (
-    <DialogOrSheet
+    <ResourceForm
+      onArchive={props.onArchive}
       {...{ open, loading, onClose }}
       title={original?.id ? t('forms.ticket_type.editTicket') : t('forms.ticket_type.newTicket')}
-      buttonAction={onSubmit}
-      buttonLabel={t('forms.save')}
+      onSubmit={onSubmit}
     >
       <TicketTypeForm {...{ control }} />
-    </DialogOrSheet>
+    </ResourceForm>
   );
 }

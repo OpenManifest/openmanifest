@@ -41,6 +41,8 @@ export const options: LinkingOptions<ReactNavigation.RootParamList> = {
                   SettingsMenuScreen: '/configuration',
                   VehiclesScreen: '/configuration/vehicles',
                   DestinationsScreen: '/configuration/destinations',
+                  CrewRolesScreen: '/configuration/crew-roles',
+                  CertificationBodiesScreen: '/configuration/certification-bodies',
                   OperatorSettingsScreen: '/configuration/basic',
                   RulesScreen: '/configuration/rules',
                   PermissionScreen: '/configuration/permissions',

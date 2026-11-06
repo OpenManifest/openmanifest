@@ -9,9 +9,9 @@ import { Permission } from 'app/api/schema.d';
 import { fullAltitude, hopNPop, reef } from 'app/__fixtures__/destination.fixture';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 import { textInputs, scoped } from 'app/test-utils/hosts';
-import { fireEvent, render, waitFor } from '../../__mocks__/render';
-import mockQueryOperator from '../manifest/__mocks__/QueryOperator.mock';
-import DestinationsScreen from '../../screens/authenticated/configuration/destinations/DestinationsScreen';
+import { fireEvent, render, waitFor } from '../../../__mocks__/render';
+import mockQueryOperator from '../../../__tests__/manifest/__mocks__/QueryOperator.mock';
+import DestinationsScreen from '../DestinationsScreen';
 
 jest.setTimeout(30000);
 
@@ -129,7 +129,7 @@ describe('<DestinationsScreen />', () => {
     await waitFor(() => expect(dialog.getByText('Name is required')).toBeTruthy());
   });
 
-  it('archives a destination', async () => {
+  it('archives a destination from its form', async () => {
     const archived = jest.fn(() => ({
       data: {
         archiveDestination: {
@@ -154,7 +154,9 @@ describe('<DestinationsScreen />', () => {
     });
 
     await waitFor(() => expect(screen.getByText('Hop n Pop')).toBeTruthy());
-    await fireEvent.press(screen.getByRole('button', { name: 'Archive Hop n Pop' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Hop n Pop' }));
+    const dialog = scoped(screen.getByTestId('under-test'));
+    await fireEvent.press(dialog.getByRole('button', { name: 'Archive' }));
 
     await waitFor(() => expect(archived).toHaveBeenCalledTimes(1));
   });

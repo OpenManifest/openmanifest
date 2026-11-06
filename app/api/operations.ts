@@ -132,6 +132,13 @@ export type AddUserQualificationMutationVariables = Types.Exact<{
 
 export type AddUserQualificationMutation = { __typename?: 'Mutation', addUserQualification?: { __typename?: 'AddUserQualificationPayload', errors?: Array<string> | null, fieldErrors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, userQualification?: { __typename?: 'UserQualification', id: string, name?: string | null, number?: string | null, expiresAt?: any | null, current: boolean, verifiedAt?: any | null, qualification: { __typename?: 'Qualification', id: string, name?: string | null, slug?: string | null } } | null } | null };
 
+export type ArchiveCrewRoleMutationVariables = Types.Exact<{
+  id: Types.Scalars['Int']['input'];
+}>;
+
+
+export type ArchiveCrewRoleMutation = { __typename?: 'Mutation', archiveCrewRole?: { __typename?: 'ArchiveCrewRolePayload', errors?: Array<string> | null, fieldErrors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, crewRole?: { __typename?: 'CrewRole', id: string, key: string, name: string, scope: Types.CrewRoleScope, required: boolean, occupiesSlot: boolean, permission?: string | null, vehicleKinds: Array<string>, position: number } | null } | null };
+
 export type ArchiveDestinationMutationVariables = Types.Exact<{
   id: Types.Scalars['Int']['input'];
 }>;
@@ -173,6 +180,13 @@ export type ConfirmUserMutationVariables = Types.Exact<{
 
 
 export type ConfirmUserMutation = { __typename?: 'Mutation', userConfirmRegistrationWithToken?: { __typename?: 'UserConfirmRegistrationWithTokenPayload', authenticatable: { __typename?: 'User', id: string, phone?: string | null, pushToken?: string | null, email?: string | null }, credentials?: { __typename?: 'Credential', accessToken: string, client: string, expiry: number, tokenType: string, uid: string } | null } | null };
+
+export type CreateCrewRoleMutationVariables = Types.Exact<{
+  attributes: Types.CrewRoleInput;
+}>;
+
+
+export type CreateCrewRoleMutation = { __typename?: 'Mutation', createCrewRole?: { __typename?: 'CreateCrewRolePayload', errors?: Array<string> | null, fieldErrors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, crewRole?: { __typename?: 'CrewRole', id: string, key: string, name: string, scope: Types.CrewRoleScope, required: boolean, occupiesSlot: boolean, permission?: string | null, vehicleKinds: Array<string>, position: number } | null } | null };
 
 export type CreateDestinationMutationVariables = Types.Exact<{
   attributes: Types.DestinationInput;
@@ -408,6 +422,14 @@ export type RevokePermissionMutationVariables = Types.Exact<{
 
 
 export type RevokePermissionMutation = { __typename?: 'Mutation', revokePermission?: { __typename?: 'RevokePermissionPayload', errors?: Array<string> | null, fieldErrors?: Array<{ __typename?: 'FieldError', message: string, field: string }> | null, membership?: { __typename?: 'Membership', permissions?: Array<Types.Permission> | null, id: string, walletId: string, expiresAt?: number | null, hasCredits: boolean, hasMembership: boolean, hasCertificationLevel: boolean, hasBodyMassKg: boolean, role?: { __typename?: 'UserRole', id: string, name?: string | null, operatorId: number } | null, certificationLevel?: { __typename?: 'CertificationLevel', id: string, name?: string | null, rank: number, equivalenceKey?: string | null } | null, user: { __typename?: 'User', id: string, name?: string | null, nickname?: string | null, phone?: string | null, email?: string | null, bodyMassKg?: string | null, dateOfBirth?: any | null, moderationRole?: Types.ModerationRole | null, image?: string | null } } | null } | null };
+
+export type UpdateCrewRoleMutationVariables = Types.Exact<{
+  id: Types.Scalars['Int']['input'];
+  attributes: Types.CrewRoleInput;
+}>;
+
+
+export type UpdateCrewRoleMutation = { __typename?: 'Mutation', updateCrewRole?: { __typename?: 'UpdateCrewRolePayload', errors?: Array<string> | null, fieldErrors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, crewRole?: { __typename?: 'CrewRole', id: string, key: string, name: string, scope: Types.CrewRoleScope, required: boolean, occupiesSlot: boolean, permission?: string | null, vehicleKinds: Array<string>, position: number } | null } | null };
 
 export type UpdateDailyLogMutationVariables = Types.Exact<{
   date: Types.Scalars['ISO8601Date']['input'];

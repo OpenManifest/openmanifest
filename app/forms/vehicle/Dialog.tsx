@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { VehicleEssentialsFragment } from 'app/api/operations';
-import DialogOrSheet from 'app/components/layout/DialogOrSheet';
+import { ResourceForm } from 'app/ui';
 import VehicleForm from './VehicleForm';
 import useVehicleForm, { VehicleFields } from './useForm';
 import { useTranslation } from 'react-i18next';
@@ -10,12 +10,14 @@ export interface IVehicleDialogProps {
   initial?: Partial<VehicleFields>;
   original?: VehicleEssentialsFragment;
   onClose(): void;
+  /** Archives the item being edited (a setup list passes it; elsewhere the form only saves) */
+  onArchive?(): void;
 }
 
 export default function VehicleDialog(props: IVehicleDialogProps) {
   const { t } = useTranslation('common');
   const { open, onClose, initial, original } = props;
-  const { control, loading, onSubmit } = useVehicleForm({
+  const { control, loading, onSubmit, reset } = useVehicleForm({
     initial: {
       id: original?.id || initial?.id || undefined,
       name: original?.name || initial?.name,
@@ -27,15 +29,20 @@ export default function VehicleDialog(props: IVehicleDialogProps) {
     onSuccess: onClose,
   });
 
+  // What was typed and not saved goes when the form closes
+  React.useEffect(() => {
+    if (!open) reset();
+  }, [open, reset]);
+
   return (
-    <DialogOrSheet
+    <ResourceForm
+      onArchive={props.onArchive}
       {...{ open, loading, onClose }}
       title={original?.id ? t('forms.vehicle.editAircraft') : t('forms.vehicle.newAircraft')}
       open={open}
-      buttonLabel={t('forms.save')}
-      buttonAction={onSubmit}
+      onSubmit={onSubmit}
     >
       <VehicleForm {...{ control }} />
-    </DialogOrSheet>
+    </ResourceForm>
   );
 }

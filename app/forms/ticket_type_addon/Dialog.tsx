@@ -1,5 +1,5 @@
 import * as React from 'react';
-import DialogOrSheet from 'app/components/layout/DialogOrSheet';
+import { ResourceForm } from 'app/ui';
 import { TicketTypeAddonDetailsFragment } from 'app/api/operations';
 import TicketTypeForm from './TicketAddonForm';
 import useForm from './useForm';
@@ -28,17 +28,16 @@ export default function TicketTypeDialog(props: ITicketTypeAddonDialog) {
   });
 
   return (
-    <DialogOrSheet
+    <ResourceForm
       {...{ open, loading, onClose }}
       title={
         original?.id
           ? t('forms.ticket_type_addon.editTicket')
           : t('forms.ticket_type_addon.newTicket')
       }
-      buttonAction={onSubmit}
-      buttonLabel={t('forms.save')}
+      onSubmit={onSubmit}
     >
       <TicketTypeForm {...{ control }} />
-    </DialogOrSheet>
+    </ResourceForm>
   );
 }

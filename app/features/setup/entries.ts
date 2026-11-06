@@ -6,6 +6,8 @@ import type { IconName } from 'app/ui';
 export type SetupRoute =
   | 'VehiclesScreen'
   | 'DestinationsScreen'
+  | 'CrewRolesScreen'
+  | 'CertificationBodiesScreen'
   | 'TicketTypesScreen'
   | 'ExtrasScreen'
   | 'OperatorEquipmentScreen'
@@ -66,6 +68,14 @@ export const SETUP_GROUPS: SetupGroup[] = [
         supportingKey: 'setupMenu.destinations',
         permission: Permission.UpdateOperator,
         module: 'destinations',
+      },
+      {
+        key: 'crewRoles',
+        route: 'CrewRolesScreen',
+        icon: 'account-hard-hat-outline',
+        title: { key: 'setupMenu.crewRolesTitle' },
+        supportingKey: 'setupMenu.crewRoles',
+        permission: Permission.UpdateOperator,
       },
       {
         key: 'tickets',
@@ -132,6 +142,15 @@ export const SETUP_GROUPS: SetupGroup[] = [
           Permission.RevokePermission,
           Permission.UpdatePermissions,
         ],
+      },
+      {
+        key: 'certificationBodies',
+        route: 'CertificationBodiesScreen',
+        icon: 'certificate-outline',
+        title: { term: 'certification_body', count: 2 },
+        supportingKey: 'setupMenu.certificationBodies',
+        permission: Permission.UpdateOperator,
+        module: 'certifications',
       },
     ],
   },

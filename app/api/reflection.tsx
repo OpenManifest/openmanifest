@@ -1087,6 +1087,46 @@ export function useAddUserQualificationMutation(baseOptions?: Apollo.MutationHoo
 export type AddUserQualificationMutationHookResult = ReturnType<typeof useAddUserQualificationMutation>;
 export type AddUserQualificationMutationResult = Apollo.MutationResult<Operation.AddUserQualificationMutation>;
 export type AddUserQualificationMutationOptions = Apollo.BaseMutationOptions<Operation.AddUserQualificationMutation, Operation.AddUserQualificationMutationVariables>;
+export const ArchiveCrewRoleDocument = gql`
+    mutation ArchiveCrewRole($id: Int!) {
+  archiveCrewRole(input: {id: $id}) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    crewRole {
+      ...crewRoleEssentials
+    }
+  }
+}
+    ${CrewRoleEssentialsFragmentDoc}`;
+export type ArchiveCrewRoleMutationFn = Apollo.MutationFunction<Operation.ArchiveCrewRoleMutation, Operation.ArchiveCrewRoleMutationVariables>;
+
+/**
+ * __useArchiveCrewRoleMutation__
+ *
+ * To run a mutation, you first call `useArchiveCrewRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useArchiveCrewRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [archiveCrewRoleMutation, { data, loading, error }] = useArchiveCrewRoleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useArchiveCrewRoleMutation(baseOptions?: Apollo.MutationHookOptions<Operation.ArchiveCrewRoleMutation, Operation.ArchiveCrewRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.ArchiveCrewRoleMutation, Operation.ArchiveCrewRoleMutationVariables>(ArchiveCrewRoleDocument, options);
+      }
+export type ArchiveCrewRoleMutationHookResult = ReturnType<typeof useArchiveCrewRoleMutation>;
+export type ArchiveCrewRoleMutationResult = Apollo.MutationResult<Operation.ArchiveCrewRoleMutation>;
+export type ArchiveCrewRoleMutationOptions = Apollo.BaseMutationOptions<Operation.ArchiveCrewRoleMutation, Operation.ArchiveCrewRoleMutationVariables>;
 export const ArchiveDestinationDocument = gql`
     mutation ArchiveDestination($id: Int!) {
   archiveDestination(input: {id: $id}) {
@@ -1332,6 +1372,46 @@ export function useConfirmUserMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ConfirmUserMutationHookResult = ReturnType<typeof useConfirmUserMutation>;
 export type ConfirmUserMutationResult = Apollo.MutationResult<Operation.ConfirmUserMutation>;
 export type ConfirmUserMutationOptions = Apollo.BaseMutationOptions<Operation.ConfirmUserMutation, Operation.ConfirmUserMutationVariables>;
+export const CreateCrewRoleDocument = gql`
+    mutation CreateCrewRole($attributes: CrewRoleInput!) {
+  createCrewRole(input: {attributes: $attributes}) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    crewRole {
+      ...crewRoleEssentials
+    }
+  }
+}
+    ${CrewRoleEssentialsFragmentDoc}`;
+export type CreateCrewRoleMutationFn = Apollo.MutationFunction<Operation.CreateCrewRoleMutation, Operation.CreateCrewRoleMutationVariables>;
+
+/**
+ * __useCreateCrewRoleMutation__
+ *
+ * To run a mutation, you first call `useCreateCrewRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCrewRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCrewRoleMutation, { data, loading, error }] = useCreateCrewRoleMutation({
+ *   variables: {
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useCreateCrewRoleMutation(baseOptions?: Apollo.MutationHookOptions<Operation.CreateCrewRoleMutation, Operation.CreateCrewRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.CreateCrewRoleMutation, Operation.CreateCrewRoleMutationVariables>(CreateCrewRoleDocument, options);
+      }
+export type CreateCrewRoleMutationHookResult = ReturnType<typeof useCreateCrewRoleMutation>;
+export type CreateCrewRoleMutationResult = Apollo.MutationResult<Operation.CreateCrewRoleMutation>;
+export type CreateCrewRoleMutationOptions = Apollo.BaseMutationOptions<Operation.CreateCrewRoleMutation, Operation.CreateCrewRoleMutationVariables>;
 export const CreateDestinationDocument = gql`
     mutation CreateDestination($attributes: DestinationInput!) {
   createDestination(input: {attributes: $attributes}) {
@@ -2445,6 +2525,47 @@ export function useRevokePermissionMutation(baseOptions?: Apollo.MutationHookOpt
 export type RevokePermissionMutationHookResult = ReturnType<typeof useRevokePermissionMutation>;
 export type RevokePermissionMutationResult = Apollo.MutationResult<Operation.RevokePermissionMutation>;
 export type RevokePermissionMutationOptions = Apollo.BaseMutationOptions<Operation.RevokePermissionMutation, Operation.RevokePermissionMutationVariables>;
+export const UpdateCrewRoleDocument = gql`
+    mutation UpdateCrewRole($id: Int!, $attributes: CrewRoleInput!) {
+  updateCrewRole(input: {id: $id, attributes: $attributes}) {
+    errors
+    fieldErrors {
+      field
+      message
+    }
+    crewRole {
+      ...crewRoleEssentials
+    }
+  }
+}
+    ${CrewRoleEssentialsFragmentDoc}`;
+export type UpdateCrewRoleMutationFn = Apollo.MutationFunction<Operation.UpdateCrewRoleMutation, Operation.UpdateCrewRoleMutationVariables>;
+
+/**
+ * __useUpdateCrewRoleMutation__
+ *
+ * To run a mutation, you first call `useUpdateCrewRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCrewRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCrewRoleMutation, { data, loading, error }] = useUpdateCrewRoleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      attributes: // value for 'attributes'
+ *   },
+ * });
+ */
+export function useUpdateCrewRoleMutation(baseOptions?: Apollo.MutationHookOptions<Operation.UpdateCrewRoleMutation, Operation.UpdateCrewRoleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<Operation.UpdateCrewRoleMutation, Operation.UpdateCrewRoleMutationVariables>(UpdateCrewRoleDocument, options);
+      }
+export type UpdateCrewRoleMutationHookResult = ReturnType<typeof useUpdateCrewRoleMutation>;
+export type UpdateCrewRoleMutationResult = Apollo.MutationResult<Operation.UpdateCrewRoleMutation>;
+export type UpdateCrewRoleMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateCrewRoleMutation, Operation.UpdateCrewRoleMutationVariables>;
 export const UpdateDailyLogDocument = gql`
     mutation UpdateDailyLog($date: ISO8601Date!, $operator: ID!, $attributes: DailyLogInput!) {
   updateDailyLog(

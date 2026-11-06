@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type { EquipmentEssentialsFragment } from 'app/api/operations';
-import DialogOrSheet from 'app/components/layout/DialogOrSheet';
+import { ResourceForm } from 'app/ui';
 import { useOperatorContext } from 'app/providers/operator/context';
 import EquipmentForm from './EquipmentForm';
 import useEquipmentForm from './useForm';
@@ -14,6 +14,8 @@ export interface IEquipmentDialogProps {
   operatorId?: number;
   userId?: number;
   onClose(): void;
+  /** Archives the item being edited (a setup list passes it; elsewhere the form only saves) */
+  onArchive?(): void;
   onSuccess?(): void;
 }
 
@@ -40,19 +42,19 @@ export default function EquipmentDialog(props: IEquipmentDialogProps) {
   const equipmentTerm = { equipment: term('equipment').toLowerCase() };
 
   return (
-    <DialogOrSheet
+    <ResourceForm
+      onArchive={props.onArchive}
       title={
         equipment?.id
           ? t('forms.equipment.editEquipment', equipmentTerm)
           : t('forms.equipment.newEquipment', equipmentTerm)
       }
-      open={open}
+      open={!!open}
       onClose={onClose}
-      buttonAction={onSubmit}
-      buttonLabel={t('forms.save')}
+      onSubmit={onSubmit}
       loading={loading}
     >
       <EquipmentForm {...{ control, kinds, kind, operatorOwned }} canChooseKind={!equipment?.id} />
-    </DialogOrSheet>
+    </ResourceForm>
   );
 }

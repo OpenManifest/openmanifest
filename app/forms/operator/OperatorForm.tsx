@@ -12,7 +12,6 @@ import { PhonePreview, WebPreview } from 'app/components/theme_preview';
 import LocationPicker from 'app/components/input/LocationPicker';
 import imagePickDark from 'assets/images/image-pick.json';
 import imagePickLight from 'assets/images/image-pick-light.json';
-import { CertificationBodyChipSelectField } from 'app/components/input/chip_select';
 import { OperatorFields } from './useForm';
 import { FormTextField } from 'app/components/input/text/TextField';
 
@@ -102,11 +101,6 @@ export default function OperatorForm(props: IOperatorForm) {
           <Stack gap="md">
             <Subheader>{t('forms.operator.name')}</Subheader>
             <FormTextField {...{ control }} name="name" label={t('forms.operator.name')} />
-            <CertificationBodyChipSelectField
-              {...{ control }}
-              name="certificationBodies"
-              industry={operator?.industry}
-            />
           </Stack>
         </Card>
       )}
