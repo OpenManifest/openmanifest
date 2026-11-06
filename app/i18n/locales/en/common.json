@@ -1321,5 +1321,17 @@
     "counted": "Counted",
     "countedOf": "{{counted}} of {{total}}",
     "stateChanged": "{{name}} changed"
+  },
+  "money": {
+    "empty": {
+      "title": "No money has moved yet",
+      "body": "Payments, top-ups and refunds show here as they happen."
+    },
+    "shown_one": "The last {{count}} order",
+    "shown_other": "The last {{count}} orders",
+    "in": "Taken in",
+    "out": "Paid out",
+    "parties": "{{from}} → {{to}}",
+    "more": "Show older"
   }
 }

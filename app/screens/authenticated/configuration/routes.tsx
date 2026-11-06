@@ -20,7 +20,7 @@ import CrewRolesScreen from 'app/features/setup/CrewRolesScreen';
 import CertificationBodiesScreen from 'app/features/setup/CertificationBodiesScreen';
 import PermissionsScreen from 'app/features/setup/PermissionsScreen';
 import OperatorDailyLogScreen from './daily_log/DailyLogScreen';
-import OperatorTransactionsScreen from './transactions/OperatorTransactionsScreen';
+import MoneyScreen from 'app/features/money/MoneyScreen';
 
 export type ConfigurationRoutes = {
   OperatorSettingsScreen: undefined;
@@ -54,6 +54,9 @@ const GuardedPermissionsScreen = guarded(PermissionsScreen, {
     Permission.RevokePermission,
   ],
 });
+
+// The operator's money is for the staff who may read others' transactions
+const GuardedMoneyScreen = guarded(MoneyScreen, { permission: Permission.ReadUserTransactions });
 
 export function useConfigurationNavigation() {
   return useNavigation<NavigationProp<ConfigurationRoutes>>();
@@ -129,8 +132,8 @@ export default function SettingsTab() {
         />
         <Configuration.Screen
           name="TransactionsScreen"
-          component={OperatorTransactionsScreen}
-          options={{ title: t('common:screens.transactions') }}
+          component={GuardedMoneyScreen}
+          options={{ title: t('common:destinations.money') }}
         />
         <Configuration.Screen
           name="PermissionScreen"

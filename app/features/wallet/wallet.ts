@@ -48,11 +48,19 @@ export function statusOf(state: OrderState): StatusKey {
   }
 }
 
-export type OrderDay = { day: string; title: string; orders: WalletOrder[] };
+export type OrderDay<O extends DayOrder = WalletOrder> = {
+  day: string;
+  title: string;
+  orders: O[];
+};
+type DayOrder = Pick<WalletOrder, 'id' | 'createdAt'>;
 
 /** The orders in groups by the day they were made at the operator, in the order they came */
-export function groupByDay(orders: readonly WalletOrder[], timeZone?: string | null): OrderDay[] {
-  const days: OrderDay[] = [];
+export function groupByDay<O extends DayOrder = WalletOrder>(
+  orders: readonly O[],
+  timeZone?: string | null
+): OrderDay<O>[] {
+  const days: OrderDay<O>[] = [];
   orders.forEach((order) => {
     const title = formatDate(order.createdAt, timeZone);
     const last = days[days.length - 1];

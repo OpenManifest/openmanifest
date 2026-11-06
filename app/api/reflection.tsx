@@ -4958,19 +4958,34 @@ export type OperatorPermissionsLazyQueryHookResult = ReturnType<typeof useOperat
 export type OperatorPermissionsSuspenseQueryHookResult = ReturnType<typeof useOperatorPermissionsSuspenseQuery>;
 export type OperatorPermissionsQueryResult = Apollo.QueryResult<Operation.OperatorPermissionsQuery, Operation.OperatorPermissionsQueryVariables>;
 export const OperatorTransactionsDocument = gql`
-    query OperatorTransactions($operatorId: ID!, $after: String) {
+    query OperatorTransactions($operatorId: ID!, $first: Int, $after: String) {
   operator(id: $operatorId) {
     ...operatorEssentials
-    orders(after: $after) {
+    orders(first: $first, after: $after) {
       edges {
         node {
-          id
+          ...walletOrder
+          buyer {
+            __typename
+            ... on Membership {
+              id
+              user {
+                id
+                name
+              }
+            }
+          }
         }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
   }
 }
-    ${OperatorEssentialsFragmentDoc}`;
+    ${OperatorEssentialsFragmentDoc}
+${WalletOrderFragmentDoc}`;
 
 /**
  * __useOperatorTransactionsQuery__
@@ -4985,6 +5000,7 @@ export const OperatorTransactionsDocument = gql`
  * const { data, loading, error } = useOperatorTransactionsQuery({
  *   variables: {
  *      operatorId: // value for 'operatorId'
+ *      first: // value for 'first'
  *      after: // value for 'after'
  *   },
  * });
