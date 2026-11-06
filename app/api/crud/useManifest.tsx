@@ -24,12 +24,12 @@ import {
 } from '../operations';
 import { TMutationResponse } from './factory';
 import { Permission } from '../schema.d';
-import { useDropzoneTimeZone } from 'app/hooks/useDropzoneToday';
+import { useOperatorTimeZone, useOperatorToday } from 'app/hooks/useOperatorToday';
 import { useLoadCreated } from './subscriptions/useLoadCreatedSubscription';
 
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
 
-export default function useManifest({ dropzone, date }: UseManifestOptions) {
+export default function useManifest({ operator, date }: UseManifestOptions) {
   const accessToken = useSession((session) => session.credentials?.accessToken);
 
   const canCreateLoad = useRestriction(Permission.CreateLoad);
@@ -64,21 +64,21 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
   );
 
   const variables: LoadsQueryVariables | undefined = React.useMemo(() => {
-    if (!dropzone) {
+    if (!operator) {
       return undefined;
     }
     return {
-      dropzone,
+      operator,
       date,
     };
-  }, [date, dropzone]);
+  }, [date, operator]);
 
   const query = useLoadsQuery({
     initialFetchPolicy: 'cache-first',
     // So that a refetch (pull to refresh) reports its own status
     notifyOnNetworkStatusChange: true,
     variables,
-    skip: !accessToken || !dropzone,
+    skip: !accessToken || !operator,
   });
 
   const [moveSlotMutation] = useMoveSlotMutation();
@@ -86,7 +86,8 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
   const [manifestGroupMutation] = useManifestGroupMutation();
   const [manifestUserMutation] = useManifestUserMutation();
   const [createLoadMutation] = useCreateLoadMutation();
-  const timeZone = useDropzoneTimeZone();
+  const timeZone = useOperatorTimeZone();
+  const today = useOperatorToday(timeZone);
   useLoadCreated(variables as LoadsQueryVariables, timeZone);
 
   const { loading, fetchMore, refetch, data, called, updateQuery, networkStatus } = query;
@@ -211,7 +212,13 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
     async function CreateLoad(
       mutationVariables: CreateLoadMutationVariables
     ): Promise<TMutationResponse<{ load: LoadDetailsFragment }>> {
-      const result = await createLoadMutation({ variables: mutationVariables });
+      // A board on another day makes loads for that day
+      const result = await createLoadMutation({
+        variables: {
+          loadDate: date && date !== today ? date : undefined,
+          ...mutationVariables,
+        },
+      });
 
       if (
         result?.data?.createLoad?.fieldErrors?.length ||
@@ -245,7 +252,7 @@ export default function useManifest({ dropzone, date }: UseManifestOptions) {
         fieldErrors: undefined,
       };
     },
-    [createLoadMutation, updateQuery]
+    [createLoadMutation, updateQuery, date, today]
   );
 
   return React.useMemo(

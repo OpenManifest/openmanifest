@@ -24,7 +24,7 @@ describe('money', () => {
     expect(formatCents(5)).toBe('$0.05');
     expect(formatCents(0)).toBe('$0.00');
     expect(formatCents(undefined)).toBe('$0.00');
-    expect(formatCents(292000)).toBe('$2920.00');
+    expect(formatCents(292000)).toBe('$2,920.00');
   });
 
   test('formatCents puts the sign before the currency symbol', () => {

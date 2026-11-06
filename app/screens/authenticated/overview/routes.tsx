@@ -2,9 +2,10 @@ import { HeaderStyleInterpolators, createStackNavigator } from '@react-navigatio
 
 import * as React from 'react';
 import { useSession } from 'app/state';
-import AppBar from 'app/components/appbar/AppBar';
+import ScreenHeader from 'app/navigation/ScreenHeader';
+import { useTranslation } from 'react-i18next';
 import OverviewScreen from './AdminOverview';
-import DashboardScreen from './DropzoneOverview';
+import DashboardScreen from './OperatorOverview';
 
 export type OverviewRoutes = {
   OverviewScreen: undefined;
@@ -14,14 +15,15 @@ export type OverviewRoutes = {
 const Overview = createStackNavigator<OverviewRoutes>();
 
 export default function OverviewTab() {
+  const { t } = useTranslation('common');
   const credentials = useSession((session) => session.credentials);
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
 
   return (
     <Overview.Navigator
       screenOptions={{
-        headerShown: !!(credentials && currentDropzoneId),
-        header: (props) => <AppBar {...props} />,
+        headerShown: !!(credentials && currentOperatorId),
+        header: (props) => <ScreenHeader {...props} />,
         headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
         cardStyle: {
           flex: 1,
@@ -31,12 +33,12 @@ export default function OverviewTab() {
       <Overview.Screen
         name="DashboardScreen"
         component={DashboardScreen}
-        options={{ title: 'Dashboard' }}
+        options={{ title: t('screens.dashboard') }}
       />
       <Overview.Screen
         name="OverviewScreen"
         component={OverviewScreen}
-        options={{ title: 'Overview' }}
+        options={{ title: t('screens.overview') }}
       />
     </Overview.Navigator>
   );

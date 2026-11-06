@@ -2,13 +2,27 @@ import * as React from 'react';
 import { StyleSheet, View, ViewStyle, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Card, List, Menu, TextInput, useTheme } from 'react-native-paper';
-import { Wind } from '../../../api/schema.d';
+import { useOperatorFormat } from 'app/i18n/operatorFormat';
+import { UNIT_SYMBOLS, unitOf } from 'app/i18n/units';
 
-export interface IWindRowProps extends Wind {
-  onChange(field: keyof Wind, value: number): void;
+/** The heights a wind can be read at, in the unit the operator shows */
+const ALTITUDES: Record<string, number[]> = {
+  ft: [14000, 12000, 10000, 7000, 5000, 2000, 1000],
+  m: [4000, 3500, 3000, 2000, 1500, 600, 300],
+};
+
+export interface IWindRowProps {
+  /** In the operator's units (a height, a speed), or "Add" on the row that adds a wind */
+  altitude?: string | null;
+  speed?: string | null;
+  direction?: string | null;
+  onChange(field: 'altitude' | 'speed' | 'direction', value: number): void;
 }
 export default function WindRow(props: IWindRowProps) {
   const { speed, direction, altitude, onChange } = props;
+  const units = useOperatorFormat((state) => state.units);
+  const altitudeUnit = unitOf('altitude', units);
+  const speedUnit = unitOf('speed', units);
   const [altitudeMenuOpen, setAltitudeMenuOpen] = React.useState(false);
   const [_speed, _setSpeed] = React.useState(speed);
   const [_direction, _setDirection] = React.useState(direction);
@@ -35,12 +49,12 @@ export default function WindRow(props: IWindRowProps) {
               >
                 <List.Icon icon="arrow-up" style={styles.icon} />
                 <Text style={[styles.altitudeOption, { color: theme.colors.onSurface }]}>
-                  {altitude?.toString()}
+                  {altitude === 'Add' ? altitude : `${altitude} ${UNIT_SYMBOLS[altitudeUnit]}`}
                 </Text>
               </TouchableOpacity>
             }
           >
-            {[14000, 12000, 10000, 7000, 5000, 2000, 1000].map((alt) => (
+            {(ALTITUDES[altitudeUnit] ?? ALTITUDES.m).map((alt) => (
               <List.Item
                 key={alt}
                 onPress={() => {
@@ -49,7 +63,7 @@ export default function WindRow(props: IWindRowProps) {
                   }
                   setAltitudeMenuOpen(false);
                 }}
-                title={alt.toString()}
+                title={`${alt} ${UNIT_SYMBOLS[altitudeUnit]}`}
                 left={() => <List.Icon style={styles.icon} icon="arrow-up" />}
               />
             ))}
@@ -71,6 +85,7 @@ export default function WindRow(props: IWindRowProps) {
             }}
             style={styles.textField}
             keyboardType="numeric"
+            right={<TextInput.Affix text={UNIT_SYMBOLS[speedUnit]} />}
           />
         </View>
 

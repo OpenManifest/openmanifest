@@ -12,7 +12,7 @@ export type LegacySession = {
     tokenType: string;
     expiry: string | number;
   } | null;
-  currentDropzoneId: string | null;
+  currentOperatorId: string | null;
   expoPushToken: string | null;
 };
 
@@ -30,10 +30,10 @@ export function parseLegacySession(raw: string | null): LegacySession | null {
     if (!global) {
       return null;
     }
-    const id = global.currentDropzoneId;
+    const id = global.currentOperatorId;
     return {
       credentials: global.credentials?.accessToken ? global.credentials : null,
-      currentDropzoneId: id === null || id === undefined ? null : String(id),
+      currentOperatorId: id === null || id === undefined ? null : String(id),
       expoPushToken: global.expoPushToken ?? null,
     };
   } catch {
@@ -43,7 +43,7 @@ export function parseLegacySession(raw: string | null): LegacySession | null {
 
 /**
  * One-time migration: the first time the session store starts without its own storage entry, take the credentials,
- * current dropzone and push token the Redux `global` slice persisted. The caller stores the result and then removes the
+ * current operator and push token the Redux `global` slice persisted. The caller stores the result and then removes the
  * legacy key with `removeLegacyReduxPersist`.
  */
 export async function migrateFromReduxPersist(): Promise<{

@@ -38,12 +38,22 @@ for (const error of validate(schema, combined)) {
   const location = error.locations?.[0];
   // Attribute the error to the document that contains the offending node
   const owner = documents.find(({ document }) =>
-    document.definitions.some((definition) => definition.loc && location && definition.loc.source === error.source)
+    document.definitions.some(
+      (definition) => definition.loc && location && definition.loc.source === error.source
+    )
   );
-  console.error(`${owner ? relative(root, owner.file) : 'unknown file'}${location ? `:${location.line}` : ''}: ${error.message}`);
+  console.error(
+    `${owner ? relative(root, owner.file) : 'unknown file'}${location ? `:${location.line}` : ''}: ${error.message}`
+  );
 }
 
-const operations = combined.definitions.filter((definition) => definition.kind === Kind.OPERATION_DEFINITION).length;
-const fragments = combined.definitions.filter((definition) => definition.kind === Kind.FRAGMENT_DEFINITION).length;
-console.log(`${failed ? 'FAILED' : 'OK'}: ${files.length} files, ${operations} operations, ${fragments} fragments checked against schema.graphql`);
+const operations = combined.definitions.filter(
+  (definition) => definition.kind === Kind.OPERATION_DEFINITION
+).length;
+const fragments = combined.definitions.filter(
+  (definition) => definition.kind === Kind.FRAGMENT_DEFINITION
+).length;
+console.log(
+  `${failed ? 'FAILED' : 'OK'}: ${files.length} files, ${operations} operations, ${fragments} fragments checked against schema.graphql`
+);
 process.exit(failed ? 1 : 0);

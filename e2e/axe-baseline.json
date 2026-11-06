@@ -1,0 +1,32 @@
+{
+  "/configuration": ["color-contrast", "label", "role-img-alt"],
+  "/configuration/vehicles": ["aria-progressbar-name", "role-img-alt"],
+  "/configuration/basic": [
+    "aria-progressbar-name",
+    "aria-prohibited-attr",
+    "color-contrast",
+    "label",
+    "role-img-alt"
+  ],
+  "/configuration/permissions": ["color-contrast", "label", "role-img-alt"],
+  "/configuration/equipment-inspection": [
+    "aria-required-attr",
+    "button-name",
+    "label",
+    "nested-interactive",
+    "role-img-alt"
+  ],
+  "/configuration/equipment": ["aria-progressbar-name", "role-img-alt"],
+  "/configuration/ticket-types": ["aria-progressbar-name", "label", "role-img-alt"],
+  "/manifest": ["aria-progressbar-name", "color-contrast", "role-img-alt"],
+  "/daily-log": ["color-contrast", "role-img-alt"],
+  "/ticket-types/extra": ["aria-progressbar-name", "role-img-alt"],
+  "/transactions": ["role-img-alt"],
+  "/weather": ["color-contrast", "label", "nested-interactive", "role-img-alt"],
+  "/weather/jumprun": ["role-img-alt"],
+  "/weather/winds": ["color-contrast", "label", "nested-interactive", "role-img-alt"],
+  "/login": ["color-contrast", "label"],
+  "/setup": ["color-contrast", "label"],
+  "/signup": ["color-contrast", "label"],
+  "load": ["button-name", "nested-interactive", "role-img-alt"]
+}
