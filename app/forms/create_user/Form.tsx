@@ -1,43 +1,60 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FormTextField } from 'app/components/input/text/TextField';
-import { Divider } from 'react-native-paper';
+
 import { Control, useWatch } from 'react-hook-form';
 import { FormNumberField } from 'app/components/input/number_input';
-import { FederationSelectField, RoleSelectField } from 'app/components/input/dropdown_select';
-import { LicenseChipSelectField } from 'app/components/input/chip_select';
+import { NumberFieldType } from 'app/components/input/number_input/NumberField';
+import {
+  CertificationBodySelectField,
+  RoleSelectField,
+} from 'app/components/input/dropdown_select';
+import { CertificationLevelChipSelectField } from 'app/components/input/chip_select';
 
 import { UserFields } from './useForm';
+import { useTranslation } from 'react-i18next';
+import { Divider, Stack } from 'app/ui';
 
 interface IGhostFormProps {
   control: Control<UserFields>;
 }
 export default function GhostForm(props: IGhostFormProps) {
+  const { t } = useTranslation('common');
   const { control } = props;
 
-  const { federation, license } = useWatch({ control });
+  const { certificationBody, certificationLevel } = useWatch({ control });
 
   return (
-    <>
-      <FormTextField label="Name" name="name" {...{ control }} />
+    <Stack gap="md">
+      <FormTextField label={t('forms.fields.name')} name="name" {...{ control }} />
 
-      <FormTextField label="Nickname" name="nickname" placeholder="Optional" {...{ control }} />
+      <FormTextField
+        label={t('forms.fields.nickname')}
+        name="nickname"
+        placeholder={t('forms.create_user.optional')}
+        {...{ control }}
+      />
 
-      <FormTextField label="Email" name="email" {...{ control }} />
-      <FormTextField label="Phone number" name="phone" {...{ control }} />
+      <FormTextField label={t('forms.fields.email')} name="email" {...{ control }} />
+      <FormTextField label={t('forms.create_user.phoneNumber')} name="phone" {...{ control }} />
 
-      <FormNumberField label="Exit weight (kg)" name="exitWeight" {...{ control }} />
+      <FormNumberField
+        label={t('forms.create_user.exitWeightKg')}
+        name="bodyMassKg"
+        variant={NumberFieldType.Weight}
+        {...{ control }}
+      />
 
       <Divider />
 
       <View style={{ width: '100%' }}>
-        <FederationSelectField {...{ control }} name="federation" />
+        <CertificationBodySelectField {...{ control }} name="certificationBody" />
 
-        {(license?.federation?.id || federation?.id) && (
-          <LicenseChipSelectField name="license" {...{ control }} />
+        {(certificationLevel?.certificationBody?.id || certificationBody?.id) && (
+          <CertificationLevelChipSelectField name="certificationLevel" {...{ control }} />
         )}
       </View>
       <RoleSelectField name="role" {...{ control }} />
-    </>
+    </Stack>
   );
 }

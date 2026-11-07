@@ -16,7 +16,6 @@ export const defaultErrorLink = onError(({ graphQLErrors, networkError, operatio
       console.error(
         `[Apollo::Links::Errors::Default]: ${message}, ${JSON.stringify(locations)}, ${path}`
       );
-      console.log(operation);
     });
   }
   if (networkError && environment !== 'production') {
@@ -35,10 +34,6 @@ export function useErrorLink() {
           if (graphQLErrors?.some((err) => err.extensions?.code === 'AUTHENTICATION_ERROR')) {
             notify.info('Session expired');
             if (authenticated) {
-              console.debug(
-                '[Apollo::Links::Errors]: Received authentication error, logging out',
-                graphQLErrors
-              );
               resetSession({ reason: 'authentication-error' });
             }
             return;
@@ -54,8 +49,6 @@ export function useErrorLink() {
               const { message, locations, path } = err;
               notify.error(`[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}`);
               console.error(`[GraphQL error]: ${message}, ${JSON.stringify(locations)}, ${path}`);
-              // console.log(JSON.stringify(err));
-              console.log(operation);
             });
           }
           if (networkError && environment !== 'production') {

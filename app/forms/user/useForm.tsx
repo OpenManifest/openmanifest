@@ -6,37 +6,45 @@ import isEqual from 'lodash/isEqual';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import type {
-  DropzoneUserDetailsFragment,
-  FederationEssentialsFragment,
-  LicenseDetailsFragment,
+  MembershipDetailsFragment,
+  CertificationBodyEssentialsFragment,
+  CertificationLevelDetailsFragment,
 } from 'app/api/operations';
-import { DropzoneUserProfileDocument, useJoinFederationMutation } from 'app/api/reflection';
+import { MembershipProfileDocument, useJoinCertificationBodyMutation } from 'app/api/reflection';
 import useMutationUpdateUser from 'app/api/hooks/useMutationUpdateUser';
 import { useNotifications } from 'app/providers/notifications';
+import i18n from 'app/i18n';
 
 export type UserFields = {
   name: string;
   nickname: string;
   email: string;
   phone: string;
-  exitWeight: number;
-  federation: FederationEssentialsFragment | null;
-  license: LicenseDetailsFragment | null;
+  bodyMassKg: number;
+  certificationBody: CertificationBodyEssentialsFragment | null;
+  certificationLevel: CertificationLevelDetailsFragment | null;
   apfNumber: string;
 };
 
 export const userValidation = yup.object({
-  name: yup.string().trim().required('Name is required'),
+  name: yup
+    .string()
+    .trim()
+    .required(() => i18n.t('forms.user.nameIsRequired')),
   nickname: yup.string().default(''),
-  email: yup.string().trim().email('Not a valid email').required('Email is required'),
+  email: yup
+    .string()
+    .trim()
+    .email(() => i18n.t('forms.user.notAValidEmail'))
+    .required(() => i18n.t('forms.user.emailIsRequired')),
   phone: yup.string().default(''),
-  exitWeight: yup
+  bodyMassKg: yup
     .number()
-    .typeError('Exit weight must be a valid number')
-    .required('Exit weight is required')
-    .moreThan(30, 'Exit weight seems too low?'),
-  federation: yup.object().nullable().default(null),
-  license: yup.object().nullable().default(null),
+    .typeError(() => i18n.t('forms.user.exitWeightMustBeAValid'))
+    .required(() => i18n.t('forms.user.exitWeightIsRequired'))
+    .moreThan(30, () => i18n.t('forms.user.exitWeightSeemsTooLow')),
+  certificationBody: yup.object().nullable().default(null),
+  certificationLevel: yup.object().nullable().default(null),
   apfNumber: yup.string().default(''),
 });
 
@@ -45,20 +53,20 @@ export const EMPTY_FORM_VALUES: UserFields = {
   nickname: '',
   email: '',
   phone: '',
-  exitWeight: 60,
-  federation: null,
-  license: null,
+  bodyMassKg: 60,
+  certificationBody: null,
+  certificationLevel: null,
   apfNumber: '',
 };
 
-/** The form values for editing a dropzone user: the user's details, plus the licence they hold at this dropzone. */
-export function toFormValues(dropzoneUser?: DropzoneUserDetailsFragment | null): UserFields {
-  if (!dropzoneUser) {
+/** The form values for editing an operator user: the user's details, plus the licence they hold at this operator. */
+export function toFormValues(membership?: MembershipDetailsFragment | null): UserFields {
+  if (!membership) {
     return EMPTY_FORM_VALUES;
   }
-  const { user, license } = dropzoneUser;
-  const userFederation = user?.userFederations?.find(
-    ({ federation }) => federation.id === license?.federation?.id
+  const { user, certificationLevel } = membership;
+  const userCertification = user?.userCertifications?.find(
+    ({ certificationBody }) => certificationBody.id === certificationLevel?.certificationBody?.id
   );
 
   return {
@@ -66,22 +74,22 @@ export function toFormValues(dropzoneUser?: DropzoneUserDetailsFragment | null):
     nickname: user?.nickname || '',
     email: user?.email || '',
     phone: user?.phone || '',
-    exitWeight: Number(user?.exitWeight) || EMPTY_FORM_VALUES.exitWeight,
-    federation: license?.federation || null,
-    license: license || null,
-    apfNumber: userFederation?.uid || '',
+    bodyMassKg: Number(user?.bodyMassKg) || EMPTY_FORM_VALUES.bodyMassKg,
+    certificationBody: certificationLevel?.certificationBody || null,
+    certificationLevel: certificationLevel || null,
+    apfNumber: userCertification?.uid || '',
   };
 }
 
 export interface IUseUserFormOpts {
-  dropzoneUser?: DropzoneUserDetailsFragment | null;
+  membership?: MembershipDetailsFragment | null;
   onSuccess?(): void;
 }
 
 export default function useUserForm(opts: IUseUserFormOpts) {
-  const { dropzoneUser, onSuccess } = opts;
+  const { membership, onSuccess } = opts;
   const notify = useNotifications();
-  const initialValues = React.useMemo(() => toFormValues(dropzoneUser), [dropzoneUser]);
+  const initialValues = React.useMemo(() => toFormValues(membership), [membership]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
 
   const methods = useForm<UserFields>({
@@ -100,7 +108,7 @@ export default function useUserForm(opts: IUseUserFormOpts) {
     reset(defaultValues);
   }, [defaultValues, reset]);
 
-  const [joinFederation] = useJoinFederationMutation();
+  const [joinCertificationBody] = useJoinCertificationBodyMutation();
   const mutationUpdateUser = useMutationUpdateUser({
     onSuccess: () => null,
     onFieldError: (field, message) => {
@@ -111,8 +119,8 @@ export default function useUserForm(opts: IUseUserFormOpts) {
     },
     onError: (error) => notify.error(error),
     mutation: {
-      refetchQueries: dropzoneUser?.id
-        ? [{ query: DropzoneUserProfileDocument, variables: { dropzoneUserId: dropzoneUser.id } }]
+      refetchQueries: membership?.id
+        ? [{ query: MembershipProfileDocument, variables: { membershipId: membership.id } }]
         : [],
     },
   });
@@ -121,38 +129,45 @@ export default function useUserForm(opts: IUseUserFormOpts) {
   const [{ loading }, onSave] = useAsyncFn(
     async (fields: UserFields) => {
       const result = await mutate({
-        dropzoneUser: dropzoneUser?.id,
+        membership: membership?.id,
         name: fields.name,
-        license: !fields.license?.id ? null : Number(fields.license.id),
+        certificationLevel: !fields.certificationLevel?.id
+          ? null
+          : Number(fields.certificationLevel.id),
         phone: fields.phone,
-        exitWeight: fields.exitWeight,
+        bodyMassKg: fields.bodyMassKg,
         email: fields.email,
       });
       if (!result || result.errors?.length || result.fieldErrors?.length) {
         return;
       }
 
-      // TODO: Set APF number from userFederation belonging to currentDropzone.federation
+      // TODO: Set APF number from userCertification belonging to currentOperator.certificationBody
       // and compare against that
-      const selectedLicenseFederation = dropzoneUser?.user?.userFederations?.find(
-        ({ federation }) => federation.slug === fields.license?.federation?.slug
-      );
+      const selectedCertificationLevelCertificationBody =
+        membership?.user?.userCertifications?.find(
+          ({ certificationBody }) =>
+            certificationBody.slug === fields.certificationLevel?.certificationBody?.slug
+        );
       if (
-        (fields.license?.id && selectedLicenseFederation?.license?.id !== fields.license.id) ||
-        (fields.apfNumber && fields.apfNumber !== selectedLicenseFederation?.uid)
+        (fields.certificationLevel?.id &&
+          selectedCertificationLevelCertificationBody?.certificationLevel?.id !==
+            fields.certificationLevel.id) ||
+        (fields.apfNumber && fields.apfNumber !== selectedCertificationLevelCertificationBody?.uid)
       ) {
-        await joinFederation({
+        await joinCertificationBody({
           variables: {
-            federation: fields.license?.federation?.id?.toString() as string,
+            certificationBody:
+              fields.certificationLevel?.certificationBody?.id?.toString() as string,
             uid: fields.apfNumber,
-            license: fields.license?.id,
+            certificationLevel: fields.certificationLevel?.id,
           },
         });
       }
-      notify.success('Profile has been updated');
+      notify.success(i18n.t('forms.user.profileHasBeenUpdated'));
       onSuccess?.();
     },
-    [dropzoneUser, joinFederation, mutate, notify, onSuccess]
+    [membership, joinCertificationBody, mutate, notify, onSuccess]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onSave), [handleSubmit, onSave]);

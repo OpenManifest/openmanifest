@@ -13,7 +13,7 @@ export type SessionCredentials = {
 
 type SessionData = {
   credentials: SessionCredentials | null;
-  currentDropzoneId: string | null;
+  currentOperatorId: string | null;
   expoPushToken: string | null;
   currentRouteName: string | null;
 };
@@ -21,7 +21,7 @@ type SessionData = {
 type SessionActions = {
   setCredentials(credentials: SessionCredentials): void;
   clearCredentials(): void;
-  setDropzone(id: string | number | null | undefined): void;
+  setOperator(id: string | number | null | undefined): void;
   setPushToken(token: string | null): void;
   setRoute(name: string | null): void;
   /** Back to the logged-out state (keeps the push token, which belongs to the device) */
@@ -33,7 +33,7 @@ export type SessionState = SessionData & SessionActions & { hydrated: boolean };
 
 export const initialSession: SessionData = {
   credentials: null,
-  currentDropzoneId: null,
+  currentOperatorId: null,
   expoPushToken: null,
   currentRouteName: null,
 };
@@ -54,8 +54,8 @@ export const useSession = create<SessionState>()(
           },
         }),
       clearCredentials: () => set({ credentials: null }),
-      setDropzone: (id) =>
-        set({ currentDropzoneId: id === null || id === undefined ? null : String(id) }),
+      setOperator: (id) =>
+        set({ currentOperatorId: id === null || id === undefined ? null : String(id) }),
       setPushToken: (token) => set({ expoPushToken: token }),
       setRoute: (name) => set({ currentRouteName: name }),
       reset: () =>
@@ -73,9 +73,9 @@ export const useSession = create<SessionState>()(
         createSessionStorage(migrateFromReduxPersist, removeLegacyReduxPersist)
       ),
       // The route is not worth restoring and the flag is runtime-only
-      partialize: ({ credentials, currentDropzoneId, expoPushToken }) => ({
+      partialize: ({ credentials, currentOperatorId, expoPushToken }) => ({
         credentials,
-        currentDropzoneId,
+        currentOperatorId,
         expoPushToken,
       }),
       onRehydrateStorage: () => (state, error) => {

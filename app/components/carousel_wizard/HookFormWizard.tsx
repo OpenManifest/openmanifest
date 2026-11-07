@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { StyleSheet, View } from 'react-native';
 import { Carousel, CarouselRef } from 'react-native-reanimated-carousel';
-import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { Step } from './Step';
 import WizardFrame from './WizardFrame';
 import Buttons from './Buttons';
@@ -30,6 +30,7 @@ function Wizard<WizardSteps extends WizardFormStep[]>(
   const { stepIndex: step, lastStepIndex } = useWatch({ control });
   const currentIndex = useMemo(() => step || 0, [step]);
 
+  const { t } = useTranslation('common');
   const carouselRef = React.useRef<CarouselRef>(null);
 
   React.useImperativeHandle(ref, () => ({
@@ -76,8 +77,10 @@ function Wizard<WizardSteps extends WizardFormStep[]>(
                     <Buttons
                       {...{ loading }}
                       isCurrent={index === currentIndex}
-                      nextLabel={currentIndex === lastStepIndex ? 'Done' : 'Next'}
-                      backLabel="Back"
+                      nextLabel={
+                        currentIndex === lastStepIndex ? t('wizard.done') : t('wizard.next')
+                      }
+                      backLabel={t('wizard.back')}
                       onNext={next}
                       onBack={back}
                     />
