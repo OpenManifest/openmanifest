@@ -139,7 +139,7 @@ export default function AccountScreen() {
             key={item?.id}
             role="radio"
             testID={`operator-${item?.id}`}
-            icon="map-marker-outline"
+            icon={item?.template?.icon ?? 'map-marker-outline'}
             label={item?.name ?? ''}
             selected={operator?.id === item?.id}
             onPress={() => switchTo(item)}

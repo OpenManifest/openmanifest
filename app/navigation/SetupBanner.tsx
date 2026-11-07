@@ -22,7 +22,8 @@ export function useSetupNotice(): {
   const equipmentRequired = !!settings?.requireEquipment;
 
   // The body mass is asked for only where the limits module checks it
-  const massChecked = !!limitsModule(operator?.modules as Record<string, unknown> | undefined)?.mass;
+  const massChecked = !!limitsModule(operator?.modules as Record<string, unknown> | undefined)
+    ?.mass;
   const hasBodyMass = !massChecked || !!currentUser.user?.bodyMassKg;
   const hasEquipment = !equipmentRequired || equipment.length > 0;
   if (!hasBodyMass || !hasEquipment) {

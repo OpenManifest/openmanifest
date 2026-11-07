@@ -3,6 +3,8 @@ import { Text } from 'react-native';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 import { mockProfileQuery, profile } from 'app/__fixtures__/profile.fixture';
+import { SKYDIVING_MODULES } from 'app/__fixtures__/operator.fixture';
+import mockQueryOperator from 'app/__tests__/manifest/__mocks__/QueryOperator.mock';
 import { Permission } from 'app/api/schema.d';
 import { fireEvent, render, waitFor, within } from '../../../__mocks__/render';
 import ProfileScreen from '../ProfileScreen';
@@ -37,7 +39,7 @@ const OTHER = { ...profile, id: '999', walletId: '999', user: { ...profile.user,
 
 async function renderProfile(
   permissions: Permission[] = [],
-  options: { id?: string; membership?: object } = {}
+  options: { id?: string; membership?: object; modules?: object } = {}
 ) {
   jest.spyOn(console, 'warn').mockImplementation(() => undefined);
   const id = options.id ?? '123';
@@ -54,7 +56,13 @@ async function renderProfile(
     {
       session: authenticatedSession,
       permissions,
-      graphql: [mock, mock, mock] as never,
+      // A skydiving operator, with the certifications, equipment and limits modules, unless the test says otherwise
+      graphql: [
+        mockQueryOperator({}, { operator: { modules: options.modules ?? SKYDIVING_MODULES } }),
+        mock,
+        mock,
+        mock,
+      ] as never,
     }
   );
   await waitFor(() => expect(screen.getByTestId('profile-summary')).toBeTruthy(), {
@@ -110,6 +118,15 @@ describe('<ProfileScreen />', () => {
     expect(screen.getByText('No. 12345 · Verified 2 Jan 2026 · Counts here')).toBeTruthy();
     expect(screen.getByText('Camera')).toBeTruthy();
     expect(screen.getByText('No. C-7 · Expires 4 Mar 2099')).toBeTruthy();
+  });
+
+  it('shows no certifications, equipment or body mass for an operator without those modules', async () => {
+    const screen = await renderProfile([], { id: '999', membership: OTHER, modules: {} });
+
+    expect(screen.getByTestId('profile-loads')).toBeTruthy();
+    expect(screen.queryByTestId('profile-certifications')).toBeNull();
+    expect(screen.queryByTestId('profile-equipment')).toBeNull();
+    expect(screen.queryByTestId('profile-summary-mass')).toBeNull();
   });
 
   it('shows the membership with a date nobody reads two ways', async () => {

@@ -190,4 +190,17 @@ describe('screens a member has of their own', () => {
 
     await waitFor(() => expect(screen.getByText('the profile')).toBeTruthy());
   });
+
+  it('say not available to the member themselves when the operator lacks the module (their equipment)', async () => {
+    mockParams = { userId: CURRENT_USER_ID };
+    const Equipment = guardedUnlessOwn(() => <Text>my equipment</Text>, {
+      permission: Permission.ReadUser,
+      module: 'equipment',
+    });
+
+    const screen = await renderWithProviders(<Equipment />, { role: 'student' });
+
+    await waitFor(() => expect(screen.getByTestId('not-available')).toBeTruthy());
+    expect(screen.queryByText('my equipment')).toBeNull();
+  });
 });

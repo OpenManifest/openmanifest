@@ -147,7 +147,9 @@ export default function useVehicleForm(opts: IUseVehicleFormOpts) {
           }
           if ('vehicle' in response && response.vehicle) {
             notify.success(
-              i18n.t('forms.vehicle.aircraftSaved', { vehicle: i18n.t('terms:vehicle', { count: 1 }) })
+              i18n.t('forms.vehicle.aircraftSaved', {
+                vehicle: i18n.t('terms:vehicle', { count: 1 }),
+              })
             );
             onSuccess?.(response.vehicle);
           }

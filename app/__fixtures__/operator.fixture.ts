@@ -4,6 +4,18 @@ import { currentUserDetailed } from './currentUser.fixture';
 import { loadEssentials } from './load.fixture';
 import { rigKind } from './equipmentKind.fixture';
 
+/** The skydiving template's modules (config/industries/skydiving/template.yml): the fixture operator has none */
+export const SKYDIVING_MODULES = {
+  destinations: { kinds: ['altitude'], scope: 'per_slot' },
+  activities: {},
+  certifications: { required_by_default: true },
+  equipment: { rentals: true, personal: true },
+  escorts: { ratio: '1:1' },
+  limits: { mass: true, payload: true, age: true },
+  conditions: { kind: 'winds_aloft' },
+  daily_log: {},
+};
+
 type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]> } : T;
 
 export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
@@ -30,6 +42,7 @@ export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
   },
   vehicleKinds: ['aircraft'],
   modules: {},
+
   callScheduleMinutes: [20, 15, 10],
   currency: 'AUD',
   units: {

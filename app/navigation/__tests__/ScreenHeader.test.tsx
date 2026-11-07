@@ -7,7 +7,7 @@ import type { ScreenHeaderProps } from '../ScreenHeader';
 const mockOperatorContext = {
   operator: {
     loading: false,
-    operator: { name: 'Skydive Test', settings: {} },
+    operator: { name: 'Skydive Test', settings: {}, modules: { limits: { mass: true } } },
     currentUser: {
       id: '5',
       creditsCents: 100,
