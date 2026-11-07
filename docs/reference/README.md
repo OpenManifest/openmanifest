@@ -162,18 +162,34 @@ need `equipment`). The profile shows `CertificationsSection` only with `certific
 `equipment` and the body mass with `limits`; the account's Equipment row needs `equipment`; the setup banner asks for a
 body mass only when the limits module checks masses. The profile wizard asks for what the modules need
 (`app/forms/user_wizard/modules.ts`: `useWizardParts` and `wizardLayout`, the step index of each part: certifications and
-qualifications with `certifications`, date of birth with an age limit, a skydiver's rig with `equipment` and the rig kind).
+qualifications with `certifications`, date of birth with an age limit, a skydiver's parachute with `equipment` and the
+parachute kind, `PARACHUTE_KIND` of `app/features/skydiving/parachute.ts`, whose key is still `rig`).
 `VehicleIcon` (`app/features/board/VehicleIcon.tsx`) is the only place that names the aeroplane glyphs: `vehicleGlyph(kind)`
 maps a vehicle kind to its glyph, `motionGlyph` / `statusGlyph` give departing, landing, none and boarding glyphs
 (aeroplanes for aircraft, gliders and tugs, neutral ones for every other kind) and `useVehicleGlyphs(kind)` uses the load's
 vehicle or the operator's main kind (`operator.vehicleKinds[0]`); load actions, load status badges (`StatusBadge` now
-defaults to neutral departed / landed icons), empty states, the vehicle list and chips use it. The operator query carries
+defaults to neutral departed / completed icons), empty states, the vehicle list and chips use it. The operator query carries
 `template { slug name icon illustrations }`: the operator selector and the account's operator switcher show the template's
 icon, and `useIllustrations()` (`app/features/skydiving/illustrations.ts`) gives `skydiving` only when the template's
 `illustrations` key says so (the parachute glyphs). Skydiving-only screens live in `app/features/skydiving/` (the classic
 board's weather card and jump run map moved to `skydiving/weather/` and show only with winds aloft). The `@generic` smoke
 (`e2e/generic.spec.ts`) signs in as the owner of a new generic operator and checks that no screen shows a skydiving word,
 an aeroplane or parachute glyph, or an equipment, certification, conditions or daily-log entry.
+
+Translated strings and the vocabulary check (P7.20): `i18next/no-literal-string` (`jsx-text-only`) is an error on all of
+`app/**` (`eslint.config.js`), except tests, mocks and fixtures, `app/api/**` and the dev pages of `app/screens/dev`
+(gallery and Playwright pages behind `GALLERY_ENABLED`); the remaining screens (the classic board and load screens,
+`app/legacy`, the error, not-found and update screens, the weather board) take their words from `common.json` (`legacy.*`,
+`errorScreen.*`, `notFound.*`, `appUpdate.*`, `conditions.board.*`) and the operator's terms. The vocabulary check runs with
+`--enforce` in CI in both repos (`yarn check:vocabulary --enforce`, backend `bin/check-vocabulary --enforce`): an old term of
+`config/vocabulary.yml` outside its `allow` globs fails the build, and every allow entry has its reason on the line above it.
+Code outside the skydiving feature names the skydiving and aviation keys through constants: `PARACHUTE_KIND` (the `rig`
+kind), `AVIATION_VEHICLE_KIND` (`app/features/aviation/kinds.ts`, the `aircraft` vehicle kind) and, in the specs,
+`e2e/support/seed.ts` (the seeded operator's name and words); the API has `Skydiving::Parachutes` (`KIND`, `TYPE`). The load
+status token for a completed load is `completed` (was `landed`), and the "take off a load" props are `canRemove` /
+`onRemove`. The `@terms` Playwright spec (`e2e/terms.spec.ts`, full project only, light, each width) signs in as the owner of
+a new generic operator and fails on any word of the skydiving vocabulary on the main routes (Today, board, load, people,
+profile, inbox, wallet, money, reports, setup and its lists, rules, branding, permissions).
 
 Operations: 76 named operations (41 mutations, 32 queries, 3 subscriptions: `loadCreated`, `loadUpdated`, `userUpdated`).
 Pass 1 validated all of them against the live server schema: 0 validation errors, and the committed
