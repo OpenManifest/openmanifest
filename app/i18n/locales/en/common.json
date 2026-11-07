@@ -173,10 +173,10 @@
       }
     },
     "book": {
-      "title": "Fly today",
+      "title": "Book today",
       "body_one": "{{load}} has {{count}} free place",
       "body_other": "{{load}} has {{count}} free places",
-      "action": "Book a jump"
+      "action": "Book a place"
     },
     "credit": {
       "title": "Your credit"
@@ -333,7 +333,7 @@
     "equipment": {
       "add": "Add {{equipment}}",
       "empty": "No {{equipment}} yet",
-      "emptyAdd": "Add it here so the manifest can check it before a jump.",
+      "emptyAdd": "Add it here so the manifest can check it before you go.",
       "edit": "Edit",
       "editLabel": "Edit {{name}}",
       "inspect": "Inspect",
@@ -403,9 +403,9 @@
   },
   "wallet": {
     "balance": "Your balance",
-    "held": "Held for booked jumps",
+    "held": "Held for booked places",
     "heldNote": "Already taken off your balance; it comes back if you come off the load.",
-    "nothingHeld": "Nothing is held: you have no jump booked that costs money.",
+    "nothingHeld": "Nothing is held: you have nothing booked that costs money.",
     "topUp": "Top up at the manifest desk",
     "history": "What you paid",
     "more": "Show older",
@@ -745,9 +745,9 @@
       "registration": "Registration",
       "minSlots": "Min slots",
       "maxSlots": "Max slots",
-      "maximumAmountOfJumpersWho": "Maximum amount of jumpers who can be manifested on one load",
+      "maximumAmountOfJumpersWho": "The most people who can be manifested on one load",
       "maxPayload": "Most it can carry (kg)",
-      "maxPayloadHelper": "Jumpers, crew and passengers together. Leave at 0 for no limit",
+      "maxPayloadHelper": "Everyone on board, crew included. Leave at 0 for no limit",
       "maxPayloadMustBeGreater": "Must be 0 or more",
       "registrationIsRequired": "Registration is required",
       "minimumSlotsMustBeGreaterThan": "Minimum slots must be greater than 0",

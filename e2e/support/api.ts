@@ -99,6 +99,43 @@ export async function createTwoVehicleLoadViaApi(name = `Two vehicles ${Date.now
   return id ? { email, id: id as string } : undefined;
 }
 
+/**
+ * A generic operator of a new user of its own (the seeded owner's operators stay as they are), with a vehicle and a
+ * load of today. Returns who to log in as, the operator's name, the owner's membership and the load.
+ */
+export async function createGenericOperatorViaApi(name = `Harbour Tours ${Date.now()}`) {
+  const email = await registerNewUser('Gen Eric');
+  const login = await call(
+    `mutation { userLogin(email: "${email}", password: "${PASSWORD}") { authenticatable { id } } }`
+  );
+  const auth = {
+    'access-token': login.headers.get('access-token') ?? '',
+    client: login.headers.get('client') ?? '',
+    uid: login.headers.get('uid') ?? '',
+  };
+  const operator = await call(
+    `mutation($name: String!) { createOperator(input: { industry: GENERIC, attributes: { name: $name, timeZone: "Australia/Brisbane" } }) { operator { id currentUser { id } } errors } }`,
+    auth,
+    { name }
+  );
+  const created = operator.json?.data?.createOperator?.operator;
+  if (!created?.id) return undefined;
+  const vehicle = await call(
+    `mutation { createVehicle(input: { attributes: { operatorId: ${Number(created.id)}, name: "Shuttle 1", registration: "S1", capacity: 12 } }) { vehicle { id } } }`,
+    auth
+  );
+  const vehicleId = vehicle.json?.data?.createVehicle?.vehicle?.id;
+  if (!vehicleId) return undefined;
+  const load = await call(
+    `mutation { createLoad(input: { attributes: { name: "Morning run", vehicles: [{ vehicleId: "${vehicleId}", role: carrying }] } }) { load { id } errors } }`,
+    auth
+  );
+  const loadId = load.json?.data?.createLoad?.load?.id;
+  return loadId
+    ? { email, name, membershipId: String(created.currentUser?.id ?? ''), loadId: String(loadId) }
+    : undefined;
+}
+
 /** Puts a load on call, `minutes` from now, the way the boarding call does. Returns whether the API accepted it. */
 export async function callLoadViaApi(id: string, minutes = 10): Promise<boolean> {
   const at = new Date(Date.now() + minutes * 60_000).toISOString();

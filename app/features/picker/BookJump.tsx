@@ -15,7 +15,7 @@ export type BookJumpProps = {
 };
 
 /**
- * "Book a jump": a member books themselves on a load, in the picker in self mode. It is not there when the dropzone has
+ * "Book a place": a member books themselves on a load, in the picker in self mode. It is not there when the dropzone has
  * switched off self-manifesting (the member then lacks the permission), the load has left or is full, or the member is
  * already on it.
  */

@@ -93,7 +93,7 @@ test.describe('booking myself @today @board', () => {
       await expect(book).toBeVisible({ timeout: 20_000 });
       await expect(page.getByTestId('today-next-load')).toHaveCount(0);
 
-      // 1: "Book a jump" opens the picker with Sam in it; 2: the confirm button
+      // 1: "Book a place" opens the picker with Sam in it; 2: the confirm button
       await pressUntil(page, book, () =>
         expect(page.getByTestId('today-book-action-picker')).toBeVisible({ timeout: 5000 })
       );

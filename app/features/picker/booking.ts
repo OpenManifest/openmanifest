@@ -16,7 +16,7 @@ export function canBook(load: BookableLoad, membershipId?: string | null): boole
   return !(load.slots ?? []).some((slot) => slot.membership?.id === membershipId);
 }
 
-/** The load a "Book a jump" on Today books: the first of the day that the member can still get on */
+/** The load a "Book a place" on Today books: the first of the day that the member can still get on */
 export function firstBookable<L extends BookableLoad>(
   loads: readonly L[],
   membershipId?: string | null
