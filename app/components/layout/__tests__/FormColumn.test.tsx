@@ -1,42 +1,44 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { render } from '@testing-library/react-native';
 import FormColumn from '../FormColumn';
+import { hostsOfType } from 'app/test-utils/hosts';
 
 describe('FormColumn', () => {
-  it('renders its children inside a scroll view', () => {
-    const screen = render(
+  it('renders its children inside a scroll view', async () => {
+    const screen = await render(
       <FormColumn testID="column">
         <Text>First field</Text>
         <Text>Second field</Text>
       </FormColumn>
     );
 
-    const scroll = screen.UNSAFE_getByType(ScrollView);
-    expect(scroll).toBeTruthy();
+    expect(hostsOfType(screen.container, 'RCTScrollView')).toHaveLength(1);
     expect(screen.getByText('First field')).toBeTruthy();
     expect(screen.getByText('Second field')).toBeTruthy();
   });
 
-  it('keeps taps working while the keyboard is open', () => {
-    const screen = render(
+  it('keeps taps working while the keyboard is open', async () => {
+    const screen = await render(
       <FormColumn>
         <Text>Field</Text>
       </FormColumn>
     );
 
-    expect(screen.UNSAFE_getByType(ScrollView).props.keyboardShouldPersistTaps).toBe('handled');
+    expect(hostsOfType(screen.container, 'RCTScrollView')[0].props.keyboardShouldPersistTaps).toBe(
+      'handled'
+    );
   });
 
-  it('limits the content to 560 and centres it', () => {
-    const screen = render(
+  it('limits the content to 560 and centres it', async () => {
+    const screen = await render(
       <FormColumn contentContainerStyle={{ paddingTop: 8 }}>
         <Text>Field</Text>
       </FormColumn>
     );
 
     const content = StyleSheet.flatten(
-      screen.UNSAFE_getByType(ScrollView).props.contentContainerStyle
+      hostsOfType(screen.container, 'RCTScrollView')[0].props.contentContainerStyle
     );
     expect(content).toMatchObject({
       width: '100%',

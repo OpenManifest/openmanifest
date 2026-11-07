@@ -3,11 +3,11 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { KeyboardStickyView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import GradientText from '../GradientText';
+import { Text, useStyles, useTheme, type Theme } from 'app/ui';
 import FormColumn from '../layout/FormColumn';
-import { useAppTheme } from 'app/theme';
+import { WIZARD_MAX_WIDTH } from './constants';
 
-export const WIZARD_MAX_WIDTH = 400;
+export { WIZARD_MAX_WIDTH };
 /** Keeps the focused input above the buttons that rise with the keyboard */
 const ACTIONS_CLEARANCE = 128;
 
@@ -18,16 +18,21 @@ export interface IWizardStepProps {
   hideContentUntilNavigatedTo?: boolean;
 }
 
+/** The column of fields of a wizard page */
 export function Fields({ children }: { children: React.ReactNode }) {
+  const styles = useStyles(stylesFor);
   return (
     <View style={styles.fields}>
       <View style={styles.fieldContent}>{children}</View>
     </View>
   );
 }
+
+/** A page of a wizard: its title (the page's heading), its content and the actions that stay above the keyboard */
 export function Step(props: IWizardStepProps) {
   const { children, title, actions, hideContentUntilNavigatedTo } = props;
-  const { theme } = useAppTheme();
+  const theme = useTheme();
+  const styles = useStyles(stylesFor);
   const insets = useSafeAreaInsets();
 
   const isFocused = useIsFocused();
@@ -35,13 +40,13 @@ export function Step(props: IWizardStepProps) {
     return null;
   }
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View style={styles.container}>
       <FormColumn bottomOffset={ACTIONS_CLEARANCE} contentContainerStyle={styles.content}>
         {title ? (
           <View style={styles.title}>
-            <GradientText numberOfLines={1} adjustsFontSizeToFit style={styles.titleText}>
-              {title}
-            </GradientText>
+            <Text variant="title" role="heading" aria-level={1} numberOfLines={2}>
+              {String(title)}
+            </Text>
           </View>
         ) : null}
         <View style={styles.children}>{children}</View>
@@ -50,7 +55,7 @@ export function Step(props: IWizardStepProps) {
       {/* The keyboard height includes the bottom inset, which the container already pads */}
       <KeyboardStickyView
         offset={{ closed: 0, opened: insets.bottom }}
-        style={{ backgroundColor: theme.colors.background }}
+        style={{ backgroundColor: theme.colour.app }}
       >
         {actions}
       </KeyboardStickyView>
@@ -58,45 +63,40 @@ export function Step(props: IWizardStepProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const stylesFor = (theme: Theme) => ({
   container: {
     ...StyleSheet.absoluteFill,
-    flexDirection: 'column',
+    flexDirection: 'column' as const,
+    backgroundColor: theme.colour.app,
   },
   content: {
     flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
+    alignItems: 'center' as const,
+    justifyContent: 'space-evenly' as const,
   },
   title: {
-    width: '100%',
+    width: '100%' as const,
     maxWidth: WIZARD_MAX_WIDTH,
-    alignSelf: 'center',
-    marginBottom: 24,
-  },
-  titleText: {
-    marginTop: 16,
-    textAlign: 'left',
-    fontWeight: 'bold',
-    fontSize: 36,
-    lineHeight: 44,
+    alignSelf: 'center' as const,
+    marginTop: theme.space.lg,
+    marginBottom: theme.space.xl,
   },
   children: {
-    width: '100%',
+    width: '100%' as const,
     flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
   },
   fields: {
-    width: '100%',
+    width: '100%' as const,
     maxWidth: WIZARD_MAX_WIDTH,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    paddingVertical: theme.space.lg,
   },
   fieldContent: {
-    flexDirection: 'column',
+    flexDirection: 'column' as const,
     flexGrow: 1,
     flexShrink: 1,
   },

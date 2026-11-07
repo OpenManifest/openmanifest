@@ -54,7 +54,6 @@ export default function Menu(props: IPopoverMenuProps) {
   const onClick = React.useCallback(
     (event: GestureResponderEvent) => {
       setOpen(true);
-      console.log({ event });
       setAnchorEl(event.currentTarget as unknown as Element);
     },
     [setOpen]

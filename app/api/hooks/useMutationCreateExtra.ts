@@ -3,21 +3,21 @@ import { createMutation, isNumeric, isRequired } from '../createMutation';
 import { ExtraInput, CreateExtraPayload } from '../schema.d';
 
 const MUTATION_CREATE_EXTRA = gql`
-  mutation CreateExtra($name: String, $ticketTypeIds: [Int!], $costCents: Int, $dropzoneId: Int) {
+  mutation CreateExtra($name: String, $ticketTypeIds: [Int!], $costCents: Int, $operatorId: Int) {
     createExtra(
       input: {
         attributes: {
           name: $name
           ticketTypeIds: $ticketTypeIds
           costCents: $costCents
-          dropzoneId: $dropzoneId
+          operatorId: $operatorId
         }
       }
     ) {
       extra {
         ...extra
 
-        dropzone {
+        operator {
           id
           extras {
             ...extra
@@ -48,6 +48,6 @@ export default createMutation<ExtraInput, CreateExtraPayload>(MUTATION_CREATE_EX
   },
   validates: {
     name: [isRequired('Tickets must have names')],
-    cost: [isRequired('Tickets must have a price'), isNumeric('Price must be a number')],
+    costCents: [isRequired('Tickets must have a price'), isNumeric('Price must be a number')],
   },
 });

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Wizard } from 'app/components/carousel_wizard';
 import { useUpdateLostPasswordMutation } from 'app/api/reflection';
 import checkPasswordComplexity, { PasswordStrength } from 'app/utils/checkPasswordComplexity';
@@ -10,7 +11,9 @@ import PasswordConfirmationStep from './steps/PasswordConfirmation';
 import { ChangePasswordFieldsProvider } from './fields';
 import { useFieldState } from '../fields';
 
-export default function SignupWizard() {
+/** Opened from the password reset email: a new password twice, then back to the login screen */
+export default function ChangePasswordScreen() {
+  const { t } = useTranslation('common');
   const fields = useFieldState({ password: '', passwordConfirmation: '' });
   const { values, setError } = fields;
   const route = useRoute<{
@@ -26,10 +29,10 @@ export default function SignupWizard() {
   const onChangePassword = React.useCallback(async () => {
     try {
       if (values.password !== values.passwordConfirmation) {
-        throw new Error('Password mismatch. Did you type exactly the same password?');
+        throw new Error(t('auth.change.mismatch'));
       }
       if (!route.params?.token) {
-        throw new Error('Security token missing - try clicking the link in the email again');
+        throw new Error(t('auth.change.tokenMissing'));
       }
       const result = await updatePassword({
         variables: {
@@ -45,23 +48,30 @@ export default function SignupWizard() {
       if (result.errors?.length) {
         throw new Error(result.errors[0].message);
       }
-      throw new Error('Password change failed');
+      throw new Error(t('auth.change.failed'));
     } catch (e) {
       if (e instanceof Error) {
         setError('passwordConfirmation', e.message);
       }
       throw e;
     }
-  }, [route.params?.token, setError, values.password, values.passwordConfirmation, updatePassword]);
+  }, [
+    route.params?.token,
+    setError,
+    t,
+    values.password,
+    values.passwordConfirmation,
+    updatePassword,
+  ]);
 
   const navigation = useNavigation();
 
   const validatePassword = React.useCallback(async () => {
     if (checkPasswordComplexity(values.password) < PasswordStrength.Acceptable) {
-      setError('password', 'Password too weak');
-      throw new Error('Password too weak');
+      setError('password', t('auth.change.tooWeak'));
+      throw new Error(t('auth.change.tooWeak'));
     }
-  }, [setError, values.password]);
+  }, [setError, t, values.password]);
 
   const onFinished = React.useCallback(async () => {
     // @ts-ignore

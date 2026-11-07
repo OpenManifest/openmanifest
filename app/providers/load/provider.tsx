@@ -2,7 +2,7 @@ import * as React from 'react';
 import type { LoadQueryVariables } from 'app/api/operations';
 import { useLoad } from 'app/api/crud';
 import { TimePickerDialog } from './TimePickerDialog';
-import { LoadContext } from './context ';
+import { LoadContext } from './context';
 import createUseDialog from '../hooks/useDialog';
 
 const useTimePickerDialog = createUseDialog();

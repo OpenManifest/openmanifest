@@ -1,10 +1,11 @@
 import * as React from 'react';
-import DialogOrSheet from 'app/components/layout/DialogOrSheet';
+import { ResourceForm } from 'app/ui';
 import { TicketTypeAddonDetailsFragment } from 'app/api/operations';
 import TicketTypeForm from './TicketAddonForm';
 import useForm from './useForm';
 import type { TicketTypeAddonFields } from './useForm';
 import { fromCents } from 'app/utils/money';
+import { useTranslation } from 'react-i18next';
 
 export interface ITicketTypeAddonDialog {
   open: boolean;
@@ -14,6 +15,7 @@ export interface ITicketTypeAddonDialog {
 }
 
 export default function TicketTypeDialog(props: ITicketTypeAddonDialog) {
+  const { t } = useTranslation('common');
   const { open, initial, original, onClose } = props;
   const { control, loading, onSubmit } = useForm({
     initial: {
@@ -26,13 +28,16 @@ export default function TicketTypeDialog(props: ITicketTypeAddonDialog) {
   });
 
   return (
-    <DialogOrSheet
+    <ResourceForm
       {...{ open, loading, onClose }}
-      title={original?.id ? 'Edit ticket' : 'New ticket'}
-      buttonAction={onSubmit}
-      buttonLabel="Save"
+      title={
+        original?.id
+          ? t('forms.ticket_type_addon.editTicket')
+          : t('forms.ticket_type_addon.newTicket')
+      }
+      onSubmit={onSubmit}
     >
       <TicketTypeForm {...{ control }} />
-    </DialogOrSheet>
+    </ResourceForm>
   );
 }
