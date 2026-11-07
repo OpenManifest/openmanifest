@@ -1267,15 +1267,22 @@
       "heading": "A heading from 0 to {{max}}°",
       "negative": "Not below zero",
       "tooMany": "Too many heights"
+    },
+    "board": {
+      "noData": "No weather data",
+      "altitude": "Altitude",
+      "wind": "Wind",
+      "direction": "Direction",
+      "jumpRun": "Jump run {{heading}}°"
     }
   },
   "reports": {
     "range": {
-      "label": "Period",
-      "all": "All time",
       "3": "3 months",
       "6": "6 months",
-      "12": "12 months"
+      "12": "12 months",
+      "label": "Period",
+      "all": "All time"
     },
     "turnaround": "Turnaround",
     "revenue": "Revenue",
@@ -1427,5 +1434,58 @@
     "manifestOthersTitle": "Manifest others",
     "manifestOthers": "Who can manifest other people on {{loads}}?",
     "doneTitle": "Setup complete"
+  },
+  "errorScreen": {
+    "title": "That's a bug",
+    "subtitle": "This error has been uploaded for review",
+    "showDetails": "Show details",
+    "hideDetails": "Hide details",
+    "reload": "Reload"
+  },
+  "notFound": {
+    "title": "This screen doesn't exist.",
+    "home": "Go to home screen!"
+  },
+  "appUpdate": {
+    "available": "A new update is available",
+    "update": "Click to update",
+    "installed": "New version installed"
+  },
+  "themePreview": {
+    "phone": "Phone",
+    "web": "Web"
+  },
+  "legacy": {
+    "manifestDeskNote": "Bookings are made at the manifest desk",
+    "prepaid": "Prepaid",
+    "group": "Group",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "slotsTable": {
+      "available": "- Available -",
+      "name": "Name",
+      "wingLoading": "Wing Loading",
+      "prepaid": "prepaid"
+    },
+    "dispatch": {
+      "title": "Dispatch {{vehicle}}",
+      "time": "Departure",
+      "submit": "Dispatch"
+    },
+    "loadCard": {
+      "notTakenOff": "{{name}} could not be taken off {{load}} #{{number}}",
+      "takenOff": "{{name}} has been taken off {{load}} #{{number}}",
+      "someone": "User",
+      "tooMany_one": "You need to take {{count}} person off the load to fit on this {{vehicle}}",
+      "tooMany_other": "You need to take {{count}} people off the load to fit on this {{vehicle}}",
+      "departsIn": "Departs in {{minutes}} min",
+      "showMore": "Show more",
+      "showLess": "Show less",
+      "departNow": "Depart now",
+      "needLoadMaster": "You must select a load master before this load can be finalized",
+      "needPilot": "You must select a pilot before this load can be finalized",
+      "complete": "Mark as completed",
+      "manifest": "Manifest"
+    }
   }
 }

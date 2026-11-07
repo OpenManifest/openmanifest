@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { Surface } from 'react-native-paper';
 import { useAppTheme } from 'app/theme';
@@ -10,6 +11,7 @@ interface IPhonePreview {
 function PhonePreview(props: IPhonePreview) {
   const { primaryColor } = props;
   const { theme, palette } = useAppTheme();
+  const { t } = useTranslation('common');
 
   return (
     <View>
@@ -24,7 +26,7 @@ function PhonePreview(props: IPhonePreview) {
         <View style={[styles.previewTabButton2, { backgroundColor: palette.placeholder }]} />
         <View style={[styles.previewTabButton3, { backgroundColor: palette.placeholder }]} />
       </Surface>
-      <Text style={styles.label}>Phone</Text>
+      <Text style={styles.label}>{t('themePreview.phone')}</Text>
     </View>
   );
 }

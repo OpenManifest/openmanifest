@@ -110,36 +110,37 @@ function GroupHeader({ title, seats, id }: { title: string; seats: string; id: s
 
 function ColumnHeadings({ fields }: Pick<ISlotsTableProps, 'fields'>) {
   const term = useTerms();
+  const { t } = useTranslation('common');
   return (
     <DataTable.Header style={styles.headings}>
       <DataTable.Title style={rowStyles.avatarCell}>{null}</DataTable.Title>
       <DataTable.Title style={rowStyles.nameCell}>
-        <Text style={styles.th}>Name</Text>
+        <Text style={styles.th}>{t('legacy.slotsTable.name')}</Text>
       </DataTable.Title>
       {fields?.includes(SlotFields.CertificationLevel) && (
         <DataTable.Title numeric style={rowStyles.certificationLevelCell}>
-          <Text style={styles.th}>License</Text>
+          <Text style={styles.th}>{term('certification')}</Text>
         </DataTable.Title>
       )}
       {fields?.includes(SlotFields.Equipment) && (
         <DataTable.Title numeric style={rowStyles.equipmentCell}>
-          <Text style={styles.th}>Equipment</Text>
+          <Text style={styles.th}>{term('equipment')}</Text>
         </DataTable.Title>
       )}
       {fields?.includes(SlotFields.WingLoading) && (
         <DataTable.Title numeric style={rowStyles.wingLoadingCell}>
-          <Text style={styles.th}>Wing Loading</Text>
+          <Text style={styles.th}>{t('legacy.slotsTable.wingLoading')}</Text>
         </DataTable.Title>
       )}
       {!fields ||
         (fields?.includes(SlotFields.ActivityType) && (
           <DataTable.Title numeric style={rowStyles.activityTypeCell}>
-            <Text style={styles.th}>Jump type</Text>
+            <Text style={styles.th}>{term('activity')}</Text>
           </DataTable.Title>
         ))}
       {fields?.includes(SlotFields.TicketType) && (
         <DataTable.Title numeric style={rowStyles.ticketCell}>
-          <Text style={styles.th}>Ticket</Text>
+          <Text style={styles.th}>{term('ticket')}</Text>
         </DataTable.Title>
       )}
       {!fields ||

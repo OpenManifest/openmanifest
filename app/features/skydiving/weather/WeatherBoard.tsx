@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import {
@@ -32,6 +33,7 @@ export default function WeatherBoard() {
     operator: { operator, loading, called },
   } = useOperatorContext();
   const panel = useConditionsPanel();
+  const { t } = useTranslation('common');
   const [isExpanded, setExpanded] = React.useState(false);
   const height = React.useRef(new Animated.Value(0));
 
@@ -110,7 +112,7 @@ export default function WeatherBoard() {
           >
             {!hasWeatherConditions ? (
               <View style={styles.noData}>
-                <Text style={styles.noDataLabel}>No weather data</Text>
+                <Text style={styles.noDataLabel}>{t('conditions.board.noData')}</Text>
               </View>
             ) : (
               <>
@@ -166,13 +168,13 @@ export default function WeatherBoard() {
                   >
                     <View style={styles.row}>
                       <View style={styles.cell}>
-                        <Text style={styles.header}>Altitude</Text>
+                        <Text style={styles.header}>{t('conditions.board.altitude')}</Text>
                       </View>
                       <View style={styles.cell}>
-                        <Text style={styles.header}>Wind</Text>
+                        <Text style={styles.header}>{t('conditions.board.wind')}</Text>
                       </View>
                       <View style={styles.cell}>
-                        <Text style={styles.header}>Direction</Text>
+                        <Text style={styles.header}>{t('conditions.board.direction')}</Text>
                       </View>
                     </View>
                     {orderBy(
@@ -218,7 +220,7 @@ export default function WeatherBoard() {
                   </Animated.View>
                   <View style={styles.jumpRun} pointerEvents="box-none">
                     <Text style={[styles.header, { textAlign: 'left' }]}>
-                      Jump run {jumpRun}&deg;
+                      {t('conditions.board.jumpRun', { heading: jumpRun })}
                     </Text>
                     <TouchableOpacity
                       style={{ width: '100%', height: '100%' }}

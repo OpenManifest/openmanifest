@@ -161,7 +161,10 @@ function LoadScreen() {
                           const diff = (load?.slots?.length || 0) - (vehicle.capacity || 0);
 
                           notify.info(
-                            `You need to take ${diff} people off the load to fit on this plane`
+                            t('common:legacy.loadCard.tooMany', {
+                              count: diff,
+                              vehicle: t('terms:vehicle', { count: 1 }).toLowerCase(),
+                            })
                           );
                         } else {
                           await updateVehicle(vehicle);

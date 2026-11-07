@@ -1,4 +1,5 @@
 import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
+import { useTranslation } from 'react-i18next';
 import { Permission } from 'app/api/schema.d';
 import { StyleSheet, Text, View } from 'react-native';
 import useRestriction from 'app/hooks/useRestriction';
@@ -44,6 +45,7 @@ export default function UserRow(props: ISlotUserRowProps) {
   const { operator: currentOperator } = useOperatorContext();
   const units = useOperatorFormat((state) => state.units);
   const term = useTerms();
+  const { t } = useTranslation('common');
   const { currentUser } = currentOperator;
   const canEditSelf = useRestriction(Permission.UpdateSlot);
   const canEditOthers = useRestriction(Permission.UpdateUserSlot);
@@ -123,7 +125,9 @@ export default function UserRow(props: ISlotUserRowProps) {
                   {slot?.membership?.user?.nickname ? (
                     <Caption>{`(${slot?.membership?.user?.name})`}</Caption>
                   ) : null}
-                  {slot?.prepaid ? <Caption testID="slot-prepaid"> · prepaid</Caption> : null}
+                  {slot?.prepaid ? (
+                    <Caption testID="slot-prepaid">{` · ${t('legacy.slotsTable.prepaid')}`}</Caption>
+                  ) : null}
                 </DataTable.Cell>
                 {fields?.includes(SlotFields.CertificationLevel) ? (
                   <DataTable.Cell numeric style={styles.certificationLevelCell}>

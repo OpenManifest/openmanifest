@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 import { Button, Card, IconButton, Paragraph, Text } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
@@ -36,6 +37,7 @@ interface ILoadCardLarge {
 function LoadCard(props: ILoadCardLarge) {
   const { onManifest, onManifestGroup, controlsVisible, onSlotGroupPress, onSlotPress } = props;
   const { theme } = useAppTheme();
+  const { t } = useTranslation(['common', 'terms']);
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDispatchOpen, setDispatchOpen] = React.useState(false);
   const {
@@ -71,20 +73,26 @@ function LoadCard(props: ILoadCardLarge) {
         if ('error' in response && response.error) {
           notify.error(
             response?.error ||
-              `${slot.membership?.user?.name} could not be taken off load #${load?.loadNumber}`
+              t('common:legacy.loadCard.notTakenOff', {
+                name: slot.membership?.user?.name,
+                load: t('terms:load', { count: 1 }).toLowerCase(),
+                number: load?.loadNumber,
+              })
           );
         } else if ('slot' in response && slot?.id) {
           notify.error(
-            `${response.slot?.membership?.user?.name || 'User'} has been taken off load #${
-              load?.loadNumber
-            }`
+            t('common:legacy.loadCard.takenOff', {
+              name: response.slot?.membership?.user?.name || t('common:legacy.loadCard.someone'),
+              load: t('terms:load', { count: 1 }).toLowerCase(),
+              number: load?.loadNumber,
+            })
           );
         }
       } finally {
         setDeletingSlot(false);
       }
     },
-    [deleteSlot, load?.loadNumber, notify]
+    [deleteSlot, load?.loadNumber, notify, t]
   );
 
   const navigation = useAuthenticatedNavigation();
@@ -167,7 +175,12 @@ function LoadCard(props: ILoadCardLarge) {
                 if ((load?.slots?.length || 0) > (vehicle.capacity || 0)) {
                   const diff = (load?.slots?.length || 0) - (vehicle.capacity || 0);
 
-                  notify.info(`You need to take ${diff} people off the load to fit on this plane`);
+                  notify.info(
+                    t('common:legacy.loadCard.tooMany', {
+                      count: diff,
+                      vehicle: t('terms:vehicle', { count: 1 }).toLowerCase(),
+                    })
+                  );
                 } else {
                   await updateVehicle(vehicle);
                   refetch();
@@ -194,10 +207,9 @@ function LoadCard(props: ILoadCardLarge) {
       {!!load?.dispatchAt && load?.dispatchAt > new Date().getTime() / 1000 && (
         <View style={{ flex: 1, backgroundColor: 'black', padding: 8 }}>
           <Paragraph style={{ color: '#FFFFFF' }}>
-            {`Take-off in ${differenceInMinutes(
-              new Date(),
-              (load?.dispatchAt as number) * 1000
-            )} min`}
+            {t('common:legacy.loadCard.departsIn', {
+              minutes: differenceInMinutes(new Date(), (load?.dispatchAt as number) * 1000),
+            })}
           </Paragraph>
         </View>
       )}
@@ -209,7 +221,9 @@ function LoadCard(props: ILoadCardLarge) {
               onPress={() => setExpanded(!isExpanded)}
               testID={isExpanded ? 'show-less' : 'show-more'}
             >
-              {isExpanded ? 'Show less' : 'Show more'}
+              {isExpanded
+                ? t('common:legacy.loadCard.showLess')
+                : t('common:legacy.loadCard.showMore')}
             </Button>
           )}
           <View style={{ flexGrow: 1 }} />
@@ -219,7 +233,7 @@ function LoadCard(props: ILoadCardLarge) {
               onPress={() => dispatchInMinutes(null)}
               testID="dispatch-cancel"
             >
-              Cancel
+              {t('common:legacy.cancel')}
             </Button>
           ) : (
             <Menu
@@ -231,7 +245,7 @@ function LoadCard(props: ILoadCardLarge) {
                   onPress={() => setDispatchOpen(true)}
                   testID="dispatch-button"
                 >
-                  Dispatch
+                  {t('common:legacy.dispatch.submit')}
                 </Button>
               }
             >
@@ -253,7 +267,7 @@ function LoadCard(props: ILoadCardLarge) {
                     setDispatchOpen(false);
                     updateLoadState(LoadState.Departed);
                   }}
-                  title="Depart now"
+                  title={t('common:legacy.loadCard.departNow')}
                 />
               )}
             </Menu>
@@ -267,18 +281,16 @@ function LoadCard(props: ILoadCardLarge) {
               mode="contained"
               onPress={() => {
                 if (!load?.loadMaster?.id) {
-                  return notify.info(
-                    'You must select a load master before this load can be finalized'
-                  );
+                  return notify.info(t('common:legacy.loadCard.needLoadMaster'));
                 }
 
                 if (!load?.pilot?.id) {
-                  return notify.info('You must select a pilot before this load can be finalized');
+                  return notify.info(t('common:legacy.loadCard.needPilot'));
                 }
                 return complete();
               }}
             >
-              Mark as completed
+              {t('common:legacy.loadCard.complete')}
             </Button>
           ) : (
             <Button
@@ -291,7 +303,7 @@ function LoadCard(props: ILoadCardLarge) {
                 Boolean(load?.dispatchAt && load.dispatchAt < new Date().getTime() / 1000)
               }
             >
-              Manifest
+              {t('common:legacy.loadCard.manifest')}
             </Button>
           )}
         </Card.Actions>

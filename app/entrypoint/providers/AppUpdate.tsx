@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as Update from 'expo-updates';
 import { View, StyleSheet, Text, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
@@ -18,6 +19,7 @@ export default function AppUpdate(props: IAppUpdateProps) {
   const [loading, setLoading] = React.useState(false);
   const animation = React.useRef<LottieView>(null);
   const notify = useNotifications();
+  const { t } = useTranslation('common');
 
   const onUpdate = React.useCallback(async () => {
     if (Platform.OS === 'web' || !Device.isDevice) {
@@ -29,9 +31,9 @@ export default function AppUpdate(props: IAppUpdateProps) {
       await Update.reloadAsync();
       setLoading(false);
       setOverlay(false);
-      notify.success('New version installed');
+      notify.success(t('appUpdate.installed'));
     }
-  }, [notify]);
+  }, [notify, t]);
   const isUpdateAvailable = React.useCallback(async () => {
     if (Platform.OS === 'web' || !Device.isDevice) {
       return;
@@ -52,7 +54,7 @@ export default function AppUpdate(props: IAppUpdateProps) {
       {children}
       {overlay && (
         <BlurView tint="dark" style={styles.blur} intensity={80}>
-          <Text style={styles.title}>A new update is available</Text>
+          <Text style={styles.title}>{t('appUpdate.available')}</Text>
           <LottieView
             ref={animation}
             style={{
@@ -69,7 +71,7 @@ export default function AppUpdate(props: IAppUpdateProps) {
             mode="outlined"
             onPress={() => onUpdate()}
           >
-            Click to update
+            {t('appUpdate.update')}
           </Button>
         </BlurView>
       )}

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, View, StyleSheet } from 'react-native';
 import { Card, Divider, List, Button } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
@@ -51,6 +52,7 @@ export default function UserEquipmentCard(props: IUserEquipmentCard) {
     onChangeGuests,
   } = props;
   const { theme } = useAppTheme();
+  const { t } = useTranslation('common');
   const validation = useManifestValidator({
     loadId,
     membershipId,
@@ -139,7 +141,7 @@ export default function UserEquipmentCard(props: IUserEquipmentCard) {
       </Card.Content>
       <Card.Actions style={styles.actions}>
         <Button mode="text" onPress={() => onRemove?.()}>
-          Remove
+          {t('legacy.remove')}
         </Button>
       </Card.Actions>
     </Card>

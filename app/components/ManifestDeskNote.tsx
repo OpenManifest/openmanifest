@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Text, useTheme } from 'react-native-paper';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
@@ -11,6 +12,7 @@ import { useOperatorContext } from 'app/providers/operator/context';
  */
 export default function ManifestDeskNote() {
   const theme = useTheme();
+  const { t } = useTranslation('common');
   const {
     operator: { operator },
   } = useOperatorContext();
@@ -25,7 +27,7 @@ export default function ManifestDeskNote() {
       testID="manifest-desk-note"
       style={[styles.note, { color: theme.colors.onSurfaceVariant }]}
     >
-      Bookings are made at the manifest desk
+      {t('legacy.manifestDeskNote')}
     </Text>
   );
 }

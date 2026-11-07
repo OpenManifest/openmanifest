@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Divider, List } from 'react-native-paper';
 import { NumberFieldType } from 'app/components/input/number_input/NumberField';
 import { Control, useController, useWatch } from 'react-hook-form';
@@ -23,6 +24,7 @@ interface IManifestFormProps {
 }
 export default function ManifestForm(props: IManifestFormProps) {
   const { control } = props;
+  const { t } = useTranslation('terms');
 
   const { id, membership, ticketType, activityType, load } = useWatch<ManifestUserFields>({
     control,
@@ -65,7 +67,9 @@ export default function ManifestForm(props: IManifestFormProps) {
         name="ticketType"
       />
 
-      {!ticketType?.extras?.length ? null : <List.Subheader>Ticket addons</List.Subheader>}
+      {!ticketType?.extras?.length ? null : (
+        <List.Subheader>{t('extra', { count: 2 })}</List.Subheader>
+      )}
       <ChipSelectField<ManifestUserFields, 'extras'>
         {...{ control }}
         allowEmpty

@@ -108,6 +108,23 @@ module.exports = defineConfig([
     },
   },
   {
+    // Every visible string of every screen goes through t() (P7.20; jsx-text-only: text between tags). Not checked:
+    // tests and fixtures, the generated and data layer of app/api (no screens), and the dev pages of app/screens/dev
+    // (the component gallery and Playwright test pages, behind GALLERY_ENABLED; their sample content is test data)
+    files: ['app/**/*.{ts,tsx}'],
+    ignores: [
+      'app/api/**',
+      'app/**/__tests__/**',
+      'app/**/__mocks__/**',
+      'app/**/__fixtures__/**',
+      'app/**/*.test.{ts,tsx}',
+      'app/test-utils/**',
+      'app/screens/dev/**',
+    ],
+    plugins: { i18next },
+    rules: { 'i18next/no-literal-string': ['error', { mode: 'jsx-text-only' }] },
+  },
+  {
     // The primitives are where the platform APIs are wrapped
     files: ['app/components/layout/**'],
     rules: { 'no-restricted-imports': 'off', 'no-restricted-syntax': 'off' },

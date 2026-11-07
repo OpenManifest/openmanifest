@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useController, useFormContext, useWatch } from 'react-hook-form';
 import { HelperText, Divider, Chip, List } from 'react-native-paper';
@@ -84,6 +85,7 @@ function UserCard(props: IUserCardProps) {
 /** The jump, ticket and jumpers of a group. Needs to be inside the group form's `FormProvider`. */
 export default function ManifestGroupForm() {
   const { control } = useFormContext<ManifestGroupFields>();
+  const { t } = useTranslation(['common', 'terms']);
   const currentOperatorId = useSession((session) => session.currentOperatorId);
   const canManifestOthers = useRestriction(Permission.CreateUserSlot);
 
@@ -131,7 +133,7 @@ export default function ManifestGroupForm() {
   return (
     <>
       <View style={{ paddingHorizontal: 8 }} key="manifest-group-config">
-        <List.Subheader>Jump type</List.Subheader>
+        <List.Subheader>{t('terms:activity', { count: 1 })}</List.Subheader>
         <ChipSelect
           autoSelectFirst
           items={activityTypes}
@@ -147,7 +149,7 @@ export default function ManifestGroupForm() {
           {activityTypeState.error?.message || ''}
         </HelperText>
 
-        <List.Subheader>Ticket</List.Subheader>
+        <List.Subheader>{t('terms:ticket', { count: 1 })}</List.Subheader>
         <ChipSelect<TicketTypeValue>
           autoSelectFirst
           items={(data?.operator?.ticketTypes || []) as TicketTypeValue[]}
@@ -158,7 +160,9 @@ export default function ManifestGroupForm() {
         <HelperText type={ticketTypeState.error ? 'error' : 'info'}>
           {ticketTypeState.error?.message || ''}
         </HelperText>
-        {!ticketType.value?.extras?.length ? null : <List.Subheader>Ticket addons</List.Subheader>}
+        {!ticketType.value?.extras?.length ? null : (
+          <List.Subheader>{t('terms:extra', { count: 2 })}</List.Subheader>
+        )}
         <ScrollView horizontal style={styles.ticketAddons}>
           {ticketType.value?.extras?.map((extra) => (
             <Chip
@@ -182,7 +186,7 @@ export default function ManifestGroupForm() {
         key="manifest-group-users"
       >
         <List.Subheader style={styles.label}>
-          Group
+          {t('common:legacy.group')}
           <GroupPicker
             value={groupNumber.value || null}
             availableGroups={

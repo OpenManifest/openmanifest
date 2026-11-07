@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Avatar, Paragraph, Title } from 'react-native-paper';
 
@@ -19,6 +20,7 @@ interface ILoadHeader {
 export default function UserHeader(props: ILoadHeader) {
   const { load, renderBadges: RenderBadges, children } = props;
   const { theme, palette } = useAppTheme();
+  const { t } = useTranslation(['common', 'terms']);
   const { width } = useWindowDimensions();
 
   return (
@@ -48,7 +50,12 @@ export default function UserHeader(props: ILoadHeader) {
           )}
         </View>
         <View style={styles.titleContainer}>
-          <Title style={styles.title}>Load #{load?.loadNumber}</Title>
+          <Title style={styles.title}>
+            {t('common:loadNumber', {
+              load: t('terms:load', { count: 1 }),
+              number: load?.loadNumber,
+            })}
+          </Title>
           <Paragraph style={styles.paragraph}>
             {load?.createdAt && format(parseISO(load.createdAt), 'dd LLLL, yyyy')}
           </Paragraph>

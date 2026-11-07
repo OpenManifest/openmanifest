@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { Avatar, Badge, Card, Chip } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -22,6 +23,7 @@ export default function SlotCard(props: ISlotCardProps) {
   const guestSlots = slot?.guestSlots ?? [];
   const hasGuest = guestSlots.length > 0;
   const term = useTerms();
+  const { t } = useTranslation('common');
   const openUser = useOpenUser();
   return (
     <>
@@ -84,7 +86,7 @@ export default function SlotCard(props: ISlotCardProps) {
               testID="slot-prepaid"
               disabled
             >
-              Prepaid
+              {t('legacy.prepaid')}
             </Chip>
           ) : null}
           <Chip
