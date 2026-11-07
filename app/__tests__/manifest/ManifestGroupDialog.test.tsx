@@ -60,7 +60,7 @@ describe('<ManifestGroupDialog />', () => {
     const screen = await renderDialog([]);
 
     await fireEvent.press(screen.getAllByText('Next')[0]);
-    await waitFor(() => expect(screen.getAllByText('Jump type').length).toBeGreaterThan(0));
+    await waitFor(() => expect(screen.getAllByText('Activity').length).toBeGreaterThan(0));
     await fireEvent.press(screen.getByText('Manifest'));
 
     await waitFor(() =>
@@ -106,7 +106,7 @@ describe('<ManifestGroupDialog />', () => {
     );
 
     await fireEvent.press(screen.getAllByText('Next')[0]);
-    await waitFor(() => expect(screen.getAllByText('Jump type').length).toBeGreaterThan(0));
+    await waitFor(() => expect(screen.getAllByText('Activity').length).toBeGreaterThan(0));
     await waitFor(() => expect(screen.getAllByText('Height').length).toBeGreaterThan(0));
     // Let the jump type and ticket be selected by themselves
     await new Promise((resolve) => setTimeout(resolve, 300));

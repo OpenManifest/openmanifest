@@ -603,7 +603,7 @@
       "primaryColorIsUsedFor": "Primary color is used for elements like the title bar and the tab bar",
       "yourChangesHaveBeenSaved": "Your changes have been saved",
       "changeBanner": "Change the banner",
-      "bannerHelp": "Your banner is displayed on the weather board and on the operator selection screen",
+      "bannerHelp": "Your banner is displayed on the board and on the operator selection screen",
       "name": "Name",
       "location": "Location"
     },
@@ -1036,7 +1036,7 @@
       "altitude": "Heights",
       "distance": "Distances",
       "mass": "Weights",
-      "area": "Areas (canopy sizes)",
+      "area": "Areas",
       "speed": "Wind speeds",
       "temperature": "Temperatures"
     },
@@ -1047,7 +1047,7 @@
     "module": {
       "destinations": {
         "label": "Destinations",
-        "help": "Where {{loads}} go: altitudes, sites or routes"
+        "help": "Where {{loads}} go: heights, sites or routes"
       },
       "activities": {
         "label": "Activities",

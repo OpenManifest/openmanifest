@@ -55,13 +55,13 @@ const routes = (made: { loadId: string; membershipId: string }) => [
   '/configuration/permissions',
 ];
 
-/** Fails on any word of the skydiving vocabulary in the page, leaving out the user's own email address */
+/** Fails on any word of the skydiving vocabulary in the page (every one is reported), leaving out the user's own email */
 async function expectNoSkydivingWords(page: Page, where: string) {
   const text = (await page.locator('body').innerText())
     .replace(/newjumper\+\d+@example\.com/g, ' ')
     .toLowerCase();
   for (const word of SKYDIVING_VOCABULARY) {
-    expect(text, `${where} says ${word}`).not.toMatch(word);
+    expect.soft(text, `${where} says ${word}`).not.toMatch(word);
   }
 }
 
