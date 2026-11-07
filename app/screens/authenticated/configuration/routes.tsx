@@ -21,6 +21,7 @@ import CertificationBodiesScreen from 'app/features/setup/CertificationBodiesScr
 import PermissionsScreen from 'app/features/setup/PermissionsScreen';
 import DailyLogScreen from 'app/features/dailylog/DailyLogScreen';
 import MoneyScreen from 'app/features/money/MoneyScreen';
+import { entryOfRoute, type SetupRoute } from 'app/features/setup/entries';
 
 export type ConfigurationRoutes = {
   OperatorSettingsScreen: undefined;
@@ -57,6 +58,27 @@ const GuardedPermissionsScreen = guarded(PermissionsScreen, {
 
 // The operator's money is for the staff who may read others' transactions
 const GuardedMoneyScreen = guarded(MoneyScreen, { permission: Permission.ReadUserTransactions });
+
+/**
+ * A Setup screen that needs a module the operator does not have (equipment, certifications, daily log, destinations)
+ * says it is not available, for a deep link too: the module is the one of its entry in the Setup list.
+ */
+function withModuleOf<Props extends object>(Screen: React.ComponentType<Props>, route: SetupRoute) {
+  const module = entryOfRoute(route)?.module;
+  return module ? guarded(Screen, { module }) : Screen;
+}
+
+const ModuleDestinationsScreen = withModuleOf(DestinationsScreen, 'DestinationsScreen');
+const ModuleCertificationBodiesScreen = withModuleOf(
+  CertificationBodiesScreen,
+  'CertificationBodiesScreen'
+);
+const ModuleInspectionFormsScreen = withModuleOf(
+  InspectionFormsScreen,
+  'EquipmentInspectionTemplateScreen'
+);
+const ModuleEquipmentScreen = withModuleOf(EquipmentScreen, 'OperatorEquipmentScreen');
+const ModuleDailyLogScreen = withModuleOf(DailyLogScreen, 'DailyLogScreen');
 
 export function useConfigurationNavigation() {
   return useNavigation<NavigationProp<ConfigurationRoutes>>();
@@ -97,7 +119,7 @@ export default function SettingsTab() {
         />
         <Configuration.Screen
           name="DestinationsScreen"
-          component={DestinationsScreen}
+          component={ModuleDestinationsScreen}
           options={{ title: t('terms:destination', { count: 2 }) }}
         />
         <Configuration.Screen
@@ -107,7 +129,7 @@ export default function SettingsTab() {
         />
         <Configuration.Screen
           name="CertificationBodiesScreen"
-          component={CertificationBodiesScreen}
+          component={ModuleCertificationBodiesScreen}
           options={{ title: t('terms:certification_body', { count: 2 }) }}
         />
         <Configuration.Screen
@@ -122,12 +144,12 @@ export default function SettingsTab() {
         />
         <Configuration.Screen
           name="EquipmentInspectionTemplateScreen"
-          component={InspectionFormsScreen}
+          component={ModuleInspectionFormsScreen}
           options={{ title: t('common:screens.equipmentInspectionForm') }}
         />
         <Configuration.Screen
           name="OperatorEquipmentScreen"
-          component={EquipmentScreen}
+          component={ModuleEquipmentScreen}
           options={{ title: t('common:screens.equipment') }}
         />
         <Configuration.Screen
@@ -142,7 +164,7 @@ export default function SettingsTab() {
         />
         <Configuration.Screen
           name="DailyLogScreen"
-          component={DailyLogScreen}
+          component={ModuleDailyLogScreen}
           options={{ title: t('terms:daily_log') }}
         />
       </Configuration.Navigator>

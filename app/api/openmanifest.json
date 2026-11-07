@@ -7496,6 +7496,22 @@
             "deprecationReason": null
           },
           {
+            "name": "illustrations",
+            "description": "Which illustrations and animations the client shows: skydiving or neutral",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "modules",
             "description": null,
             "args": [],
@@ -7562,6 +7578,30 @@
                 "name": "Industry",
                 "kind": "ENUM",
                 "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "vehicleKinds",
+            "description": "The kinds of vehicle the template starts with (the first is the main one)",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "String",
+                    "kind": "SCALAR",
+                    "ofType": null
+                  }
+                }
               }
             },
             "isDeprecated": false,
@@ -13468,6 +13508,22 @@
             "deprecationReason": null
           },
           {
+            "name": "template",
+            "description": "The industry template the operator was created from: its icon, illustrations and vehicle kinds",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "IndustryTemplate",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "terminology",
             "description": "Terms of the operator's industry, with its own changes",
             "args": [
@@ -13597,6 +13653,30 @@
                   "ofType": {
                     "name": "UserRole",
                     "kind": "OBJECT",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "vehicleKinds",
+            "description": "The kinds of vehicle the operator runs (the first is the main one)",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "String",
+                    "kind": "SCALAR",
                     "ofType": null
                   }
                 }

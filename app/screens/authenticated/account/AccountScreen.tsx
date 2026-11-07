@@ -13,11 +13,16 @@ import {
 } from 'app/state/preferences';
 import { useStyles } from 'app/ui';
 import { formatMoney } from 'app/i18n/format';
+import { useIllustrations } from 'app/features/skydiving/illustrations';
+import { useAccessDecision } from 'app/navigation/useDestinations';
 import Row from './Row';
 import Section from './Section';
 
 const SCHEMES: ColorSchemePreference[] = ['system', 'light', 'dark'];
 const DENSITIES: DensityPreference[] = ['auto', 'compact', 'regular', 'comfortable'];
+
+/** A member's own equipment is there only when the operator keeps track of equipment */
+const EQUIPMENT_RULE = { module: 'equipment' };
 
 /** The person, their places, how the app looks, which operator it shows and logging out */
 export default function AccountScreen() {
@@ -43,6 +48,8 @@ export default function AccountScreen() {
     detail: { ...theme.type.bodyCompact, color: theme.colour.textMuted },
   }));
   const userId = currentUser?.id;
+  const hasEquipment = useAccessDecision(EQUIPMENT_RULE) === 'allowed';
+  const illustrations = useIllustrations();
   const role = (currentUser?.role?.name ?? '').replace(/_/g, ' ');
 
   const switchTo = React.useCallback(
@@ -71,12 +78,14 @@ export default function AccountScreen() {
           label={t('account.profile')}
           onPress={() => linkTo(`/user/${userId}`)}
         />
-        <Row
-          testID="account-equipment"
-          icon="parachute-outline"
-          label={t('terms:equipment', { count: 2 })}
-          onPress={() => linkTo(`/user/${userId}/equipment`)}
-        />
+        {hasEquipment ? (
+          <Row
+            testID="account-equipment"
+            icon={illustrations === 'skydiving' ? 'parachute-outline' : 'toolbox-outline'}
+            label={t('terms:equipment', { count: 2 })}
+            onPress={() => linkTo(`/user/${userId}/equipment`)}
+          />
+        ) : null}
         <Row
           testID="account-transactions"
           icon="cash-multiple"

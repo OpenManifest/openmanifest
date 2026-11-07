@@ -14,6 +14,7 @@ import PlacesMeter from 'app/features/board/PlacesMeter';
 import { crewSlots } from 'app/features/board/crew';
 import { statusOf } from 'app/features/board/loadStatus';
 import CrewRoleMenu from './CrewRoleMenu';
+import { useVehicleGlyphs } from 'app/features/board/VehicleIcon';
 
 export type LoadHeaderProps = {
   load: LoadDetailsFragment;
@@ -45,6 +46,7 @@ export default function LoadHeader({
   const { t } = useTranslation(['common', 'terms']);
   const theme = useTheme();
   const state = String(t(`terms:state.${load.state}`));
+  const glyphs = useVehicleGlyphs(load.vehicle?.kind);
   const calling = load.state === LoadState.Boarding && !!load.dispatchAt;
   const callTerm = String(t('terms:call', { count: 1 }));
   const departed = load.departedAt ? formatTime(load.departedAt, timeZone) : null;
@@ -76,7 +78,12 @@ export default function LoadHeader({
               {load.name}
             </Text>
           ) : null}
-          <StatusBadge status={statusOf(load.state)} label={state} testID={`${testID}-state`} />
+          <StatusBadge
+            status={statusOf(load.state)}
+            icon={glyphs.status(statusOf(load.state))}
+            label={state}
+            testID={`${testID}-state`}
+          />
           {called && load.state === LoadState.Boarding ? (
             <Text variant="caption" tone="muted" testID={`${testID}-called-at`}>
               {t('common:load.calledAt', { call: callTerm.toLowerCase(), time: called })}

@@ -10,6 +10,7 @@ import PlacesMeter from './PlacesMeter';
 import VehicleIcon from './VehicleIcon';
 import { crewSlots } from './crew';
 import { isOver, statusOf } from './loadStatus';
+import { useVehicleGlyphs } from './VehicleIcon';
 
 export type LoadCardProps = {
   load: LoadDetailsFragment;
@@ -48,6 +49,7 @@ export default function LoadCard({
     number: load.loadNumber,
   });
   const state = String(t(`terms:state.${load.state}`));
+  const glyphs = useVehicleGlyphs(load.vehicle?.kind);
   const calling = load.state === LoadState.Boarding && !!load.dispatchAt;
   const vehicles = load.vehicles ?? [];
   const crew = crewSlots(load, crewRoles);
@@ -86,7 +88,12 @@ export default function LoadCard({
                 {load.name}
               </Text>
             ) : null}
-            <StatusBadge status={statusOf(load.state)} label={state} testID={`${testID}-state`} />
+            <StatusBadge
+              status={statusOf(load.state)}
+              icon={glyphs.status(statusOf(load.state))}
+              label={state}
+              testID={`${testID}-state`}
+            />
           </View>
           {calling ? (
             <Countdown

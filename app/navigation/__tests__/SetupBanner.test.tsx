@@ -10,8 +10,15 @@ type Member = {
 const day = 24 * 3600;
 const now = () => Math.floor(Date.now() / 1000);
 
-const mockState: { settings: Record<string, boolean>; currentUser: unknown; loading: boolean } = {
+const mockState: {
+  settings: Record<string, boolean>;
+  modules: Record<string, unknown>;
+  currentUser: unknown;
+  loading: boolean;
+} = {
   settings: {},
+  // A skydiving operator checks body masses
+  modules: { limits: { mass: true } },
   currentUser: null,
   loading: false,
 };
@@ -19,7 +26,7 @@ jest.mock('app/providers/operator/context', () => ({
   useOperatorContext: () => ({
     operator: {
       loading: mockState.loading,
-      operator: { settings: mockState.settings },
+      operator: { settings: mockState.settings, modules: mockState.modules },
       currentUser: mockState.currentUser,
     },
   }),
@@ -37,6 +44,7 @@ const notice = async () => (await renderHook(() => useSetupNotice())).result.cur
 describe('useSetupNotice', () => {
   beforeEach(() => {
     mockState.settings = {};
+    mockState.modules = { limits: { mass: true } };
     mockState.loading = false;
     mockState.currentUser = member();
   });
@@ -94,5 +102,11 @@ describe('useSetupNotice', () => {
     expect(await notice()).toBe('setup.repack');
     mockState.currentUser = member({ creditsCents: 0 });
     expect(await notice()).toBe('setup.credits');
+  });
+
+  it('does not ask for the body mass where no limits module checks it', async () => {
+    mockState.modules = {};
+    mockState.currentUser = member({ user: { bodyMassKg: 0, equipment: [] } });
+    expect(await notice()).toBeNull();
   });
 });

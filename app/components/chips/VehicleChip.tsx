@@ -9,6 +9,7 @@ import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
 import Select, { ISelectOption } from '../input/select/Select';
 import Chip from './Chip';
+import { useVehicleGlyphs } from 'app/features/board/VehicleIcon';
 
 interface IVehicleChipSelect {
   value?: VehicleEssentialsFragment | null;
@@ -31,6 +32,7 @@ export default function VehicleChip(props: IVehicleChipSelect) {
     },
   });
   const allowed = useRestriction(Permission.UpdateLoad);
+  const glyph = useVehicleGlyphs(value?.kind).vehicle;
 
   const options = React.useMemo(
     () =>
@@ -54,16 +56,16 @@ export default function VehicleChip(props: IVehicleChipSelect) {
       <Chip
         {...{ backgroundColor, small, color, onPress: openMenu }}
         style={{ maxWidth: 100 }}
-        icon="airplane"
+        icon={glyph}
       >
         {truncate(item?.label || 'No Plane', { length: 12 })}
       </Chip>
     ),
-    [backgroundColor, color, small]
+    [backgroundColor, color, glyph, small]
   );
 
   return !allowed ? (
-    <Chip {...{ backgroundColor, small, color }} style={{ maxWidth: 100 }} icon="airplane">
+    <Chip {...{ backgroundColor, small, color }} style={{ maxWidth: 100 }} icon={glyph}>
       {value?.name || 'No Plane'}
     </Chip>
   ) : (

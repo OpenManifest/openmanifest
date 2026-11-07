@@ -82,6 +82,13 @@ export const OperatorEssentialsFragmentDoc = gql`
   timeZone
   terminology
   industry
+  template {
+    slug
+    name
+    icon
+    illustrations
+  }
+  vehicleKinds
   modules
   callScheduleMinutes
   currency

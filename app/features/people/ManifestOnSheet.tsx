@@ -5,6 +5,7 @@ import { EmptyState, ListRow, Overlay, StatusBadge, useTheme } from 'app/ui';
 import type { LoadDetailsFragment } from 'app/api/operations';
 import { statusOf } from 'app/features/board/loadStatus';
 import { manifestTargets } from './people';
+import { useVehicleGlyphs } from 'app/features/board/VehicleIcon';
 
 export type ManifestOnSheetProps = {
   /** Whom to put on a load: the name the title says */
@@ -33,6 +34,7 @@ export default function ManifestOnSheet({
   testID = 'people-manifest-on',
 }: ManifestOnSheetProps) {
   const { t } = useTranslation(['common', 'terms']);
+  const glyphs = useVehicleGlyphs();
   const theme = useTheme();
   const targets = React.useMemo(() => manifestTargets(loads), [loads]);
   const loadTerm = String(t('terms:load', { count: 1 }));
@@ -62,6 +64,7 @@ export default function ManifestOnSheet({
               trailing={
                 <StatusBadge
                   status={statusOf(load.state)}
+                  icon={glyphs.status(statusOf(load.state))}
                   label={String(t(`terms:state.${load.state}`, { defaultValue: load.state ?? '' }))}
                 />
               }
@@ -71,7 +74,7 @@ export default function ManifestOnSheet({
       ) : (
         <EmptyState
           testID={`${testID}-nowhere`}
-          icon="airplane-off"
+          icon={glyphs.motion('none')}
           title={t('common:people.manifestOn.nowhere')}
           body={t('common:people.manifestOn.nowhereBody')}
           action={{ label: t('common:people.manifestOn.board'), onPress: onBoard }}

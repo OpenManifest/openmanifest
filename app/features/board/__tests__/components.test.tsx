@@ -8,7 +8,6 @@ import CrewChip from '../CrewChip';
 import DestinationLabel from '../DestinationLabel';
 import LoadCard from '../LoadCard';
 import PlacesMeter from '../PlacesMeter';
-import { vehicleGlyph } from '../vehicleGlyph';
 import { isOver, statusOf } from '../loadStatus';
 import {
   guideRole,
@@ -18,16 +17,6 @@ import {
   pilotRole,
   caravan,
 } from 'app/__fixtures__/board.fixture';
-
-describe('vehicleGlyph', () => {
-  it('maps a kind to its glyph, and an unknown kind to a car', () => {
-    expect(vehicleGlyph('aircraft')).toBe('airplane');
-    expect(vehicleGlyph('tug')).toBe('airplane-takeoff');
-    expect(vehicleGlyph('raft')).toBe('rowing');
-    expect(vehicleGlyph('hovercraft')).toBe('car');
-    expect(vehicleGlyph(null)).toBe('car');
-  });
-});
 
 describe('loadStatus', () => {
   it('maps the states to status tokens and tells the loads that are over', () => {

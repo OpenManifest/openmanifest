@@ -5,6 +5,7 @@ import { ListRow, StatusBadge, Text, useTheme } from 'app/ui';
 import type { LoadDetailsFragment } from 'app/api/operations';
 import { statusOf } from 'app/features/board/loadStatus';
 import { placesOf } from 'app/features/board/places';
+import { useVehicleGlyphs } from 'app/features/board/VehicleIcon';
 
 export type TodayLoadsProps = {
   loads: readonly LoadDetailsFragment[];
@@ -22,6 +23,7 @@ export default function TodayLoads({
   testID = 'today-loads',
 }: TodayLoadsProps) {
   const { t } = useTranslation(['common', 'terms']);
+  const glyphs = useVehicleGlyphs();
   const theme = useTheme();
 
   return (
@@ -59,6 +61,7 @@ export default function TodayLoads({
             trailing={
               <StatusBadge
                 status={statusOf(load.state)}
+                icon={glyphs.status(statusOf(load.state))}
                 label={String(t(`terms:state.${load.state}`))}
               />
             }

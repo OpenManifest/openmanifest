@@ -97,10 +97,10 @@ export function pushDataOf(data: unknown): { notificationId?: string; type?: str
 const ICONS: Partial<Record<NotificationType, string>> = {
   [NotificationType.Boarding]: 'bullhorn-outline',
   [NotificationType.BoardingCanceled]: 'bullhorn-variant-outline',
-  [NotificationType.UserManifested]: 'airplane-takeoff',
+  [NotificationType.UserManifested]: 'ticket-confirmation-outline',
   [NotificationType.CreditsUpdated]: 'cash-multiple',
   [NotificationType.EquipmentInspectionRequested]: 'eye-outline',
-  [NotificationType.EquipmentInspectionCompleted]: 'parachute',
+  [NotificationType.EquipmentInspectionCompleted]: 'clipboard-check-outline',
   [NotificationType.PermissionGranted]: 'lock-open-outline',
   [NotificationType.PermissionRevoked]: 'lock-alert-outline',
   [NotificationType.MembershipUpdated]: 'card-account-details-outline',

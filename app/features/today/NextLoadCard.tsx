@@ -6,6 +6,7 @@ import { LoadState } from 'app/api/schema.d';
 import type { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { statusOf } from 'app/features/board/loadStatus';
 import { placesOf } from 'app/features/board/places';
+import { useVehicleGlyphs } from 'app/features/board/VehicleIcon';
 
 export type NextLoadCardProps = {
   load: LoadDetailsFragment;
@@ -41,6 +42,7 @@ export default function NextLoadCard({
     number: load.loadNumber,
   });
   const state = String(t(`terms:state.${load.state}`));
+  const glyphs = useVehicleGlyphs(load.vehicle?.kind);
   const calling = load.state === LoadState.Boarding && !!load.dispatchAt;
   const { capacity, filled } = placesOf(load);
   const details = [slot.activityType?.name, slot.ticketType?.name].filter(Boolean).join(' · ');
@@ -74,7 +76,12 @@ export default function NextLoadCard({
             <Text variant="title" role="heading" aria-level={2}>
               {title}
             </Text>
-            <StatusBadge status={statusOf(load.state)} label={state} testID={`${testID}-state`} />
+            <StatusBadge
+              status={statusOf(load.state)}
+              icon={glyphs.status(statusOf(load.state))}
+              label={state}
+              testID={`${testID}-state`}
+            />
           </View>
           {calling ? (
             <Countdown

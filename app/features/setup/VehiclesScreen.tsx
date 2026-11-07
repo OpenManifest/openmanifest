@@ -9,6 +9,7 @@ import useRestriction from 'app/hooks/useRestriction';
 import useTerms from 'app/i18n/useTerms';
 import { useSession } from 'app/state';
 import { ResourceList } from 'app/ui';
+import { useVehicleGlyphs, vehicleGlyph } from 'app/features/board/VehicleIcon';
 import { vehicleFacts } from './lists';
 import { useRefetchOnFocus, useResourceEditor } from './useResourceEditor';
 
@@ -28,6 +29,7 @@ export default function VehiclesScreen() {
     nameOf: (vehicle) => vehicle.name ?? vehicle.registration ?? '',
   });
   const vehicleWord = term('vehicle').toLowerCase();
+  const glyphs = useVehicleGlyphs();
 
   return (
     <ScreenContainer edges={['bottom']} testID="vehicles">
@@ -39,20 +41,20 @@ export default function VehiclesScreen() {
         keyOf={(vehicle) => vehicle.id}
         titleOf={(vehicle) => vehicle.name || vehicle.registration || ''}
         factsOf={(vehicle) => vehicleFacts(vehicle, t)}
-        iconOf={() => 'airplane'}
+        iconOf={(vehicle) => vehicleGlyph(vehicle.kind ?? glyphs.kind)}
         onOpen={canUpdate ? editor.openItem : undefined}
         rowTestID={(vehicle) => `vehicle-${vehicle.id}`}
         create={
           canCreate
             ? {
-                label: t('forms.vehicle.newAircraft'),
+                label: t('forms.vehicle.newAircraft', { vehicle: vehicleWord }),
                 onPress: editor.openNew,
                 testID: 'new-vehicle-primary-action',
               }
             : undefined
         }
         empty={{
-          icon: 'airplane-off',
+          icon: glyphs.motion('none'),
           title: t('resources.empty', { items: term('vehicle', 2).toLowerCase() }),
           body: t('resources.vehiclesEmpty', {
             vehicle: vehicleWord,

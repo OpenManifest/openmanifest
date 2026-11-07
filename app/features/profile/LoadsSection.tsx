@@ -5,6 +5,7 @@ import { formatDate, formatMoney } from 'app/i18n/format';
 import { statusOf } from 'app/features/board/loadStatus';
 import Section from './Section';
 import type { ProfileSlot } from './profile';
+import { useVehicleGlyphs } from 'app/features/board/VehicleIcon';
 
 export type LoadsSectionProps = {
   slots: readonly ProfileSlot[];
@@ -34,6 +35,7 @@ export default function LoadsSection({
   testID = 'profile-loads',
 }: LoadsSectionProps) {
   const { t } = useTranslation(['common', 'terms']);
+  const glyphs = useVehicleGlyphs();
   const loads = t('terms:load_count', { count: 2 });
 
   return (
@@ -41,7 +43,7 @@ export default function LoadsSection({
       {!slots.length ? (
         <EmptyState
           testID={`${testID}-empty`}
-          icon="airplane-off"
+          icon={glyphs.motion('none')}
           title={t('common:profile.loads.empty', { loads: loads.toLowerCase() })}
           body={
             self
@@ -77,7 +79,13 @@ export default function LoadsSection({
               aria-label={`${title}, ${date}, ${state}`}
               supporting={supporting}
               onPress={() => onOpen(slot)}
-              trailing={<StatusBadge status={statusOf(slot.load.state)} label={state} />}
+              trailing={
+                <StatusBadge
+                  status={statusOf(slot.load.state)}
+                  icon={glyphs.status(statusOf(slot.load.state))}
+                  label={state}
+                />
+              }
             />
           );
         })

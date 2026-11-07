@@ -29,6 +29,7 @@ import {
   type ProfileRule,
 } from './profile';
 import useProfile, { useEquipmentActions, useOpenBoard } from './useProfile';
+import { decide } from 'app/navigation/destinations';
 
 export type ProfileRoute = {
   ProfileScreen: {
@@ -80,6 +81,9 @@ function ProfileContent({
     operator: { operator },
   } = useOperatorContext();
   const { dialogs } = useManifestContext();
+  const modules = (operator?.modules ?? {}) as Record<string, unknown>;
+  // Certifications and equipment are sections only for an operator with those modules
+  const shows = (module: string) => decide({ module }, { permissions: [], modules }) === 'allowed';
   const { editUser, editMembership, editEquipment } = useProfileDialogs();
   const equipmentActions = useEquipmentActions(profile?.id);
   const [updateUser] = useUpdateUserMutation();
@@ -187,6 +191,7 @@ function ProfileContent({
       onWizard={() => openWizard()}
       onRemove={() => setConfirmingRemove(true)}
       onChangePhoto={abilities.editDetails ? changePhoto : undefined}
+      showBodyMass={shows('limits')}
     />
   );
   const ready = (
@@ -230,14 +235,14 @@ function ProfileContent({
       }
     />
   );
-  const certifications = (
+  const certifications = !shows('certifications') ? null : (
     <CertificationsSection
       certifications={member.user.userCertifications ?? []}
       currentId={member.userCertification?.id}
       onUpdate={abilities.editDetails ? () => openWizard(CERTIFICATION_STEP) : undefined}
     />
   );
-  const equipmentSection = (
+  const equipmentSection = !shows('equipment') ? null : (
     <EquipmentSection
       equipment={equipment}
       inspections={member.equipmentInspections}

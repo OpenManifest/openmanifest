@@ -17,11 +17,10 @@ import type { CrewRoleEssentialsFragment, LoadDetailsFragment } from 'app/api/op
 import { formatCall } from 'app/i18n/format';
 import { needsConfirmation, type LoadActionKey } from './loadActions';
 import { useLoadActions } from './useLoadActions';
+import { useVehicleGlyphs } from './VehicleIcon';
 
-const ICON: Record<LoadActionKey, MenuItem['icon']> = {
+const ICON: Record<Exclude<LoadActionKey, 'depart' | 'complete'>, MenuItem['icon']> = {
   call: 'bullhorn-outline',
-  depart: 'airplane-takeoff',
-  complete: 'airplane-landing',
   cancelCall: 'bullhorn-variant-outline',
   cancelLoad: 'cancel',
   reopen: 'undo',
@@ -50,6 +49,14 @@ export default function LoadActions({
   const { t } = useTranslation(['common', 'terms']);
   const theme = useTheme();
   const { plan, callMinutes, busy, run, blocked } = useLoadActions(load, crewRoles);
+  const glyphs = useVehicleGlyphs(load.vehicle?.kind);
+  // Departing and landing show the vehicle of the load: an aeroplane taking off, or a neutral arrow
+  const iconOf = (action: LoadActionKey): MenuItem['icon'] =>
+    action === 'depart'
+      ? glyphs.motion('depart')
+      : action === 'complete'
+        ? glyphs.motion('land')
+        : ICON[action];
   const [picking, setPicking] = React.useState(false);
   const [custom, setCustom] = React.useState<number | null>(DEFAULT_CUSTOM_MINUTES);
   const [choice, setChoice] = React.useState<string | null>(null);
@@ -89,7 +96,7 @@ export default function LoadActions({
           <Button
             testID={`${testID}-primary`}
             label={label(plan.primary)}
-            icon={ICON[plan.primary]}
+            icon={iconOf(plan.primary)}
             loading={busy}
             disabled={!!blocked(plan.primary)}
             fullWidth
@@ -114,7 +121,7 @@ export default function LoadActions({
           }
           items={plan.menu.map((action) => ({
             label: label(action),
-            icon: ICON[action],
+            icon: iconOf(action),
             destructive: action === 'cancelLoad',
             disabled: !!blocked(action),
             testID: `${testID}-${action}`,

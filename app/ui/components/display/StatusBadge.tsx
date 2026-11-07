@@ -17,8 +17,8 @@ export type StatusBadgeProps = {
 const ICON: Record<StatusKey, React.ComponentProps<typeof MaterialCommunityIcons>['name']> = {
   open: 'door-open',
   boarding: 'bullhorn-outline',
-  departed: 'airplane-takeoff',
-  landed: 'airplane-landing',
+  departed: 'arrow-top-right',
+  landed: 'flag-checkered',
   cancelled: 'cancel',
   warning: 'alert-outline',
   blocked: 'alert-octagon-outline',

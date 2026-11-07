@@ -11,6 +11,7 @@ import { useOperatorToday, useOperatorTimeZone } from 'app/hooks/useOperatorToda
 import { dateInZone } from 'app/utils/operatorTime';
 import { formatCall } from 'app/i18n/format';
 import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
+import { useVehicleGlyphs } from 'app/features/board/VehicleIcon';
 
 interface ILoadActionButtonProps {
   load: LoadDetailsFragment;
@@ -28,6 +29,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
 
   const { operator: currentOperator } = useOperatorContext();
   const { currentUser } = currentOperator;
+  const glyphs = useVehicleGlyphs(load?.vehicle?.kind);
 
   const theme = useTheme();
   const canUpdateLoad = useRestriction(Permission.UpdateLoad);
@@ -51,24 +53,25 @@ export default function ActionButton(props: ILoadActionButtonProps) {
 
   // The calls the operator offers (the template's until it sets its own); with none, the load departs directly
   const callMinutes = currentOperator.operator?.callScheduleMinutes ?? [];
+  const depart = glyphs.motion('depart');
   const callActions = callMinutes.length
     ? [
         {
           label: 'Custom call',
           onPress: timepicker.open,
-          icon: 'airplane-takeoff',
+          icon: depart,
         },
         ...callMinutes.map((minutes) => ({
           label: formatCall(minutes),
           onPress: createVehicleDispatchAction(minutes),
-          icon: 'airplane-takeoff',
+          icon: depart,
         })),
       ]
     : [
         {
           label: 'Depart now',
           onPress: () => updateLoadState(LoadState.Departed),
-          icon: 'airplane-takeoff',
+          icon: depart,
         },
       ];
 
@@ -99,7 +102,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       ? null
       : {
           label: 'Cancel boarding call',
-          icon: 'airplane-off',
+          icon: glyphs.motion('none'),
           onPress: createVehicleDispatchAction(null),
         },
     ![LoadState.Open].includes(load.state)
@@ -120,7 +123,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
       ? null
       : {
           label: 'Mark as Landed',
-          icon: 'airplane-landing',
+          icon: glyphs.motion('land'),
           onPress: complete,
         },
   ].filter(Boolean);

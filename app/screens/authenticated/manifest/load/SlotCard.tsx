@@ -92,7 +92,7 @@ export default function SlotCard(props: ISlotCardProps) {
             textStyle={styles.chipText}
             icon={(iconProps) => (
               <MaterialCommunityIcons
-                name="airplane-takeoff"
+                name="certificate-outline"
                 {...iconProps}
                 style={{ marginTop: 0, marginBottom: 3 }}
               />

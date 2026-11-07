@@ -5,19 +5,16 @@ import { useStep as useCertificationBodyStep } from './steps/CertificationBody';
 import { useStep as useCertificationBodyNumberStep } from './steps/CertificationBodyNumber';
 import { useStep as useCertificationLevelStep } from './steps/CertificationLevel';
 import { useStep as useNicknameStep } from './steps/Nickname';
-import {
-  useStep as useQualificationsStep,
-  useQualificationStepRequired,
-} from './steps/Qualifications';
+import { useStep as useQualificationsStep } from './steps/Qualifications';
 import { useStep as useRealNameStep } from './steps/RealName';
-import { useStep as useDateOfBirthStep, useDateOfBirthStepRequired } from './steps/DateOfBirth';
+import { useStep as useDateOfBirthStep } from './steps/DateOfBirth';
 import {
   useAskForRigStep,
   useReserveRepackStep,
   useRigStep,
-  useRigStepsRequired,
   useWingloadingStep,
 } from 'app/features/skydiving/wizard';
+import { useWizardParts, wizardLayout } from './modules';
 import { RIG_KIND, canopySizeToSquareMetres, findRigKind } from 'app/features/skydiving/rig';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { useOperatorFormat } from 'app/i18n/operatorFormat';
@@ -49,13 +46,24 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
   const step8 = useRigStep();
   const step9 = useReserveRepackStep();
   const step10 = useWingloadingStep();
-  // The qualification step follows the certification steps when the operator asks for qualifications, then come the
-  // questions about a skydiver's rig when the operator has the rig kind; the steps after each move up
-  const withQualifications = useQualificationStepRequired();
-  const withRigs = useRigStepsRequired();
-  const withDateOfBirth = useDateOfBirthStepRequired();
-  // Steps that sit before the rig steps move them down
-  const shift = (withQualifications ? 1 : 0) + (withDateOfBirth ? 1 : 0);
+  // Only the parts the operator's modules ask for: certifications (and the qualifications its tickets need), the date
+  // of birth for an age limit, and a skydiver's rig; each part's steps follow the ones before it
+  const {
+    certifications: withCertifications,
+    qualifications: withQualifications,
+    dateOfBirth: withDateOfBirth,
+    rigs: withRigs,
+  } = useWizardParts();
+  const layout = React.useMemo(
+    () =>
+      wizardLayout({
+        certifications: withCertifications,
+        qualifications: withQualifications,
+        dateOfBirth: withDateOfBirth,
+        rigs: withRigs,
+      }),
+    [withCertifications, withQualifications, withDateOfBirth, withRigs]
+  );
   const {
     operator: { operator },
   } = useOperatorContext();
@@ -67,9 +75,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       step1,
       step2,
       step3,
-      step4,
-      step5,
-      step6,
+      ...(withCertifications ? [step4, step5, step6] : []),
       ...(withQualifications ? [qualificationsStep] : []),
       ...(withDateOfBirth ? [dateOfBirthStep] : []),
       ...(withRigs ? [step7, step8, step9, step10] : []),
@@ -87,6 +93,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       step7,
       step8,
       step9,
+      withCertifications,
       withQualifications,
       withDateOfBirth,
       withRigs,
@@ -133,8 +140,8 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               qualifications,
             } = fields;
 
-            if ([3, 4, 5].includes(stepIndex)) {
-              if (stepIndex === 4 && !apfNumber) return true;
+            if (layout.certification?.includes(stepIndex)) {
+              if (stepIndex === layout.certification[1] && !apfNumber) return true;
               if (!certificationBody?.id) {
                 setError('certificationBody', {
                   message: i18n.t('forms.user_wizard.youMustSelectACertificationBody'),
@@ -143,7 +150,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                 return false;
               }
 
-              if (!certificationLevel?.id && stepIndex === 5) {
+              if (!certificationLevel?.id && stepIndex === layout.certification[2]) {
                 setError('certificationLevel', {
                   message: i18n.t('forms.user_wizard.youMustSelectACertificationLevel'),
                   type: 'required',
@@ -183,7 +190,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               return true;
             }
 
-            if (withQualifications && stepIndex === 6) {
+            if (stepIndex === layout.qualifications) {
               // Only what changed is saved; a qualification needs its number
               for (const [index, entry] of (qualifications ?? []).entries()) {
                 const before = initial?.qualifications?.[index];
@@ -212,12 +219,17 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
             }
 
             // The questions about the jumper's rig: skip them for a jumper without one, save the rig step by step
-            if (withRigs && stepIndex === 6 + shift && !hasRig) {
+            if (stepIndex === layout.askForRig && !hasRig) {
               setValue('stepIndex', lastStepIndex);
               return false;
             }
 
-            if (withRigs && hasRig && stepIndex >= 7 + shift && stepIndex < lastStepIndex) {
+            if (
+              layout.rigFrom !== null &&
+              hasRig &&
+              stepIndex >= layout.rigFrom &&
+              stepIndex < lastStepIndex
+            ) {
               if (
                 isEqual(
                   { serviceDueAt, make, model, serial, canopySize },
@@ -331,9 +343,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       equipment,
       joinCertificationBody,
       addQualification,
-      shift,
-      withQualifications,
-      withRigs,
+      layout,
       rigKind?.id,
       units,
       setError,

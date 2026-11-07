@@ -26,7 +26,8 @@ import useRestriction from 'app/hooks/useRestriction';
 import DragDropWrapper from '../../../../components/slots_table/DragAndDrop/DragDropSlotProvider';
 import LoadCardSmall from './LoadCard/Small/Card';
 import LoadCardLarge from './LoadCard/Large/Card';
-import WeatherConditions from './Weather/WeatherBoard';
+import WeatherConditions from 'app/features/skydiving/weather/WeatherBoard';
+import { hasWindsAloft } from 'app/features/skydiving/conditions/conditions';
 import LoadingCardLarge from './LoadCard/Large/Loading';
 import LoadingCardSmall from './LoadCard/Small/Loading';
 import SetupProfileCard from './SetupProfileCard';
@@ -230,7 +231,7 @@ export default function ManifestScreen() {
             ListHeaderComponent={() => (
               <>
                 <DateBar />
-                <WeatherConditions />
+                {hasWindsAloft(operator?.modules) ? <WeatherConditions /> : null}
                 <ManifestDeskNote />
               </>
             )}

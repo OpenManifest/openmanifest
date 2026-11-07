@@ -755,9 +755,9 @@
       "maximumSlotsMustBeGreaterThan": "Maximum slots must be greater than 0",
       "basicEmptyWeightMustBeGreater": "Basic empty weight must be greater than 0",
       "maximumTakeOffWeightMustBe": "Maximum take off weight must be greater than 0",
-      "aircraftSaved": "Aircraft saved",
-      "editAircraft": "Edit aircraft",
-      "newAircraft": "New aircraft"
+      "aircraftSaved": "{{vehicle}} saved",
+      "editAircraft": "Edit {{vehicle}}",
+      "newAircraft": "New {{vehicle}}"
     },
     "equipment_inspection": {
       "equipmentInspectionSaved": "Equipment inspection saved",

@@ -42,7 +42,7 @@ export default function OperatorsScreen() {
         ListEmptyComponent={
           loading ? null : (
             <EmptyState
-              icon="airplane-takeoff"
+              icon="map-marker-radius-outline"
               title={t('operatorSelect.empty', { operators: term('operator', 2).toLowerCase() })}
               body={t('operatorSelect.emptyBody', { operator: operator.toLowerCase() })}
             />

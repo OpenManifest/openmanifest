@@ -21,8 +21,8 @@ import {
   useConditionsPanel,
 } from 'app/features/skydiving/conditions/WindsAloft';
 import parseISO from 'date-fns/parseISO';
-import nightBackground from '../../../../../../assets/images/night.png';
-import weatherBackground from '../../../../../../assets/images/weather.png';
+import nightBackground from 'assets/images/night.png';
+import weatherBackground from 'assets/images/weather.png';
 import JumpRunMap from './JumpRun';
 import { formatQuantity } from 'app/i18n/format';
 import { useOperatorFormat } from 'app/i18n/operatorFormat';

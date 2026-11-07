@@ -29,9 +29,11 @@ const Users = createStackNavigator<UserRoutes>();
 const READ_USERS = { permission: Permission.ReadUser };
 const PeopleList = guarded(PeopleScreen, READ_USERS);
 const Profile = guardedUnlessOwn(ProfileScreen, READ_USERS);
-const Inspection = guardedUnlessOwn(EquipmentInspectionScreen, READ_USERS);
+// Equipment and its inspections are there only when the operator keeps track of equipment
+const READ_EQUIPMENT = { ...READ_USERS, module: 'equipment' };
+const Inspection = guardedUnlessOwn(EquipmentInspectionScreen, READ_EQUIPMENT);
 const Orders = guardedUnlessOwn(OrdersScreen, READ_USERS);
-const Equipment = guardedUnlessOwn(EquipmentScreen, READ_USERS);
+const Equipment = guardedUnlessOwn(EquipmentScreen, READ_EQUIPMENT);
 const Receipt = guardedUnlessOwn(OrderReceiptScreen, READ_USERS);
 
 export default function Routes() {

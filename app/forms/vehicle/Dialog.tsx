@@ -4,6 +4,7 @@ import { ResourceForm } from 'app/ui';
 import VehicleForm from './VehicleForm';
 import useVehicleForm, { VehicleFields } from './useForm';
 import { useTranslation } from 'react-i18next';
+import useTerms from 'app/i18n/useTerms';
 
 export interface IVehicleDialogProps {
   open: boolean;
@@ -16,6 +17,8 @@ export interface IVehicleDialogProps {
 
 export default function VehicleDialog(props: IVehicleDialogProps) {
   const { t } = useTranslation('common');
+  const term = useTerms();
+  const vehicle = term('vehicle').toLowerCase();
   const { open, onClose, initial, original } = props;
   const { control, loading, onSubmit, reset } = useVehicleForm({
     initial: {
@@ -38,7 +41,11 @@ export default function VehicleDialog(props: IVehicleDialogProps) {
     <ResourceForm
       onArchive={props.onArchive}
       {...{ open, loading, onClose }}
-      title={original?.id ? t('forms.vehicle.editAircraft') : t('forms.vehicle.newAircraft')}
+      title={
+        original?.id
+          ? t('forms.vehicle.editAircraft', { vehicle })
+          : t('forms.vehicle.newAircraft', { vehicle })
+      }
       open={open}
       onSubmit={onSubmit}
     >

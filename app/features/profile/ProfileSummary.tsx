@@ -27,6 +27,8 @@ export type ProfileSummaryProps = {
   onRemove(): void;
   /** Changes the photo: absent for those who may not */
   onChangePhoto?(): void;
+  /** Shows the body mass (an operator with the limits module checks it); on by default */
+  showBodyMass?: boolean;
   testID?: string;
 };
 
@@ -42,6 +44,7 @@ export default function ProfileSummary({
   onWizard,
   onRemove,
   onChangePhoto,
+  showBodyMass = true,
   testID = 'profile-summary',
 }: ProfileSummaryProps) {
   const { t } = useTranslation(['common', 'terms']);
@@ -137,7 +140,7 @@ export default function ProfileSummary({
             <Text tone="brand">{entry.label}</Text>
           </Tappable>
         ))}
-        {user.bodyMassKg ? (
+        {showBodyMass && user.bodyMassKg ? (
           <Text tone="muted" testID={`${testID}-mass`}>
             {t('common:profile.bodyMass', {
               mass: formatQuantity(Number(user.bodyMassKg), 'mass'),

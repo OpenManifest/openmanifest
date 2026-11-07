@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { IconButton, Menu, StatusBadge, type MenuItem, type StatusKey } from 'app/ui';
 import { formatDate } from 'app/i18n/format';
 import { lastLoadOf, nameOf, type Person, type Readiness, type Summary } from './people';
+import { useVehicleGlyphs } from 'app/features/board/VehicleIcon';
 
 const STATUS: Record<Readiness, StatusKey> = {
   ready: 'ok',
@@ -72,6 +73,7 @@ export function PersonMenu({
   testID,
 }: PersonActions & { person: Person; testID: string }) {
   const { t } = useTranslation('common');
+  const glyphs = useVehicleGlyphs();
   const label = t('people.menu', { name: nameOf(person) });
   const items: MenuItem[] = [
     {
@@ -84,7 +86,7 @@ export function PersonMenu({
   if (onManifest) {
     items.push({
       label: t('people.action.manifest'),
-      icon: 'airplane-plus',
+      icon: glyphs.motion('board'),
       testID: 'people-action-manifest',
       onPress: () => onManifest(person),
     });

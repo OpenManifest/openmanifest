@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useOperatorContext } from 'app/providers/operator/context';
 import useOpenUser from './useOpenUser';
 import { Banner } from 'app/ui';
+import { limitsModule } from 'app/utils/limits';
 
 /** What the signed-in member still has to do before they can manifest at this operator, if anything */
 export function useSetupNotice(): {
@@ -20,7 +21,9 @@ export function useSetupNotice(): {
   const equipment = currentUser.user?.equipment ?? [];
   const equipmentRequired = !!settings?.requireEquipment;
 
-  const hasBodyMass = !!currentUser.user?.bodyMassKg;
+  // The body mass is asked for only where the limits module checks it
+  const massChecked = !!limitsModule(operator?.modules as Record<string, unknown> | undefined)?.mass;
+  const hasBodyMass = !massChecked || !!currentUser.user?.bodyMassKg;
   const hasEquipment = !equipmentRequired || equipment.length > 0;
   if (!hasBodyMass || !hasEquipment) {
     return {

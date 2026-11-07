@@ -80,7 +80,10 @@ export function guardedUnlessOwn<Props extends object>(
       operator: { currentUser },
     } = useOperatorContext();
     const subject = subjectOf(route.params);
+    // A module the operator lacks is not there for anyone, the member themselves included
+    const moduleDecision = useAccessDecision({ module: rule.module });
 
+    if (moduleDecision === 'not-available') return <NotAvailable />;
     if (subject && currentUser?.id === subject) return <Screen {...props} />;
     return <Guarded {...props} />;
   }
