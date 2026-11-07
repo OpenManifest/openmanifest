@@ -1,6 +1,7 @@
 import { openFirstLoad } from './support/board';
 import { expectAccessible } from './support/a11y';
 import { expect, gotoRoute, test } from './support/test';
+import { SEED } from './support/seed';
 
 test.describe('screen header @nav @manifest', () => {
   test('a load names itself, the document follows, and back returns to the board', async ({
@@ -8,12 +9,12 @@ test.describe('screen header @nav @manifest', () => {
   }) => {
     await gotoRoute(page, '/manifest');
     await expect(page.getByRole('heading', { name: 'Board', level: 1 })).toBeVisible();
-    await expect(page).toHaveTitle(/^Board · Demo Dropzone$/);
+    await expect(page).toHaveTitle(`Board · ${SEED.operator}`);
 
     await openFirstLoad(page);
 
     await expect(page.getByRole('heading', { name: /^Load #\d+$/, level: 1 })).toBeVisible();
-    await expect(page).toHaveTitle(/^Load #\d+ · Demo Dropzone$/);
+    await expect(page).toHaveTitle(new RegExp(`^Load #\\d+ · ${SEED.operator}$`));
     await expectAccessible(page, 'load');
 
     // The back button is named after the screen it returns to

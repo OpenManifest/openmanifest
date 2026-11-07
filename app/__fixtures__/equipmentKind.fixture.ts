@@ -2,8 +2,8 @@ import type { EquipmentKindEssentialsFragment } from 'app/api/operations';
 
 type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]> } : T;
 
-/** The rig kind a skydiving operator is given by its template */
-export const rigKind: DeepRequired<EquipmentKindEssentialsFragment> = {
+/** The parachute kind (key `rig`) a skydiving operator is given by its template */
+export const parachuteKind: DeepRequired<EquipmentKindEssentialsFragment> = {
   __typename: 'EquipmentKind',
   id: '1',
   key: 'rig',
@@ -32,9 +32,12 @@ export const rigKind: DeepRequired<EquipmentKindEssentialsFragment> = {
   },
 };
 
-export const rigKindRef = {
+export const parachuteKindRef = {
   __typename: 'EquipmentKind' as const,
   id: '1',
   key: 'rig',
   name: 'Rig',
 };
+
+/** The label of the parachute kind's type attribute ("Rig type") */
+export const parachuteTypeLabel = 'Rig type';

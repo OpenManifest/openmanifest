@@ -16,7 +16,7 @@ import {
   useTheme,
 } from 'app/ui';
 
-const AIRCRAFT = [
+const VEHICLES = [
   { value: 'caravan', label: 'Caravan' },
   { value: 'otter', label: 'Otter' },
   { value: 'skyvan', label: 'Skyvan' },
@@ -31,7 +31,7 @@ export default function FormsScreen() {
   const { colour } = useTheme();
   const [name, setName] = React.useState('');
   const [weight, setWeight] = React.useState<number | null>(80);
-  const [aircraft, setAircraft] = React.useState<string | null>(null);
+  const [vehicle, setVehicle] = React.useState<string | null>(null);
   const [scheme, setScheme] = React.useState<string | null>('system');
   const [alerts, setAlerts] = React.useState(false);
   const [filters, setFilters] = React.useState(['tandem']);
@@ -66,12 +66,12 @@ export default function FormsScreen() {
           testID="forms-weight"
         />
         <Select
-          label="Aircraft"
+          label="Vehicle"
           placeholder="Pick one"
-          options={AIRCRAFT}
-          value={aircraft}
-          onChange={setAircraft}
-          testID="forms-aircraft"
+          options={VEHICLES}
+          value={vehicle}
+          onChange={setVehicle}
+          testID="forms-vehicle"
         />
         <Segmented label="Theme" options={THEME} value={scheme} onChange={setScheme} />
         <Switch label="Load alerts" value={alerts} onChange={setAlerts} testID="forms-alerts" />
@@ -99,7 +99,7 @@ export default function FormsScreen() {
             />
           ))}
         </Row>
-        <Text testID="forms-summary">{`${name}|${weight}|${aircraft}|${scheme}|${alerts}`}</Text>
+        <Text testID="forms-summary">{`${name}|${weight}|${vehicle}|${scheme}|${alerts}`}</Text>
       </Stack>
       <PortalHost />
     </ScrollView>

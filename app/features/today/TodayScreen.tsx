@@ -21,7 +21,7 @@ import TodayLoads from './TodayLoads';
 import { dutiesOf, loadsOfDay, nextLoadOf, placeOn } from './today';
 
 /**
- * Where a member lands: the load they fly next (state, call, take-me-off when the dropzone lets them), whether they are
+ * Where a member lands: the load they fly next (state, call, take-me-off when the operator lets them), whether they are
  * ready with the way to fix what is not, their credit, the loads of the day and, for crew, their duties.
  */
 export default function TodayScreen() {
@@ -78,7 +78,7 @@ export default function TodayScreen() {
     [navigation]
   );
 
-  const takeOff = async () => {
+  const removeMe = async () => {
     if (!next) return;
     setTaking(true);
     try {
@@ -108,10 +108,10 @@ export default function TodayScreen() {
           load={next.load}
           slot={next.slot}
           timeZone={operator?.timeZone}
-          canTakeOff={permissions.canDeleteOwnSlot}
+          canRemove={permissions.canDeleteOwnSlot}
           deskOnly={!permissions.canDeleteOwnSlot}
           taking={taking}
-          onTakeOff={takeOff}
+          onRemove={removeMe}
           onOpen={() => openLoad(next.load)}
         />
       ) : bookable && permissions.canManifestSelf ? (

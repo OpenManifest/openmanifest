@@ -23,7 +23,7 @@ const AT_ONCE = 10;
 
 /**
  * The member's notifications, newest first, the ones not read marked: a row opens what it is about (the load of a
- * call, the rig that needs inspecting) and marks itself read. "Mark all as read" does it for the lot.
+ * call, the item that needs inspecting) and marks itself read. "Mark all as read" does it for the lot.
  */
 export default function InboxScreen() {
   const { t } = useTranslation('common');

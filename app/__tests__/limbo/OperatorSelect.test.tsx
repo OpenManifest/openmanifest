@@ -37,7 +37,7 @@ function renderScreen(nodes: OperatorNode[], extraMocks: unknown[] = []) {
 }
 
 describe('<OperatorsScreen />', () => {
-  it('lists the dropzones returned by the Dropzones query', async () => {
+  it('lists the operators returned by the Operators query', async () => {
     const screen = await renderScreen([
       { ...operatorExtensive, id: '1', name: 'Skydive Jest' },
       { ...operatorExtensive, id: '2', name: 'Alpha' },
@@ -49,7 +49,7 @@ describe('<OperatorsScreen />', () => {
     expect(screen.getByRole('button', { name: 'Skydive Jest' })).toBeTruthy();
   });
 
-  it('stores the dropzone when a card is pressed', async () => {
+  it('stores the operator when a card is pressed', async () => {
     const screen = await renderScreen([{ ...operatorExtensive, id: '7', name: 'Alpha' }]);
 
     const card = await waitFor(() => screen.getByText('Alpha'));
@@ -58,7 +58,7 @@ describe('<OperatorsScreen />', () => {
     expect(useSession.getState().currentOperatorId).toBe('7');
   });
 
-  describe('a dropzone the user has not joined', () => {
+  describe('an operator the user has not joined', () => {
     const joinMock = (result: Record<string, unknown> | jest.Mock) => ({
       request: {
         query: JoinOperatorDocument,
@@ -71,7 +71,7 @@ describe('<OperatorsScreen />', () => {
           : { data: { __typename: 'Mutation', joinOperator: result } },
     });
 
-    it('joins it before it becomes the current dropzone', async () => {
+    it('joins it before it becomes the current operator', async () => {
       const joined = jest.fn(() => ({
         data: {
           __typename: 'Mutation',
@@ -101,7 +101,7 @@ describe('<OperatorsScreen />', () => {
           joinMock({
             __typename: 'JoinOperatorPayload',
             membership: null,
-            errors: ['This dropzone cannot be joined'],
+            errors: ['This operator cannot be joined'],
             fieldErrors: null,
           }),
         ]
@@ -116,7 +116,7 @@ describe('<OperatorsScreen />', () => {
     });
   });
 
-  it('shows an empty state when there are no dropzones', async () => {
+  it('shows an empty state when there are no operators', async () => {
     const screen = await renderScreen([]);
 
     await waitFor(() => {

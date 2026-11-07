@@ -1,4 +1,5 @@
 import { LoadState, LoadVehicleRole } from 'app/api/schema.d';
+import { AVIATION_VEHICLE_KIND } from 'app/features/aviation/kinds';
 
 export const pilotRole = {
   __typename: 'CrewRole',
@@ -9,7 +10,7 @@ export const pilotRole = {
   required: true,
   occupiesSlot: true,
   permission: null,
-  vehicleKinds: ['aircraft'],
+  vehicleKinds: [AVIATION_VEHICLE_KIND],
   position: 1,
 } as any;
 
@@ -28,7 +29,7 @@ export const guideRole = {
 export const caravan = {
   id: 'v1',
   name: 'Caravan',
-  kind: 'aircraft',
+  kind: AVIATION_VEHICLE_KIND,
   capacity: 16,
   minCapacity: 0,
 };
@@ -85,7 +86,7 @@ export const slotOf = (id: string, name: string, overrides: Record<string, unkno
     equipment: [],
     membership: {
       ...membership(name),
-      certificationLevel: { id: 'c1', name: 'License A' },
+      certificationLevel: { id: 'c1', name: 'Level A' },
     },
     ...overrides,
   }) as any;

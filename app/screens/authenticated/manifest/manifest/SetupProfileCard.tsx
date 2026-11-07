@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import LottieView from 'app/components/LottieView';
 import * as React from 'react';
 import { Card, List } from 'react-native-paper';
@@ -6,14 +7,17 @@ import useProfileWizard from 'app/hooks/navigation/useProfileWizard';
 
 export default function SetupProfileCard() {
   const openWizard = useProfileWizard();
+  const { t } = useTranslation(['common', 'terms']);
   const onPress = React.useCallback(() => openWizard(), [openWizard]);
 
   return (
     <Card style={styles.card} {...{ onPress }}>
       <Card.Content style={styles.content}>
         <List.Item
-          title="Complete your profile"
-          description="Let this dropzone know who you are"
+          title={t('common:legacy.setup.profile')}
+          description={t('common:legacy.setup.profileBody', {
+            operator: t('terms:operator', { count: 1 }).toLowerCase(),
+          })}
           titleStyle={{ marginBottom: 4 }}
           left={() => (
             <LottieView

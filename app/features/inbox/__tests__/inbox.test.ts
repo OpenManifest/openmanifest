@@ -4,11 +4,11 @@ import { openPush, openTarget } from '../openTarget';
 
 const load = { __typename: 'Load', id: '7', loadNumber: 3 } as never;
 const slot = { __typename: 'Slot', id: '9', load: { id: '7', loadNumber: 3 } } as never;
-const rig = { __typename: 'Equipment', id: '5', name: 'Rig', owner: { id: '12' } } as never;
+const item = { __typename: 'Equipment', id: '5', name: 'Primary', owner: { id: '12' } } as never;
 const inspection = {
   __typename: 'EquipmentInspection',
   id: '6',
-  equipment: { id: '5', name: 'Rig', owner: { id: '12' } },
+  equipment: { id: '5', name: 'Primary', owner: { id: '12' } },
 } as never;
 const transaction = { __typename: 'Transaction', id: '3', amountCents: 4000 } as never;
 
@@ -34,8 +34,8 @@ describe('targetOf', () => {
     expect(targetOf(NotificationType.CreditsUpdated, transaction)).toEqual({ screen: 'wallet' });
   });
 
-  it('opens the inspection a rig needs, and the owner of a rig that was inspected', () => {
-    expect(targetOf(NotificationType.EquipmentInspectionRequested, rig)).toEqual({
+  it('opens the inspection an item needs, and the owner of an item that was inspected', () => {
+    expect(targetOf(NotificationType.EquipmentInspectionRequested, item)).toEqual({
       screen: 'inspection',
       equipmentId: '5',
       membershipId: '12',
@@ -44,7 +44,7 @@ describe('targetOf', () => {
       screen: 'profile',
       membershipId: '12',
     });
-    expect(targetOf(NotificationType.EquipmentInspectionCompleted, rig)).toEqual({
+    expect(targetOf(NotificationType.EquipmentInspectionCompleted, item)).toEqual({
       screen: 'profile',
       membershipId: '12',
     });

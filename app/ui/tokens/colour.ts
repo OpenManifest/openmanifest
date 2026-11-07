@@ -4,7 +4,15 @@ export type Scheme = 'light' | 'dark';
 export type Pair = { bg: string; fg: string };
 
 export type StatusKey =
-  'open' | 'boarding' | 'departed' | 'landed' | 'cancelled' | 'warning' | 'blocked' | 'ok' | 'info';
+  | 'open'
+  | 'boarding'
+  | 'departed'
+  | 'completed'
+  | 'cancelled'
+  | 'warning'
+  | 'blocked'
+  | 'ok'
+  | 'info';
 
 export type ColourTokens = {
   app: string;
@@ -47,7 +55,7 @@ const light: ColourTokens = {
     open: { bg: '#E1EEFB', fg: '#0A4F96' },
     boarding: { bg: '#FFE6A8', fg: '#5C3B00' },
     departed: { bg: '#EBE3FA', fg: '#43287A' },
-    landed: { bg: '#DDF2E3', fg: '#17592F' },
+    completed: { bg: '#DDF2E3', fg: '#17592F' },
     cancelled: { bg: '#ECEEF1', fg: '#4A5260' },
     warning: { bg: '#FFE9D6', fg: '#7A3300' },
     blocked: { bg: '#FDE3E5', fg: '#8E1119' },
@@ -74,7 +82,7 @@ const dark: ColourTokens = {
     open: { bg: '#10304F', fg: '#9CCBFF' },
     boarding: { bg: '#4A3A12', fg: '#FFE08A' },
     departed: { bg: '#2B2147', fg: '#CDBBF5' },
-    landed: { bg: '#12351F', fg: '#8FE3AE' },
+    completed: { bg: '#12351F', fg: '#8FE3AE' },
     cancelled: { bg: '#262B33', fg: '#B4BCC8' },
     warning: { bg: '#4A2A0C', fg: '#FFC98A' },
     blocked: { bg: '#4A1519', fg: '#FFB3B8' },

@@ -200,7 +200,7 @@ test.describe('a member’s profile as the manifest desk @profile', () => {
     await openProfile(page, await membershipOf('Jo Jumper'));
 
     // The dialog element itself has no box on the web (its content is fixed): look at what is in it
-    const membership = page.getByRole('dialog', { name: 'Edit dropzone user' });
+    const membership = page.getByRole('dialog', { name: 'Edit membership' });
     const pilot = membership.getByRole('checkbox', { name: 'Pilot' });
     await pressInView(page, page.getByTestId('profile-membership-edit'), () =>
       expect(pilot).toBeVisible({ timeout: 5000 })

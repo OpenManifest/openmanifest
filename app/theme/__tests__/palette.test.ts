@@ -3,7 +3,7 @@ import { colour } from 'app/ui/tokens';
 import { createAppTheme, createPalette } from '../palette';
 
 describe('createAppTheme', () => {
-  it('uses the light theme and the default primary colour without a dropzone', () => {
+  it('uses the light theme and the default primary colour without an operator', () => {
     const theme = createAppTheme(false);
 
     expect(theme.dark).toBe(false);
@@ -18,7 +18,7 @@ describe('createAppTheme', () => {
     expect(theme.colors.background).not.toBe(createAppTheme(false).colors.background);
   });
 
-  it('applies the dropzone colours in both schemes', () => {
+  it('applies the operator colours in both schemes', () => {
     for (const isDark of [false, true]) {
       const theme = createAppTheme(isDark, { primary: '#112233', accent: '#445566' });
 
@@ -27,7 +27,7 @@ describe('createAppTheme', () => {
     }
   });
 
-  it('falls back to the defaults for missing or empty dropzone colours', () => {
+  it('falls back to the defaults for missing or empty operator colours', () => {
     const defaults = createAppTheme(false);
     const theme = createAppTheme(false, { primary: null, accent: '' });
 

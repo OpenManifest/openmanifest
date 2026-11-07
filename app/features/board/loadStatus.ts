@@ -1,7 +1,7 @@
 import { LoadState } from 'app/api/schema.d';
 import type { StatusKey } from 'app/ui';
 
-/** The status token of a load state: a completed load has landed */
+/** The status token of a load state: a completed load has its own token */
 export function statusOf(state?: LoadState | string | null): StatusKey {
   switch (state) {
     case LoadState.Boarding:
@@ -9,7 +9,7 @@ export function statusOf(state?: LoadState | string | null): StatusKey {
     case LoadState.Departed:
       return 'departed';
     case LoadState.Completed:
-      return 'landed';
+      return 'completed';
     case LoadState.Cancelled:
       return 'cancelled';
     default:

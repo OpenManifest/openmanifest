@@ -39,7 +39,7 @@ describe('<MembershipDialog />', () => {
     expect(dialog.getByText('Membership expiry must be set')).toBeTruthy();
   });
 
-  it('sends the access level and expiry to UpdateDropzoneUser', async () => {
+  it('sends the access level and expiry to UpdateMembership', async () => {
     const mutationResult = jest.fn(() => ({
       data: {
         updateMembership: {

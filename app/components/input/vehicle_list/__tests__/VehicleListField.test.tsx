@@ -7,6 +7,7 @@ import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 import { scoped } from 'app/test-utils/hosts';
 import { fireEvent, render, waitFor } from '../../../../__mocks__/render';
 import { VehicleListField, VehicleRole } from '../VehicleListField';
+import { AVIATION_VEHICLE_KIND } from 'app/features/aviation/kinds';
 
 jest.setTimeout(30000);
 
@@ -17,7 +18,7 @@ const beaver = {
   registration: 'ABC123',
   minCapacity: 1,
   capacity: 10,
-  kind: 'aircraft',
+  kind: AVIATION_VEHICLE_KIND,
 };
 const tug = { ...beaver, id: '2', name: 'Tug', registration: 'TUG1', capacity: 1 };
 const otter = { ...beaver, id: '3', name: 'Otter', registration: 'OTT1', capacity: 4 };

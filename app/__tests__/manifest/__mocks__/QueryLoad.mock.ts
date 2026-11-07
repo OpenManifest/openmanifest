@@ -10,6 +10,7 @@ import {
 } from '../../../api/operations';
 import { LoadDocument } from '../../../api/reflection';
 import createMockedQuery from './createMockedQuery.mock';
+import { AVIATION_VEHICLE_KIND } from 'app/features/aviation/kinds';
 
 export const loadEssentials: LoadEssentialsFragment = {
   __typename: 'Load',
@@ -84,7 +85,7 @@ export const beaver = {
   id: '1',
   capacity: 10,
   name: 'Beaver',
-  kind: 'aircraft',
+  kind: AVIATION_VEHICLE_KIND,
 };
 
 /** What a card of the board has besides the essentials: the vehicle that carries, the crew and the destinations */

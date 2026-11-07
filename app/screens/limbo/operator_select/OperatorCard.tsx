@@ -9,7 +9,7 @@ interface OperatorCardProps {
   operator: OperatorEssentialsFragment;
 }
 
-/** An operator to choose: its banner (or initials), name and the icon and name of its template (a parachute for a dropzone);
+/** An operator to choose: its banner (or initials), name and the icon and name of its template (a parachute for skydiving);
  * choosing it joins it when needed and opens it */
 export default function OperatorCard(props: OperatorCardProps) {
   const { operator } = props;

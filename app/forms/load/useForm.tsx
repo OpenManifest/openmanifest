@@ -29,7 +29,11 @@ export type LoadFields = Required<Pick<LoadDetailsFragment, 'maxSlots' | 'vehicl
 
 export const loadValidation = yup.object({
   name: yup.string().nullable().default(null),
-  vehicle: yup.object().required(() => i18n.t('forms.load.youCantCreateALoadWithout')),
+  vehicle: yup.object().required(() =>
+    i18n.t('forms.load.youCantCreateALoadWithout', {
+      vehicle: i18n.t('terms:vehicle', { count: 1 }).toLowerCase(),
+    })
+  ),
   original: yup.object().nullable(),
   maxSlots: yup
     .number()

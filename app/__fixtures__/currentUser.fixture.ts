@@ -1,7 +1,7 @@
 import { ModerationRole } from 'app/api/schema.d';
 import { CurrentUserDetailedFragment } from 'app/api/operations';
 import { addDays, startOfDay } from 'date-fns';
-import { rigKindRef } from './equipmentKind.fixture';
+import { parachuteKindRef } from './equipmentKind.fixture';
 
 type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]> } : T;
 export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
@@ -74,7 +74,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         serial: '12345',
         ownership: 'personal',
         attributes: { rig_type: 'sport', canopy_size_m2: 13.9355 },
-        equipmentKind: rigKindRef,
+        equipmentKind: parachuteKindRef,
         inService: true,
         operator: null,
         maintainedAt: null,
@@ -97,7 +97,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         serial: '34567',
         ownership: 'personal',
         attributes: { rig_type: 'sport', canopy_size_m2: 15.7935 },
-        equipmentKind: rigKindRef,
+        equipmentKind: parachuteKindRef,
         inService: true,
         operator: null,
         maintainedAt: null,

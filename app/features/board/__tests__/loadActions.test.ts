@@ -18,7 +18,7 @@ describe('planActions', () => {
     });
   });
 
-  it('departs a load on call, which can be called off or landed', () => {
+  it('departs a load on call, which can be called off or completed', () => {
     expect(planActions({ ...base, state: LoadState.Boarding })).toEqual({
       primary: 'depart',
       menu: ['cancelCall', 'complete'],

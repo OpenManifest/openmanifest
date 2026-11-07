@@ -26,16 +26,16 @@ describe('StatusBadge', () => {
   it.each(SCHEMES)('uses the colours of its status in the %s scheme', async (scheme) => {
     const screen = await renderThemed(
       <>
-        <StatusBadge status="landed" label="Landed" testID="landed" />
+        <StatusBadge status="completed" label="Completed" testID="completed" />
         <StatusBadge status="blocked" label="Full" testID="blocked" />
       </>,
       { scheme }
     );
 
-    expect(flat(screen.getByTestId('landed')).backgroundColor).toBe(
-      colours[scheme].status.landed.bg
+    expect(flat(screen.getByTestId('completed')).backgroundColor).toBe(
+      colours[scheme].status.completed.bg
     );
-    expect(flat(screen.getByText('Landed')).color).toBe(colours[scheme].status.landed.fg);
+    expect(flat(screen.getByText('Completed')).color).toBe(colours[scheme].status.completed.fg);
     expect(flat(screen.getByTestId('blocked')).backgroundColor).toBe(
       colours[scheme].status.blocked.bg
     );
@@ -213,7 +213,7 @@ describe('Countdown', () => {
     );
   });
 
-  it('follows the time zone of the dropzone for the clock time, not for the countdown', async () => {
+  it('follows the time zone of the operator for the clock time, not for the countdown', async () => {
     const zones = await renderThemed(
       <>
         <Countdown end={minutesFromNow(5)} label="A" timeZone="Pacific/Auckland" testID="a" />

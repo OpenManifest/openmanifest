@@ -98,7 +98,7 @@ describe('<OperatorWizard />', () => {
     );
   });
 
-  it('creates the dropzone with what was entered when the banner step is done', async () => {
+  it('creates the operator with what was entered when the banner step is done', async () => {
     const mutationResult = jest.fn(() => ({
       data: {
         createOperator: {

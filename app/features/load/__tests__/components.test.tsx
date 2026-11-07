@@ -51,7 +51,7 @@ describe('<PlaceRow />', () => {
     );
 
     expect(getByText('Ann Lee')).toBeTruthy();
-    expect(getByText('License A · Freefly · Fun jump')).toBeTruthy();
+    expect(getByText('Level A · Freefly · Fun jump')).toBeTruthy();
     expect(getByTestId('slot-row-prepaid')).toBeTruthy();
     expect(getByTestId('slot-row-eligibility')).toBeTruthy();
   });
@@ -68,16 +68,16 @@ describe('<PlaceRow />', () => {
 
   it('has a menu with what may be done: edit, and take off', async () => {
     const onEdit = jest.fn();
-    const onTakeOff = jest.fn();
+    const onRemove = jest.fn();
     const slot = slotOf('1', 'Ann');
     const { getByLabelText, findByTestId } = await renderThemed(
-      <PlaceRow slot={slot} canEdit canTakeOff onEdit={onEdit} onTakeOff={onTakeOff} />
+      <PlaceRow slot={slot} canEdit canRemove onEdit={onEdit} onRemove={onRemove} />
     );
 
     await fireEvent.press(getByLabelText('Actions for Ann'));
-    await fireEvent.press(await findByTestId('slot-row-take-off'));
+    await fireEvent.press(await findByTestId('slot-row-remove'));
 
-    expect(onTakeOff).toHaveBeenCalledWith(slot);
+    expect(onRemove).toHaveBeenCalledWith(slot);
     expect(onEdit).not.toHaveBeenCalled();
   });
 
@@ -138,7 +138,7 @@ describe('<FreePlaces />', () => {
 describe('<VehicleHeader />', () => {
   it('names the vehicle and how many of its places are taken', async () => {
     const { getByText } = await renderThemed(
-      <VehicleHeader title="Otter" kind="aircraft" filled={3} capacity={10} />
+      <VehicleHeader title="Otter" kind="glider" filled={3} capacity={10} />
     );
 
     expect(getByText('Otter')).toBeTruthy();

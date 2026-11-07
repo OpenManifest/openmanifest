@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
-import { rigKind } from 'app/__fixtures__/equipmentKind.fixture';
+import { parachuteKind } from 'app/__fixtures__/equipmentKind.fixture';
 import { mockProfileQuery, profile } from 'app/__fixtures__/profile.fixture';
 import createMockedQuery from 'app/__tests__/manifest/__mocks__/createMockedQuery.mock';
 import { EquipmentInspectionTemplateDocument } from 'app/api/reflection';
@@ -21,7 +21,7 @@ const definition = JSON.stringify([
   { label: 'Reserve date', valueType: 'string', isRequired: true, value: '2026-10-01' },
   { label: 'Pin check', valueType: 'boolean', value: true },
 ]);
-/** Another member whose rig "Primary" was inspected before: the form shows as it was filled in */
+/** Another member whose parachute "Primary" was inspected before: the form shows as it was filled in */
 const OTHER = {
   ...profile,
   id: '999',
@@ -44,8 +44,8 @@ const templates = createMockedQuery(EquipmentInspectionTemplateDocument, { opera
     id: '1',
     equipmentKinds: [
       {
-        ...rigKind,
-        inspectionFormTemplate: { ...rigKind.inspectionFormTemplate, definition },
+        ...parachuteKind,
+        inspectionFormTemplate: { ...parachuteKind.inspectionFormTemplate, definition },
       },
     ],
   },

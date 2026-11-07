@@ -101,7 +101,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     ![LoadState.Boarding].includes(load.state)
       ? null
       : {
-          label: 'Cancel boarding call',
+          label: 'Cancel boarding',
           icon: glyphs.motion('none'),
           onPress: createVehicleDispatchAction(null),
         },
@@ -122,7 +122,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     ![LoadState.Boarding, LoadState.Departed].includes(load.state)
       ? null
       : {
-          label: 'Mark as Landed',
+          label: 'Mark as completed',
           icon: glyphs.motion('land'),
           onPress: complete,
         },

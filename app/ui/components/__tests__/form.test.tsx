@@ -247,23 +247,23 @@ describe('Select', () => {
 
   it('is a combobox named by its label that shows the choice or the placeholder', async () => {
     const empty = await renderThemed(
-      <Select label="Aircraft" options={options} placeholder="Pick one" />
+      <Select label="Vehicle" options={options} placeholder="Pick one" />
     );
-    expect(empty.getByRole('combobox', { name: 'Aircraft' })).toBeTruthy();
+    expect(empty.getByRole('combobox', { name: 'Vehicle' })).toBeTruthy();
     expect(empty.getByText('Pick one')).toBeTruthy();
 
-    const chosen = await renderThemed(<Select label="Aircraft" options={options} value="b" />);
+    const chosen = await renderThemed(<Select label="Vehicle" options={options} value="b" />);
     expect(chosen.getByText('Otter')).toBeTruthy();
   });
 
   it('opens a list of options with the chosen one selected, and chooses one', async () => {
     const onChange = jest.fn();
     const screen = await renderThemed(
-      <Select label="Aircraft" options={options} value="a" onChange={onChange} />
+      <Select label="Vehicle" options={options} value="a" onChange={onChange} />
     );
 
-    await fireEvent.press(screen.getByRole('combobox', { name: 'Aircraft' }));
-    expect(screen.getByRole('combobox', { name: 'Aircraft', expanded: true })).toBeTruthy();
+    await fireEvent.press(screen.getByRole('combobox', { name: 'Vehicle' }));
+    expect(screen.getByRole('combobox', { name: 'Vehicle', expanded: true })).toBeTruthy();
     expect(screen.getByRole('option', { name: 'Caravan', selected: true })).toBeTruthy();
     expect(screen.getByRole('option', { name: 'Otter', selected: false })).toBeTruthy();
 
@@ -276,10 +276,10 @@ describe('Select', () => {
   it('does not choose a disabled option', async () => {
     const onChange = jest.fn();
     const screen = await renderThemed(
-      <Select label="Aircraft" options={options} onChange={onChange} />
+      <Select label="Vehicle" options={options} onChange={onChange} />
     );
 
-    await fireEvent.press(screen.getByRole('combobox', { name: 'Aircraft' }));
+    await fireEvent.press(screen.getByRole('combobox', { name: 'Vehicle' }));
     await fireEvent.press(screen.getByRole('option', { name: 'Skyvan' }));
 
     expect(onChange).not.toHaveBeenCalled();
@@ -288,10 +288,10 @@ describe('Select', () => {
   it('closes from the backdrop without choosing', async () => {
     const onChange = jest.fn();
     const screen = await renderThemed(
-      <Select label="Aircraft" options={options} onChange={onChange} />
+      <Select label="Vehicle" options={options} onChange={onChange} />
     );
 
-    await fireEvent.press(screen.getByRole('combobox', { name: 'Aircraft' }));
+    await fireEvent.press(screen.getByRole('combobox', { name: 'Vehicle' }));
     await fireEvent.press(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(onChange).not.toHaveBeenCalled();
@@ -299,9 +299,9 @@ describe('Select', () => {
   });
 
   it('does not open while disabled', async () => {
-    const screen = await renderThemed(<Select label="Aircraft" options={options} disabled />);
+    const screen = await renderThemed(<Select label="Vehicle" options={options} disabled />);
 
-    await fireEvent.press(screen.getByRole('combobox', { name: 'Aircraft' }));
+    await fireEvent.press(screen.getByRole('combobox', { name: 'Vehicle' }));
 
     expect(screen.queryByRole('option', { name: 'Caravan' })).toBeNull();
   });

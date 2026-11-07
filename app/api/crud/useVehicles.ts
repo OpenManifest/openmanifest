@@ -61,7 +61,7 @@ export function useVehicles(vars?: Partial<VehiclesQueryVariables>) {
       attributes: CreateVehicleMutationVariables['attributes']
     ): Promise<TMutationResponse<{ vehicle: VehicleEssentialsFragment }>> {
       if (!operator) {
-        return { error: 'No dropzone selected' };
+        return { error: 'No operator selected' };
       }
       const response = await createVehicle({
         variables: { attributes },

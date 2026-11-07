@@ -47,7 +47,7 @@ import {
 
 export type MemberPickerProps = {
   load: LoadDetailsFragment;
-  /** `desk` picks anyone of the dropzone; `self` is a member booking themselves: no search, their own defaults, confirm */
+  /** `desk` picks anyone of the operator; `self` is a member booking themselves: no search, their own defaults, confirm */
   mode?: 'desk' | 'self';
   /** Starts with this member searched for and picked (People's "Manifest on…") */
   member?: { id: string; name: string } | null;

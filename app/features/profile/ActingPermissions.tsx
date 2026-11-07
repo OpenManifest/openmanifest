@@ -8,7 +8,7 @@ import useTerms from 'app/i18n/useTerms';
 import { useNotifications } from 'app/providers/notifications';
 import { ACTING_PERMISSIONS, actingOf } from './profile';
 
-/** The name of an acting permission: "Pilot", "Rig inspector" */
+/** The name of an acting permission: "Pilot", "Equipment inspector" */
 export function useActingLabel() {
   const { t } = useTranslation('common');
   const term = useTerms();

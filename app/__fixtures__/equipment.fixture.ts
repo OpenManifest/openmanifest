@@ -1,6 +1,6 @@
 import { EquipmentEssentialsFragment } from 'app/api/operations';
 import { startOfDay } from 'date-fns';
-import { rigKindRef } from './equipmentKind.fixture';
+import { parachuteKindRef } from './equipmentKind.fixture';
 
 export const currentUserEssentials: EquipmentEssentialsFragment = {
   id: '2',
@@ -12,7 +12,7 @@ export const currentUserEssentials: EquipmentEssentialsFragment = {
   serial: '34567',
   ownership: 'personal',
   attributes: { rig_type: 'sport', canopy_size_m2: 15.7935 },
-  equipmentKind: rigKindRef,
+  equipmentKind: parachuteKindRef,
   inService: true,
   serviceDueAt: startOfDay(new Date()).getTime() / 1000,
   owner: {

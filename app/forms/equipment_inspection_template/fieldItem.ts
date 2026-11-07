@@ -12,7 +12,7 @@ export function parseFields(definition?: string | null): FieldItem[] {
     const parsed = JSON.parse(definition || '[]');
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    console.error('Failed to read rig inspection template', definition);
+    console.error('Failed to read equipment inspection template', definition);
     return [];
   }
 }

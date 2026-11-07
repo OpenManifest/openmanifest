@@ -1,6 +1,6 @@
 import { useOperatorContext } from 'app/providers/operator/context';
 import { decide } from 'app/navigation/destinations';
-import { useRigStepsRequired } from 'app/features/skydiving/wizard';
+import { useParachuteStepsRequired } from 'app/features/skydiving/wizard';
 import { useQualificationStepRequired } from './steps/Qualifications';
 import { useDateOfBirthStepRequired } from './steps/DateOfBirth';
 
@@ -12,8 +12,8 @@ export type WizardParts = {
   qualifications: boolean;
   /** Date of birth: the limits module with an age limit */
   dateOfBirth: boolean;
-  /** A skydiver's rig: the equipment module, with the rig kind */
-  rigs: boolean;
+  /** A skydiver's parachute: the equipment module, with the parachute kind of skydiving */
+  parachute: boolean;
 };
 
 /** Where the steps of each part start; `null` when the operator does not ask for the part */
@@ -21,9 +21,9 @@ export type WizardLayout = {
   certification: [body: number, number: number, level: number] | null;
   qualifications: number | null;
   dateOfBirth: number | null;
-  askForRig: number | null;
-  /** The rig, its reserve repack and the wing loading follow the question */
-  rigFrom: number | null;
+  askForParachute: number | null;
+  /** The parachute, its reserve repack and the wing loading follow the question */
+  parachuteFrom: number | null;
 };
 
 /** Name, nickname and photo always come first */
@@ -41,15 +41,15 @@ export function wizardLayout(parts: WizardParts): WizardLayout {
   const certification = take(parts.certifications, 3);
   const qualifications = take(parts.qualifications);
   const dateOfBirth = take(parts.dateOfBirth);
-  const askForRig = take(parts.rigs, 4);
+  const askForParachute = take(parts.parachute, 4);
 
   return {
     certification:
       certification === null ? null : [certification, certification + 1, certification + 2],
     qualifications,
     dateOfBirth,
-    askForRig,
-    rigFrom: askForRig === null ? null : askForRig + 1,
+    askForParachute,
+    parachuteFrom: askForParachute === null ? null : askForParachute + 1,
   };
 }
 
@@ -62,13 +62,13 @@ export function useWizardParts(): WizardParts {
   const has = (module: string) => decide({ module }, { permissions: [], modules }) === 'allowed';
   const qualifications = useQualificationStepRequired();
   const dateOfBirth = useDateOfBirthStepRequired();
-  const rigs = useRigStepsRequired();
+  const parachute = useParachuteStepsRequired();
   const certifications = has('certifications');
 
   return {
     certifications,
     qualifications: certifications && qualifications,
     dateOfBirth,
-    rigs: has('equipment') && rigs,
+    parachute: has('equipment') && parachute,
   };
 }

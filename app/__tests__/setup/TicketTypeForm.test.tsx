@@ -16,7 +16,7 @@ function OperatorReady() {
   const {
     operator: { operator },
   } = useOperatorContext();
-  return operator?.id ? <Text>dropzone ready</Text> : null;
+  return operator?.id ? <Text>operator ready</Text> : null;
 }
 
 describe('<TicketTypeDialog />', () => {
@@ -66,7 +66,7 @@ describe('<TicketTypeDialog />', () => {
 
     // The operator provider mounts its own closed copy of this dialog, so scope to ours
     const dialog = scoped(screen.getByTestId('under-test'));
-    await waitFor(() => expect(dialog.getByText('dropzone ready')).toBeTruthy(), {
+    await waitFor(() => expect(dialog.getByText('operator ready')).toBeTruthy(), {
       timeout: 10000,
     });
     const [name, cost] = textInputs(dialog.container);
@@ -138,7 +138,7 @@ describe('<TicketTypeDialog />', () => {
     );
 
     const dialog = scoped(screen.getByTestId('under-test'));
-    await waitFor(() => expect(dialog.getByText('dropzone ready')).toBeTruthy(), {
+    await waitFor(() => expect(dialog.getByText('operator ready')).toBeTruthy(), {
       timeout: 10000,
     });
     const [name, cost] = textInputs(dialog.container);

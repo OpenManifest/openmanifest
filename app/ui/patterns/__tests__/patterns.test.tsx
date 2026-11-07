@@ -5,21 +5,21 @@ import { renderThemed } from '../../components/testing';
 import ResourceForm, { resourceFormPresentation } from '../ResourceForm';
 import ResourceList from '../ResourceList';
 
-type Plane = { id: string; name: string; registration: string };
-const PLANES: Plane[] = [
+type Vehicle = { id: string; name: string; registration: string };
+const VEHICLES: Vehicle[] = [
   { id: '1', name: 'Otter', registration: 'VH-OTR' },
   { id: '2', name: 'Caravan', registration: 'VH-CRV' },
 ];
 
-function List(props: Partial<React.ComponentProps<typeof ResourceList<Plane>>>) {
+function List(props: Partial<React.ComponentProps<typeof ResourceList<Vehicle>>>) {
   return (
-    <ResourceList<Plane>
-      testID="planes"
-      items={PLANES}
-      keyOf={(plane) => plane.id}
-      titleOf={(plane) => plane.name}
-      factsOf={(plane) => [{ label: 'Registration', value: plane.registration }]}
-      empty={{ title: 'No planes yet', body: 'Add one to start' }}
+    <ResourceList<Vehicle>
+      testID="vehicles"
+      items={VEHICLES}
+      keyOf={(vehicle) => vehicle.id}
+      titleOf={(vehicle) => vehicle.name}
+      factsOf={(vehicle) => [{ label: 'Registration', value: vehicle.registration }]}
+      empty={{ title: 'No vehicles yet', body: 'Add one to start' }}
       {...props}
     />
   );
@@ -38,12 +38,15 @@ describe('ResourceList', () => {
     const onOpen = jest.fn();
     const onNew = jest.fn();
     const screen = await renderThemed(
-      <List onOpen={onOpen} create={{ label: 'New plane', onPress: onNew, testID: 'new-plane' }} />
+      <List
+        onOpen={onOpen}
+        create={{ label: 'New vehicle', onPress: onNew, testID: 'new-vehicle' }}
+      />
     );
 
     await fireEvent.press(screen.getByRole('button', { name: 'Caravan' }));
-    expect(onOpen).toHaveBeenCalledWith(PLANES[1]);
-    await fireEvent.press(screen.getByTestId('new-plane'));
+    expect(onOpen).toHaveBeenCalledWith(VEHICLES[1]);
+    await fireEvent.press(screen.getByTestId('new-vehicle'));
     expect(onNew).toHaveBeenCalledTimes(1);
   });
 
@@ -51,17 +54,17 @@ describe('ResourceList', () => {
     const screen = await renderThemed(<List />);
 
     expect(screen.queryByRole('button', { name: 'Otter' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'New plane' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'New vehicle' })).toBeNull();
   });
 
   it('says there is nothing yet and offers the one way out', async () => {
     const onNew = jest.fn();
     const screen = await renderThemed(
-      <List items={[]} create={{ label: 'New plane', onPress: onNew }} />
+      <List items={[]} create={{ label: 'New vehicle', onPress: onNew }} />
     );
 
-    expect(screen.getByRole('heading', { name: 'No planes yet' })).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'New plane' }));
+    expect(screen.getByRole('heading', { name: 'No vehicles yet' })).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'New vehicle' }));
     expect(onNew).toHaveBeenCalledTimes(1);
   });
 
@@ -69,7 +72,7 @@ describe('ResourceList', () => {
     const screen = await renderThemed(
       <List
         onOpen={jest.fn()}
-        trailingOf={(plane) => <NativeText>{`switch ${plane.id}`}</NativeText>}
+        trailingOf={(vehicle) => <NativeText>{`switch ${vehicle.id}`}</NativeText>}
       />
     );
 

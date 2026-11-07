@@ -9,7 +9,7 @@ import { useMemo } from 'app/hooks/react';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import i18n from 'app/i18n';
-import { isRig } from '../rig';
+import { isRig } from '../parachute';
 
 export const validation = yup.object({
   serviceDueAt: yup

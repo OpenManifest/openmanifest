@@ -17,7 +17,7 @@ function OperatorReady() {
   const {
     operator: { operator },
   } = useOperatorContext();
-  return operator?.id ? <Text>dropzone ready</Text> : null;
+  return operator?.id ? <Text>operator ready</Text> : null;
 }
 
 // Name and email filled in; the certificationBody and licence are picked automatically (single option), the access level is not.
@@ -42,7 +42,7 @@ async function renderFilledDialog(createGhost: jest.Mock) {
     }
   );
   const dialog = scoped(screen.getByTestId('under-test'));
-  await waitFor(() => expect(dialog.getByText('dropzone ready')).toBeTruthy(), { timeout: 10000 });
+  await waitFor(() => expect(dialog.getByText('operator ready')).toBeTruthy(), { timeout: 10000 });
   await waitFor(() => expect(dialog.getByText('Certificate A')).toBeTruthy(), { timeout: 10000 });
   const inputs = textInputs(dialog.container);
   await fireEvent.changeText(inputs[0], 'Gina Ghost');

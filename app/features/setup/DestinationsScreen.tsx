@@ -20,7 +20,7 @@ const ICON: Record<DestinationKind, IconName> = {
   [DestinationKind.Section]: 'waves',
 };
 
-/** The places the operator's loads go to: altitudes for a dropzone, sites for a dive boat, routes for a bus */
+/** The places the operator's loads go to: altitudes for a skydiving operator, sites for a dive boat, routes for a bus */
 export default function DestinationsScreen() {
   const { t } = useTranslation('common');
   const term = useTerms();

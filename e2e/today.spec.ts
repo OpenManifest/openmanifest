@@ -39,7 +39,7 @@ test.describe('today as a fun jumper @today', () => {
     await expect(next).toContainText('Load #1', { timeout: 20_000 });
 
     try {
-      await press(page, page.getByTestId('today-next-load-take-off'));
+      await press(page, page.getByTestId('today-next-load-remove'));
       await expect(page.getByTestId('today-next-load')).toBeHidden({ timeout: 15_000 });
     } finally {
       // The seed has Jo Jumper on the first load: put them back for the specs that follow
@@ -71,7 +71,7 @@ test.describe('today as a student @today', () => {
     const next = page.getByTestId('today-next-load');
     await expect(next).toBeVisible({ timeout: 20_000 });
     await expect(page.getByTestId('today-next-load-desk')).toBeVisible();
-    await expect(page.getByTestId('today-next-load-take-off')).toHaveCount(0);
+    await expect(page.getByTestId('today-next-load-remove')).toHaveCount(0);
   });
 });
 
@@ -131,7 +131,7 @@ test.describe('booking myself @today @board', () => {
     });
   });
 
-  test.describe('where the dropzone switched self-manifesting off', () => {
+  test.describe('where the operator switched self-manifesting off', () => {
     test.use({ role: 'jumper2' });
 
     test('has no entry points: Today and the board leave the booking to the desk', async ({

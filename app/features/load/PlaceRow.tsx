@@ -11,7 +11,7 @@ import EligibilityBadge from './EligibilityBadge';
 import type { GroupPosition } from './sections';
 
 /** The colours the groups of a load take in turn: a status colour is a pair that already reads in both schemes */
-const GROUP_COLOURS: StatusKey[] = ['info', 'boarding', 'landed', 'departed'];
+const GROUP_COLOURS: StatusKey[] = ['info', 'boarding', 'completed', 'departed'];
 
 export type PlaceRowProps = {
   slot: SlotDetailsFragment;
@@ -19,7 +19,7 @@ export type PlaceRowProps = {
   group?: { number: number; position: GroupPosition } | null;
   /** May change this place (their own, or anyone's) */
   canEdit?: boolean;
-  canTakeOff?: boolean;
+  canRemove?: boolean;
   /** May move this place to another load or vehicle */
   canMove?: boolean;
   /** Whether the destination of the place is worth showing: when it can differ from the load's */
@@ -27,7 +27,7 @@ export type PlaceRowProps = {
   /** The guests of an escort are shown under the row, so this row is joined to them */
   joined?: boolean;
   onEdit?(slot: SlotDetailsFragment): void;
-  onTakeOff?(slot: SlotDetailsFragment): void;
+  onRemove?(slot: SlotDetailsFragment): void;
   onMove?(slot: SlotDetailsFragment): void;
   onOpenPerson?(slot: SlotDetailsFragment): void;
   testID?: string;
@@ -43,12 +43,12 @@ export default function PlaceRow({
   rules,
   group,
   canEdit = false,
-  canTakeOff = false,
+  canRemove = false,
   canMove = false,
   showDestination = false,
   joined = false,
   onEdit,
-  onTakeOff,
+  onRemove,
   onMove,
   onOpenPerson,
   testID = 'slot-row',
@@ -87,13 +87,13 @@ export default function PlaceRow({
           onPress: () => onMove(slot),
         }
       : null,
-    canTakeOff && onTakeOff
+    canRemove && onRemove
       ? {
-          label: t('common:load.takeOff'),
+          label: t('common:load.remove'),
           icon: 'account-remove-outline' as const,
           destructive: true,
-          testID: `${testID}-take-off`,
-          onPress: () => onTakeOff(slot),
+          testID: `${testID}-remove`,
+          onPress: () => onRemove(slot),
         }
       : null,
   ].filter((item): item is NonNullable<typeof item> => !!item);
@@ -164,22 +164,22 @@ export default function PlaceRow({
   );
 
   // A phone swipes a row away as a shortcut; every place has the menu as well
-  if (Platform.OS === 'web' || !canTakeOff || !onTakeOff) return row;
+  if (Platform.OS === 'web' || !canRemove || !onRemove) return row;
   return (
     <Swipeable
       overshootRight={false}
       renderRightActions={() => (
         <Tappable
           role="button"
-          aria-label={t('common:load.takeOff')}
-          onPress={() => onTakeOff(slot)}
+          aria-label={t('common:load.remove')}
+          onPress={() => onRemove(slot)}
           style={{
             justifyContent: 'center',
             paddingHorizontal: theme.space.lg,
             backgroundColor: theme.colour.status.blocked.bg,
           }}
         >
-          <Text tone="blocked">{t('common:load.takeOff')}</Text>
+          <Text tone="blocked">{t('common:load.remove')}</Text>
         </Tappable>
       )}
     >

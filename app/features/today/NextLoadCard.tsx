@@ -13,12 +13,12 @@ export type NextLoadCardProps = {
   /** The member's own place on it */
   slot: SlotDetailsFragment;
   timeZone?: string | null;
-  /** May take themselves off: the dropzone lets members change their own booking */
-  canTakeOff?: boolean;
-  /** The member must ask the desk: the dropzone does not let them take themselves off */
+  /** May take themselves off: the operator lets members change their own booking */
+  canRemove?: boolean;
+  /** The member must ask the desk: the operator does not let them take themselves off */
   deskOnly?: boolean;
   taking?: boolean;
-  onTakeOff?(): void;
+  onRemove?(): void;
   onOpen?(): void;
   testID?: string;
 };
@@ -28,10 +28,10 @@ export default function NextLoadCard({
   load,
   slot,
   timeZone,
-  canTakeOff = false,
+  canRemove = false,
   deskOnly = false,
   taking = false,
-  onTakeOff,
+  onRemove,
   onOpen,
   testID = 'today-next-load',
 }: NextLoadCardProps) {
@@ -97,14 +97,14 @@ export default function NextLoadCard({
           {t('common:today.next.places', { filled, capacity })}
         </Text>
       </Tappable>
-      {canLeave && canTakeOff ? (
+      {canLeave && canRemove ? (
         <Button
           variant="secondary"
           icon="account-remove-outline"
-          label={t('common:today.next.takeOff')}
+          label={t('common:today.next.removeMe')}
           loading={taking}
-          testID={`${testID}-take-off`}
-          onPress={onTakeOff}
+          testID={`${testID}-remove`}
+          onPress={onRemove}
         />
       ) : null}
       {canLeave && deskOnly ? (

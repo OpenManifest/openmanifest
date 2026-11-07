@@ -1,6 +1,7 @@
 import { expectAccessible } from './support/a11y';
 import { expectLayout } from './support/layout';
 import { expect, gotoRoute, test } from './support/test';
+import { SEED } from './support/seed';
 
 const isWide = (page: import('@playwright/test').Page) => (page.viewportSize()?.width ?? 0) >= 1024;
 
@@ -35,7 +36,7 @@ test.describe('navigation @nav', () => {
       expect(box?.x).toBe(0);
       expect(box?.width).toBe(240);
       await expect(nav.getByRole('button', { name: 'Switch operator' })).toContainText(
-        'Demo Dropzone'
+        SEED.operator
       );
       await expect(nav.getByRole('button', { name: 'Account menu' })).toBeVisible();
     } else if (viewport.width >= 600) {

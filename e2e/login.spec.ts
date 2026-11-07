@@ -25,12 +25,12 @@ test.describe('login @login', () => {
     await expectAccessible(page, '/signup');
   });
 
-  test('owner logs in, picks the dropzone and reaches the board', async ({ page }) => {
+  test('owner logs in, picks the operator and reaches the board', async ({ page }) => {
     await gotoRoute(page, '/login');
     await submitLogin(page, ROLES.owner);
     await operatorRow(page).waitFor({ timeout: 30_000 });
-    await expectLayout(page, 'dropzone selection');
-    await expectAccessible(page, 'dropzone selection');
+    await expectLayout(page, 'operator selection');
+    await expectAccessible(page, 'operator selection');
     await selectOperator(page);
     await expectLayout(page, '/manifest');
   });
@@ -99,7 +99,7 @@ test.describe('login @login', () => {
   });
 
   // Selecting an operator the user has not joined joins them (P6.4)
-  test('a brand new user joins the dropzone and reaches their day', async ({ page }) => {
+  test('a brand new user joins the operator and reaches their day', async ({ page }) => {
     const email = await registerNewUser();
     await loginViaUi(page, email);
     // Someone who may not manifest others lands on Today, not on the board

@@ -45,7 +45,7 @@ describe('useAppTheme', () => {
     await screen.unmount();
   });
 
-  it('takes the primary colour from the current dropzone', async () => {
+  it('takes the primary colour from the current operator', async () => {
     const operator = MOCK_QUERY_OPERATOR();
     const screen = await render(<Probe />, { graphql: [operator], session: authenticatedSession });
     const expected = (operator.result as { data: { operator: { primaryColor: string } } }).data

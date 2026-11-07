@@ -9,7 +9,7 @@ test.describe('form components @forms', () => {
 
     await expect(page.getByRole('textbox', { name: 'Name' })).toBeVisible();
     await expect(page.getByRole('spinbutton', { name: 'Exit weight' })).toHaveValue('80');
-    await expect(page.getByRole('combobox', { name: 'Aircraft' })).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'Vehicle' })).toBeVisible();
     await expect(page.getByRole('radiogroup', { name: 'Theme' })).toBeVisible();
     await expect(page.getByRole('switch', { name: 'Load alerts' })).not.toBeChecked();
     await expectAccessible(page, 'forms');
@@ -50,7 +50,7 @@ test.describe('form components @forms', () => {
     page,
   }) => {
     await gotoRoute(page, FORMS);
-    const trigger = page.getByRole('combobox', { name: 'Aircraft' });
+    const trigger = page.getByRole('combobox', { name: 'Vehicle' });
 
     await trigger.focus();
     await page.keyboard.press('Enter');

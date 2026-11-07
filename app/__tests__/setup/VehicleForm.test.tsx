@@ -14,11 +14,11 @@ function OperatorReady() {
   const {
     operator: { operator },
   } = useOperatorContext();
-  return operator?.id ? <Text>dropzone ready</Text> : null;
+  return operator?.id ? <Text>operator ready</Text> : null;
 }
 
 describe('<VehicleDialog />', () => {
-  it('sends the entered values to CreateAircraft', async () => {
+  it('sends the entered values to CreateVehicle', async () => {
     const mutationResult = jest.fn(() => ({
       data: {
         createVehicle: {
@@ -61,7 +61,7 @@ describe('<VehicleDialog />', () => {
 
     // The operator provider mounts its own closed copy of this dialog, so scope to ours
     const dialog = scoped(screen.getByTestId('under-test'));
-    await waitFor(() => expect(dialog.getByText('dropzone ready')).toBeTruthy(), {
+    await waitFor(() => expect(dialog.getByText('operator ready')).toBeTruthy(), {
       timeout: 10000,
     });
     const [name, registration, , maxSlots] = textInputs(dialog.container);
@@ -90,7 +90,7 @@ describe('<VehicleDialog />', () => {
 
   // The dialog builds `initial` from the (absent) original vehicle, so `capacity: undefined` overrides the
   // form's default of 4 and a new vehicle cannot be saved until max slots is typed in.
-  it('BUG-096: a new aircraft starts with the default max slots', async () => {
+  it('BUG-096: a new vehicle starts with the default max slots', async () => {
     const screen = await render(
       <View testID="under-test">
         <VehicleDialog open onClose={jest.fn()} />

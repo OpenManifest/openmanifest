@@ -14,13 +14,13 @@ import { useTranslation } from 'react-i18next';
 import i18n from 'app/i18n';
 import { useOperatorFormat } from 'app/i18n/operatorFormat';
 import { UNIT_SYMBOLS, convert, unitOf } from 'app/i18n/units';
-import { canopySize, isRig } from '../rig';
+import { canopySize, isRig } from '../parachute';
 
 export const validation = yup.object({
   canopySize: yup.number().required(() => i18n.t('forms.user_wizard.pleaseEnterYourCanopySizeIn')),
   bodyMassKg: yup
     .number()
-    .required(() => i18n.t('forms.user_wizard.enterYourExitWeight'))
+    .required(() => i18n.t('forms.user_wizard.enterYourBodyMass'))
     .default(70),
 });
 
@@ -88,7 +88,7 @@ function WingloadingWizardScreen(props: IWizardStepProps) {
             <FormNumberField
               {...{ control }}
               name="bodyMassKg"
-              label={t('forms.user_wizard.yourExitWeight')}
+              label={t('forms.user_wizard.yourBodyMass')}
               variant={NumberFieldType.Weight}
               helperText={t('forms.user_wizard.yourWeightInKgS')}
             />

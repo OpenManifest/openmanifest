@@ -63,7 +63,7 @@ const member = (id: string, name: string, extra: Record<string, unknown> = {}) =
   hasMembership: true,
   hasCertificationLevel: true,
   role: null,
-  certificationLevel: { __typename: 'CertificationLevel', id: 'c', name: 'License A' },
+  certificationLevel: { __typename: 'CertificationLevel', id: 'c', name: 'Level A' },
   user: {
     __typename: 'User',
     id: `u${id}`,

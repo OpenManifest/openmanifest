@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { Icon, type IconName, type StatusKey, type TextTone } from 'app/ui';
 import { useOperatorContext } from 'app/providers/operator/context';
+import { AVIATION_VEHICLE_KIND } from 'app/features/aviation/kinds';
 
 /**
  * The glyph of a vehicle kind (GENERALISATION §14, D10). This module is the one place that names the aeroplane glyphs:
  * everything else asks it for the glyph of a kind, or of what a vehicle does (`useVehicleGlyphs`).
  */
 const GLYPHS: Record<string, IconName> = {
-  aircraft: 'airplane',
+  [AVIATION_VEHICLE_KIND]: 'airplane',
   glider: 'airplane',
   tug: 'airplane-takeoff',
   helicopter: 'helicopter',
@@ -17,7 +18,7 @@ const GLYPHS: Record<string, IconName> = {
   kayak: 'kayaking',
   bus: 'bus',
   '4x4': 'car-estate',
-  van: 'van-passenger',
+  van: 'van-utility',
   vehicle: 'car',
 };
 
@@ -30,9 +31,9 @@ export function vehicleGlyph(kind?: string | null): IconName {
 export type VehicleMotion = 'depart' | 'land' | 'none' | 'board';
 
 /** Kinds that take off and land: their motions are the aeroplane glyphs */
-const AIRCRAFT_KINDS = ['aircraft', 'glider', 'tug'];
+const FLYING_KINDS = [AVIATION_VEHICLE_KIND, 'glider', 'tug'];
 
-const AIRCRAFT_MOTION: Record<VehicleMotion, IconName> = {
+const FLYING_MOTION: Record<VehicleMotion, IconName> = {
   depart: 'airplane-takeoff',
   land: 'airplane-landing',
   none: 'airplane-off',
@@ -47,16 +48,16 @@ const NEUTRAL_MOTION: Record<VehicleMotion, IconName> = {
   board: 'account-plus-outline',
 };
 
-/** The glyph of a motion of a vehicle kind: an aeroplane taking off for an aircraft, an arrow for a bus */
+/** The glyph of a motion of a vehicle kind: an aeroplane taking off for a flying kind, an arrow for a bus */
 export function motionGlyph(motion: VehicleMotion, kind?: string | null): IconName {
-  const aircraft = AIRCRAFT_KINDS.includes((kind ?? '').toLowerCase());
-  return (aircraft ? AIRCRAFT_MOTION : NEUTRAL_MOTION)[motion];
+  const flies = FLYING_KINDS.includes((kind ?? '').toLowerCase());
+  return (flies ? FLYING_MOTION : NEUTRAL_MOTION)[motion];
 }
 
-/** The icon of a load's status badge for a vehicle kind: departed and landed follow the vehicle, the rest are the badge's own */
+/** The icon of a load's status badge for a vehicle kind: departed and completed follow the vehicle, the rest are the badge's own */
 export function statusGlyph(status: StatusKey, kind?: string | null): IconName | undefined {
   if (status === 'departed') return motionGlyph('depart', kind);
-  if (status === 'landed') return motionGlyph('land', kind);
+  if (status === 'completed') return motionGlyph('land', kind);
   return undefined;
 }
 
@@ -88,7 +89,7 @@ export type VehicleIconProps = {
   tone?: TextTone;
 };
 
-/** The glyph of a vehicle's kind: an aeroplane for an aircraft, a boat for a boat; decorative, the name sits beside it */
+/** The glyph of a vehicle's kind: an aeroplane for a flying kind, a boat for a boat; decorative, the name sits beside it */
 export default function VehicleIcon({ kind, size = 20, tone = 'muted' }: VehicleIconProps) {
   const glyphs = useVehicleGlyphs(kind);
   return <Icon name={glyphs.vehicle} size={size} tone={tone} />;

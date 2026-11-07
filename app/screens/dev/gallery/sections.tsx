@@ -152,7 +152,7 @@ const STATUSES: [StatusKey, string][] = [
   ['open', 'Open'],
   ['boarding', 'On call'],
   ['departed', 'In air'],
-  ['landed', 'Landed'],
+  ['completed', 'Completed'],
   ['cancelled', 'Cancelled'],
   ['warning', 'Warning'],
   ['blocked', 'Blocked'],
@@ -416,7 +416,7 @@ function NumberFieldSection() {
   );
 }
 
-const AIRCRAFT = [
+const VEHICLES = [
   { value: 'caravan', label: 'Caravan' },
   { value: 'otter', label: 'Otter' },
   { value: 'skyvan', label: 'Skyvan', disabled: true },
@@ -427,21 +427,21 @@ function SelectSection() {
   return (
     <Section id="select" title="Select">
       <Select
-        label="Aircraft"
+        label="Vehicle"
         placeholder="Pick one"
-        options={AIRCRAFT}
+        options={VEHICLES}
         value={value}
         onChange={setValue}
       />
-      <Select label="Chosen" options={AIRCRAFT} value="otter" />
+      <Select label="Chosen" options={VEHICLES} value="otter" />
       <Select
         label="With error"
-        options={AIRCRAFT}
+        options={VEHICLES}
         value={null}
         placeholder="Pick one"
         error="Required"
       />
-      <Select label="Disabled" options={AIRCRAFT} value="caravan" disabled />
+      <Select label="Disabled" options={VEHICLES} value="caravan" disabled />
     </Section>
   );
 }

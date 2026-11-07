@@ -15,7 +15,7 @@ describe('useOperatorToday', () => {
     Settings.defaultZone = originalZone;
   });
 
-  it("is the dropzone's date while the device is on the day before", async () => {
+  it("is the operator's date while the device is on the day before", async () => {
     jest.setSystemTime(new Date('2026-10-08T23:00:00Z'));
 
     const { result } = await renderHook(() => useOperatorToday('Australia/Brisbane'));
@@ -23,7 +23,7 @@ describe('useOperatorToday', () => {
     expect(result.current).toBe('2026-10-09');
   });
 
-  it("moves on to the next day by itself when the dropzone's midnight passes", async () => {
+  it("moves on to the next day by itself when the operator's midnight passes", async () => {
     jest.setSystemTime(new Date('2026-10-08T13:58:30Z')); // 23:58:30 on 8 October at the operator
     const { result } = await renderHook(() => useOperatorToday('Australia/Brisbane'));
     expect(result.current).toBe('2026-10-08');

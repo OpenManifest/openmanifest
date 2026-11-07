@@ -10,7 +10,7 @@ export type CreditCardProps = {
   testID?: string;
 };
 
-/** The member's credit with the dropzone: what they can still book before they need to top up */
+/** The member's credit with the operator: what they can still book before they need to top up */
 export default function CreditCard({ creditsCents, testID = 'today-credit' }: CreditCardProps) {
   const { t } = useTranslation('common');
   const theme = useTheme();

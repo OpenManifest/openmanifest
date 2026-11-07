@@ -1,4 +1,5 @@
 import { VehicleEssentialsFragment } from 'app/api/operations';
+import { useTranslation } from 'react-i18next';
 import { truncate } from 'lodash';
 import * as React from 'react';
 import { useSession } from 'app/state';
@@ -23,6 +24,7 @@ interface IVehicleChipSelect {
 export default function VehicleChip(props: IVehicleChipSelect) {
   const { small, color: assignedColor, backgroundColor, value, onSelect } = props;
   const theme = useTheme();
+  const { t } = useTranslation(['common', 'terms']);
   const color = assignedColor || theme.colors.onSurface;
   const currentOperatorId = useSession((session) => session.currentOperatorId);
 
@@ -58,15 +60,19 @@ export default function VehicleChip(props: IVehicleChipSelect) {
         style={{ maxWidth: 100 }}
         icon={glyph}
       >
-        {truncate(item?.label || 'No Plane', { length: 12 })}
+        {truncate(
+          item?.label ||
+            t('common:legacy.noVehicle', { vehicle: t('terms:vehicle', { count: 1 }) }),
+          { length: 12 }
+        )}
       </Chip>
     ),
-    [backgroundColor, color, glyph, small]
+    [backgroundColor, color, glyph, small, t]
   );
 
   return !allowed ? (
     <Chip {...{ backgroundColor, small, color }} style={{ maxWidth: 100 }} icon={glyph}>
-      {value?.name || 'No Plane'}
+      {value?.name || t('common:legacy.noVehicle', { vehicle: t('terms:vehicle', { count: 1 }) })}
     </Chip>
   ) : (
     <View style={{ maxWidth: 100 }}>

@@ -12,6 +12,7 @@ import MOCK_QUERY_OPERATOR from './__mocks__/QueryOperator.mock';
 import LoadDialog from '../../forms/load/Dialog';
 import { NotificationContext } from 'app/providers/notifications/context';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
+import { AVIATION_VEHICLE_KIND } from 'app/features/aviation/kinds';
 
 jest.setTimeout(30000);
 
@@ -22,7 +23,7 @@ const BEAVER = {
   registration: 'ABC123',
   minCapacity: 0,
   capacity: 10,
-  kind: 'aircraft',
+  kind: AVIATION_VEHICLE_KIND,
 };
 
 const membership = (id: string, name: string) => ({
@@ -68,7 +69,7 @@ function usersWithPermission(permission: Permission, user: Awaited<ReturnType<ty
 }
 
 describe('<LoadDialog />', () => {
-  it('sends the selected plane, pilot and GCA to CreateLoad', async () => {
+  it('sends the selected vehicle, pilot and GCA to CreateLoad', async () => {
     const mutationResult = jest.fn(() => ({
       data: {
         createLoad: {

@@ -20,7 +20,7 @@ import {
 
 describe('loadStatus', () => {
   it('maps the states to status tokens and tells the loads that are over', () => {
-    expect(statusOf(LoadState.Completed)).toBe('landed');
+    expect(statusOf(LoadState.Completed)).toBe('completed');
     expect(statusOf(LoadState.Boarding)).toBe('boarding');
     expect(statusOf(undefined)).toBe('open');
     expect(isOver(LoadState.Cancelled)).toBe(true);

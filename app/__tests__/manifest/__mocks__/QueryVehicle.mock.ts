@@ -1,6 +1,7 @@
 import { VehiclesQuery, VehiclesQueryVariables } from '../../../api/operations';
 import { VehiclesDocument } from '../../../api/reflection';
 import createMockedQuery from './createMockedQuery.mock';
+import { AVIATION_VEHICLE_KIND } from 'app/features/aviation/kinds';
 
 type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]> } : T;
 export default createMockedQuery<VehiclesQueryVariables, DeepRequired<VehiclesQuery>>(
@@ -17,7 +18,7 @@ export default createMockedQuery<VehiclesQueryVariables, DeepRequired<VehiclesQu
         minCapacity: 0,
         capacity: 10,
         name: 'Beaver',
-        kind: 'aircraft',
+        kind: AVIATION_VEHICLE_KIND,
       },
     ],
   }

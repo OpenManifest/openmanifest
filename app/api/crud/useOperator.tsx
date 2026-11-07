@@ -45,7 +45,7 @@ export function useOperator(vars: Partial<OperatorQueryVariables>) {
     ): Promise<TMutationResponse<{ operator: OperatorEssentialsFragment }>> => {
       try {
         if (!query?.data?.operator?.id && !currentOperatorId)
-          return { error: 'No dropzone selected' };
+          return { error: 'No operator selected' };
         const { data: response } = await updateOperator({
           variables: {
             id: Number(query?.data?.operator?.id || currentOperatorId),

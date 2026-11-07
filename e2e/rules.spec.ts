@@ -98,7 +98,7 @@ test.describe('setup and rules @setup', () => {
         await gotoRoute(jumper, '/today');
         await expect(jumper.getByTestId('today-next-load')).toBeVisible({ timeout: 20_000 });
         await expect(jumper.getByTestId('today-next-load-desk')).toBeVisible();
-        await expect(jumper.getByTestId('today-next-load-take-off')).toHaveCount(0);
+        await expect(jumper.getByTestId('today-next-load-remove')).toHaveCount(0);
         await expect(jumper.getByTestId('today-book')).toHaveCount(0);
       } finally {
         await context.close();

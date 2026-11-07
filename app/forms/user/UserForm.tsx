@@ -36,7 +36,7 @@ export default function UserForm(props: IUserFormProps) {
         {...{ control }}
         name="bodyMassKg"
         variant={NumberFieldType.Weight}
-        label={t('forms.user.exitWeightKg')}
+        label={t('forms.user.bodyMassKg')}
       />
 
       <Divider />

@@ -79,7 +79,7 @@ function VehicleList({ value, error, onChange }: IVehicleListProps) {
             trailing={
               <Row gap="xs">
                 <IconButton
-                  icon={carries ? 'seat-passenger' : 'account-off-outline'}
+                  icon={carries ? 'seat' : 'account-off-outline'}
                   aria-label={
                     carries
                       ? t('forms.load.makeSupport', { name })

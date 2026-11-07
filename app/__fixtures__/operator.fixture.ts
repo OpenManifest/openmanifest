@@ -2,7 +2,8 @@ import { OperatorExtensiveFragment } from 'app/api/operations';
 import { Industry, OperatorState, LoadState } from 'app/api/schema.d';
 import { currentUserDetailed } from './currentUser.fixture';
 import { loadEssentials } from './load.fixture';
-import { rigKind } from './equipmentKind.fixture';
+import { parachuteKind } from './equipmentKind.fixture';
+import { AVIATION_VEHICLE_KIND } from 'app/features/aviation/kinds';
 
 /** The skydiving template's modules (config/industries/skydiving/template.yml): the fixture operator has none */
 export const SKYDIVING_MODULES = {
@@ -40,7 +41,7 @@ export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
     icon: 'parachute',
     illustrations: 'skydiving',
   },
-  vehicleKinds: ['aircraft'],
+  vehicleKinds: [AVIATION_VEHICLE_KIND],
   modules: {},
 
   callScheduleMinutes: [20, 15, 10],
@@ -79,7 +80,7 @@ export const operatorExtensive: DeepRequired<OperatorExtensiveFragment> = {
     },
   ],
   requiredQualifications: [],
-  equipmentKinds: [rigKind],
+  equipmentKinds: [parachuteKind],
   currentConditions: {
     __typename: 'WeatherCondition',
     id: '1',

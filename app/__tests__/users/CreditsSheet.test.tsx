@@ -25,7 +25,7 @@ function OperatorReady() {
   const {
     operator: { operator },
   } = useOperatorContext();
-  return operator?.id ? <Text>dropzone ready</Text> : null;
+  return operator?.id ? <Text>operator ready</Text> : null;
 }
 
 function renderSheet(mutationResult: jest.Mock, variables: Record<string, unknown>) {
@@ -60,7 +60,7 @@ const orderResult = () =>
   }));
 
 describe('<CreditSheet />', () => {
-  it('a deposit of 50 sells credits from the dropzone wallet to the member wallet', async () => {
+  it('a deposit of 50 sells credits from the operator wallet to the member wallet', async () => {
     const mutationResult = orderResult();
     const screen = await renderSheet(mutationResult, {
       amountCents: 5000,
@@ -72,7 +72,7 @@ describe('<CreditSheet />', () => {
 
     // The manifest provider mounts its own closed copy of this sheet, so scope to ours
     const sheet = scoped(screen.getByTestId('under-test'));
-    await waitFor(() => expect(sheet.getByText('dropzone ready')).toBeTruthy(), { timeout: 10000 });
+    await waitFor(() => expect(sheet.getByText('operator ready')).toBeTruthy(), { timeout: 10000 });
     const [, amount] = textInputs(sheet.container);
     await fireEvent.changeText(amount, '50');
     await waitFor(() => expect(sheet.getByText('+$50')).toBeTruthy());
@@ -118,7 +118,7 @@ describe('<CreditSheet />', () => {
       }
     );
 
-    await waitFor(() => expect(screen.getByText('dropzone ready')).toBeTruthy(), {
+    await waitFor(() => expect(screen.getByText('operator ready')).toBeTruthy(), {
       timeout: 10000,
     });
     await fireEvent.press(screen.getByText('Withdraw 15'));

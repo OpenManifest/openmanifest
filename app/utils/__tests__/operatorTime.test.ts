@@ -12,7 +12,7 @@ import {
 // 09:00 on 9 October at the operator
 const NOW = DateTime.fromISO('2026-10-08T23:00:00Z');
 
-describe('dropzone time', () => {
+describe('operator time', () => {
   const originalZone = Settings.defaultZone;
   beforeEach(() => {
     Settings.defaultZone = 'UTC';
@@ -21,13 +21,13 @@ describe('dropzone time', () => {
     Settings.defaultZone = originalZone;
   });
 
-  it('today is the dropzone date, not the device date', () => {
+  it('today is the operator date, not the device date', () => {
     expect(NOW.toISODate()).toBe('2026-10-08');
     expect(todayInZone('Australia/Brisbane', NOW)).toBe('2026-10-09');
     expect(todayInZone('America/Los_Angeles', NOW)).toBe('2026-10-08');
   });
 
-  it('moves to the next day when midnight comes at the dropzone', () => {
+  it('moves to the next day when midnight comes at the operator', () => {
     const beforeMidnight = DateTime.fromISO('2026-10-08T13:59:00Z');
     const midnight = DateTime.fromISO('2026-10-08T14:00:00Z');
 
@@ -35,26 +35,26 @@ describe('dropzone time', () => {
     expect(todayInZone('Australia/Brisbane', midnight)).toBe('2026-10-09');
   });
 
-  it('places an instant on the day it falls on at the dropzone', () => {
+  it('places an instant on the day it falls on at the operator', () => {
     expect(dateInZone('2026-10-08T16:00:00Z', 'Australia/Brisbane')).toBe('2026-10-09');
     expect(dateInZone('2026-10-08T09:00:00Z', 'Australia/Brisbane')).toBe('2026-10-08');
   });
 
-  it('knows whether an instant is today at the dropzone', () => {
+  it('knows whether an instant is today at the operator', () => {
     expect(isTodayInZone('2026-10-08T16:00:00Z', 'Australia/Brisbane', NOW)).toBe(true);
     expect(isTodayInZone('2026-10-08T09:00:00Z', 'Australia/Brisbane', NOW)).toBe(false);
     // The same instants on a device date comparison would say the opposite
     expect(DateTime.fromISO('2026-10-08T16:00:00Z').hasSame(NOW, 'day')).toBe(true);
   });
 
-  it('shows call times as the clock at the dropzone', () => {
+  it('shows call times as the clock at the operator', () => {
     const seconds = DateTime.fromISO('2026-10-08T23:30:00Z').toSeconds();
 
     expect(clockInZone(seconds, 'Australia/Brisbane', 'HH:mm')).toBe('09:30');
     expect(clockInZone(seconds, 'UTC', 'HH:mm')).toBe('23:30');
   });
 
-  it('turns a time of day at the dropzone into an instant of its day', () => {
+  it('turns a time of day at the operator into an instant of its day', () => {
     // 10:15 today at the operator is 00:15 UTC on the same date
     const seconds = timeTodayInZone(10, 15, 'Australia/Brisbane', NOW);
 

@@ -52,7 +52,7 @@ export const vehicleValidation = yup.object({
   maxDepartWeight: yup
     .number()
     .default(0)
-    .min(0, () => i18n.t('forms.vehicle.maximumTakeOffWeightMustBe')),
+    .min(0, () => i18n.t('forms.vehicle.maxWeightMustBe')),
   fuelType: yup.string().nullable().default(null),
 });
 
@@ -147,7 +147,7 @@ export default function useVehicleForm(opts: IUseVehicleFormOpts) {
           }
           if ('vehicle' in response && response.vehicle) {
             notify.success(
-              i18n.t('forms.vehicle.aircraftSaved', {
+              i18n.t('forms.vehicle.vehicleSaved', {
                 vehicle: i18n.t('terms:vehicle', { count: 1 }),
               })
             );

@@ -26,7 +26,7 @@ export const GCA_ROLE = {
   position: 1,
 };
 
-/** The crew roles of a dropzone: a pilot for each aircraft and a GCA for the load */
+/** The crew roles of a skydiving operator: a pilot for each vehicle and a GCA for the load */
 export default createMockedQuery<CrewRolesQueryVariables, CrewRolesQuery>(
   CrewRolesDocument,
   { operatorId: '1' },

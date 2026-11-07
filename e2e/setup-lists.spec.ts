@@ -3,6 +3,7 @@ import { expectAccessible } from './support/a11y';
 import { expectLayout } from './support/layout';
 import { pressUntil } from './support/press';
 import { expect, gotoRoute, test } from './support/test';
+import { SEED } from './support/seed';
 
 // The setup lists (U5.5): one pattern for every list of Setup → Operations and the accepted bodies. A row opens the
 // item's form (a sheet on a phone, a side panel on a wide window); each spec creates an item, edits it and archives it
@@ -52,20 +53,24 @@ test.describe('setup lists @setup', () => {
   test('a vehicle is added, renamed and archived', async ({ page }) => {
     const name = `E2E Otter ${stamp()}`;
     await gotoRoute(page, '/configuration/vehicles');
-    let form = await openForm(page, page.getByTestId('new-vehicle-primary-action'), 'New aircraft');
+    let form = await openForm(
+      page,
+      page.getByTestId('new-vehicle-primary-action'),
+      `New ${SEED.vehicle}`
+    );
     await form.getByRole('textbox', { name: 'Name' }).fill(name);
     await form.getByRole('textbox', { name: 'Registration' }).fill(`VH-${stamp()}`);
     await form.getByRole('spinbutton', { name: 'Max slots' }).fill('8');
     await save(form);
     await expect(page.getByRole('button', { name, exact: true })).toBeVisible();
 
-    form = await openRow(page, name, 'Edit aircraft');
+    form = await openRow(page, name, `Edit ${SEED.vehicle}`);
     await expectAccessible(page, 'vehicle form');
     await form.getByRole('textbox', { name: 'Name' }).fill(`${name} II`);
     await save(form);
     await expect(page.getByRole('button', { name: `${name} II`, exact: true })).toBeVisible();
 
-    form = await openRow(page, `${name} II`, 'Edit aircraft');
+    form = await openRow(page, `${name} II`, `Edit ${SEED.vehicle}`);
     await archive(page, form, `${name} II`);
   });
 
@@ -167,7 +172,11 @@ test.describe('setup lists @setup', () => {
   test('an item of equipment is added, edited and archived', async ({ page }) => {
     const serial = `E2E${stamp()}`;
     await gotoRoute(page, '/configuration/equipment');
-    let form = await openForm(page, page.getByTestId('new-equipment-primary-action'), 'New rig');
+    let form = await openForm(
+      page,
+      page.getByTestId('new-equipment-primary-action'),
+      `New ${SEED.equipment}`
+    );
     await form.getByRole('textbox', { name: 'Make' }).fill('Sun Path');
     await form.getByRole('textbox', { name: 'Model' }).fill('Javelin');
     await form.getByRole('textbox', { name: 'Serial' }).fill(serial);
@@ -184,20 +193,20 @@ test.describe('setup lists @setup', () => {
     const name = `Sun Path Javelin #${serial}`;
     await expect(page.getByRole('button', { name, exact: true })).toBeVisible();
 
-    form = await openRow(page, name, 'Edit rig');
+    form = await openRow(page, name, `Edit ${SEED.equipment}`);
     await form.getByRole('textbox', { name: 'Model' }).fill('Odyssey');
     await save(form);
     const renamed = `Sun Path Odyssey #${serial}`;
     await expect(page.getByRole('button', { name: renamed, exact: true })).toBeVisible();
 
-    form = await openRow(page, renamed, 'Edit rig');
+    form = await openRow(page, renamed, `Edit ${SEED.equipment}`);
     await archive(page, form, renamed);
   });
 
   test('an inspection form gets a field and loses it again', async ({ page }) => {
     const label = `E2E check ${stamp()}`;
     await gotoRoute(page, '/configuration/equipment-inspection');
-    let form = await openRow(page, 'Rig', 'Rig inspection form');
+    let form = await openRow(page, SEED.equipmentKind, `${SEED.equipmentKind} inspection form`);
     await form.getByRole('button', { name: 'Add a field' }).click();
     await page.getByRole('menuitem', { name: 'Checkbox' }).click();
     const field = page.getByTestId('field-dialog');
@@ -206,12 +215,12 @@ test.describe('setup lists @setup', () => {
     await expect(field).toBeHidden();
     await save(form);
 
-    form = await openRow(page, 'Rig', 'Rig inspection form');
+    form = await openRow(page, SEED.equipmentKind, `${SEED.equipmentKind} inspection form`);
     await expect(form.getByText(label)).toBeVisible();
     await form.getByRole('button', { name: `Remove ${label}` }).click();
     await save(form);
 
-    form = await openRow(page, 'Rig', 'Rig inspection form');
+    form = await openRow(page, SEED.equipmentKind, `${SEED.equipmentKind} inspection form`);
     await expect(form.getByText(label)).toHaveCount(0);
     await page.keyboard.press('Escape');
     await expect(form).toBeHidden();

@@ -95,7 +95,6 @@
     "equipment": "Equipment",
     "transactions": "Transactions",
     "permissions": "Permissions",
-    "masterLog": "Master log",
     "inbox": "Inbox",
     "people": "People",
     "user": "Profile",
@@ -144,7 +143,7 @@
     "next": {
       "title": "Your next load",
       "places": "{{filled}} of {{capacity}} places taken",
-      "takeOff": "Take me off this load",
+      "removeMe": "Take me off this load",
       "desk": "Ask the manifest desk to change your booking",
       "tookOff": "You are off {{load}}"
     },
@@ -210,8 +209,8 @@
       "boarding_canceled": "Boarding call cancelled",
       "user_manifested": "Booked on a load",
       "credits_updated": "Your balance changed",
-      "equipment_inspection_requested": "Rig inspection needed",
-      "equipment_inspection_completed": "Rig inspected",
+      "equipment_inspection_requested": "Inspection needed",
+      "equipment_inspection_completed": "Inspection done",
       "permission_granted": "Access granted",
       "permission_revoked": "Access removed",
       "membership_updated": "Your membership changed",
@@ -530,11 +529,11 @@
       "preRegisterUser": "Pre-register user",
       "optional": "Optional",
       "phoneNumber": "Phone number",
-      "exitWeightKg": "Exit weight",
+      "bodyMassKg": "Body weight",
       "nameIsRequired": "Name is required",
       "emailIsRequiredToInviteThe": "Email is required to invite the user",
-      "exitWeightIsRequired": "Exit weight is required",
-      "exitWeightMustBeMoreThan": "Exit weight must be more than 40kg",
+      "bodyMassIsRequired": "Body weight is required",
+      "bodyMassMustBeMoreThan": "Body weight must be more than 40kg",
       "certificationBodyMustBeSelected": "Certification body must be selected",
       "allJumpersMustHaveACertificationLevel": "All jumpers must have a certification level",
       "youMustSelectARole": "You must select a role"
@@ -571,7 +570,7 @@
       "pilot": "Pilot",
       "youMustSelectAGca": "You must select a GCA",
       "everyLoadNeedsAPilot": "Every load needs a pilot",
-      "youCantCreateALoadWithout": "You cant create a load without an aircraft",
+      "youCantCreateALoadWithout": "You can't create a load without choosing the {{vehicle}}",
       "youMustSpecifyMaxSlots": "You must specify max slots",
       "addedToTheBoard": "Load #{{number}} added to the board",
       "destinations": "{{destinations}}",
@@ -593,8 +592,8 @@
       "membershipExpires": "Membership expires",
       "userMustHaveAnAccessLevel": "User must have an access level",
       "membershipExpiryMustBeSet": "Membership expiry must be set",
-      "edit": "Edit dropzone user",
-      "new": "New dropzone user",
+      "edit": "Edit membership",
+      "new": "New membership",
       "actingPermissions": "Acting permissions",
       "financial": "Financial"
     },
@@ -602,7 +601,6 @@
       "branding": "Branding",
       "primaryColor": "Primary color",
       "primaryColorIsUsedFor": "Primary color is used for elements like the title bar and the tab bar",
-      "yourDropzoneMustBePartOf": "Your dropzone must accept at least one certification body",
       "yourChangesHaveBeenSaved": "Your changes have been saved",
       "changeBanner": "Change the banner",
       "bannerHelp": "Your banner is displayed on the weather board and on the operator selection screen",
@@ -689,13 +687,13 @@
     "user": {
       "updateInformation": "Update information",
       "phone": "Phone",
-      "exitWeightKg": "Exit weight",
+      "bodyMassKg": "Body weight",
       "nameIsRequired": "Name is required",
       "notAValidEmail": "Not a valid email",
       "emailIsRequired": "Email is required",
-      "exitWeightMustBeAValid": "Exit weight must be a valid number",
-      "exitWeightIsRequired": "Exit weight is required",
-      "exitWeightSeemsTooLow": "Exit weight seems too low?",
+      "bodyMassMustBeAValid": "Body weight must be a valid number",
+      "bodyMassIsRequired": "Body weight is required",
+      "bodyMassSeemsTooLow": "Body weight seems too low?",
       "profileHasBeenUpdated": "Profile has been updated"
     },
     "user_wizard": {
@@ -717,7 +715,7 @@
       "serialNumber": "Serial number",
       "wingLoading": "Wing Loading",
       "yourWingloading": "Your wingloading",
-      "yourExitWeight": "Your exit weight",
+      "yourBodyMass": "Your exit weight",
       "yourWeightInKgS": "Your weight with all equipment on",
       "canopySize": "Canopy Size",
       "sizeOfYourMainCanopy": "Size of your main canopy in square feet",
@@ -727,7 +725,7 @@
       "pleaseEnterTheModelOfYour": "Please enter the model of your container",
       "serialNumberMakesItFasterTo": "Serial number makes it faster to identify and inspect your container",
       "pleaseEnterYourCanopySizeIn": "Please enter your canopy size in square feet",
-      "enterYourExitWeight": "Enter your exit weight",
+      "enterYourBodyMass": "Enter your exit weight",
       "youMustSelectACertificationBody": "You must select a certification body",
       "youMustSelectACertificationLevel": "You must select a certification level",
       "uploadPhoto": "Upload a photo",
@@ -754,10 +752,10 @@
       "maximumSlotsIsRequired": "Maximum slots is required",
       "maximumSlotsMustBeGreaterThan": "Maximum slots must be greater than 0",
       "basicEmptyWeightMustBeGreater": "Basic empty weight must be greater than 0",
-      "maximumTakeOffWeightMustBe": "Maximum take off weight must be greater than 0",
-      "aircraftSaved": "{{vehicle}} saved",
-      "editAircraft": "Edit {{vehicle}}",
-      "newAircraft": "New {{vehicle}}"
+      "maxWeightMustBe": "Maximum weight must be greater than 0",
+      "vehicleSaved": "{{vehicle}} saved",
+      "editVehicle": "Edit {{vehicle}}",
+      "newVehicle": "New {{vehicle}}"
     },
     "equipment_inspection": {
       "equipmentInspectionSaved": "Equipment inspection saved",
@@ -888,7 +886,7 @@
   },
   "load": {
     "edit": "Edit",
-    "takeOff": "Take off",
+    "remove": "Take off",
     "prepaid": "Prepaid",
     "placeMenu": "Actions for {{name}}",
     "freePlaces_one": "{{count}} free place",
@@ -1486,6 +1484,15 @@
       "needPilot": "You must select a pilot before this load can be finalized",
       "complete": "Mark as completed",
       "manifest": "Manifest"
+    },
+    "noVehicle": "No {{vehicle}}",
+    "setup": {
+      "addVehicle": "Add {{vehicle}}",
+      "addTicket": "Create a {{ticket}}",
+      "expanded": "Show expanded cards",
+      "compact": "Show compact cards",
+      "profile": "Complete your profile",
+      "profileBody": "Let this {{operator}} know who you are"
     }
   }
 }

@@ -49,7 +49,7 @@ test.describe('manifest board @manifest', () => {
     await press(page, primary);
     await expect(state).toContainText(/in flight|departed/i, { timeout: 15_000 });
     await press(page, primary);
-    await expect(state).toContainText(/landed|completed/i, { timeout: 15_000 });
+    await expect(state).toContainText(/(land|complet)ed/i, { timeout: 15_000 });
     await expect(primary).toHaveText(/re-open/i);
   });
 

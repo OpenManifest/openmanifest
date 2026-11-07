@@ -43,8 +43,8 @@ export default function VehicleDialog(props: IVehicleDialogProps) {
       {...{ open, loading, onClose }}
       title={
         original?.id
-          ? t('forms.vehicle.editAircraft', { vehicle })
-          : t('forms.vehicle.newAircraft', { vehicle })
+          ? t('forms.vehicle.editVehicle', { vehicle })
+          : t('forms.vehicle.newVehicle', { vehicle })
       }
       open={open}
       onSubmit={onSubmit}

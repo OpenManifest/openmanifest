@@ -10,7 +10,7 @@ import {
 import { bracketGroups, buildSections } from '../sections';
 import { readinessOf } from '../eligibility';
 
-const labels = { notAssigned: 'No aircraft' };
+const labels = { notAssigned: 'No vehicle' };
 const kinds = (items: { type: string }[]) => items.map(({ type }) => type);
 
 describe('bracketGroups', () => {
@@ -104,7 +104,7 @@ describe('buildSections', () => {
       'header:Otter',
       'place:2',
       'free:2',
-      'header:No aircraft',
+      'header:No vehicle',
       'place:3',
     ]);
     expect(items[0]).toMatchObject({ filled: 1, capacity: 2 });

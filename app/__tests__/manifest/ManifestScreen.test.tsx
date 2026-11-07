@@ -81,7 +81,7 @@ describe('<ManifestScreen />', () => {
     );
   });
 
-  describe('the day of a Brisbane dropzone, seen from a device in UTC (BUG-068)', () => {
+  describe('the day of a Brisbane operator, seen from a device in UTC (BUG-068)', () => {
     const originalNow = Settings.now;
     const originalZone = Settings.defaultZone;
     afterEach(() => {
@@ -109,7 +109,7 @@ describe('<ManifestScreen />', () => {
         session: authenticatedSession,
       });
 
-    it("shows the loads of the dropzone's day, not the device's", async () => {
+    it("shows the loads of the operator's day, not the device's", async () => {
       // 23:00 UTC on 8 October: still the 8th on the device, already 09:00 on the 9th in Brisbane
       Settings.defaultZone = 'UTC';
       Settings.now = () => new Date('2026-10-08T23:00:00Z').valueOf();

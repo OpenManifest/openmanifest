@@ -41,7 +41,10 @@ async function expectNoSkydiving(page: Page, where: string, within?: Locator, ot
   for (const other of others ? await others.allInnerTexts() : [])
     text = text.split(other).join(' ');
   // The seed's public dropzone, and the email the new user got from the API helper ("newjumper+…"), are not the screen's words
-  text = text.split('Demo Dropzone').join(' ').replace(/newjumper\+\d+@example\.com/g, ' ');
+  text = text
+    .split('Demo Dropzone')
+    .join(' ')
+    .replace(/newjumper\+\d+@example\.com/g, ' ');
   for (const [name, glyph] of Object.entries(SKYDIVING_GLYPHS)) {
     expect(text.includes(glyph), `${where} shows the ${name} icon`).toBe(false);
   }

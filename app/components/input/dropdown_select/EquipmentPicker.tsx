@@ -4,7 +4,7 @@ import type {
   EquipmentKindEssentialsFragment,
 } from 'app/api/operations';
 import { useOperatorContext } from 'app/providers/operator/context';
-import { RIG_KIND } from 'app/features/skydiving/rig';
+import { PARACHUTE_KIND } from 'app/features/skydiving/parachute';
 import { withHookForm } from '../withHookForm';
 import EquipmentSelect from './EquipmentSelect';
 
@@ -42,7 +42,7 @@ interface IEquipmentPicker {
   loadId?: number;
   ticketTypeId?: string | null;
   activityTypeId?: string | null;
-  /** Skydiving: a tandem instructor's rig is a tandem rig */
+  /** Skydiving: a tandem instructor's parachute is a tandem one */
   tandem?: boolean;
   value?: EquipmentEssentialsFragment[] | null;
   small?: boolean;
@@ -53,7 +53,7 @@ interface IEquipmentPicker {
 }
 
 /**
- * What a slot uses, one item for each kind of equipment that slot needs (a rig; a BCD, a regulator and a wetsuit): a
+ * What a slot uses, one item for each kind of equipment that slot needs (a parachute; a BCD, a regulator and a wetsuit): a
  * select for every required kind of the operator that puts its choice in the list.
  */
 function EquipmentPicker(props: IEquipmentPicker) {
@@ -95,7 +95,7 @@ function EquipmentPicker(props: IEquipmentPicker) {
           kind={kind.key}
           label={kind.name}
           {...{ membershipId, loadId, small, variant, autoSelectFirst, error }}
-          tandem={tandem && kind.key === RIG_KIND}
+          tandem={tandem && kind.key === PARACHUTE_KIND}
           value={chosen.find((item) => item.equipmentKind?.key === kind.key) as never}
           onChange={(item) => onChangeKind(kind.key, item)}
         />

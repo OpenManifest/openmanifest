@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DateTime } from 'luxon';
 import { fireEvent } from '@testing-library/react-native';
 import { renderThemed } from 'app/ui/components/testing';
-import { rigKind } from 'app/__fixtures__/equipmentKind.fixture';
+import { parachuteKind } from 'app/__fixtures__/equipmentKind.fixture';
 import { currentUserDetailed } from 'app/__fixtures__/currentUser.fixture';
 import { Permission } from 'app/api/schema.d';
 import ReadyChecklist from 'app/features/today/ReadyChecklist';
@@ -13,7 +13,7 @@ import FundsSection from '../FundsSection';
 import LoadsSection from '../LoadsSection';
 import MembershipSection from '../MembershipSection';
 
-const rig = (currentUserDetailed.user.equipment ?? [])[0] as never;
+const parachute = (currentUserDetailed.user.equipment ?? [])[0] as never;
 const inspection = {
   __typename: 'EquipmentInspection',
   id: '70',
@@ -158,9 +158,9 @@ describe('<EquipmentSection />', () => {
     const onInspect = jest.fn();
     const { getByText, getByTestId } = await renderThemed(
       <EquipmentSection
-        equipment={[rig]}
+        equipment={[parachute]}
         inspections={[inspection]}
-        kinds={[rigKind]}
+        kinds={[parachuteKind]}
         onEdit={onEdit}
         onInspect={onInspect}
         onViewCard={jest.fn()}
@@ -168,7 +168,7 @@ describe('<EquipmentSection />', () => {
     );
 
     expect(getByText('Primary')).toBeTruthy();
-    expect(getByText('Rig · Vector V310 · 12345')).toBeTruthy();
+    expect(getByText(`${parachuteKind.name} · Vector V310 · 12345`)).toBeTruthy();
     expect(getByText('Main canopy size')).toBeTruthy();
     expect(getByTestId('profile-equipment-1-inspection-value').props.children).toBe(
       'By Ian Inspector'
@@ -183,9 +183,9 @@ describe('<EquipmentSection />', () => {
   it('says an item is not inspected, and keeps editing from those who may not', async () => {
     const { getByText, queryByTestId } = await renderThemed(
       <EquipmentSection
-        equipment={[rig]}
+        equipment={[parachute]}
         inspections={[]}
-        kinds={[rigKind]}
+        kinds={[parachuteKind]}
         onInspect={jest.fn()}
         onViewCard={jest.fn()}
       />
@@ -201,7 +201,7 @@ describe('<EquipmentSection />', () => {
       <EquipmentSection
         equipment={[]}
         inspections={[]}
-        kinds={[rigKind]}
+        kinds={[parachuteKind]}
         onAdd={jest.fn()}
         onInspect={jest.fn()}
         onViewCard={jest.fn()}

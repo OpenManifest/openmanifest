@@ -4,7 +4,7 @@ import { fromSi, toSi, unitOf, type UnitSystem } from 'app/i18n/units';
  * What only skydiving knows about its equipment: the `rig` kind, its type and its canopy. The generic equipment screens
  * work for any kind; the wizard steps and the wing loading of this feature read these attributes.
  */
-export const RIG_KIND = 'rig';
+export const PARACHUTE_KIND = 'rig';
 
 export type RigType = 'student' | 'sport' | 'tandem';
 export const RIG_TYPES: RigType[] = ['student', 'sport', 'tandem'];
@@ -12,7 +12,7 @@ export const RIG_TYPES: RigType[] = ['student', 'sport', 'tandem'];
 type WithKind = { equipmentKind?: { key: string } | null; attributes?: unknown };
 
 export const isRig = (equipment?: WithKind | null): boolean =>
-  equipment?.equipmentKind?.key === RIG_KIND;
+  equipment?.equipmentKind?.key === PARACHUTE_KIND;
 
 type RigAttributes = { rig_type?: RigType; canopy_size_m2?: number; pack_value?: number };
 
@@ -20,8 +20,8 @@ export const rigAttributes = (equipment?: WithKind | null): RigAttributes =>
   (equipment?.attributes ?? {}) as RigAttributes;
 
 /** The rig kind of a list of kinds (an operator's), if it has one */
-export const findRigKind = <K extends { key: string }>(kinds?: K[] | null): K | undefined =>
-  kinds?.find((kind) => kind.key === RIG_KIND);
+export const findParachuteKind = <K extends { key: string }>(kinds?: K[] | null): K | undefined =>
+  kinds?.find((kind) => kind.key === PARACHUTE_KIND);
 
 /** The canopy size in the operator's area unit (square feet for a skydiving operator), rounded */
 export function canopySize(equipment?: WithKind | null, units?: UnitSystem | null): number | null {

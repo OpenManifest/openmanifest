@@ -43,11 +43,11 @@ export default function useSelectOperator() {
           if (payload?.membership) {
             return select();
           }
-          notify.error(payload?.errors?.[0] ?? 'This dropzone cannot be joined');
+          notify.error(payload?.errors?.[0] ?? 'This operator cannot be joined');
           return false;
         })
         .catch((error) => {
-          notify.error(error instanceof Error ? error.message : 'This dropzone cannot be joined');
+          notify.error(error instanceof Error ? error.message : 'This operator cannot be joined');
           return false;
         });
     },

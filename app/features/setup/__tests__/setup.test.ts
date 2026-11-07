@@ -31,7 +31,7 @@ const shape = (permissions: Permission[], modules: Record<string, unknown> = SKY
   );
 
 describe('Setup groups', () => {
-  it('give an owner of a dropzone everything, in three groups', () => {
+  it('give an owner of an operator everything, in three groups', () => {
     expect(shape(ROLE_PERMISSIONS.owner)).toEqual([
       'operations: vehicles destinations crewRoles tickets extras equipment inspection conditions',
       'people: permissions certificationBodies',

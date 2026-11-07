@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
 import { currentUserDetailed } from 'app/__fixtures__/currentUser.fixture';
-import { rigKind } from 'app/__fixtures__/equipmentKind.fixture';
+import { parachuteKind } from 'app/__fixtures__/equipmentKind.fixture';
 import MOCK_QUERY_OPERATOR from 'app/__tests__/manifest/__mocks__/QueryOperator.mock';
 import MOCK_QUERY_AVAILABLE_EQUIPMENT from 'app/__tests__/manifest/__mocks__/QueryAvailableEquipment.mock';
 import { render, waitFor, within } from '../../../../__mocks__/render';
@@ -11,17 +11,17 @@ import EquipmentPicker, { kindRequired, requiredKinds } from '../EquipmentPicker
 jest.setTimeout(30000);
 
 const wetsuitKind = {
-  ...rigKind,
+  ...parachuteKind,
   id: '2',
   key: 'wetsuit',
   name: 'Wetsuit',
   requiredBy: { ticket_type_ids: [7], activity_type_ids: [3] },
 };
-const noKind = { ...rigKind, id: '3', key: 'pfd', name: 'PFD', requiredBy: {} };
+const noKind = { ...parachuteKind, id: '3', key: 'pfd', name: 'PFD', requiredBy: {} };
 
 describe('which kinds of equipment a slot needs', () => {
   it('needs the kinds required by every slot', () => {
-    expect(kindRequired(rigKind, {})).toBe(true);
+    expect(kindRequired(parachuteKind, {})).toBe(true);
   });
 
   it('needs a kind listed for the ticket type or the activity type of the slot', () => {
@@ -37,15 +37,17 @@ describe('which kinds of equipment a slot needs', () => {
 
   it('lists the kinds a slot needs', () => {
     expect(
-      requiredKinds([rigKind, wetsuitKind, noKind], { ticketTypeId: '7' }).map((kind) => kind.key)
-    ).toEqual(['rig', 'wetsuit']);
+      requiredKinds([parachuteKind, wetsuitKind, noKind], { ticketTypeId: '7' }).map(
+        (kind) => kind.key
+      )
+    ).toEqual([parachuteKind.key, 'wetsuit']);
     expect(requiredKinds(undefined, {})).toEqual([]);
   });
 });
 
 async function renderPicker(
   props: Partial<React.ComponentProps<typeof EquipmentPicker>>,
-  kinds = [rigKind]
+  kinds = [parachuteKind]
 ) {
   const screen = await render(
     <View testID="under-test">
@@ -63,11 +65,11 @@ async function renderPicker(
 }
 
 describe('<EquipmentPicker />', () => {
-  it('shows the item chosen for the rig kind', async () => {
+  it('shows the item chosen for the parachute kind', async () => {
     const [primary] = currentUserDetailed.user.equipment ?? [];
     const picker = await renderPicker({ value: [primary as never] });
 
-    await waitFor(() => expect(picker.getByText('Rig')).toBeTruthy());
+    await waitFor(() => expect(picker.getByText(parachuteKind.name)).toBeTruthy());
     await waitFor(() => expect(picker.getByText('Primary')).toBeTruthy());
   });
 
@@ -81,9 +83,9 @@ describe('<EquipmentPicker />', () => {
   });
 
   it('shows a select for each kind the slot needs and none for the other kinds', async () => {
-    const picker = await renderPicker({}, [rigKind, noKind]);
+    const picker = await renderPicker({}, [parachuteKind, noKind]);
 
-    await waitFor(() => expect(picker.getByText('Rig')).toBeTruthy());
+    await waitFor(() => expect(picker.getByText(parachuteKind.name)).toBeTruthy());
     expect(picker.queryByText('PFD')).toBeNull();
   });
 });

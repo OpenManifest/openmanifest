@@ -9,13 +9,17 @@ import { useStep as useQualificationsStep } from './steps/Qualifications';
 import { useStep as useRealNameStep } from './steps/RealName';
 import { useStep as useDateOfBirthStep } from './steps/DateOfBirth';
 import {
-  useAskForRigStep,
+  useAskForParachuteStep,
   useReserveRepackStep,
-  useRigStep,
+  useParachuteStep,
   useWingloadingStep,
 } from 'app/features/skydiving/wizard';
 import { useWizardParts, wizardLayout } from './modules';
-import { RIG_KIND, canopySizeToSquareMetres, findRigKind } from 'app/features/skydiving/rig';
+import {
+  PARACHUTE_KIND,
+  canopySizeToSquareMetres,
+  findParachuteKind,
+} from 'app/features/skydiving/parachute';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { useOperatorFormat } from 'app/i18n/operatorFormat';
 import { useUserProfileContext } from 'app/api/crud';
@@ -42,17 +46,17 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
   const step6 = useCertificationLevelStep();
   const qualificationsStep = useQualificationsStep();
   const dateOfBirthStep = useDateOfBirthStep();
-  const step7 = useAskForRigStep();
-  const step8 = useRigStep();
+  const step7 = useAskForParachuteStep();
+  const step8 = useParachuteStep();
   const step9 = useReserveRepackStep();
   const step10 = useWingloadingStep();
   // Only the parts the operator's modules ask for: certifications (and the qualifications its tickets need), the date
-  // of birth for an age limit, and a skydiver's rig; each part's steps follow the ones before it
+  // of birth for an age limit, and a skydiver's parachute; each part's steps follow the ones before it
   const {
     certifications: withCertifications,
     qualifications: withQualifications,
     dateOfBirth: withDateOfBirth,
-    rigs: withRigs,
+    parachute: withParachute,
   } = useWizardParts();
   const layout = React.useMemo(
     () =>
@@ -60,14 +64,14 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
         certifications: withCertifications,
         qualifications: withQualifications,
         dateOfBirth: withDateOfBirth,
-        rigs: withRigs,
+        parachute: withParachute,
       }),
-    [withCertifications, withQualifications, withDateOfBirth, withRigs]
+    [withCertifications, withQualifications, withDateOfBirth, withParachute]
   );
   const {
     operator: { operator },
   } = useOperatorContext();
-  const rigKind = findRigKind(operator?.equipmentKinds);
+  const parachuteKind = findParachuteKind(operator?.equipmentKinds);
   const units = useOperatorFormat((state) => state.units);
 
   const steps = useMemo(
@@ -78,7 +82,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       ...(withCertifications ? [step4, step5, step6] : []),
       ...(withQualifications ? [qualificationsStep] : []),
       ...(withDateOfBirth ? [dateOfBirthStep] : []),
-      ...(withRigs ? [step7, step8, step9, step10] : []),
+      ...(withParachute ? [step7, step8, step9, step10] : []),
     ],
     [
       qualificationsStep,
@@ -96,7 +100,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       withCertifications,
       withQualifications,
       withDateOfBirth,
-      withRigs,
+      withParachute,
     ]
   );
 
@@ -127,7 +131,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               canopySize,
               bodyMassKg,
               certificationBody,
-              hasRig,
+              hasParachute,
               certificationLevel,
               make,
               model,
@@ -135,7 +139,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               nickname,
               dateOfBirth,
               serviceDueAt,
-              rigId,
+              parachuteId,
               serial,
               qualifications,
             } = fields;
@@ -218,16 +222,16 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               return true;
             }
 
-            // The questions about the jumper's rig: skip them for a jumper without one, save the rig step by step
-            if (stepIndex === layout.askForRig && !hasRig) {
+            // The questions about the skydiver's parachute: skip them for a skydiver without one, save the parachute step by step
+            if (stepIndex === layout.askForParachute && !hasParachute) {
               setValue('stepIndex', lastStepIndex);
               return false;
             }
 
             if (
-              layout.rigFrom !== null &&
-              hasRig &&
-              stepIndex >= layout.rigFrom &&
+              layout.parachuteFrom !== null &&
+              hasParachute &&
+              stepIndex >= layout.parachuteFrom &&
               stepIndex < lastStepIndex
             ) {
               if (
@@ -246,16 +250,16 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
               }
               const equipmentResponse = await equipment.add({
                 userId: Number(membership.user.id),
-                kindId: rigKind?.id,
+                kindId: parachuteKind?.id,
                 serviceDueAt,
                 make,
                 model,
                 serial,
-                // The rig's attributes: the canopy size typed in the operator's unit is stored in square metres
+                // The parachute's attributes: the canopy size typed in the operator's unit is stored in square metres
                 attributes: canopySize
                   ? { canopy_size_m2: canopySizeToSquareMetres(Number(canopySize), units) }
                   : undefined,
-                id: rigId || undefined,
+                id: parachuteId || undefined,
               });
               if ('error' in equipmentResponse) {
                 setError('serial', { message: equipmentResponse.error, type: 'required' });
@@ -278,7 +282,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
                 return false;
               }
               if ('equipment' in equipmentResponse) {
-                setValue('rigId', equipmentResponse.equipment.id);
+                setValue('parachuteId', equipmentResponse.equipment.id);
                 setValue('make', equipmentResponse.equipment.make || '');
                 setValue('model', equipmentResponse.equipment.model || '');
                 setValue('serial', equipmentResponse.equipment.serial || '');
@@ -344,7 +348,7 @@ export function useUserWizardForm(opts: IUserWizardFormOpts) {
       joinCertificationBody,
       addQualification,
       layout,
-      rigKind?.id,
+      parachuteKind?.id,
       units,
       setError,
       setValue,

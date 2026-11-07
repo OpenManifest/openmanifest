@@ -115,7 +115,7 @@ export function LoadView({ embedded = false }: { embedded?: boolean }) {
     !!slot.membership?.id && slot.membership.id === currentUser?.id;
   const canEdit = (slot: SlotDetailsFragment) =>
     isOwn(slot) ? permissions.canUpdateOwnSlot : permissions.canUpdateSlot;
-  const canTakeOff = (slot: SlotDetailsFragment) =>
+  const canRemove = (slot: SlotDetailsFragment) =>
     isOwn(slot) ? permissions.canDeleteOwnSlot : permissions.canDeleteSlot;
 
   const edit = React.useCallback(
@@ -129,7 +129,7 @@ export function LoadView({ embedded = false }: { embedded?: boolean }) {
     },
     [dialogs.manifestGroup, dialogs.manifestUser, load]
   );
-  const takeOff = React.useCallback(
+  const remove = React.useCallback(
     async (slot: SlotDetailsFragment) => {
       const response = await deleteSlot({ id: Number(slot.id) });
       const name = slot.membership?.user?.name ?? '';
@@ -168,12 +168,12 @@ export function LoadView({ embedded = false }: { embedded?: boolean }) {
           group: item.group,
           rules: item.slot.membership ? rulesByMember.get(item.slot.membership.id) : null,
           canEdit: canEdit(item.slot),
-          canTakeOff: canTakeOff(item.slot),
+          canRemove: canRemove(item.slot),
           canMove: canEdit(item.slot),
           onMove: setMoving,
           showDestination,
           onEdit: edit,
-          onTakeOff: takeOff,
+          onRemove: remove,
           onOpenPerson: (slot: SlotDetailsFragment) =>
             slot.membership?.id && openUser('ProfileScreen', { userId: slot.membership.id }),
         };

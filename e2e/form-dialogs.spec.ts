@@ -4,7 +4,7 @@ import { expect, gotoRoute, test } from './support/test';
 
 // The forms of the setup screens open in an overlay (a dialog or a side panel on the web) with the save button pinned
 test.describe('form dialogs @setup', () => {
-  test('a new aircraft is entered in a dialog named by its title, validated and closed with Escape', async ({
+  test('a new vehicle is entered in a dialog named by its title, validated and closed with Escape', async ({
     page,
   }) => {
     await gotoRoute(page, '/configuration/vehicles');
@@ -12,7 +12,7 @@ test.describe('form dialogs @setup', () => {
     await pressUntil(page, page.getByTestId('new-vehicle-primary-action'), () =>
       expect(card).toBeVisible({ timeout: 5000 })
     );
-    await expect(page.getByRole('dialog', { name: 'New aircraft' })).toHaveCount(1);
+    await expect(page.getByRole('dialog', { name: /^New / })).toHaveCount(1);
     await expect(card).toBeVisible();
     await expect(card.getByRole('textbox', { name: 'Name' })).toBeVisible();
     await expect(card.getByRole('textbox', { name: 'Registration' })).toBeVisible();

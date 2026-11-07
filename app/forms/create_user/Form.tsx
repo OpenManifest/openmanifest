@@ -39,7 +39,7 @@ export default function GhostForm(props: IGhostFormProps) {
       <FormTextField label={t('forms.create_user.phoneNumber')} name="phone" {...{ control }} />
 
       <FormNumberField
-        label={t('forms.create_user.exitWeightKg')}
+        label={t('forms.create_user.bodyMassKg')}
         name="bodyMassKg"
         variant={NumberFieldType.Weight}
         {...{ control }}

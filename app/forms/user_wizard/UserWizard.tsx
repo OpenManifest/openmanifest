@@ -10,7 +10,7 @@ import NicknameStep from './steps/Nickname';
 import CertificationLevelStep from './steps/CertificationLevel';
 import QualificationsStep from './steps/Qualifications';
 import DoneStep from './steps/Done';
-import { RIG_STEPS } from 'app/features/skydiving/wizard';
+import { PARACHUTE_STEPS } from 'app/features/skydiving/wizard';
 import AvatarStep from './steps/Avatar';
 import DateOfBirthStep from './steps/DateOfBirth';
 import { useWizardParts } from './modules';
@@ -30,12 +30,12 @@ const stepsAfter = [DoneStep];
 export function UserWizard() {
   const wizard = React.useRef<WizardRef>(null);
   // Steps that only some operators' modules ask for: certifications and qualifications, the date of birth, and the
-  // questions about a skydiver's rig (in the order of `wizardLayout`)
+  // questions about a skydiver's parachute (in the order of `wizardLayout`)
   const {
     certifications: withCertifications,
     qualifications: withQualifications,
     dateOfBirth: withDateOfBirth,
-    rigs: withRigs,
+    parachute: withParachute,
   } = useWizardParts();
   const steps = React.useMemo(
     () => [
@@ -43,10 +43,10 @@ export function UserWizard() {
       ...(withCertifications ? certificationSteps : []),
       ...(withQualifications ? [QualificationsStep] : []),
       ...(withDateOfBirth ? [DateOfBirthStep] : []),
-      ...(withRigs ? RIG_STEPS : []),
+      ...(withParachute ? PARACHUTE_STEPS : []),
       ...stepsAfter,
     ],
-    [withCertifications, withQualifications, withDateOfBirth, withRigs]
+    [withCertifications, withQualifications, withDateOfBirth, withParachute]
   );
   const navigation = useNavigation();
   const { params } = useRoute<{

@@ -165,7 +165,7 @@ export async function registerNewUser(name = 'New Jumper'): Promise<string> {
 
 /**
  * Makes sure a member of the seed has flown before, so the member picker has a last slot to fill in: a load on which they
- * had a place, landed. Does nothing when they already have one. Returns whether they have a last slot.
+ * had a place, completed. Does nothing when they already have one. Returns whether they have a last slot.
  */
 export async function giveLastSlotViaApi(name: string): Promise<boolean> {
   const found = await ownerCall('{ operators { edges { node { id } } } }');
@@ -192,10 +192,10 @@ export async function giveLastSlotViaApi(name: string): Promise<boolean> {
     `mutation { createSlot(input: { attributes: { load: ${loadId}, membership: ${member.id}, ticketType: ${ticketTypes[0].id}, activityType: ${activityTypes[0].id}, bodyMassKg: 80 } }) { slot { id } } }`
   );
   if (!slot.json?.data?.createSlot?.slot?.id) return false;
-  const landed = await ownerCall(
+  const completed = await ownerCall(
     `mutation { finalizeLoad(input: { id: ${Number(loadId)}, state: completed }) { load { id } } }`
   );
-  return !!landed.json?.data?.finalizeLoad?.load?.id;
+  return !!completed.json?.data?.finalizeLoad?.load?.id;
 }
 
 /**

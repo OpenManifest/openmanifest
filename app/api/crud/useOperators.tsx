@@ -53,7 +53,7 @@ export default function useOperators(vars: Partial<OperatorsQueryVariables>) {
         };
       } catch (e) {
         appSignal.sendError(e as Error);
-        return { error: 'You cant modify dropzone visibility' };
+        return { error: 'You cant modify operator visibility' };
       }
     },
     [appSignal, updateVisibilityMutation]

@@ -1,6 +1,7 @@
 import { LoadVehicleRole } from 'app/api/schema.d';
 import { LoadDetailsFragment } from 'app/api/operations';
 import { buildSlotEntries } from '../Table';
+import { AVIATION_VEHICLE_KIND } from 'app/features/aviation/kinds';
 
 const labels = {
   seats: (count: number, seats: number) => `${count} of ${seats}`,
@@ -14,7 +15,7 @@ const vehicle = (id: string, name: string, capacity: number) => ({
   capacity,
   minCapacity: 1,
   registration: name,
-  kind: 'aircraft',
+  kind: AVIATION_VEHICLE_KIND,
 });
 
 const loadVehicle = (id: string, role: LoadVehicleRole, capacity: number) => ({

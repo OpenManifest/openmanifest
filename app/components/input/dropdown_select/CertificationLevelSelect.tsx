@@ -1,4 +1,5 @@
 import { CertificationLevelEssentialsFragment } from 'app/api/operations';
+import { useTranslation } from 'react-i18next';
 import { useCertificationLevelsQuery } from 'app/api/reflection';
 import * as React from 'react';
 import Select from '../select/Select';
@@ -12,6 +13,7 @@ interface ICertificationLevelSelect {
 
 function CertificationLevelSelect(props: ICertificationLevelSelect) {
   const { onChange, value, certificationBodyId } = props;
+  const { t } = useTranslation('terms');
 
   const { data } = useCertificationLevelsQuery({
     variables: {
@@ -31,7 +33,7 @@ function CertificationLevelSelect(props: ICertificationLevelSelect) {
   const selected = React.useMemo(() => value, [value]);
   return (
     <Select<CertificationLevelEssentialsFragment>
-      label="License"
+      label={t('certification', { count: 1 })}
       value={selected}
       options={options}
       onChange={onChange}

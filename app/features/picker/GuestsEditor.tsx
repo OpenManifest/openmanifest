@@ -16,7 +16,7 @@ export type GuestsEditorProps = {
   testID?: string;
 };
 
-/** The guests who ride with an escort (a tandem passenger, a try dive student): a name and an exit weight for each */
+/** The guests who ride with an escort (a tandem student, a try dive student): a name and a body weight for each */
 export default function GuestsEditor({
   escort,
   guests,

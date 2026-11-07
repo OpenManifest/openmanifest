@@ -18,7 +18,7 @@ const ICON: Record<StatusKey, React.ComponentProps<typeof MaterialCommunityIcons
   open: 'door-open',
   boarding: 'bullhorn-outline',
   departed: 'arrow-top-right',
-  landed: 'flag-checkered',
+  completed: 'flag-checkered',
   cancelled: 'cancel',
   warning: 'alert-outline',
   blocked: 'alert-octagon-outline',

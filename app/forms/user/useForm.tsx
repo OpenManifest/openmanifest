@@ -40,9 +40,9 @@ export const userValidation = yup.object({
   phone: yup.string().default(''),
   bodyMassKg: yup
     .number()
-    .typeError(() => i18n.t('forms.user.exitWeightMustBeAValid'))
-    .required(() => i18n.t('forms.user.exitWeightIsRequired'))
-    .moreThan(30, () => i18n.t('forms.user.exitWeightSeemsTooLow')),
+    .typeError(() => i18n.t('forms.user.bodyMassMustBeAValid'))
+    .required(() => i18n.t('forms.user.bodyMassIsRequired'))
+    .moreThan(30, () => i18n.t('forms.user.bodyMassSeemsTooLow')),
   certificationBody: yup.object().nullable().default(null),
   certificationLevel: yup.object().nullable().default(null),
   apfNumber: yup.string().default(''),

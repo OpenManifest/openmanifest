@@ -30,7 +30,7 @@ const loadOf = (resource: Resource): string | null => {
   return null;
 };
 
-/** What a row of the inbox opens: the load of a call, the inspection a rig needs, the profile of an inspected rig's owner */
+/** What a row of the inbox opens: the load of a call, the inspection an item needs, the profile of an inspected item's owner */
 export function targetOf(type: NotificationType | null | undefined, resource: Resource): Target {
   switch (type) {
     case NotificationType.Boarding:

@@ -11,7 +11,7 @@ import { isNumber } from 'lodash';
 import { formatDestination } from 'app/i18n/format';
 import { useOperatorFormat } from 'app/i18n/operatorFormat';
 import useTerms from 'app/i18n/useTerms';
-import { canopySize } from 'app/features/skydiving/rig';
+import { canopySize } from 'app/features/skydiving/parachute';
 import SwipeActions from '../layout/SwipeActions';
 import UserAvatar from '../UserAvatar';
 import DraggableWrapper from './DragAndDrop/DraggableRow';

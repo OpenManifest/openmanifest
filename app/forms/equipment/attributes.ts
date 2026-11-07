@@ -5,7 +5,7 @@ import { formatDate, parseQuantity } from 'app/i18n/format';
 
 /**
  * What an item of a kind of equipment records is described by the kind's attribute schema (EquipmentKind.attributeSchema,
- * seeded from the industry template): the screens draw their fields from it and nothing in here knows what a rig or a
+ * seeded from the industry template): the screens draw their fields from it and nothing in here knows what a parachute or a
  * wetsuit is.
  */
 export type AttributeType = 'string' | 'integer' | 'decimal' | 'enum' | 'date';
@@ -106,7 +106,7 @@ export function formatAttribute(
   return String(value);
 }
 
-/** "Main canopy size: 190 ft² · Rig type: Sport" */
+/** "Main canopy size: 190 ft² · Type: Sport" */
 export function summarize(
   schema: AttributeSchema,
   values: AttributeValues | null | undefined,

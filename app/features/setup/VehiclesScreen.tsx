@@ -47,7 +47,7 @@ export default function VehiclesScreen() {
         create={
           canCreate
             ? {
-                label: t('forms.vehicle.newAircraft', { vehicle: vehicleWord }),
+                label: t('forms.vehicle.newVehicle', { vehicle: vehicleWord }),
                 onPress: editor.openNew,
                 testID: 'new-vehicle-primary-action',
               }

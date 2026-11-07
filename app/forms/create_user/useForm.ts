@@ -38,8 +38,8 @@ export const ghostValidation = yup.object({
   certificationBodyUid: yup.string().optional().nullable(),
   bodyMassKg: yup
     .number()
-    .required(() => i18n.t('forms.create_user.exitWeightIsRequired'))
-    .min(40, () => i18n.t('forms.create_user.exitWeightMustBeMoreThan'))
+    .required(() => i18n.t('forms.create_user.bodyMassIsRequired'))
+    .min(40, () => i18n.t('forms.create_user.bodyMassMustBeMoreThan'))
     .default(50),
   certificationBody: yup
     .object()

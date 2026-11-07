@@ -3,7 +3,7 @@ import { pushDataOf, pushTargetOf, type Target } from './inbox';
 type Navigate = (name: 'Authenticated', params: object) => void;
 
 /**
- * Opens a target from anywhere with a navigate: the screens of the tabs, the load of a call, the inspection a rig needs.
+ * Opens a target from anywhere with a navigate: the screens of the tabs, the load of a call, the inspection an item needs.
  * The people screens open under People with the list beneath, as `useOpenUser` does.
  */
 export function openTarget(navigate: Navigate, target: Target) {

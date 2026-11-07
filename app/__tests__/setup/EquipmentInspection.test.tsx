@@ -52,7 +52,7 @@ async function renderForm(
   return scoped(screen.getByTestId('under-test'));
 }
 
-describe('rig inspection form', () => {
+describe('equipment inspection form', () => {
   it('shows the fields of the template', async () => {
     const form = await renderForm();
 
@@ -60,7 +60,7 @@ describe('rig inspection form', () => {
     expect(form.queryAllByText('Notes').length).toBeGreaterThan(0);
   });
 
-  it('wants the required fields filled in before a rig is marked OK to jump', async () => {
+  it('wants the required fields filled in before an item is marked OK to use', async () => {
     const mutationResult = jest.fn();
     const form = await renderForm([
       {

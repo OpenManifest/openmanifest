@@ -11,7 +11,7 @@ export type ResourceFormProps = {
   open: boolean;
   /** Called when the person closes it: the close button, the backdrop, Escape, the back gesture */
   onClose(): void;
-  /** Names the form for screen readers and heads it ("New aircraft", "Edit Otter") */
+  /** Names the form for screen readers and heads it ("New vehicle", "Edit Otter") */
   title: string;
   /** Saves; without it there is no save button (an item that is only looked at, or archived) */
   onSubmit?(): void;

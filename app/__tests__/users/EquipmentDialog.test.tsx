@@ -2,6 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { CreateEquipmentDocument, UpdateEquipmentDocument } from 'app/api/reflection';
 import { currentUserEssentials } from 'app/__fixtures__/equipment.fixture';
+import { parachuteTypeLabel as TYPE_LABEL } from 'app/__fixtures__/equipmentKind.fixture';
 import { fireEvent, render, waitFor, within } from '../../__mocks__/render';
 import EquipmentDialog from '../../forms/equipment';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
@@ -22,7 +23,7 @@ async function renderDialog(
 }
 
 describe('<EquipmentDialog />', () => {
-  it('starts with the rig being edited', async () => {
+  it('starts with the item being edited', async () => {
     const dialog = await renderDialog({ equipment: currentUserEssentials });
 
     await waitFor(() => expect(dialog.getByDisplayValue('Pond')).toBeTruthy());
@@ -31,20 +32,20 @@ describe('<EquipmentDialog />', () => {
     // The canopy size is stored in m² and shown in the operator's unit
     await waitFor(() => expect(dialog.getByDisplayValue('170')).toBeTruthy());
     expect(dialog.getByText('Main canopy size (ft²)')).toBeTruthy();
-    // The type of a rig is something only the operator's own rigs have
-    expect(dialog.queryByText('Rig type')).toBeNull();
+    // The type is an attribute only the operator's own parachutes have
+    expect(dialog.queryByText(TYPE_LABEL)).toBeNull();
   });
 
-  it("asks for the attributes of the operator's rig, from the schema of its kind", async () => {
+  it("asks for the attributes of the operator's parachute, from the schema of its kind", async () => {
     const dialog = await renderDialog({ userId: undefined, operatorId: 1 });
 
-    await waitFor(() => expect(dialog.getByText('Rig type')).toBeTruthy());
+    await waitFor(() => expect(dialog.getByText(TYPE_LABEL)).toBeTruthy());
     expect(dialog.getByText('Main canopy size (ft²)')).toBeTruthy();
     expect(dialog.getByText('Pack value')).toBeTruthy();
     expect(dialog.getByText('Student')).toBeTruthy();
   });
 
-  it('asks for the details a new rig needs', async () => {
+  it('asks for the details a new item needs', async () => {
     const dialog = await renderDialog({});
     // No date shows until one is chosen (BUG-113: today's date showed, as if it were set)
     await waitFor(() => expect(dialog.getByText('No date')).toBeTruthy());
@@ -54,7 +55,7 @@ describe('<EquipmentDialog />', () => {
     await waitFor(() => expect(dialog.getByText('Set when the next service is due')).toBeTruthy());
   });
 
-  it('sends the edited values to UpdateRig', async () => {
+  it('sends the edited values to UpdateEquipment', async () => {
     const mutationResult = jest.fn(() => ({
       data: {
         updateEquipment: {
@@ -94,7 +95,7 @@ describe('<EquipmentDialog />', () => {
     await waitFor(() => expect(mutationResult).toHaveBeenCalledTimes(1), { timeout: 10000 });
   });
 
-  it('sends a new rig to CreateRig', async () => {
+  it('sends a new item to CreateEquipment', async () => {
     const mutationResult = jest.fn(() => ({
       data: {
         createEquipment: {

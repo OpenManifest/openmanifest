@@ -12,7 +12,7 @@ export type Places = {
   filled: number;
 };
 
-/** The crew that takes a place of the vehicle (a pilot sits in the aircraft, a guide on the ground does not) */
+/** The crew that takes a place of the vehicle (a pilot sits in the aeroplane, a guide on the ground does not) */
 export function seatedCrew(load: Pick<PlacesLoad, 'crew'>): number {
   return (load.crew ?? []).filter(({ crewRole, membership }) => crewRole.occupiesSlot && membership)
     .length;

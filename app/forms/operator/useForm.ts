@@ -100,7 +100,7 @@ export default function useOperatorForm(opts: IUseManifestFormOpts) {
     async (fields: OperatorFields) => {
       try {
         if (!canUpdateOperator) {
-          return { error: "You don't have permission to update this dropzone" };
+          return { error: "You don't have permission to update this operator" };
         }
         // Throws when the fields are invalid
         operatorValidation.validateSync(fields);

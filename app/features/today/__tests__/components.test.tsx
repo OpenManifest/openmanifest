@@ -64,14 +64,14 @@ describe('<NextLoadCard />', () => {
   const load = makeLoad({ id: '4', loadNumber: 4, state: LoadState.Open });
   const slot = slotOf('s1', 'Ann Ready');
 
-  it('offers to take the member off when the dropzone lets them', async () => {
-    const onTakeOff = jest.fn();
+  it('offers to take the member off when the operator lets them', async () => {
+    const onRemove = jest.fn();
     const { getByTestId, queryByTestId } = await renderThemed(
-      <NextLoadCard load={load} slot={slot} canTakeOff onTakeOff={onTakeOff} />
+      <NextLoadCard load={load} slot={slot} canRemove onRemove={onRemove} />
     );
 
-    await fireEvent.press(getByTestId('today-next-load-take-off'));
-    expect(onTakeOff).toHaveBeenCalled();
+    await fireEvent.press(getByTestId('today-next-load-remove'));
+    expect(onRemove).toHaveBeenCalled();
     expect(queryByTestId('today-next-load-desk')).toBeNull();
   });
 
@@ -80,7 +80,7 @@ describe('<NextLoadCard />', () => {
       <NextLoadCard load={load} slot={slot} deskOnly />
     );
 
-    expect(queryByTestId('today-next-load-take-off')).toBeNull();
+    expect(queryByTestId('today-next-load-remove')).toBeNull();
     expect(getByTestId('today-next-load-desk')).toBeTruthy();
     expect(getByText('Ask the manifest desk to change your booking')).toBeTruthy();
   });
@@ -88,10 +88,10 @@ describe('<NextLoadCard />', () => {
   it('offers neither once the load has left', async () => {
     const left = makeLoad({ id: '4', loadNumber: 4, state: LoadState.Departed });
     const { queryByTestId } = await renderThemed(
-      <NextLoadCard load={left} slot={slot} canTakeOff deskOnly />
+      <NextLoadCard load={left} slot={slot} canRemove deskOnly />
     );
 
-    expect(queryByTestId('today-next-load-take-off')).toBeNull();
+    expect(queryByTestId('today-next-load-remove')).toBeNull();
     expect(queryByTestId('today-next-load-desk')).toBeNull();
   });
 });

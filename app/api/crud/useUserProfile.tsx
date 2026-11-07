@@ -212,7 +212,7 @@ function useUserProfile(variables?: Partial<MembershipQueryVariables>) {
       { amount, message }: { amount: number; message?: string | null }
     ): ReturnType<typeof createOrder> {
       if (!operator) {
-        return { error: 'No dropzone selected' };
+        return { error: 'No operator selected' };
       }
       return createOrder({
         amountCents: toCents(amount),
@@ -231,7 +231,7 @@ function useUserProfile(variables?: Partial<MembershipQueryVariables>) {
       { amount, message }: { amount: number; message?: string | null }
     ): ReturnType<typeof createOrder> {
       if (!operator) {
-        return { error: 'No dropzone selected' };
+        return { error: 'No operator selected' };
       }
       return createOrder({
         amountCents: toCents(amount),

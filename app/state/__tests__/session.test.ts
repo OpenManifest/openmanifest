@@ -56,7 +56,7 @@ describe('session store', () => {
     expect(state.hydrated).toBe(true);
   });
 
-  it('migrates credentials, dropzone and push token from the redux-persist blob', async () => {
+  it('migrates credentials, operator and push token from the redux-persist blob', async () => {
     await AsyncStorage.setItem(
       'persist:open-manifest.0.9.1',
       legacyBlob({

@@ -12,7 +12,7 @@ interface ICrewFieldsProps {
   control: Control<LoadFields>;
 }
 
-/** One chip select for each place in the crew of the load, from the operator's crew roles (a pilot for each aircraft, a guide for each raft) */
+/** One chip select for each place in the crew of the load, from the operator's crew roles (a pilot for each aeroplane, a guide for each raft) */
 export default function CrewFields({ control }: ICrewFieldsProps) {
   const {
     operator: { operator },

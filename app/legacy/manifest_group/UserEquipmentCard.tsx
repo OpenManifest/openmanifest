@@ -4,7 +4,7 @@ import { ScrollView, View, StyleSheet } from 'react-native';
 import { Card, Divider, List, Button } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 import { useAppTheme } from 'app/theme';
-import { RIG_KIND, wingLoadingOf } from 'app/features/skydiving/rig';
+import { PARACHUTE_KIND, wingLoadingOf } from 'app/features/skydiving/parachute';
 import Chip from 'app/components/chips/Chip';
 import TextInput from 'app/components/input/text/TextField';
 import UserAvatar from 'app/components/UserAvatar';
@@ -63,9 +63,9 @@ export default function UserEquipmentCard(props: IUserEquipmentCard) {
     bodyMassKg,
     guests: escortCapacity > 0 ? guestInputsOf(guests) : undefined,
   });
-  // Skydiving: the wing loading under the rig
+  // Skydiving: the wing loading under the parachute
   const wingLoading = wingLoadingOf(
-    selectedEquipment?.find((item) => item.equipmentKind?.key === RIG_KIND),
+    selectedEquipment?.find((item) => item.equipmentKind?.key === PARACHUTE_KIND),
     bodyMassKg
   );
 

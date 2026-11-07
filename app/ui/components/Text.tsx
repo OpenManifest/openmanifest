@@ -23,7 +23,7 @@ const STATUS: StatusKey[] = [
   'open',
   'boarding',
   'departed',
-  'landed',
+  'completed',
   'cancelled',
   'warning',
   'blocked',

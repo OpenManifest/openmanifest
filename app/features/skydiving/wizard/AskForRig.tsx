@@ -8,10 +8,10 @@ import { WizardFormStep } from 'app/hooks/forms/useWizard';
 import { useMemo } from 'app/hooks/react';
 import { useTranslation } from 'react-i18next';
 import useTerms from 'app/i18n/useTerms';
-import { isRig } from '../rig';
+import { isRig } from '../parachute';
 
 export const validation = yup.object({
-  hasRig: yup.boolean().default(false),
+  hasParachute: yup.boolean().default(false),
 });
 
 type StepFields = {
@@ -24,7 +24,7 @@ export function useStep(): WizardFormStep<StepFields> {
   return useMemo(
     () => ({
       defaultValues: {
-        hasRig: !!membership?.user?.equipment?.some(isRig),
+        hasParachute: !!membership?.user?.equipment?.some(isRig),
       },
       validation,
     }),
@@ -44,7 +44,7 @@ function AskForRigStep(props: IWizardStepProps) {
       <Fields>
         <Controller
           {...{ control }}
-          name="hasRig"
+          name="hasParachute"
           render={({ field: { onChange, value } }) => (
             <CardSelect
               items={[

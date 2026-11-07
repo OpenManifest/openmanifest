@@ -1,16 +1,16 @@
 import {
-  RIG_KIND,
+  PARACHUTE_KIND,
   calculateWingLoading,
   canopySize,
   canopySizeToSquareMetres,
-  findRigKind,
+  findParachuteKind,
   isRig,
   rigAttributes,
   wingLoadingOf,
-} from '../rig';
+} from '../parachute';
 
 const rig = {
-  equipmentKind: { key: RIG_KIND },
+  equipmentKind: { key: PARACHUTE_KIND },
   attributes: { rig_type: 'student', canopy_size_m2: 15.7935, pack_value: 12 },
 };
 const wetsuit = { equipmentKind: { key: 'wetsuit' }, attributes: {} };
@@ -20,11 +20,11 @@ describe('skydiving rigs', () => {
     expect(isRig(rig)).toBe(true);
     expect(isRig(wetsuit)).toBe(false);
     expect(isRig(null)).toBe(false);
-    expect(findRigKind([{ key: 'wetsuit' }, { key: 'rig', id: '3' }])).toEqual({
+    expect(findParachuteKind([{ key: 'wetsuit' }, { key: 'rig', id: '3' }])).toEqual({
       key: 'rig',
       id: '3',
     });
-    expect(findRigKind([{ key: 'wetsuit' }])).toBeUndefined();
+    expect(findParachuteKind([{ key: 'wetsuit' }])).toBeUndefined();
   });
 
   it('reads the attributes of a rig', () => {

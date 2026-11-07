@@ -1,4 +1,5 @@
 import ManifestDeskNote from 'app/components/ManifestDeskNote';
+import { useTranslation } from 'react-i18next';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import {
@@ -63,6 +64,7 @@ const setupTicketsCardFragment = { ...loadingFragment, id: '__SETUP_TICKETS_CARD
 
 export default function ManifestScreen() {
   const { theme } = useAppTheme();
+  const { t } = useTranslation(['common', 'terms']);
   const [display, setDisplay] = React.useState<'list' | 'cards'>('cards');
   const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
   const {
@@ -145,7 +147,9 @@ export default function ManifestScreen() {
       if (load.id === '__SETUP_VEHICLE_CARD__') {
         return (
           <SetupStepCard
-            title="Add an aircraft"
+            title={t('common:legacy.setup.addVehicle', {
+              vehicle: t('terms:vehicle', { count: 1 }).toLowerCase(),
+            })}
             completed={!!vehicles?.length}
             onPress={sheets.vehicle.open}
             index={1}
@@ -156,7 +160,9 @@ export default function ManifestScreen() {
       if (load.id === '__SETUP_TICKETS_CARD__') {
         return (
           <SetupStepCard
-            title="Create a ticket"
+            title={t('common:legacy.setup.addTicket', {
+              ticket: t('terms:ticket', { count: 1 }).toLowerCase(),
+            })}
             completed={!!ticketTypes?.length}
             onPress={sheets.ticketType.open}
             index={2}
@@ -200,6 +206,7 @@ export default function ManifestScreen() {
     },
     [
       display,
+      t,
       vehicles?.length,
       sheets.vehicle.open,
       sheets.ticketType.open,
@@ -285,7 +292,7 @@ export default function ManifestScreen() {
           anchor={<IconButton icon="cog-outline" onPress={() => setDisplayOptionsOpen(true)} />}
         >
           <MenuItem
-            title="Show expanded cards"
+            title={t('common:legacy.setup.expanded')}
             bold={display !== 'cards'}
             onPress={() => {
               setDisplay('list');
@@ -293,7 +300,7 @@ export default function ManifestScreen() {
             }}
           />
           <MenuItem
-            title="Show compact cards"
+            title={t('common:legacy.setup.compact')}
             bold={display === 'cards'}
             onPress={() => {
               setDisplay('cards');

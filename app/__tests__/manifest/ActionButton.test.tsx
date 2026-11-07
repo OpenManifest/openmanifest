@@ -32,7 +32,7 @@ describe('<ActionButton />', () => {
     Settings.now = originalNow;
   });
 
-  it('"10 minute call" sets the load to BOARDING_CALL with a dispatch time 10 minutes ahead', async () => {
+  it('"10 minute call" puts the load on call with a dispatch time 10 minutes ahead', async () => {
     const loadMock = MOCK_QUERY_LOAD(
       {},
       { load: { createdAt: new Date(NOW).toISOString() as never } }
@@ -133,7 +133,7 @@ describe('<ActionButton />', () => {
       );
       await fireEvent.press(primary);
       await fireEvent.press(
-        await waitFor(() => screen.getByText('Mark as Landed'), { timeout: 10000 })
+        await waitFor(() => screen.getByText('Mark as completed'), { timeout: 10000 })
       );
     };
 
@@ -143,7 +143,7 @@ describe('<ActionButton />', () => {
           data: {
             finalizeLoad: {
               __typename: 'FinalizeLoadPayload',
-              errors: ["Load #1 can't land, it is landed"],
+              errors: ['Load #1 is already completed'],
               fieldErrors: null,
               load: null,
             },
@@ -154,7 +154,7 @@ describe('<ActionButton />', () => {
       await pressComplete(screen);
 
       await waitFor(
-        () => expect(notifications.error).toHaveBeenCalledWith("Load #1 can't land, it is landed"),
+        () => expect(notifications.error).toHaveBeenCalledWith('Load #1 is already completed'),
         { timeout: 10000 }
       );
     });
@@ -170,7 +170,7 @@ describe('<ActionButton />', () => {
     });
   });
 
-  describe('the day of the load, at the dropzone (a Brisbane dropzone, a device in UTC)', () => {
+  describe('the day of the load, at the operator (a Brisbane operator, a device in UTC)', () => {
     // 23:00 UTC on 8 October is 09:00 on 9 October in Brisbane
     const renderLoadCreatedAt = async (createdAt: string) => {
       Settings.now = () => new Date('2026-10-08T23:00:00Z').valueOf();
@@ -204,7 +204,7 @@ describe('<ActionButton />', () => {
       await fireEvent.press(primary);
     };
 
-    it('offers a call for a load created on the dropzone day, though the device is still a day behind', async () => {
+    it('offers a call for a load created on the operator day, though the device is still a day behind', async () => {
       // 02:00 on 9 October in Brisbane, 16:00 on 8 October in UTC
       const { screen, restore } = await renderLoadCreatedAt('2026-10-08T16:00:00Z');
 
@@ -215,7 +215,7 @@ describe('<ActionButton />', () => {
       restore();
     });
 
-    it('offers no call for a load of the dropzone day before, though the device date matches', async () => {
+    it('offers no call for a load of the operator day before, though the device date matches', async () => {
       // 19:00 on 8 October in Brisbane, 09:00 on 8 October in UTC: the same day on the device, yesterday at the operator
       const { screen, restore } = await renderLoadCreatedAt('2026-10-08T09:00:00Z');
 

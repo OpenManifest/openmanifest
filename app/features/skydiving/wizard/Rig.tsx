@@ -12,10 +12,10 @@ import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import useTerms from 'app/i18n/useTerms';
 import i18n from 'app/i18n';
-import { isRig } from '../rig';
+import { isRig } from '../parachute';
 
 export const validation = yup.object({
-  rigId: yup.string().nullable().default(null),
+  parachuteId: yup.string().nullable().default(null),
   make: yup
     .string()
     .required(() => i18n.t('forms.user_wizard.pleaseSelectAManufacturer'))
@@ -38,7 +38,7 @@ export function useStep(): WizardFormStep<StepFields> {
         make: rig?.make || '',
         model: rig?.model || '',
         serial: rig?.serial || '',
-        rigId: rig?.id || null,
+        parachuteId: rig?.id || null,
       },
       validation,
     }),

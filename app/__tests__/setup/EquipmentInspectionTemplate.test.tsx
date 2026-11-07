@@ -37,7 +37,7 @@ async function renderForm(graphql: Parameters<typeof render>[1]['graphql'] = [])
   return within(screen.getByTestId('under-test'));
 }
 
-describe('rig inspection template form', () => {
+describe('equipment inspection template form', () => {
   it('lists the fields of the template', async () => {
     const form = await renderForm();
 
