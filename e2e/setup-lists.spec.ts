@@ -181,14 +181,11 @@ test.describe('setup lists @setup', () => {
     await form.getByRole('textbox', { name: 'Model' }).fill('Javelin');
     await form.getByRole('textbox', { name: 'Serial' }).fill(serial);
     // A kind that is serviced needs the date of its next service: none shows until one is chosen (BUG-113)
-    const due = form.getByRole('button', { name: 'Reserve repack due' });
-    await expect(due).toContainText('No date');
-    await due.click();
-    await page
-      .locator('.DayPicker-Day:not(.DayPicker-Day--outside)', { hasText: /^28$/ })
-      .first()
-      .click();
-    await expect(due).not.toContainText('No date');
+    // The browser's own date input (U6.1)
+    const due = form.getByLabel('Reserve repack due', { exact: true });
+    await expect(due).toHaveValue('');
+    await due.fill('2027-01-28');
+    await expect(due).toHaveValue('2027-01-28');
     await save(form);
     const name = `Sun Path Javelin #${serial}`;
     await expect(page.getByRole('button', { name, exact: true })).toBeVisible();

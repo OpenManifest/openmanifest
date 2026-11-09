@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Card, Subheader } from 'app/ui';
+import { Card, FormDateField, Subheader } from 'app/ui';
 import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
-import { DatePickerField } from 'app/components/input/date_picker';
 import { useFormContext } from 'react-hook-form';
 import { useUserProfileContext } from 'app/api/crud';
 import { WizardFormStep } from 'app/hooks/forms/useWizard';
@@ -47,7 +46,7 @@ function ReserveRepackStep(props: IWizardStepProps) {
       <Fields>
         <Card>
           <Subheader>{t('forms.user_wizard.dueDate')}</Subheader>
-          <DatePickerField
+          <FormDateField
             {...{ control }}
             name="serviceDueAt"
             label={t('forms.user_wizard.reserveRepackDueDate')}

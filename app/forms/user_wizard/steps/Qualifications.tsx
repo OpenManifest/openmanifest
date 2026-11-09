@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Card, Stack, Subheader } from 'app/ui';
+import { Card, FormDateField, Stack, Subheader } from 'app/ui';
 import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard';
-import { DatePickerField } from 'app/components/input/date_picker';
 import { FormTextField } from 'app/components/input/text/TextField';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useUserProfileContext } from 'app/api/crud';
@@ -93,7 +92,7 @@ function QualificationsStep(props: IWizardStepProps) {
                   name={`qualifications.${index}.number` as const}
                   label={t('forms.user_wizard.qualificationNumber')}
                 />
-                <DatePickerField
+                <FormDateField
                   {...{ control }}
                   name={`qualifications.${index}.expiresAt` as const}
                   label={t('forms.user_wizard.qualificationExpires')}

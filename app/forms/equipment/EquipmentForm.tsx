@@ -2,14 +2,13 @@ import * as React from 'react';
 import { Control, useController, useWatch } from 'react-hook-form';
 
 import TextInput, { FormTextField } from 'app/components/input/text/TextField';
-import DatePicker from 'app/components/input/date_picker';
 import ChipSelect from 'app/components/input/chip_select/ChipSelect';
 import type { EquipmentKindEssentialsFragment } from 'app/api/operations';
 import { useTranslation } from 'react-i18next';
 import useTerms from 'app/i18n/useTerms';
 import { useOperatorFormat } from 'app/i18n/operatorFormat';
 import { UNIT_SYMBOLS, unitOf } from 'app/i18n/units';
-import { FieldError, Stack, Subheader } from 'app/ui';
+import { DateField, FieldError, isoDateOf, secondsOfIsoDate, Stack, Subheader } from 'app/ui';
 import { EquipmentFields } from './useForm';
 import {
   attributesFor,
@@ -59,16 +58,12 @@ function AttributeField(props: {
 
   if (spec.type === 'date') {
     return (
-      <>
-        <DatePicker
-          label={label}
-          value={field.value ? new Date(String(field.value)).getTime() / 1000 : 0}
-          onChange={(seconds) =>
-            field.onChange(new Date(seconds * 1000).toISOString().slice(0, 10))
-          }
-        />
-        <FieldError>{fieldState.error?.message || ''}</FieldError>
-      </>
+      <DateField
+        label={label}
+        value={secondsOfIsoDate(field.value ? String(field.value).slice(0, 10) : null)}
+        onChange={(seconds) => field.onChange(isoDateOf(seconds))}
+        error={fieldState.error?.message}
+      />
     );
   }
 
@@ -137,12 +132,12 @@ export default function EquipmentForm(props: IEquipmentFormProps) {
 
       {kind?.serviceIntervalDays ? (
         <>
-          <DatePicker
+          <DateField
             value={serviceDueAt.value ?? 0}
             onChange={serviceDueAt.onChange}
             label={term('service_due')}
+            error={serviceState.error?.message}
           />
-          <FieldError>{serviceState.error?.message || ''}</FieldError>
         </>
       ) : null}
     </Stack>

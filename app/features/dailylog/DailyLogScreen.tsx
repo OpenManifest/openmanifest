@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { DateTime } from 'luxon';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
 import FormColumn, { FORM_COLUMN_WIDE_MAX_WIDTH } from 'app/components/layout/FormColumn';
-import DatePicker from 'app/components/input/date_picker/DatePicker';
 import { useDailyLogQuery, useMembershipsQuery } from 'app/api/reflection';
 import { Permission } from 'app/api/schema.d';
 import { formatQuantity } from 'app/i18n/format';
@@ -12,6 +11,7 @@ import useTerms from 'app/i18n/useTerms';
 import { useOperatorContext } from 'app/providers/operator/context';
 import {
   Button,
+  DateField,
   Divider,
   EmptyState,
   FormSelect,
@@ -79,7 +79,7 @@ export default function DailyLogScreen() {
       >
         <Row gap="sm" align="center">
           <View style={{ flex: 1 }}>
-            <DatePicker
+            <DateField
               label={t('dailyLog.day')}
               value={secondsOf(date)}
               onChange={(seconds) => {

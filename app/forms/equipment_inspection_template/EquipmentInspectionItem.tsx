@@ -4,10 +4,9 @@ import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
-import DatePicker from 'app/components/input/date_picker/DatePicker';
 import TextInput from 'app/components/input/text/TextField';
 import { FieldItem } from './fieldItem';
-import { Stack, Switch, Text } from 'app/ui';
+import { DateField, Stack, Switch, Text } from 'app/ui';
 
 interface IFormItemItem {
   value: string | number | boolean;
@@ -62,7 +61,7 @@ export default function EquipmentInspectionItem(props: IFormItemItem) {
   if (config?.valueType && config?.valueType === 'date') {
     return (
       <Stack gap="xs" flex>
-        <DatePicker
+        <DateField
           disabled={!canInspect}
           value={Number(value)}
           onChange={(time) =>

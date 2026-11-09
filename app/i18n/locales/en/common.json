@@ -111,7 +111,10 @@
     "decrease": "Decrease {{label}}",
     "remove": "Remove {{label}}",
     "optional": "Optional",
-    "selected": "Selected"
+    "selected": "Selected",
+    "noDate": "No date",
+    "noTime": "No time",
+    "done": "Done"
   },
   "overlay": {
     "close": "Close"
