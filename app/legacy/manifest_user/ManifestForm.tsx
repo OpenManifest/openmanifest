@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Divider, List } from 'react-native-paper';
+import { Divider, Subheader } from 'app/ui';
 import { NumberFieldType } from 'app/components/input/number_input/NumberField';
 import { Control, useController, useWatch } from 'react-hook-form';
 import { TicketTypeExtraEssentialsFragment } from 'app/api/operations';
@@ -67,9 +67,7 @@ export default function ManifestForm(props: IManifestFormProps) {
         name="ticketType"
       />
 
-      {!ticketType?.extras?.length ? null : (
-        <List.Subheader>{t('extra', { count: 2 })}</List.Subheader>
-      )}
+      {!ticketType?.extras?.length ? null : <Subheader>{t('extra', { count: 2 })}</Subheader>}
       <ChipSelectField<ManifestUserFields, 'extras'>
         {...{ control }}
         allowEmpty

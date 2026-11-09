@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import { FormProvider, useWatch } from 'react-hook-form';
-import { useTheme } from 'react-native-paper';
-import { Tabs, TabScreen, TabsProvider } from 'react-native-paper-tabs';
+import { Tabs, useTheme } from 'app/ui';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import type { MembershipEssentialsFragment } from 'app/api/operations';
 import ManifestGroupForm from './ManifestGroupForm';
@@ -70,24 +69,21 @@ export default function ManifestGroupDialog(props: IManifestGroupDialogProps) {
 
   const theme = useTheme();
   const handleStyles = React.useMemo(
-    () => ({ backgroundColor: theme.colors.primary }),
-    [theme.colors.primary]
+    () => ({ backgroundColor: theme.colour.brand }),
+    [theme.colour.brand]
   );
 
   const StickyHeader = React.useCallback(
     () => (
-      <View pointerEvents={(users?.length || 0) > 0 ? undefined : 'none'}>
-        <TabsProvider defaultIndex={tabIndex} onChangeIndex={setTabIndex}>
-          <Tabs mode="fixed">
-            <TabScreen label="Create group">
-              <View />
-            </TabScreen>
-            <TabScreen label="Configure jump">
-              <View />
-            </TabScreen>
-          </Tabs>
-        </TabsProvider>
-      </View>
+      <Tabs
+        label="Manifest a group"
+        value={String(tabIndex)}
+        onChange={(value) => setTabIndex(Number(value))}
+        tabs={[
+          { value: '0', label: 'Create group' },
+          { value: '1', label: 'Configure jump', disabled: !users?.length },
+        ]}
+      />
     ),
     [users?.length, tabIndex]
   );

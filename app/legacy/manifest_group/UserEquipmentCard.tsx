@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View, StyleSheet } from 'react-native';
-import { Card, Divider, List, Button } from 'react-native-paper';
+import { Button, Card, Divider, Row, Text, useTheme } from 'app/ui';
 import ProgressBar from 'app/components/ProgressBar';
-import { useAppTheme } from 'app/theme';
 import { PARACHUTE_KIND, wingLoadingOf } from 'app/features/skydiving/parachute';
 import Chip from 'app/components/chips/Chip';
 import TextInput from 'app/components/input/text/TextField';
@@ -51,7 +50,7 @@ export default function UserEquipmentCard(props: IUserEquipmentCard) {
     onChangeBodyMassKg,
     onChangeGuests,
   } = props;
-  const { theme } = useAppTheme();
+  const theme = useTheme();
   const { t } = useTranslation('common');
   const validation = useManifestValidator({
     loadId,
@@ -79,72 +78,71 @@ export default function UserEquipmentCard(props: IUserEquipmentCard) {
     }
   }, [membership?.user.bodyMassKg, bodyMassKg, onChangeBodyMassKg]);
   return (
-    <Card style={{ marginHorizontal: 16, marginBottom: 16 }} elevation={1}>
-      <ProgressBar indeterminate color={theme.colors.primary} visible={loading} />
-      <Card.Title
-        title={membership?.user.name}
-        left={() => (
-          <UserAvatar name={membership?.user?.name} image={membership?.user?.image} size={36} />
-        )}
-        titleStyle={{ paddingRight: 0 }}
-        right={() => (
-          <View style={{ maxWidth: 100, marginRight: 16 }}>
-            <NumberField
-              value={!bodyMassKg ? 0 : bodyMassKg}
-              mode="flat"
-              variant={NumberFieldType.Weight}
-              onChange={(num) => onChangeBodyMassKg(num)}
-            />
-          </View>
-        )}
-      />
+    <View style={{ marginHorizontal: theme.space.lg, marginBottom: theme.space.lg }}>
+      <Card padding="none">
+        <ProgressBar indeterminate visible={loading} />
+        <View style={{ padding: theme.space.lg, paddingBottom: theme.space.sm }}>
+          <Row gap="md" align="center">
+            <UserAvatar name={membership?.user?.name} image={membership?.user?.image} size={36} />
+            <View style={{ flex: 1 }}>
+              <Text variant="label">{membership?.user.name}</Text>
+            </View>
+            <View style={{ maxWidth: 100 }}>
+              <NumberField
+                value={!bodyMassKg ? 0 : bodyMassKg}
+                mode="flat"
+                variant={NumberFieldType.Weight}
+                onChange={(num) => onChangeBodyMassKg(num)}
+              />
+            </View>
+          </Row>
+        </View>
 
-      <Card.Content>
-        <Divider style={{ marginBottom: 8 }} />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={{ maxWidth: 128 }}>
-            <EquipmentPicker
-              small
-              variant="chip"
-              membershipId={membershipId ? Number(membershipId) : undefined}
-              onChange={onChangeEquipment}
-              value={selectedEquipment}
-              ticketTypeId={ticketTypeId}
-              activityTypeId={activityTypeId}
-              tandem={escortCapacity > 0}
-              autoSelectFirst
-            />
-          </View>
-          {!wingLoading ? null : (
-            <Chip small icon="escalator-down" mode="outlined" disabled>
-              {wingLoading}
+        <View style={{ paddingHorizontal: theme.space.lg, gap: theme.space.sm }}>
+          <Divider />
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={{ maxWidth: 128 }}>
+              <EquipmentPicker
+                small
+                variant="chip"
+                membershipId={membershipId ? Number(membershipId) : undefined}
+                onChange={onChangeEquipment}
+                value={selectedEquipment}
+                ticketTypeId={ticketTypeId}
+                activityTypeId={activityTypeId}
+                tandem={escortCapacity > 0}
+                autoSelectFirst
+              />
+            </View>
+            {!wingLoading ? null : (
+              <Chip small icon="escalator-down" mode="outlined" disabled>
+                {wingLoading}
+              </Chip>
+            )}
+            <Chip small icon="lock" mode="outlined" disabled>
+              {membership?.role?.name}
             </Chip>
+            <Chip small icon="ticket-account" mode="outlined" disabled>
+              {membership?.certificationLevel?.name}
+            </Chip>
+          </ScrollView>
+          {escortCapacity < 1 ? null : (
+            <>
+              <Divider />
+              <GuestsInput
+                value={guests}
+                capacity={escortCapacity}
+                onChange={(next) => onChangeGuests?.(next)}
+              />
+            </>
           )}
-          <Chip small icon="lock" mode="outlined" disabled>
-            {membership?.role?.name}
-          </Chip>
-          <Chip small icon="ticket-account" mode="outlined" disabled>
-            {membership?.certificationLevel?.name}
-          </Chip>
-        </ScrollView>
-        {escortCapacity < 1 ? null : (
-          <>
-            <Divider />
-            <GuestsInput
-              value={guests}
-              capacity={escortCapacity}
-              onChange={(next) => onChangeGuests?.(next)}
-            />
-          </>
-        )}
-        <EligibilityMessages failures={validation.failures} expiring={validation.expiring} />
-      </Card.Content>
-      <Card.Actions style={styles.actions}>
-        <Button mode="text" onPress={() => onRemove?.()}>
-          {t('legacy.remove')}
-        </Button>
-      </Card.Actions>
-    </Card>
+          <EligibilityMessages failures={validation.failures} expiring={validation.expiring} />
+        </View>
+        <View style={styles.actions}>
+          <Button variant="tertiary" label={t('legacy.remove')} onPress={() => onRemove?.()} />
+        </View>
+      </Card>
+    </View>
   );
 }
 
@@ -162,5 +160,5 @@ const styles = StyleSheet.create({
   rowLast: {
     flex: 2 / 4,
   },
-  actions: { justifyContent: 'flex-end' },
+  actions: { flexDirection: 'row', justifyContent: 'flex-end', padding: 8 },
 });

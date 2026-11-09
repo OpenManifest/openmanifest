@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View, ViewProps } from 'react-native';
-import { Checkbox, Divider, List, Searchbar } from 'react-native-paper';
+import { Divider, Icon, ListRow, TextField } from 'app/ui';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useMembershipsDetailedQuery } from 'app/api/reflection';
 
@@ -48,34 +48,39 @@ export default function UserListSelect(props: IUserListSelect) {
   );
   return (
     <>
-      <Searchbar value={searchText} onChangeText={setSearchText} placeholder="Search skydivers" />
+      <TextField
+        label=""
+        placeholder="Search skydivers"
+        value={searchText}
+        onChange={setSearchText}
+      />
       <View {...containerProps}>
         <Wrapper>
           {!data?.memberships?.edges?.length && <NoResults title="No users" subtitle="" />}
 
           {data?.memberships?.edges?.map((edge) => (
             <React.Fragment key={`user-${edge?.node?.id || 0}`}>
-              <List.Item
-                style={{ width: '100%' }}
-                key={`user-${edge?.node?.id}`}
-                title={edge?.node?.user.name}
-                description={edge?.node?.role?.name}
-                left={() => (
+              <ListRow
+                title={edge?.node?.user.name || ''}
+                supporting={edge?.node?.role?.name || undefined}
+                selected={value?.map(({ id }) => id).includes(Number(edge?.node?.id))}
+                leading={
                   <UserAvatar
                     name={edge?.node?.user?.name}
                     image={edge?.node?.user?.image}
                     size={36}
                   />
-                )}
-                right={() => (
-                  <Checkbox
-                    status={
+                }
+                trailing={
+                  <Icon
+                    name={
                       value?.map(({ id }) => id).includes(Number(edge?.node?.id))
-                        ? 'checked'
-                        : 'unchecked'
+                        ? 'checkbox-marked'
+                        : 'checkbox-blank-outline'
                     }
+                    tone="brand"
                   />
-                )}
+                }
                 disabled={
                   // Dont allow removing current user if the user
                   // can only manifest a group with themselves in it
@@ -89,7 +94,7 @@ export default function UserListSelect(props: IUserListSelect) {
                   }
                 }}
               />
-              <Divider style={styles.divider} key={`divider-${edge?.node?.id}`} />
+              <Divider />
             </React.Fragment>
           ))}
         </Wrapper>
@@ -99,7 +104,6 @@ export default function UserListSelect(props: IUserListSelect) {
 }
 
 const styles = StyleSheet.create({
-  divider: { width: '100%' },
   wrapper: {
     paddingHorizontal: 8,
   },

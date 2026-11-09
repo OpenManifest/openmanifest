@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useController, useFormContext, useWatch } from 'react-hook-form';
-import { HelperText, Divider, Chip, List } from 'react-native-paper';
+import { Chip, Divider, FieldError, Row, Subheader } from 'app/ui';
 import uniqBy from 'lodash/uniqBy';
 import { useAllowedActivityTypesQuery } from 'app/api/reflection';
 import { useSession } from 'app/state';
@@ -133,7 +133,7 @@ export default function ManifestGroupForm() {
   return (
     <>
       <View style={{ paddingHorizontal: 8 }} key="manifest-group-config">
-        <List.Subheader>{t('terms:activity', { count: 1 })}</List.Subheader>
+        <Subheader>{t('terms:activity', { count: 1 })}</Subheader>
         <ChipSelect
           autoSelectFirst
           items={activityTypes}
@@ -145,11 +145,9 @@ export default function ManifestGroupForm() {
           onChange={([selected]) => activityType.onChange(selected)}
         />
 
-        <HelperText type={activityTypeState.error ? 'error' : 'info'}>
-          {activityTypeState.error?.message || ''}
-        </HelperText>
+        <FieldError>{activityTypeState.error?.message || ''}</FieldError>
 
-        <List.Subheader>{t('terms:ticket', { count: 1 })}</List.Subheader>
+        <Subheader>{t('terms:ticket', { count: 1 })}</Subheader>
         <ChipSelect<TicketTypeValue>
           autoSelectFirst
           items={(data?.operator?.ticketTypes || []) as TicketTypeValue[]}
@@ -157,26 +155,21 @@ export default function ManifestGroupForm() {
           renderItemLabel={(item) => item.name}
           onChange={([selected]) => ticketType.onChange(selected)}
         />
-        <HelperText type={ticketTypeState.error ? 'error' : 'info'}>
-          {ticketTypeState.error?.message || ''}
-        </HelperText>
+        <FieldError>{ticketTypeState.error?.message || ''}</FieldError>
         {!ticketType.value?.extras?.length ? null : (
-          <List.Subheader>{t('terms:extra', { count: 2 })}</List.Subheader>
+          <Subheader>{t('terms:extra', { count: 2 })}</Subheader>
         )}
         <ScrollView horizontal style={styles.ticketAddons}>
           {ticketType.value?.extras?.map((extra) => (
             <Chip
               key={`addon-${extra?.id}`}
+              label={`${extra.name} (${formatCents(extra.costCents)})`}
               selected={extras.value?.some(({ id }) => id === extra.id)}
               onPress={createToggleTicketAddonHandler(extra)}
-            >
-              {`${extra.name} (${formatCents(extra.costCents)})`}
-            </Chip>
+            />
           ))}
         </ScrollView>
-        <HelperText type={extrasState.error ? 'error' : 'info'}>
-          {extrasState.error?.message || ''}
-        </HelperText>
+        <FieldError>{extrasState.error?.message || ''}</FieldError>
       </View>
 
       <Divider />
@@ -185,8 +178,8 @@ export default function ManifestGroupForm() {
         style={{ paddingHorizontal: 0, paddingTop: 16, flexGrow: 1 }}
         key="manifest-group-users"
       >
-        <List.Subheader style={styles.label}>
-          {t('common:legacy.group')}
+        <Row justify="between" align="center">
+          <Subheader>{t('common:legacy.group')}</Subheader>
           <GroupPicker
             value={groupNumber.value || null}
             availableGroups={
@@ -194,10 +187,10 @@ export default function ManifestGroupForm() {
             }
             onChange={groupNumber.onChange}
           />
-        </List.Subheader>
-        <HelperText type="error">
+        </Row>
+        <FieldError>
           {usersState.error?.message || usersState.error?.root?.message || ''}
-        </HelperText>
+        </FieldError>
         {users?.map((slotUser) => (
           <UserCard {...{ slotUser }} key={`manifest-${slotUser.id}`} />
         ))}

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, HelperText, IconButton, List } from 'react-native-paper';
+import { Button, FieldError, Icon, IconButton, Subheader, Tappable, Text, useTheme } from 'app/ui';
 import TextInput from 'app/components/input/text/TextField';
 import NumberField, { NumberFieldType } from 'app/components/input/number_input/NumberField';
 import useTerms from 'app/i18n/useTerms';
@@ -12,6 +12,30 @@ export interface IGuestsInputProps {
   capacity: number;
   error?: string | null;
   onChange(guests: GuestValue[]): void;
+}
+
+/** A section that opens and closes under its title: the personal details of a guest */
+function Details({ title, children }: { title: string; children: React.ReactNode }) {
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
+  return (
+    <View>
+      <Tappable
+        role="button"
+        aria-label={title}
+        aria-expanded={open}
+        onPress={() => setOpen(!open)}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: theme.space.md }}
+      >
+        <Icon name="card-account-details-outline" tone="muted" />
+        <View style={{ flex: 1 }}>
+          <Text>{title}</Text>
+        </View>
+        <Icon name={open ? 'chevron-up' : 'chevron-down'} tone="muted" />
+      </Tappable>
+      {open ? children : null}
+    </View>
+  );
 }
 
 /**
@@ -31,7 +55,7 @@ export default function GuestsInput(props: IGuestsInputProps) {
 
   return (
     <>
-      <List.Subheader>{term('guest', capacity)}</List.Subheader>
+      <Subheader>{term('guest', capacity)}</Subheader>
       {guests.map((guest, index) => (
         // eslint-disable-next-line react/no-array-index-key
         <View key={`guest-${index}`} testID={`guest-${index}`}>
@@ -54,14 +78,11 @@ export default function GuestsInput(props: IGuestsInputProps) {
             </View>
             <IconButton
               icon="close"
-              accessibilityLabel={`Remove ${term('guest').toLowerCase()}`}
+              aria-label={`Remove ${term('guest').toLowerCase()}`}
               onPress={() => onChange(guests.filter((_, at) => at !== index))}
             />
           </View>
-          <List.Accordion
-            title="More details"
-            left={(left) => <List.Icon {...left} icon="card-account-details-outline" />}
-          >
+          <Details title="More details">
             <TextInput
               mode="flat"
               value={guest.email ?? ''}
@@ -89,20 +110,19 @@ export default function GuestsInput(props: IGuestsInputProps) {
               onChangeText={(emergencyContact: string) => update(index, { emergencyContact })}
               label="Emergency contact"
             />
-          </List.Accordion>
+          </Details>
         </View>
       ))}
       {guests.length < capacity ? (
         <Button
           icon="account-plus"
-          mode="text"
+          variant="tertiary"
           testID="add-guest"
+          label={`Add ${term('guest').toLowerCase()}`}
           onPress={() => onChange([...guests, { ...EMPTY_GUEST }])}
-        >
-          {`Add ${term('guest').toLowerCase()}`}
-        </Button>
+        />
       ) : null}
-      {error ? <HelperText type="error">{error}</HelperText> : null}
+      <FieldError>{error}</FieldError>
     </>
   );
 }
