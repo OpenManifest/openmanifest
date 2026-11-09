@@ -1,0 +1,20 @@
+# The board renders, a load opens, and back to the board
+appId: com.dangertechnologies.openmanifest
+name: board
+---
+- runFlow: login.yaml
+- assertVisible:
+    id: 'manifest-date-bar'
+- assertVisible:
+    id: 'load-card'
+- tapOn:
+    id: 'load-card'
+    index: 0
+- extendedWaitUntil:
+    visible: 'Load #.*'
+    timeout: 30000
+- takeScreenshot: load
+- back
+- assertVisible:
+    id: 'loads'
+- takeScreenshot: board-again

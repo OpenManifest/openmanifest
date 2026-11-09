@@ -26,20 +26,17 @@ $ EXPO_ENV=local npx expo export --platform web                # static web buil
 
 Checks: `yarn check:types`, `yarn check:linting`, `yarn check:testing`.
 
-## Web smoke test
+## UI tests (Playwright)
 
-Needs the API running locally with the offline seed (`bin/rails db:seed db:seed:dev_baseline` in
-`openmanifest-server`, server on port 5000) and `127.0.0.1 local.openmanifest.org` in `/etc/hosts`.
+`e2e/` holds a Playwright Test suite that runs against the web export, the API and the offline seed. See
+[`e2e/README.md`](e2e/README.md) for the full local run. In short, with the API on port 5000 (seeded) and
+`127.0.0.1 local.openmanifest.org` in `/etc/hosts`:
 
 ```
 $ EXPO_ENV=local npx expo export --platform web               # -> dist/
 $ python3 scripts/serve-web-build.py dist 19006 &              # SPA server with index.html fallback
-$ node scripts/web-smoke.mjs --base http://localhost:19006 --out /tmp/smoke
+$ yarn test:ui:smoke                                           # two widths, light; `--grep @manifest` for one area
 ```
-
-The script logs in as `owner@example.com`, opens the manifest board and a load at 1280×800 and 360×640, saves four
-screenshots and exits non-zero on any failed step or page error. It uses Playwright from `PLAYWRIGHT_PATH` (default
-`/opt/node-tools/node_modules/playwright`).
 
 ## Documentation
 

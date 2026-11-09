@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as Update from 'expo-updates';
 import { View, StyleSheet, Text, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Button } from 'react-native-paper';
 import * as Device from 'expo-device';
 
-import * as fonts from '@expo-google-fonts/roboto';
 import LottieView from 'app/components/LottieView';
 import { useNotifications } from 'app/providers/notifications';
 
@@ -15,15 +15,11 @@ interface IAppUpdateProps {
 
 export default function AppUpdate(props: IAppUpdateProps) {
   const { children } = props;
-  const { useFonts, __metadata__, ...rest } = fonts;
-  const [fontsLoaded] = fonts.useFonts({
-    ...rest,
-  });
-
   const [overlay, setOverlay] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const animation = React.useRef<LottieView>(null);
   const notify = useNotifications();
+  const { t } = useTranslation('common');
 
   const onUpdate = React.useCallback(async () => {
     if (Platform.OS === 'web' || !Device.isDevice) {
@@ -35,9 +31,9 @@ export default function AppUpdate(props: IAppUpdateProps) {
       await Update.reloadAsync();
       setLoading(false);
       setOverlay(false);
-      notify.success('New version installed');
+      notify.success(t('appUpdate.installed'));
     }
-  }, [notify]);
+  }, [notify, t]);
   const isUpdateAvailable = React.useCallback(async () => {
     if (Platform.OS === 'web' || !Device.isDevice) {
       return;
@@ -53,15 +49,12 @@ export default function AppUpdate(props: IAppUpdateProps) {
     isUpdateAvailable();
   }, [isUpdateAvailable]);
 
-  if (!fontsLoaded) {
-    return null;
-  }
   return (
     <View style={{ flex: 1 }}>
       {children}
       {overlay && (
         <BlurView tint="dark" style={styles.blur} intensity={80}>
-          <Text style={styles.title}>A new update is available</Text>
+          <Text style={styles.title}>{t('appUpdate.available')}</Text>
           <LottieView
             ref={animation}
             style={{
@@ -78,7 +71,7 @@ export default function AppUpdate(props: IAppUpdateProps) {
             mode="outlined"
             onPress={() => onUpdate()}
           >
-            Click to update
+            {t('appUpdate.update')}
           </Button>
         </BlurView>
       )}

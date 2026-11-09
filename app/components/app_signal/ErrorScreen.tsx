@@ -2,6 +2,7 @@ import * as React from 'react';
 import { reloadAsync } from 'expo-updates';
 import { Button, Card, HelperText } from 'react-native-paper';
 import { Platform, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native-gesture-handler';
 import LottieView from '../LottieView';
 import ScreenContainer from '../layout/ScreenContainer';
@@ -12,6 +13,7 @@ interface IErrorScreenProps {
 }
 export default function ErrorScreen(props: IErrorScreenProps) {
   const { error } = props;
+  const { t } = useTranslation('common');
   const [isDetailsVisible, setDetailsVisible] = React.useState(false);
   const [reloading, setReloading] = React.useState(false);
   const onToggleDetails = React.useCallback(
@@ -37,8 +39,8 @@ export default function ErrorScreen(props: IErrorScreenProps) {
     <ScreenContainer style={styles.container}>
       <Card style={styles.card}>
         <Card.Title
-          title="That's a bug"
-          subtitle="This error has been uploaded for review"
+          title={t('errorScreen.title')}
+          subtitle={t('errorScreen.subtitle')}
           titleStyle={{ textAlign: 'center' }}
           subtitleStyle={{ textAlign: 'center' }}
         />
@@ -65,7 +67,7 @@ export default function ErrorScreen(props: IErrorScreenProps) {
         </Card.Content>
         <Card.Actions style={{ justifyContent: 'space-between' }}>
           <Button compact onPress={onToggleDetails}>
-            {isDetailsVisible ? 'Hide' : 'Show'} details
+            {isDetailsVisible ? t('errorScreen.hideDetails') : t('errorScreen.showDetails')}
           </Button>
           <Button
             disabled={reloading}
@@ -74,7 +76,7 @@ export default function ErrorScreen(props: IErrorScreenProps) {
             mode="outlined"
             onPress={onReloadApp}
           >
-            Reload
+            {t('errorScreen.reload')}
           </Button>
         </Card.Actions>
       </Card>

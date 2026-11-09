@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import Toast from 'react-native-toast-message';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Toast, useTheme } from 'app/ui';
 import LottieView from 'app/components/LottieView';
 import { isEqual, last } from 'lodash';
 import lottieDoneAnimation from '../../../assets/images/finished-2.json';
@@ -14,6 +15,10 @@ interface INotification {
     onPress: () => void;
   };
 }
+
+/** How long a message stays: longer when there is something to press */
+const VISIBLE_MS = 4000;
+const VISIBLE_WITH_ACTION_MS = 8000;
 
 enum AnimationState {
   opening = 0,
@@ -79,16 +84,12 @@ export function NotificationsProvider(props: React.PropsWithChildren<object>) {
   }, [onHide]);
 
   React.useEffect(() => {
-    if (notification) {
-      Toast.show({
-        onHide,
-        text1: notification.message,
-        type: notification.variant || 'success',
-      });
-      if (notification.variant === 'error') {
-        console.error(notification.message);
-      }
+    if (!notification) return undefined;
+    if (notification.variant === 'error') {
+      console.error(notification.message);
     }
+    const timer = setTimeout(onHide, notification.action ? VISIBLE_WITH_ACTION_MS : VISIBLE_MS);
+    return () => clearTimeout(timer);
   }, [notification, onHide]);
 
   const context = React.useMemo(
@@ -119,8 +120,60 @@ export function NotificationsProvider(props: React.PropsWithChildren<object>) {
           />
         </View>
       )}
-      <Toast autoHide visibilityTime={4000} position="bottom" type="success" />
+      <ToastLayer notification={notification} onDismiss={onHide} />
     </NotificationContext.Provider>
+  );
+}
+
+/** The current message, centred above the bottom edge (and above the tab bar on a phone) */
+function ToastLayer({
+  notification,
+  onDismiss,
+}: {
+  notification?: INotification;
+  onDismiss(): void;
+}) {
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
+  if (!notification) return null;
+  const clearance =
+    theme.breakpoint === 'compact' ? theme.density.touchTarget + theme.space.xxxl : theme.space.lg;
+
+  return (
+    <View
+      pointerEvents="box-none"
+      style={{
+        ...StyleSheet.absoluteFill,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingHorizontal: theme.space.lg,
+        paddingBottom: insets.bottom + clearance,
+      }}
+    >
+      <Toast
+        message={notification.message}
+        tone={
+          notification.variant === 'error'
+            ? 'error'
+            : notification.variant === 'info'
+              ? 'info'
+              : 'success'
+        }
+        action={
+          notification.action
+            ? {
+                label: notification.action.label,
+                onPress: () => {
+                  notification.action?.onPress();
+                  onDismiss();
+                },
+              }
+            : undefined
+        }
+        onDismiss={onDismiss}
+        testID="toast"
+      />
+    </View>
   );
 }
 

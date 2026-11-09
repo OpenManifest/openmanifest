@@ -10,8 +10,8 @@ jest.mock('react-native-safe-area-context', () => ({
 }));
 
 describe('FloatingActionArea', () => {
-  it('renders its children', () => {
-    const screen = render(
+  it('renders its children', async () => {
+    const screen = await render(
       <FloatingActionArea testID="fabs">
         <Text>Add</Text>
       </FloatingActionArea>
@@ -20,8 +20,8 @@ describe('FloatingActionArea', () => {
     expect(screen.getByText('Add')).toBeTruthy();
   });
 
-  it('floats above the bottom inset and beside the right inset', () => {
-    const screen = render(
+  it('floats above the bottom inset and beside the right inset', async () => {
+    const screen = await render(
       <FloatingActionArea testID="fabs">
         <Text>Add</Text>
       </FloatingActionArea>
@@ -36,8 +36,8 @@ describe('FloatingActionArea', () => {
     });
   });
 
-  it('skips the bottom inset inside a tab navigator, whose tab bar covers it', () => {
-    const screen = render(
+  it('skips the bottom inset inside a tab navigator, whose tab bar covers it', async () => {
+    const screen = await render(
       <BottomTabBarHeightContext.Provider value={83}>
         <FloatingActionArea testID="fabs">
           <Text>Add</Text>
@@ -51,8 +51,8 @@ describe('FloatingActionArea', () => {
     });
   });
 
-  it('lets touches through to the content below', () => {
-    const screen = render(
+  it('lets touches through to the content below', async () => {
+    const screen = await render(
       <FloatingActionArea testID="fabs">
         <Text>Add</Text>
       </FloatingActionArea>
