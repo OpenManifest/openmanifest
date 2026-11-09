@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import { CreateOrderDocument } from 'app/api/reflection';
 import { useOperatorContext } from 'app/providers';
 import { useUserProfile } from 'app/api/crud';
-import { Button } from 'react-native-paper';
+import { Button } from 'app/ui';
 import { operatorExtensive } from 'app/__fixtures__/operator.fixture';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import CreditSheet from '../../forms/credits/Credits';
@@ -87,9 +87,10 @@ describe('<CreditSheet />', () => {
     function Withdraw() {
       const { withdrawCredits } = useUserProfile();
       return (
-        <Button onPress={() => withdrawCredits(MEMBER as never, { amount: 15 })}>
-          Withdraw 15
-        </Button>
+        <Button
+          label="Withdraw 15"
+          onPress={() => withdrawCredits(MEMBER as never, { amount: 15 })}
+        />
       );
     }
     const screen = await render(

@@ -14,11 +14,9 @@ export type AppThemeState = {
   brand: string | null;
 };
 
-const lightTheme = createAppTheme(false);
-
 export const AppThemeContext = React.createContext<AppThemeState>({
-  theme: lightTheme,
-  palette: createPalette(lightTheme),
+  theme: createAppTheme(false),
+  palette: createPalette(false),
   isDark: false,
   brand: null,
 });
@@ -53,12 +51,17 @@ export function useCreateAppTheme(): AppThemeState {
   const accent = operator?.secondaryColor;
 
   return React.useMemo(() => {
-    const theme = createAppTheme(isDark, { primary, accent });
-    return { theme, palette: createPalette(theme), isDark, brand: primary || null };
+    const colors = { primary, accent };
+    return {
+      theme: createAppTheme(isDark, colors),
+      palette: createPalette(isDark, colors),
+      isDark,
+      brand: primary || null,
+    };
   }, [isDark, primary, accent]);
 }
 
-/** The Paper/React Navigation theme, the palette (primary and accent expanded into shades) and `isDark`. */
+/** The React Navigation theme, the palette (primary and accent expanded into shades) and `isDark`. */
 export function useAppTheme(): AppThemeState {
   return React.useContext(AppThemeContext);
 }

@@ -89,8 +89,8 @@ jest.mock('@gorhom/bottom-sheet', () => {
   return { ...require('@gorhom/bottom-sheet/mock'), BottomSheetTextInput };
 });
 
-// React Native 0.71's jest setup mocks AccessibilityInfo.addEventListener without a return value, so react-native-paper 4
-// falls back to the removed `removeEventListener` when its Provider unmounts. Return a real subscription.
+// React Native's jest setup mocks AccessibilityInfo.addEventListener without a return value; components that remove
+// their listener on unmount (the reduced-motion hooks) need a real subscription.
 jest.mock('react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo', () => {
   const actual = jest.requireActual(
     'react-native/Libraries/Components/AccessibilityInfo/AccessibilityInfo'

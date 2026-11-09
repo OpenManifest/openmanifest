@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { fireEvent, render } from '@testing-library/react-native';
-import { PaperProvider } from 'react-native-paper';
+import { ThemeProvider } from 'app/ui';
 import ColorPicker from '../../components/input/colorpicker';
 import { COLOR_PRESETS } from '../../components/input/colorpicker/ColorPicker';
 
 async function renderPicker(value: string, onChange = jest.fn()) {
   const screen = await render(
-    <PaperProvider>
+    <ThemeProvider scheme="light">
       <ColorPicker
         title="Primary color"
         helperText="Used for buttons"
         value={value}
         onChange={onChange}
       />
-    </PaperProvider>
+    </ThemeProvider>
   );
   return { screen, onChange };
 }

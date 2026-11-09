@@ -20,19 +20,19 @@ describe('createAppTheme', () => {
 
   it('applies the operator colours in both schemes', () => {
     for (const isDark of [false, true]) {
-      const theme = createAppTheme(isDark, { primary: '#112233', accent: '#445566' });
+      const colors = { primary: '#112233', accent: '#445566' };
 
-      expect(theme.colors.primary).toBe('#112233');
-      expect(theme.colors.accent).toBe('#445566');
+      expect(createAppTheme(isDark, colors).colors.primary).toBe('#112233');
+      expect(createPalette(isDark, colors).accent.main).toBe('#445566');
     }
   });
 
   it('falls back to the defaults for missing or empty operator colours', () => {
-    const defaults = createAppTheme(false);
-    const theme = createAppTheme(false, { primary: null, accent: '' });
+    const colors = { primary: null, accent: '' };
 
-    expect(theme.colors.primary).toBe(defaults.colors.primary);
-    expect(theme.colors.accent).toBe(defaults.colors.accent);
+    expect(createAppTheme(false, colors).colors.primary).toBe(createAppTheme(false).colors.primary);
+    expect(createPalette(false, colors).accent.main).toBe(createPalette(false).accent.main);
+    expect(createPalette(false).accent.main).toBe(colour.light.status.info.fg);
   });
 
   it('does not share colour objects between themes', () => {
@@ -49,7 +49,6 @@ describe('createAppTheme from tokens', () => {
       const theme = createAppTheme(scheme === 'dark');
 
       expect(theme.colors.background).toBe(colour[scheme].app);
-      expect(theme.colors.surface).toBe(colour[scheme].surface);
       expect(theme.colors.card).toBe(colour[scheme].surface);
       expect(theme.colors.text).toBe(colour[scheme].text);
       expect(theme.colors.border).toBe(colour[scheme].border);
@@ -76,7 +75,7 @@ describe('createAppTheme from tokens', () => {
 
 describe('createPalette', () => {
   it('expands primary and accent into shades', () => {
-    const palette = createPalette(createAppTheme(false, { primary: '#808080', accent: '#ff0000' }));
+    const palette = createPalette(false, { primary: '#808080', accent: '#ff0000' });
 
     expect(palette.primary.main).toBe('#808080');
     expect(palette.primary.dark).toBe('#4D4D4D');
@@ -84,11 +83,14 @@ describe('createPalette', () => {
     expect(palette.accent.main).toBe('#ff0000');
   });
 
-  it('keeps the remaining theme colours', () => {
-    const theme = createAppTheme(true);
-    const palette = createPalette(theme);
+  it('takes the surfaces from the tokens of the scheme', () => {
+    for (const scheme of ['light', 'dark'] as const) {
+      const palette = createPalette(scheme === 'dark');
 
-    expect(palette.background).toBe(theme.colors.background);
-    expect(palette.surface).toBe(theme.colors.surface);
+      expect(palette.background).toBe(colour[scheme].app);
+      expect(palette.surface).toBe(colour[scheme].surface);
+      expect(palette.onSurface).toBe(colour[scheme].text);
+      expect(palette.placeholder).toBe(colour[scheme].textMuted);
+    }
   });
 });

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { fireEvent, render } from '@testing-library/react-native';
-import { PaperProvider } from 'react-native-paper';
+import { ThemeProvider } from 'app/ui';
 import { setOperatorFormat } from 'app/i18n/operatorFormat';
 import NumberField, { NumberFieldType } from '../../components/input/number_input/NumberField';
 
@@ -10,7 +10,7 @@ function Harness(
   const { onValue, value: initial = 80, ...rest } = props;
   const [value, setValue] = React.useState<number>(initial as number);
   return (
-    <PaperProvider>
+    <ThemeProvider scheme="light">
       <NumberField
         label="Exit weight"
         {...rest}
@@ -20,7 +20,7 @@ function Harness(
           onValue?.(next);
         }}
       />
-    </PaperProvider>
+    </ThemeProvider>
   );
 }
 
