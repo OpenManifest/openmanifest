@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import * as Update from 'expo-updates';
 import { View, StyleSheet, Text, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { Button } from 'react-native-paper';
+import { Button } from 'app/ui';
 import * as Device from 'expo-device';
 
 import LottieView from 'app/components/LottieView';
@@ -63,16 +63,14 @@ export default function AppUpdate(props: IAppUpdateProps) {
             }}
             source={require('../../../assets/images/loading.json')}
           />
-          <Button
-            disabled={loading}
-            loading={loading}
-            color="#FFFFFF"
-            style={styles.button}
-            mode="outlined"
-            onPress={() => onUpdate()}
-          >
-            {t('appUpdate.update')}
-          </Button>
+          <View style={styles.button}>
+            <Button
+              disabled={loading}
+              loading={loading}
+              label={t('appUpdate.update')}
+              onPress={() => onUpdate()}
+            />
+          </View>
         </BlurView>
       )}
     </View>

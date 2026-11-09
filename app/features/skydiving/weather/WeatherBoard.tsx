@@ -12,7 +12,7 @@ import {
   Easing,
 } from 'react-native';
 
-import { Card, Divider, useTheme } from 'react-native-paper';
+import { Tappable, useTheme } from 'app/ui';
 import format from 'date-fns/format';
 import { orderBy } from 'lodash';
 import SkeletonContent from 'app/components/Skeleton';
@@ -77,7 +77,7 @@ export default function WeatherBoard() {
   }, [canUpdate, panel]);
   const onEditJumprun = onEditWindboard;
 
-  const defaultBackground = theme.dark ? nightBackground : weatherBackground;
+  const defaultBackground = theme.isDark ? nightBackground : weatherBackground;
 
   return (loading && !operator?.currentConditions) || !called ? (
     <SkeletonContent
@@ -92,9 +92,11 @@ export default function WeatherBoard() {
         height: height.current.interpolate({ inputRange: [0, 1], outputRange: [200, 300] }),
       }}
     >
-      <Card
-        style={styles.card}
-        elevation={3}
+      <Tappable
+        role="button"
+        aria-label={t('conditions.title')}
+        aria-expanded={isExpanded}
+        style={{ ...styles.card, ...theme.elevation.raised }}
         onPress={() => setExpanded(!isExpanded)}
         onLongPress={onEditWindboard}
       >
@@ -103,11 +105,12 @@ export default function WeatherBoard() {
           style={{ ...StyleSheet.absoluteFill, opacity: 0.75 }}
           resizeMode="cover"
         >
-          <Card.Content
+          <View
             style={{
               alignItems: 'center',
               justifyContent: 'center',
               flexGrow: 1,
+              padding: theme.space.lg,
             }}
           >
             {!hasWeatherConditions ? (
@@ -183,7 +186,7 @@ export default function WeatherBoard() {
                       'desc'
                     ).map(({ speedMps, direction, altitudeM }) => (
                       <React.Fragment key={`wind-at-${altitudeM}`}>
-                        <Divider style={{ width: '100%', backgroundColor: 'white' }} />
+                        <View style={styles.divider} />
                         <View style={styles.row}>
                           <View style={styles.cell}>
                             <Text style={styles.value}>
@@ -234,15 +237,16 @@ export default function WeatherBoard() {
                 </View>
               </>
             )}
-          </Card.Content>
+          </View>
         </ImageBackground>
-      </Card>
+      </Tappable>
       <OperatorConditionsPanel open={panel.open} onClose={panel.close} />
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
+  divider: { width: '100%', height: StyleSheet.hairlineWidth, backgroundColor: 'white' },
   card: {
     flexGrow: 1,
     borderRadius: 10,

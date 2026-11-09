@@ -13,7 +13,7 @@ import { useMembershipsLazyQuery } from 'app/api/reflection';
 import { useSession } from 'app/state';
 import first from 'lodash/first';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Caption } from 'react-native-paper';
+import { Text } from 'app/ui';
 import UserAvatar from '../UserAvatar.web.old';
 import { useAppTheme } from 'app/theme';
 
@@ -152,7 +152,9 @@ export default function MembershipAutocomplete(props: IMembershipAutocompletePro
             {option.user.nickname ? (
               <>
                 {option.user.nickname}&nbsp;
-                <Caption>({option.user.name})</Caption>
+                <Text variant="caption" tone="muted">
+                  ({option.user.name})
+                </Text>
               </>
             ) : (
               option.user.name

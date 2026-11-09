@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { Caption, Card, List, useTheme } from 'react-native-paper';
 import { capitalize } from 'lodash';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { successColor } from 'app/constants/Colors';
+import { View } from 'react-native';
 import { TransactionEssentialsFragment } from 'app/api/operations';
-import { DateTime } from 'luxon';
+import { formatDateTime } from 'app/i18n/format';
 import { formatCents } from 'app/utils/money';
+import { Icon, ListRow, Text, useTheme } from 'app/ui';
 
 interface ITransaction {
   transaction: TransactionEssentialsFragment;
@@ -26,74 +24,26 @@ function getIcon(status?: string | null) {
   }
 }
 
+/** A transaction of a receipt: its kind, message and time, and the amount (out in the blocked colour) */
 export default function TransactionCard(props: ITransaction) {
   const { transaction, onPress } = props;
   const theme = useTheme();
+  const when = transaction?.createdAt ? formatDateTime(transaction.createdAt) : '';
 
   return (
-    <TouchableOpacity onPress={onPress} style={{ width: '100%' }}>
-      <Card style={styles.transaction}>
-        <Card.Content style={styles.transactionContent}>
-          <Caption
-            style={{
-              position: 'absolute',
-              top: 4,
-              right: 8,
-              color: theme.colors.onSurface,
-            }}
-          >
-            {transaction?.createdAt &&
-              DateTime.fromISO(transaction.createdAt).toLocaleString(DateTime.DATETIME_SHORT)}
-          </Caption>
-          <List.Item
-            description={capitalize(transaction.message || '')}
-            title={transaction.transactionType.toUpperCase()}
-            style={{ width: '100%' }}
-            titleStyle={styles.transactionTitle}
-            descriptionStyle={styles.transactionDescription}
-            left={() => (
-              <View style={{ width: 165, alignItems: 'center', flexDirection: 'row' }}>
-                <MaterialCommunityIcons
-                  color={transaction.amountCents < 0 ? '#FF1414' : successColor}
-                  name={getIcon(transaction.status)}
-                  size={36}
-                  style={{ marginHorizontal: 16 }}
-                />
-                <Text
-                  style={{
-                    fontSize: 30,
-                    fontWeight: '100',
-                    textAlign: 'center',
-                    color: theme.colors.onSurface,
-                  }}
-                >
-                  {formatCents(transaction.amountCents)}
-                </Text>
-              </View>
-            )}
+    <View style={{ backgroundColor: theme.colour.surface }}>
+      <ListRow
+        title={transaction.transactionType.toUpperCase()}
+        supporting={[capitalize(transaction.message || ''), when].filter(Boolean).join(' · ')}
+        onPress={onPress}
+        leading={
+          <Icon
+            name={getIcon(transaction.status)}
+            tone={transaction.amountCents < 0 ? 'blocked' : 'ok'}
           />
-        </Card.Content>
-      </Card>
-    </TouchableOpacity>
+        }
+        trailing={<Text variant="title">{formatCents(transaction.amountCents)}</Text>}
+      />
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  avatarIcon: {},
-  transactionTitle: {
-    paddingLeft: 0,
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 0,
-  },
-  transactionDescription: {
-    paddingLeft: 0,
-  },
-  transactionContent: { paddingLeft: 0, paddingRight: 4, paddingTop: 8, paddingBottom: 8 },
-  transaction: {
-    marginHorizontal: 0,
-    marginVertical: StyleSheet.hairlineWidth,
-    borderRadius: 2,
-    width: '100%',
-  },
-});

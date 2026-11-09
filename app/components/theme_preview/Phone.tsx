@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
-import { Surface } from 'react-native-paper';
-import { useAppTheme } from 'app/theme';
+import { useTheme } from 'app/ui';
 
 interface IPhonePreview {
   primaryColor?: string;
@@ -10,22 +9,22 @@ interface IPhonePreview {
 
 function PhonePreview(props: IPhonePreview) {
   const { primaryColor } = props;
-  const { theme, palette } = useAppTheme();
+  const theme = useTheme();
   const { t } = useTranslation('common');
 
   return (
     <View>
-      <Surface style={styles.previewContainer}>
-        <View style={[styles.previewAppBar, { backgroundColor: theme.colors.surface }]} />
+      <View style={[styles.previewContainer, theme.elevation.raised]}>
+        <View style={[styles.previewAppBar, { backgroundColor: theme.colour.surface }]} />
         <View style={[styles.previewLoadCard]} />
         <View style={[styles.previewLoadCard2]} />
         <View style={[styles.previewLoadCard3]} />
         <View style={[styles.previewButton, { backgroundColor: primaryColor }]} />
-        <View style={[styles.previewTabBar, { backgroundColor: theme.colors.surface }]} />
-        <View style={[styles.previewTabButton, { backgroundColor: palette.placeholder }]} />
-        <View style={[styles.previewTabButton2, { backgroundColor: palette.placeholder }]} />
-        <View style={[styles.previewTabButton3, { backgroundColor: palette.placeholder }]} />
-      </Surface>
+        <View style={[styles.previewTabBar, { backgroundColor: theme.colour.surface }]} />
+        <View style={[styles.previewTabButton, { backgroundColor: theme.colour.textMuted }]} />
+        <View style={[styles.previewTabButton2, { backgroundColor: theme.colour.textMuted }]} />
+        <View style={[styles.previewTabButton3, { backgroundColor: theme.colour.textMuted }]} />
+      </View>
       <Text style={styles.label}>{t('themePreview.phone')}</Text>
     </View>
   );

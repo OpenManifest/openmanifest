@@ -1,45 +1,27 @@
 import * as React from 'react';
-import { Avatar } from 'react-native-paper';
+import { View, type StyleProp, type ViewStyle } from 'react-native';
+import { Avatar, type AvatarSize } from 'app/ui';
 
-import first from 'lodash/first';
-
-type AvatarProps = typeof Avatar.Image extends React.ComponentType<infer P> ? P : never;
-
-interface IUserAvatarProps extends Omit<AvatarProps, 'source'> {
-  source?: AvatarProps['source'];
+interface IUserAvatarProps {
   image?: string | null;
   name?: string | null;
+  /** In dp, as the older screens give it: the nearest size of the design system is used */
+  size?: number;
+  style?: StyleProp<ViewStyle>;
 }
-export default function UserAvatar(props: IUserAvatarProps) {
-  const { name, image, source: _, size, ...rest } = props;
-  const initals = name
-    ?.split(/\s/g)
-    .map((n) => first(n))
-    .join('');
 
-  return !image ? (
-    <Avatar.Text
-      label={initals || ''}
-      {...rest}
-      style={{
-        alignSelf: 'center',
-        height: size || 32,
-        width: size || 32,
-        borderRadius: (size || 32) / 2,
-      }}
-      size={size || 32}
-    />
-  ) : (
-    <Avatar.Image
-      source={{ uri: image }}
-      {...rest}
-      style={{
-        alignSelf: 'center',
-        height: size || 32,
-        width: size || 32,
-        borderRadius: (size || 32) / 2,
-      }}
-      size={size || 32}
-    />
+/** The nearest avatar size of the design system to a size in dp */
+export function avatarSizeOf(size = 32): AvatarSize {
+  if (size >= 52) return 'lg';
+  if (size >= 38) return 'md';
+  return 'sm';
+}
+
+/** The avatar of the older screens (a size in dp): `Avatar` from `app/ui` in the nearest of its sizes */
+export default function UserAvatar({ image, name, size, style }: IUserAvatarProps) {
+  return (
+    <View style={[{ alignSelf: 'center' }, style]}>
+      <Avatar name={name || ''} imageUri={image} size={avatarSizeOf(size)} />
+    </View>
   );
 }

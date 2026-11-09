@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Text, useTheme } from 'react-native-paper';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { useOperatorContext } from 'app/providers/operator/context';
+import { Text, useTheme } from 'app/ui';
 
 /**
  * One line in place of the add actions: shown to a member who cannot manifest anybody because the operator has
@@ -23,15 +23,10 @@ export default function ManifestDeskNote() {
     return null;
   }
   return (
-    <Text
-      testID="manifest-desk-note"
-      style={[styles.note, { color: theme.colors.onSurfaceVariant }]}
-    >
-      {t('legacy.manifestDeskNote')}
-    </Text>
+    <View style={{ paddingHorizontal: theme.space.lg, paddingVertical: theme.space.sm }}>
+      <Text testID="manifest-desk-note" tone="muted">
+        {t('legacy.manifestDeskNote')}
+      </Text>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  note: { paddingHorizontal: 16, paddingVertical: 8 },
-});

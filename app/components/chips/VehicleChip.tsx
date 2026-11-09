@@ -4,7 +4,7 @@ import { truncate } from 'lodash';
 import * as React from 'react';
 import { useSession } from 'app/state';
 import { View } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { useTheme } from 'app/ui';
 import { useVehiclesQuery } from '../../api/reflection';
 import { Permission } from '../../api/schema.d';
 import useRestriction from '../../hooks/useRestriction';
@@ -25,7 +25,7 @@ export default function VehicleChip(props: IVehicleChipSelect) {
   const { small, color: assignedColor, backgroundColor, value, onSelect } = props;
   const theme = useTheme();
   const { t } = useTranslation(['common', 'terms']);
-  const color = assignedColor || theme.colors.onSurface;
+  const color = assignedColor || theme.colour.text;
   const currentOperatorId = useSession((session) => session.currentOperatorId);
 
   const { data } = useVehiclesQuery({

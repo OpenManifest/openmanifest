@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { reloadAsync } from 'expo-updates';
-import { Button, Card, HelperText } from 'react-native-paper';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native-gesture-handler';
 import LottieView from '../LottieView';
 import ScreenContainer from '../layout/ScreenContainer';
 import twigBreakAnimation from '../../../assets/images/error-twig-break.json';
+import { Button, Card, Row, Stack, Text, useTheme } from 'app/ui';
 
 interface IErrorScreenProps {
   error?: Error | null;
@@ -14,6 +14,7 @@ interface IErrorScreenProps {
 export default function ErrorScreen(props: IErrorScreenProps) {
   const { error } = props;
   const { t } = useTranslation('common');
+  const theme = useTheme();
   const [isDetailsVisible, setDetailsVisible] = React.useState(false);
   const [reloading, setReloading] = React.useState(false);
   const onToggleDetails = React.useCallback(
@@ -37,49 +38,61 @@ export default function ErrorScreen(props: IErrorScreenProps) {
 
   return (
     <ScreenContainer style={styles.container}>
-      <Card style={styles.card}>
-        <Card.Title
-          title={t('errorScreen.title')}
-          subtitle={t('errorScreen.subtitle')}
-          titleStyle={{ textAlign: 'center' }}
-          subtitleStyle={{ textAlign: 'center' }}
-        />
-        <Card.Content style={{ alignItems: 'center' }}>
-          <LottieView
-            source={twigBreakAnimation}
-            autoPlay
-            loop={false}
-            style={{
-              height: Platform.OS === 'web' ? 300 : 150,
-              width: Platform.OS === 'web' ? 300 : 150,
-            }}
-          />
-          {!error ? null : (
-            <>
-              <HelperText type="error">{error?.message}</HelperText>
-              {isDetailsVisible ? (
-                <ScrollView style={{ maxHeight: 300 }}>
-                  <HelperText type="error">{error.stack}</HelperText>
-                </ScrollView>
-              ) : null}
-            </>
-          )}
-        </Card.Content>
-        <Card.Actions style={{ justifyContent: 'space-between' }}>
-          <Button compact onPress={onToggleDetails}>
-            {isDetailsVisible ? t('errorScreen.hideDetails') : t('errorScreen.showDetails')}
-          </Button>
-          <Button
-            disabled={reloading}
-            loading={reloading}
-            compact
-            mode="outlined"
-            onPress={onReloadApp}
-          >
-            {t('errorScreen.reload')}
-          </Button>
-        </Card.Actions>
-      </Card>
+      <View style={[styles.card, { marginHorizontal: theme.space.lg }]}>
+        <Card variant="raised">
+          <Stack gap="md">
+            <Stack gap="xs">
+              <Text variant="title" role="heading" align="center">
+                {t('errorScreen.title')}
+              </Text>
+              <Text tone="muted" align="center">
+                {t('errorScreen.subtitle')}
+              </Text>
+            </Stack>
+            <View style={{ alignItems: 'center' }}>
+              <LottieView
+                source={twigBreakAnimation}
+                autoPlay
+                loop={false}
+                style={{
+                  height: Platform.OS === 'web' ? 300 : 150,
+                  width: Platform.OS === 'web' ? 300 : 150,
+                }}
+              />
+            </View>
+            {!error ? null : (
+              <>
+                <Text variant="caption" tone="blocked">
+                  {error?.message}
+                </Text>
+                {isDetailsVisible ? (
+                  <ScrollView style={{ maxHeight: 300 }}>
+                    <Text variant="caption" tone="blocked">
+                      {error.stack}
+                    </Text>
+                  </ScrollView>
+                ) : null}
+              </>
+            )}
+            <Row justify="between" gap="sm">
+              <Button
+                variant="tertiary"
+                label={
+                  isDetailsVisible ? t('errorScreen.hideDetails') : t('errorScreen.showDetails')
+                }
+                onPress={onToggleDetails}
+              />
+              <Button
+                variant="secondary"
+                disabled={reloading}
+                loading={reloading}
+                label={t('errorScreen.reload')}
+                onPress={onReloadApp}
+              />
+            </Row>
+          </Stack>
+        </Card>
+      </View>
     </ScreenContainer>
   );
 }
@@ -90,5 +103,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  card: { width: '100%', minHeight: 250, maxWidth: 450, marginHorizontal: 16 },
+  card: { width: '100%', maxWidth: 450 },
 });

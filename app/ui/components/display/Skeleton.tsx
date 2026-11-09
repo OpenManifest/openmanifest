@@ -17,7 +17,7 @@ export type SkeletonProps = {
 const LINE = 16;
 
 /** Whether the system asks for less motion; the pulse stands still then */
-function useReduceMotion() {
+export function useReduceMotion() {
   const [reduce, setReduce] = React.useState(false);
   React.useEffect(() => {
     let mounted = true;

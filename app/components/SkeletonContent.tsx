@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Animated, Platform, StyleProp, View, ViewStyle } from 'react-native';
-import { useTheme } from 'react-native-paper';
-import Color from 'color';
+import { useTheme } from 'app/ui';
 
 export interface ICustomViewStyle extends ViewStyle {
   children?: ICustomViewStyle[];
@@ -15,12 +14,7 @@ export interface ISkeletonContentProps {
   children?: React.ReactNode;
 }
 
-const DEFAULT_BORDER_RADIUS = 4;
 const PULSE_DURATION = 600;
-const defaultColors = {
-  boneColor: '#E1E9EE',
-  highlightColor: '#F2F8FC',
-};
 
 /**
  * Grey placeholder blocks that pulse while content is loading. `layout` describes the blocks (a block can contain
@@ -30,9 +24,7 @@ const defaultColors = {
 export default function SkeletonContent(props: ISkeletonContentProps) {
   const { isLoading, layout = [], containerStyle, children } = props;
   const theme = useTheme();
-  const boneColor = theme.dark
-    ? Color(defaultColors.boneColor).negate().rgb().toString()
-    : defaultColors.boneColor;
+  const boneColor = theme.colour.raised;
   const pulse = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
@@ -75,7 +67,7 @@ export default function SkeletonContent(props: ISkeletonContentProps) {
           testID="skeleton-bone"
           style={[
             {
-              borderRadius: DEFAULT_BORDER_RADIUS,
+              borderRadius: theme.radius.sm,
               backgroundColor: boneColor,
               overflow: 'hidden',
               opacity,

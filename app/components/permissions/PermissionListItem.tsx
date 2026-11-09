@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { List, Switch } from 'react-native-paper';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { RoleDetailedFragment } from 'app/api/operations';
 import { useSwitchPermission } from 'app/features/setup/usePermissionMatrix';
+import { ListRow, Switch } from 'app/ui';
 
 interface IPermissionListItem {
   title: string;
@@ -19,16 +19,19 @@ export default function PermissionListItem(props: IPermissionListItem) {
   const switchPermission = useSwitchPermission();
 
   return (
-    <List.Item
+    <ListRow
+      title={title}
+      supporting={description}
       disabled={!canChangePermissions}
-      style={{ width: '100%' }}
-      right={() => (
+      trailing={
         <Switch
+          label={title}
+          hideLabel
+          disabled={!canChangePermissions}
           value={role.permissions.includes(permissionName)}
-          onValueChange={(enabled) => switchPermission(role, permissionName, enabled)}
+          onChange={(enabled) => switchPermission(role, permissionName, enabled)}
         />
-      )}
-      {...{ title, description }}
+      }
     />
   );
 }

@@ -2,7 +2,6 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SectionList, StyleSheet, View } from 'react-native';
-import { List } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 
 import { useOperatorContext } from 'app/providers/operator/context';
@@ -13,7 +12,7 @@ import { OrderEssentialsFragment } from 'app/api/operations';
 import { useUserProfile } from 'app/api/crud';
 import OrderCard from '../../../../components/orders/OrderCard';
 import { useUserNavigation } from '../useUserNavigation';
-import { useAppTheme } from 'app/theme';
+import { Subheader, useTheme } from 'app/ui';
 import useWalletRedirect from 'app/features/wallet/useWalletRedirect';
 
 export type OrdersRoute = {
@@ -22,7 +21,7 @@ export type OrdersRoute = {
   };
 };
 export default function OrdersScreen() {
-  const { theme } = useAppTheme();
+  const theme = useTheme();
   const {
     operator: { currentUser },
   } = useOperatorContext();
@@ -46,8 +45,8 @@ export default function OrdersScreen() {
   if (toWallet) return null;
 
   return (
-    <View style={{ flexGrow: 1, backgroundColor: theme.colors.surface }}>
-      {loading && <ProgressBar color={theme.colors.primary} indeterminate visible={loading} />}
+    <View style={{ flexGrow: 1, backgroundColor: theme.colour.surface }}>
+      {loading && <ProgressBar indeterminate visible={loading} />}
 
       <SectionList
         sections={map(
@@ -66,7 +65,7 @@ export default function OrdersScreen() {
             };
           }
         )}
-        renderSectionHeader={({ section: { title } }) => <List.Subheader>{title}</List.Subheader>}
+        renderSectionHeader={({ section: { title } }) => <Subheader>{title}</Subheader>}
         style={styles.flatList}
         data={membership?.orders?.edges || []}
         refreshing={false}

@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { View } from 'react-native';
-import { useTheme } from 'react-native-paper';
 import { truncate } from 'lodash';
 import { CrewRoleEssentialsFragment, MembershipEssentialsFragment } from 'app/api/operations';
 import { useMembershipsQuery } from 'app/api/reflection';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { useSession } from 'app/state';
-import type { IconName } from 'app/ui';
+import { useTheme, type IconName } from 'app/ui';
 import Select, { ISelectOption } from '../input/select/Select';
 import Chip from './Chip';
 
@@ -33,7 +32,7 @@ interface ICrewChipProps {
 export default function CrewChip(props: ICrewChipProps) {
   const { role, label, value, small, backgroundColor, color: assignedColor, onSelect } = props;
   const theme = useTheme();
-  const color = assignedColor || theme.colors.onSurface;
+  const color = assignedColor || theme.colour.text;
   const icon = ICON[role.key] ?? 'account';
   const empty = `No ${label ?? role.name}`;
   const currentOperatorId = useSession((session) => session.currentOperatorId);
