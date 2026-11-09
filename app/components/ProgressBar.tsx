@@ -1,17 +1,98 @@
 import * as React from 'react';
-import { View } from 'react-native';
-import { ProgressBar as PaperProgressBar } from 'react-native-paper';
+import { Animated, Easing, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from 'app/ui';
+import { useReduceMotion } from 'app/ui/components/display/Skeleton';
 
-type Props = React.ComponentProps<typeof PaperProgressBar>;
+type Props = {
+  /** Hidden (an empty 4 dp strip, so the layout does not jump) unless true; default true */
+  visible?: boolean;
+  /** A bar that runs while something loads, rather than one that fills to `progress` */
+  indeterminate?: boolean;
+  /** 0 to 1 */
+  progress?: number;
+  /** The fill (default: the brand colour) */
+  color?: string;
+  'aria-label'?: string;
+  accessibilityLabel?: string;
+  testID?: string;
+};
+
+const HEIGHT = 4;
+const SEGMENT = 0.3;
 
 /**
- * react-native-paper 5 renders its root with `height: '100%'` on web, so in a column flex parent the bar grows to the
- * height of the screen and pushes everything below it out of view. Wrapping it in a 4 px box restores the 4 px bar.
+ * The thin bar at the top of a screen while it loads. A progress bar needs a name (axe `aria-progressbar-name`):
+ * "Loading" unless the caller gives one. The running segment stands still when the system asks for less motion.
  */
-export default function ProgressBar(props: Props) {
+export default function ProgressBar({
+  visible = true,
+  indeterminate = false,
+  progress = 0,
+  color,
+  testID,
+  ...props
+}: Props) {
+  const { t } = useTranslation('common');
+  const theme = useTheme();
+  const reduceMotion = useReduceMotion();
+  const label = props['aria-label'] ?? props.accessibilityLabel ?? t('loading');
+  const [width, setWidth] = React.useState(0);
+  const [run] = React.useState(() => new Animated.Value(0));
+  const running = visible && indeterminate && !reduceMotion;
+
+  React.useEffect(() => {
+    if (!running) return undefined;
+    const loop = Animated.loop(
+      Animated.timing(run, {
+        toValue: 1,
+        duration: 1200,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: false,
+      })
+    );
+    loop.start();
+    return () => {
+      loop.stop();
+      run.setValue(0);
+    };
+  }, [run, running]);
+
+  const fill = color || theme.colour.brand;
+  const fraction = indeterminate ? SEGMENT : Math.min(1, Math.max(0, progress));
+
   return (
-    <View style={{ height: 4 }}>
-      <PaperProgressBar {...props} />
+    <View
+      role="progressbar"
+      aria-label={label}
+      accessibilityLabel={label}
+      aria-busy={visible && indeterminate}
+      aria-valuemin={indeterminate ? undefined : 0}
+      aria-valuemax={indeterminate ? undefined : 100}
+      aria-valuenow={indeterminate ? undefined : Math.round(fraction * 100)}
+      testID={testID}
+      onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
+      style={{ height: HEIGHT, overflow: 'hidden' }}
+    >
+      {visible ? (
+        <Animated.View
+          style={{
+            height: HEIGHT,
+            width: `${fraction * 100}%`,
+            backgroundColor: fill,
+            transform: running
+              ? [
+                  {
+                    translateX: run.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [-width * SEGMENT, width],
+                    }),
+                  },
+                ]
+              : [],
+          }}
+        />
+      ) : null}
     </View>
   );
 }

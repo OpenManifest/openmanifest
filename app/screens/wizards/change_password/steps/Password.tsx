@@ -1,25 +1,25 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import TextInput from 'app/components/input/text/TextField';
 import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard/Step';
-import { useChangePasswordFields } from '../fields';
 import PasswordComplexityIndicator from 'app/components/input/PasswordComplexityIndicator';
 import checkPasswordComplexity from 'app/utils/checkPasswordComplexity';
+import { useChangePasswordFields } from '../fields';
 
 function PasswordStep(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   const { values, errors, setValue } = useChangePasswordFields();
   return (
-    <Step {...props} title="Password">
+    <Step {...props} title={t('auth.change.title')}>
       <Fields>
         <TextInput
-          mode="flat"
-          label="Password"
+          label={t('auth.change.newPassword')}
           error={errors.password}
-          textContentType="password"
+          textContentType="newPassword"
+          autoComplete="new-password"
           secureTextEntry
-          passwordRules="required: upper; required: lower; required: digit; minlength: 8;"
           value={values.password}
           onChangeText={(newValue) => setValue('password', newValue)}
-          style={{ width: '100%', backgroundColor: 'transparent', fontSize: 32, minHeight: 70 }}
         />
         <PasswordComplexityIndicator strength={checkPasswordComplexity(values.password)} />
       </Fields>

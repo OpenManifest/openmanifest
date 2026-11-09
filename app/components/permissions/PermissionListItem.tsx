@@ -1,10 +1,9 @@
-import { useUpdateRoleMutation } from 'app/api/reflection';
 import * as React from 'react';
-import { List, Switch } from 'react-native-paper';
 import { Permission } from 'app/api/schema.d';
 import useRestriction from 'app/hooks/useRestriction';
 import { RoleDetailedFragment } from 'app/api/operations';
-import { useNotifications } from 'app/providers/notifications';
+import { useSwitchPermission } from 'app/features/setup/usePermissionMatrix';
+import { ListRow, Switch } from 'app/ui';
 
 interface IPermissionListItem {
   title: string;
@@ -16,44 +15,23 @@ interface IPermissionListItem {
 export default function PermissionListItem(props: IPermissionListItem) {
   const { title, description, role, permissionName } = props;
   const canChangePermissions = useRestriction(Permission.GrantPermission);
-  const [mutationUpdatePermission] = useUpdateRoleMutation();
-  const notify = useNotifications();
+  // Optimistic, and back again when the server refuses (the wizard's step; Setup has the matrix)
+  const switchPermission = useSwitchPermission();
 
   return (
-    <List.Item
+    <ListRow
+      title={title}
+      supporting={description}
       disabled={!canChangePermissions}
-      style={{ width: '100%' }}
-      right={() => (
+      trailing={
         <Switch
+          label={title}
+          hideLabel
+          disabled={!canChangePermissions}
           value={role.permissions.includes(permissionName)}
-          onValueChange={async () => {
-            const result = await mutationUpdatePermission({
-              variables: {
-                roleId: Number(role.id),
-                permissionName,
-                enabled: !role.permissions.includes(permissionName),
-              },
-              optimisticResponse: {
-                updateRole: {
-                  role: {
-                    ...role,
-                    permissions: !role.permissions.includes(permissionName)
-                      ? role.permissions.filter((name) => name !== permissionName)
-                      : [...role.permissions, permissionName],
-                  },
-                  errors: null,
-                  fieldErrors: null,
-                },
-              },
-            });
-
-            if (result?.data?.updateRole?.errors?.length) {
-              result?.data?.updateRole?.errors?.map((message) => notify.error(message));
-            }
-          }}
+          onChange={(enabled) => switchPermission(role, permissionName, enabled)}
         />
-      )}
-      {...{ title, description }}
+      }
     />
   );
 }

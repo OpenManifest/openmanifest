@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { LayoutChangeEvent, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { LayoutChangeEvent, useWindowDimensions, View } from 'react-native';
+import { useStyles, type Theme } from 'app/ui';
 import ScreenContainer from '../layout/ScreenContainer';
 import Dots from './Dots';
 
@@ -14,6 +15,7 @@ export interface IWizardFrameProps {
 /** Safe-area aware container for the wizard pages: progress dots on top, the pages filling the rest */
 export default function WizardFrame(props: IWizardFrameProps) {
   const { dotCount, dotIndex = 0, children } = props;
+  const styles = useStyles(stylesFor);
   const [width, setWidth] = React.useState(0);
   const screen = useWindowDimensions();
   const onLayout = React.useCallback((event: LayoutChangeEvent) => {
@@ -34,13 +36,13 @@ export default function WizardFrame(props: IWizardFrameProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const stylesFor = (theme: Theme) => ({
   dots: {
-    alignSelf: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 16,
+    alignSelf: 'center' as const,
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    marginTop: theme.space.lg,
     zIndex: 1100,
   },
   pages: {

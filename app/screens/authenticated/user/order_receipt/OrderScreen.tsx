@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { Button, Card, Divider, List, useTheme } from 'react-native-paper';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import color from 'color';
-import { successColor } from 'app/constants/Colors';
 import LottieView from 'app/components/LottieView';
-import { Dropzone, DropzoneUser } from 'app/api/schema.d';
-import ScrollableScreen from 'app/components/layout/ScrollableScreen';
+import { Operator, Membership } from 'app/api/schema.d';
+import FormColumn from 'app/components/layout/FormColumn';
 import UserAvatar from 'app/components/UserAvatar';
 import lottieTicketAnimation from 'app/../assets/images/ticket.json';
-import { DropzoneEssentialsFragment } from 'app/api/operations';
+import { OperatorEssentialsFragment } from 'app/api/operations';
 import { useUserProfile } from 'app/api/crud';
+import useWalletRedirect from 'app/features/wallet/useWalletRedirect';
+import { Card, Divider, ListRow, Row, StatusBadge, Text, useTheme } from 'app/ui';
 import ReceiptCard from './ReceiptCard';
 
 export type OrderReceiptRoute = {
@@ -23,11 +23,11 @@ export default function OrderScreen() {
   const route = useRoute<RouteProp<OrderReceiptRoute, 'OrderReceiptScreen'>>();
   const theme = useTheme();
   const { orderId, userId } = route.params;
-  const { dropzoneUser } = useUserProfile({ id: userId });
+  const toWallet = useWalletRedirect(userId, orderId);
+  const { membership } = useUserProfile({ id: userId });
   const order = React.useMemo(
-    () =>
-      dropzoneUser?.orders?.edges?.map((edge) => edge?.node).find((node) => node?.id === orderId),
-    [dropzoneUser?.orders?.edges, orderId]
+    () => membership?.orders?.edges?.map((edge) => edge?.node).find((node) => node?.id === orderId),
+    [membership?.orders?.edges, orderId]
   );
 
   const animation = React.useMemo(
@@ -36,121 +36,88 @@ export default function OrderScreen() {
         JSON.stringify(lottieTicketAnimation).replace(
           /260,254,0/g,
           [
-            color(theme.colors.primary).red(),
-            color(theme.colors.primary).green(),
-            color(theme.colors.primary).blue(),
+            color(theme.colour.brand).red(),
+            color(theme.colour.brand).green(),
+            color(theme.colour.brand).blue(),
           ].join(',')
         )
       ),
-    [theme.colors.primary]
+    [theme.colour.brand]
   );
+  if (toWallet) return null;
+
+  const buyerName =
+    (order?.buyer as Membership)?.user?.name || (order?.buyer as Operator)?.name || '';
+  const sellerName =
+    (order?.seller as Membership)?.user?.name ||
+    (order?.seller as OperatorEssentialsFragment)?.name ||
+    '';
+
   return (
-    <ScrollableScreen>
-      <Card style={{ marginTop: 32, width: '100%', maxWidth: 600 }}>
-        <Card.Content style={{ paddingBottom: 16 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-            <LottieView
-              loop={false}
-              autoPlay
-              speed={0.5}
-              style={{
-                height: 150,
-                width: 150,
-              }}
-              source={animation as unknown as string}
-            />
-            <View style={{ flexGrow: 1 }}>
-              <Text
+    <FormColumn>
+      <View style={{ marginTop: theme.space.xxl, width: '100%', maxWidth: 600 }}>
+        <Card variant="raised" padding="none">
+          <View style={{ padding: theme.space.lg }}>
+            <Row gap="md" align="center">
+              <LottieView
+                loop={false}
+                autoPlay
+                speed={0.5}
                 style={{
-                  fontWeight: 'bold',
-                  alignSelf: 'flex-start',
-                  fontSize: 26,
-                  marginLeft: 16,
-                  width: '100%',
-                  color: theme.colors.onSurface,
+                  height: 150,
+                  width: 150,
                 }}
-              >{`Order #${order?.id || ''}`}</Text>
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  opacity: 0.6,
-                  alignSelf: 'flex-start',
-                  fontSize: 14,
-                  marginLeft: 16,
-                  width: '100%',
-                  marginBottom: 48,
-                  color: theme.colors.onSurface,
-                }}
-              >
-                {order?.title}
-              </Text>
-              <Button mode="outlined" color={successColor} style={{ borderRadius: 16, margin: 8 }}>
-                {order?.state}
-              </Button>
-            </View>
+                source={animation as unknown as string}
+              />
+              <View style={{ flexGrow: 1, flexShrink: 1, gap: theme.space.sm }}>
+                <Text variant="title" role="heading">{`Order #${order?.id || ''}`}</Text>
+                <Text tone="muted">{order?.title}</Text>
+                {order?.state ? <StatusBadge status="ok" label={order.state} /> : null}
+              </View>
+            </Row>
           </View>
-        </Card.Content>
-        <Divider />
-        <Card.Title
-          style={{ flexDirection: 'row' }}
-          titleStyle={{ width: '50%' }}
-          rightStyle={{ width: '50%' }}
-          title={
-            <List.Item
-              description="Buyer"
-              title={(order?.buyer as DropzoneUser)?.user?.name || (order?.buyer as Dropzone)?.name}
-              left={(props) => (
-                <UserAvatar
-                  name={
-                    (order?.buyer as DropzoneUser)?.user?.name ||
-                    (order?.buyer as Dropzone)?.name ||
-                    ''
-                  }
-                  image={
-                    (order?.buyer as DropzoneUser)?.user?.image ||
-                    (order?.buyer as Dropzone)?.banner ||
-                    ''
-                  }
-                  style={{ alignSelf: 'center' }}
-                  size={36}
-                />
-              )}
-              titleStyle={{ width: 100, fontSize: 14 }}
-              descriptionStyle={{ width: 100, fontSize: 10 }}
-            />
-          }
-          right={() => (
-            <List.Item
-              description="Seller"
-              right={(props) => (
-                <UserAvatar
-                  name={
-                    (order?.seller as DropzoneUser)?.user?.name ||
-                    (order?.seller as DropzoneEssentialsFragment)?.name ||
-                    ''
-                  }
-                  image={
-                    (order?.buyer as DropzoneUser)?.user?.image ||
-                    (order?.buyer as Dropzone)?.banner ||
-                    ''
-                  }
-                  style={{ alignSelf: 'center', marginLeft: 8 }}
-                  size={36}
-                />
-              )}
-              titleStyle={{ textAlign: 'right', fontSize: 14 }}
-              descriptionStyle={{ textAlign: 'right', fontSize: 10 }}
-              title={
-                (order?.seller as DropzoneUser)?.user?.name ||
-                (order?.seller as DropzoneEssentialsFragment)?.name
-              }
-            />
-          )}
-        />
-      </Card>
+          <Divider />
+          <Row gap="sm">
+            <View style={{ flex: 1 }}>
+              <ListRow
+                title={buyerName}
+                supporting="Buyer"
+                leading={
+                  <UserAvatar
+                    name={buyerName}
+                    image={
+                      (order?.buyer as Membership)?.user?.image ||
+                      (order?.buyer as Operator)?.banner ||
+                      ''
+                    }
+                    size={36}
+                  />
+                }
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <ListRow
+                title={sellerName}
+                supporting="Seller"
+                trailing={
+                  <UserAvatar
+                    name={sellerName}
+                    image={
+                      (order?.seller as Membership)?.user?.image ||
+                      (order?.seller as OperatorEssentialsFragment)?.banner ||
+                      ''
+                    }
+                    size={36}
+                  />
+                }
+              />
+            </View>
+          </Row>
+        </Card>
+      </View>
       {order?.receipts?.map((receipt, index) => {
-        return <ReceiptCard {...{ receipt, order, index }} />;
+        return <ReceiptCard key={receipt.id} {...{ receipt, order, index }} />;
       })}
-    </ScrollableScreen>
+    </FormColumn>
   );
 }

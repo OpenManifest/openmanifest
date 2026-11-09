@@ -1,54 +1,71 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { HelperText, TextInput, useTheme } from 'react-native-paper';
+import UiTextField, {
+  type TextFieldProps as UiTextFieldProps,
+} from 'app/ui/components/form/TextField';
 import { withHookForm } from '../withHookForm';
-import useSheetInputRender from '../useSheetInputRender';
 
-type Extract<T> = T extends React.ComponentType<infer U> ? U : never;
-interface ITextFieldProps extends Omit<
-  Extract<typeof TextInput>,
-  'onChange' | 'onChangeText' | 'error'
-> {
-  error?: string | null;
-  helperText?: string | null;
-  onChangeText?(newValue: string): void;
+/**
+ * The props this field took when it was a Paper `TextInput`: the ones that still mean something are passed on, the
+ * look (`mode`, `style`, adornments, a custom `render`) is the design system's now.
+ */
+export type ITextFieldProps = Omit<UiTextFieldProps, 'label' | 'onChange'> & {
+  label?: string;
   onChange?(newValue: string): void;
-}
+  onChangeText?(newValue: string): void;
+  /** Ignored: kept so existing call sites compile */
+  mode?: 'flat' | 'outlined';
+  style?: unknown;
+  passwordRules?: string;
+  render?: unknown;
+  dense?: boolean;
+  left?: unknown;
+  right?: unknown;
+  editable?: boolean;
+  numberOfLines?: number;
+  placeholderTextColor?: string;
+  defaultValue?: string;
+  role?: string;
+  accessibilityValue?: unknown;
+};
 
-function TextField(props: ITextFieldProps) {
-  const { error, helperText, onChangeText: setText, onChange, style, ...rest } = props;
-  const onChangeText = onChange || setText;
-  const theme = useTheme();
-  const render = useSheetInputRender();
+function TextField({
+  label,
+  onChange,
+  onChangeText,
+  editable,
+  disabled,
+  mode: _mode,
+  style: _style,
+  passwordRules: _passwordRules,
+  render: _render,
+  dense: _dense,
+  left: _left,
+  right: _right,
+  numberOfLines: _numberOfLines,
+  placeholderTextColor: _placeholderTextColor,
+  defaultValue,
+  role: _role,
+  accessibilityValue: _accessibilityValue,
+  value,
+  ...rest
+}: ITextFieldProps) {
+  const [uncontrolled, setUncontrolled] = React.useState(defaultValue ?? '');
+  const change = onChange ?? onChangeText;
+
   return (
-    <>
-      <TextInput
-        mode="outlined"
-        style={StyleSheet.flatten([styles.field, { backgroundColor: theme.colors.surface }, style])}
-        render={render}
-        {...rest}
-        {...{ onChangeText }}
-        error={!!error}
-      />
-      <HelperText style={styles.helperText} type={error ? 'error' : 'info'}>
-        {error || helperText || ' '}
-      </HelperText>
-    </>
+    <UiTextField
+      {...rest}
+      label={label ?? ''}
+      value={value ?? (defaultValue !== undefined ? uncontrolled : value)}
+      disabled={disabled ?? editable === false}
+      onChange={(next) => {
+        setUncontrolled(next);
+        change?.(next);
+      }}
+    />
   );
 }
 
 export const FormTextField = withHookForm(TextField);
 
 export default TextField;
-
-const styles = StyleSheet.create({
-  fields: {
-    flex: 1,
-  },
-  field: {
-    marginBottom: 8,
-  },
-  helperText: {
-    marginBottom: 16,
-  },
-});

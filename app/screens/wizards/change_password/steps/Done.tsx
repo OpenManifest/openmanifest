@@ -1,21 +1,17 @@
 import * as React from 'react';
-import { Paragraph } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
+import { Icon, Stack, Text } from 'app/ui';
 import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard/Step';
-import LottieView from 'app/components/LottieView';
-import lottieDoneAnimation from '../../../../../assets/images/finished-2.json';
 
 function DoneStep(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   return (
-    <Step {...props} title="Password changed">
+    <Step {...props} title={t('auth.change.doneTitle')}>
       <Fields>
-        <LottieView
-          loop={false}
-          autoPlay
-          speed={1.2}
-          style={{ height: 300, width: 300, alignSelf: 'center' }}
-          source={lottieDoneAnimation as unknown as string}
-        />
-        <Paragraph>Your password has been changed. You can now log in again.</Paragraph>
+        <Stack gap="md" align="center">
+          <Icon name="check-circle-outline" size={56} tone="ok" />
+          <Text align="center">{t('auth.change.doneBody')}</Text>
+        </Stack>
       </Fields>
     </Step>
   );

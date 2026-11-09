@@ -1,58 +1,58 @@
 import * as React from 'react';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import {
-  useCreateRigMutation,
-  useUpdateRigMutation,
-  useCreateRigInspectionMutation,
+  useCreateEquipmentMutation,
+  useUpdateEquipmentMutation,
+  useCreateEquipmentInspectionMutation,
 } from '../reflection';
 import {
-  UpdateRigMutationVariables,
-  CreateRigMutationVariables,
-  RigEssentialsFragment,
+  UpdateEquipmentMutationVariables,
+  CreateEquipmentMutationVariables,
+  EquipmentEssentialsFragment,
 } from '../operations';
 import { TMutationResponse } from './factory';
 
 export function useEquipment() {
-  const [createRig] = useCreateRigMutation();
-  const [updateRig] = useUpdateRigMutation();
-  const [inspectRig] = useCreateRigInspectionMutation();
+  const [createEquipment] = useCreateEquipmentMutation();
+  const [updateEquipment] = useUpdateEquipmentMutation();
+  const [inspectEquipment] = useCreateEquipmentInspectionMutation();
 
   const create = React.useCallback(
-    async function CreateRig(
-      variables: CreateRigMutationVariables
-    ): Promise<TMutationResponse<{ rig: RigEssentialsFragment }>> {
-      const response = await createRig({ variables });
+    async function CreateEquipment(
+      variables: CreateEquipmentMutationVariables
+    ): Promise<TMutationResponse<{ equipment: EquipmentEssentialsFragment }>> {
+      const response = await createEquipment({ variables });
 
-      if (response?.data?.createRig?.rig?.id) {
-        return { rig: response?.data?.createRig?.rig };
+      if (response?.data?.createEquipment?.equipment?.id) {
+        return { equipment: response?.data?.createEquipment?.equipment };
       }
       return {
-        error: response?.data?.createRig?.errors?.[0],
-        fieldErrors: response?.data?.createRig?.fieldErrors || undefined,
+        error: response?.data?.createEquipment?.errors?.[0],
+        fieldErrors: response?.data?.createEquipment?.fieldErrors || undefined,
       };
     },
-    [createRig]
+    [createEquipment]
   );
 
   const update = React.useCallback(
-    async function UpdateRig(
-      attributes: UpdateRigMutationVariables
-    ): Promise<TMutationResponse<{ rig: RigEssentialsFragment }>> {
-      const response = await updateRig({ variables: attributes });
+    async function UpdateEquipment(
+      attributes: UpdateEquipmentMutationVariables
+    ): Promise<TMutationResponse<{ equipment: EquipmentEssentialsFragment }>> {
+      const response = await updateEquipment({ variables: attributes });
 
-      if (response?.data?.updateRig?.rig?.id) {
-        return { rig: response?.data?.updateRig?.rig };
+      if (response?.data?.updateEquipment?.equipment?.id) {
+        return { equipment: response?.data?.updateEquipment?.equipment };
       }
       return {
-        error: response?.data?.updateRig?.errors?.[0],
-        fieldErrors: response?.data?.updateRig?.fieldErrors || undefined,
+        error: response?.data?.updateEquipment?.errors?.[0],
+        fieldErrors: response?.data?.updateEquipment?.fieldErrors || undefined,
       };
     },
-    [updateRig]
+    [updateEquipment]
   );
 
   const add = React.useCallback(
-    (attributes: CreateRigMutationVariables & { id?: string }) => {
+    (attributes: CreateEquipmentMutationVariables & { id?: string }) => {
       if (attributes?.id) {
         return update({ ...attributes, id: Number(attributes?.id) });
       }
