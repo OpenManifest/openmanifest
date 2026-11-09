@@ -19,7 +19,7 @@ Client diagrams: [diagrams.md](diagrams.md).
 | Server data     | Apollo Client 3.14.1 (`BatchHttpLink`, ActionCable link for subscriptions)                                                                                                                                        | `app/api/`                               |
 | Client state    | zustand 5 stores: `useSession` (credentials, current dropzone, push token; credentials in `expo-secure-store` on native), `usePreferences` (colour scheme), `useThemeOverrides` (colour preview); no Redux (P4.8) | `app/state/`, `app/theme/`               |
 | Navigation      | React Navigation 7 (stack, drawer, bottom tabs)                                                                                                                                                                   | `app/screens/**/routes.tsx`              |
-| UI kit          | react-native-paper 5.15.3 (MD2 theme, P3.11), react-native-reanimated 4.5.1 (with react-native-worklets 0.10.1), @gorhom/bottom-sheet 5.2.14                                                                      |                                          |
+| UI kit          | `app/ui` on React Native primitives and tokens (no Paper since U6.1), react-native-reanimated 4.5.1 (with react-native-worklets 0.10.1), @gorhom/bottom-sheet 5.2.14                                              |                                          |
 | Forms           | react-hook-form 7 + yup, one `useForm` hook per form in `app/forms/<name>/` (P4.5–P4.7)                                                                                                                           | `app/forms/`                             |
 | Code generation | graphql-codegen (`codegen.yml`) → `app/api/schema.d.ts`, `operations.ts`, `reflection.tsx`                                                                                                                        |                                          |
 | Web             | `expo export --platform web` (Metro, `web.bundler: metro`, `output: single`; was webpack 4 before P3.7). Custom HTML, `404.html` and `.well-known/` live in `public/`, which Metro copies to `dist/`              | `app.json`, `metro.config.js`, `public/` |
@@ -97,6 +97,17 @@ Main flows:
 | `FloatingActionArea` | Bottom-right area for FABs, outside scroll content; above the gesture bar, rises with the keyboard                                                                                                                            |
 | `useBreakpoint`      | `compact` < 600 ≤ `medium` < 1024 ≤ `expanded` from the window width                                                                                                                                                          |
 | `Sheet`              | The one bottom sheet (`DialogOrSheet` and `Credits` use it): dynamic height, interactive keyboard handling, bottom inset padding. `TextField`/`NumberField` render a `BottomSheetTextInput` inside a `Sheet` (`SheetContext`) |
+
+Dates and times (U6.1): `DateField` and `TimeField` in `app/ui` (and `FormDateField`/`FormTimeField` for react-hook-form)
+take and give seconds since the epoch. A date is the midday of the chosen day on the device, so it keeps its date in any
+zone and in UTC; a time is today's at the operator (`timeZone`). On the web they are the browser's own
+`<input type="date|time">` in the box of a text field; on Android `DateTimePickerAndroid` opens the system dialog; on iOS
+the `@react-native-community/datetimepicker` calendar or wheels open under the box. react-native-paper, its dates and
+tabs packages and react-day-picker are gone: `app/theme/palette.ts` builds only the React Navigation theme and the small
+palette that the web's MUI bridge and the gradient text read, both from the tokens; everything else reads `useTheme()`
+from `app/ui`. The classic board (`app/screens/authenticated/manifest`, `app/components/slots_table`, `app/legacy`) uses
+`app/ui` pieces too (a small table grid in `slots_table/Grid.tsx`, `Menu` in place of Paper's FAB group) until U6.4
+retires it.
 
 `KeyboardProvider` (react-native-keyboard-controller) sits inside `SafeAreaProvider` in `app/entrypoint/Entrypoint.tsx`;
 `android.softwareKeyboardLayoutMode` is `resize`. Web has no bottom sheets: `*.web.tsx` variants use drawers/dialogs.
@@ -241,7 +252,7 @@ Metro/webpack pick `*.web.tsx`, `*.android.tsx`, `*.ios.tsx` over the base file.
 | `app/components/dialogs/ImageViewer/ImageViewer.web.tsx`                                                                                                                                    | web          | uses `react-image-lightbox` (deprecated)                                                    |
 | `app/components/dialogs/ManifestGroup/ManifestGroup.web.tsx`, `app/legacy/manifest_user/Dialog.web.tsx`, `app/forms/credits/Credits.web.tsx`, `app/components/layout/DialogOrSheet.web.tsx` | web          | dialogs instead of bottom sheets                                                            |
 | `app/components/input/LocationPicker.web.tsx`, `app/components/map/Map.web.tsx`, `app/screens/wizards/dropzone_wizard/steps/Location.web.tsx`                                               | web          | Google Maps JS instead of `react-native-maps` (maps issue client#127, BUG-085)              |
-| `app/components/input/date_picker/DatePicker.web.tsx`, `number_input/NumberField.web.tsx`, `select/Select.web.tsx`, `popover/Menu.web.tsx`                                                  | web          |                                                                                             |
+| `app/ui/components/form/{DateField,TimeField}.web.tsx`, `number_input/NumberField.web.tsx`, `select/Select.web.tsx`                                                                         | web          |                                                                                             |
 | `app/components/input/jump_run_select/JumpRunSelect.{android,web}.tsx`                                                                                                                      | Android, web | circular slider variants                                                                    |
 | `app/components/slots_table/AvailableRow.web.tsx`, `DragAndDrop/*.web.tsx`                                                                                                                  | web          | drag-and-drop between loads (`@dnd-kit/core`)                                               |
 | `app/hooks/useColorScheme.web.ts`                                                                                                                                                           | web          |                                                                                             |
@@ -383,7 +394,6 @@ Full table:
 | `react`                                               | dep   | `19.2.3` (P3.17)   | 19.2.3    | 19.3.0        | `19.2.3`        |                                                       |
 | `react-calendar-heatmap`                              | dep   | `1.9.0`            | 1.9.0     | 1.10.0        |                 |                                                       |
 | `react-countdown-circle-timer`                        | dep   | `3.2.1` (P3.13)    | 3.2.1     | 3.2.1         |                 | last publish 2023-03-15                               |
-| `react-day-picker`                                    | dep   | `^7.4.10`          | 7.4.10    | 10.0.2        |                 |                                                       |
 | `react-dom`                                           | dep   | `19.2.3` (P3.17)   | 19.2.3    | 19.3.0        | `19.2.3`        |                                                       |
 | `react-hook-form`                                     | dep   | `7.42.1`           | 7.42.1    | 7.89.0        |                 |                                                       |
 | `react-image-lightbox`                                | dep   | `^5.1.4`           | 5.1.4     | 5.1.4         |                 | **deprecated on npm**; last publish 2023-01-19        |
@@ -396,9 +406,6 @@ Full table:
 | `react-native-image-viewing`                          | dep   | `0.2.2`            | 0.2.2     | 0.2.2         |                 | last publish 2022-05-14                               |
 | `react-native-maps`                                   | dep   | `1.27.2` (P3.16)   | 1.27.2    | 1.29.11       | `1.27.2`        |                                                       |
 | `react-native-pager-view`                             | dep   | `8.0.2` (P3.18)    | 8.0.2     | 9.0.7         | `8.0.2`         |                                                       |
-| `react-native-paper`                                  | dep   | `5.15.3` (P3.11)   | 5.15.3    | 5.15.3        |                 |                                                       |
-| `react-native-paper-dates`                            | dep   | `0.24.0` (P3.11)   | 0.24.0    | 0.24.0        |                 |                                                       |
-| `react-native-paper-tabs`                             | dep   | `0.11.4` (P3.11)   | 0.11.4    | 0.11.4        |                 |                                                       |
 | `react-native-reanimated`                             | dep   | `4.5.1` (P3.18)    | 4.5.1     | 4.7.1         | `4.5.1`         |                                                       |
 | `react-native-reanimated-carousel`                    | dep   | `5.1.1` (P3.15)    | 5.1.1     | 5.1.1         |                 |                                                       |
 | `react-native-safe-area-context`                      | dep   | `~5.7.0` (P3.17)   | 5.7.0     | 5.10.1        | `~5.7.0`        |                                                       |
