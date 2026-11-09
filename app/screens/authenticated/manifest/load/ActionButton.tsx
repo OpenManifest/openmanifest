@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { FAB, useTheme } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
 import { LoadDetailsFragment } from 'app/api/operations';
 
 import { useOperatorContext, useLoadContext, useManifestContext } from 'app/providers';
@@ -10,7 +9,8 @@ import useRestriction from 'app/hooks/useRestriction';
 import { useOperatorToday, useOperatorTimeZone } from 'app/hooks/useOperatorToday';
 import { dateInZone } from 'app/utils/operatorTime';
 import { formatCall } from 'app/i18n/format';
-import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
+import FloatingActionArea from 'app/components/layout/FloatingActionArea';
+import { Button, Menu, type MenuItem } from 'app/ui';
 import { useVehicleGlyphs } from 'app/features/board/VehicleIcon';
 
 interface ILoadActionButtonProps {
@@ -23,7 +23,7 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     dialogs: { timepicker },
     load: { cancel, complete, updateLoadState, createVehicleDispatchAction },
   } = useLoadContext();
-  const [isExpanded, setExpanded] = React.useState(false);
+  const { t } = useTranslation('common');
 
   const { load } = props;
 
@@ -31,7 +31,6 @@ export default function ActionButton(props: ILoadActionButtonProps) {
   const { currentUser } = currentOperator;
   const glyphs = useVehicleGlyphs(load?.vehicle?.kind);
 
-  const theme = useTheme();
   const canUpdateLoad = useRestriction(Permission.UpdateLoad);
 
   const canManifestSelf = useRestriction(Permission.CreateSlot);
@@ -134,25 +133,22 @@ export default function ActionButton(props: ILoadActionButtonProps) {
     ...(canUpdateLoad ? workflowActions : []),
   ];
 
-  // Not in a Portal: the group fills the screen area above the tab bar, which already covers the bottom inset
+  const items = buttonActions.filter(Boolean) as MenuItem[];
+  if (!items.length) return null;
+
   return (
-    <FAB.Group
-      testID="load-actions-primary-action"
-      visible={!!buttonActions.length}
-      open={isExpanded}
-      icon={isExpanded ? 'close' : 'plus'}
-      style={styles.group}
-      fabStyle={{ backgroundColor: theme.colors.primary }}
-      // @ts-ignore
-      actions={buttonActions.map((action) => ({
-        ...action,
-        labelMaxFontSizeMultiplier: CHROME_MAX_FONT_SIZE_MULTIPLIER,
-      }))}
-      onStateChange={({ open }) => setExpanded(open)}
-    />
+    <FloatingActionArea>
+      <Menu
+        label={t('legacy.loadActions')}
+        items={items}
+        trigger={
+          <Button
+            testID="load-actions-primary-action"
+            icon="plus"
+            label={t('legacy.loadActions')}
+          />
+        }
+      />
+    </FloatingActionArea>
   );
 }
-
-const styles = StyleSheet.create({
-  group: { paddingBottom: 0 },
-});

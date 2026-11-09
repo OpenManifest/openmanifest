@@ -1,61 +1,58 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Divider, List } from 'react-native-paper';
+import { View } from 'react-native';
+import { Divider, Tappable, Text, useTheme } from 'app/ui';
 
 interface IInfoGrid {
   items: { title: string; value: string; onPress?(): void; bold?: boolean }[];
 }
+
+/** Facts of a load side by side (vehicle, crew, call): each a value over its name, some pressable */
 export default function InfoGrid(props: IInfoGrid) {
   const { items } = props;
+  const theme = useTheme();
   const flex = 1 / items.length;
 
   return (
     <>
-      <Divider style={styles.divider} />
-      <View style={styles.container}>
-        {items.map((item, i) => (
-          <React.Fragment key={`info-grid-${i}`}>
-            <View style={{ flex }}>
-              <List.Item
-                titleStyle={[
-                  styles.title,
-                  {
-                    fontWeight: item.bold !== false ? 'bold' : undefined,
-                  },
-                ]}
-                style={{
-                  paddingVertical: 20,
-                }}
-                title={item.value}
-                descriptionStyle={styles.description}
-                description={item.title}
-                onPress={item.onPress}
-              />
-            </View>
-            {i === items.length - 1 ? null : (
-              <Divider key={`info-grid-divider-${i}`} style={styles.verticalDivider} />
-            )}
-          </React.Fragment>
-        ))}
+      <Divider />
+      <View style={{ width: '100%', flexDirection: 'row' }}>
+        {items.map((item, i) => {
+          const content = (
+            <>
+              <Text align="center" variant={item.bold !== false ? 'label' : 'body'}>
+                {item.value}
+              </Text>
+              <Text align="center" variant="caption" tone="muted">
+                {item.title}
+              </Text>
+            </>
+          );
+          const cell = {
+            flex,
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingVertical: theme.space.lg,
+            gap: theme.space.xs,
+          } as const;
+          return (
+            <React.Fragment key={`info-grid-${i}`}>
+              {item.onPress ? (
+                <Tappable
+                  role="button"
+                  aria-label={`${item.title}: ${item.value}`}
+                  onPress={item.onPress}
+                  style={cell}
+                >
+                  {content}
+                </Tappable>
+              ) : (
+                <View style={cell}>{content}</View>
+              )}
+              {i === items.length - 1 ? null : <Divider vertical />}
+            </React.Fragment>
+          );
+        })}
       </View>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { width: '100%', flexDirection: 'row' },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    width: '100%',
-  },
-  verticalDivider: {
-    width: StyleSheet.hairlineWidth,
-    height: '100%',
-  },
-  title: {
-    textAlign: 'center',
-  },
-  description: {
-    textAlign: 'center',
-  },
-});

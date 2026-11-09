@@ -10,17 +10,15 @@ import {
   View,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { FAB, IconButton } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 
 import NoResults from 'app/components/NoResults';
 import FloatingActionArea from 'app/components/layout/FloatingActionArea';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
 import { LoadState, Permission } from 'app/api/schema.d';
-import { useAppTheme } from 'app/theme';
+import { Button, IconButton, Menu } from 'app/ui';
 import { useOperatorContext, useManifestContext } from 'app/providers';
 import { LoadDetailsFragment } from 'app/api/operations';
-import Menu, { MenuItem } from 'app/components/popover/Menu';
 
 import { useVehicles, useTickets } from 'app/api/crud';
 import useRestriction from 'app/hooks/useRestriction';
@@ -34,7 +32,6 @@ import LoadingCardSmall from './LoadCard/Small/Loading';
 import SetupProfileCard from './SetupProfileCard';
 import DateBar from './DateBar';
 import { SetupStepCard } from './FinishSetupSteps';
-import { CHROME_MAX_FONT_SIZE_MULTIPLIER } from 'app/components/layout/fontScale';
 
 const loadingFragment: LoadDetailsFragment = {
   id: '__LOADING__',
@@ -63,10 +60,8 @@ const setupVehiclesCardFragment = { ...loadingFragment, id: '__SETUP_VEHICLE_CAR
 const setupTicketsCardFragment = { ...loadingFragment, id: '__SETUP_TICKETS_CARD__' };
 
 export default function ManifestScreen() {
-  const { theme } = useAppTheme();
   const { t } = useTranslation(['common', 'terms']);
   const [display, setDisplay] = React.useState<'list' | 'cards'>('cards');
-  const [isDisplayOptionsOpen, setDisplayOptionsOpen] = React.useState(false);
   const {
     operator: { operator, currentUser, loading, refetch },
     dialogs: sheets,
@@ -219,11 +214,7 @@ export default function ManifestScreen() {
   );
   return (
     <ScreenContainer edges={['bottom']}>
-      <ProgressBar
-        visible={loading || manifest.loading}
-        indeterminate
-        color={theme.colors.primary}
-      />
+      <ProgressBar visible={loading || manifest.loading} indeterminate />
 
       <View style={styles.container}>
         {operator?.banner && (
@@ -274,40 +265,31 @@ export default function ManifestScreen() {
       </View>
       {manifest.permissions.canCreateLoad && (
         <FloatingActionArea>
-          <FAB
-            labelMaxFontSizeMultiplier={CHROME_MAX_FONT_SIZE_MULTIPLIER}
+          <Button
             testID="new-load-primary-action"
-            style={{ backgroundColor: theme.colors.primary }}
-            small
             icon="plus"
-            onPress={() => dialogs.load.open({})}
             label="New load"
+            onPress={() => dialogs.load.open({})}
           />
         </FloatingActionArea>
       )}
       <View style={styles.header}>
         <Menu
-          open={isDisplayOptionsOpen}
-          setOpen={setDisplayOptionsOpen}
-          anchor={<IconButton icon="cog-outline" onPress={() => setDisplayOptionsOpen(true)} />}
-        >
-          <MenuItem
-            title={t('common:legacy.setup.expanded')}
-            bold={display !== 'cards'}
-            onPress={() => {
-              setDisplay('list');
-              setDisplayOptionsOpen(false);
-            }}
-          />
-          <MenuItem
-            title={t('common:legacy.setup.compact')}
-            bold={display === 'cards'}
-            onPress={() => {
-              setDisplay('cards');
-              setDisplayOptionsOpen(false);
-            }}
-          />
-        </Menu>
+          label={t('common:legacy.setup.display')}
+          trigger={<IconButton icon="cog-outline" aria-label={t('common:legacy.setup.display')} />}
+          items={[
+            {
+              label: t('common:legacy.setup.expanded'),
+              selected: display !== 'cards',
+              onPress: () => setDisplay('list'),
+            },
+            {
+              label: t('common:legacy.setup.compact'),
+              selected: display === 'cards',
+              onPress: () => setDisplay('cards'),
+            },
+          ]}
+        />
       </View>
     </ScreenContainer>
   );

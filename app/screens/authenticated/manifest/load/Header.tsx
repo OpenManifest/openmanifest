@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
-import { Avatar, Paragraph, Title } from 'react-native-paper';
 
 import isAfter from 'date-fns/isAfter';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,7 +9,7 @@ import { format } from 'date-fns/esm';
 import parseISO from 'date-fns/parseISO';
 import { DateTime } from 'luxon';
 import Countdown from '../manifest/LoadCard/Countdown';
-import { useAppTheme } from 'app/theme';
+import { Icon, Text, useTheme } from 'app/ui';
 
 interface ILoadHeader {
   load?: LoadEssentialsFragment;
@@ -19,7 +18,7 @@ interface ILoadHeader {
 }
 export default function UserHeader(props: ILoadHeader) {
   const { load, renderBadges: RenderBadges, children } = props;
-  const { theme, palette } = useAppTheme();
+  const theme = useTheme();
   const { t } = useTranslation(['common', 'terms']);
   const { width } = useWindowDimensions();
 
@@ -28,7 +27,7 @@ export default function UserHeader(props: ILoadHeader) {
       start={{ x: 0.0, y: 0.25 }}
       end={{ x: 0.5, y: 1.0 }}
       style={styles.container}
-      colors={[theme.colors.surface, theme.colors.surface]}
+      colors={[theme.colour.surface, theme.colour.surface]}
     >
       <View style={styles.avatarContainer}>
         <View style={{ flex: 1 / 3, alignItems: 'center', justifyContent: 'center' }}>
@@ -37,33 +36,33 @@ export default function UserHeader(props: ILoadHeader) {
           DateTime.fromSeconds(load.dispatchAt) > DateTime.local() ? (
             <Countdown
               end={new Date(load.dispatchAt * 1000)}
-              variant={theme.dark ? 'light' : 'dark'}
+              variant={theme.isDark ? 'light' : 'dark'}
               size={80}
             />
           ) : (
-            <Avatar.Icon
-              size={80}
-              icon="account-tie-hat"
-              color={theme.dark ? theme.colors.text : palette.primary.dark}
-              style={{ backgroundColor: theme.dark ? palette.primary.dark : palette.primary.light }}
-            />
+            <View
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: theme.radius.pill,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: theme.colour.brandSoft,
+              }}
+            >
+              <Icon name="account-tie-hat" size={48} tone="onBrandSoft" />
+            </View>
           )}
         </View>
         <View style={styles.titleContainer}>
-          <Title style={styles.title}>
+          <Text variant="title" role="heading">
             {t('common:loadNumber', {
               load: t('terms:load', { count: 1 }),
               number: load?.loadNumber,
             })}
-          </Title>
-          <Paragraph style={styles.paragraph}>
-            {load?.createdAt && format(parseISO(load.createdAt), 'dd LLLL, yyyy')}
-          </Paragraph>
-          {RenderBadges && width > 600 ? (
-            <RenderBadges />
-          ) : (
-            <Paragraph style={styles.paragraph}>{load?.name}</Paragraph>
-          )}
+          </Text>
+          <Text>{load?.createdAt && format(parseISO(load.createdAt), 'dd LLLL, yyyy')}</Text>
+          {RenderBadges && width > 600 ? <RenderBadges /> : <Text>{load?.name}</Text>}
         </View>
       </View>
 
@@ -99,6 +98,4 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'center',
   },
-  title: {},
-  paragraph: {},
 });

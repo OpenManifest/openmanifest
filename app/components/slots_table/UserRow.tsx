@@ -1,11 +1,11 @@
 import { LoadDetailsFragment, SlotDetailsFragment } from 'app/api/operations';
 import { useTranslation } from 'react-i18next';
 import { Permission } from 'app/api/schema.d';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import useRestriction from 'app/hooks/useRestriction';
 import { useOperatorContext } from 'app/providers/operator/context';
 import React from 'react';
-import { Avatar, Caption, DataTable, Paragraph } from 'react-native-paper';
+import { Icon } from 'app/ui';
 import { generateColor } from 'app/utils/generateColor';
 import { isNumber } from 'lodash';
 import { formatDestination } from 'app/i18n/format';
@@ -16,6 +16,7 @@ import SwipeActions from '../layout/SwipeActions';
 import UserAvatar from '../UserAvatar';
 import DraggableWrapper from './DragAndDrop/DraggableRow';
 import DroppableSlot from './DragAndDrop/DroppableSlot';
+import { Cell, CellText, TableRow } from './Grid';
 
 export enum SlotFields {
   CertificationLevel = 'certificationLevel',
@@ -76,8 +77,9 @@ export default function UserRow(props: ISlotUserRowProps) {
                 onPress: () => onDeletePress(slot),
               }}
             >
-              <DataTable.Row
+              <TableRow
                 testID="slot-row"
+                label={slot?.membership?.user?.nickname || slot?.membership?.user?.name || ''}
                 style={
                   isNumber(slot?.groupNumber)
                     ? {
@@ -105,81 +107,76 @@ export default function UserRow(props: ISlotUserRowProps) {
                     }
                   }
                 }}
-                pointerEvents="none"
               >
-                <DataTable.Cell style={styles.avatarCell}>
+                <Cell style={styles.avatarCell}>
                   <UserAvatar
                     size={20}
                     name={slot?.membership?.user?.nickname || slot?.membership?.user?.name || ''}
                     image={slot?.membership?.user?.image}
-                    style={{ marginLeft: -12 }}
                   />
-                </DataTable.Cell>
-                <DataTable.Cell style={styles.nameCell}>
-                  <Paragraph style={styles.slotText}>
+                </Cell>
+                <Cell style={styles.nameCell}>
+                  <CellText>
                     {slot?.membership?.user?.nickname
                       ? slot?.membership?.user?.nickname
                       : slot?.membership?.user?.name}
-                  </Paragraph>
+                  </CellText>
 
                   {slot?.membership?.user?.nickname ? (
-                    <Caption>{`(${slot?.membership?.user?.name})`}</Caption>
+                    <CellText muted>{` (${slot?.membership?.user?.name})`}</CellText>
                   ) : null}
                   {slot?.prepaid ? (
-                    <Caption testID="slot-prepaid">{` · ${t('legacy.slotsTable.prepaid')}`}</Caption>
+                    <CellText
+                      muted
+                      testID="slot-prepaid"
+                    >{` · ${t('legacy.slotsTable.prepaid')}`}</CellText>
                   ) : null}
-                </DataTable.Cell>
+                </Cell>
                 {fields?.includes(SlotFields.CertificationLevel) ? (
-                  <DataTable.Cell numeric style={styles.certificationLevelCell}>
-                    <Paragraph style={styles.slotText}>
-                      {slot?.membership?.certificationLevel?.name}
-                    </Paragraph>
-                  </DataTable.Cell>
+                  <Cell numeric style={styles.certificationLevelCell}>
+                    <CellText>{slot?.membership?.certificationLevel?.name}</CellText>
+                  </Cell>
                 ) : null}
                 {fields?.includes(SlotFields.Equipment) ? (
-                  <DataTable.Cell numeric style={styles.equipmentCell}>
-                    <Paragraph style={styles.slotText}>
+                  <Cell numeric style={styles.equipmentCell}>
+                    <CellText>
                       {slot?.equipment
                         ?.map((item) => {
                           const size = canopySize(item, units);
                           return `${item.make} ${item.model}${size ? ` w/ ${size}` : ''}`;
                         })
                         .join(', ') || null}
-                    </Paragraph>
-                  </DataTable.Cell>
+                    </CellText>
+                  </Cell>
                 ) : null}
                 {fields?.includes(SlotFields.WingLoading) ? (
-                  <DataTable.Cell numeric style={styles.wingLoadingCell}>
-                    <Paragraph style={styles.slotText}>
-                      {slot?.wingLoading?.toFixed(2) || '-'}
-                    </Paragraph>
-                  </DataTable.Cell>
+                  <Cell numeric style={styles.wingLoadingCell}>
+                    <CellText>{slot?.wingLoading?.toFixed(2) || '-'}</CellText>
+                  </Cell>
                 ) : null}
                 {!fields || fields.includes(SlotFields.ActivityType) ? (
-                  <DataTable.Cell numeric style={styles.activityTypeCell}>
-                    <Paragraph style={styles.slotText}>{slot?.activityType?.name}</Paragraph>
-                  </DataTable.Cell>
+                  <Cell numeric style={styles.activityTypeCell}>
+                    <CellText>{slot?.activityType?.name}</CellText>
+                  </Cell>
                 ) : null}
                 {fields?.includes(SlotFields.TicketType) ? (
-                  <DataTable.Cell numeric style={styles.ticketCell}>
-                    <Paragraph style={styles.slotText}>{slot?.ticketType?.name}</Paragraph>
-                  </DataTable.Cell>
+                  <Cell numeric style={styles.ticketCell}>
+                    <CellText>{slot?.ticketType?.name}</CellText>
+                  </Cell>
                 ) : null}
                 {!fields || fields.includes(SlotFields.Altitude) ? (
-                  <DataTable.Cell numeric style={styles.altitudeCell}>
-                    <Paragraph style={styles.slotText}>
+                  <Cell numeric style={styles.altitudeCell}>
+                    <CellText>
                       {formatDestination(slot?.destination ?? slot?.ticketType?.defaultDestination)}
-                    </Paragraph>
-                  </DataTable.Cell>
+                    </CellText>
+                  </Cell>
                 ) : null}
-              </DataTable.Row>
+              </TableRow>
 
               {(slot?.guestSlots ?? []).map((guestSlot) => (
-                <DataTable.Row
+                <TableRow
                   key={`guest-${guestSlot.id}`}
                   testID="slot-row"
-                  disabled={!!load?.hasCompleted}
-                  pointerEvents="none"
                   style={
                     isNumber(slot?.groupNumber)
                       ? {
@@ -190,21 +187,19 @@ export default function UserRow(props: ISlotUserRowProps) {
                       : undefined
                   }
                 >
-                  <DataTable.Cell style={styles.avatarCell}>
-                    <Avatar.Icon icon="parachute" size={20} />
-                  </DataTable.Cell>
-                  <DataTable.Cell style={styles.tandemGuestNameCell}>
-                    <Paragraph style={styles.slotText}>
-                      <Text style={{ fontWeight: 'bold' }}>{term('guest')}:</Text>{' '}
-                      {guestSlot.guest?.name}
-                    </Paragraph>
-                  </DataTable.Cell>
-                  <DataTable.Cell numeric style={styles.altitudeCell}>
-                    <Paragraph style={styles.slotText}>
+                  <Cell style={styles.avatarCell}>
+                    <Icon name="parachute" size={20} tone="muted" />
+                  </Cell>
+                  <Cell style={styles.tandemGuestNameCell}>
+                    <CellText bold>{`${term('guest')}: `}</CellText>
+                    <CellText>{guestSlot.guest?.name}</CellText>
+                  </Cell>
+                  <Cell numeric style={styles.altitudeCell}>
+                    <CellText>
                       {formatDestination(slot?.destination ?? slot?.ticketType?.defaultDestination)}
-                    </Paragraph>
-                  </DataTable.Cell>
-                </DataTable.Row>
+                    </CellText>
+                  </Cell>
+                </TableRow>
               ))}
             </SwipeActions>
           </View>
@@ -215,12 +210,6 @@ export default function UserRow(props: ISlotUserRowProps) {
 }
 
 export const styles = StyleSheet.create({
-  slotText: {
-    fontSize: 12,
-    alignSelf: 'center',
-    minHeight: 24,
-    textAlignVertical: 'center',
-  },
   avatarCell: {
     flex: 1,
   },

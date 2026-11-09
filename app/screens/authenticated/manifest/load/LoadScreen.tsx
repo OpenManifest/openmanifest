@@ -16,7 +16,6 @@ import VehicleChip from 'app/components/chips/VehicleChip';
 import { LoadState, Permission } from 'app/api/schema.d';
 
 import useRestriction from 'app/hooks/useRestriction';
-import { Divider } from 'react-native-paper';
 import { useNotifications } from 'app/providers/notifications';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
 import ManifestDeskNote from 'app/components/ManifestDeskNote';
@@ -24,7 +23,7 @@ import ActionButton from './ActionButton';
 import Header from './Header';
 import InfoGrid from './InfoGrid';
 import TableView from './views/TableView';
-import { useAppTheme } from 'app/theme';
+import { Divider, useTheme } from 'app/ui';
 
 export type LoadScreenRoute = {
   LoadScreen: {
@@ -38,7 +37,7 @@ export type LoadScreenRoute = {
  */
 function LoadScreen() {
   const [isExpanded, setExpanded] = React.useState(false);
-  const { palette, theme } = useAppTheme();
+  const theme = useTheme();
 
   const {
     manifest: { deleteSlot },
@@ -147,7 +146,7 @@ function LoadScreen() {
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{ marginVertical: 8 }}
+            style={{ marginVertical: theme.space.sm }}
             data={['vehicle', 'crew']}
             keyExtractor={(item) => item.toString()}
             renderItem={({ item }) => {
@@ -173,7 +172,7 @@ function LoadScreen() {
                       }}
                       small
                       backgroundColor="transparent"
-                      color={palette.onSurface}
+                      color={theme.colour.text}
                     />
                   );
                 default:
@@ -184,7 +183,7 @@ function LoadScreen() {
                         onSelect={updateCrew}
                         small
                         backgroundColor="transparent"
-                        color={palette.onSurface}
+                        color={theme.colour.text}
                       />
                     </View>
                   );

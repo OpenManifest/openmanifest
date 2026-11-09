@@ -4,9 +4,10 @@ import { StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { LoadVehicleRole } from 'app/api/schema.d';
 import { FlatList } from 'react-native-gesture-handler';
-import { DataTable, Surface, Text } from 'react-native-paper';
+import { Text, useTheme } from 'app/ui';
 import UserRow, { SlotFields, styles as rowStyles } from './UserRow';
 import AvailableRow from './AvailableRow';
+import { Cell, CellText, TableRow } from './Grid';
 import useTerms from 'app/i18n/useTerms';
 
 export interface ISlotsTableProps {
@@ -100,10 +101,10 @@ function useSlotEntries(load?: LoadDetailsFragment | null) {
 function GroupHeader({ title, seats, id }: { title: string; seats: string; id: string }) {
   return (
     <View style={styles.group} testID={`slots-${id}`}>
-      <Text style={styles.th} role="heading" aria-level={3}>
+      <Text variant="label" role="heading" aria-level={3}>
         {title}
       </Text>
-      <Text>{seats}</Text>
+      <Text variant="bodyCompact">{seats}</Text>
     </View>
   );
 }
@@ -112,44 +113,44 @@ function ColumnHeadings({ fields }: Pick<ISlotsTableProps, 'fields'>) {
   const term = useTerms();
   const { t } = useTranslation('common');
   return (
-    <DataTable.Header style={styles.headings}>
-      <DataTable.Title style={rowStyles.avatarCell}>{null}</DataTable.Title>
-      <DataTable.Title style={rowStyles.nameCell}>
-        <Text style={styles.th}>{t('legacy.slotsTable.name')}</Text>
-      </DataTable.Title>
+    <TableRow>
+      <Cell style={rowStyles.avatarCell}>{null}</Cell>
+      <Cell style={rowStyles.nameCell}>
+        <CellText bold>{t('legacy.slotsTable.name')}</CellText>
+      </Cell>
       {fields?.includes(SlotFields.CertificationLevel) && (
-        <DataTable.Title numeric style={rowStyles.certificationLevelCell}>
-          <Text style={styles.th}>{term('certification')}</Text>
-        </DataTable.Title>
+        <Cell numeric style={rowStyles.certificationLevelCell}>
+          <CellText bold>{term('certification')}</CellText>
+        </Cell>
       )}
       {fields?.includes(SlotFields.Equipment) && (
-        <DataTable.Title numeric style={rowStyles.equipmentCell}>
-          <Text style={styles.th}>{term('equipment')}</Text>
-        </DataTable.Title>
+        <Cell numeric style={rowStyles.equipmentCell}>
+          <CellText bold>{term('equipment')}</CellText>
+        </Cell>
       )}
       {fields?.includes(SlotFields.WingLoading) && (
-        <DataTable.Title numeric style={rowStyles.wingLoadingCell}>
-          <Text style={styles.th}>{t('legacy.slotsTable.wingLoading')}</Text>
-        </DataTable.Title>
+        <Cell numeric style={rowStyles.wingLoadingCell}>
+          <CellText bold>{t('legacy.slotsTable.wingLoading')}</CellText>
+        </Cell>
       )}
       {!fields ||
         (fields?.includes(SlotFields.ActivityType) && (
-          <DataTable.Title numeric style={rowStyles.activityTypeCell}>
-            <Text style={styles.th}>{term('activity')}</Text>
-          </DataTable.Title>
+          <Cell numeric style={rowStyles.activityTypeCell}>
+            <CellText bold>{term('activity')}</CellText>
+          </Cell>
         ))}
       {fields?.includes(SlotFields.TicketType) && (
-        <DataTable.Title numeric style={rowStyles.ticketCell}>
-          <Text style={styles.th}>{term('ticket')}</Text>
-        </DataTable.Title>
+        <Cell numeric style={rowStyles.ticketCell}>
+          <CellText bold>{term('ticket')}</CellText>
+        </Cell>
       )}
       {!fields ||
         (fields?.includes(SlotFields.Altitude) && (
-          <DataTable.Title numeric style={rowStyles.altitudeCell}>
-            <Text style={styles.th}>{term('destination')}</Text>
-          </DataTable.Title>
+          <Cell numeric style={rowStyles.altitudeCell}>
+            <CellText bold>{term('destination')}</CellText>
+          </Cell>
         ))}
-    </DataTable.Header>
+    </TableRow>
   );
 }
 
@@ -170,21 +171,20 @@ function SlotRow(props: ISlotsTableProps & { slot: SlotDetailsFragment | null; i
  */
 export default function SlotsTable(props: ISlotsTableProps) {
   const { load, fields } = props;
+  const theme = useTheme();
   const entries = useSlotEntries(load);
 
   return (
-    <Surface>
-      <DataTable>
-        <ColumnHeadings {...{ fields }} />
-        {entries.map((entry) =>
-          entry.kind === 'group' ? (
-            <GroupHeader key={entry.key} id={entry.key} title={entry.title} seats={entry.seats} />
-          ) : (
-            <SlotRow {...props} key={entry.key} slot={entry.slot} index={entry.index} />
-          )
-        )}
-      </DataTable>
-    </Surface>
+    <View style={{ backgroundColor: theme.colour.surface }}>
+      <ColumnHeadings {...{ fields }} />
+      {entries.map((entry) =>
+        entry.kind === 'group' ? (
+          <GroupHeader key={entry.key} id={entry.key} title={entry.title} seats={entry.seats} />
+        ) : (
+          <SlotRow {...props} key={entry.key} slot={entry.slot} index={entry.index} />
+        )
+      )}
+    </View>
   );
 }
 
@@ -222,12 +222,6 @@ export function SlotsList(props: ISlotsListProps) {
 }
 
 const styles = StyleSheet.create({
-  th: {
-    fontWeight: 'bold',
-  },
-  headings: {
-    width: '100%',
-  },
   group: {
     flexDirection: 'row',
     justifyContent: 'space-between',

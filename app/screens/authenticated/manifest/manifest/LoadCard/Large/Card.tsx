@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
-import { Button, Card, IconButton, Paragraph, Text } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 import differenceInMinutes from 'date-fns/differenceInMinutes';
 
@@ -14,7 +13,6 @@ import {
 } from 'app/providers';
 import LoadCrewChips from 'app/components/chips/LoadCrewChips';
 import VehicleChip from 'app/components/chips/VehicleChip';
-import Menu, { MenuItem } from 'app/components/popover/Menu';
 
 import { LoadState, Permission } from 'app/api/schema.d';
 import { formatCall } from 'app/i18n/format';
@@ -24,7 +22,7 @@ import LoadSlotTable from 'app/components/slots_table/Table';
 import { SlotFields } from 'app/components/slots_table/UserRow';
 import { useNotifications } from 'app/providers/notifications';
 import LoadingCard from './Loading';
-import { useAppTheme } from 'app/theme';
+import { Button, Card, IconButton, Menu, Row, Text, useTheme } from 'app/ui';
 
 interface ILoadCardLarge {
   controlsVisible: boolean;
@@ -36,10 +34,9 @@ interface ILoadCardLarge {
 
 function LoadCard(props: ILoadCardLarge) {
   const { onManifest, onManifestGroup, controlsVisible, onSlotGroupPress, onSlotPress } = props;
-  const { theme } = useAppTheme();
+  const theme = useTheme();
   const { t } = useTranslation(['common', 'terms']);
   const [isExpanded, setExpanded] = React.useState(false);
-  const [isDispatchOpen, setDispatchOpen] = React.useState(false);
   const {
     manifest: { deleteSlot },
   } = useManifestContext();
@@ -119,196 +116,172 @@ function LoadCard(props: ILoadCardLarge) {
   if (loading) {
     return <LoadingCard />;
   }
+  const loadTitle = `Load ${load?.loadNumber || 0}`;
   return (
-    <Card
+    <View
       testID="load-card"
-      style={{ margin: 16, opacity: load?.hasCompleted ? 0.5 : 1.0 }}
-      elevation={3}
+      style={{ margin: theme.space.lg, opacity: load?.hasCompleted ? 0.5 : 1.0 }}
     >
-      <Card.Title
-        style={{ justifyContent: 'space-between' }}
-        title={
-          <View
-            style={{
-              width: '100%',
-              flex: 1,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Text testID="title">{`Load ${load?.loadNumber || 0}`}</Text>
-            <View style={{ flexGrow: 1 }} />
+      <Card variant="raised" padding="none">
+        <View style={{ padding: theme.space.lg, paddingBottom: 0 }}>
+          <Row align="center" gap="sm">
+            <View style={{ flex: 1, gap: theme.space.xs }}>
+              <Text variant="title" testID="title">
+                {loadTitle}
+              </Text>
+              {load?.name ? <Text tone="muted">{load.name}</Text> : null}
+            </View>
             {showGroupIcon && (
               <IconButton
                 icon="account-group"
+                aria-label={t('common:legacy.loadCard.manifestGroup')}
                 testID="manifest-group-button"
                 onPress={() => onManifestGroup?.()}
               />
             )}
-          </View>
-        }
-        subtitle={load?.name}
-      />
-      <ProgressBar visible={loading || deletingSlot} color={theme.colors.primary} />
-      <Card.Content
-        style={{
-          marginVertical: 8,
-          paddingHorizontal: 0,
-          height: isExpanded || !controlsVisible ? undefined : 300,
-          overflow: 'hidden',
-        }}
-      >
+          </Row>
+        </View>
+        <ProgressBar visible={loading || deletingSlot} />
         <View
-          style={{ flexDirection: 'row', paddingHorizontal: 8, backgroundColor: 'transparent' }}
+          style={{
+            marginVertical: theme.space.sm,
+            height: isExpanded || !controlsVisible ? undefined : 300,
+            overflow: 'hidden',
+          }}
         >
-          <ScrollView
-            style={{ height: 32 }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ backgroundColor: 'transparent' }}
+          <View style={{ flexDirection: 'row', paddingHorizontal: theme.space.sm }}>
+            <ScrollView style={{ height: 32 }} horizontal showsHorizontalScrollIndicator={false}>
+              <VehicleChip
+                small
+                value={load?.vehicle}
+                onSelect={async (vehicle) => {
+                  if ((load?.slots?.length || 0) > (vehicle.capacity || 0)) {
+                    const diff = (load?.slots?.length || 0) - (vehicle.capacity || 0);
+
+                    notify.info(
+                      t('common:legacy.loadCard.tooMany', {
+                        count: diff,
+                        vehicle: t('terms:vehicle', { count: 1 }).toLowerCase(),
+                      })
+                    );
+                  } else {
+                    await updateVehicle(vehicle);
+                    refetch();
+                  }
+                }}
+              />
+              <LoadCrewChips small load={load} onSelect={updateCrew} />
+            </ScrollView>
+          </View>
+          <LoadSlotTable
+            {...{ load, loading, onSlotPress, onSlotGroupPress }}
+            onDeletePress={onDeleteSlot}
+            onAvailableSlotPress={() =>
+              load?.id &&
+              navigation.navigate('Manifest', {
+                screen: 'LoadScreen',
+                params: { loadId: load?.id },
+              })
+            }
+            onSlotPress={onSlotPress}
+            fields={[SlotFields.ActivityType].filter(Boolean) as SlotFields[]}
+          />
+        </View>
+        {!!load?.dispatchAt && load?.dispatchAt > new Date().getTime() / 1000 && (
+          <View
+            style={{ backgroundColor: theme.colour.status.boarding.bg, padding: theme.space.sm }}
           >
-            <VehicleChip
-              small
-              value={load?.vehicle}
-              onSelect={async (vehicle) => {
-                if ((load?.slots?.length || 0) > (vehicle.capacity || 0)) {
-                  const diff = (load?.slots?.length || 0) - (vehicle.capacity || 0);
+            <Text tone="boarding">
+              {t('common:legacy.loadCard.departsIn', {
+                minutes: differenceInMinutes(new Date(), (load?.dispatchAt as number) * 1000),
+              })}
+            </Text>
+          </View>
+        )}
 
-                  notify.info(
-                    t('common:legacy.loadCard.tooMany', {
-                      count: diff,
-                      vehicle: t('terms:vehicle', { count: 1 }).toLowerCase(),
-                    })
-                  );
-                } else {
-                  await updateVehicle(vehicle);
-                  refetch();
-                }
-              }}
-            />
-            <LoadCrewChips small load={load} onSelect={updateCrew} />
-          </ScrollView>
-        </View>
-        <LoadSlotTable
-          {...{ load, loading, onSlotPress, onSlotGroupPress }}
-          onDeletePress={onDeleteSlot}
-          onAvailableSlotPress={() =>
-            load?.id &&
-            navigation.navigate('Manifest', {
-              screen: 'LoadScreen',
-              params: { loadId: load?.id },
-            })
-          }
-          onSlotPress={onSlotPress}
-          fields={[SlotFields.ActivityType].filter(Boolean) as SlotFields[]}
-        />
-      </Card.Content>
-      {!!load?.dispatchAt && load?.dispatchAt > new Date().getTime() / 1000 && (
-        <View style={{ flex: 1, backgroundColor: 'black', padding: 8 }}>
-          <Paragraph style={{ color: '#FFFFFF' }}>
-            {t('common:legacy.loadCard.departsIn', {
-              minutes: differenceInMinutes(new Date(), (load?.dispatchAt as number) * 1000),
-            })}
-          </Paragraph>
-        </View>
-      )}
-
-      {!controlsVisible ? null : (
-        <Card.Actions>
-          {load?.maxSlots && load?.maxSlots < 5 ? null : (
-            <Button
-              onPress={() => setExpanded(!isExpanded)}
-              testID={isExpanded ? 'show-less' : 'show-more'}
-            >
-              {isExpanded
-                ? t('common:legacy.loadCard.showLess')
-                : t('common:legacy.loadCard.showMore')}
-            </Button>
-          )}
-          <View style={{ flexGrow: 1 }} />
-          {!canUpdateLoad || !!load?.hasCompleted ? null : load?.dispatchAt ? (
-            <Button
-              mode="outlined"
-              onPress={() => dispatchInMinutes(null)}
-              testID="dispatch-cancel"
-            >
-              {t('common:legacy.cancel')}
-            </Button>
-          ) : (
-            <Menu
-              setOpen={setDispatchOpen}
-              open={isDispatchOpen}
-              anchor={
+        {!controlsVisible ? null : (
+          <View style={{ padding: theme.space.sm }}>
+            <Row gap="sm" align="center" wrap>
+              {load?.maxSlots && load?.maxSlots < 5 ? null : (
                 <Button
-                  mode="outlined"
-                  onPress={() => setDispatchOpen(true)}
-                  testID="dispatch-button"
-                >
-                  {t('common:legacy.dispatch.submit')}
-                </Button>
-              }
-            >
-              {callMinutes.map((minutes) => (
-                <MenuItem
-                  key={minutes}
-                  testID="dispatch-call"
-                  onPress={() => {
-                    setDispatchOpen(false);
-                    dispatchInMinutes(minutes);
-                  }}
-                  title={formatCall(minutes)}
-                />
-              ))}
-              {callMinutes.length ? null : (
-                <MenuItem
-                  testID="dispatch-depart"
-                  onPress={() => {
-                    setDispatchOpen(false);
-                    updateLoadState(LoadState.Departed);
-                  }}
-                  title={t('common:legacy.loadCard.departNow')}
+                  variant="tertiary"
+                  onPress={() => setExpanded(!isExpanded)}
+                  testID={isExpanded ? 'show-less' : 'show-more'}
+                  label={
+                    isExpanded
+                      ? t('common:legacy.loadCard.showLess')
+                      : t('common:legacy.loadCard.showMore')
+                  }
                 />
               )}
-            </Menu>
-          )}
+              <View style={{ flexGrow: 1 }} />
+              {!canUpdateLoad || !!load?.hasCompleted ? null : load?.dispatchAt ? (
+                <Button
+                  variant="secondary"
+                  onPress={() => dispatchInMinutes(null)}
+                  testID="dispatch-cancel"
+                  label={t('common:legacy.cancel')}
+                />
+              ) : (
+                <Menu
+                  label={t('common:legacy.dispatch.submit')}
+                  trigger={
+                    <Button
+                      variant="secondary"
+                      testID="dispatch-button"
+                      label={t('common:legacy.dispatch.submit')}
+                    />
+                  }
+                  items={
+                    callMinutes.length
+                      ? callMinutes.map((minutes) => ({
+                          label: formatCall(minutes),
+                          testID: 'dispatch-call',
+                          onPress: () => dispatchInMinutes(minutes),
+                        }))
+                      : [
+                          {
+                            label: t('common:legacy.loadCard.departNow'),
+                            testID: 'dispatch-depart',
+                            onPress: () => updateLoadState(LoadState.Departed),
+                          },
+                        ]
+                  }
+                />
+              )}
 
-          {load?.hasCompleted ? null : load?.dispatchAt &&
-            load.dispatchAt < new Date().getTime() / 1000 &&
-            canUpdateLoad ? (
-            <Button
-              style={{ marginLeft: 8 }}
-              mode="contained"
-              onPress={() => {
-                if (!load?.loadMaster?.id) {
-                  return notify.info(t('common:legacy.loadCard.needLoadMaster'));
-                }
+              {load?.hasCompleted ? null : load?.dispatchAt &&
+                load.dispatchAt < new Date().getTime() / 1000 &&
+                canUpdateLoad ? (
+                <Button
+                  label={t('common:legacy.loadCard.complete')}
+                  onPress={() => {
+                    if (!load?.loadMaster?.id) {
+                      return notify.info(t('common:legacy.loadCard.needLoadMaster'));
+                    }
 
-                if (!load?.pilot?.id) {
-                  return notify.info(t('common:legacy.loadCard.needPilot'));
-                }
-                return complete();
-              }}
-            >
-              {t('common:legacy.loadCard.complete')}
-            </Button>
-          ) : (
-            <Button
-              style={{ marginLeft: 8 }}
-              mode="contained"
-              testID="manifest-button"
-              onPress={() => onManifest()}
-              disabled={
-                !showManifestButton ||
-                Boolean(load?.dispatchAt && load.dispatchAt < new Date().getTime() / 1000)
-              }
-            >
-              {t('common:legacy.loadCard.manifest')}
-            </Button>
-          )}
-        </Card.Actions>
-      )}
-    </Card>
+                    if (!load?.pilot?.id) {
+                      return notify.info(t('common:legacy.loadCard.needPilot'));
+                    }
+                    return complete();
+                  }}
+                />
+              ) : (
+                <Button
+                  testID="manifest-button"
+                  label={t('common:legacy.loadCard.manifest')}
+                  onPress={() => onManifest()}
+                  disabled={
+                    !showManifestButton ||
+                    Boolean(load?.dispatchAt && load.dispatchAt < new Date().getTime() / 1000)
+                  }
+                />
+              )}
+            </Row>
+          </View>
+        )}
+      </Card>
+    </View>
   );
 }
 

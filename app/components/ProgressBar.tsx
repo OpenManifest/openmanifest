@@ -38,7 +38,7 @@ export default function ProgressBar({
   const reduceMotion = useReduceMotion();
   const label = props['aria-label'] ?? props.accessibilityLabel ?? t('loading');
   const [width, setWidth] = React.useState(0);
-  const run = React.useRef(new Animated.Value(0)).current;
+  const [run] = React.useState(() => new Animated.Value(0));
   const running = visible && indeterminate && !reduceMotion;
 
   React.useEffect(() => {
