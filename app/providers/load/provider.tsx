@@ -7,9 +7,16 @@ import createUseDialog from '../hooks/useDialog';
 
 const useTimePickerDialog = createUseDialog();
 
-function LoadContextProvider(props: React.PropsWithChildren<Partial<LoadQueryVariables>>) {
-  const { children, ...variables } = props;
-  const load = useLoad(variables);
+type LoadContextProviderProps = React.PropsWithChildren<
+  Partial<LoadQueryVariables> & {
+    /** Follow the load's pushes (the default); off where something else follows them, such as the board */
+    live?: boolean;
+  }
+>;
+
+function LoadContextProvider(props: LoadContextProviderProps) {
+  const { children, live, ...variables } = props;
+  const load = useLoad(variables, { live });
   const timepicker = useTimePickerDialog();
   const dialogs = React.useMemo(() => ({ timepicker }), [timepicker]);
 

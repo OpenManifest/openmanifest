@@ -17,7 +17,7 @@ export type PersonRowProps = PersonActions & {
  * A person in the list (phones and tablets): who they are, their role, licence, credit and when they last flew, whether
  * they are ready with the reason when they are not, and their actions. The row opens the profile.
  */
-export default function PersonRow({
+function PersonRow({
   person,
   lastLoad,
   onOpen,
@@ -92,3 +92,6 @@ export default function PersonRow({
     </View>
   );
 }
+
+/** Memoised: showing more people, or a push to the screen, leaves the rows already shown alone */
+export default React.memo(PersonRow);

@@ -24,7 +24,11 @@ export function isConflict(error: unknown): boolean {
   );
 }
 
-export function useLoad(variables: Partial<LoadQueryVariables>) {
+/**
+ * One load, with its actions. `live` (the default) follows the load's pushes; the board turns it off for its columns, as
+ * it follows every load of the day itself and a second subscription would apply each push twice.
+ */
+export function useLoad(variables: Partial<LoadQueryVariables>, { live = true } = {}) {
   const authenticated = useAuthenticated();
   const notify = useNotifications();
   const [getLoad, query] = useLoadLazyQuery();
@@ -46,7 +50,7 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
 
   const [mutationFinalizeLoad] = useFinalizeLoadMutation();
   const [updateLoadMutation] = useUpdateLoadMutation();
-  useLoadUpdated(variables?.id);
+  useLoadUpdated(live ? variables?.id : undefined);
 
   const update = React.useCallback(
     async function UpdateLoad(

@@ -25,6 +25,33 @@ const FLEX: Record<Exclude<Column, 'actions'>, number> = {
   lastLoad: 1.5,
 };
 
+/** The style of a column's cells: the actions hold one icon button */
+function useCell() {
+  const theme = useTheme();
+  const actionsWidth = theme.density.touchTarget;
+  return React.useCallback(
+    (column: Column): ViewStyle =>
+      column === 'actions'
+        ? { width: actionsWidth, alignItems: 'flex-end' }
+        : {
+            flex: FLEX[column],
+            minWidth: 0,
+            alignItems: column === 'credit' ? 'flex-end' : 'flex-start',
+          },
+    [actionsWidth]
+  );
+}
+
+function useRowStyle(): ViewStyle {
+  const theme = useTheme();
+  return {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.space.md,
+    paddingHorizontal: theme.space.lg,
+  };
+}
+
 /**
  * The people as a table (wide windows): name, role, licence, whether they are ready (with the reason), credit and when
  * they last flew, one row each with its actions. A table to screen readers: column headers, rows, cells; the name opens
@@ -40,23 +67,8 @@ export default function PeopleTable({
 }: PeopleTableProps) {
   const { t } = useTranslation(['common', 'terms']);
   const theme = useTheme();
-  const reasonOf = useReason();
-  const actionsWidth = theme.density.touchTarget;
-
-  const cell = (column: Column): ViewStyle =>
-    column === 'actions'
-      ? { width: actionsWidth, alignItems: 'flex-end' }
-      : {
-          flex: FLEX[column],
-          minWidth: 0,
-          alignItems: column === 'credit' ? 'flex-end' : 'flex-start',
-        };
-  const row: ViewStyle = {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.space.md,
-    paddingHorizontal: theme.space.lg,
-  };
+  const cell = useCell();
+  const row = useRowStyle();
   const headers: [Column, string][] = [
     ['name', t('common:people.column.name')],
     ['role', t('common:people.column.role')],
@@ -103,109 +115,141 @@ export default function PeopleTable({
           )
         )}
       </View>
-      {people.map((person, index) => {
-        const name = nameOf(person);
-        const summary = summaryOf(person.eligibility);
-        const reason = reasonOf(summary);
-        const id = `people-row-${person.id}`;
-        const negative = (person.creditsCents ?? 0) < 0;
-        return (
-          <View
-            key={person.id}
-            role="row"
-            testID="people-row"
-            style={{
-              ...row,
-              minHeight: theme.density.row,
-              paddingVertical: theme.space.xs,
-              borderTopWidth: index ? 1 : 0,
-              borderTopColor: theme.colour.border,
-            }}
-          >
-            <View role="cell" style={cell('name')}>
-              <Tappable
-                role="button"
-                aria-label={name}
-                minTarget={false}
-                testID={`${id}-open`}
-                onPress={() => onOpen(person)}
-                style={({ pressed, hovered }) => ({
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: theme.space.sm,
-                  maxWidth: '100%',
-                  paddingVertical: theme.space.xs,
-                  borderRadius: theme.radius.sm,
-                  backgroundColor: pressed || hovered ? theme.colour.raised : 'transparent',
-                })}
-              >
-                <Avatar name={name} imageUri={person.user.image} size="sm" />
-                <View style={{ flexShrink: 1 }}>
-                  <Text tone="brand" numberOfLines={1}>
-                    {name}
-                  </Text>
-                  {person.user.email ? (
-                    <Text variant="caption" tone="muted" numberOfLines={1}>
-                      {person.user.email}
-                    </Text>
-                  ) : null}
-                </View>
-              </Tappable>
-            </View>
-            <View role="cell" style={cell('role')}>
-              <Text variant="bodyCompact" numberOfLines={1}>
-                {roleLabel(person.role?.name) || t('common:people.none')}
-              </Text>
-            </View>
-            <View role="cell" style={cell('licence')}>
-              <Text
-                variant="bodyCompact"
-                tone={person.certificationLevel ? 'default' : 'muted'}
-                numberOfLines={1}
-              >
-                {person.certificationLevel?.name ?? t('common:people.none')}
-              </Text>
-            </View>
-            <View role="cell" style={{ ...cell('status'), gap: theme.space.xs }}>
-              <ReadinessBadge summary={summary} testID={`${id}-status`} />
-              {reason ? (
-                <Text
-                  variant="caption"
-                  tone={summary.status === 'blocked' ? 'blocked' : 'warning'}
-                  numberOfLines={2}
-                  testID={`${id}-reason`}
-                >
-                  {reason}
-                </Text>
-              ) : null}
-            </View>
-            <View role="cell" style={cell('credit')}>
-              <Text
-                variant="bodyCompact"
-                tone={negative ? 'blocked' : 'default'}
-                numberOfLines={1}
-                testID={`${id}-credit`}
-              >
-                {formatMoney(person.creditsCents)}
-              </Text>
-            </View>
-            <View role="cell" style={cell('lastLoad')}>
-              <Text variant="bodyCompact" numberOfLines={1} testID={`${id}-last`}>
-                {lastLoadOf(person)}
-              </Text>
-            </View>
-            <View role="cell" style={cell('actions')}>
-              <PersonMenu
-                person={person}
-                onOpen={onOpen}
-                onManifest={onManifest}
-                onAddCredit={onAddCredit}
-                testID={id}
-              />
-            </View>
-          </View>
-        );
-      })}
+      {people.map((person, index) => (
+        <TableRow
+          key={person.id}
+          person={person}
+          first={!index}
+          lastLoad={lastLoadOf(person)}
+          onOpen={onOpen}
+          onManifest={onManifest}
+          onAddCredit={onAddCredit}
+        />
+      ))}
     </View>
   );
 }
+
+type TableRowProps = PersonActions & {
+  person: Person;
+  /** The first row has no line above it */
+  first: boolean;
+  lastLoad: string;
+};
+
+/** A person's row. Memoised: showing more people, or a push to the screen, leaves the rows already shown alone. */
+const TableRow = React.memo(function TableRow({
+  person,
+  first,
+  lastLoad,
+  onOpen,
+  onManifest,
+  onAddCredit,
+}: TableRowProps) {
+  const { t } = useTranslation(['common', 'terms']);
+  const theme = useTheme();
+  const reasonOf = useReason();
+  const cell = useCell();
+  const row = useRowStyle();
+  const name = nameOf(person);
+  const summary = summaryOf(person.eligibility);
+  const reason = reasonOf(summary);
+  const id = `people-row-${person.id}`;
+  const negative = (person.creditsCents ?? 0) < 0;
+  return (
+    <View
+      key={person.id}
+      role="row"
+      testID="people-row"
+      style={{
+        ...row,
+        minHeight: theme.density.row,
+        paddingVertical: theme.space.xs,
+        borderTopWidth: first ? 0 : 1,
+        borderTopColor: theme.colour.border,
+      }}
+    >
+      <View role="cell" style={cell('name')}>
+        <Tappable
+          role="button"
+          aria-label={name}
+          minTarget={false}
+          testID={`${id}-open`}
+          onPress={() => onOpen(person)}
+          style={({ pressed, hovered }) => ({
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: theme.space.sm,
+            maxWidth: '100%',
+            paddingVertical: theme.space.xs,
+            borderRadius: theme.radius.sm,
+            backgroundColor: pressed || hovered ? theme.colour.raised : 'transparent',
+          })}
+        >
+          <Avatar name={name} imageUri={person.user.image} size="sm" />
+          <View style={{ flexShrink: 1 }}>
+            <Text tone="brand" numberOfLines={1}>
+              {name}
+            </Text>
+            {person.user.email ? (
+              <Text variant="caption" tone="muted" numberOfLines={1}>
+                {person.user.email}
+              </Text>
+            ) : null}
+          </View>
+        </Tappable>
+      </View>
+      <View role="cell" style={cell('role')}>
+        <Text variant="bodyCompact" numberOfLines={1}>
+          {roleLabel(person.role?.name) || t('common:people.none')}
+        </Text>
+      </View>
+      <View role="cell" style={cell('licence')}>
+        <Text
+          variant="bodyCompact"
+          tone={person.certificationLevel ? 'default' : 'muted'}
+          numberOfLines={1}
+        >
+          {person.certificationLevel?.name ?? t('common:people.none')}
+        </Text>
+      </View>
+      <View role="cell" style={{ ...cell('status'), gap: theme.space.xs }}>
+        <ReadinessBadge summary={summary} testID={`${id}-status`} />
+        {reason ? (
+          <Text
+            variant="caption"
+            tone={summary.status === 'blocked' ? 'blocked' : 'warning'}
+            numberOfLines={2}
+            testID={`${id}-reason`}
+          >
+            {reason}
+          </Text>
+        ) : null}
+      </View>
+      <View role="cell" style={cell('credit')}>
+        <Text
+          variant="bodyCompact"
+          tone={negative ? 'blocked' : 'default'}
+          numberOfLines={1}
+          testID={`${id}-credit`}
+        >
+          {formatMoney(person.creditsCents)}
+        </Text>
+      </View>
+      <View role="cell" style={cell('lastLoad')}>
+        <Text variant="bodyCompact" numberOfLines={1} testID={`${id}-last`}>
+          {lastLoad}
+        </Text>
+      </View>
+      <View role="cell" style={cell('actions')}>
+        <PersonMenu
+          person={person}
+          onOpen={onOpen}
+          onManifest={onManifest}
+          onAddCredit={onAddCredit}
+          testID={id}
+        />
+      </View>
+    </View>
+  );
+});

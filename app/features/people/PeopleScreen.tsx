@@ -74,11 +74,19 @@ export default function PeopleScreen() {
   useDebounce(() => setTerm(search.trim()), 250, [search]);
   useSearchShortcut(searchRef, isFocused);
 
-  const { data, loading, refetch } = usePeopleQuery({
+  const {
+    data: fetched,
+    previousData,
+    loading,
+    refetch,
+  } = usePeopleQuery({
     variables: { operatorId: operator?.id as string, search: term || undefined, first: size },
     skip: !operator?.id,
     fetchPolicy: 'cache-and-network',
   });
+  // The people already shown stay while the next page (or a search) loads: without them the list went back to its
+  // skeleton, and to the top, on every "Show more"
+  const data = fetched ?? previousData;
   const { data: roleData } = useRolesQuery({
     variables: { operatorId: operator?.id as string },
     skip: !operator?.id,
@@ -102,14 +110,19 @@ export default function PeopleScreen() {
     ? (loads.find((load): load is LoadDetailsFragment => load?.id === picking.loadId) ?? null)
     : null;
 
-  const actions = {
-    onOpen: (person: Person) => openUser('ProfileScreen', { userId: person.id }),
-    onManifest: canManifest ? setPlacing : undefined,
-    onAddCredit: canAddCredit
-      ? (person: Person) =>
-          dialogs.credits.open({ membership: person as unknown as MembershipDetailsFragment })
-      : undefined,
-  };
+  // The same functions on every render, so the rows (memoised) render again only when their person changes
+  const openCredits = dialogs.credits.open;
+  const actions = React.useMemo(
+    () => ({
+      onOpen: (person: Person) => openUser('ProfileScreen', { userId: person.id }),
+      onManifest: canManifest ? setPlacing : undefined,
+      onAddCredit: canAddCredit
+        ? (person: Person) =>
+            openCredits({ membership: person as unknown as MembershipDetailsFragment })
+        : undefined,
+    }),
+    [openUser, canManifest, canAddCredit, openCredits]
+  );
 
   return (
     <ScreenContainer edges={['bottom']}>

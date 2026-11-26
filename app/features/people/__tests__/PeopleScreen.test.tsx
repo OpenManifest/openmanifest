@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { authenticatedSession } from 'app/__fixtures__/session.fixture';
-import { jo, stu } from 'app/__fixtures__/people.fixture';
+import { jo, personOf, stu } from 'app/__fixtures__/people.fixture';
 import MOCK_QUERY_LOADS from 'app/__tests__/manifest/__mocks__/QueryLoads.mock';
 import MOCK_QUERY_ROLES from 'app/__tests__/manifest/__mocks__/QueryRoles.mock';
 import createMockedQuery from 'app/__tests__/manifest/__mocks__/createMockedQuery.mock';
@@ -110,6 +110,31 @@ describe('<PeopleScreen />', () => {
     expect(await screen.findByTestId('people-action-profile')).toBeTruthy();
     expect(screen.queryByTestId('people-action-manifest')).toBeNull();
     expect(screen.queryByTestId('people-action-credit')).toBeNull();
+  });
+
+  it('keeps the people shown while the next page loads', async () => {
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const first = people([jo(), stu()], true)();
+    // The second page answers late: until then the first page stays, not the skeleton
+    const second = {
+      ...people([jo(), stu(), personOf('9', 'Sam Skydiver')])({ first: 100 }),
+      delay: 500,
+    };
+    const screen = await render(<PeopleScreen />, {
+      session: authenticatedSession,
+      graphql: [first, first, second, MOCK_QUERY_ROLES(), MOCK_QUERY_LOADS()] as never,
+    });
+    await waitFor(() => expect(screen.getByTestId('people-more')).toBeTruthy(), {
+      timeout: 10000,
+    });
+
+    await fireEvent.press(screen.getByTestId('people-more'));
+
+    expect(screen.queryByTestId('people-loading')).toBeNull();
+    expect(screen.getAllByTestId('people-row')).toHaveLength(2);
+    await waitFor(() => expect(screen.getAllByTestId('people-row')).toHaveLength(3), {
+      timeout: 10000,
+    });
   });
 
   it('offers more people when there are more', async () => {

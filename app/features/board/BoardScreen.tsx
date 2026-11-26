@@ -93,7 +93,8 @@ const BoardColumn = React.memo(function BoardColumn(props: BoardColumnProps) {
     <DroppableLoad loadId={load.id} loadLabel={loadLabel} testID={`board-column-${load.id}`}>
       <View style={{ width: COLUMN_WIDTH, gap: theme.space.sm }}>
         <BoardCard {...props} selected={false} />
-        <LoadContextProvider id={load.id}>
+        {/* useBoard follows the pushes of every load of the day */}
+        <LoadContextProvider id={load.id} live={false}>
           <ColumnPlaces loadLabel={loadLabel} />
         </LoadContextProvider>
       </View>
