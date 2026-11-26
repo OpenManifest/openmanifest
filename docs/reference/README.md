@@ -120,6 +120,16 @@ reduced motion it stays still while flagged. `haptic('call' | 'depart' | 'land')
 medium impact for a call, a success for departure and landing) when those load actions succeed (`useLoadActions`);
 `haptics.web.ts` does nothing.
 
+Performance (U6.3, numbers in `docs/verification/ui-u7.md`): the board's cards and columns are memoised
+(`BoardCard`, `BoardColumn` in `BoardScreen.tsx`) on props that stay the same objects while another load changes, so a
+push renders only the card of its load; parts of a load that only need the manifest's permissions read
+`useManifestPermissions()` (its own context) instead of `useManifestContext()`, which changes with every load of the day.
+The board follows each load once, in `useBoard`; its columns' `LoadContextProvider` passes `live={false}` so `useLoad`
+does not subscribe again. People keep the people shown while the next page or a search loads (`previousData`), and their
+rows are memoised with stable actions. Dates go through luxon (`app/i18n/format.ts`); date-fns is gone.
+`scripts/measure-ui.mjs` measures the board under live updates and the people list against the scaled seed (backend
+`db:seed:perf_scale`).
+
 `KeyboardProvider` (react-native-keyboard-controller) sits inside `SafeAreaProvider` in `app/entrypoint/Entrypoint.tsx`;
 `android.softwareKeyboardLayoutMode` is `resize`. Web has no bottom sheets: `*.web.tsx` variants use drawers/dialogs.
 ESLint (`eslint.config.js`) rejects `KeyboardAvoidingView` and React Native's `SafeAreaView` imports and `Dimensions.get(...)`
@@ -373,7 +383,6 @@ Full table:
 | `@react-navigation/stack`                             | dep   | `7.12.0` (P3.9)    | 7.12.0    | 7.12.0        |                 |                                                       |
 | `check-password-strength`                             | dep   | `2.0.7`            | 2.0.7     | 3.0.0         |                 |                                                       |
 | `color`                                               | dep   | `4.2.3`            | 4.2.3     | 5.0.3         |                 |                                                       |
-| `date-fns`                                            | dep   | `2.29.3`           | 2.29.3    | 4.4.0         |                 |                                                       |
 | `deprecated-react-native-prop-types`                  | dep   | `2.3.0`            | 2.3.0     | 5.0.0         |                 |                                                       |
 | `dotenv`                                              | dep   | `14.3.2`           | 14.3.2    | 18.0.6        |                 |                                                       |
 | `expo`                                                | dep   | `^57.0.27` (P3.18) | 57.0.27   | 57.0.27       |                 |                                                       |
