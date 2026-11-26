@@ -76,10 +76,11 @@ cache twice; now once (BUG-125). People: unchanged, 28 SQL queries per page what
 
 ## Checks
 
-| Check                               | Result               |
-| ----------------------------------- | -------------------- |
-| Client checks                       | see the pull request |
-| Tier 2 `@board @people` (390, 1440) | see the pull request |
+| Check                   | Result                                                                                                                                                                                                                                                                      |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Client checks           | `check:types` clean; `check:linting` 0 errors (149 warnings, was 150); `check:testing` 142 suites, 1172 tests in 100 s (U0.4: 50 suites, 349 tests, 51 s); `check:graphql` OK; `check-vocabulary --enforce` 0 hits                                                          |
+| Tier 2 `@board @people` | `--project=smoke-390x844-light --project=smoke-1440x900-light --workers=1`, after a reseed: 44 passed, 2 skipped, twice in a row (5.1 and 5.3 min)                                                                                                                          |
+| Flake fixed on the way  | "Manifest on…" (`people.spec.ts`) and "a member books from the card of a load" (`today.spec.ts`) pressed an element while a panel slid in (U6.2) or a list rendered again; `press` now waits for the element's box to stop moving, and `pressUntil` waits for it to be back |
 
 ## How to measure again
 
