@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { startOfDay } from 'date-fns';
+import { DateTime } from 'luxon';
 import isEqual from 'lodash/isEqual';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
@@ -123,7 +123,7 @@ export default function useEquipmentInspectionForm(opts: IUseEquipmentInspection
               query: OperatorDocument,
               variables: {
                 operatorId: operatorId?.toString() as string,
-                earliestTimestamp: startOfDay(new Date()).toISOString(),
+                earliestTimestamp: DateTime.now().startOf('day').toJSDate().toISOString(),
               },
             });
 
@@ -132,7 +132,7 @@ export default function useEquipmentInspectionForm(opts: IUseEquipmentInspection
                 query: OperatorDocument,
                 variables: {
                   operatorId: operatorId?.toString() as string,
-                  earliestTimestamp: startOfDay(new Date()).toISOString(),
+                  earliestTimestamp: DateTime.now().startOf('day').toJSDate().toISOString(),
                 },
                 data: {
                   ...currentDz,

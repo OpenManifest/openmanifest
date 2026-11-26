@@ -1,6 +1,6 @@
 import { ModerationRole } from 'app/api/schema.d';
 import { CurrentUserDetailedFragment } from 'app/api/operations';
-import { addDays, startOfDay } from 'date-fns';
+import { DateTime } from 'luxon';
 import { parachuteKindRef } from './equipmentKind.fixture';
 
 type DeepRequired<T> = T extends object ? { [K in keyof T]-?: DeepRequired<T[K]> } : T;
@@ -78,7 +78,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         inService: true,
         operator: null,
         maintainedAt: null,
-        serviceDueAt: addDays(new Date(), 20).getTime() / 1000,
+        serviceDueAt: DateTime.now().plus({ days: 20 }).toSeconds(),
         owner: {
           id: '1',
           __typename: 'User',
@@ -101,7 +101,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
         inService: true,
         operator: null,
         maintainedAt: null,
-        serviceDueAt: startOfDay(new Date()).getTime() / 1000,
+        serviceDueAt: DateTime.now().startOf('day').toSeconds(),
         owner: {
           id: '1',
           __typename: 'User',

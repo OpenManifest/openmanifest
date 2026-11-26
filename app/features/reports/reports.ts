@@ -1,4 +1,4 @@
-import { subMonths } from 'date-fns';
+import { DateTime } from 'luxon';
 import type { OperatorStatisticsFragment } from 'app/api/operations';
 import { OperatorState, OperatorStateEvent, type TimeRangeInput } from 'app/api/schema.d';
 
@@ -10,7 +10,10 @@ export const RANGES: RangeKey[] = ['all', '3', '6', '12'];
 export function timeRangeOf(range: RangeKey, now: Date = new Date()): TimeRangeInput | undefined {
   if (range === 'all') return undefined;
   return {
-    startTime: subMonths(now, Number(range)).toISOString(),
+    startTime: DateTime.fromJSDate(now)
+      .minus({ months: Number(range) })
+      .toJSDate()
+      .toISOString(),
     endTime: now.toISOString(),
   };
 }

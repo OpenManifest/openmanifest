@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Animated, Platform } from 'react-native';
-import diff from 'date-fns/differenceInSeconds';
-import secondsToMinutes from 'date-fns/secondsToMinutes';
+import { DateTime } from 'luxon';
 import CountdownCircleTimer from './CountdownTimer';
 
 interface ICountdownProps {
@@ -11,7 +10,7 @@ interface ICountdownProps {
 }
 export default function Countdown(props: ICountdownProps) {
   const { end, size, variant } = props;
-  const difference = diff(end, new Date());
+  const difference = Math.trunc(DateTime.fromJSDate(end).diffNow('seconds').seconds);
   const fractionFiveMinutes = 5 / difference;
   const fractionTenMinutes = 10 / difference;
   const fractionTwentyMinutes = 10 / difference;
@@ -35,7 +34,7 @@ export default function Countdown(props: ICountdownProps) {
         // @ts-ignore
         ({ remainingTime, animatedColor }) => {
           const seconds = Math.round(remainingTime % 60);
-          const minutes = secondsToMinutes(remainingTime);
+          const minutes = Math.floor(remainingTime / 60);
           const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
           const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
           return (

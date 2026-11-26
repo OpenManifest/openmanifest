@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 
 import { Tappable, useTheme } from 'app/ui';
-import format from 'date-fns/format';
 import { orderBy } from 'lodash';
 import SkeletonContent from 'app/components/Skeleton';
 import { useOperatorContext } from 'app/providers/operator/context';
@@ -21,11 +20,10 @@ import {
   OperatorConditionsPanel,
   useConditionsPanel,
 } from 'app/features/skydiving/conditions/WindsAloft';
-import parseISO from 'date-fns/parseISO';
 import nightBackground from 'assets/images/night.png';
 import weatherBackground from 'assets/images/weather.png';
 import JumpRunMap from './JumpRun';
-import { formatQuantity } from 'app/i18n/format';
+import { formatDate, formatQuantity } from 'app/i18n/format';
 import { useOperatorFormat } from 'app/i18n/operatorFormat';
 
 export default function WeatherBoard() {
@@ -42,7 +40,7 @@ export default function WeatherBoard() {
   const conditions = operator?.currentConditions;
 
   const date = operator?.currentConditions?.createdAt
-    ? parseISO(operator.currentConditions.createdAt)
+    ? new Date(operator.currentConditions.createdAt)
     : new Date();
   const jumpRun = operator?.currentConditions?.jumpRun || 0;
   const temperatureC = operator?.currentConditions?.temperatureC;
@@ -129,7 +127,7 @@ export default function WeatherBoard() {
                         marginRight: 8,
                       }}
                     />
-                    <Text style={styles.date}>{format(date, 'LLL do, yy')}</Text>
+                    <Text style={styles.date}>{formatDate(date)}</Text>
                   </View>
 
                   <View

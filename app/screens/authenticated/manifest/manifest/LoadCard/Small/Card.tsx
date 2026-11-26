@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ScrollView, View } from 'react-native';
-import { isBefore } from 'date-fns';
 
 import LoadCrewChips from 'app/components/chips/LoadCrewChips';
 import VehicleChip from 'app/components/chips/VehicleChip';
@@ -57,7 +56,7 @@ function LoadCard(props: ILoadCardSmall) {
           <Text variant="title">{title}</Text>
           {load?.name ? <Text tone="muted">{load.name}</Text> : null}
         </View>
-        {!load?.dispatchAt || isBefore(new Date(), load?.dispatchAt) ? null : (
+        {!load?.dispatchAt || load.dispatchAt * 1000 <= new Date().getTime() ? null : (
           <Countdown end={new Date(load.dispatchAt * 1000)} />
         )}
         {state ? <StatusBadge status={state.status} label={state.label} /> : null}

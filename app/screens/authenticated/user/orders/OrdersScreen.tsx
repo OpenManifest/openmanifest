@@ -6,8 +6,8 @@ import ProgressBar from 'app/components/ProgressBar';
 
 import { useOperatorContext } from 'app/providers/operator/context';
 import { groupBy, map } from 'lodash';
-import { formatDistance, parseISO, startOfDay, differenceInDays, format } from 'date-fns';
-import enAU from 'date-fns/locale/en-AU';
+import { DateTime } from 'luxon';
+import { formatDate, formatRelative } from 'app/i18n/format';
 import { OrderEssentialsFragment } from 'app/api/operations';
 import { useUserProfile } from 'app/api/crud';
 import OrderCard from '../../../../components/orders/OrderCard';
@@ -50,15 +50,16 @@ export default function OrdersScreen() {
 
       <SectionList
         sections={map(
-          groupBy(membership?.orders?.edges, (e) =>
-            startOfDay(parseISO(e?.node?.createdAt)).toISOString()
+          groupBy(
+            membership?.orders?.edges,
+            (e) => DateTime.fromISO(e?.node?.createdAt).startOf('day').toISO() as string
           ),
           (d, t) => {
-            const date = parseISO(t);
+            const date = DateTime.fromISO(t);
             const title =
-              differenceInDays(new Date(), date) > 7
-                ? format(date, 'dd MMM, yyyy')
-                : formatDistance(date, new Date(), { addSuffix: true, locale: enAU });
+              Math.trunc(DateTime.now().diff(date, 'days').days) > 7
+                ? formatDate(date)
+                : formatRelative(date);
             return {
               title,
               data: d,

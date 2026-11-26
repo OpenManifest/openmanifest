@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 import ProgressBar from 'app/components/ProgressBar';
-import differenceInMinutes from 'date-fns/differenceInMinutes';
 
 import { SlotDetailsFragment } from 'app/api/operations';
 import {
@@ -193,7 +192,9 @@ function LoadCard(props: ILoadCardLarge) {
           >
             <Text tone="boarding">
               {t('common:legacy.loadCard.departsIn', {
-                minutes: differenceInMinutes(new Date(), (load?.dispatchAt as number) * 1000),
+                minutes: Math.trunc(
+                  ((load?.dispatchAt as number) * 1000 - new Date().getTime()) / 60000
+                ),
               })}
             </Text>
           </View>

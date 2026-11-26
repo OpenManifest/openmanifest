@@ -2,12 +2,10 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 
-import isAfter from 'date-fns/isAfter';
 import { LinearGradient } from 'expo-linear-gradient';
 import { LoadEssentialsFragment } from 'app/api/operations';
-import { format } from 'date-fns/esm';
-import parseISO from 'date-fns/parseISO';
 import { DateTime } from 'luxon';
+import { formatDate } from 'app/i18n/format';
 import Countdown from '../manifest/LoadCard/Countdown';
 import { Icon, Text, useTheme } from 'app/ui';
 
@@ -61,7 +59,7 @@ export default function UserHeader(props: ILoadHeader) {
               number: load?.loadNumber,
             })}
           </Text>
-          <Text>{load?.createdAt && format(parseISO(load.createdAt), 'dd LLLL, yyyy')}</Text>
+          <Text>{load?.createdAt && formatDate(load.createdAt)}</Text>
           {RenderBadges && width > 600 ? <RenderBadges /> : <Text>{load?.name}</Text>}
         </View>
       </View>
