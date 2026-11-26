@@ -1,7 +1,10 @@
 import * as React from 'react';
-import { ScrollView, View, type ViewStyle } from 'react-native';
+import { ScrollView, StyleSheet, View, type ViewStyle } from 'react-native';
 import * as Dialog from '@rn-primitives/dialog';
 import { useTranslation } from 'react-i18next';
+import { cssDuration, cssEasing, overlayTransition } from '../../motion/transitions';
+import { useReduceMotion } from '../../motion/useReduceMotion';
+import { motion } from '../../tokens/motion';
 import { useTheme } from '../../theme';
 import IconButton from '../IconButton';
 import Text from '../Text';
@@ -16,6 +19,38 @@ const LAYER = 1000;
 
 /** `position: fixed` and CSS lengths are web-only values that React Native's types do not know */
 const web = (style: object) => style as ViewStyle;
+
+/** A CSS animation (react-native-web compiles `animationKeyframes` to `@keyframes`) */
+const enter = (duration: number, from: object, to: object) =>
+  web({
+    animationKeyframes: [{ from, to }],
+    animationDuration: cssDuration(duration),
+    animationTimingFunction: cssEasing,
+  });
+
+/**
+ * How each kind comes in: the scrim fades, a sheet slides up, a panel slides in from the end, a dialog rises a little
+ * into the centre (movement, not opacity: text fading in would be below contrast while it does). Radix unmounts them
+ * at once when they close.
+ */
+const transitions = StyleSheet.create({
+  scrim: enter(motion.base, { opacity: 0 }, { opacity: 1 }),
+  sheet: enter(
+    overlayTransition('sheet', false).duration,
+    { transform: 'translateY(100%)' },
+    { transform: 'translateY(0)' }
+  ),
+  panel: enter(
+    overlayTransition('panel', false).duration,
+    { transform: 'translateX(100%)' },
+    { transform: 'translateX(0)' }
+  ),
+  dialog: enter(
+    overlayTransition('dialog', false).duration,
+    { transform: 'translate(-50%, -46%)' },
+    { transform: 'translate(-50%, -50%)' }
+  ),
+});
 
 /**
  * The one overlay of the app, on the web: `@rn-primitives/dialog` (Radix) gives it `role="dialog"` named by its title,
@@ -36,6 +71,8 @@ export default function Overlay({
 }: OverlayProps) {
   const { t } = useTranslation('common');
   const theme = useTheme();
+  // With reduced motion (the browser's `prefers-reduced-motion`) it appears at once
+  const animate = !useReduceMotion();
   const kind = resolvePresentation(presentation, { breakpoint: theme.breakpoint, native: false });
   // Opened from outside (a state, not a trigger inside the dialog), so Radix does not know what to give focus back to
   const opener = React.useRef<HTMLElement | null>(null);
@@ -73,15 +110,18 @@ export default function Overlay({
     <Dialog.Root open={open} onOpenChange={(next) => !next && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay
-          style={web({
-            position: 'fixed',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: LAYER,
-            backgroundColor: theme.colour.scrim,
-          })}
+          style={[
+            animate ? transitions.scrim : null,
+            web({
+              position: 'fixed',
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: LAYER,
+              backgroundColor: theme.colour.scrim,
+            }),
+          ]}
         />
         <Dialog.Content
           testID={testID}
@@ -93,12 +133,15 @@ export default function Overlay({
             event.preventDefault();
             opener.current?.focus();
           }}
-          style={{
-            ...placement,
-            zIndex: LAYER + 1,
-            backgroundColor: theme.colour.surface,
-            ...theme.elevation.overlay,
-          }}
+          style={[
+            animate ? transitions[kind] : null,
+            {
+              ...placement,
+              zIndex: LAYER + 1,
+              backgroundColor: theme.colour.surface,
+              ...theme.elevation.overlay,
+            },
+          ]}
         >
           <View
             style={{

@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { Pressable, Text } from 'react-native';
-import { fireEvent } from '@testing-library/react-native';
+import { AccessibilityInfo, Animated, Pressable, Text } from 'react-native';
+import { fireEvent, waitFor } from '@testing-library/react-native';
 import { LoadState } from 'app/api/schema.d';
-import { renderThemed } from 'app/ui/components/testing';
+import { flat, renderThemed } from 'app/ui/components/testing';
 import ConditionsStrip from 'app/features/skydiving/conditions/ConditionsStrip';
 import CrewChip from '../CrewChip';
 import DestinationLabel from '../DestinationLabel';
 import LoadCard from '../LoadCard';
 import PlacesMeter from '../PlacesMeter';
 import { isOver, statusOf } from '../loadStatus';
+import { resetReduceMotion } from 'app/ui/motion/useReduceMotion';
 import {
   guideRole,
   loadVehicle,
@@ -166,6 +167,38 @@ describe('<LoadCard />', () => {
   it('has no countdown for a load that is not on call', async () => {
     const { queryByTestId } = await renderThemed(<LoadCard load={makeLoad()} />);
     expect(queryByTestId('load-card-countdown')).toBeNull();
+  });
+
+  it('marks a load that changed with a brand ring that fades out over the highlight time', async () => {
+    resetReduceMotion();
+    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(false);
+    const timing = jest.spyOn(Animated, 'timing');
+    const { getByTestId } = await renderThemed(<LoadCard load={makeLoad()} highlighted />);
+
+    expect(getByTestId('load-card-highlight').props['aria-hidden']).toBe(true);
+    await waitFor(() =>
+      expect(timing).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ toValue: 0, duration: 600 })
+      )
+    );
+    jest.restoreAllMocks();
+  });
+
+  it('keeps the ring still with reduced motion, and hides it on a load that did not change', async () => {
+    resetReduceMotion();
+    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+    const timing = jest.spyOn(Animated, 'timing');
+    // The board is up (and has heard the system's answer) before a load changes
+    const quiet = await renderThemed(<LoadCard load={makeLoad()} testID="quiet" />);
+    await waitFor(() => expect(AccessibilityInfo.isReduceMotionEnabled).toHaveBeenCalled());
+    await waitFor(() => Promise.resolve());
+    const changed = await renderThemed(<LoadCard load={makeLoad()} highlighted />);
+
+    expect(flat(changed.getByTestId('load-card-highlight')).opacity).toBe(1);
+    expect(flat(quiet.getByTestId('quiet-highlight')).opacity).toBe(0);
+    expect(timing).not.toHaveBeenCalled();
+    jest.restoreAllMocks();
   });
 
   it('says there is no vehicle yet, in the operator’s word', async () => {

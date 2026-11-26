@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { Animated, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Countdown, Row, StatusBadge, Tappable, Text, useTheme } from 'app/ui';
+import { Countdown, Row, StatusBadge, Tappable, Text, useHighlight, useTheme } from 'app/ui';
 import { LoadState } from 'app/api/schema.d';
 import type { CrewRoleEssentialsFragment, LoadDetailsFragment } from 'app/api/operations';
 import CrewChip from './CrewChip';
@@ -20,7 +20,7 @@ export type LoadCardProps = {
   timeZone?: string | null;
   /** The load the board has open beside the list */
   selected?: boolean;
-  /** A moment after the load changed */
+  /** A moment after the load changed: a brand ring that fades out (and stands still with reduced motion) */
   highlighted?: boolean;
   onPress?(): void;
   /** The next action of the load (a button), added by the board */
@@ -53,6 +53,8 @@ export default function LoadCard({
   const calling = load.state === LoadState.Boarding && !!load.dispatchAt;
   const vehicles = load.vehicles ?? [];
   const crew = crewSlots(load, crewRoles);
+  const highlight = useHighlight(highlighted);
+  const border = selected ? 2 : 1;
 
   return (
     <View
@@ -61,10 +63,10 @@ export default function LoadCard({
         // A load that is over says so with its state badge and a dashed border; dimming it with opacity took its text below
         // AA contrast, and the raised colour took the brand text of dark schemes below it too
         backgroundColor: theme.colour.surface,
-        borderStyle: isOver(load.state) && !(selected || highlighted) ? 'dashed' : 'solid',
+        borderStyle: isOver(load.state) && !selected ? 'dashed' : 'solid',
         borderRadius: theme.radius.lg,
-        borderWidth: selected || highlighted ? 2 : 1,
-        borderColor: selected || highlighted ? theme.colour.brand : theme.colour.border,
+        borderWidth: border,
+        borderColor: selected ? theme.colour.brand : theme.colour.border,
         padding: theme.space.lg,
         gap: theme.space.md,
       }}
@@ -134,6 +136,25 @@ export default function LoadCard({
         ) : null}
       </Tappable>
       {action ? <View>{action}</View> : null}
+      {/* Over the card's own border, so it fades without moving anything */}
+      <Animated.View
+        pointerEvents="none"
+        aria-hidden
+        testID={`${testID}-highlight`}
+        style={[
+          {
+            position: 'absolute',
+            top: -border,
+            bottom: -border,
+            start: -border,
+            end: -border,
+            borderRadius: theme.radius.lg,
+            borderWidth: 2,
+            borderColor: theme.colour.brand,
+            opacity: highlight,
+          },
+        ]}
+      />
     </View>
   );
 }

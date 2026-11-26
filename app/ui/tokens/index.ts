@@ -14,7 +14,7 @@ export { density } from './density';
 export type { Density } from './density';
 export { elevation } from './elevation';
 export type { Elevation, ElevationKey } from './elevation';
-export { motion } from './motion';
+export { easing, motion } from './motion';
 export type { MotionKey } from './motion';
 export { radius } from './radius';
 export type { RadiusKey } from './radius';

@@ -4,10 +4,11 @@ import { useManifestContext } from 'app/providers/manifest/context';
 import { LoadUpdatedDocument } from 'app/api/reflection';
 import type { LoadDetailsFragment, LoadUpdatedSubscription } from 'app/api/operations';
 import { applyLoadUpdate } from 'app/api/crud/subscriptions/useLoadUpdatedSubscription';
+import { motion } from 'app/ui';
 import { holdOrder, sortLoads } from './order';
 
-/** How long a row that changed stays flagged */
-export const HIGHLIGHT_MS = 600;
+/** How long a row that changed stays flagged: the highlight of the motion tokens */
+export const HIGHLIGHT_MS = motion.highlight;
 
 /**
  * The loads of one day for the board, with what the board needs to feel live:

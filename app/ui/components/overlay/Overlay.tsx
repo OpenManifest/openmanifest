@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Modal, Platform, ScrollView, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Sheet from 'app/components/layout/Sheet';
+import { overlayTransition } from '../../motion/transitions';
+import { useReduceMotion } from '../../motion/useReduceMotion';
 import { useTheme } from '../../theme';
 import IconButton from '../IconButton';
 import Tappable from '../../Tappable';
@@ -34,7 +36,8 @@ const PANEL_WIDTH = 400;
 /**
  * The one overlay of the app: a bottom sheet, a dialog or a side panel with a title, a close button, scrolling content
  * and a pinned footer. On the web it traps focus, closes on Escape and returns focus to what opened it
- * (`Overlay.web.tsx`); here, on native, the sheet is the shared `Sheet` and the others a `Modal`.
+ * (`Overlay.web.tsx`); here, on native, the sheet is the shared `Sheet` and the others a `Modal`. A sheet and a panel
+ * slide in, a dialog fades in; with reduced motion they appear at once.
  */
 export default function Overlay({
   open,
@@ -50,6 +53,7 @@ export default function Overlay({
 }: OverlayProps) {
   const { t } = useTranslation('common');
   const theme = useTheme();
+  const reduce = useReduceMotion();
   const kind = resolvePresentation(presentation, {
     breakpoint: theme.breakpoint,
     native: Platform.OS !== 'web',
@@ -76,7 +80,9 @@ export default function Overlay({
     <Modal
       visible={open}
       transparent
-      animationType={panel ? 'slide' : 'fade'}
+      // The platform's own slide and fade (about `motion.slow`); none with reduced motion
+      animationType={overlayTransition(kind, reduce).modal}
+      testID={testID ? `${testID}-modal` : undefined}
       onRequestClose={onClose}
       supportedOrientations={['portrait', 'landscape']}
     >

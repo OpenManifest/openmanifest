@@ -8,7 +8,8 @@ import {
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
 import type { BottomSheetBackdropProps, BottomSheetFooterProps } from '@gorhom/bottom-sheet';
-import { Text, useTheme } from 'app/ui';
+import { Easing, ReduceMotion } from 'react-native-reanimated';
+import { easing, Text, useTheme } from 'app/ui';
 import { SheetContext } from './SheetContext';
 
 export interface ISheetProps {
@@ -56,6 +57,15 @@ export default function Sheet(props: ISheetProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
+  // Slides in and out over `motion.slow` with the standard easing; not at all when the system asks for less motion
+  const animationConfigs = React.useMemo(
+    () => ({
+      duration: theme.motion.slow,
+      easing: Easing.bezier(...easing.standard),
+      reduceMotion: ReduceMotion.System,
+    }),
+    [theme.motion.slow]
+  );
 
   const onDismiss = React.useCallback(() => {
     setTimeout(() => {
@@ -67,9 +77,9 @@ export default function Sheet(props: ISheetProps) {
     if (open) {
       sheetRef.current?.present();
     } else {
-      sheetRef.current?.dismiss({ duration: 300 });
+      sheetRef.current?.dismiss(animationConfigs);
     }
-  }, [open]);
+  }, [open, animationConfigs]);
 
   const HandleComponent = React.useCallback(
     () => (
@@ -133,6 +143,8 @@ export default function Sheet(props: ISheetProps) {
       ref={sheetRef}
       name={name}
       enableDynamicSizing
+      animationConfigs={animationConfigs}
+      overrideReduceMotion={ReduceMotion.System}
       maxDynamicContentSize={height - insets.top - TOP_MARGIN}
       enablePanDownToClose
       keyboardBehavior="interactive"

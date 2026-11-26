@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { AccessibilityInfo, Animated, Platform, View } from 'react-native';
+import { Animated, Platform, View } from 'react-native';
+import { useReduceMotion } from '../../motion/useReduceMotion';
 import { useTheme } from '../../theme';
 
 export type SkeletonProps = {
@@ -15,23 +16,6 @@ export type SkeletonProps = {
 };
 
 const LINE = 16;
-
-/** Whether the system asks for less motion; the pulse stands still then */
-export function useReduceMotion() {
-  const [reduce, setReduce] = React.useState(false);
-  React.useEffect(() => {
-    let mounted = true;
-    AccessibilityInfo.isReduceMotionEnabled?.()
-      .then((value) => mounted && setReduce(value))
-      .catch(() => undefined);
-    const subscription = AccessibilityInfo.addEventListener?.('reduceMotionChanged', setReduce);
-    return () => {
-      mounted = false;
-      subscription?.remove?.();
-    };
-  }, []);
-  return reduce;
-}
 
 function Bar({
   pulse,

@@ -37,6 +37,9 @@ jest.mock('app/providers/notifications', () => ({
   useNotifications: () => ({ error: mockError, success: jest.fn() }),
 }));
 
+const mockHaptic = jest.fn();
+jest.mock('app/ui/motion/haptics', () => ({ haptic: (event: string) => mockHaptic(event) }));
+
 const today = `${todayInZone(operatorExtensive.timeZone)}T02:00:00Z`;
 const piloted = {
   crew: [
@@ -85,6 +88,7 @@ describe('<LoadActions />', () => {
     const minutes = (new Date(variables.attributes.dispatchAt).getTime() - Date.now()) / 60_000;
     expect(minutes).toBeGreaterThan(9);
     expect(minutes).toBeLessThanOrEqual(10);
+    expect(mockHaptic).toHaveBeenCalledWith('call');
   });
 
   it('calls at a time of your own', async () => {
@@ -125,6 +129,7 @@ describe('<LoadActions />', () => {
     await fireEvent.press(onCall.getByTestId('load-actions-primary'));
     await waitFor(() => expect(mockUpdate).toHaveBeenCalledTimes(1));
     expect(mockUpdate.mock.calls[0][0].variables.attributes.state).toBe('departed');
+    await waitFor(() => expect(mockHaptic).toHaveBeenLastCalledWith('depart'));
     await onCall.unmount();
 
     const flying = await renderActions({ state: LoadState.Departed });
@@ -132,6 +137,8 @@ describe('<LoadActions />', () => {
     await fireEvent.press(flying.getByTestId('load-actions-primary'));
     await waitFor(() => expect(mockFinalize).toHaveBeenCalledTimes(1));
     expect(mockFinalize.mock.calls[0][0].variables).toEqual({ id: 10, state: 'completed' });
+    await waitFor(() => expect(mockHaptic).toHaveBeenLastCalledWith('land'));
+    expect(mockHaptic).toHaveBeenCalledTimes(2);
   });
 
   it('re-opens a load that is over', async () => {
@@ -145,6 +152,7 @@ describe('<LoadActions />', () => {
       state: 'open',
       dispatchAt: null,
     });
+    expect(mockHaptic).not.toHaveBeenCalled();
   });
 
   it('cancels the call of a load on call', async () => {
@@ -203,6 +211,8 @@ describe('<LoadActions />', () => {
     await fireEvent.press(board.getByTestId('load-actions-primary'));
 
     await waitFor(() => expect(mockError).toHaveBeenCalledWith('Load is not in the air'));
+    // Only what succeeded is felt
+    expect(mockHaptic).not.toHaveBeenCalled();
   });
 
   it('asks for the load again when the server says it was changed, so the next tap is current', async () => {

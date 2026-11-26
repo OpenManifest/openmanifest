@@ -5,6 +5,7 @@ import { DateTime } from 'luxon';
 import { useFinalizeLoadMutation, useUpdateLoadMutation } from 'app/api/reflection';
 import type { CrewRoleEssentialsFragment, LoadDetailsFragment } from 'app/api/operations';
 import { LoadState, Permission } from 'app/api/schema.d';
+import { haptic, type HapticEvent } from 'app/ui';
 import { isConflict } from 'app/api/crud/useLoad';
 import useRestriction from 'app/hooks/useRestriction';
 import { useOperatorTimeZone, useOperatorToday } from 'app/hooks/useOperatorToday';
@@ -15,6 +16,13 @@ import { crewSlots } from './crew';
 import { planActions, type LoadActionKey } from './loadActions';
 
 type Outcome = { ok: true } | { ok: false; error: string };
+
+/** The actions the person who pressed feels on a phone when they succeed: the call, the departure, the landing */
+const HAPTICS: Partial<Record<LoadActionKey, HapticEvent>> = {
+  call: 'call',
+  depart: 'depart',
+  complete: 'land',
+};
 
 /**
  * The next actions of a load: the plan by its state, and each action as a call that reports in a toast. Several cards
@@ -109,40 +117,51 @@ export function useLoadActions(
     [fail, finalizeLoad, load.id, t]
   );
 
-  /** Runs an action; `minutes` is the call (a number of minutes from now) */
+  /** Sends an action to the server; `minutes` is the call (a number of minutes from now) */
+  const perform = React.useCallback(
+    async (action: LoadActionKey, minutes?: number): Promise<Outcome> => {
+      switch (action) {
+        case 'call':
+          return await update({
+            dispatchAt: DateTime.local()
+              .plus({ minutes: minutes ?? 0 })
+              .toISO(),
+            state: LoadState.Boarding,
+          });
+        case 'cancelCall':
+        case 'reopen':
+          return await update({ dispatchAt: null, state: LoadState.Open });
+        case 'depart':
+          return await update({ dispatchAt: null, state: LoadState.Departed });
+        case 'complete':
+          return await finalize(LoadState.Completed);
+        case 'cancelLoad':
+          return await finalize(LoadState.Cancelled);
+        default:
+          return fail(t('common:board.actions.failed'));
+      }
+    },
+    [fail, finalize, t, update]
+  );
+
+  /** Runs an action unless it is blocked; a call, departure or landing that succeeds taps the phone */
   const run = React.useCallback(
     async (action: LoadActionKey, minutes?: number): Promise<Outcome> => {
       const reason = blocked(action);
       if (reason) return fail(reason);
       setBusy(true);
       try {
-        switch (action) {
-          case 'call':
-            return await update({
-              dispatchAt: DateTime.local()
-                .plus({ minutes: minutes ?? 0 })
-                .toISO(),
-              state: LoadState.Boarding,
-            });
-          case 'cancelCall':
-          case 'reopen':
-            return await update({ dispatchAt: null, state: LoadState.Open });
-          case 'depart':
-            return await update({ dispatchAt: null, state: LoadState.Departed });
-          case 'complete':
-            return await finalize(LoadState.Completed);
-          case 'cancelLoad':
-            return await finalize(LoadState.Cancelled);
-          default:
-            return fail(t('common:board.actions.failed'));
-        }
+        const outcome = await perform(action, minutes);
+        const event = HAPTICS[action];
+        if (outcome.ok && event) haptic(event);
+        return outcome;
       } finally {
         setBusy(false);
       }
     },
     // `blocked` closes over `missing`
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [fail, finalize, missing, t, update]
+    [fail, missing, perform]
   );
 
   return { plan, callMinutes, busy, run, blocked, missing };

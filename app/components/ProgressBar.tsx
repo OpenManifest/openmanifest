@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Animated, Easing, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'app/ui';
-import { useReduceMotion } from 'app/ui/components/display/Skeleton';
+import { useReduceMotion } from 'app/ui/motion/useReduceMotion';
 
 type Props = {
   /** Hidden (an empty 4 dp strip, so the layout does not jump) unless true; default true */
