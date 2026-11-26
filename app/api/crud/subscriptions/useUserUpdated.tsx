@@ -1,24 +1,23 @@
 import { OnDataOptions } from '@apollo/client';
-import { DropzoneUserDetailsFragment, UserUpdatedSubscription } from 'app/api/operations';
-import { DropzoneUserDetailsFragmentDoc, useUserUpdatedSubscription } from 'app/api/reflection';
+import { MembershipDetailsFragment, UserUpdatedSubscription } from 'app/api/operations';
+import { MembershipDetailsFragmentDoc, useUserUpdatedSubscription } from 'app/api/reflection';
 import * as React from 'react';
 
-export function useUserUpdated(dropzoneUserId?: string) {
+export function useUserUpdated(membershipId?: string) {
   const onData = React.useCallback(
     ({ client, data: { data: result } }: OnDataOptions<UserUpdatedSubscription>) => {
-      if (result?.userUpdated?.dropzoneUser) {
-        console.debug('[Apollo::Subscription::UpdateUser]: Received update', result?.userUpdated);
-        const { dropzoneUser } = result.userUpdated;
-        client.cache.updateFragment<DropzoneUserDetailsFragment>(
+      if (result?.userUpdated?.membership) {
+        const { membership } = result.userUpdated;
+        client.cache.updateFragment<MembershipDetailsFragment>(
           {
-            fragment: DropzoneUserDetailsFragmentDoc,
-            fragmentName: 'dropzoneUserDetails',
+            fragment: MembershipDetailsFragmentDoc,
+            fragmentName: 'membershipDetails',
             broadcast: true,
-            id: client.cache.identify(dropzoneUser),
+            id: client.cache.identify(membership),
           },
           (previous) => ({
             ...previous,
-            ...dropzoneUser,
+            ...membership,
           })
         );
       }
@@ -27,8 +26,8 @@ export function useUserUpdated(dropzoneUserId?: string) {
   );
 
   return useUserUpdatedSubscription({
-    variables: { id: dropzoneUserId as string },
-    skip: !dropzoneUserId,
+    variables: { id: membershipId as string },
+    skip: !membershipId,
     onData,
   });
 }

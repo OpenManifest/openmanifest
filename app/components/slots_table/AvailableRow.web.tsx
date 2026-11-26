@@ -1,10 +1,10 @@
 import React from 'react';
-import { DataTable } from 'react-native-paper';
 import { LoadState } from 'app/api/schema.d';
 import { useLoadContext, useManifestContext } from 'app/providers';
-import { DropzoneUserEssentialsFragment } from 'app/api/operations';
-import DropzoneUserAutocomplete from '../autocomplete/DropzoneUserAutocomplete.web';
+import { MembershipEssentialsFragment } from 'app/api/operations';
+import MembershipAutocomplete from '../autocomplete/MembershipAutocomplete.web';
 import DroppableSlot from './DragAndDrop/DroppableSlot';
+import { TableRow } from './Grid';
 
 export interface IAvailableRowProps {
   index: number;
@@ -18,9 +18,9 @@ export default function AvailableRow(props: IAvailableRowProps) {
   const { dialogs } = useManifestContext();
 
   const onSelectUser = React.useCallback(
-    (user: DropzoneUserEssentialsFragment) => {
+    (user: MembershipEssentialsFragment) => {
       if (load) {
-        dialogs.manifestUser.open({ load, slot: { dropzoneUser: user } });
+        dialogs.manifestUser.open({ load, slot: { membership: user } });
       }
     },
     [dialogs.manifestUser, load]
@@ -28,16 +28,16 @@ export default function AvailableRow(props: IAvailableRowProps) {
 
   return (
     <DroppableSlot loadId={load?.id?.toString() || '0'} rowIndex={index}>
-      <DataTable.Row testID="slot-row" style={{ paddingTop: 8 }}>
-        <DropzoneUserAutocomplete
-          disabled={[LoadState.Cancelled, LoadState.InFlight, LoadState.Landed].includes(
+      <TableRow testID="slot-row">
+        <MembershipAutocomplete
+          disabled={[LoadState.Cancelled, LoadState.Departed, LoadState.Completed].includes(
             load?.state as LoadState
           )}
           placeholder="- Available -"
           value={null}
           onChange={onSelectUser}
         />
-      </DataTable.Row>
+      </TableRow>
     </DroppableSlot>
   );
 }

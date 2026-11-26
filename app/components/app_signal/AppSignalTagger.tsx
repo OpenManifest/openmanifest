@@ -1,7 +1,7 @@
 import * as React from 'react';
 import pick from 'lodash/pick';
 import isEqual from 'lodash/isEqual';
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { useCurrentUserQuery } from 'app/api/reflection';
 import { useSession } from 'app/state';
 import { Platform } from 'react-native';
@@ -14,31 +14,31 @@ function AppSignalSessionTagProvider(props: React.PropsWithChildren<object>) {
   // is rendered at the top of the app to catch errors
   // outside of GraphQL as wele
   const {
-    dropzone: { dropzone, currentUser: currentDropzoneUser },
-  } = useDropzoneContext();
+    operator: { operator, currentUser: currentMembership },
+  } = useOperatorContext();
   const credentials = useSession((session) => session.credentials);
   const { data: currentUserData } = useCurrentUserQuery({ skip: !credentials });
   const currentUser = currentUserData?.currentUser;
   const currentRouteName = useSession((session) => session.currentRouteName);
-  const currentDropzoneId = useSession((session) => session.currentDropzoneId);
+  const currentOperatorId = useSession((session) => session.currentOperatorId);
   const { tags, setTags } = useAppSignalContext();
 
   const sessionTags: { [key: string]: string } = React.useMemo(
     () => ({
       ...INITIAL_TAGS,
-      currentDropzoneId: (dropzone?.id || currentDropzoneId || 'Unknown')?.toString(),
-      currentDropzone: dropzone?.name || 'Unknown',
+      currentOperatorId: (operator?.id || currentOperatorId || 'Unknown')?.toString(),
+      currentOperator: operator?.name || 'Unknown',
       currentRouteName: currentRouteName || 'Unknown',
-      currentUser: (currentDropzoneUser?.id || currentUser?.id || 'Unknown')?.toString(),
+      currentUser: (currentMembership?.id || currentUser?.id || 'Unknown')?.toString(),
       platform: Platform.OS as string,
     }),
     [
-      currentDropzoneId,
-      currentDropzoneUser?.id,
+      currentOperatorId,
+      currentMembership?.id,
       currentRouteName,
       currentUser?.id,
-      dropzone?.id,
-      dropzone?.name,
+      operator?.id,
+      operator?.name,
     ]
   );
 
