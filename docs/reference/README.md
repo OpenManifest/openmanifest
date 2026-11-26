@@ -109,6 +109,17 @@ from `app/ui`. The classic board (`app/screens/authenticated/manifest`, `app/com
 `app/ui` pieces too (a small table grid in `slots_table/Grid.tsx`, `Menu` in place of Paper's FAB group) until U6.4
 retires it.
 
+Motion and haptics (U6.2): `app/ui/motion` applies the motion tokens (120/200/300 ms, highlight 600 ms, standard
+easing `cubic-bezier(0.2, 0, 0, 1)` in `tokens/motion.ts`). `useReduceMotion()` is the system's "reduce motion" (the
+browser's `prefers-reduced-motion` on the web), asked once and shared. The `Sheet` slides over `motion.slow` with
+Reanimated's `ReduceMotion.System`; `Overlay` on native uses the `Modal`'s slide (panel) and fade (dialog), none with
+reduced motion; on the web the scrim fades, a sheet slides up, a panel slides in and a dialog rises into place with CSS
+keyframes (`overlayTransition`, movement rather than opacity so text never fades below contrast), not at all with
+reduced motion. A board card that changed shows a brand ring that fades over `motion.highlight` (`useHighlight`); with
+reduced motion it stays still while flagged. `haptic('call' | 'depart' | 'land')` taps the phone (expo-haptics: a
+medium impact for a call, a success for departure and landing) when those load actions succeed (`useLoadActions`);
+`haptics.web.ts` does nothing.
+
 `KeyboardProvider` (react-native-keyboard-controller) sits inside `SafeAreaProvider` in `app/entrypoint/Entrypoint.tsx`;
 `android.softwareKeyboardLayoutMode` is `resize`. Web has no bottom sheets: `*.web.tsx` variants use drawers/dialogs.
 ESLint (`eslint.config.js`) rejects `KeyboardAvoidingView` and React Native's `SafeAreaView` imports and `Dimensions.get(...)`
@@ -374,6 +385,7 @@ Full table:
 | `expo-device`                                         | dep   | `~57.0.2` (P3.18)  | 57.0.2    | 57.0.2        | `~57.0.2`       |                                                       |
 | `expo-dev-client`                                     | dep   | `~57.0.19` (P3.21) | 57.0.19   | 57.0.19       | `~57.0.19`      | development builds (`eas.json` `development` profile) |
 | `expo-font`                                           | dep   | `~57.0.4` (P3.18)  | 57.0.4    | 57.0.4        | `~57.0.4`       |                                                       |
+| `expo-haptics`                                        | dep   | `~57.0.3` (U6.2)   | 57.0.3    | 57.0.3        | `~57.0.3`       |                                                       |
 | `expo-image-picker`                                   | dep   | `~57.0.20` (P3.18) | 57.0.20   | 57.0.20       | `~57.0.20`      |                                                       |
 | `expo-linear-gradient`                                | dep   | `~57.0.2` (P3.18)  | 57.0.2    | 57.0.2        | `~57.0.2`       |                                                       |
 | `expo-linking`                                        | dep   | `~57.0.12` (P3.18) | 57.0.12   | 57.0.12       | `~57.0.12`      |                                                       |

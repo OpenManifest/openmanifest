@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { cssDuration, cssEasing, overlayTransition } from '../../motion/transitions';
 import { useReduceMotion } from '../../motion/useReduceMotion';
 import { motion } from '../../tokens/motion';
+import { space } from '../../tokens/space';
 import { useTheme } from '../../theme';
 import IconButton from '../IconButton';
 import Text from '../Text';
@@ -31,7 +32,7 @@ const enter = (duration: number, from: object, to: object) =>
 /**
  * How each kind comes in: the scrim fades, a sheet slides up, a panel slides in from the end, a dialog rises a little
  * into the centre (movement, not opacity: text fading in would be below contrast while it does). Radix unmounts them
- * at once when they close.
+ * at once when they close. The animations sit on inner views: Radix merges the style of its own parts as one object.
  */
 const transitions = StyleSheet.create({
   scrim: enter(motion.base, { opacity: 0 }, { opacity: 1 }),
@@ -47,8 +48,8 @@ const transitions = StyleSheet.create({
   ),
   dialog: enter(
     overlayTransition('dialog', false).duration,
-    { transform: 'translate(-50%, -46%)' },
-    { transform: 'translate(-50%, -50%)' }
+    { transform: `translateY(${space.lg}px)` },
+    { transform: 'translateY(0)' }
   ),
 });
 
@@ -93,8 +94,6 @@ export default function Overlay({
             right: 0,
             bottom: 0,
             maxHeight: '90%',
-            borderTopLeftRadius: theme.radius.lg,
-            borderTopRightRadius: theme.radius.lg,
           })
         : web({
             position: 'fixed',
@@ -103,26 +102,34 @@ export default function Overlay({
             transform: 'translate(-50%, -50%)',
             width: `min(${DIALOG_WIDTH}px, calc(100% - ${2 * theme.space.lg}px))`,
             maxHeight: '90%',
-            borderRadius: theme.radius.lg,
           });
+  const shape: ViewStyle =
+    kind === 'panel'
+      ? {}
+      : kind === 'sheet'
+        ? { borderTopLeftRadius: theme.radius.lg, borderTopRightRadius: theme.radius.lg }
+        : { borderRadius: theme.radius.lg };
 
   return (
     <Dialog.Root open={open} onOpenChange={(next) => !next && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay
-          style={[
-            animate ? transitions.scrim : null,
-            web({
-              position: 'fixed',
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: 0,
-              zIndex: LAYER,
-              backgroundColor: theme.colour.scrim,
-            }),
-          ]}
-        />
+          style={web({
+            position: 'fixed',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: LAYER,
+          })}
+        >
+          <View
+            style={[
+              animate ? transitions.scrim : null,
+              { flex: 1, backgroundColor: theme.colour.scrim },
+            ]}
+          />
+        </Dialog.Overlay>
         <Dialog.Content
           testID={testID}
           aria-describedby={undefined}
@@ -133,62 +140,67 @@ export default function Overlay({
             event.preventDefault();
             opener.current?.focus();
           }}
-          style={[
-            animate ? transitions[kind] : null,
-            {
-              ...placement,
-              zIndex: LAYER + 1,
-              backgroundColor: theme.colour.surface,
-              ...theme.elevation.overlay,
-            },
-          ]}
+          style={{ ...placement, zIndex: LAYER + 1 }}
         >
           <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingStart: theme.space.lg,
-              paddingEnd: theme.space.xs,
-              paddingVertical: theme.space.xs,
-            }}
+            style={[
+              animate ? transitions[kind] : null,
+              {
+                flexGrow: kind === 'panel' ? 1 : 0,
+                flexShrink: 1,
+                backgroundColor: theme.colour.surface,
+                ...shape,
+                ...theme.elevation.overlay,
+              },
+            ]}
           >
-            <View
-              style={
-                showTitle
-                  ? { flexShrink: 1 }
-                  : { position: 'absolute', width: 1, height: 1, overflow: 'hidden' }
-              }
-            >
-              <Dialog.Title asChild>
-                <Text variant="title" role="heading" aria-level={2} numberOfLines={2}>
-                  {title}
-                </Text>
-              </Dialog.Title>
-            </View>
-            <Dialog.Close asChild>
-              <IconButton icon="close" aria-label={t('overlay.close')} />
-            </Dialog.Close>
-          </View>
-          {handle}
-          <ScrollView
-            style={{ flexShrink: 1 }}
-            contentContainerStyle={{ padding: disablePadding ? 0 : theme.space.lg }}
-            keyboardShouldPersistTaps="handled"
-          >
-            {children}
-          </ScrollView>
-          {footer ? (
             <View
               style={{
-                padding: theme.space.lg,
-                borderTopWidth: 1,
-                borderTopColor: theme.colour.border,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingStart: theme.space.lg,
+                paddingEnd: theme.space.xs,
+                paddingVertical: theme.space.xs,
               }}
             >
-              {footer}
+              <View
+                style={
+                  showTitle
+                    ? { flexShrink: 1 }
+                    : { position: 'absolute', width: 1, height: 1, overflow: 'hidden' }
+                }
+              >
+                <Dialog.Title asChild>
+                  <Text variant="title" role="heading" aria-level={2} numberOfLines={2}>
+                    {title}
+                  </Text>
+                </Dialog.Title>
+              </View>
+              <Dialog.Close asChild>
+                <IconButton icon="close" aria-label={t('overlay.close')} />
+              </Dialog.Close>
             </View>
-          ) : null}
+            {handle}
+            <ScrollView
+              style={{ flexShrink: 1 }}
+              contentContainerStyle={{ padding: disablePadding ? 0 : theme.space.lg }}
+              keyboardShouldPersistTaps="handled"
+            >
+              {children}
+            </ScrollView>
+            {footer ? (
+              <View
+                style={{
+                  padding: theme.space.lg,
+                  borderTopWidth: 1,
+                  borderTopColor: theme.colour.border,
+                }}
+              >
+                {footer}
+              </View>
+            ) : null}
+          </View>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
