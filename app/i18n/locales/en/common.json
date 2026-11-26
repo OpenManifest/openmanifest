@@ -1041,7 +1041,8 @@
       "mass": "Weights",
       "area": "Areas",
       "speed": "Wind speeds",
-      "temperature": "Temperatures"
+      "temperature": "Temperatures",
+      "depth": "Depths"
     },
     "currency": "Currency",
     "currencyHelp": "Prices, credit and payments are in this currency",
@@ -1415,26 +1416,11 @@
     "create": "Create {{operator}}"
   },
   "operatorWizard": {
-    "nameTitle": "Name",
-    "name": "Name",
-    "nameRequired": "Your {{operator}} must have a name",
-    "affiliationTitle": "Affiliation",
-    "affiliationRequired": "Your {{operator}} must accept at least one organization",
-    "locationTitle": "Location",
-    "myLocation": "Go to my location",
-    "brandingTitle": "Branding",
     "brandColour": "Brand colour",
     "brandColourHelp": "This colour is used for active elements and calls to action",
-    "colourRequired": "Please pick a brand colour",
-    "logoTitle": "Logo",
     "logo": "Logo",
     "pickLogo": "Pick a logo",
-    "logoHelp": "Your logo is shown as the avatar of your {{operator}} throughout the app.",
-    "selfManifestTitle": "Manifest",
-    "selfManifest": "Who can manifest themselves on {{loads}}?",
-    "manifestOthersTitle": "Manifest others",
-    "manifestOthers": "Who can manifest other people on {{loads}}?",
-    "doneTitle": "Setup complete"
+    "logoHelp": "Your logo is shown as the avatar of your {{operator}} throughout the app."
   },
   "errorScreen": {
     "title": "That's a bug",
@@ -1500,5 +1486,89 @@
       "display": "Display options"
     },
     "loadActions": "Actions"
+  },
+  "onboarding": {
+    "steps": {
+      "industry": {
+        "title": "What do you run?",
+        "intro": "Pick the closest kind of business. It sets the words, modules and presets you start with; you can change them later."
+      },
+      "name": {
+        "title": "Name",
+        "intro": "The name your customers and staff will see."
+      },
+      "location": {
+        "title": "Location and time zone",
+        "intro": "Days, times and calls follow this time zone."
+      },
+      "money": {
+        "title": "Currency and units",
+        "intro": "Pre-filled from your device and the {{name}} template."
+      },
+      "certifications": {
+        "title": "Certification bodies",
+        "intro": "Whose certifications your {{operator}} accepts."
+      },
+      "branding": {
+        "title": "Branding",
+        "intro": "Your colour and logo. Next creates your {{operator}}."
+      },
+      "review": {
+        "title": "Review presets",
+        "intro": "Your {{operator}} starts with these. Set your prices and add your first vehicle; everything can be changed in Setup."
+      },
+      "done": {
+        "title": "Done",
+        "intro": "Your {{operator}} is ready."
+      }
+    },
+    "groups": {
+      "air": "Air",
+      "water": "Water",
+      "land": "Land",
+      "other": "Other"
+    },
+    "industryLocked": "Your {{operator}} has been created; its kind of business cannot change.",
+    "startsWith": "{{name}} starts with",
+    "summary": {
+      "label": "{{label}}: ",
+      "modules": "Modules",
+      "crewRoles": "Crew roles",
+      "ticketTypes": "Ticket types",
+      "destinations": "Destinations",
+      "equipmentKinds": "Equipment kinds",
+      "roles": "Roles",
+      "activityTypes_one": "{{count}} activity type",
+      "activityTypes_other": "{{count}} activity types",
+      "none": "none"
+    },
+    "name": "Name of your {{operator}}",
+    "timeZone": "Time zone",
+    "timeZoneHelp": "An IANA name, for example Europe/Berlin; your device's to start with",
+    "position": "Location: {{lat}}, {{lng}}",
+    "noPosition": "No location yet: use this device's, or set it later in Setup → Branding.",
+    "useMyLocation": "Use my location",
+    "locationDenied": "The location could not be read. You can set it later in Setup → Branding.",
+    "prices": "Prices",
+    "noTickets": "The template has no {{tickets}} with prices. Add them in Setup.",
+    "firstVehicle": "First {{vehicle}}",
+    "firstVehicleHelp": "Optional: add the {{vehicle}} you use most; more can be added in Setup.",
+    "vehicleName": "Name",
+    "vehicleCapacity": "Seats",
+    "vehicleAdded": "{{name}} has been added.",
+    "modulesHelp": "Optional modules (equipment, certifications, limits and more) are switched on and off in Setup → Rules.",
+    "openRules": "Open Setup → Rules",
+    "openManifest": "Open the manifest",
+    "ready": "{{name}} is ready. Invite your staff and add more in Setup.",
+    "failed": "Something went wrong; please try again",
+    "errors": {
+      "industryRequired": "Pick the kind of business closest to yours",
+      "nameRequired": "Your {{operator}} must have a name",
+      "timeZoneInvalid": "Enter a time zone such as Europe/Berlin",
+      "currencyRequired": "Pick a currency",
+      "bodiesRequired": "Your {{operator}} must accept at least one certification body",
+      "colourRequired": "Please pick a brand colour",
+      "capacityRequired": "How many seats does it have?"
+    }
   }
 }

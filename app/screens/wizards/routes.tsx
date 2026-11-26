@@ -3,7 +3,7 @@ import * as React from 'react';
 import { UserWizardScreen } from 'app/forms/user_wizard';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
-import OperatorWizardScreen from './operator_wizard/OperatorWizard';
+import OperatorWizardScreen from 'app/features/onboarding/OperatorWizardScreen';
 import RecoverPasswordScreen from './recover_password/RecoverPasswordScreen';
 import ConfirmUserScreen from './confirm_user/ConfirmUserScreen';
 import ChangePasswordScreen from './change_password/ChangePasswordScreen';
