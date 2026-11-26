@@ -1,137 +1,63 @@
 import * as React from 'react';
-import { Caption, Card, List, useTheme } from 'react-native-paper';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { View } from 'react-native';
 import {
-  DropzoneEssentialsFragment,
-  DropzoneUserEssentialsFragment,
+  OperatorEssentialsFragment,
+  MembershipEssentialsFragment,
   OrderEssentialsFragment,
 } from 'app/api/operations';
-import { DropzoneUser } from 'app/api/schema.d';
-import { successColor } from 'app/constants/Colors';
+import { Membership } from 'app/api/schema.d';
 import UserAvatar from 'app/components/UserAvatar';
-import { DateTime } from 'luxon';
+import { formatDateTime } from 'app/i18n/format';
 import { formatCents } from 'app/utils/money';
+import { Icon, ListRow, Text, useTheme } from 'app/ui';
 
 interface IOrder {
   order: OrderEssentialsFragment;
-  dropzoneUser?: DropzoneUserEssentialsFragment | null;
+  membership?: MembershipEssentialsFragment | null;
   showAvatar?: boolean;
   onPress?(): void;
 }
 
+/** An order in a member's list of transactions: who paid, what for, when, and the amount (minus when they paid) */
 export default function OrderCard(props: IOrder) {
-  const { order, dropzoneUser, showAvatar, onPress } = props;
+  const { order, membership, showAvatar, onPress } = props;
   const theme = useTheme();
   const isSelfBuyer =
-    order.buyer?.__typename === 'DropzoneUser' &&
-    (order.buyer as DropzoneUser)?.id === dropzoneUser?.id;
-  const icon =
-    // @ts-ignore
-    isSelfBuyer === dropzoneUser?.id ? 'cash-minus' : 'cash-plus';
+    order.buyer?.__typename === 'Membership' && (order.buyer as Membership)?.id === membership?.id;
+  const buyerName =
+    (order?.buyer as MembershipEssentialsFragment)?.user?.name ||
+    (order?.buyer as OperatorEssentialsFragment)?.name ||
+    '';
+  const when = order?.createdAt ? formatDateTime(order.createdAt) : '';
 
-  const right = React.useCallback(
-    () => (
-      <Text
-        style={{
-          fontSize: 16,
-          fontFamily: 'Roboto_400Regular',
-          fontWeight: '400',
-          textAlign: 'center',
-          alignSelf: 'center',
-          color: theme.colors.onSurface,
-        }}
-      >
-        {`${isSelfBuyer ? '-' : ''}${formatCents(order.amountCents)}`}
-      </Text>
-    ),
-    [isSelfBuyer, order.amountCents, theme.colors.onSurface]
-  );
-
-  const left = React.useCallback(
-    () => (
-      <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-        {showAvatar ? (
-          <UserAvatar
-            style={{ alignSelf: 'center', marginHorizontal: 12 }}
-            size={60}
-            name={
-              (order?.buyer as DropzoneUserEssentialsFragment)?.user?.name ||
-              (order?.buyer as DropzoneEssentialsFragment).name ||
-              ''
-            }
-            image={
-              (order?.buyer as DropzoneUserEssentialsFragment).user?.image ||
-              (order?.buyer as DropzoneEssentialsFragment).banner ||
-              undefined
-            }
-          />
-        ) : (
-          <MaterialCommunityIcons
-            color={
-              order.buyer &&
-              '__typename' in order.buyer &&
-              // @ts-ignore
-              order.buyer.__typename === 'DropzoneUser' &&
-              (order.buyer as DropzoneUserEssentialsFragment)?.id === dropzoneUser?.id
-                ? '#FF1414'
-                : successColor
-            }
-            name={icon}
-            size={36}
-            style={{ marginHorizontal: 16 }}
-          />
-        )}
-      </View>
-    ),
-    [dropzoneUser?.id, icon, order.buyer, showAvatar]
-  );
   return (
-    <TouchableOpacity onPress={onPress}>
-      <Card style={styles.order}>
-        <Caption
-          style={{
-            textAlign: 'right',
-            paddingRight: 4,
-            paddingTop: 2,
-            marginBottom: 0,
-          }}
-        >
-          {DateTime.fromISO(order?.createdAt).toLocaleString(DateTime.DATETIME_SHORT)}
-        </Caption>
-        <Card.Content style={styles.orderContent}>
-          <List.Item
-            title={
-              (order?.buyer as DropzoneUser)?.user?.name ||
-              (order?.buyer as DropzoneEssentialsFragment)?.name
-            }
-            style={{ width: '100%' }}
-            titleStyle={styles.orderTitle}
-            description={order.title || null}
-            descriptionStyle={styles.orderDescription}
-            {...{ right, left }}
-          />
-        </Card.Content>
-      </Card>
-    </TouchableOpacity>
+    <View style={{ backgroundColor: theme.colour.surface }}>
+      <ListRow
+        title={buyerName}
+        supporting={[order.title, when].filter(Boolean).join(' · ')}
+        onPress={onPress}
+        leading={
+          showAvatar ? (
+            <UserAvatar
+              size={40}
+              name={buyerName}
+              image={
+                (order?.buyer as MembershipEssentialsFragment)?.user?.image ||
+                (order?.buyer as OperatorEssentialsFragment)?.banner ||
+                undefined
+              }
+            />
+          ) : (
+            <Icon
+              name={isSelfBuyer ? 'cash-minus' : 'cash-plus'}
+              tone={isSelfBuyer ? 'blocked' : 'ok'}
+            />
+          )
+        }
+        trailing={
+          <Text variant="body">{`${isSelfBuyer ? '-' : ''}${formatCents(order.amountCents)}`}</Text>
+        }
+      />
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  avatarIcon: {},
-  orderTitle: {
-    paddingLeft: 0,
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 6,
-  },
-  orderDescription: {
-    paddingLeft: 0,
-  },
-  orderContent: { paddingLeft: 0, paddingRight: 4, paddingTop: 8, paddingBottom: 8 },
-  order: {
-    marginHorizontal: 0,
-    marginVertical: StyleSheet.hairlineWidth,
-    width: '100%',
-  },
-});

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { DropzoneUserDetailsFragment, OrderEssentialsFragment } from 'app/api/operations';
+import { MembershipDetailsFragment, OrderEssentialsFragment } from 'app/api/operations';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useManifestContext } from 'app/providers/manifest/context';
@@ -10,39 +10,44 @@ import { TransactionType } from 'app/api/schema.d';
 import { useUserProfile } from 'app/api/crud';
 import { useNotifications } from 'app/providers/notifications';
 import withDefaults from 'app/forms/initialValues';
+import i18n from 'app/i18n';
 
 export type CreditFields = {
   amount: number;
-  dropzoneUser: DropzoneUserDetailsFragment | null;
+  membership: MembershipDetailsFragment | null;
   type: TransactionType;
   message?: string | null;
 };
 
 export const orderValidation = yup.object({
-  amount: yup.number().integer().default(0).min(1, 'Amount must be greater than 0'),
+  amount: yup
+    .number()
+    .integer()
+    .default(0)
+    .min(1, () => i18n.t('forms.credits.amountMustBeGreaterThan0')),
   message: yup.string().nullable().default(null),
   type: yup
     .string()
     .oneOf(Object.values(TransactionType))
-    .required('No transaction type selected')
+    .required(() => i18n.t('forms.credits.noTransactionTypeSelected'))
     .default(TransactionType.Withdrawal),
 });
 
 export const EMPTY_FORM_VALUES: Partial<CreditFields> = {
   amount: 0,
   message: null,
-  dropzoneUser: null,
+  membership: null,
   type: TransactionType.Deposit,
 };
 
 export interface IUseManifestFormOpts {
   initial?: Partial<CreditFields>;
-  dropzoneUser?: DropzoneUserDetailsFragment | null;
+  membership?: MembershipDetailsFragment | null;
   onSuccess?(order: OrderEssentialsFragment): void;
 }
 
 export default function useCreditsForm(opts: IUseManifestFormOpts) {
-  const { initial, dropzoneUser, onSuccess } = opts;
+  const { initial, membership, onSuccess } = opts;
   const initialValues = React.useMemo(() => withDefaults(EMPTY_FORM_VALUES, initial), [initial]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
   const { addCredits, withdrawCredits } = useUserProfile();
@@ -72,19 +77,18 @@ export default function useCreditsForm(opts: IUseManifestFormOpts) {
 
   const [{ loading }, onCreateOrder] = useAsyncFn(
     async (fields: CreditFields) => {
-      console.debug({ fields });
-      if (!dropzoneUser) {
-        setError('amount', { message: 'No user selected' });
+      if (!membership) {
+        setError('amount', { message: i18n.t('forms.credits.noUserSelected') });
         return;
       }
       try {
         const response =
           fields.type === TransactionType.Deposit
-            ? await addCredits(dropzoneUser, {
+            ? await addCredits(membership, {
                 amount: fields.amount,
                 message: fields.message,
               })
-            : await withdrawCredits(dropzoneUser, {
+            : await withdrawCredits(membership, {
                 amount: fields.amount,
                 message: fields.message,
               });
@@ -112,7 +116,7 @@ export default function useCreditsForm(opts: IUseManifestFormOpts) {
         }
       }
     },
-    [createLoad, dropzoneUser, setError, notify, onSuccess, addCredits, withdrawCredits]
+    [createLoad, membership, setError, notify, onSuccess, addCredits, withdrawCredits]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onCreateOrder), [handleSubmit, onCreateOrder]);
