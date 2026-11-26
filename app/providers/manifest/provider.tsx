@@ -15,7 +15,7 @@ import { useOperatorContext } from '../operator/context';
 import useRestriction from 'app/hooks/useRestriction';
 import { Permission } from 'app/api/schema.d';
 import createUseDialog from '../hooks/useDialog';
-import { ManifestContext, useManifestContext } from './context';
+import { ManifestContext, ManifestPermissionsContext, useManifestContext } from './context';
 
 export type UseManifestOptions = Partial<LoadsQueryVariables>;
 
@@ -134,7 +134,9 @@ export function ManifestContextProvider(props: React.PropsWithChildren<UseManife
 
   return (
     <ManifestContext.Provider value={context}>
-      {children}
+      <ManifestPermissionsContext.Provider value={permissions}>
+        {children}
+      </ManifestPermissionsContext.Provider>
       <CreditsDialogWrapper />
       <LoadDialogWrapper />
       <ManifestUserDialogWrapper />

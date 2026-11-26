@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Avatar, Text, useTheme } from 'app/ui';
-import { useLoadContext, useManifestContext } from 'app/providers';
+import { useLoadContext, useManifestPermissions } from 'app/providers';
 import { DraggablePlace } from './dnd/BoardDnd';
 
 export type ColumnPlacesProps = {
@@ -21,9 +21,7 @@ export default function ColumnPlaces({ loadLabel, testID = 'board-places' }: Col
   const {
     load: { load },
   } = useLoadContext();
-  const {
-    manifest: { permissions },
-  } = useManifestContext();
+  const permissions = useManifestPermissions();
   const slots = load?.slots ?? [];
   if (!load || !slots.length) return null;
 

@@ -10,7 +10,7 @@ import DateBar from 'app/screens/authenticated/manifest/manifest/DateBar';
 import { LoadView } from 'app/features/load/LoadScreen';
 import BookJump from 'app/features/picker/BookJump';
 import { useCrewRolesQuery } from 'app/api/reflection';
-import type { LoadDetailsFragment } from 'app/api/operations';
+import type { CrewRoleEssentialsFragment, LoadDetailsFragment } from 'app/api/operations';
 import { Permission } from 'app/api/schema.d';
 import { LoadContextProvider, useManifestContext, useOperatorContext } from 'app/providers';
 import useRestriction from 'app/hooks/useRestriction';
@@ -21,6 +21,91 @@ import { COLUMN_WIDTH, MAX_CONTENT_WIDTH, layoutOf, splitLoads } from './layout'
 import { BoardDndProvider, DroppableLoad } from './dnd/BoardDnd';
 import { useBoard } from './useBoard';
 import WindsAloft from 'app/features/skydiving/conditions/WindsAloft';
+
+type BoardCardProps = {
+  load: LoadDetailsFragment;
+  crewRoles: readonly CrewRoleEssentialsFragment[];
+  timeZone?: string | null;
+  highlighted: boolean;
+  selected: boolean;
+  /** A member books themselves from the card; the desk books people from the load */
+  selfBooking: boolean;
+  onPress(load: LoadDetailsFragment): void;
+};
+
+/**
+ * A load's card with its actions. Memoised on props that stay the same objects while another load changes (Apollo hands
+ * out a new object only for the load that changed), so a live update renders the card of that load and no other.
+ */
+const BoardCard = React.memo(function BoardCard({
+  load,
+  crewRoles,
+  timeZone,
+  highlighted,
+  selected,
+  selfBooking,
+  onPress,
+}: BoardCardProps) {
+  const { t } = useTranslation(['common', 'terms']);
+  const theme = useTheme();
+  const loadName = t('common:loadNumber', {
+    load: t('terms:load', { count: 1 }),
+    number: load.loadNumber,
+  });
+  const press = React.useCallback(() => onPress(load), [onPress, load]);
+  return (
+    <LoadCard
+      load={load}
+      crewRoles={crewRoles}
+      timeZone={timeZone}
+      highlighted={highlighted}
+      selected={selected}
+      onPress={press}
+      action={
+        <View style={{ gap: theme.space.sm }}>
+          <LoadActions load={load} crewRoles={crewRoles} />
+          {selfBooking ? (
+            <BookJump
+              load={load}
+              variant="secondary"
+              label={t('common:picker.self.add', { load: loadName })}
+              testID={`book-jump-${load.id}`}
+            />
+          ) : null}
+        </View>
+      }
+    />
+  );
+});
+
+type BoardColumnProps = Omit<BoardCardProps, 'selected'>;
+
+/** A load's column on a wide window: its card over its places, which can be dragged to another column */
+const BoardColumn = React.memo(function BoardColumn(props: BoardColumnProps) {
+  const { t } = useTranslation(['common', 'terms']);
+  const theme = useTheme();
+  const { load } = props;
+  const loadLabel = t('common:loadNumber', {
+    load: t('terms:load', { count: 1 }),
+    number: load.loadNumber,
+  });
+  return (
+    <DroppableLoad loadId={load.id} loadLabel={loadLabel} testID={`board-column-${load.id}`}>
+      <View style={{ width: COLUMN_WIDTH, gap: theme.space.sm }}>
+        <BoardCard {...props} selected={false} />
+        <LoadContextProvider id={load.id}>
+          <ColumnPlaces loadLabel={loadLabel} />
+        </LoadContextProvider>
+      </View>
+    </DroppableLoad>
+  );
+});
+
+/** Between the cards of a list: a component of its own, as one made in render would mount again on every render */
+function CardGap() {
+  const theme = useTheme();
+  return <View style={{ height: theme.space.md }} />;
+}
 
 /**
  * The board of the day: a column of cards on a phone, the list beside the selected load on a tablet, and a column for
@@ -69,33 +154,25 @@ export default function BoardScreen() {
     [navigation]
   );
 
-  const loadName = (load: LoadDetailsFragment) =>
-    t('common:loadNumber', { load: loadTerm, number: load.loadNumber });
-
-  const card = (load: LoadDetailsFragment, onPress: () => void) => (
-    <LoadCard
-      key={load.id}
-      load={load}
-      crewRoles={crewRoles}
-      timeZone={operator?.timeZone}
-      highlighted={board.isChanged(load.id)}
-      selected={layout === 'split' && selected?.id === load.id}
-      onPress={onPress}
-      action={
-        <View style={{ gap: theme.space.sm }}>
-          <LoadActions load={load} crewRoles={crewRoles} />
-          {/* The desk books people from the load; a member books themselves from its card */}
-          {permissions.canManifestOthers ? null : (
-            <BookJump
-              load={load}
-              variant="secondary"
-              label={t('common:picker.self.add', { load: loadName(load) })}
-              testID={`book-jump-${load.id}`}
-            />
-          )}
-        </View>
-      }
-    />
+  const timeZone = operator?.timeZone;
+  const selfBooking = !permissions.canManifestOthers;
+  const { changed } = board;
+  const selectedCard = layout === 'split' ? selected?.id : undefined;
+  const selectLoad = React.useCallback((load: LoadDetailsFragment) => select(load.id), []);
+  const onPress = layout === 'split' ? selectLoad : openLoad;
+  const renderCard = React.useCallback(
+    ({ item }: { item: LoadDetailsFragment }) => (
+      <BoardCard
+        load={item}
+        crewRoles={crewRoles}
+        timeZone={timeZone}
+        highlighted={changed.has(item.id)}
+        selected={selectedCard === item.id}
+        selfBooking={selfBooking}
+        onPress={onPress}
+      />
+    ),
+    [crewRoles, timeZone, changed, selectedCard, selfBooking, onPress]
   );
 
   const header = (
@@ -141,24 +218,17 @@ export default function BoardScreen() {
       <BoardDndProvider onFreeze={board.freeze} onUnfreeze={board.unfreeze}>
         <ScrollView horizontal testID="loads" showsHorizontalScrollIndicator>
           <View style={{ flexDirection: 'row', gap: theme.space.lg, alignItems: 'flex-start' }}>
-            {active.map((load) => {
-              const loadLabel = t('common:loadNumber', { load: loadTerm, number: load.loadNumber });
-              return (
-                <DroppableLoad
-                  key={load.id}
-                  loadId={load.id}
-                  loadLabel={loadLabel}
-                  testID={`board-column-${load.id}`}
-                >
-                  <View style={{ width: COLUMN_WIDTH, gap: theme.space.sm }}>
-                    {card(load, () => openLoad(load))}
-                    <LoadContextProvider id={load.id}>
-                      <ColumnPlaces loadLabel={loadLabel} />
-                    </LoadContextProvider>
-                  </View>
-                </DroppableLoad>
-              );
-            })}
+            {active.map((load) => (
+              <BoardColumn
+                key={load.id}
+                load={load}
+                crewRoles={crewRoles}
+                timeZone={timeZone}
+                highlighted={changed.has(load.id)}
+                selfBooking={selfBooking}
+                onPress={openLoad}
+              />
+            ))}
             {over.length ? (
               <View
                 testID="board-finished"
@@ -168,7 +238,9 @@ export default function BoardScreen() {
                 <Text variant="label" tone="muted" role="heading" aria-level={2}>
                   {t('common:board.completedStrip', { count: over.length })}
                 </Text>
-                {over.map((load) => card(load, () => openLoad(load)))}
+                {over.map((item) => (
+                  <React.Fragment key={item.id}>{renderCard({ item })}</React.Fragment>
+                ))}
               </View>
             ) : null}
           </View>
@@ -183,8 +255,8 @@ export default function BoardScreen() {
           style={{ width: 360, flexGrow: 0 }}
           data={board.loads}
           keyExtractor={({ id }) => id}
-          ItemSeparatorComponent={() => <View style={{ height: theme.space.md }} />}
-          renderItem={({ item }) => card(item, () => select(item.id))}
+          ItemSeparatorComponent={CardGap}
+          renderItem={renderCard}
           refreshControl={
             <RefreshControl refreshing={board.refreshing} onRefresh={() => board.refetch()} />
           }
@@ -219,8 +291,8 @@ export default function BoardScreen() {
         testID="loads"
         data={board.loads}
         keyExtractor={({ id }) => id}
-        ItemSeparatorComponent={() => <View style={{ height: theme.space.md }} />}
-        renderItem={({ item }) => card(item, () => openLoad(item))}
+        ItemSeparatorComponent={CardGap}
+        renderItem={renderCard}
         // Room for the button that floats below the last load
         contentContainerStyle={{ paddingBottom: theme.space.xxxl + theme.space.xxl }}
         refreshControl={

@@ -96,3 +96,16 @@ export const ManifestContext = React.createContext<IManifestContext>(INITIAL_CON
 export function useManifestContext() {
   return React.useContext(ManifestContext);
 }
+
+/**
+ * What the user may do on the manifest, apart from the loads: the context above changes with every load of the day, so
+ * a part of one load (its card, its places) that only needs the permissions reads them here and is left alone when
+ * another load changes.
+ */
+export const ManifestPermissionsContext = React.createContext<
+  IManifestContext['manifest']['permissions']
+>(INITIAL_CONTEXT.manifest.permissions);
+
+export function useManifestPermissions() {
+  return React.useContext(ManifestPermissionsContext);
+}

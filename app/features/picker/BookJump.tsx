@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from 'app/ui';
 import type { LoadDetailsFragment } from 'app/api/operations';
-import { useManifestContext, useOperatorContext } from 'app/providers';
+import { useManifestPermissions, useOperatorContext } from 'app/providers';
 import MemberPicker from './MemberPicker';
 import { canBook } from './booking';
 
@@ -30,9 +30,7 @@ export default function BookJump({
   const {
     operator: { currentUser },
   } = useOperatorContext();
-  const {
-    manifest: { permissions },
-  } = useManifestContext();
+  const permissions = useManifestPermissions();
 
   if (!permissions.canManifestSelf || !canBook(load, currentUser?.id)) return null;
   return (
