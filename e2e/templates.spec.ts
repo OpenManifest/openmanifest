@@ -99,9 +99,14 @@ test.describe('the scuba and snorkel templates @templates', () => {
       })
     );
     await expect(page.getByRole('checkbox', { name: 'APF', exact: true })).toHaveCount(0);
-    await press(page, page.getByRole('checkbox', { name: 'PADI', exact: true }));
-    await press(page, page.getByRole('checkbox', { name: 'SSI', exact: true }));
-    await expect(page.getByRole('checkbox', { name: 'SSI', exact: true })).toHaveAttribute(
+    for (const agency of ['PADI', 'SSI']) {
+      const chip = page.getByRole('checkbox', { name: agency, exact: true });
+      // A chip toggles: press again only once the first press has had time to show (a second press undoes it)
+      await pressUntil(page, chip, () =>
+        expect(chip).toHaveAttribute('aria-checked', 'true', { timeout: 8_000 })
+      );
+    }
+    await expect(page.getByRole('checkbox', { name: 'PADI', exact: true })).toHaveAttribute(
       'aria-checked',
       'true'
     );
@@ -125,9 +130,10 @@ test.describe('the scuba and snorkel templates @templates', () => {
     // Two sites: a shallow one for anyone, a deep wreck for advanced divers
     await gotoRoute(page, '/configuration/destinations');
     await expect(page.getByText('The wreck').first()).toBeVisible({ timeout: 20_000 });
+    await expectLayout(page, 'dive sites');
     for (const [site, depth, level] of [
       ['Turtle bay', '10', null],
-      ['Deep wreck', '30', /Advanced Open Water Diver \/ Advanced Adventurer/],
+      ['Deep wreck', '30', /Advanced Adventurer/],
     ] as const) {
       const add = page.getByTestId('new-destination-primary-action');
       await pressUntil(page, add, () =>
@@ -140,7 +146,6 @@ test.describe('the scuba and snorkel templates @templates', () => {
         await press(page, page.getByRole('option', { name: level }));
       }
       if (site === 'Deep wreck') {
-        await expectLayout(page, 'dive site form');
         await expectAccessible(page, 'dive site form');
       }
       await pressUntil(page, page.getByTestId('resource-form-save'), () =>

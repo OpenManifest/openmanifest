@@ -49,7 +49,7 @@ export async function demoOperator(auth: Auth, name: string) {
   const found = await apiAs(
     auth,
     `{
-      memberships(operator: ${id}, first: 50) { edges { node { id user { name } } } }
+      memberships(operator: ${id}, first: 50, licensed: false) { edges { node { id user { name } } } }
       ticketTypes(operator: ${id}) { id name }
       extras(operator: "${id}") { id name }
       operator(id: "${id}") { destinations { id name } crewRoles { id key } }

@@ -270,6 +270,14 @@ Scripts: `yarn sync:schema` (download schema), `yarn ts:graphql` (codegen), `yar
    `createVehicle`, and "Open Setup → Rules" for the optional modules) → Done ("Open the manifest"). `validateStep`
    blocks a step, `stepOfField` takes the owner back to a field the server rejected. The `@wizard` smoke
    (`e2e/operator-wizard.spec.ts`) creates a generic operator through it.
+9. The scuba and snorkel templates (P7.24) are data on the server; the client adds to the destination form
+   (`app/forms/destination/`) a site's deepest point (`location.max_depth_m`, in the operator's depth unit, when the
+   template has one) and its lowest certification (`minCertificationRank`, a `FormSelect` of the ranks of the accepted
+   bodies' levels, `rankOptions` in `ranks.ts`, when the certifications module is on). The member picker asks
+   `activityTypes(operator:)` for the operator's own activity types. `ChipSelect` renders again when its `value`
+   changes (BUG-132). The `@templates` smoke (`e2e/templates.spec.ts`, helpers in `e2e/support/templates.ts`) creates a
+   dive centre in the wizard with PADI and SSI, a boat and two sites, then runs the seed's demo dive centre and snorkel
+   operator (`<slug>-owner@example.com`) through a trip each.
 
 ## 6. Platform-specific files
 

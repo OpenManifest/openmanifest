@@ -76,11 +76,11 @@ function ChipSelect<T>(props: IChipSelect<T>) {
   );
 }
 
+// Renders again when the chosen items change (`value`; it compared a `selected` prop that does not exist, so a chip pressed
+// in a list of several never showed as chosen, BUG-132) or the press handler does
+const MEMO_PROPS = ['isDisabled', 'isSelected', 'items', 'value', 'error', 'onChange'];
 const ChipSelectComponent = React.memo(ChipSelect, (previous, next) => {
-  return isEqual(
-    pick(previous, ['isDisabled', 'isSelected', 'items', 'selected', 'error']),
-    pick(next, ['isDisabled', 'isSelected', 'items', 'selected', 'error'])
-  );
+  return isEqual(pick(previous, MEMO_PROPS), pick(next, MEMO_PROPS));
 }) as typeof ChipSelect;
 
 export const ChipSelectField = withHookForm(ChipSelect);

@@ -120,9 +120,12 @@ export default function useDestinationForm(opts: IUseDestinationFormOpts) {
         location: isAltitude
           ? undefined
           : { ...location, ...(maxDepthM == null ? {} : { max_depth_m: maxDepthM }) },
-        minCertificationRank: validated.minCertificationRank
-          ? Number(validated.minCertificationRank)
-          : null,
+        // A place other than an altitude asks for a rank, or for none (null clears it)
+        minCertificationRank: isAltitude
+          ? undefined
+          : validated.minCertificationRank
+            ? Number(validated.minCertificationRank)
+            : null,
       };
       try {
         const response = fields.id
