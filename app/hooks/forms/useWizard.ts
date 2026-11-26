@@ -140,8 +140,6 @@ export function useWizardForm<
     [initialValues, steps?.length, startIndex]
   );
 
-  console.debug({ defaultValues });
-
   const form = useHookForm<WizardFields | typeof INITIAL_WIZARD_VALUES>({
     resolver: createValidators(
       (steps?.map((step) => step?.validation).filter(Boolean) as ReturnType<typeof yup.object>[]) ||
@@ -157,7 +155,6 @@ export function useWizardForm<
 
   const restore = useCallback(() => reset(defaultValues), [defaultValues, reset]);
   useEffect(() => {
-    console.debug('Resetting fields');
     reset(defaultValues);
   }, [defaultValues, reset]);
 
@@ -205,7 +202,6 @@ export function useWizardForm<
         try {
           const successful = await onSubmit(fields as WizardFields, defaultValues as never);
           if (successful !== false && stepIndex < fields.lastStepIndex) {
-            console.debug({ successful });
             setValue('stepIndex', (stepIndex || 0) + 1);
             return false;
           }

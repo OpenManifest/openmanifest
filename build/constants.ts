@@ -26,6 +26,8 @@ export const APP_NAME = packageJson.name;
 // Server URLs for each environment
 export const ENDPOINTS = {
   local: 'http://local.openmanifest.org:5000/graphql',
+  // The Android emulator reaches the host's API at 10.0.2.2 (CI only: .github/workflows/android-ui.yml)
+  'android-ci': 'http://10.0.2.2:5000/graphql',
   staging: 'https://stg.openmanifest.org/graphql',
   default: 'https://stg.openmanifest.org/graphql',
   production: 'https://prod.openmanifest.org/graphql',
@@ -33,6 +35,7 @@ export const ENDPOINTS = {
 
 export const FRONTENDS = {
   local: 'http://local.openmanifest.org:19000',
+  'android-ci': 'http://10.0.2.2:19006',
   staging: 'https://staging.openmanifest.org',
   production: 'https://www.openmanifest.org',
 };

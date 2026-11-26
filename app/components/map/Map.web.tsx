@@ -64,8 +64,7 @@ export default function MapWebView(props: IMapProps) {
         // const location = await Location.getCurrentPositionAsync({});
         // const lat = coords?.lat || location.coords.latitude;
         // const lng = coords?.lng || location.coords.longitude;
-      } catch (error) {
-        console.log({ error });
+      } catch {
       } finally {
         // @ts-ignore
         const bounds = new window.google.maps.LatLngBounds(coords);

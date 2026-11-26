@@ -1,65 +1,38 @@
-import { errorColor, successColor, warningColor } from 'app/constants/Colors';
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { ProgressMeter } from 'app/ui';
 import { PasswordStrength } from '../../utils/checkPasswordComplexity';
 
 interface IPasswordComplexityIndicatorProps {
   strength: PasswordStrength;
 }
-function PasswordStep(props: IPasswordComplexityIndicatorProps) {
-  const { strength } = props;
 
-  const indicatorStyle = [styles.indicatorWeak, styles.indicatorOk, styles.indicatorStrong];
+const WORDS = [
+  'password.tooWeak',
+  'password.weak',
+  'password.acceptable',
+  'password.strong',
+] as const;
+
+/** How strong a password is, in a bar and in words: too weak and weak are blocked, acceptable a warning, strong ok */
+function PasswordStep({ strength }: IPasswordComplexityIndicatorProps) {
+  const { t } = useTranslation('common');
 
   return (
-    <>
-      <Text style={styles.title}>{['Too weak', 'Weak', 'Acceptable', 'Strong'][strength]}</Text>
-      <View style={styles.indicator}>
-        <View style={indicatorStyle[strength]} />
-        {strength < PasswordStrength.Acceptable ? (
-          <View style={[styles.indicatorInactive, { flex: 1 / 3 }]} />
-        ) : null}
-        {[PasswordStrength.Weak, PasswordStrength.Acceptable].includes(strength) ? (
-          <View
-            style={[
-              styles.indicatorInactive,
-              { flex: strength < PasswordStrength.Acceptable ? 1 / 3 : 1 / 2 },
-            ]}
-          />
-        ) : null}
-      </View>
-    </>
+    <ProgressMeter
+      label={t('password.strength')}
+      value={strength + 1}
+      max={WORDS.length}
+      valueText={t(WORDS[strength])}
+      tone={
+        strength < PasswordStrength.Acceptable
+          ? 'blocked'
+          : strength === PasswordStrength.Acceptable
+            ? 'warning'
+            : 'ok'
+      }
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontWeight: 'bold',
-    marginLeft: 4,
-    marginTop: 8,
-  },
-  indicator: {
-    flexDirection: 'row',
-    height: 12,
-    borderRadius: 8,
-    overflow: 'hidden',
-    marginTop: 8,
-  },
-  indicatorInactive: {
-    backgroundColor: '#AAA',
-  },
-  indicatorWeak: {
-    flex: 1 / 3,
-    backgroundColor: errorColor,
-  },
-  indicatorOk: {
-    flex: 2 / 3,
-    backgroundColor: warningColor,
-  },
-  indicatorStrong: {
-    backgroundColor: successColor,
-    flex: 1,
-  },
-});
 
 export default PasswordStep;

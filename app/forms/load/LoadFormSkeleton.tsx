@@ -1,17 +1,7 @@
 import * as React from 'react';
-import SkeletonContent from 'app/components/Skeleton';
+import { Skeleton } from 'app/ui';
 
+/** What the new load form looks like while its choices load */
 export default function LoadFormSkeleton() {
-  return (
-    <SkeletonContent
-      containerStyle={{
-        height: 120,
-        width: 335,
-        margin: 16,
-        paddingHorizontal: 16,
-      }}
-      isLoading
-      layout={[{ key: 'header', width: '100%', height: 60, borderRadius: 8, marginBottom: 8 }]}
-    />
-  );
+  return <Skeleton height={60} />;
 }

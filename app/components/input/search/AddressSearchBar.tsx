@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { View } from 'react-native';
-import { Divider, List, Searchbar } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
+import { Divider, ListRow, Stack, TextField } from 'app/ui';
 import debounce from 'lodash/debounce';
 import { GeocodedLocation } from 'app/api/schema.d';
 import { first } from 'lodash';
@@ -15,6 +15,7 @@ interface IAddressSearchBarProps {
 }
 export default function AddressSearchBar(props: IAddressSearchBarProps) {
   const { value, onChange: onChangeText, onSelect } = props;
+  const { t } = useTranslation('common');
   const [suggestions, setSuggestions] = React.useState<GeocodedLocation[]>([]);
   const [selected, setSelected] = React.useState<GeocodedLocation>();
   const [fetchLocation, { data }] = useAddressToLocationLazyQuery();
@@ -60,11 +61,12 @@ export default function AddressSearchBar(props: IAddressSearchBarProps) {
   );
 
   return (
-    <View style={{ width: '100%', borderRadius: 3, backgroundColor: 'white' }}>
-      <Searchbar
-        {...{ value, onChangeText }}
-        allowFontScaling
-        numberOfLines={1}
+    <Stack gap="xs">
+      <TextField
+        label={t('location.search')}
+        value={value}
+        onChange={onChangeText}
+        returnKeyType="search"
         onSubmitEditing={() => {
           if (first(suggestions)) {
             onPickResult(first(suggestions) as GeocodedLocation);
@@ -73,19 +75,17 @@ export default function AddressSearchBar(props: IAddressSearchBarProps) {
       />
       {suggestions
         ?.filter((suggestion) => suggestion.formattedString !== selected?.formattedString)
-        .map((item) => {
-          return (
-            <>
-              <Divider />
-              <List.Item
-                title={item.formattedString}
-                onPress={() => {
-                  onPickResult(item);
-                }}
-              />
-            </>
-          );
-        })}
-    </View>
+        .map((item) => (
+          <React.Fragment key={item.formattedString}>
+            <Divider />
+            <ListRow
+              title={item.formattedString ?? ''}
+              onPress={() => {
+                onPickResult(item);
+              }}
+            />
+          </React.Fragment>
+        ))}
+    </Stack>
   );
 }

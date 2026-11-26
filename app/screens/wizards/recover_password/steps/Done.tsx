@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Paragraph } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
+import { Text } from 'app/ui';
 import { Step, IWizardStepProps, Fields } from 'app/components/carousel_wizard/Step';
 
 function DoneStep(props: IWizardStepProps) {
+  const { t } = useTranslation('common');
   return (
-    <Step {...props} title="Check your email">
+    <Step {...props} title={t('auth.recover.doneTitle')}>
       <Fields>
-        <Paragraph>We've sent you a link to restore your password.</Paragraph>
+        <Text>{t('auth.recover.doneBody')}</Text>
       </Fields>
     </Step>
   );
