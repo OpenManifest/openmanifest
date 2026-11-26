@@ -247,6 +247,8 @@ export type CreateOperatorMutationVariables = Types.Exact<{
   lng?: Types.InputMaybe<Types.Scalars['Float']['input']>;
   primaryColor?: Types.InputMaybe<Types.Scalars['String']['input']>;
   secondaryColor?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  currency?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  units?: Types.InputMaybe<Types.Scalars['JSON']['input']>;
 }>;
 
 
@@ -715,7 +717,7 @@ export type InboxQuery = { __typename?: 'Query', operator?: { __typename?: 'Oper
 export type IndustriesQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type IndustriesQuery = { __typename?: 'Query', industries: Array<{ __typename?: 'IndustryTemplate', slug: Types.Industry, name: string, icon: string, modules: Array<string> }> };
+export type IndustriesQuery = { __typename?: 'Query', industries: Array<{ __typename?: 'IndustryTemplate', slug: Types.Industry, name: string, description: string, icon: string, base?: string | null, modules: Array<string>, units: any, vehicleKinds: Array<string>, presetSummary: { __typename?: 'IndustryPresetSummary', roles: Array<string>, crewRoles: Array<string>, ticketTypes: Array<string>, extras: Array<string>, destinations: Array<string>, equipmentKinds: Array<string>, activityTypes: number } }> };
 
 export type LoadQueryVariables = Types.Exact<{
   id: Types.Scalars['ID']['input'];

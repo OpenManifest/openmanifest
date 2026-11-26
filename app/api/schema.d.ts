@@ -970,10 +970,25 @@ export type IndustryBooking = {
   manifestLink: ManifestLink;
 };
 
+/** What an industry template's presets create in a new operator, by name (the wizard's preview and review) */
+export type IndustryPresetSummary = {
+  __typename?: 'IndustryPresetSummary';
+  /** How many activity types are enabled */
+  activityTypes: Scalars['Int']['output'];
+  /** The crew roles of a load or vehicle */
+  crewRoles: Array<Scalars['String']['output']>;
+  destinations: Array<Scalars['String']['output']>;
+  equipmentKinds: Array<Scalars['String']['output']>;
+  extras: Array<Scalars['String']['output']>;
+  /** The roles members can have */
+  roles: Array<Scalars['String']['output']>;
+  ticketTypes: Array<Scalars['String']['output']>;
+};
+
 /** What an operator of an industry starts with: modules, terms, and the presets copied into it */
 export type IndustryTemplate = {
   __typename?: 'IndustryTemplate';
-  /** The family (the abstract base the template extends): _aviation, _water, _ground */
+  /** The family (the abstract base at the root of what the template extends): _aviation, _water, _ground */
   base?: Maybe<Scalars['String']['output']>;
   /** How bookings reach the manifest */
   booking: IndustryBooking;
@@ -984,9 +999,11 @@ export type IndustryTemplate = {
   illustrations: Scalars['String']['output'];
   modules: Array<Scalars['String']['output']>;
   name: Scalars['String']['output'];
-  /** How many roles, ticket types, extras and activity types the presets create */
-  presetSummary: Scalars['JSON']['output'];
+  /** What the presets create: roles, crew roles, ticket types, extras, destinations */
+  presetSummary: IndustryPresetSummary;
   slug: Industry;
+  /** The units the template starts with: { altitude: "ft", mass: "kg", ... } */
+  units: Scalars['JSON']['output'];
   /** The kinds of vehicle the template starts with (the first is the main one) */
   vehicleKinds: Array<Scalars['String']['output']>;
 };
@@ -1032,7 +1049,7 @@ export type Load = AnyResource & {
   availableSlots: Scalars['Int']['output'];
   /** When the load was called; cleared when the call is cancelled */
   calledAt?: Maybe<Scalars['ISO8601DateTime']['output']>;
-  /** When the load landed; cleared when it is reopened */
+  /** When the load was completed; cleared when it is reopened */
   completedAt?: Maybe<Scalars['ISO8601DateTime']['output']>;
   createdAt: Scalars['ISO8601DateTime']['output'];
   /** Who fills the crew roles of the load */
@@ -1209,7 +1226,7 @@ export type Membership = AnyResource & Wallet & {
   hasEquipmentInspection: Scalars['Boolean']['output'];
   hasMembership: Scalars['Boolean']['output'];
   id: Scalars['ID']['output'];
-  /** The slot the member last flew at this operator: their most recent one on a load that has left or landed */
+  /** The slot the member last flew at this operator: their most recent one on a load that has left or been completed */
   lastSlot?: Maybe<Slot>;
   notifications?: Maybe<NotificationConnection>;
   operator: Operator;
@@ -1950,6 +1967,8 @@ export type OperatorInput = {
   settings?: InputMaybe<SettingsInput>;
   /** IANA time zone; needed to create an operator */
   timeZone?: InputMaybe<Scalars['String']['input']>;
+  /** The units shown, over the template's: { altitude: "ft" | "m", mass: "kg" | "lb", ... } */
+  units?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export enum OperatorState {
@@ -2488,7 +2507,7 @@ export type SlotInput = {
   bodyMassKg?: InputMaybe<Scalars['Float']['input']>;
   /** Where this slot goes (per-slot destinations); the ticket type's by default */
   destination?: InputMaybe<Scalars['ID']['input']>;
-  /** The items the slot uses: a rig, or a BCD, regulator and wetsuit */
+  /** The items the slot uses: a parachute, or a BCD, regulator and wetsuit */
   equipment?: InputMaybe<Array<Scalars['ID']['input']>>;
   extras?: InputMaybe<Array<Scalars['ID']['input']>>;
   groupNumber?: InputMaybe<Scalars['Int']['input']>;
@@ -3139,7 +3158,7 @@ export type Vehicle = AnyResource & {
   guid: Scalars['ID']['output'];
   hours?: Maybe<Scalars['Int']['output']>;
   id: Scalars['ID']['output'];
-  /** aircraft, raft, bus, ...: what crew roles per vehicle apply to */
+  /** aeroplane, raft, bus, ...: what crew roles per vehicle apply to */
   kind?: Maybe<Scalars['String']['output']>;
   /** What the vehicle may carry (the limits module) */
   maxPayloadKg?: Maybe<Scalars['Float']['output']>;

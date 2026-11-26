@@ -976,11 +976,29 @@ type IndustryBooking {
 }
 
 """
+What an industry template's presets create in a new operator, by name (the wizard's preview and review)
+"""
+type IndustryPresetSummary {
+  """How many activity types are enabled"""
+  activityTypes: Int!
+
+  """The crew roles of a load or vehicle"""
+  crewRoles: [String!]!
+  destinations: [String!]!
+  equipmentKinds: [String!]!
+  extras: [String!]!
+
+  """The roles members can have"""
+  roles: [String!]!
+  ticketTypes: [String!]!
+}
+
+"""
 What an operator of an industry starts with: modules, terms, and the presets copied into it
 """
 type IndustryTemplate {
   """
-  The family (the abstract base the template extends): _aviation, _water, _ground
+  The family (the abstract base at the root of what the template extends): _aviation, _water, _ground
   """
   base: String
 
@@ -999,10 +1017,15 @@ type IndustryTemplate {
   name: String!
 
   """
-  How many roles, ticket types, extras and activity types the presets create
+  What the presets create: roles, crew roles, ticket types, extras, destinations
   """
-  presetSummary: JSON!
+  presetSummary: IndustryPresetSummary!
   slug: Industry!
+
+  """
+  The units the template starts with: { altitude: "ft", mass: "kg", ... }
+  """
+  units: JSON!
 
   """
   The kinds of vehicle the template starts with (the first is the main one)
@@ -1057,7 +1080,7 @@ type Load implements AnyResource {
   """When the load was called; cleared when the call is cancelled"""
   calledAt: ISO8601DateTime
 
-  """When the load landed; cleared when it is reopened"""
+  """When the load was completed; cleared when it is reopened"""
   completedAt: ISO8601DateTime
   createdAt: ISO8601DateTime!
 
@@ -1254,7 +1277,7 @@ type Membership implements AnyResource & Wallet {
   Get user equipment that have been inspected and marked as OK + operator equipment
   """
   availableEquipment(
-    """Skydiving: the tandem rigs of the operator"""
+    """Skydiving: the tandem parachutes of the operator"""
     isTandem: Boolean
 
     """Only items of the equipment kind with this key"""
@@ -1288,7 +1311,7 @@ type Membership implements AnyResource & Wallet {
   id: ID!
 
   """
-  The slot the member last flew at this operator: their most recent one on a load that has left or landed
+  The slot the member last flew at this operator: their most recent one on a load that has left or been completed
   """
   lastSlot: Slot
   notifications(
@@ -1941,6 +1964,11 @@ input OperatorInput {
 
   """IANA time zone; needed to create an operator"""
   timeZone: String
+
+  """
+  The units shown, over the template's: { altitude: "ft" | "m", mass: "kg" | "lb", ... }
+  """
+  units: JSON
 }
 
 enum OperatorState {
@@ -2172,7 +2200,7 @@ type Query {
   Get user equipment that have been inspected and marked as OK + operator equipment
   """
   availableEquipment(
-    """Skydiving: the tandem rigs of the operator"""
+    """Skydiving: the tandem parachutes of the operator"""
     isTandem: Boolean
 
     """Only items of the equipment kind with this key"""
@@ -2543,7 +2571,7 @@ input SlotInput {
   """
   destination: ID
 
-  """The items the slot uses: a rig, or a BCD, regulator and wetsuit"""
+  """The items the slot uses: a parachute, or a BCD, regulator and wetsuit"""
   equipment: [ID!]
   extras: [ID!]
   groupNumber: Int
@@ -3169,7 +3197,7 @@ type Vehicle implements AnyResource {
   hours: Int
   id: ID!
 
-  """aircraft, raft, bus, ...: what crew roles per vehicle apply to"""
+  """aeroplane, raft, bus, ...: what crew roles per vehicle apply to"""
   kind: String
 
   """What the vehicle may carry (the limits module)"""

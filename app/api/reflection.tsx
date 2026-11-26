@@ -1607,9 +1607,9 @@ export type CreateLoadMutationHookResult = ReturnType<typeof useCreateLoadMutati
 export type CreateLoadMutationResult = Apollo.MutationResult<Operation.CreateLoadMutation>;
 export type CreateLoadMutationOptions = Apollo.BaseMutationOptions<Operation.CreateLoadMutation, Operation.CreateLoadMutationVariables>;
 export const CreateOperatorDocument = gql`
-    mutation CreateOperator($industry: Industry!, $name: String!, $banner: String, $certificationBodyIds: [Int!], $timeZone: String!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String) {
+    mutation CreateOperator($industry: Industry!, $name: String!, $banner: String, $certificationBodyIds: [Int!], $timeZone: String!, $lat: Float, $lng: Float, $primaryColor: String, $secondaryColor: String, $currency: String, $units: JSON) {
   createOperator(
-    input: {industry: $industry, attributes: {name: $name, banner: $banner, certificationBodyIds: $certificationBodyIds, timeZone: $timeZone, primaryColor: $primaryColor, secondaryColor: $secondaryColor, lat: $lat, lng: $lng}}
+    input: {industry: $industry, attributes: {name: $name, banner: $banner, certificationBodyIds: $certificationBodyIds, timeZone: $timeZone, primaryColor: $primaryColor, secondaryColor: $secondaryColor, lat: $lat, lng: $lng, currency: $currency, units: $units}}
   ) {
     fieldErrors {
       field
@@ -1646,6 +1646,8 @@ export type CreateOperatorMutationFn = Apollo.MutationFunction<Operation.CreateO
  *      lng: // value for 'lng'
  *      primaryColor: // value for 'primaryColor'
  *      secondaryColor: // value for 'secondaryColor'
+ *      currency: // value for 'currency'
+ *      units: // value for 'units'
  *   },
  * });
  */
@@ -4118,8 +4120,21 @@ export const IndustriesDocument = gql`
   industries {
     slug
     name
+    description
     icon
+    base
     modules
+    units
+    vehicleKinds
+    presetSummary {
+      roles
+      crewRoles
+      ticketTypes
+      extras
+      destinations
+      equipmentKinds
+      activityTypes
+    }
   }
 }
     `;

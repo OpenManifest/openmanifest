@@ -7431,13 +7431,185 @@
       },
       {
         "kind": "OBJECT",
+        "name": "IndustryPresetSummary",
+        "description": "What an industry template's presets create in a new operator, by name (the wizard's preview and review)",
+        "isOneOf": null,
+        "fields": [
+          {
+            "name": "activityTypes",
+            "description": "How many activity types are enabled",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "Int",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "crewRoles",
+            "description": "The crew roles of a load or vehicle",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "String",
+                    "kind": "SCALAR",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "destinations",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "String",
+                    "kind": "SCALAR",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "equipmentKinds",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "String",
+                    "kind": "SCALAR",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "extras",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "String",
+                    "kind": "SCALAR",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "roles",
+            "description": "The roles members can have",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "String",
+                    "kind": "SCALAR",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ticketTypes",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "String",
+                    "kind": "SCALAR",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "IndustryTemplate",
         "description": "What an operator of an industry starts with: modules, terms, and the presets copied into it",
         "isOneOf": null,
         "fields": [
           {
             "name": "base",
-            "description": "The family (the abstract base the template extends): _aviation, _water, _ground",
+            "description": "The family (the abstract base at the root of what the template extends): _aviation, _water, _ground",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -7553,14 +7725,14 @@
           },
           {
             "name": "presetSummary",
-            "description": "How many roles, ticket types, extras and activity types the presets create",
+            "description": "What the presets create: roles, crew roles, ticket types, extras, destinations",
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "name": "JSON",
-                "kind": "SCALAR",
+                "name": "IndustryPresetSummary",
+                "kind": "OBJECT",
                 "ofType": null
               }
             },
@@ -7577,6 +7749,22 @@
               "ofType": {
                 "name": "Industry",
                 "kind": "ENUM",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "units",
+            "description": "The units the template starts with: { altitude: \"ft\", mass: \"kg\", ... }",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "JSON",
+                "kind": "SCALAR",
                 "ofType": null
               }
             },
@@ -7915,7 +8103,7 @@
           },
           {
             "name": "completedAt",
-            "description": "When the load landed; cleared when it is reopened",
+            "description": "When the load was completed; cleared when it is reopened",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -9163,7 +9351,7 @@
             "args": [
               {
                 "name": "isTandem",
-                "description": "Skydiving: the tandem rigs of the operator",
+                "description": "Skydiving: the tandem parachutes of the operator",
                 "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
@@ -9445,7 +9633,7 @@
           },
           {
             "name": "lastSlot",
-            "description": "The slot the member last flew at this operator: their most recent one on a load that has left or landed",
+            "description": "The slot the member last flew at this operator: their most recent one on a load that has left or been completed",
             "args": [],
             "type": {
               "kind": "OBJECT",
@@ -14028,6 +14216,18 @@
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "units",
+            "description": "The units shown, over the template's: { altitude: \"ft\" | \"m\", mass: \"kg\" | \"lb\", ... }",
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "interfaces": null,
@@ -15418,7 +15618,7 @@
             "args": [
               {
                 "name": "isTandem",
-                "description": "Skydiving: the tandem rigs of the operator",
+                "description": "Skydiving: the tandem parachutes of the operator",
                 "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
@@ -17776,7 +17976,7 @@
           },
           {
             "name": "equipment",
-            "description": "The items the slot uses: a rig, or a BCD, regulator and wetsuit",
+            "description": "The items the slot uses: a parachute, or a BCD, regulator and wetsuit",
             "type": {
               "kind": "LIST",
               "name": null,
@@ -22855,7 +23055,7 @@
           },
           {
             "name": "kind",
-            "description": "aircraft, raft, bus, ...: what crew roles per vehicle apply to",
+            "description": "aeroplane, raft, bus, ...: what crew roles per vehicle apply to",
             "args": [],
             "type": {
               "kind": "SCALAR",
