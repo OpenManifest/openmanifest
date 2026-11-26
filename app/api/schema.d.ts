@@ -956,8 +956,12 @@ export type GuestInput = {
 export enum Industry {
   /** Any operator that manifests people onto loads; switch on what you need */
   Generic = 'GENERIC',
+  /** Boats to dive sites, certified divers, rental gear */
+  Scuba = 'SCUBA',
   /** Aircraft, jumpers, licences, rigs and the master log */
-  Skydiving = 'SKYDIVING'
+  Skydiving = 'SKYDIVING',
+  /** Boats to reefs, snorkel gear, children with an adult */
+  Snorkel = 'SNORKEL'
 }
 
 /** What an industry template says about bookings (the booking plan builds on it) */
@@ -2157,7 +2161,7 @@ export type Query = {
   __typename?: 'Query';
   /** Get all Activity Events for an operator (or all operators) */
   activity: EventConnection;
-  /** Get all jump types */
+  /** Get the activity types: those the members may all do, or those an operator offers */
   activityTypes: Array<ActivityType>;
   /** Get user equipment that have been inspected and marked as OK + operator equipment */
   availableEquipment?: Maybe<Array<Equipment>>;
@@ -2214,6 +2218,7 @@ export type QueryActivityArgs = {
 
 export type QueryActivityTypesArgs = {
   memberships?: InputMaybe<Array<Scalars['Int']['input']>>;
+  operator?: InputMaybe<Scalars['ID']['input']>;
 };
 
 

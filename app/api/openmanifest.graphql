@@ -960,8 +960,14 @@ enum Industry {
   """Any operator that manifests people onto loads; switch on what you need"""
   GENERIC
 
+  """Boats to dive sites, certified divers, rental gear"""
+  SCUBA
+
   """Aircraft, jumpers, licences, rigs and the master log"""
   SKYDIVING
+
+  """Boats to reefs, snorkel gear, children with an adult"""
+  SNORKEL
 }
 
 """
@@ -2193,8 +2199,17 @@ type Query {
     timeRange: TimeRangeInput
   ): EventConnection!
 
-  """Get all jump types"""
-  activityTypes(memberships: [Int!]): [ActivityType!]!
+  """
+  Get the activity types: those the members may all do, or those an operator offers
+  """
+  activityTypes(
+    memberships: [Int!]
+
+    """
+    Only the activity types this operator offers (those its template enables)
+    """
+    operator: ID
+  ): [ActivityType!]!
 
   """
   Get user equipment that have been inspected and marked as OK + operator equipment

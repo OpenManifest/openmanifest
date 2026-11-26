@@ -3463,8 +3463,8 @@ export type ActivityDetailsLazyQueryHookResult = ReturnType<typeof useActivityDe
 export type ActivityDetailsSuspenseQueryHookResult = ReturnType<typeof useActivityDetailsSuspenseQuery>;
 export type ActivityDetailsQueryResult = Apollo.QueryResult<Operation.ActivityDetailsQuery, Operation.ActivityDetailsQueryVariables>;
 export const ActivityTypesDocument = gql`
-    query ActivityTypes($allowedForMembershipIds: [Int!]) {
-  activityTypes(memberships: $allowedForMembershipIds) {
+    query ActivityTypes($allowedForMembershipIds: [Int!], $operatorId: ID) {
+  activityTypes(memberships: $allowedForMembershipIds, operator: $operatorId) {
     ...activityTypeEssentials
   }
 }
@@ -3483,6 +3483,7 @@ export const ActivityTypesDocument = gql`
  * const { data, loading, error } = useActivityTypesQuery({
  *   variables: {
  *      allowedForMembershipIds: // value for 'allowedForMembershipIds'
+ *      operatorId: // value for 'operatorId'
  *   },
  * });
  */
@@ -3516,7 +3517,7 @@ export const AllowedActivityTypesDocument = gql`
       ...ticketTypeEssentials
     }
   }
-  activityTypes {
+  activityTypes(operator: $operatorId) {
     ...activityTypeEssentials
   }
 }

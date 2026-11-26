@@ -6,7 +6,11 @@ import { ResourceForm } from 'app/ui';
 import useTerms from 'app/i18n/useTerms';
 import { activeUnits } from 'app/i18n/operatorFormat';
 import { fromSi, unitOf } from 'app/i18n/units';
+import { useCertificationLevelsQuery } from 'app/api/reflection';
+import { useOperatorContext } from 'app/providers/operator/context';
+import { moduleEnabled } from 'app/utils/modules';
 import DestinationForm from './DestinationForm';
+import { rankOptions } from './ranks';
 import useForm from './useForm';
 
 export interface IDestinationDialogProps {
@@ -20,6 +24,14 @@ export interface IDestinationDialogProps {
   onArchive?(): void;
 }
 
+/** The deepest point of a site, in the operator's depth unit */
+function depthOf(location: unknown): number | undefined {
+  const metres = (location as { max_depth_m?: unknown } | null)?.max_depth_m;
+  return typeof metres === 'number'
+    ? Math.round(fromSi('depth', metres, unitOf('depth', activeUnits())))
+    : undefined;
+}
+
 export default function DestinationDialog({
   open,
   original,
@@ -29,6 +41,21 @@ export default function DestinationDialog({
 }: IDestinationDialogProps) {
   const { t } = useTranslation('common');
   const term = useTerms();
+  const {
+    operator: { operator },
+  } = useOperatorContext();
+  const certifications = moduleEnabled(operator?.modules, 'certifications');
+  const { data: levels } = useCertificationLevelsQuery({ skip: !open || !certifications });
+  const ranks = React.useMemo(
+    () =>
+      certifications
+        ? rankOptions(
+            levels?.certificationLevels ?? [],
+            (operator?.certificationBodies ?? []).map(({ id }) => id)
+          )
+        : [],
+    [certifications, levels?.certificationLevels, operator?.certificationBodies]
+  );
   const initial = React.useMemo(
     () => ({
       id: original?.id,
@@ -38,10 +65,17 @@ export default function DestinationDialog({
         original?.altitudeM == null
           ? undefined
           : Math.round(fromSi('altitude', original.altitudeM, unitOf('altitude', activeUnits()))),
+      maxDepth: depthOf(original?.location),
+      minCertificationRank:
+        original?.minCertificationRank == null ? '' : String(original.minCertificationRank),
     }),
     [original, kinds]
   );
-  const { control, loading, onSubmit, reset } = useForm({ initial, onSuccess: onClose });
+  const { control, loading, onSubmit, reset } = useForm({
+    initial,
+    location: original?.location,
+    onSuccess: onClose,
+  });
 
   React.useEffect(() => {
     if (!open) {
@@ -61,7 +95,7 @@ export default function DestinationDialog({
       }
       onSubmit={onSubmit}
     >
-      <DestinationForm {...{ control, kinds }} />
+      <DestinationForm {...{ control, kinds, ranks }} />
     </ResourceForm>
   );
 }

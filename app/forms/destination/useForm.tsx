@@ -20,6 +20,10 @@ export type DestinationFields = {
   kind: DestinationKind;
   /** The height of an altitude, in the operator's altitude unit (the API takes metres) */
   altitude?: number | null;
+  /** The deepest point of a site, in the operator's depth unit (kept in `location.max_depth_m`) */
+  maxDepth?: number | null;
+  /** The certification rank the place asks for, as a string ('' for anyone) */
+  minCertificationRank?: string | null;
 };
 
 export const destinationValidation = yup.object({
@@ -36,21 +40,31 @@ export const destinationValidation = yup.object({
           .required(() => i18n.t('forms.destination.altitudeIsRequired'))
           .min(1, () => i18n.t('forms.destination.altitudeIsRequired')),
     }),
+  maxDepth: yup
+    .number()
+    .nullable()
+    .transform((value) => (Number.isNaN(value) ? null : value))
+    .min(0),
+  minCertificationRank: yup.string().nullable(),
 });
 
 export const EMPTY_FORM_VALUES: Partial<DestinationFields> = {
   name: '',
   kind: DestinationKind.Altitude,
   altitude: null,
+  maxDepth: null,
+  minCertificationRank: '',
 };
 
 export interface IUseDestinationFormOpts {
   initial?: Partial<DestinationFields>;
+  /** What the destination's `location` holds already (lat, lng, ...): kept, with the deepest point over it */
+  location?: unknown;
   onSuccess?(destination: DestinationEssentialsFragment): void;
 }
 
 export default function useDestinationForm(opts: IUseDestinationFormOpts) {
-  const { initial, onSuccess } = opts;
+  const { initial, location: previousLocation, onSuccess } = opts;
   const notify = useNotifications();
   const initialValues = React.useMemo(() => withDefaults(EMPTY_FORM_VALUES, initial), [initial]);
   const [defaultValues, setDefaultValues] = React.useState(initialValues);
@@ -86,6 +100,15 @@ export default function useDestinationForm(opts: IUseDestinationFormOpts) {
       }
       const validated = await destinationValidation.validate(fields, { abortEarly: false });
       const isAltitude = validated.kind === DestinationKind.Altitude;
+      const depthUnit = unitOf('depth', activeUnits());
+      const { max_depth_m: _previousDepth, ...location } = (previousLocation ?? {}) as Record<
+        string,
+        unknown
+      >;
+      const maxDepthM =
+        validated.maxDepth == null
+          ? undefined
+          : Math.round(toSi('depth', Number(validated.maxDepth), depthUnit) * 100) / 100;
       const attributes = {
         name: validated.name,
         kind: validated.kind,
@@ -94,6 +117,12 @@ export default function useDestinationForm(opts: IUseDestinationFormOpts) {
               toSi('altitude', Number(validated.altitude), unitOf('altitude', activeUnits())) * 100
             ) / 100
           : undefined,
+        location: isAltitude
+          ? undefined
+          : { ...location, ...(maxDepthM == null ? {} : { max_depth_m: maxDepthM }) },
+        minCertificationRank: validated.minCertificationRank
+          ? Number(validated.minCertificationRank)
+          : null,
       };
       try {
         const response = fields.id
@@ -121,7 +150,7 @@ export default function useDestinationForm(opts: IUseDestinationFormOpts) {
         }
       }
     },
-    [operator?.id, setError, notify, onSuccess, create, update]
+    [operator?.id, setError, notify, onSuccess, create, update, previousLocation]
   );
 
   const onSubmit = React.useMemo(() => handleSubmit(onSave), [handleSubmit, onSave]);

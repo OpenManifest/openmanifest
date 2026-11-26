@@ -184,7 +184,10 @@ function OpenPicker({
     : null;
 
   const { data: activityData } = useActivityTypesQuery({
-    variables: { allowedForMembershipIds: !group && selected ? [Number(selected.id)] : undefined },
+    variables: {
+      allowedForMembershipIds: !group && selected ? [Number(selected.id)] : undefined,
+      operatorId: operator?.id,
+    },
     skip: !lead,
   });
   const activities = activityData?.activityTypes ?? [];

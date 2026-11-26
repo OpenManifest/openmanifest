@@ -620,6 +620,7 @@ export type ActivityDetailsQuery = { __typename?: 'Query', activity: { __typenam
 
 export type ActivityTypesQueryVariables = Types.Exact<{
   allowedForMembershipIds?: Types.InputMaybe<Array<Types.Scalars['Int']['input']> | Types.Scalars['Int']['input']>;
+  operatorId?: Types.InputMaybe<Types.Scalars['ID']['input']>;
 }>;
 
 

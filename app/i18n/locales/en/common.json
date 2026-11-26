@@ -793,7 +793,11 @@
       "empty": "No {{destinations}} yet",
       "emptyBody": "Add the places your loads go to.",
       "none": "None",
-      "altitude": "Height"
+      "altitude": "Height",
+      "maxDepth": "Deepest point",
+      "minCertification": "Lowest {{certification}}",
+      "minCertificationHelp": "Who may go there: this level, or a level of the same rank at another body",
+      "anyone": "Anyone"
     },
     "crew_role": {
       "new": "New crew role",

@@ -131,12 +131,16 @@ const tickets = createMockedQuery(TicketTypesDocument, { operator: '1' }, {
   ticketTypes: [ticketType('t1', 'Fun jump'), ticketType('t2', 'Tandem', { requiresEscort: true })],
 } as never);
 
-const activities = createMockedQuery(ActivityTypesDocument, { allowedForMembershipIds: [1] }, {
-  activityTypes: [
-    { __typename: 'ActivityType', id: 'a1', name: 'Freefly' },
-    { __typename: 'ActivityType', id: 'a2', name: 'Flat' },
-  ],
-} as never);
+const activities = createMockedQuery(
+  ActivityTypesDocument,
+  { allowedForMembershipIds: [1], operatorId: '1' },
+  {
+    activityTypes: [
+      { __typename: 'ActivityType', id: 'a1', name: 'Freefly' },
+      { __typename: 'ActivityType', id: 'a2', name: 'Flat' },
+    ],
+  } as never
+);
 
 const slotEligibility = (failures: Record<string, unknown>[] = []) => ({
   request: {
