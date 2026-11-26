@@ -1,9 +1,7 @@
 import { isEqual, pick, xorBy } from 'lodash';
 import * as React from 'react';
-import { Platform, View, StyleSheet } from 'react-native';
-import Chip, { ChipProps } from 'app/components/chips/Chip';
-import { HelperText } from 'react-native-paper';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native';
+import { Chip, Row, Stack, Text, type IconName } from 'app/ui';
 import { withHookForm } from '../withHookForm';
 
 export interface IChipSelect<T> {
@@ -11,7 +9,8 @@ export interface IChipSelect<T> {
   value: T[];
   autoSelectFirst?: boolean;
   allowEmpty?: boolean;
-  icon?: ChipProps['icon'];
+  /** Ignored: a chosen chip shows a check mark */
+  icon?: IconName;
   error?: string | null;
   variant?: 'scroll' | 'flat';
   isSelected?(item: T): boolean;
@@ -28,7 +27,6 @@ function ChipSelect<T>(props: IChipSelect<T>) {
     variant = 'flat',
     isSelected,
     isDisabled,
-    icon,
     renderItemLabel,
     onChange,
     autoSelectFirst,
@@ -41,63 +39,42 @@ function ChipSelect<T>(props: IChipSelect<T>) {
     }
   }, [value, autoSelectFirst, onChange, items]);
 
-  const Wrapper = React.useCallback(
-    ({ children }: React.PropsWithChildren<object>) =>
-      variant === 'scroll' ? (
-        <ScrollView horizontal>{children} </ScrollView>
-      ) : (
-        (children as React.JSX.Element)
-      ),
-    [variant]
+  const chips = (
+    <Row gap="sm" wrap={variant !== 'scroll'}>
+      {items?.map((item) => {
+        const isItemSelected = isSelected
+          ? isSelected(item)
+          : (value ?? []).some((selected) => isEqual(item, selected));
+        return (
+          <Chip
+            key={JSON.stringify(item)}
+            label={String(renderItemLabel(item) ?? '')}
+            disabled={isDisabled?.(item) || false}
+            selected={isItemSelected}
+            onPress={() =>
+              onChange(
+                !allowEmpty && value.length === 1
+                  ? [item]
+                  : xorBy(value, [item], isSelected || JSON.stringify)
+              )
+            }
+          />
+        );
+      })}
+    </Row>
   );
 
   return (
-    <Wrapper>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-        {items?.map((item) => {
-          const isItemSelected = isSelected
-            ? isSelected(item)
-            : value.some((selected) => isEqual(item, selected));
-          return (
-            <Chip
-              key={JSON.stringify(item)}
-              small
-              mode={!isItemSelected ? 'flat' : 'outlined'}
-              icon={
-                !value?.some((selected) =>
-                  isSelected ? isSelected(selected) : isEqual(item, selected)
-                ) && icon
-                  ? icon
-                  : undefined
-              }
-              style={{ margin: Platform.OS === 'web' ? 4 : 1 }}
-              disabled={isDisabled?.(item) || false}
-              selected={isItemSelected}
-              onPress={() =>
-                onChange(
-                  !allowEmpty && value.length === 1
-                    ? [item]
-                    : xorBy(value, [item], isSelected || JSON.stringify)
-                )
-              }
-            >
-              {renderItemLabel(item)}
-            </Chip>
-          );
-        })}
-      </View>
-      <HelperText style={styles.helperText} type="error">
-        {error || ''}
-      </HelperText>
-    </Wrapper>
+    <Stack gap="xs">
+      {variant === 'scroll' ? <ScrollView horizontal>{chips}</ScrollView> : chips}
+      {error ? (
+        <Text variant="caption" tone="blocked" role="alert">
+          {error}
+        </Text>
+      ) : null}
+    </Stack>
   );
 }
-
-const styles = StyleSheet.create({
-  helperText: {
-    marginBottom: 16,
-  },
-});
 
 const ChipSelectComponent = React.memo(ChipSelect, (previous, next) => {
   return isEqual(

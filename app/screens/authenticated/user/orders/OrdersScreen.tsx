@@ -1,18 +1,19 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SectionList, StyleSheet, View } from 'react-native';
-import { List } from 'react-native-paper';
 import ProgressBar from 'app/components/ProgressBar';
 
-import { useDropzoneContext } from 'app/providers/dropzone/context';
+import { useOperatorContext } from 'app/providers/operator/context';
 import { groupBy, map } from 'lodash';
-import { formatDistance, parseISO, startOfDay, differenceInDays, format } from 'date-fns';
-import enAU from 'date-fns/locale/en-AU';
+import { DateTime } from 'luxon';
+import { formatDate, formatRelative } from 'app/i18n/format';
 import { OrderEssentialsFragment } from 'app/api/operations';
 import { useUserProfile } from 'app/api/crud';
 import OrderCard from '../../../../components/orders/OrderCard';
 import { useUserNavigation } from '../useUserNavigation';
-import { useAppTheme } from 'app/theme';
+import { Subheader, useTheme } from 'app/ui';
+import useWalletRedirect from 'app/features/wallet/useWalletRedirect';
 
 export type OrdersRoute = {
   OrdersScreen: {
@@ -20,64 +21,69 @@ export type OrdersRoute = {
   };
 };
 export default function OrdersScreen() {
-  const { theme } = useAppTheme();
+  const theme = useTheme();
   const {
-    dropzone: { currentUser },
-  } = useDropzoneContext();
+    operator: { currentUser },
+  } = useOperatorContext();
   const route = useRoute<RouteProp<OrdersRoute>>();
-  const { dropzoneUser, loading, refetch } = useUserProfile({
+  const { membership, loading, refetch } = useUserProfile({
     id: (route?.params?.userId || currentUser?.id) as string,
   });
 
   const navigation = useUserNavigation();
+  const { t } = useTranslation('common');
+  const toWallet = useWalletRedirect(route?.params?.userId || currentUser?.id);
   React.useEffect(() => {
-    if (dropzoneUser?.user?.name && dropzoneUser?.id !== currentUser?.id) {
-      const [firstName] = dropzoneUser.user?.name?.split(/\s/) || [];
-      navigation.setOptions({ title: `${firstName}'s Transactions` });
+    if (membership?.user?.name && membership?.id !== currentUser?.id) {
+      const [firstName] = membership.user?.name?.split(/\s/) || [];
+      navigation.setOptions({ title: t('screens.transactionsOf', { name: firstName }) });
     } else {
-      navigation.setOptions({ title: 'Your Transactions' });
+      navigation.setOptions({ title: t('screens.yourTransactions') });
     }
-  }, [currentUser?.id, dropzoneUser?.id, dropzoneUser?.user?.name, navigation]);
+  }, [currentUser?.id, membership?.id, membership?.user?.name, navigation, t]);
+
+  if (toWallet) return null;
 
   return (
-    <View style={{ flexGrow: 1, backgroundColor: theme.colors.surface }}>
-      {loading && <ProgressBar color={theme.colors.primary} indeterminate visible={loading} />}
+    <View style={{ flexGrow: 1, backgroundColor: theme.colour.surface }}>
+      {loading && <ProgressBar indeterminate visible={loading} />}
 
       <SectionList
         sections={map(
-          groupBy(dropzoneUser?.orders?.edges, (e) =>
-            startOfDay(parseISO(e?.node?.createdAt)).toISOString()
+          groupBy(
+            membership?.orders?.edges,
+            (e) => DateTime.fromISO(e?.node?.createdAt).startOf('day').toISO() as string
           ),
           (d, t) => {
-            const date = parseISO(t);
+            const date = DateTime.fromISO(t);
             const title =
-              differenceInDays(new Date(), date) > 7
-                ? format(date, 'dd MMM, yyyy')
-                : formatDistance(date, new Date(), { addSuffix: true, locale: enAU });
+              Math.trunc(DateTime.now().diff(date, 'days').days) > 7
+                ? formatDate(date)
+                : formatRelative(date);
             return {
               title,
               data: d,
             };
           }
         )}
-        renderSectionHeader={({ section: { title } }) => <List.Subheader>{title}</List.Subheader>}
+        renderSectionHeader={({ section: { title } }) => <Subheader>{title}</Subheader>}
         style={styles.flatList}
-        data={dropzoneUser?.orders?.edges || []}
+        data={membership?.orders?.edges || []}
         refreshing={false}
         onRefresh={refetch}
         renderItem={({ item }) => (
           <OrderCard
             showAvatar
             onPress={() =>
-              !item?.node || !dropzoneUser
+              !item?.node || !membership
                 ? null
                 : navigation.navigate('OrderReceiptScreen', {
                     orderId: item?.node?.id,
-                    userId: dropzoneUser.id,
+                    userId: membership.id,
                   })
             }
             order={item?.node as OrderEssentialsFragment}
-            {...{ dropzoneUser }}
+            {...{ membership }}
           />
         )}
       />

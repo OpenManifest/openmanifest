@@ -24,14 +24,17 @@ export function isConflict(error: unknown): boolean {
   );
 }
 
-export function useLoad(variables: Partial<LoadQueryVariables>) {
+/**
+ * One load, with its actions. `live` (the default) follows the load's pushes; the board turns it off for its columns, as
+ * it follows every load of the day itself and a second subscription would apply each push twice.
+ */
+export function useLoad(variables: Partial<LoadQueryVariables>, { live = true } = {}) {
   const authenticated = useAuthenticated();
   const notify = useNotifications();
   const [getLoad, query] = useLoadLazyQuery();
 
   React.useEffect(() => {
     if (authenticated && variables?.id && !sameVariables(variables, query.variables)) {
-      console.debug('[Context::Load] Fetching load', variables);
       getLoad({ variables: variables as LoadQueryVariables });
     }
   }, [authenticated, getLoad, query.variables, variables]);
@@ -47,14 +50,13 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
 
   const [mutationFinalizeLoad] = useFinalizeLoadMutation();
   const [updateLoadMutation] = useUpdateLoadMutation();
-  useLoadUpdated(variables?.id);
+  useLoadUpdated(live ? variables?.id : undefined);
 
   const update = React.useCallback(
     async function UpdateLoad(
       attributes: Partial<UpdateLoadMutationVariables['attributes']>
     ): Promise<TMutationResponse<{ load: LoadDetailsFragment }>> {
       try {
-        console.debug('[Context::Load] Updating load', load?.id, attributes);
         if (!load?.id) {
           return { error: 'Load cannot be updated' };
         }
@@ -78,8 +80,6 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
             },
           },
         });
-
-        console.debug({ response });
 
         if (response?.updateLoad?.load?.id) {
           notify.success(`Load #${load?.loadNumber} updated`);
@@ -116,7 +116,7 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
 
       await update({
         dispatchAt: dispatchTime,
-        state: dispatchTime ? LoadState.BoardingCall : LoadState.Open,
+        state: dispatchTime ? LoadState.Boarding : LoadState.Open,
       });
     },
     [load, update]
@@ -132,47 +132,45 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
     [update]
   );
 
-  const updatePilot = React.useCallback(
-    async (pilot: { id: string }) => {
+  // Puts `member` on the crew role, for the load or for one of its vehicles; the rest of the crew stays as it is
+  const updateCrew = React.useCallback(
+    async (role: { id: string }, member: { id: string }, loadVehicleId: string | null = null) => {
+      const others = (load?.crew ?? []).filter(
+        ({ crewRole, loadVehicle }) =>
+          !(crewRole.id === role.id && (loadVehicle?.id ?? null) === loadVehicleId)
+      );
       await update({
-        pilot: pilot.id,
+        crew: [
+          ...others.map(({ crewRole, membership, loadVehicle }) => ({
+            crewRoleId: crewRole.id,
+            membershipId: membership.id,
+            loadVehicleId: loadVehicle?.id,
+          })),
+          {
+            crewRoleId: role.id,
+            membershipId: member.id,
+            loadVehicleId: loadVehicleId ?? undefined,
+          },
+        ],
+      });
+    },
+    [load?.crew, update]
+  );
+
+  const updateVehicle = React.useCallback(
+    async (vehicle: { id: string; capacity: number }) => {
+      await update({
+        vehicle: vehicle.id,
       });
     },
     [update]
   );
 
-  const updateGCA = React.useCallback(
-    async (gca: { id: string }) => {
-      await update({
-        gca: gca.id,
-      });
-    },
-    [update]
-  );
-
-  const updatePlane = React.useCallback(
-    async (plane: { id: string; maxSlots: number }) => {
-      await update({
-        plane: plane.id,
-      });
-    },
-    [update]
-  );
-
-  const updateLoadMaster = React.useCallback(
-    async (lm: { id: string }) => {
-      await update({
-        loadMaster: lm.id,
-      });
-    },
-    [update]
-  );
-
-  // Landing and cancelling go through finalizeLoad. The server refuses invalid transitions (a landed load cannot be
+  // Landing and cancelling go through finalizeLoad. The server refuses invalid transitions (a completed load cannot be
   // cancelled, ...) with `errors`, and the request itself can fail: both are shown instead of being dropped (BUG-082).
   const loadId = load?.id;
   const finalize = React.useCallback(
-    async (state: LoadState.Landed | LoadState.Cancelled) => {
+    async (state: LoadState.Completed | LoadState.Cancelled) => {
       try {
         const { data: response } = await mutationFinalizeLoad({
           variables: { id: Number(loadId), state },
@@ -199,13 +197,13 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
     [loadId, mutationFinalizeLoad, notify]
   );
 
-  const markAsLanded = React.useCallback(() => finalize(LoadState.Landed), [finalize]);
+  const complete = React.useCallback(() => finalize(LoadState.Completed), [finalize]);
 
   const cancel = React.useCallback(() => finalize(LoadState.Cancelled), [finalize]);
 
-  const canDispatchAircraft = useRestriction(Permission.UpdateLoad);
+  const canDispatchVehicle = useRestriction(Permission.UpdateLoad);
 
-  const createAircraftDispatchAction = React.useCallback(
+  const createVehicleDispatchAction = React.useCallback(
     (minutes: number | null) => () => dispatchInMinutes(minutes),
     [dispatchInMinutes]
   );
@@ -217,7 +215,7 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
       }
       await update({
         dispatchAt: !time ? null : DateTime.fromSeconds(time).toISO(),
-        state: time ? LoadState.BoardingCall : LoadState.Open,
+        state: time ? LoadState.Boarding : LoadState.Open,
       });
     },
     [load, update]
@@ -228,10 +226,8 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
       loading,
       called,
       update,
-      updatePilot,
-      updateGCA,
-      updatePlane,
-      updateLoadMaster,
+      updateCrew,
+      updateVehicle,
       cancel,
       refetch: queryVariables?.id ? refetch : noop,
       fetchMore: queryVariables?.id ? () => fetchMore({ variables }) : uninitializedHandler,
@@ -239,18 +235,16 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
       dispatchAtTime,
       dispatchInMinutes,
       updateLoadState,
-      createAircraftDispatchAction,
-      canDispatchAircraft,
-      markAsLanded,
+      createVehicleDispatchAction,
+      canDispatchVehicle,
+      complete,
     }),
     [
       loading,
       called,
       update,
-      updatePilot,
-      updateGCA,
-      updatePlane,
-      updateLoadMaster,
+      updateCrew,
+      updateVehicle,
       cancel,
       queryVariables?.id,
       refetch,
@@ -258,9 +252,9 @@ export function useLoad(variables: Partial<LoadQueryVariables>) {
       dispatchAtTime,
       dispatchInMinutes,
       updateLoadState,
-      createAircraftDispatchAction,
-      canDispatchAircraft,
-      markAsLanded,
+      createVehicleDispatchAction,
+      canDispatchVehicle,
+      complete,
       fetchMore,
       variables,
     ]

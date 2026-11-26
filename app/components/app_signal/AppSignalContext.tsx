@@ -6,9 +6,9 @@ import AppSignalClient from './AppSignalClient';
 
 export interface IAppSignalDefaultTags {
   platform: string;
-  currentDropzoneId: string;
+  currentOperatorId: string;
   currentUserId: string;
-  currentDropzone: string;
+  currentOperator: string;
   currentUser: string;
 }
 export interface IAppSignalContext {
@@ -19,8 +19,8 @@ export interface IAppSignalContext {
 
 export const INITIAL_TAGS = {
   platform: Platform.OS,
-  currentDropzoneId: 'Unknown',
-  currentDropzone: 'Unknown',
+  currentOperatorId: 'Unknown',
+  currentOperator: 'Unknown',
   currentUserId: 'Unknown',
   currentUser: 'Unknown',
 };

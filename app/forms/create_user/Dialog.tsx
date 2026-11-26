@@ -1,24 +1,26 @@
 import * as React from 'react';
-import { DropzoneUserEssentialsFragment } from 'app/api/operations';
+import { MembershipEssentialsFragment } from 'app/api/operations';
 import DialogOrSheet from 'app/components/layout/DialogOrSheet';
 import GhostForm from './Form';
 import useForm, { UserFields } from './useForm';
+import { useTranslation } from 'react-i18next';
 
 export interface ICreateGhostDialog {
   open?: boolean;
-  original?: DropzoneUserEssentialsFragment;
+  original?: MembershipEssentialsFragment;
   initial?: Partial<UserFields>;
   onClose(): void;
 }
 export default function CreateGhostDialog(props: ICreateGhostDialog) {
+  const { t } = useTranslation('common');
   const { open, onClose, initial, original } = props;
   const { control, loading, onSubmit, reset } = useForm({
     initial: {
       name: original?.user?.name || initial?.name,
       nickname: original?.user?.nickname || initial?.nickname,
       phone: original?.user?.phone || initial?.phone,
-      license: original?.license || initial?.license,
-      federation: initial?.federation,
+      certificationLevel: original?.certificationLevel || initial?.certificationLevel,
+      certificationBody: initial?.certificationBody,
       email: original?.user?.email || initial?.email,
       role: original?.role || initial?.role,
       id: original?.id || initial?.id || undefined,
@@ -33,10 +35,10 @@ export default function CreateGhostDialog(props: ICreateGhostDialog) {
 
   return (
     <DialogOrSheet
-      title="Pre-register user"
+      title={t('forms.create_user.preRegisterUser')}
       {...{ open, loading, onClose }}
       buttonAction={onSubmit}
-      buttonLabel="Create"
+      buttonLabel={t('forms.create')}
     >
       <GhostForm {...{ control }} />
     </DialogOrSheet>

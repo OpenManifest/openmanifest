@@ -1,0 +1,26 @@
+# Signs in as the seeded owner and reaches the manifest board
+appId: com.dangertechnologies.openmanifest
+name: login
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "(?i)log ?in"
+    timeout: 60000
+- tapOn: "(?i)email"
+- inputText: 'owner@example.com'
+- tapOn: "(?i)password"
+- inputText: 'Password1!'
+- hideKeyboard
+- tapOn: "(?i)log ?in"
+# The seeded owner has one operator to pick
+- extendedWaitUntil:
+    visible: 'Dropzone'
+    timeout: 60000
+- takeScreenshot: operators
+- tapOn: 'Dropzone'
+- extendedWaitUntil:
+    visible:
+      id: 'loads'
+    timeout: 60000
+- takeScreenshot: board

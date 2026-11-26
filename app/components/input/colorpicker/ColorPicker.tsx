@@ -1,26 +1,20 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Card, HelperText, List, Surface, TextInput, TouchableRipple } from 'react-native-paper';
+import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import manipulate from 'color';
+import {
+  COLOUR_PRESETS,
+  Card,
+  Row,
+  Stack,
+  Subheader,
+  Tappable,
+  Text,
+  TextField,
+  useTheme,
+} from 'app/ui';
 
-export const COLOR_PRESETS = [
-  '#000000',
-  '#FF1414',
-  '#D6116B',
-  '#B70E97',
-  '#6718AC',
-  '#1E47AB',
-  '#11839E',
-  '#0DA583',
-  '#10C626',
-  '#92EA12',
-  '#FF8B14',
-  '#FFB214',
-  '#7A4A2B',
-  '#5C6B73',
-  '#E63946',
-  '#1D3557',
-];
+export const COLOR_PRESETS: readonly string[] = COLOUR_PRESETS;
 
 export const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
 
@@ -32,111 +26,108 @@ interface IColorPicker {
   onChange(color: string): void;
 }
 
+const SWATCH = 32;
+const PREVIEW = 32;
+
+/** A grid of preset colours and a field for a hex value, with a preview of the colour */
 function ColorPicker(props: IColorPicker) {
   const { value, title, helperText, onChange, error } = props;
+  const { t } = useTranslation('common');
+  const theme = useTheme();
 
   const [text, setText] = React.useState(value || '');
 
   // Follow the value when it is changed from outside (a preset, a form reset)
-  React.useEffect(() => {
+  const [seen, setSeen] = React.useState(value);
+  if (value !== seen) {
+    setSeen(value);
     setText((current) =>
       current.toLowerCase() === (value || '').toLowerCase() ? current : value || ''
     );
-  }, [value]);
+  }
 
   const isInvalid = text.length > 0 && !HEX_COLOR.test(text);
 
   return (
-    <Card style={styles.card}>
-      <List.Subheader>{title}</List.Subheader>
+    <Card>
+      <Stack gap="md">
+        <Subheader>{title}</Subheader>
 
-      <Card.Content style={styles.swatches}>
-        {COLOR_PRESETS.map((color) => (
-          <TouchableRipple
-            key={color}
-            accessibilityLabel={`Color ${color}`}
-            onPress={() => {
-              setText(color);
-              onChange(color);
+        <Row gap="sm" wrap>
+          {COLOR_PRESETS.map((color) => {
+            const selected = color.toLowerCase() === (value || '').toLowerCase();
+            return (
+              <Tappable
+                key={color}
+                role="button"
+                aria-label={t('colour.swatch', { colour: color })}
+                aria-pressed={selected}
+                onPress={() => {
+                  setText(color);
+                  onChange(color);
+                }}
+                style={{
+                  flexDirection: 'row',
+                  width: SWATCH,
+                  height: SWATCH,
+                  overflow: 'hidden',
+                  borderRadius: theme.radius.sm,
+                  borderWidth: selected ? 3 : 1,
+                  borderColor: selected ? theme.colour.text : theme.colour.border,
+                }}
+              >
+                {[
+                  manipulate(color).lighten(0.6).hex(),
+                  color,
+                  manipulate(color).darken(0.3).hex(),
+                ].map((shade) => (
+                  <View key={shade} style={{ flex: 1, backgroundColor: shade }} />
+                ))}
+              </Tappable>
+            );
+          })}
+        </Row>
+
+        <Row gap="md" align="center">
+          <View
+            aria-hidden
+            style={{
+              width: PREVIEW,
+              height: PREVIEW,
+              borderRadius: theme.radius.pill,
+              borderWidth: 1,
+              borderColor: theme.colour.border,
+              backgroundColor: HEX_COLOR.test(value || '') ? value : theme.colour.surface,
             }}
-          >
-            <Surface
-              style={[
-                styles.colorBox,
-                styles.row,
-                color.toLowerCase() === (value || '').toLowerCase() ? styles.selected : {},
-              ]}
-            >
-              <View
-                style={[styles.third, { backgroundColor: manipulate(color).lighten(0.6).hex() }]}
-              />
-              <View style={[styles.third, { backgroundColor: color }]} />
-              <View
-                style={[styles.third, { backgroundColor: manipulate(color).darken(0.3).hex() }]}
-              />
-            </Surface>
-          </TouchableRipple>
-        ))}
-      </Card.Content>
-
-      <Card.Content style={styles.hexRow}>
-        <View
-          style={[
-            styles.preview,
-            { backgroundColor: HEX_COLOR.test(value || '') ? value : '#FFFFFF' },
-          ]}
-        />
-        <TextInput
-          dense
-          mode="outlined"
-          label="Custom color (hex)"
-          placeholder="#1D3557"
-          autoCapitalize="characters"
-          autoCorrect={false}
-          maxLength={7}
-          value={text}
-          error={isInvalid}
-          style={styles.hexInput}
-          onChangeText={(newText) => {
-            const normalised =
-              newText.length > 0 && !newText.startsWith('#') ? `#${newText}` : newText;
-            setText(normalised);
-            if (HEX_COLOR.test(normalised)) {
-              onChange(normalised);
-            }
-          }}
-        />
-      </Card.Content>
-      <HelperText type={error || isInvalid ? 'error' : 'info'}>
-        {isInvalid ? 'Use a hex color such as #1D3557' : error || helperText}
-      </HelperText>
+          />
+          <View style={{ flex: 1 }}>
+            <TextField
+              label={t('colour.custom')}
+              placeholder={COLOR_PRESETS[COLOR_PRESETS.length - 1]}
+              autoCapitalize="characters"
+              autoCorrect={false}
+              maxLength={7}
+              value={text}
+              error={isInvalid ? t('colour.invalid') : error}
+              onChange={(newText) => {
+                const normalised =
+                  newText.length > 0 && !newText.startsWith('#') ? `#${newText}` : newText;
+                setText(normalised);
+                if (HEX_COLOR.test(normalised)) {
+                  onChange(normalised);
+                }
+              }}
+            />
+          </View>
+        </Row>
+        {!isInvalid && !error ? (
+          <Text variant="caption" tone="muted">
+            {helperText}
+          </Text>
+        ) : null}
+      </Stack>
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  card: { padding: 8, marginVertical: 16 },
-  swatches: { flexDirection: 'row', flexWrap: 'wrap' },
-  row: { flexDirection: 'row' },
-  third: { height: '100%', width: '33%' },
-  selected: { borderWidth: 2, borderColor: 'black' },
-  colorBox: {
-    height: 25,
-    width: 25,
-    margin: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  hexRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-  preview: {
-    height: 32,
-    width: 32,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#999999',
-    marginRight: 12,
-  },
-  hexInput: { flex: 1 },
-});
 
 export default ColorPicker;

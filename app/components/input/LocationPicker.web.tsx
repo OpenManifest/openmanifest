@@ -1,7 +1,10 @@
 import * as React from 'react';
-import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 import { Region } from 'react-native-maps';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTheme } from 'app/ui';
+import MyLocationButton from './location/MyLocationButton';
+import useMarkerStyle from './location/MarkerStyle';
 
 import * as Location from 'expo-location';
 import MapView from '../map/Map';
@@ -17,6 +20,8 @@ interface ILocationPickerProps {
 }
 export function LocationWizardStep(props: ILocationPickerProps) {
   const { markerSize, labelSize, value = { lat: -27.550908, lng: 153.111635 }, onChange } = props;
+  const theme = useTheme();
+  const marker = useMarkerStyle();
   const [center, setCenter] = React.useState<{ lat: number; lng: number }>();
   const setUsersLocation = React.useCallback(async () => {
     try {
@@ -25,14 +30,11 @@ export function LocationWizardStep(props: ILocationPickerProps) {
         return;
       }
       const location = await Location.getCurrentPositionAsync({});
-      console.log('user location', location.coords);
       setCenter({
         lat: location.coords.latitude,
         lng: location.coords.longitude,
       });
-    } catch (error) {
-      console.log(error);
-    }
+    } catch {}
   }, []);
 
   // Start at user location
@@ -85,7 +87,7 @@ export function LocationWizardStep(props: ILocationPickerProps) {
       height="100%"
       mapStyle={{
         ...StyleSheet.absoluteFill,
-        marginTop: -50,
+        top: -theme.space.xxxl,
       }}
       coords={region}
       center={center || region}
@@ -114,33 +116,19 @@ export function LocationWizardStep(props: ILocationPickerProps) {
           <MaterialCommunityIcons
             pointerEvents="none"
             size={markerSize || 60}
-            style={{
-              color: '#ffffff',
-              textShadowColor: 'rgba(14,14,14,0.8)',
-              textShadowOffset: {
-                width: 5,
-                height: 5,
-              },
-              textShadowRadius: 10,
-              zIndex: 10,
-            }}
+            style={marker.pin}
             name={isDragging ? 'map-marker' : 'map-marker-check-outline'}
           />
           <Animated.Text
             style={{
-              fontSize: labelSize || 30,
+              ...theme.type.title,
+              fontSize: labelSize || theme.type.title.fontSize,
               position: 'absolute',
               bottom: '30%',
               width: '100%',
               opacity: opacity.current,
               textAlign: 'center',
-              color: '#ffffff',
-              textShadowColor: 'rgba(14,14,14,0.8)',
-              textShadowOffset: {
-                width: 3,
-                height: 3,
-              },
-              textShadowRadius: 10,
+              ...marker.label,
             }}
           >
             {region.lat.toFixed(5)},{region.lng.toFixed(5)}
@@ -148,66 +136,17 @@ export function LocationWizardStep(props: ILocationPickerProps) {
         </View>
       )}
 
-      <TouchableOpacity
-        style={styles.myLocation}
-        onPress={() => {
-          setUsersLocation();
-        }}
-      >
-        <MaterialIcons name="my-location" size={20} />
-      </TouchableOpacity>
+      <MyLocationButton onPress={() => setUsersLocation()} />
     </MapView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 48,
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-  },
-  title: {
-    position: 'absolute',
-    fontSize: 30,
-    top: 140,
-    fontWeight: 'bold',
-    color: 'white',
-    left: 0,
-    paddingLeft: 10,
-    width: '100%',
-    paddingBottom: 40,
-    textAlign: 'center',
-    textShadowColor: 'rgba(15, 15, 15, 0.5)',
-    textShadowRadius: 10,
-    textShadowOffset: {
-      width: 2,
-      height: 2,
-    },
-  },
   markerFixed: {
     ...StyleSheet.absoluteFill,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
-  },
-  content: {
-    width: '100%',
-    justifyContent: 'space-around',
-    flexDirection: 'column',
-  },
-  card: {
-    padding: 0,
-    paddingVertical: 16,
-    marginVertical: 16,
-    width: '100%',
-  },
-  myLocation: {
-    position: 'absolute',
-    bottom: 30,
-    right: 30,
-    backgroundColor: 'white',
-    borderRadius: 50,
-    padding: 8,
   },
 });
 

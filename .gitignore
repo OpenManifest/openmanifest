@@ -68,9 +68,19 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 
+# expo prebuild output (the Android CI build makes it)
+/android/
+
 # Expo
 .expo/
 web-build/
 dist/
 
 # @end expo-cli
+
+# Playwright
+/e2e/.auth/
+/e2e/.results/
+/e2e/.report/
+/ui-debt.json
+/e2e/maestro-report/

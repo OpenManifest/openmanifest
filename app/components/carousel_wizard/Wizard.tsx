@@ -3,6 +3,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Carousel, CarouselRef } from 'react-native-reanimated-carousel';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { IWizardStepProps } from './Step';
 import WizardFrame from './WizardFrame';
 import Buttons from './Buttons';
@@ -29,6 +30,7 @@ function Wizard(props: IWizardProps, ref: React.Ref<CarouselRef>) {
     if (outerIndex !== undefined) return outerIndex;
     return index;
   }, [index, outerIndex]);
+  const { t } = useTranslation('common');
   const navigation = useNavigation();
   const carouselRef = React.useRef<CarouselRef>(null);
 
@@ -94,8 +96,10 @@ function Wizard(props: IWizardProps, ref: React.Ref<CarouselRef>) {
                 actions={
                   <Buttons
                     isCurrent={index === currentIndex}
-                    nextLabel={currentIndex === steps.length - 1 ? 'Done' : 'Next'}
-                    backLabel="Back"
+                    nextLabel={
+                      currentIndex === steps.length - 1 ? t('wizard.done') : t('wizard.next')
+                    }
+                    backLabel={t('wizard.back')}
                     onNext={onNext}
                     onBack={onBack}
                   />
