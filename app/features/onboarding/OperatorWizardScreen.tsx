@@ -172,13 +172,23 @@ export default function OperatorWizardScreen() {
             attributes: {
               operatorId: Number(values.id),
               name: values.vehicleName.trim(),
+              registration: values.vehicleRegistration.trim(),
               capacity: values.vehicleCapacity,
             },
           },
         });
         const payload = result.data?.createVehicle;
         if (!payload?.vehicle?.id) {
-          (payload?.errors?.length ? payload.errors : [t('onboarding.failed')]).forEach((message) =>
+          const messages = [
+            ...(payload?.errors ?? []),
+            ...(payload?.fieldErrors ?? []).map(({ field, message }) =>
+              t('onboarding.fieldMessage', {
+                field: t(`onboarding.vehicleFields.${field}`, { defaultValue: field }),
+                message,
+              })
+            ),
+          ];
+          (messages.length ? messages : [t('onboarding.failed')]).forEach((message) =>
             notify.error(message)
           );
           return false;

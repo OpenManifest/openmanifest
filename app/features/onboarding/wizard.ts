@@ -74,6 +74,7 @@ export type WizardValues = {
   /** Prices of the preset ticket types, by id, in the currency's main unit; only the ones changed */
   prices: Record<string, number | null>;
   vehicleName: string;
+  vehicleRegistration: string;
   vehicleCapacity: number | null;
   /** Set once the first vehicle has been created */
   vehicleId: string | null;
@@ -111,6 +112,7 @@ export function initialValues(): WizardValues {
     banner: '',
     prices: {},
     vehicleName: '',
+    vehicleRegistration: '',
     vehicleCapacity: null,
     vehicleId: null,
   };
@@ -156,10 +158,13 @@ export function validateStep(step: StepKey, values: WizardValues): WizardErrors 
       return values.certificationBodies.length ? {} : { certificationBodies: 'bodiesRequired' };
     case 'branding':
       return values.primaryColor ? {} : { primaryColor: 'colourRequired' };
-    case 'review':
-      return values.vehicleName.trim() && !values.vehicleCapacity
-        ? { vehicleCapacity: 'capacityRequired' }
-        : {};
+    case 'review': {
+      if (!values.vehicleName.trim() || values.vehicleId) return {};
+      const errors: WizardErrors = {};
+      if (!values.vehicleRegistration.trim()) errors.vehicleRegistration = 'registrationRequired';
+      if (!values.vehicleCapacity) errors.vehicleCapacity = 'capacityRequired';
+      return errors;
+    }
     default:
       return {};
   }

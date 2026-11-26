@@ -59,7 +59,9 @@ test.describe('visual baselines @visual', () => {
   // The operator setup wizard's first page (U5.8b)
   test('setup wizard', async ({ page }) => {
     await gotoRoute(page, '/setup');
-    await expect(page.getByRole('heading', { name: 'Name' })).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByRole('heading', { name: 'What do you run?' })).toBeVisible({
+      timeout: 20_000,
+    });
     await page.waitForTimeout(1000);
     await expect(page).toHaveScreenshot('setup-wizard.png', OPTIONS);
   });

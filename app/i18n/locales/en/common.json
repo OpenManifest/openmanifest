@@ -1554,8 +1554,15 @@
     "firstVehicle": "First {{vehicle}}",
     "firstVehicleHelp": "Optional: add the {{vehicle}} you use most; more can be added in Setup.",
     "vehicleName": "Name",
+    "vehicleRegistration": "Registration",
     "vehicleCapacity": "Seats",
     "vehicleAdded": "{{name}} has been added.",
+    "vehicleFields": {
+      "name": "Name",
+      "registration": "Registration",
+      "capacity": "Seats"
+    },
+    "fieldMessage": "{{field}} {{message}}",
     "modulesHelp": "Optional modules (equipment, certifications, limits and more) are switched on and off in Setup → Rules.",
     "openRules": "Open Setup → Rules",
     "openManifest": "Open the manifest",
@@ -1568,7 +1575,8 @@
       "currencyRequired": "Pick a currency",
       "bodiesRequired": "Your {{operator}} must accept at least one certification body",
       "colourRequired": "Please pick a brand colour",
-      "capacityRequired": "How many seats does it have?"
+      "capacityRequired": "How many seats does it have?",
+      "registrationRequired": "Enter its registration or number"
     }
   }
 }

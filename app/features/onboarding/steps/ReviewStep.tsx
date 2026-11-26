@@ -75,6 +75,13 @@ export default function ReviewStep({ values, set, errors, industry, onOpenRules 
               value={values.vehicleName}
               onChange={(vehicleName) => set({ vehicleName })}
             />
+            <TextField
+              testID="review-vehicle-registration"
+              label={t('onboarding.vehicleRegistration')}
+              value={values.vehicleRegistration}
+              error={errors.vehicleRegistration}
+              onChange={(vehicleRegistration) => set({ vehicleRegistration })}
+            />
             <NumberField
               testID="review-vehicle-capacity"
               label={t('onboarding.vehicleCapacity')}

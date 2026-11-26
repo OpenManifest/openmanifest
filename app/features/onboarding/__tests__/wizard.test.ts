@@ -102,11 +102,18 @@ describe('operator wizard logic', () => {
       timeZone: 'timeZoneInvalid',
     });
     expect(validateStep('review', { ...values, vehicleName: 'Bus 1' })).toEqual({
+      vehicleRegistration: 'registrationRequired',
       vehicleCapacity: 'capacityRequired',
     });
     expect(
-      validateStep('review', { ...values, vehicleName: 'Bus 1', vehicleCapacity: 12 })
+      validateStep('review', {
+        ...values,
+        vehicleName: 'Bus 1',
+        vehicleRegistration: 'B1',
+        vehicleCapacity: 12,
+      })
     ).toEqual({});
+    expect(validateStep('review', { ...values, vehicleName: 'Bus 1', vehicleId: '5' })).toEqual({});
     expect(validateStep('certifications', values)).toEqual({
       certificationBodies: 'bodiesRequired',
     });

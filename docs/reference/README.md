@@ -255,10 +255,21 @@ Scripts: `yarn sync:schema` (download schema), `yarn ts:graphql` (codegen), `yar
    operator selection (`OperatorsScreen` at `/operators/select`: one `ListRow` per operator with its logo or initials,
    "Create <operator>" opens the setup wizard), the password reset (`RecoverPasswordScreen` at `/recover-password`,
    `ChangePasswordScreen` at `/change-password`), the account confirmation (`ConfirmUserScreen` at `/confirm`:
-   confirming, confirmed or failed, also without a token) and the operator setup wizard (`/setup`). They share the
-   wizard frame `app/components/carousel_wizard` (`WizardFrame` with `Dots`, a `progressbar` named "Step n of m";
-   `Step` with the page title as its heading; `Buttons`, the next button `wizard-next-primary-action` and back); the
-   map steps' pin, coordinates and "Go to my location" are in `MapOverlay.tsx`.
+   confirming, confirmed or failed, also without a token). They share the wizard frame `app/components/carousel_wizard`
+   (`WizardFrame` with `Dots`, a `progressbar` named "Step n of m"; `Step` with the page title as its heading;
+   `Buttons`, the next button `wizard-next-primary-action` and back).
+8. The operator wizard (P7.23, GENERALISATION §6, `app/features/onboarding/`, `OperatorWizardScreen` at `/setup`) has
+   its own frame, `WizardShell` (a `ProgressMeter` named "Step n of m", the step's heading and intro in the form column,
+   Next `wizard-next-primary-action` and Back pinned under it). Steps (`stepsFor` in `wizard.ts`): Industry (the
+   `Industries` query's templates grouped by family, `groupIndustries`: air `_aviation`, water `_water`, land `_ground`,
+   other; the one picked previews its `presetSummary`, `PresetSummary`) → Name → Location and time zone (the device's
+   zone from `expo-localization`, "Use my location" with `expo-location`) → Currency and units (the device's currency,
+   the template's `units`) → Certification bodies (only when the template has `certifications`) → Branding (colour,
+   logo; Next creates the operator with `createOperator`, or updates it after going back; the industry is then fixed)
+   → Review presets (the summary, the preset tickets' prices with `updateTicketType`, the first vehicle with
+   `createVehicle`, and "Open Setup → Rules" for the optional modules) → Done ("Open the manifest"). `validateStep`
+   blocks a step, `stepOfField` takes the owner back to a field the server rejected. The `@wizard` smoke
+   (`e2e/operator-wizard.spec.ts`) creates a generic operator through it.
 
 ## 6. Platform-specific files
 

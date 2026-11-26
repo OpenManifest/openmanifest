@@ -73,13 +73,18 @@ test.describe('login @login', () => {
     const create = page.getByTestId('create-operator-primary-action');
     await create.waitFor({ timeout: 30_000 });
     await pressUntil(page, create, () =>
-      expect(page.getByRole('heading', { name: 'Name' })).toBeVisible({ timeout: 5_000 })
+      expect(page.getByRole('heading', { name: 'What do you run?' })).toBeVisible({
+        timeout: 5_000,
+      })
     );
-    await expect(page.getByRole('progressbar', { name: 'Step 1 of 8' })).toBeVisible();
+    await expect(page.getByRole('progressbar', { name: 'Step 1 of 7' })).toBeVisible();
     await expectLayout(page, '/setup');
     await expectAccessible(page, '/setup');
+    // The industry comes first (P7.23)
     await pressUntil(page, page.getByTestId('wizard-next-primary-action'), () =>
-      expect(page.getByText('Your operator must have a name')).toBeVisible({ timeout: 3_000 })
+      expect(page.getByText('Pick the kind of business closest to yours')).toBeVisible({
+        timeout: 3_000,
+      })
     );
   });
 
