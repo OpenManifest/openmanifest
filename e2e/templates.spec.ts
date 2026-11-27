@@ -14,6 +14,8 @@ import {
 } from './support/templates';
 import { expect, gotoRoute, test } from './support/test';
 
+// P7.25 adds whale watching (a trip with adults and a child, completed, the passenger list exported as CSV) and the
+// fishing charter (an angler without a licence is kept off the adult ticket and taken on the licence-included one).
 // P7.24: the scuba and snorkel templates. A dive centre made in the wizard adds its boat and two sites; the seed's demo
 // dive centre runs a two-site trip with certified divers, nitrox and a try diver; the seed's snorkel operator takes a
 // child with an adult. Each trip is called, leaves and comes back from the load screen.
@@ -279,6 +281,132 @@ test.describe('the scuba and snorkel templates @templates', () => {
       await callDepartComplete(page, trip, /60 minute/i);
     } finally {
       await clearOpenLoads(owner, lagoon.id);
+    }
+  });
+});
+
+test.describe('the whale-watching and fishing-charter templates @templates', () => {
+  test.describe.configure({ timeout: 240_000 });
+  // The passenger list is of the operator's day: the browser is where the demo operators are
+  test.use({ timezoneId: 'Australia/Brisbane' });
+
+  test('a whale-watching trip with adults and a child, completed, its passenger list exported @whale', async ({
+    page,
+  }) => {
+    const owner = await signIn(templateEmail('whale_watching', 'owner'));
+    const whales = await demoOperator(owner, 'Humpback Bay Whale Watch');
+    await clearOpenLoads(owner, whales.id);
+    try {
+      const trip = await createTripViaApi(
+        owner,
+        whales.vehicle.id,
+        `Humpbacks ${test.info().project.name}`,
+        [
+          { crewRoleId: whales.crew.skipper, membershipId: whales.members['Skye Skipper'] },
+          { crewRoleId: whales.crew.naturalist, membershipId: whales.members['Nina Naturalist'] },
+        ],
+        [whales.destinations['Bay run'].id]
+      );
+      const adult = await manifestViaApi(owner, {
+        load: trip,
+        membership: whales.members['Wren Watcher'],
+        ticketType: whales.tickets.Adult.id,
+      });
+      expect(adult.errors).toEqual([]);
+      const family = await manifestViaApi(owner, {
+        load: trip,
+        membership: whales.members['Morgan Parent'],
+        ticketType: whales.tickets['Adult with child'].id,
+        guests: [{ name: 'Charlie Child', dateOfBirth: '2018-04-04', bodyMassKg: 22 }],
+      });
+      expect(family.errors).toEqual([]);
+
+      await openAs(page, templateEmail('whale_watching', 'owner'), 'Humpback Bay Whale Watch');
+      await gotoRoute(page, `/loads/${trip}`);
+      for (const person of ['Wren Watcher', 'Morgan Parent', 'Charlie Child']) {
+        await expect(page.getByText(person).first()).toBeVisible({ timeout: 20_000 });
+      }
+      await callDepartComplete(page, trip, /30 minute/i);
+
+      // The passenger list: the trip's crew, everyone on it with whom to call, and the day as CSV
+      await gotoRoute(page, '/daily-log');
+      const section = page.getByTestId(`daily-log-load-${trip}`);
+      await expect(section).toBeVisible({ timeout: 20_000 });
+      await expect(section).toContainText('Nina Naturalist');
+      await expect(section).toContainText('Emergency contact: Rob Watcher 0400 111 222');
+      // The child has the adult's
+      await expect(section).toContainText('With adult Morgan Parent');
+      await expectLayout(page, 'passenger list');
+      await expectAccessible(page, 'passenger list');
+      const exportButton = page.getByRole('button', { name: 'Export the passenger list as CSV' });
+      const [download] = await Promise.all([
+        page.waitForEvent('download', { timeout: 20_000 }),
+        press(page, exportButton),
+      ]);
+      expect(download.suggestedFilename()).toMatch(/^passenger-list-\d{4}-\d{2}-\d{2}\.csv$/);
+      const csv = await (await download.createReadStream()).toArray();
+      const text = Buffer.concat(csv).toString('utf8');
+      expect(text).toContain(
+        'Trip,Departure,Name,Phone,Email,Emergency contact,Ticket,With (adult)'
+      );
+      expect(text).toMatch(
+        /Charlie Child,.*Morgan Parent 0400000000,Adult with child,Morgan Parent/
+      );
+      expect(text).toContain('Wren Watcher');
+    } finally {
+      await clearOpenLoads(owner, whales.id);
+    }
+  });
+
+  test('a fishing charter keeps an angler without a licence off the adult ticket @fishing', async ({
+    page,
+  }) => {
+    const owner = await signIn(templateEmail('fishing_charter', 'owner'));
+    const charter = await demoOperator(owner, 'Reef & Reel Charters');
+    await clearOpenLoads(owner, charter.id);
+    try {
+      const trip = await createTripViaApi(
+        owner,
+        charter.vehicle.id,
+        `Reef run ${test.info().project.name}`,
+        [{ crewRoleId: charter.crew.skipper, membershipId: charter.members['Cody Skipper'] }],
+        [charter.destinations['Offshore grounds'].id]
+      );
+      const rod = charter.extras['Rod and reel hire'].id;
+      const licensed = await manifestViaApi(owner, {
+        load: trip,
+        membership: charter.members['Lee Licensed'],
+        ticketType: charter.tickets.Adult.id,
+        extras: [rod],
+      });
+      expect(licensed.errors).toEqual([]);
+
+      const blocked = await manifestViaApi(owner, {
+        load: trip,
+        membership: charter.members['Nico Nolicence'],
+        ticketType: charter.tickets.Adult.id,
+      });
+      expect(blocked.id).toBeUndefined();
+      expect(blocked.errors.join(' ')).toMatch(/missing a certification: qualification/);
+
+      const included = await manifestViaApi(owner, {
+        load: trip,
+        membership: charter.members['Nico Nolicence'],
+        ticketType: charter.tickets['Adult, licence included'].id,
+        extras: [rod],
+      });
+      expect(included.errors).toEqual([]);
+
+      await openAs(page, templateEmail('fishing_charter', 'owner'), 'Reef & Reel Charters');
+      await gotoRoute(page, `/loads/${trip}`);
+      for (const person of ['Lee Licensed', 'Nico Nolicence']) {
+        await expect(page.getByText(person).first()).toBeVisible({ timeout: 20_000 });
+      }
+      await expectLayout(page, 'fishing charter');
+      await expectAccessible(page, 'fishing charter');
+      await callDepartComplete(page, trip, /30 minute/i);
+    } finally {
+      await clearOpenLoads(owner, charter.id);
     }
   });
 });
