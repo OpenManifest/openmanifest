@@ -1,2 +1,7 @@
 export { ManifestContextProvider } from './provider';
-export { ManifestContext, useManifestContext } from './context';
+export {
+  ManifestContext,
+  ManifestPermissionsContext,
+  useManifestContext,
+  useManifestPermissions,
+} from './context';

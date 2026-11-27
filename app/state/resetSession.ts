@@ -22,7 +22,7 @@ async function clearPushToken() {
 
 /**
  * Logs the user out and forgets everything about their session: the push token on the server (when the credentials are
- * still valid), in-flight requests, the Apollo cache, the credentials (secure storage) and the current dropzone.
+ * still valid), departed requests, the Apollo cache, the credentials (secure storage) and the current operator.
  * Used by the logout action and when the server says the session has expired.
  */
 export function resetSession({ reason }: { reason: ResetSessionReason }) {
@@ -38,15 +38,13 @@ export function resetSession({ reason }: { reason: ResetSessionReason }) {
 let resetting: Promise<void> | null = null;
 
 async function performReset(reason: ResetSessionReason) {
-  console.debug(`[Session::reset]: Resetting the session (${reason})`);
   const client = getApolloClient();
 
   if (reason === 'logout') {
     try {
       await clearPushToken();
-    } catch (error) {
+    } catch {
       // Offline, or the server refused: logging out has to work anyway
-      console.debug('[Session::reset]: Could not clear the push token', error);
     }
   }
 

@@ -37,7 +37,7 @@ export default function UserAvatar(props: IUserAvatarProps) {
   return (
     <Avatar
       sx={{
-        bgcolor: stringToColor(name || 'Dropzone User'),
+        bgcolor: stringToColor(name || 'Member'),
       }}
       style={{ height: size, width: size, alignSelf: 'center', marginRight: 12 }}
       src={image || undefined}

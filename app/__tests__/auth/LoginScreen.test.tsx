@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { TextInput } from 'react-native';
 import { GraphQLError } from 'graphql';
 import { LoginDocument } from 'app/api/reflection';
 import { NotificationContext } from 'app/providers/notifications/context';
 import { useSession } from '../../state';
 import { fireEvent, render, waitFor } from '../../__mocks__/render';
 import LoginScreen from '../../screens/unauthenticated/login/LoginScreen';
+import { textInputs } from 'app/test-utils/hosts';
 
 const VARIABLES = { email: 'jest@example.com', password: 'secret-password' };
 
@@ -28,9 +28,9 @@ const authenticatable = {
   updatedAt: '2022-01-01T00:00:00Z',
 };
 
-function renderLogin(mock: Record<string, unknown>) {
+async function renderLogin(mock: Record<string, unknown>) {
   const notifications = { success: jest.fn(), error: jest.fn(), info: jest.fn() };
-  const screen = render(
+  const screen = await render(
     <NotificationContext.Provider value={notifications}>
       <LoginScreen />
     </NotificationContext.Provider>,
@@ -46,30 +46,30 @@ function renderLogin(mock: Record<string, unknown>) {
   return { ...screen, notifications };
 }
 
-function fillAndSubmit(screen: ReturnType<typeof renderLogin>, values = VARIABLES) {
-  const [email, password] = screen.UNSAFE_getAllByType(TextInput);
-  fireEvent.changeText(email, values.email);
-  fireEvent.changeText(password, values.password);
-  fireEvent.press(screen.getByText('Log in'));
+async function fillAndSubmit(screen: Awaited<ReturnType<typeof renderLogin>>, values = VARIABLES) {
+  const [email, password] = textInputs(screen.container);
+  await fireEvent.changeText(email, values.email);
+  await fireEvent.changeText(password, values.password);
+  await fireEvent.press(screen.getByRole('button', { name: 'Log in' }));
 }
 
 describe('<LoginScreen />', () => {
-  it('renders the login form', () => {
-    const screen = renderLogin({ result: { data: {} } });
+  it('renders the login form', async () => {
+    const screen = await renderLogin({ result: { data: {} } });
 
-    expect(screen.getByText('Log in')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Log in' })).toBeTruthy();
     expect(screen.getByText('Forgot your password?')).toBeTruthy();
-    expect(screen.getByText('Sign up')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Sign up' })).toBeTruthy();
   });
 
   it('stores the credentials in the session after a successful login', async () => {
-    const screen = renderLogin({
+    const screen = await renderLogin({
       result: {
         data: { userLogin: { __typename: 'UserLoginPayload', authenticatable, credentials } },
       },
     });
 
-    fillAndSubmit(screen);
+    await fillAndSubmit(screen);
 
     await waitFor(() => {
       expect(useSession.getState().credentials).toMatchObject({
@@ -82,11 +82,11 @@ describe('<LoginScreen />', () => {
   });
 
   it('shows the server error and stores nothing when the login fails', async () => {
-    const screen = renderLogin({
+    const screen = await renderLogin({
       result: { errors: [new GraphQLError('Invalid login credentials')] },
     });
 
-    fillAndSubmit(screen);
+    await fillAndSubmit(screen);
 
     await waitFor(() => {
       expect(screen.notifications.error).toHaveBeenCalledWith('Invalid login credentials');
@@ -95,9 +95,9 @@ describe('<LoginScreen />', () => {
   });
 
   it('does not submit when the email is invalid', async () => {
-    const screen = renderLogin({ result: { data: {} } });
+    const screen = await renderLogin({ result: { data: {} } });
 
-    fillAndSubmit(screen, { email: 'not-an-email', password: 'x' });
+    await fillAndSubmit(screen, { email: 'not-an-email', password: 'x' });
 
     await waitFor(() => {
       expect(screen.getByText('This is not a valid email')).toBeTruthy();

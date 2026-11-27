@@ -11,7 +11,7 @@ function GradientText(props: TextProps & { children: string | number }) {
         style={{
           opacity: 1,
           // Not the `background` shorthand: it resets `background-clip` whenever the colours change, which turned the
-          // text into a solid block after the dropzone's theme loaded.
+          // text into a solid block after the operator's theme loaded.
           backgroundImage: `linear-gradient(45deg, ${palette.primary.dark}, ${palette.primary.main})`,
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',

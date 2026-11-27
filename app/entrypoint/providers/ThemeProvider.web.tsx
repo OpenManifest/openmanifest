@@ -2,6 +2,7 @@ import { ThemeProvider } from '@mui/material';
 import { Theme, createTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { AppThemeProvider, useAppTheme } from 'app/theme';
+import I18nProvider from 'app/i18n/I18nProvider';
 
 function MuiBridge(props: { children: React.ReactNode }) {
   const { palette, isDark } = useAppTheme();
@@ -38,7 +39,9 @@ function MuiBridge(props: { children: React.ReactNode }) {
 function Content(props: { children: React.ReactNode }) {
   return (
     <AppThemeProvider>
-      <MuiBridge>{props.children}</MuiBridge>
+      <I18nProvider>
+        <MuiBridge>{props.children}</MuiBridge>
+      </I18nProvider>
     </AppThemeProvider>
   );
 }

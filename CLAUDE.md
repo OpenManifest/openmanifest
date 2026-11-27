@@ -9,7 +9,7 @@ Expo / React Native client (iOS, Android, web) for OpenManifest. The Rails Graph
 
 Before doing any work:
 
-1. Read the plan's **Executor instructions** section first and follow it exactly (one task per session, branch naming,
+1. Read the plan's **Executor instructions** section first and follow it exactly (task loop, branch naming,
    PRs, status updates in the backend copy, stop conditions).
 2. Then read the task you picked and every document it links.
 

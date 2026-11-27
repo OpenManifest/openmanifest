@@ -128,7 +128,6 @@ export function createMutation<
                     hasErrors = true;
                     raiseFieldError(variable as string, validator.message);
                   } else {
-                    console.log(`Validator had no callback or pattern for ${variable as string}`);
                   }
                 });
               }
