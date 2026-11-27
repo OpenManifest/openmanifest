@@ -4,8 +4,8 @@ import { render } from '../../../__mocks__/render';
 import ScreenContainer from '../ScreenContainer';
 
 describe('ScreenContainer', () => {
-  it('fills the screen with the theme background', () => {
-    const screen = render(
+  it('fills the screen with the theme background', async () => {
+    const screen = await render(
       <ScreenContainer testID="screen">
         <Text>Content</Text>
       </ScreenContainer>,
@@ -16,6 +16,6 @@ describe('ScreenContainer', () => {
     expect(style.flex).toBe(1);
     expect(style.backgroundColor).toBeTruthy();
     expect(screen.getByText('Content')).toBeTruthy();
-    screen.unmount();
+    await screen.unmount();
   });
 });

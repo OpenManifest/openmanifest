@@ -1,21 +1,16 @@
 import { MutationFunctionOptions, MutationResult } from '@apollo/client';
-import {
-  LoginWithAppleMutation,
-  LoginWithAppleMutationVariables,
-  LoginWithFacebookMutation,
-} from 'app/api/operations';
-import * as React from 'react';
-import { View } from 'react-native';
+import { LoginWithAppleMutation, LoginWithAppleMutationVariables } from 'app/api/operations';
 
 export function useLoginWithApple(
   opts?: MutationFunctionOptions<LoginWithAppleMutation, LoginWithAppleMutationVariables>
 ) {
   return [() => null, null] as unknown as [
     () => Promise<void>,
-    MutationResult<LoginWithFacebookMutation>,
+    MutationResult<LoginWithAppleMutation>,
   ];
 }
 
-export default function AppleButton() {
-  return <View />;
+/** Sign in with Apple is offered on iOS only */
+export default function AppleButton(_props: { onPress?(): void }) {
+  return null;
 }

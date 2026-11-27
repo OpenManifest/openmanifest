@@ -1,4 +1,5 @@
 import { StackScreenProps } from '@react-navigation/stack';
+import { useTranslation } from 'react-i18next';
 import * as React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -7,11 +8,12 @@ import { RootStackParamList } from '../../types';
 export default function NotFoundScreen({
   navigation,
 }: StackScreenProps<RootStackParamList, 'NotFound'>) {
+  const { t } = useTranslation('common');
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>This screen doesn't exist.</Text>
+      <Text style={styles.title}>{t('notFound.title')}</Text>
       <TouchableOpacity onPress={() => navigation.replace('Root')} style={styles.link}>
-        <Text style={styles.linkText}>Go to home screen!</Text>
+        <Text style={styles.linkText}>{t('notFound.home')}</Text>
       </TouchableOpacity>
     </View>
   );

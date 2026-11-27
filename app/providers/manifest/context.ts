@@ -2,14 +2,20 @@ import * as React from 'react';
 import { noop } from 'lodash';
 import { useManifest } from 'app/api/crud/useManifest';
 import { uninitializedHandler } from 'app/api/crud/factory';
-import type { IManifestUserDialog } from 'app/forms/manifest_user/Dialog';
+import type { IManifestUserDialog } from 'app/legacy/manifest_user/Dialog';
 import type { ICreditsSheet } from 'app/forms/credits/Credits';
 import type { ILoadDialog } from 'app/forms/load/Dialog';
-import type { IManifestGroupDialogProps } from 'app/forms/manifest_group';
+import type { IManifestGroupDialogProps } from 'app/legacy/manifest_group';
 import type { IDialogContextSubstate } from '../hooks/useDialog';
 
 interface IManifestContext {
-  manifest: ReturnType<typeof useManifest>;
+  manifest: ReturnType<typeof useManifest> & {
+    /** The day the board shows, `YYYY-MM-DD` in the operator's time zone */
+    date: string;
+    today: string;
+    isToday: boolean;
+    setDate(date: string): void;
+  };
   dialogs: {
     manifestUser: IDialogContextSubstate<
       Omit<IManifestUserDialog, 'open' | 'onClose' | 'onSuccess'>
@@ -36,6 +42,10 @@ export const INITIAL_CONTEXT: IManifestContext = {
     manifestGroup: uninitializedHandler as never,
     moveSlot: uninitializedHandler as never,
     createLoad: uninitializedHandler as never,
+    date: '',
+    today: '',
+    isToday: true,
+    setDate: noop,
     permissions: {
       canAddTransaction: false,
       canCreateLoad: false,
@@ -70,7 +80,7 @@ export const INITIAL_CONTEXT: IManifestContext = {
       close: noop,
       visible: false,
       state: {
-        dropzoneUser: undefined,
+        membership: undefined,
       },
     },
     manifestGroup: {
@@ -85,4 +95,17 @@ export const ManifestContext = React.createContext<IManifestContext>(INITIAL_CON
 
 export function useManifestContext() {
   return React.useContext(ManifestContext);
+}
+
+/**
+ * What the user may do on the manifest, apart from the loads: the context above changes with every load of the day, so
+ * a part of one load (its card, its places) that only needs the permissions reads them here and is left alone when
+ * another load changes.
+ */
+export const ManifestPermissionsContext = React.createContext<
+  IManifestContext['manifest']['permissions']
+>(INITIAL_CONTEXT.manifest.permissions);
+
+export function useManifestPermissions() {
+  return React.useContext(ManifestPermissionsContext);
 }

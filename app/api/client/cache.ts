@@ -4,7 +4,7 @@ import { relayStylePagination } from '@apollo/client/utilities';
 export const cache = new InMemoryCache({
   typePolicies: {
     Event: relayStylePagination(),
-    DropzoneUsers: relayStylePagination(),
+    Memberships: relayStylePagination(),
     Loads: relayStylePagination(),
   },
 });

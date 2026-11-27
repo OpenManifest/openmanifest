@@ -1,2 +1,2 @@
 export { LoadContextProvider, withLoadContext } from './provider';
-export { useLoadContext } from './context ';
+export { useLoadContext } from './context';
