@@ -336,6 +336,7 @@ export const DailyLogCrewFragmentDoc = gql`
   role
   name
   phone
+  vehicle
 }
     `;
 export const DailyLogVehicleFragmentDoc = gql`
@@ -343,6 +344,8 @@ export const DailyLogVehicleFragmentDoc = gql`
   id
   name
   registration
+  kind
+  role
 }
     `;
 export const DailyLogSlotFragmentDoc = gql`
@@ -366,11 +369,15 @@ export const DailyLogLoadFragmentDoc = gql`
   dispatchAt
   departedAt
   completedAt
+  durationMinutes
   destinations
   crew {
     ...dailyLogCrew
   }
   vehicle {
+    ...dailyLogVehicle
+  }
+  vehicles {
     ...dailyLogVehicle
   }
   gca {

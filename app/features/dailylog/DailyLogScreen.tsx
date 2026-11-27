@@ -27,13 +27,16 @@ import Section, { Fact } from 'app/features/profile/Section';
 import { useNotifications } from 'app/providers/notifications';
 import { clampToToday, dayTitle, isoDayOf, secondsOf } from './dailyLog';
 import { csvFileName, exportCsv } from './exportCsv';
+import FlightLogLoad from './FlightLogLoad';
 import GuestListLoad from './GuestListLoad';
 import useDailyLogForm from './useDailyLogForm';
 
 /**
  * The daily log (Setup → Daily log): a day's duty officer and notes, which staff change here, and every load of the
  * day with its crew, vehicle and who was on it. The day's log downloads as a file. Operators whose template keeps a guest
- * list (boats and ground tours) see each person's contact and emergency contact, and export the day as CSV.
+ * list (boats and ground tours) see each person's contact and emergency contact, and export the day as CSV; operators
+ * whose template keeps a flight log (scenic flights, balloons) see when each flight left and came back, its vehicles and
+ * the crew of each.
  */
 export default function DailyLogScreen() {
   const { t } = useTranslation('common');
@@ -76,6 +79,7 @@ export default function DailyLogScreen() {
   };
   const notify = useNotifications();
   const guestList = entry?.template === 'guest_list';
+  const flightLog = entry?.template === 'flight_log';
   const onExport = async () => {
     if (!entry?.csv) return;
     try {
@@ -199,7 +203,12 @@ export default function DailyLogScreen() {
         {guestList
           ? entry?.loads?.map((load) => <GuestListLoad key={load.id} load={load} />)
           : null}
-        {guestList
+        {flightLog
+          ? entry?.loads?.map((load) => (
+              <FlightLogLoad key={load.id} load={load} timeZone={operator?.timeZone} />
+            ))
+          : null}
+        {guestList || flightLog
           ? null
           : entry?.loads?.map((load) => (
               <Section

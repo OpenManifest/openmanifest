@@ -12,14 +12,31 @@ export type CrewSlot = {
 };
 
 /**
- * One place for each crew role the load has: once for a role of the load, and once for each carrying vehicle the role
- * applies to for a role per vehicle (so a two-raft load shows a guide for each raft).
+ * Does a role per vehicle apply to this vehicle of a load? The kinds the role names, else every vehicle that carries: a
+ * support vehicle (a balloon's chase vehicle, a shuttle) has crew only of a role that names its kind (the server's
+ * `CrewRole#applies_to?`).
+ */
+export function roleAppliesTo(
+  role: Pick<CrewRoleEssentialsFragment, 'vehicleKinds'>,
+  vehicle: { kind?: string | null },
+  vehicleRole: LoadVehicleRole | null | undefined
+): boolean {
+  const kinds = role.vehicleKinds ?? [];
+  if (vehicleRole === LoadVehicleRole.Support) return kinds.includes(vehicle.kind ?? '');
+  return !kinds.length || kinds.includes(vehicle.kind ?? '');
+}
+
+/**
+ * One place for each crew role the load has: once for a role of the load, and once for each vehicle the role applies to
+ * for a role per vehicle (so a two-raft load shows a guide for each raft, a balloon flight its pilot and chase crew).
  */
 export function crewSlots(
   load: Pick<LoadDetailsFragment, 'vehicles' | 'crew'>,
   roles: readonly CrewRoleEssentialsFragment[]
 ): CrewSlot[] {
-  const carrying = (load.vehicles ?? []).filter(({ role }) => role === LoadVehicleRole.Carrying);
+  const vehicles = load.vehicles ?? [];
+  // A role is named by its vehicle when several carry (a guide for each raft)
+  const carrying = vehicles.filter(({ role }) => role === LoadVehicleRole.Carrying);
 
   return [...roles]
     .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
@@ -30,11 +47,8 @@ export function crewSlots(
         );
         return [{ key: role.id, role, loadVehicleId: null, member: assignment?.membership }];
       }
-      return carrying
-        .filter(
-          ({ vehicle }) =>
-            !role.vehicleKinds?.length || role.vehicleKinds.includes(vehicle.kind ?? '')
-        )
+      return vehicles
+        .filter(({ vehicle, role: vehicleRole }) => roleAppliesTo(role, vehicle, vehicleRole))
         .map((loadVehicle) => ({
           key: `${role.id}-${loadVehicle.id}`,
           role,

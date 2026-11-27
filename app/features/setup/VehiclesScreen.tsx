@@ -5,6 +5,8 @@ import type { VehicleEssentialsFragment } from 'app/api/operations';
 import { useVehicles } from 'app/api/crud';
 import ScreenContainer from 'app/components/layout/ScreenContainer';
 import VehicleDialog from 'app/forms/vehicle/Dialog';
+import { vehicleKindName } from 'app/forms/vehicle/kinds';
+import { useOperatorContext } from 'app/providers/operator/context';
 import useRestriction from 'app/hooks/useRestriction';
 import useTerms from 'app/i18n/useTerms';
 import { useSession } from 'app/state';
@@ -30,6 +32,11 @@ export default function VehiclesScreen() {
   });
   const vehicleWord = term('vehicle').toLowerCase();
   const glyphs = useVehicleGlyphs();
+  const {
+    operator: { operator },
+  } = useOperatorContext();
+  // An operator with several kinds (a balloon and its chase vehicle) sees each vehicle's
+  const severalKinds = (operator?.vehicleKinds?.length ?? 0) > 1;
 
   return (
     <ScreenContainer edges={['bottom']} testID="vehicles">
@@ -40,7 +47,13 @@ export default function VehiclesScreen() {
         onRefresh={refetch}
         keyOf={(vehicle) => vehicle.id}
         titleOf={(vehicle) => vehicle.name || vehicle.registration || ''}
-        factsOf={(vehicle) => vehicleFacts(vehicle, t)}
+        factsOf={(vehicle) =>
+          vehicleFacts(
+            vehicle,
+            t,
+            severalKinds && vehicle.kind ? vehicleKindName(vehicle.kind) : undefined
+          )
+        }
         iconOf={(vehicle) => vehicleGlyph(vehicle.kind ?? glyphs.kind)}
         onOpen={canUpdate ? editor.openItem : undefined}
         rowTestID={(vehicle) => `vehicle-${vehicle.id}`}

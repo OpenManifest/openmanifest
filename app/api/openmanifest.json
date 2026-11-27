@@ -3304,6 +3304,18 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "vehicle",
+            "description": "The name of the vehicle the role is filled for (a role per vehicle); none for a role of the load",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -3562,6 +3574,18 @@
             "deprecationReason": null
           },
           {
+            "name": "durationMinutes",
+            "description": "Minutes from departure to completion (the flight time of the flight log); none until it is back",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "gca",
             "description": null,
             "args": [],
@@ -3659,12 +3683,32 @@
           },
           {
             "name": "vehicle",
-            "description": null,
+            "description": "The first vehicle that carried participants",
             "args": [],
             "type": {
               "kind": "OBJECT",
               "name": "DailyLogVehicle",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "vehicles",
+            "description": "Every vehicle of the load with what it did (a balloon and its chase vehicle)",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "name": null,
+                "kind": "NON_NULL",
+                "ofType": {
+                  "name": "DailyLogVehicle",
+                  "kind": "OBJECT",
+                  "ofType": null
+                }
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3890,6 +3934,18 @@
             "deprecationReason": null
           },
           {
+            "name": "kind",
+            "description": "The kind of vehicle (a helicopter, a balloon, a chase vehicle)",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "name",
             "description": null,
             "args": [],
@@ -3908,6 +3964,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "role",
+            "description": "What it did on the load: carried participants or supported the load",
+            "args": [],
+            "type": {
+              "kind": "ENUM",
+              "name": "LoadVehicleRole",
               "ofType": null
             },
             "isDeprecated": false,
@@ -7615,6 +7683,18 @@
           {
             "name": "GENERIC",
             "description": "Any operator that manifests people onto loads; switch on what you need",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "HOT_AIR_BALLOON",
+            "description": "Balloon flights from launch sites, a chase vehicle and crew, age and weight limits, a flight log",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SCENIC_FLIGHTS",
+            "description": "Helicopters and aeroplanes on scenic routes, weight limits, a flight log",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -23474,6 +23554,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "kind",
+            "description": "One of the operator's vehicle kinds (a helicopter or an aeroplane, a balloon\nor its chase vehicle); the main kind when left out",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,

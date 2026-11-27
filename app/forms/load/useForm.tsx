@@ -9,7 +9,7 @@ import { camelCase, isEqual } from 'lodash';
 import { LoadState, LoadVehicleRole } from 'app/api/schema.d';
 import { MembershipEssentialsFragment, VehicleEssentialsFragment } from 'app/api/operations';
 import { useCrewRolesQuery } from 'app/api/reflection';
-import { carryingVehicles, crewSlots } from './crew';
+import { crewSlots, loadVehicles } from './crew';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { moduleEnabled } from 'app/utils/modules';
 import { useNotifications } from 'app/providers/notifications';
@@ -128,7 +128,7 @@ export default function useManifestForm(opts: IUseManifestFormOpts) {
   // Who is on the crew, by place: the roles of the operator, once for the load or for each vehicle that carries
   const crewEntries = React.useCallback(
     (fields: { vehicle?: unknown; vehicleRoles?: unknown; crew?: LoadFields['crew'] }) => {
-      const vehicles = carryingVehicles({
+      const vehicles = loadVehicles({
         vehicle: fields.vehicle as never,
         vehicleRoles: fields.vehicleRoles as never,
         multiVehicle,

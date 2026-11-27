@@ -11,6 +11,7 @@ function facts(list: (ResourceFact | null | false | undefined)[]): ResourceFact[
   return list.filter((fact): fact is ResourceFact => !!fact && fact.value !== '');
 }
 
+/** The vehicle's facts; `kindName` (the operator's name of its kind) is shown for an operator with several kinds */
 export function vehicleFacts(
   vehicle: {
     registration?: string | null;
@@ -18,11 +19,13 @@ export function vehicleFacts(
     capacity?: number | null;
     maxPayloadKg?: number | null;
   },
-  t: Translate
+  t: Translate,
+  kindName?: string
 ): ResourceFact[] {
   const min = vehicle.minCapacity ?? 1;
   const max = vehicle.capacity ?? 0;
   return facts([
+    !!kindName && { label: t('forms.vehicle.kind'), value: kindName },
     { label: t('forms.vehicle.registration'), value: vehicle.registration ?? '' },
     {
       label: t('resources.facts.seats'),

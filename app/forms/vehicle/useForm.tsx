@@ -16,6 +16,8 @@ export type VehicleFields = {
   id?: string;
   name?: string;
   registration: string;
+  /** One of the operator's vehicle kinds (a helicopter or an aeroplane, a balloon or its chase vehicle) */
+  kind?: string | null;
   minCapacity?: number;
   capacity: number;
   /** What the vehicle may carry, in kilograms; 0: no limit set */
@@ -31,6 +33,7 @@ export const vehicleValidation = yup.object({
   id: yup.string().nullable().default(null),
   name: yup.string().nullable().default(null),
   registration: yup.string().required(() => i18n.t('forms.vehicle.registrationIsRequired')),
+  kind: yup.string().nullable().default(null),
   minCapacity: yup
     .number()
     .integer()
@@ -110,6 +113,8 @@ export default function useVehicleForm(opts: IUseVehicleFormOpts) {
         return;
       }
       const validated = await vehicleValidation.validate(fields, { abortEarly: false });
+      // The kind is sent when one was chosen (an operator with several kinds); else the server takes the main one
+      const kind = validated.kind ? { kind: validated.kind } : {};
       try {
         const response = fields.id
           ? await update(Number(fields.id), {
@@ -119,6 +124,7 @@ export default function useVehicleForm(opts: IUseVehicleFormOpts) {
               minCapacity: validated.minCapacity,
               registration: validated.registration,
               maxPayloadKg: validated.maxPayloadKg || null,
+              ...kind,
             })
           : await create({
               name: validated.name,
@@ -127,6 +133,7 @@ export default function useVehicleForm(opts: IUseVehicleFormOpts) {
               minCapacity: validated.minCapacity,
               registration: validated.registration,
               maxPayloadKg: validated.maxPayloadKg || null,
+              ...kind,
             });
 
         if (response) {

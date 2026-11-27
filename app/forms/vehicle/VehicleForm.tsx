@@ -4,9 +4,10 @@ import { Control } from 'react-hook-form';
 import { FormNumberField } from 'app/components/input/number_input';
 import { VehicleFields } from './useForm';
 import { useTranslation } from 'react-i18next';
-import { Stack } from 'app/ui';
+import { FormSelect, Stack } from 'app/ui';
 import { useOperatorContext } from 'app/providers/operator/context';
 import { limitsModule } from 'app/utils/limits';
+import { vehicleKindOptions } from './kinds';
 
 export interface IVehicleFormProps {
   control: Control<VehicleFields>;
@@ -18,9 +19,20 @@ export default function VehicleForm(props: IVehicleFormProps) {
     operator: { operator },
   } = useOperatorContext();
   const limits = limitsModule(operator?.modules as Record<string, unknown>);
+  const kinds = vehicleKindOptions(operator?.vehicleKinds);
   return (
     <Stack gap="md">
       <FormTextField {...{ control }} name="name" mode="outlined" label={t('forms.fields.name')} />
+      {kinds.length ? (
+        <FormSelect
+          {...{ control }}
+          name="kind"
+          testID="vehicle-kind"
+          label={t('forms.vehicle.kind')}
+          placeholder={t('forms.vehicle.chooseKind')}
+          options={kinds}
+        />
+      ) : null}
 
       <FormTextField {...{ control }} name="registration" label={t('forms.vehicle.registration')} />
       <FormNumberField {...{ control }} name="minCapacity" label={t('forms.vehicle.minSlots')} />

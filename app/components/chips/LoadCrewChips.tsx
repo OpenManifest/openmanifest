@@ -2,6 +2,7 @@ import * as React from 'react';
 import { LoadDetailsFragment, MembershipEssentialsFragment } from 'app/api/operations';
 import { useCrewRolesQuery } from 'app/api/reflection';
 import { LoadVehicleRole } from 'app/api/schema.d';
+import { roleAppliesTo } from 'app/features/board/crew';
 import { useSession } from 'app/state';
 import CrewChip from './CrewChip';
 
@@ -27,7 +28,8 @@ export default function LoadCrewChips({ load, onSelect, ...style }: ILoadCrewChi
   const { data } = useCrewRolesQuery({
     variables: { operatorId: currentOperatorId?.toString() as string },
   });
-  const carrying = (load?.vehicles ?? []).filter(({ role }) => role === LoadVehicleRole.Carrying);
+  const vehicles = load?.vehicles ?? [];
+  const carrying = vehicles.filter(({ role }) => role === LoadVehicleRole.Carrying);
 
   return (
     <>
@@ -45,11 +47,8 @@ export default function LoadCrewChips({ load, onSelect, ...style }: ILoadCrewChi
             />
           );
         }
-        return carrying
-          .filter(
-            ({ vehicle }) =>
-              !role.vehicleKinds?.length || role.vehicleKinds.includes(vehicle.kind ?? '')
-          )
+        return vehicles
+          .filter(({ vehicle, role: vehicleRole }) => roleAppliesTo(role, vehicle, vehicleRole))
           .map((loadVehicle) => {
             const assignment = load?.crew?.find(
               ({ crewRole, loadVehicle: assigned }) =>

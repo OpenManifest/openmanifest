@@ -746,6 +746,8 @@
     },
     "vehicle": {
       "registration": "Registration",
+      "kind": "Kind",
+      "chooseKind": "Choose a kind",
       "minSlots": "Min slots",
       "maxSlots": "Max slots",
       "maximumAmountOfJumpersWho": "The most people who can be manifested on one load",
@@ -1378,7 +1380,13 @@
     "with": "With {{escort}} {{name}}",
     "noContact": "No phone or email",
     "emergencyContactOf": "Emergency contact: {{contact}}",
-    "noEmergencyContact": "none given"
+    "noEmergencyContact": "none given",
+    "departed": "Departed",
+    "back": "Back",
+    "duration": "Duration",
+    "minutes_one": "{{count}} minute",
+    "minutes_other": "{{count}} minutes",
+    "notYet": "Not yet"
   },
   "wizard": {
     "next": "Next",
