@@ -285,6 +285,16 @@ Scripts: `yarn sync:schema` (download schema), `yarn ts:graphql` (codegen), `yar
     share sheet on a phone). The profile form edits the member's `emergencyContact`. `@whale` completes a trip with
     adults and a child and exports its passenger list; `@fishing` blocks an angler without a licence on the adult ticket
     and takes them on "Adult, licence included".
+11. The scenic-flight and hot-air-balloon templates (P7.26) keep the flight log: when `dailyLog.template` is
+    `flight_log`, `DailyLogScreen` shows each load as `FlightLogLoad` (departed and back times in the operator's time
+    zone, `durationMinutes`, destinations, every vehicle of `vehicles` by its kind, the vehicle that carried first, crew
+    by role and vehicle, everybody on it). A vehicle's `kind` is chosen in the vehicle form, and shown on the vehicles
+    list, only for an operator with several kinds (`vehicleKindOptions` in `app/forms/vehicle/kinds.ts`; names from the
+    template's `terms.vehicle_kind`). A role per vehicle applies to a support vehicle only when it names the vehicle's
+    kind (`roleAppliesTo` in `app/features/board/crew.ts`, used by the load form, the board and the crew chips), so a
+    balloon flight has a pilot for the balloon and chase crew for the chase vehicle. `@scenic` keeps a passenger over a
+    helicopter's payload off and checks the flight's times in the log; `@balloon` flies a balloon with its chase vehicle
+    and crew.
 
 ## 6. Platform-specific files
 

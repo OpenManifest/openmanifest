@@ -77,6 +77,7 @@ export async function demoOperator(auth: Auth, name: string) {
       data.operator.crewRoles.map((role: { id: string; key: string }) => [role.key, role.id])
     ) as Record<string, string>,
     vehicle: data.vehicles[0] as Named,
+    vehicles: byName<Named>(data.vehicles),
   };
 }
 
@@ -96,20 +97,31 @@ export async function clearOpenLoads(auth: Auth, operatorId: number) {
   }
 }
 
-/** Creates a load of a demo operator for its vehicle, crew and places; returns its id */
+/**
+ * Creates a load of a demo operator for its vehicle (and support vehicles: a balloon's chase vehicle), crew (a role per
+ * vehicle with the vehicle's id) and places; returns its id
+ */
 export async function createTripViaApi(
   auth: Auth,
   vehicleId: string,
   name: string,
-  crew: { crewRoleId: string; membershipId: string }[],
-  destinationIds: string[]
+  crew: { crewRoleId: string; membershipId: string; vehicleId?: string }[],
+  destinationIds: string[],
+  supportVehicleIds: string[] = []
 ): Promise<string> {
   const crewInput = crew
-    .map((entry) => `{ crewRoleId: "${entry.crewRoleId}", membershipId: "${entry.membershipId}" }`)
+    .map(
+      (entry) =>
+        `{ crewRoleId: "${entry.crewRoleId}", membershipId: "${entry.membershipId}"${entry.vehicleId ? `, vehicleId: "${entry.vehicleId}"` : ''} }`
+    )
     .join(', ');
+  const vehicles = [
+    `{ vehicleId: "${vehicleId}", role: carrying }`,
+    ...supportVehicleIds.map((id) => `{ vehicleId: "${id}", role: support }`),
+  ].join(', ');
   const created = await apiAs(
     auth,
-    `mutation($name: String!) { createLoad(input: { attributes: { name: $name, vehicles: [{ vehicleId: "${vehicleId}", role: carrying }], crew: [${crewInput}], destinationIds: [${destinationIds.map(Number).join(', ')}] } }) { load { id } errors fieldErrors { message } } }`,
+    `mutation($name: String!) { createLoad(input: { attributes: { name: $name, vehicles: [${vehicles}], crew: [${crewInput}], destinationIds: [${destinationIds.map(Number).join(', ')}] } }) { load { id } errors fieldErrors { message } } }`,
     { name }
   );
   const id = created.data?.createLoad?.load?.id;
@@ -127,6 +139,7 @@ export async function manifestViaApi(
     activityType?: string;
     extras?: string[];
     guests?: { name: string; dateOfBirth: string; bodyMassKg: number }[];
+    bodyMassKg?: number;
   }
 ): Promise<{ id?: string; errors: string[] }> {
   const result = await apiAs(

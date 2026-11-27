@@ -14,6 +14,9 @@ import {
 } from './support/templates';
 import { expect, gotoRoute, test } from './support/test';
 
+// P7.26 adds scenic flights (a passenger over the helicopter's payload is kept off; the flight's times are in the flight
+// log) and balloons (a flight with its chase vehicle and chase crew, called, in flight and landed, with its times and
+// both vehicles' crew in the flight log).
 // P7.25 adds whale watching (a trip with adults and a child, completed, the passenger list exported as CSV) and the
 // fishing charter (an angler without a licence is kept off the adult ticket and taken on the licence-included one).
 // P7.24: the scuba and snorkel templates. A dive centre made in the wizard adds its boat and two sites; the seed's demo
@@ -43,7 +46,15 @@ async function openAs(page: Page, email: string, operatorName: string) {
 }
 
 /** Calls the load (the first call of the template's schedule), sends it and brings it back, from the load screen */
-async function callDepartComplete(page: Page, loadId: string, firstCall: RegExp) {
+async function callDepartComplete(
+  page: Page,
+  loadId: string,
+  firstCall: RegExp,
+  states: { departed: RegExp; completed: RegExp } = {
+    departed: /at sea|departed/i,
+    completed: /back|completed/i,
+  }
+) {
   await gotoRoute(page, `/loads/${loadId}`);
   const primary = page.getByTestId('load-actions-primary');
   const state = page.getByTestId('load-header-state');
@@ -53,10 +64,10 @@ async function callDepartComplete(page: Page, loadId: string, firstCall: RegExp)
   await press(page, call);
   await expect(state).toContainText(/boarding/i, { timeout: 15_000 });
   await pressUntil(page, primary, () =>
-    expect(state).toContainText(/at sea|departed/i, { timeout: 5_000 })
+    expect(state).toContainText(states.departed, { timeout: 5_000 })
   );
   await pressUntil(page, primary, () =>
-    expect(state).toContainText(/back|completed/i, { timeout: 5_000 })
+    expect(state).toContainText(states.completed, { timeout: 5_000 })
   );
 }
 
@@ -407,6 +418,169 @@ test.describe('the whale-watching and fishing-charter templates @templates', () 
       await callDepartComplete(page, trip, /30 minute/i);
     } finally {
       await clearOpenLoads(owner, charter.id);
+    }
+  });
+});
+
+const AVIATION_STATES = { departed: /in flight/i, completed: /landed/i };
+
+test.describe('the scenic-flight and hot-air-balloon templates @templates', () => {
+  test.describe.configure({ timeout: 240_000 });
+  // The flight log is of the operator's day: the browser is where the demo operators are
+  test.use({ timezoneId: 'Australia/Brisbane' });
+
+  test('a scenic flight keeps a passenger over the payload off and logs its times @scenic', async ({
+    page,
+  }) => {
+    const owner = await signIn(templateEmail('scenic_flights', 'owner'));
+    const scenic = await demoOperator(owner, 'Harbour Scenic Flights');
+    await clearOpenLoads(owner, scenic.id);
+    try {
+      const helicopter = scenic.vehicles.Kestrel.id;
+      const flight = await createTripViaApi(
+        owner,
+        helicopter,
+        `Coast ${test.info().project.name}`,
+        [
+          {
+            crewRoleId: scenic.crew.pilot,
+            membershipId: scenic.members['Hollis Pilot'],
+            vehicleId: helicopter,
+          },
+        ],
+        [scenic.destinations['Coastal loop'].id]
+      );
+      const adult = scenic.tickets.Adult.id;
+      // The helicopter carries 300 kg: the pilot (75) and two passengers (110, 100) leave 15
+      for (const [name, bodyMassKg] of [
+        ['Tara Tourist', 110],
+        ['Vic Visitor', 100],
+      ] as const) {
+        const seated = await manifestViaApi(owner, {
+          load: flight,
+          membership: scenic.members[name],
+          ticketType: adult,
+          bodyMassKg,
+        });
+        expect(seated.errors).toEqual([]);
+      }
+      const over = await manifestViaApi(owner, {
+        load: flight,
+        membership: scenic.members['Quinn Sightseer'],
+        ticketType: adult,
+        bodyMassKg: 60,
+      });
+      expect(over.id).toBeUndefined();
+      expect(over.errors.join(' ')).toMatch(/can carry at most 300/);
+
+      await openAs(page, templateEmail('scenic_flights', 'owner'), 'Harbour Scenic Flights');
+      // The operator flies two kinds of aircraft: each vehicle says which
+      await gotoRoute(page, '/configuration/vehicles');
+      await expect(page.getByText('Helicopter').first()).toBeVisible({ timeout: 20_000 });
+      await expect(page.getByText('Aeroplane').first()).toBeVisible();
+
+      await gotoRoute(page, `/loads/${flight}`);
+      for (const person of ['Tara Tourist', 'Vic Visitor']) {
+        await expect(page.getByText(person).first()).toBeVisible({ timeout: 20_000 });
+      }
+      await expect(page.getByText('Quinn Sightseer')).toHaveCount(0);
+      await expectLayout(page, 'scenic flight');
+      await expectAccessible(page, 'scenic flight');
+      await callDepartComplete(page, flight, /30 minute/i, AVIATION_STATES);
+
+      await gotoRoute(page, '/daily-log');
+      const section = page.getByTestId(`daily-log-load-${flight}`);
+      await expect(section).toBeVisible({ timeout: 20_000 });
+      await expect(page.getByTestId(`daily-log-load-${flight}-departed-value`)).toHaveText(
+        /^\d{2}:\d{2}$/
+      );
+      await expect(page.getByTestId(`daily-log-load-${flight}-duration-value`)).toHaveText(
+        /\d+ minutes?/
+      );
+      await expect(section).toContainText('Hollis Pilot');
+      await expect(section).toContainText('Kestrel SF-101');
+    } finally {
+      await clearOpenLoads(owner, scenic.id);
+    }
+  });
+
+  test('a balloon flight with its chase vehicle and crew, in flight and landed, in the flight log @balloon', async ({
+    page,
+  }) => {
+    const owner = await signIn(templateEmail('hot_air_balloon', 'owner'));
+    const balloons = await demoOperator(owner, 'Valley Dawn Balloons');
+    await clearOpenLoads(owner, balloons.id);
+    try {
+      const balloon = balloons.vehicles.Sunrise.id;
+      const chase = balloons.vehicles['Chase One'].id;
+      const flight = await createTripViaApi(
+        owner,
+        balloon,
+        `Dawn ${test.info().project.name}`,
+        [
+          {
+            crewRoleId: balloons.crew.pilot,
+            membershipId: balloons.members['Aria Pilot'],
+            vehicleId: balloon,
+          },
+          {
+            crewRoleId: balloons.crew.chase_crew,
+            membershipId: balloons.members['Cole Chaser'],
+            vehicleId: chase,
+          },
+        ],
+        [balloons.destinations['Valley field'].id],
+        [chase]
+      );
+      // A child under the template's minimum age stays on the ground; one over it flies with the adult
+      const young = await manifestViaApi(owner, {
+        load: flight,
+        membership: balloons.members['Fay Flyer'],
+        ticketType: balloons.tickets['Adult with child'].id,
+        guests: [{ name: 'Tiny Tot', dateOfBirth: '2022-01-01', bodyMassKg: 18 }],
+      });
+      expect(young.errors.join(' ')).toMatch(/at least 8 years old/);
+      const family = await manifestViaApi(owner, {
+        load: flight,
+        membership: balloons.members['Fay Flyer'],
+        ticketType: balloons.tickets['Adult with child'].id,
+        guests: [{ name: 'Ivy Young', dateOfBirth: '2015-06-21', bodyMassKg: 34 }],
+      });
+      expect(family.errors).toEqual([]);
+      const adult = await manifestViaApi(owner, {
+        load: flight,
+        membership: balloons.members['Hugo Highfield'],
+        ticketType: balloons.tickets.Adult.id,
+      });
+      expect(adult.errors).toEqual([]);
+
+      await openAs(page, templateEmail('hot_air_balloon', 'owner'), 'Valley Dawn Balloons');
+      await gotoRoute(page, `/loads/${flight}`);
+      for (const person of ['Fay Flyer', 'Ivy Young', 'Hugo Highfield', 'Cole Chaser']) {
+        await expect(page.getByText(person).first()).toBeVisible({ timeout: 20_000 });
+      }
+      await expectLayout(page, 'balloon flight');
+      await expectAccessible(page, 'balloon flight');
+      await callDepartComplete(page, flight, /60 minute/i, AVIATION_STATES);
+
+      await gotoRoute(page, '/daily-log');
+      const section = page.getByTestId(`daily-log-load-${flight}`);
+      await expect(section).toBeVisible({ timeout: 20_000 });
+      await expect(page.getByTestId(`daily-log-load-${flight}-departed-value`)).toHaveText(
+        /^\d{2}:\d{2}$/
+      );
+      await expect(page.getByTestId(`daily-log-load-${flight}-back-value`)).toHaveText(
+        /^\d{2}:\d{2}$/
+      );
+      await expect(section).toContainText('Sunrise HB-201');
+      await expect(section).toContainText('Chase One HB-202');
+      await expect(section).toContainText('Chase crew · Chase One');
+      await expect(section).toContainText('Cole Chaser');
+      await expect(page.getByTestId(`daily-log-load-${flight}-count-value`)).toHaveText('3');
+      await expectLayout(page, 'flight log');
+      await expectAccessible(page, 'flight log');
+    } finally {
+      await clearOpenLoads(owner, balloons.id);
     }
   });
 });
