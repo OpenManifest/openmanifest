@@ -295,6 +295,12 @@ Scripts: `yarn sync:schema` (download schema), `yarn ts:graphql` (codegen), `yar
     balloon flight has a pilot for the balloon and chase crew for the chase vehicle. `@scenic` keeps a passenger over a
     helicopter's payload off and checks the flight's times in the log; `@balloon` flies a balloon with its chase vehicle
     and crew.
+12. The tandem-paragliding and parasailing templates (P7.27) are data only: no client change. A tandem passenger is the
+    guest of a pilot who holds the escort qualification of the ticket (one guest each); a parasail flight is the slots
+    of one `groupNumber`, checked against the ticket's `groupLimits` (size and combined body mass) by `slotEligibility`
+    and `createSlot`. `@paragliding` flies three passengers with three rated pilots on one van run and keeps a fourth
+    off (the driver has no rating, a pilot takes one passenger); `@parasailing` keeps a triple flight over its combined
+    body mass off and flies the three as a tandem and a solo (`manifestViaApi` takes a `groupNumber`).
 
 ## 6. Platform-specific files
 

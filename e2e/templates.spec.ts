@@ -7,6 +7,7 @@ import { press, pressUntil } from './support/press';
 import {
   clearOpenLoads,
   createTripViaApi,
+  deleteSlotViaApi,
   demoOperator,
   manifestViaApi,
   signIn,
@@ -14,6 +15,9 @@ import {
 } from './support/templates';
 import { expect, gotoRoute, test } from './support/test';
 
+// P7.27 adds tandem paragliding (three passengers fly with three rated pilots on one shuttle run; a fourth has no pilot
+// left: the driver holds no rating and a pilot takes one passenger) and parasailing (a triple flight over its combined
+// body mass is kept off and the three fly as a tandem and a solo).
 // P7.26 adds scenic flights (a passenger over the helicopter's payload is kept off; the flight's times are in the flight
 // log) and balloons (a flight with its chase vehicle and chase crew, called, in flight and landed, with its times and
 // both vehicles' crew in the flight log).
@@ -581,6 +585,164 @@ test.describe('the scenic-flight and hot-air-balloon templates @templates', () =
       await expectAccessible(page, 'flight log');
     } finally {
       await clearOpenLoads(owner, balloons.id);
+    }
+  });
+});
+
+test.describe('the tandem-paragliding and parasailing templates @templates', () => {
+  test.describe.configure({ timeout: 240_000 });
+  // The flight log and the passenger list are of the operator's day: the browser is where the demo operators are
+  test.use({ timezoneId: 'Australia/Brisbane' });
+
+  test('three passengers with three tandem pilots on one run, a fourth without a pilot @paragliding', async ({
+    page,
+  }) => {
+    const owner = await signIn(templateEmail('tandem_paragliding', 'owner'));
+    const tandems = await demoOperator(owner, 'Ridge Lift Tandems');
+    await clearOpenLoads(owner, tandems.id);
+    try {
+      const van = tandems.vehicles['Shuttle One'].id;
+      const run = await createTripViaApi(
+        owner,
+        van,
+        `Ridge ${test.info().project.name}`,
+        [
+          {
+            crewRoleId: tandems.crew.driver,
+            membershipId: tandems.members['Dev Driver'],
+            vehicleId: van,
+          },
+        ],
+        [tandems.destinations['North launch'].id]
+      );
+      const tandem = tandems.tickets['Tandem flight'].id;
+      const pairs = [
+        ['Rhea Ridge', { name: 'Ana Airborne', dateOfBirth: '1994-03-03', bodyMassKg: 62 }],
+        ['Theo Thermal', { name: 'Ben Breeze', dateOfBirth: '1987-12-12', bodyMassKg: 88 }],
+        ['Wren Wingover', { name: 'Cam Cloud', dateOfBirth: '2014-08-08', bodyMassKg: 38 }],
+      ] as const;
+      for (const [pilot, passenger] of pairs) {
+        const flown = await manifestViaApi(owner, {
+          load: run,
+          membership: tandems.members[pilot],
+          ticketType: tandem,
+          guests: [passenger],
+        });
+        expect(flown.errors).toEqual([]);
+      }
+      // The fourth passenger: the driver holds no tandem rating, and a pilot flies one passenger at a time
+      const fourth = { name: 'Dot Drift', dateOfBirth: '1999-05-15', bodyMassKg: 70 };
+      const withDriver = await manifestViaApi(owner, {
+        load: run,
+        membership: tandems.members['Dev Driver'],
+        ticketType: tandem,
+        guests: [fourth],
+      });
+      expect(withDriver.id).toBeUndefined();
+      expect(withDriver.errors.join(' ')).toMatch(
+        /Dev Driver cannot escort guests: missing qualification/
+      );
+      const twoAtOnce = await manifestViaApi(owner, {
+        load: run,
+        membership: tandems.members['Rhea Ridge'],
+        ticketType: tandem,
+        guests: [pairs[0][1], fourth],
+      });
+      expect(twoAtOnce.errors.join(' ')).toMatch(/takes at most 1 guest for each escort/);
+
+      await openAs(page, templateEmail('tandem_paragliding', 'owner'), 'Ridge Lift Tandems');
+      await gotoRoute(page, `/loads/${run}`);
+      for (const [pilot, passenger] of pairs) {
+        await expect(page.getByText(pilot).first()).toBeVisible({ timeout: 20_000 });
+        await expect(page.getByText(passenger.name).first()).toBeVisible();
+      }
+      await expect(page.getByText('Dot Drift')).toHaveCount(0);
+      await expectLayout(page, 'shuttle run');
+      await expectAccessible(page, 'shuttle run');
+      await callDepartComplete(page, run, /30 minute/i, AVIATION_STATES);
+
+      await gotoRoute(page, '/daily-log');
+      const section = page.getByTestId(`daily-log-load-${run}`);
+      await expect(section).toBeVisible({ timeout: 20_000 });
+      await expect(section).toContainText('Shuttle One PG-301');
+      await expect(section).toContainText('Dev Driver');
+      await expect(page.getByTestId(`daily-log-load-${run}-count-value`)).toHaveText('6');
+    } finally {
+      await clearOpenLoads(owner, tandems.id);
+    }
+  });
+
+  test('a triple flight over its weight is kept off and flies as a tandem and a solo @parasailing', async ({
+    page,
+  }) => {
+    const owner = await signIn(templateEmail('parasailing', 'owner'));
+    const parasail = await demoOperator(owner, 'Bayside Parasail');
+    await clearOpenLoads(owner, parasail.id);
+    try {
+      const trip = await createTripViaApi(
+        owner,
+        parasail.vehicle.id,
+        `Bay ${test.info().project.name}`,
+        [
+          { crewRoleId: parasail.crew.captain, membershipId: parasail.members['Cora Captain'] },
+          {
+            crewRoleId: parasail.crew.winch_operator,
+            membershipId: parasail.members['Will Winch'],
+          },
+        ],
+        []
+      );
+      const flyers = [
+        ['Fran Flyer', 85],
+        ['Hal Heavy', 95],
+        ['Kai Kite', 60],
+      ] as const;
+      const fly = (index: number, ticket: string, groupNumber: number) =>
+        manifestViaApi(owner, {
+          load: trip,
+          membership: parasail.members[flyers[index][0]],
+          ticketType: parasail.tickets[ticket].id,
+          bodyMassKg: flyers[index][1],
+          groupNumber,
+        });
+
+      // 85 + 95 + 60 = 240 kg: over the triple flight's 225
+      const first = await fly(0, 'Triple flight', 1);
+      const second = await fly(1, 'Triple flight', 1);
+      expect([...first.errors, ...second.errors]).toEqual([]);
+      const third = await fly(2, 'Triple flight', 1);
+      expect(third.id).toBeUndefined();
+      expect(third.errors.join(' ')).toMatch(/A flight group can weigh at most 225/);
+
+      // The two heavier flyers go as a tandem, the third alone
+      await deleteSlotViaApi(owner, first.id!);
+      await deleteSlotViaApi(owner, second.id!);
+      for (const [index, ticket, group] of [
+        [0, 'Tandem flight', 2],
+        [1, 'Tandem flight', 2],
+        [2, 'Solo flight', 3],
+      ] as const) {
+        const flown = await fly(index, ticket, group);
+        expect(flown.errors).toEqual([]);
+      }
+
+      await openAs(page, templateEmail('parasailing', 'owner'), 'Bayside Parasail');
+      await gotoRoute(page, `/loads/${trip}`);
+      for (const [name] of flyers) {
+        await expect(page.getByText(name).first()).toBeVisible({ timeout: 20_000 });
+      }
+      await expectLayout(page, 'parasail trip');
+      await expectAccessible(page, 'parasail trip');
+      await callDepartComplete(page, trip, /30 minute/i);
+
+      await gotoRoute(page, '/daily-log');
+      const section = page.getByTestId(`daily-log-load-${trip}`);
+      await expect(section).toBeVisible({ timeout: 20_000 });
+      await expect(section).toContainText('Will Winch');
+      await expect(section).toContainText('Emergency contact: Ida Heavy 0400 343 434');
+      await expect(section).toContainText('Solo flight');
+    } finally {
+      await clearOpenLoads(owner, parasail.id);
     }
   });
 });

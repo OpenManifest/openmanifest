@@ -140,6 +140,8 @@ export async function manifestViaApi(
     extras?: string[];
     guests?: { name: string; dateOfBirth: string; bodyMassKg: number }[];
     bodyMassKg?: number;
+    /** The flight group the slot flies in (a parasail flight): slots of one number fly together */
+    groupNumber?: number;
   }
 ): Promise<{ id?: string; errors: string[] }> {
   const result = await apiAs(
@@ -156,4 +158,14 @@ export async function manifestViaApi(
       ...(result.errors ?? []).map((error: { message: string }) => error.message),
     ],
   };
+}
+
+/** Takes a slot (and its guests) off its load */
+export async function deleteSlotViaApi(auth: Auth, slotId: string) {
+  const result = await apiAs(
+    auth,
+    `mutation { deleteSlot(input: { id: ${Number(slotId)} }) { errors } }`
+  );
+  const errors = result.data?.deleteSlot?.errors ?? result.errors ?? [];
+  if (errors.length) throw new Error(`could not delete slot ${slotId}: ${JSON.stringify(errors)}`);
 }
