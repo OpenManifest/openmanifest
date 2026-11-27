@@ -7693,6 +7693,12 @@
             "deprecationReason": null
           },
           {
+            "name": "PARASAILING",
+            "description": "Solo, tandem and triple flights from a boat, weight limits per flyer and per flight, a passenger list",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "SCENIC_FLIGHTS",
             "description": "Helicopters and aeroplanes on scenic routes, weight limits, a flight log",
             "isDeprecated": false,
@@ -7713,6 +7719,12 @@
           {
             "name": "SNORKEL",
             "description": "Boats to reefs, snorkel gear, children with an adult",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "TANDEM_PARAGLIDING",
+            "description": "A shuttle van to launch sites, tandem pilots with one passenger each, wing and harness checks, a flight log",
             "isDeprecated": false,
             "deprecationReason": null
           },

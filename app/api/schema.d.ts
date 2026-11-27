@@ -998,6 +998,8 @@ export enum Industry {
   Generic = 'GENERIC',
   /** Balloon flights from launch sites, a chase vehicle and crew, age and weight limits, a flight log */
   HotAirBalloon = 'HOT_AIR_BALLOON',
+  /** Solo, tandem and triple flights from a boat, weight limits per flyer and per flight, a passenger list */
+  Parasailing = 'PARASAILING',
   /** Helicopters and aeroplanes on scenic routes, weight limits, a flight log */
   ScenicFlights = 'SCENIC_FLIGHTS',
   /** Boats to dive sites, certified divers, rental gear */
@@ -1006,6 +1008,8 @@ export enum Industry {
   Skydiving = 'SKYDIVING',
   /** Boats to reefs, snorkel gear, children with an adult */
   Snorkel = 'SNORKEL',
+  /** A shuttle van to launch sites, tandem pilots with one passenger each, wing and harness checks, a flight log */
+  TandemParagliding = 'TANDEM_PARAGLIDING',
   /** Boats on whale-watching routes, a passenger list, children with an adult */
   WhaleWatching = 'WHALE_WATCHING'
 }
