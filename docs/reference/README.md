@@ -278,6 +278,13 @@ Scripts: `yarn sync:schema` (download schema), `yarn ts:graphql` (codegen), `yar
    changes (BUG-132). The `@templates` smoke (`e2e/templates.spec.ts`, helpers in `e2e/support/templates.ts`) creates a
    dive centre in the wizard with PADI and SSI, a boat and two sites, then runs the seed's demo dive centre and snorkel
    operator (`<slug>-owner@example.com`) through a trip each.
+10. The whale-watching and fishing-charter templates (P7.25) are data on the server too. Their daily log is the guest
+    list: when `dailyLog.template` is `guest_list`, `DailyLogScreen` shows each load as `GuestListLoad` (destinations,
+    crew by role, everybody with phone, email, emergency contact, ticket and escort) and an "Export as CSV" button that
+    hands the server's `dailyLog.csv` to `exportCsv` (`app/features/dailylog/exportCsv.ts`: a download on the web, the
+    share sheet on a phone). The profile form edits the member's `emergencyContact`. `@whale` completes a trip with
+    adults and a child and exports its passenger list; `@fishing` blocks an angler without a licence on the adult ticket
+    and takes them on "Adult, licence included".
 
 ## 6. Platform-specific files
 
