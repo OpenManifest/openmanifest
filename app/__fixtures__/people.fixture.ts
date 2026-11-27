@@ -61,6 +61,7 @@ export const personOf = (id: string, name: string, options: Options = {}) =>
       email: options.email ?? `${name.split(' ')[0].toLowerCase()}@example.com`,
       bodyMassKg: 80,
       dateOfBirth: null,
+      emergencyContact: null,
       moderationRole: 'user',
       image: null,
     },

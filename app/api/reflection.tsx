@@ -27,6 +27,7 @@ export const UserEssentialsFragmentDoc = gql`
   email
   bodyMassKg
   dateOfBirth
+  emergencyContact
   moderationRole
   image
 }
@@ -329,6 +330,14 @@ export const DailyLogUserFragmentDoc = gql`
   phone
 }
     `;
+export const DailyLogCrewFragmentDoc = gql`
+    fragment dailyLogCrew on DailyLogCrew {
+  id
+  role
+  name
+  phone
+}
+    `;
 export const DailyLogVehicleFragmentDoc = gql`
     fragment dailyLogVehicle on DailyLogVehicle {
   id
@@ -342,13 +351,25 @@ export const DailyLogSlotFragmentDoc = gql`
   altitudeM
   activityType
   name
+  phone
+  email
+  emergencyContact
+  ticketType
+  escort
 }
     `;
 export const DailyLogLoadFragmentDoc = gql`
     fragment dailyLogLoad on DailyLogLoad {
   id
   loadNumber
+  name
   dispatchAt
+  departedAt
+  completedAt
+  destinations
+  crew {
+    ...dailyLogCrew
+  }
   vehicle {
     ...dailyLogVehicle
   }
@@ -365,7 +386,8 @@ export const DailyLogLoadFragmentDoc = gql`
     ...dailyLogSlot
   }
 }
-    ${DailyLogVehicleFragmentDoc}
+    ${DailyLogCrewFragmentDoc}
+${DailyLogVehicleFragmentDoc}
 ${DailyLogUserFragmentDoc}
 ${DailyLogSlotFragmentDoc}`;
 export const LocationFragmentDoc = gql`
@@ -382,6 +404,8 @@ export const DailyLogEntryFragmentDoc = gql`
   date
   notes
   downloadUrl
+  template
+  csv
   dutyOfficer {
     ...dailyLogUser
   }
@@ -3125,9 +3149,9 @@ export type UpdateTicketTypeMutationHookResult = ReturnType<typeof useUpdateTick
 export type UpdateTicketTypeMutationResult = Apollo.MutationResult<Operation.UpdateTicketTypeMutation>;
 export type UpdateTicketTypeMutationOptions = Apollo.BaseMutationOptions<Operation.UpdateTicketTypeMutation, Operation.UpdateTicketTypeMutationVariables>;
 export const UpdateUserDocument = gql`
-    mutation UpdateUser($membership: ID, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $certificationLevel: Int, $bodyMassKg: Float, $dateOfBirth: ISO8601Date) {
+    mutation UpdateUser($membership: ID, $name: String, $phone: String, $email: String, $image: String, $pushToken: String, $nickname: String, $certificationLevel: Int, $bodyMassKg: Float, $dateOfBirth: ISO8601Date, $emergencyContact: String) {
   updateUser(
-    input: {membership: $membership, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, certificationLevel: $certificationLevel, bodyMassKg: $bodyMassKg, dateOfBirth: $dateOfBirth}}
+    input: {membership: $membership, attributes: {pushToken: $pushToken, name: $name, phone: $phone, email: $email, image: $image, nickname: $nickname, certificationLevel: $certificationLevel, bodyMassKg: $bodyMassKg, dateOfBirth: $dateOfBirth, emergencyContact: $emergencyContact}}
   ) {
     errors
     fieldErrors {
@@ -3165,6 +3189,7 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<Operation.UpdateUserM
  *      certificationLevel: // value for 'certificationLevel'
  *      bodyMassKg: // value for 'bodyMassKg'
  *      dateOfBirth: // value for 'dateOfBirth'
+ *      emergencyContact: // value for 'emergencyContact'
  *   },
  * });
  */

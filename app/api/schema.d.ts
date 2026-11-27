@@ -432,8 +432,19 @@ export type DailyLog = {
   updatedAt: Scalars['ISO8601DateTime']['output'];
 };
 
+/** A member on the crew of a load, by the operator's name of the role */
+export type DailyLogCrew = {
+  __typename?: 'DailyLogCrew';
+  id?: Maybe<Scalars['ID']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  role?: Maybe<Scalars['String']['output']>;
+};
+
 export type DailyLogEntry = {
   __typename?: 'DailyLogEntry';
+  /** The day's guest list as CSV: one row per person on each load */
+  csv?: Maybe<Scalars['String']['output']>;
   date?: Maybe<Scalars['ISO8601Date']['output']>;
   downloadUrl?: Maybe<Scalars['String']['output']>;
   dutyOfficer?: Maybe<DailyLogUser>;
@@ -441,6 +452,8 @@ export type DailyLogEntry = {
   loads?: Maybe<Array<DailyLogLoad>>;
   location?: Maybe<GeocodedLocation>;
   notes?: Maybe<Scalars['String']['output']>;
+  /** Which daily log the operator keeps: apf_log, flight_log or guest_list */
+  template?: Maybe<Scalars['String']['output']>;
 };
 
 export type DailyLogInput = {
@@ -450,11 +463,17 @@ export type DailyLogInput = {
 
 export type DailyLogLoad = {
   __typename?: 'DailyLogLoad';
+  completedAt?: Maybe<Scalars['ISO8601DateTime']['output']>;
+  crew?: Maybe<Array<DailyLogCrew>>;
+  departedAt?: Maybe<Scalars['ISO8601DateTime']['output']>;
+  /** Names of the places the load went to */
+  destinations?: Maybe<Array<Scalars['String']['output']>>;
   dispatchAt?: Maybe<Scalars['ISO8601DateTime']['output']>;
   gca?: Maybe<DailyLogUser>;
   id: Scalars['ID']['output'];
   loadMaster?: Maybe<DailyLogUser>;
   loadNumber?: Maybe<Scalars['Int']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
   pilot?: Maybe<DailyLogUser>;
   slots?: Maybe<Array<DailyLogSlot>>;
   vehicle?: Maybe<DailyLogVehicle>;
@@ -465,8 +484,16 @@ export type DailyLogSlot = {
   activityType?: Maybe<Scalars['String']['output']>;
   /** Metres */
   altitudeM?: Maybe<Scalars['Float']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  /** The person's own, or for a guest without one their escort's name and phone */
+  emergencyContact?: Maybe<Scalars['String']['output']>;
+  /** For a guest: the name of the member they came with */
+  escort?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   name?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  /** The ticket's name */
+  ticketType?: Maybe<Scalars['String']['output']>;
 };
 
 export type DailyLogUser = {
@@ -954,6 +981,8 @@ export type GuestInput = {
 
 /** The industry of an operator: chosen when it is created, never changed */
 export enum Industry {
+  /** Boats to fishing grounds, fishing licences, rod and tackle hire */
+  FishingCharter = 'FISHING_CHARTER',
   /** Any operator that manifests people onto loads; switch on what you need */
   Generic = 'GENERIC',
   /** Boats to dive sites, certified divers, rental gear */
@@ -961,7 +990,9 @@ export enum Industry {
   /** Aircraft, jumpers, licences, rigs and the master log */
   Skydiving = 'SKYDIVING',
   /** Boats to reefs, snorkel gear, children with an adult */
-  Snorkel = 'SNORKEL'
+  Snorkel = 'SNORKEL',
+  /** Boats on whale-watching routes, a passenger list, children with an adult */
+  WhaleWatching = 'WHALE_WATCHING'
 }
 
 /** What an industry template says about bookings (the booking plan builds on it) */
@@ -3032,6 +3063,8 @@ export type User = AnyResource & {
   /** Needed where a ticket or an activity has an age limit */
   dateOfBirth?: Maybe<Scalars['ISO8601Date']['output']>;
   email?: Maybe<Scalars['String']['output']>;
+  /** Who to call for the member (name and phone): the passenger list shows it */
+  emergencyContact?: Maybe<Scalars['String']['output']>;
   equipment?: Maybe<Array<Equipment>>;
   guid: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
@@ -3085,6 +3118,7 @@ export type UserInput = {
   certificationLevel?: InputMaybe<Scalars['Int']['input']>;
   dateOfBirth?: InputMaybe<Scalars['ISO8601Date']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
+  emergencyContact?: InputMaybe<Scalars['String']['input']>;
   image?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   nickname?: InputMaybe<Scalars['String']['input']>;

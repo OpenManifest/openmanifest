@@ -91,6 +91,7 @@ describe('<UserDialog />', () => {
             name: 'Court J. Jester',
             certificationLevel: 2,
             phone: '0411 111 111',
+            emergencyContact: '',
             bodyMassKg: 70,
             email: 'cj@example.com',
           },

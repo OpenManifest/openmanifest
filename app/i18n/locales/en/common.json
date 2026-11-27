@@ -690,6 +690,8 @@
     "user": {
       "updateInformation": "Update information",
       "phone": "Phone",
+      "emergencyContact": "Emergency contact",
+      "emergencyContactPlaceholder": "Name and phone of who to call",
       "bodyMassKg": "Body weight",
       "nameIsRequired": "Name is required",
       "notAValidEmail": "Not a valid email",
@@ -1371,7 +1373,12 @@
     "pilot": "Pilot",
     "gca": "Ground control",
     "noVehicle": "No {{vehicle}} chosen",
-    "nobodyOn": "Nobody was on this {{load}}"
+    "nobodyOn": "Nobody was on this {{load}}",
+    "exportCsv": "Export the {{log}} as CSV",
+    "with": "With {{escort}} {{name}}",
+    "noContact": "No phone or email",
+    "emergencyContactOf": "Emergency contact: {{contact}}",
+    "noEmergencyContact": "none given"
   },
   "wizard": {
     "next": "Next",

@@ -20,6 +20,7 @@ export type UserFields = {
   nickname: string;
   email: string;
   phone: string;
+  emergencyContact: string;
   bodyMassKg: number;
   certificationBody: CertificationBodyEssentialsFragment | null;
   certificationLevel: CertificationLevelDetailsFragment | null;
@@ -38,6 +39,7 @@ export const userValidation = yup.object({
     .email(() => i18n.t('forms.user.notAValidEmail'))
     .required(() => i18n.t('forms.user.emailIsRequired')),
   phone: yup.string().default(''),
+  emergencyContact: yup.string().default(''),
   bodyMassKg: yup
     .number()
     .typeError(() => i18n.t('forms.user.bodyMassMustBeAValid'))
@@ -53,6 +55,7 @@ export const EMPTY_FORM_VALUES: UserFields = {
   nickname: '',
   email: '',
   phone: '',
+  emergencyContact: '',
   bodyMassKg: 60,
   certificationBody: null,
   certificationLevel: null,
@@ -74,6 +77,7 @@ export function toFormValues(membership?: MembershipDetailsFragment | null): Use
     nickname: user?.nickname || '',
     email: user?.email || '',
     phone: user?.phone || '',
+    emergencyContact: user?.emergencyContact || '',
     bodyMassKg: Number(user?.bodyMassKg) || EMPTY_FORM_VALUES.bodyMassKg,
     certificationBody: certificationLevel?.certificationBody || null,
     certificationLevel: certificationLevel || null,
@@ -135,6 +139,7 @@ export default function useUserForm(opts: IUseUserFormOpts) {
           ? null
           : Number(fields.certificationLevel.id),
         phone: fields.phone,
+        emergencyContact: fields.emergencyContact,
         bodyMassKg: fields.bodyMassKg,
         email: fields.email,
       });

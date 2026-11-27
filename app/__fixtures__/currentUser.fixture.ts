@@ -52,6 +52,7 @@ export const currentUserDetailed: DeepRequired<CurrentUserDetailedFragment> = {
     moderationRole: ModerationRole.User,
     nickname: 'Jex',
     dateOfBirth: null,
+    emergencyContact: null,
     userCertifications: [],
     id: '234',
     name: 'Court Jester',

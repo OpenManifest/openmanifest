@@ -24,12 +24,16 @@ import {
   useTheme,
 } from 'app/ui';
 import Section, { Fact } from 'app/features/profile/Section';
+import { useNotifications } from 'app/providers/notifications';
 import { clampToToday, dayTitle, isoDayOf, secondsOf } from './dailyLog';
+import { csvFileName, exportCsv } from './exportCsv';
+import GuestListLoad from './GuestListLoad';
 import useDailyLogForm from './useDailyLogForm';
 
 /**
  * The daily log (Setup → Daily log): a day's duty officer and notes, which staff change here, and every load of the
- * day with its crew, vehicle and who was on it. The day's log downloads as a file.
+ * day with its crew, vehicle and who was on it. The day's log downloads as a file. Operators whose template keeps a guest
+ * list (boats and ground tours) see each person's contact and emergency contact, and export the day as CSV.
  */
 export default function DailyLogScreen() {
   const { t } = useTranslation('common');
@@ -70,6 +74,16 @@ export default function DailyLogScreen() {
   const onDownload = () => {
     if (entry?.downloadUrl) Linking.openURL(entry.downloadUrl);
   };
+  const notify = useNotifications();
+  const guestList = entry?.template === 'guest_list';
+  const onExport = async () => {
+    if (!entry?.csv) return;
+    try {
+      await exportCsv(entry.csv, csvFileName(term('daily_log'), date));
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : String(error));
+    }
+  };
 
   return (
     <ScreenContainer edges={['bottom']} testID="daily-log">
@@ -95,6 +109,15 @@ export default function DailyLogScreen() {
             disabled={!entry?.downloadUrl}
             onPress={onDownload}
           />
+          {guestList ? (
+            <IconButton
+              icon="file-delimited-outline"
+              aria-label={t('dailyLog.exportCsv', { log: term('daily_log').toLowerCase() })}
+              testID="daily-log-export-csv"
+              disabled={!entry?.loads?.length}
+              onPress={onExport}
+            />
+          ) : null}
         </Row>
 
         <Section
@@ -173,43 +196,53 @@ export default function DailyLogScreen() {
             title={t('dailyLog.noLoads', words)}
           />
         ) : null}
-        {entry?.loads?.map((load) => (
-          <Section
-            key={load.id}
-            title={t('loadNumber', { load: term('load'), number: load.loadNumber })}
-            testID={`daily-log-load-${load.id}`}
-            list
-          >
-            <View style={{ paddingHorizontal: theme.space.lg, gap: theme.space.xs }}>
-              <Fact label={t('dailyLog.pilot')} value={load.pilot?.name || t('dailyLog.nobody')} />
-              <Fact label={t('dailyLog.gca')} value={load.gca?.name || t('dailyLog.nobody')} />
-              <Fact
-                label={term('vehicle')}
-                value={
-                  load.vehicle
-                    ? [load.vehicle.name, load.vehicle.registration].filter(Boolean).join(' ')
-                    : t('dailyLog.noVehicle', { vehicle: term('vehicle').toLowerCase() })
-                }
-              />
-            </View>
-            <Divider />
-            {load.slots?.length ? (
-              load.slots.map((slot) => (
-                <ListRow
-                  key={slot.id}
-                  testID={`daily-log-slot-${slot.id}`}
-                  title={slot.name || ''}
-                  supporting={slot.activityType || undefined}
-                  trailing={<Text tone="muted">{formatQuantity(slot.altitudeM, 'altitude')}</Text>}
-                />
-              ))
-            ) : (
-              <View style={{ paddingHorizontal: theme.space.lg }}>
-                <Text tone="muted">{t('dailyLog.nobodyOn', words)}</Text>
-              </View>
-            )}
-          </Section>
-        ))}
+        {guestList
+          ? entry?.loads?.map((load) => <GuestListLoad key={load.id} load={load} />)
+          : null}
+        {guestList
+          ? null
+          : entry?.loads?.map((load) => (
+              <Section
+                key={load.id}
+                title={t('loadNumber', { load: term('load'), number: load.loadNumber })}
+                testID={`daily-log-load-${load.id}`}
+                list
+              >
+                <View style={{ paddingHorizontal: theme.space.lg, gap: theme.space.xs }}>
+                  <Fact
+                    label={t('dailyLog.pilot')}
+                    value={load.pilot?.name || t('dailyLog.nobody')}
+                  />
+                  <Fact label={t('dailyLog.gca')} value={load.gca?.name || t('dailyLog.nobody')} />
+                  <Fact
+                    label={term('vehicle')}
+                    value={
+                      load.vehicle
+                        ? [load.vehicle.name, load.vehicle.registration].filter(Boolean).join(' ')
+                        : t('dailyLog.noVehicle', { vehicle: term('vehicle').toLowerCase() })
+                    }
+                  />
+                </View>
+                <Divider />
+                {load.slots?.length ? (
+                  load.slots.map((slot) => (
+                    <ListRow
+                      key={slot.id}
+                      testID={`daily-log-slot-${slot.id}`}
+                      title={slot.name || ''}
+                      supporting={slot.activityType || undefined}
+                      trailing={
+                        <Text tone="muted">{formatQuantity(slot.altitudeM, 'altitude')}</Text>
+                      }
+                    />
+                  ))
+                ) : (
+                  <View style={{ paddingHorizontal: theme.space.lg }}>
+                    <Text tone="muted">{t('dailyLog.nobodyOn', words)}</Text>
+                  </View>
+                )}
+              </Section>
+            ))}
       </FormColumn>
     </ScreenContainer>
   );

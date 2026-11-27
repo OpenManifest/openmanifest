@@ -32,6 +32,13 @@ export default function UserForm(props: IUserFormProps) {
       <FormTextField {...{ control }} name="nickname" label={t('forms.fields.nickname')} />
       <FormTextField {...{ control }} name="email" label={t('forms.fields.email')} />
       <FormTextField {...{ control }} name="phone" label={t('forms.user.phone')} />
+      <FormTextField
+        {...{ control }}
+        name="emergencyContact"
+        testID="user-emergency-contact"
+        label={t('forms.user.emergencyContact')}
+        placeholder={t('forms.user.emergencyContactPlaceholder')}
+      />
       <FormNumberField
         {...{ control }}
         name="bodyMassKg"

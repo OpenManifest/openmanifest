@@ -416,7 +416,17 @@ type DailyLog {
   updatedAt: ISO8601DateTime!
 }
 
+"""A member on the crew of a load, by the operator's name of the role"""
+type DailyLogCrew {
+  id: ID
+  name: String
+  phone: String
+  role: String
+}
+
 type DailyLogEntry {
+  """The day's guest list as CSV: one row per person on each load"""
+  csv: String
   date: ISO8601Date
   downloadUrl: String
   dutyOfficer: DailyLogUser
@@ -424,6 +434,9 @@ type DailyLogEntry {
   loads: [DailyLogLoad!]
   location: GeocodedLocation
   notes: String
+
+  """Which daily log the operator keeps: apf_log, flight_log or guest_list"""
+  template: String
 }
 
 input DailyLogInput {
@@ -432,11 +445,18 @@ input DailyLogInput {
 }
 
 type DailyLogLoad {
+  completedAt: ISO8601DateTime
+  crew: [DailyLogCrew!]
+  departedAt: ISO8601DateTime
+
+  """Names of the places the load went to"""
+  destinations: [String!]
   dispatchAt: ISO8601DateTime
   gca: DailyLogUser
   id: ID!
   loadMaster: DailyLogUser
   loadNumber: Int
+  name: String
   pilot: DailyLogUser
   slots: [DailyLogSlot!]
   vehicle: DailyLogVehicle
@@ -447,8 +467,21 @@ type DailyLogSlot {
 
   """Metres"""
   altitudeM: Float
+  email: String
+
+  """
+  The person's own, or for a guest without one their escort's name and phone
+  """
+  emergencyContact: String
+
+  """For a guest: the name of the member they came with"""
+  escort: String
   id: ID!
   name: String
+  phone: String
+
+  """The ticket's name"""
+  ticketType: String
 }
 
 type DailyLogUser {
@@ -957,6 +990,9 @@ scalar ISO8601DateTime @specifiedBy(url: "https://tools.ietf.org/html/rfc3339")
 
 """The industry of an operator: chosen when it is created, never changed"""
 enum Industry {
+  """Boats to fishing grounds, fishing licences, rod and tackle hire"""
+  FISHING_CHARTER
+
   """Any operator that manifests people onto loads; switch on what you need"""
   GENERIC
 
@@ -968,6 +1004,11 @@ enum Industry {
 
   """Boats to reefs, snorkel gear, children with an adult"""
   SNORKEL
+
+  """
+  Boats on whale-watching routes, a passenger list, children with an adult
+  """
+  WHALE_WATCHING
 }
 
 """
@@ -3080,6 +3121,11 @@ type User implements AnyResource {
   """Needed where a ticket or an activity has an age limit"""
   dateOfBirth: ISO8601Date
   email: String
+
+  """
+  Who to call for the member (name and phone): the passenger list shows it
+  """
+  emergencyContact: String
   equipment: [Equipment!]
   guid: ID!
   id: ID!
@@ -3138,6 +3184,7 @@ input UserInput {
   certificationLevel: Int
   dateOfBirth: ISO8601Date
   email: String
+  emergencyContact: String
   image: String
   name: String
   nickname: String
