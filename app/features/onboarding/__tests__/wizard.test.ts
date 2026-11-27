@@ -41,7 +41,7 @@ function template(overrides: Partial<IndustryTemplate>): IndustryTemplate {
 
 const skydiving = template({
   slug: Industry.Skydiving,
-  name: 'Dropzone',
+  name: 'Skydiving',
   base: '_aviation',
   modules: ['certifications', 'equipment'],
   units: { altitude: 'ft', mass: 'kg', speed: 'kn' },

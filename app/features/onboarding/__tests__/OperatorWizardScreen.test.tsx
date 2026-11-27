@@ -42,13 +42,13 @@ const industries = {
         {
           __typename: 'IndustryTemplate',
           slug: Industry.Skydiving,
-          name: 'Dropzone',
-          description: 'Aircraft and people',
+          name: 'Skydiving',
+          description: 'Vehicles and people',
           icon: 'parachute',
           base: '_aviation',
           modules: ['destinations', 'certifications'],
           units: { altitude: 'ft', mass: 'kg' },
-          vehicleKinds: ['aircraft'],
+          vehicleKinds: ['boat'],
           presetSummary: summary({ crewRoles: ['Pilot', 'GCA'] }),
         },
         {
